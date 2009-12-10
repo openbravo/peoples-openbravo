@@ -69,22 +69,22 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MATTRIBUTESET">
+      <foreign-key foreignTable="AD_CLIENT" name="M_ATTRIBUTESET_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MATTRIBUTESET">
+      <foreign-key foreignTable="AD_ORG" name="M_ATTRIBUTESET_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_LOTCTL" name="MLOTCTL_MATTRIBUTESET">
+      <foreign-key foreignTable="M_LOTCTL" name="M_ATTRIBUTESET_M_LOTCTL">
         <reference local="M_LOTCTL_ID" foreign="M_LOTCTL_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_SERNOCTL" name="MSERNOCTL_ATTRIBUTESET">
+      <foreign-key foreignTable="M_SERNOCTL" name="M_ATTRIBUTESET_M_SERNOCTL">
         <reference local="M_SERNOCTL_ID" foreign="M_SERNOCTL_ID"/>
       </foreign-key>
       <check name="M_ATTRIBUTESET_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTESET_ISGUARANTEE_CHK"><![CDATA[ISGUARANTEEDATE IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTESET_ISLOCKABLE_CHK"><![CDATA[ISLOCKABLE IN ('Y', 'N')]]></check>
       <check name="M_ATTRIBUTESET_ISLOT_CHECK"><![CDATA[ISLOT IN ('Y', 'N')]]></check>
       <check name="M_ATTRIBUTESET_ISSERNO_CHECK"><![CDATA[ISSERNO IN ('Y', 'N')]]></check>
-      <check name="MATTRIBSET_ISGUARDATE_CHECK"><![CDATA[ISGUARANTEEDATE IN ('Y', 'N')]]></check>
-      <check name="MATTRIBSET_ISLOCKABLE_CHECK"><![CDATA[ISLOCKABLE IN ('Y', 'N')]]></check>
     </table>
   </database>

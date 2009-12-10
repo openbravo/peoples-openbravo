@@ -41,18 +41,18 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MRAPPELPRODUCTCATEGOR">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MRAPPELPRODUCTCATEGORY">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_RAPPEL" name="M_RAPPEL_M_RAPPEL_PRODCATE">
         <reference local="M_RAPPEL_ID" foreign="M_RAPPEL_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="PRODCATE_M_RAPPEL_PRODCATE">
+      <foreign-key foreignTable="AD_CLIENT" name="M_RAPPEL_PRODUCTCATEGORY_AD_CL">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="M_RAPPEL_PRODUCTCATEGORY_AD_OR">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_RAPPEL_PRODUCTCATEGORY_M_PRO">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="MRAPPRCAT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_RAPPEL_PRODUCTCATEGORY_I_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

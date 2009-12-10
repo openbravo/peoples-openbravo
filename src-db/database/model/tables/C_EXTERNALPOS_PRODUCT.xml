@@ -41,13 +41,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CEXTERNALPOSPRODUCT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_EXTERNALPOS_PRODUCT_AD_CLIEN">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CEXTERNALPOSPRODUCT">
+      <foreign-key foreignTable="AD_ORG" name="C_EXTERNALPOS_PRODUCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_EXTERNALPOS" name="EXTPOS_C_EXTERNALPOS_PROD">
+      <foreign-key foreignTable="C_EXTERNALPOS" name="C_EXTERNALPOS_PRODUCT_C_EXTERN">
         <reference local="C_EXTERNALPOS_ID" foreign="C_EXTERNALPOS_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_C_EXTERNALPOS_PROD">

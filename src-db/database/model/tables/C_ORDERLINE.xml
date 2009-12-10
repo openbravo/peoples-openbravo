@@ -185,59 +185,59 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CORDERLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_ORDERLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CORDERLINE">
+      <foreign-key foreignTable="AD_ORG" name="C_ORDERLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="C_ORDERLINE_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_ORDERLINE_C_BPARTNER_LOCATIO">
+        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CHARGE" name="C_ORDERLINE_C_CHARGE">
+        <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="C_ORDERLINE_C_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDER" name="C_ORDERLINE_C_ORDER">
+        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDER_DISCOUNT" name="C_ORDERLINE_C_ORDER_DISCOUNT">
+        <reference local="C_ORDER_DISCOUNT_ID" foreign="C_ORDER_DISCOUNT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_TAX" name="C_ORDERLINE_C_TAX">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_ORDERLINE_C_UOM">
+        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="C_ORDERLINE_M_ATTRIBUTESETINST">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_OFFER" name="C_ORDERLINE_M_OFFER">
+        <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="C_ORDERLINE_M_PRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="C_ORDERLINE_M_PRODUCT_UOM">
+        <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_SHIPPER" name="C_ORDERLINE_M_SHIPPER">
+        <reference local="M_SHIPPER_ID" foreign="M_SHIPPER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE" name="C_ORDERLINE_M_WAREHOUSE">
+        <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="C_ORDERLINE_S_RESOURCEASSIGNME">
+        <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SOPOREF">
         <reference local="REF_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_SOLINE">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPARTNERLOCATION_SOLINE">
-        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CHARGE" name="CCHARGE_CORDERLINE">
-        <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CORDERLINE">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ORDER_DISCOUNT" name="CINORDERLINE_FK_DISCORDER">
-        <reference local="C_ORDER_DISCOUNT_ID" foreign="C_ORDER_DISCOUNT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ORDER" name="CORDER_CORDERLINE">
-        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_CORDERLINE">
-        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_CORDERLINE">
-        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_CORDERLINE">
-        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_OFFER" name="MOFFER_CORDERLINE">
-        <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CORDERLINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTOUMID_CORDERLINE">
-        <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_SHIPPER" name="MSHIPPER_CORDERLINE">
-        <reference local="M_SHIPPER_ID" foreign="M_SHIPPER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_CORDERLINE">
-        <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="SRESOURCEASSIGN_CORDERLINE">
-        <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
       </foreign-key>
       <index name="C_ORDERLINE_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>

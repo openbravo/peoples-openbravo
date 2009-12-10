@@ -157,36 +157,36 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IBANKSTATEMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="I_BANKSTATEMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_IBANKSTATEMENT">
+      <foreign-key foreignTable="AD_ORG" name="I_BANKSTATEMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BANKACCOUNT" name="CBANKACCOUNT_IBANKSTATEMENT">
+      <foreign-key foreignTable="C_BANKACCOUNT" name="I_BANKSTATEMENT_C_BANKACCOUNT">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BANKSTATEMENT" name="CBANKSTATEMENT_IBANKSTATEMENT">
-        <reference local="C_BANKSTATEMENT_ID" foreign="C_BANKSTATEMENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BANKSTATEMENTLINE" name="CBANKSTMTLINE_IBANKSTMT">
+      <foreign-key foreignTable="C_BANKSTATEMENTLINE" name="I_BANKSTATEMENT_C_BANKSTATEME1">
         <reference local="C_BANKSTATEMENTLINE_ID" foreign="C_BANKSTATEMENTLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_IBANKSTATEMENT">
+      <foreign-key foreignTable="C_BANKSTATEMENT" name="I_BANKSTATEMENT_C_BANKSTATEMEN">
+        <reference local="C_BANKSTATEMENT_ID" foreign="C_BANKSTATEMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="I_BANKSTATEMENT_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CHARGE" name="CCHARGE_IBANKSTMT">
+      <foreign-key foreignTable="C_CHARGE" name="I_BANKSTATEMENT_C_CHARGE">
         <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBT_PAYMENT_IBANKSTMT">
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="I_BANKSTATEMENT_C_DEBT_PAYMENT">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="CINVOICE_IBANKSTATEMENT">
+      <foreign-key foreignTable="C_INVOICE" name="I_BANKSTATEMENT_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
+      <check name="I_BANKSTATEMENT_I_ISIMPORT_CHK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
       <check name="I_BANKSTATEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="IBANKSTAT_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
-      <check name="IBANKSTAT_ISREVERSAL_CHECK"><![CDATA[ISREVERSAL IN ('Y', 'N')]]></check>
-      <check name="IBANKSTAT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="I_BANKSTATEMENT_ISREVERSAL_CHK"><![CDATA[ISREVERSAL IN ('Y', 'N')]]></check>
+      <check name="I_BANKSTATEMENT_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

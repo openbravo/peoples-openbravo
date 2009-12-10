@@ -133,30 +133,30 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IELEMENTVALUE">
+      <foreign-key foreignTable="AD_CLIENT" name="I_ELEMENTVALUE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_IELEMENTVALUE" onDelete="cascade">
+      <foreign-key foreignTable="AD_COLUMN" name="I_ELEMENTVALUE_AD_COLUMN" onDelete="cascade">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_IELEMENTVALUE">
+      <foreign-key foreignTable="AD_ORG" name="I_ELEMENTVALUE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENT" name="CELEMENT_IELEMENTVALUE">
+      <foreign-key foreignTable="C_ELEMENT" name="I_ELEMENTVALUE_C_ELEMENT">
         <reference local="C_ELEMENT_ID" foreign="C_ELEMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_IELEMENTVALUE">
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="I_ELEMENTVALUE_C_ELEMENTVALUE">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CEVALUEPARENT_IELEMENTVALUE">
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="I_ELEMENTVALUE_PARENTELEMENTVA">
         <reference local="PARENTELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <check name="I_ELEMENTVALUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="IELEMVAL_ISDOCCONTROL_CHECK"><![CDATA[ISDOCCONTROLLED IN ('Y', 'N')]]></check>
-      <check name="IELEMVALUE_POSTACTUAL_CHECK"><![CDATA[POSTACTUAL IN ('Y', 'N')]]></check>
-      <check name="IELEMVALUE_POSTBUDGET_CHECK"><![CDATA[POSTBUDGET IN ('Y', 'N')]]></check>
-      <check name="IELEMVALUE_POSTENCUMBR_CHECK"><![CDATA[POSTENCUMBRANCE IN ('Y', 'N')]]></check>
-      <check name="IELEMVALUE_POSTSTATIST_CHECK"><![CDATA[POSTSTATISTICAL IN ('Y', 'N')]]></check>
-      <check name="IELEMVALUE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_ISDOCCONTRO_CHK"><![CDATA[ISDOCCONTROLLED IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_POSTACTUAL_CHK"><![CDATA[POSTACTUAL IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_POSTBUDGET_CHK"><![CDATA[POSTBUDGET IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_POSTENCUMBR_CHK"><![CDATA[POSTENCUMBRANCE IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_POSTSTATIST_CHK"><![CDATA[POSTSTATISTICAL IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -137,8 +137,9 @@ public class RemittanceCancel extends HttpSecureAppServlet {
           String strDocumentNo = Utility.getDocumentNoConnection(conn, this, vars.getClient(),
               "C_DP_Management", true);
           try {
-            RemittanceCancelData.insertDPManagement(conn, this, strDPMID, vars.getClient(), vars
-                .getOrg(), vars.getUser(), strDocumentNo, strDateAcct, strRLId);
+            String strOrg = RemittanceCancelData.selectOrg(this, strRLId);
+            RemittanceCancelData.insertDPManagement(conn, this, strDPMID, vars.getClient(), strOrg,
+                vars.getUser(), strDocumentNo, strDateAcct, strRLId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

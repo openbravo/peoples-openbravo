@@ -104,25 +104,25 @@
       <foreign-key foreignTable="AD_SEQUENCE" name="AD_SEQUENCE_DOCTYPEDOC">
         <reference local="DOCNOSEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CDOCTYPE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_DOCTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CDOCTYPE">
+      <foreign-key foreignTable="AD_ORG" name="C_DOCTYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_CDOCTYPE" onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="C_DOCTYPE_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPE">
         <reference local="C_DOCTYPE_REVERSED_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_INVOICE">
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPEINVOICE">
         <reference local="C_DOCTYPEINVOICE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_SHIPMENT">
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPESHIPMENT">
         <reference local="C_DOCTYPESHIPMENT_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_CATEGORY" name="GLCATEGORY_CDOCTYPE">
+      <foreign-key foreignTable="GL_CATEGORY" name="C_DOCTYPE_GL_CATEGORY">
         <reference local="GL_CATEGORY_ID" foreign="GL_CATEGORY_ID"/>
       </foreign-key>
       <unique name="C_DOCTYPE_NAME">
@@ -130,8 +130,8 @@
         <unique-column name="NAME"/>
       </unique>
       <check name="C_DOCTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_DOCTYPE_ISDOCNOCONTROLLE_CHK"><![CDATA[ISDOCNOCONTROLLED IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ORGFILTERED_CHECK"><![CDATA[ORGFILTERED IN ('Y', 'N')]]></check>
-      <check name="CDOCTYPEISDOCNOCONTROL_CHECK"><![CDATA[ISDOCNOCONTROLLED IN ('Y', 'N')]]></check>
     </table>
   </database>

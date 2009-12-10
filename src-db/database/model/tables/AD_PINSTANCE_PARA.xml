@@ -77,16 +77,16 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPINSTANCEPARA">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_PINSTANCE_PARA_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADPINSTANCEPARA">
+      <foreign-key foreignTable="AD_ORG" name="AD_PINSTANCE_PARA_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PINSTANCE" name="ADPINSTANCE_ADPINSTANCEPARA" onDelete="cascade">
+      <foreign-key foreignTable="AD_PINSTANCE" name="AD_PINSTANCE_PARA_AD_PINSTANCE" onDelete="cascade">
         <reference local="AD_PINSTANCE_ID" foreign="AD_PINSTANCE_ID"/>
       </foreign-key>
-      <unique name="ADPINSTANCEPARA_ADPINSTANCE_UN">
+      <unique name="AD_PINSTANCE_PARA_PINSTANCE_UN">
         <unique-column name="AD_PINSTANCE_ID"/>
         <unique-column name="SEQNO"/>
       </unique>

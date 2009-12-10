@@ -20,7 +20,6 @@
 package org.openbravo.test.ant;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.net.URL;
 
 import junit.framework.TestCase;
@@ -51,26 +50,14 @@ public class BaseAntTest extends TestCase {
 
   protected void doTest(String task, String additionalPath) {
     log.info("Running ant task " + task);
-    final PrintWriter outputLogWriter = new PrintWriter(System.err);
 
     try {
       final AntExecutor ant = new AntExecutor(getProperty("source.path")
           + (additionalPath != null ? "/" + additionalPath : ""));
-      ant.setOBPrintStreamLog(System.err);
-      // ant.setLogLevel(Project.MSG_INFO);
-      // ant.setOBPrintStreamLog(null);// outputLogWriter);
       ant.runTask(task);
-      final String result = ant.getErr();
-      if (result.indexOf("Success") != -1) {
-        return;
-      } else {
-        System.err.println(result);
-        fail(result);
-      }
+
     } catch (final Exception e) {
       throw new OBException(e);
-    } finally {
-      outputLogWriter.close();
     }
   }
 

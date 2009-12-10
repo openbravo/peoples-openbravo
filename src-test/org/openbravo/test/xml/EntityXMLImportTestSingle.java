@@ -53,7 +53,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * insert.
    */
   public void testImportNoUpdate() {
-    setUserContext("100");
+    setBigBazaarAdminContext();
 
     final String xml = exportTax();
     final Client c = OBDal.getInstance().get(Client.class, "1000000");
@@ -89,7 +89,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    */
   public void test1Greeting() {
     cleanRefDataLoaded();
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Greeting.class);
     final int cnt = count(Greeting.class);
     addReadWriteAccess(Greeting.class);
@@ -111,7 +111,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * object.
    */
   public void test2Greeting() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Greeting.class);
     final String xml = getXML(Greeting.class);
     setUserContext("1000019");
@@ -184,7 +184,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
 
   // do it again, no change!
   private <T extends BaseOBObject> void doTestNoChange(Class<T> clz) {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Greeting.class);
     final String xml = getXML(clz);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(

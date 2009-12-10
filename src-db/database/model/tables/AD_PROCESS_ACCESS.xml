@@ -45,23 +45,23 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_ACCESS_AD_PROCESS" onDelete="cascade">
+        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ROLE" name="AD_PROCESS_ACCESS_AD_ROLE" onDelete="cascade">
+        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESSACCESS_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_PROCESSTACCESS_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADPROCESSACCESS" onDelete="cascade">
-        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADPROCESSACCESS" onDelete="cascade">
-        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
-      </foreign-key>
       <index name="AD_PROCESS_ACCESS_UN_KEY" unique="true">
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_PROCESS_ID"/>
       </index>
-      <check name="ADPROCACC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADPROCACC_ISREADWRITE_CHECK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_ACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_ACCESS_ISREADWR_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

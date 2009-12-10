@@ -77,46 +77,46 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTCATEGORYACCT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_CATEGORY_ACCT_AD_CLI">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MPRODUCTCATEGORYACCT">
+      <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_CATEGORY_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MPRODCATACCT" onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="M_PRODUCT_CATEGORY_ACCT_C_ACCT" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCAT_MPRODCATACCT" onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_CATEGORY_ACCT_M_PROD" onDelete="cascade">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PASSET_MPRODUCTCATEGORY">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_CATEGORY_ACCT_P_ASSE">
         <reference local="P_ASSET_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PCOGS_MPRODUCTCATEGORY">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_CATEGORY_ACCT_P_COGS">
         <reference local="P_COGS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PEXPENSE_MPRODUCTCATEGORY">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_CATEGORY_ACCT_P_EXPE">
         <reference local="P_EXPENSE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PINVOICEPV_MPRODUCTCATEGORY">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_CATEGORY_ACCT_P_INVO">
         <reference local="P_INVOICEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PPURCHASEPV_MPRODUCTCATEGOR">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_CATEGORY_ACCT_P_PURC">
         <reference local="P_PURCHASEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PREVENUE_MPRODUCTCATEGORY">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_CATEGORY_ACCT_P_REVE">
         <reference local="P_REVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTGRANT_MPRODUCTCAT">
-        <reference local="P_TRADEDISCOUNTGRANT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTREC_MPRODUCTCATEG">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_CATEGORY_ACCT_P_TRA1">
         <reference local="P_TRADEDISCOUNTREC_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <unique name="MPRODUCTCATEGORYACCT_MPRODU_UN">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="M_PRODUCT_CATEGORY_ACCT_P_TRAD">
+        <reference local="P_TRADEDISCOUNTGRANT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <unique name="M_PRODUCT_CATEGORY_ACCT_PRO_UN">
         <unique-column name="M_PRODUCT_CATEGORY_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
-      <check name="MPRODCATAC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_CATEGORY_ACCT_IS_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

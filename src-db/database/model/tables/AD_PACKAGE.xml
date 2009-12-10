@@ -49,13 +49,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="PACKAGECLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_PACKAGE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="PACKAGEMODULE">
+      <foreign-key foreignTable="AD_MODULE" name="AD_PACKAGE_AD_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="PACKAGEORG">
+      <foreign-key foreignTable="AD_ORG" name="AD_PACKAGE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="AD_PACKAGE_JAVANAME">
@@ -64,6 +64,6 @@
       <unique name="AD_PACKAGE_NAME">
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADPACKAGE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PACKAGE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

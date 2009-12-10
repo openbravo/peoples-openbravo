@@ -61,10 +61,10 @@
         <default/>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADORGTYPE">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ORGTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADORGTYPE">
+      <foreign-key foreignTable="AD_ORG" name="AD_ORGTYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="AD_ORGTYPE_ISACCTLE_CHECK"><![CDATA[ISACCTLEGALENTITY IN ('Y', 'N')]]></check>
@@ -72,7 +72,7 @@
       <check name="AD_ORGTYPE_ISBU_CHECK"><![CDATA[ISBUSINESSUNIT IN ('Y', 'N')]]></check>
       <check name="AD_ORGTYPE_ISDEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
       <check name="AD_ORGTYPE_ISLEGALENTITY_CHECK"><![CDATA[ISLEGALENTITY IN ('Y', 'N')]]></check>
+      <check name="AD_ORGTYPE_ISLEGALENTITY_CHK"><![CDATA[(((ISLEGALENTITY = 'Y') AND (ISBUSINESSUNIT = 'N')) OR ((ISLEGALENTITY = 'N') AND (ISBUSINESSUNIT = 'Y'))) OR ((ISLEGALENTITY = 'N') AND (ISBUSINESSUNIT = 'N'))]]></check>
       <check name="AD_ORGTYPE_ISTRALLOWED_CHECK"><![CDATA[ISTRANSACTIONSALLOWED IN ('Y', 'N')]]></check>
-      <check name="ISLE_ISBU_EXCLUDE"><![CDATA[(((ISLEGALENTITY = 'Y') AND (ISBUSINESSUNIT = 'N')) OR ((ISLEGALENTITY = 'N') AND (ISBUSINESSUNIT = 'Y'))) OR ((ISLEGALENTITY = 'N') AND (ISBUSINESSUNIT = 'N'))]]></check>
     </table>
   </database>

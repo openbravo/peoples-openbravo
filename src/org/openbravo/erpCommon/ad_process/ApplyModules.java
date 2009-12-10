@@ -20,28 +20,38 @@ package org.openbravo.erpCommon.ad_process;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.ModuleLog;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.system.ReloadContext;
 import org.openbravo.service.system.RestartTomcat;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 /**
  * Servlet for the Apply Modules method.
@@ -60,18 +70,20 @@ public class ApplyModules extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       printPage(request, response, vars);
+    } else if (vars.commandIn("TOMCAT")) {
+      printPageTomcat(request, response, vars);
     } else if (vars.commandIn("STARTAPPLY")) {
       startApply(response, vars);
-    } else if (vars.commandIn("UPDATELOG")) {
-      updateLog(response, vars);
+    } else if (vars.commandIn("UPDATESTATUS")) {
+      update(response, vars);
+    } else if (vars.commandIn("REQUESTERRORSTATE")) {
+      requesterrorstate(response, vars);
     } else if (vars.commandIn("GETERR")) {
       getError(response, vars);
     } else if (vars.commandIn("RESTART")) {
       restartApplicationServer(response, vars);
     } else if (vars.commandIn("RELOAD")) {
       reloadContext(response, vars);
-    } else if (vars.commandIn("DONOTHING")) {
-      // Won't be called.
     } else {
       pageError(response);
     }
@@ -81,11 +93,6 @@ public class ApplyModules extends HttpSecureAppServlet {
    * Prints the default page for the process, showing the process description and a OK and Cancel
    * buttons. First it checks whether the server has write permissions to be able to execute the
    * process.
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
    */
   private void printPage(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
@@ -97,12 +104,14 @@ public class ApplyModules extends HttpSecureAppServlet {
       return;
     }
 
+    String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("help", ApplyModulesData.getHelp(this, vars.getLanguage()));
+    xmlDocument.setParameter("buttonLog", fileName);
+    xmlDocument.setParameter("logfile", fileName);
     {
       final OBError myMessage = vars.getMessage("ApplyModules");
       vars.removeMessage("ApplyModules");
@@ -112,6 +121,25 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  /**
+   * Prints a page that only allows the user to restart or reload Tomcat
+   */
+  private void printPageTomcat(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars) throws IOException, ServletException {
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_process/RestartTomcat").createXmlDocument();
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
+
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
 
@@ -176,34 +204,168 @@ public class ApplyModules extends HttpSecureAppServlet {
   }
 
   /**
+   * This method returns an ApplyModulesResponse object, that later is transformed into a JSON
+   * object and resend to the rebuild window.
+   */
+  private ApplyModulesResponse fillResponse(String state) {
+    ApplyModulesResponse resp = new ApplyModulesResponse();
+    resp.setState(Integer.parseInt(state.replace("RB", "")));
+    PreparedStatement ps = null;
+    PreparedStatement ps2 = null;
+    PreparedStatement ps3 = null;
+    try {
+      ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN' AND SYSTEM_STATUS LIKE ?");
+      ps.setString(1, "%" + state);
+      ps.executeQuery();
+      ResultSet rs = ps.getResultSet();
+      ArrayList<String> warnings = new ArrayList<String>();
+      while (rs.next()) {
+        warnings.add(rs.getString(1));
+      }
+      resp.setWarnings(warnings.toArray(new String[0]));
+
+      ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
+      ps2.setString(1, "%" + state);
+      ps2.executeQuery();
+      ResultSet rs2 = ps2.getResultSet();
+      ArrayList<String> errors = new ArrayList<String>();
+      while (rs2.next()) {
+        errors.add(rs2.getString(1));
+      }
+      resp.setErrors(errors.toArray(new String[0]));
+
+      ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED DESC");
+      ps3.executeQuery();
+      ResultSet rs3 = ps3.getResultSet();
+      if (rs3.next()) {
+        resp.setLastmessage(rs3.getString(1));
+      } else {
+        resp.setLastmessage("");
+      }
+
+    } catch (Exception e) {
+      log4j.error("Error while building Response object", e);
+    } finally {
+      try {
+        releasePreparedStatement(ps3);
+        releasePreparedStatement(ps2);
+        releasePreparedStatement(ps);
+      } catch (SQLException e2) {
+        log4j.error("Error when closing prepared statements while building response object", e2);
+      }
+    }
+    return resp;
+  }
+
+  /**
+   * This method is called via AJAX through a timer in the rebuild window. It returns the current
+   * status of the system (and warnings/errors that happened in the current state)
+   */
+  private void update(HttpServletResponse response, VariablesSecureApp vars) {
+    PreparedStatement ps = null;
+    try {
+      ps = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
+      ps.executeQuery();
+      ResultSet rs = ps.getResultSet();
+      rs.next();
+      String state = rs.getString(1);
+      ApplyModulesResponse resp = fillResponse(state);
+      if (resp.getErrors().length > 0)
+        resp.setStatusofstate("Error");
+      else if (resp.getWarnings().length > 0)
+        resp.setStatusofstate("Warning");
+      else
+        resp.setStatusofstate("Processing");
+      response.setContentType("text/plain; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      String strResult;
+      XStream xs = new XStream(new JettisonMappedXmlDriver());
+      xs.alias("Response", ApplyModulesResponse.class);
+      strResult = xs.toXML(resp);
+      out.print(strResult);
+      out.close();
+    } catch (Exception e) {
+      log4j.error("Error while updating the system status in the rebuild window.", e);
+    } finally {
+      if (ps != null)
+        try {
+          releasePreparedStatement(ps);
+        } catch (SQLException e) {
+          log4j.error(
+              "Error while trying to close prepared statement when updating the rebuild window", e);
+        }
+    }
+  }
+
+  /**
+   * This method is called via AJAX, and returns the status and warnings/errors for a particular
+   * state. This method will be called when the Rebuild Window notices that one or more steps were
+   * not updated and the build process already finished them
+   */
+  private void requesterrorstate(HttpServletResponse response, VariablesSecureApp vars) {
+    String state = vars.getStringParameter("reqStatus");
+    ApplyModulesResponse pet = fillResponse(state);
+    if (pet.getErrors().length > 0)
+      pet.setStatusofstate("Error");
+    else if (pet.getWarnings().length > 0)
+      pet.setStatusofstate("Warning");
+    else
+      pet.setStatusofstate("Success");
+    response.setContentType("text/plain; charset=UTF-8");
+    try {
+      final PrintWriter out = response.getWriter();
+      String strResult;
+      XStream xs = new XStream(new JettisonMappedXmlDriver());
+      xs.alias("Response", ApplyModulesResponse.class);
+      strResult = xs.toXML(pet);
+      out.print(strResult);
+      out.close();
+    } catch (IOException e) {
+      log4j.error("Error while updating the system status in the rebuild window.", e);
+    }
+  }
+
+  /**
    * Method to be called via AJAX. Creates a new AntExecutor object, saves it in session and
    * executes the apply modules task on it.
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    // final PrintStream oldOut=System.out;
+    User currentUser = OBContext.getOBContext().getUser();
+    boolean admin = OBContext.getOBContext().setInAdministratorMode(true);
+    PreparedStatement ps = null;
+    PreparedStatement ps2 = null;
+    PreparedStatement ps3 = null;
+    PreparedStatement updateSession = null;
+    AntExecutor ant = null;
     try {
-      final AntExecutor ant = new AntExecutor(vars.getSessionValue("#sourcePath"));
-      String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "-apply.log";
-      // final OBPrintStream obps=new OBPrintStream(new
-      // PrintStream(response.getOutputStream()));
-      // System.setOut(obps);
+      ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
+      ps.executeUpdate();
+      ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB11'");
+      ps2.executeUpdate();
 
-      // ant.setOBPrintStreamLog(response.getWriter());
-      final PrintStream out = new PrintStream(response.getOutputStream());
-      ant.setOBPrintStreamLog(new PrintStream(out));
+      // We first shutdown the background process, so that it doesn't interfere
+      // with the rebuild process
+      try {
+        OBScheduler.getInstance().getScheduler().shutdown(true);
+      } catch (Exception e) {
+        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+      }
 
-      fileName = ant.setLogFile(fileName);
-      // obps.setLogFile(new File(fileName+".db"));
-      ant.setLogFileInOBPrintStream(new File(fileName));
-      vars.setSessionObject("ApplyModules|Log", ant);
+      Properties props = new Properties();
+      props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
+      props.setProperty("log4j.appender.DB.Basedir", vars.getSessionValue("#sourcePath"));
+      props.setProperty("log4j.rootCategory", "INFO,DB");
+      PropertyConfigurator.configure(props);
 
-      // do not execute tranlsation process (all entries should be already in the module)
+      ant = new AntExecutor(vars.getSessionValue("#sourcePath"));
+
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+
+      ant.setLogFileAndListener(vars.getStringParameter("logfile"));
+
+      // do not execute translation process (all entries should be already in the module)
       ant.setProperty("tr", "no");
 
       final Vector<String> tasks = new Vector<String>();
@@ -227,33 +389,42 @@ public class ApplyModules extends HttpSecureAppServlet {
         tasks.add("apply.modules");
         ant.setProperty("module", unnappliedModules);
       }
-      response.setContentType("text/plain; charset=UTF-8");
-      out.print("Shutting down scheduler (background processes) ...");
-      // We first shutdown the background process, so that it doesn't interfere
-      // with the rebuild process
-      OBScheduler.getInstance().getScheduler().shutdown(true);
-      out.println(" done.\n");
+
+      // We also cancel sessions opened for users different from the current one
+      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
+      updateSession.setString(1, currentUser.getId());
+      updateSession.executeUpdate();
       ant.runTask(tasks);
 
-      ant.setFinished(true);
-
-      if (ant.hasErrorOccured()) {
-        createModuleLog(false, ant.getErr());
-      } else {
-        createModuleLog(true, null);
+      PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
+      psErr.executeQuery();
+      ResultSet rsErr = psErr.getResultSet();
+      if (!rsErr.next()) {
+        ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'");
+        ps3.executeUpdate();
       }
-
-      out.println("finished");
       out.close();
     } catch (final Exception e) {
-      e.printStackTrace();
+      log4j.error("Error while updating the system status in the rebuild window.", e);
       // rolback the old transaction and start a new one
       // to store the build log
       OBDal.getInstance().rollbackAndClose();
       createModuleLog(false, e.getMessage());
       OBDal.getInstance().commitAndClose();
     } finally {
-      // System.setOut(oldOut);
+      try {
+        Properties props = new Properties();
+        props.setProperty("log4j.rootCategory", "INFO,R");
+        PropertyConfigurator.configure(props);
+        ant.closeLogFile();
+        releasePreparedStatement(ps);
+        releasePreparedStatement(ps2);
+        releasePreparedStatement(ps3);
+        releasePreparedStatement(updateSession);
+      } catch (SQLException e) {
+        log4j.error("Error while updating the system status in the rebuild window.", e);
+      }
+      OBContext.getOBContext().setInAdministratorMode(admin);
     }
   }
 
@@ -286,69 +457,53 @@ public class ApplyModules extends HttpSecureAppServlet {
   }
 
   /**
-   * Method to be called via AJAX. It is intended to be called periodically to show the log
-   * generated after the las call
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void updateLog(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-    try {
-      final AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
-      if (ant != null)
-        ant.setPrintWriter(response.getWriter());
-    } catch (final Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
    * Method to be called via AJAX. It returns a XML structure with the error messages (if any) or a
    * Success one
-   * 
-   * @param response
-   * @param vars
-   * @throws IOException
-   * @throws ServletException
    */
   private void getError(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: print page errors");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/MessageJS").createXmlDocument();
-    String type = "Hidden";
-    String title = "";
-    String description = "";
-    final String strLanguage = vars.getLanguage();
-
+    OBError error = new OBError();
+    PreparedStatement ps;
+    PreparedStatement ps2;
     try {
-      final AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
-      if (ant != null)
-        description = ant.getErr();
-      if (description.startsWith("SuccessRebuild")) {
-        type = "Success";
-        title = Utility.messageBD(this, type, strLanguage);
-        description = "<![CDATA[" + Utility.messageBD(this, description, strLanguage) + "]]>";
+      ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
+      ps.executeQuery();
+      ResultSet rs = ps.getResultSet();
+      if (rs.next()) {
+        error.setType("Error");
+        error.setTitle(Utility.messageBD(myPool, "Error", vars.getLanguage()));
+        error.setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
+            + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">"
+            + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>.");
+
       } else {
-        type = "Error";
-        title = Utility.messageBD(this, type, strLanguage);
-        description = "<![CDATA[" + description + "]]>";
+        ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN'");
+        ps2.executeQuery();
+        ResultSet rs2 = ps2.getResultSet();
+        if (rs2.next()) {
+          error.setType("Warning");
+          error.setTitle(Utility.messageBD(myPool, "Warning", vars.getLanguage()));
+          error.setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage())
+              + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">"
+              + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>."
+              + Utility.messageBD(myPool, "BuildWarning2", vars.getLanguage()));
+
+        } else {
+          error.setType("Success");
+          error.setTitle(Utility.messageBD(myPool, "Success", vars.getLanguage()));
+          error.setMessage(Utility.messageBD(myPool, "BuildSuccessful", vars.getLanguage()));
+        }
       }
-      xmlDocument.setParameter("type", type);
-      xmlDocument.setParameter("title", title);
-      xmlDocument.setParameter("description", Utility.formatMessageBDToHtml(description));
-      response.setContentType("text/xml; charset=UTF-8");
-      response.setHeader("Cache-Control", "no-cache");
-      final PrintWriter out = response.getWriter();
-      out.println(xmlDocument.print());
-      out.close();
-    } catch (final Exception e) {
-      description = "";
+    } catch (Exception e) {
+      log4j.error("Error while returning the error to the rebuild window", e);
     }
+
+    XStream xs = new XStream(new JettisonMappedXmlDriver());
+    xs.alias("OBError", OBError.class);
+    String strResult = xs.toXML(error);
+    final PrintWriter out = response.getWriter();
+    out.print(strResult);
+    out.close();
   }
 
   /**

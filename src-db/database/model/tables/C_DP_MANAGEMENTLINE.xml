@@ -53,17 +53,17 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CDPMANAGEMENTLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_DP_MANAGEMENTLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CDPMANAGEMENTLINE">
+      <foreign-key foreignTable="AD_ORG" name="C_DP_MANAGEMENTLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DP_MANAGEMENT" name="CDPMANAGEMENT_CDPMANAGEMENTLIN">
-        <reference local="C_DP_MANAGEMENT_ID" foreign="C_DP_MANAGEMENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="DEBTPAYMENT_DPMANAGEMENTLINE">
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="C_DP_MANAGEMENTLINE_C_DEBT_PAY">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DP_MANAGEMENT" name="C_DP_MANAGEMENTLINE_C_DP_MANAG">
+        <reference local="C_DP_MANAGEMENT_ID" foreign="C_DP_MANAGEMENT_ID"/>
       </foreign-key>
     </table>
   </database>

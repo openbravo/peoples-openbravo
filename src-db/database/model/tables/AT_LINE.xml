@@ -84,17 +84,17 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATLINE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AT_COMMAND" name="AT_COMMAND_ATLINE">
         <reference local="AT_COMMAND_ID" foreign="AT_COMMAND_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="AT_LINE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AT_TEST" name="AT_LINE_CHILD_TEST">
+        <reference local="CHILD_TEST" foreign="AT_TEST_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AT_TEST" name="AT_TEST_ATLINE">
         <reference local="AT_TEST_ID" foreign="AT_TEST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AT_TEST" name="CHILD_TEST_ATLINE">
-        <reference local="CHILD_TEST" foreign="AT_TEST_ID"/>
       </foreign-key>
       <check name="AT_LINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

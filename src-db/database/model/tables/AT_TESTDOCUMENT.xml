@@ -95,12 +95,12 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATTESTDOCUMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTESTDOCUMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AT_TESTDOCUMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <check name="ATTESTDOCUMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ATTESTDOCUMENT_LINEINTER_CHECK"><![CDATA[LINE_INTERCHANGER IN ('Y', 'N')]]></check>
-      <check name="ATTESTDOCUMENT_ODUCTION_CHECK"><![CDATA[INTRODUCTION IN ('Y', 'N')]]></check>
-      <check name="ATTESTDOCUMENT_PREFIX_CHECK"><![CDATA[PREFIX IN ('Y', 'N')]]></check>
+      <check name="AT_TESTDOCUMENT_INTRODUCTI_CHK"><![CDATA[INTRODUCTION IN ('Y', 'N')]]></check>
+      <check name="AT_TESTDOCUMENT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AT_TESTDOCUMENT_LINE_INTER_CHK"><![CDATA[LINE_INTERCHANGER IN ('Y', 'N')]]></check>
+      <check name="AT_TESTDOCUMENT_PREFIX_CHK"><![CDATA[PREFIX IN ('Y', 'N')]]></check>
     </table>
   </database>

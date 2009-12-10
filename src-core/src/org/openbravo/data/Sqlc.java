@@ -948,6 +948,9 @@ public class Sqlc extends DefaultHandler {
             posFinalAfter = 0;
             out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
                 + parameter.strName + ".equals(\"\"))?\"\":" + parameter.strName + ");\n");
+          } else {
+            log4j.error(sqlcName + "." + sql.sqlName + " position after = \"" + parameter.strAfter
+                + "\" for optional parameter " + parameter.strName + " not found in xsql file!");
           }
         }
       }

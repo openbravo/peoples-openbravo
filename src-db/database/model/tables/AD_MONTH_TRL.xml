@@ -49,23 +49,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADMONTHTRL">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_MONTH_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_ADMONTHTRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_MONTH_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MONTH" name="ADMONTH_ADMONTHTRL" onDelete="cascade">
+      <foreign-key foreignTable="AD_MONTH" name="AD_MONTH_TRL_AD_MONTH" onDelete="cascade">
         <reference local="AD_MONTH_ID" foreign="AD_MONTH_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADMONTHTRL">
+      <foreign-key foreignTable="AD_ORG" name="AD_MONTH_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="ADMONTHTRL_ADMONTHI_UN">
+      <unique name="AD_MONTH_TRL_MONTH_LANGUAGE_UN">
         <unique-column name="AD_MONTH_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="ADMONTHTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADMONTHTRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="AD_MONTH_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_MONTH_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

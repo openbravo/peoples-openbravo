@@ -57,10 +57,10 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="TASKCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_TASK_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="TASKORG">
+      <foreign-key foreignTable="AD_ORG" name="AD_TASK_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="AD_TASK_NAME">

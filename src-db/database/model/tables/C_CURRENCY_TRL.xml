@@ -53,23 +53,23 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCURRENCYTRL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_CURRENCY_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CCURRENCYTRL">
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_CURRENCY_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CCURRENCYTRL">
+      <foreign-key foreignTable="AD_ORG" name="C_CURRENCY_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCURRENCYTRL" onDelete="cascade">
+      <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCY_TRL_C_CURRENCY" onDelete="cascade">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <unique name="CCURRENCYTRL_CCURRENCYID_AD_UN">
+      <unique name="C_CURRENCY_TRL_CURRENCY_LAN_UN">
         <unique-column name="C_CURRENCY_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
       <check name="C_CURRENCY_TRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CCURR_TRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="C_CURRENCY_TRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -44,7 +44,7 @@ public class EvaluationTest extends BaseTest {
    * Tests the evaluation of a simple java script expression executed on a set of objects.
    */
   public void testEvaluation() {
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     // as a test print scripting language names
     final ScriptEngineManager manager = new ScriptEngineManager();

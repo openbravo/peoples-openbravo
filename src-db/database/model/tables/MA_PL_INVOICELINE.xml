@@ -45,16 +45,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPLINVOICELINE">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_PL_INVOICELINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MAPLINVOICELINE">
+      <foreign-key foreignTable="AD_ORG" name="MA_PL_INVOICELINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_PLINVOICELINE">
+      <foreign-key foreignTable="C_INVOICELINE" name="MA_PL_INVOICELINE_C_INVOICELIN">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MPRODUCTIONPLAN_PLINVOICELINE">
+      <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MA_PL_INVOICELINE_M_PRODUCTION">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
       </foreign-key>
       <check name="MA_PL_INVOICELI_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

@@ -57,12 +57,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICELINEACCTDIMEN">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICELINEACCTDIMENSIO">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="C_INVOICELINE_ACCTD_FK_CAMP">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
@@ -71,6 +65,12 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="C_INVOICELINE_ACCTD_FK_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_INVOICELINE_ACCTDIMENSION_A1">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="C_INVOICELINE_ACCTDIMENSION_AD">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
     </table>
   </database>

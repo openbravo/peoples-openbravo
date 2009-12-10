@@ -57,17 +57,17 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTBOM">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_BOM_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MPRODUCTBOM">
+      <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_BOM_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_BOMPRODUCT">
-        <reference local="M_PRODUCTBOM_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTBOM" onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_BOM_M_PRODUCT" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_BOM_M_PRODUCTBOM">
+        <reference local="M_PRODUCTBOM_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <index name="M_PRODUCT_BOM_M_PRODUCT_ID" unique="false">
         <index-column name="M_PRODUCT_ID"/>
