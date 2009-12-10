@@ -152,7 +152,7 @@ public class WADControl {
     return css;
   }
 
-  public String replaceHTML(String text) {
+  protected String replaceHTML(String text) {
     text = text.replace("<HTML>", "");
     text = text.replace("<HEAD>", "");
     text = text.replace("<BODY>", "");
@@ -503,5 +503,22 @@ public class WADControl {
    */
   public String getLinkColumnId() {
     return "";
+  }
+
+  /**
+   * Returns the display javascript logic
+   * 
+   */
+  public String getDisplayLogic(boolean display, boolean isreadonly) {
+    StringBuffer displayLogic = new StringBuffer();
+
+    displayLogic.append("displayLogicElement('");
+    displayLogic.append(getData("ColumnName"));
+    displayLogic.append("_lbl_td', ").append(display ? "true" : "false").append(");\n");
+    displayLogic.append("displayLogicElement('");
+    displayLogic.append(getData("ColumnName"));
+    displayLogic.append("_lbl', ").append(display ? "true" : "false").append(");\n");
+
+    return displayLogic.toString();
   }
 }

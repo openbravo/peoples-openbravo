@@ -1029,35 +1029,9 @@ public class WadUtility {
     _displayLogic.append("displayLogicElement('");
     _displayLogic.append(auxControl.getData("ColumnName"));
     _displayLogic.append("_inp', true);\n");
-    if (!auxControl.getData("AD_Reference_ID").equals("28")) {
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_lbl_td', true);\n");
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_lbl', true);\n");
-    }
-    if ((isGeneralNumber(auxControl.getData("AD_Reference_ID"))
-        || isDateField(auxControl.getData("AD_Reference_ID"))
-        || isTimeField(auxControl.getData("AD_Reference_ID"))
-        || isLikeType(auxControl.getData("AD_Reference_ID"))
-        || isDecimalNumber(auxControl.getData("AD_Reference_ID"))
-        || isQtyNumber(auxControl.getData("AD_Reference_ID"))
-        || isPriceNumber(auxControl.getData("AD_Reference_ID"))
-        || isIntegerNumber(auxControl.getData("AD_Reference_ID"))
-        || auxControl.getData("AD_Reference_ID").equals("21")
-        || auxControl.getData("AD_Reference_ID").equals("25")
-        || auxControl.getData("AD_Reference_ID").equals("30")
-        || auxControl.getData("AD_Reference_ID").equals("800011")
-        || auxControl.getData("AD_Reference_ID").equals("31")
-        || auxControl.getData("AD_Reference_ID").equals("32")
-        || auxControl.getData("AD_Reference_ID").equals("35") || isLinkType(auxControl
-        .getData("AD_Reference_ID")))
-        && !auxControl.getData("IsReadOnly").equals("Y") && !isreadonly) {
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_btt', true);\n");
-    }
+
+    _displayLogic.append(auxControl.getDisplayLogic(true, isreadonly));
+
     _displayLogic.append("} else {\n");
     _displayLogic.append("displayLogicElement('");
     _displayLogic.append(auxControl.getData("ColumnName"));
@@ -1065,35 +1039,9 @@ public class WadUtility {
     _displayLogic.append("displayLogicElement('");
     _displayLogic.append(auxControl.getData("ColumnName"));
     _displayLogic.append("_inp', false);\n");
-    if (!auxControl.getData("AD_Reference_ID").equals("28")) {
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_lbl_td', false);\n");
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_lbl', false);\n");
-    }
-    if ((isGeneralNumber(auxControl.getData("AD_Reference_ID"))
-        || isDateField(auxControl.getData("AD_Reference_ID"))
-        || isTimeField(auxControl.getData("AD_Reference_ID"))
-        || isLikeType(auxControl.getData("AD_Reference_ID"))
-        || isDecimalNumber(auxControl.getData("AD_Reference_ID"))
-        || isQtyNumber(auxControl.getData("AD_Reference_ID"))
-        || isPriceNumber(auxControl.getData("AD_Reference_ID"))
-        || isIntegerNumber(auxControl.getData("AD_Reference_ID"))
-        || auxControl.getData("AD_Reference_ID").equals("21")
-        || auxControl.getData("AD_Reference_ID").equals("25")
-        || auxControl.getData("AD_Reference_ID").equals("30")
-        || auxControl.getData("AD_Reference_ID").equals("800011")
-        || auxControl.getData("AD_Reference_ID").equals("31")
-        || auxControl.getData("AD_Reference_ID").equals("35")
-        || auxControl.getData("AD_Reference_ID").equals("32") || isLinkType(auxControl
-        .getData("AD_Reference_ID")))
-        && !auxControl.getData("IsReadOnly").equals("Y") && !isreadonly) {
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_btt', false);\n");
-    }
+
+    _displayLogic.append(auxControl.getDisplayLogic(false, isreadonly));
+
     _displayLogic.append("}\n");
     return _displayLogic.toString();
   }

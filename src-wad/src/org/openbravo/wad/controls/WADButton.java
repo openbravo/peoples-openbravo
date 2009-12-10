@@ -228,4 +228,8 @@ public class WADButton extends WADControl {
     vecOrder.addElement(aux);
   }
 
+  public String getDisplayLogic(boolean display, boolean isreadonly) {
+    return "";
+  }
+
 }
