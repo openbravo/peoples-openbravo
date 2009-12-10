@@ -391,15 +391,15 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="generate.entities.quick" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="run.tests">
+  <target name="run.tests" depends="init">
     <ant dir="${base.src}" target="run.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="run.all.tests">
+  <target name="run.all.tests" depends="init">
     <ant dir="${base.src}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="run.quick.tests">
+  <target name="run.quick.tests" depends="init">
     <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
