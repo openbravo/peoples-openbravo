@@ -64,7 +64,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    final ConnectionProvider connectionProvider = new DalConnectionProvider();
+    ConnectionProvider connectionProvider = new DalConnectionProvider();
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -200,6 +200,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         // own connection provider and if it is not committed the OBScheduler won't
         // see the ProcessRequest if it is new.
         OBDal.getInstance().commitAndClose();
+        // refresh the connection provider
+        connectionProvider = new DalConnectionProvider();
 
         if (requestList.size() == 0) {
           OBScheduler.getInstance().schedule(pr.getId(), bundle2);

@@ -19,8 +19,17 @@
 
 package org.openbravo.test.dal;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
@@ -35,9 +44,11 @@ import org.openbravo.test.base.BaseTest;
  * 
  * 
  * @author mtaal
+ * @author iperdomo
  */
 
 public class IssuesTest extends BaseTest {
+  private static final Logger log = Logger.getLogger(IssuesTest.class);
 
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=11461
@@ -72,6 +83,46 @@ public class IssuesTest extends BaseTest {
     // if we get here then the issue is solved.
 
     // don't save anything
+    OBDal.getInstance().rollbackAndClose();
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=11681
+   */
+  public void test11681() {
+    setSystemAdministratorContext();
+
+    OBCriteria<Module> obc = OBDal.getInstance().createCriteria(Module.class);
+    obc.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, false));
+
+    if (obc.list().size() == 0) {
+      // Can't test DAL's connection provider
+      return;
+    }
+
+    Module module = obc.list().get(0);
+    module.setInDevelopment(true);
+    OBDal.getInstance().save(module);
+
+    Connection con = OBDal.getInstance().getConnection();
+
+    final String sql = "SELECT isindevelopment FROM ad_module where ad_module_id = ?";
+
+    try {
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setString(1, module.getId());
+      ResultSet result = st.executeQuery();
+      result.next();
+
+      String isInDev = UtilSql.getValue(result, "isindevelopment");
+      assertTrue(isInDev.equals("Y"));
+
+      result = null;
+      st = null;
+      con.close();
+    } catch (SQLException e) {
+      log.error("Error " + e.getMessage(), e);
+    }
     OBDal.getInstance().rollbackAndClose();
   }
 }
