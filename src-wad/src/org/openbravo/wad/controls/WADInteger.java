@@ -246,4 +246,12 @@ public class WADInteger extends WADControl {
     return displayLogic.toString();
   }
 
+  public String getDefaultValue() {
+    if (getData("required").equals("Y")) {
+      return "0";
+    } else {
+      return "";
+    }
+  }
+
 }

@@ -521,4 +521,11 @@ public class WADControl {
 
     return displayLogic.toString();
   }
+
+  /**
+   * Obtains default value for the field
+   */
+  public String getDefaultValue() {
+    return "";
+  }
 }

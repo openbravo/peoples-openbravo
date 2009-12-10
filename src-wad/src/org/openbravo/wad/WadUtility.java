@@ -160,58 +160,6 @@ public class WadUtility {
 
   }
 
-  /**
-   * Establece el tipo de class que le corresponde a un campo determinado de la edición
-   * 
-   * @param efd
-   *          - Estructura de tipo EditionFieldsData
-   * @return Devuelve un String con el parámetro class completo o un String vacío en caso de no
-   *         tener class asociado para el campo indicado.
-   */
-  public static String classRequiredUpdateable(EditionFieldsData efd, boolean isupdateable,
-      boolean tabIsReadOnly) {
-    StringBuffer htmltext = new StringBuffer();
-    String strAux = "";
-    try {
-      if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference)
-          || isIntegerNumber(efd.reference) || isGeneralNumber(efd.reference)
-          || isQtyNumber(efd.reference)) {
-        strAux = " number";
-      }
-      String strType = "dojoValidateValid";
-      String classType = "TextBox";
-      if (isSelectType(efd.reference)) {
-        strType = "Combo";
-        classType = "Combo";
-      }
-
-      if (efd.required.equals("Y") && !efd.columnname.equalsIgnoreCase("Value")) {
-        if (efd.isreadonly.equals("Y") || tabIsReadOnly) {
-          htmltext.append(" class=\"").append(strType).append(" required ").append(classType)
-              .append("_OneCell_width").append(strAux).append(" readonly\" ");
-        } else if (!isupdateable) {
-          htmltext.append(" class=\"").append(strType).append(" required ").append(classType)
-              .append("_OneCell_width").append(strAux).append(" readonly\" ");
-        } else {
-          htmltext.append(" class=\"").append(strType).append(" required ").append(classType)
-              .append("_OneCell_width").append(strAux).append("\" ");
-        }
-      } else if (efd.isreadonly.equals("Y") || tabIsReadOnly) {
-        htmltext.append(" class=\"").append(strType).append(" ").append(classType).append(
-            "_OneCell_width").append(strAux).append(" readonly\" ");
-      } else if (!isupdateable) {
-        htmltext.append(" class=\"").append(strType).append(" ").append(classType).append(
-            "_OneCell_width").append(strAux).append(" readonly\" ");
-      } else {
-        htmltext.append(" class=\"").append(strType).append(" ").append(classType).append(
-            "_OneCell_width").append(strAux).append("\" ");
-      }
-    } catch (Exception e) {
-      return "";
-    }
-    return htmltext.toString();
-  }
-
   public static String buildSQL(String clause, Vector<Object> vecParameters) {
     StringBuffer where = new StringBuffer();
     if (!clause.equals("")) {
@@ -542,22 +490,13 @@ public class WadUtility {
     }
   }
 
-  public static String getWadDefaultValue(FieldsData fd) {
+  public static String getWadDefaultValue(ConnectionProvider pool, FieldsData fd) {
     if (fd == null)
       return "";
-    if (fd.referencevalue.equals("28") && !fd.name.toUpperCase().endsWith("_ID"))
-      return "N"; // Button
-    else if (fd.referencevalue.equals("20"))
-      return "N"; // YesNo
-    else if (fd.required.equals("Y")) {
-      if (isDecimalNumber(fd.referencevalue) || isPriceNumber(fd.referencevalue)
-          || isIntegerNumber(fd.referencevalue) || isGeneralNumber(fd.referencevalue)
-          || isQtyNumber(fd.referencevalue))
-        return "0";
-      // FIXME: It makes no sense that the default value for an ID or
-      // reference is zero
-    }
-    return "";
+    WADControl control = getWadControlClass(pool, fd.referencevalue, fd.type);
+    control.setData("name", fd.name.toUpperCase());
+    control.setData("required", fd.required);
+    return control.getDefaultValue();
   }
 
   public static String displayLogic(String code, Vector<Object> vecDL,

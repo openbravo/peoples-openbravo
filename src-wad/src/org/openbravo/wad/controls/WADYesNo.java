@@ -118,4 +118,8 @@ public class WADYesNo extends WADControl {
   public String toJava() {
     return "";
   }
+
+  public String getDefaultValue() {
+    return "N";
+  }
 }
