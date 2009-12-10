@@ -44,40 +44,6 @@ public class WadActionButton {
   static final int IMAGE_EDITION_HEIGHT = 16;
 
   /**
-   * Checks if the given reference is a numeric type
-   * 
-   * @param reference
-   *          The reference to check.
-   * @return Boolean that indicates if the reference is a numeric type or not.
-   */
-  public static boolean isNumericType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    if (WadUtility.isGeneralNumber(reference) || WadUtility.isDecimalNumber(reference)
-        || WadUtility.isPriceNumber(reference) || WadUtility.isIntegerNumber(reference)
-        || WadUtility.isQtyNumber(reference)) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Checks if the given reference is a date type
-   * 
-   * @param reference
-   *          The reference to check.
-   * @return Boolean that indicates if the reference is a date type or not.
-   */
-  public static boolean isDateType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    if (WadUtility.isDateTimeField(reference)) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Generates the action button call for the java of the window.
    * 
    * @param conn
@@ -139,7 +105,7 @@ public class WadActionButton {
             vecParams.addElement("changeprojectstatus");
           } else
             fab[i].processParams = "";
-          fab[i].processParams += getProcessParamsJava(data, fab[i], vecParams, false);
+          fab[i].processParams += getProcessParamsJava(conn, data, fab[i], vecParams, false);
           fab[i].processCode = "ActionButtonData.process" + fab[i].adProcessId
               + "(this, pinstance);\n";
         }
@@ -208,7 +174,7 @@ public class WadActionButton {
           }
 
           fab[i].processParams = "";
-          fab[i].processParams += getProcessParamsJava(data, fab[i], vecParams, true);
+          fab[i].processParams += getProcessParamsJava(conn, data, fab[i], vecParams, true);
           fab[i].processCode = "new " + fab[i].classname + "().execute(pb);";
         }
       }
@@ -280,7 +246,7 @@ public class WadActionButton {
             vecParams.addElement("changeprojectstatus");
           } else
             fab[i].processParams = "";
-          fab[i].processParams += getProcessParamsJava(data, fab[i], vecParams, false);
+          fab[i].processParams += getProcessParamsJava(conn, data, fab[i], vecParams, false);
           fab[i].processCode = "ActionButtonData.process" + fab[i].adProcessId
               + "(this, pinstance);\n";
         }
@@ -323,7 +289,7 @@ public class WadActionButton {
             data = ProcessRelationData.selectParameters(conn, "", fab[i].adProcessId);
           } catch (final ServletException e) {
           }
-          fab[i].processParams = getProcessParamsJava(data, fab[i], vecParams, true);
+          fab[i].processParams = getProcessParamsJava(conn, data, fab[i], vecParams, true);
         }
 
         fab[i].processCode = "new " + fab[i].classname + "().execute(pb);";
@@ -601,7 +567,7 @@ public class WadActionButton {
    *          Vector of parameters.
    * @return String with all the calls.
    */
-  public static String getProcessParamsJava(ProcessRelationData[] data,
+  public static String getProcessParamsJava(ConnectionProvider conn, ProcessRelationData[] data,
       ActionButtonRelationData fd, Vector<Object> vecParams, boolean isGenericJava) {
     if (fd == null)
       return "";
@@ -611,7 +577,9 @@ public class WadActionButton {
       for (int i = 0; i < data.length; i++) {
         html.append("String str" + Sqlc.TransformaNombreColumna(data[i].columnname));
 
-        if (WadActionButton.isNumericType(data[i].reference)) {
+        WADControl control = WadUtility.getWadControlClass(conn, data[i].reference,
+            data[i].adReferenceValueId);
+        if (control.isNumericType()) {
           html.append(" = vars.getNumericParameter");
         } else {
           html.append(" = vars.getStringParameter");
@@ -627,9 +595,8 @@ public class WadActionButton {
                   ");\n");
         } else {
           html.append("PInstanceProcessData.insertPInstanceParam"
-              + (isNumericType(data[i].adReferenceId) ? "Number"
-                  : (isDateType(data[i].adReferenceId) ? "Date" : "")) + "(this, pinstance, \""
-              + data[i].seqno + "\", \"" + data[i].columnname + "\", str"
+              + (control.isNumericType() ? "Number" : (control.isDate() ? "Date" : ""))
+              + "(this, pinstance, \"" + data[i].seqno + "\", \"" + data[i].columnname + "\", str"
               + Sqlc.TransformaNombreColumna(data[i].columnname)
               + ", vars.getClient(), vars.getOrg(), vars.getUser());\n");
         }

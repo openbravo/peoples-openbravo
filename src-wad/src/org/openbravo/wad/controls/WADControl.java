@@ -472,11 +472,11 @@ public class WADControl {
     selCol.xmltext += "(" + tableName + "." + selCol.realcolumnname + ")";
 
     selCol.xmltext += " = (";
-    if (WadUtility.isTextData(selCol.reference))
+    if (isText())
       selCol.xmltext += "'";
 
     selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
-    if (WadUtility.isTextData(selCol.reference)) {
+    if (isText()) {
       selCol.xmltext += "'";
     }
     selCol.xmltext += ") \")";
@@ -495,6 +495,14 @@ public class WADControl {
    * 
    */
   public boolean isLink() {
+    return false;
+  }
+
+  /**
+   * Determines whether the reference is text
+   * 
+   */
+  public boolean isText() {
     return false;
   }
 
@@ -527,5 +535,9 @@ public class WADControl {
    */
   public String getDefaultValue() {
     return "";
+  }
+
+  public boolean isDate() {
+    return false;
   }
 }

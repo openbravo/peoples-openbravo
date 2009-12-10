@@ -685,51 +685,6 @@ public class WadUtility {
     return false;
   }
 
-  public static boolean isDecimalNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return (reference.equals("12") || reference.equals("22"));
-  }
-
-  public static boolean isGeneralNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("800019");
-  }
-
-  public static boolean isQtyNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("29");
-  }
-
-  public static boolean isPriceNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("800008");
-
-  }
-
-  public static boolean isIntegerNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("11");
-  }
-
-  public static boolean isDateTimeField(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-
-    return reference.equals("15") || reference.equals("16") || reference.equals("24");
-  }
-
-  public static boolean isTextData(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("15") || reference.equals("20") || reference.equals("17");
-
-  }
-
   public static boolean isSearchValueColumn(String name) {
     if (name == null || name.equals(""))
       return false;

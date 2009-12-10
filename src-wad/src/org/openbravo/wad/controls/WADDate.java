@@ -250,4 +250,12 @@ public class WADDate extends WADControl {
     }
     return displayLogic.toString();
   }
+
+  public boolean isText() {
+    return true;
+  }
+
+  public boolean isDate() {
+    return true;
+  }
 }

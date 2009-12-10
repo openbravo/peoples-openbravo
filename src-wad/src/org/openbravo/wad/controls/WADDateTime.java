@@ -239,6 +239,9 @@ public class WADDateTime extends WADControl {
     aux.xmltext += " + 1 \")";
     aux.xsqltext += "(?" + ") + 1 ";
     vecAuxSelCol.addElement(aux);
+  }
 
+  public boolean isDate() {
+    return true;
   }
 }
