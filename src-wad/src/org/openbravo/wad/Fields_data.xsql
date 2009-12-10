@@ -68,23 +68,7 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="selectDescriptionTrl" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Description of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT (CASE WHEN ft.Name IS NULL THEN '*' || f.Name ELSE ft.Name END) As Name, f.isDisplayed as isdisplayed, f.isEncrypted, c.AD_REFERENCE_ID as reference, 
-      c.FIELDLENGTH, 'Medio' as Text_Align, f.displaylength, c.ColumnName, f.showInRelation 
-      FROM ad_field f left join ad_field_trl ft on f.ad_field_id = ft.ad_field_id 
-                                              AND ft.isactive = 'Y'
-                                              AND ft.ad_language = ?, 
-           ad_column c 
-      WHERE f.ad_column_id = c.ad_column_id 
-      AND f.showInRelation = 'Y' 
-      AND f.ad_tab_id = ?    
-      ORDER BY f.SEQNO
-    </Sql>
-    <Parameter name="adLanguage"/>
-    <Parameter name="tab"/>    
-  </SqlMethod>
+  
   <SqlMethod name="selectAuxiliar" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql>
@@ -96,22 +80,7 @@
     <Parameter name="sql" optional="true" after="WHERE " text="code LIKE ? || '%' AND "/>
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="tabName" type="preparedStatement" return="string">
-    <SqlMethodComment>Name of the tab</SqlMethodComment>
-    <Sql>
-        SELECT Name FROM ad_tab
-        WHERE ad_tab_id = ?
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  <SqlMethod name="windowName" type="preparedStatement" return="string">
-      <SqlMethodComment>Name of the window</SqlMethodComment>
-      <Sql>
-        SELECT ad_window.Name FROM ad_tab, ad_window
-        WHERE ad_window.ad_window_id = ad_tab.ad_window_id and ad_tab_id = ?
-      </Sql>
-      <Parameter name="tab"/>
-  </SqlMethod>
+  
   <SqlMethod name="tableKeyColumnName" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the column key of the tab</SqlMethodComment>
       <Sql><![CDATA[
@@ -206,23 +175,7 @@
       <Parameter name="parentTab"/>
       <Parameter name="parentTab"/>
   </SqlMethod>
-  <SqlMethod name="parentsColumnRealAll" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
-      <Sql>
-        SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
-        (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
-        AND AD_TAB.ad_tab_id=?) AS tablename,
-        (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,
-        AD_COLUMN.AD_Module_ID as columnModule
-        FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND ad_tab_id = ? 
-        AND isparent='Y'
-        order by ad_column.seqno
-      </Sql>
-      <Parameter name="parentTab"/>
-      <Parameter name="tab"/>
-  </SqlMethod>
+
   <SqlMethod name="parentsColumnDisplayNameSortTab" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
       <Sql><![CDATA[
@@ -270,21 +223,7 @@
       <Parameter name="tab"/>
       <Parameter name="parentTab"/>
   </SqlMethod>
-  <SqlMethod name="parentsColumnDisplayNameRealAll" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
-      <Sql>
-        SELECT ad_field.Name AS NAME, AD_FIELD_TRL.NAME AS COLUMNNAME
-        FROM AD_FIELD left join AD_FIELD_TRL on AD_FIELD.AD_FIELD_ID = AD_FIELD_TRL.AD_FIELD_ID 
-                                            AND AD_FIELD_TRL.AD_LANGUAGE = ? ,
-             AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND ad_tab_id = ?
-        AND isparent='Y'
-        ORDER BY AD_Column.SEQNO
-      </Sql>
-      <Parameter name="adLanguage"/>
-      <Parameter name="tab"/>
-  </SqlMethod>
+ 
   <SqlMethod name="tableName" type="preparedStatement" return="string">
       <SqlMethodComment>Name of the table of the tab</SqlMethodComment>
       <Sql>
@@ -309,52 +248,7 @@
     ]]></Sql>
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="selectLists" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Fields of reference list in a tab</SqlMethodComment>
-    <Sql>
-      SELECT ColumnName As Name, 'x' as xmltext, ad_reference_value_id as referencevalue, ColumnName as NameRef, ad_table.tablename 
-      FROM ad_field, ad_column, ad_table
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        and ad_column.ad_table_id = ad_table.ad_table_id 
-        and ad_field.ISDISPLAYED = 'Y'
-        AND ad_tab_id = ?
-        AND ad_reference_id = '17'
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  <SqlMethod name="selectTables" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Fields of reference table in a tab</SqlMethodComment>
-    <Sql>
-      SELECT ColumnName As Name, 'x' as xmltext, ad_reference_value_id as referencevalue, 
-      ad_val_rule.CODE as defaultValue, ad_val_rule.AD_VAL_RULE_ID as columnname,
-      ad_ref_table.WHERECLAUSE, ad_table.tablename, ad_table.name as nameref, 'TableList' as tablenametrl, 
-      '18' as reference, 'Y' as required, ad_column.istranslated 
-      FROM ad_field, ad_column left join ad_val_rule on ad_column.AD_VAL_RULE_ID = ad_val_rule.AD_VAL_RULE_ID , 
-          ad_ref_table, ad_table 
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-      AND ad_ref_table.ad_table_id = ad_table.ad_table_id 
-      AND ad_column.AD_REFERENCE_VALUE_ID = ad_ref_table.AD_REFERENCE_ID  
-      and ad_field.ISDISPLAYED = 'Y'
-      AND ad_tab_id = ? 
-      AND ad_column.ad_reference_id = '18'
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
-  <SqlMethod name="selectTableDirs" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Fields of reference table in a tab</SqlMethodComment>
-    <Sql>
-      SELECT ColumnName As Name, 'x' as xmltext, ColumnName as referencevalue, 
-      ad_val_rule.CODE as defaultValue, ad_val_rule.AD_VAL_RULE_ID as columnname, ad_table.tablename, 
-      'TableDir' as tablenametrl, '' as WHERECLAUSE, '19' as reference, ad_column.istranslated 
-      FROM ad_field, ad_column left join ad_val_rule on ad_column.AD_VAL_RULE_ID = ad_val_rule.AD_VAL_RULE_ID , ad_table 
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-      and ad_column.ad_table_id = ad_table.ad_table_id 
-      and ad_field.ISDISPLAYED = 'Y'
-      AND ad_tab_id = ? 
-      AND ad_reference_id = '19'
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
+  
   <SqlMethod name="columnIdentifier" type="preparedStatement" return="string">
       <SqlMethodComment>Name of the table of the tab</SqlMethodComment>
       <Sql>
@@ -424,7 +318,7 @@
       ad_table.TABLENAME as NameRef, ad_reference_value_id as type, ad_column.name as realname
       FROM ad_field, ad_column, ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
-	  	AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
+        AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
         AND ad_tab_id = ? 
         AND upper(ad_column.columnname) <> 'BINARYDATA'
       union
@@ -476,7 +370,7 @@
       ad_table.TABLENAME as NameRef, '' as realname
       FROM ad_field, ad_column, ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
-	  	AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
+        AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
         AND ad_tab_id = ? 
         and isParent='N'
         and ad_column.columnname = 'DocumentNo'
@@ -752,7 +646,7 @@
       ad_table.TABLENAME as NameRef, '' as realname, ad_column.ISSESSIONATTR, ad_column.istranslated 
       FROM ad_field, ad_column, ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
-	  	AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
+        AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
         AND ad_tab_id = ? 
         and ismandatory='Y' 
         AND upper(ad_column.columnname) = 'VALUE'
@@ -836,23 +730,7 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="hasButtonList" type="preparedStatement" return="String" default="0">
-    <SqlMethodComment>Checks if the tab has action buttons</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-          select count(*) as total
-        from ad_field f,
-             ad_column c
-       where f.ad_tab_id = ?
-         and f.ad_column_id = c.ad_column_id
-         and ad_reference_id = '28'
-         and ad_reference_value_id is not null
-         and f.isdisplayed = 'Y'
-         and f.isactive='Y'
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
+
   <SqlMethod name="hasButtonFixed" type="preparedStatement" return="String" default="0">
     <SqlMethodComment>Checks if the tab has action buttons</SqlMethodComment>
     <Sql>

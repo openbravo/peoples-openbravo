@@ -168,33 +168,6 @@
     <Parameter name="tab"/>
   </SqlMethod>
 
-  <SqlMethod name="selectionColumns" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
-      ad_field.name as Name, ismandatory as required, ad_reference_value_id as referenceValue, 
-      ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
-      isSameLine as issameline, isDisplayed as isdisplayed, isupdateable as isupdateable, 
-      isparent, ad_column.FIELDLENGTH, ad_element.name as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, ad_field.DISPLAYLOGIC, ad_field.ad_tab_id as tabid, 
-      ad_callout.name as calloutname, moc.classname as classname_callout, momc.mappingname as mappingname_callout
-      FROM ad_field, 
-           ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id
-           left join ad_callout on ad_column.ad_callout_id = ad_callout.ad_callout_id 
-           left join ad_model_object moc on ad_callout.ad_callout_id = moc.ad_callout_id 
-                              AND moc.action = 'C' 
-                              AND moc.isactive = 'Y'
-                              AND moc.isdefault = 'Y' 
-           left join ad_model_object_mapping momc on moc.ad_model_object_id = momc.ad_model_object_id 
-                              AND momc.isactive = 'Y' 
-                              AND momc.isdefault = 'Y'
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        AND ad_field.ad_tab_id = ?
-        AND upper(ad_column.columnname) in ('VALUE', 'NAME', 'DESCRIPTION')
-      ORDER BY ad_field.SEQNO
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
   <SqlMethod name="fieldGroupName" type="preparedStatement" return="String" default="">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql>
