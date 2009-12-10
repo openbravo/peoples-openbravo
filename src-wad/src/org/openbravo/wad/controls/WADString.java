@@ -181,8 +181,7 @@ public class WADString extends WADControl {
   public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
     selCol.xmltext = " + ((strParam" + selCol.columnname + ".equals(\"\") || strParam"
         + selCol.columnname + ".equals(\"%\"))?\"\":\" AND ";
-    if (WadUtility.isLikeType(selCol.reference)
-        && !WadUtility.isSearchValueColumn(selCol.realcolumnname)) {
+    if (!WadUtility.isSearchValueColumn(selCol.realcolumnname)) {
       selCol.xmltext += "C_IGNORE_ACCENT";
     }
     selCol.xmltext += "(" + tableName + "." + selCol.realcolumnname + ")";

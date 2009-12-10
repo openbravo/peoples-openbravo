@@ -23,7 +23,6 @@ import java.util.Vector;
 
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.EditionFieldsData;
-import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADInteger extends WADControl {
@@ -207,11 +206,6 @@ public class WADInteger extends WADControl {
     selCol.xsqltext = tableName + "." + selCol.realcolumnname + " >= ";
 
     selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
-    if (WadUtility.isTimeField(selCol.reference))
-      selCol.xmltext += "', 'HH24:MI:SS')";
-    else if (WadUtility.isDateField(selCol.reference)
-        || WadUtility.isDateTimeField(selCol.reference))
-      selCol.xmltext += "')";
     selCol.xmltext += " \")";
     selCol.xsqltext += "(?" + ") ";
     aux.columnnameinp = FormatUtilities.replace(selCol.columnname) + "_f";

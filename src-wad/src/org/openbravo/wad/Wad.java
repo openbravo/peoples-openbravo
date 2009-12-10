@@ -2677,7 +2677,7 @@ public class Wad extends DefaultHandler {
       final FieldsData fieldsDataUpdate[] = FieldsData.selectUpdatables(pool, strTab);
       for (int i = 0; i < fieldsDataUpdate.length; i++) { // *** i=1?
         fieldsDataUpdate[i].name = ((i > 0) ? ", " : "") + fieldsDataUpdate[i].name;
-        if (WadUtility.isTimeField(fieldsDataUpdate[i].reference))
+        if (fieldsDataUpdate[i].reference.equals("24"))
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?,'HH24:MI:SS')";
         else if (fieldsDataUpdate[i].reference.equals("16")) { // datetime
           fieldsDataUpdate[i].xmlFormat = "TO_DATE(?, ?)";
@@ -2731,7 +2731,7 @@ public class Wad extends DefaultHandler {
             && !fieldsDataValue[i].name.equalsIgnoreCase("CreatedBy")
             && !fieldsDataValue[i].name.equalsIgnoreCase("Updated")
             && !fieldsDataValue[i].name.equalsIgnoreCase("UpdatedBy")) {
-          if (WadUtility.isTimeField(fieldsDataValue[i].reference)) {
+          if (fieldsDataValue[i].reference.equals("24")) {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, 'HH24:MI:SS')";
           } else if (fieldsDataValue[i].reference.equals("16")) {
             // datetime
@@ -3951,10 +3951,12 @@ public class Wad extends DefaultHandler {
       firstFocus = "'firstElement'";
     } else {
       String id = ff[0].columnname;
-      if (WadUtility.isSearchType(ff[0].reference))
+      String reference = ff[0].reference;
+      if (reference.equals("21") || reference.equals("25") || reference.equals("30")
+          || reference.equals("31") || reference.equals("32") || reference.equals("35")
+          || reference.equals("800013") || reference.equals("800011"))
         id += "_R";
-      if (ff[0].reference.equals("17") || ff[0].reference.equals("18")
-          || ff[0].reference.equals("19"))
+      if (reference.equals("17") || reference.equals("18") || reference.equals("19"))
         id = "report" + id + "_S";
       firstFocus = "'" + id + "', 'id'";
     }

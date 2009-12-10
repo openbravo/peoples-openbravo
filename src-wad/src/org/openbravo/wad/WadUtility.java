@@ -55,11 +55,11 @@ public class WadUtility {
 
   public static String applyFormat(String text, String reference, String sqlDateFormat) {
     // used from WADControl column identifier, keep hardcoded for core references
-    if (isDateField(reference))
+    if (reference.equals("15"))
       return "TO_CHAR(" + text + ", '" + sqlDateFormat + "')";
-    else if (isTimeField(reference))
+    else if (reference.equals("24"))
       return "TO_CHAR(" + text + ", 'HH24:MM:SS')";
-    else if (isDateTimeField(reference))
+    else if (reference.equals("16"))
       return "TO_CHAR(" + text + ", '" + sqlDateFormat + " HH24:MM:SS')";
     else
       text = "TO_CHAR(COALESCE(TO_CHAR(" + text + "), ''))";
@@ -716,30 +716,11 @@ public class WadUtility {
     return reference.equals("11");
   }
 
-  public static boolean isDateField(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("15");
-  }
-
-  public static boolean isTimeField(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("24");
-  }
-
   public static boolean isDateTimeField(String reference) {
     if (reference == null || reference.equals(""))
       return false;
 
     return reference.equals("15") || reference.equals("16") || reference.equals("24");
-  }
-
-  // string, text, memo
-  public static boolean isLikeType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("10") || reference.equals("14") || reference.equals("34");
   }
 
   public static boolean isTextData(String reference) {
@@ -753,26 +734,6 @@ public class WadUtility {
     if (name == null || name.equals(""))
       return false;
     return (name.equalsIgnoreCase("Value") || name.equalsIgnoreCase("DocumentNo"));
-  }
-
-  public static boolean isSelectType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("17") || reference.equals("18") || reference.equals("19");
-  }
-
-  public static boolean isSearchType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("21") || reference.equals("25") || reference.equals("30")
-        || reference.equals("31") || reference.equals("32") || reference.equals("35")
-        || reference.equals("800013") || reference.equals("800011");
-  }
-
-  public static boolean isLinkType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("800101");
   }
 
   public static String sqlCasting(ConnectionProvider conn, String reference, String referencevalue) {

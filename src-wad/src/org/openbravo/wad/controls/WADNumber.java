@@ -23,7 +23,6 @@ import java.util.Vector;
 
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.EditionFieldsData;
-import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADNumber extends WADControl {
@@ -185,25 +184,56 @@ public class WADNumber extends WADControl {
 
   private void setFormat(XmlDocument xmlDocument) {
     xmlDocument.setParameter("columnName", getData("ColumnName"));
-    if (WadUtility.isDecimalNumber(getData("AD_Reference_ID"))) {
+    if (isDecimalNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "euroEdition");
       xmlDocument.setParameter("outputFormat", "euroEdition");
-    } else if (WadUtility.isQtyNumber(getData("AD_Reference_ID"))) {
+    } else if (isQtyNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "qtyEdition");
       xmlDocument.setParameter("outputFormat", "qtyEdition");
-    } else if (WadUtility.isPriceNumber(getData("AD_Reference_ID"))) {
+    } else if (isPriceNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "priceEdition");
       xmlDocument.setParameter("outputFormat", "priceEdition");
-    } else if (WadUtility.isIntegerNumber(getData("AD_Reference_ID"))) {
+    } else if (isIntegerNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "integerEdition");
       xmlDocument.setParameter("outputFormat", "integerEdition");
-    } else if (WadUtility.isGeneralNumber(getData("AD_Reference_ID"))) {
+    } else if (isGeneralNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "generalQtyEdition");
       xmlDocument.setParameter("outputFormat", "generalQtyEdition");
     } else {
       xmlDocument.setParameter("columnFormat", "qtyEdition");
       xmlDocument.setParameter("outputFormat", "generalQtyEdition");
     }
+  }
+
+  private boolean isDecimalNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return (reference.equals("12") || reference.equals("22"));
+  }
+
+  private boolean isGeneralNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return reference.equals("800019");
+  }
+
+  private boolean isQtyNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return reference.equals("29");
+  }
+
+  private boolean isPriceNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return reference.equals("800008");
+
+  }
+
+  private boolean isIntegerNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return reference.equals("11");
   }
 
   public boolean isNumericType() {
@@ -236,11 +266,6 @@ public class WADNumber extends WADControl {
     selCol.xsqltext = tableName + "." + selCol.realcolumnname + " >= ";
 
     selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
-    if (WadUtility.isTimeField(selCol.reference))
-      selCol.xmltext += "', 'HH24:MI:SS')";
-    else if (WadUtility.isDateField(selCol.reference)
-        || WadUtility.isDateTimeField(selCol.reference))
-      selCol.xmltext += "')";
     selCol.xmltext += " \")";
     selCol.xsqltext += "(?" + ") ";
     aux.columnnameinp = FormatUtilities.replace(selCol.columnname) + "_f";
