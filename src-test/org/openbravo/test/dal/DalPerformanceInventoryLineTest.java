@@ -52,7 +52,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
    * reported.
    */
   public void testACreateInventoryLine() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
 
     // make sure our user can do this
     addReadWriteAccess(InventoryCount.class);
@@ -96,7 +96,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
    * and updates one line. The timings are reported in the log.
    */
   public void testBReadAndAddLine() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     // make sure our user can do this
     addReadWriteAccess(InventoryCount.class);
     addReadWriteAccess(InventoryCountLine.class);

@@ -379,6 +379,7 @@ public class ModelSQLGeneration {
    * @return String with the sql.
    * @throws Exception
    */
+  @SuppressWarnings("unchecked")
   static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars,
       TableSQLData tableSQL, String selectFields, Vector<String> filter,
       Vector<String> filterParams, int offset, int pageSize, boolean sorted, boolean onlyId)

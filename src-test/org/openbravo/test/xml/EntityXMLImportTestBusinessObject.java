@@ -62,7 +62,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /** Sets up the test data, creates a first of Payment Terms. */
   public void testAPaymentTerm() {
     cleanRefDataLoaded();
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(PaymentTermTrl.class);
     createSavePaymentTerm();
   }
@@ -73,7 +73,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   public void testBPaymentTerm() {
 
     // read from 1000000
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     setAccess();
 
     final List<PaymentTerm> pts = getPaymentTerms();
@@ -109,7 +109,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   public void testCPaymentTerm() {
 
     // read from 1000000
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
     String xml = getXML(pts);
@@ -139,7 +139,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   public void testDPaymentTerm() {
 
     // read from 1000000
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     setAccess();
 
     // make a copy of the paymentterms and their children so that the
@@ -183,7 +183,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   public void testEPaymentTerm() {
 
     // read from 1000000
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     setAccess();
     // make a copy of the paymentterms and their children so that the
     // original db is not updated
@@ -303,7 +303,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Remove the testdata.
    */
   public void testZPaymentTerm() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
     // financialmanagementpaymenttermline is not deletable, but as we are cleaning up

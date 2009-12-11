@@ -27,7 +27,7 @@
     *  Access
     */
         
-    aux number;
+    aux NUMBER;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;

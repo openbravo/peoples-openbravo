@@ -64,17 +64,17 @@ function enableLocalShortcuts() {
 }
 function validate() {
 	var frm = document.frmMain;
-	if (frm.inpDateFrom.value!=null && frm.inpDateFrom.value!="" && !isValidDate(frm.inpDateFrom.value, getDateFormat(document.getElementById(frm.inpDateFrom.id).getAttribute("displayformat")))) {
+	if (frm.inpDateFrom.value!=null && frm.inpDateFrom.value!="" && !isValidDate(frm.inpDateFrom.value, document.getElementById('paramDateFrom').getAttribute("displayformat"))) {
 			setWindowElementFocus(frm.inpDateFrom);
 			frm.inpDateFrom.select();
 			showJSMessage(5);
 			return false;
-	} else if (frm.inpDateTo.value!=null && frm.inpDateTo.value!="" && !isValidDate(frm.inpDateTo.value, getDateFormat(document.getElementById(frm.inpDateTo.id).getAttribute("displayformat")))) {
+	} else if (frm.inpDateTo.value!=null && frm.inpDateTo.value!="" && !isValidDate(frm.inpDateTo.value, document.getElementById('paramDateTo').getAttribute("displayformat"))) {
 			setWindowElementFocus(frm.inpDateTo);
 			frm.inpDateTo.select();
 			showJSMessage(5);
 			return false;
-	} else if (frm.inpDateordered.value!=null && frm.inpDateordered.value!="" && !isValidDate(frm.inpDateordered.value, getDateFormat(document.getElementById(frm.inpDateordered.id).getAttribute("displayformat")))) {
+	} else if (frm.inpDateordered.value!=null && frm.inpDateordered.value!="" && !isValidDate(frm.inpDateordered.value, document.getElementById('paramDateordered').getAttribute("displayformat"))) {
 			setWindowElementFocus(frm.inpDateordered);
 			frm.inpDateordered.select();
 			showJSMessage(5);

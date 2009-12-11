@@ -14,12 +14,17 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
@@ -38,6 +43,7 @@ public class HeartbeatProcess implements Process {
   private static final String SCHEDULED_BEAT = "S";
   private static final String DISABLING_BEAT = "D";
   private static final String UNKNOWN_BEAT = "U";
+  public static final String HB_PROCESS_ID = "1005800000";
 
   private ProcessContext ctx;
 
@@ -275,4 +281,19 @@ public class HeartbeatProcess implements Process {
     }
   }
 
+  public static boolean isHeartbeatEnabled() {
+    SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+    final org.openbravo.model.ad.ui.Process HBProcess = OBDal.getInstance().get(
+        org.openbravo.model.ad.ui.Process.class, HB_PROCESS_ID);
+    final boolean isHBEnabled = sys.isEnableHeartbeat() == null ? false : sys.isEnableHeartbeat();
+
+    final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
+        ProcessRequest.class);
+    prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
+        Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString())));
+    final List<ProcessRequest> prRequestList = prCriteria.list();
+
+    // Must exist a scheduled process request for HB and must be enable at SystemInfo level
+    return prRequestList.size() > 0 && isHBEnabled;
+  }
 }

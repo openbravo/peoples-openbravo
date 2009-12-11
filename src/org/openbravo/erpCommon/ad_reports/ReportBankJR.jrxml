@@ -432,7 +432,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						height="16"
 						key="element-90"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
+					<textElement textAlignment="Center">
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
 				<text><![CDATA[Amount]]></text>
@@ -520,7 +520,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{accumulated}!=null)?$P{NUMBERFORMAT}.format($V{accumulated}.add($F{INITIALBALANCE})):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="131"
 						y="30"
@@ -531,7 +531,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 					<textElement>
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{accumulated}.add($V{initialBalance})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{accumulated}!=null)?$P{NUMBERFORMAT}.format($V{accumulated}.add($V{initialBalance})):new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>
@@ -677,7 +677,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						height="16"
 						key="textField-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{TRXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TRXAMT}):new String(" ")]]></textFieldExpression>
@@ -706,7 +706,7 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 						key="textField"
 						stretchType="RelativeToBandHeight"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{accumulated}!=null)?$P{NUMBERFORMAT}.format($V{accumulated}.add($F{INITIALBALANCE})):new String(" ")]]></textFieldExpression>
