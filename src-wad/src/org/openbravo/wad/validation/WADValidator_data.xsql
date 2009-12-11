@@ -228,4 +228,23 @@
     <Parameter name="checkAll"/>
   </SqlMethod>
   
+  <SqlMethod name="checkAuxiliarInput" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+        select i.name as objectName, p.name as expectedvalue
+          from ad_auxiliarInput i, AD_Module_DBPrefix p, AD_Module m
+         where p.AD_Module_ID = i.AD_Module_ID
+           and i.ad_module_id != '0'
+           and m.ad_module_id = i.ad_module_id
+           and instr(upper(i.NAME), upper(p.name)||'_') != 1
+           and (m.javapackage in ('1') or to_char('Y')=to_char(?))
+      ]]>
+    </Sql>
+    <Field name="objecttype" value=""/>
+    <Field name="currentvalue" value=""/>
+    <Field name="expectedvalue" value=""/>
+    <Parameter name="module" optional="true" type="replace" after="m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
+  </SqlMethod>
+  
 </SqlClass>

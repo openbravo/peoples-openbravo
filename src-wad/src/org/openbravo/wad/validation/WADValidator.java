@@ -59,6 +59,7 @@ public class WADValidator {
     validateModelObject(result);
     validateModelObjectMapping(result);
     validateColumnNaming(result);
+    validateAuxiliarInput(result);
     return result;
   }
 
@@ -138,6 +139,22 @@ public class WADValidator {
         result.addError(WADValidationType.COLUMN_NAME, issue.objecttype + " " + issue.objectname
             + " has value: " + issue.currentvalue + ". But it should start with EM_"
             + issue.expectedvalue);
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Validates names of auxiliar inputs columns
+   */
+  private void validateAuxiliarInput(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkAuxiliarInput(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.AUXILIARINPUT, issue.objectname
+            + " does not start by its module's DBPrefix: " + issue.expectedvalue);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
