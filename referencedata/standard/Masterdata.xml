@@ -8204,7 +8204,7 @@
     <name>Spain</name>
     <description>Spain</description>
     <iSOCountryCode>ES</iSOCountryCode>
-    <hasRegions>true</hasRegions>
+    <hasRegions>false</hasRegions>
     <regionName>Provincia</regionName>
     <phoneNoFormat>Y</phoneNoFormat>
     <addressPrintFormat>E-@P@ @C@</addressPrintFormat>
