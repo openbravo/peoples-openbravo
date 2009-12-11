@@ -364,7 +364,8 @@ build.war: build a war file in the lib directory.
         
         <WADValidation propertiesFile="${base.config}/Openbravo.properties"
                        modules="${module}"
-                       stoponerror="${stopOnWadError}"/>
+                       stoponerror="${stopOnWadError}"
+                       friendlyWarnings="${friendlyWarnings}"/>
   </target>
   
   <target name="wad" depends="init, wadvalidation">

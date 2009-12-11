@@ -26,13 +26,18 @@ public class WADValidatorTask extends Task {
   private String propertiesFile;
   private String modules;
   private boolean stoponerror;
+  private boolean friendlyWarnings;
 
   @Override
   public void execute() throws BuildException {
     CPStandAlone conn = new CPStandAlone(propertiesFile);
-    WADValidator val = new WADValidator(conn, modules);
+    WADValidator val = new WADValidator(conn, modules, friendlyWarnings);
     WADValidationResult result = val.validate();
-    result.printLog(stoponerror);
+    if (friendlyWarnings) {
+      result.printFriendlyLog();
+    } else {
+      result.printLog(stoponerror);
+    }
     if (result.hasErrors() && stoponerror) {
       throw new BuildException("WAD verification has errors");
     }
@@ -60,6 +65,14 @@ public class WADValidatorTask extends Task {
 
   public void setStoponerror(boolean failonerror) {
     this.stoponerror = failonerror;
+  }
+
+  public boolean isFriendlyWarnings() {
+    return friendlyWarnings;
+  }
+
+  public void setFriendlyWarnings(boolean friendlyWarnings) {
+    this.friendlyWarnings = friendlyWarnings;
   }
 
 }

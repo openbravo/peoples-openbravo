@@ -60,6 +60,7 @@ public class WADValidationResult {
 
   private HashMap<WADValidationType, List<String>> errors = new HashMap<WADValidationType, List<String>>();
   private HashMap<WADValidationType, List<String>> warnings = new HashMap<WADValidationType, List<String>>();
+  private ArrayList<String> modules = new ArrayList<String>();
 
   /**
    * Adds a warning message to a validation type
@@ -83,6 +84,10 @@ public class WADValidationResult {
    */
   public void addError(WADValidationType validationType, String warning) {
     addToResult(errors, validationType, warning);
+  }
+
+  public void addModule(String moduleName) {
+    modules.add(moduleName);
   }
 
   private void addToResult(Map<WADValidationType, List<String>> result,
@@ -134,5 +139,28 @@ public class WADValidationResult {
       }
     }
 
+  }
+
+  public void printFriendlyLog() {
+    String message = "";
+    String message2 = "";
+    if (modules.size() == 0) {
+      return;
+    }
+    if (modules.size() == 1) {
+      message = "Module ";
+      message2 = " does not comply with ";
+    } else {
+      message = "Modules ";
+      message2 = " do not comply with ";
+    }
+    for (int i = 0; i < modules.size(); i++) {
+      if (i < modules.size() - 1) {
+        message += ",";
+      }
+      message += modules.get(i);
+    }
+    message2 += "Openbravo coding rules. The rebuild process has been successful but this might cause a conflict if other modules are installed. In future releases of Openbravo Maintenance Packs a more strict validation will be enforced so you will need to update this module to a newer version which complies with Openbravo coding rules";
+    log.warn(message + message2);
   }
 }

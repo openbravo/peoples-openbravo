@@ -367,6 +367,8 @@ public class ApplyModules extends HttpSecureAppServlet {
 
       // do not execute translation process (all entries should be already in the module)
       ant.setProperty("tr", "no");
+      // We will show special, friendly warnings when they are available
+      ant.setProperty("friendlyWarnings", "true");
 
       final Vector<String> tasks = new Vector<String>();
 
