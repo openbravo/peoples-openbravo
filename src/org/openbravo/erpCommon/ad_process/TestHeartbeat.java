@@ -47,7 +47,6 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessRunner;
-import org.openbravo.scheduling.ProcessBundle.Channel;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -95,7 +94,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
         prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-            Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString())));
+            Expression.eq(ProcessRequest.PROPERTY_STATUS, HeartbeatProcess.STATUS_SCHEDULED)));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         if (requestList.size() != 0) {
@@ -163,7 +162,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
         prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-            Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString())));
+            Expression.eq(ProcessRequest.PROPERTY_STATUS, HeartbeatProcess.STATUS_UNSCHEDULED)));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         ProcessRequest pr = null;
