@@ -161,6 +161,7 @@
          where o.ad_tab_id = t.ad_tab_id
            and t.ad_window_id = w.ad_window_id
            and t.ad_module_id = m.ad_module_id
+           and w.ad_module_id = t.ad_module_id
            and om.ad_model_object_id = o.ad_model_object_id
            and om.mappingname not like '/'||m.javapackage||'.%'
            and om.mappingname not like '/'||m.javapackage||'/%'
