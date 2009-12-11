@@ -77,8 +77,8 @@
    <SqlMethod name="countRows" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-      		SELECT COUNT(*) VALUE FROM ( SELECT '0' AS rn1, B.* FROM 
-                (SELECT 1 FROM C_VALIDCOMBINATION C left join M_PRODUCT P on C.M_PRODUCT_ID = P.M_PRODUCT_ID 
+      		SELECT COUNT(*) AS VALUE FROM ( SELECT '0' AS rn1, B.* FROM 
+                ( SELECT 1 FROM C_VALIDCOMBINATION C left join M_PRODUCT P on C.M_PRODUCT_ID = P.M_PRODUCT_ID 
 	                                      left join C_BPARTNER B on C.C_BPARTNER_ID = B.C_BPARTNER_ID 
 	                                      left join C_PROJECT J on C.C_PROJECT_ID = J.C_PROJECT_ID
 	                                      left join C_CAMPAIGN M on C.C_CAMPAIGN_ID = M.C_CAMPAIGN_ID,
