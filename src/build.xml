@@ -118,7 +118,7 @@ build.war: build a war file in the lib directory.
     <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+    <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" moduleJavaPackage="${module}"/>
   </target>
   
   <target name="load.logoimages">
