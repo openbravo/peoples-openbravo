@@ -660,7 +660,12 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("document.frmMain.inpParam").append(
               FormatUtilities.replace(fields[i].columnname)).append(
               ".value, false);return false;\">\n");
-          strHtml.append("<table class=\"FieldButton\" ");
+          strHtml.append("<table class=\"FieldButton\" onclick=\"calculator('frmMain.");
+          strHtml.append("inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(
+              "', ");
+          strHtml.append("document.frmMain.inpParam").append(
+              FormatUtilities.replace(fields[i].columnname)).append(
+              ".value, false);return false;\" ");
           strHtml
               .append("onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calculator';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">");
           strHtml.append("<tr>\n<td class=\"FieldButton_bg\">\n");
