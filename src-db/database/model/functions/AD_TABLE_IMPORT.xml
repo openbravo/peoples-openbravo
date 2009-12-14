@@ -72,6 +72,7 @@
     v_Client_ID VARCHAR2(32);
     v_Aux NUMBER;
     v_missingColumns boolean;
+    v_CorrectType CHAR(1):='Y';
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -139,6 +140,7 @@
       v_IsUpdateable:='Y';
       v_varchar2:=Cur_Column.DATA_DEFAULT;
       v_varchar2:=SUBSTR(v_varchar2, 1, 2000) ;
+      v_CorrectType:='Y';
       IF(INSTR(v_varchar2, '''')<>0) THEN
         v_varchar2:=SUBSTR(SUBSTR(v_varchar2, 2, 1999), 1, INSTR(SUBSTR(v_varchar2, 2, 1999), '''') -1) ;
       ELSE
@@ -226,6 +228,7 @@
           v_AD_Reference_ID:='15';
         ELSE
           v_AD_Reference_ID:='10'; -- if not found, use String
+          v_CorrectType:='N';
         END IF;
       END IF;
       v_columnName:=InitCap(Cur_Column.Column_Name) ;
@@ -268,32 +271,36 @@
       else
         v_module_id := v_module_table_id;
       end if;
+      IF (v_CorrectType='Y') THEN
+        DBMS_OUTPUT.PUT_LINE('Inserting Column:'||v_columnName||' to module:'||v_module_id);
       
-      DBMS_OUTPUT.PUT_LINE('Inserting Column:'||v_columnName||' to module:'||v_module_id);
-      
-      INSERT
-      INTO AD_COLUMN
-        (
-          AD_COLUMN_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-          CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-          NAME, COLUMNNAME, AD_TABLE_ID,
-          AD_REFERENCE_ID, FIELDLENGTH, ISKEY, ISPARENT,
-          ISMANDATORY, ISIDENTIFIER, SEQNO, ISTRANSLATED,
-          ISENCRYPTED, ISUPDATEABLE, AD_REFERENCE_VALUE_ID,
-          AD_VAL_RULE_ID, DEFAULTVALUE, ISSESSIONATTR, 
-          POSITION, aD_module_id
-        )
-        VALUES
-        (v_NextNo, '0', '0', 'Y',
-        now(), '0', now(), '0',
-        v_columnName, v_columnName, Cur_Column.AD_Table_ID,
-        v_AD_Reference_ID, v_FieldLength, v_IsKey, v_IsParent,
-       (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
-        v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, 
-        v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr,
-        Cur_Column.COLUMN_ID, v_module_id);
-      --
-      v_count:=v_count + 1;
+        INSERT
+        INTO AD_COLUMN
+          (
+            AD_COLUMN_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+            CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+            NAME, COLUMNNAME, AD_TABLE_ID,
+            AD_REFERENCE_ID, FIELDLENGTH, ISKEY, ISPARENT,
+            ISMANDATORY, ISIDENTIFIER, SEQNO, ISTRANSLATED,
+            ISENCRYPTED, ISUPDATEABLE, AD_REFERENCE_VALUE_ID,
+            AD_VAL_RULE_ID, DEFAULTVALUE, ISSESSIONATTR, 
+            POSITION, aD_module_id
+          )
+          VALUES
+          (v_NextNo, '0', '0', 'Y',
+          now(), '0', now(), '0',
+          v_columnName, v_columnName, Cur_Column.AD_Table_ID,
+          v_AD_Reference_ID, v_FieldLength, v_IsKey, v_IsParent,
+         (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
+          v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, 
+          v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr,
+          Cur_Column.COLUMN_ID, v_module_id);
+          --
+	  v_count:=v_count + 1;
+      ELSE
+        v_Result :=0;
+	v_Message:=v_Message || '@WrongColumnType@: ' ||v_columnName||'. ';
+      END IF;
       -- Added by Ismael Ciordia
       v_SeqNo:=v_SeqNo + 10;
       v_LastColumnName:=Cur_Column.Column_Name;
@@ -302,7 +309,7 @@
       
     END LOOP; --  All new columns
     -- Summary info
-    v_Message:='@Created@ = ' || v_count;
+    v_Message:=v_Message || '@Created@ = ' || v_count;
     
     
     --Check common columns

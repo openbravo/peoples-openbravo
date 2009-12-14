@@ -79,9 +79,14 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         variables.setSessionValue("targetmenu", strTarget);
       }
 
-      // redirects
+      String qString = request.getQueryString();
+
       String strDireccionLocal = HttpBaseUtils.getLocalAddress(request);
-      variables.setSessionValue("target", strDireccionLocal + "/security/Menu.html");
+
+      // Storing target string to redirect after a successful login
+      variables.setSessionValue("target", strDireccionLocal + "/security/Menu.html"
+          + (qString != null && !qString.equals("") ? "?" + qString : ""));
+
       if (strAjax != null && !strAjax.equals(""))
         bdErrorAjax(response, "Error", "", Utility.messageBD(this.conn, "NotLogged", variables
             .getLanguage()));

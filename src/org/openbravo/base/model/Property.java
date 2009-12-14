@@ -52,6 +52,7 @@ public class Property {
   private Property referencedProperty;
   private String name;
   private String columnName;
+  private boolean isActiveColumn = false;
   private String nameOfColumn; // AD_COLUMN.NAME
   // note defaultValue contains the value as it exists in the db, for booleans
   // this for example Y or N
@@ -124,10 +125,11 @@ public class Property {
     setFieldLength(fromColumn.getFieldLength());
     setAllowedValues(fromColumn.getAllowedValues());
     final String columnname = fromColumn.getColumnName().toLowerCase();
-    if (columnname.equals("line") || columnname.equals("seqno") || columnname.equals("lineno"))
+    if (columnname.equals("line") || columnname.equals("seqno") || columnname.equals("lineno")) {
       setOrderByProperty(true);
-    else
+    } else {
       setOrderByProperty(false);
+    }
 
     setTransient(fromColumn.isTransient());
     setTransientCondition(fromColumn.getIsTransientCondition());
@@ -216,6 +218,7 @@ public class Property {
     }
     if (getName().equalsIgnoreCase("active") && isPrimitive()) {
       getEntity().setActiveEnabled(true);
+      setActiveColumn(true);
     }
   }
 
@@ -457,7 +460,8 @@ public class Property {
    */
   public boolean allowDerivedRead() {
     if (allowDerivedRead == null) {
-      allowDerivedRead = isId() || isIdentifier() || isClientOrOrganization();
+      allowDerivedRead = isActiveColumn() || isAuditInfo() || isId() || isIdentifier()
+          || isClientOrOrganization();
     }
     return allowDerivedRead;
   }
@@ -940,5 +944,13 @@ public class Property {
 
   public void setDate(boolean isDate) {
     this.isDate = isDate;
+  }
+
+  public boolean isActiveColumn() {
+    return isActiveColumn;
+  }
+
+  public void setActiveColumn(boolean isActiveColumn) {
+    this.isActiveColumn = isActiveColumn;
   }
 }

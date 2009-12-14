@@ -71,7 +71,12 @@ public class OBRebuildAppender extends AppenderSkeleton {
         ps.setString(2, arg0.getMessage().toString());
         ps.executeUpdate();
       } catch (Exception e) {
-        System.err.println("Error while trying to insert into log table");
+        // We will not log an error if the insertion in the log table
+        // goes wrong for two different reasons:
+        // - First, it could cause problems if the message itself is redirected to the log again
+        // - Second, if the instance which is being rebuild doesn't yet have the log table, or the
+        // table is being recreated, the insertion will fail, and this is ok.
+        // We don't need to have log lines in the database in that case
       }
 
   }
