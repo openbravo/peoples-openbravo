@@ -813,7 +813,7 @@ BEGIN
     INSERT INTO ad_alertrecipient(ad_client_id, ad_org_id, isactive, created, createdby,
                               updated, updatedby, ad_alertrecipient_id, ad_alertrule_id,
                               ad_role_id, sendemail)
-         VALUES('0', '0', 'Y', now(), '100', now(), '100', get_uuid(), '1005400000', '0', 'N');
+         VALUES('0', '0', 'Y', now(), '100', now(), '100', '8CC1347628D148FABA1FC26622F4B070', '1005400000', '0', 'N');
 EXCEPTION WHEN OTHERS THEN NULL;
 END;
 /-- END
