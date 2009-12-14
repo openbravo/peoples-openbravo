@@ -285,8 +285,8 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
         "#AccessibleOrgTree", "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(
         this, strDateTo, "1"), strcBpartnerId);
 
-    String sClientID = vars.getClient();
-    String sOrganID = vars.getOrg();
+    String sClientID = vars.getUserClient();
+    String sOrganID = "'" + vars.getOrg() + "'";
     OrganizationData[] dataOrganization = OrganizationData.select(this, vars.getLanguage(),
         sClientID, sOrganID);
 
