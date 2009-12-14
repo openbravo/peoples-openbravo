@@ -366,9 +366,11 @@
         FROM C_ELEMENTVALUE
         WHERE VALUE = ?
         AND AD_CLIENT_ID = ?
+        AND C_ELEMENT_ID = ?
     </Sql>
     <Parameter name="value"/>
     <Parameter name="client"/>
+    <Parameter name="element"/>
   </SqlMethod>
   <SqlMethod name="updateTreeNode" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
