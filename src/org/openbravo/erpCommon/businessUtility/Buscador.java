@@ -214,7 +214,7 @@ public class Buscador extends HttpSecureAppServlet {
             "\",");
         params.append(" escape(");
         if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19") || fields[i].reference.equals("20")) { // Combo
+            || fields[i].reference.equals("19")) { // Combo
           paramsData.append("((frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1)?");
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
@@ -253,7 +253,7 @@ public class Buscador extends HttpSecureAppServlet {
         }
         params.append(")");
         if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19") || fields[i].reference.equals("20")) { // Como
+            || fields[i].reference.equals("19")) { // Como
           strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1");
         } else if (Utility.isDecimalNumber(fields[i].reference)
