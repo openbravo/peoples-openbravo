@@ -211,8 +211,12 @@ public class Buscador extends HttpSecureAppServlet {
         params.append(", \"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(
             "\",");
         params.append(" escape(");
-        if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19") || fields[i].equals("20")) { // Combo
+        if (fields[i].reference.equals("17")
+            || fields[i].reference.equals("18")
+            || fields[i].reference.equals("19")
+            || fields[i].equals("20")
+            || (fields[i].reference.equals("30") && (fields[i].referencevalue == null || fields[i].referencevalue
+                .equals("")))) { // Combo
           paramsData.append("((frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1)?");
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
@@ -260,8 +264,12 @@ public class Buscador extends HttpSecureAppServlet {
             "\"");
         params.append(", ");
         params.append("escape(");
-        if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19") || fields[i].reference.equals("20")) { // Combo
+        if (fields[i].reference.equals("17")
+            || fields[i].reference.equals("18")
+            || fields[i].reference.equals("19")
+            || fields[i].reference.equals("20")
+            || (fields[i].reference.equals("30") && (fields[i].referencevalue == null || fields[i].referencevalue
+                .equals("")))) { // Combo
           paramsData.append("((frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1)?");
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
@@ -368,9 +376,14 @@ public class Buscador extends HttpSecureAppServlet {
       else
         strHtml.append(fields[i].name);
       strHtml.append("</span></td>\n");
-      if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-          || fields[i].reference.equals("19") || fields[i].reference.equals("20")) {// List, Table,
-        // TableDir, Yes/No
+      if (fields[i].reference.equals("17")
+          || fields[i].reference.equals("18")
+          || fields[i].reference.equals("19")
+          || fields[i].reference.equals("20")
+          || (fields[i].reference.equals("30") && (fields[i].referencevalue == null || fields[i].referencevalue
+              .equals("")))) {// List,
+        // Table,
+        // TableDir, Yes/No, direct search
         scriptSelect = true;
         strHtml.append("<td class=\"Combo_ContentCell\" colspan=\"3\">");
         strHtml.append("<select ");
@@ -394,8 +407,17 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append(">");
         strHtml.append("<option value=\"\"></option>\n");
         try {
-          // Special case Yes/No reference: set list reference and select the Yes/No subreference
-          String reference = fields[i].reference.equals("20") ? "17" : fields[i].reference;
+
+          String reference;
+          if (fields[i].reference.equals("20")) {
+            // Special case Yes/No reference: set list reference and select the Yes/No subreference
+            reference = "17";
+          } else if (fields[i].reference.equals("30")) {
+            // Special case Search without search value: use as table dir
+            reference = "19";
+          } else {
+            reference = fields[i].reference;
+          }
           String subreference = fields[i].reference.equals("20") ? "47209D76F3EE4B6D84222C5BDF170AA2"
               : fields[i].referencevalue;
           ComboTableData comboTableData = new ComboTableData(vars, this, reference,
