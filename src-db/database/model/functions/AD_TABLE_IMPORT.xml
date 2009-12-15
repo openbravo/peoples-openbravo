@@ -210,11 +210,9 @@
       IF(v_AD_Reference_ID IS NULL) THEN
         IF(Cur_Column.Data_Type IN('CHAR','BPCHAR') AND Cur_Column.Data_Length=1) THEN
           v_AD_Reference_ID:='20';
-        ELSIF(Cur_Column.Data_Type IN('VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR') AND Cur_Column.Data_Length=4000) THEN
+        ELSIF(Cur_Column.Data_Type IN('VARCHAR', 'VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR') AND Cur_Column.Data_Length=4000) THEN
           v_AD_Reference_ID:='14';
-        ELSIF(Cur_Column.Data_Type IN('VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR')) THEN
-          v_AD_Reference_ID:='10';
-        ELSIF(Cur_Column.Data_Type IN('VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR')) THEN
+        ELSIF(Cur_Column.Data_Type IN('VARCHAR', 'VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR')) THEN
           v_AD_Reference_ID:='10';
         ELSIF(Cur_Column.Data_Type='NUMBER' AND Cur_Column.DATA_SCALE=0) THEN
           v_AD_Reference_ID:='11';
