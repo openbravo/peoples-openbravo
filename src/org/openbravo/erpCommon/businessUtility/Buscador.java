@@ -91,8 +91,6 @@ public class Buscador extends HttpSecureAppServlet {
             if (data[i].reference.equals("10") || data[i].reference.equals("14")
                 || data[i].reference.equals("34"))
               data[i].value = "%";
-            else if (data[i].reference.equals("20"))
-              data[i].value = "N";
             else
               data[i].value = "";
           }
@@ -215,19 +213,8 @@ public class Buscador extends HttpSecureAppServlet {
         params.append(", \"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(
             "\",");
         params.append(" escape(");
-        if (fields[i].reference.equals("20")) {
-          paramsData.append("((radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append(")!=null)?");
-          paramsData.append("radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append("):");
-          paramsData.append("\"\"));\n");
-          params.append("((radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append(")!=null)?");
-          params.append("radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append("):");
-          params.append("\"\")");
-        } else if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19")) { // Select
+        if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
+            || fields[i].reference.equals("19") || fields[i].reference.equals("20")) { // Combo
           paramsData.append("((frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1)?");
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
@@ -266,7 +253,7 @@ public class Buscador extends HttpSecureAppServlet {
         }
         params.append(")");
         if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19")) { // Select
+            || fields[i].reference.equals("19") || fields[i].reference.equals("20")) { // Como
           strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1");
         } else if (Utility.isDecimalNumber(fields[i].reference)
@@ -299,19 +286,8 @@ public class Buscador extends HttpSecureAppServlet {
             "\"");
         params.append(", ");
         params.append("escape(");
-        if (fields[i].reference.equals("20")) {
-          paramsData.append("((radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append(")!=null)?");
-          paramsData.append("radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append("):");
-          paramsData.append("\"\"));\n");
-          params.append("((radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append(")!=null)?");
-          params.append("radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append("):");
-          params.append("\"\")");
-        } else if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19")) {
+        if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
+            || fields[i].reference.equals("19") || fields[i].reference.equals("20")) { // Combo
           paramsData.append("((frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1)?");
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
@@ -419,8 +395,8 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append(fields[i].name);
       strHtml.append("</span></td>\n");
       if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-          || fields[i].reference.equals("19")) {// List, Table,
-        // TableDir
+          || fields[i].reference.equals("19") || fields[i].reference.equals("20")) {// List, Table,
+        // TableDir, Yes/No
         scriptSelect = true;
         strHtml.append("<td class=\"Combo_ContentCell\" colspan=\"3\">");
         strHtml.append("<select ");
@@ -444,10 +420,14 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append(">");
         strHtml.append("<option value=\"\"></option>\n");
         try {
-          ComboTableData comboTableData = new ComboTableData(vars, this, fields[i].reference,
-              fields[i].columnname, fields[i].referencevalue, fields[i].adValRuleId, Utility
-                  .getContext(this, vars, "#AccessibleOrgTree", strWindow), Utility.getContext(
-                  this, vars, "#User_Client", strWindow), 0);
+          // Special case Yes/No reference: set list reference and select the Yes/No subreference
+          String reference = fields[i].reference.equals("20") ? "17" : fields[i].reference;
+          String subreference = fields[i].reference.equals("20") ? "47209D76F3EE4B6D84222C5BDF170AA2"
+              : fields[i].referencevalue;
+          ComboTableData comboTableData = new ComboTableData(vars, this, reference,
+              fields[i].columnname, subreference, fields[i].adValRuleId, Utility.getContext(this,
+                  vars, "#AccessibleOrgTree", strWindow), Utility.getContext(this, vars,
+                  "#User_Client", strWindow), 0);
           comboTableData.fillParametersFromSearch(strTab, strWindow);
           FieldProvider[] data = comboTableData.select(false);
           comboTableData = null;
@@ -542,15 +522,6 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("</tr>\n");
         strHtml.append("</table>\n");
         strHtml.append("</td>\n");
-      } else if (fields[i].reference.equals("20")) { // YesNo
-        strHtml.append("<td class=\"Radio_Check_ContentCell\">\n");
-        strHtml
-            .append(
-                "<span class=\"Checkbox_container_NOT_Focused\"><input type=\"checkbox\" value=\"Y\"  name=\"inpParam")
-            .append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
-        if (fields[i].value.equals("Y"))
-          strHtml.append("checked");
-        strHtml.append("></input></span>\n");
       } else if (fields[i].reference.equals("30") || fields[i].reference.equals("21")
           || fields[i].reference.equals("31") || fields[i].reference.equals("25")
           || fields[i].reference.equals("800011")) { // Search
