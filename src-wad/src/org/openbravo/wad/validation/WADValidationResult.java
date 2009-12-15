@@ -124,10 +124,9 @@ public class WADValidationResult {
     }
 
     if (!stopOnError && errors.size() > 0) {
-      log.error("The following errors during validation do not stop the");
-      log.error("compilation process to allow backwards compatibility for");
-      log.error("modules, but they MUST be fixed because in future core ");
-      log.error("releases they will not be allowed.");
+      log.error("The following errors are violations to the Openbravo naming rules.");
+      log.error("They do not stop the build process but they should be fixed ");
+      log.error("as soon as possible.");
     }
 
     for (WADValidationType type : errors.keySet()) {
@@ -160,7 +159,11 @@ public class WADValidationResult {
       }
       message += modules.get(i);
     }
-    message2 += "Openbravo coding rules. The rebuild process has been successful but this might cause a conflict if other modules are installed. In future releases of Openbravo Maintenance Packs a more strict validation will be enforced so you will need to update this module to a newer version which complies with Openbravo coding rules";
+    message2 += "Openbravo naming rules.";
     log.warn(message + message2);
+    log.warn("The rebuild process has completed successfully but this module2");
+    log.warn("might cause conflicts with other modules in the future.");
+    log.warn("Please request the author of this module to produce a new version");
+    log.warn("that addresses these violations.");
   }
 }

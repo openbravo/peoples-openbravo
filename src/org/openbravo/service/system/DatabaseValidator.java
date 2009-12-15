@@ -535,7 +535,8 @@ public class DatabaseValidator implements SystemValidator {
       if (table.getPrimaryKey() != null && !table.getPrimaryKey().equals("")
           && !nameStartsByDBPrefix(table.getPrimaryKey())) {
         String errorMsg = "Table  " + table.getName() + " has primary key named "
-            + table.getPrimaryKey() + ", which does not starts by module's DBPrefix.";
+            + table.getPrimaryKey()
+            + ", which does not start with the database prefix of the module.";
         if (isDbsmExecution()) {
           result.addWarning(SystemValidationType.INCORRECT_PK_NAME, errorMsg);
         } else {

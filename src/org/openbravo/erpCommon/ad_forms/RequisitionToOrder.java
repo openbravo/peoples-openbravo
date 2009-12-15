@@ -485,11 +485,11 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       BigDecimal qtyOrder = new BigDecimal("0");
       boolean insertLine = false;
 
-      RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(this, cCurrencyId,
-          strOrderDate, strOrg, strWarehouse, RequisitionToOrderData.billto(this, strVendor)
-              .equals("") ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
-              : RequisitionToOrderData.billto(this, strVendor), RequisitionToOrderData
-              .cBPartnerLocationId(this, strVendor), strPriceListVersionId, strSelected);
+      RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(this, strOrderDate,
+          RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strPriceListVersionId,
+          cCurrencyId, strOrg, strWarehouse, RequisitionToOrderData.billto(this, strVendor).equals(
+              "") ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
+              : RequisitionToOrderData.billto(this, strVendor), strSelected);
       for (int i = 0; lines != null && i < lines.length; i++) {
         if (i == 0)
           strCOrderlineID = SequenceIdData.getUUID();
