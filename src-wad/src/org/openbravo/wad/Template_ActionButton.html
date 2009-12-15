@@ -51,6 +51,7 @@ window.onunload = reloadOpener; // Reload opener when closing/canceling
 function validate(action, form, value) {
   var frm = document.frmMain;
   var key = frm.inpKey;
+  try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
   return validateClient(action, form, value);
 }
 </script>
