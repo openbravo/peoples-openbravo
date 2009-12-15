@@ -928,7 +928,7 @@ public class Buscador extends HttpSecureAppServlet {
     }
     params.append(", 'WindowID'");
     params.append(", '").append(windowId).append("'");
-    if (!strIsSOTrx.equals("")) {
+    if (strIsSOTrx.equals("Y") || strIsSOTrx.equals("N")) {
       params.append(", 'inpisSOTrxTab'");
       params.append(", '").append(strIsSOTrx).append("'");
     }
