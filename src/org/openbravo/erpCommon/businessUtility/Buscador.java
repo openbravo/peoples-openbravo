@@ -204,17 +204,15 @@ public class Buscador extends HttpSecureAppServlet {
     StringBuffer paramsData = new StringBuffer();
     StringBuffer params = new StringBuffer();
     if (fields != null && fields.length != 0 && isHighVolume) {
-      strHtml.append("if (");
       for (int i = 0; i < fields.length; i++) {
-        if (i > 0)
-          strHtml.append(" && ");
+
         paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
             FormatUtilities.replace(fields[i].columnname)).append("\" , ");
         params.append(", \"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(
             "\",");
         params.append(" escape(");
         if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19")) { // Combo
+            || fields[i].reference.equals("19") || fields[i].equals("20")) { // Combo
           paramsData.append("((frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1)?");
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
@@ -252,32 +250,8 @@ public class Buscador extends HttpSecureAppServlet {
               .append(".value");
         }
         params.append(")");
-        if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19")) { // Como
-          strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".selectedIndex!=-1");
-        } else if (Utility.isDecimalNumber(fields[i].reference)
-            || Utility.isIntegerNumber(fields[i].reference)
-            || Utility.isDateTime(fields[i].reference)) {
-          strHtml.append("(frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".value==null || ");
-          strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".value==\"\") ");
-          strHtml.append("&& (frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append("_f.value==null || ");
-          strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append("_f.value==\"\") ");
-        } else {
-          strHtml.append("(frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".value==null || ");
-          strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".value==\"\") ");
-        }
+
       }
-      strHtml.append(") {\n");
-      strHtml.append("    showJSMessage(1);\n");
-      strHtml.append("    return false;\n");
-      strHtml.append("  }\n");
     } else if (fields != null) {
       for (int i = 0; i < fields.length; i++) {
         paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
