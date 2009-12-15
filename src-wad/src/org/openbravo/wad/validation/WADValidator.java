@@ -31,6 +31,7 @@ public class WADValidator {
   private String modules;
   private ConnectionProvider conn;
   private String checkAll;
+  private boolean friendlyWarnings;
 
   /**
    * Constructor
@@ -40,11 +41,12 @@ public class WADValidator {
    * @param moduleId
    *          Module to check
    */
-  public WADValidator(ConnectionProvider conn, String modules) {
+  public WADValidator(ConnectionProvider conn, String modules, boolean friendlyWarnings) {
     checkAll = (modules == null || modules.equals("%") || modules.equals("")) ? "Y" : "N";
     this.modules = "'"
         + (checkAll.equals("Y") ? "%" : modules.replace(", ", ",").replace(",", "', '")) + "'";
     this.conn = conn;
+    this.friendlyWarnings = friendlyWarnings;
   }
 
   /**
@@ -59,6 +61,7 @@ public class WADValidator {
     validateModelObject(result);
     validateModelObjectMapping(result);
     validateColumnNaming(result);
+    validateAuxiliarInput(result);
     return result;
   }
 
@@ -71,6 +74,7 @@ public class WADValidator {
       for (WADValidatorData issue : data) {
         result.addError(WADValidationType.MISSING_IDENTIFIER, "Table " + issue.objectname
             + " has not identifier.");
+        result.addModule(issue.modulename);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -87,6 +91,7 @@ public class WADValidator {
       for (WADValidatorData issue : data) {
         result.addError(WADValidationType.MISSING_KEY, "Table " + issue.objectname
             + " has not primary key.");
+        result.addModule(issue.modulename);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -104,6 +109,7 @@ public class WADValidator {
         result.addError(WADValidationType.MODEL_OBJECT, issue.objecttype + " " + issue.objectname
             + " has classname: " + issue.currentvalue + ". But it should be in "
             + issue.expectedvalue + " package.");
+        result.addModule(issue.modulename);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -121,6 +127,7 @@ public class WADValidator {
         result.addError(WADValidationType.MODEL_OBJECT_MAPPING, issue.objecttype + " "
             + issue.objectname + " has mapping: " + issue.currentvalue
             + ". But it should start with /" + issue.expectedvalue + ".");
+        result.addModule(issue.modulename);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -138,6 +145,23 @@ public class WADValidator {
         result.addError(WADValidationType.COLUMN_NAME, issue.objecttype + " " + issue.objectname
             + " has value: " + issue.currentvalue + ". But it should start with EM_"
             + issue.expectedvalue);
+        result.addModule(issue.modulename);
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Validates names of auxiliar inputs columns
+   */
+  private void validateAuxiliarInput(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkAuxiliarInput(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.AUXILIARINPUT, issue.objectname
+            + " does not start by its module's DBPrefix: " + issue.expectedvalue);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,

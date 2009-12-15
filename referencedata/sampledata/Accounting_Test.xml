@@ -10766,10 +10766,46 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADProcessAccess>
+  <ADProcessAccess id="A64CA5C8B8B44C248D234FA7C4838609">
+    <id>A64CA5C8B8B44C248D234FA7C4838609</id>
+    <process id="645271C57F8C4DA4A1F64C7ACE37B101"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
   <ADProcessAccess id="BFDC7F3A742C4E8F8723389323244734">
     <id>BFDC7F3A742C4E8F8723389323244734</id>
     <process id="462033447A1548F09BBFB0683FA976CC"/>
     <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="C2D7EE6EB4004516AFD86EEA6D8E535D">
+    <id>C2D7EE6EB4004516AFD86EEA6D8E535D</id>
+    <process id="406CFC3A1DE144FF855DA10A987C057C"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="D19BE7251DBB4BA980C5C8E30CC76E2D">
+    <id>D19BE7251DBB4BA980C5C8E30CC76E2D</id>
+    <process id="406CFC3A1DE144FF855DA10A987C057C"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="FFA2FCB2C3684CD3B4DF3B1397DBCBD7">
+    <id>FFA2FCB2C3684CD3B4DF3B1397DBCBD7</id>
+    <process id="645271C57F8C4DA4A1F64C7ACE37B101"/>
+    <role id="1000006"/>
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
@@ -25217,6 +25253,13 @@
     <withholdingamount xsi:nil="true"/>
     <taxDate>2008-12-18T12:47:12.0Z</taxDate>
     <withholding xsi:nil="true"/>
+    <paymentComplete>false</paymentComplete>
+    <totalPaid>0</totalPaid>
+    <outstandingAmount>0</outstandingAmount>
+    <daysTillDue>0</daysTillDue>
+    <dueAmount>0</dueAmount>
+    <lastCalculatedOnDate xsi:nil="true"/>
+    <updatePaymentMonitor>false</updatePaymentMonitor>
   </Invoice>
   <Invoice id="1000041">
     <id>1000041</id>
@@ -25267,6 +25310,13 @@
     <withholdingamount xsi:nil="true"/>
     <taxDate>2008-12-18T12:47:12.0Z</taxDate>
     <withholding xsi:nil="true"/>
+    <paymentComplete>false</paymentComplete>
+    <totalPaid>0</totalPaid>
+    <outstandingAmount>0</outstandingAmount>
+    <daysTillDue>0</daysTillDue>
+    <dueAmount>0</dueAmount>
+    <lastCalculatedOnDate xsi:nil="true"/>
+    <updatePaymentMonitor>false</updatePaymentMonitor>
   </Invoice>
   <Invoice id="1000042">
     <id>1000042</id>
@@ -25317,6 +25367,13 @@
     <withholdingamount xsi:nil="true"/>
     <taxDate>2008-12-18T12:47:12.0Z</taxDate>
     <withholding xsi:nil="true"/>
+    <paymentComplete>false</paymentComplete>
+    <totalPaid>0</totalPaid>
+    <outstandingAmount>0</outstandingAmount>
+    <daysTillDue>0</daysTillDue>
+    <dueAmount>0</dueAmount>
+    <lastCalculatedOnDate xsi:nil="true"/>
+    <updatePaymentMonitor>false</updatePaymentMonitor>
   </Invoice>
   <Invoice id="1000043">
     <id>1000043</id>
@@ -25367,6 +25424,13 @@
     <withholdingamount xsi:nil="true"/>
     <taxDate>2008-12-18T12:47:12.0Z</taxDate>
     <withholding xsi:nil="true"/>
+    <paymentComplete>false</paymentComplete>
+    <totalPaid>0</totalPaid>
+    <outstandingAmount>0</outstandingAmount>
+    <daysTillDue>0</daysTillDue>
+    <dueAmount>0</dueAmount>
+    <lastCalculatedOnDate xsi:nil="true"/>
+    <updatePaymentMonitor>false</updatePaymentMonitor>
   </Invoice>
   <Invoice id="1000044">
     <id>1000044</id>
@@ -25417,6 +25481,13 @@
     <withholdingamount xsi:nil="true"/>
     <taxDate>2008-12-18T12:47:12.0Z</taxDate>
     <withholding xsi:nil="true"/>
+    <paymentComplete>false</paymentComplete>
+    <totalPaid>0</totalPaid>
+    <outstandingAmount>0</outstandingAmount>
+    <daysTillDue>0</daysTillDue>
+    <dueAmount>0</dueAmount>
+    <lastCalculatedOnDate xsi:nil="true"/>
+    <updatePaymentMonitor>false</updatePaymentMonitor>
   </Invoice>
   <MaterialMgmtShipmentInOut id="1000035">
     <id>1000035</id>

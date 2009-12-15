@@ -807,6 +807,17 @@ BEGIN
 END AD_GET_RDBMS;
 /-- END
  
+--Inserts an alert recipient for available updates
+--See issue:  https://issues.openbravo.com/view.php?id=11743
+BEGIN
+    INSERT INTO ad_alertrecipient(ad_client_id, ad_org_id, isactive, created, createdby,
+                              updated, updatedby, ad_alertrecipient_id, ad_alertrule_id,
+                              ad_role_id, sendemail)
+         VALUES('0', '0', 'Y', now(), '100', now(), '100', get_uuid(), '1005400000', '0', 'N');
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/-- END
+
 
 --Regenerate mappings and classnames for tabs in modules (issue #11431)
 update ad_tab set name = 'M'||name where ad_module_id != '0'

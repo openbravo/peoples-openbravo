@@ -47,14 +47,12 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessRunner;
-import org.openbravo.scheduling.ProcessBundle.Channel;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class TestHeartbeat extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
-  private static final String HB_Process_ID = "1005800000";
   private static final String HB_tabId = "1005400005";
   private static final String SystemInfomation_ID = "0";
   private static final String EVERY_N_DAYS = "N";
@@ -68,21 +66,22 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
+    final Process HBProcess = OBDal.getInstance()
+        .get(Process.class, HeartbeatProcess.HB_PROCESS_ID);
     final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class,
         SystemInfomation_ID);
-    final boolean isHearbeatEnabled = sysInfo.isEnableHeartbeat() == null ? false : sysInfo
-        .isEnableHeartbeat();
 
     final String clickedButton = vars.getStringParameter("inpLastFieldChanged");
 
-    if (isHearbeatEnabled || clickedButton.equalsIgnoreCase("inpisheartbeatactive")) {
+    if (HeartbeatProcess.isHeartbeatEnabled()
+        || clickedButton.equalsIgnoreCase("inpisheartbeatactive")) {
       // Disable Heartbeat
       try {
 
         if (sysInfo.isEnableHeartbeat() != null && sysInfo.isEnableHeartbeat()) {
           // Sending beat
-          ProcessBundle beat = new ProcessBundle(HB_Process_ID, vars).init(connectionProvider);
+          ProcessBundle beat = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars)
+              .init(connectionProvider);
           new ProcessRunner(beat).execute(connectionProvider);
         }
 
@@ -94,9 +93,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         // Un-scheduling the process
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
-        prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess));
-        prCriteria
-            .add(Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString()));
+        prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
+            Expression.eq(ProcessRequest.PROPERTY_STATUS, HeartbeatProcess.STATUS_SCHEDULED)));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         if (requestList.size() != 0) {
@@ -126,7 +124,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         OBDal.getInstance().save(HBProcess);
 
         // Sending beat
-        ProcessBundle bundle = new ProcessBundle(HB_Process_ID, vars).init(connectionProvider);
+        ProcessBundle bundle = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars)
+            .init(connectionProvider);
         final String beatExecutionId = new ProcessRunner(bundle).execute(connectionProvider);
 
         // Getting beat result
@@ -162,9 +161,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         // Scheduling the process
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
-        prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess));
-        prCriteria
-            .add(Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString()));
+        prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
+            Expression.eq(ProcessRequest.PROPERTY_STATUS, HeartbeatProcess.STATUS_UNSCHEDULED)));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         ProcessRequest pr = null;

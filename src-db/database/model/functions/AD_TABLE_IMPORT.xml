@@ -298,6 +298,7 @@
           --
 	  v_count:=v_count + 1;
       ELSE
+        v_Result :=0;
 	v_Message:=v_Message || '@WrongColumnType@: ' ||v_columnName||'. ';
       END IF;
       -- Added by Ismael Ciordia

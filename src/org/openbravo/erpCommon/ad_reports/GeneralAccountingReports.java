@@ -446,7 +446,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("accountingReports", Utility.arrayDobleEntrada("arrAccountingReports",
         GeneralAccountingReportsData.selectRptDouble(this)));
     xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears",
-        GeneralAccountingReportsData.selectYearsDouble(this)));
+        GeneralAccountingReportsData.selectYearsDouble(this, vars.getUserClient())));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
