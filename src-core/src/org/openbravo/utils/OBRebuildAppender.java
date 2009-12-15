@@ -65,10 +65,13 @@ public class OBRebuildAppender extends AppenderSkeleton {
         }
         PreparedStatement ln = connection
             .prepareStatement("SELECT coalesce(max(line_number)+1,1) FROM AD_ERROR_LOG");
-        ln.execute();
-        ResultSet rs = ln.getResultSet();
-        rs.next();
-        String line_number = rs.getString(1);
+        ResultSet rs = ln.executeQuery();
+        String line_number;
+        if (rs.next()) {
+          line_number = rs.getString(1);
+        } else {
+          line_number = "1";
+        }
 
         String message = arg0.getMessage().toString();
         if (message.length() > 3000)

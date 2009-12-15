@@ -209,7 +209,7 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private ApplyModulesResponse fillResponse(VariablesSecureApp vars, String state,
       String defaultState) {
-    String ln = vars.getSessionValue("LAST_LINE_NUMBER_LOG");
+    String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
     int lastlinenumber;
     if (ln == null || ln.equals("")) {
       lastlinenumber = 0;
@@ -268,7 +268,8 @@ public class ApplyModules extends HttpSecureAppServlet {
         resp.setLastmessage("");
       }
 
-      vars.setSessionValue("LAST_LINE_NUMBER_LOG", new Integer(newlinenumber).toString());
+      vars.setSessionValue("ApplyModules|Last_Line_Number_Log", new Integer(newlinenumber)
+          .toString());
       if (error)
         resp.setStatusofstate("Error");
       else if (warning)
@@ -330,14 +331,14 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void requesterrorstate(HttpServletResponse response, VariablesSecureApp vars) {
     String state = vars.getStringParameter("reqStatus");
-    ApplyModulesResponse pet = fillResponse(vars, state, "Success");
+    ApplyModulesResponse resp = fillResponse(vars, state, "Success");
     response.setContentType("text/plain; charset=UTF-8");
     try {
       final PrintWriter out = response.getWriter();
       String strResult;
       XStream xs = new XStream(new JettisonMappedXmlDriver());
       xs.alias("Response", ApplyModulesResponse.class);
-      strResult = xs.toXML(pet);
+      strResult = xs.toXML(resp);
       out.print(strResult);
       out.close();
     } catch (IOException e) {
@@ -352,7 +353,7 @@ public class ApplyModules extends HttpSecureAppServlet {
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     User currentUser = OBContext.getOBContext().getUser();
-    vars.setSessionValue("LAST_LINE_NUMBER_LOG", "-1");
+    vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
     boolean admin = OBContext.getOBContext().setInAdministratorMode(true);
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
