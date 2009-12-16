@@ -79,14 +79,14 @@ public class Reference extends ModelObject {
     primitiveTypes.put("800101", String.class);
   }
 
-  private char validationType;
+  private Character validationType;
   private Set<String> allowedValues = new HashSet<String>();
 
-  public char getValidationType() {
+  public Character getValidationType() {
     return validationType;
   }
 
-  public void setValidationType(char validationType) {
+  public void setValidationType(Character validationType) {
     this.validationType = validationType;
   }
 
