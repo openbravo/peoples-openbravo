@@ -25,7 +25,7 @@
   v_Aux NUMBER;
       
 BEGIN
-    
+
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
@@ -52,6 +52,10 @@ BEGIN
   
   IF v_Aux != 0 THEN
     RAISE_APPLICATION_ERROR(-20000, '@ColumnDBPrefix@') ;
+  END IF;
+  
+  IF AD_IsJavaWord(:new.Name)='Y' THEN
+    RAISE_APPLICATION_ERROR(-20000, '@NotAllowedColumnName@ "'||:new.name||'" @ReservedJavaWord@') ;
   END IF;
   
   /**
