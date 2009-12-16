@@ -46,10 +46,9 @@
     var error_status=['','','','','','','','','','','','','',''];
     var numofwarns=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     var numoferrs=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    var warnings=[];
-    var errors=[];
     var start=false;
     var processing = false;
+    var stopAddingWarns=false;
 
     //Changes the status of one node (corresponding icon, ...)
     function progList_changeStatus(node, newStatus, text) {
@@ -110,7 +109,17 @@
 
     //Adds text to the textarea
     function progList_addTextToTextArea(text) {
-      document.getElementById('warningsAndErrors').innerHTML += text+"<br>";
+      if(stopAddingWarns){
+          return;
+      }
+      var charn= document.getElementById('warningsAndErrors').innerHTML.length;
+      if(charn>2000){
+        stopAddingWarns=true;
+        document.getElementById('warningsAndErrors').innerHTML += "and more..."+"<br>";
+      }
+      else{
+        document.getElementById('warningsAndErrors').innerHTML += text+"<br>";
+      }
     }
     
     //Starts a timer (used to periodically trigger a request to update the status of the window)
@@ -241,27 +250,29 @@
 
     //Inserts warnings and errors in the textarea
     function insertWarnsAndErrors(response){
-      if(start===true){
+      if(start===true && !stopAddingWarns){
         if(response.statusofstate=="Warning"){
           var warns=response.warnings.string;
           if(warns!==null){
             if(!(warns instanceof Array)){
               warns=[warns];
             }
-            if(numofwarns[getStatusIndex(response.state)]<warns.length){
-              for(i=numofwarns[getStatusIndex(response.state)];i<warns.length;i++){
-                var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
+            for(i=0;i<warns.length;i++){
+              var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
+              var l=old.length;
+              if(l>300){
+                //add nothing else to the tooltip, already too long
+              }else{
                 if(old===""){
                   old="Warnings: ";
                 }else{
                   old+=",";
                 }
                 document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
-                warnings.push(warns[i]);
-                progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
               }
-              numofwarns[getStatusIndex(response.state)]=warns.length;
+              progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
             }
+            numofwarns[getStatusIndex(response.state)]=warns.length;
           }
         }
         if(response.statusofstate=="Error"){
@@ -271,8 +282,7 @@
               errs=[errs];
             }
             if(numoferrs[getStatusIndex(response.state)]<errs.length){
-              for(i=numoferrs[getStatusIndex(response.state)];i<errs.length;i++){
-                warnings.push(errs[i]);
+              for(i=0;i<errs.length;i++){
                 progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
               }
               numoferrs[getStatusIndex(response.state)]=errs.length;
