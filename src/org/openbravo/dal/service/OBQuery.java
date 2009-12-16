@@ -20,6 +20,7 @@
 package org.openbravo.dal.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -478,6 +479,21 @@ public class OBQuery<E extends BaseOBObject> {
    */
   public void setNamedParameters(Map<String, Object> namedParameters) {
     this.namedParameters = namedParameters;
+  }
+
+  /**
+   * Sets one named parameter used in the query.
+   * 
+   * @param paramName
+   *          name of the parameter
+   * @param value
+   *          value which should be used for this parameter
+   */
+  public void setNamedParameter(String paramName, Object value) {
+    if (this.namedParameters == null) {
+      this.namedParameters = new HashMap<String, Object>();
+    }
+    this.namedParameters.put(paramName, value);
   }
 
   public int getFirstResult() {

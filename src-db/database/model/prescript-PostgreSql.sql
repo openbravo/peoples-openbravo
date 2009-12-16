@@ -1368,12 +1368,12 @@ begin
   v_md5 = ''; 
   --Checksum for PL functions
   for i in (
-	select upper(proname) as proname, p.proname as realname, pronargs, p.proargtypes 
+	select upper(proname) as proname, p.proname as realname, pronargs, oidvectortypes(p.proargtypes)
 	from pg_proc p, pg_namespace n 
          where  pronamespace = n.oid   and n.nspname=current_schema() 
          and p.oid not in (select tgfoid   from pg_trigger) 
          and p.proname not in ('temp_findinarray', 'ad_db_modified', 'dateformat')
-         order by 1,2,3) loop 
+         order by 1,2,3,4) loop 
       --note that for overloaded functions more than one line will be obtained
 
      

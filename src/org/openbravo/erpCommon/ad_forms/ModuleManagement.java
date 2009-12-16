@@ -24,20 +24,18 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.hibernate.criterion.Expression;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
@@ -54,9 +52,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
-import org.openbravo.model.ad.ui.Process;
-import org.openbravo.model.ad.ui.ProcessRequest;
-import org.openbravo.scheduling.ProcessBundle.Channel;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
@@ -72,7 +67,6 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class ModuleManagement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static final String HB_Process_ID = "1005800000";
 
   /**
    * Main method that controls the sent command
@@ -257,9 +251,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
         rt = total
             + "&nbsp;"
             + Utility.messageBD(this, "ApplyModules", lang)
-            + ", <a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900);return false;\">"
+            + ", <a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900);return false;\">"
             + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
         return rt;
+      }
+      String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
+      // Check if last build was done but Tomcat wasn't restarted
+      if (!restartTomcat.equals("0")) {
+        rt = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900);return false;\">"
+            + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
+        return rt;
+
       }
 
       // Check for updates
@@ -545,7 +547,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     Module module = null;
 
     // Remote installation is only allowed for heartbeat enabled instances
-    if (!islocal && !isHeartbeatEnabled()) {
+    if (!islocal && !HeartbeatProcess.isHeartbeatEnabled()) {
       String inpcRecordId = recordId;
       String command = "DEFAULT";
 
@@ -787,21 +789,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
       out.close();
     }
     return notAllowedMods.size() == 0;
-  }
-
-  private boolean isHeartbeatEnabled() {
-    SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-    final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
-    final boolean isHBEnabled = sys.isEnableHeartbeat() == null ? false : sys.isEnableHeartbeat();
-
-    final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
-        ProcessRequest.class);
-    prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess));
-    prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString()));
-    final List<ProcessRequest> prRequestList = prCriteria.list();
-
-    // Must exist a scheduled process request for HB and must be enable at SystemInfo level
-    return prRequestList.size() > 0 && isHBEnabled;
   }
 
   /**

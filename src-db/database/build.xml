@@ -100,6 +100,34 @@ export.database.structure: Exports the database structure in the xml's files.
     <antcall target="update.dbupdate.timestamp" />
   </target>
 
+  <target name="update.database.mod.java">
+    <java classname="org.openbravo.ddlutils.task.AlterDatabaseModJava" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
+      <arg value="${bbdd.driver}"/>
+      <arg value="${bbdd.owner.url}"/>
+      <arg value="${bbdd.user}"/>
+      <arg value="${bbdd.password}"/>
+      <arg value="com.openbravo.db.OpenbravoExcludeFilter"/>
+      <arg value="model"/>
+      <arg value="com.openbravo.db.OpenbravoMetadataFilter"/>
+      <arg value="sourcedata"/>
+      <arg value="${bbdd.object}"/>
+      <arg value="false"/>
+      <arg value="${bbdd.verbosity}"/>
+      <arg value="${base.modules}/"/>
+      <arg value="${base.config}/"/>
+      <arg value="*/src-db/database/model"/>
+      <arg value="${base.modules}/"/>
+      <arg value="*/src-db/database/sourcedata"/>
+      <arg value="${module}"/>
+      <arg value="0"/>
+      <arg value="${base.config}/Openbravo.properties"/>
+      <arg value="${force}"/>
+      <classpath refid="runtime-classpath" />
+    </java>
+    <antcall target="database.postupdate.${bbdd.rdbms}" />
+    <antcall target="update.dbupdate.timestamp" />
+  </target>
+  
   <target name="update.database.mod">
     <alterdatabasedatamod driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="DEBUG" basedir="${base.modules}/" baseConfig="${base.config}" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" module="${module}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" />
     <antcall target="database.postupdate.${bbdd.rdbms}" />
@@ -152,6 +180,21 @@ export.database.structure: Exports the database structure in the xml's files.
     </sql>
   </target>
 
+  <target name="setApplied">
+    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true">
+      <classpath>
+        <fileset dir="${base.lib}">
+          <include name="**/*.jar">
+          </include>
+        </fileset>
+      </classpath>
+      <transaction>
+          UPDATE AD_MODULE SET STATUS='A',ISINDEVELOPMENT='N' WHERE STATUS='P';
+          DELETE FROM AD_MODULE WHERE STATUS = 'U';
+      </transaction>
+    </sql>
+  </target>
+  
   <target name="update.dbupdate.timestamp">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       <classpath>

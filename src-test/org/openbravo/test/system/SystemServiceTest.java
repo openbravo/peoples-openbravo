@@ -43,7 +43,7 @@ public class SystemServiceTest extends BaseTest {
    * Test the {@link DataSetService#hasChanged(DataSet, Date)} method.
    */
   public void testChangedDataSet() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final List<DataSet> dss = OBDal.getInstance().createCriteria(DataSet.class).list();
     final Date now = new Date(System.currentTimeMillis());
     for (DataSet ds : dss) {
@@ -67,7 +67,7 @@ public class SystemServiceTest extends BaseTest {
    * object in a specific table have changed since a specific time.
    */
   public void testChangedClasses() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final Class<?>[] clzs = new Class<?>[] { Table.class, Column.class, Reference.class };
 
     final Date now = new Date(System.currentTimeMillis());

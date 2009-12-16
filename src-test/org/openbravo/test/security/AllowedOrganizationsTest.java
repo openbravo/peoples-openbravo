@@ -75,7 +75,7 @@ public class AllowedOrganizationsTest extends BaseTest {
    * natural tree of A.
    */
   public void testOrganizationCheck() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     OBContext.getOBContext().getOrganizationStructureProvider().reInitialize();
 
     final Project p = OBDal.getInstance().get(Project.class, "1000001");

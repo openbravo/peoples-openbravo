@@ -370,8 +370,8 @@ public class PrintController extends HttpSecureAppServlet {
             }
             final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(), report
                 .getOrgId());
-            sendDocumentEmail(report, vars, request.getSession().getAttribute("files"),
-                documentData, senderAddress, checks);
+            sendDocumentEmail(report, vars, (Vector<Object>) request.getSession().getAttribute(
+                "files"), documentData, senderAddress, checks);
             nrOfEmailsSend++;
           }
         }
@@ -582,7 +582,7 @@ public class PrintController extends HttpSecureAppServlet {
     return null;
   }
 
-  void sendDocumentEmail(Report report, VariablesSecureApp vars, Object object,
+  void sendDocumentEmail(Report report, VariablesSecureApp vars, Vector<Object> object,
       PocData documentData, String senderAddess, HashMap<String, Boolean> checks)
       throws IOException, ServletException {
     final String documentId = report.getDocumentId();
@@ -791,6 +791,7 @@ public class PrintController extends HttpSecureAppServlet {
       ServletException {
     XmlDocument xmlDocument = null;
     pocData = getContactDetails(documentType, strDocumentId);
+    @SuppressWarnings("unchecked")
     Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request.getSession().getAttribute(
         "files");
 
@@ -1047,7 +1048,7 @@ public class PrintController extends HttpSecureAppServlet {
 
   private boolean moreThanOneLenguageDefined(Map<String, Report> reports) throws ReportingException {
     Iterator itRep = reports.values().iterator();
-    Map lenguages = new HashMap<String, String>();
+    HashMap<String, String> lenguages = new HashMap<String, String>();
     while (itRep.hasNext()) {
       Report report = (Report) itRep.next();
       lenguages.put(report.getEmailDefinition().getLanguage(), report.getEmailDefinition()

@@ -53,7 +53,7 @@ public class SystemValidatorTest extends BaseTest {
    * Executes the {@link DatabaseValidator#validate()} method on the current database.
    */
   public void testSystemValidation() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final DatabaseValidator databaseValidator = new DatabaseValidator();
     databaseValidator.setDatabase(createDatabaseObject());
     final SystemValidationResult result = databaseValidator.validate();
@@ -65,7 +65,7 @@ public class SystemValidatorTest extends BaseTest {
    * modules.
    */
   public void testSystemValidationModules() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     for (Module module : OBDal.getInstance().createQuery(Module.class, "").list()) {
       final DatabaseValidator databaseValidator = new DatabaseValidator();
       databaseValidator.setDatabase(createDatabaseObject());
@@ -96,7 +96,7 @@ public class SystemValidatorTest extends BaseTest {
    * Performs module validation using the {@link ModuleValidator}.
    */
   public void testModulesValidation() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final ModuleValidator moduleValidator = new ModuleValidator();
     final SystemValidationResult result = moduleValidator.validate();
     printResult(result, true);

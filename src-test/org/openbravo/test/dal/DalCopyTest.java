@@ -42,7 +42,7 @@ public class DalCopyTest extends BaseTest {
    * Test copy of a structure, parent and childs should point to eachother
    */
   public void testHiddenUpdates() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(PaymentTerm.class);
     addReadWriteAccess(PaymentTermTrl.class);
     final List<PaymentTerm> pts = OBDal.getInstance().createCriteria(PaymentTerm.class).list();

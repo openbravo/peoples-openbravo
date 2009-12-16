@@ -313,8 +313,9 @@ public class Wad extends DefaultHandler {
       if (dirWebClients != null && !dirWebClients.equals("")) {
         fileWebXmlClient = new File(dirWebClients);
         if (!fileWebXmlClient.exists()) {
-          log4j.warn("No such directory: " + fileWebXmlClient.getAbsoluteFile());
           fileWebXmlClient = null;
+        } else {
+          log4j.info("srcClient folder found.");
         }
       }
 
@@ -955,9 +956,7 @@ public class Wad extends DefaultHandler {
       auxFieldsData = null;
       String keyColumnName = "";
       boolean isSecondaryKey = false;
-      final FieldsData[] dataKey = FieldsData
-          .keyColumnName(pool, tabsData.tabid, ((parentsFieldsData != null
-              && parentsFieldsData.length > 0 && !sinParent) ? parentsFieldsData[0].name : " "));
+      final FieldsData[] dataKey = FieldsData.keyColumnName(pool, tabsData.tabid);
       if (dataKey != null && dataKey.length > 0) {
         keyColumnName = dataKey[0].name;
         isSecondaryKey = dataKey[0].issecondarykey.equals("Y");

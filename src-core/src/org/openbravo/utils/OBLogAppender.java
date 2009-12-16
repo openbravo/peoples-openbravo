@@ -35,6 +35,7 @@ import org.apache.tools.ant.Project;
  * 
  * @author mtaal
  */
+@Deprecated
 public class OBLogAppender extends AppenderSkeleton {
 
   private static final ThreadLocal<OutputStream> outputStreamHolder = new ThreadLocal<OutputStream>();

@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_actionButton;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_process.PaymentMonitor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -47,8 +45,7 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("InvoicePaymentMonitor: doPost");
+    log4j.debug("InvoicePaymentMonitor: doPost");
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -84,28 +81,17 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
 
   private OBError process(VariablesSecureApp vars, String strKey) throws ServletException {
     OBError myError = null;
-    int i = 0;
-    final StringBuilder whereClause = new StringBuilder();
     try {
-      whereClause.append(" as inv ");
-      whereClause.append(" where inv.processed=true");
-      whereClause.append(" and inv.id='" + strKey + "'");
-
-      final OBQuery<Invoice> obqParameters = OBDal.getInstance().createQuery(Invoice.class,
-          whereClause.toString());
-      final List<Invoice> invoices = obqParameters.list();
-      for (Invoice invoice : invoices) {
+      Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
+      if (invoice.isProcessed()) {
         PaymentMonitor.updateInvoice(invoice);
-        i++;
       }
+
       myError = new OBError();
       myError.setType("Success");
       myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      // myError.setMessage(Utility.messageBD(this, "RecordsProcessed", vars.getLanguage()) + ": " +
-      // i);
     } catch (Exception e) {
-      e.printStackTrace();
-      log4j.warn("Rollback in transaction");
+      log4j.error("Rollback in transaction", e);
       myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
     }
     return myError;
@@ -114,8 +100,7 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String windowId, String strTab, String strProcessId, String strPath, String strTabName)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: Button process InvoicePaymentMonitor");
+    log4j.debug("Output: Button process InvoicePaymentMonitor");
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
@@ -130,7 +115,7 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
     }
     String[] discard = { "", "" };
     if (strHelp.equals(""))
-      discard[0] = new String("helpDiscard");
+      discard[0] = "helpDiscard";
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/InvoicePaymentMonitor", discard)
         .createXmlDocument();
@@ -166,5 +151,5 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
 
   public String getServletInfo() {
     return "Servlet InvoicePaymentMonitor";
-  } // end of getServletInfo() method
+  }
 }

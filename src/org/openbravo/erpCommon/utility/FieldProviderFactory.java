@@ -53,6 +53,7 @@ public class FieldProviderFactory implements FieldProvider {
    * 
    * @param obj
    */
+  @SuppressWarnings("unchecked")
   public FieldProviderFactory(Object obj) {
     object = obj;
     if (obj instanceof HashMap) {
