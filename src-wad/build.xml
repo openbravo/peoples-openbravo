@@ -35,6 +35,7 @@ doc: generates the api for the project.
   <property name="build.wad.docs" value="${basedir}/docs" />
   <property name="build.wad.sqlc" value="${basedir}/build/javasqlc" />
   <property name="build.wad.src" value="${basedir}/src" />
+  <property name="main.dir" value="${basedir}/.." />
 
   <path id="wad.class.path">
     <pathelement path="../src-core/build/classes" />
@@ -69,18 +70,26 @@ doc: generates the api for the project.
   </target>
 
   <target name="compileSqlc" depends="sqlc">
-    <javac srcdir="${build.wad.sqlc}/src:${base.modules}" excludes="${base.modules}/src/**" destdir="${build.wad}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+    <javac srcdir="${build.wad.sqlc}/src" includes="**/*.java" destdir="${build.wad}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="wad.class.path" />
     </javac>
   </target>
 
   <target name="compile" depends="compileSqlc">
-    <javac srcdir="${build.wad.src}:${base.modules}" excludes="${base.modules}/src/**" destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+    <javac srcdir="${main.dir}" includes="src-wad/src/**/*.java,modules/*/src-wad/**/*.java" destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="wad.class.path" />
     </javac>
     <copy todir="${build.wad}" encoding="UTF-8">
       <fileset dir="${build.wad.src}" includes="**/*xml" />
       <fileset dir="${build.wad.src}" includes="**/*html" />
+    </copy>
+    <copy todir="${build.wad}" encoding="UTF-8">
+      <fileset dir="${base.modules}">
+          <include name="*/src-wad/**/*" />
+          <exclude name="*/src-wad/**/*.java" />
+          <exclude name="*/src-wad/**/*.xsql" />
+      </fileset>
+      <mapper type="regexp" from="(.*\${file.separator}src-wad)(.*)" to="\2" />
     </copy>
   </target>
 
