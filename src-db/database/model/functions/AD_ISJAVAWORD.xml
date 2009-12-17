@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_ISJAVAWORD">
     <function name="AD_ISJAVAWORD" type="CHAR">
-      <parameter name="word" type="VARCHAR">
+      <parameter name="word" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -72,6 +72,7 @@ BEGIN
           'void',
           'volatile',
           'while') THEN 'Y' ELSE 'N' END;
-END AD_ISJAVAWORD]]></body>
+END AD_ISJAVAWORD
+]]></body>
     </function>
   </database>
