@@ -361,65 +361,65 @@ function removeOnUnloadHandler(form) {
 * @type Boolean
 */
 function checkForChanges(f) {
-	var form = f;
-	
-	if (form == null) {
-		if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
-			if(top.opener != null) { // is a pop-up window
-				form = top.opener.top.appFrame.document.forms[0];
-			}
-		}
-		else {
-			form = top.appFrame.document.forms[0];			
-		}
-	}
-	
-	if(typeof form == 'undefined') {
-		return true;
-	}
-	
-	var autosave = null;
-	if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
-		if(top.opener != null) { // is a pop-up window
-		  autosave = top.opener.top.frameMenu.autosave;
-		}
-	}
-	else {
-	  autosave = top.frameMenu.autosave;
-	}
-	
-	if(typeof autosave == 'undefined' || !autosave) { // 2.40 behavior		
-		if (inputValue(form.inpLastFieldChanged)!="") {
-			if (!showJSMessage(26))
-				return false;
-		}
-		if(form.autosave) {
-			form.autosave.value = 'N';
-		}
-		return true;
-	}
-	else {
-		if(typeof top.appFrame == 'undefined'){
-			return true;
-		}		
-		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
-		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
-		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
-			var autoSaveFlag = autosave;		
-			if (promptConfirmation && hasUserChanges) {
-				autoSaveFlag = showJSMessage(25);
-				if(typeof top.appFrame.confirmOnChanges != 'undefined' && autoSaveFlag) {
-					top.appFrame.confirmOnChanges = false;
-				}
-			}
-			if (autoSaveFlag) {
-				if(form.autosave) {
-					form.autosave.value = 'Y';
-				}
-			}
-		}
-		return true;
-	}	
+  var form = f;
+  
+  if (form == null) {
+    if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
+      if(top.opener != null) { // is a pop-up window
+        form = top.opener.top.appFrame.document.forms[0];
+      }
+    }
+    else {
+      form = top.appFrame.document.forms[0];      
+    }
+  }
+  
+  if(typeof form == 'undefined') {
+    return true;
+  }
+  
+  var autosave = null;
+  if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
+    if(top.opener != null) { // is a pop-up window
+      autosave = top.opener.top.frameMenu.autosave;
+    }
+  }
+  else {
+    autosave = top.frameMenu.autosave;
+  }
+  
+  if(typeof autosave == 'undefined' || !autosave) { // 2.40 behavior    
+    if (inputValue(form.inpLastFieldChanged)!="") {
+      if (!showJSMessage(26))
+        return false;
+    }
+    if(form.autosave) {
+      form.autosave.value = 'N';
+    }
+    return true;
+  }
+  else {
+    if(typeof top.appFrame == 'undefined'){
+      return true;
+    }   
+    var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
+    var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
+    if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
+      var autoSaveFlag = autosave;    
+      if (promptConfirmation && hasUserChanges) {
+        autoSaveFlag = showJSMessage(25);
+        if(typeof top.appFrame.confirmOnChanges != 'undefined' && autoSaveFlag) {
+          top.appFrame.confirmOnChanges = false;
+        }
+      }
+      if (autoSaveFlag) {
+        if(form.autosave) {
+          form.autosave.value = 'Y';
+        }
+      }
+    }
+    return true;
+  } 
 }
 
 /**
@@ -429,14 +429,14 @@ function checkForChanges(f) {
  * @return 
  */
 function continueUserAction(requestURL) {
-	if(typeof(requestURL) == 'undefined') { 
-		return false;
-	}	
-	var continueAction = showJSMessage(26, null, false);
-	if(continueAction) {
-		submitCommandForm('DEFAULT', false, null, requestURL, 'appFrame', false, true);
-	}
-	return true;
+  if(typeof(requestURL) == 'undefined') { 
+    return false;
+  } 
+  var continueAction = showJSMessage(26, null, false);
+  if(continueAction) {
+    submitCommandForm('DEFAULT', false, null, requestURL, 'appFrame', false, true);
+  }
+  return true;
 }
 
 /**
@@ -464,8 +464,8 @@ function sendDirectLink(form, columnName, parentKey, url, keyId, tableId, newTar
     autosave = top.frameMenu.autosave;
   }
   if(autosave && isUserChanges) {
-	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
-	if (!depurar_validate_wrapper(action, form, "")) return false;
+  try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
+  if (!depurar_validate_wrapper(action, form, "")) return false;
   }
   if (bolCheckChanges==null) bolCheckChanges = false;
   if (arrGeneralChange!=null && arrGeneralChange.length>0 && bolCheckChanges) {
@@ -2762,7 +2762,12 @@ function formElementValue(form, ElementName, Value) {
             obj.value = formattedValue;
           }
           else {
-            obj.value = Value;
+            // to support smartclient values
+            if (obj.setValue) {
+              obj.setValue(Value);
+            } else {
+              obj.value = Value;
+            }
           }
       } else {
       //if (obj.className.toUpperCase().indexOf("REQUIRED")!=-1 || obj.className.toUpperCase().indexOf("KEY")!=-1 || obj.className.toUpperCase().indexOf("READONLY")!=-1)
@@ -2806,7 +2811,7 @@ function getFrame(frameName) {
   if(op == null) {
     return top.frames[frameName];
   }
-  return op.top.frames[frameName];	
+  return op.top.frames[frameName];  
 }
 
 /**
@@ -3128,6 +3133,14 @@ function displayLogicElement(id, display) {
 * @type Boolean
 */
 function readOnlyLogicElement(id, readonly) {
+  // support non-openbravo edit elements which have a setDisabled 
+  // method
+  var element = getReference(id);
+  if (element.setDisabled && typeof element.setDisabled === 'function') {
+     element.setDisabled(readonly);
+     return true;
+  }
+  
   obj = getStyle(id);
   if (obj==null) return false;
 
@@ -3335,6 +3348,13 @@ function checkFieldChange(elementToCheck) {
 */
 function windowUndo(form) {
   form.reset();
+  // added to support components which need a custom
+  // on reset action
+  for (i=0;i<form.elements.length;i++) {
+    if (form.elements[i].onreset) {
+      form.elements[i].onreset();
+    }
+  }
   form.inpLastFieldChanged.value = '';
   setWindowEditing(false);
   displayLogic();

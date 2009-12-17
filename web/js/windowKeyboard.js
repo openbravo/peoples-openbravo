@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -333,7 +333,9 @@ function setWindowElementFocus(obj, type, event) {
     removeWindowElementFocus(focusedWindowElement_tmp);
     focusedWindowElement = obj;
     focusedWindowElement_tmp = focusedWindowElement;
-    if(!frameLocked) putWindowElementFocus(focusedWindowElement, event);
+    if(!frameLocked) {
+      putWindowElementFocus(focusedWindowElement, event);
+    }
   }
 }
 
@@ -496,9 +498,12 @@ function putWindowElementFocus(obj, event) {
       obj.focus();
       focusGenericTree();
     } else {
-      if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+      // added for Smartclient support
+      if (obj.focusInItem) {
+        obj.focusInItem();
+      } else if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
       } else {
-        obj.focus();
+          obj.focus();
       }
     }
   } catch (e) {
