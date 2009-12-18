@@ -49,6 +49,7 @@
     var start=false;
     var processing = false;
     var stopAddingWarns=false;
+    var restarting=false;
 
     //Changes the status of one node (corresponding icon, ...)
     function progList_changeStatus(node, newStatus, text) {
@@ -175,10 +176,12 @@
     function restart() {
       if (document.frmMain.option[0].checked) {
         window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+        restarting=true;
         closeThisPage();
         return false;
       } else if (document.frmMain.option[1].checked) {
         window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+        restarting=true;
         closeThisPage();
         return false;
       } else if (document.frmMain.option[2].checked) {
@@ -414,7 +417,9 @@
     
     function onUnloadDo() {
       top.opener.setProcessingMode('window', false);
-      reloadOpener();
+      if(!restarting){
+        reloadOpener();
+      }
     }
 
   </script>

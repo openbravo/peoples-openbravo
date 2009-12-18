@@ -33,7 +33,7 @@
            AND M2.STATUS != 'U' 
            AND M2.AD_MODULE_ID = AD_DEPENDENT_MODULE_ID
            AND D.AD_MODULE_ID NOT IN ('2')
-      </Sql>
+       </Sql>
       <Parameter name="modules" type="replace" optional="true" after="AD_DEPENDENT_MODULE_ID IN (" text="'1'"/>
       <Parameter name="modules" type="replace" optional="true" after="D.AD_MODULE_ID NOT IN (" text="'2'"/>
    </SqlMethod>
@@ -42,18 +42,28 @@
       <Sql>
         SELECT STATUS
           FROM AD_MODULE M
-         WHERE AD_MODULE_ID IN ('1')
+         WHERE M.AD_MODULE_ID IN ('1')
+         UNION
+         SELECT STATUS
+          FROM AD_MODULE_INSTALL MI
+         WHERE MI.AD_MODULE_ID IN ('2')
       </Sql>
-      <Parameter name="module" type="replace" optional="true" after="AD_MODULE_ID IN (" text="'1'"/>
+      <Parameter name="module" type="replace" optional="true" after="M.AD_MODULE_ID IN (" text="'1'"/>
+      <Parameter name="module" type="replace" optional="true" after="MI.AD_MODULE_ID IN (" text="'2'"/>
    </SqlMethod>
    <SqlMethod name="selectDirectories" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT NAME, JAVAPACKAGE, VERSION 
           FROM AD_MODULE M
-         WHERE AD_MODULE_ID IN ('1')
+         WHERE M.AD_MODULE_ID IN ('1')
+        UNION
+        SELECT NAME, JAVAPACKAGE, VERSION 
+          FROM AD_MODULE_INSTALL MI
+         WHERE MI.AD_MODULE_ID IN ('2')
       </Sql>
-      <Parameter name="module" type="replace" optional="true" after="AD_MODULE_ID IN (" text="'1'"/>
+      <Parameter name="module" type="replace" optional="true" after="M.AD_MODULE_ID IN (" text="'1'"/>
+      <Parameter name="module" type="replace" optional="true" after="MI.AD_MODULE_ID IN (" text="'2'"/>
    </SqlMethod>
    
    <SqlMethod name="selectContent" type="preparedStatement" return="multiple">
@@ -72,6 +82,33 @@
       <Sql>
         UPDATE AD_MODULE
            SET STATUS = 'U'
+         WHERE AD_MODULE_ID IN ('1')           
+      </Sql>
+      <Parameter name="modules" type="replace" optional="true" after="WHERE AD_MODULE_ID IN (" text="'1'"/>
+   </SqlMethod>
+   
+   <SqlMethod name="deleteTmpModule" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        DELETE FROM AD_MODULE_INSTALL
+         WHERE AD_MODULE_ID IN ('1')           
+      </Sql>
+      <Parameter name="modules" type="replace" optional="true" after="WHERE AD_MODULE_ID IN (" text="'1'"/>
+   </SqlMethod>
+   
+   <SqlMethod name="deleteTmpDependency" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        DELETE FROM AD_MODULE_DEPENDENCY_INST
+         WHERE AD_MODULE_ID IN ('1')           
+      </Sql>
+      <Parameter name="modules" type="replace" optional="true" after="WHERE AD_MODULE_ID IN (" text="'1'"/>
+   </SqlMethod>
+   
+   <SqlMethod name="deleteTmpDBPrefix" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        DELETE FROM AD_MODULE_DBPREFIX_INSTALL
          WHERE AD_MODULE_ID IN ('1')           
       </Sql>
       <Parameter name="modules" type="replace" optional="true" after="WHERE AD_MODULE_ID IN (" text="'1'"/>
