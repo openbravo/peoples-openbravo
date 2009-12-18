@@ -433,6 +433,13 @@ build.war: build a war file in the lib directory.
       </fileset>
       <mapper type="regexp" from="(.*\${file.separator}src)(.*)" to="\2" />
     </copy>
+    <copy todir="${build}">
+      <fileset dir="${base.modules}">
+        <include name="*/src/**" />
+        <exclude name="*/src/**/*.java" />
+      </fileset>
+      <mapper type="regexp" from="(.*\${file.separator}src)(.*)" to="\2" />
+    </copy>
   </target>
 
   <!-- FIXME: These tasks is only for development and testing purposes, remove it afterwards-->
