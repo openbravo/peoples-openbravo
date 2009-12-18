@@ -4553,7 +4553,7 @@ td.DimensionUDArrows_ContentCell {
 
 .TextBox_MsgContainer_span {
   position: absolute;
-  z-index: 99;
+  z-index: 300000;
 }
 
 table.TextBox_MsgContainer_table {
@@ -5834,7 +5834,7 @@ a.Main_NavBar_RightButton:active .Main_NavBar_RightButton_Icon_help {
   background-position: top left;
   background-image: url(Main/Status/processingBackground.png);
   text-align: center;
-  z-index: 99;
+  z-index: 300000;
 }
 
 .Main_Status_Processing_Elements_Container {
@@ -7515,7 +7515,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   background-position: center center;
   background-image: url(Menu/Status/processingBackground.png);
   text-align: center;
-  z-index: 99;
+  z-index: 300000;
 }
 
 .Menu_Status_Processing_Elements_Container {
@@ -9212,7 +9212,7 @@ td.Popup_SeparatorBar_bg {
   height: 100%;
   background-color: #505050;
   text-align: center;
-  z-index: 99;
+  z-index: 300000;
 }
 
 .Popup_Status_Loading_Elements_Container {
@@ -9256,7 +9256,7 @@ td.Popup_SeparatorBar_bg {
   background-position: center center;
   background-image: url(Popup/Status/processingBackground.png);
   text-align: center;
-  z-index: 99;
+  z-index: 300000;
 }
 
 .Popup_Status_Processing_Elements_Container {
