@@ -6,11 +6,11 @@ dojo.js:
 ./../../dojo/_base/_loader/loader.js
 ./../../dojo/_base/_loader/hostenv_browser.js
 /opt/dojo-svn/deploy/dojo/_base/lang.js
+/opt/dojo-svn/deploy/dojo/_base/array.js
 /opt/dojo-svn/deploy/dojo/_base/declare.js
 /opt/dojo-svn/deploy/dojo/_base/connect.js
 /opt/dojo-svn/deploy/dojo/_base/Deferred.js
 /opt/dojo-svn/deploy/dojo/_base/json.js
-/opt/dojo-svn/deploy/dojo/_base/array.js
 /opt/dojo-svn/deploy/dojo/_base/Color.js
 /opt/dojo-svn/deploy/dojo/_base.js
 /opt/dojo-svn/deploy/dojo/_base/window.js
@@ -23,8 +23,8 @@ dojo.js:
 /opt/dojo-svn/deploy/dojo/_base/browser.js
 /opt/dojo-svn/deploy/dojo/date/stamp.js
 /opt/dojo-svn/deploy/dojo/parser.js
-/opt/dojo-svn/deploy/dijit/_base/focus.js
 /opt/dojo-svn/deploy/dijit/_base/manager.js
+/opt/dojo-svn/deploy/dijit/_base/focus.js
 /opt/dojo-svn/deploy/dojo/AdapterRegistry.js
 /opt/dojo-svn/deploy/dijit/_base/place.js
 /opt/dojo-svn/deploy/dijit/_base/window.js
@@ -49,8 +49,9 @@ dojo.js:
 /opt/dojo-svn/deploy/dojo/cldr/supplemental.js
 /opt/dojo-svn/deploy/dojo/date.js
 /opt/dojo-svn/deploy/dojo/date/locale.js
+/opt/dojo-svn/deploy/dojo/cache.js
 /opt/dojo-svn/deploy/dijit/_Templated.js
-/opt/dojo-svn/deploy/dijit/_Calendar.js
+/opt/dojo-svn/deploy/dijit/Calendar.js
 /opt/dojo-svn/deploy/dijit/form/_FormWidget.js
 /opt/dojo-svn/deploy/dijit/form/TextBox.js
 /opt/dojo-svn/deploy/dijit/Tooltip.js

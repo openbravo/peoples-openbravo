@@ -18,24 +18,23 @@ dojo.declare("dijit.layout._LayoutWidget",
 	{
 		// summary:
 		//		Base class for a _Container widget which is responsible for laying out its children.
-		//		Widgets which mixin this code must define layout() to lay out the children.
+		//		Widgets which mixin this code must define layout() to manage placement and sizing of the children.
 
 		// baseClass: [protected extension] String
 		//		This class name is applied to the widget's domNode
 		//		and also may be used to generate names for sub nodes,
-		//		like for example dijitTabContainer-content.
+		//		for example dijitTabContainer-content.
 		baseClass: "dijitLayoutContainer",
 
-		// isLayoutContainer: [private deprecated] Boolean
-		//		TODO: this is unused, but maybe it *should* be used for a child to
-		//		detect whether the parent is going to call resize() on it or not
-		//		(see calls to getParent() and resize() in this file)
+		// isLayoutContainer: [protected] Boolean
+		//		Indicates that this widget is going to call resize() on its
+		//		children widgets, setting their size, when they become visible.
 		isLayoutContainer: true,
 
 		postCreate: function(){
 			dojo.addClass(this.domNode, "dijitContainer");
 			dojo.addClass(this.domNode, this.baseClass);
-			
+
 			this.inherited(arguments);
 		},
 
@@ -53,18 +52,18 @@ dojo.declare("dijit.layout._LayoutWidget",
 
 			if(this._started){ return; }
 
-			// TODO: seems like this code should be in _Container.startup().
-			// Then things that don't extend LayoutContainer (like GridContainer)
-			// would get the behavior for free.
-			dojo.forEach(this.getChildren(), function(child){ child.startup(); });
+			// Need to call inherited first - so that child widgets get started
+			// up correctly
+			this.inherited(arguments);
 
-			// If I am a top level widget
-			if(!this.getParent || !this.getParent()){
+			// If I am a not being controlled by a parent layout widget...
+			var parent = this.getParent && this.getParent()
+			if(!(parent && parent.isLayoutContainer)){
 				// Do recursive sizing and layout of all my descendants
 				// (passing in no argument to resize means that it has to glean the size itself)
 				this.resize();
 
-				// Since my parent isn't a layout container, and my style *may be* width=height=100% 
+				// Since my parent isn't a layout container, and my style *may be* width=height=100%
 				// or something similar (either set directly or via a CSS class),
 				// monitor when my size changes so that I can re-layout.
 				// For browsers where I can't directly monitor when my size changes,
@@ -74,8 +73,6 @@ dojo.declare("dijit.layout._LayoutWidget",
 					this.resize();
 				});
 			}
-			
-			this.inherited(arguments);
 		},
 
 		resize: function(changeSize, resultSize){
@@ -84,7 +81,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 			// description:
 			//		Change size mode:
 			//			When changeSize is specified, changes the marginBox of this widget
-			//			 and forces it to relayout its contents accordingly.
+			//			and forces it to relayout its contents accordingly.
 			//			changeSize may specify height, width, or both.
 			//
 			//			If resultSize is specified it indicates the size the widget will
@@ -93,7 +90,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 			//		Notification mode:
 			//			When changeSize is null, indicates that the caller has already changed
 			//			the size of the widget, or perhaps it changed because the browser
-			//			window was resized.  Tells widget to relayout it's contents accordingly.
+			//			window was resized.  Tells widget to relayout its contents accordingly.
 			//
 			//			If resultSize is also specified it indicates the size the widget has
 			//			become.
@@ -101,7 +98,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 			//		In either mode, this method also:
 			//			1. Sets this._borderBox and this._contentBox to the new size of
 			//				the widget.  Queries the current domNode size if necessary.
-			//			2. Calls layout() to resize contents (and maybe adjust child widgets).	
+			//			2. Calls layout() to resize contents (and maybe adjust child widgets).
 			//
 			// changeSize: Object?
 			//		Sets the widget to this margin-box size and position.
@@ -109,7 +106,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 			//	|	{w: int, h: int, l: int, t: int}
 			//
 			// resultSize: Object?
-			//		The margin-box size of this widget after applying changeSize (if 
+			//		The margin-box size of this widget after applying changeSize (if
 			//		changeSize is specified).  If caller knows this size and
 			//		passes it in, we don't need to query the browser to get the size.
 			//	|	{w: int, h: int}
@@ -130,7 +127,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 			// inaccurate results, so try not to depend on it.
 			var mb = resultSize || {};
 			dojo.mixin(mb, changeSize || {});	// changeSize overrides resultSize
-			if ( !("h" in mb) || !("w" in mb) ){
+			if( !("h" in mb) || !("w" in mb) ){
 				mb = dojo.mixin(dojo.marginBox(node), mb);	// just use dojo.marginBox() to fill in missing values
 			}
 
@@ -151,7 +148,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 				h: bb.h - pe.h
 			};
 
-			// Callback for widget to adjust size of it's children
+			// Callback for widget to adjust size of its children
 			this.layout();
 		},
 
@@ -166,7 +163,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 			//		protected extension
 		},
 
-		_setupChild: function(/*Widget*/child){
+		_setupChild: function(/*dijit._Widget*/child){
 			// summary:
 			//		Common setup for initial children and children which are added after startup
 			// tags:
@@ -178,7 +175,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 			}
 		},
 
-		addChild: function(/*Widget*/ child, /*Integer?*/ insertIndex){
+		addChild: function(/*dijit._Widget*/ child, /*Integer?*/ insertIndex){
 			// Overrides _Container.addChild() to call _setupChild()
 			this.inherited(arguments);
 			if(this._started){
@@ -186,7 +183,7 @@ dojo.declare("dijit.layout._LayoutWidget",
 			}
 		},
 
-		removeChild: function(/*Widget*/ child){
+		removeChild: function(/*dijit._Widget*/ child){
 			// Overrides _Container.removeChild() to remove class added by _setupChild()
 			dojo.removeClass(child.domNode, this.baseClass+"-child");
 			if(child.baseClass){
@@ -263,11 +260,11 @@ dijit.layout.marginBox2contentBox = function(/*DomNode*/ node, /*Object*/ mb){
 			dojo.addClass(elm, "dijitAlign" + capitalize(pos));
 
 			// set size && adjust record of remaining space.
-			// note that setting the width of a <div> may affect it's height.
+			// note that setting the width of a <div> may affect its height.
 			if(pos == "top" || pos == "bottom"){
 				size(child, { w: dim.w });
 				dim.h -= child.h;
-				if(pos=="top"){
+				if(pos == "top"){
 					dim.t += child.h;
 				}else{
 					elmStyle.top = dim.t + dim.h + "px";

@@ -29,7 +29,7 @@ dojo.declare(
 			//		Don't change this parameter from the default value.
 			//		This ContentPane parameter doesn't make sense for TooltipDialog, since TooltipDialog
 			//		is never a child of a layout container, nor can you specify the size of
-			//		TooltipDialog in order to control the size of an inner widget. 
+			//		TooltipDialog in order to control the size of an inner widget.
 			doLayout: false,
 
 			// autofocus: Boolean
@@ -52,8 +52,7 @@ dojo.declare(
 			//		Set by `dijit._DialogMixin._getFocusItems`.
 			_lastFocusItem: null,
 
-			templateString: null,
-			templateString:"<div waiRole=\"presentation\">\n\t<div class=\"dijitTooltipContainer\" waiRole=\"presentation\">\n\t\t<div class =\"dijitTooltipContents dijitTooltipFocusNode\" dojoAttachPoint=\"containerNode\" tabindex=\"-1\" waiRole=\"dialog\"></div>\n\t</div>\n\t<div class=\"dijitTooltipConnector\" waiRole=\"presentation\"></div>\n</div>\n",
+			templateString: dojo.cache("dijit", "templates/TooltipDialog.html", "<div waiRole=\"presentation\">\n\t<div class=\"dijitTooltipContainer\" waiRole=\"presentation\">\n\t\t<div class =\"dijitTooltipContents dijitTooltipFocusNode\" dojoAttachPoint=\"containerNode\" tabindex=\"-1\" waiRole=\"dialog\"></div>\n\t</div>\n\t<div class=\"dijitTooltipConnector\" waiRole=\"presentation\"></div>\n</div>\n"),
 
 			postCreate: function(){
 				this.inherited(arguments);
@@ -72,7 +71,7 @@ dojo.declare(
 				if(c){
 					dojo.removeClass(this.domNode, c);
 				}
-				c = "dijitTooltipAB"+(corner.charAt(1)=='L'?"Left":"Right")+" dijitTooltip"+(corner.charAt(0)=='T' ? "Below" : "Above");
+				c = "dijitTooltipAB"+(corner.charAt(1) == 'L'?"Left":"Right")+" dijitTooltip"+(corner.charAt(0) == 'T' ? "Below" : "Above");
 				dojo.addClass(this.domNode, c);
 				this._currentOrientClass = c;
 			},
@@ -83,10 +82,10 @@ dojo.declare(
 				//		This is called from the dijit.popup code, and should not be called directly.
 				// tags:
 				//		protected
-			
+
 				this.orient(this.domNode,pos.aroundCorner, pos.corner);
 				this._onShow(); // lazy load trigger
-				
+
 				if(this.autofocus){
 					this._getFocusItems(this.containerNode);
 					dijit.focus(this._firstFocusItem);
@@ -112,12 +111,13 @@ dojo.declare(
 
 				var node = evt.target;
 				var dk = dojo.keys;
-				if (evt.charOrCode === dk.TAB){
+				if(evt.charOrCode === dk.TAB){
 					this._getFocusItems(this.containerNode);
 				}
 				var singleFocusItem = (this._firstFocusItem == this._lastFocusItem);
 				if(evt.charOrCode == dk.ESCAPE){
-					this.onCancel();
+					// Use setTimeout to avoid crash on IE, see #10396.
+					setTimeout(dojo.hitch(this, "onCancel"), 0);
 					dojo.stopEvent(evt);
 				}else if(node == this._firstFocusItem && evt.shiftKey && evt.charOrCode === dk.TAB){
 					if(!singleFocusItem){
@@ -135,7 +135,7 @@ dojo.declare(
 					evt.stopPropagation();
 				}
 			}
-		}	
+		}
 	);
 
 }

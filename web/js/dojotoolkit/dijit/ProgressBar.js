@@ -50,7 +50,12 @@ dojo.declare("dijit.ProgressBar", [dijit._Widget, dijit._Templated], {
 	// 		If true: show that a process is underway but that the amount completed is unknown.
 	indeterminate: false,
 
-	templateString:"<div class=\"dijitProgressBar dijitProgressBarEmpty\"\n\t><div waiRole=\"progressbar\" tabindex=\"0\" dojoAttachPoint=\"internalProgress\" class=\"dijitProgressBarFull\"\n\t\t><div class=\"dijitProgressBarTile\"></div\n\t\t><span style=\"visibility:hidden\">&nbsp;</span\n\t></div\n\t><div dojoAttachPoint=\"label\" class=\"dijitProgressBarLabel\" id=\"${id}_label\">&nbsp;</div\n\t><img dojoAttachPoint=\"indeterminateHighContrastImage\" class=\"dijitProgressBarIndeterminateHighContrastImage\" alt=\"\"\n\t></img\n></div>\n",
+	// name: String
+	//		this is the field name (for a form) if set. This needs to be set if you want to use
+	//		this widget in a dijit.form.Form widget (such as dijit.Dialog)
+	name: '',
+
+	templateString: dojo.cache("dijit", "templates/ProgressBar.html", "<div class=\"dijitProgressBar dijitProgressBarEmpty\"\n\t><div waiRole=\"progressbar\" tabindex=\"0\" dojoAttachPoint=\"internalProgress\" class=\"dijitProgressBarFull\"\n\t\t><div class=\"dijitProgressBarTile\"></div\n\t\t><span style=\"visibility:hidden\">&nbsp;</span\n\t></div\n\t><div dojoAttachPoint=\"label\" class=\"dijitProgressBarLabel\" id=\"${id}_label\">&nbsp;</div\n\t><img dojoAttachPoint=\"indeterminateHighContrastImage\" class=\"dijitProgressBarIndeterminateHighContrastImage\" alt=\"\"\n\t></img\n></div>\n"),
 
 	// _indeterminateHighContrastImagePath: [private] dojo._URL
 	//		URL to image to use for indeterminate progress bar when display is in high contrast mode
@@ -61,7 +66,7 @@ dojo.declare("dijit.ProgressBar", [dijit._Widget, dijit._Templated], {
 	postCreate: function(){
 		this.inherited(arguments);
 		this.indeterminateHighContrastImage.setAttribute("src",
-			this._indeterminateHighContrastImagePath);
+			this._indeterminateHighContrastImagePath.toString());
 		this.update();
 	},
 
@@ -106,6 +111,18 @@ dojo.declare("dijit.ProgressBar", [dijit._Widget, dijit._Templated], {
 		dojo[classFunc](this.domNode, "dijitProgressBarIndeterminate");
 		tip.style.width = (percent * 100) + "%";
 		this.onChange();
+	},
+
+	_setValueAttr: function(v){
+		if(v == Infinity){
+			this.update({indeterminate:true});
+		}else{
+			this.update({indeterminate:false, progress:v});
+		}
+	},
+
+	_getValueAttr: function(){
+		return this.progress;
 	},
 
 	report: function(/*float*/percent){

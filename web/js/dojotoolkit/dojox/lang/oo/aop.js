@@ -10,11 +10,11 @@ dojo._hasResource["dojox.lang.oo.aop"] = true;
 dojo.provide("dojox.lang.oo.aop");
 
 dojo.require("dojox.lang.oo.Decorator");
-dojo.require("dojox.lang.oo.chain");
 dojo.require("dojox.lang.oo.general");
 
 (function(){
-	var oo = dojox.lang.oo, md = oo.makeDecorator, ooa = oo.aop;
+	var oo = dojox.lang.oo, md = oo.makeDecorator, oog = oo.general, ooa = oo.aop,
+		isF = dojo.isFunction;
 
 	// five decorators implementing light-weight AOP weaving
 
@@ -36,13 +36,13 @@ dojo.require("dojox.lang.oo.general");
 	=====*/
 
 	// reuse existing decorators
-	ooa.before = oo.chain.before;
-	ooa.around = oo.general.wrap;
+	ooa.before = oog.before;
+	ooa.around = oog.wrap;
 
 	ooa.afterReturning = md(function(name, newValue, oldValue){
 		// summary: creates an "afterReturning" advise,
 		// the returned value is passed as the only argument
-		return dojo.isFunction(oldValue) ?
+		return isF(oldValue) ?
 			function(){
 				var ret = oldValue.apply(this, arguments);
 				newValue.call(this, ret);
@@ -53,7 +53,7 @@ dojo.require("dojox.lang.oo.general");
 	ooa.afterThrowing = md(function(name, newValue, oldValue){
 		// summary: creates an "afterThrowing" advise,
 		// the exception is passed as the only argument
-		return dojo.isFunction(oldValue) ?
+		return isF(oldValue) ?
 			function(){
 				var ret;
 				try{
@@ -69,7 +69,7 @@ dojo.require("dojox.lang.oo.general");
 	ooa.after = md(function(name, newValue, oldValue){
 		// summary: creates an "after" advise,
 		// it takes no arguments
-		return dojo.isFunction(oldValue) ?
+		return isF(oldValue) ?
 			function(){
 				var ret;
 				try{

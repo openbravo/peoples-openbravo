@@ -56,10 +56,10 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 		this._saveInProgress = false;
 	},
 
-	referenceIntegrity: true,  //Flag that defaultly enabled reference integrity tracking.  This way it can also be disabled pogrammatially or declaratively.
+	referenceIntegrity: true, //Flag that defaultly enabled reference integrity tracking.  This way it can also be disabled pogrammatially or declaratively.
 
 	_assert: function(/* boolean */ condition){
-		if(!condition) {
+		if(!condition){
 			throw new Error("assertion failed in ItemFileWriteStore");
 		}
 	},
@@ -78,7 +78,7 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 
 		this._assert(!this._saveInProgress);
 
-		if (!this._loadFinished){
+		if(!this._loadFinished){
 			// We need to do this here so that we'll be able to find out what
 			// identifierAttribute was specified in the data file.
 			this._forceLoad();
@@ -93,10 +93,10 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 			newIdentity = this._arrayOfAllItems.length;
 		}else{
 			newIdentity = keywordArgs[identifierAttribute];
-			if (typeof newIdentity === "undefined"){
+			if(typeof newIdentity === "undefined"){
 				throw new Error("newItem() was not passed an identity for the new item");
 			}
-			if (dojo.isArray(newIdentity)){
+			if(dojo.isArray(newIdentity)){
 				throw new Error("newItem() was not passed an single-valued identity");
 			}
 		}
@@ -195,7 +195,7 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 	
 	_removeArrayElement: function(/* Array */ array, /* anything */ element){
 		var index = dojo.indexOf(array, element);
-		if (index != -1){
+		if(index != -1){
 			array.splice(index, 1);
 			return true;
 		}
@@ -261,7 +261,7 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 						for(var attribute in references[itemId]){
 							var oldValues = this.getValues(containingItem, attribute) || [];
 							var newValues = dojo.filter(oldValues, function(possibleItem){
-							   return !(this.isItem(possibleItem) && this.getIdentity(possibleItem) == identity);
+								return !(this.isItem(possibleItem) && this.getIdentity(possibleItem) == identity);
 							}, this);
 							//Remove the note of the reference to the item and set the values on the modified attribute.
 							this._removeReferenceFromMap(item, containingItem, attribute); 
@@ -358,7 +358,7 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 
 			if(this.referenceIntegrity && oldValueOrValues){
 				var oldValues = oldValueOrValues;
-				if (!dojo.isArray(oldValues)){
+				if(!dojo.isArray(oldValues)){
 					oldValues = [oldValues];
 				}
 				for(var i = 0; i < oldValues.length; i++){
@@ -515,7 +515,7 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 			}
 		}
 	},
-						   
+	
 	_getValueOrValues: function(/* item */ item, /* attribute-name-string */ attribute){
 		var valueOrValues = undefined;
 		if(this.hasAttribute(item, attribute)){
@@ -545,7 +545,7 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 			if(typeof value === "object"){
 				for(var type in this._datatypeMap){
 					var typeMap = this._datatypeMap[type];
-					if (dojo.isObject(typeMap) && !dojo.isFunction(typeMap)){
+					if(dojo.isObject(typeMap) && !dojo.isFunction(typeMap)){
 						if(value instanceof typeMap.type){
 							if(!typeMap.serialize){
 								throw new Error("ItemFileWriteStore:  No serializer defined for type mapping: [" + type + "]");
@@ -702,12 +702,12 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 				delete deletedItem["backup_" + this._reverseRefMap];
 			}
 			this._arrayOfAllItems[index] = deletedItem;
-			if (this._itemsByIdentity) {
+			if(this._itemsByIdentity){
 				this._itemsByIdentity[identity] = deletedItem;
 			}
 			if(deletedItem[this._rootItemPropName]){
 				this._arrayOfTopLevelItems.push(deletedItem);
-			}	  
+			}
 		}
 		//We have to pass through it again and restore the reference maps after all the
 		//undeletes have occurred.
@@ -761,8 +761,8 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 			// return true if the store is dirty -- which means return true
 			// if there are any new items, dirty items, or modified items
 			if(!this._isEmpty(this._pending._newItems) || 
-			   !this._isEmpty(this._pending._modifiedItems) ||
-			   !this._isEmpty(this._pending._deletedItems)){
+				!this._isEmpty(this._pending._modifiedItems) ||
+				!this._isEmpty(this._pending._deletedItems)){
 				return true;
 			}
 			return false; // boolean
@@ -795,7 +795,7 @@ dojo.declare("dojox.data.AndOrWriteStore", dojox.data.AndOrReadStore, {
 		// client code can connect observers to it. 
 	},
 
-	close: function(/* object? */ request) {
+	close: function(/* object? */ request){
 		// summary:
 		//		Over-ride of base close function of ItemFileReadStore to add in check for store state.
 		// description:

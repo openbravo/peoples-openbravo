@@ -41,7 +41,7 @@ dojo.declare(
 		// buttonWidget: [const] String
 		//		The name of the widget used to display the title of each pane
 		buttonWidget: "dijit.layout._AccordionButton",
-		
+
 		// _verticalSpace: Number
 		//		Pixels of space available for the open pane
 		//		(my content box size minus the cumulative size of all the title bars)
@@ -51,13 +51,13 @@ dojo.declare(
 
 		postCreate: function(){
 			this.domNode.style.overflow = "hidden";
-			this.inherited(arguments); 
+			this.inherited(arguments);
 			dijit.setWaiRole(this.domNode, "tablist");
 		},
 
 		startup: function(){
 			if(this._started){ return; }
-			this.inherited(arguments);	
+			this.inherited(arguments);
 			if(this.selectedChildWidget){
 				var style = this.selectedChildWidget.containerNode.style;
 				style.display = "";
@@ -65,7 +65,7 @@ dojo.declare(
 				this.selectedChildWidget._buttonWidget._setSelectedState(true);
 			}
 		},
-		
+
 		_getTargetHeight: function(/* Node */ node){
 			// summary:
 			//		For the given node, returns the height that should be
@@ -113,7 +113,8 @@ dojo.declare(
 			var cls = dojo.getObject(this.buttonWidget);
 			var button = (child._buttonWidget = new cls({
 				contentWidget: child,
-				title: child.title,
+				label: child.title,
+				title: child.tooltip,
 				iconClass: child.iconClass,
 				id: child.id + "_button",
 				parent: this
@@ -158,7 +159,7 @@ dojo.declare(
 			});
 			this.inherited(arguments);
 		},
-		
+
 		_transition: function(/*Widget?*/newWidget, /*Widget?*/oldWidget){
 			// Overrides StackContainer._transition() to provide sliding of title bars etc.
 
@@ -174,11 +175,11 @@ dojo.declare(
 
 				// Size the new widget, in case this is the first time it's being shown,
 				// or I have been resized since the last time it was shown.
-				// Note that page must be visible for resizing to work. 
+				// Note that page must be visible for resizing to work.
 				if(this.doLayout && newWidget.resize){
 					newWidget.resize(this._containerContentBox);
 				}
-				
+
 				var newContents = newWidget.domNode;
 				dojo.addClass(newContents, "dijitVisible");
 				dojo.removeClass(newContents, "dijitHidden");
@@ -222,7 +223,7 @@ dojo.declare(
 		},
 
 		// note: we are treating the container as controller here
-		_onKeyPress: function(/*Event*/ e, /*Widget*/ fromTitle){
+		_onKeyPress: function(/*Event*/ e, /*dijit._Widget*/ fromTitle){
 			// summary:
 			//		Handle keypress events
 			// description:
@@ -259,9 +260,10 @@ dojo.declare("dijit.layout._AccordionButton",
 	// tags:
 	//		private
 
-	templateString:"<div dojoAttachPoint='titleNode,focusNode' dojoAttachEvent='ondijitclick:_onTitleClick,onkeypress:_onTitleKeyPress,onfocus:_handleFocus,onblur:_handleFocus,onmouseenter:_onTitleEnter,onmouseleave:_onTitleLeave'\n\t\tclass='dijitAccordionTitle' wairole=\"tab\" waiState=\"expanded-false\"\n\t\t><span class='dijitInline dijitAccordionArrow' waiRole=\"presentation\"></span\n\t\t><span class='arrowTextUp' waiRole=\"presentation\">+</span\n\t\t><span class='arrowTextDown' waiRole=\"presentation\">-</span\n\t\t><img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='iconNode' style=\"vertical-align: middle\" waiRole=\"presentation\"/>\n\t\t<span waiRole=\"presentation\" dojoAttachPoint='titleTextNode' class='dijitAccordionText'></span>\n</div>\n",
+	templateString: dojo.cache("dijit.layout", "templates/AccordionButton.html", "<div dojoAttachPoint='titleNode,focusNode' dojoAttachEvent='ondijitclick:_onTitleClick,onkeypress:_onTitleKeyPress,onfocus:_handleFocus,onblur:_handleFocus,onmouseenter:_onTitleEnter,onmouseleave:_onTitleLeave'\n\t\tclass='dijitAccordionTitle' wairole=\"tab\" waiState=\"expanded-false\"\n\t\t><span class='dijitInline dijitAccordionArrow' waiRole=\"presentation\"></span\n\t\t><span class='arrowTextUp' waiRole=\"presentation\">+</span\n\t\t><span class='arrowTextDown' waiRole=\"presentation\">-</span\n\t\t><img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='iconNode' style=\"vertical-align: middle\" waiRole=\"presentation\"/>\n\t\t<span waiRole=\"presentation\" dojoAttachPoint='titleTextNode' class='dijitAccordionText'></span>\n</div>\n"),
 	attributeMap: dojo.mixin(dojo.clone(dijit.layout.ContentPane.prototype.attributeMap), {
-		title: {node: "titleTextNode", type: "innerHTML" },
+		label: {node: "titleTextNode", type: "innerHTML" },
+		title: {node: "titleTextNode", type: "attribute", attribute: "title"},
 		iconClass: { node: "iconNode", type: "class" }
 	}),
 
@@ -324,10 +326,10 @@ dojo.declare("dijit.layout._AccordionButton",
 		this.focusNode.setAttribute("tabIndex", isSelected ? "0" : "-1");
 	},
 
-	_handleFocus: function(/*Event*/e){
+	_handleFocus: function(/*Event*/ e){
 		// summary:
 		//		Handle the blur and focus state of this widget.
-		dojo[(e.type=="focus" ? "addClass" : "removeClass")](this.focusNode,"dijitAccordionFocused");		
+		dojo.toggleClass(this.titleTextNode, "dijitAccordionFocused", e.type == "focus");
 	},
 
 	setSelected: function(/*Boolean*/ isSelected){

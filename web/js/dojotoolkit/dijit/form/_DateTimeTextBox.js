@@ -17,8 +17,14 @@ dojo.require("dijit.form.ValidationTextBox");
 /*=====
 dojo.declare(
 	"dijit.form._DateTimeTextBox.__Constraints",
-	[dijit.form.RangeBoundTextBox.__Constraints, dojo.date.locale.__FormatOptions]
-);
+	[dijit.form.RangeBoundTextBox.__Constraints, dojo.date.locale.__FormatOptions], {
+	// summary:
+	//		Specifies both the rules on valid/invalid values (first/last date/time allowed),
+	//		and also formatting options for how the date/time is displayed.
+	// example:
+	//		To restrict to dates within 2004, displayed in a long format like "December 25, 2005":
+	//	|		{min:'2004-01-01',max:'2004-12-31', formatLength:'long'}
+});
 =====*/
 
 dojo.declare(
@@ -28,9 +34,12 @@ dojo.declare(
 		// summary:
 		//		Base class for validating, serializable, range-bound date or time text box.
 
-		/*=====
 		// constraints: dijit.form._DateTimeTextBox.__Constraints
-		//		Starting / ending dates or times allowed
+		//		Despite the name, this parameter specifies both constraints on the input
+		//		(including starting/ending dates/times allowed) as well as
+		//		formatting options like whether the date is displayed in long (ex: December 25, 2005)
+		//		or short (ex: 12/25/2005) format.   See `dijit.form._DateTimeTextBox.__Constraints` for details.
+		/*=====
 		constraints: {},
 		======*/
 
@@ -72,7 +81,7 @@ dojo.declare(
 			return dojo.date.stamp.toISOString(val, options);
 		},
 
-		//	value: Date
+		// value: Date
 		//		The value of this widget as a JavaScript Date object.  Use attr("value") / attr("value", val) to manipulate.
 		//		When passed to the parser in markup, must be specified according to `dojo.date.stamp.fromISOString`
 		value: new Date(""),	// value.toString()="NaN"
@@ -91,7 +100,7 @@ dojo.declare(
 		_selector: "",
 
 		constructor: function(/*Object*/args){
-			var dateClass = args.datePackage ? args.datePackage + ".Date" :  "Date";
+			var dateClass = args.datePackage ? args.datePackage + ".Date" : "Date";
 			this.dateClassObj = dojo.getObject(dateClass, false);
 			this.value = new this.dateClassObj("");
 
@@ -113,11 +122,12 @@ dojo.declare(
 			if(typeof constraints.min == "string"){ constraints.min = fromISO(constraints.min); }
  			if(typeof constraints.max == "string"){ constraints.max = fromISO(constraints.max); }
 		},
-		
+
 		_onFocus: function(/*Event*/ evt){
 			// summary:
 			//		open the popup
 			this._open();
+			this.inherited(arguments);
 		},
 
 		_setValueAttr: function(/*Date*/ value, /*Boolean?*/ priorityChange, /*String?*/ formattedValue){
@@ -168,7 +178,7 @@ dojo.declare(
 						// 	disables dates outside of the min/max of the _DateTimeTextBox
 						var compare = dojo.date.compare;
 						var constraints = textBox.constraints;
-						return constraints && (constraints.min && (compare(constraints.min, date, textBox._selector) > 0) || 
+						return constraints && (constraints.min && (compare(constraints.min, date, textBox._selector) > 0) ||
 							(constraints.max && compare(constraints.max, date, textBox._selector) < 0));
 					}
 				});
@@ -184,7 +194,7 @@ dojo.declare(
 				});
 				this._opened=true;
 			}
-			
+
 			dojo.marginBox(this._picker.domNode,{ w:this.domNode.offsetWidth });
 		},
 
@@ -192,7 +202,7 @@ dojo.declare(
 			if(this._opened){
 				dijit.popup.close(this._picker);
 				this._opened=false;
-			}			
+			}
 		},
 
 		_onBlur: function(){
@@ -249,7 +259,7 @@ dojo.declare(
 			}else if(e.charOrCode === dk.TAB){
 				this._tabbingAway = true;
 			}else if(this._opened && (e.keyChar || e.charOrCode === dk.BACKSPACE || e.charOrCode == dk.DELETE)){
-				// Replace the element - but do it after a delay to allow for 
+				// Replace the element - but do it after a delay to allow for
 				// filtering to occur
 				setTimeout(dojo.hitch(this, function(){
 					dijit.placeOnScreenAroundElement(p.domNode.parentNode, this.domNode, {'BL':'TL', 'TL':'BL'}, p.orient ? dojo.hitch(p, "orient") : null);

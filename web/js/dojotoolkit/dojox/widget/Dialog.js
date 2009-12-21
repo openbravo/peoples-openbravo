@@ -11,12 +11,15 @@ dojo.provide('dojox.widget.Dialog');
 dojo.experimental('dojox.widget.Dialog');
 
 dojo.require('dijit.Dialog');
+dojo.require("dojox.layout.ContentPane");
+
 dojo.require('dojox.fx');
 
 dojo.declare('dojox.widget.Dialog', 
-	dijit.Dialog, 
+	[dojox.layout.ContentPane, dijit._DialogBase], 
 	{
-	// summary: A Lightbox-like Modal-dialog for HTML Content
+	// summary:
+	//		A Lightbox-like Modal-dialog for HTML Content
 	//
 	// description:
 	//		An HTML-capable Dialog widget with advanced sizing 
@@ -27,7 +30,7 @@ dojo.declare('dojox.widget.Dialog',
 	//		It works identically to a `dijit.Dialog` with several 
 	//		additional parameters.
 	
-	templateString:"<div class=\"dojoxDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dojoxDialogTitleBar\">\n\t\t<span dojoAttachPoint=\"titleNode\" class=\"dojoxDialogTitle\" id=\"${id}_title\">${title}</span>\n\t</div>\n\t<div dojoAttachPoint=\"dojoxDialogWrapper\">\n\t\t<div dojoAttachPoint=\"containerNode\" class=\"dojoxDialogPaneContent\"></div>\n\t</div>\n\t<div dojoAttachPoint=\"closeButtonNode\" class=\"dojoxDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\">\n\t\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\">x</span>\n\t</div>\n</div>\n",
+	templateString: dojo.cache("dojox.widget", "Dialog/Dialog.html", "<div class=\"dojoxDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dojoxDialogTitleBar\">\n\t\t<span dojoAttachPoint=\"titleNode\" class=\"dojoxDialogTitle\" id=\"${id}_title\">${title}</span>\n\t</div>\n\t<div dojoAttachPoint=\"dojoxDialogWrapper\">\n\t\t<div dojoAttachPoint=\"containerNode\" class=\"dojoxDialogPaneContent\"></div>\n\t</div>\n\t<div dojoAttachPoint=\"closeButtonNode\" class=\"dojoxDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\">\n\t\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\">x</span>\n\t</div>\n</div>\n"),
 	
 	// sizeToViewport: Boolean
 	//		If true, fix the size of the dialog to the Viewport based on 
@@ -113,6 +116,7 @@ dojo.declare('dojox.widget.Dialog',
 	},
 	
 	show: function(){
+		if(this.open){ return; }
 		
 		this._setSize();
 		dojo.style(this.closeButtonNode,"opacity", 0);
@@ -237,9 +241,13 @@ dojo.declare('dojox.widget.Dialog',
 		// summary: Show the inner container after sizing animation
 
 		var container = this.containerNode;
-		dojo.style(this.domNode,"overflow","visible");
+		dojo.style(this.domNode, {
+			overflow: "visible",
+			opacity: 1
+		});
+		dojo.style(this.closeButtonNode,"opacity",1);
 		dojo.style(container, {
-			height: this._displaysize.h + "px",
+			height: this._displaysize.h - this.titleNode.offsetHeight + "px",
 			width: this._displaysize.w + "px",
 			overflow:"auto"
 		});

@@ -39,7 +39,7 @@ dojo.declare(
 		//	  Adjust the value by this much when spinning using the PgUp/Dn keys
 		largeDelta: 10,
 
-		templateString:"<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\"\n\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\" waiRole=\"presentation\"\n\t><div class=\"dijitInputLayoutContainer\"\n\t\t><div class=\"dijitReset dijitSpinnerButtonContainer\"\n\t\t\t>&nbsp;<div class=\"dijitReset dijitLeft dijitButtonNode dijitArrowButton dijitUpArrowButton\"\n\t\t\t\tdojoAttachPoint=\"upArrowNode\"\n\t\t\t\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse\"\n\t\t\t\tstateModifier=\"UpArrow\"\n\t\t\t\t><div class=\"dijitArrowButtonInner\">&thinsp;</div\n\t\t\t\t><div class=\"dijitArrowButtonChar\">&#9650;</div\n\t\t\t></div\n\t\t\t><div class=\"dijitReset dijitLeft dijitButtonNode dijitArrowButton dijitDownArrowButton\"\n\t\t\t\tdojoAttachPoint=\"downArrowNode\"\n\t\t\t\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse\"\n\t\t\t\tstateModifier=\"DownArrow\"\n\t\t\t\t><div class=\"dijitArrowButtonInner\">&thinsp;</div\n\t\t\t\t><div class=\"dijitArrowButtonChar\">&#9660;</div\n\t\t\t></div\n\t\t></div\n\t\t><div class=\"dijitReset dijitValidationIcon\"><br></div\n\t\t><div class=\"dijitReset dijitValidationIconText\">&Chi;</div\n\t\t><div class=\"dijitReset dijitInputField\"\n\t\t\t><input class='dijitReset' dojoAttachPoint=\"textbox,focusNode\" type=\"${type}\" dojoAttachEvent=\"onkeypress:_onKeyPress\"\n\t\t\t\twaiRole=\"spinbutton\" autocomplete=\"off\" ${nameAttrSetting}\n\t\t/></div\n\t></div\n></div>\n",
+		templateString: dojo.cache("dijit.form", "templates/Spinner.html", "<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\"\n\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\" waiRole=\"presentation\"\n\t><div class=\"dijitInputLayoutContainer\"\n\t\t><div class=\"dijitReset dijitSpinnerButtonContainer\"\n\t\t\t>&nbsp;<div class=\"dijitReset dijitLeft dijitButtonNode dijitArrowButton dijitUpArrowButton\"\n\t\t\t\tdojoAttachPoint=\"upArrowNode\"\n\t\t\t\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse\"\n\t\t\t\tstateModifier=\"UpArrow\"\n\t\t\t\t><div class=\"dijitArrowButtonInner\">&thinsp;</div\n\t\t\t\t><div class=\"dijitArrowButtonChar\">&#9650;</div\n\t\t\t></div\n\t\t\t><div class=\"dijitReset dijitLeft dijitButtonNode dijitArrowButton dijitDownArrowButton\"\n\t\t\t\tdojoAttachPoint=\"downArrowNode\"\n\t\t\t\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse\"\n\t\t\t\tstateModifier=\"DownArrow\"\n\t\t\t\t><div class=\"dijitArrowButtonInner\">&thinsp;</div\n\t\t\t\t><div class=\"dijitArrowButtonChar\">&#9660;</div\n\t\t\t></div\n\t\t></div\n\t\t><div class=\"dijitReset dijitValidationIcon\"><br></div\n\t\t><div class=\"dijitReset dijitValidationIconText\">&Chi;</div\n\t\t><div class=\"dijitReset dijitInputField\"\n\t\t\t><input class='dijitReset' dojoAttachPoint=\"textbox,focusNode\" type=\"${type}\" dojoAttachEvent=\"onkeypress:_onKeyPress\"\n\t\t\t\twaiRole=\"spinbutton\" autocomplete=\"off\" ${nameAttrSetting}\n\t\t/></div\n\t></div\n></div>\n"),
 		baseClass: "dijitSpinner",
 
 		adjust: function(/* Object */ val, /*Number*/ delta){
@@ -80,9 +80,9 @@ dojo.declare(
 			var inc=this.smallDelta;
 			if(node == this.textbox){
 				var k=dojo.keys;
-				var key = evt.charOrCode; 
+				var key = evt.charOrCode;
 				inc = (key == k.PAGE_UP || key == k.PAGE_DOWN) ? this.largeDelta : this.smallDelta;
-				node = (key == k.UP_ARROW ||key == k.PAGE_UP) ? this.upArrowNode : this.downArrowNode;
+				node = (key == k.UP_ARROW || key == k.PAGE_UP) ? this.upArrowNode : this.downArrowNode;
 			}
 			if(count == -1){ this._arrowReleased(node); }
 			else{ this._arrowPressed(node, (node == this.upArrowNode) ? 1 : -1, inc); }
@@ -93,14 +93,14 @@ dojo.declare(
 			// summary:
 			//		Mouse wheel listener where supported
 
-			dojo.stopEvent(evt);	
+			dojo.stopEvent(evt);
 			// FIXME: Safari bubbles
 
 			// be nice to DOH and scroll as much as the event says to
 			var scrollAmount = evt.detail ? (evt.detail * -1) : (evt.wheelDelta / 120);
 			if(scrollAmount !== 0){
 				var node = this[(scrollAmount > 0 ? "upArrowNode" : "downArrowNode" )];
-				
+
 				this._arrowPressed(node, scrollAmount, this.smallDelta);
 
 				if(!this._wheelTimer){
@@ -108,7 +108,7 @@ dojo.declare(
 				}
 				this._wheelTimer = setTimeout(dojo.hitch(this,"_arrowReleased",node), 50);
 			}
-			
+
 		},
 
 		postCreate: function(){
@@ -122,18 +122,21 @@ dojo.declare(
 			this._connects.push(dijit.typematic.addListener(this.downArrowNode, this.textbox, {charOrCode:dojo.keys.PAGE_DOWN,ctrlKey:false,altKey:false,shiftKey:false,metaKey:false}, this, "_typematicCallback", this.timeoutChangeRate, this.defaultTimeout));
 			if(dojo.isIE){
 				var _this = this;
+				(function resize(){
+					var sz = _this.upArrowNode.parentNode.offsetHeight;
+					if(sz){
+						_this.upArrowNode.style.height = sz >> 1;
+						_this.downArrowNode.style.height = sz - (sz >> 1);
+						_this.focusNode.parentNode.style.height = sz;
+					}
+				})();
 				this.connect(this.domNode, "onresize",
-					function(){ setTimeout(dojo.hitch(_this,
+					function(){ setTimeout(
 						function(){
-				        		var sz = this.upArrowNode.parentNode.offsetHeight;
-							if(sz){
-								this.upArrowNode.style.height = sz >> 1;
-								this.downArrowNode.style.height = sz - (sz >> 1);
-								this.focusNode.parentNode.style.height = sz;
-							}
+							resize();
 							// cause IE to rerender when spinner is moved from hidden to visible
-							this._setStateClass();
-						}), 0);
+							_this._setStateClass();
+						}, 0);
 					}
 				);
 				this._layoutHackIE7();

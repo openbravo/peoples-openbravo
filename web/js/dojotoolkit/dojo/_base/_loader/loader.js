@@ -30,14 +30,14 @@ dojo._hasResource["dojo.foo"] = true;
 
 		_moduleHasPrefix: function(/*String*/module){
 			// summary: checks to see if module has been established
-			var mp = this._modulePrefixes;
+			var mp = d._modulePrefixes;
 			return !!(mp[module] && mp[module].value); // Boolean
 		},
 
 		_getModulePrefix: function(/*String*/module){
 			// summary: gets the prefix associated with module
-			var mp = this._modulePrefixes;
-			if(this._moduleHasPrefix(module)){
+			var mp = d._modulePrefixes;
+			if(d._moduleHasPrefix(module)){
 				return mp[module].value; // String
 			}
 			return module; // String
@@ -77,9 +77,9 @@ dojo._hasResource["dojo.foo"] = true;
 		// cb: 
 		//		a callback function to pass the result of evaluating the script
 
-		var uri = ((relpath.charAt(0) == '/' || relpath.match(/^\w+:/)) ? "" : this.baseUrl) + relpath;
+		var uri = ((relpath.charAt(0) == '/' || relpath.match(/^\w+:/)) ? "" : d.baseUrl) + relpath;
 		try{
-			return !module ? this._loadUri(uri, cb) : this._loadUriAndCheck(uri, module, cb); // Boolean
+			return !module ? d._loadUri(uri, cb) : d._loadUriAndCheck(uri, module, cb); // Boolean
 		}catch(e){
 			console.error(e);
 			return false; // Boolean
@@ -143,11 +143,11 @@ dojo._hasResource["dojo.foo"] = true;
 		// summary: calls loadUri then findModule and returns true if both succeed
 		var ok = false;
 		try{
-			ok = this._loadUri(uri, cb);
+			ok = d._loadUri(uri, cb);
 		}catch(e){
 			console.error("failed loading " + uri + " with error: " + e);
 		}
-		return !!(ok && this._loadedModules[moduleName]); // Boolean
+		return !!(ok && d._loadedModules[moduleName]); // Boolean
 	}
 
 	dojo.loaded = function(){
@@ -157,20 +157,20 @@ dojo._hasResource["dojo.foo"] = true;
 		//		direct dojo.connect() to this method in order to handle
 		//		initialization tasks that require the environment to be
 		//		initialized. In a browser host,	declarative widgets will 
-		//		be constructed when this function	finishes runing.
-		this._loadNotifying = true;
-		this._postLoad = true;
+		//		be constructed when this function finishes runing.
+		d._loadNotifying = true;
+		d._postLoad = true;
 		var mll = d._loaders;
 
 		//Clear listeners so new ones can be added
 		//For other xdomain package loads after the initial load.
-		this._loaders = [];
+		d._loaders = [];
 
 		for(var x = 0; x < mll.length; x++){
 			mll[x]();
 		}
 
-		this._loadNotifying = false;
+		d._loadNotifying = false;
 		
 		//Make sure nothing else got added to the onload queue
 		//after this first run. If something did, and we are not waiting for any
@@ -201,18 +201,35 @@ dojo._hasResource["dojo.foo"] = true;
 		}
 	}
 
-	dojo.addOnLoad = function(/*Object?*/obj, /*String|Function*/functionName){
+	dojo.ready = dojo.addOnLoad = function(/*Object*/obj, /*String|Function?*/functionName){
 		// summary:
+		//		Registers a function to be triggered after the DOM and dojo.require() calls 
+		//		have finished loading.
+		//
+		// description:
 		//		Registers a function to be triggered after the DOM has finished
-		//		loading and widgets declared in markup have been instantiated.
+		//		loading and `dojo.require` modules have loaded. Widgets declared in markup 
+		//		have been instantiated if `djConfig.parseOnLoad` is true when this fires. 
+		//
 		//		Images and CSS files may or may not have finished downloading when
 		//		the specified function is called.  (Note that widgets' CSS and HTML
 		//		code is guaranteed to be downloaded before said widgets are
-		//		instantiated.)
+		//		instantiated, though including css resouces BEFORE any script elements
+		//		is highly recommended).
+		//
 		// example:
-		//	|	dojo.addOnLoad(functionPointer);
+		//	Register an anonymous function to run when everything is ready
+		//	|	dojo.addOnLoad(function(){ doStuff(); });
+		//
+		// example:
+		//	Register a function to run when everything is ready by pointer:
+		//	|	var init = function(){ doStuff(); }
+		//	|	dojo.addOnLoad(init);
+		//
+		// example:
+		//	Register a function to run scoped to `object`, either by name or anonymously:
 		//	|	dojo.addOnLoad(object, "functionName");
-		//	|	dojo.addOnLoad(object, function(){ /* ... */});
+		//	|	dojo.addOnLoad(object, function(){ doStuff(); });
 
 		d._onto(d._loaders, obj, functionName);
 
@@ -267,11 +284,11 @@ dojo._hasResource["dojo.foo"] = true;
 		var syms = modulename.split(".");
 		for(var i = syms.length; i>0; i--){
 			var parentModule = syms.slice(0, i).join(".");
-			if(i == 1 && !this._moduleHasPrefix(parentModule)){		
+			if(i == 1 && !d._moduleHasPrefix(parentModule)){		
 				// Support default module directory (sibling of dojo) for top-level modules 
 				syms[0] = "../" + syms[0];
 			}else{
-				var parentModulePath = this._getModulePrefix(parentModule);
+				var parentModulePath = d._getModulePrefix(parentModule);
 				if(parentModulePath != parentModule){
 					syms.splice(0, i, parentModulePath);
 					break;
@@ -384,19 +401,19 @@ dojo._hasResource["dojo.foo"] = true;
 		//		|	var B = dojo.require("A.B");
 		//	   	|	...
 		//	returns: the required namespace object
-		omitModuleCheck = this._global_omit_module_check || omitModuleCheck;
+		omitModuleCheck = d._global_omit_module_check || omitModuleCheck;
 
 		//Check if it is already loaded.
-		var module = this._loadedModules[moduleName];
+		var module = d._loadedModules[moduleName];
 		if(module){
 			return module;
 		}
 
 		// convert periods to slashes
-		var relpath = this._getModuleSymbols(moduleName).join("/") + '.js';
+		var relpath = d._getModuleSymbols(moduleName).join("/") + '.js';
 
 		var modArg = !omitModuleCheck ? moduleName : null;
-		var ok = this._loadPath(relpath, modArg);
+		var ok = d._loadPath(relpath, modArg);
 
 		if(!ok && !omitModuleCheck){
 			throw new Error("Could not load '" + moduleName + "'; last tried '" + relpath + "'");
@@ -404,9 +421,9 @@ dojo._hasResource["dojo.foo"] = true;
 
 		// check that the symbol was defined
 		// Don't bother if we're doing xdomain (asynchronous) loading.
-		if(!omitModuleCheck && !this._isXDomain){
+		if(!omitModuleCheck && !d._isXDomain){
 			// pass in false so we can give better error
-			module = this._loadedModules[moduleName];
+			module = d._loadedModules[moduleName];
 			if(!module){
 				throw new Error("symbol '" + moduleName + "' is not defined after loading '" + relpath + "'"); 
 			}
@@ -417,15 +434,18 @@ dojo._hasResource["dojo.foo"] = true;
 
 	dojo.provide = function(/*String*/ resourceName){
 		//	summary:
+		//		Register a resource with the package system. Works in conjunction with `dojo.require`
+		//
+		//	description:
+		//		Each javascript source file is called a resource.  When a
+		//		resource is loaded by the browser, `dojo.provide()` registers
+		//		that it has been loaded.
+		//
 		//		Each javascript source file must have at least one
 		//		`dojo.provide()` call at the top of the file, corresponding to
 		//		the file name.  For example, `js/dojo/foo.js` must have
 		//		`dojo.provide("dojo.foo");` before any calls to
 		//		`dojo.require()` are made.
-		//	description:
-		//		Each javascript source file is called a resource.  When a
-		//		resource is loaded by the browser, `dojo.provide()` registers
-		//		that it has been loaded.
 		//	
 		//		For backwards compatibility reasons, in addition to registering
 		//		the resource, `dojo.provide()` also ensures that the javascript
@@ -440,6 +460,13 @@ dojo._hasResource["dojo.foo"] = true;
 		//		are combined into one bigger file (similar to a .lib or .jar
 		//		file), that file may contain multiple dojo.provide() calls, to
 		//		note that it includes multiple resources.
+		//
+		// resourceName: String
+		//		A dot-sperated string identifying a resource. 
+		//
+		// example:
+		//	Safely create a `my` object, and make dojo.require("my.CustomModule") work
+		//	|	dojo.provide("my.CustomModule"); 
 
 		//Make sure we have a string.
 		resourceName = resourceName + "";
@@ -487,8 +514,12 @@ dojo._hasResource["dojo.foo"] = true;
 
 	dojo.requireIf = function(/*Boolean*/ condition, /*String*/ resourceName){
 		// summary:
-		//		If the condition is true then call dojo.require() for the specified
+		//		If the condition is true then call `dojo.require()` for the specified
 		//		resource
+		//
+		// example:
+		//	|	dojo.requireIf(dojo.isBrowser, "my.special.Module");
+		
 		if(condition === true){
 			// FIXME: why do we support chained require()'s here? does the build system?
 			var args = [];
@@ -503,7 +534,7 @@ dojo._hasResource["dojo.foo"] = true;
 
 	dojo.registerModulePath = function(/*String*/module, /*String*/prefix){
 		//	summary: 
-		//		maps a module name to a path
+		//		Maps a module name to a path
 		//	description: 
 		//		An unregistered module is given the default path of ../[module],
 		//		relative to Dojo root. For example, module acme is mapped to
@@ -562,7 +593,10 @@ dojo._hasResource["dojo.foo"] = true;
 		//		bundle is found
 		//
 		// bundleName: 
-		//		bundle name, i.e. the filename without the '.js' suffix
+		//		bundle name, i.e. the filename without the '.js' suffix. Using "nls" as a
+		//		a bundle name is not supported, since "nls" is the name of the folder
+		//		that holds bundles. Using "nls" as the bundle name will cause problems
+		//		with the custom build.
 		//
 		// locale: 
 		//		the locale to load (optional)  By default, the browser's user
@@ -609,7 +643,7 @@ dojo._hasResource["dojo.foo"] = true;
 	var ore = new RegExp("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?$"),
 		ire = new RegExp("^((([^\\[:]+):)?([^@]+)@)?(\\[([^\\]]+)\\]|([^\\[:]*))(:([0-9]+))?$");
 
-	dojo._Url = function(/*dojo._Url||String...*/){
+	dojo._Url = function(/*dojo._Url|String...*/){
 		// summary: 
 		//		Constructor to create an object representing a URL.
 		//		It is marked as private, since we might consider removing
@@ -763,7 +797,7 @@ dojo._hasResource["dojo.foo"] = true;
 			loc = d.baseUrl + loc;
 		}
 
-		return new d._Url(loc, url); // String
+		return new d._Url(loc, url); // dojo._Url
 	}
 })();
 

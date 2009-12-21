@@ -12,7 +12,7 @@ dojo.experimental("dojox.layout.ExpandoPane"); // just to show it can be done?
 
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit._Templated");
-dojo.require("dijit._Container");
+dojo.require("dijit._Contained");
 
 dojo.declare("dojox.layout.ExpandoPane",
 	[dijit.layout.ContentPane, dijit._Templated, dijit._Contained],
@@ -28,7 +28,7 @@ dojo.declare("dojox.layout.ExpandoPane",
 	maxWidth: "",
 	splitter: false,
 	
-	templateString:"<div class=\"dojoxExpandoPane\" dojoAttachEvent=\"ondblclick:toggle\" >\n\t<div dojoAttachPoint=\"titleWrapper\" class=\"dojoxExpandoTitle\">\n\t\t<div class=\"dojoxExpandoIcon\" dojoAttachPoint=\"iconNode\" dojoAttachEvent=\"onclick:toggle\"><span class=\"a11yNode\">X</span></div>\t\t\t\n\t\t<span class=\"dojoxExpandoTitleNode\" dojoAttachPoint=\"titleNode\">${title}</span>\n\t</div>\n\t<div class=\"dojoxExpandoWrapper\" dojoAttachPoint=\"cwrapper\" dojoAttachEvent=\"ondblclick:_trap\">\n\t\t<div class=\"dojoxExpandoContent\" dojoAttachPoint=\"containerNode\"></div>\n\t</div>\n</div>\n",
+	templateString: dojo.cache("dojox.layout", "resources/ExpandoPane.html", "<div class=\"dojoxExpandoPane\" dojoAttachEvent=\"ondblclick:toggle\" >\n\t<div dojoAttachPoint=\"titleWrapper\" class=\"dojoxExpandoTitle\">\n\t\t<div class=\"dojoxExpandoIcon\" dojoAttachPoint=\"iconNode\" dojoAttachEvent=\"onclick:toggle\"><span class=\"a11yNode\">X</span></div>\t\t\t\n\t\t<span class=\"dojoxExpandoTitleNode\" dojoAttachPoint=\"titleNode\">${title}</span>\n\t</div>\n\t<div class=\"dojoxExpandoWrapper\" dojoAttachPoint=\"cwrapper\" dojoAttachEvent=\"ondblclick:_trap\">\n\t\t<div class=\"dojoxExpandoContent\" dojoAttachPoint=\"containerNode\"></div>\n\t</div>\n</div>\n"),
 
 	// easeOut: String|Function
 	//		easing function used to hide pane

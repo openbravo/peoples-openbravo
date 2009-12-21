@@ -45,6 +45,15 @@ dojo.declare("dojox.form._ChildTextBox", dijit.form.ValidationTextBox, {
 		if(!this.name){
 			dojo.removeAttr(this.focusNode, "name");
 		}
+		this.connect(this.focusNode, "onkeypress", "_onChildKeyPress");
+	},
+	
+	_onChildKeyPress: function(e){
+		// Check if we pressed <enter> - if so, set our blur value so that
+		// the parent widget will be updated correctly.
+		if(e && e.keyCode == dojo.keys.ENTER){
+			this._setBlurValue();
+		}
 	}
 });
 
@@ -153,7 +162,7 @@ dojo.declare("dojox.form.PasswordValidator", dijit.form._FormValueWidget, {
 	//		The name to send our old password as (when form is posted)
 	oldName: "",
 	
-	templateString:"<div dojoAttachPoint=\"containerNode\">\n\t<input type=\"hidden\" name=\"${name}\" value=\"\" dojoAttachPoint=\"focusNode\" />\n</div>\n",
+	templateString: dojo.cache("dojox.form", "resources/PasswordValidator.html", "<div dojoAttachPoint=\"containerNode\">\n\t<input type=\"hidden\" name=\"${name}\" value=\"\" dojoAttachPoint=\"focusNode\" />\n</div>\n"),
 	
 	_hasBeenBlurred: false,
 
@@ -259,6 +268,7 @@ dojo.declare("dojox.form.PasswordValidator", dijit.form._FormValueWidget, {
 		if (this.oldName && !widgets[0]){
 			throw new Error("Need to specify pwType=\"old\" if using oldName");
 		}
+		this.containerNode = this.domNode;
 		this._createSubWidgets();
 		this.connect(this._inputWidgets[1], "_setValueAttr", "_childValueAttr");
 		this.connect(this._inputWidgets[2], "_setValueAttr", "_childValueAttr");		
