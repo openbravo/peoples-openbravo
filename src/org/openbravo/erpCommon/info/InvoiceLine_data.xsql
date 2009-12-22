@@ -59,8 +59,8 @@
         <Parameter name="businesPartner" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.DATEINVOICED >= TO_DATE(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.DATEINVOICED < TO_DATE(?) ]]></Parameter>
-        <Parameter name="grandTotalFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
-        <Parameter name="grandTotalTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.GrandTotal <= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[  AND IL.PRICEACTUAL*IL.QTYINVOICED >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[  AND IL.PRICEACTUAL*IL.QTYINVOICED <= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="product" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND IL.M_Product_ID=? ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="b.NAME" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
@@ -100,8 +100,8 @@
         <Parameter name="businesPartner" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.C_BPartner_ID = ? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.DATEINVOICED >= TO_DATE(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.DATEINVOICED < TO_DATE(?) ]]></Parameter>
-        <Parameter name="grandTotalFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
-        <Parameter name="grandTotalTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.GrandTotal <= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[  AND IL.PRICEACTUAL*IL.QTYINVOICED >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[  AND IL.PRICEACTUAL*IL.QTYINVOICED <= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="product" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND IL.M_Product_ID = ? ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
         <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
