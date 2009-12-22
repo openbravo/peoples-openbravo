@@ -58,8 +58,8 @@
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
-        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
-        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED <= ? ]]></Parameter>
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID=? ]]></Parameter>
         <Parameter name="isdelivered" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYINVOICED, 0)) <> 0 ]]></Parameter>
@@ -102,8 +102,8 @@
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID = ? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
-        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
-        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED <= ? ]]></Parameter>
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID = ? ]]></Parameter>
         <Parameter name="isdelivered" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYINVOICED, 0)) <> 0 ]]></Parameter>
@@ -152,8 +152,8 @@
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
-        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
-        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED <= ? ]]></Parameter>
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID=? ]]></Parameter>
         <Parameter name="isdelivered" optional="true" type="none" after="HAVING 1=1 "><![CDATA[ AND (ol.QTYORDERED - COALESCE(SUM(mp2.QTY), 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="HAVING 1=1 "><![CDATA[ AND (ol.QTYORDERED - COALESCE(SUM(mp.QTY),0)) <> 0 ]]></Parameter>
