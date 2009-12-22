@@ -53,7 +53,7 @@
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="I.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="I.AD_ORG_ID IN (" text="'1'"/>
-        <Parameter name="documentno" ignoreValue="%" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.DocumentNo) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="documentno" ignoreValue="%" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(IL.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" ignoreValue="%" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" ignoreValue="%" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.POReference) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.C_BPartner_ID=? ]]></Parameter>
@@ -95,7 +95,7 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="I.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="I.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.DocumentNo) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="description" ignoreValue="%" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" ignoreValue="%" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(IL.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" ignoreValue="%" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.POReference) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.C_BPartner_ID = ? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.DATEINVOICED >= TO_DATE(?) ]]></Parameter>
