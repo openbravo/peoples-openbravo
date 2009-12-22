@@ -39,6 +39,7 @@
   <structure name="installs">
     <FIELD id="moduleInstall">name</FIELD>
     <FIELD id="moduleInstallVer">versionNo</FIELD>
+    <FIELD id="moduleInstallVerMin">versionNoMin</FIELD>
     <FIELD id="linkAdditional" attribute="onclick" replace="xx">moduleVersionID</FIELD>
     <SECTION id="instList"/>
   </structure>
@@ -46,6 +47,8 @@
   <structure name="updates">
     <FIELD id="moduleUpdate">name</FIELD>
     <FIELD id="moduleUpdateVer">versionNo</FIELD>
+    <FIELD id="moduleUpdateVerMin">versionNoMin</FIELD>
+    <FIELD id="moduleUpdateVerCurr">versionNoCurr</FIELD>
     <FIELD id="linkUpdate" attribute="onclick" replace="xx">moduleVersionID</FIELD>
     <SECTION id="updtList"/>
   </structure>
