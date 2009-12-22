@@ -525,6 +525,7 @@ public class ApplyModules extends HttpSecureAppServlet {
     XStream xs = new XStream(new JettisonMappedXmlDriver());
     xs.alias("OBError", OBError.class);
     String strResult = xs.toXML(error);
+    response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.print(strResult);
     out.close();
