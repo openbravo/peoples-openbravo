@@ -273,7 +273,9 @@
                 }
                 document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
               }
-              progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
+              if(warns[i]!=undefined){
+                progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
+              }
             }
             numofwarns[getStatusIndex(response.state)]=warns.length;
           }
