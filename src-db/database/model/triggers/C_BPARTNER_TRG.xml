@@ -167,7 +167,7 @@ BEGIN
               :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
               Cur_Defaults.V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_Prepayment_Acct, Cur_Defaults.Status);
          END IF;
-              v_C_AcctSchema_ID:=Cur_Defaults.C_AcctSchema_ID;
+              
   END IF;
   END LOOP;
 -- Employee
