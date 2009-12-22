@@ -53,7 +53,7 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(ol.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
@@ -97,7 +97,7 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(ol.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID = ? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
@@ -147,7 +147,7 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(ol.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
