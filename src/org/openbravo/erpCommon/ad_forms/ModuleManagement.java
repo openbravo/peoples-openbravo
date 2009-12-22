@@ -36,6 +36,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
@@ -472,15 +473,52 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("license", module.getLicenseType());
 
     if (dependencies != null && dependencies.length > 0)
-      xmlDocument.setData("dependencies", FieldProviderFactory.getFieldProviderArray(dependencies));
+      xmlDocument.setData("dependencies", formatDeps4Display(dependencies, vars, this));
 
     if (includes != null && includes.length > 0)
-      xmlDocument.setData("includes", FieldProviderFactory.getFieldProviderArray(includes));
+      xmlDocument.setData("includes", formatDeps4Display(includes, vars, this));
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private static FieldProvider[] formatDeps4Display(ModuleDependency[] deps,
+      VariablesSecureApp vars, ConnectionProvider conn) {
+    HashMap<String, String>[] res = new HashMap[deps.length];
+
+    for (int i = 0; i < deps.length; i++) {
+      res[i] = new HashMap<String, String>();
+      res[i].put("moduleName", getDisplayString(deps[i], vars, conn));
+    }
+    return FieldProviderFactory.getFieldProviderArray(res);
+  }
+
+  private static String getDisplayString(ModuleDependency dep, VariablesSecureApp vars,
+      ConnectionProvider conn) {
+
+    final String DETAIL_MSG_DETAIL_BETWEEN = Utility.messageBD(conn, "MODULE_VERSION_BETWEEN", vars
+        .getLanguage());
+
+    final String DETAIL_MSG_OR_LATER = Utility.messageBD(conn, "MODULE_VERSION_OR_LATER", vars
+        .getLanguage());
+
+    final String VERSION = Utility.messageBD(conn, "VERSION", vars.getLanguage());
+
+    String displayString = dep.getModuleName() + " " + VERSION + " ";
+
+    if (dep.getVersionEnd().equals(dep.getVersionStart())) {
+      displayString += dep.getVersionStart();
+    } else if (dep.getVersionEnd().contains(".999999")) {
+      displayString += DETAIL_MSG_OR_LATER.replace("@MODULE_VERSION@", dep.getVersionStart());
+    } else {
+      String tmp = DETAIL_MSG_DETAIL_BETWEEN.replace("@MIN_VERSION@", dep.getVersionStart());
+      tmp = tmp.replace("@MAX_VERSION@", dep.getVersionEnd());
+      displayString += tmp;
+    }
+
+    return displayString;
   }
 
   /**
