@@ -223,10 +223,6 @@
     //calling the getError function to display a success/warning/error final message
     function endProcess(paramXMLParticular, XMLHttpRequestObj) {
       if (getReadyStateHandler(XMLHttpRequestObj)) { 
-        processing = false;
-        top.opener.setProcessingMode('window', false);
-        var frm = document.frmMain;
-        return submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModules.html", false, null, null);
       }
       return true;
     }
@@ -377,6 +373,13 @@
           current_state=stateindex;
         }
       }
+      if(state=="60"){
+    	processing = false;
+    	top.opener.setProcessingMode('window', false);
+    	var frm = document.frmMain;
+    	return submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModules.html", false, null, null);
+      }
+    	        
     }
 
     //This function resets the status of all the nodes
