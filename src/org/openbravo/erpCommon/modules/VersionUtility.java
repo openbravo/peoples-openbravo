@@ -124,10 +124,15 @@ public class VersionUtility {
       foundModule = false;
     }
 
-    if (foundModule && checkVersion(strModVersion, dependency, mod, errors))
+    if (foundModule && checkVersion(strModVersion, dependency, mod, errors)) {
       return true;
-    errors.add(strModVersion + " @CR_DependensOnModule@ \"" + dependency.modName
-        + "\", @CR_ModuleNotInstalled@");
+    }
+
+    if (modulesMap.get(dependency.modId) == null) {
+      // Appending not installed error message when module is not present
+      errors.add(strModVersion + " @CR_DependensOnModule@ \"" + dependency.modName
+          + "\", @CR_ModuleNotInstalled@");
+    }
 
     return false;
   }
