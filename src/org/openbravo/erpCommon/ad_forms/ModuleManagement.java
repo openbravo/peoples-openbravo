@@ -472,11 +472,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("license", module.getLicenseType());
 
-    if (dependencies != null && dependencies.length > 0)
+    if (dependencies != null && dependencies.length > 0) {
       xmlDocument.setData("dependencies", formatDeps4Display(dependencies, vars, this));
+    }
 
-    if (includes != null && includes.length > 0)
+    if (includes != null && includes.length > 0) {
       xmlDocument.setData("includes", formatDeps4Display(includes, vars, this));
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -508,9 +510,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     String displayString = dep.getModuleName() + " " + VERSION + " ";
 
-    if (dep.getVersionEnd().equals(dep.getVersionStart())) {
+    if (dep.getVersionEnd() != null && dep.getVersionEnd().equals(dep.getVersionStart())) {
       displayString += dep.getVersionStart();
-    } else if (dep.getVersionEnd().contains(".999999")) {
+    } else if (dep.getVersionEnd() == null || dep.getVersionEnd().contains(".999999")) {
+      // NOTE: dep.getVersionEnd() is .999999 from CR but null when installing from .obx
       displayString += DETAIL_MSG_OR_LATER.replace("@MODULE_VERSION@", dep.getVersionStart());
     } else {
       String tmp = DETAIL_MSG_DETAIL_BETWEEN.replace("@MIN_VERSION@", dep.getVersionStart());
@@ -723,7 +726,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
           .getFieldProviderArray(inst);
       for (FieldProvider fp : insts) {
         String moduleId = fp.getField("moduleID");
-        FieldProviderFactory.setField(fp, "versionNoMin", minVersions.get(moduleId));
+        FieldProviderFactory.setField(fp, "versionNoMin", (minVersions.get(moduleId) == null ? fp
+            .getField("versionNo") : minVersions.get(moduleId)));
       }
       xmlDocument.setData("installs", insts);
     }
@@ -782,11 +786,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
     Map<String, String> minVersions = new HashMap<String, String>();
     for (Module m : im.getModulesToInstall()) {
       calcMinVersionFromDeps(minVersions, m.getDependencies());
-      calcMinVersionFromDeps(minVersions, m.getIncludes());
+      if (m.getIncludes() != null) {
+        calcMinVersionFromDeps(minVersions, m.getIncludes());
+      }
     }
     for (Module m : im.getModulesToUpdate()) {
       calcMinVersionFromDeps(minVersions, m.getDependencies());
-      calcMinVersionFromDeps(minVersions, m.getIncludes());
+      if (m.getIncludes() != null) {
+        calcMinVersionFromDeps(minVersions, m.getIncludes());
+      }
     }
 
     // check and show:
