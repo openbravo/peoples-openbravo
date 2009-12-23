@@ -42,10 +42,10 @@
   <script language="JavaScript" type="text/javascript">
     var lc_isTimerEnabled = true;
     var current_state=0;
-    var possible_states=[11,12,13,14,15,21,31,41,42,43,44,45,51,60];
-    var error_status=['','','','','','','','','','','','','',''];
-    var numofwarns=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    var numoferrs=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    var possible_states=[59,11,12,13,14,15,21,31,41,42,43,44,45,51,60];
+    var error_status=['','','','','','','','','','','','','','',''];
+    var numofwarns=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    var numoferrs=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     var start=false;
     var processing = false;
     var stopAddingWarns=false;
@@ -213,6 +213,10 @@
               displayLogicElement('restartOptions',true);
           }
           document.getElementById("rebuildMessage").style.display = "none";
+          if(msg.OBError.type=="Error"){
+              var node=correspondingNode(possible_states[current_state]);
+              progList_changeStatus(node, 'Error');
+          }
         }
       }
       return true;
@@ -344,8 +348,12 @@
           
         var state=msg.Response.state;
         if(state=="11" || start===true){
-          if(state=="60"){
+          if(state=="60" || state=="59"){
             stopLocalTimer();
+            processing = false;
+            top.opener.setProcessingMode('window', false);
+            var frm = document.frmMain;
+            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModules.html", false, null, null);
           }
           start=true;
           var errorStatus=msg.Response.statusofstate;
