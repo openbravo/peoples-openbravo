@@ -33,7 +33,7 @@
       	(DOCUMENTNO || ' - ' || DATEORDERED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT) AS LINE_TEXT,
 		C_ORDERLINE_ID || '#' || DOCUMENTNO || ' - ' || DATEORDERED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT as rowkey
       FROM ( SELECT '0' AS RN1, A.* FROM (  
-          SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, o.DATEORDERED, o.DOCUMENTNO, 
+          SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, ol.DATEORDERED, o.DOCUMENTNO, 
           o.ISSOTRX, ol.QTYORDERED AS QTY, ol.PRICEACTUAL, ol.LINENETAMT, ol.LINE, o.GRANDTOTAL
           FROM C_ORDER o, C_ORDERLINE ol, M_PRODUCT p, C_BPARTNER b
           WHERE o.C_ORDER_ID = ol.C_ORDER_ID 
@@ -56,8 +56,8 @@
         <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(ol.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
-        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
-        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.DateOrdered >= to_date(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.DateOrdered < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED >= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED <= ? ]]></Parameter>
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID=? ]]></Parameter>
@@ -100,8 +100,8 @@
         <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(ol.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID = ? ]]></Parameter>
-        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
-        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.DateOrdered >= to_date(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.DateOrdered < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED >= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED <= ? ]]></Parameter>
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID = ? ]]></Parameter>
@@ -118,10 +118,10 @@
       <Sql>
       <![CDATA[
       SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (  
-          SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, o.DATEORDERED, o.DOCUMENTNO, 
+          SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, ol.DATEORDERED, o.DOCUMENTNO, 
           o.ISSOTRX, ol.QTYORDERED AS QTY, ol.PRICEACTUAL, ol.LINENETAMT, 
-          (o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT) AS LINE_TEXT,
-			  ol.C_ORDERLINE_ID || '#' || o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT as rowkey
+          (o.DOCUMENTNO || ' - ' || ol.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT) AS LINE_TEXT,
+			  ol.C_ORDERLINE_ID || '#' || o.DOCUMENTNO || ' - ' || ol.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT as rowkey
           FROM C_ORDERLINE ol left join M_MATCHPO mp on ol.C_ORDERLINE_ID = mp.C_ORDERLINE_ID 
                                                     AND mp.C_INVOICELINE_ID IS NOT NULL
                               left join M_MATCHPO mp2 on ol.C_ORDERLINE_ID = mp2.C_ORDERLINE_ID
@@ -134,7 +134,7 @@
           AND o.AD_ORG_ID IN ('1') 
           AND o.IsActive='Y' 
           AND o.ISSOTRX = 'N'
-          GROUP BY ol.C_ORDERLINE_ID, b.NAME, p.NAME, o.DATEORDERED, o.DOCUMENTNO, 
+          GROUP BY ol.C_ORDERLINE_ID, b.NAME, p.NAME, ol.DATEORDERED, o.DOCUMENTNO, 
           o.ISSOTRX, ol.QTYORDERED, ol.PRICEACTUAL, ol.LINENETAMT, o.GRANDTOTAL, ol.LINE, ol.LINENETAMT
           HAVING 1=1 
           ORDER BY ol.C_ORDERLINE_ID
@@ -150,8 +150,8 @@
         <Parameter name="description" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(ol.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
-        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
-        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.DateOrdered >= to_date(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.DateOrdered < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED >= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.PRICEACTUAL*ol.QTYORDERED <= ? ]]></Parameter>
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID=? ]]></Parameter>
