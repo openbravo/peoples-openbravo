@@ -1310,16 +1310,21 @@ div.calendar {
 }
 
 .CheckList_RebuildSystemWindow_textarea {
-  overflow: auto;
-  width: 400px;
+  overflow-x: none;
+  overflow-y: scroll;
+  width: 750px;
   height: 125px;
   background-color: white;
   font-family: monospace;
   font-size: 9pt;
   border: #505050 1px solid;
-  padding-left: 8px;
-  white-space: nowrap;
+  padding-left: 20px;
+  /*white-space: nowrap;*/
 }
+
+.CL_RSW_ta_line {
+  text-indent: -12px;
+} 
 
 .CheckList_Row {
   clear: left;
