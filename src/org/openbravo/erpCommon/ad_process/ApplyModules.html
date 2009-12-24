@@ -50,6 +50,7 @@
     var processing = false;
     var stopAddingWarns=false;
     var restarting=false;
+    var pending_states=0;
 
     //Changes the status of one node (corresponding icon, ...)
     function progList_changeNode(node, newStatus, text) {
@@ -125,12 +126,12 @@
       }
       var charn= document.getElementById('warningsAndErrors').innerHTML.length;
       if(charn>2000){
-        stopAddingWarns=true;
-        document.getElementById('warningsAndErrors').innerHTML += "and more..."+"<br>";
-      }
-      else{
-        document.getElementById('warningsAndErrors').innerHTML += text+"<br>";
-      }
+          stopAddingWarns=true;
+          document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + "and more..." + "</p>";
+        }
+        else{
+          document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + text + "</p>";
+        } 
     }
     
     //Starts a timer (used to periodically trigger a request to update the status of the window)
@@ -285,7 +286,7 @@
                 document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
               }
               if(warns[i]!=undefined){
-                progList_addTextToTextArea('<i>Warning: </i>'+warns[i]);
+                progList_addTextToTextArea('<b><i>Warning: </b></i>'+warns[i]);
               }
             }
             numofwarns[getStatusIndex(response.state)]=warns.length;
@@ -299,7 +300,7 @@
             }
             if(numoferrs[getStatusIndex(response.state)]<errs.length){
               for(i=0;i<errs.length;i++){
-                progList_addTextToTextArea('<b>Error: </b>'+errs[i]);
+                progList_addTextToTextArea('<b><i>Error: </b></i>'+errs[i]);
               }
               numoferrs[getStatusIndex(response.state)]=errs.length;
             }
@@ -315,7 +316,7 @@
         if (XMLHttpRequestObj.responseText) {
           strText = XMLHttpRequestObj.responseText;
         }
-
+        pending_states=pending_states-1;
         if(start===true){
           var msg = eval("("+strText+")");
  
@@ -377,6 +378,7 @@
           var errorStatus=msg.Response.statusofstate;
           var stateindex=getStatusIndex(state);
           if(stateindex>current_state){
+            pending_states=stateindex-current_state;
             for(i=current_state;i<stateindex;i++){
               //We need to ask for warning/error state for the intermediate status
               document.getElementById("reqStatus").value=possible_states[i];
@@ -387,15 +389,17 @@
           error_status[getStatusIndex(state)]=errorStatus;
           var message;
           if(msg.Response.lastmessage!==null){
-            message=msg.Response.lastmessage.substring(0,50);
+            message=msg.Response.lastmessage.substring(0,40);
           }else{
             message="";
           }
 
           insertWarnsAndErrors(msg.Response);
           if(state!="60"){
-              progList_changeNode(correspondingNode(state), errorStatus, message);
-              progList_changeIcon(correspondingNode(state), "Processing", message);
+              if(pending_states<=0){
+                progList_changeNode(correspondingNode(state), errorStatus, message);
+                progList_changeIcon(correspondingNode(state), "Processing", message);
+              }
           }
           current_state=stateindex;
         }
