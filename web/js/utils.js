@@ -3179,6 +3179,7 @@ function readOnlyLogicElement(id, readonly) {
       obj.className = className.replace("LabelText","LabelTextReadOnly");
     if ((className.indexOf("TextBox_")!=-1)||(className.indexOf("TextArea_")!=-1)) {
       if (className.indexOf("readonly")==-1) changeClass(id,'readonly ', '');
+      disableFieldButton(getAssociatedFieldButton(obj, 'window'));
     }
   } else { //not readonly
     obj.className = obj.className.replace("ReadOnly","");
@@ -3198,6 +3199,9 @@ function readOnlyLogicElement(id, readonly) {
         var newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
         obj.setAttribute("onChange",newOnChange_combo); 
       }
+    }
+    if ((obj.className.indexOf("TextBox_")!=-1)||(obj.className.indexOf("TextArea_")!=-1)) {
+      enableFieldButton(getAssociatedFieldButton(obj, 'window'));
     }
   }
   return true;
