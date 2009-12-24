@@ -8,15 +8,17 @@
 if(!dojo._hasResource["dojox.date.hebrew.Date"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.date.hebrew.Date"] = true;
 dojo.provide("dojox.date.hebrew.Date");
-dojo.experimental("dojox.date.hebrew.Date");
 
 dojo.require("dojox.date.hebrew.numerals");
 
 dojo.declare("dojox.date.hebrew.Date", null, {
-	// summary: The component defines the Hebrew Calendar Object
+	// summary: A Date-like object which implements the Hebrew calendar
 	//
 	// description:
-	//	This module is similar to the Date() object provided by JavaScript
+	//	A Date-like object which implements the Hebrew Calendar.  Because this object
+	//	implements many of the same methods as the native JavaScript Date object, which
+	//	implements the Gregorian calendar, it can often be used its place.  Note that
+	//	this object does not extend Date or use its prototype.
 	//
 	// example:
 	// |	dojo.require("dojox.date.hebrew.Date");
@@ -51,22 +53,24 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 	* certain holidays fall on the sabbath, the year can end up being three
 	* different lengths, called "deficient", "normal", and "complete".
 	*/
+	
+	//"Absolute" indexes of  months:  Tishri -  0, Heshvan - 1, Kislev - 2, Tevet - 3, Shevat -  4, Adar I (leap years only) - 5, Adar - 6, Nisan - 7, Iyar - 8, Sivan - 9,   Tammuz-10, Av - 11, Elul - 12.
 
 	_MONTH_LENGTH:  [
 		// Deficient  Normal     Complete
-		[   30,	    30,	    30	],		 //Tishri
-		[   29,	    29,	    30	],		 //Heshvan
-		[   29,	    30,	    30	],		 //Kislev
-		[   29,	    29,	    29	],		 //Tevet
-		[   30,	    30,	    30	],		 //Shevat
-		[   30,	    30,	    30	],		 //Adar I (leap years only)
-		[   29,	    29,	    29	],		 //Adar
-		[   30,	    30,	    30	],		 //Nisan
-		[   29,	    29,	    29	],		 //Iyar
-		[   30,	    30,	    30	],		 //Sivan
-		[   29,	    29,	    29	],		 //Tammuz
-		[   30,	    30,	    30	],		 //Av
-		[   29,	    29,	    29	]		 //Elul
+		[   30,	    30,	    30	],		 //Tishri    0
+		[   29,	    29,	    30	],		 //Heshvan   1
+		[   29,	    30,	    30	],		 //Kislev   2
+		[   29,	    29,	    29	],		 //Tevet  3
+		[   30,	    30,	    30	],		 //Shevat  4
+		[   30,	    30,	    30	],		 //Adar I (leap years only)  5
+		[   29,	    29,	    29	],		 //Adar  6
+		[   30,	    30,	    30	],		 //Nisan  7
+		[   29,	    29,	    29	],		 //Iyar  8
+		[   30,	    30,	    30	],		 //Sivan  9
+		[   29,	    29,	    29	],		 //Tammuz  10
+		[   30,	    30,	    30	],		 //Av  11
+		[   29,	    29,	    29	]		 //Elul  12
 	],
 
 	/**
@@ -143,9 +147,7 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 	_day: 0,
 
  	constructor: function(){
-		// summary: This is the constructor
-		// description:
-		//	This fucntion initialize the date object values
+		// summary: initialize the date object value
 		//
 		// example:
 		// |		var date1 = new dojox.date.hebrew.Date();
@@ -177,18 +179,15 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 				this._seconds = arg0._seconds;
 				this._milliseconds = arg0._milliseconds; 
 			}	
-		}else if(len >=3){
-			// YYYY MM DD arguments passed, month is from 0-12
+		}else if(len >= 3){
+			// YYYY, MM, DD arguments passed, month is from 0-12,  "absolute" index of month 
 			this._year += arguments[0];
 			this._month += arguments[1];
 			this._date += arguments[2];
 			
-			if(!this.isLeapYear(this._year) && this._month>=5){
-				this._month++;
-			}
-			if(this._month >12 || (!this.isLeapYear(this._year) && this._month > 11)){
-				console.warn("the month is incorrect , set 0");
-				this._month = 0;			
+			if(this._month > 12){
+				console.warn("the month is incorrect , set 0  " + this._month + "   " + this._year );
+				this._month = 0;
 			}
 			this._hours += arguments[3] || 0;
 			this._minutes += arguments[4] || 0;
@@ -196,16 +195,11 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 			this._milliseconds += arguments[6] || 0;
 		}
   
-		var day = this._startOfYear(this._year);
-		if(this._month != 0){
-			day += (this.isLeapYear(this._year) ? this._LEAP_MONTH_START : this._MONTH_START)[this._month][this._yearType(this._year)];
-		}
-		day += this._date - 1;
-		this._day = (day+1) % 7;
+		this._setDay();	
 	},
 	
 	getDate: function(){
-		// summary: This function returns the date value (1 - 30)
+		// summary: returns the date value (1 - 30)
 		//
 		// example:
 		// |		var date1 = new dojox.date.hebrew.Date();
@@ -216,7 +210,7 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 	},
 
 	getDateLocalized: function(/*String?*/locale){
-		// summary: This function returns the date value as hebrew numerals for the Hebrew locale,
+		// summary: returns the date value as hebrew numerals for the Hebrew locale,
 		//		a number for all others.
 		//
 		// example:
@@ -224,96 +218,103 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 		// |
 		// |		console.log(date1.getDate());
 
-		return locale.match(/^he(?:-.+)?$/) ?
+		return (locale || dojo.locale).match(/^he(?:-.+)?$/) ?
 			dojox.date.hebrew.numerals.getDayHebrewLetters(this._date) : this.getDate();
 	},
 
 	getMonth: function(){
-		// summary: This function return the month value ( 0 - 11 )
+		// summary: returns the month value (0 - 12)
+		//
+		// description: the result is the index in the month array:
+		//	0. Tishri
+		//	1. Heshvan
+		//	2. Kislev
+		//	3. Tevet
+		//	4. Shevat
+		//	5. Adar I (leap years only)
+		//	6. Adar
+		//	7. Nisan
+		//	8. Iyar
+		//	9. Sivan
+		//	10. Tammuz
+		//	11.	Av
+		//	12. Elul - 12
+		// For non leap years, for months after Shevat, the actual position of
+		// the month in the year (used for short format) is less than
+		// the "absolute" index by 1.
 		//
 		// example:
-		// |		var date1 = new dojox.date.hebrew.Date();
+		// |		var date1 = new dojox.date.hebrew.Date(5769, 6, 1);
 		// |
 		// |		console.log(date1.getMonth()+1);
+		// |		>> 7
 
 		return this._month;
 	},
 
-
 	getFullYear: function(){
-		// summary: This function return the Year value 
+		// summary: returns the Year value 
 		//
 		// example:
-		// |		var date1 = new dojox.date.hebrew.Date();
+		// |		var date1 = new dojox.date.hebrew.Date(5769, 6, 1);
 		// |
 		// |		console.log(date1.getFullYear());
+		// |		>> 5769
 		return this._year;
 	},
 			
 	getHours: function(){
- 		//summary: returns the Hour value
+ 		//summary: returns the hour value
 		return this._hours;
 	},
 		
 	getMinutes: function(){
-		//summary: returns the Minuites value
+		//summary: returns the minutes value
 
 		return this._minutes;
 	},
 
 	getSeconds: function(){
-		//summary: returns the seconde value
+		//summary: returns the seconds value
 		return this._seconds;
 	},
 
 	getMilliseconds: function(){
-		//summary: returns the Milliseconds value
+		//summary: returns the milliseconds value
 
 		return this._milliseconds;
 	},
 
 	setDate: function(/*number*/date){	
-		// summary: This function sets the Date
+		// summary: sets the date number for a given month
 		// example:
-		// |		var date1 = new dojox.date.hebrew.Date();
+		// |		var date1 = new dojox.date.hebrew.Date(5769, 6, 1);
 		// |		date1.setDate(2);
 
 		date = +date;
+		var mdays;
 		if(date>0){
-			//FIXME: do..while?
-			for(var mdays = this.getDaysInHebrewMonth(this._month, this._year);
-					date > mdays;
-					date -= mdays,mdays = this.getDaysInHebrewMonth(this._month, this._year)){
+			while (date > (mdays = this.getDaysInHebrewMonth(this._month, this._year))){
+				date -= mdays;
 				this._month++;
 				if(this._month >= 13){this._year++; this._month -= 13;}
 			}
-
-			this._date = date;
 		}else{
-			//FIXME: do..while?
-			for(mdays = this.getDaysInHebrewMonth((this._month-1)>=0 ? (this._month-1) : 12, ((this._month-1)>=0)? this._year : this._year-1);
-					date<=0;
-					mdays = this.getDaysInHebrewMonth((this._month-1)>=0 ? (this._month-1) : 12, ((this._month-1)>=0)? this._year : this._year-1)){
+			while(date<=0){
+				mdays = this.getDaysInHebrewMonth((this._month-1)>=0 ? (this._month-1) : 12, ((this._month-1)>=0)? this._year : this._year-1);
 				this._month--;
 				if(this._month < 0){this._year--; this._month += 13;}
-
 				date += mdays;
-			} 
-			this._date = date;
+			}
 		}
-
-		var day = this._startOfYear(this._year);
-		if(this._month != 0){
-			day += (this.isLeapYear(this._year) ? this._LEAP_MONTH_START : this._MONTH_START)[this._month][this._yearType(this._year)];
-		}
-		day += this._date - 1;
-		this._day = (day+1) % 7;
+		this._date = date;
+		this._setDay();		
 		return this;
 	},
 	
 
 	setFullYear: function(/*number*/year, /*number?*/month, /*number?*/ date){
-		// summary: This function set Year 
+		// summary: set the year 
 		//
 		// example:
 		// |		var date1 = new dojox.date.hebrew.Date();
@@ -321,32 +322,48 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 		// |		date1.setFullYear(5768, 1, 1);
 		
 		this._year = year = +year;
-		if(!this.isLeapYear(year) && this._month==5){ 
+		if(!this.isLeapYear(year) && this._month==5){  //incorrect month number for non leap year
 			this._month++; 
 		} 
-		var day = this._startOfYear(year);
-		if(this._month != 0){
-			day += (this.isLeapYear(year) ? this._LEAP_MONTH_START : this._MONTH_START)[this._month][this._yearType(year)];
-		}
-		day += this._date - 1;
-		this._day = (day+1) % 7;
-
+		
 		if(month !== undefined){this.setMonth(month);}
 		if(date !== undefined){this.setDate(date);}
-
+		
+		var dnum = this.getDaysInHebrewMonth(this._month, this._year);
+		if(dnum < this._date){
+			this._date = dnum;
+		} // if the date in this month more than number of the days in this month
+		
+		this._setDay();
 		return this;
 	},
 
 	setMonth: function(/*number*/month){
-		// summary: This function set Month
+		// summary: sets the month.  You should use "absolute" index in the month array:
+		//	0. Tishri
+		//	1. Heshvan
+		//	2. Kislev
+		//	3. Tevet
+		//	4. Shevat
+		//	5. Adar I (leap years only)
+		//	6. Adar
+		//	7. Nisan
+		//	8. Iyar
+		//	9. Sivan
+		//	10. Tammuz
+		//	11.	Av
+		//	12. Elul - 12
+		//  For non leap years, for months after Shevat, the actual position of
+		//	the month in the year (used for short format) is less than
+		//	the "absolute" index by 1. 
 		//
 		// example:
 		// |		var date1 = new dojox.date.hebrew.Date();
 		// |		date1.setMonth(0); //first month
 
 		month = +month; // coerce to a Number					
-		if(!this.isLeapYear(this._year) && month >= 5){month++;}
-
+		if(!this.isLeapYear(this._year) && month == 5){month++;}
+	
 		if(month>=0){
 			while(month >12){
 				this._year++;
@@ -356,8 +373,7 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 		}else{
 			while(month<0){
 				this._year--;
-				month += 13;
-				if (!this.isLeapYear(this._year) && month < 5){month--;}	
+				month += (!this.isLeapYear(this._year)  &&  month < -7) ? 12 : 13; 
 			}		
 		}
 		
@@ -368,17 +384,18 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 			this._date = dnum;
 		} // if the date in this month more than number of the days in this month
 		
-		var day = this._startOfYear(this._year);
-		if(this._month != 0){
-			day += (this.isLeapYear(this._year) ? this._LEAP_MONTH_START : this._MONTH_START)[this._month][this._yearType(this._year)];
-		}	
-		day += (this._date - 1);
-		this._day = ((day+1) % 7);
+		this._setDay();
 		return this;
 	},
 
-	setHours: function(/*TODOC*/){
-		//summary: set the Hours  0-23
+	setHours: function(){
+		//	summary: sets the hour
+		//
+		//	description: Sets the hour and optionally minutes, seconds, milliseconds also.
+		//		
+		// example:
+		// |		var date1 = new dojox.date.hebrew.Date();
+		// |		date1.setHours(12, 30, 0, 0); 
 
 		var hours_arg_no = arguments.length;
 		var hours = 0;
@@ -411,142 +428,75 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 			hours -= 24;
 		}
 		this._hours = hours;
-		var day = this._startOfYear(this._year);
-		if(this._month != 0){
-			day += (this.isLeapYear(this._year) ? this._LEAP_MONTH_START : this._MONTH_START)[this._month][this._yearType(this._year)];
-		}
-		day += this._date - 1;
-		this._day = (day+1) % 7;
+		this._setDay();
 		return this;
 	},
 
-	setMinutes: function(/*number*/minutes){
-		//summary: set the Minutes  frm 0-59
+	setMinutes: function(/*Number*/minutes){
+		//summary: sets the minutes (0-59)
 		minutes = +minutes;
-		while(minutes >= 60){
-			this._hours++;
-			if(this._hours >= 24){     
-				this._date++;
-				this._hours -= 24;
-				var mdays = this.getDaysInHebrewMonth(this._month, this._year);
-				if(this._date > mdays){
-					this._month ++;
-					if(!this.isLeapYear(this._year) && this._month==5){ this._month++; }
-					if(this._month >= 13){this._year++; this._month -= 13;}
-					this._date -= mdays;
-				}
-			}
-			minutes -= 60;
-		}
-		this._minutes = minutes;
-		var day = this._startOfYear(this._year);
-		if(this._month != 0){
-			day += (this.isLeapYear(this._year) ? this._LEAP_MONTH_START : this._MONTH_START)[this._month][this._yearType(this._year)];
-		}
-		day += this._date - 1;
-		this._day = (day+1) % 7;
+		this._minutes = minutes % 60;
+		this.setHours(parseInt(minutes / 60));		
+		this._setDay();
 		return this;
 	},
 
-	setSeconds: function(/*number*/seconds){
-		//summary: set the Seconds  from 0-59
+	setSeconds: function(/*Number*/seconds){
+		//summary: sets the seconds (0-59)
 
 		seconds = +seconds;
-		while(seconds >= 60){
-			this._minutes++;
-			if(this._minutes >= 60){
-				this._hours++;
-				this._minutes -= 60;
-				if(this._hours >= 24){         
-					this._date++;
-					this._hours -= 24;
-					var mdays = this.getDaysInHebrewMonth(this._month, this._year);
-					if(this._date > mdays){
-						this._month++;
-						if(!this.isLeapYear(this._year) && this._month==5){ this._month++; }
-						if(this._month >= 13){this._year++; this._month -= 13;}
-							
-						this._date -= mdays;
-					}
-				}
-			}
-			seconds -= 60;
-		}
-		this._seconds = seconds;
-		var day = this._startOfYear(this._year);
-		if(this._month != 0){
-			day += (this.isLeapYear(this._year) ? this._LEAP_MONTH_START : this._MONTH_START)[this._month][this._yearType(this._year)];
-		}
-		day += (this._date - 1);
-		this._day = ((day+1) % 7);
+		this._seconds = seconds % 60;
+		this.setMinutes(parseInt(seconds / 60));
+		this._setDay();
 		return this;
 	},
 
-	setMilliseconds: function(/*number*/milliseconds){
-		//summary: set the milliseconds
+	setMilliseconds: function(/*Number*/milliseconds){
+		//summary: sets the milliseconds
 
 		milliseconds = +milliseconds;
-		//FIXME: use mod instead of iterate for overflow? same for methods above.
-		while(milliseconds >= 1000){
-			this.setSeconds++;
-			if(this._seconds >= 60){
-				this._minutes++;
-				this._seconds -= 60;
-				if(this._minutes >= 60){
-					this._hours++;
-					this._minutes -= 60;
-					if(this._hours >= 24){         
-						this._date++;
-						this._hours -= 24;
-						var mdays = this.getDaysInHebrewMonth(this._month, this._year);
-						if(this._date > mdays)
-						{
-							this._month++;
-							if (!this.isLeapYear(this._year) && this._month == 5) {
-								this._month++;
-							}
-							if(this._month >= 13){this._year++; this._month -= 13;}
-							this._date -= mdays;
-						}
-					}
-				}
-			}
-			milliseconds -= 1000;
-		}
-		this._milliseconds = milliseconds;
+		this._milliseconds = milliseconds % 1000;
+		this.setSeconds(parseInt(milliseconds / 1000));
+		this._setDay();
+		return this;
+	},
+
+	_setDay: function(){ 
 		var day = this._startOfYear(this._year);
 		if(this._month != 0){
 			day += (this.isLeapYear(this._year) ? this._LEAP_MONTH_START : this._MONTH_START)[this._month][this._yearType(this._year)];
 		}
 		day += this._date - 1;
-		this._day = (day+1) % 7;
-		return this;
+		this._day = (day+1) % 7;	
 	},
-
 
 	toString: function(){ 
-		// summary: This returns a string representation of the date in "dd, MM, YYYY HH:MM:SS" format
-		// | 
+		// summary: returns a string representation of the date in "dd, MM, yyyy HH:mm:ss" format
+		//
+		// description: returns a string representation of the date in "dd, MM, yyyy HH:mm:ss" format (all numeric)
+		//	For user presentation, use dojox.date.hebrew.locale.format which will present in the appropriate language
+		//  and format.  toString() language- and culturally-specific conventions to keep this module free of
+		//	dependencies on dojox.date.locale and dojo.cldr.
+		//
 		// example:
-		// |		var date1 = new dojox.date.hebrew.Date();
+		// |		var date1 = new dojox.date.hebrew.Date(5769, 6, 1);
 		// |		console.log(date1.toString());
-
-		return this._date + ", " + ((!this.isLeapYear(this._year) && this._month>5) ? this._month : (this._month+1)) + ", " + this._year + "  " + this._hours + ":" + this._minutes + ":" + this._seconds; // String
+		// |		>>> "1, 6, 5769 0:0:0"
+		return this._date + ", " + this._month + ", " + this._year + "  " + this._hours + ":" + this._minutes + ":" + this._seconds; // String
 	},
 
 	// ported from the Java class com.ibm.icu.util.HebrewCalendar from ICU4J v3.6.1 at http://www.icu-project.org/
-	getDaysInHebrewMonth: function(/*number*/month, /*number*/ year){
-		// summary: returns the number of days in the month used
+	getDaysInHebrewMonth: function(/*Number*/month, /*Number*/ year){
+		// summary: returns the number of days in the given month and year
 
-		// These two months can vary: 1=HESHVAN, 2=KISLEV.  The rest are a fixed length
+		// Aside from the leap month, these two months can vary: 1=HESHVAN, 2=KISLEV
+		// The rest are a fixed length
 		var yearType = (month == 1 || month == 2) ? this._yearType(year) : 0;
-		if (!this.isLeapYear(this._year) && month == 5) {return 0};
-		return this._MONTH_LENGTH[month][yearType];
+		return (!this.isLeapYear(this._year) && month == 5) ? 0 : this._MONTH_LENGTH[month][yearType];
 	},
 
-	
 	// ported from the Java class com.ibm.icu.util.HebrewCalendar from ICU4J v3.6.1 at http://www.icu-project.org/
-	_yearType: function(/*number*/year){
+	_yearType: function(/*Number*/year){
 		var yearLength = this._handleGetYearLength(Number(year));
 		if(yearLength > 380){
 			yearLength -= 30;        // Subtract length of leap month.
@@ -594,7 +544,7 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 	},
 
 	// ported from the Java class com.ibm.icu.util.HebrewCalendar from ICU4J v3.6.1 at http://www.icu-project.org/
-	isLeapYear: function(/*number*/year){	
+	isLeapYear: function(/*Number*/year){	
 	//	summary:
 	//		Determines if the year (argument) is a leap year
 	//	description: The Leap year contains additional month adar sheni
@@ -619,7 +569,7 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 		this._milliseconds = gdate.getMilliseconds();
 		this._minutes = gdate.getMinutes();
 		this._seconds = gdate.getSeconds();
-		//TODO: need to set _day?
+		this._setDay();
 		return this;
 	},
 
@@ -654,7 +604,7 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 
 	// ported from the Java class com.ibm.icu.util.Calendar.computeGregorianFields from ICU4J v3.6.1 at http://www.icu-project.org/
 	toGregorian: function(){
-		// summary: This returns the equevalent Grogorian date value in Date object
+		// summary: returns the equivalent Grogorian date value as a native Date object
 		// example:
 		// |		var dateHebrew = new dojox.date.hebrew.Date(5768,11,20);
 		// |		var dateGregorian = dateHebrew.toGregorian();
@@ -667,9 +617,10 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 			day += (this.isLeapYear(hYear) ? this._LEAP_MONTH_START : this._MONTH_START)[hMonth][this._yearType(hYear)];
 		}
 
-		var julianDay =  (hDate + day + 347997);
+		var julianDay =  (hDate + day + 347997),
 		// The Gregorian epoch day is zero for Monday January 1, year 1.
-		var gregorianEpochDay = julianDay - 1721426;
+			gregorianEpochDay = julianDay - 1721426;
+
 		// Here we convert from the day number to the multiple radix
 		// representation.  We use 400-year, 100-year, and 4-year cycles.
 		// For example, the 4-year cycle has 4 years + 1 leap day; giving
@@ -710,7 +661,7 @@ dojo.declare("dojox.date.hebrew.Date", null, {
 	},
 
 	getDay: function(){
-		// summary: This function return Week Day value ( 0 - 6 )
+		// summary: returns weekday value (0 - 6)
 		//
 		// example:
 		// |		var date1 = new dojox.date.hebrew.Date();

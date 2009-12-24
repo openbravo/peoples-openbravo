@@ -361,18 +361,18 @@ public class ApplyModules extends HttpSecureAppServlet {
     PreparedStatement updateSession = null;
     AntExecutor ant = null;
     try {
+      // We first shutdown the background process, so that it doesn't interfere
+      // with the rebuild process
+      try {
+        if (OBScheduler.getInstance().getScheduler().isStarted())
+          OBScheduler.getInstance().getScheduler().shutdown(true);
+      } catch (Exception e) {
+        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+      }
       ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
       ps.executeUpdate();
       ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB11'");
       ps2.executeUpdate();
-
-      // We first shutdown the background process, so that it doesn't interfere
-      // with the rebuild process
-      try {
-        OBScheduler.getInstance().getScheduler().shutdown(true);
-      } catch (Exception e) {
-        // We will not log an exception if the scheduler complains. The user shouldn't notice this
-      }
 
       Properties props = new Properties();
       props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
@@ -425,6 +425,9 @@ public class ApplyModules extends HttpSecureAppServlet {
       ResultSet rsErr = psErr.getResultSet();
       if (!rsErr.next()) {
         ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'");
+        ps3.executeUpdate();
+      } else {
+        ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB59'");
         ps3.executeUpdate();
       }
       out.close();
@@ -525,6 +528,7 @@ public class ApplyModules extends HttpSecureAppServlet {
     XStream xs = new XStream(new JettisonMappedXmlDriver());
     xs.alias("OBError", OBError.class);
     String strResult = xs.toXML(error);
+    response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.print(strResult);
     out.close();

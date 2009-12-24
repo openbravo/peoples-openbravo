@@ -44,7 +44,7 @@ dojo.declare(
 	// href: String
 	//		The href of the content that displays now.
 	//		Set this at construction if you want to load data externally when the
-	//		pane is shown.	(Set preload=true to load it immediately.)
+	//		pane is shown.  (Set preload=true to load it immediately.)
 	//		Changing href after creation doesn't have any effect; use attr('href', ...);
 	href: "",
 
@@ -63,11 +63,11 @@ dojo.declare(
 
 	// parseOnLoad: Boolean
 	//		Parse content and create the widgets, if any.
-	parseOnLoad:	true,
+	parseOnLoad: true,
 
 	// preventCache: Boolean
 	//		Prevent caching of data from href's by appending a timestamp to the href.
-	preventCache:	false,
+	preventCache: false,
 
 	// preload: Boolean
 	//		Force load of data on initialization even if pane is hidden.
@@ -79,11 +79,11 @@ dojo.declare(
 
 	// loadingMessage: String
 	//		Message that shows while downloading
-	loadingMessage: "<span class='dijitContentPaneLoading'>${loadingState}</span>", 
+	loadingMessage: "<span class='dijitContentPaneLoading'>${loadingState}</span>",
 
 	// errorMessage: String
 	//		Message that shows if an error occurs
-	errorMessage: "<span class='dijitContentPaneError'>${errorState}</span>", 
+	errorMessage: "<span class='dijitContentPaneError'>${errorState}</span>",
 
 	// isLoaded: [readonly] Boolean
 	//		True if the ContentPane has data in it, either specified
@@ -108,14 +108,15 @@ dojo.declare(
 	ioArgs: {},
 
 	// isContainer: [protected] Boolean
-	//		Just a flag indicating that this widget will call resize() on
-	//		its children.   _LayoutWidget based widgets check for
-	//
-	//	|		if(!this.getParent || !this.getParent()){
-	//
-	//		and if getParent() returns false because !parent.isContainer,
-	//		then they resize themselves on initialization.
+	//		Indicates that this widget acts as a "parent" to the descendant widgets.
+	//		When the parent is started it will call startup() on the child widgets.
+	//		See also `isLayoutContainer`.
 	isContainer: true,
+
+	// isLayoutContainer: [protected] Boolean
+	//		Indicates that this widget will call resize() on it's child widgets
+	//		when they become visible.
+	isLayoutContainer: true,
 
 	// onLoadDeferred: [readonly] dojo.Deferred
 	//		This is the `dojo.Deferred` returned by attr('href', ...) and refresh().
@@ -126,12 +127,19 @@ dojo.declare(
 	//		This is different than an onLoad() handler which gets called any time any href is loaded.
 	onLoadDeferred: null,
 
+	// Override _Widget's attributeMap because we don't want the title attribute (used to specify
+	// tab labels) to be copied to ContentPane.domNode... otherwise a tooltip shows up over the
+	// entire pane.
+	attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
+		title: []
+	}),
+
 	postMixInProperties: function(){
 		this.inherited(arguments);
 		var messages = dojo.i18n.getLocalization("dijit", "loading", this.lang);
 		this.loadingMessage = dojo.string.substitute(this.loadingMessage, messages);
 		this.errorMessage = dojo.string.substitute(this.errorMessage, messages);
-		
+
 		// Detect if we were initialized with data
 		if(!this.href && this.srcNodeRef && this.srcNodeRef.innerHTML){
 			this.isLoaded = true;
@@ -154,7 +162,7 @@ dojo.declare(
 		// over a node
 		this.domNode.title = "";
 
-		if (!dojo.attr(this.domNode,"role")){
+		if(!dojo.attr(this.domNode,"role")){
 			dijit.setWaiRole(this.domNode, "group");
 		}
 
@@ -168,25 +176,22 @@ dojo.declare(
 		//		the same API.
 		if(this._started){ return; }
 
+		var parent = dijit._Contained.prototype.getParent.call(this);
+		this._childOfLayoutWidget = parent && parent.isLayoutContainer;
+
+		// I need to call resize() on my child/children (when I become visible), unless
+		// I'm the child of a layout widget in which case my parent will call resize() on me and I'll do it then.
+		this._needLayout = !this._childOfLayoutWidget;
+
 		if(this.isLoaded){
 			dojo.forEach(this.getChildren(), function(child){
 				child.startup();
 			});
-
-			// If we have static content in the content pane (specified during
-			// initialization) then we need to do layout now... unless we are
-			// a child of a TabContainer etc. in which case wait until the TabContainer
-			// calls resize() on us.
-			if(this.doLayout){
-				this._checkIfSingleChild();
-			}
-			if(!this._singleChild || !dijit._Contained.prototype.getParent.call(this)){
-				this._scheduleLayout();
-			}
 		}
-		
-		// If we have an href then check if we should load it now
-		this._loadCheck();
+
+		if(this._isShown() || this.preload){
+			this._onShow();
+		}
 
 		this.inherited(arguments);
 	},
@@ -198,7 +203,9 @@ dojo.declare(
 		//		and should propogate startup() and resize() calls to it.
 		//		Skips over things like data stores since they aren't visible.
 
-		var childNodes = dojo.query(">", this.containerNode),
+		var childNodes = dojo.query("> *", this.containerNode).filter(function(node){
+				return node.tagName !== "SCRIPT"; // or a regexp for hidden elements like script|area|map|etc..
+			}),
 			childWidgetNodes = childNodes.filter(function(node){
 				return dojo.hasAttr(node, "dojoType") || dojo.hasAttr(node, "widgetId");
 			}),
@@ -217,6 +224,9 @@ dojo.declare(
 		}else{
 			delete this._singleChild;
 		}
+
+		// So we can set overflow: hidden to avoid a safari bug w/scrollbars showing up (#9449)
+		dojo.toggleClass(this.containerNode, this.baseClass + "SingleChild", !!this._singleChild);
 	},
 
 	setHref: function(/*String|Uri*/ href){
@@ -250,7 +260,7 @@ dojo.declare(
 			// ContentPane is made visible
 			this._hrefChanged = true;
 		}
-		
+
 		return this.onLoadDeferred;		// dojo.Deferred
 	},
 
@@ -284,7 +294,7 @@ dojo.declare(
 		this._setContent(data || "");
 
 		this._isDownloaded = false; // mark that content is from a attr('content') not an attr('href')
-		
+
 		return this.onLoadDeferred; 	// dojo.Deferred
 	},
 	_getContentAttr: function(){
@@ -300,7 +310,7 @@ dojo.declare(
 			this._xhrDfd.cancel();
 		}
 		delete this._xhrDfd; // garbage collect
-		
+
 		this.onLoadDeferred = null;
 	},
 
@@ -319,43 +329,69 @@ dojo.declare(
 		if(this._beingDestroyed){
 			return;
 		}
-		this._beingDestroyed = true;
 		this.inherited(arguments);
 	},
 
-	resize: function(size){
+	resize: function(changeSize, resultSize){
 		// summary:
 		//		See `dijit.layout._LayoutWidget.resize` for description.
 		//		Although ContentPane doesn't extend _LayoutWidget, it does implement
 		//		the same API.
 
-		dojo.marginBox(this.domNode, size);
-
-		// Compute content box size in case we [later] need to size child
-		// If either height or width wasn't specified by the user, then query node for it.
-		// But note that setting the margin box and then immediately querying dimensions may return
-		// inaccurate results, so try not to depend on it.
-		var node = this.containerNode,
-			mb = dojo.mixin(dojo.marginBox(node), size||{});
-
-		var cb = (this._contentBox = dijit.layout.marginBox2contentBox(node, mb));
-
-		// If we have a single widget child then size it to fit snugly within my borders
-		if(this._singleChild && this._singleChild.resize){
-			// note: if widget has padding this._contentBox will have l and t set,
-			// but don't pass them to resize() or it will doubly-offset the child
-			this._singleChild.resize({w: cb.w, h: cb.h});
+		// For the TabContainer --> BorderContainer --> ContentPane case, _onShow() is
+		// never called, so resize() is our trigger to do the initial href download.
+		if(!this._wasShown){
+			this._onShow();
 		}
+
+		this._resizeCalled = true;
+
+		// Set margin box size, unless it wasn't specified, in which case use current size.
+		if(changeSize){
+			dojo.marginBox(this.domNode, changeSize);
+		}
+
+		// Compute content box size of containerNode in case we [later] need to size our single child.
+		var cn = this.containerNode;
+		if(cn === this.domNode){
+			// If changeSize or resultSize was passed to this method and this.containerNode ==
+			// this.domNode then we can compute the content-box size without querying the node,
+			// which is more reliable (similar to LayoutWidget.resize) (see for example #9449).
+			var mb = resultSize || {};
+			dojo.mixin(mb, changeSize || {}); // changeSize overrides resultSize
+			if(!("h" in mb) || !("w" in mb)){
+				mb = dojo.mixin(dojo.marginBox(cn), mb); // just use dojo.marginBox() to fill in missing values
+			}
+			this._contentBox = dijit.layout.marginBox2contentBox(cn, mb);
+		}else{
+			this._contentBox = dojo.contentBox(cn);
+		}
+
+		// Make my children layout, or size my single child widget
+		this._layoutChildren();
 	},
 
 	_isShown: function(){
 		// summary:
-		//		Returns true if the content is currently shown
-		if("open" in this){
+		//		Returns true if the content is currently shown.
+		// description:
+		//		If I am a child of a layout widget then it actually returns true if I've ever been visible,
+		//		not whether I'm currently visible, since that's much faster than tracing up the DOM/widget
+		//		tree every call, and at least solves the performance problem on page load by deferring loading
+		//		hidden ContentPanes until they are first shown
+
+		if(this._childOfLayoutWidget){
+			// If we are TitlePane, etc - we return that only *IF* we've been resized
+			if(this._resizeCalled && "open" in this){
+				return this.open;
+			}
+			return this._resizeCalled;
+		}else if("open" in this){
 			return this.open;		// for TitlePane, etc.
 		}else{
+			// TODO: with _childOfLayoutWidget check maybe this branch no longer necessary?
 			var node = this.domNode;
-			return (node.style.display != 'none')  && (node.style.visibility != 'hidden') && !dojo.hasClass(node, "dijitHidden");
+			return (node.style.display != 'none') && (node.style.visibility != 'hidden') && !dojo.hasClass(node, "dijitHidden");
 		}
 	},
 
@@ -367,34 +403,29 @@ dojo.declare(
 		//		If the ContentPane is a hidden pane of a TabContainer etc., then it's
 		//		called whenever the pane is made visible.
 		//
-		//		Does processing necessary, including href download and layout/resize of
+		//		Does necessary processing, including href download and layout/resize of
 		//		child widget(s)
 
-		if(this._needLayout){
-			// If a layout has been scheduled for when we become visible, do it now
-			this._layoutChildren();
+		if(this.href){
+			if(!this._xhrDfd && // if there's an href that isn't already being loaded
+				(!this.isLoaded || this._hrefChanged || this.refreshOnShow)
+			){
+				this.refresh();
+			}
+		}else{
+			// If we are the child of a layout widget then the layout widget will call resize() on
+			// us, and then we will size our child/children.   Otherwise, we need to do it now.
+			if(!this._childOfLayoutWidget && this._needLayout){
+				// If a layout has been scheduled for when we become visible, do it now
+				this._layoutChildren();
+			}
 		}
-
-		// Do lazy-load of URL
-		this._loadCheck();
 
 		this.inherited(arguments);
-	},
 
-	_loadCheck: function(){
-		// summary:
-		//		Call this to load href contents if necessary.
-		// description:
-		//		Call when !ContentPane has been made visible [from prior hidden state],
-		//		or href has been changed, or on startup, etc.
-
-		if(
-			(this.href && !this._xhrDfd) &&		// if there's an href that isn't already being loaded
-			(!this.isLoaded || this._hrefChanged || this.refreshOnShow) && 	// and we need a [re]load
-			(this.preload || this._isShown())	// and now is the time to [re]load
-		){
-			this.refresh();
-		}
+		// Need to keep track of whether ContentPane has been shown (which is different than
+		// whether or not it's currently visible).
+		this._wasShown = true;
 	},
 
 	refresh: function(){
@@ -463,7 +494,7 @@ dojo.declare(
 		this.isLoaded = true;
 		try{
 			this.onLoadDeferred.callback(data);
-			this.onLoad(data);			
+			this.onLoad(data);
 		}catch(e){
 			console.error('Error '+this.widgetId+' running custom onLoad code: ' + e.message);
 		}
@@ -510,7 +541,7 @@ dojo.declare(
 			});
 			delete setter.parseResults;
 		}
-		
+
 		// And then clear away all the DOM nodes
 		dojo.html._emptyNode(this.containerNode);
 
@@ -519,19 +550,19 @@ dojo.declare(
 	},
 
 	_setContent: function(cont, isFakeContent){
-		// summary: 
+		// summary:
 		//		Insert the content into the container node
 
 		// first get rid of child widgets
 		this.destroyDescendants();
 
 		// dojo.html.set will take care of the rest of the details
-		// we provide an override for the error handling to ensure the widget gets the errors 
+		// we provide an override for the error handling to ensure the widget gets the errors
 		// configure the setter instance with only the relevant widget instance properties
-		// NOTE: unless we hook into attr, or provide property setters for each property, 
+		// NOTE: unless we hook into attr, or provide property setters for each property,
 		// we need to re-configure the ContentSetter with each use
-		var setter = this._contentSetter; 
-		if(! (setter && setter instanceof dojo.html._ContentSetter)) {
+		var setter = this._contentSetter;
+		if(! (setter && setter instanceof dojo.html._ContentSetter)){
 			setter = this._contentSetter = new dojo.html._ContentSetter({
 				node: this.containerNode,
 				_onError: dojo.hitch(this, this._onError),
@@ -550,12 +581,12 @@ dojo.declare(
 		};
 
 		var setterParams = dojo.mixin({
-			cleanContent: this.cleanContent, 
-			extractContent: this.extractContent, 
-			parseContent: this.parseOnLoad 
+			cleanContent: this.cleanContent,
+			extractContent: this.extractContent,
+			parseContent: this.parseOnLoad
 		}, this._contentSetterParams || {});
-		
-		dojo.mixin(setter, setterParams); 
+
+		dojo.mixin(setter, setterParams);
 
 		setter.set( (dojo.isObject(cont) && cont.domNode) ? cont.domNode : cont );
 
@@ -563,27 +594,27 @@ dojo.declare(
 		delete this._contentSetterParams;
 
 		if(!isFakeContent){
+			// Startup each top level child widget (and they will start their children, recursively)
 			dojo.forEach(this.getChildren(), function(child){
-				child.startup();
-			});
-
-			if(this.doLayout){
-				this._checkIfSingleChild();
-			}
+				// The parser has already called startup on all widgets *without* a getParent() method
+				if(!this.parseOnLoad || child.getParent){
+					child.startup();
+				}
+			}, this);
 
 			// Call resize() on each of my child layout widgets,
 			// or resize() on my single child layout widget...
 			// either now (if I'm currently visible)
 			// or when I become visible
 			this._scheduleLayout();
-			
+
 			this._onLoadHandler(cont);
 		}
 	},
 
 	_onError: function(type, err, consoleText){
 		this.onLoadDeferred.errback(err);
-	
+
 		// shows user the string that is returned by on[type]Error
 		// overide on[type]Error and return your own string to customize
 		var errText = this['on' + type + 'Error'].call(this, err);
@@ -593,7 +624,7 @@ dojo.declare(
 			this._setContent(errText, true);
 		}
 	},
-	
+
 	_scheduleLayout: function(){
 		// summary:
 		//		Call resize() on each of my child layout widgets, either now
@@ -614,8 +645,15 @@ dojo.declare(
 		//		(from an href, or from attr('content', ...))... but deferred until
 		//		the ContentPane is visible
 
+		if(this.doLayout){
+			this._checkIfSingleChild();
+		}
+
 		if(this._singleChild && this._singleChild.resize){
 			var cb = this._contentBox || dojo.contentBox(this.containerNode);
+
+			// note: if widget has padding this._contentBox will have l and t set,
+			// but don't pass them to resize() or it will doubly-offset the child
 			this._singleChild.resize({w: cb.w, h: cb.h});
 		}else{
 			// All my child widgets are independently sized (rather than matching my size),

@@ -600,7 +600,8 @@ public class DataImportService implements OBSingleton {
     try {
       OBDal.getInstance().save(toInsert);
     } catch (final Exception e) {
-      throw new OBException(e);
+      log.warn("There was a problem inserting data in the database.");
+      log.info("The following exception was raised: ", e);
     }
   }
 }

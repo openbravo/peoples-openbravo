@@ -35,7 +35,7 @@ dojo.declare(
 		constraints:{},
 =====*/
 
-		//	value: Date
+		// value: Date
 		//		The value of this widget as a JavaScript Date object, with only hours/minutes/seconds specified.
 		//
 		//		Example:

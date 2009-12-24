@@ -120,11 +120,11 @@ dojo.require("dojox.sketch.UndoStack");
 		this._keydown=function(e){
 			var prevent=false;
 			if(e.ctrlKey){
-				if(e.keyCode===90){ //ctrl+z
+				if(e.keyCode===90 || e.keyCode===122){ //ctrl+z
 					self.undo();
 					prevent = true;
 				}
-				else if(e.keyCode===89){ //ctrl+y
+				else if(e.keyCode===89 || e.keyCode===121){ //ctrl+y
 					self.redo();
 					prevent = true;
 				}
@@ -151,7 +151,7 @@ dojo.require("dojox.sketch.UndoStack");
 			var o=self._fromEvt(e);
 			self._startPoint={ x:e.pageX, y:e.pageY };
 
-			self._ctr=dojo._abs(self.node);
+			self._ctr=dojo.position(self.node);
 			//	figure out the coordinates taking scroll into account
 			var scroll={x:self.node.scrollLeft,y:self.node.scrollTop};
 			//var win = dijit.getDocumentWindow(self.node.ownerDocument);
@@ -285,7 +285,7 @@ dojo.require("dojox.sketch.UndoStack");
 			dojo.connect(es, 'ondblclick', this._dblclick),
 			dojo.connect(node, 'onkeydown', this._keydown));
 		
-		this.image=this.group.createImage({ width:this.size.w, height:this.size.h, src:this.imageSrc });
+		this.image=this.group.createImage({ width:this.imageSize.w, height:this.imageSize.h, src:this.imageSrc });
 	};
 
 	p.destroy=function(isLoading){
@@ -327,8 +327,8 @@ dojo.require("dojox.sketch.UndoStack");
 		//	assume fitting the parent node.
 //		var box=dojo.html.getContentBox(this.node.parentNode);
 		//the following should work under IE and FF, not sure about others though
-		var wF=(this.node.parentNode.clientWidth-5)/this.size.w;
-		var hF=(this.node.parentNode.clientHeight-5)/this.size.h;
+		var wF=(this.node.parentNode.offsetWidth-5)/this.size.w;
+		var hF=(this.node.parentNode.offsetHeight-5)/this.size.h;
 		return Math.min(wF, hF)*100;
 	};
 	p.unzoom=function(){
@@ -458,7 +458,7 @@ dojo.require("dojox.sketch.UndoStack");
 		var obj=dojox.xml.DomParser.parse(text);
 		var node=this.node;
 		this.load(obj,node);
-		this.zoom(this.zoomFactor*100); //zoom to orignal scale
+		//this.zoom(this.zoomFactor*100); //zoom to orignal scale
 	};
 	p.load=function(obj, n){
 		//	create from pseudo-DOM
@@ -470,6 +470,10 @@ dojo.require("dojox.sketch.UndoStack");
 		};
 		var g=node.childrenByName("g")[0];
 		var img=g.childrenByName("image")[0];
+		this.imageSize={
+			w:parseFloat(img.getAttribute('width'),10), 
+			h:parseFloat(img.getAttribute('height'),10) 
+		};
 		this.imageSrc=img.getAttribute("xlink:href");
 		this.initialize(n);
 

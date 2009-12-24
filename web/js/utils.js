@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5433';
+  var number = '5759';
   return number;
 }
 
@@ -774,6 +774,16 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   else isPopup = false;
   if (height==null) height = screen.height - 50;
   if (width==null) width = screen.width;
+  if (height.toString().indexOf("%") != -1) {
+    height = height.replace('%','');
+    height = parseInt(height);
+    height = screen.height * (height/100);
+  }
+  if (width.toString().indexOf("%") != -1) {
+    width = width.replace('%','');
+    width = parseInt(width);
+    width = screen.width * (width/100);
+  }
   if (top==null) top = (screen.height - height) / 2;
   if (left==null) left = (screen.width - width) / 2;
   if (checkChanges==null) checkChanges = false;
@@ -805,7 +815,7 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   }
   if (isPopup == true && hasLoading == true) {
     isPopupLoadingWindowLoaded=false;
-    var urlLoading = '../utility/PopupLoading.html'
+    var urlLoading = '../utility/PopupLoading.html';
     var winPopUp = window.open((doSubmit?urlLoading:url), _name, adds);
   } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);

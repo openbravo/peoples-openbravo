@@ -19,7 +19,7 @@ dojo.declare("dojox.av.widget.ProgressSlider", [dijit._Widget, dijit._Templated]
 	//		progress bars: one for playhead position, and one for download 
 	//		progress.
 	//
-	templateString:"<div class=\"Progress\" dojoAttachEvent=\"mousedown:startDrag\">\n    \n    <div class=\"ProgressLoaded\" dojoAttachPoint=\"progressLoaded\"></div>\n    <div class=\"ProgressPosition\" dojoAttachPoint=\"progressPosition\"></div>\n\t<div class=\"ProgressHandle\" dojoAttachPoint=\"handle\" dojoAttachEvent=\"mouseover:handleOver, mouseout:handleOut\"></div>\n</div>\n",
+	templateString: dojo.cache("dojox.av.widget", "resources/ProgressSlider.html", "<div class=\"Progress\" dojoAttachEvent=\"mousedown:startDrag\">\n    \n    <div class=\"ProgressLoaded\" dojoAttachPoint=\"progressLoaded\"></div>\n    <div class=\"ProgressPosition\" dojoAttachPoint=\"progressPosition\"></div>\n\t<div class=\"ProgressHandle\" dojoAttachPoint=\"handle\" dojoAttachEvent=\"mouseover:handleOver, mouseout:handleOut\"></div>\n</div>\n"),
 	postCreate: function(){
 		// summary:
 		//		Initialize slider.
