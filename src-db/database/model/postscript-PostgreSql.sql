@@ -558,11 +558,17 @@ AS '$libdir/uuid-ossp', 'uuid_generate_v4'
 VOLATILE STRICT LANGUAGE C;
 /-- END
 
+alter table ad_tab disable trigger ad_tab_mod_trg;
+/-- END
+
 --Regenerate mappings and classnames for tabs in modules (issue #11431)
 update ad_tab set name = 'M'||name where ad_module_id != '0';
 /-- END
  
 update ad_tab set name = substr(name,2) where ad_module_id != '0';
+/-- END
+
+alter table ad_tab enable trigger ad_tab_mod_trg;
 /-- END
 
 -- Inserts an alert recipient for available updates
