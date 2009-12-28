@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ddlutils.model.Check;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.model.ForeignKey;
 import org.apache.ddlutils.model.Index;
@@ -41,6 +42,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.module.ModuleDBPrefix;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
@@ -55,6 +57,7 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 // check naming rule of a table, use ad_exceptions table
 public class DatabaseValidator implements SystemValidator {
   private Database database;
+  private boolean dbsmExecution = false;
 
   private static int MAX_OBJECT_NAME_LENGTH = 30;
 
@@ -622,6 +625,14 @@ public class DatabaseValidator implements SystemValidator {
 
   public void setValidateModule(Module module) {
     this.validateModule = module;
+  }
+
+  public boolean isDbsmExecution() {
+    return dbsmExecution;
+  }
+
+  public void setDbsmExecution(boolean dbsmExecution) {
+    this.dbsmExecution = dbsmExecution;
   }
 
 }
