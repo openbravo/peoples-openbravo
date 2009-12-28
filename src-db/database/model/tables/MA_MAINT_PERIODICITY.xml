@@ -64,13 +64,13 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINT_PERIODICITY">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINT_PERIODICITY">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_MAINT_PERIODICITY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MAINTENANCE" name="MAMAINTENANCE_MAINTPERIODICITY">
+      <foreign-key foreignTable="MA_MAINTENANCE" name="MA_MAINT_PERIODICITY_MA_MAINTE">
         <reference local="MA_MAINTENANCE_ID" foreign="MA_MAINTENANCE_ID"/>
       </foreign-key>
-      <check name="MAINTPERIOD_EXCLUDWEEK_CHECK"><![CDATA[EXCLUDEWEEKEND IN ('Y', 'N')]]></check>
-      <check name="MAMAINTPERIOD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MA_MAINT_PERIODICITY_EXCLU_CHK"><![CDATA[EXCLUDEWEEKEND IN ('Y', 'N')]]></check>
+      <check name="MA_MAINT_PERIODICITY_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

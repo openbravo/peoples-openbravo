@@ -85,45 +85,45 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CACCTSCHEMAGL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_ACCTSCHEMA_GL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CACCTSCHEMAGL">
+      <foreign-key foreignTable="AD_ORG" name="C_ACCTSCHEMA_GL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_GL_C_ACCTSCHEMA" onDelete="cascade">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_GL_CURRENCYBALANC">
+        <reference local="CURRENCYBALANCING_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_GL_INCOMESUMMARY_">
+        <reference local="INCOMESUMMARY_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_GL_INTERCOMPANYD1">
+        <reference local="INTERCOMPANYDUETO_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_GL_INTERCOMPANYDU">
+        <reference local="INTERCOMPANYDUEFROM_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_GL_PPVOFFSET_ACCT">
+        <reference local="PPVOFFSET_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_GL_RETAINEDEARNIN">
+        <reference local="RETAINEDEARNING_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_GL_SUSPENSEBALANC">
+        <reference local="SUSPENSEBALANCING_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_GL_SUSPENSEERROR_">
+        <reference local="SUSPENSEERROR_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHM_GL_C_VLDCMBNTN">
         <reference local="CFS_ORDER_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CACCTSCHEMAGL" onDelete="cascade">
-        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_CURRENCYBALANCING_CSCHEMAGL">
-        <reference local="CURRENCYBALANCING_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_INCOMESUMMARY_CSCHEMAGL">
-        <reference local="INCOMESUMMARY_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_INTERCOMPANYDUEFROM_CSCHEMA">
-        <reference local="INTERCOMPANYDUEFROM_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_INTERCOMPANYDUETO_CSCHEMAGL">
-        <reference local="INTERCOMPANYDUETO_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PPVOFFSET_CSCHEMAGL">
-        <reference local="PPVOFFSET_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_RETAINEDEARNING_CSCHEMAGL">
-        <reference local="RETAINEDEARNING_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_SUSPENSEBALANCING_CSCHEMAGL">
-        <reference local="SUSPENSEBALANCING_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_SUSPENSEERROR_CSCHEMAGL">
-        <reference local="SUSPENSEERROR_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <check name="CACCTSCHEMAGL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CACCTSCHEMAGL_U_SPEERROR_CHECK"><![CDATA[USESUSPENSEERROR IN ('Y', 'N')]]></check>
-      <check name="CACCTSCHEMAGL_USECURBAL_CHECK"><![CDATA[USECURRENCYBALANCING IN ('Y', 'N')]]></check>
-      <check name="CACCTSCHEMAGL_USESUSPENB_CHECK"><![CDATA[USESUSPENSEBALANCING IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_GL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_GL_USECURRENC_CHK"><![CDATA[USECURRENCYBALANCING IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_GL_USESUSPENS_CH1"><![CDATA[USESUSPENSEBALANCING IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_GL_USESUSPENS_CHK"><![CDATA[USESUSPENSEERROR IN ('Y', 'N')]]></check>
     </table>
   </database>

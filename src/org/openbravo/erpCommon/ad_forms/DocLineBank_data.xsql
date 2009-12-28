@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
 -->
 
@@ -55,20 +55,9 @@
     <Sql>
       <![CDATA[
       SELECT COUNT(*) AS COUNT
-      FROM C_BANKSTATEMENTLINE BL left join C_DEBT_PAYMENT DP on BL.C_DEBT_PAYMENT_ID = DP.C_DEBT_PAYMENT_ID
-      WHERE C_BANKSTATEMENT_ID = ?
-      AND EXISTS (SELECT 1
-          FROM C_YEAR, C_PERIOD, C_PERIODCONTROL, AD_CLIENTINFO
-          WHERE C_YEAR.C_YEAR_ID = C_PERIOD.C_YEAR_ID
-         AND C_PERIOD.C_PERIOD_ID = C_PERIODCONTROL.C_PERIOD_ID
-         AND C_YEAR.C_CALENDAR_ID = AD_CLIENTINFO.C_CALENDAR_ID
-         AND AD_CLIENTINFO.AD_CLIENT_ID = BL.AD_CLIENT_ID
-         AND C_PERIODCONTROL.DOCBASETYPE = 'CMB'
-         AND C_PERIODCONTROL.PERIODSTATUS <> 'O'
-         AND BL.DATEACCT >= C_PERIOD.STARTDATE
-         AND BL.DATEACCT < C_PERIOD.ENDDATE + 1)
-      GROUP BY bl.line
-      ORDER BY LINE
+      FROM C_BANKSTATEMENTLINE BL
+      WHERE C_CHK_OPEN_PERIOD(BL.AD_Org_ID, BL.DATEACCT, 'CMB', NULL)<>1
+      AND C_BANKSTATEMENT_ID = ?
      ]]>
      </Sql>
      <Parameter name="cBankaccountId"/>

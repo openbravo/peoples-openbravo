@@ -45,18 +45,18 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="CLIENT_FK_SEQEMPLOYEE">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_SEQUENCE_EMPLOYEE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SALARY_CATEGORY" name="CSALARYCATEGORY_MASEQUENCEEMPL">
-        <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ORG_FK_SEQEMPLOYEE">
+      <foreign-key foreignTable="AD_ORG" name="MA_SEQUENCE_EMPLOYEE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_SEQUENCE" name="SEQUENCE_FK_SEQEMPLOYEE">
+      <foreign-key foreignTable="C_SALARY_CATEGORY" name="MA_SEQUENCE_EMPLOYEE_C_SALARY_">
+        <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_SEQUENCE" name="MA_SEQUENCE_EMPLOYEE_MA_SEQUEN">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
       </foreign-key>
-      <check name="ISACTIVE_CH_SEQEMPLOYEE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MA_SEQUENCE_EMPLOYEE_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

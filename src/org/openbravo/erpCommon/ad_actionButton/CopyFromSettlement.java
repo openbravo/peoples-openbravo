@@ -105,6 +105,9 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     String strDebe = "";
     String strHaber = "";
     String strImporte = "";
+    String strCBPartnerId_D = "";
+    String spChars = "";
+    boolean inpEvent = false;
     try {
       conn = getTransactionConnection();
       CopyFromSettlementData[] data = CopyFromSettlementData.select(this, strKey);
@@ -114,8 +117,35 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
             data[i].cDebtPaymentId);
         strDebtPayment = SequenceIdData.getUUID();
         strCBPartnerId = vars.getStringParameter("inpcBpartnerId" + data[i].cDebtPaymentId);
+        strCBPartnerId_D = vars.getStringParameter("inpcBpartnerId_D" + data[i].cDebtPaymentId);
+        if (strCBPartnerId_D.equals("")) {
+          strCBPartnerId = "";
+        }
         strDate = vars.getStringParameter("inpDate" + data[i].cDebtPaymentId);
+        if (strDate.equals("")) {
+          myError = Utility.translateError(this, vars, vars.getLanguage(),
+              "The field DatePlanned is mandatory and cannot be left empty");
+          return myError;
+        }
         strImporte = vars.getStringParameter("inpAmount" + data[i].cDebtPaymentId);
+        if (strImporte.equals("")) {
+          myError = Utility.translateError(this, vars, vars.getLanguage(),
+              "The field Amount is mandatory and cannot be left empty");
+          return myError;
+        }
+        spChars = " `()\\~!@^&*+\"|:=,< >$-%/;'";
+        int pos;
+        for (int a = 1; a <= 25; a++) {
+          pos = strImporte.indexOf(spChars.charAt(a));
+          if (pos != -1) {
+            inpEvent = true;
+          }
+        }
+        if (inpEvent == true) {
+          myError = Utility.translateError(this, vars, vars.getLanguage(),
+              "The number is not correct.You may check the data");
+          return myError;
+        }
         try {
           CopyFromSettlementData.insertDebtPayment(conn, this, strDebtPayment, to[0].client,
               to[0].org, vars.getUser(), data[i].isreceipt, strSettlement, data[i].description,
@@ -129,7 +159,17 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
         }
         for (int j = 0; j < data1.length; j++) {
           strDebe = vars.getStringParameter("inpDebe" + data1[j].cDebtPaymentBalancingId);
+          if (strDebe.equals("")) {
+            myError = Utility.translateError(this, vars, vars.getLanguage(),
+                "The field Debit is mandatory and cannot be left empty");
+            return myError;
+          }
           strHaber = vars.getStringParameter("inpHaber" + data1[j].cDebtPaymentBalancingId);
+          if (strHaber.equals("")) {
+            myError = Utility.translateError(this, vars, vars.getLanguage(),
+                "The field Credit is mandatory and cannot be left empty");
+            return myError;
+          }
           strDebtPaymentBalancing = SequenceIdData.getUUID();
           try {
             CopyFromSettlementData.insert(conn, this, strDebtPaymentBalancing, to[0].client,

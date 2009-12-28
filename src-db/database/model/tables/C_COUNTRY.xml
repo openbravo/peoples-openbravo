@@ -93,20 +93,20 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CCOUNTRY">
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_COUNTRY_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRY_C_COUNTRY">
+        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="C_COUNTRY_C_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_COUNTRYCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_COUNTRYORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_CCOUNTRY">
-        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCOUNTRY">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <unique name="C_COUNTRYCODE">
         <unique-column name="COUNTRYCODE"/>

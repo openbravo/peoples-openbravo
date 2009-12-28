@@ -61,22 +61,22 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SEXPENSETYPE">
+      <foreign-key foreignTable="AD_CLIENT" name="S_EXPENSETYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_SEXPENSETYPE">
+      <foreign-key foreignTable="AD_ORG" name="S_EXPENSETYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_SEXPENSETYPE">
+      <foreign-key foreignTable="C_TAXCATEGORY" name="S_EXPENSETYPE_C_TAXCATEGORY">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_SEXPENSETYPE">
+      <foreign-key foreignTable="C_UOM" name="S_EXPENSETYPE_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCTCATEGORY_SEXPENSETYPE">
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="S_EXPENSETYPE_M_PRODUCT_CATEGO">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="SEXPENSETYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="SEXPENSETYPE_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
+      <check name="S_EXPENSETYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="S_EXPENSETYPE_ISINVOICED_CHK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
     </table>
   </database>

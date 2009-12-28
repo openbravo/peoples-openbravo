@@ -85,31 +85,31 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MINOUTLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="M_INOUTLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MINOUTLINE">
+      <foreign-key foreignTable="AD_ORG" name="M_INOUTLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="CORDERLINE_MINOUT">
+      <foreign-key foreignTable="C_ORDERLINE" name="M_INOUTLINE_C_ORDERLINE">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_MINOUTLINE">
+      <foreign-key foreignTable="C_UOM" name="M_INOUTLINE_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MINOUTLINE">
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_INOUTLINE_M_ATTRIBUTESETINST">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INOUT" name="MINOUT_MINOUTLINE">
+      <foreign-key foreignTable="M_INOUT" name="M_INOUTLINE_M_INOUT">
         <reference local="M_INOUT_ID" foreign="M_INOUT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MINOUTLINE">
+      <foreign-key foreignTable="M_LOCATOR" name="M_INOUTLINE_M_LOCATOR">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MINOUTLINE">
+      <foreign-key foreignTable="M_PRODUCT" name="M_INOUTLINE_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MINOUTLINE">
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="M_INOUTLINE_M_PRODUCT_UOM">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
       <index name="M_INOUTLINE_INOUT" unique="false">

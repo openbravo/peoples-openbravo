@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008 Openbravo SL
+* All portions are Copyright (C) 2008-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -25,7 +25,7 @@
   v_Aux NUMBER;
       
 BEGIN
-    
+
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
@@ -41,7 +41,8 @@ BEGIN
          AND NOT EXISTS (SELECT 1 
                           FROM AD_MODULE_DBPREFIX P
                           WHERE P.AD_MODULE_ID = :new.AD_Module_ID 
-                          AND instr(upper(:new.columnname), 'EM_'||upper(P.name)||'_') = 1)
+                          AND instr(upper(:new.columnname), 'EM_'||upper(P.name)||'_') = 1
+                          AND instr(upper(:new.name), 'EM_'||upper(P.name)||'_') = 1)
          AND NOT EXISTS( SELECT 1
                              FROM AD_EXCEPTIONS, ad_table t
                              WHERE TYPE='COLUMN'
@@ -50,7 +51,11 @@ BEGIN
                              AND UPPER(NAME1)=UPPER(:new.Columnname));
   
   IF v_Aux != 0 THEN
-    RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
+    RAISE_APPLICATION_ERROR(-20000, '@ColumnDBPrefix@') ;
+  END IF;
+  
+  IF AD_IsJavaWord(:new.Name)='Y' THEN
+    RAISE_APPLICATION_ERROR(-20000, '@NotAllowedColumnName@ "'||:new.name||'" @ReservedJavaWord@') ;
   END IF;
   
   /**

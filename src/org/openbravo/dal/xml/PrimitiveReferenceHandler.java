@@ -63,14 +63,14 @@ public class PrimitiveReferenceHandler implements OBSingleton {
 
   private static PrimitiveReferenceHandler instance;
 
-  public static PrimitiveReferenceHandler getInstance() {
+  public static synchronized PrimitiveReferenceHandler getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(PrimitiveReferenceHandler.class);
     }
     return instance;
   }
 
-  public static void setInstance(PrimitiveReferenceHandler instance) {
+  public static synchronized void setInstance(PrimitiveReferenceHandler instance) {
     PrimitiveReferenceHandler.instance = instance;
   }
 

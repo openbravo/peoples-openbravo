@@ -104,9 +104,16 @@ public class ImportBPartner extends ImportProcess {
       no = ImportBPartnerData.updateRegionId(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled())
         log4j.debug("ImportBPartner RegionId = " + no);
-      no = ImportBPartnerData.updateRegionError(con, conn, getAD_Client_ID());
-      if (log4j.isDebugEnabled())
-        log4j.debug("Invalid Region = " + no);
+
+      /*
+       * Prevents Region validation check the failed smoke test:
+       * http://builds.openbravo.com/job/erp_devel_int-pgsql-smoke-test/141/
+       * 
+       * Change requested by QA team
+       * 
+       * no = ImportBPartnerData.updateRegionError(con, conn, getAD_Client_ID()); if
+       * (log4j.isDebugEnabled()) log4j.debug("Invalid Region = " + no);
+       */
 
       // Greeting
       no = ImportBPartnerData.updateGreetingId(con, conn, getAD_Client_ID());

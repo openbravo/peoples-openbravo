@@ -65,22 +65,22 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SRESOURCE">
+      <foreign-key foreignTable="AD_CLIENT" name="S_RESOURCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_SRESOURCE">
+      <foreign-key foreignTable="AD_ORG" name="S_RESOURCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_SRESOURCE">
+      <foreign-key foreignTable="AD_USER" name="S_RESOURCE_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_SRESOURCE">
+      <foreign-key foreignTable="M_WAREHOUSE" name="S_RESOURCE_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_RESOURCETYPE" name="SRESOURCETYPE_SRESOURCE" onDelete="cascade">
+      <foreign-key foreignTable="S_RESOURCETYPE" name="S_RESOURCE_S_RESOURCETYPE" onDelete="cascade">
         <reference local="S_RESOURCETYPE_ID" foreign="S_RESOURCETYPE_ID"/>
       </foreign-key>
-      <check name="SRESOURCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="SRESOURCE_ISAVAILABLE_CHECK"><![CDATA[ISAVAILABLE IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCE_ISAVAILABLE_CHK"><![CDATA[ISAVAILABLE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -205,25 +205,25 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IPRODUCT">
+      <foreign-key foreignTable="AD_CLIENT" name="I_PRODUCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_IPRODUCT">
+      <foreign-key foreignTable="AD_ORG" name="I_PRODUCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_IPRODUCT">
+      <foreign-key foreignTable="C_BPARTNER" name="I_PRODUCT_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_IPRODUCT">
+      <foreign-key foreignTable="C_CURRENCY" name="I_PRODUCT_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_IPRODUCT">
+      <foreign-key foreignTable="C_UOM" name="I_PRODUCT_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_IPRODUCT">
+      <foreign-key foreignTable="M_PRODUCT" name="I_PRODUCT_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCTCATEGORY_IPRODUCT">
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="I_PRODUCT_M_PRODUCT_CATEGORY">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
       <check name="I_PROD_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>

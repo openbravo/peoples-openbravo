@@ -9,5 +9,7 @@
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/postgresql-jdbc3-8.2.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-1.2.8.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/ant-1.7.1.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-collections.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

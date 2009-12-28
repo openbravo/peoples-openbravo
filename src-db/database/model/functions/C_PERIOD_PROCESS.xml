@@ -47,6 +47,7 @@
   p_DocBaseType C_PeriodControl_Log.DocBaseType%TYPE;
   p_PeriodAction C_PeriodControl_Log.PeriodAction%TYPE;
   p_Processing C_PeriodControl_Log.Processing%TYPE;
+  v_AD_Client_ID C_PeriodControl_Log.AD_Client_ID%TYPE;
   
 BEGIN
     --  Update AD_PInstance
@@ -61,8 +62,8 @@ BEGIN
     FROM AD_PInstance
     WHERE AD_PInstance_ID=p_PInstance_ID;
     
-    SELECT AD_Org_ID, ISRecursive, C_Year_ID, PeriodNO, DocBaseType, PeriodAction, Processing
-    INTO p_Organization, p_IsRecursive, p_Year, p_PeriodNO, p_DocBaseType, p_PeriodAction, p_Processing
+    SELECT AD_Client_ID, AD_Org_ID, ISRecursive, C_Year_ID, PeriodNO, DocBaseType, PeriodAction, Processing
+    INTO v_AD_Client_ID, p_Organization, p_IsRecursive, p_Year, p_PeriodNO, p_DocBaseType, p_PeriodAction, p_Processing
     FROM C_PeriodControl_Log
     WHERE C_PeriodControl_Log_ID=v_Record_ID_Log;
       
@@ -116,7 +117,8 @@ BEGIN
         -- Action: Close if not permanently closed
       ELSIF(p_PeriodAction='C') THEN
         SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count FROM C_PERIOD, C_PERIODCONTROL, C_YEAR WHERE 
-          C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID AND C_PERIODCONTROL.PERIODSTATUS='O' AND C_YEAR.YEAR<p_Year;                  
+          C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID AND C_PERIODCONTROL.PERIODSTATUS='O' AND C_YEAR.YEAR<p_Year
+          AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID;                  
         IF (v_Count>=1) THEN           
           RAISE_APPLICATION_ERROR(-20000, '@YearNotClose@');
         END IF;

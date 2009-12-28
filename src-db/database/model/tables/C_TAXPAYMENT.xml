@@ -81,25 +81,25 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_FK_CTAXPAYMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_TAXPAYMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_FK_CTAXPAYMENT">
+      <foreign-key foreignTable="AD_ORG" name="C_TAXPAYMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_FK_CTAXPAYMENT">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_TAXPAYMENT_C_ACCTSCHEMA">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_FK_CTAXPAYMENT">
+      <foreign-key foreignTable="C_BPARTNER" name="C_TAXPAYMENT_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_FK_TAXPAYMENT">
+      <foreign-key foreignTable="C_CURRENCY" name="C_TAXPAYMENT_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SETTLEMENT" name="CSETTLEMENT_FK_CTAXPAYMENT">
+      <foreign-key foreignTable="C_SETTLEMENT" name="C_TAXPAYMENT_C_SETTLEMENT">
         <reference local="C_SETTLEMENT_ID" foreign="C_SETTLEMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_FK_CTAXPAYMENT">
+      <foreign-key foreignTable="GL_JOURNAL" name="C_TAXPAYMENT_GL_JOURNAL">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
     </table>

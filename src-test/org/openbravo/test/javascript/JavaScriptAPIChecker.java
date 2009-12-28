@@ -24,7 +24,6 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.mozilla.javascript.FunctionNode;
@@ -200,16 +199,7 @@ public class JavaScriptAPIChecker {
       if (cursor.getType() == Token.FUNCTION) {
         int fnIndex = cursor.getExistingIntProp(Node.FUNCTION_PROP);
         FunctionNode fn = nodeTree.getFunctionNode(fnIndex);
-        Iterator<String> iter = null;
-        StringBuffer sbParam = new StringBuffer();
-        if (fn.getSymbolTable() != null) {
-          iter = fn.getSymbolTable().keySet().iterator();
-          while (iter.hasNext()) {
-            sbParam.append(iter.next());
-            sbParam.append(" ");
-          }
-        }
-        sb.append("FUNCTION: " + fn.getFunctionName() + " [ " + sbParam + "]");
+        sb.append("FUNCTION: " + fn.getFunctionName());
       } else if (cursor.getType() == Token.VAR) {
         Node vn = cursor.getFirstChild();
         sb.append("VAR: " + vn.getString());

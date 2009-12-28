@@ -132,7 +132,7 @@ public class DatabaseValidator implements SystemValidator {
       // ignore errors related to C_TEMP_SELECTION and AD_CONTEXT_INFO
       if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")
           && !dbTable.getName().toUpperCase().startsWith("AD_CONTEXT_INFO")) {
-        result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
+        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
             + dbTable.getName() + " present in the database "
             + " but not defined in the Application Dictionary");
       }
@@ -150,6 +150,8 @@ public class DatabaseValidator implements SystemValidator {
     }
 
     checkIncorrectClientOrganizationName(result);
+
+    checkDBObjectsName(result);
 
     return result;
   }
@@ -509,6 +511,101 @@ public class DatabaseValidator implements SystemValidator {
             + invalidOrgName);
       }
     }
+  }
+
+  /**
+   * Checks DB objects naming rules for: <li>
+   * Primary Keys <li>
+   * Foreign Keys <li>
+   * Check Constraints <li>
+   * Unique Constraints <li>
+   * Indexes
+   * 
+   */
+  private void checkDBObjectsName(SystemValidationResult result) {
+    if (getValidateModule() == null) {
+      return;
+    }
+
+    for (org.apache.ddlutils.model.Table table : getDatabase().getTables()) {
+      // Primary Key
+      if (table.getPrimaryKey() != null && !table.getPrimaryKey().equals("")
+          && !nameStartsByDBPrefix(table.getPrimaryKey())) {
+        String errorMsg = "Table  " + table.getName() + " has primary key named "
+            + table.getPrimaryKey()
+            + ", which does not start with the database prefix of the module.";
+        if (isDbsmExecution()) {
+          result.addWarning(SystemValidationType.INCORRECT_PK_NAME, errorMsg);
+        } else {
+          result.addError(SystemValidationType.INCORRECT_PK_NAME, errorMsg);
+        }
+      }
+
+      // Foreign Key
+      for (ForeignKey fk : table.getForeignKeys()) {
+        if (!nameStartsByDBPrefix(fk.getName())) {
+          String errorMsg = "Table  " + table.getName() + " has foreign key named " + fk.getName()
+              + ", which does not starts by module's DBPrefix.";
+          if (isDbsmExecution()) {
+            result.addWarning(SystemValidationType.INCORRECT_FK_NAME, errorMsg);
+          } else {
+            result.addError(SystemValidationType.INCORRECT_FK_NAME, errorMsg);
+          }
+        }
+      }
+
+      // Check constraints
+      for (Check check : table.getChecks()) {
+        if (!nameStartsByDBPrefix(check.getName())) {
+          String errorMsg = "Table  " + table.getName() + " has check constraint key named "
+              + check.getName() + ", which does not starts by module's DBPrefix.";
+          if (isDbsmExecution()) {
+            result.addWarning(SystemValidationType.INCORRECT_CHECK_NAME, errorMsg);
+          } else {
+            result.addError(SystemValidationType.INCORRECT_CHECK_NAME, errorMsg);
+          }
+        }
+      }
+
+      // Unique constraints
+      for (Unique unique : table.getuniques()) {
+        if (!nameStartsByDBPrefix(unique.getName())) {
+          String errorMsg = "Table  " + table.getName() + " has unique constraint key named "
+              + unique.getName() + ", which does not starts by module's DBPrefix.";
+          if (isDbsmExecution()) {
+            result.addWarning(SystemValidationType.INCORRECT_UNIQUE_NAME, errorMsg);
+          } else {
+            result.addError(SystemValidationType.INCORRECT_UNIQUE_NAME, errorMsg);
+          }
+        }
+      }
+
+      // Indexes
+      for (Index index : table.getIndices()) {
+        if (!nameStartsByDBPrefix(index.getName())) {
+          String errorMsg = "Table  " + table.getName() + " has index named " + index.getName()
+              + ", which does not starts by module's DBPrefix.";
+          if (isDbsmExecution()) {
+            result.addWarning(SystemValidationType.INCORRECT_INDEX_NAME, errorMsg);
+          } else {
+            result.addError(SystemValidationType.INCORRECT_INDEX_NAME, errorMsg);
+          }
+        }
+      }
+    }
+  }
+
+  private boolean nameStartsByDBPrefix(String name) {
+    if (name.toUpperCase().startsWith("EM_")) {
+      // belongs to another module
+      return true;
+    }
+    for (ModuleDBPrefix dbprefix : getValidateModule().getModuleDBPrefixList()) {
+      if (name.toUpperCase().startsWith(dbprefix.getName().toUpperCase() + "_")) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public Database getDatabase() {

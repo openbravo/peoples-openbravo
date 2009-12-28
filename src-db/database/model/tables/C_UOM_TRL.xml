@@ -57,19 +57,19 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CUOMTRL">
+      <foreign-key foreignTable="AD_CLIENT" name="C_UOM_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CUOMTRL" onDelete="cascade">
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_UOM_TRL_AD_LANGUAGE" onDelete="cascade">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CUOMTRL">
+      <foreign-key foreignTable="AD_ORG" name="C_UOM_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_CUOMTRL" onDelete="cascade">
+      <foreign-key foreignTable="C_UOM" name="C_UOM_TRL_C_UOM" onDelete="cascade">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <unique name="CUOMTRL_CUOMID_ADLANGUAGE_UN">
+      <unique name="C_UOM_TRL_UOM_LANGUAGE_UN">
         <unique-column name="C_UOM_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>

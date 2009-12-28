@@ -30,7 +30,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 	localSaveOnly: false,
 
 	//Templates for the HTML rendering.  Need to figure these out better, admittedly.
-	templateString:"<div class=\"feedViewerContainer\" dojoAttachPoint=\"feedViewerContainerNode\">\n\t<table cellspacing=\"0\" cellpadding=\"0\" class=\"feedViewerTable\">\n\t\t<tbody dojoAttachPoint=\"feedViewerTableBody\" class=\"feedViewerTableBody\">\n\t\t</tbody>\n\t</table>\n</div>\n",
+	templateString: dojo.cache("dojox.atom", "widget/templates/FeedViewer.html", "<div class=\"feedViewerContainer\" dojoAttachPoint=\"feedViewerContainerNode\">\n\t<table cellspacing=\"0\" cellpadding=\"0\" class=\"feedViewerTable\">\n\t\t<tbody dojoAttachPoint=\"feedViewerTableBody\" class=\"feedViewerTableBody\">\n\t\t</tbody>\n\t</table>\n</div>\n"),
 
 	_feed: null,
 	_currentSelection: null, // Currently selected entry
@@ -47,7 +47,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//		event given in markup/creation.
 		this._includeFilters = [];
 
-		if (this.entrySelectionTopic !== ""){
+		if(this.entrySelectionTopic !== ""){
 			this._subscriptions = [dojo.subscribe(this.entrySelectionTopic, this, "_handleEvent")];
 		}
 		this.atomIO = new dojox.atom.io.Connection();
@@ -63,13 +63,13 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		var children = this.getDescendants();
 		for(var i in children){
 			var child = children[i];
-			if (child && child.isFilter) {
+			if(child && child.isFilter){
 				this._includeFilters.push(new dojox.atom.widget.FeedViewer.CategoryIncludeFilter(child.scheme, child.term, child.label));
 				child.destroy();
 			}
 		}
 		
-		if (this.url !== "") {
+		if(this.url !== ""){
 			this.setFeedFromUrl(this.url);
 		}
 	},
@@ -96,13 +96,12 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//
 		//	returns:  
 		//		Nothing.
-		if (url !== "") {
-			if (this._isRelativeURL(url)) {
-
+		if(url !== ""){
+			if(this._isRelativeURL(url)){
 				var baseUrl = "";
-				if (url.charAt(0) !== '/') {
+				if(url.charAt(0) !== '/'){
 					baseUrl = this._calculateBaseURL(window.location.href, true);
-				} else {
+				}else{
 					baseUrl = this._calculateBaseURL(window.location.href, false);
 				}
 				this.url = baseUrl + url;
@@ -142,25 +141,25 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 			return dpts.join(",");
 		};
 		var sortedEntries = feed.entries.sort(dojo.hitch(this,entrySorter));
-		if (feed){
+		if(feed){
 			var lastSectionTitle = null;
-			for (var i=0;i<sortedEntries.length;i++){
+			for(var i=0;i<sortedEntries.length;i++){
 				
 				var entry = sortedEntries[i];
 
-				if (this._isFilterAccepted(entry)) {
+				if(this._isFilterAccepted(entry)){
 					var time = this._displayDateForEntry(entry);
 					var sectionTitle = "";
 
-					if (time !== null){
+					if(time !== null){
 						sectionTitle = groupingStr(time.toLocaleString());
 
-						if (sectionTitle === "" ) {
+						if(sectionTitle === "" ){
 							//Generally an issue on Opera with how its toLocaleString() works, so do a quick and dirty date construction M/D/Y
 							sectionTitle = "" + (time.getMonth() + 1) + "/" + time.getDate() + "/" + time.getFullYear();
 						}
 					}
-					if ((lastSectionTitle === null) || (lastSectionTitle != sectionTitle)){
+					if((lastSectionTitle === null) || (lastSectionTitle != sectionTitle)){
 						this.appendGrouping(sectionTitle);
 						lastSectionTitle = sectionTitle;
 					}
@@ -180,9 +179,9 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//
 		//	returns:  
 		//		An appropriate date for the feed viewer display.
-		if (entry.updated){return entry.updated;}
-		if (entry.modified){return entry.modified;}
-		if (entry.issued){return entry.issued;}
+		if(entry.updated){return entry.updated;}
+		if(entry.modified){return entry.modified;}
+		if(entry.issued){return entry.issued;}
 		return new Date();
 	},
 
@@ -242,12 +241,12 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		dojo.publish(this.entrySelectionTopic, [{ action: "delete", source: this, entry: entryRow.entry }]);
 	},
 
-	_removeEntry: function(/*FeedViewerEntry*/ entry, /* boolean */success) {
+	_removeEntry: function(/*FeedViewerEntry*/ entry, /* boolean */success){
 		//	summary: 
 		//		callback for when an entry is deleted from a feed.
 		//	description: 
 		//		callback for when an entry is deleted from a feed.
-		if(success) {
+		if(success){
 			/* Check if this is the last Entry beneath the given date */
 			var idx = dojo.indexOf(this.childWidgets, entry);
 			var before = this.childWidgets[idx-1];
@@ -259,7 +258,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 			
 			/* Destroy the FeedViewerEntry to remove it from the view */
 			entry.destroy();
-		} else {}
+		}else{}
 	},
 	
 	_rowSelected: function(/*object*/evt){
@@ -274,8 +273,8 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//	returns:  
 		//		Nothing.
 		var selectedNode = evt.target;
-		while(selectedNode) {
-			if(selectedNode.attributes) {
+		while(selectedNode){
+			if(selectedNode.attributes){
 				var widgetid = selectedNode.attributes.getNamedItem("widgetid");
 				if(widgetid && widgetid.value.indexOf("FeedViewerEntry") != -1){
 					break;
@@ -284,7 +283,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 			selectedNode = selectedNode.parentNode;
 		}
 
-		for (var i=0;i<this._feed.entries.length;i++){
+		for(var i=0;i<this._feed.entries.length;i++){
 			var entry = this._feed.entries[i];
 			if( (selectedNode === entry.domNode) && (this._currentSelection !== entry) ){
 				//Found it and it isn't already selected.
@@ -293,17 +292,17 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 				dojo.addClass(entry._entryWidget.timeNode, "feedViewerEntryUpdatedSelected");
 
 				this.onEntrySelected(entry);
-				if (this.entrySelectionTopic !== "") {
+				if(this.entrySelectionTopic !== ""){
 					dojo.publish(this.entrySelectionTopic, [{ action: "set", source: this, feed: this._feed, entry: entry }]);
 				}
-				if (this._isEditable(entry)) {
+				if(this._isEditable(entry)){
 					entry._entryWidget.enableDelete();
 				}
 
 				this._deselectCurrentSelection();
 				this._currentSelection = entry;
 				break;
-			} else if ( (selectedNode === entry.domNode) && (this._currentSelection === entry) ) {
+			}else if( (selectedNode === entry.domNode) && (this._currentSelection === entry) ){
 				//Found it and it is the current selection, we just want to de-select it so users can 'unselect rows' if they want.
 				dojo.publish(this.entrySelectionTopic, [{ action: "delete", source: this, entry: entry }]);
 				this._deselectCurrentSelection();
@@ -320,7 +319,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//
 		//	returns:  
 		//		Nothing. 
-		if (this._currentSelection) {
+		if(this._currentSelection){
 			dojo.addClass(this._currentSelection._entryWidget.timeNode, "feedViewerEntryUpdated");
 			dojo.removeClass(this._currentSelection.domNode, "feedViewerEntrySelected");
 			dojo.removeClass(this._currentSelection._entryWidget.timeNode, "feedViewerEntryUpdatedSelected");
@@ -330,7 +329,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 	}, 
 
 
-	_isEditable: function(/*object*/entry) {
+	_isEditable: function(/*object*/entry){
 		//	summary: 
 		//		Internal function for determining of a particular entry is editable.
 		//	description: 
@@ -343,7 +342,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//	returns:  
 		//		Boolean denoting if the entry seems editable or not.. 
 		var retVal = false;
-		if (entry && entry !== null && entry.links && entry.links !== null) {
+		if(entry && entry !== null && entry.links && entry.links !== null){
 			for(var x in entry.links){
 				if(entry.links[x].rel && entry.links[x].rel == "edit"){
 					retVal = true;
@@ -368,7 +367,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//		Nothing. 
 	},
 
-	_isRelativeURL: function(/*string*/url) {
+	_isRelativeURL: function(/*string*/url){
 		//	summary: 
 		//		Method to determine if the URL is relative or absolute.
 		//	description: 
@@ -380,34 +379,32 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//
 		//	returns: 
 		//		boolean indicating whether it's a relative url or not.
-		function isFileURL(url)
-		{
+		var isFileURL = function(url){
 			var retVal = false;
-			if (url.indexOf("file://") === 0) {
+			if(url.indexOf("file://") === 0){
 				retVal = true;
 			}
 			return retVal;
 		}
 
-		function isHttpURL(url)
-		{
+		var isHttpURL = function(url){
 			var retVal = false;
-			if (url.indexOf("http://") === 0) {
+			if(url.indexOf("http://") === 0){
 				retVal = true;
 			}
 			return retVal;
 		}
 
 		var retVal = false;
-		if (url !== null) {
-			if (!isFileURL(url) && !isHttpURL(url)) {
+		if(url !== null){
+			if(!isFileURL(url) && !isHttpURL(url)){
 				retVal = true;
 			}
 		}
 		return retVal;
 	},
 
-	_calculateBaseURL: function(/*string*/fullURL, /*boolean*/currentPageRelative) {
+	_calculateBaseURL: function(/*string*/fullURL, /*boolean*/currentPageRelative){
 		//	summary: 
 		//		Internal function to calculate a baseline URL from the provided full URL.
 		//	description: 
@@ -421,7 +418,7 @@ dojo.declare("dojox.atom.widget.FeedViewer",[dijit._Widget, dijit._Templated, di
 		//	returns: 
 		//		String of the baseline URL
 		var baseURL = null;
-		if (fullURL !== null) {
+		if(fullURL !== null){
 			//Check to see if we need to strip off any query parameters from the URL.
 			var index = fullURL.indexOf("?");
 			if(index != -1){
@@ -624,7 +621,7 @@ dojo.declare("dojox.atom.widget.FeedViewerEntry",[dijit._Widget, dijit._Template
 	//		Widget for handling the display of an entry and specific events associated with it.
 	//		description: Widget for handling the display of an entry and specific events associated with it.
 
-	templateString:"<tr class=\"feedViewerEntry\" dojoAttachPoint=\"entryNode\" dojoAttachEvent=\"onclick:onClick\">\n    <td class=\"feedViewerEntryUpdated\" dojoAttachPoint=\"timeNode\">\n    </td>\n    <td>\n        <table border=\"0\" width=\"100%\" dojoAttachPoint=\"titleRow\">\n            <tr padding=\"0\" border=\"0\">\n                <td class=\"feedViewerEntryTitle\" dojoAttachPoint=\"titleNode\">\n                </td>\n                <td class=\"feedViewerEntryDelete\" align=\"right\">\n                    <span dojoAttachPoint=\"deleteButton\" dojoAttachEvent=\"onclick:deleteEntry\" class=\"feedViewerDeleteButton\" style=\"display:none;\">[delete]</span>\n                </td>\n            <tr>\n        </table>\n    </td>\n</tr>\n",
+	templateString: dojo.cache("dojox.atom", "widget/templates/FeedViewerEntry.html", "<tr class=\"feedViewerEntry\" dojoAttachPoint=\"entryNode\" dojoAttachEvent=\"onclick:onClick\">\n    <td class=\"feedViewerEntryUpdated\" dojoAttachPoint=\"timeNode\">\n    </td>\n    <td>\n        <table border=\"0\" width=\"100%\" dojoAttachPoint=\"titleRow\">\n            <tr padding=\"0\" border=\"0\">\n                <td class=\"feedViewerEntryTitle\" dojoAttachPoint=\"titleNode\">\n                </td>\n                <td class=\"feedViewerEntryDelete\" align=\"right\">\n                    <span dojoAttachPoint=\"deleteButton\" dojoAttachEvent=\"onclick:deleteEntry\" class=\"feedViewerDeleteButton\" style=\"display:none;\">[delete]</span>\n                </td>\n            <tr>\n        </table>\n    </td>\n</tr>\n"),
 
 	entryNode: null,
 	timeNode: null,
@@ -727,7 +724,7 @@ dojo.declare("dojox.atom.widget.FeedViewerGrouping",[dijit._Widget, dijit._Templ
 	//		Grouping of feed entries.
 	//	description: 
 	//		Grouping of feed entries.
-	templateString:"<tr dojoAttachPoint=\"groupingNode\" class=\"feedViewerGrouping\">\n\t<td colspan=\"2\" dojoAttachPoint=\"titleNode\" class=\"feedViewerGroupingTitle\">\n\t</td>\n</tr>\n",
+	templateString: dojo.cache("dojox.atom", "widget/templates/FeedViewerGrouping.html", "<tr dojoAttachPoint=\"groupingNode\" class=\"feedViewerGrouping\">\n\t<td colspan=\"2\" dojoAttachPoint=\"titleNode\" class=\"feedViewerGroupingTitle\">\n\t</td>\n</tr>\n"),
 	
 	groupingNode: null,
 	titleNode: null,

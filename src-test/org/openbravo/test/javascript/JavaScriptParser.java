@@ -24,7 +24,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Iterator;
 
 import org.mozilla.javascript.CompilerEnvirons;
 import org.mozilla.javascript.ErrorReporter;
@@ -109,16 +108,7 @@ public class JavaScriptParser {
         if (cursor.getType() == Token.FUNCTION) {
           int fnIndex = cursor.getExistingIntProp(Node.FUNCTION_PROP);
           FunctionNode fn = nodeTree.getFunctionNode(fnIndex);
-          Iterator<String> iter = null;
-          StringBuffer sbParam = new StringBuffer();
-          if (fn.getSymbolTable() != null) {
-            iter = fn.getSymbolTable().keySet().iterator();
-            while (iter.hasNext()) {
-              sbParam.append(iter.next());
-              sbParam.append(" ");
-            }
-          }
-          details.append("FUNCTION: " + fn.getFunctionName() + " [ " + sbParam + "]\n");
+          details.append("FUNCTION: " + fn.getFunctionName() + "\n");
         } else if (cursor.getType() == Token.VAR) {
           Node vn = cursor.getFirstChild();
           details.append("VAR: " + vn.getString() + "\n");

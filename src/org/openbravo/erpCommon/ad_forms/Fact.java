@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -439,11 +439,11 @@ public class Fact {
     log4jFact.debug("balanceSegment (" + segmentType + ") - ");
     // Org
     if (segmentType.equals(AcctSchemaElement.SEGMENT_Org)) {
-      HashMap<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
+      HashMap<String, BigDecimal> map = new HashMap<String, BigDecimal>();
       // Add up values by key
       for (int i = 0; i < m_lines.size(); i++) {
         FactLine line = (FactLine) m_lines.get(i);
-        Integer key = new Integer(line.getAD_Org_ID(conn));
+        String key = line.getAD_Org_ID(conn);
         BigDecimal bal = line.getSourceBalance();
         BigDecimal oldBal = map.get(key);
         if (oldBal != null)
@@ -451,9 +451,9 @@ public class Fact {
         map.put(key, bal);
       }
       // Create entry for non-zero element
-      Iterator<Integer> keys = map.keySet().iterator();
+      Iterator<String> keys = map.keySet().iterator();
       while (keys.hasNext()) {
-        Integer key = keys.next();
+        String key = keys.next();
         BigDecimal diff = map.get(key);
         //
         if (diff.compareTo(ZERO) != 0) {
@@ -478,7 +478,7 @@ public class Fact {
           }
           line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct, m_acctSchema
               .getCurrencyRateType(), conn);
-          line.setAD_Org_ID(key.toString());
+          line.setAD_Org_ID(key);
           log4jFact.debug("balanceSegment (" + segmentType + ") - ");
           log4jFact.debug("************* fact - balanceSegment - m_lines.size() - "
               + m_lines.size() + " - line.ad_org_id - " + line.getAD_Org_ID(conn));

@@ -20,7 +20,7 @@ dijit.tree.__SourceArgs = function(){
 	//		Can be used as a DnD source. Defaults to true.
 	// accept: String[]
 	//		List of accepted types (text strings) for a target; defaults to
-	//		["text"]
+	//		["text", "treeNode"]
 	// copyOnly: Boolean?
 	//		Copy items, if true, use a state of Ctrl key otherwise,
 	// dragThreshold: Number
@@ -39,7 +39,7 @@ dijit.tree.__SourceArgs = function(){
 dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 	// summary:
 	//		Handles drag and drop operations (as a source or a target) for `dijit.Tree`
-	
+
 	// isSource: [private] Boolean
 	//		Can be used as a DnD source.
 	isSource: true,
@@ -47,15 +47,15 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 	// accept: String[]
 	//		List of accepted types (text strings) for the Tree; defaults to
 	//		["text"]
-	accept: ["text"],
+	accept: ["text", "treeNode"],
 
 	// copyOnly: [private] Boolean
 	//		Copy items, if true, use a state of Ctrl key otherwise
 	copyOnly: false,
 
 	// dragThreshold: Number
-	//		The move delay in pixels before detecting a drag; 0 by default
-	dragThreshold: 0,
+	//		The move delay in pixels before detecting a drag; 5 by default
+	dragThreshold: 5,
 
 	// betweenThreshold: Integer
 	//		Distance from upper/lower edge of node to allow drop to reorder nodes
@@ -69,7 +69,7 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		if(!params){ params = {}; }
 		dojo.mixin(this, params);
 		this.isSource = typeof params.isSource == "undefined" ? true : params.isSource;
-		var type = params.accept instanceof Array ? params.accept : ["text"];
+		var type = params.accept instanceof Array ? params.accept : ["text", "treeNode"];
 		this.accept = null;
 		if(type.length){
 			this.accept = {};
@@ -88,11 +88,11 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		this._lastY = 0;
 
 		// states
-		this.sourceState  = "";
+		this.sourceState = "";
 		if(this.isSource){
 			dojo.addClass(this.node, "dojoDndSource");
 		}
-		this.targetState  = "";
+		this.targetState = "";
 		if(this.accept){
 			dojo.addClass(this.node, "dojoDndTarget");
 		}
@@ -100,15 +100,10 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		// set up events
 		this.topics = [
 			dojo.subscribe("/dnd/source/over", this, "onDndSourceOver"),
-			dojo.subscribe("/dnd/start",  this, "onDndStart"),
-			dojo.subscribe("/dnd/drop",   this, "onDndDrop"),
+			dojo.subscribe("/dnd/start", this, "onDndStart"),
+			dojo.subscribe("/dnd/drop", this, "onDndDrop"),
 			dojo.subscribe("/dnd/cancel", this, "onDndCancel")
 		];
-		this.events.push(
-			// monitor mouse movements to tell when drag starts etc.
-			dojo.connect(this.node, "onmousemove", this, "onMouseMove")
-		);
-
 	},
 
 	// methods
@@ -160,19 +155,15 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		if(newTarget && this.betweenThreshold > 0){
 			// If mouse is over a new TreeNode, then get new TreeNode's position and size
 			if(!this.targetBox || oldTarget != newTarget){
-				this.targetBox = {
-					xy: dojo.coords(newTarget, true),
-					w: newTarget.offsetWidth,
-					h: newTarget.offsetHeight
-				};
+				this.targetBox = dojo.position(newTarget, true);
 			}
-			if((e.pageY - this.targetBox.xy.y) <= this.betweenThreshold){
+			if((e.pageY - this.targetBox.y) <= this.betweenThreshold){
 				newDropPosition = "Before";
-			}else if((e.pageY - this.targetBox.xy.y) >= (this.targetBox.h - this.betweenThreshold)){
+			}else if((e.pageY - this.targetBox.y) >= (this.targetBox.h - this.betweenThreshold)){
 				newDropPosition = "After";
 			}
 		}
-		
+
 		if(newTarget != oldTarget || newDropPosition != oldDropPosition){
 			if(oldTarget){
 				this._removeItemClass(oldTarget, oldDropPosition);
@@ -190,7 +181,8 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 			}else if(m.source == this && (newTarget.id in this.selection)){
 				// Guard against dropping onto yourself (TODO: guard against dropping onto your descendant, #7140)
 				m.canDrop(false);
-			}else if(this.checkItemAcceptance(newTarget, m.source, newDropPosition.toLowerCase())){
+			}else if(this.checkItemAcceptance(newTarget, m.source, newDropPosition.toLowerCase())
+					&& !this._isParentChildDrop(m.source, newTarget)){
 				m.canDrop(true);
 			}else{
 				m.canDrop(false);
@@ -209,17 +201,16 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		// tags:
 		//		private
 		if(this.isDragging && this.targetState == "Disabled"){ return; }
+		this.inherited(arguments);
 		var m = dojo.dnd.manager();
 		if(this.isDragging){
-			if(this.betweenThreshold > 0){
-				this._onDragMouse(e);
-			}
+			this._onDragMouse(e);
 		}else{
 			if(this.mouseDown && this.isSource &&
-			   (Math.abs(e.pageX-this._lastX)>=this.dragThreshold || Math.abs(e.pageY-this._lastY)>=this.dragThreshold)){
+				 (Math.abs(e.pageX-this._lastX)>=this.dragThreshold || Math.abs(e.pageY-this._lastY)>=this.dragThreshold)){
 				var n = this.getSelectedNodes();
 				var nodes=[];
-				for (var i in n){
+				for(var i in n){
 					nodes.push(n[i]);
 				}
 				if(nodes.length){
@@ -256,19 +247,6 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		}
 	},
 
-	onMouseOver: function(/*TreeNode*/ widget, /*Event*/ e){
-		// summary:
-		//		Event processor for when mouse is moved over a TreeNode
-		// tags:
-		//		private
-
-		this.inherited(arguments);
-
-		if(this.isDragging){
-			this._onDragMouse(e);
-		}
-	},
-
 	onMouseOut: function(){
 		// summary:
 		//		Event processor for when mouse is moved away from a TreeNode
@@ -294,9 +272,9 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		//		"over", "before", or "after"
 		// tags:
 		//		extension
-		return true;	
+		return true;
 	},
-	
+
 	// topic event processors
 	onDndSourceOver: function(source){
 		// summary:
@@ -332,25 +310,40 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 
 		this._changeState("Target", accepted ? "" : "Disabled");
 
-		if(accepted){
+		if(this == source){
 			dojo.dnd.manager().overSource(this);
 		}
 
 		this.isDragging = true;
 	},
 
-	itemCreator: function(nodes){
+	itemCreator: function(/*DomNode[]*/ nodes, target, /*dojo.dnd.Source*/ source){
 		// summary:
-		//		Returns the "item" passed to the drop target
-		//		(which is not necessarily a Tree, could be anything)
+		//		Returns objects passed to `Tree.model.newItem()` based on DnD nodes
+		//		dropped onto the tree.   Developer must override this method to enable
+		// 		dropping from external sources onto this Tree, unless the Tree.model's items
+		//		happen to look like {id: 123, name: "Apple" } with no other attributes.
+		// description:
+		//		For each node in nodes[], which came from source, create a hash of name/value
+		//		pairs to be passed to Tree.model.newItem().  Returns array of those hashes.
+		// returns: Object[]
+		//		Array of name/value hashes for each new item to be added to the Tree, like:
+		// |	[
+		// |		{ id: 123, label: "apple", foo: "bar" },
+		// |		{ id: 456, label: "pear", zaz: "bam" }
+		// |	]
 		// tags:
-		//		protected
+		//		extension
+
+		// TODO: for 2.0 refactor so itemCreator() is called once per drag node, and
+		// make signature itemCreator(sourceItem, node, target) (or similar).
+
 		return dojo.map(nodes, function(node){
 			return {
 				"id": node.id,
 				"name": node.textContent || node.innerText || ""
 			};
-		});
+		}); // Object[]
 	},
 
 	onDndDrop: function(source, nodes, copy){
@@ -393,19 +386,25 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 				newParentItem = (targetWidget && targetWidget.item) || tree.item;
 			}
 
-			// If we are dragging from another source (or at least, another source
-			// that points to a different data store), then we need to make new data
-			// store items for each element in nodes[].  This call get the parameters
-			// to pass to store.newItem()
+			// If necessary, use this variable to hold array of hashes to pass to model.newItem()
+			// (one entry in the array for each dragged node).
 			var newItemsParams;
-			if(source != this){
-				newItemsParams = this.itemCreator(nodes, target);
-			}
 
 			dojo.forEach(nodes, function(node, idx){
-				var childTreeNode = dijit.getEnclosingWidget(node),
-					childItem = childTreeNode && childTreeNode.item,
-					oldParentItem = childTreeNode && childTreeNode.getParent().item;
+				// dojo.dnd.Item representing the thing being dropped.
+				// Don't confuse the use of item here (meaning a DnD item) with the
+				// uses below where item means dojo.data item.
+				var sourceItem = source.getItem(node.id);
+
+				// Information that's available if the source is another Tree
+				// (possibly but not necessarily this tree, possibly but not
+				// necessarily the same model as this Tree)
+				if(dojo.indexOf(sourceItem.type, "treeNode") != -1){
+					var childTreeNode = sourceItem.data,
+						childItem = childTreeNode.item,
+						oldParentItem = childTreeNode.getParent().item;
+				}
+
 				if(source == this){
 					// This is a node from my own tree, and we are moving it, not copying.
 					// Remove item from old parent's children attribute.
@@ -420,20 +419,17 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 					model.pasteItem(childItem, oldParentItem, newParentItem, copy, insertIndex);
 				}else if(model.isItem(childItem)){
 					// Item from same model
+					// (maybe we should only do this branch if the source is a tree?)
 					model.pasteItem(childItem, oldParentItem, newParentItem, copy, insertIndex);
 				}else{
-					if(newItemsParams[idx].id){
-						model.fetchItemByIdentity({identity: newItemsParams[idx].id, onItem: function(item){
-							if(item){
-								// There's already a matching item in model, use it
-								model.pasteItem(item, null, newParentItem, true, insertIndex);
-							}else{
-								model.newItem(newItemsParams[idx], newParentItem, insertIndex);
-							}
-						}});
-					}else{
-						model.newItem(newItemsParams[idx], newParentItem, insertIndex);
+					// Get the hash to pass to model.newItem().  A single call to
+					// itemCreator() returns an array of hashes, one for each drag source node.
+					if(!newItemsParams){
+						newItemsParams = this.itemCreator(nodes, target, source);
 					}
+
+					// Create new item in the tree, based on the drag source.
+					model.newItem(newItemsParams[idx], newParentItem, insertIndex);
 				}
 			}, this);
 
@@ -443,6 +439,7 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		}
 		this.onDndCancel();
 	},
+
 	onDndCancel: function(){
 		// summary:
 		//		Topic event processor for /dnd/cancel, called to cancel the DnD operation
@@ -455,7 +452,7 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		this._changeState("Source", "");
 		this._changeState("Target", "");
 	},
-	
+
 	// When focus moves in/out of the entire Tree
 	onOverEvent: function(){
 		// summary:
@@ -478,6 +475,44 @@ dojo.declare("dijit.tree.dndSource", dijit.tree._dndSelector, {
 		m.outSource(this);
 
 		this.inherited(arguments);
+	},
+
+	_isParentChildDrop: function(source, targetRow){
+		// summary:
+		//		Checks whether the dragged items are parent rows in the tree which are being
+		//		dragged into their own children.
+		//
+		// source:
+		//		The DragSource object.
+		//
+		// targetRow:
+		//		The tree row onto which the dragged nodes are being dropped.
+		//
+		// tags:
+		//		private
+
+		// If the dragged object is not coming from the tree this widget belongs to,
+		// it cannot be invalid.
+		if(!source.tree || source.tree != this.tree){
+			return false;
+		}
+
+
+		var root = source.tree.domNode;
+		var ids = {};
+		for(var x in source.selection){
+			ids[source.selection[x].parentNode.id] = true;
+		}
+
+		var node = targetRow.parentNode;
+
+		// Iterate up the DOM hierarchy from the target drop row,
+		// checking of any of the dragged nodes have the same ID.
+		while(node != root && (!node.id || !ids[node.id])){
+			node = node.parentNode;
+		}
+
+		return node.id && ids[node.id];
 	},
 
 	_unmarkTargetAnchor: function(){

@@ -209,7 +209,7 @@ public class BaseWSTest extends BaseTest {
       }
       return content;
     } catch (final Exception e) {
-      throw new OBException(e);
+      throw new OBException("Exception when executing ws: " + wsPart, e);
     }
   }
 

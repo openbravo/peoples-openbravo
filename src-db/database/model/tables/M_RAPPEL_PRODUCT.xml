@@ -41,17 +41,17 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MRAPPELPRODUCT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MRAPPELPRODUCT">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_M_RAPPEL_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_RAPPEL" name="M_RAPPEL_M_RAPPEL_PRODUCT">
         <reference local="M_RAPPEL_ID" foreign="M_RAPPEL_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="M_RAPPEL_PRODUCT_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="M_RAPPEL_PRODUCT_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
     </table>
   </database>

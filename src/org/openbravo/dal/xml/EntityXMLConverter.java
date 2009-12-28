@@ -37,6 +37,7 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -115,6 +116,8 @@ public class EntityXMLConverter implements OBNotSingleton {
   // and which ones have been considered already
   private List<BaseOBObject> toProcess = new ArrayList<BaseOBObject>();
   private Set<BaseOBObject> allToProcessObjects = new HashSet<BaseOBObject>();
+  // the iterator is used in case of large sets of data
+  private ScrollableResults dataScroller = null;
 
   private TransformerHandler xmlHandler;
   private Writer output;
@@ -224,16 +227,34 @@ public class EntityXMLConverter implements OBNotSingleton {
       xmlHandler.startElement(XMLConstants.OPENBRAVO_NAMESPACE, XMLConstants.OB_ROOT_ELEMENT, "ob:"
           + XMLConstants.OB_ROOT_ELEMENT, rootAttrs);
 
-      boolean firstRound = true;
-      while (toProcess.size() > 0) {
-        final List<BaseOBObject> localToProcess = getToProcess();
-        // reset the toProcess so that new objects are added to a new list
-        replaceToProcess();
-        for (BaseOBObject bob : localToProcess) {
-          export(bob, !firstRound);
+      boolean exportBecauseReferenced = false;
+      // do the data scrollers
+      if (dataScroller != null) {
+        int cnt = 0;
+        while (dataScroller.next()) {
+          export((BaseOBObject) dataScroller.get(0), false);
+          getOutput().flush();
+          if ((cnt++ % 100) == 0) {
+            // before clearing the session make sure that all added
+            // objects are also processed
+            // the extra while loop is needed because the export can
+            // recursively add new objects
+            exportAllToProcessObjects(true);
+
+            OBDal.getInstance().getSession().clear();
+          }
         }
-        firstRound = false;
+        // the remaining objects are always exported because they have been referenced
+        exportBecauseReferenced = true;
+
+        // get rid of the datascroller
+        dataScroller.close();
+        dataScroller = null;
       }
+
+      // handle the remaining toProcess objects
+      exportAllToProcessObjects(exportBecauseReferenced);
+
       // reset mem
       replaceToProcess();
       getAllToProcessObjects().clear();
@@ -242,6 +263,20 @@ public class EntityXMLConverter implements OBNotSingleton {
       xmlHandler.endDocument();
     } catch (Exception e) {
       throw new EntityXMLException(e);
+    }
+  }
+
+  private void exportAllToProcessObjects(boolean exportBecauseReferenced) throws Exception {
+    boolean localExportBecauseReferenced = exportBecauseReferenced;
+    while (toProcess.size() > 0) {
+      final List<BaseOBObject> localToProcess = getToProcess();
+      // reset the toProcess so that new objects are added to a new list
+      replaceToProcess();
+      for (BaseOBObject bob : localToProcess) {
+        export(bob, localExportBecauseReferenced);
+        getOutput().flush();
+      }
+      localExportBecauseReferenced = true;
     }
   }
 
@@ -271,8 +306,13 @@ public class EntityXMLConverter implements OBNotSingleton {
 
     // depending on the security only a limited set of
     // properties is exported
-    final boolean onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker()
-        .isDerivedReadable(obObject.getEntity());
+    boolean onlyIdentifierProps;
+    if (OBContext.getOBContext().isInAdministratorMode()) {
+      onlyIdentifierProps = false;
+    } else {
+      onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker().isDerivedReadable(
+          obObject.getEntity());
+    }
 
     final List<Property> exportableProperties;
     // second 'and' is necessary because referenced entities are not part of the dataset
@@ -649,4 +689,11 @@ public class EntityXMLConverter implements OBNotSingleton {
     }
   }
 
+  public ScrollableResults getDataScroller() {
+    return dataScroller;
+  }
+
+  public void setDataScroller(ScrollableResults dataScroller) {
+    this.dataScroller = dataScroller;
+  }
 }

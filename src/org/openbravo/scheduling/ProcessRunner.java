@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,12 +87,13 @@ public class ProcessRunner {
       endTime = System.currentTimeMillis();
       status = ERROR;
       log.error("Process " + requestId + " threw an Exception: " + e.getMessage(), e);
+      throw new ServletException(e);
+    } finally {
+      final String duration = ProcessMonitor.getDuration(endTime - startTime);
+      ProcessRequestData.update(conn, COMPLETE, requestId);
+      ProcessRunData.update(conn, ctx.getUser(), status, duration, bundle.getLog().toString(),
+          executionId);
     }
-
-    final String duration = ProcessMonitor.getDuration(endTime - startTime);
-    ProcessRequestData.update(conn, COMPLETE, requestId);
-    ProcessRunData.update(conn, ctx.getUser(), status, duration, bundle.getLog().toString(),
-        executionId);
 
     return executionId;
   }

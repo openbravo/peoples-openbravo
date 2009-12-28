@@ -26,6 +26,7 @@
   CUR_DATA RECORD;
   v_JavaPackage VARCHAR2(260);
   v_ModuleMapping VARCHAR2(260);
+  v_TabName VARCHAR2(260);
     
 BEGIN
     
@@ -37,14 +38,14 @@ BEGIN
   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')
   OR COALESCE(:old.AD_Module_ID,'.') <> COALESCE(:new.AD_Module_ID,'.')))
  THEN
-    SELECT JavaPackage
+    SELECT (CASE WHEN M.AD_MODULE_ID ='0' THEN NULL ELSE JavaPackage END)
       INTO  v_JavaPackage
       FROM AD_MODULE M
      WHERE AD_MODULE_ID = :New.AD_Module_ID;
  
 
     IF v_JavaPackage IS NOT NULL THEN
-      v_ModuleMapping := '/'||v_JavaPackage;
+      v_ModuleMapping := '/'||v_JavaPackage||'.';
       v_JavaPackage := v_JavaPackage||'.'||AD_MAPPING_FORMAT(TO_CHAR(:NEW.NAME));
     ELSE
       v_ModuleMapping := '/';
@@ -55,7 +56,9 @@ BEGIN
       (
       SELECT MO.AD_MODEL_OBJECT_ID,
         AD_MAPPING_FORMAT(TO_CHAR(:NEW.NAME)) AS WINDOWNAME,
-        AD_MAPPING_FORMAT(TO_CHAR(T.NAME))    AS TABNAME
+        AD_MAPPING_FORMAT(TO_CHAR(T.NAME))  AS TABNAME,
+        t.AD_Module_ID,
+        t.AD_Tab_ID
       FROM AD_MODEL_OBJECT MO,
         AD_TAB T
       WHERE MO.AD_TAB_ID=T.AD_TAB_ID
@@ -63,6 +66,12 @@ BEGIN
         AND T.AD_WINDOW_ID=:NEW.AD_WINDOW_ID
       )
     LOOP
+      --Add tab's uuid to name for non-core tabs
+      v_TabName := CUR_DATA.TABNAME;
+      IF (CUR_DATA.AD_MODULE_ID!='0') THEN
+        v_TabName := v_TabName||CUR_DATA.AD_Tab_ID;
+      END IF;
+      
       UPDATE AD_MODEL_OBJECT
         SET CLASSNAME=('org.openbravo.erpWindows.' || v_JavaPackage || '.' || CUR_DATA.TABNAME),
         ISACTIVE=:NEW.ISACTIVE

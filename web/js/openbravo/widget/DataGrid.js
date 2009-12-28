@@ -374,7 +374,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
     } catch (ignored) {column.innerHTML="";}
     var textNode = createTextCellElement(column);*/
     if (column && column.type.name == 'url' && newContent != '') { editingElement.innerHTML = "<a href=\"" + newContent + "\" target=_blank><img src=\"../web/js/openbravo/templates/popup1.gif\" border=\"0\" title=\"Link\" alt=\"Link\"></a>&nbsp;" + newContent; }
-    if (column && column.type.name == 'img' && newContent != '') { editingElement.innerHTML = "<img src=\"" + newContent + "\" border=\"0\" height=\"15px\">"; }
+    if (column && column.type.name == 'img' && newContent != '') { editingElement.innerHTML = "<a onclick=\"openPopUp('" + newContent + "', 'Image', '70%', '70%'); return false;\" href=\"" + newContent + "\"><img src=\"" + newContent + "\" border=\"0\" height=\"15px\"></a>"; }
     else { editingElement.innerHTML = newContent; }
     //editingElement.appendChild(textNode);
   },
@@ -2631,7 +2631,7 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
           }
           var textNode = createTextCellElement(column);*/
           if (column.type.name == 'url' && value != '') { this.rowNode.cells[i].innerHTML = "<a href=\"" + value + "\" target=_blank><img src=\"../web/js/openbravo/templates/popup1.gif\" border=\"0\ title=\"Link\" alt=\"Link\"></a>&nbsp;" + value; }
-          if (column.type.name == 'img' && value != '') { this.rowNode.cells[i].innerHTML = "<img src=\"" + value + "\" border=\"0\" height=\"15px\">"; }
+          if (column.type.name == 'img' && value != '') { this.rowNode.cells[i].innerHTML = "<a onclick=\"openPopUp('" + value + "', 'Image', '70%', '70%'); return false;\" href=\"" + value + "\"><img src=\"" + value + "\" border=\"0\" height=\"15px\"></a>"; }
           else { this.rowNode.cells[i].innerHTML = value; }
           //this.rowNode.cells[i].appendChild(textNode);
         }

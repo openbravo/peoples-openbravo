@@ -36,6 +36,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -46,13 +47,12 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessRunner;
-import org.openbravo.scheduling.ProcessBundle.Channel;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class TestHeartbeat extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
-  private static final String HB_Process_ID = "1005800000";
   private static final String HB_tabId = "1005400005";
   private static final String SystemInfomation_ID = "0";
   private static final String EVERY_N_DAYS = "N";
@@ -62,24 +62,27 @@ public class TestHeartbeat extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
+    ConnectionProvider connectionProvider = new DalConnectionProvider();
+
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    final Process HBProcess = OBDal.getInstance().get(Process.class, HB_Process_ID);
+    final Process HBProcess = OBDal.getInstance()
+        .get(Process.class, HeartbeatProcess.HB_PROCESS_ID);
     final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class,
         SystemInfomation_ID);
-    final boolean isHearbeatEnabled = sysInfo.isEnableHeartbeat() == null ? false : sysInfo
-        .isEnableHeartbeat();
 
     final String clickedButton = vars.getStringParameter("inpLastFieldChanged");
 
-    if (isHearbeatEnabled || clickedButton.equalsIgnoreCase("inpisheartbeatactive")) {
+    if (HeartbeatProcess.isHeartbeatEnabled()
+        || clickedButton.equalsIgnoreCase("inpisheartbeatactive")) {
       // Disable Heartbeat
       try {
 
         if (sysInfo.isEnableHeartbeat() != null && sysInfo.isEnableHeartbeat()) {
           // Sending beat
-          ProcessBundle beat = new ProcessBundle(HB_Process_ID, vars).init(this);
-          new ProcessRunner(beat).execute(this);
+          ProcessBundle beat = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars)
+              .init(connectionProvider);
+          new ProcessRunner(beat).execute(connectionProvider);
         }
 
         // Deactivating the process at SystemInfo
@@ -90,9 +93,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         // Un-scheduling the process
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
-        prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess));
-        prCriteria
-            .add(Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString()));
+        prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
+            Expression.eq(ProcessRequest.PROPERTY_STATUS, HeartbeatProcess.STATUS_SCHEDULED)));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         if (requestList.size() != 0) {
@@ -100,14 +102,13 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           final ProcessRequest pr = requestList.get(0);
 
           OBDal.getInstance().save(pr);
-          OBDal.getInstance().commitAndClose();
 
-          final ProcessBundle bundle = ProcessBundle.request(pr.getId(), vars, this);
+          final ProcessBundle bundle = ProcessBundle.request(pr.getId(), vars, connectionProvider);
 
           OBScheduler.getInstance().unschedule(pr.getId(), bundle.getContext());
         }
 
-        String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
+        String msg = Utility.messageBD(connectionProvider, "HB_SUCCESS", vars.getLanguage());
         advisePopUpRefresh(request, response, "SUCCESS", "Heartbeat Configuration", msg);
 
       } catch (Exception e) {
@@ -122,11 +123,10 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         HBProcess.setActive(true);
         OBDal.getInstance().save(HBProcess);
 
-        OBDal.getInstance().commitAndClose();
-
         // Sending beat
-        ProcessBundle bundle = new ProcessBundle(HB_Process_ID, vars).init(this);
-        final String beatExecutionId = new ProcessRunner(bundle).execute(this);
+        ProcessBundle bundle = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars)
+            .init(connectionProvider);
+        final String beatExecutionId = new ProcessRunner(bundle).execute(connectionProvider);
 
         // Getting beat result
         final ProcessRun result = OBDal.getInstance().get(ProcessRun.class, beatExecutionId);
@@ -136,9 +136,9 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           sysInfo.setEnableHeartbeat(false);
           sysInfo.setTestHeartbeat("N");
           OBDal.getInstance().save(sysInfo);
-          OBDal.getInstance().commitAndClose();
 
-          String msg = Utility.messageBD(this, "HB_INTERNAL_ERROR", vars.getLanguage());
+          String msg = Utility.messageBD(connectionProvider, "HB_INTERNAL_ERROR", vars
+              .getLanguage());
           // Extracting the last line from the log
           String log = result.getLog().substring(0, result.getLog().lastIndexOf("\n"));
           log = log.substring(log.lastIndexOf("\n"));
@@ -161,9 +161,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         // Scheduling the process
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
-        prCriteria.add(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess));
-        prCriteria
-            .add(Expression.eq(ProcessRequest.PROPERTY_CHANNEL, Channel.SCHEDULED.toString()));
+        prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
+            Expression.eq(ProcessRequest.PROPERTY_STATUS, HeartbeatProcess.STATUS_UNSCHEDULED)));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         ProcessRequest pr = null;
@@ -193,10 +192,15 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
         OBDal.getInstance().save(pr);
 
-        // SQLC uses a different connection
-        OBDal.getInstance().commitAndClose();
+        final ProcessBundle bundle2 = ProcessBundle.request(pr.getId(), vars, connectionProvider);
 
-        final ProcessBundle bundle2 = ProcessBundle.request(pr.getId(), vars, this);
+        // at this point a commit has to be done because the OBScheduler uses its
+        // own connection provider and if it is not committed the OBScheduler won't
+        // see the ProcessRequest if it is new.
+        OBDal.getInstance().commitAndClose();
+        // refresh the connection provider
+        connectionProvider = new DalConnectionProvider();
+
         if (requestList.size() == 0) {
           OBScheduler.getInstance().schedule(pr.getId(), bundle2);
         } else {
@@ -206,11 +210,20 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         if (vars.commandIn("CONFIGURE_MODULE")) {
           // Continue with the module install
           String recordId = vars.getStringParameter("inpcRecordId", IsIDFilter.instance);
-          response.sendRedirect(strDireccion
-              + "/ad_forms/ModuleManagement.html?Command=INSTALL&inpcRecordId=" + recordId);
+          String command = "INSTALL";
+
+          if (recordId.equals("FFF")) {
+            command = "UPDATE";
+            recordId = "&inpcUpdate=all";
+          } else {
+            recordId = "&inpcRecordId=" + recordId;
+          }
+
+          response.sendRedirect(strDireccion + "/ad_forms/ModuleManagement.html?Command=" + command
+              + recordId);
         } else {
           // Prompt HB configured
-          String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
+          String msg = Utility.messageBD(connectionProvider, "HB_SUCCESS", vars.getLanguage());
           advisePopUpRefresh(request, response, "SUCCESS", "Heartbeat Configuration", msg);
         }
       } catch (Exception e) {

@@ -73,33 +73,33 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MINTERNALCONSUMPTIONL">
+      <foreign-key foreignTable="AD_CLIENT" name="M_INTERNAL_CONSUMPTIONLINE_AD_">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MINTERNALCONSUMPTIONLINE">
+      <foreign-key foreignTable="AD_ORG" name="M_INTERNAL_CONSUMPTIONLINE_AD1">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="COUMID_MINTCONSUMPTIONLINE">
+      <foreign-key foreignTable="C_UOM" name="M_INTERNAL_CONSUMPTIONLINE_C_U">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_INTCONSUMPLINE">
-        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="MINTCONSUMP_MINT_CONSUMPLINE">
-        <reference local="M_INTERNAL_CONSUMPTION_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MINTERNALCONSUMPLINE">
-        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MINTCONSUMPTIONLINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MINTCONSUMPLINE">
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="M_INTERNAL_CONSUMPTIONLINE_M_1">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <index name="MINTERNAL_CONSUMPTIONLINE_INDX" unique="false">
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_INTERNAL_CONSUMPTIONLINE_M_A">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="M_INTERNAL_CONSUMPTIONLINE_M_I">
+        <reference local="M_INTERNAL_CONSUMPTION_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_LOCATOR" name="M_INTERNAL_CONSUMPTIONLINE_M_L">
+        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="M_INTERNAL_CONSUMPTIONLINE_M_P">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <index name="M_INTERNAL_CONSUMPTLN_CONS_IDX" unique="false">
         <index-column name="M_INTERNAL_CONSUMPTION_ID"/>
       </index>
-      <check name="MINTCONLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_INTERNAL_CONSUMPTIONLINE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

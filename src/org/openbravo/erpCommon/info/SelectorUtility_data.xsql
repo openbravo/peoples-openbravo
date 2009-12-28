@@ -52,4 +52,18 @@
      <Parameter name="cBpartnerId" optional="true" type="argument" after="(1=2" text=" OR C_BPARTNER_ID IN"/>
   </SqlMethod>
 
+  <SqlMethod name="selectProject" type="preparedStatement" return="multiple">
+    <Sql>
+    <![CDATA[
+      SELECT C_PROJECT_ID AS ID, C_PROJECT.NAME
+      FROM C_PROJECT
+      WHERE AD_ORG_ID IN ('1')
+      AND AD_CLIENT_ID IN ('1')
+      AND (1=2 )
+     ]]></Sql>
+     <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
+     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
+     <Parameter name="cProjectId" optional="true" type="argument" after="(1=2" text=" OR C_PROJECT_ID IN"/>
+  </SqlMethod>
+
 </SqlClass>

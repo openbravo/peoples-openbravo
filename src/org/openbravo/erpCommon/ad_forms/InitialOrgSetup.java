@@ -611,10 +611,9 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             return false;
           } else {
             final String strParent = InitialOrgSetupData.selectParent(conn, this,
-                data[i].accountParent, AD_Client_ID);
-            if (strParent != null && !strParent.equals(""))
-              InitialOrgSetupData.updateTreeNode(conn, this, strParent, strAccountTree,
-                  C_ElementValue_ID, AD_Client_ID);
+                data[i].accountParent, AD_Client_ID, C_Element_ID);
+            InitialOrgSetupData.updateTreeNode(conn, this, (strParent != null && !strParent
+                .equals("")) ? strParent : "0", strAccountTree, C_ElementValue_ID, AD_Client_ID);
           }
         } catch (final ServletException e) {
           log4j.warn("InitialOrgSetup - save - Natural Account not added");

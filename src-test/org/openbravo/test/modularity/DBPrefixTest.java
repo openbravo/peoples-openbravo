@@ -40,7 +40,7 @@ public class DBPrefixTest extends BaseTest {
    * Creates a new module to test with
    */
   public void testCreateModule() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
     module.setName("Test-dbprefixes-names");
     module.setJavaPackage("org.openbravo.test.dbprefix");
@@ -96,7 +96,7 @@ public class DBPrefixTest extends BaseTest {
    * Deletes all the modules matching the name for the testing one
    */
   public void testDeleteModule() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
     obCriteria.add(Expression.eq(Module.PROPERTY_JAVAPACKAGE, "org.openbravo.test.dbprefix"));
     final List<Module> modules = obCriteria.list();
@@ -108,7 +108,7 @@ public class DBPrefixTest extends BaseTest {
 
   // Obtains the module iserted for testing purposes
   private Module getModule() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
     obCriteria.add(Expression.eq(Module.PROPERTY_JAVAPACKAGE, "org.openbravo.test.dbprefix"));
     final List<Module> modules = obCriteria.list();
@@ -119,7 +119,7 @@ public class DBPrefixTest extends BaseTest {
   // Tries to insert a valid or not valid and check it was inserted (if valid)
   // or not inserted (if not valid
   private void insertDBPrefix(String name, boolean isValid) {
-    setUserContext("0");
+    setSystemAdministratorContext();
     Module mod = getModule();
     ModuleDBPrefix dbPrefix = OBProvider.getInstance().get(ModuleDBPrefix.class);
 

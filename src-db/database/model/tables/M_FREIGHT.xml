@@ -93,32 +93,32 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MFREIGHT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_FREIGHT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MFREIGHT">
+      <foreign-key foreignTable="AD_ORG" name="M_FREIGHT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_MFREIGHT">
+      <foreign-key foreignTable="C_COUNTRY" name="M_FREIGHT_C_COUNTRY">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRYTO_MFREIGHT">
-        <reference local="TO_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_MFREIGHT">
+      <foreign-key foreignTable="C_CURRENCY" name="M_FREIGHT_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="CREGION_MFREIGHT">
+      <foreign-key foreignTable="C_REGION" name="M_FREIGHT_C_REGION">
         <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="CREGIONTO_MFREIGHT">
-        <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_FREIGHTCATEGORY" name="MFREIGHTCATEGORY_MFREIGHT">
+      <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHT_M_FREIGHTCATEGORY">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_SHIPPER" name="MSHIPPER_MFREIGHT">
+      <foreign-key foreignTable="M_SHIPPER" name="M_FREIGHT_M_SHIPPER">
         <reference local="M_SHIPPER_ID" foreign="M_SHIPPER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="M_FREIGHT_TO_COUNTRY">
+        <reference local="TO_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_REGION" name="M_FREIGHT_TO_REGION">
+        <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
     </table>
   </database>

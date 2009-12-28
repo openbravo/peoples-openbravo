@@ -63,6 +63,9 @@ function imprimir() {
 
 function validate() {
 	var frm = document.frmMain;
+    var evFrom = frm.inpcElementValueIdFrom.value;
+	var evTo = frm.inpcElementValueIdTo.value;
+
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
 		showJSMessage(7);
@@ -75,6 +78,10 @@ function validate() {
 		setWindowElementFocus(frm.inpcAcctSchemaId);
 		showJSMessage(7);
 		return false;
+    } else if ((evFrom != null && evFrom != "" && (evTo == null || evTo == ""))
+    		   ||  (evTo != null && evTo != "" && (evFrom == null || evFrom == ""))) {
+    	showJSMessage(27);
+    	return false;
 	}
 	markCheckedAllElements(frm.inpcBPartnerId_IN);
 	return true;
@@ -377,7 +384,7 @@ function onloadFunctions() {
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input type="hidden" name="inpcElementValueIdTo" id="paramElementvalueToId" value=""></input>
+                      <input type="hidden" name="inpcElementValueIdTo" id="paramElementvalueIdTo" value=""></input>
                       <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpElementValueIdTo_DES" id="inpElementValueIdTo_DES" maxlength="20" value=""></input>
                     </td>
                     <td class="FieldButton_ContentCell">

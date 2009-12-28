@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SL
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+    * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -27,6 +27,7 @@
     *  Access
     */
         
+    aux NUMBER;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -83,6 +84,17 @@ BEGIN
     WHERE AD_Form_ID=:new.AD_Form_ID;
   END IF;
  END IF;
+ 
+ select count(*)
+   into aux
+   from ad_module
+  where ad_module_id = :new.ad_module_id
+    and :new.classname like javapackage||'.%';
+    
+  if aux = 0 then
+    RAISE_APPLICATION_ERROR(-20000, '@JavaClassNotInModulePackage@');
+  end if;
+  
 -- Updating
 END AD_FORM_TRG
 ]]></body>

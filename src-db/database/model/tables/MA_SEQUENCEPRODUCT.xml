@@ -80,20 +80,20 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MASEQUENCEPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCEPRODUCT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOMID_MASEQUENCEPRODUCT">
-        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MASEQUENCEPRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_SEQUENCE" name="MASEQUENCE_MASEQUENCEPRODUCT">
-        <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="MA_SEQUENCEPRODUCT_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MASEQPRODUCT">
+      <foreign-key foreignTable="C_UOM" name="MA_SEQUENCEPRODUCT_C_UOM">
+        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="MA_SEQUENCEPRODUCT_M_PRODUCT_U">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_SEQUENCE" name="MA_SEQUENCEPRODUCT_MA_SEQUENCE">
+        <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
       </foreign-key>
       <index name="MA_SEQ_PROD_SEQ_ID" unique="false">
         <index-column name="MA_SEQUENCE_ID"/>

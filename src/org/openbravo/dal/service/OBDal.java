@@ -73,9 +73,18 @@ public class OBDal implements OBSingleton {
   }
 
   /**
+   * Returns the connection used by the hibernate session.
+   * 
+   * Note: flushes the hibernate session before returning the connection.
+   * 
    * @return the current database connection
+   * @see #flush()
    */
   public Connection getConnection() {
+    // before returning a connection always flush all other hibernate actions
+    // to the database.
+    flush();
+
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
@@ -132,11 +141,13 @@ public class OBDal implements OBSingleton {
     // TODO: log using entityName
     log.debug("Saving object " + obj.getClass().getName());
     setClientOrganization(obj);
-    if (obj instanceof BaseOBObject) {
-      OBContext.getOBContext().getEntityAccessChecker().checkWritable(
-          ((BaseOBObject) obj).getEntity());
+    if (!OBContext.getOBContext().isInAdministratorMode()) {
+      if (obj instanceof BaseOBObject) {
+        OBContext.getOBContext().getEntityAccessChecker().checkWritable(
+            ((BaseOBObject) obj).getEntity());
+      }
+      SecurityChecker.getInstance().checkWriteAccess(obj);
     }
-    SecurityChecker.getInstance().checkWriteAccess(obj);
     SessionHandler.getInstance().save(obj);
   }
 
@@ -403,6 +414,9 @@ public class OBDal implements OBSingleton {
     // allow read access to those, otherwise it is really
     // difficult to use querying on these very generic values
     if (entityName.equals(Client.ENTITY_NAME) || entityName.equals(Organization.ENTITY_NAME)) {
+      return;
+    }
+    if (OBContext.getOBContext().isInAdministratorMode()) {
       return;
     }
     final Entity e = ModelProvider.getInstance().getEntity(entityName);

@@ -52,13 +52,13 @@
         AND 2=2
         AND 3=3
         AND 4=4
-        GROUP BY C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
+        GROUP BY FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
             DATEACCT, FACT_ACCT.FACT_ACCT_GROUP_ID, FACT_ACCT.FACT_ACCT_ID, FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION
         ORDER  BY C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
             DATEACCT, FACT_ACCT.FACT_ACCT_GROUP_ID, FACT_ACCT.FACT_ACCT_ID, FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID,  FACT_ACCT.DESCRIPTION
           ) C
         ) B WHERE 1=1 
-      ) A ORDER BY   PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
+      ) A ORDER BY   C_BPARTNER_ID, PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
@@ -77,12 +77,12 @@
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
+    <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, "/>
     <Parameter name="orden2" type="replace" optional="true" after="ORDER  BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT.DESCRIPTION"><![CDATA[ LIMIT ]]></Parameter>
     <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
     <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
-    <Parameter name="orden3" type="replace" optional="true" after=") A ORDER BY " text="  PARTNER, "/>
+    <Parameter name="orden3" type="replace" optional="true" after=") A ORDER BY " text="  C_BPARTNER_ID, "/>
   </SqlMethod>
 
   <SqlMethod name="selectHiding" type="preparedStatement" return="multiple">
@@ -119,13 +119,13 @@
         AND ((fact_acct.RECORD_ID2 IS NULL) OR (SUM != 0))
         AND 3=3
         AND 4=4
-        GROUP BY C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
+        GROUP BY FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
             DATEACCT, FACT_ACCT.FACT_ACCT_GROUP_ID, FACT_ACCT.FACT_ACCT_ID, FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION
         ORDER  BY C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
             DATEACCT, FACT_ACCT.FACT_ACCT_GROUP_ID, FACT_ACCT.FACT_ACCT_ID, FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID,  FACT_ACCT.DESCRIPTION
           ) C
         ) B WHERE 1=1 
-      ) A ORDER BY   PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
+      ) A ORDER BY   C_BPARTNER_ID, PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
@@ -146,12 +146,12 @@
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
+    <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, "/>
     <Parameter name="orden2" type="replace" optional="true" after="ORDER  BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT.DESCRIPTION"><![CDATA[ LIMIT ]]></Parameter>
     <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
     <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
-    <Parameter name="orden3" type="replace" optional="true" after=") A ORDER BY " text="  PARTNER, "/>
+    <Parameter name="orden3" type="replace" optional="true" after=") A ORDER BY " text="  C_BPARTNER_ID, "/>
    </SqlMethod>
 
   <SqlMethod name="selectAll" type="preparedStatement" return="multiple">
@@ -174,13 +174,13 @@
         AND 2=2
         AND 3=3
         AND 4=4
-        GROUP BY C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
+        GROUP BY FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
             DATEACCT, FACT_ACCT.FACT_ACCT_GROUP_ID, FACT_ACCT.FACT_ACCT_ID, FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION
         ORDER  BY C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
             DATEACCT, FACT_ACCT.FACT_ACCT_GROUP_ID, FACT_ACCT.FACT_ACCT_ID, FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID,  FACT_ACCT.DESCRIPTION
           ) C
         ) B WHERE 1=1 
-      ) A ORDER BY   PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
+      ) A ORDER BY   C_BPARTNER_ID, PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
@@ -197,12 +197,12 @@
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
+    <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, "/>
     <Parameter name="orden2" type="replace" optional="true" after="ORDER  BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT.DESCRIPTION"><![CDATA[ LIMIT ]]></Parameter>
     <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
     <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
-    <Parameter name="orden3" type="replace" optional="true" after=") A ORDER BY " text="  PARTNER, "/>
+    <Parameter name="orden3" type="replace" optional="true" after=") A ORDER BY " text="  C_BPARTNER_ID, "/>
    </SqlMethod>
 
   <SqlMethod name="selectAllHiding" type="preparedStatement" return="multiple">
@@ -232,13 +232,13 @@
         AND ((fact_acct.RECORD_ID2 IS NULL) OR (SUM != 0))
         AND 3=3
         AND 4=4
-        GROUP BY C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
+        GROUP BY FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
             DATEACCT, FACT_ACCT.FACT_ACCT_GROUP_ID, FACT_ACCT.FACT_ACCT_ID, FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION
         ORDER  BY C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, FACT_ACCT.ACCTVALUE, FACT_ACCT.ACCTDESCRIPTION, FACT_ACCT.ACCOUNT_ID, 
             DATEACCT, FACT_ACCT.FACT_ACCT_GROUP_ID, FACT_ACCT.FACT_ACCT_ID, FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID,  FACT_ACCT.DESCRIPTION
           ) C
         ) B WHERE 1=1 
-      ) A ORDER BY   PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
+      ) A ORDER BY   C_BPARTNER_ID, PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
@@ -257,12 +257,12 @@
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND (AMTACCTDR + AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
+    <Parameter name="orden2" type="replace" optional="true" after="GROUP BY " text="FACT_ACCT.C_BPARTNER_ID, C_BPARTNER.NAME, "/>
     <Parameter name="orden2" type="replace" optional="true" after="ORDER  BY " text="C_BPARTNER.NAME, FACT_ACCT.C_BPARTNER_ID, "/>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT.DESCRIPTION"><![CDATA[ LIMIT ]]></Parameter>
     <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
     <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
-    <Parameter name="orden3" type="replace" optional="true" after=") A ORDER BY " text="  PARTNER, "/>
+    <Parameter name="orden3" type="replace" optional="true" after=") A ORDER BY " text="  C_BPARTNER_ID, "/>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">
@@ -351,4 +351,24 @@
       <Parameter name="client" type="replace" optional="true" after="AND P.AD_CLIENT_ID IN (" text="'1'"/>
       <Parameter name="orgs" type="replace" optional="true" after="AND P.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>
+   
+  <SqlMethod name="selectSubaccountDescription" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT COALESCE(TO_CHAR(NAME),TO_CHAR(''))
+      FROM C_ELEMENTVALUE
+      WHERE C_ELEMENTVALUE_ID = ?
+    ]]></Sql>
+    <Parameter name="elementValueId"/>
+  </SqlMethod>
+  <SqlMethod name="selectOrganization" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT NAME
+        FROM AD_ORG
+        WHERE AD_ORG_ID = ?
+      ]]></Sql>
+    <Parameter name="org"/>
+  </SqlMethod>
 </SqlClass>

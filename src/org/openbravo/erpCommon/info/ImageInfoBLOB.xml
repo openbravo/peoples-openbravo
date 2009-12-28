@@ -29,5 +29,6 @@
   <PARAMETER id="tableId" name="tableId" attribute="value" replace="xx"/>
   <PARAMETER id="parentObjectId" name="parentObjectId" attribute="value" replace="xx"/>
   <PARAMETER id="inpColumnName" name="inpColumnName" attribute="value" replace="xx"/>
+  <PARAMETER id="inpOrgId" name="inpOrgId" attribute="value" replace="xx"/>
     <DISCARD id="discard"/>
 </REPORT>

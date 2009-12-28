@@ -53,10 +53,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CACCTRPT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_ACCT_RPT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CACCTRPT">
+      <foreign-key foreignTable="AD_ORG" name="C_ACCT_RPT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCT_RPT_C_ACCTSCHEMA">

@@ -12,7 +12,7 @@ dojo.require("dojo.dnd.common");
 dojo.require("dojo.dnd.Container");
 
 dojo.declare("dijit.tree._dndContainer",
-	null, 
+	null,
 	{
 
 		// summary:
@@ -20,6 +20,13 @@ dojo.declare("dijit.tree._dndContainer",
 		//		It's modeled after `dojo.dnd.Container`.
 		// tags:
 		//		protected
+
+		/*=====
+		// current: DomNode
+		//		The currently hovered TreeNode.rowNode (which is the DOM node
+		//		associated w/a given node in the tree, excluding it's descendants)
+		current: null,
+		=====*/
 
 		constructor: function(tree, params){
 			// summary:
@@ -33,39 +40,45 @@ dojo.declare("dijit.tree._dndContainer",
 			this.tree = tree;
 			this.node = tree.domNode;	// TODO: rename; it's not a TreeNode but the whole Tree
 			dojo.mixin(this, params);
-	
+
 			// class-specific variables
 			this.map = {};
 			this.current = null;	// current TreeNode's DOM node
-	
+
 			// states
 			this.containerState = "";
 			dojo.addClass(this.node, "dojoDndContainer");
-			
+
 			// set up events
 			this.events = [
-			    // container level events
+				// container level events
 				dojo.connect(this.node, "onmouseenter", this, "onOverEvent"),
-				dojo.connect(this.node, "onmouseleave",  this, "onOutEvent"),
+				dojo.connect(this.node, "onmouseleave",	this, "onOutEvent"),
 
 				// switching between TreeNodes
 				dojo.connect(this.tree, "_onNodeMouseEnter", this, "onMouseOver"),
-				dojo.connect(this.tree, "_onNodeMouseLeave",  this, "onMouseOut"),
+				dojo.connect(this.tree, "_onNodeMouseLeave", this, "onMouseOut"),
 
 				// cancel text selection and text dragging
-				dojo.connect(this.node, "ondragstart",   dojo, "stopEvent"),
+				dojo.connect(this.node, "ondragstart", dojo, "stopEvent"),
 				dojo.connect(this.node, "onselectstart", dojo, "stopEvent")
 			];
 		},
 
 		getItem: function(/*String*/ key){
 			// summary:
-			//		Returns a data item by it's key (id).
-			//		Called by dojo.dnd.Source.checkAcceptance()
+			//		Returns the dojo.dnd.Item (representing a dragged node) by it's key (id).
+			//		Called by dojo.dnd.Source.checkAcceptance().
 			// tags:
 			//		protected
 
-			return this.selection[key];
+			var node = this.selection[key],
+				ret = {
+					data: dijit.getEnclosingWidget(node),
+					type: ["treeNode"]
+				};
+
+			return ret;	// dojo.dnd.Item
 		},
 
 		destroy: function(){
@@ -104,7 +117,7 @@ dojo.declare("dijit.tree._dndContainer",
 			// newState: String
 			//		new state
 			var prefix = "dojoDnd" + type;
-			var state  = type.toLowerCase() + "State";
+			var state = type.toLowerCase() + "State";
 			//dojo.replaceClass(this.node, prefix + newState, prefix + this[state]);
 			dojo.removeClass(this.node, prefix + this[state]);
 			dojo.addClass(this.node, prefix + newState);

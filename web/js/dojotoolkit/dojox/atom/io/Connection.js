@@ -49,7 +49,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 		this._getXmlDoc(url, "feed", new dojox.atom.io.model.Feed(), dojox.atom.io.model._Constants.ATOM_NS, callback, /*handleDocumentRetrieved,*/ errorCallback, scope);
 	},
 	
-	getService: function(url, callback, errorCallback, scope){  
+	getService: function(url, callback, errorCallback, scope){
 		//	summary: 
 		//		Function to retrieve an introspection document from the given URL.
 		// 	description: 
@@ -154,8 +154,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 					if(callback){
 						callback.call(scope, newNode, evaldObj, args);
 					}else if(ae){
-						var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-						throw new Error(_nlsResources.noCallback);
+						throw new Error("The callback value does not exist.");
 					}
 				}else{
 					callback.call(scope, null, null, args);
@@ -174,8 +173,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 			xhrArgs.error = function(error, args){errorCallback.call(scope, error, args);};
 		}else{
 			xhrArgs.error = function(){
-				var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-				throw new Error(_nlsResources.failedXhr);
+				throw new Error("The URL requested cannot be accessed");
 			};
 		}
 		dojo.xhrGet(xhrArgs);
@@ -216,8 +214,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 		entry.updated = new Date();
 		var url = entry.getEditHref();
 		if(!url){
-			var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-			throw new Error(_nlsResources.missingEditUrl);
+			throw new Error("A URL has not been specified for editing this entry.");
 		}
 
 		var self = this;
@@ -240,8 +237,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 						if(callback){
 							callback.call(scope, entry, location, args);
 						}else if(ae){
-							var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-							throw new Error(_nlsResources.noCallback);
+							throw new Error("The callback value does not exist.");
 						}
 					};
 					self.getEntry(location,handleRetrieve);
@@ -249,8 +245,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 					if(callback){
 						callback.call(scope, entry, args.xhr.getResponseHeader("Location"), args);
 					}else if(ae){
-						var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-						throw new Error(_nlsResources.noCallback);
+						throw new Error("The callback value does not exist.");
 					}
 				}
 				return data;
@@ -268,8 +263,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 			xhrArgs.error = function(error, args){errorCallback.call(scope, error, args);};
 		}else{
 			xhrArgs.error = function(){
-				var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-				throw new Error(_nlsResources.failedXhr);
+				throw new Error("The URL requested cannot be accessed");
 			};
 		}
 
@@ -322,8 +316,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 		if(!url && feedUrl){url = feedUrl;}
 		if(!url){
 			if(ae){
-				var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-				throw new Error(_nlsResources.missingUrl);
+				throw new Error("The request cannot be processed because the URL parameter is missing.");
 			}
 			return;
 		}
@@ -345,18 +338,16 @@ dojo.declare("dojox.atom.io.Connection",null,{
 					if(callback){
 						callback.call(scope, entry, location, args);
 					}else if(ae){
-						var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-						throw new Error(_nlsResources.noCallback);
+						throw new Error("The callback value does not exist.");
 					}
 				}else{
 					//Function to handle the callback mapping of a getEntry after an update to return the
 					//entry and location.
-					var handleRetrieve = function(entry, dom, args) {
+					var handleRetrieve = function(entry, dom, args){
 						if(callback){
 							callback.call(scope, entry, location, args);
 						}else if(ae){
-							var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-							throw new Error(_nlsResources.noCallback);
+							throw new Error("The callback value does not exist.");
 						}
 					};
 					self.getEntry(location,handleRetrieve);
@@ -376,8 +367,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 			xhrArgs.error = function(error, args){errorCallback.call(scope, error, args);};
 		}else{
 			xhrArgs.error = function(){
-				var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-				throw new Error(_nlsResources.failedXhr);
+				throw new Error("The URL requested cannot be accessed");
 			};
 		}
 		dojo.rawXhrPost(xhrArgs);
@@ -406,15 +396,14 @@ dojo.declare("dojox.atom.io.Connection",null,{
 		}
 
 		var url = null;
-		if(typeof(entry)=="string"){
+		if(typeof(entry) == "string"){
 			url = entry;
 		}else{
 			url = entry.getEditHref();
 		}
 		if(!url){
-			var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
 			callback.call(scope, false, null);
-			throw new Error(_nlsResources.missingUrl);
+			throw new Error("The request cannot be processed because the URL parameter is missing.");
 		}
 
 		var xhrArgs = {
@@ -439,8 +428,7 @@ dojo.declare("dojox.atom.io.Connection",null,{
 			xhrArgs.error = function(error, args){errorCallback.call(scope, error, args);};
 		}else{
 			xhrArgs.error = function(){
-				var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-				throw new Error(_nlsResources.failedXhr);
+				throw new Error("The URL requested cannot be accessed");
 			};
 		}
 		if(xmethod){

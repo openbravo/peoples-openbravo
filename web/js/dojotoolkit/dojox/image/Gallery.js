@@ -71,7 +71,7 @@ dojo.declare("dojox.image.Gallery",
 	//		Time, in seconds, between image changes in the slide show.
 	slideshowInterval: 3,
 	
-	templateString:"<div dojoAttachPoint=\"outerNode\" class=\"imageGalleryWrapper\">\n\t<div dojoAttachPoint=\"thumbPickerNode\"></div>\n\t<div dojoAttachPoint=\"slideShowNode\"></div>\n</div>\n", 
+	templateString: dojo.cache("dojox.image", "resources/Gallery.html", "<div dojoAttachPoint=\"outerNode\" class=\"imageGalleryWrapper\">\n\t<div dojoAttachPoint=\"thumbPickerNode\"></div>\n\t<div dojoAttachPoint=\"slideShowNode\"></div>\n</div>\n"), 
 
 	postCreate: function(){
 		// summary: 
@@ -175,6 +175,10 @@ dojo.declare("dojox.image.Gallery",
 		// callback: Function
 		//		Optional callback function to call when the image has finished displaying.
 		this.slideShow.showImage(index, callback);
+	},
+	
+	resize: function(dim){
+		this.thumbPicker.resize(dim);
 	},
 	
 	_centerChildren: function() {

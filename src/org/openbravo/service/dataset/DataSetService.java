@@ -60,14 +60,14 @@ public class DataSetService implements OBSingleton {
 
   private static DataSetService instance;
 
-  public static DataSetService getInstance() {
+  public static synchronized DataSetService getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(DataSetService.class);
     }
     return instance;
   }
 
-  public static void setInstance(DataSetService instance) {
+  public static synchronized void setInstance(DataSetService instance) {
     DataSetService.instance = instance;
   }
 
@@ -117,13 +117,12 @@ public class DataSetService implements OBSingleton {
       List<?> list = obc.list();
       if (obc.count() < 20 && obc.count() > 0) {
         log
-            .error("The following rows were changed after your last update.database or export.database:");
+            .warn("The following rows were changed after your last update.database or export.database:");
         for (Object obj : list) {
-          log.error("     -" + obj);
+          log.warn("     -" + obj);
         }
       } else if (obc.count() > 20) {
-        log.error("Rows inside the table "
-            + ((BaseOBObject) list.get(0)).getEntity().getTableName()
+        log.warn("Rows inside the table " + ((BaseOBObject) list.get(0)).getEntity().getTableName()
             + " were changed after your last update.database or export.database:");
       }
       if (obc.count() > 0) {

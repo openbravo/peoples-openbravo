@@ -63,14 +63,14 @@ var debugMode = false; // Flag to output debug messages in Firebug
  * @return Boolean
  */
 function isDebugEnabled() {
-  return debugMode && typeof console === 'object';
+  return debugMode && typeof window.console === 'object';
 }
 
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5376';
+  var number = '5759';
   return number;
 }
 
@@ -340,10 +340,10 @@ function removeOnUnload() {
  */
 function removeOnUnloadHandler(form) {
   var f = form;
-  if(f === null) {
+  if(typeof f === 'undefined' || f === null) {
     f = document.forms[0];
   }
-  if(typeof f.isPopUpCall !== 'undefined' && f.isPopUpCall.value === '1') {
+  if(typeof f.IsPopUpCall !== 'undefined' && f.IsPopUpCall.value === '1') {
     // Checking for a onunload event handler
     if(typeof window.onunload === 'function') {
       if(isDebugEnabled()) {
@@ -774,6 +774,16 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   else isPopup = false;
   if (height==null) height = screen.height - 50;
   if (width==null) width = screen.width;
+  if (height.toString().indexOf("%") != -1) {
+    height = height.replace('%','');
+    height = parseInt(height);
+    height = screen.height * (height/100);
+  }
+  if (width.toString().indexOf("%") != -1) {
+    width = width.replace('%','');
+    width = parseInt(width);
+    width = screen.width * (width/100);
+  }
   if (top==null) top = (screen.height - height) / 2;
   if (left==null) left = (screen.width - width) / 2;
   if (checkChanges==null) checkChanges = false;
@@ -805,7 +815,7 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   }
   if (isPopup == true && hasLoading == true) {
     isPopupLoadingWindowLoaded=false;
-    var urlLoading = '../utility/PopupLoading.html'
+    var urlLoading = '../utility/PopupLoading.html';
     var winPopUp = window.open((doSubmit?urlLoading:url), _name, adds);
   } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);
@@ -3169,6 +3179,7 @@ function readOnlyLogicElement(id, readonly) {
       obj.className = className.replace("LabelText","LabelTextReadOnly");
     if ((className.indexOf("TextBox_")!=-1)||(className.indexOf("TextArea_")!=-1)) {
       if (className.indexOf("readonly")==-1) changeClass(id,'readonly ', '');
+      disableFieldButton(getAssociatedFieldButton(obj, 'window'));
     }
   } else { //not readonly
     obj.className = obj.className.replace("ReadOnly","");
@@ -3188,6 +3199,9 @@ function readOnlyLogicElement(id, readonly) {
         var newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
         obj.setAttribute("onChange",newOnChange_combo); 
       }
+    }
+    if ((obj.className.indexOf("TextBox_")!=-1)||(obj.className.indexOf("TextArea_")!=-1)) {
+      enableFieldButton(getAssociatedFieldButton(obj, 'window'));
     }
   }
   return true;

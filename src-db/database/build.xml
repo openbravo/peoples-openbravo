@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,24 +20,12 @@
 <!--
 List of targets:
 
-create.database: creates the database from scratch.
 update.database: updates structure and data in database.
-clean.database.ORACLE: Drop database from Oracle.
-clean.database.POSTGRE: Drop database from PostgreSQL.
-ORACLE.structure: Creates the database in Oracle.
-POSTGRE.structure: Creates the database in PostgreSql.
-prepare.database: Call to the specific rdbms structure.
-create.database.structure: Create the database structure from xml files.
-update.database.structure: Updates the database structure from xml files.
 create.database.script: Creates the database script in the script directory.
 update.database.script: Updates the database script in the script directory.
 export.database.structure: Exports the database structure in the xml's files.
-import.database.data: Imports the data into the database.
-export.database.data: Exports the data from database to xml's files.
-database.postcreate.ORACLE: Executes post creation operation in Oracle database.
-database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL database.
 -->
-<project name="openbravo" default="create.database" basedir=".">
+<project name="openbravo" basedir=".">
   <property environment="env" />
   <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
     <and>
@@ -56,16 +44,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     </fileset>
   </path>
 
-  <taskdef name="createdatabase" classname="org.openbravo.ddlutils.task.CreateDatabase">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
   <taskdef name="createscript" classname="org.openbravo.ddlutils.task.CreateXML2SQL">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
-  <taskdef name="alterdatabase" classname="org.openbravo.ddlutils.task.AlterDatabase">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
-  <taskdef name="alterdatabasedata" classname="org.openbravo.ddlutils.task.AlterDatabaseData">
     <classpath refid="runtime-classpath" />
   </taskdef>
   <taskdef name="alterdatabasedataall" classname="org.openbravo.ddlutils.task.AlterDatabaseDataAll">
@@ -74,55 +53,22 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   <taskdef name="alterdatabasedatamod" classname="org.openbravo.ddlutils.task.AlterDatabaseDataMod">
     <classpath refid="runtime-classpath" />
   </taskdef>
-  <taskdef name="altercustomizeddatabasedata" classname="org.openbravo.ddlutils.task.AlterCustomizedDatabaseData">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
   <taskdef name="alterscript" classname="org.openbravo.ddlutils.task.AlterXML2SQL">
     <classpath refid="runtime-classpath" />
   </taskdef>
   <taskdef name="exportdatabase" classname="org.openbravo.ddlutils.task.ExportDatabase">
     <classpath refid="runtime-classpath" />
   </taskdef>
-  <taskdef name="importdata" classname="org.openbravo.ddlutils.task.ImportDataXML">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
-  <taskdef name="exportdata" classname="org.openbravo.ddlutils.task.ExportDataXMLMod">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
   <taskdef name="exportconfigscript" classname="org.openbravo.ddlutils.task.ExportConfigScript">
     <classpath refid="runtime-classpath" />
   </taskdef>
-  <taskdef name="savemodel" classname="org.openbravo.ddlutils.task.SaveDatabase">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
-  <taskdef name="comparedatabase" classname="org.openbravo.ddlutils.task.CompareDatabase">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
-  <taskdef name="comparedata" classname="org.openbravo.ddlutils.task.CompareData">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
-
-  <target name="create.database">
-    <antcall target="clean.database.${bbdd.rdbms}" />
-    <antcall target="prepare.database" />
-    <antcall target="create.database.all" />
-    <antcall target="database.preimport.${bbdd.rdbms}" />
-    <antcall target="database.postimport.${bbdd.rdbms}" />
-    <antcall target="database.postcreate.${bbdd.rdbms}" />
-    <antcall target="update.dbupdate.timestamp" />
-  </target>
 
   <target name="export.config.script">
-    <exportconfigscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" filter="com.openbravo.db.OpenbravoMetadataFilter" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" moduledir="${base.modules}" model="model" coreData="${base.db}/sourcedata" verbosity="${bbdd.verbosity}" industryTemplate="${industryTemplate}" userId="0" propertiesFile="${base.config}/Openbravo.properties" />
-  </target>
-
-  <target name="update.database.old">
-    <alterdatabasedata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" />
-    <antcall target="database.postupdate.${bbdd.rdbms}" />
+    <exportconfigscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" filter="com.openbravo.db.OpenbravoMetadataFilter" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" moduledir="${base.modules}" model="model" coreData="${base.db}/sourcedata" verbosity="${bbdd.verbosity}" industryTemplate="${industryTemplate}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" />
   </target>
 
   <target name="update.database">
-    <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}"/>
+    <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}"/>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
@@ -154,160 +100,38 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     <antcall target="update.dbupdate.timestamp" />
   </target>
 
-  <target name="update.database.mod">
-    <alterdatabasedatamod driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="DEBUG" basedir="${base.modules}/" baseConfig="${base.config}" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" module="${module}" userId="0" propertiesFile="${base.config}/Openbravo.properties" force="${force}" />
+  <target name="update.database.mod.java">
+    <java classname="org.openbravo.ddlutils.task.AlterDatabaseModJava" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
+      <arg value="${bbdd.driver}"/>
+      <arg value="${bbdd.owner.url}"/>
+      <arg value="${bbdd.user}"/>
+      <arg value="${bbdd.password}"/>
+      <arg value="com.openbravo.db.OpenbravoExcludeFilter"/>
+      <arg value="model"/>
+      <arg value="com.openbravo.db.OpenbravoMetadataFilter"/>
+      <arg value="sourcedata"/>
+      <arg value="${bbdd.object}"/>
+      <arg value="false"/>
+      <arg value="${bbdd.verbosity}"/>
+      <arg value="${base.modules}/"/>
+      <arg value="${base.config}/"/>
+      <arg value="*/src-db/database/model"/>
+      <arg value="${base.modules}/"/>
+      <arg value="*/src-db/database/sourcedata"/>
+      <arg value="${module}"/>
+      <arg value="0"/>
+      <arg value="${base.config}/Openbravo.properties"/>
+      <arg value="${force}"/>
+      <classpath refid="runtime-classpath" />
+    </java>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
-  <target name="clean.database.ORACLE">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        DROP USER ${bbdd.user} CASCADE;
-      </transaction>
-    </sql>
-  </target>
-
-  <target name="clean.database.POSTGRE">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        DROP DATABASE ${bbdd.sid};
-      </transaction>
-    </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        DROP ROLE ${bbdd.user};
-      </transaction>
-    </sql>
-  </target>
-
-  <target name="ORACLE.structure">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" delimiter="/">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        --CHEKING IF USER EXISTS
-        DECLARE
-          v_count NUMBER;
-        BEGIN
-          SELECT COUNT(*) INTO v_count FROM DBA_USERS WHERE USERNAME = '${bbdd.user}';
-          IF (v_count > 0) THEN
-            RAISE_APPLICATION_ERROR(-20100, '${bbdd.user} ALREADY EXISTS. SELECT ANOTHER USER OR DROP IT FIRST');
-          END IF;
-        END;
-        /
-      </transaction>
-
-    </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        --UPDATING OPEN CURSORS NUMBER
-        ALTER SYSTEM SET OPEN_CURSORS = 10000 SCOPE=BOTH;
-      </transaction>
-    </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        --CREATING USER
-        CREATE USER ${bbdd.user} IDENTIFIED BY ${bbdd.password}
-        DEFAULT TABLESPACE USERS
-        TEMPORARY TABLESPACE TEMP;
-
-        --GRANTING USER
-      	grant create session     to ${bbdd.user};
-      	grant alter  session     to ${bbdd.user};
-      	grant create table       to ${bbdd.user};
-      	grant create procedure   to ${bbdd.user};
-      	grant create trigger     to ${bbdd.user};
-      	grant create view        to ${bbdd.user};
-      	alter user ${bbdd.user} quota unlimited on users;
-      </transaction>
-    </sql>
-  </target>
-
-  <target name="POSTGRE.structure">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        --CREATING USER
-        CREATE ROLE ${bbdd.user} LOGIN PASSWORD '${bbdd.password}'
-               SUPERUSER CREATEDB CREATEROLE
-               VALID UNTIL 'infinity';
-        
-        UPDATE pg_authid SET rolcatupdate=true WHERE rolname='${bbdd.user}';
-      </transaction>
-    </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-        CREATE DATABASE ${bbdd.sid}
-                  WITH ENCODING='UTF8'
-                  OWNER=${bbdd.user}
-                  TEMPLATE=template0;
-      </transaction>
-    </sql>
-  </target>
-
-  <target name="prepare.database">
-    <antcall target="${bbdd.rdbms}.structure" />
-  </target>
-
-  <target name="create.database.all">
-    <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" dropfirst="false" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" modulesDir="${base.modules}/" dirFilter="*/src-db/database/model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata">
-    </createdatabase>
-    <antcall target="database.poststructure.${bbdd.rdbms}" />
-  </target>
-
-  <target name="create.original.database.structure">
-    <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="../originalDatabase/model" object="${bbdd.object}" dropfirst="false" failonerror="false" verbosity="${bbdd.verbosity}" />
-    <antcall target="database.poststructure.${bbdd.rdbms}" />
-  </target>
-
-  <target name="update.database.structure">
-    <alterdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}" />
-    <antcall target="database.poststructure.${bbdd.rdbms}" />
+  
+  <target name="update.database.mod">
+    <alterdatabasedatamod driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="DEBUG" basedir="${base.modules}/" baseConfig="${base.config}" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" module="${module}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" />
+    <antcall target="database.postupdate.${bbdd.rdbms}" />
+    <antcall target="update.dbupdate.timestamp" />
   </target>
 
   <target name="create.database.script">
@@ -315,75 +139,12 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   </target>
 
   <target name="update.database.script">
-    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}"  basedir="${base.modules}/" dirFilter="*/src-db/database/model/" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
+    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}"  basedir="${base.modules}/" dirFilter="*/src-db/database/model/" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
   </target>
 
   <target name="export.database.structure">
-    <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" />
+      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" />
   </target>
-
-  <target name="import.database.data">
-    <antcall target="database.preimport.${bbdd.rdbms}" />
-    <importdata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" filter="com.openbravo.db.OpenbravoMetadataFilter" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" basedir="${base.db}/../.." input="src-db/database/sourcedata" verbosity="${bbdd.verbosity}" />
-    <antcall target="database.postimport.${bbdd.rdbms}" />
-    <antcall target="database.postupdate.${bbdd.rdbms}" />
-  </target>
-
-
-  <target name="export.database.data">
-    <exportdata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" filter="com.openbravo.db.OpenbravoMetadataFilter" output="sourcedata" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" codeRevision="${code.revision}" userId="0" propertiesFile="${base.config}/Openbravo.properties" module="${module}" datasetList="AD,ADRD"/>
-  </target>
-
-  <target name="database.postcreate.ORACLE">
-    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-          DELETE FROM AD_SYSTEM;
-          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
-          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
-          DELETE FROM AD_SYSTEM_INFO;
-          INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, CODE_REVISION)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', '${code.revision}');
-          DELETE FROM AD_REGISTRATION_INFO;
-          INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
-          CALL AD_UPDATE_SEQUENCE();
-          CALL AD_UPDATE_ACCESS();
-          UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
-        </transaction>
-    </sql>
-  </target>
-
-  <target name="database.postcreate.POSTGRE">
-    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-      <classpath>
-        <fileset dir="${base.lib}">
-          <include name="**/*.jar">
-          </include>
-        </fileset>
-      </classpath>
-      <transaction>
-          DELETE FROM AD_SYSTEM;
-          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
-          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
-          DELETE FROM AD_SYSTEM_INFO;
-          INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, CODE_REVISION)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', '${code.revision}');
-          DELETE FROM AD_REGISTRATION_INFO;
-          INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
-          SELECT AD_UPDATE_SEQUENCE();
-          SELECT AD_UPDATE_ACCESS();
-          UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
-        </transaction>
-    </sql>
-  </target>
-
 
   <target name="database.postupdate.ORACLE">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true">
@@ -395,7 +156,6 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
       </classpath>
       <transaction>
           UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
-          CALL AD_UPDATE_SEQUENCE();
           CALL AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
           CALL AD_LANGUAGE_CREATE(NULL);
@@ -413,7 +173,6 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
       </classpath>
       <transaction>
           UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
-          SELECT AD_UPDATE_SEQUENCE();
           SELECT AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
           SELECT AD_LANGUAGE_CREATE(NULL);
@@ -421,21 +180,8 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     </sql>
   </target>
 
-  <target name="update.customized.database">
-    <altercustomizeddatabasedata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" password="${bbdd.password}" filter="com.openbravo.db.OpenbravoMetadataFilter" model="model" orgModel="../originalDatabase/model" data="${basedir}/sourcedata" orgData="${basedir}/../originalDatabase/sourcedata" verbosity="${bbdd.verbosity}" />
-    <antcall target="database.postcreate.${bbdd.rdbms}" />
-  </target>
-
-  <target name="database.preimport.ORACLE">
-  </target>
-  <target name="database.postimport.ORACLE">
-  </target>
-  <target name="database.preimport.POSTGRE">
-  </target>
-  <target name="database.postimport.POSTGRE">
-  </target>
-  <target name="database.poststructure.ORACLE">
-    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+  <target name="setApplied">
+    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="abort" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -443,13 +189,12 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
         </fileset>
       </classpath>
       <transaction>
-            PURGE RECYCLEBIN;
-        </transaction>
+          UPDATE AD_MODULE SET STATUS='A',ISINDEVELOPMENT='N' WHERE STATUS='P';
+          DELETE FROM AD_MODULE WHERE STATUS = 'U';
+      </transaction>
     </sql>
   </target>
-  <target name="database.poststructure.POSTGRE">
-  </target>
-
+  
   <target name="update.dbupdate.timestamp">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
       <classpath>

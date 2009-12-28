@@ -298,11 +298,21 @@
    <SqlMethod name="selectYearsDouble" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT O.AD_ORG_ID AS PADRE, Y.C_YEAR_ID AS ID, Y.YEAR AS NAME
+        SELECT O.AD_ORG_ID AS PADRE, Y.C_YEAR_ID AS ID, Y.YEAR || ' (' || C.NAME || ')' AS NAME
         FROM C_YEAR Y, C_CALENDAR C, AD_ORG O
         WHERE C.C_CALENDAR_ID = Y.C_CALENDAR_ID
-          AND C.C_CALENDAR_ID=(SELECT AD_ORG.C_CALENDAR_ID FROM AD_ORG WHERE AD_ORG_GETCALENDAROWNER(O.AD_ORG_ID) = AD_ORG.AD_ORG_ID)
-        ORDER BY O.AD_ORG_ID, Y.YEAR
+          AND C.C_CALENDAR_ID IN (
+                                    SELECT ORG.C_CALENDAR_ID FROM AD_ORG ORG
+                                    WHERE AD_ISORGINCLUDED(O.AD_ORG_ID, ORG.AD_ORG_ID, '1') <> -1
+                                      AND ORG.C_CALENDAR_ID IS NOT NULL
+                                  UNION
+                                    SELECT ORG.C_CALENDAR_ID FROM AD_ORG ORG
+                                    WHERE AD_ISORGINCLUDED(ORG.AD_ORG_ID,O.AD_ORG_ID, '1') <> -1
+                                      AND ORG.C_CALENDAR_ID IS NOT NULL
+                                 )
+        ORDER BY O.NAME, Y.YEAR
         ]]></Sql>
+    <Parameter name="Client"  type="replace" optional="true"  after="WHERE AD_ISORGINCLUDED(O.AD_ORG_ID, ORG.AD_ORG_ID, " text="'1'"></Parameter>
+    <Parameter name="Client"  type="replace" optional="true"  after="WHERE AD_ISORGINCLUDED(ORG.AD_ORG_ID,O.AD_ORG_ID, " text="'1'"></Parameter>
    </SqlMethod>
 </SqlClass>

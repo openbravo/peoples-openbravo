@@ -61,13 +61,13 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADORG">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ORG_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORGTYPE" name="ADORGTYPE_ADORG">
+      <foreign-key foreignTable="AD_ORGTYPE" name="AD_ORG_AD_ORGTYPE">
         <reference local="AD_ORGTYPE_ID" foreign="AD_ORGTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CALENDAR" name="CCALENDAR_ADORG">
+      <foreign-key foreignTable="C_CALENDAR" name="AD_ORG_C_CALENDAR">
         <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>
       </foreign-key>
       <unique name="AD_ORG_VALUE">

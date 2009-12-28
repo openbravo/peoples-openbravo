@@ -137,26 +137,26 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPBANKACCOUNT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_BP_BANKACCOUNT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CBPBANKACCOUNT">
+      <foreign-key foreignTable="AD_ORG" name="C_BP_BANKACCOUNT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_CBPBANKACCOUNT">
+      <foreign-key foreignTable="AD_USER" name="C_BP_BANKACCOUNT_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="C_BP_BANKACCOUNT_C_BPARTNER" onDelete="cascade">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_COUNTRY" name="C_BP_BANKACCOUNT_C_COUNTRY">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CBPBANKACCOUNT" onDelete="cascade">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <index name="C_BPBANKACCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
       <check name="C_BP_BACC_COUNTRY_CHECK"><![CDATA[(IBAN IS NULL) OR (C_COUNTRY_ID IS NOT NULL)]]></check>
       <check name="C_BP_BACC_IBAN_CHECK"><![CDATA[(((SHOWIBAN = 'Y') AND (SHOWACCOUNTNO = 'N')) AND (IBAN IS NOT NULL)) OR (((SHOWIBAN = 'N') AND (SHOWACCOUNTNO = 'Y')) AND (ACCOUNTNO IS NOT NULL))]]></check>
-      <check name="CBPBANKACCOUNT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_BP_BANKACCOUNT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

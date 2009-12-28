@@ -53,16 +53,16 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICELINEOFFER">
+      <foreign-key foreignTable="AD_CLIENT" name="C_INVOICELINE_OFFER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICELINEOFFER">
+      <foreign-key foreignTable="AD_ORG" name="C_INVOICELINE_OFFER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_CINVOICELINEOFFER" onDelete="cascade">
+      <foreign-key foreignTable="C_INVOICELINE" name="C_INVOICELINE_OFFER_C_INVOICEL" onDelete="cascade">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_OFFER" name="MOFFER_CINVOICELINEOFFER">
+      <foreign-key foreignTable="M_OFFER" name="C_INVOICELINE_OFFER_M_OFFER">
         <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
       </foreign-key>
     </table>

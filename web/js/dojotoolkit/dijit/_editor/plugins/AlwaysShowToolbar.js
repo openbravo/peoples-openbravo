@@ -12,8 +12,9 @@ dojo.provide("dijit._editor.plugins.AlwaysShowToolbar");
 dojo.declare("dijit._editor.plugins.AlwaysShowToolbar", dijit._editor._Plugin,
 	{
 	// summary:
-	//		For auto-expanding editors, this plugin will keep the
-	//		editor's toolbar visible even when the top of the editor
+	//		This plugin is required for Editors in auto-expand mode.
+	//		It handles the auto-expansion as the user adds/deletes text,
+	//		and keeps the editor's toolbar visible even when the top of the editor
 	//		has scrolled off the top of the viewport (usually when editing a long
 	//		document).
 	// description:
@@ -103,7 +104,7 @@ dojo.declare("dijit._editor.plugins.AlwaysShowToolbar", dijit._editor._Plugin,
 
 		if(!this._scrollSetUp){
 			this._scrollSetUp = true;
-			this._scrollThreshold = dojo._abs(tdn, true).y;
+			this._scrollThreshold = dojo.position(tdn, true).y;
 //			console.log("threshold:", this._scrollThreshold);
 			//what's this for?? comment out for now
 //			if((isIE6)&&(db)&&(dojo.style(db, "backgroundIimage")=="none")){
@@ -122,7 +123,7 @@ dojo.declare("dijit._editor.plugins.AlwaysShowToolbar", dijit._editor._Plugin,
 				this.editor.iframe.style.marginTop = tdnbox.h+"px";
 
 				if(isIE6){
-					s.left = dojo._abs(tdn).x;
+					s.left = dojo.position(tdn).x;
 					if(tdn.previousSibling){
 						this._IEOriginalPos = ['after',tdn.previousSibling];
 					}else if(tdn.nextSibling){
@@ -172,7 +173,7 @@ dojo.declare("dijit._editor.plugins.AlwaysShowToolbar", dijit._editor._Plugin,
 	},
 
 	destroy: function(){
-	    // Overrides _Plugin.destroy().   TODO: call this.inherited() rather than repeating code.
+		// Overrides _Plugin.destroy().   TODO: call this.inherited() rather than repeating code.
 		this._IEOriginalPos = null;
 		this._handleScroll = false;
 		dojo.forEach(this._connects, dojo.disconnect);

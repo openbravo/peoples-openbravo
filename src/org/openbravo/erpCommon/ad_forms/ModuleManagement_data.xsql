@@ -76,12 +76,21 @@
          SELECT COUNT(*) AS TOTAL
            FROM (SELECT 1 
                    FROM AD_MODULE 
-                  WHERE STATUS IN ('I','U')
+                  WHERE STATUS IN ('I','U','P')
                   UNION ALL
                  SELECT 1
                    FROM AD_MODULE_INSTALL) A
       </Sql>
    </SqlMethod>
+   
+   <SqlMethod name="selectRestartTomcat" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+         SELECT COUNT(*) AS TOTAL
+           FROM AD_SYSTEM_INFO WHERE SYSTEM_STATUS='RB60'
+      </Sql>
+   </SqlMethod>
+   
    <SqlMethod name="selectUpdate" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

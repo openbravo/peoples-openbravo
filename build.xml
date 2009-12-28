@@ -45,24 +45,14 @@ trl.clean: refer to trl.clean target of src.
 translate: refer to translate target of src.
 installWebService: refer to installWebService target of src.
 uninstallWebService: refer to uninstallWebService target of src.
-preinstall: deprecated.
-preinstall.complete: deprecated.
-install: deprecated.
 deploy.context: deploy the context into Tomcat using the manager
 install.source: install the ERP from sources (from subversion).
 eclipse.install.source: install the ERP from sources for eclipse (from Mercurial).
 create.database: refer to create.database target of database.
 update.database: refer to update.database target of database.
-create.database.structure: refer to create.database.structure target of database.
-update.database.structure: refer to update.database.structure target of database.
 create.database.script: refer to create.database.script target of database.
 update.database.script: refer to update.database.script target of database.
 export.database: exports database structure and data to xml files.
-export.database.structure: refer to export.database.structure target of database.
-export.database.data: refer to export.database.data target of database.
-import.database.data: refer to import.database.data target of database.
-save.database.model: refer to save.database.model target of database.
-compare.database.structure: refer to compare.database.structure target of database.
 -->
 <project name="openbravo" default="compile.complete" basedir=".">
   <property environment="env" />
@@ -106,6 +96,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="apply.modules.complete.compilation" value="false" />
   <property name="calculate.core.revision" value="true"/>
   <property name="stopOnWadError" value="false"/>
+  <property name="friendlyWarnings" value="false"/>
 
   <available file=".hg" property="is.hg" />
 
@@ -206,7 +197,19 @@ compare.database.structure: refer to compare.database.structure target of databa
       <include name="*/lib/**" />
     </fileset>
   </path>
-
+  
+  <macrodef name="updatesystemstatus">
+     <attribute name="v" default="NOT SET"/>
+     <sequential>
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
+                       DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)
+         </transaction>
+       </sql>
+     </sequential>
+  </macrodef>
+  
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
   
   <target name="init" depends="code.rev">
@@ -262,7 +265,9 @@ compare.database.structure: refer to compare.database.structure target of databa
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
+    <updatesystemstatus v="RB51"/>
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
@@ -297,9 +302,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="compile" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="compile.complete.deploy">
-    <antcall target="compile.complete.development" />
-    <antcall target="compile.complete.war" />
+  <target name="compile.complete.deploy" depends="compile.complete.development, compile.complete.war">
     
     <!-- Calculate wad checksum to enable smartbuild-->
     <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
@@ -320,9 +323,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="war" />
   </target>
 
-  <target name="compile.deploy">
-    <antcall target="compile.war" />
-    <antcall target="compile.development" />
+  <target name="compile.deploy" depends="compile.war, compile.development">
   </target>
 
   <target name="compile.development" depends="init" if="mode.class">
@@ -391,15 +392,15 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="generate.entities.quick" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="run.tests">
+  <target name="run.tests" depends="init">
     <ant dir="${base.src}" target="run.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="run.all.tests">
+  <target name="run.all.tests" depends="init">
     <ant dir="${base.src}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="run.quick.tests">
+  <target name="run.quick.tests" depends="init">
     <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
@@ -419,7 +420,7 @@ compare.database.structure: refer to compare.database.structure target of databa
                   stableDBdir="${stableDBdir}"
                   testDBdir="${base.src.db}/database"
                   verbosity="${bbdd.verbosity}"
-                  userId="0" 
+                  userId="0" adminMode="true" 
                   propertiesFile="${base.config}/Openbravo.properties"/>    
   </target>
 
@@ -511,19 +512,14 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="uninstallWebService" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="install.source" depends="init,code.rev">
-    <antcall target="database.lib" />
-    <antcall target="create.database" />
-    <antcall target="wad.lib" />
-    <antcall target="trl.lib" />
+  <target name="install.source" depends="init, create.database, wad.lib, trl.lib, compile.complete.deploy">
 
-    <antcall target="compile.complete.deploy" />
-    
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
     <!--
 		<antcall target="validate.database" />
@@ -531,9 +527,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 		-->
   </target>
 
-  <target name="eclipse.install.source" depends="init,code.rev">
-    <antcall target="database.lib" />
-    <antcall target="create.database" />
+  <target name="eclipse.install.source" depends="init, create.database">
     <eclipse.incrementalBuild project="OpenbravoCore" kind="full"/>
     <antcall target="eclipse.wad.lib"/>
     <antcall target="eclipse.trl.lib"/>
@@ -543,87 +537,44 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="import.sample.data" />
   </target>
 
-  <target name="create.database" depends="init,code.rev, core.lib">
-    <antcall target="database.lib" />
-    <antcall target="core.lib" />
+  <target name="create.database" depends="init, core.lib, database.lib">
     <ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
     <antcall target="db.apply.modules.sampledata" />
   </target>
 
-  <target name="update.database" depends="init,code.rev">
-    <antcall target="database.lib" />
-    <antcall target="core.lib" />
+  <target name="update.database" depends="init, core.lib, database.lib">
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
+    <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
     <antcall target="db.apply.modules" />
   </target>
 
-  <target name="update.database.mod" depends="init,code.rev">
-    <antcall target="database.lib" />
-    <antcall target="core.lib" />
-    <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true" />
+  <target name="update.database.mod" depends="init, core.lib, database.lib">
+    <ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="update.customized.database" depends="init,code.rev">
-    <antcall target="database.lib" />
-    <antcall target="core.lib" />
-    <ant dir="${base.db}" target="update.customized.database" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="create.database.structure" depends="init">
-    <antcall target="core.lib" />
-    <ant dir="${base.db}" target="create.database.structure" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="update.database.structure" depends="init">
-    <antcall target="core.lib" />
-    <ant dir="${base.db}" target="update.database.structure" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="create.database.script" depends="init">
-    <antcall target="core.lib" />
+  <target name="create.database.script" depends="init, core.lib">
     <ant dir="${base.db}" target="create.database.script" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="update.database.script" depends="init">
-    <antcall target="core.lib" />
+  <target name="update.database.script" depends="init, core.lib">
     <ant dir="${base.db}" target="update.database.script" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="export.database" depends="init,code.rev,generate.entities">
-    <antcall target="database.lib" />
-    <antcall target="core.lib" />
+  <target name="export.database" depends="init, core.lib, database.lib, generate.entities.quick">
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="export.database.structure" depends="init,code.rev">
-    <antcall target="core.lib" />
-    <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="export.config.script" depends="init,code.rev">
-    <antcall target="core.lib" />
+  <target name="export.config.script" depends="init, core.lib">
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="export.database.data" depends="init,code.rev">
-    <antcall target="core.lib" />
-    <ant dir="${base.db}" target="export.database.data" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="import.database.data" depends="init,code.rev">
-    <antcall target="core.lib" />
-    <ant dir="${base.db}" target="import.database.data" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="db.apply.modules" if="apply.modules.on.create">
-    <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
     <antcall target="generate.entities" />
-    <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
@@ -631,11 +582,11 @@ compare.database.structure: refer to compare.database.structure target of databa
 
 
   <target name="apply.modules">
-    <echo>Applying ${module} modules...</echo>
     <antcall target="update.database.mod" />
-    
+    <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities" />
-    
+
+    <updatesystemstatus v="RB31"/>
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <condition property="apply.modules.complete.compilation.var">
@@ -647,6 +598,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     </condition>
     
     <antcall target="apply.modules.compile"/>
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
+     
   </target>
   
   <target name="apply.module.forked">
@@ -659,7 +612,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties"/>
+    <applyModule userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
 
   <target name="apply.module">
@@ -788,14 +741,23 @@ compare.database.structure: refer to compare.database.structure target of databa
     <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-
+    
+    <taskdef name="WADValidation" classname="org.openbravo.wad.validation.WADValidatorTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+            
     <echo message="Validating Module..." />
-    <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+    
+    <WADValidation propertiesFile="${base.config}/Openbravo.properties"
+                   modules="${module}"
+                   stoponerror="true"/>
+
+    <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
 
     <antcall target="obx.export.database" />
     <antcall target="obx.export.config.script" />
 
-    <extractModule moduleName="${module}" userId="0" propertiesFile="${base.config}/Openbravo.properties" exportRD="${obx.export.RD}" />
+    <extractModule moduleName="${module}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" exportRD="${obx.export.RD}" />
   </target>
 
   <target name="diagnostic">
@@ -925,5 +887,9 @@ compare.database.structure: refer to compare.database.structure target of databa
   
   <target name="load.logoimages">
     <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
+  </target>
+  
+  <target name="validate.wad">
+    <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
   </target>
 </project>

@@ -27,6 +27,7 @@ public class DocLine_DPManagement extends DocLine {
   public String Isreceipt;
   public String StatusTo;
   public String StatusFrom;
+  public String conversionDate;
 
   public DocLine_DPManagement(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,8 +82,7 @@ public class WADString extends WADControl {
           "org/openbravo/wad/controls/WADStringEncrypted", discard).createXmlDocument();
       xmlDocument
           .setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
-      xmlDocument
-          .setParameter("hasButton2", (buttonClass.equals("") ? "0" : "1"));
+      xmlDocument.setParameter("hasButton2", (buttonClass.equals("") ? "0" : "1"));
       xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
       xmlDocument.setParameter("button", textButton);
       isDisabled = true;
@@ -96,7 +95,6 @@ public class WADString extends WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_") + getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("missing", WADControl.missing);
 
     if (!isDisabled)
       isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
@@ -139,8 +137,7 @@ public class WADString extends WADControl {
           "org/openbravo/wad/controls/WADStringEncrypted", discard).createXmlDocument();
       xmlDocument
           .setParameter("hasButton", (textButton.equals("") ? "TextButton_ContentCell" : ""));
-      xmlDocument
-          .setParameter("hasButton2", (buttonClass.equals("") ? "0" : "1"));
+      xmlDocument.setParameter("hasButton2", (buttonClass.equals("") ? "0" : "1"));
       xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
       xmlDocument.setParameter("button", textButton);
       isDisabled = true;
@@ -153,7 +150,6 @@ public class WADString extends WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", (textButton.equals("") ? "" : "btn_") + getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("missing", WADControl.missing);
 
     if (!isDisabled)
       isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));

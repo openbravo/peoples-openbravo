@@ -163,7 +163,7 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
   protected BaseOBObject replaceByUniqueObject(BaseOBObject bob) {
     if (bob.isNewOBObject() && bob.getEntity().getUniqueConstraints().size() > 0) {
       final BaseOBObject otherUniqueObject = entityResolver.findUniqueConstrainedObject(bob);
-      if (otherUniqueObject != null) {
+      if (otherUniqueObject != null && otherUniqueObject != bob) {
         // now copy the imported values from the bob to
         // otherUniqueObject
         for (final Property p : bob.getEntity().getProperties()) {
@@ -177,7 +177,18 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
           if (p.isClientOrOrganization()) {
             continue;
           }
-          otherUniqueObject.set(p.getName(), bob.get(p.getName()));
+          // do not replace the collection, this dereferencing an orphan-delete collection
+          if (p.isOneToMany()) {
+            @SuppressWarnings("unchecked")
+            final List<Object> otherUniqueValues = (List<Object>) otherUniqueObject
+                .get(p.getName());
+            @SuppressWarnings("unchecked")
+            final List<Object> newValues = (List<Object>) bob.get(p.getName());
+            otherUniqueValues.clear();
+            otherUniqueValues.addAll(newValues);
+          } else {
+            otherUniqueObject.set(p.getName(), bob.get(p.getName()));
+          }
         }
         // and replace the bob, because the object from the db
         // should be used

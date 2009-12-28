@@ -35,10 +35,8 @@
   <PARAMETER id="fieldButton" name="button"/>
   <PARAMETER id="xxinvalidSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxinvalidSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxinvalidSpanText" name="invalid"/>
   <PARAMETER id="xxmissingSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxmissingSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxmissingSpanText" name="missing"/>
 
   <DISCARD id="discard"/>
 </REPORT>

@@ -61,16 +61,16 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SRESOURCEASSIGNMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="S_RESOURCEASSIGNMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_SRESOURCEASSIGNMENT">
+      <foreign-key foreignTable="AD_ORG" name="S_RESOURCEASSIGNMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_SRESOURCEASSIGNMENT">
+      <foreign-key foreignTable="S_RESOURCE" name="S_RESOURCEASSIGNMENT_S_RESOURC">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
-      <check name="SRESOURCEASSIGN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="SRESOURCEASSIGN_ONFIRMED_CHECK"><![CDATA[ISCONFIRMED IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCEASSIGNMENT_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCEASSIGNMENT_ISCON_CHK"><![CDATA[ISCONFIRMED IN ('Y', 'N')]]></check>
     </table>
   </database>
