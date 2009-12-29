@@ -363,9 +363,9 @@ function removeOnUnloadHandler(form) {
 function checkForChanges(f) {
 	var form = f;
 	
-	if (form == null) {
-		if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
-			if(top.opener != null) { // is a pop-up window
+	if (form === null) {
+		if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
+			if(top.opener !== null) { // is a pop-up window
 				form = top.opener.top.appFrame.document.forms[0];
 			}
 		}
@@ -374,13 +374,13 @@ function checkForChanges(f) {
 		}
 	}
 	
-	if(typeof form == 'undefined') {
+	if(typeof form === 'undefined') {
 		return true;
 	}
 	
 	var autosave = null;
-	if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
-		if(top.opener != null) { // is a pop-up window
+	if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
+		if(top.opener !== null) { // is a pop-up window
 		  autosave = top.opener.top.frameMenu.autosave;
 		}
 	}
@@ -388,8 +388,8 @@ function checkForChanges(f) {
 	  autosave = top.frameMenu.autosave;
 	}
 	
-	if(typeof autosave == 'undefined' || !autosave) { // 2.40 behavior		
-		if (inputValue(form.inpLastFieldChanged)!="") {
+	if(typeof autosave === 'undefined' || !autosave) { // 2.40 behavior		
+		if (inputValue(form.inpLastFieldChanged) !== "") {
 			if (!showJSMessage(26))
 				return false;
 		}
@@ -399,16 +399,35 @@ function checkForChanges(f) {
 		return true;
 	}
 	else {
-		if(typeof top.appFrame == 'undefined'){
+		if(typeof top.appFrame === 'undefined'){
 			return true;
-		}		
-		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
-		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
+		}
+
+		try {
+		  var promptConfirmation = typeof top.appFrame.confirmOnChanges === 'undefined' ? true : top.appFrame.confirmOnChanges;
+		} catch(e) {
+		  if(isDebugEnabled()) {
+            console.error("%o", e);
+		  }
+		}
+
+		try {
+		  var hasUserChanges = typeof top.appFrame.isUserChanges === 'undefined' ? false : top.appFrame.isUserChanges;
+		} catch(e) {
+		  if(isDebugEnabled()) {
+            console.error("%o", e);
+		  }
+		}
+
+        if(typeof promptConfirmation === 'undefined' || typeof hasUserChanges === 'undefined') { // Nothing to be done
+          return true;
+        }
+
 		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
 			var autoSaveFlag = autosave;		
 			if (promptConfirmation && hasUserChanges) {
 				autoSaveFlag = showJSMessage(25);
-				if(typeof top.appFrame.confirmOnChanges != 'undefined' && autoSaveFlag) {
+				if(typeof top.appFrame.confirmOnChanges !== 'undefined' && autoSaveFlag) {
 					top.appFrame.confirmOnChanges = false;
 				}
 			}
@@ -510,7 +529,7 @@ function dispatchEventChange(target) {
  */
 function depurar_validate_wrapper(action, form, value) {
   // if new-style validate-function exists => call it
-  if (typeof validate == "function") {
+  if (typeof validate === "function") {
     return validate(action, form, value);
   } else {
     // call old-style depurar function

@@ -139,26 +139,59 @@
 
       function validate(action, form, value) {
          var appFrame = top.frames.appFrame;
-         if(!appFrame.isUserChanges) {
-             return true;
+
+         try {
+           var isUserChanges = appFrame.isUserChanges;
+         } catch(e) {
+           if(isDebugEnabled()) {
+             console.error("%o", e);
+           }
          }
-         var loc = appFrame.location.toString();
-         if( loc.indexOf('Home.html') != -1 || typeof appFrame.depurar_validate_wrapper == 'undefined') {
-             return true;
+
+         if(typeof isUserChanges === 'undefined' || !appFrame.isUserChanges) {
+           return true;
          }
+
+         try {
+           var loc = appFrame.location.toString();
+         } catch(e) {
+           if(isDebugEnabled()) {
+             console.error("%o", e);
+           }
+         }
+
+         if(typeof loc === 'undefined' || loc.indexOf('Home.html') !== -1 || typeof appFrame.depurar_validate_wrapper === 'undefined') {
+           return true;
+         }
+
          return appFrame.depurar_validate_wrapper(action, form, value);
       }
 
       function getForm() {
-         var appForm = top.frames.appFrame.document.forms[0];
-         var loc = top.frames.appFrame.location.toString();
-         if(loc.indexOf('Home.html') != -1 || typeof(appForm) == 'undefined') {
-       	   return null;
+         try {
+            var appForm = top.frames.appFrame.document.forms[0];
+         } catch(e) {
+           if(isDebugEnabled()) {
+             console.error("%o", e);
+           }
          }
-         
-         if(typeof(appForm.inpLastFieldChanged) == 'undefined' || appForm.inpLastFieldChanged.value == "") {
+
+         try {
+           var loc = top.frames.appFrame.location.toString();
+         } catch(e) {
+           if(isDebugEnabled()) {
+             console.error("%o", e);
+           }
+         }
+
+         if(typeof loc === 'undefined' || typeof appForm === 'undefined' || loc.indexOf('Home.html') !== -1) {
            return null;
          }
+
+         if(typeof appForm.inpLastFieldChanged === 'undefined' || appForm.inpLastFieldChanged.value === "") {
+           return null;
+         }
+
          return appForm;
       }
     </script>
