@@ -146,7 +146,7 @@ public class Table extends ModelObject {
   public void setReferenceTypes(ModelProvider modelProvider) {
     for (final Column c : columns) {
       if (!c.isPrimitiveType())
-        c.setReferenceType(modelProvider);
+        c.setReferenceType();
     }
   }
 

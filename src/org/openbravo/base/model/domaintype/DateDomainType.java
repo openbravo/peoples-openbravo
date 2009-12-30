@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,28 +11,29 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
- -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.openbravo.base.model.RefTable" lazy="false" table="ad_ref_table">
-		<cache usage="read-write"/>
-		
-		<id name="id" type="string" column="ad_reference_id">
-			<generator class="uuid" />
-		</id>
-		
-		<property name="active" type="org.openbravo.base.session.OBYesNoType" not-null="true" column="isactive"/>				
-         
-        <many-to-one name="reference" not-null="true" class="org.openbravo.base.model.Reference" column="ad_reference_id" insert="false" update="false"/>
+ */
 
-		<many-to-one name="column" not-null="true" class="org.openbravo.base.model.Column" column="ad_key"/>				
-		
-		<property name="updated"/>
-		
-	</class>
+package org.openbravo.base.model.domaintype;
 
-</hibernate-mapping>
+import java.util.Date;
+
+/**
+ * The type for a date column.
+ * 
+ * @author mtaal
+ */
+
+public class DateDomainType extends BasePrimitiveDomainType {
+
+  /**
+   * @return class of the {@link Date}
+   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
+   */
+  public Class<?> getPrimitiveType() {
+    return Date.class;
+  }
+}

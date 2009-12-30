@@ -37,6 +37,7 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
@@ -385,7 +386,7 @@ public class DatabaseValidator implements SystemValidator {
       }
     } else if (property != null && property.getPrimitiveObjectType() != null) {
       final Class<?> prim = property.getPrimitiveObjectType();
-      if (prim == String.class) {
+      if (prim == String.class || property.getDomainType() instanceof ButtonDomainType) {
         checkType(dbColumn, dbTable, result, new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR",
             "CLOB" });
       } else if (prim == Long.class) {

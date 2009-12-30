@@ -56,7 +56,7 @@ public class IssuesTest extends BaseTest {
   public void test11461() {
     setSystemAdministratorContext();
 
-    Module module = OBDal.getInstance().createCriteria(Module.class).list().get(0);
+    Module module = OBDal.getInstance().get(Module.class, "0");
     module.setInDevelopment(true);
     OBDal.getInstance().save(module);
     OBDal.getInstance().flush();

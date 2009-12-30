@@ -19,6 +19,10 @@
 
 package org.openbravo.base.model;
 
+import org.apache.log4j.Logger;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.SearchDomainType;
+
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Reference table in the application
  * dictionary.
@@ -27,16 +31,26 @@ package org.openbravo.base.model;
  */
 
 public class RefSearch extends ModelObject {
+  private static final Logger log = Logger.getLogger(RefSearch.class);
 
   private String reference;
+  private Reference referenceObject;
   private Column column;
 
-  public String getReference() {
-    return reference;
+  public Reference getReferenceObject() {
+    return referenceObject;
   }
 
-  public void setReference(String reference) {
-    this.reference = reference;
+  public void setReferenceObject(Reference referenceObj) {
+    this.referenceObject = referenceObj;
+    reference = referenceObj.getId();
+    final DomainType domainType = referenceObj.getDomainType();
+    if (!(domainType instanceof SearchDomainType)) {
+      log.error("Domain type of reference " + referenceObj.getId()
+          + " is not a TableDomainType but a " + domainType);
+    } else {
+      ((SearchDomainType) domainType).setRefSearch(this);
+    }
   }
 
   public Column getColumn() {
@@ -45,5 +59,19 @@ public class RefSearch extends ModelObject {
 
   public void setColumn(Column column) {
     this.column = column;
+  }
+
+  /**
+   * @deprecated use {@link #getReferenceObject()}
+   */
+  public String getReference() {
+    return reference;
+  }
+
+  /**
+   * @deprecated use {@link #setReferenceObject(Reference)}
+   */
+  public void setReference(String reference) {
+    this.reference = reference;
   }
 }

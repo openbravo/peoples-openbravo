@@ -23,8 +23,16 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.domaintype.DateDomainType;
+import org.openbravo.base.model.domaintype.DatetimeDomainType;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
+import org.openbravo.base.util.OBClassLoader;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Reference table in the in-memory
@@ -32,9 +40,8 @@ import java.util.Set;
  * 
  * @author iperdomo
  */
-
-@SuppressWarnings("unchecked")
 public class Reference extends ModelObject {
+  private static final Logger log = Logger.getLogger(Reference.class);
 
   // Ids of ReferenceTypes
   public static final String TABLE = "18";
@@ -47,15 +54,24 @@ public class Reference extends ModelObject {
   public static final String NO_REFERENCE = "-1";
 
   // Validation Types
+  /**
+   * @deprecated, validation type is not used anymore
+   */
   public static final char TABLE_VALIDATION = 'T';
+  /**
+   * @deprecated, validation type is not used anymore
+   */
   public static final char SEARCH_VALIDATION = 'S';
+  /**
+   * @deprecated, validation type is not used anymore
+   */
   public static final char LIST_VALIDATION = 'L';
 
-  private static HashMap<String, Class> primitiveTypes;
+  private static HashMap<String, Class<?>> primitiveTypes;
 
   static {
     // Mapping reference id with a Java type
-    primitiveTypes = new HashMap<String, Class>();
+    primitiveTypes = new HashMap<String, Class<?>>();
 
     primitiveTypes.put("10", String.class);
     primitiveTypes.put("11", Long.class);
@@ -79,36 +95,104 @@ public class Reference extends ModelObject {
     primitiveTypes.put("800101", String.class);
   }
 
-  private Character validationType;
-  private Set<String> allowedValues = new HashSet<String>();
-
-  public Character getValidationType() {
-    return validationType;
-  }
-
-  public void setValidationType(Character validationType) {
-    this.validationType = validationType;
-  }
-
+  /**
+   * @deprecated use {@link PrimitiveDomainType#getPrimitiveType()}.
+   */
+  @SuppressWarnings("unchecked")
   public static Class getPrimitiveType(String id) {
     if (primitiveTypes.containsKey(id))
       return primitiveTypes.get(id);
     return Object.class;
   }
 
-  public void addAllowedValue(String value) {
-    allowedValues.add(value);
+  private String modelImpl;
+  private DomainType domainType;
+  private Reference parentReference;
+
+  public boolean isPrimitive() {
+    return getDomainType() instanceof PrimitiveDomainType;
   }
 
-  public Set<String> getAllowedValues() {
-    return allowedValues;
+  public DomainType getDomainType() {
+    if (domainType != null) {
+      return domainType;
+    }
+    try {
+      final Class<?> clz = OBClassLoader.getInstance().loadClass(getModelImplementationClassName());
+      domainType = (DomainType) clz.newInstance();
+      domainType.setReference(this);
+    } catch (Exception e) {
+      throw new OBException("Not able to create domain type " + getModelImpl(), e);
+    }
+    return domainType;
   }
 
+  private String getModelImplementationClassName() {
+    if (getModelImpl() == null && getParentReference() != null) {
+      return getParentReference().getModelImplementationClassName();
+    }
+    return getModelImpl();
+  }
+
+  public String getModelImpl() {
+    return modelImpl;
+  }
+
+  public void setModelImpl(String modelImpl) {
+    this.modelImpl = modelImpl;
+  }
+
+  public Reference getParentReference() {
+    return parentReference;
+  }
+
+  public void setParentReference(Reference parentReference) {
+    this.parentReference = parentReference;
+  }
+
+  /**
+   * @deprecated validation type not used anymore, returns a space always
+   */
+  public char getValidationType() {
+    log
+        .warn("The validation type concept is not used anymore. The Reference.getValidationType() method is deprecated");
+    return ' ';
+  }
+
+  /**
+   * @deprecated validation type not used anymore
+   */
+  public void setValidationType(char validationType) {
+  }
+
+  /**
+   * @deprecated check instance of {@link #getDomainType()}.
+   */
   public boolean isDatetime() {
-    return getId().equals("16");
+    return getDomainType() instanceof DatetimeDomainType;
   }
 
+  /**
+   * @deprecated check instance of {@link #getDomainType()}.
+   */
   public boolean isDate() {
-    return getId().equals("15");
+    return getDomainType() instanceof DateDomainType;
   }
+
+  /**
+   * @deprecated use {@link StringEnumerateDomainType#addEnumerateValue(String)}.
+   * @see #getDomainType()
+   */
+  public void addAllowedValue(String value) {
+    ((StringEnumerateDomainType) getDomainType()).addEnumerateValue(value);
+  }
+
+  /**
+   * @deprecated use {@link StringEnumerateDomainType#getEnumerateValues()}.
+   * @see #getDomainType()
+   */
+  public Set<String> getAllowedValues() {
+    return ((StringEnumerateDomainType) getDomainType()).getEnumerateValues();
+  }
+
 }

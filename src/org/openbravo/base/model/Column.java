@@ -23,6 +23,13 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.model.domaintype.ButtonDomainType;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.EnumerateDomainType;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+import org.openbravo.base.model.domaintype.StringDomainType;
+import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Column table in the application
@@ -57,6 +64,28 @@ public class Column extends ModelObject {
   private Integer position;
 
   private Module module;
+
+  public DomainType getDomainType() {
+    if (referenceValue != null) {
+      final DomainType refValueDomainType = referenceValue.getDomainType();
+      // always return a string or enumerate domain type for a button
+      // this is to handle particular cases where the main reference
+      // is a button and the sub reference is a list, there are one or
+      // two exceptions on this also (other main reference)
+      // but the common case is that the subreference is a list
+      if (reference.getDomainType() instanceof ButtonDomainType
+          && !(refValueDomainType instanceof EnumerateDomainType || refValueDomainType instanceof StringDomainType)) {
+        final StringDomainType stringDomainType = new StringDomainType();
+        stringDomainType.setModelProvider(refValueDomainType.getModelProvider());
+        stringDomainType.setReference(referenceValue);
+        return stringDomainType;
+      } else {
+        return refValueDomainType;
+      }
+    }
+
+    return reference.getDomainType();
+  }
 
   public boolean isBoolean() {
     return isPrimitiveType()
@@ -184,25 +213,20 @@ public class Column extends ModelObject {
   }
 
   public boolean isPrimitiveType() {
-    if (!reference.getId().equals(Reference.TABLE) && !reference.getId().equals(Reference.TABLEDIR)
-        && !reference.getId().equals(Reference.SEARCH)
-        && !reference.getId().equals(Reference.IMAGE)
-        && !reference.getId().equals(Reference.IMAGE_BLOB)
-        && !reference.getId().equals(Reference.PRODUCT_ATTRIBUTE)
-        && !reference.getId().equals(Reference.RESOURCE_ASSIGNMENT))
-      return true;
-    return false;
+    // anything else than foreign key is a primitive
+    return getDomainType() instanceof PrimitiveDomainType;
   }
 
   @SuppressWarnings("unchecked")
-  public Class getPrimitiveType() {
+  public Class<?> getPrimitiveType() {
     if (isPrimitiveType()) {
-      final Class<?> clz = Reference.getPrimitiveType(reference.getId());
-      if (clz == Boolean.class && getReferenceValue() != null) {
-        // a string list
-        return String.class;
-      }
-      return clz;
+      return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
+      // final Class<?> clz = ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
+      // if (clz == Boolean.class && getReferenceValue() != null) {
+      // // a string list
+      // return String.class;
+      // }
+      // return clz;
     }
     return null;
   }
@@ -241,7 +265,14 @@ public class Column extends ModelObject {
     return super.isActive();
   }
 
+  /**
+   * @deprecated use {@link Column#setReferenceType()}
+   */
   protected void setReferenceType(ModelProvider modelProvider) {
+    setReferenceType();
+  }
+
+  protected void setReferenceType() {
 
     // reference type does not need to be set
     if (isPrimitiveType()) {
@@ -249,18 +280,11 @@ public class Column extends ModelObject {
     }
 
     try {
-      final String referenceId = reference.getId();
-      final String referenceValueId = (referenceValue != null ? referenceValue.getId()
-          : Reference.NO_REFERENCE);
-      final char validationType = (referenceValue != null ? referenceValue.getValidationType()
-          : reference.getValidationType());
-      final Column c = modelProvider.getColumnByReference(referenceId, referenceValueId,
-          validationType, getColumnName());
-      if (c != null)
-        setReferenceType(c);
+      setReferenceType(((ForeignKeyDomainType) getDomainType())
+          .getForeignKeyColumn(getColumnName()));
     } catch (final Exception e) {
-      System.out.println("Error >> tableName: " + table.getTableName() + " - columnName: "
-          + getColumnName());
+      log.error("No referenced column found: error >> tableName: " + table.getTableName()
+          + " - columnName: " + getColumnName(), e);
       e.printStackTrace();
     }
   }
@@ -354,8 +378,8 @@ public class Column extends ModelObject {
     if (getColumnName().equalsIgnoreCase("changeprojectstatus")) {
       return Collections.EMPTY_SET;
     }
-    if (getReferenceValue() != null) {
-      return getReferenceValue().getAllowedValues();
+    if (getDomainType() instanceof StringEnumerateDomainType) {
+      return (Set<String>) ((StringEnumerateDomainType) getDomainType()).getEnumerateValues();
     }
     return Collections.EMPTY_SET;
   }
