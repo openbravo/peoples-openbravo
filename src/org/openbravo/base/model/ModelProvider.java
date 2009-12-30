@@ -393,6 +393,17 @@ public class ModelProvider implements OBSingleton {
             thisProp.getEntity().getIdentifierProperties().remove(thisProp);
             continue;
           }
+
+          // can occur if the column is read and returned through a
+          // module provided Domain Type
+          if (thatColumn.getProperty() == null) {
+            final Entity entity = getEntityByTableName(thatColumn.getTable().getTableName());
+            Check.isNotNull(entity, "No entity found using tablename "
+                + thatColumn.getTable().getTableName() + " for column " + thatColumn);
+            final Property property = entity.getPropertyByColumnName(thatColumn.getColumnName());
+            thatColumn.setProperty(property);
+          }
+
           // targetentity is set within setReferencedProperty
           final Property thatProperty = thatColumn.getProperty();
           thisProp.setReferencedProperty(thatProperty);

@@ -102,4 +102,8 @@ public class ModelObject {
   public void setUpdated(Date updated) {
     this.updated = updated;
   }
+
+  public String toString() {
+    return this.getClass().getName() + " [id: " + id + ", name: " + name + "]";
+  }
 }

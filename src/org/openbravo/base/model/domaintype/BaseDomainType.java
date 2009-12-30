@@ -40,6 +40,9 @@ public abstract class BaseDomainType implements DomainType {
    * Method is empty in this class, subclasses should override and call super.initialize() (to allow
    * future additional initialization in this class).
    * 
+   * Note: any subclass should clean-up and close database connections or hibernate sessions. If
+   * this is not done then the update.database task may hang when disabling foreign keys.
+   * 
    * @see org.openbravo.base.model.domaintype.DomainType#initialize(org.openbravo.base.model.ModelProvider)
    */
   public void initialize() {

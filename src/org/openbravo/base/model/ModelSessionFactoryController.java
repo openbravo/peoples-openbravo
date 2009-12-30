@@ -20,6 +20,8 @@
 package org.openbravo.base.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
@@ -37,6 +39,8 @@ import org.openbravo.base.util.Check;
 
 public class ModelSessionFactoryController extends SessionFactoryController {
 
+  private List<Class<?>> additionalClasses = new ArrayList<Class<?>>();
+
   @Override
   protected void mapModel(Configuration cfg) {
     cfg.addClass(Table.class);
@@ -47,6 +51,9 @@ public class ModelSessionFactoryController extends SessionFactoryController {
     cfg.addClass(RefTable.class);
     cfg.addClass(RefList.class);
     cfg.addClass(Module.class);
+    for (Class<?> clz : additionalClasses) {
+      cfg.addClass(clz);
+    }
   }
 
   @Override
@@ -127,5 +134,13 @@ public class ModelSessionFactoryController extends SessionFactoryController {
     public void onCollectionUpdate(Object collection, Serializable key) throws CallbackException {
       Check.fail("The model session factory is not allowed to " + "update model data.");
     }
+  }
+
+  public List<Class<?>> getAdditionalClasses() {
+    return additionalClasses;
+  }
+
+  public void addAdditionalClasses(Class<?> clz) {
+    additionalClasses.add(clz);
   }
 }
