@@ -398,7 +398,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
 <!--3D8AB0C824ED4C70ADE086D9CFE5DA1A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3D8AB0C824ED4C70ADE086D9CFE5DA1A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3D8AB0C824ED4C70ADE086D9CFE5DA1A-->  <NAME><![CDATA[Register]]></NAME>
-<!--3D8AB0C824ED4C70ADE086D9CFE5DA1A-->  <DESCRIPTION><![CDATA[Opens the Openbravo's website registration window]]></DESCRIPTION>
+<!--3D8AB0C824ED4C70ADE086D9CFE5DA1A-->  <DESCRIPTION><![CDATA[Register your installation of Openbravo ERP in order to receive development and commercial updates and information]]></DESCRIPTION>
 <!--3D8AB0C824ED4C70ADE086D9CFE5DA1A-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--3D8AB0C824ED4C70ADE086D9CFE5DA1A-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.utility.Register]]></CLASSNAME>
 <!--3D8AB0C824ED4C70ADE086D9CFE5DA1A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
