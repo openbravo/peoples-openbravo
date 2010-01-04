@@ -16,10 +16,12 @@
 <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
 <script language="javascript">
     function onLoadDo(url) {
-      if(typeof top.opener.top.appFrame != 'undefined') 
+      if(typeof top.opener.top.appFrame !== 'undefined') {
         top.opener.top.appFrame.document.location.href = url;
-      else
+      }
+      else {
           top.opener.top.document.location.href = url;
+      }
       top.window.close();
     }
   </script>

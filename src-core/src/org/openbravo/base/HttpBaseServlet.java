@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.rmi.Naming;
 import java.sql.CallableStatement;
@@ -550,16 +551,16 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   }
 
   /**
-   * Renders the FO input source into a PDF file which is then written directly to the response to
-   * the user.
+   * Renders the FO input source into a PDF file which is then written directly to OutputStream.
    * 
    * @param strFo
    *          FO source string for generating the PDF.
-   * @param response
-   *          HttpServletResponse object to which the PDF will be rendered to.
+   * @param out
+   *          OutputStream object to which the PDF will be rendered to.
    * @throws ServletException
    */
-  protected void renderFO(String strFo, HttpServletResponse response) throws ServletException {
+
+  protected void renderFO(String strFo, OutputStream out) throws ServletException {
     // Check validity of the certificate
     // Create a trust manager that does not validate certificate chains
     TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -604,81 +605,83 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
           org.apache.fop.apps.Options options = new org.apache.fop.apps.Options(fopFile);
         }
       }
-      strFo = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + strFo;
+
+      final String foTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + strFo;
 
       if ((globalParameters.strServidorRenderFo == null)
           || (globalParameters.strServidorRenderFo.equals(""))) {
+
         if (log4j.isDebugEnabled())
           log4j.debug(strFo);
-        StringReader sr = new StringReader(strFo);
+
+        StringReader sr = new StringReader(foTemplate);
+
         if (log4j.isDebugEnabled())
           log4j.debug(sr.toString());
+
         InputSource inputFO = new InputSource(sr);
 
-        // log4j.info("Beginning of ByteArrayOutputStream");
-        if (log4j.isDebugEnabled())
-          log4j.debug("Beginning of response.setContentType");
-        response.setContentType("application/pdf; charset=UTF-8");
         if (log4j.isDebugEnabled())
           log4j.debug("Beginning of driver");
+
         Driver driver = new Driver();
         driver.setLogger(globalParameters.getFopLogger());
         driver.setRenderer(Driver.RENDER_PDF);
         driver.setInputSource(inputFO);
 
-        // ByteArrayOutputStream out = new ByteArrayOutputStream();
-        driver.setOutputStream(response.getOutputStream());
+        driver.setOutputStream(out);
 
         if (log4j.isDebugEnabled())
           log4j.debug("driver.run()");
+
         driver.run();
-        /*
-         * log4j.info("Beginning of out.toByteArray()"); byte[] content = out.toByteArray();
-         * log4j.info("Beginning of response.setContentLength");
-         * response.setContentLength(content.length);log4j.info(
-         * "Beginning of response.getOutputStream().write(content)");
-         */
-        /*
-         * int incr = 1000; for (int i=0;i<content.length;i+=incr) { int end =
-         * ((content.length<(i+incr))?content.length-i:incr);
-         * response.getOutputStream().write(content, i, end); response.getOutputStream().flush(); }
-         */
-        /*
-         * response.getOutputStream().write(content);
-         * log4j.info("Beginning of response.getOutputStream().flush()" );
-         * response.getOutputStream().flush();
-         */
+
         if (log4j.isDebugEnabled())
           log4j.debug("End of renderFO");
-        response.getOutputStream().flush();
-        response.getOutputStream().close();
+
         sr.close();
         driver.reset();
         driver = null;
       } else {
-        response.setContentType("application/pdf; charset=UTF-8");
+
         RenderFoI render = (RenderFoI) Naming.lookup("rmi://"
             + globalParameters.strServidorRenderFo + "/RenderFo");
 
         byte[] content = render.computeRenderFo(strFo);
-        response.setContentLength(content.length);
-        /*
-         * int incr = 1000; for (int i=0;i<content.length;i+=incr) { int end =
-         * ((content.length<(i+incr))?content.length-i:incr);
-         * response.getOutputStream().write(content, i, end); response.getOutputStream().flush(); }
-         */
-        response.getOutputStream().write(content);
-        response.getOutputStream().flush();
+        out.write(content);
+        out.flush();
       }
     } catch (java.lang.IllegalStateException il) {
       return;
     } catch (Exception ex) {
-      try {
-        response.getOutputStream().flush();
-      } catch (Exception ignored) {
-      }
-      throw new ServletException(ex);
+      throw new ServletException(ex.getMessage(), ex);
     }
+  }
+
+  /**
+   * Renders a PDF directly into a HttpServletResponse. <b>NOTE:</b> If you use this method the
+   * 'loading' pop-up window will not be closed.
+   * 
+   * @param strFo
+   * @param out
+   * @throws ServletException
+   */
+  @Deprecated
+  protected void renderFO(String strFo, HttpServletResponse response) throws ServletException {
+
+    try {
+
+      response.setContentType("application/pdf; charset=UTF-8");
+
+      renderFO(strFo, response.getOutputStream());
+
+      response.getOutputStream().flush();
+      response.getOutputStream().close();
+
+    } catch (Exception ex) {
+      throw new ServletException(ex.getMessage(), ex);
+    }
+
   }
 
   /**
