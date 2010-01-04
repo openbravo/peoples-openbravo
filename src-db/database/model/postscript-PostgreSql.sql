@@ -558,10 +558,83 @@ AS '$libdir/uuid-ossp', 'uuid_generate_v4'
 VOLATILE STRICT LANGUAGE C;
 /-- END
 
---Regenerate mappings and classnames for tabs in modules (issue #11431)
-update ad_tab set name = 'M'||name where ad_module_id != '0'
-/-- END
- 
-update ad_tab set name = substr(name,2) where ad_module_id != '0'
+alter table ad_tab disable trigger ad_tab_mod_trg;
 /-- END
 
+--Regenerate mappings and classnames for tabs in modules (issue #11431)
+update ad_tab set name = 'M'||name where ad_module_id != '0';
+/-- END
+ 
+update ad_tab set name = substr(name,2) where ad_module_id != '0';
+/-- END
+
+alter table ad_tab enable trigger ad_tab_mod_trg;
+/-- END
+
+-- Inserts an alert recipient for available updates
+-- See issue:  https://issues.openbravo.com/view.php?id=11743
+CREATE OR REPLACE FUNCTION pg_temp.insert_recipient()
+  RETURNS void AS
+$BODY$ DECLARE
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2009 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  INSERT INTO ad_alertrecipient(ad_client_id, ad_org_id, isactive, created, createdby,
+                              updated, updatedby, ad_alertrecipient_id, ad_alertrule_id,
+                              ad_role_id, sendemail)
+       VALUES('0', '0', 'Y', now(), '100', now(), '100', '8CC1347628D148FABA1FC26622F4B070', '1005400000', '0', 'N');
+EXCEPTION
+WHEN OTHERS THEN
+--do nothing
+END;   $BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+SELECT pg_temp.insert_recipient();
+/-- END
+
+--Inserts role access for new register window
+--See issue:  https://issues.openbravo.com/view.php?id=11349
+CREATE OR REPLACE FUNCTION pg_temp.insert_register_form_access()
+  RETURNS void AS
+$BODY$ DECLARE
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2009 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  INSERT INTO ad_form_access(ad_form_access_id, ad_form_id, ad_role_id,
+                               ad_client_id, ad_org_id, isactive, created,
+                               createdby, updated, updatedby, isreadwrite)
+         VALUES('41263F39F7614270808A955844B07A7F', '3D8AB0C824ED4C70ADE086D9CFE5DA1A', '0', '0', '0', 'Y', now(), '0', now(), '0', 'Y');
+EXCEPTION
+WHEN OTHERS THEN
+--do nothing
+END;   $BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+SELECT pg_temp.insert_register_form_access();
+/-- END

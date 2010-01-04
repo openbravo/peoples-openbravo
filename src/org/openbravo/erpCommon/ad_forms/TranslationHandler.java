@@ -178,7 +178,7 @@ class TranslationHandler extends DefaultHandler {
           log4j.debug(m_sql.toString());
         m_updateCount++;
       } else if (no == 0)
-        log4j.warn("Not Found - " + m_sql.toString());
+        log4j.info("Not Found - " + m_sql.toString());
       else
         log4j.error("Update Rows=" + no + " (Should be 1) - " + m_sql.toString());
     } else if (qName.equals(Translation.XML_VALUE_TAG)) {

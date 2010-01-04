@@ -22,7 +22,8 @@ dojo.declare("dijit.layout.AccordionPane", dijit.layout.ContentPane, {
 	},
 
 	onSelected: function(){
-		// summary: called when this pane is selected
+		// summary:
+		//		called when this pane is selected
 	}
 });
 

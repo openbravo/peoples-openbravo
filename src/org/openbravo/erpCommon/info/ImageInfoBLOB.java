@@ -142,13 +142,13 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           try {
             Class tableClass = Class.forName(dpackage.getJavaPackage() + "."
                 + table.getJavaClassName());
+            @SuppressWarnings("unchecked")
             BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(tableClass,
                 parentObjectId);
             parentObject.set(propertyName, null);
             OBDal.getInstance().flush();
             OBDal.getInstance().remove(image);
           } catch (Exception e) {
-            e.printStackTrace();
             log4j.error("Class for table not found", e);
           }
         } finally {
@@ -213,7 +213,13 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           + "_R').className = \"dummyClass_\" + parent.opener.document.getElementById('"
           + columnname + "_R').className;");
     }
-    writer.println("window.close()");
+
+    // When deleting an image, reset parent status to not changed in order to avoid trigger Autosave
+    if (imageId.equals("")) {
+      writer.println("parentWindow.isUserChanges = false;");
+      writer.println("parentWindow.document.forms[0].inpLastFieldChanged.value=\"\";");
+    }
+    writer.println("window.close();");
 
     writer.println("try { parentWindow.changeToEditingMode('force'); } catch (e) {}");
     writer.println("}");

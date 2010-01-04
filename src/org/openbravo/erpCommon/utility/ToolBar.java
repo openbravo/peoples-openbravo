@@ -513,6 +513,9 @@ public class ToolBar {
       removeAllTests();
     if (isReadOnly)
       removeReadOnly();
+    if (!email) {
+      removeElement("EMAIL");
+    }
   }
 
   // AL New toolbars

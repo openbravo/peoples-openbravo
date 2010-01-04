@@ -135,7 +135,7 @@ public class DatabaseValidator implements SystemValidator {
     for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
       // ignore errors related to C_TEMP_SELECTION
       if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
-        result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
+        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
             + dbTable.getName() + " present in the database "
             + " but not defined in the Application Dictionary");
       }
@@ -535,7 +535,8 @@ public class DatabaseValidator implements SystemValidator {
       if (table.getPrimaryKey() != null && !table.getPrimaryKey().equals("")
           && !nameStartsByDBPrefix(table.getPrimaryKey())) {
         String errorMsg = "Table  " + table.getName() + " has primary key named "
-            + table.getPrimaryKey() + ", which does not starts by module's DBPrefix.";
+            + table.getPrimaryKey()
+            + ", which does not start with the database prefix of the module.";
         if (isDbsmExecution()) {
           result.addWarning(SystemValidationType.INCORRECT_PK_NAME, errorMsg);
         } else {

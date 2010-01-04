@@ -17,12 +17,10 @@
 
 # File is used by ApplyModule and other ant tasks
 
-log4j.rootCategory=INFO, A1, O1
+log4j.rootCategory=INFO, A1, O2
 
-# Additional Appender used for apply modules or other cases
-log4j.appender.O1=org.openbravo.utils.OBLogAppender
-log4j.appender.O1.layout=org.apache.log4j.PatternLayout
-log4j.appender.O1.layout.ConversionPattern=%-4r [%t] %-5p %c - %m%n
+# Additional Appender used for Improved Upgrade Process
+log4j.appender.O2=org.openbravo.utils.OBRebuildAppender
 
 # A1 is set to be a ConsoleAppender. 
 log4j.appender.A1=org.apache.log4j.ConsoleAppender

@@ -44,7 +44,7 @@ dojo.mixin(dojox.embed.flashVars, {
 				//val = escape(val);
 			}
 			return val;
-		}
+		};
 		var df = dojox.embed.flashVars.serialize;
 		var txt = "";
 		if(dojo.isArray(o)){

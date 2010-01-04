@@ -55,7 +55,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
    * Builds the testdata, {@link CountryTrl} objects for a specific {@link Country}.
    */
   public void testACreateCountryTrl() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final Country country = getCountry("Norway");
     final OBCriteria<CountryTrl> obc = OBDal.getInstance().createCriteria(CountryTrl.class);
     obc.add(Expression.eq("country", country));
@@ -92,7 +92,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
    * This method also cleans up the testdata.
    */
   public void testCountryTrlImport() {
-    setUserContext("100");
+    setBigBazaarAdminContext();
 
     // read countrytrl
     String xml = exportClass(CountryTrl.class, "country", getCountry("Norway"));

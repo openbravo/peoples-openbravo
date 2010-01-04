@@ -1438,13 +1438,10 @@ public class TableSQLData implements Serializable {
       String parentKey = getParentColumnName();
       if (parentKey == null)
         parentKey = "";
-      if (primaryKey.equals("") && data[i].iskey.equals("Y")
-          && (getIsSameTable() || !data[i].columnname.equalsIgnoreCase(parentKey))) {
+      if (primaryKey.equals("") && data[i].iskey.equals("Y")) {
         primaryKey = data[i].columnname;
-      } else if (secondaryKey.equals("") && data[i].issecondarykey.equals("Y")
-          && (getIsSameTable() || !data[i].columnname.equalsIgnoreCase(parentKey))) {
-        secondaryKey = data[i].columnname;
       }
+
     }
 
     if (showAudit) {

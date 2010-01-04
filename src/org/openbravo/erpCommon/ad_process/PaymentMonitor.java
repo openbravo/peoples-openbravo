@@ -56,7 +56,7 @@ public class PaymentMonitor {
     invoice.setDueAmount(overDueAmount.setScale(invoice.getCurrency().getStandardPrecision()
         .intValue(), BigDecimal.ROUND_HALF_UP));
     invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(invoice.getTotalPaid()));
-    invoice.setLastCalculatedOnDate(new Date(System.currentTimeMillis()));
+    invoice.setLastCalculatedOnDate(new Date());
     OBDal.getInstance().save(invoice);
     OBDal.getInstance().flush();
     return;
@@ -64,13 +64,13 @@ public class PaymentMonitor {
 
   static Long getDaysTillDue(Invoice invoice) {
     Long daysToDue = 0L;
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as dp ");
-    whereClause.append(" where dp.invoice.id ='").append(invoice.getId()).append("'");
-    whereClause.append(" order by dp.dueDate");
+
+    String whereClause = " as dp where dp.invoice.id = :invoice order by dp.dueDate";
 
     final OBQuery<DebtPayment> obqParameters = OBDal.getInstance().createQuery(DebtPayment.class,
-        whereClause.toString());
+        whereClause);
+    obqParameters.setNamedParameter("invoice", invoice.getId());
+
     final List<DebtPayment> payments = obqParameters.list();
     ArrayList<Long> allDaysToDue = new ArrayList<Long>();
     for (DebtPayment payment : payments) {

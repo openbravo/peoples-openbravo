@@ -7,6 +7,7 @@
 
 if(!dojo._hasResource["dojox.analytics.plugins.mouseOver"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.analytics.plugins.mouseOver"] = true;
+dojo.require("dojox.analytics._base");
 dojo.provide("dojox.analytics.plugins.mouseOver");
 
 dojox.analytics.plugins.mouseOver = new (function(){

@@ -71,11 +71,11 @@ public class AccessLevelTest extends BaseTest {
     // "  O";"Organization"
     // " CO";"Client+Organization"
 
-    setUserContext("0");
+    setSystemAdministratorContext();
     final List<Table> tables = OBDal.getInstance().createCriteria(Table.class).list();
     // SmallBazaar role --> CO
     final Role role = OBDal.getInstance().get(Role.class, "1000000");
-    setUserContext("100");
+    setBigBazaarAdminContext();
     OBContext.getOBContext().setRole(role);
     final String userLevel = OBContext.getOBContext().getUserLevel();
     assertEquals("CO", userLevel.trim());
@@ -105,7 +105,7 @@ public class AccessLevelTest extends BaseTest {
    * access level defined for that entity.
    */
   public void testADataAccessLevel() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final List<Entity> entities = ModelProvider.getInstance().getModel();
     final StringBuilder sb = new StringBuilder();
     final Client clientZero = OBDal.getInstance().get(Client.class, "0");
@@ -199,7 +199,7 @@ public class AccessLevelTest extends BaseTest {
    * Test the System access level.
    */
   public void testAccessLevelSystem() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final Organization o = OBDal.getInstance().get(Organization.class, "1000002");
     final Table t = OBDal.getInstance().get(Table.class, "100");
     t.setOrganization(o);
@@ -219,7 +219,7 @@ public class AccessLevelTest extends BaseTest {
    * Tests the Organization Access Level.
    */
   public void testAccessLevelOrganization() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final Organization o = OBDal.getInstance().get(Organization.class, "0");
     final CashJournal c = OBDal.getInstance().get(CashJournal.class, "1000000");
     c.setOrganization(o);
@@ -239,7 +239,7 @@ public class AccessLevelTest extends BaseTest {
    * Tests Access Level System Client.
    */
   public void testAccessLevelSC() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final Organization o = OBDal.getInstance().get(Organization.class, "1000001");
     final Country c = OBDal.getInstance().get(Country.class, "100");
     c.setOrganization(o);

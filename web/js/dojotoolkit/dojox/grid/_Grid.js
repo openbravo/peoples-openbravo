@@ -29,8 +29,8 @@ dojo.require("dojox.grid._Events");
 dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 (function(){
+	// NOTE: this is for backwards compatibility with Dojo 1.3
 	if(!dojo.isCopyKey){
-		// backwards compatibility with 1.3
 		dojo.isCopyKey = dojo.dnd.getCopyKeyState;
 	}
 	/*=====
@@ -190,7 +190,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		//	|		structure="structure"
 		//	|		dojoType="dojox.grid._Grid"></div>
 
-		templateString:"<div class=\"dojoxGrid\" hidefocus=\"hidefocus\" wairole=\"grid\" dojoAttachEvent=\"onmouseout:_mouseOut\">\n\t<div class=\"dojoxGridMasterHeader\" dojoAttachPoint=\"viewsHeaderNode\" tabindex=\"-1\" wairole=\"presentation\"></div>\n\t<div class=\"dojoxGridMasterView\" dojoAttachPoint=\"viewsNode\" wairole=\"presentation\"></div>\n\t<div class=\"dojoxGridMasterMessages\" style=\"display: none;\" dojoAttachPoint=\"messagesNode\"></div>\n\t<span dojoAttachPoint=\"lastFocusNode\" tabindex=\"0\"></span>\n</div>\n",
+		templateString:"<div class=\"dojoxGrid\" hidefocus=\"hidefocus\" wairole=\"grid\" dojoAttachEvent=\"onmouseout:_mouseOut\">\n\t<div class=\"dojoxGridMasterHeader\" dojoAttachPoint=\"viewsHeaderNode\" wairole=\"presentation\"></div>\n\t<div class=\"dojoxGridMasterView\" dojoAttachPoint=\"viewsNode\" wairole=\"presentation\"></div>\n\t<div class=\"dojoxGridMasterMessages\" style=\"display: none;\" dojoAttachPoint=\"messagesNode\"></div>\n\t<span dojoAttachPoint=\"lastFocusNode\" tabindex=\"0\"></span>\n</div>\n",
 
 		// classTag: String
 		// 		CSS class applied to the grid's domNode
@@ -239,6 +239,13 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		//		that many rows if there are more
 		autoHeight: '',
 
+		// rowHeight: Integer
+		//		If rowHeight is set to a positive number, it will define the height of the rows
+		//		in pixels. This can provide a significant performance advantage, since it
+		//		eliminates the need to measure row sizes during rendering, which is one
+		// 		the primary bottlenecks in the DataGrid's performance. 
+		rowHeight: 0,
+		
 		// autoRender: Boolean
 		//		If autoRender is true, grid will render itself after initialization.
 		autoRender: true,
@@ -378,6 +385,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			}
 			// Call this to update our autoheight to start out
 			this._setAutoHeightAttr(this.autoHeight, true);
+			this.lastScrollTop = this.scrollTop = 0;
 		},
 		
 		postCreate: function(){
@@ -385,7 +393,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			this._setHeaderMenuAttr(this.headerMenu);
 			this._setStructureAttr(this.structure);
 			this._click = [];
-			this.inherited(arguments)
+			this.inherited(arguments);
 			if(this.domNode && this.autoWidth && this.initialWidth){
 				this.domNode.style.width = this.initialWidth;
 			}
@@ -584,7 +592,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 									}
 								}, this);
 							}
-							var checked = dojo.filter(self.layout.cells, function(c){
+							checked = dojo.filter(self.layout.cells, function(c){
 								if(c.menuItems.length > 1){
 									dojo.forEach(c.menuItems, "item.attr('disabled', false);");
 								}else{
@@ -707,6 +715,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			delete this._pendingChangeSize;
 			delete this._pendingResultSize;
 			// if we have set up everything except the DOM, we cannot resize
+			if(!this.domNode){ return; }
 			var pn = this.domNode.parentNode;
 			if(!pn || pn.nodeType != 1 || !this.hasLayout() || pn.style.visibility == "hidden" || pn.style.display == "none"){
 				return;
@@ -714,12 +723,13 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			// useful measurement
 			var padBorder = this._getPadBorder();
 			var hh = undefined;
+			var h;
 			// grid height
 			if(this._autoHeight){
 				this.domNode.style.height = 'auto';
 				this.viewsNode.style.height = '';
 			}else if(typeof this.autoHeight == "number"){
-				var h = hh = this._getHeaderHeight();
+				h = hh = this._getHeaderHeight();
 				h += (this.scroller.averageRowHeight * this.autoHeight);
 				this.domNode.style.height = h + "px";
 			}else if(this.domNode.clientHeight <= padBorder.h){
@@ -740,13 +750,13 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 				this.height = this.domNode.style.height;
 				delete this.fitTo;
 			}else if(this.fitTo == "parent"){
-				var h = dojo._getContentBox(pn).h;
-				dojo.marginBox(this.domNode, { h: Math.max(0, h) });
+				h = this._parentContentBoxHeight = this._parentContentBoxHeight || dojo._getContentBox(pn).h;
+				this.domNode.style.height = Math.max(0, h) + "px";
 			}
 			
 			var hasFlex = dojo.some(this.views.views, function(v){ return v.flexCells; });
 
-			if(!this._autoHeight && dojo._getContentBox(this.domNode).h === 0){
+			if(!this._autoHeight && (h || dojo._getContentBox(this.domNode).h) === 0){
 				// We need to hide the header, since the Grid is essentially hidden.
 				this.viewsHeaderNode.style.display = "none";
 			}else{
@@ -915,10 +925,10 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 				return;
 			}
 			//this.edit.saveState(inRowIndex);
-			var lastScrollTop = this.scrollTop;
+			this.lastScrollTop = this.scrollTop;
 			this.prerender();
 			this.scroller.invalidateNodes();
-			this.setScrollTop(lastScrollTop);
+			this.setScrollTop(this.lastScrollTop);
 			this.postrender();
 			//this.edit.restoreState(inRowIndex);
 		},
@@ -952,12 +962,13 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			//		How many rows to update.
 			startIndex = Number(startIndex);
 			howMany = Number(howMany);
+			var i;
 			if(this.updating){
-				for(var i=0; i<howMany; i++){
+				for(i=0; i<howMany; i++){
 					this.invalidated[i+startIndex]=true;
 				}
 			}else{
-				for(var i=0; i<howMany; i++){
+				for(i=0; i<howMany; i++){
 					this.views.updateRow(i+startIndex, this._skipRowRenormalize);
 				}
 				this.scroller.rowHeightChanged(startIndex);
@@ -1001,6 +1012,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 					}
 				}
 			}
+			return null;
 		},
 		rowHeightChanged: function(inRowIndex){
 			// summary:
@@ -1093,7 +1105,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			return this.layout.cells[inIndex];
 		},
 
-		setCellWidth: function(inIndex, inUnitWidth) {
+		setCellWidth: function(inIndex, inUnitWidth){
 			this.getCell(inIndex).unitWidth = inUnitWidth;
 		},
 
@@ -1166,6 +1178,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 			if(m in this){
 				return this[m](e);
 			}
+			return false;
 		},
 
 		dispatchKeyEvent: function(e){
@@ -1259,7 +1272,11 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		removeSelectedRows: function(){
 			// summary:
 			//		Remove the selected rows from the grid.
-			this.updateRowCount(Math.max(0, this.attr('rowCount') - this.selection.getSelected().length));
+			if(this.allItemsSelected){
+				this.updateRowCount(0);
+			}else{
+				this.updateRowCount(Math.max(0, this.attr('rowCount') - this.selection.getSelected().length));
+			}
 			this.selection.clear();
 		}
 
@@ -1270,10 +1287,10 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		var widthFromAttr = function(n){
 			var w = d.attr(n, "width")||"auto";
 			if((w != "auto")&&(w.slice(-2) != "em")&&(w.slice(-1) != "%")){
-				w = parseInt(w)+"px";
+				w = parseInt(w, 10)+"px";
 			}
 			return w;
-		}
+		};
 		// if(!props.store){ console.debug("no store!"); }
 		// if a structure isn't referenced, do we have enough
 		// data to try to build one automatically?
@@ -1285,7 +1302,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 				var sv = d.attr(cg, "span");
 				var v = {
 					noscroll: (d.attr(cg, "noscroll") == "true") ? true : false,
-					__span: (!!sv ? parseInt(sv) : 1),
+					__span: (!!sv ? parseInt(sv, 10) : 1),
 					cells: []
 				};
 				if(d.hasAttr(cg, "width")){
@@ -1332,7 +1349,8 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 					var cell = {
 						name: d.trim(d.attr(th, "name")||th.innerHTML),
 						colSpan: parseInt(d.attr(th, "colspan")||1, 10),
-						type: d.trim(d.attr(th, "cellType")||"")
+						type: d.trim(d.attr(th, "cellType")||""),
+						id: d.trim(d.attr(th,"id")||"")
 					};
 					cellCount += cell.colSpan;
 					var rowSpan = d.attr(th, "rowspan");
@@ -1368,7 +1386,7 @@ dojo.requireLocalization("dijit", "loading", null, "ROOT,ar,ca,cs,da,de,el,es,fi
 		}
 
 		return new ctor(props, node);
-	}
+	};
 })();
 
 }

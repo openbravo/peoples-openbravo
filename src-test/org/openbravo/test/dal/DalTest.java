@@ -55,7 +55,7 @@ public class DalTest extends BaseTest {
    * Test to assert save false in a null char(1) column - Part I
    */
   public void testSaveBooleanValue1() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     if (sysInfo.isEnableHeartbeat() == null) {
       sysInfo.setEnableHeartbeat(false);
@@ -67,7 +67,7 @@ public class DalTest extends BaseTest {
    * Test to assert save false in a null char(1) column - Part II
    */
   public void testSaveBooleanValue2() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     assertTrue(sysInfo.isEnableHeartbeat() != null);
   }
@@ -77,7 +77,7 @@ public class DalTest extends BaseTest {
    * removed in a later test.
    */
   public void testCreateBPGroup() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Category.class);
     final Category bpg = OBProvider.getInstance().get(Category.class);
     bpg.setDefault(true);
@@ -92,7 +92,7 @@ public class DalTest extends BaseTest {
    * Test queries for the {@link Category} created in the previous step and removes it.
    */
   public void testRemoveBPGroup() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
     final OBCriteria<Category> obCriteria = OBDal.getInstance().createCriteria(Category.class);
@@ -129,7 +129,7 @@ public class DalTest extends BaseTest {
    * This test checks if the {@link Category} was removed in the previous step.
    */
   public void testCheckBPGroupRemoved() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
@@ -210,7 +210,7 @@ public class DalTest extends BaseTest {
    * #getName()}.
    */
   public void testTransaction25PageRead() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(MaterialTransaction.class);
     final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
@@ -240,7 +240,7 @@ public class DalTest extends BaseTest {
    * milliseconds one page took to retrieve.
    */
   public void testTransactionAllPagesTime() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
     final int count = countObc.count();
@@ -278,7 +278,7 @@ public class DalTest extends BaseTest {
    * Tests paged read of {@link Currency} objects.
    */
   public void testCurrencyPageRead() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final int count = OBDal.getInstance().createCriteria(Currency.class).count();
     final int pageSize = 5;
     final int pageCount = 1 + (count / 5);
@@ -299,7 +299,7 @@ public class DalTest extends BaseTest {
    * Tests paged read of {@link CashBook} objects.
    */
   public void testCashBookPageRead() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final int count = OBDal.getInstance().createCriteria(CashBook.ENTITY_NAME).count();
     final int pageSize = 5;
     final int pageCount = 1 + (count / 5);
@@ -320,7 +320,7 @@ public class DalTest extends BaseTest {
    * Tests if a database trigger is fired on creation of a {@link CashBook}.
    */
   public void testCashBookTrigger() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Currency.class);
     addReadWriteAccess(CashBook.class);
     addReadWriteAccess(CashBookAccounts.class);

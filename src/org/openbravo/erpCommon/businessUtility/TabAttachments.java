@@ -453,7 +453,8 @@ public class TabAttachments extends HttpSecureAppServlet {
       response.setContentType("application/txt");
     else
       response.setContentType(data[0].datatypeContent);
-    response.setHeader("Content-Disposition", "attachment; filename=" + data[0].name);
+    response.setHeader("Content-Disposition", "attachment; filename=\""
+        + data[0].name.replace("\"", "\\\"") + "\"");
 
     f.dumpFile(response.getOutputStream());
     response.getOutputStream().flush();

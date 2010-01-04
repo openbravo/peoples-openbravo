@@ -83,7 +83,7 @@ public class XMLBaseTest extends BaseTest {
   }
 
   protected void cleanRefDataLoaded() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     final OBCriteria<ReferenceDataStore> obc = OBDal.getInstance().createCriteria(
         ReferenceDataStore.class);
     obc.setFilterOnActive(false);

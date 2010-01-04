@@ -26,7 +26,7 @@ dojo.requireLocalization("dojo.cldr", "gregorian", null, "ROOT,ar,ca,cs,da,de,el
 
 (function(){
 	// Format a pattern without literals
-	function formatPattern(dateObject, bundle, fullYear, pattern){
+	function formatPattern(dateObject, bundle, options, pattern){
 		return pattern.replace(/([a-z])\1*/ig, function(match){
 			var s, pad,
 				c = match.charAt(0),
@@ -42,7 +42,7 @@ dojo.requireLocalization("dojo.cldr", "gregorian", null, "ROOT,ar,ca,cs,da,de,el
 						case 1:
 							break;
 						case 2:
-							if(!fullYear){
+							if(!options.fullYear){
 								s = String(s); s = s.substr(s.length - 2);
 								break;
 							}
@@ -127,12 +127,12 @@ dojo.requireLocalization("dojo.cldr", "gregorian", null, "ROOT,ar,ca,cs,da,de,el
 				case 'v': // FIXME: don't know what this is. seems to be same as z?
 				case 'z':
 					// We only have one timezone to offer; the one from the browser
-					s = dojo.date.getTimezoneName(dateObject);
+					s = dojo.date.locale._getZone(dateObject, true, options);
 					if(s){break;}
 					l=4;
 					// fallthrough... use GMT if tz not available
 				case 'Z':
-					var offset = dateObject.getTimezoneOffset();
+					var offset = dojo.date.locale._getZone(dateObject, false, options);
 					var tz = [
 						(offset<=0 ? "+" : "-"),
 						dojo.string.pad(Math.floor(Math.abs(offset)/60), 2),
@@ -186,6 +186,28 @@ dojo.requireLocalization("dojo.cldr", "gregorian", null, "ROOT,ar,ca,cs,da,de,el
 	}
 =====*/
 
+dojo.date.locale._getZone = function(/*Date*/dateObject, /*boolean*/getName, /*dojo.date.locale.__FormatOptions?*/options){
+	// summary:
+	//		Returns the zone (or offset) for the given date and options.  This
+	//		is broken out into a separate function so that it can be overridden
+	//		by timezone-aware code.
+	//
+	// dateObject:
+	//		the date and/or time being formatted.
+	//
+	// getName:
+	//		Whether to return the timezone string (if true), or the offset (if false)
+	//
+	// options:
+	//		The options being used for formatting
+	if(getName){
+		return dojo.date.getTimezoneName(dateObject);
+	}else{
+		return dateObject.getTimezoneOffset();
+	}
+};
+
+
 dojo.date.locale.format = function(/*Date*/dateObject, /*dojo.date.locale.__FormatOptions?*/options){
 	// summary:
 	//		Format a Date object as a String, using locale-specific settings.
@@ -211,7 +233,7 @@ dojo.date.locale.format = function(/*Date*/dateObject, /*dojo.date.locale.__Form
 		formatLength = options.formatLength || 'short',
 		bundle = dojo.date.locale._getGregorianBundle(locale),
 		str = [],
-		sauce = dojo.hitch(this, formatPattern, dateObject, bundle, options.fullYear);
+		sauce = dojo.hitch(this, formatPattern, dateObject, bundle, options);
 	if(options.selector == "year"){
 		return _processPattern(bundle["dateFormatItem-yyyy"] || "yyyy", sauce);
 	}
@@ -225,10 +247,8 @@ dojo.date.locale.format = function(/*Date*/dateObject, /*dojo.date.locale.__Form
 		if(pattern){str.push(_processPattern(pattern, sauce));}
 	}
 
-	return str.length == 1 ? str[0] : bundle["dateTimeFormat-"+formatLength].replace(/\{([^\s\:\}]+)\}/g,
-		function(match, key){
-			return str[key];
-		}); // String
+	return str.length == 1 ? str[0] : bundle["dateTimeFormat-"+formatLength].replace(/\{(\d+)\}/g,
+		function(match, key){ return str[key]; }); // String
 };
 
 dojo.date.locale.regexp = function(/*dojo.date.locale.__FormatOptions?*/options){
@@ -251,7 +271,8 @@ dojo.date.locale._parseInfo = function(/*dojo.date.locale.__FormatOptions?*/opti
 	}else if(options.selector == 'time'){
 		pattern = timePattern;
 	}else{
-		pattern = datePattern + ' ' + timePattern; //TODO: use locale-specific pattern to assemble date + time
+		pattern = bundle["dateTimeFormat-"+formatLength].replace(/\{(\d+)\}/g,
+			function(match, key){ return [timePattern, datePattern][key]; });
 	}
 
 	var tokens = [],

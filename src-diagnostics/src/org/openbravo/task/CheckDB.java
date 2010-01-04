@@ -218,7 +218,7 @@ public class CheckDB extends Task {
       // Check contrib
       log4j.info("Checking PostgreSQL contrib package installed...");
       try {
-        st = connSystem.prepareStatement("SELECT uuid_generate_v1()");
+        st = connSystem.prepareStatement("SELECT uuid_generate_v4()");
         result = st.executeQuery();
         result.close();
         st.close();

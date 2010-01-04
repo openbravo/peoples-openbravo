@@ -1079,10 +1079,14 @@ function executeAssociatedLink() {
   }
 }
 
-function getAssociatedFieldButton(type) {
+function getAssociatedFieldButton(input, type) {
   var fieldButton = null;
   var success = true;
-  fieldButton = focusedWindowElement;
+  if (typeof input == 'undefined' || input == null) {
+    fieldButton = focusedWindowElement;
+  } else {
+    fieldButton = input;
+  }
   if (type=='window') {
     try {
       //Go to the TD parent
@@ -1134,7 +1138,7 @@ function getAssociatedFieldButton(type) {
 
 function executeAssociatedFieldButton() {
   var fieldButton = null;
-  fieldButton = getAssociatedFieldButton('window');
+  fieldButton = getAssociatedFieldButton(null, 'window');
   if (fieldButton != null && fieldButton != false) {
     fieldButton.onclick();
     return true;

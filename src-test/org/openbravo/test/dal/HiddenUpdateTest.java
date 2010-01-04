@@ -52,7 +52,7 @@ public class HiddenUpdateTest extends BaseTest {
    * concept.
    */
   public void testHiddenUpdates() {
-    setUserContext("0");
+    setSystemAdministratorContext();
 
     final SessionFactoryController currentSFC = SessionFactoryController.getInstance();
     try {

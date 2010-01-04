@@ -37,7 +37,7 @@ dojo.data.util.filter.patternToRegExp = function(/*String*/pattern, /*boolean?*/
 	var c = null;
 	for(var i = 0; i < pattern.length; i++){
 		c = pattern.charAt(i);
-		switch (c) {
+		switch(c){
 			case '\\':
 				rxp += c;
 				i++;

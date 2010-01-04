@@ -32,6 +32,7 @@ import java.io.PrintWriter;
  * @see AntExecutor
  * 
  */
+@Deprecated
 class OBPrintStream extends PrintStream {
   private StringBuffer log;
   private boolean finished;
@@ -78,7 +79,8 @@ class OBPrintStream extends PrintStream {
   }
 
   /**
-   * Writes a byte array to the internal PrintStream, replaces line breaks with the <br/> html tag.
+   * Writes a byte array to the internal PrintStream, replaces line breaks with the <br/>
+   * html tag.
    */
   @Override
   public void write(byte[] buf) {

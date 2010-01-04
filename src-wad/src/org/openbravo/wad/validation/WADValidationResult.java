@@ -39,7 +39,8 @@ public class WADValidationResult {
    */
   public enum WADValidationType {
     SQL("SQL"), MISSING_IDENTIFIER("Missing Identifier"), MISSING_KEY("Missing Key Column"), MODEL_OBJECT(
-        "Model Object"), MODEL_OBJECT_MAPPING("HTML Mapping"), COLUMN_NAME("Column Naming");
+        "Model Object"), MODEL_OBJECT_MAPPING("HTML Mapping"), COLUMN_NAME("Column Naming"), AUXILIARINPUT(
+        "Auxiliary Input Name");
 
     private String description;
 
@@ -59,6 +60,7 @@ public class WADValidationResult {
 
   private HashMap<WADValidationType, List<String>> errors = new HashMap<WADValidationType, List<String>>();
   private HashMap<WADValidationType, List<String>> warnings = new HashMap<WADValidationType, List<String>>();
+  private ArrayList<String> modules = new ArrayList<String>();
 
   /**
    * Adds a warning message to a validation type
@@ -82,6 +84,10 @@ public class WADValidationResult {
    */
   public void addError(WADValidationType validationType, String warning) {
     addToResult(errors, validationType, warning);
+  }
+
+  public void addModule(String moduleName) {
+    modules.add(moduleName);
   }
 
   private void addToResult(Map<WADValidationType, List<String>> result,
@@ -118,10 +124,9 @@ public class WADValidationResult {
     }
 
     if (!stopOnError && errors.size() > 0) {
-      log.error("The following errors during validation do not stop the");
-      log.error("compilation process to allow backwards compatibility for");
-      log.error("modules, but they MUST be fixed because in future core ");
-      log.error("releases they will not be allowed.");
+      log.error("The following errors are violations to the Openbravo naming rules.");
+      log.error("They do not stop the build process but they should be fixed ");
+      log.error("as soon as possible.");
     }
 
     for (WADValidationType type : errors.keySet()) {
@@ -133,5 +138,32 @@ public class WADValidationResult {
       }
     }
 
+  }
+
+  public void printFriendlyLog() {
+    String message = "";
+    String message2 = "";
+    if (modules.size() == 0) {
+      return;
+    }
+    if (modules.size() == 1) {
+      message = "Module ";
+      message2 = " does not comply with ";
+    } else {
+      message = "Modules ";
+      message2 = " do not comply with ";
+    }
+    for (int i = 0; i < modules.size(); i++) {
+      if (i < modules.size() - 1) {
+        message += ",";
+      }
+      message += modules.get(i);
+    }
+    message2 += "Openbravo naming rules.";
+    log.warn(message + message2);
+    log.warn("The rebuild process has completed successfully but this module2");
+    log.warn("might cause conflicts with other modules in the future.");
+    log.warn("Please request the author of this module to produce a new version");
+    log.warn("that addresses these violations.");
   }
 }

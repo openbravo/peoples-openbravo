@@ -64,13 +64,13 @@
     function validate(action) {
       var frm=document.frmMain;
       if (action=="FIND_BANK") {
-        if (frm.inpplanneddateFrom.value!=null && frm.inpplanneddateFrom.value!="" && !isValidDate(frm.inpplanneddateFrom.value, frm.inpplanneddateFrom.displayFormat)) {
+        if (frm.inpplanneddateFrom.value!=null && frm.inpplanneddateFrom.value!="" && !isValidDate(frm.inpplanneddateFrom.value, document.getElementById('inpPlannedDateFrom').getAttribute('displayFormat'))) {
           setWindowElementFocus(frm.inpplanneddateFrom);
           frm.inpplanneddateFrom.select();
           showJSMessage(5);
           setTimeout('resizeAreaCreateFrom()',100);
           return false;
-        } else if (frm.inpplanneddateTo.value!=null && frm.inpplanneddateTo.value!="" && !isValidDate(frm.inpplanneddateTo.value, frm.inpplanneddateTo.displayFormat)) {
+        } else if (frm.inpplanneddateTo.value!=null && frm.inpplanneddateTo.value!="" && !isValidDate(frm.inpplanneddateTo.value, document.getElementById('inpPlannedDateTo').getAttribute('displayFormat'))) {
           setWindowElementFocus(frm.inpplanneddateTo);
           frm.inpplanneddateTo.select();
           showJSMessage(5);

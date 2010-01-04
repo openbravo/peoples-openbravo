@@ -97,7 +97,7 @@
 <FIELD id="fieldBank">bank</FIELD>
 <FIELD id="fieldCurrency">currency</FIELD>
 <FIELD id="fieldInvoice">invoice</FIELD>
-<FIELD id="fieldAmount" format="euroInform">amount</FIELD>
+<FIELD id="fieldAmount" format="euroInform">pAmount</FIELD>
 <FIELD id="fieldConverted" format="euroInform">converted</FIELD>
 
 <SECTION id="sectionDetail"/>

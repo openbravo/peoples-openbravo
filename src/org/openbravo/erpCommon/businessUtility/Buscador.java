@@ -91,8 +91,6 @@ public class Buscador extends HttpSecureAppServlet {
             if (data[i].reference.equals("10") || data[i].reference.equals("14")
                 || data[i].reference.equals("34"))
               data[i].value = "%";
-            else if (data[i].reference.equals("20"))
-              data[i].value = "N";
             else
               data[i].value = "";
           }
@@ -100,7 +98,7 @@ public class Buscador extends HttpSecureAppServlet {
         if (data == null || data.length == 0) {
           if (log4j.isDebugEnabled())
             log4j.debug("The columns defined were parent keys");
-          bdError(request, response, "SearchNothing", vars.getLanguage());
+          advisePopUp(request, response, "SearchNothing", Utility.messageBD(this, "SearchNothing", vars.getLanguage()));
         } else
           printPage(response, vars, strTab, data, strWindow, strWindowId, strIsSOTrx);
       }
@@ -206,28 +204,19 @@ public class Buscador extends HttpSecureAppServlet {
     StringBuffer paramsData = new StringBuffer();
     StringBuffer params = new StringBuffer();
     if (fields != null && fields.length != 0 && isHighVolume) {
-      strHtml.append("if (");
       for (int i = 0; i < fields.length; i++) {
-        if (i > 0)
-          strHtml.append(" && ");
+
         paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
             FormatUtilities.replace(fields[i].columnname)).append("\" , ");
         params.append(", \"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(
             "\",");
         params.append(" escape(");
-        if (fields[i].reference.equals("20")) {
-          paramsData.append("((radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append(")!=null)?");
-          paramsData.append("radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append("):");
-          paramsData.append("\"\"));\n");
-          params.append("((radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append(")!=null)?");
-          params.append("radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append("):");
-          params.append("\"\")");
-        } else if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19")) { // Select
+        if (fields[i].reference.equals("17")
+            || fields[i].reference.equals("18")
+            || fields[i].reference.equals("19")
+            || fields[i].equals("20")
+            || (fields[i].reference.equals("30") && (fields[i].referencevalue == null || fields[i].referencevalue
+                .equals("")))) { // Combo
           paramsData.append("((frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1)?");
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
@@ -265,32 +254,8 @@ public class Buscador extends HttpSecureAppServlet {
               .append(".value");
         }
         params.append(")");
-        if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19")) { // Select
-          strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".selectedIndex!=-1");
-        } else if (Utility.isDecimalNumber(fields[i].reference)
-            || Utility.isIntegerNumber(fields[i].reference)
-            || Utility.isDateTime(fields[i].reference)) {
-          strHtml.append("(frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".value==null || ");
-          strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".value==\"\") ");
-          strHtml.append("&& (frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append("_f.value==null || ");
-          strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append("_f.value==\"\") ");
-        } else {
-          strHtml.append("(frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".value==null || ");
-          strHtml.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
-              .append(".value==\"\") ");
-        }
+
       }
-      strHtml.append(") {\n");
-      strHtml.append("    showJSMessage(1);\n");
-      strHtml.append("    return false;\n");
-      strHtml.append("  }\n");
     } else if (fields != null) {
       for (int i = 0; i < fields.length; i++) {
         paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
@@ -299,19 +264,12 @@ public class Buscador extends HttpSecureAppServlet {
             "\"");
         params.append(", ");
         params.append("escape(");
-        if (fields[i].reference.equals("20")) {
-          paramsData.append("((radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append(")!=null)?");
-          paramsData.append("radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append("):");
-          paramsData.append("\"\"));\n");
-          params.append("((radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append(")!=null)?");
-          params.append("radioValue(frm.inpParam").append(
-              FormatUtilities.replace(fields[i].columnname)).append("):");
-          params.append("\"\")");
-        } else if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-            || fields[i].reference.equals("19")) {
+        if (fields[i].reference.equals("17")
+            || fields[i].reference.equals("18")
+            || fields[i].reference.equals("19")
+            || fields[i].reference.equals("20")
+            || (fields[i].reference.equals("30") && (fields[i].referencevalue == null || fields[i].referencevalue
+                .equals("")))) { // Combo
           paramsData.append("((frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
               .append(".selectedIndex!=-1)?");
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname))
@@ -418,9 +376,14 @@ public class Buscador extends HttpSecureAppServlet {
       else
         strHtml.append(fields[i].name);
       strHtml.append("</span></td>\n");
-      if (fields[i].reference.equals("17") || fields[i].reference.equals("18")
-          || fields[i].reference.equals("19")) {// List, Table,
-        // TableDir
+      if (fields[i].reference.equals("17")
+          || fields[i].reference.equals("18")
+          || fields[i].reference.equals("19")
+          || fields[i].reference.equals("20")
+          || (fields[i].reference.equals("30") && (fields[i].referencevalue == null || fields[i].referencevalue
+              .equals("")))) {// List,
+        // Table,
+        // TableDir, Yes/No, direct search
         scriptSelect = true;
         strHtml.append("<td class=\"Combo_ContentCell\" colspan=\"3\">");
         strHtml.append("<select ");
@@ -444,10 +407,23 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append(">");
         strHtml.append("<option value=\"\"></option>\n");
         try {
-          ComboTableData comboTableData = new ComboTableData(vars, this, fields[i].reference,
-              fields[i].columnname, fields[i].referencevalue, fields[i].adValRuleId, Utility
-                  .getContext(this, vars, "#AccessibleOrgTree", strWindow), Utility.getContext(
-                  this, vars, "#User_Client", strWindow), 0);
+
+          String reference;
+          if (fields[i].reference.equals("20")) {
+            // Special case Yes/No reference: set list reference and select the Yes/No subreference
+            reference = "17";
+          } else if (fields[i].reference.equals("30")) {
+            // Special case Search without search value: use as table dir
+            reference = "19";
+          } else {
+            reference = fields[i].reference;
+          }
+          String subreference = fields[i].reference.equals("20") ? "47209D76F3EE4B6D84222C5BDF170AA2"
+              : fields[i].referencevalue;
+          ComboTableData comboTableData = new ComboTableData(vars, this, reference,
+              fields[i].columnname, subreference, fields[i].adValRuleId, Utility.getContext(this,
+                  vars, "#AccessibleOrgTree", strWindow), Utility.getContext(this, vars,
+                  "#User_Client", strWindow), 0);
           comboTableData.fillParametersFromSearch(strTab, strWindow);
           FieldProvider[] data = comboTableData.select(false);
           comboTableData = null;
@@ -542,15 +518,6 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("</tr>\n");
         strHtml.append("</table>\n");
         strHtml.append("</td>\n");
-      } else if (fields[i].reference.equals("20")) { // YesNo
-        strHtml.append("<td class=\"Radio_Check_ContentCell\">\n");
-        strHtml
-            .append(
-                "<span class=\"Checkbox_container_NOT_Focused\"><input type=\"checkbox\" value=\"Y\"  name=\"inpParam")
-            .append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
-        if (fields[i].value.equals("Y"))
-          strHtml.append("checked");
-        strHtml.append("></input></span>\n");
       } else if (fields[i].reference.equals("30") || fields[i].reference.equals("21")
           || fields[i].reference.equals("31") || fields[i].reference.equals("25")
           || fields[i].reference.equals("800011")) { // Search
@@ -660,7 +627,12 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("document.frmMain.inpParam").append(
               FormatUtilities.replace(fields[i].columnname)).append(
               ".value, false);return false;\">\n");
-          strHtml.append("<table class=\"FieldButton\" ");
+          strHtml.append("<table class=\"FieldButton\" onclick=\"calculator('frmMain.");
+          strHtml.append("inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(
+              "', ");
+          strHtml.append("document.frmMain.inpParam").append(
+              FormatUtilities.replace(fields[i].columnname)).append(
+              ".value, false);return false;\" ");
           strHtml
               .append("onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calculator';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">");
           strHtml.append("<tr>\n<td class=\"FieldButton_bg\">\n");
@@ -956,7 +928,7 @@ public class Buscador extends HttpSecureAppServlet {
     }
     params.append(", 'WindowID'");
     params.append(", '").append(windowId).append("'");
-    if (!strIsSOTrx.equals("")) {
+    if (strIsSOTrx.equals("Y") || strIsSOTrx.equals("N")) {
       params.append(", 'inpisSOTrxTab'");
       params.append(", '").append(strIsSOTrx).append("'");
     }
