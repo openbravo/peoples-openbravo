@@ -34,7 +34,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -747,7 +747,7 @@ WHEN OTHERS THEN
   ELSE
     RAISE;
   END IF;
-  p_InOut_ID:=0; -- Error Indicator
+  p_InOut_ID:='0'; -- Error Indicator
   RETURN;
 END M_INOUT_CREATE
 ]]></body>
