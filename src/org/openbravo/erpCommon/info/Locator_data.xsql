@@ -65,15 +65,14 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-      SELECT COUNT(*) AS VALUE FROM ( SELECT '0' AS RN1, B.* FROM (      				   
-        SELECT 1
+      SELECT COUNT(*) AS VALUE FROM ( SELECT '0' AS RN1, B.* FROM ( SELECT 1
         FROM M_LOCATOR m, M_WAREHOUSE mw
         WHERE m.M_WAREHOUSE_ID = mw.M_WAREHOUSE_ID
         AND mw.AD_Client_ID IN ('1') 
         AND mw.AD_Org_ID IN ('1') 
         AND mw.ISACTIVE = 'Y'
         AND m.ISACTIVE = 'Y'
-		AND  1=1
+		AND 1=1
 		) B
 		) A 
         ]]>
