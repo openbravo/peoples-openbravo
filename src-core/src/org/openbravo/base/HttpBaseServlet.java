@@ -666,7 +666,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @param out
    * @throws ServletException
    */
-  @Deprecated
   protected void renderFO(String strFo, HttpServletResponse response) throws ServletException {
 
     try {
