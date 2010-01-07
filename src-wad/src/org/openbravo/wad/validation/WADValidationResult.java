@@ -160,10 +160,10 @@ public class WADValidationResult {
       message += modules.get(i);
     }
     message2 += "Openbravo naming rules.";
-    log.warn(message + message2);
-    log.warn("The rebuild process has completed successfully but this module2");
-    log.warn("might cause conflicts with other modules in the future.");
-    log.warn("Please request the author of this module to produce a new version");
-    log.warn("that addresses these violations.");
+    log.info(message + message2);
+    log.info("The rebuild process has completed successfully but this module2");
+    log.info("might cause conflicts with other modules in the future.");
+    log.info("Please request the author of this module to produce a new version");
+    log.info("that addresses these violations.");
   }
 }
