@@ -286,6 +286,8 @@ public class OBContext implements OBNotSingleton {
   private String serializedUserId;
   private boolean serialized = false;
 
+  private Language systemLanguage;
+
   public String getUserLevel() {
     return userLevel;
   }
@@ -629,6 +631,10 @@ public class OBContext implements OBNotSingleton {
 
       setReadableClients(role);
 
+      systemLanguage = getOne(Language.class, "select l from " + Language.class.getName()
+          + " l where l." + Language.PROPERTY_ACTIVE + "='Y' and "
+          + Language.PROPERTY_SYSTEMLANGUAGE + "='Y'");
+
       // initialize some proxys
       Hibernate.initialize(getCurrentOrganization().getClient());
       Hibernate.initialize(getCurrentClient().getOrganization());
@@ -654,8 +660,8 @@ public class OBContext implements OBNotSingleton {
     final Query qry = SessionHandler.getInstance().createQuery(qryStr);
     qry.setMaxResults(1);
     final List<?> result = qry.list();
-    if (doCheck) {
-      Check.isTrue(result.size() == 1, "The query '" + qryStr + "' returned " + result.size()
+    if (doCheck && result.size() != 1) {
+      log.error("The query '" + qryStr + "' returned " + result.size()
           + " results while only 1 result was expected");
     }
     if (result.size() == 0) {
@@ -798,5 +804,13 @@ public class OBContext implements OBNotSingleton {
 
   public boolean isSerialized() {
     return serialized;
+  }
+
+  public Language getSystemLanguage() {
+    return systemLanguage;
+  }
+
+  public void setSystemLanguage(Language systemLanguage) {
+    this.systemLanguage = systemLanguage;
   }
 }
