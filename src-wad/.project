@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>selector-src-wad</name>
+			<type>2</type>
+			<location>/home/mtaal/mydata/dev/openbravo/workspaces/obpireference/openbravo/modules/org.openbravo.userinterface.selector/src-wad</location>
+		</link>
+	</linkedResources>
 </projectDescription>

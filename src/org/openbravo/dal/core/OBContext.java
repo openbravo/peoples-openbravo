@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -285,8 +285,6 @@ public class OBContext implements OBNotSingleton {
   // support storing the context in a persistent tomcat session
   private String serializedUserId;
   private boolean serialized = false;
-
-  private Language systemLanguage;
 
   public String getUserLevel() {
     return userLevel;
@@ -631,10 +629,6 @@ public class OBContext implements OBNotSingleton {
 
       setReadableClients(role);
 
-      systemLanguage = getOne(Language.class, "select l from " + Language.class.getName()
-          + " l where l." + Language.PROPERTY_ACTIVE + "='Y' and "
-          + Language.PROPERTY_SYSTEMLANGUAGE + "='Y'");
-
       // initialize some proxys
       Hibernate.initialize(getCurrentOrganization().getClient());
       Hibernate.initialize(getCurrentClient().getOrganization());
@@ -804,13 +798,5 @@ public class OBContext implements OBNotSingleton {
 
   public boolean isSerialized() {
     return serialized;
-  }
-
-  public Language getSystemLanguage() {
-    return systemLanguage;
-  }
-
-  public void setSystemLanguage(Language systemLanguage) {
-    this.systemLanguage = systemLanguage;
   }
 }
