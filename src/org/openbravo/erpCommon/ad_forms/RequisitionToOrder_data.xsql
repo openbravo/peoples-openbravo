@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -446,7 +446,7 @@
     <Parameter name="mProductId"/>
     <Parameter name="priceactual"/>
     <Parameter name="qtyordered"/>
-    <Parameter name="pricelist"/>
+    <Parameter name="pricelistid"/>
     <Parameter name="pricelimit"/>
     <Parameter name="cTaxId"/>
     <Parameter name="sResourceassignmentId"/>
