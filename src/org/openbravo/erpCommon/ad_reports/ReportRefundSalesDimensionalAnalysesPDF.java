@@ -368,7 +368,7 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
         xmlDocument.setData("structure2", data);
       }
       String strResult = xmlDocument.print();
-      renderFO(strResult, response);
+      renderFO(strResult, request, response);
     }
   }
 

@@ -77,7 +77,8 @@ public class ReportPricelist extends HttpSecureAppServlet {
           "ReportPricelist|pricelistversion");
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
           "ReportPricelist|mProductId", IsIDFilter.instance);
-      printPagePdf(response, vars, strProductCategory, strPricelistversionId, strmProductId);
+      printPagePdf(request, response, vars, strProductCategory, strPricelistversionId,
+          strmProductId);
     } else
       pageError(response);
   }
@@ -185,9 +186,9 @@ public class ReportPricelist extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
-      String strProductCategory, String strPricelistversionId, String strmProductId)
-      throws IOException, ServletException {
+  private void printPagePdf(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strProductCategory, String strPricelistversionId,
+      String strmProductId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print pdf");
     XmlDocument xmlDocument = null;
@@ -200,7 +201,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
     String strResult = xmlDocument.print();
     if (log4j.isDebugEnabled())
       log4j.debug(strResult);
-    renderFO(strResult, response);
+    renderFO(strResult, request, response);
   }
 
   public String getServletInfo() {

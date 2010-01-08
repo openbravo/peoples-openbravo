@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -161,16 +161,24 @@ public class InsertAcces extends HttpSecureAppServlet {
             log4j.error("Action: " + accesData[i].action + " window: " + accesData[i].adwindowid);
             InsertAccesData.insertWindow(this, accesData[i].adwindowid, roleid, vars.getClient(),
                 "0", vars.getUser());
-            if (!accesData[i].printreport.equals(""))
+            if (!accesData[i].printreport.equals("")
+                && (InsertAccesData.selectProcess(this, roleid, accesData[i].printreport) == null || InsertAccesData
+                    .selectProcess(this, roleid, accesData[i].printreport).equals(""))) {
+              log4j.error("Action window print report: " + accesData[i].printreport);
               InsertAccesData.insertProcess(this, accesData[i].printreport, roleid, vars
                   .getClient(), "0", vars.getUser());
+            }
             InsertAccesData[] buttons = InsertAccesData.selectWindowButtons(this,
                 accesData[i].adwindowid, roleid);
             if (buttons != null && buttons.length > 0) {
               for (int j = 0; j < buttons.length; j++) {
-                log4j.error("Action window button: " + buttons[j].adprocessid);
-                InsertAccesData.insertProcess(this, buttons[j].adprocessid, roleid, vars
-                    .getClient(), "0", vars.getUser());
+                if (InsertAccesData.selectProcess(this, roleid, buttons[j].adprocessid) == null
+                    || InsertAccesData.selectProcess(this, roleid, buttons[j].adprocessid).equals(
+                        "")) {
+                  log4j.error("Action window button: " + buttons[j].adprocessid);
+                  InsertAccesData.insertProcess(this, buttons[j].adprocessid, roleid, vars
+                      .getClient(), "0", vars.getUser());
+                }
               }
             }
           } else if (accesData[i].action.equals("P")
