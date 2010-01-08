@@ -318,7 +318,7 @@
               (p_InOut_ID, Cur_Order.C_Order_ID, Cur_Order.IsSOTrx, Cur_Order.AD_Client_ID,
               Cur_Order.AD_Org_ID, 'Y', now(), '0',
               now(), '0', v_DocumentNo, v_DocType_ID,
-              Cur_Order.Description, 'N', 'C-', now(),
+              Cur_Order.Description, 'N', 'C-', Cur_Order.DATEORDERED,
               now(), Cur_Order.C_BPartner_ID, Cur_Order.C_BPartner_Location_ID, Cur_Order.AD_User_ID,
               Cur_Order.M_Warehouse_ID, Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.DeliveryRule,
               Cur_Order.FreightCostRule, Cur_Order.FreightAmt, Cur_Order.C_Project_ID, Cur_Order.C_Activity_ID,
