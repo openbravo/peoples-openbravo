@@ -33,6 +33,7 @@ log4j.category.org.openbravo.data.Sqlc=INFO
 log4j.category.org.openbravo.translate.Translate=INFO
 log4j.category.org.openbravo.wad=INFO
 #log4j.category.org.openbravo.translate=INFO
+log4j.category.org.openbravo.database=DEBUG
 
 log4j.category.org=WARN
 
