@@ -49,7 +49,7 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 	//videoHeight: 240,
 	
 	widgetsInTemplate:true,
-	templateString:"<div class=\"playerContainer\">\n  <div class=\"PlayerScreen\" dojoAttachPoint=\"playerScreen\"></div>\n<table class=\"Controls\">\n  <tr>\n    <td colspan=\"2\" dojoAttachPoint=\"progressContainer\">\n    \t\n    </td>\n  </tr>\n  <tr>\n    <td class=\"PlayContainer\" dojoAttachPoint=\"playContainer\">\n    \t\n     </td>\n    <td class=\"ControlsRight\">\n      <table class=\"StatusContainer\">\n        <tr dojoAttachPoint=\"statusContainer\">\n          \n        </tr>\n     \t<tr>\n        \t<td colspan=\"3\" class=\"ControlsBottom\" dojoAttachPoint=\"controlsBottom\">\n      \t\t\t \n      \t\t</td>\n         </tr>\n      </table>\n    </td>\n  </tr>\n</table>\n</div>\n",
+	templateString: dojo.cache("dojox.av.widget", "resources/Player.html", "<div class=\"playerContainer\">\n\t<div class=\"PlayerScreen\" dojoAttachPoint=\"playerScreen\"></div>\n\t<table class=\"Controls\">\n\t\t<tr>\n\t\t\t<td colspan=\"2\" dojoAttachPoint=\"progressContainer\"></td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td class=\"PlayContainer\" dojoAttachPoint=\"playContainer\"></td>\n\t\t\t<td class=\"ControlsRight\">\n\t\t\t<table class=\"StatusContainer\">\n\t\t\t\t<tr dojoAttachPoint=\"statusContainer\">\n\t\t\t\t</tr>\n\t\t\t\t<tr>\n\t\t\t\t\t<td colspan=\"3\" class=\"ControlsBottom\" dojoAttachPoint=\"controlsBottom\"></td>\n\t\t\t\t</tr>\n\t\t\t</table>\n\t\t</td>\n\t\t</tr>\n\t</table>\n</div>\n"),
 	
 	_fillContent: function(){ 
 		// summary
@@ -106,33 +106,23 @@ dojo.declare("dojox.av.widget.Player", [dijit._Widget, dijit._Templated], {
 			dojo.style(this.media.domNode, "width", "100%");
 			dojo.style(this.media.domNode, "height", "100%");
 		}
-		
-		//dojo.style(this.media.domNode, "width", this.videoWidth+(dojo.isString(this.playerWidth)?"":"px"));
-		//dojo.style(this.media.domNode, "height", this.videoHeight+(dojo.isString(this.playerWidth)?"":"px"));
-		//return
-		//setTimeout(dojo.hitch(this, function(){
 		dojo.forEach(this.items, function(id){
-			//console.log("    ids:", id , this.mediaNode.id)
 			if(id !== this.mediaNode.id){
 				var child = dijit.byId(id);
 				this.children.push(child);	
 				if(child){
-					console.log("child:", child.declaredClass, "this.media:", this.media)	
 					child.setMedia(this.media, this);
 				}
 			}
 		}, this);
-		//}),1000)
 	},
+	
 	onResize: function(evt){
 		// summary:
 		//		If a player size is a percentage, this will fire an onResize
 		//		event for all children, passing the size of the player.
 		//
 		var dim = dojo.marginBox(this.domNode);
-		
-		
-		
 		if(this.media && this.media.onResize !== null){
 			this.media.onResize(dim);	
 		}

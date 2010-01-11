@@ -21,7 +21,7 @@ dojo.declare("dijit.MenuItem",
 
 		// Make 3 columns
 		// icon, label, and expand arrow (BiDi-dependent) indicating sub-menu
-		templateString:"<tr class=\"dijitReset dijitMenuItem\" dojoAttachPoint=\"focusNode\" waiRole=\"menuitem\" tabIndex=\"-1\"\n\t\tdojoAttachEvent=\"onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick\">\n\t<td class=\"dijitReset\" waiRole=\"presentation\">\n\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitMenuItemIcon\" dojoAttachPoint=\"iconNode\">\n\t</td>\n\t<td class=\"dijitReset dijitMenuItemLabel\" colspan=\"2\" dojoAttachPoint=\"containerNode\"></td>\n\t<td class=\"dijitReset dijitMenuItemAccelKey\" style=\"display: none\" dojoAttachPoint=\"accelKeyNode\"></td>\n\t<td class=\"dijitReset dijitMenuArrowCell\" waiRole=\"presentation\">\n\t\t<div dojoAttachPoint=\"arrowWrapper\" style=\"visibility: hidden\">\n\t\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitMenuExpand\">\n\t\t\t<span class=\"dijitMenuExpandA11y\">+</span>\n\t\t</div>\n\t</td>\n</tr>\n",
+		templateString: dojo.cache("dijit", "templates/MenuItem.html", "<tr class=\"dijitReset dijitMenuItem\" dojoAttachPoint=\"focusNode\" waiRole=\"menuitem\" tabIndex=\"-1\"\n\t\tdojoAttachEvent=\"onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick\">\n\t<td class=\"dijitReset\" waiRole=\"presentation\">\n\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitMenuItemIcon\" dojoAttachPoint=\"iconNode\">\n\t</td>\n\t<td class=\"dijitReset dijitMenuItemLabel\" colspan=\"2\" dojoAttachPoint=\"containerNode\"></td>\n\t<td class=\"dijitReset dijitMenuItemAccelKey\" style=\"display: none\" dojoAttachPoint=\"accelKeyNode\"></td>\n\t<td class=\"dijitReset dijitMenuArrowCell\" waiRole=\"presentation\">\n\t\t<div dojoAttachPoint=\"arrowWrapper\" style=\"visibility: hidden\">\n\t\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitMenuExpand\">\n\t\t\t<span class=\"dijitMenuExpandA11y\">+</span>\n\t\t</div>\n\t</td>\n</tr>\n"),
 
 		attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
 			label: { node: "containerNode", type: "innerHTML" },
@@ -60,7 +60,7 @@ dojo.declare("dijit.MenuItem",
 			dojo.setSelectable(this.domNode, false);
 			var label = this.id+"_text";
 			dojo.attr(this.containerNode, "id", label);
-			if (this.accelKeyNode) {
+			if(this.accelKeyNode){
 				dojo.attr(this.accelKeyNode, "id", this.id + "_accel");
 				label += " " + this.id + "_accel";
 			}
@@ -110,6 +110,10 @@ dojo.declare("dijit.MenuItem",
 			// summary:
 			//		Focus on this MenuItem
 			try{
+				if(dojo.isIE == 8){
+					// needed for IE8 which won't scroll TR tags into view on focus yet calling scrollIntoView creates flicker (#10275)
+					this.containerNode.focus();
+				}
 				dijit.focus(this.focusNode);
 			}catch(e){
 				// this throws on IE (at least) in some scenarios
@@ -123,6 +127,7 @@ dojo.declare("dijit.MenuItem",
 			// tags:
 			//		protected
 			this._setSelected(true);
+			this.getParent()._onItemFocus(this);
 
 			this.inherited(arguments);
 		},
@@ -142,7 +147,7 @@ dojo.declare("dijit.MenuItem",
 			 * MenuItem is not in the chain of active widgets and gets a premature call to
 			 * _onBlur()
 			 */
-			
+
 			dojo.toggleClass(this.domNode, "dijitMenuItemSelected", selected);
 		},
 

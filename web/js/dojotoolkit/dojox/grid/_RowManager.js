@@ -35,7 +35,7 @@ dojo.provide("dojox.grid._RowManager");
 				over: this.isOver(inRowIndex),
 				customStyles: "",
 				customClasses: "dojoxGridRow"
-			}
+			};
 		},
 		styleRowNode: function(inRowIndex, inRowNode){
 			var row = this.prepareStylingRow(inRowIndex, inRowNode);

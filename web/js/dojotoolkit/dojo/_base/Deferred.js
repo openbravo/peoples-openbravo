@@ -227,6 +227,7 @@ dojo.Deferred = function(/*Function?*/ canceller){
 	this.results = [null, null];
 	this.canceller = canceller;
 	this.silentlyCancelled = false;
+	this.isFiring = false;
 };
 
 dojo.extend(dojo.Deferred, {
@@ -360,7 +361,7 @@ dojo.extend(dojo.Deferred, {
 		//		Add separate callback and errback to the end of the callback
 		//		sequence.
 		this.chain.push([cb, eb])
-		if(this.fired >= 0){
+		if(this.fired >= 0 && !this.isFiring){
 			this._fire();
 		}
 		return this; // dojo.Deferred
@@ -370,6 +371,7 @@ dojo.extend(dojo.Deferred, {
 		// summary: 
 		//		Used internally to exhaust the callback sequence when a result
 		//		is available.
+		this.isFiring = true;
 		var chain = this.chain;
 		var fired = this.fired;
 		var res = this.results[fired];
@@ -418,6 +420,7 @@ dojo.extend(dojo.Deferred, {
 		}
 		this.fired = fired;
 		this.results[fired] = res;
+		this.isFiring = false;
 		if((cb)&&(this.paused)){
 			// this is for "tail recursion" in case the dependent
 			// deferred is already fired

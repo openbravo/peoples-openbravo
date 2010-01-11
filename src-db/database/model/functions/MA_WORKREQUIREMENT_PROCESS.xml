@@ -229,7 +229,7 @@
     END IF; --FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
       UPDATE MA_WorkRequirement
-        SET Processed='Y'
+        SET Processed='Y', updated = now(), updatedby = v_User_ID
       WHERE MA_WorkRequirement_ID=v_Record_ID;
     END IF; --FINISH_PROCESS
     --<<FINISH_PROCESS>>

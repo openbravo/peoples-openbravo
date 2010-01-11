@@ -240,7 +240,7 @@
               SELECT COALESCE(MAX(PriceList), 0),
                 COALESCE(MAX(PriceActual), 0),
                 COALESCE(MAX(PriceLimit), 0),
-                COALESCE(MAX(Linenetamt),0),
+                COALESCE(MAX(CUR_ShipmentLines.movementqty*priceactual),0),
                 MAX(c_tax_id)
               INTO v_PriceList,
                 v_PriceActual,

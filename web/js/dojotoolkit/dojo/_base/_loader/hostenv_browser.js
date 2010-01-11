@@ -141,16 +141,19 @@ if(typeof window != 'undefined'){
 				if(dua.indexOf("Gecko") >= 0 && !d.isKhtml && !d.isWebKit){ d.isMozilla = d.isMoz = tv; }
 		if(d.isMoz){
 			//We really need to get away from this. Consider a sane isGecko approach for the future.
-			d.isFF = parseFloat(dua.split("Firefox/")[1] || dua.split("Minefield/")[1] || dua.split("Shiretoko/")[1]) || undefined;
+			d.isFF = parseFloat(dua.split("Firefox/")[1] || dua.split("Minefield/")[1]) || undefined;
 		}
 		if(document.all && !d.isOpera){
 			d.isIE = parseFloat(dav.split("MSIE ")[1]) || undefined;
 			//In cases where the page has an HTTP header or META tag with
-			//X-UA-Compatible, then it is in emulation mode, for a previous
-			//version. Make sure isIE reflects the desired version.
+			//X-UA-Compatible, then it is in emulation mode.
+			//Make sure isIE reflects the desired version.
 			//document.documentMode of 5 means quirks mode.
-			if(d.isIE >= 8 && document.documentMode != 5){
-				d.isIE = document.documentMode;
+			//Only switch the value if documentMode's major version
+			//is different from isIE's major version.
+			var mode = document.documentMode;
+			if(mode && mode != 5 && Math.floor(d.isIE) != mode){
+				d.isIE = mode;
 			}
 		}
 
@@ -160,8 +163,7 @@ if(typeof window != 'undefined'){
 			dojo.config.ieForceActiveXXhr=true;
 		}
 		
-		var cm = document.compatMode;
-		d.isQuirks = cm == "BackCompat" || cm == "QuirksMode" || d.isIE < 6;
+		d.isQuirks = document.compatMode == "BackCompat";
 
 		// TODO: is the HTML LANG attribute relevant?
 		d.locale = dojo.config.locale || (d.isIE ? n.userLanguage : n.language).toLowerCase();
@@ -232,7 +234,7 @@ if(typeof window != 'undefined'){
 			//		failure and failure is okay (an exception otherwise)
 
 			// NOTE: must be declared before scope switches ie. this._xhrObj()
-			var http = this._xhrObj();
+			var http = d._xhrObj();
 
 			if(!hasBase && dojo._Url){
 				uri = (new dojo._Url(owloc, uri)).toString();
@@ -269,11 +271,11 @@ if(typeof window != 'undefined'){
 			//		evtName handler.
 			// evtName: should be in the form "onclick" for "onclick" handlers.
 			// Make sure you pass in the "on" part.
-			var oldHandler = _w[evtName] || function(){};
-			_w[evtName] = function(){
+			var _a = _w.attachEvent || _w.addEventListener;
+			evtName = _w.attachEvent ? evtName : evtName.substring(2);
+			_a(evtName, function(){
 				fp.apply(_w, arguments);
-				oldHandler.apply(_w, arguments);
-			};
+			}, false);
 		};
 
 
@@ -358,53 +360,33 @@ if(typeof window != 'undefined'){
 
 	})();
 
+	//START DOMContentLoaded
 	dojo._initFired = false;
-	//	BEGIN DOMContentLoaded, from Dean Edwards (http://dean.edwards.name/weblog/2006/06/again/)
 	dojo._loadInit = function(e){
-		dojo._initFired = true;
-		// allow multiple calls, only first one will take effect
-		// A bug in khtml calls events callbacks for document for event which isnt supported
-		// for example a created contextmenu event calls DOMContentLoaded, workaround
-		var type = e && e.type ? e.type.toLowerCase() : "load";
-		if(arguments.callee.initialized || (type != "domcontentloaded" && type != "load")){ return; }
-		arguments.callee.initialized = true;
-		if("_khtmlTimer" in dojo){
-			clearInterval(dojo._khtmlTimer);
-			delete dojo._khtmlTimer;
-		}
+		if(!dojo._initFired){
+			dojo._initFired = true;
 
-		if(dojo._inFlightCount == 0){
-			dojo._modulesLoaded();
+			//Help out IE to avoid memory leak.
+			if(!dojo.config.afterOnLoad && window.detachEvent){
+				window.detachEvent("onload", dojo._loadInit);
+			}
+
+			if(dojo._inFlightCount == 0){
+				dojo._modulesLoaded();
+			}
 		}
 	}
 
 	if(!dojo.config.afterOnLoad){
-		//	START DOMContentLoaded
-		// Mozilla and Opera 9 expose the event we could use
-				if(document.addEventListener){
-			// NOTE: 
-			//		due to a threading issue in Firefox 2.0, we can't enable
-			//		DOMContentLoaded on that platform. For more information, see:
-			//		http://trac.dojotoolkit.org/ticket/1704
-			if(dojo.isWebKit > 525 || dojo.isOpera || dojo.isFF >= 3 || (dojo.isMoz && dojo.config.enableMozDomContentLoaded === true)){
-						document.addEventListener("DOMContentLoaded", dojo._loadInit, null);
-					}
-	
-			//	mainly for Opera 8.5, won't be fired if DOMContentLoaded fired already.
-			//  also used for Mozilla because of trac #1640
-			window.addEventListener("load", dojo._loadInit, null);
+		if(document.addEventListener){
+			//Standards. Hooray! Assumption here that if standards based,
+			//it knows about DOMContentLoaded. It is OK if it does not, the fall through
+			//to window onload should be good enough.
+			document.addEventListener("DOMContentLoaded", dojo._loadInit, false);
+			window.addEventListener("load", dojo._loadInit, false);
+		}else if(window.attachEvent){
+			window.attachEvent("onload", dojo._loadInit);
 		}
-			
-				if(dojo.isAIR){
-			window.addEventListener("load", dojo._loadInit, null);
-		}else if((dojo.isWebKit < 525) || dojo.isKhtml){
-			dojo._khtmlTimer = setInterval(function(){
-				if(/loaded|complete/.test(document.readyState)){
-					dojo._loadInit(); // call the onload handler
-				}
-			}, 10);
-		}
-				//	END DOMContentLoaded
 	}
 
 		if(dojo.isIE){
@@ -413,7 +395,7 @@ if(typeof window != 'undefined'){
 		// 	because we don't know if there are other functions added that
 		// 	might.  Note that this has changed because the build process
 		// 	strips all comments -- including conditional ones.
-		if(!dojo.config.afterOnLoad){
+		if(!dojo.config.afterOnLoad && !dojo.config.skipIeDomLoaded){
 			document.write('<scr'+'ipt defer src="//:" '
 				+ 'onreadystatechange="if(this.readyState==\'complete\'){' + dojo._scopeName + '._loadInit();}">'
 				+ '</scr'+'ipt>'
@@ -422,10 +404,19 @@ if(typeof window != 'undefined'){
 
 		try{
 			document.namespaces.add("v","urn:schemas-microsoft-com:vml");
-			document.createStyleSheet().addRule("v\\:*", "behavior:url(#default#VML);  display:inline-block");
+			var vmlElems = ["*", "group", "roundrect", "oval", "shape", "rect", "imagedata"],
+				i = 0, l = 1, s = document.createStyleSheet();
+			if(dojo.isIE >= 8){
+				i = 1;
+				l = vmlElems.length;
+			}
+			for(; i < l; ++i){
+				s.addRule("v\\:" + vmlElems[i], "behavior:url(#default#VML); display:inline-block");
+			}
 		}catch(e){}
 	}
-	
+		//END DOMContentLoaded
+
 
 	/*
 	OpenAjax.subscribe("OpenAjax", "onload", function(){

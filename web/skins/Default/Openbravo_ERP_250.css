@@ -1310,16 +1310,21 @@ div.calendar {
 }
 
 .CheckList_RebuildSystemWindow_textarea {
-  overflow: auto;
-  width: 400px;
+  overflow-x: none;
+  overflow-y: scroll;
+  width: 750px;
   height: 125px;
   background-color: white;
   font-family: monospace;
   font-size: 9pt;
   border: #505050 1px solid;
-  padding-left: 8px;
-  white-space: nowrap;
+  padding-left: 20px;
+  /*white-space: nowrap;*/
 }
+
+.CL_RSW_ta_line {
+  text-indent: -12px;
+} 
 
 .CheckList_Row {
   clear: left;
@@ -1624,7 +1629,7 @@ div.calendar {
   position: relative;
   width: 17px;
   height: 16px;
-  margin-top: 1px;
+  margin-top: 0px;
   _left: -1px;
   cursor: pointer;
   border-collapse:collapse;
@@ -1637,12 +1642,60 @@ div.calendar {
   position: relative;
   width: 17px;
   height: 16px;
-  margin-top: 18px;
+  margin-top: 22px;
   _left: -1px;
   cursor: pointer;
   border-collapse:collapse;
   border: none;
   background-image: url(Common/DataGrid/iconNextRange.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.DataGrid_Popup_text_container {
+  padding-right: 60px;
+  padding-bottom: 6px;
+  text-align: right;
+}
+
+.DataGrid_Popup_text_bookmark {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #505050;
+}
+
+a.DataGrid_Popup_text_pagerange {
+  color: #2985BA;
+  font-weight: bold;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a.DataGrid_Popup_text_pagerange:active {
+  color: #1d5e84;
+  text-decoration: none;
+  -moz-outline-style: none;
+  font-weight: bold;
+}
+
+a.DataGrid_Popup_text_pagerange:visited {
+  color: #2985BA;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a.DataGrid_Popup_text_pagerange:hover {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+a.DataGrid_Popup_text_pagerange_focus {
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
+  color: #2985BA;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #2985BA;
+  outline: none;
+  font-weight: bold;
 }
 
 /* Table */
@@ -4553,7 +4606,7 @@ td.DimensionUDArrows_ContentCell {
 
 .TextBox_MsgContainer_span {
   position: absolute;
-  z-index: 99;
+  z-index: 300000;
 }
 
 table.TextBox_MsgContainer_table {
@@ -5834,7 +5887,7 @@ a.Main_NavBar_RightButton:active .Main_NavBar_RightButton_Icon_help {
   background-position: top left;
   background-image: url(Main/Status/processingBackground.png);
   text-align: center;
-  z-index: 99;
+  z-index: 300000;
 }
 
 .Main_Status_Processing_Elements_Container {
@@ -6743,11 +6796,27 @@ a.Main_ToolBar_text_relatedinfo:hover {
 .Main_ToolBar_text_bookmark {
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
-  font-weight: bold;
   color: #B4B4B4;
 }
 
 
+a.Main_ToolBar_text_pagerange {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  color: #B4B4B4;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+a.Main_ToolBar_text_pagerange:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  color: #C8C8C8;
+  text-decoration: underline;
+  white-space: nowrap;
+}
 
 
 .Main_ToolBar_Space {
@@ -7515,7 +7584,7 @@ td.ToolBar_ExpansibleMenu_bg_active {
   background-position: center center;
   background-image: url(Menu/Status/processingBackground.png);
   text-align: center;
-  z-index: 99;
+  z-index: 300000;
 }
 
 .Menu_Status_Processing_Elements_Container {
@@ -9212,7 +9281,7 @@ td.Popup_SeparatorBar_bg {
   height: 100%;
   background-color: #505050;
   text-align: center;
-  z-index: 99;
+  z-index: 300000;
 }
 
 .Popup_Status_Loading_Elements_Container {
@@ -9256,7 +9325,7 @@ td.Popup_SeparatorBar_bg {
   background-position: center center;
   background-image: url(Popup/Status/processingBackground.png);
   text-align: center;
-  z-index: 99;
+  z-index: 300000;
 }
 
 .Popup_Status_Processing_Elements_Container {

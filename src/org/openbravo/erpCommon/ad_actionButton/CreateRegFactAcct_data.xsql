@@ -100,7 +100,8 @@
            AMTSOURCECR,AMTACCTDR, AMTACCTCR,
            FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
            ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
-           RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID)
+           RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID,
+           DESCRIPTION)
         VALUES
           ( ?,?,?,
            'Y',now(),?,now(),?,
@@ -110,7 +111,8 @@
            TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
            ?,TO_NUMBER(?), 'R',
            ?, ?, ?,
-           ?, ?, ?)
+           ?, ?, ?,
+           ?)
       ]]>
     </Sql>
     <Parameter name="fact_acct_id"/>
@@ -133,12 +135,13 @@
     <Parameter name="amtacctcr"/>
     <Parameter name="fact_acct_group_id"/>
     <Parameter name="seqno"/>
-    <Parameter name="description"/>
+    <Parameter name="acctdescription"/>
     <Parameter name="value"/>
     <Parameter name="bpartner"/>
     <Parameter name="debtPayment"/>
     <Parameter name="product"/>
     <Parameter name="asset"/>
+    <Parameter name="description"/>
   </SqlMethod>
   <SqlMethod name="getEndDate" type="preparedStatement" return="Date">
     <SqlMethodComment></SqlMethodComment>
@@ -270,7 +273,8 @@
         AMTSOURCECR,AMTACCTDR, AMTACCTCR,
         FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
         ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
-        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID)
+        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID,
+        DESCRIPTION)
         VALUES
           (?,?,?,
            'Y',now(),?,now(),?,
@@ -280,7 +284,8 @@
            TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
            ?,TO_NUMBER(?),?,
            ?,?,?,
-           ?, ?, ?)
+           ?, ?, ?,
+           ?)
       ]]>
     </Sql>
     <Parameter name="fact_acct_id"/>
@@ -304,12 +309,13 @@
     <Parameter name="fact_acct_group_id"/>
     <Parameter name="seqno"/>
     <Parameter name="factAcctType"/>
-    <Parameter name="description"/>
+    <Parameter name="acctdescription"/>
     <Parameter name="value"/>
     <Parameter name="bpartner"/>
     <Parameter name="debtPayment"/>
     <Parameter name="product"/>
     <Parameter name="asset"/>
+    <Parameter name="description"/>
   </SqlMethod>
   <SqlMethod name="getStartDate" type="preparedStatement" return="Date">
     <SqlMethodComment></SqlMethodComment>

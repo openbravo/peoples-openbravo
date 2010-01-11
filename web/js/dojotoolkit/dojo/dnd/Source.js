@@ -210,16 +210,12 @@ dojo.declare("dojo.dnd.Source", dojo.dnd.Selector, {
 			var before = false;
 			if(this.current){
 				if(!this.targetBox || this.targetAnchor != this.current){
-					this.targetBox = {
-						xy: dojo.coords(this.current, true),
-						w: this.current.offsetWidth,
-						h: this.current.offsetHeight
-					};
+					this.targetBox = dojo.position(this.current, true);
 				}
 				if(this.horizontal){
-					before = (e.pageX - this.targetBox.xy.x) < (this.targetBox.w / 2);
+					before = (e.pageX - this.targetBox.x) < (this.targetBox.w / 2);
 				}else{
-					before = (e.pageY - this.targetBox.xy.y) < (this.targetBox.h / 2);
+					before = (e.pageY - this.targetBox.y) < (this.targetBox.h / 2);
 				}
 			}
 			if(this.current != this.targetAnchor || before != this.before){
@@ -509,7 +505,7 @@ dojo.declare("dojo.dnd.Source", dojo.dnd.Selector, {
 		// check for handles
 		for(var node = e.target; node && node !== this.node; node = node.parentNode){
 			if(dojo.hasClass(node, "dojoDndHandle")){ return true; }
-			if(dojo.hasClass(node, "dojoDndItem")){ break; }
+			if(dojo.hasClass(node, "dojoDndItem") || dojo.hasClass(node, "dojoDndIgnore")){ break; }
 		}
 		return false;	// Boolean
 	}

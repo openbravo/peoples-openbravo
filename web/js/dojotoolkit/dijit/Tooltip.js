@@ -28,7 +28,7 @@ dojo.declare(
 		//		Milliseconds to fade in/fade out
 		duration: dijit.defaultDuration,
 
-		templateString:"<div class=\"dijitTooltip dijitTooltipLeft\" id=\"dojoTooltip\">\n\t<div class=\"dijitTooltipContainer dijitTooltipContents\" dojoAttachPoint=\"containerNode\" waiRole='alert'></div>\n\t<div class=\"dijitTooltipConnector\"></div>\n</div>\n",
+		templateString: dojo.cache("dijit", "templates/Tooltip.html", "<div class=\"dijitTooltip dijitTooltipLeft\" id=\"dojoTooltip\">\n\t<div class=\"dijitTooltipContainer dijitTooltipContents\" dojoAttachPoint=\"containerNode\" waiRole='alert'></div>\n\t<div class=\"dijitTooltipConnector\"></div>\n</div>\n"),
 
 		postCreate: function(){
 			dojo.body().appendChild(this.domNode);
@@ -61,31 +61,7 @@ dojo.declare(
 			// one, the node size will not be updated until it moves.
 			this.domNode.style.top = (this.domNode.offsetTop + 1) + "px";
 
-			// position the element and change CSS according to position[] (a list of positions to try)
-			var align = {};
-			var ltr = this.isLeftToRight();
-			dojo.forEach( (position && position.length) ? position : dijit.Tooltip.defaultPosition, function(pos){
-				switch(pos){
-					case "after":				
-						align[ltr ? "BR" : "BL"] = ltr ? "BL" : "BR";
-						break;
-					case "before":
-						align[ltr ? "BL" : "BR"] = ltr ? "BR" : "BL";
-						break;
-					case "below":
-						// first try to align left borders, next try to align right borders (or reverse for RTL mode)
-						align[ltr ? "BL" : "BR"] = ltr ? "TL" : "TR";
-						align[ltr ? "BR" : "BL"] = ltr ? "TR" : "TL";
-						break;
-					case "above":
-					default:
-						// first try to align left borders, next try to align right borders (or reverse for RTL mode)
-						align[ltr ? "TL" : "TR"] = ltr ? "BL" : "BR";
-						align[ltr ? "TR" : "TL"] = ltr ? "BR" : "BL";
-						break;
-				}
-			});
-			var pos = dijit.placeOnScreenAroundElement(this.domNode, aroundNode, align, dojo.hitch(this, "orient"));
+			var pos = dijit.placeOnScreenAroundElement(this.domNode, aroundNode, dijit.getPopupAroundAlignment((position && position.length) ? position : dijit.Tooltip.defaultPosition, this.isLeftToRight()), dojo.hitch(this, "orient"));
 
 			// show it
 			dojo.style(this.domNode, "opacity", 0);
@@ -178,7 +154,7 @@ dojo.declare(
 	"dijit.Tooltip",
 	dijit._Widget,
 	{
-		// summary
+		// summary:
 		//		Pops up a tooltip (a help message) when you hover over a node.
 
 		// label: String
@@ -257,8 +233,17 @@ dojo.declare(
 			}
 		},
 
-		postCreate: function(){	
+		postCreate: function(){
 			dojo.addClass(this.domNode,"dijitTooltipData");
+		},
+
+		startup: function(){
+			this.inherited(arguments);
+
+			// If this tooltip was created in a template, or for some other reason the specified connectId[s]
+			// didn't exist during the widget's initialization, then connect now.
+			var ids = this.connectId;
+			dojo.forEach(dojo.isArrayLike(ids) ? ids : [ids], this.addTarget, this);
 		},
 
 		_onTargetMouseEnter: function(/*Event*/ e){
@@ -286,7 +271,7 @@ dojo.declare(
 			this._focus = true;
 			this._onHover(e);
 		},
-		
+
 		_onTargetBlur: function(/*Event*/ e){
 			// summary:
 			//		Handler for blur event on the target node
@@ -338,7 +323,7 @@ dojo.declare(
 				delete this._showTimer;
 			}
 			dijit.showTooltip(this.label || this.domNode.innerHTML, target, this.position);
-			
+
 			this._connectNode = target;
 			this.onShow(target, this.position);
 		},

@@ -27,9 +27,9 @@ dojo.declare("dojox.widget._CalendarMonth", null, {
 dojo.declare("dojox.widget._CalendarMonthView", [dojox.widget._CalendarView, dijit._Templated], {
 	// summary: A Calendar view listing the 12 months of the year
 
-	// templatePath: URL
-	//	the path to the template to be used to construct the widget.
-	templateString:"<div class=\"dojoxCalendarMonthLabels\" style=\"left: 0px;\"  \n\tdojoAttachPoint=\"monthContainer\" dojoAttachEvent=\"onclick: onClick\">\n    <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: auto;\">\n        <tbody>\n            <tr class=\"dojoxCalendarMonthGroupTemplate\">\n                <td class=\"dojoxCalendarMonthTemplate\">\n                    <div class=\"dojoxCalendarMonthLabel\"></div>\n                </td>\n             </tr>\n        </tbody>\n    </table>\n</div>\n",
+	// templateString: String
+	//	The template to be used to construct the widget.
+	templateString: dojo.cache("dojox.widget", "Calendar/CalendarMonth.html", "<div class=\"dojoxCalendarMonthLabels\" style=\"left: 0px;\"  \n\tdojoAttachPoint=\"monthContainer\" dojoAttachEvent=\"onclick: onClick\">\n    <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: auto;\">\n        <tbody>\n            <tr class=\"dojoxCalendarMonthGroupTemplate\">\n                <td class=\"dojoxCalendarMonthTemplate\">\n                    <div class=\"dojoxCalendarMonthLabel\"></div>\n                </td>\n             </tr>\n        </tbody>\n    </table>\n</div>\n"),
 
 	// datePart: String
 	//	Specifies how much to increment the displayed date when the user
@@ -51,7 +51,6 @@ dojo.declare("dojox.widget._CalendarMonthView", [dojox.widget._CalendarView, dij
 	},
 
 	_setValueAttr: function(value){
-		console.log("set value " + value);
 		this.header.innerHTML = value.getFullYear();
 	},
 
@@ -84,9 +83,9 @@ dojo.declare("dojox.widget._CalendarYear", null, {
 dojo.declare("dojox.widget._CalendarYearView", [dojox.widget._CalendarView, dijit._Templated], {
 	// summary: A Calendar view listing 12 years
 
-	// templatePath: URL
-	//	the path to the template to be used to construct the widget.
-	templateString:"<div class=\"dojoxCalendarYearLabels\" style=\"left: 0px;\" dojoAttachPoint=\"yearContainer\">\n    <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: auto;\" dojoAttachEvent=\"onclick: onClick\">\n        <tbody>\n            <tr class=\"dojoxCalendarYearGroupTemplate\">\n                <td class=\"dojoxCalendarNextMonth dojoxCalendarYearTemplate\">\n                    <div class=\"dojoxCalendarYearLabel\">\n                    </div>\n                </td>\n            </tr>\n        </tbody>\n    </table>\n</div>\n",
+	// templateString: String
+	//		The template to be used to construct the widget.
+	templateString: dojo.cache("dojox.widget", "Calendar/CalendarYear.html", "<div class=\"dojoxCalendarYearLabels\" style=\"left: 0px;\" dojoAttachPoint=\"yearContainer\">\n    <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: auto;\" dojoAttachEvent=\"onclick: onClick\">\n        <tbody>\n            <tr class=\"dojoxCalendarYearGroupTemplate\">\n                <td class=\"dojoxCalendarNextMonth dojoxCalendarYearTemplate\">\n                    <div class=\"dojoxCalendarYearLabel\">\n                    </div>\n                </td>\n            </tr>\n        </tbody>\n    </table>\n</div>\n"),
 
 	displayedYears: 6,
 

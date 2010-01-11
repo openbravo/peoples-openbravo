@@ -231,8 +231,7 @@ cWithHoldId varchar2(32);
     --* There are invoice lines
     --* There are tax lines
     --* There are both invoice and tax lines 
-    IF((v_DocStatus='DR' AND v_DocAction='CO')
-       OR (v_DocStatus='CO' AND v_DocAction='RE')) THEN
+    IF((v_DocStatus='DR' AND v_DocAction='CO')) THEN
           SELECT COUNT(*)
           INTO V_InvoiceLines_count
           FROM C_INVOICE

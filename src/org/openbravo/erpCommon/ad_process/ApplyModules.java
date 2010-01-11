@@ -207,30 +207,55 @@ public class ApplyModules extends HttpSecureAppServlet {
    * This method returns an ApplyModulesResponse object, that later is transformed into a JSON
    * object and resend to the rebuild window.
    */
-  private ApplyModulesResponse fillResponse(String state) {
+  private ApplyModulesResponse fillResponse(VariablesSecureApp vars, String state,
+      String defaultState) {
+    String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
+    int lastlinenumber;
+    if (ln == null || ln.equals("")) {
+      lastlinenumber = 0;
+    } else {
+      lastlinenumber = Integer.parseInt(ln);
+    }
     ApplyModulesResponse resp = new ApplyModulesResponse();
     resp.setState(Integer.parseInt(state.replace("RB", "")));
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
+    boolean warning = false;
+    boolean error = false;
+    int newlinenumber = lastlinenumber;
     try {
-      ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN' AND SYSTEM_STATUS LIKE ?");
+      ps = getPreparedStatement("SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN' AND SYSTEM_STATUS LIKE ?");
       ps.setString(1, "%" + state);
       ps.executeQuery();
       ResultSet rs = ps.getResultSet();
       ArrayList<String> warnings = new ArrayList<String>();
       while (rs.next()) {
-        warnings.add(rs.getString(1));
+        warning = true; // there is at least an warning in this state
+        int linenumber = rs.getInt(2);
+        if (linenumber > newlinenumber) {
+          newlinenumber = linenumber;
+        }
+        if (linenumber > lastlinenumber) {
+          warnings.add(rs.getString(1));
+        }
       }
       resp.setWarnings(warnings.toArray(new String[0]));
 
-      ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
+      ps2 = getPreparedStatement("SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
       ps2.setString(1, "%" + state);
       ps2.executeQuery();
       ResultSet rs2 = ps2.getResultSet();
       ArrayList<String> errors = new ArrayList<String>();
       while (rs2.next()) {
-        errors.add(rs2.getString(1));
+        error = true; // there is at least an error in this state
+        int linenumber = rs2.getInt(2);
+        if (linenumber > newlinenumber) {
+          newlinenumber = linenumber;
+        }
+        if (linenumber > lastlinenumber) {
+          errors.add(rs2.getString(1));
+        }
       }
       resp.setErrors(errors.toArray(new String[0]));
 
@@ -243,6 +268,14 @@ public class ApplyModules extends HttpSecureAppServlet {
         resp.setLastmessage("");
       }
 
+      vars.setSessionValue("ApplyModules|Last_Line_Number_Log", new Integer(newlinenumber)
+          .toString());
+      if (error)
+        resp.setStatusofstate("Error");
+      else if (warning)
+        resp.setStatusofstate("Warning");
+      else
+        resp.setStatusofstate(defaultState);
     } catch (Exception e) {
       log4j.error("Error while building Response object", e);
     } finally {
@@ -269,13 +302,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       ResultSet rs = ps.getResultSet();
       rs.next();
       String state = rs.getString(1);
-      ApplyModulesResponse resp = fillResponse(state);
-      if (resp.getErrors().length > 0)
-        resp.setStatusofstate("Error");
-      else if (resp.getWarnings().length > 0)
-        resp.setStatusofstate("Warning");
-      else
-        resp.setStatusofstate("Processing");
+      ApplyModulesResponse resp = fillResponse(vars, state, "Processing");
       response.setContentType("text/plain; charset=UTF-8");
       final PrintWriter out = response.getWriter();
       String strResult;
@@ -304,20 +331,14 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void requesterrorstate(HttpServletResponse response, VariablesSecureApp vars) {
     String state = vars.getStringParameter("reqStatus");
-    ApplyModulesResponse pet = fillResponse(state);
-    if (pet.getErrors().length > 0)
-      pet.setStatusofstate("Error");
-    else if (pet.getWarnings().length > 0)
-      pet.setStatusofstate("Warning");
-    else
-      pet.setStatusofstate("Success");
+    ApplyModulesResponse resp = fillResponse(vars, state, "Success");
     response.setContentType("text/plain; charset=UTF-8");
     try {
       final PrintWriter out = response.getWriter();
       String strResult;
       XStream xs = new XStream(new JettisonMappedXmlDriver());
       xs.alias("Response", ApplyModulesResponse.class);
-      strResult = xs.toXML(pet);
+      strResult = xs.toXML(resp);
       out.print(strResult);
       out.close();
     } catch (IOException e) {
@@ -332,6 +353,7 @@ public class ApplyModules extends HttpSecureAppServlet {
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     User currentUser = OBContext.getOBContext().getUser();
+    vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
     boolean admin = OBContext.getOBContext().setInAdministratorMode(true);
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
@@ -339,18 +361,18 @@ public class ApplyModules extends HttpSecureAppServlet {
     PreparedStatement updateSession = null;
     AntExecutor ant = null;
     try {
+      // We first shutdown the background process, so that it doesn't interfere
+      // with the rebuild process
+      try {
+        if (OBScheduler.getInstance().getScheduler().isStarted())
+          OBScheduler.getInstance().getScheduler().shutdown(true);
+      } catch (Exception e) {
+        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+      }
       ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
       ps.executeUpdate();
       ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB11'");
       ps2.executeUpdate();
-
-      // We first shutdown the background process, so that it doesn't interfere
-      // with the rebuild process
-      try {
-        OBScheduler.getInstance().getScheduler().shutdown(true);
-      } catch (Exception e) {
-        // We will not log an exception if the scheduler complains. The user shouldn't notice this
-      }
 
       Properties props = new Properties();
       props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
@@ -403,6 +425,9 @@ public class ApplyModules extends HttpSecureAppServlet {
       ResultSet rsErr = psErr.getResultSet();
       if (!rsErr.next()) {
         ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'");
+        ps3.executeUpdate();
+      } else {
+        ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB59'");
         ps3.executeUpdate();
       }
       out.close();
@@ -503,6 +528,7 @@ public class ApplyModules extends HttpSecureAppServlet {
     XStream xs = new XStream(new JettisonMappedXmlDriver());
     xs.alias("OBError", OBError.class);
     String strResult = xs.toXML(error);
+    response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.print(strResult);
     out.close();
