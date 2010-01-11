@@ -54,7 +54,6 @@ public class ApplyModuleTask extends DalInitializingTask {
         obDir = getProject().getBaseDir().toString();
       if (propertiesFile == null || propertiesFile.equals(""))
         propertiesFile = obDir + "/config/Openbravo.properties";
-      System.out.println("properties file: " + propertiesFile);
       final ApplyModule am = new ApplyModule(new CPStandAlone(propertiesFile), obDir);
       am.execute();
     } catch (final Exception e) {

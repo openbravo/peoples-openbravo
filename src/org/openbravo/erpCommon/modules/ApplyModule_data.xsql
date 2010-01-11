@@ -24,10 +24,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT M.JAVAPACKAGE, M.NAME || ' - ' || a.dbuser as name, M.AD_LANGUAGE, L.ISSYSTEMLANGUAGE, '' as DS_NAME, '' AS AD_MODULE_ID
+      SELECT M.JAVAPACKAGE, M.NAME, M.AD_LANGUAGE, L.ISSYSTEMLANGUAGE, '' as DS_NAME, '' AS AD_MODULE_ID
         FROM AD_MODULE M LEFT JOIN AD_LANGUAGE L
-        ON L.AD_LANGUAGE = M.AD_LANGUAGE,
-        (SELECT USER AS DBUSER FROM DUAL) a
+                           ON L.AD_LANGUAGE = M.AD_LANGUAGE
        WHERE (STATUS = 'I' OR STATUS = 'P')
          AND ISTRANSLATIONMODULE = 'Y'
     ]]></Sql>

@@ -86,7 +86,6 @@ public class ApplyModule {
       // **************** Translation modules ************************
       // Check whether modules to install are translations
       log4j.info("Looking for translation modules");
-      log4j.info("obDir: "+obDir);
       final ApplyModuleData[] data = ApplyModuleData.selectTranslationModules(pool);
 
       if (data != null && data.length > 0) {
