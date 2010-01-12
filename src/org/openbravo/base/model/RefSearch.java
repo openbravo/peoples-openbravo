@@ -62,14 +62,14 @@ public class RefSearch extends ModelObject {
   }
 
   /**
-   * @deprecated use {@link #getReferenceObject()}
+   * Deprecated use {@link #getReferenceObject()}
    */
   public String getReference() {
     return reference;
   }
 
   /**
-   * @deprecated use {@link #setReferenceObject(Reference)}
+   * Deprecated use {@link #setReferenceObject(Reference)}
    */
   public void setReference(String reference) {
     this.reference = reference;

@@ -935,25 +935,25 @@ public class Property {
   }
 
   /**
-   * @deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
+   * Deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
    */
   public void setDate(boolean isDate) {
   }
 
   /**
-   * @deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
+   * Deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
    */
   public void setDatetime(boolean isDatetime) {
   }
 
   /**
-   * @deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
+   * Deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
    */
   public void setPrimitive(boolean primitive) {
   }
 
   /**
-   * @deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
+   * Deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
    */
   public void setPrimitiveType(Class<?> primitiveType) {
   }

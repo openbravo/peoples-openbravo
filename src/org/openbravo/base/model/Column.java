@@ -266,7 +266,7 @@ public class Column extends ModelObject {
   }
 
   /**
-   * @deprecated use {@link Column#setReferenceType()}
+   * Deprecated use {@link Column#setReferenceType()}
    */
   protected void setReferenceType(ModelProvider modelProvider) {
     setReferenceType();
