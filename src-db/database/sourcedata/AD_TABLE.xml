@@ -347,7 +347,7 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--116-->  <TABLENAME><![CDATA[AD_Menu]]></TABLENAME>
 <!--116-->  <CLASSNAME><![CDATA[Menu]]></CLASSNAME>
 <!--116-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--116-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--116-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--116-->  <AD_WINDOW_ID><![CDATA[105]]></AD_WINDOW_ID>
 <!--116-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--116-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
