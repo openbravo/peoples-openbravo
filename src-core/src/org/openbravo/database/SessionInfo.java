@@ -58,7 +58,7 @@ public class SessionInfo {
    */
   static public void initDB(Connection conn, String rdbms) {
     try {
-      if (rdbms.equals("POSTGRE")) {
+      if (rdbms != null && rdbms.equals("POSTGRE")) {
         // Create temporary table
         ResultSet rs = getPreparedStatement(
             conn,
@@ -77,7 +77,7 @@ public class SessionInfo {
         }
       }
     } catch (Exception e) {
-      log4j.error("Error g", e);
+      log4j.error("Error initializating audit infrastructure", e);
     }
   }
 
