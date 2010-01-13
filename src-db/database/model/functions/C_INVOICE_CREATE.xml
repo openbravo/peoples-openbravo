@@ -226,7 +226,7 @@
               WHERE o.C_Order_ID=l.C_Order_ID
                 AND l.QtyOrdered<>l.QtyInvoiced
               )
-            ORDER BY PriorityRule,
+            ORDER BY o.DateOrdered,PriorityRule,
               C_BPartner_ID,
               DocumentNo
             )
