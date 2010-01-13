@@ -129,57 +129,57 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_STIMEEXPENSELINE">
+      <foreign-key foreignTable="AD_CLIENT" name="S_TIMEEXPENSELINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_STIMEEXPENSELINE">
+      <foreign-key foreignTable="AD_ORG" name="S_TIMEEXPENSELINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_ACTIVITY" name="S_TIMEEXPENSELINE_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_BPARTNER" name="S_TIMEEXPENSELINE_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_CAMPAIGN" name="S_TIMEEXPENSELINE_C_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_CURRENCY" name="S_TIMEEXPENSELINE_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_INVOICELINE" name="S_TIMEEXPENSELINE_C_INVOICELIN">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="CORDERLINE_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_ORDERLINE" name="S_TIMEEXPENSELINE_C_ORDERLINE">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_PROJECT" name="S_TIMEEXPENSELINE_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECTPHASE" name="CPROJECTPHASE_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_PROJECTPHASE" name="S_TIMEEXPENSELINE_C_PROJECTPHA">
         <reference local="C_PROJECTPHASE_ID" foreign="C_PROJECTPHASE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECTTASK" name="CPROJECTTASK_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_PROJECTTASK" name="S_TIMEEXPENSELINE_C_PROJECTTAS">
         <reference local="C_PROJECTTASK_ID" foreign="C_PROJECTTASK_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_STIMEEXPENSELINE">
+      <foreign-key foreignTable="C_UOM" name="S_TIMEEXPENSELINE_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_STIMEEXPENSELINE">
+      <foreign-key foreignTable="M_PRODUCT" name="S_TIMEEXPENSELINE_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="SRESOURCEASSIGN_STELINE">
+      <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="S_TIMEEXPENSELINE_S_RESOURCEAS">
         <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_TIMEEXPENSE" name="STIMEEXPENSE_LINE">
+      <foreign-key foreignTable="S_TIMEEXPENSE" name="S_TIMEEXPENSELINE_S_TIMEEXPENS">
         <reference local="S_TIMEEXPENSE_ID" foreign="S_TIMEEXPENSE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="S_TIMETYPE" name="STIMETYPE_STIMEEXPENSELINE">
+      <foreign-key foreignTable="S_TIMETYPE" name="S_TIMEEXPENSELINE_S_TIMETYPE">
         <reference local="S_TIMETYPE_ID" foreign="S_TIMETYPE_ID"/>
       </foreign-key>
       <check name="S_TIMEEXPENSELINE_CHECK1"><![CDATA[(ISINVOICED = 'N') OR (C_BPARTNER_ID IS NOT NULL)]]></check>
-      <check name="STIMEEXLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="STIMEEXLN_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
-      <check name="STIMEEXLN_ISTIMEREPORT_CHECK"><![CDATA[ISTIMEREPORT IN ('Y', 'N')]]></check>
+      <check name="S_TIMEEXPENSELINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="S_TIMEEXPENSELINE_ISINVOIC_CHK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
+      <check name="S_TIMEEXPENSELINE_ISTIMERE_CHK"><![CDATA[ISTIMEREPORT IN ('Y', 'N')]]></check>
     </table>
   </database>

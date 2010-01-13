@@ -253,83 +253,83 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IGLJOURNAL">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_IGLJOURNAL">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGDOC_IGLJOURNAL">
-        <reference local="AD_ORGDOC_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_IGLJOURNAL">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_IGLJOURNAL">
-        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_GLJOURNAL">
-        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_IGLJOURNAL">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_IGLJOURNAL">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_IGLJOURNAL">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_IGLJOURNAL">
-        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELVALUEACCOUNT_IGLJOURNAL">
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="I_GLJOURNAL_ACCOUNT">
         <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELVALUEUSER2_IGLJOURNAL">
-        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="I_GLJOURNAL_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CEVALUEUSER1_IGLJOURNAL">
-        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
+      <foreign-key foreignTable="AD_ORG" name="I_GLJOURNAL_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="CLOCFROM_IGLJOURNAL">
+      <foreign-key foreignTable="AD_ORG" name="I_GLJOURNAL_AD_ORGDOC">
+        <reference local="AD_ORGDOC_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="I_GLJOURNAL_AD_ORGTRX">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="I_GLJOURNAL_C_ACCTSCHEMA">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="I_GLJOURNAL_C_ACTIVITY">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="I_GLJOURNAL_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="I_GLJOURNAL_C_CAMPAIGN">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="I_GLJOURNAL_C_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="I_GLJOURNAL_C_DOCTYPE">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="I_GLJOURNAL_C_LOCFROM">
         <reference local="C_LOCFROM_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="CLOCTO_IGLJOURNAL">
+      <foreign-key foreignTable="C_LOCATION" name="I_GLJOURNAL_C_LOCTO">
         <reference local="C_LOCTO_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PERIOD" name="CPERIOD_IGLJOURNAL">
+      <foreign-key foreignTable="C_PERIOD" name="I_GLJOURNAL_C_PERIOD">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_IGLJOURNAL">
+      <foreign-key foreignTable="C_PROJECT" name="I_GLJOURNAL_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SALESREGION" name="CSALESREGION_IGLJOURNAL">
+      <foreign-key foreignTable="C_SALESREGION" name="I_GLJOURNAL_C_SALESREGION">
         <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_IGLJOURNAL">
+      <foreign-key foreignTable="C_UOM" name="I_GLJOURNAL_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_IGLJOURNAL">
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="I_GLJOURNAL_C_VALIDCOMBINATION">
         <reference local="C_VALIDCOMBINATION_ID" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_CATEGORY" name="GLCATEGORY_IGLJOURNAL">
+      <foreign-key foreignTable="GL_CATEGORY" name="I_GLJOURNAL_GL_CATEGORY">
         <reference local="GL_CATEGORY_ID" foreign="GL_CATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_JOURNALLINE" name="GLJOURBELLINE_IGLJOURNAL">
-        <reference local="GL_JOURNALLINE_ID" foreign="GL_JOURNALLINE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_IGLJOURNAL">
+      <foreign-key foreignTable="GL_JOURNAL" name="I_GLJOURNAL_GL_JOURNAL">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_JOURNALBATCH" name="GLJOURNALBATCH_IGLJOURNAL">
+      <foreign-key foreignTable="GL_JOURNALBATCH" name="I_GLJOURNAL_GL_JOURNALBATCH">
         <reference local="GL_JOURNALBATCH_ID" foreign="GL_JOURNALBATCH_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_OGLJOURNAL">
+      <foreign-key foreignTable="GL_JOURNALLINE" name="I_GLJOURNAL_GL_JOURNALLINE">
+        <reference local="GL_JOURNALLINE_ID" foreign="GL_JOURNALLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="I_GLJOURNAL_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="I_GLJOURNAL_USER1">
+        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="I_GLJOURNAL_USER2">
+        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <check name="I_GLJOURNAL_I_ISIMPORTED_CHK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
       <check name="I_GLJOURNAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="I_GLJOURNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
-      <check name="IGLJOURNAL_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
     </table>
   </database>

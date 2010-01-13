@@ -69,6 +69,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String stradClientId = vars.getClient();
+    final String stradOrgId = vars.getGlobalVariable("inpadOrgId", "SL_Journal_Period|adOrgId", "");
     ;
     String strDateAcct = strDateAcctNew;
     String strcPeriodId = strcPeriodIdNew;
@@ -79,7 +80,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     }
     // When DateAcct is changed, set C_Period_ID
     if (strChanged.equals("inpdateacct")) {
-      strcPeriodId = SLJournalPeriodData.period(this, stradClientId, strDateAcct);
+      strcPeriodId = SLJournalPeriodData.period(this, stradClientId, stradOrgId, strDateAcct);
       if (strcPeriodId.equals(""))
         strcPeriodId = strcPeriodIdNew;
     }

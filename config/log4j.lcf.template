@@ -16,16 +16,11 @@
 # ************************************************************************
 
 # to enable logging in i.e. eclipse console add ", C" to the line below
-log4j.rootCategory=INFO, R, O1
+log4j.rootCategory=INFO, R
 
 # Set our global levels
 log4j.category.org=WARN
 log4j.category.org.openbravo=INFO
-
-# Additional Appender used for apply modules or other cases
-log4j.appender.O1=org.openbravo.utils.OBLogAppender
-log4j.appender.O1.layout=org.apache.log4j.PatternLayout
-log4j.appender.O1.layout.ConversionPattern=%-4r [%t] %-5p %c - %m%n
 
 log4j.appender.R=org.apache.log4j.RollingFileAppender
 log4j.appender.R.File=${catalina.base}/logs/openbravo.log

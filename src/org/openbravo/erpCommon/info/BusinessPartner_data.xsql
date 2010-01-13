@@ -125,7 +125,7 @@
         AND bp.IsActive='Y'
         AND UPPER(bp.VALUE) LIKE UPPER(?)
         ORDER BY bp.name
-      ) A
+      ) A 
       ]]></Sql>
         <Parameter name="adUserClient" type="replace" optional="true" after="bp.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="bp.AD_Org_ID IN (" text="'1'"/>

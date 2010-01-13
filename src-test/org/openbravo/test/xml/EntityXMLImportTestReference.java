@@ -55,7 +55,7 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    */
   public void test1Warehouse() {
     cleanRefDataLoaded();
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Warehouse.class);
     final String xml = getXML(Warehouse.class);
     // insert in org 1000001
@@ -95,7 +95,7 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    * {@link Location} objects are also exported but not imported as they already exist in 1000001.
    */
   public void test3Warehouse() {
-    setUserContext("1000000");
+    setBigBazaarUserContext();
     addReadWriteAccess(Warehouse.class);
     final String xml = getXML(Warehouse.class);
     setUserContext("1000019");

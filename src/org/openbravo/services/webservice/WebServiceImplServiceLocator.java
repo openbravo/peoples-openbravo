@@ -109,7 +109,7 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     }
 
     private java.util.HashSet ports = null;
-
+    @SuppressWarnings("unchecked")
     public java.util.Iterator getPorts() {
         if (ports == null) {
             ports = new java.util.HashSet();

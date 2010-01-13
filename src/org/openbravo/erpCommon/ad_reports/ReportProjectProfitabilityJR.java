@@ -125,7 +125,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     String discard[] = { "discard" };
     String strTreeOrg = "'" + strOrg + "'";
     if (strExpand.equals("Y"))
-      strTreeOrg = treeOrg(vars, strOrg);
+      strTreeOrg += treeOrg(vars, strOrg);
     ReportProjectProfitabilityData[] data = null;
 
     // Checks if there is a conversion rate for each of the transactions of
@@ -306,11 +306,11 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   private String treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
     ReportProjectProfitabilityData[] dataOrg = ReportProjectProfitabilityData.selectOrg(this,
         strOrg, vars.getClient());
-    String strTreeOrg = "'" + strOrg + "'";
+    String strTreeOrg = "";
     for (int i = 0; i < dataOrg.length; i++) {
       strTreeOrg += "," + "'" + dataOrg[i].nodeId + "'";
       if (dataOrg[i].issummary.equals("Y"))
-        treeOrg(vars, dataOrg[i].nodeId);
+        strTreeOrg += treeOrg(vars, dataOrg[i].nodeId);
     }
     return strTreeOrg;
   }

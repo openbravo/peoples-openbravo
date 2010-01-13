@@ -500,6 +500,7 @@ public class AccountTree {
           Vector<Object> vecParcial = new Vector<Object>();
           vecParcial.addElement("0");
           vecParcial.addElement("0");
+          @SuppressWarnings("unchecked")
           Vector<Object> vecAux = (Vector<Object>) vec.clone();
           dataChilds = calculateTree(forms, resultantAccounts[i].nodeId, vecParcial);
           if (dataChilds != null && dataChilds.length > 0)

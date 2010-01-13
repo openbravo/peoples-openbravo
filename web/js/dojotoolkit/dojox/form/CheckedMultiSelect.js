@@ -10,7 +10,7 @@ dojo._hasResource["dojox.form.CheckedMultiSelect"] = true;
 dojo.provide("dojox.form.CheckedMultiSelect");
 
 dojo.require("dijit.form.CheckBox");
-dojo.require("dojox.form._FormSelectWidget");
+dojo.require("dijit.form._FormSelectWidget");
 
 dojo.declare("dojox.form._CheckedMultiSelectItem", 
 	[dijit._Widget, dijit._Templated],
@@ -19,7 +19,7 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 	//		The individual items for a CheckedMultiSelect
 
 	widgetsInTemplate: true,
-	templateString:"<div class=\"dijitReset ${baseClass}\"\n\t><input class=\"${baseClass}Box\" dojoType=\"dijit.form.CheckBox\" dojoAttachPoint=\"checkBox\" \n\t\tdojoAttachEvent=\"_onClick:_changeBox\" type=\"${_type.type}\" baseClass=\"${_type.baseClass}\"\n\t><div class=\"dijitInline ${baseClass}Label\" dojoAttachPoint=\"labelNode\" dojoAttachEvent=\"onmousedown:_onMouse,onmouseover:_onMouse,onmouseout:_onMouse,onclick:_onClick\"></div\n></div>\n",
+	templateString: dojo.cache("dojox.form", "resources/_CheckedMultiSelectItem.html", "<div class=\"dijitReset ${baseClass}\"\n\t><input class=\"${baseClass}Box\" dojoType=\"dijit.form.CheckBox\" dojoAttachPoint=\"checkBox\" \n\t\tdojoAttachEvent=\"_onClick:_changeBox\" type=\"${_type.type}\" baseClass=\"${_type.baseClass}\"\n\t><div class=\"dijitInline ${baseClass}Label\" dojoAttachPoint=\"labelNode\" dojoAttachEvent=\"onmousedown:_onMouse,onmouseover:_onMouse,onmouseout:_onMouse,onclick:_onClick\"></div\n></div>\n"),
 
 	baseClass: "dojoxMultiSelectItem",
 
@@ -40,7 +40,7 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 		// summary:
 		//		Set the appropriate _subClass value - based on if we are multi-
 		//		or single-select
-		if(this.parent._multiValue){
+		if(this.parent.multiple){
 			this._type = {type: "checkbox", baseClass: "dijitCheckBox"};
 		}else{
 			this._type = {type: "radio", baseClass: "dijitRadio"};
@@ -63,7 +63,7 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 		//		(only on click of the checkbox)  Radio-based calls _setValueAttr
 		//		instead.
 		if(this.attr("disabled") || this.attr("readOnly")){ return; }
-		if(this.parent._multiValue){
+		if(this.parent.multiple){
 			this.option.selected = this.checkBox.attr('value') && true;
 		}else{
 			this.parent.attr('value', this.option.value);
@@ -119,12 +119,11 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 	}
 });
 
-dojo.declare("dojox.form.CheckedMultiSelect", dojox.form._FormSelectWidget, {
+dojo.declare("dojox.form.CheckedMultiSelect", dijit.form._FormSelectWidget, {
 	// summary:
 	//		Extends the core dijit MultiSelect to provide a "checkbox" selector
 
-	templateString: "",
-	templateString:"<div class=\"dijit dijitReset dijitInline\" dojoAttachEvent=\"onmousedown:_mouseDown,onclick:focus\"\n\t><select class=\"${baseClass}Select\" multiple=\"true\" dojoAttachPoint=\"containerNode,focusNode\"></select\n\t><div dojoAttachPoint=\"wrapperDiv\"></div\n></div>\n",
+	templateString: dojo.cache("dojox.form", "resources/CheckedMultiSelect.html", "<div class=\"dijit dijitReset dijitInline\" dojoAttachEvent=\"onmousedown:_mouseDown,onclick:focus\"\n\t><select class=\"${baseClass}Select\" multiple=\"true\" dojoAttachPoint=\"containerNode,focusNode\"></select\n\t><div dojoAttachPoint=\"wrapperDiv\"></div\n></div>\n"),
 
 	baseClass: "dojoxMultiSelect",
 

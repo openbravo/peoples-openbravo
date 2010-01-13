@@ -50,14 +50,14 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 public class SystemService implements OBSingleton {
   private static SystemService instance;
 
-  public static SystemService getInstance() {
+  public static synchronized SystemService getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(SystemService.class);
     }
     return instance;
   }
 
-  public static void setInstance(SystemService instance) {
+  public static synchronized void setInstance(SystemService instance) {
     SystemService.instance = instance;
   }
 
@@ -113,6 +113,7 @@ public class SystemService implements OBSingleton {
     final DatabaseValidator databaseValidator = new DatabaseValidator();
     databaseValidator.setValidateModule(module);
     databaseValidator.setDatabase(database);
+    databaseValidator.setDbsmExecution(true);
     return databaseValidator.validate();
   }
 

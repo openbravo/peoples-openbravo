@@ -211,7 +211,6 @@ public class OBScheduler {
       sched.unscheduleJob(requestId, OB_GROUP);
       sched.deleteJob(requestId, OB_GROUP);
       ProcessRequestData.update(getConnection(), UNSCHEDULED, null, format(new Date()), requestId);
-
     } catch (final Exception e) {
       log.error("An error occurred unscheduling process " + requestId, e);
     }
@@ -515,19 +514,19 @@ public class OBScheduler {
      * 
      * @param date
      * @param time
-     * @param dateTimeFormat
+     * @param dtFormat
      * @return
      * @throws ParseException
      */
-    private static Calendar timestamp(String date, String time, String dateTimeFormat)
+    private static Calendar timestamp(String date, String time, String dtFormat)
         throws ParseException {
 
-      if (dateTimeFormat == null || dateTimeFormat.trim().equals("")) {
+      if (dtFormat == null || dtFormat.trim().equals("")) {
         throw new ParseException("dateTimeFormat cannot be null.", -1);
       }
 
       Calendar cal = null;
-      final String dateFormat = dateTimeFormat.substring(0, dateTimeFormat.indexOf(' '));
+      final String dateFormat = dtFormat.substring(0, dtFormat.indexOf(' '));
 
       if (date == null || date.equals("")) {
         cal = Calendar.getInstance();

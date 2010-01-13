@@ -113,32 +113,32 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SRESOURCETYPE">
+      <foreign-key foreignTable="AD_CLIENT" name="S_RESOURCETYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_SRESOURCETYPE">
+      <foreign-key foreignTable="AD_ORG" name="S_RESOURCETYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_SRESOURCETYPE">
+      <foreign-key foreignTable="C_TAXCATEGORY" name="S_RESOURCETYPE_C_TAXCATEGORY">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_SRESOURCETYPE">
+      <foreign-key foreignTable="C_UOM" name="S_RESOURCETYPE_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_SRESOURCETYPE">
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="S_RESOURCETYPE_M_PRODUCT_CATEG">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="SRESTYPE_ALLOWU_RACTIONS_CHECK"><![CDATA[ALLOWUOMFRACTIONS IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ISDATESLOT_CHECK"><![CDATA[ISDATESLOT IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ISSING_SIGNMENT_CHECK"><![CDATA[ISSINGLEASSIGNMENT IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ISTIMESLOT_CHECK"><![CDATA[ISTIMESLOT IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ONFRIDAY_CHECK"><![CDATA[ONFRIDAY IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ONMONDAY_CHECK"><![CDATA[ONMONDAY IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ONSATURDAY_CHECK"><![CDATA[ONSATURDAY IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ONSUNDAY_CHECK"><![CDATA[ONSUNDAY IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ONTHURSDAY_CHECK"><![CDATA[ONTHURSDAY IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ONTUESDAY_CHECK"><![CDATA[ONTUESDAY IN ('Y', 'N')]]></check>
-      <check name="SRESTYPE_ONWEDNESDAY_CHECK"><![CDATA[ONWEDNESDAY IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ALLOWUOMFRA_CHK"><![CDATA[ALLOWUOMFRACTIONS IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ISDATESLOT_CHK"><![CDATA[ISDATESLOT IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ISSINGLEASS_CHK"><![CDATA[ISSINGLEASSIGNMENT IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ISTIMESLOT_CHK"><![CDATA[ISTIMESLOT IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ONFRIDAY_CHK"><![CDATA[ONFRIDAY IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ONMONDAY_CHK"><![CDATA[ONMONDAY IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ONSATURDAY_CHK"><![CDATA[ONSATURDAY IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ONSUNDAY_CHK"><![CDATA[ONSUNDAY IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ONTHURSDAY_CHK"><![CDATA[ONTHURSDAY IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ONTUESDAY_CHK"><![CDATA[ONTUESDAY IN ('Y', 'N')]]></check>
+      <check name="S_RESOURCETYPE_ONWEDNESDAY_CHK"><![CDATA[ONWEDNESDAY IN ('Y', 'N')]]></check>
     </table>
   </database>

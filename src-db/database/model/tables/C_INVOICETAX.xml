@@ -57,16 +57,16 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICETAX">
+      <foreign-key foreignTable="AD_CLIENT" name="C_INVOICETAX_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICETAX">
+      <foreign-key foreignTable="AD_ORG" name="C_INVOICETAX_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="CINVOICE_CINVOICETAX">
+      <foreign-key foreignTable="C_INVOICE" name="C_INVOICETAX_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_CINVOICETAX">
+      <foreign-key foreignTable="C_TAX" name="C_INVOICETAX_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
       <index name="C_INVOICETAX_INVOICEID" unique="false">

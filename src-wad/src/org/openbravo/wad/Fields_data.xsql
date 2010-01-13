@@ -139,12 +139,9 @@
         WHERE ad_table.ad_table_id = ad_column.ad_table_id
           AND ad_tab.ad_table_id = ad_table.ad_table_id
           AND ad_tab_id = ? 
-          and (iskey='Y' OR isSecondaryKey='Y')
-          AND ad_column.ColumnName <> ? 
-          ORDER BY (CASE iskey WHEN 'Y' THEN 1 ELSE 2 END)
+          and iskey='Y'
       ]]></Sql>
       <Parameter name="tab"/>
-      <Parameter name="parentField"/>
   </SqlMethod>
   <SqlMethod name="parentsColumnNameSortTab" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>

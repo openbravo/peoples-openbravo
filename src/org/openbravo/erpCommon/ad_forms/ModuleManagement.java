@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +36,14 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
 import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
+import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.CommercialModuleStatus;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -250,9 +254,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
         rt = total
             + "&nbsp;"
             + Utility.messageBD(this, "ApplyModules", lang)
-            + ", <a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900);return false;\">"
+            + ", <a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900);return false;\">"
             + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
         return rt;
+      }
+      String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
+      // Check if last build was done but Tomcat wasn't restarted
+      if (!restartTomcat.equals("0")) {
+        rt = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900);return false;\">"
+            + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
+        return rt;
+
       }
 
       // Check for updates
@@ -460,16 +472,56 @@ public class ModuleManagement extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("license", module.getLicenseType());
 
-    if (dependencies != null && dependencies.length > 0)
-      xmlDocument.setData("dependencies", FieldProviderFactory.getFieldProviderArray(dependencies));
+    if (dependencies != null && dependencies.length > 0) {
+      xmlDocument.setData("dependencies", formatDeps4Display(dependencies, vars, this));
+    }
 
-    if (includes != null && includes.length > 0)
-      xmlDocument.setData("includes", FieldProviderFactory.getFieldProviderArray(includes));
+    if (includes != null && includes.length > 0) {
+      xmlDocument.setData("includes", formatDeps4Display(includes, vars, this));
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private static FieldProvider[] formatDeps4Display(ModuleDependency[] deps,
+      VariablesSecureApp vars, ConnectionProvider conn) {
+    HashMap<String, String>[] res = new HashMap[deps.length];
+
+    for (int i = 0; i < deps.length; i++) {
+      res[i] = new HashMap<String, String>();
+      res[i].put("moduleName", getDisplayString(deps[i], vars, conn));
+    }
+    return FieldProviderFactory.getFieldProviderArray(res);
+  }
+
+  private static String getDisplayString(ModuleDependency dep, VariablesSecureApp vars,
+      ConnectionProvider conn) {
+
+    final String DETAIL_MSG_DETAIL_BETWEEN = Utility.messageBD(conn, "MODULE_VERSION_BETWEEN", vars
+        .getLanguage());
+
+    final String DETAIL_MSG_OR_LATER = Utility.messageBD(conn, "MODULE_VERSION_OR_LATER", vars
+        .getLanguage());
+
+    final String VERSION = Utility.messageBD(conn, "VERSION", vars.getLanguage());
+
+    String displayString = dep.getModuleName() + " " + VERSION + " ";
+
+    if (dep.getVersionEnd() != null && dep.getVersionEnd().equals(dep.getVersionStart())) {
+      displayString += dep.getVersionStart();
+    } else if (dep.getVersionEnd() == null || dep.getVersionEnd().contains(".999999")) {
+      // NOTE: dep.getVersionEnd() is .999999 from CR but null when installing from .obx
+      displayString += DETAIL_MSG_OR_LATER.replace("@MODULE_VERSION@", dep.getVersionStart());
+    } else {
+      String tmp = DETAIL_MSG_DETAIL_BETWEEN.replace("@MIN_VERSION@", dep.getVersionStart());
+      tmp = tmp.replace("@MAX_VERSION@", dep.getVersionEnd());
+      displayString += tmp;
+    }
+
+    return displayString;
   }
 
   /**
@@ -538,9 +590,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
     Module module = null;
 
     // Remote installation is only allowed for heartbeat enabled instances
-    if (!islocal && !isHeartbeatEnabled()) {
-      response.sendRedirect(strDireccion
-          + "/ad_forms/Heartbeat.html?Command=DEFAULT_MODULE&inpcRecordId=" + recordId);
+    if (!islocal && !HeartbeatProcess.isHeartbeatEnabled()) {
+      String inpcRecordId = recordId;
+      String command = "DEFAULT";
+
+      if (updateModules != null && updateModules.length > 0 && !updateModules[0].equals("")) {
+        inpcRecordId = "FFF";
+        command = "UPDATE";
+      }
+
+      response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
+          + "_MODULE&inpcRecordId=" + inpcRecordId);
     }
 
     if (!islocal && (updateModules == null || updateModules.length == 0)) {
@@ -562,6 +622,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     OBError message = null;
     boolean found = false;
     boolean check;
+    // to hold (key,value) = (moduleId, minVersion)
+    Map<String, String> minVersions = new HashMap<String, String>();
 
     VersionUtility.setPool(this);
 
@@ -583,11 +645,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
       if (check) { // dependencies are statisfied, show modules to install
         // installOrig includes also the module to install
         final Module[] installOrig = im.getModulesToInstall();
-
-        // check commercial modules and show error page if not allowed to install
-        if (!checkCommercialModules(im, response, vars)) {
-          return;
-        }
 
         if (installOrig == null || installOrig.length == 0)
           discard[0] = "modulesToinstall";
@@ -629,6 +686,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // after all the checks, save the ImportModule object in session
         // to take it in next steps
         vars.setSessionObject("InstallModule|ImportModule", im);
+
+        // calculate minimum required version of each extra module (installs & updates)
+        minVersions = calcMinVersions(im);
+
+        // check commercial modules and show error page if not allowed to install
+        if (!checkCommercialModules(im, minVersions, response, vars)) {
+          return;
+        }
+
       } else { // Dependencies not satisfied, do not show continue button
         message = im.getCheckError();
         discard[5] = "discardContinue";
@@ -655,11 +721,27 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
-    if (inst != null && inst.length > 0)
-      xmlDocument.setData("installs", FieldProviderFactory.getFieldProviderArray(inst));
+    if (inst != null && inst.length > 0) {
+      FieldProviderFactory[] insts = (FieldProviderFactory[]) FieldProviderFactory
+          .getFieldProviderArray(inst);
+      for (FieldProvider fp : insts) {
+        String moduleId = fp.getField("moduleID");
+        FieldProviderFactory.setField(fp, "versionNoMin", (minVersions.get(moduleId) == null ? fp
+            .getField("versionNo") : minVersions.get(moduleId)));
+      }
+      xmlDocument.setData("installs", insts);
+    }
 
-    if (upd != null && upd.length > 0)
-      xmlDocument.setData("updates", FieldProviderFactory.getFieldProviderArray(upd));
+    if (upd != null && upd.length > 0) {
+      FieldProviderFactory[] upds = (FieldProviderFactory[]) FieldProviderFactory
+          .getFieldProviderArray(upd);
+      for (FieldProvider fp : upds) {
+        String moduleId = fp.getField("moduleID");
+        FieldProviderFactory.setField(fp, "versionNoMin", minVersions.get(moduleId));
+        FieldProviderFactory.setField(fp, "versionNoCurr", currentInstalledVersion(moduleId));
+      }
+      xmlDocument.setData("updates", upds);
+    }
 
     xmlDocument.setParameter("inpLocalInstall", islocal ? "Y" : "N");
 
@@ -683,8 +765,71 @@ public class ModuleManagement extends HttpSecureAppServlet {
     out.close();
   }
 
-  private boolean checkCommercialModules(ImportModule im, HttpServletResponse response,
-      VariablesSecureApp vars) throws IOException {
+  private String currentInstalledVersion(String moduleId) {
+    String currentVersion = "";
+    org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+        org.openbravo.model.ad.module.Module.class, moduleId);
+    if (mod != null) {
+      currentVersion = mod.getVersion();
+    }
+    return currentVersion;
+  }
+
+  /**
+   * calculate minimum required version for each module in consistent set of (installs, updates)
+   * returned by a checkConsistency call
+   * 
+   * @param im
+   */
+  private Map<String, String> calcMinVersions(ImportModule im) {
+    // (key,value) = (moduleId, minRequiredVersion)
+    Map<String, String> minVersions = new HashMap<String, String>();
+    for (Module m : im.getModulesToInstall()) {
+      calcMinVersionFromDeps(minVersions, m.getDependencies());
+      if (m.getIncludes() != null) {
+        calcMinVersionFromDeps(minVersions, m.getIncludes());
+      }
+    }
+    for (Module m : im.getModulesToUpdate()) {
+      calcMinVersionFromDeps(minVersions, m.getDependencies());
+      if (m.getIncludes() != null) {
+        calcMinVersionFromDeps(minVersions, m.getIncludes());
+      }
+    }
+
+    // check and show:
+    for (Module m : im.getModulesToInstall()) {
+      log4j.debug("Install module " + m.getName() + " in version " + m.getVersionNo()
+          + ", required is version >=" + minVersions.get(m.getModuleID()));
+    }
+    for (Module m : im.getModulesToUpdate()) {
+      log4j.debug("Updating module " + m.getName() + " in version " + m.getVersionNo()
+          + ", required is version >=" + minVersions.get(m.getModuleID()));
+    }
+    return minVersions;
+  }
+
+  /**
+   * Utility method which processes a list of dependencies and fills a Map of (moduleID, minVersion)
+   * 
+   * @param minVersions
+   *          in/out-parameter with map of (moduleID, minVersion)
+   * @param deps
+   *          array of dependency entries
+   */
+  private static void calcMinVersionFromDeps(Map<String, String> minVersions,
+      ModuleDependency[] deps) {
+    for (ModuleDependency md : deps) {
+      String oldMinVersion = minVersions.get(md.getModuleID());
+      VersionComparator vc = new VersionComparator();
+      if (oldMinVersion == null || vc.compare(oldMinVersion, md.getVersionStart()) < 0) {
+        minVersions.put(md.getModuleID(), md.getVersionStart());
+      }
+    }
+  }
+
+  private boolean checkCommercialModules(ImportModule im, Map<String, String> minVersions,
+      HttpServletResponse response, VariablesSecureApp vars) throws IOException {
     ActivationKey ak = new ActivationKey();
     boolean OBPSActiveInstance = ActivationKey.isActiveInstance();
     ArrayList<Module> notAllowedMods = new ArrayList<Module>();
@@ -693,47 +838,105 @@ public class ModuleManagement extends HttpSecureAppServlet {
     String expired = "";
     String notActiveYet = "";
 
-    for (Module instMod : im.getModulesToInstall()) {
-      if (instMod.getIsCommercial()) {
-        if (!OBPSActiveInstance
-            || ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
-          if (notSubscribed.length() > 0) {
-            notSubscribed += ", ";
-          }
-          notSubscribed += instMod.getName();
-        } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
-          if (expired.length() > 0) {
-            expired += ", ";
-          }
-          expired += instMod.getName();
-        } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
-          if (notActiveYet.length() > 0) {
-            notActiveYet += ", ";
-          }
-          notActiveYet += instMod.getName();
+    boolean showNotActivatedError = false;
+
+    if (im.getModulesToInstall().length > 1) {
+      for (Module mod : im.getModulesToInstall()) {
+        if (mod.getIsCommercial() && !OBPSActiveInstance) {
+          showNotActivatedError = true;
+          break;
+        }
+      }
+
+      for (Module mod : im.getModulesToUpdate()) {
+        if (mod.getIsCommercial() && !OBPSActiveInstance) {
+          showNotActivatedError = true;
+          break;
         }
       }
     }
 
-    for (Module updMod : im.getModulesToUpdate()) {
-      if (updMod.getIsCommercial()) {
-        if (!OBPSActiveInstance
-            || ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
-          if (notSubscribed.length() > 0) {
-            notSubscribed += ", ";
-          }
-          notSubscribed += updMod.getName();
+    if (showNotActivatedError) {
+      String msgHeader = Utility
+          .messageBD(this, "MODULE_DEPENDS_ON_COMMERCIAL", vars.getLanguage());
+      String moduleTemplate = Utility.messageBD(this, "COMMERCIAL_MODULE_DETAIL", vars
+          .getLanguage());
 
-        } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
-          if (expired.length() > 0) {
-            expired += ", ";
+      boolean firstModule = true;
+      String moduleID = "";
+
+      for (Module mod : im.getModulesToInstall()) {
+        if (firstModule) {
+          moduleID = mod.getModuleID();
+          notSubscribed = msgHeader.replace("@MODULE@", mod.getName() + " - " + mod.getVersionNo());
+          notSubscribed += "<br><br>";
+          firstModule = false;
+        }
+
+        if (moduleID.equals(mod.getModuleID()) || !mod.getIsCommercial()) {
+          continue; // skip details
+        }
+
+        String moduleDetail = moduleTemplate.replace("@MODULE@", mod.getName());
+        String minVersion = minVersions.get(mod.getModuleID());
+        if (minVersion == null) {
+          minVersion = mod.getVersionNo();
+        }
+        moduleDetail = moduleDetail.replace("@MIN_VERSION@", minVersion);
+        moduleDetail = moduleDetail.replace("@RECOMMENDED_VERSION@", mod.getVersionNo());
+        notSubscribed += moduleDetail;
+        notSubscribed += "<br><br>";
+      }
+    } else {
+
+      for (Module instMod : im.getModulesToInstall()) {
+        if (instMod.getIsCommercial()) {
+          if (!OBPSActiveInstance
+              || ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+            notAllowedMods.add(instMod);
+            if (notSubscribed.length() > 0) {
+              notSubscribed += ", ";
+            }
+            notSubscribed += instMod.getName();
+          } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
+            notAllowedMods.add(instMod);
+            if (expired.length() > 0) {
+              expired += ", ";
+            }
+            expired += instMod.getName();
+          } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
+            notAllowedMods.add(instMod);
+            if (notActiveYet.length() > 0) {
+              notActiveYet += ", ";
+            }
+            notActiveYet += instMod.getName();
           }
-          expired += updMod.getName();
-        } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
-          if (notActiveYet.length() > 0) {
-            notActiveYet += ", ";
+        }
+      }
+
+      for (Module updMod : im.getModulesToUpdate()) {
+        if (updMod.getIsCommercial()) {
+          if (!OBPSActiveInstance
+              || ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+            notAllowedMods.add(updMod);
+            if (notSubscribed.length() > 0) {
+              notSubscribed += ", ";
+            }
+            notSubscribed += updMod.getName();
+
+          } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
+            notAllowedMods.add(updMod);
+            if (expired.length() > 0) {
+              expired += ", ";
+            }
+            expired += updMod.getName();
+          } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
+            notAllowedMods.add(updMod);
+            if (notActiveYet.length() > 0) {
+              notActiveYet += ", ";
+            }
+            notActiveYet += updMod.getName();
           }
-          notActiveYet += updMod.getName();
         }
       }
     }
@@ -757,6 +960,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
           discard[3] = "OBPSInstance-NoActiveYet";
         }
       }
+
+      if (im.getModulesToInstall().length == 1) {
+        String msgOBPSRequired = Utility.messageBD(this, "OBPS_SUBSCRIPTION_REQUIRED", vars
+            .getLanguage());
+        msgOBPSRequired = msgOBPSRequired.replace("@MODULE_LIST@", notSubscribed);
+        notSubscribed = msgOBPSRequired;
+      }
+
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/ModuleManagement_ErrorCommercial", discard)
           .createXmlDocument();
@@ -772,11 +983,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
       out.close();
     }
     return notAllowedMods.size() == 0;
-  }
-
-  private boolean isHeartbeatEnabled() {
-    SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-    return sys.isEnableHeartbeat() != null && sys.isEnableHeartbeat();
   }
 
   /**

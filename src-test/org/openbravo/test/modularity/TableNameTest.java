@@ -48,7 +48,7 @@ public class TableNameTest extends BaseTest {
    * Creates a test module to work with it in later tests
    */
   public void testCreateModule() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
     module.setName("Test-table-names");
     module.setJavaPackage("org.openbravo.test.tablename");
@@ -75,7 +75,7 @@ public class TableNameTest extends BaseTest {
    * it is assigned to
    */
   public void testCreateTable1() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST1_Table1");
     table.setDBTableName("TEST1_Table1");
@@ -92,7 +92,7 @@ public class TableNameTest extends BaseTest {
    * exception and thus the table is not inserted.
    */
   public void testCreateTable2() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST_Table2");
     table.setDBTableName("TEST_Table2");
@@ -115,7 +115,7 @@ public class TableNameTest extends BaseTest {
    * it should not insert anything
    */
   public void testCreateTable3() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST1_Table3");
     table.setDBTableName("TEST1_Table3");
@@ -138,7 +138,7 @@ public class TableNameTest extends BaseTest {
    * in core, this should fail because the naming rules are not filled
    */
   public void testChangePackage() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     OBCriteria<Table> obCriteria = OBDal.getInstance().createCriteria(Table.class);
     obCriteria.add(Expression.eq(Module.PROPERTY_NAME, "TEST1_Table1"));
     List<Table> tables = obCriteria.list();
@@ -158,7 +158,7 @@ public class TableNameTest extends BaseTest {
    * Removes all created objects from database.
    */
   public void testCleanUp() {
-    setUserContext("0");
+    setSystemAdministratorContext();
     OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
     obCriteria.add(Expression.eq(Module.PROPERTY_NAME, "Test-table-names"));
     List<Module> modules = obCriteria.list();

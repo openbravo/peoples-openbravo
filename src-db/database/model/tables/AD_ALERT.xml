@@ -69,22 +69,22 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_ALERTRULE" name="ADALERTRULE_ADALERT">
+      <foreign-key foreignTable="AD_ALERTRULE" name="AD_ALERT_AD_ALERTRULE">
         <reference local="AD_ALERTRULE_ID" foreign="AD_ALERTRULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADALERT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ALERT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADALERT">
+      <foreign-key foreignTable="AD_ORG" name="AD_ALERT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADALERT">
+      <foreign-key foreignTable="AD_ROLE" name="AD_ALERT_AD_ROLE">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_ADALERT">
+      <foreign-key foreignTable="AD_USER" name="AD_ALERT_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_ADALERT">
+      <foreign-key foreignTable="M_WAREHOUSE" name="AD_ALERT_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
     </table>

@@ -47,6 +47,7 @@ public class DalInitializingTask extends Task {
   protected String userId;
   private String providerConfigDirectory;
   private boolean reInitializeModel;
+  private boolean adminMode = false;
 
   public String getPropertiesFile() {
     return propertiesFile;
@@ -113,6 +114,9 @@ public class DalInitializingTask extends Task {
     try {
       log.debug("Setting user context to user " + getUserId());
       OBContext.setOBContext(getUserId());
+      if (isAdminMode()) {
+        OBContext.enableAsAdminContext();
+      }
       doExecute();
       errorOccured = false;
     } finally {
@@ -120,6 +124,9 @@ public class DalInitializingTask extends Task {
         OBDal.getInstance().rollbackAndClose();
       } else {
         OBDal.getInstance().commitAndClose();
+      }
+      if (isAdminMode()) {
+        OBContext.resetAsAdminContext();
       }
     }
   }
@@ -164,6 +171,14 @@ public class DalInitializingTask extends Task {
 
     LogManager.resetConfiguration();
     PropertyConfigurator.configure(props);
+  }
+
+  public boolean isAdminMode() {
+    return adminMode;
+  }
+
+  public void setAdminMode(boolean adminMode) {
+    this.adminMode = adminMode;
   }
 
 }

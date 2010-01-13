@@ -1368,12 +1368,12 @@ begin
   v_md5 = ''; 
   --Checksum for PL functions
   for i in (
-	select upper(proname) as proname, pronargs, p.proargtypes 
+	select upper(proname) as proname, p.proname as realname, pronargs, oidvectortypes(p.proargtypes)
 	from pg_proc p, pg_namespace n 
          where  pronamespace = n.oid   and n.nspname=current_schema() 
          and p.oid not in (select tgfoid   from pg_trigger) 
          and p.proname not in ('temp_findinarray', 'ad_db_modified', 'dateformat')
-         order by 1,2,3) loop 
+         order by 1,2,3,4) loop 
       --note that for overloaded functions more than one line will be obtained
 
      
@@ -1384,7 +1384,7 @@ begin
      select md5(p.prosrc) 
        into aux
        from pg_proc p
-      where UPPER(p.proname) = i.proname
+      where p.proname = i.realname
         and p.pronargs = i.pronargs
         and p.proargtypes = i.proargtypes;
         
@@ -1402,7 +1402,7 @@ begin
 	      OR pg_proc.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype)
 	     AND NOT pg_proc.proisagg
 	     AND pg_catalog.pg_function_is_visible(pg_proc.oid)
-	     AND upper(pg_proc.proname) = i.proname
+	     AND pg_proc.proname = i.realname
              and pg_proc.pronargs = i.pronargs
              and pg_proc.proargtypes = i.proargtypes
 	     and (pg_proc.proargmodes is not null
@@ -1452,7 +1452,7 @@ begin
   end loop;
 
   --tables
-  for i in (SELECT UPPER(TABLENAME) as tablename
+  for i in (SELECT UPPER(TABLENAME) as tablename, t.tablename as realname
               FROM PG_TABLES t
               WHERE SCHEMANAME = CURRENT_SCHEMA()
              ORDER BY 1) loop
@@ -1463,7 +1463,7 @@ begin
               FROM  pg_attribute, pg_constraint JOIN PG_CLASS ON PG_CLASS.OID = PG_CONSTRAINT.CONRELID 
               WHERE pg_constraint.conrelid = pg_class.oid AND pg_attribute.attrelid = pg_constraint.conrelid AND (pg_attribute.attnum = ANY (pg_constraint.conkey))
               and PG_CONSTRAINT.CONTYPE::TEXT = 'p' 
-	      AND UPPER(PG_CLASS.RELNAME::TEXT) =  i.tablename
+	      AND PG_CLASS.RELNAME =  i.realname
               ORDER BY PG_CONSTRAINT.CONNAME, pg_attribute.attnum::integer) loop
         v_md5 := md5(v_md5||j.pk);
      end loop;
@@ -1502,7 +1502,7 @@ begin
               END),'.')) as cl
               FROM pg_class, pg_namespace, pg_attribute, pg_type
               WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0 
-              AND upper(pg_class.relname::text) = i.tablename
+              AND pg_class.relname = i.realname
               ORDER BY pg_attribute.attnum) loop
       v_md5 := md5(v_md5||j.cl);
     end loop;
@@ -1510,7 +1510,7 @@ begin
     --checks
     for j in (SELECT md5(upper(pg_constraint.conname::text)|| pg_constraint.consrc) as ck
               FROM pg_constraint JOIN pg_class ON pg_class.oid = pg_constraint.conrelid
-              WHERE pg_constraint.contype::text = 'c' and upper(pg_class.relname::text) = i.tablename
+              WHERE pg_constraint.contype::text = 'c' and pg_class.relname = i.realname
               ORDER BY upper(pg_constraint.conname::text)) loop
       v_md5 := md5(v_md5||j.ck);
     end loop;
@@ -1518,7 +1518,7 @@ begin
     --fk
     for j in (SELECT md5(upper(pc.conname::text)|| upper(fk_table.relname::text)|| upper(pc.confdeltype::text)||  upper(pa1.attname)|| upper(pa2.attname)) as ck
               FROM pg_class pc1, pg_attribute pa1, pg_class pc2, pg_attribute pa2, pg_constraint pc JOIN pg_class ON pg_class.oid = pc.conrelid LEFT JOIN pg_class fk_table ON fk_table.oid = pc.confrelid
-              WHERE pc.contype::text = 'f' and upper(pg_class.relname::text) = i.tablename
+              WHERE pc.contype::text = 'f' and pg_class.relname = i.realname
               AND  pc.conrelid= pc1.oid and upper(pc.conname) = upper(pc.conname) 
               and pa1.attrelid = pc1.oid and pa1.attnum = ANY(pc.conkey)
               and pc.confrelid = pc2.oid and pa2.attrelid = pc2.oid and pa2.attnum = ANY(pc.confkey)
@@ -1539,7 +1539,7 @@ begin
               AND PG_INDEX.INDISPRIMARY ='f'
                AND pg_attribute.attrelid = pg_index.indrelid
           AND pg_attribute.attnum = ANY (indkey)
-              AND UPPER(PG_CLASS1.RELNAME) = i.tablename
+              AND PG_CLASS1.RELNAME = i.realname
               ORDER BY UPPER(PG_CLASS.RELNAME), upper(pg_attribute.attname::text)) loop
       v_md5 := md5(v_md5||j.ck);
     end loop;

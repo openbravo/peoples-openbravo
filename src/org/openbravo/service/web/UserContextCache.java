@@ -48,14 +48,14 @@ public class UserContextCache implements OBSingleton {
 
   private static UserContextCache instance;
 
-  public static UserContextCache getInstance() {
+  public static synchronized UserContextCache getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(UserContextCache.class);
     }
     return instance;
   }
 
-  public static void setInstance(UserContextCache instance) {
+  public static synchronized void setInstance(UserContextCache instance) {
     UserContextCache.instance = instance;
   }
 

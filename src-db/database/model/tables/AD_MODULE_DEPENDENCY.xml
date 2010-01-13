@@ -57,19 +57,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADMODULEDEPENDENCY_ADCLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_DEPENDENCY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULEDEPENDENCY_ADMODULE" onDelete="cascade">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULEDEPENDENCY_ADMODULE2">
+      <foreign-key foreignTable="AD_MODULE" name="AD_MODULE_DEPENDENCY_AD_DEPEND">
         <reference local="AD_DEPENDENT_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADMODULEDEPENDENCY_ADORG">
+      <foreign-key foreignTable="AD_MODULE" name="AD_MODULE_DEPENDENCY_AD_MODULE" onDelete="cascade">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_MODULE_DEPENDENCY_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_MODULE_DEPENDENCY_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISINCLUDED_CHK"><![CDATA[ISINCLUDED IN ('Y', 'N')]]></check>
-      <check name="MODULEDEPENDENCY_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

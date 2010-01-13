@@ -11,7 +11,7 @@ dojo.provide("dojox.form._SelectStackMixin");
 
 dojo.declare("dojox.form._SelectStackMixin", null, {
 	// summary:
-	//		Mix this class in to a dojox.form._FormSelectWidget in order to 
+	//		Mix this class in to a dijit.form._FormSelectWidget in order to 
 	//		provide support for "selectable" multiforms.  The widget is pointed
 	//		to a dijit.layout.StackContainer and will handle displaying and 
 	//		submitting the values of only the appropriate pane.
@@ -52,7 +52,7 @@ dojo.declare("dojox.form._SelectStackMixin", null, {
 		return id; // String
 	},
 	
-	_togglePane: function(/*Widget*/ pane, /*Boolean*/ shown){
+	_togglePane: function(/*dijit._Widget*/ pane, /*Boolean*/ shown){
 		// summary: called when a pane is either shown or hidden (so that
 		//  we can toggle the widgets on it)
 		
@@ -80,12 +80,29 @@ dojo.declare("dojox.form._SelectStackMixin", null, {
 		}
 		pane._shown = shown;
 	},
+	
+	_connectTitle: function(/*dijit._Widget*/ pane, /*String*/ value){
+		var fx = dojo.hitch(this, function(title){
+			this.updateOption({value: value, label: title});
+		});
+		if(pane._setTitleAttr){
+			this.connect(pane, "_setTitleAttr", fx);
+		}else{
+			this.connect(pane, "attr", function(attr, val){
+				if(attr == "title" && arguments.length > 1){
+					fx(val);
+				}
+			});
+		}
+	},
 
-	onAddChild: function(/*Widget*/ pane, /*Integer?*/ insertIndex){
+	onAddChild: function(/*dijit._Widget*/ pane, /*Integer?*/ insertIndex){
 		// summary: Called when the stack container adds a new pane
 		if(!this._panes[pane.id]){
 			this._panes[pane.id] = pane;
-			this.addOption({value: this._optionValFromPane(pane.id), label: pane.title});
+			var v = this._optionValFromPane(pane.id);
+			this.addOption({value: v, label: pane.title});
+			this._connectTitle(pane, v);
 		}
 		if(!pane.onShow || !pane.onHide || pane._shown == undefined){
 			pane.onShow = dojo.hitch(this, "_togglePane", pane, true);
@@ -107,7 +124,7 @@ dojo.declare("dojox.form._SelectStackMixin", null, {
 		return this.inherited(arguments);
 	},
 
-	onRemoveChild: function(/*Widget*/ pane){
+	onRemoveChild: function(/*dijit._Widget*/ pane){
 		// summary: Called when the stack container removes a pane
 		if(this._panes[pane.id]){
 			delete this._panes[pane.id];
@@ -115,7 +132,7 @@ dojo.declare("dojox.form._SelectStackMixin", null, {
 		}
 	},
 	
-	onSelectChild: function(/*Widget*/ pane){
+	onSelectChild: function(/*dijit._Widget*/ pane){
 		// summary: Called when the stack container selects a new pane
 		this._setValueAttr(this._optionValFromPane(pane.id));
 	},
@@ -125,6 +142,7 @@ dojo.declare("dojox.form._SelectStackMixin", null, {
 		var selPane = info.selected;
 		this.addOption(dojo.filter(dojo.map(info.children, function(c){
 			var v = this._optionValFromPane(c.id);
+			this._connectTitle(c, v);
 			var toAdd = null;
 			if(!this._panes[c.id]){
 				this._panes[c.id] = c;
@@ -194,7 +212,12 @@ dojo.declare("dojox.form._SelectStackMixin", null, {
 		// summary: Called when form select widget's value has changed
 		var pane = this._panes[this._paneIdFromOption(val)];
 		if (pane){
-			dijit.byId(this.stackId).selectChild(pane);
+			var s = dijit.byId(this.stackId);
+			if(pane == s.selectedChildWidget){
+				s._transition(pane);
+			}else{
+				s.selectChild(pane);
+			}
 		}
 	}
 });

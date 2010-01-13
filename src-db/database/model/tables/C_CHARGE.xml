@@ -61,17 +61,17 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCHARGE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_CHARGE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CCHARGE">
+      <foreign-key foreignTable="AD_ORG" name="C_CHARGE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_CCHARGE">
+      <foreign-key foreignTable="C_TAXCATEGORY" name="C_CHARGE_C_TAXCATEGORY">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
-      <check name="CCHARGE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CCHARGE_ISSAMECURRENCY_CHECK"><![CDATA[ISSAMECURRENCY IN ('Y', 'N')]]></check>
-      <check name="CCHARGE_ISSAMETAX_CHECK"><![CDATA[ISSAMETAX IN ('Y', 'N')]]></check>
+      <check name="C_CHARGE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_CHARGE_ISSAMECURRENCY_CHK"><![CDATA[ISSAMECURRENCY IN ('Y', 'N')]]></check>
+      <check name="C_CHARGE_ISSAMETAX_CHK"><![CDATA[ISSAMETAX IN ('Y', 'N')]]></check>
     </table>
   </database>

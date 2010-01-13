@@ -20,7 +20,7 @@ dojo.declare("dojox.av.widget.Status", [dijit._Widget, dijit._Templated], {
 	//		(playing, paused, buffering, etc.) in the middle. Displays
 	//		the playhead time on the left and the duration on the right.
 	//
-	templateString:"<table class=\"Status\">\n    <tr>\n        <td class=\"Time\"><span dojoAttachPoint=\"timeNode\">0.00</span></td>\n        <td class=\"Status\"><div dojoAttachPoint=\"titleNode\">Loading...</div></td>\n        <td class=\"Duration\"><span dojoAttachPoint=\"durNode\">0.00</span></td>\n    </tr>\n</table>\n",
+	templateString: dojo.cache("dojox.av.widget", "resources/Status.html", "<table class=\"Status\">\n    <tr>\n        <td class=\"Time\"><span dojoAttachPoint=\"timeNode\">0.00</span></td>\n        <td class=\"Status\"><div dojoAttachPoint=\"titleNode\">Loading...</div></td>\n        <td class=\"Duration\"><span dojoAttachPoint=\"durNode\">0.00</span></td>\n    </tr>\n</table>\n"),
 	//
 	postCreate: function(){
 		this.titleNode = dojo.query(".Status", this.domNode);

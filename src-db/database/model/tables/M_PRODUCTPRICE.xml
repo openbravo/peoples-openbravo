@@ -53,19 +53,19 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTPRICE">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCTPRICE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MPRODUCTPRICE">
+      <foreign-key foreignTable="AD_ORG" name="M_PRODUCTPRICE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST_VERSION" name="MPRICELISTVER_MPRODUCTPRICE" onDelete="cascade">
+      <foreign-key foreignTable="M_PRICELIST_VERSION" name="M_PRODUCTPRICE_M_PRICELIST_VER" onDelete="cascade">
         <reference local="M_PRICELIST_VERSION_ID" foreign="M_PRICELIST_VERSION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTPRICE" onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCTPRICE_M_PRODUCT" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <unique name="MPRODUCTPRICE_MPRICELISTVER_UN">
+      <unique name="M_PRODUCTPRICE_PRICELIST_VE_UN">
         <unique-column name="M_PRICELIST_VERSION_ID"/>
         <unique-column name="M_PRODUCT_ID"/>
       </unique>

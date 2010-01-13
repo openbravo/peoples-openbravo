@@ -46,14 +46,14 @@ public class XMLUtil implements OBSingleton {
 
   private static XMLUtil instance;
 
-  public static XMLUtil getInstance() {
+  public static synchronized XMLUtil getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(XMLUtil.class);
     }
     return instance;
   }
 
-  public static void setInstance(XMLUtil instance) {
+  public static synchronized void setInstance(XMLUtil instance) {
     XMLUtil.instance = instance;
   }
 

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo S.L.
+ * All portions are Copyright (C) 2001-2009 Openbravo S.L.
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -111,22 +111,5 @@
       <Parameter name="tadRecordrangeInfo"/>
       <Parameter name="tadTransactionalrange"/>
       <Parameter name="tadTheme"/>
-  </SqlMethod>
-  <SqlMethod name="insert" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      INSERT INTO AD_PREFERENCE (AD_PREFERENCE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, 
-      CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_USER_ID, ATTRIBUTE, VALUE)
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y', 
-      now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), ?, ?)
-    ]]></Sql>
-      <Parameter name="adPreferenceId"/>
-      <Parameter name="adClientId"/>
-      <Parameter name="adOrgId"/>
-      <Parameter name="adUserId"/>
-      <Parameter name="adUserId"/>
-      <Parameter name="adUserId"/>
-      <Parameter name="attribute"/>
-      <Parameter name="value"/>
   </SqlMethod>
 </SqlClass>

@@ -69,25 +69,25 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MSTORAGEPENDING">
+      <foreign-key foreignTable="AD_CLIENT" name="M_STORAGE_PENDING_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MSTORAGEPENDING">
+      <foreign-key foreignTable="AD_ORG" name="M_STORAGE_PENDING_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="CUOM_MSTORAGEPENDING">
+      <foreign-key foreignTable="C_UOM" name="M_STORAGE_PENDING_C_UOM">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRIBUTE_MSTORAGEPENDING">
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_STORAGE_PENDING_M_ATTRIBUTES">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MSTORAGEPENDING">
+      <foreign-key foreignTable="M_PRODUCT" name="M_STORAGE_PENDING_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOM_MSTORAGEPENDING">
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="M_STORAGE_PENDING_M_PRODUCT_UO">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MSTORAGEPENDING">
+      <foreign-key foreignTable="M_WAREHOUSE" name="M_STORAGE_PENDING_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
       <unique name="M_STORAGE_PENDING_UN">

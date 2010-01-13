@@ -57,16 +57,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADATTACHMENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ATTACHMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_DATATYPE" name="ADDATATYPE_ADATTACHMENT">
+      <foreign-key foreignTable="AD_DATATYPE" name="AD_ATTACHMENT_AD_DATATYPE">
         <reference local="AD_DATATYPE_ID" foreign="AD_DATATYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADATTACHMENT">
+      <foreign-key foreignTable="AD_ORG" name="AD_ATTACHMENT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADATTACHMENT" onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="AD_ATTACHMENT_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <index name="AD_ATTACHMENT_RECORD" unique="false">

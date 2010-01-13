@@ -140,6 +140,42 @@
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_CLIENTINFO">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_CLIENTINFO_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_BPARTNER">
+        <reference local="AD_TREE_BPARTNER_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_MENU">
+        <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_ORG">
+        <reference local="AD_TREE_ORG_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_PRODUCT">
+        <reference local="AD_TREE_PRODUCT_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_PROJECT">
+        <reference local="AD_TREE_PROJECT_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="AD_CLIENTINFO_AD_TREE_SALESREG">
+        <reference local="AD_TREE_SALESREGION_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="AD_CLIENTINFO_C_ACCTSCHEMA1">
+        <reference local="C_ACCTSCHEMA1_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="AD_CLIENTINFO_C_ACCTSCHEMA2" onDelete="setnull">
+        <reference local="C_ACCTSCHEMA2_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="AD_CLIENTINFO_C_ACCTSCHEMA3" onDelete="setnull">
+        <reference local="C_ACCTSCHEMA3_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="AD_CLIENTINFO_C_BPARTNERCASHTR">
+        <reference local="C_BPARTNERCASHTRX_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CALENDAR" name="AD_CLIENTINFO_C_CALENDAR">
+        <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_IMAGE" name="AD_CLIENTINFO_IMAGEBIGCOMP">
         <reference local="YOUR_COMPANY_BIG_IMAGE" foreign="AD_IMAGE_ID"/>
       </foreign-key>
@@ -149,26 +185,11 @@
       <foreign-key foreignTable="AD_IMAGE" name="AD_CLIENTINFO_IMAGEMENUCOMP">
         <reference local="YOUR_COMPANY_MENU_IMAGE" foreign="AD_IMAGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADCLIENTINFO">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      <foreign-key foreignTable="M_PRICELIST" name="AD_CLIENTINFO_M_PRICELIST">
+        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREEBPARTNER_ADCLIENTINFO">
-        <reference local="AD_TREE_BPARTNER_ID" foreign="AD_TREE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREEMENU_ADCLIENTINFO">
-        <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREEORG_ADCLIENTINFO">
-        <reference local="AD_TREE_ORG_ID" foreign="AD_TREE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREEPRODUCT_ADCLIENTINFO">
-        <reference local="AD_TREE_PRODUCT_ID" foreign="AD_TREE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREEPROJECT_ADCLIENTINFO">
-        <reference local="AD_TREE_PROJECT_ID" foreign="AD_TREE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREESALESREG_ADCLIENTINFO">
-        <reference local="AD_TREE_SALESREGION_ID" foreign="AD_TREE_ID"/>
+      <foreign-key foreignTable="M_PRODUCT" name="AD_CLIENTINFO_M_PRODUCTFREIGHT">
+        <reference local="M_PRODUCTFREIGHT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="C_UOM_LENGTH_AD_CLIENTINFO">
         <reference local="C_UOM_LENGTH_ID" foreign="C_UOM_ID"/>
@@ -182,33 +203,12 @@
       <foreign-key foreignTable="C_UOM" name="C_UOM_WEIGHT_AD_CLIENTINFO">
         <reference local="C_UOM_WEIGHT_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA1_ADCLIENTINFO">
-        <reference local="C_ACCTSCHEMA1_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA2_ADCLIENTINFO" onDelete="setnull">
-        <reference local="C_ACCTSCHEMA2_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA3_ADCLIENTINFO" onDelete="setnull">
-        <reference local="C_ACCTSCHEMA3_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_ADCLIENTINFO">
-        <reference local="C_BPARTNERCASHTRX_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CALENDAR" name="CCALENDAR_ADCLIENTINFO">
-        <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_ADCLIENTINFO">
-        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_ADCLIENTINFO">
-        <reference local="M_PRODUCTFREIGHT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <check name="ADCLIENTINFO_ACCT2ACTIVE_CHECK"><![CDATA[ACCT2_ACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADCLIENTINFO_ACCT3ACTIVE_CHECK"><![CDATA[ACCT3_ACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADCLIENTINFO_ANEGATSTOCK_CHECK"><![CDATA[ALLOWNEGATIVESTOCK IN ('Y', 'N')]]></check>
-      <check name="ADCLIENTINFO_INOUTORG_CHECK"><![CDATA[CHECKINOUTORG IN ('Y', 'N')]]></check>
-      <check name="ADCLIENTINFO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADCLIENTINFO_ISDISLNAMT_CHECK"><![CDATA[ISDISCOUNTLINEAMT IN ('Y', 'N')]]></check>
-      <check name="ADCLIENTINFO_ORDERORG_CHECK"><![CDATA[CHECKORDERORG IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ACCT2_ACTIVE_CHK"><![CDATA[ACCT2_ACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ACCT3_ACTIVE_CHK"><![CDATA[ACCT3_ACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ALLOWNEGATIV_CHK"><![CDATA[ALLOWNEGATIVESTOCK IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_CHECKINOUTOR_CHK"><![CDATA[CHECKINOUTORG IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_CHECKORDEROR_CHK"><![CDATA[CHECKORDERORG IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ISDISCOUNTLI_CHK"><![CDATA[ISDISCOUNTLINEAMT IN ('Y', 'N')]]></check>
     </table>
   </database>

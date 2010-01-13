@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_ACCOUNTINGRPT_ELEMENT">
-    <table name="AD_ACCOUNTINGRPT_ELEMENT" primaryKey="PK_AD_ACCOUNTINGRPT_ELEMENT">
+    <table name="AD_ACCOUNTINGRPT_ELEMENT" primaryKey="AD_ACCOUNTINGRPT_ELEMENT_KEY">
       <column name="AD_ACCOUNTINGRPT_ELEMENT_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -77,17 +77,17 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="ADACCOUNTRPT_FK_ACCOUNT">
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="AD_ACCOUNTINGRPT_ELEMENT_ACCOU">
         <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="ADACCOUNTRPT_FK_ACCTSCHEMA">
-        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADACCOUNTRPT_FK_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ACCOUNTINGRPT_ELEMENT_AD_CL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADACCOUNTRPT_FK_ORG">
+      <foreign-key foreignTable="AD_ORG" name="AD_ACCOUNTINGRPT_ELEMENT_AD_OR">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="AD_ACCOUNTINGRPT_ELEMENT_C_ACC">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
     </table>
   </database>

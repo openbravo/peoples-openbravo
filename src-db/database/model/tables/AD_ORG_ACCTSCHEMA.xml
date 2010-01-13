@@ -61,23 +61,23 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADORGACCTSCHEMA">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_ORG_ACCTSCHEMA_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADORGACCTSCHEMA">
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_ACCTSCHEMA_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_SEQUENCE" name="ADSEQUENCEBP_ADORGACCTSCHEMA">
+      <foreign-key foreignTable="AD_SEQUENCE" name="AD_ORG_ACCTSCHEMA_AD_SEQUENCE_">
         <reference local="AD_SEQUENCE_BP_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_SEQUENCE" name="ADSEQUENCEPR_ADORGACCTSCHEMA">
+      <foreign-key foreignTable="AD_SEQUENCE" name="AD_ORG_ACCTSCHEMA_AD_SEQUENCE1">
         <reference local="AD_SEQUENCE_PR_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_ADORGACCTSCHEMA">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="AD_ORG_ACCTSCHEMA_C_ACCTSCHEMA">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <check name="ADORGACCTSCH_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADORGACCTSCH_ISBPNEWACCT_CHECK"><![CDATA[ISBPNEWACCOUNT IN ('Y', 'N')]]></check>
-      <check name="ADORGACCTSCH_ISPRNEWACCT_CHECK"><![CDATA[ISPRNEWACCOUNT IN ('Y', 'N')]]></check>
+      <check name="AD_ORG_ACCTSCHEMA_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_ORG_ACCTSCHEMA_ISBPNEWA_CHK"><![CDATA[ISBPNEWACCOUNT IN ('Y', 'N')]]></check>
+      <check name="AD_ORG_ACCTSCHEMA_ISPRNEWA_CHK"><![CDATA[ISPRNEWACCOUNT IN ('Y', 'N')]]></check>
     </table>
   </database>

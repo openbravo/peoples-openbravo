@@ -85,13 +85,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMACHINECOST">
+      <foreign-key foreignTable="AD_CLIENT" name="MA_MACHINE_COST_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MAMACHINECOST">
+      <foreign-key foreignTable="AD_ORG" name="MA_MACHINE_COST_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MACHINE" name="MAMACHINE_MAMACHINECOST">
+      <foreign-key foreignTable="MA_MACHINE" name="MA_MACHINE_COST_MA_MACHINE">
         <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
       </foreign-key>
       <check name="MA_MACHINE_COST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

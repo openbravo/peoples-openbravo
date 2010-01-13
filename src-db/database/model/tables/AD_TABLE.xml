@@ -127,36 +127,37 @@
       <foreign-key foreignTable="AD_PACKAGE" name="AD_PACKAGE_TABLE">
         <reference local="AD_PACKAGE_ID" foreign="AD_PACKAGE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_TABLE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_TABLE_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_TABLE_AD_WINDOW">
         <reference local="PO_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE" onDelete="setnull">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="TABLECLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="TABLEORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <index name="FKI_AD_PACKAGE_KEY" unique="false">
+      <index name="AD_TABLE_PACKAGE_IDX" unique="false">
         <index-column name="AD_PACKAGE_ID"/>
       </index>
-      <unique name="AD_TABLE_NAME">
-        <unique-column name="NAME"/>
-      </unique>
-      <unique name="CLASSNAME_PACKAGE">
+      <unique name="AD_TABLE_CLASSNAME_PACKAGE_UN">
         <unique-column name="CLASSNAME"/>
         <unique-column name="AD_PACKAGE_ID"/>
       </unique>
-      <unique name="TREETYPE">
+      <unique name="AD_TABLE_NAME">
+        <unique-column name="NAME"/>
+      </unique>
+      <unique name="AD_TABLE_TREETYPE_UN">
         <unique-column name="TREETYPE"/>
       </unique>
-      <check name="ADTABLE_FULLAUDIT_CHECK"><![CDATA[(ISFULLYAUDITED = 'N') OR (UPPER((TABLENAME)) <> 'AD_AUDIT_TRAIL')]]></check>
-      <check name="ADTABLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADTABLE_ISDELETEABLE_CHECK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
-      <check name="ADTABLE_ISHIGHVOLUME_CHECK"><![CDATA[ISHIGHVOLUME IN ('Y', 'N')]]></check>
-      <check name="ADTABLE_ISSECUR_YENABLED_CHECK"><![CDATA[ISSECURITYENABLED IN ('Y', 'N')]]></check>
-      <check name="ADTABLE_ISVIEW_CHECK"><![CDATA[ISVIEW IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISDELETEABLE_CHK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISFULLYAUDITED_CHK"><![CDATA[ISFULLYAUDITED IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISFULLYAUDITED_CHK2"><![CDATA[(ISFULLYAUDITED = 'N') OR (UPPER((TABLENAME)) <> 'AD_AUDIT_TRAIL')]]></check>
+      <check name="AD_TABLE_ISHIGHVOLUME_CHK"><![CDATA[ISHIGHVOLUME IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISSECUR_YENABLED_CHK"><![CDATA[ISSECURITYENABLED IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISVIEW_CHK"><![CDATA[ISVIEW IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,19 +53,21 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT RPAD(COALESCE(BP.NAME2,BP.NAME),40,' ') AS TERCERO,RPAD(TO_CHAR(COALESCE(C_INVOICE.DATEINVOICED,DP.DATEPLANNED), 'DDMMYY'),14) AS FECHA_FACTURA,
+      SELECT RPAD(COALESCE(BA.A_Name,COALESCE(BP.NAME2,BP.NAME)),40,' ') AS TERCERO,RPAD(TO_CHAR(COALESCE(C_INVOICE.DATEINVOICED,DP.DATEPLANNED), 'DDMMYY'),14) AS FECHA_FACTURA,
       TO_CHAR(TO_CHAR(DP.DATEPLANNED, 'DDMMYY')) AS FECHA_VENCIMIENTO,LPAD(TO_CHAR(ROUND(DP.AMOUNT*100,0)),10,'0') AS PAYAMT,
       (SELECT MAX(BP_A.ACCOUNTNO) FROM C_BP_BANKACCOUNT BP_A WHERE BP.C_BPARTNER_ID = BP_A.C_BPARTNER_ID AND BP_A.ISACTIVE='Y')  AS CREDITCARDNUMBER,
       LPAD(BP.VALUE,12,'0') AS N_FACTURA, RPAD(LPAD(BP.VALUE,8,'0'),12,' ') AS N_FACTURA19,L.CITY AS CIUDAD, RPAD(L.ADDRESS1,40,' ') AS DIRECCION,
       TO_CHAR(now(),'DD')||TO_CHAR(now(),'MM')||TO_CHAR(now(),'YY') AS HOY, RPAD(COALESCE(TO_CHAR(DP.DESCRIPTION),' '),40,' ') AS CONCEPTO,
       RPAD(L.CITY,35,' ') AS PLAZA, RPAD(L.CITY,38,' ') AS LOCALIDAD, L.POSTAL AS POSTAL, SUBSTR(L.POSTAL,1,2) AS CODIGO_PROVINCIA, BP.TAXID AS NIF
       FROM c_remittanceline S, C_BPARTNER_LOCATION BP_L,
-      C_LOCATION L, C_BPARTNER BP,
+      C_LOCATION L, C_BPARTNER BP, C_BP_BankAccount BA,
       C_DEBT_PAYMENT DP left join C_INVOICE on DP.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
       WHERE S.C_debt_payment_id = DP.C_debt_payment_id
+      AND BA.C_BPartner_ID = BP.C_BPartner_ID
       AND DP.C_BPARTNER_ID = BP.C_BPARTNER_ID
       AND BP_L.C_BPARTNER_LOCATION_ID = C_GETBPLOCATIONID(BP.C_BPARTNER_ID, 'B')
       AND BP_L.C_LOCATION_ID = L.C_LOCATION_ID
+      AND BA.IsActive = 'Y'
       and s.C_Remittance_ID = ?
     ]]>
     </Sql>

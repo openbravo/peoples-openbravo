@@ -52,6 +52,7 @@ import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -62,6 +63,7 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -209,11 +211,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           String strOrg = "";
           String strWarehouse = "";
 
+          SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+          boolean correctSystemStatus = sysInfo.getSystemStatus() == null
+              || this.globalParameters.getOBProperty("safe.mode", "false")
+                  .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
           ActivationKey ak = new ActivationKey();
           LicenseRestriction limitation = ak.checkOPSLimitations(variables.getDBSession());
+          // We check if there is a Openbravo Professional Subscription restriction in the license,
+          // or if the last rebuild didn't go well. If any of these are true, then the user is
+          // allowed to login only as system administrator
           if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
               || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
-              || limitation == LicenseRestriction.MODULE_EXPIRED) {
+              || limitation == LicenseRestriction.MODULE_EXPIRED || !correctSystemStatus) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
             if (strRole == null || strRole.equals("")) {

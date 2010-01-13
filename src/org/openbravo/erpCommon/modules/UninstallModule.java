@@ -126,9 +126,7 @@ public class UninstallModule {
         if (status != null && "U".equals(status)) {
           continue;
         }
-        UninstallModuleData.updateUninstall(pool, contents); // set as
-        // uninstalled
-        // in DB
+
         final UninstallModuleData data[] = UninstallModuleData.selectDirectories(pool, contents); // delete
         // directories
         if (data != null && data.length > 0) {
@@ -153,8 +151,17 @@ public class UninstallModule {
               addLog("@ModuleHasNotDirectory@ " + data[i].name, MSG_WARN);
               log4j.info(data[i].name + " has no contents directory");
             }
-
           }
+        }
+
+        if (status.equals("I")) {
+          // the module has not been already installed, delete it from temporary installation tables
+          UninstallModuleData.deleteTmpModule(pool, contents);
+          UninstallModuleData.deleteTmpDependency(pool, contents);
+          UninstallModuleData.deleteTmpDBPrefix(pool, contents);
+        } else {
+          // set as uninstalled in DB
+          UninstallModuleData.updateUninstall(pool, contents);
         }
       }
     } catch (final Exception e) {

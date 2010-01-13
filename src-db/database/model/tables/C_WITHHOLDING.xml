@@ -93,22 +93,22 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CWITHHOLDING">
+      <foreign-key foreignTable="AD_CLIENT" name="C_WITHHOLDING_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CWITHHOLDING">
+      <foreign-key foreignTable="AD_ORG" name="C_WITHHOLDING_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CWITHHOLDING">
+      <foreign-key foreignTable="C_BPARTNER" name="C_WITHHOLDING_BENEFICIARY">
         <reference local="BENEFICIARY" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CWITHHOLDING">
+      <foreign-key foreignTable="C_PAYMENTTERM" name="C_WITHHOLDING_C_PAYMENTTERM">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
       <check name="C_WITHHOLDING_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CWITHHOLD_ISTAXPRORAT_CHECK"><![CDATA[ISTAXPRORATED IN ('Y', 'N')]]></check>
-      <check name="CWITHOLD_ISPAIDTO3PART_CHECK"><![CDATA[ISPAIDTO3PARTY IN ('Y', 'N')]]></check>
-      <check name="CWITHOLD_ISPNTWITHOLD_CHECK"><![CDATA[ISPERCENTWITHHOLDING IN ('Y', 'N')]]></check>
-      <check name="CWITHOLD_ISTAXWITHHOLD_CHECK"><![CDATA[ISTAXWITHHOLDING IN ('Y', 'N')]]></check>
+      <check name="C_WITHHOLDING_ISPAIDTO3PAR_CHK"><![CDATA[ISPAIDTO3PARTY IN ('Y', 'N')]]></check>
+      <check name="C_WITHHOLDING_ISPERCENTWIT_CHK"><![CDATA[ISPERCENTWITHHOLDING IN ('Y', 'N')]]></check>
+      <check name="C_WITHHOLDING_ISTAXPRORATE_CHK"><![CDATA[ISTAXPRORATED IN ('Y', 'N')]]></check>
+      <check name="C_WITHHOLDING_ISTAXWITHHOL_CHK"><![CDATA[ISTAXWITHHOLDING IN ('Y', 'N')]]></check>
     </table>
   </database>

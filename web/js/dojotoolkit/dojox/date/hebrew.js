@@ -8,7 +8,6 @@
 if(!dojo._hasResource["dojox.date.hebrew"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.date.hebrew"] = true;
 dojo.provide("dojox.date.hebrew");
-dojo.experimental("dojox.date.hebrew");
 
 dojo.require("dojox.date.hebrew.Date");
 dojo.require("dojo.date"); // for compare
@@ -68,26 +67,19 @@ dojox.date.hebrew.add = function(/*dojox.date.hebrew.Date*/date, /*String*/inter
 			break;
 		case "weekday":
 			var day = date.getDay();
-			if(((day + amount) < 5) && ((day + amount) > 0)){
-				 newHebrDate.setDate(date.getDate() + amount);
+			var remdays = 0;
+			if(amount < 0 && day == 6){ day = 5; remdays = -1; }
+			
+			if((day + amount) < 5 && (day + amount) >= 0){ //in the same week
+				 newHebrDate.setDate(date.getDate() + amount + remdays);
 			}else{
-				var adddays = 0, /*weekend */
-					remdays = 0;
-				if (day == 5) {//friday
-					day = 4;
-					remdays = (amount > 0) ?  -1 : 1;
-				}else if (day == 6){ //shabat
-					day = 4;
-					remdays = (amount > 0) ? -2 : 2;		
-				}
-				var add = (amount > 0) ? (5 - day - 1) : -day 
-				var amountdif = amount - add;
-				var div = parseInt(amountdif / 5);
-				if (amountdif % 5 != 0){
-					adddays = (amount > 0)  ? 2 : -2;
-				}
-				adddays = adddays + div * 7 + amountdif % 5 + add;
-				newHebrDate.setDate(date.getDate() + adddays +  remdays);
+				var add = (amount > 0) ? 5 : -1;
+				var adddays = (amount > 0) ? 2 : -2 ; /*first weekend */
+				if  (amount > 0 && (day == 5 || day == 6)) { remdays =  4 - day; day = 4;}
+				var newamount  =  day + amount - add;
+				var weeks = parseInt(newamount / 5);
+				var newday = newamount%5;
+				newHebrDate.setDate(date.getDate() - day+ adddays + weeks * 7 + remdays + newday + add);
 			}
 			break;
 		case "year":
@@ -99,8 +91,12 @@ dojox.date.hebrew.add = function(/*dojox.date.hebrew.Date*/date, /*String*/inter
 			break;
 		case "month":
 			var month = date.getMonth(); 
-			if(!date.isLeapYear(date.getFullYear()) && month > 5){month --;}
-			newHebrDate.setMonth(month + amount);
+			var add = month + amount;
+			if(!date.isLeapYear(date.getFullYear())){
+				if(month < 5 && add >= 5){ add++;}
+				else if (month > 5 && add <= 5){ add--;}	
+			}
+			newHebrDate.setMonth(add);
 			break;
 		case "hour":
 			newHebrDate.setHours(date.getHours() + amount);
@@ -218,7 +214,7 @@ dojox.date.hebrew.difference = function(/*dojox.date.hebrew.Date*/date1, /*dojox
 			var month1 = startdate.getMonth();
 			var month2 = enddate.getMonth();
 			
-			if (yearDiff == 0){
+			if(yearDiff == 0){
 				delta = ( !date1.isLeapYear(date1.getFullYear())  && startdate.getMonth() > 5 && enddate.getMonth() <=5) ? (startdate.getMonth() - enddate.getMonth() - 1) :
 						(startdate.getMonth() - enddate.getMonth() );
 			}else{
@@ -230,7 +226,7 @@ dojox.date.hebrew.difference = function(/*dojox.date.hebrew.Date*/date1, /*dojox
 					delta += enddate.isLeapYear(i) ? 13 : 12; 
 				}
 			}
-			if (date1.toGregorian() < date2.toGregorian()){
+			if(date1.toGregorian() < date2.toGregorian()){
 				delta = -delta;
 			}
 			break;

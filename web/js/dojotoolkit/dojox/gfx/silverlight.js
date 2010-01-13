@@ -539,6 +539,18 @@ dojox.gfx.createSurface = function(parentNode, width, height){
 	// width: String: width of surface, e.g., "100px"
 	// height: String: height of surface, e.g., "100px"
 
+	if(!width && !height){
+		var pos = d.position(parentNode);
+		width  = width  || pos.w;
+		height = height || pos.h;
+	}
+	if(typeof width == "number"){
+		width = width + "px";
+	}
+	if(typeof height == "number"){
+		height = height + "px";
+	}
+
 	var s = new dojox.gfx.Surface();
 	parentNode = dojo.byId(parentNode);
 	s._parent = parentNode;
@@ -731,7 +743,7 @@ dojo.extend(dojox.gfx.Surface, dojox.gfx.shape.Creator);
 				ev.y = ev.offsetY = ev.layerY = p.y;
 				// calculate clientX and clientY
 				var parent = surfaces[s.getHost().content.root.name];
-				var t = dojo._abs(parent);
+				var t = dojo.position(parent);
 				ev.clientX = t.x + p.x;
 				ev.clientY = t.y + p.y;
 			}catch(e){

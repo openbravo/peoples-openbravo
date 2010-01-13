@@ -55,24 +55,6 @@
     <Parameter name="lang"/>
   </SqlMethod>
   
-  <SqlMethod name="setInstalled" type="preparedStatement" return="rowcount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-       UPDATE AD_MODULE
-          SET STATUS = 'A', ISINDEVELOPMENT='N'
-        WHERE (STATUS = 'I' OR STATUS ='P')
-    ]]></Sql>
-  </SqlMethod>
-  
-  <SqlMethod name="deleteUninstalled" type="preparedStatement" return="rowcount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-       DELETE FROM AD_MODULE
-       WHERE STATUS = 'U'
-    ]]></Sql>
-  </SqlMethod>
   
   
 </SqlClass>

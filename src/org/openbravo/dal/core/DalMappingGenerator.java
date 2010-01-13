@@ -54,14 +54,14 @@ public class DalMappingGenerator implements OBSingleton {
 
   private static DalMappingGenerator instance = new DalMappingGenerator();
 
-  public static DalMappingGenerator getInstance() {
+  public static synchronized DalMappingGenerator getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(DalMappingGenerator.class);
     }
     return instance;
   }
 
-  public static void setInstance(DalMappingGenerator dalMappingGenerator) {
+  public static synchronized void setInstance(DalMappingGenerator dalMappingGenerator) {
     instance = dalMappingGenerator;
   }
 

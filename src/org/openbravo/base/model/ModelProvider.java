@@ -78,7 +78,7 @@ public class ModelProvider implements OBSingleton {
    * 
    * @return the ModelProvider instance
    */
-  public static ModelProvider getInstance() {
+  public static synchronized ModelProvider getInstance() {
     // set in a localInstance to prevent threading issues when
     // reseting it in setInstance()
     ModelProvider localInstance = instance;
@@ -95,7 +95,7 @@ public class ModelProvider implements OBSingleton {
    * @param instance
    *          the custom ModelProvider
    */
-  public static void setInstance(ModelProvider instance) {
+  public static synchronized void setInstance(ModelProvider instance) {
     ModelProvider.instance = instance;
   }
 

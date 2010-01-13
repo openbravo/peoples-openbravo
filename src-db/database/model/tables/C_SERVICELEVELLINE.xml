@@ -53,16 +53,16 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CSERVICELEVELLINE">
+      <foreign-key foreignTable="AD_CLIENT" name="C_SERVICELEVELLINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CSERVICELEVELLINE">
+      <foreign-key foreignTable="AD_ORG" name="C_SERVICELEVELLINE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_SERVICELEVEL" name="CSERVICELEVEL_LINE" onDelete="cascade">
+      <foreign-key foreignTable="C_SERVICELEVEL" name="C_SERVICELEVELLINE_C_SERVICELE" onDelete="cascade">
         <reference local="C_SERVICELEVEL_ID" foreign="C_SERVICELEVEL_ID"/>
       </foreign-key>
-      <check name="CSERVLEVLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CSERVLEVLINE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="C_SERVICELEVELLINE_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_SERVICELEVELLINE_PROCESS_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -21,7 +21,7 @@ dojo.declare("dojox.av.widget.VolumeButton", [dijit._Widget, dijit._Templated], 
 	//		opens a slider on click that is used to adjust the volume.
 	//		The icon changes according to the volume level.
 	//
-	templateString:"<div class=\"Volume\" dojoAttachEvent=\"mousedown:onShowVolume\">\n\t<div class=\"VolumeSlider\" dojoAttachPoint=\"volumeSlider\">\n    \t<div class=\"VolumeSliderBack\" dojoAttachPoint=\"volumeSliderBack\"></div>\n    \t<div class=\"VolumeSliderHandle\" dojoAttachPoint=\"handle\" dojoAttachEvent=\"mousedown:startDrag, mouseup:endDrag, mouseover:handleOver, mouseout:handleOut\"></div>\t\n    </div>\n    <div class=\"icon\"></div>\n</div>\n",
+	templateString: dojo.cache("dojox.av.widget", "resources/VolumeButton.html", "<div class=\"Volume\" dojoAttachEvent=\"mousedown:onShowVolume\">\n\t<div class=\"VolumeSlider\" dojoAttachPoint=\"volumeSlider\">\n    \t<div class=\"VolumeSliderBack\" dojoAttachPoint=\"volumeSliderBack\"></div>\n    \t<div class=\"VolumeSliderHandle\" dojoAttachPoint=\"handle\" dojoAttachEvent=\"mousedown:startDrag, mouseup:endDrag, mouseover:handleOver, mouseout:handleOut\"></div>\t\n    </div>\n    <div class=\"icon\"></div>\n</div>\n"),
 	//
 	postCreate: function(){
 		// summary:

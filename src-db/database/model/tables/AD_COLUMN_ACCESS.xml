@@ -53,22 +53,22 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADCOLUMNACCESS">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_COLUMN_ACCESS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADCOLUMNACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_ACCESS_AD_COLUMN" onDelete="cascade">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADCOLUMNACCESS">
+      <foreign-key foreignTable="AD_ORG" name="AD_COLUMN_ACCESS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADCOLUMNACCESS">
+      <foreign-key foreignTable="AD_ROLE" name="AD_COLUMN_ACCESS_AD_ROLE">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADCOLUMNACCESS" onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="AD_COLUMN_ACCESS_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <unique name="ADCOLUMNACCESS_ADROLEID_ADC_UN">
+      <unique name="AD_COLUMN_ACCESS_ROLE_COLUM_UN">
         <unique-column name="AD_ROLE_ID"/>
         <unique-column name="AD_COLUMN_ID"/>
       </unique>

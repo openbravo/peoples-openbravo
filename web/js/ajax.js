@@ -56,8 +56,12 @@ function getXMLHttpRequest() {
 }
 
 function getReadyStateHandler(req, responseXmlHandler, notifyError) {
-  if (req==null) return false;
-  if (notifyError==null) notifyError=true;
+  if (req === null) {
+    return false;
+  }
+  if (notifyError === null || typeof notifyError === 'undefined') {
+    notifyError = true;
+  }
   // If the request's status is "complete"
   if (req.readyState == 4) {
     // Check that we received a successful response from the server
@@ -67,8 +71,9 @@ function getReadyStateHandler(req, responseXmlHandler, notifyError) {
       return true;
     } else {
       // An HTTP problem has occurred
-      if (notifyError)
+      if (notifyError) {
         alert("HTTP error "+req.status+": "+req.statusText);
+	  }
       return false;
     }
     return false;
@@ -79,21 +84,30 @@ function getReadyStateHandler(req, responseXmlHandler, notifyError) {
 function submitXmlHttpRequestUrl(callbackFunction, url, debug, paramXMLReq) {
   var XMLHttpRequestObj = null;
   XMLHttpRequestObj = getXMLHttpRequest();
-  if (!paramXMLReq) paramXMLReq = paramXMLRequest; //Deprecated in 2.50
-  if (!XMLHttpRequestObj) XMLHttpRequestObj = getXMLHttpRequest();
-  if (debug==null) debug=false;
+  if (!paramXMLReq) {
+    paramXMLReq = paramXMLRequest; //Deprecated in 2.50
+  }
+  if (!XMLHttpRequestObj) {
+    XMLHttpRequestObj = getXMLHttpRequest();
+  }
+  if (debug === null) {
+    debug = false;
+  }
   if (!XMLHttpRequestObj) {
     alert("Your browser doesn't support this technology");
     return false;
   }
-  if (debug)
-    if (!debugXmlHttpRequest(url)) return false;
+  if (debug) {
+    if (!debugXmlHttpRequest(url)) {
+	  return false;
+	}
+  }
   XMLHttpRequestObj.open("GET", url);
   var paramXMLParticular = paramXMLReq;
   xmlreq = XMLHttpRequestObj; //Deprecated in 2.50
   XMLHttpRequestObj.onreadystatechange = function () {
     return callbackFunction(paramXMLParticular, XMLHttpRequestObj);
-  }
+  };
   xmlreq = null; //Deprecated in 2.50
   paramXMLRequest = null; //Deprecated in 2.50
   XMLHttpRequestObj.send(null);
@@ -105,11 +119,19 @@ function submitXmlHttpRequestUrl(callbackFunction, url, debug, paramXMLReq) {
 function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
   var XMLHttpRequestObj = null;
   XMLHttpRequestObj = getXMLHttpRequest();
- // if (!xmlreq) xmlreq = getXMLHttpRequest(); //Deprecated in 2.50
-  if (!paramXMLReq) paramXMLReq = paramXMLRequest; //Deprecated in 2.50
-  if (formObject==null) formObject = document.forms[0];
-  if (debug==null) debug=false;
-  if (Action==null) Action = formObject.action;
+  // if (!xmlreq) xmlreq = getXMLHttpRequest(); //Deprecated in 2.50
+  if (!paramXMLReq) {
+    paramXMLReq = paramXMLRequest; //Deprecated in 2.50
+  }
+  if (formObject === null) {
+    formObject = document.forms[0];
+  }
+  if (debug === null) {
+    debug = false;
+  }
+  if (Action === null) {
+    Action = formObject.action;
+  }
   if (!XMLHttpRequestObj) {
     alert("Your browser doesn't support this technology");
     return false;
@@ -120,15 +142,20 @@ function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, A
   for (var i=0;i<length;i++) {
     if (formObject.elements[i].type) {
       var text = inputValueForms(formObject.elements[i].name, formObject.elements[i]);
-      if (text!=null && text!="" && text!="=") sendText += "&" + text;
+      if (text !== null && text !== "" && text !== "=") {
+	    sendText += "&" + text;
+	  }
     }
   }
-  if (extraParams != null && extraParams != "" && extraParams != "null") {
+  if (extraParams !== null && extraParams !== "" && extraParams !== "null") {
     sendText += extraParams;
   }
 
-  if (debug)
-    if (!debugXmlHttpRequest(Command)) return false;
+  if (debug) {
+    if (!debugXmlHttpRequest(Command)) {
+	  return false;
+	}
+  }
   //XMLHttpRequestObj.open("GET", Action + "?" + sendText);
   XMLHttpRequestObj.open("POST", Action);
   try {
@@ -137,8 +164,8 @@ function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, A
   var paramXMLParticular = paramXMLReq;
   xmlreq = XMLHttpRequestObj; //Deprecated in 2.50
   XMLHttpRequestObj.onreadystatechange = function () {
-  return callbackFunction(paramXMLParticular, XMLHttpRequestObj);
-  }
+    return callbackFunction(paramXMLParticular, XMLHttpRequestObj);
+  };
   xmlreq = null; //Deprecated in 2.50
   //XMLHttpRequestObj.send(null);
   paramXMLRequest = null; //Deprecated in 2.50
@@ -153,15 +180,23 @@ function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, deb
 }
 
 function lockField(inputField) {
-  if (inputField==null) return false;
-  if (!inputField.type) return false;
+  if (inputField === null) {
+    return false;
+  }
+  if (!inputField.type) {
+    return false;
+  }
   inputField.disabled=true;
   return true;
 }
 
 function unlockField(inputField) {
-  if (inputField==null) return false;
-  if (!inputField.type) return false;
+  if (inputField === null) {
+    return false;
+  }
+  if (!inputField.type) {
+    return false;
+  }
   inputField.disabled=false;
   return true;
 }

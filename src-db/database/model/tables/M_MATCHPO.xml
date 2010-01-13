@@ -69,22 +69,22 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MMATCHPO">
+      <foreign-key foreignTable="AD_CLIENT" name="M_MATCHPO_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MMATCHPO">
+      <foreign-key foreignTable="AD_ORG" name="M_MATCHPO_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_MMATCHPO">
+      <foreign-key foreignTable="C_INVOICELINE" name="M_MATCHPO_C_INVOICELINE">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="CORDERLINE_MMATCHPO">
+      <foreign-key foreignTable="C_ORDERLINE" name="M_MATCHPO_C_ORDERLINE">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INOUTLINE" name="MINOUTLINE_MMATCHPO">
+      <foreign-key foreignTable="M_INOUTLINE" name="M_MATCHPO_M_INOUTLINE">
         <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MMATCHPO">
+      <foreign-key foreignTable="M_PRODUCT" name="M_MATCHPO_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <index name="M_MATCHPO_SHIP" unique="false">
