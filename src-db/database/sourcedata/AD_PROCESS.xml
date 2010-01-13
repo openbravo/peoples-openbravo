@@ -2245,13 +2245,24 @@
 <!--800001-->  <VALUE><![CDATA[RV_ReportGeneralLedger]]></VALUE>
 <!--800001-->  <NAME><![CDATA[General Ledger Report]]></NAME>
 <!--800001-->  <DESCRIPTION><![CDATA[Report general ledger]]></DESCRIPTION>
-<!--800001-->  <HELP><![CDATA[Report general ledger]]></HELP>
+<!--800001-->  <HELP><![CDATA[Create a report showing all general ledger entries grouped by account for a specified time period. It is possible to group the results by the Business Partner, Product or Project accounting dimensions. It is also possible to filter the results by a range of amounts, organization, range of accounts and a selection of Business Partners, Products and Projects accounting. Additionally it is possible to hide the matched Debt/Payments.
+
+There are 3 ways available to get the results, the Search button and the pdf and Excel exports.
+
+The Search button shows the result in the same window using pagination, so you might need to move to Next and Previous pages if the result has too many entries.
+
+The result is grouped by the selected accounting dimension (if there is one selected) and by the account. The displayed entries are ordered by accounting date.  The Previous amount is the sum of the amounts of that account based on the selected dates with accounting date prior the selected date range. If entries of one account does not fit on one page the subtotal shows the sum of the amounts that are present on the page plus the previous balance, in this case the next page the will include in the previous amounts will be the subtotal of the previous page.
+
+The pdf export generates a pdf file that can be printed or stored in the computer for later reviews. It has the same grouping rules as the search button. In this case the subtotal amounts are the sum of the amounts not including the initial balance amounts.
+
+The Excel export generates an xls file that can be used to perform more advanced analysis to the data. In this case the entries are not shown in different groups. So the user can reorder and group the entries as desired. For each entry  the accounting date, account number, account description, debit amount, credit amount, entry description, business partner, product and project are shown.]]></HELP>
 <!--800001-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800001-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800001-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800001-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800001-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800001-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800001-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800001-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800001--></AD_PROCESS>
@@ -5644,23 +5655,6 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1004400007-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400007-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--1004400007--></AD_PROCESS>
-
-<!--1005200000--><AD_PROCESS>
-<!--1005200000-->  <AD_PROCESS_ID><![CDATA[1005200000]]></AD_PROCESS_ID>
-<!--1005200000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005200000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005200000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005200000-->  <VALUE><![CDATA[ChangeAudit]]></VALUE>
-<!--1005200000-->  <NAME><![CDATA[Change Audit Status]]></NAME>
-<!--1005200000-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--1005200000-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--1005200000-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--1005200000-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--1005200000-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--1005200000-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--1005200000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005200000-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--1005200000--></AD_PROCESS>
 
 <!--1005400001--><AD_PROCESS>
 <!--1005400001-->  <AD_PROCESS_ID><![CDATA[1005400001]]></AD_PROCESS_ID>
