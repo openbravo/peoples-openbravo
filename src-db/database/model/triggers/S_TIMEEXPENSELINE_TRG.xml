@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -26,6 +26,9 @@
   v_TimeExpense_ID VARCHAR2(32);
   v_RO NUMBER;
   v_need_verification BOOLEAN := true;
+  v_BP_PriceList_ID VARCHAR2(32);
+  v_BP_PL_Currency_ID VARCHAR2(32);
+  v_Count NUMBER;
     
 BEGIN
     
@@ -91,6 +94,7 @@ BEGIN
     -- Difference, ID
     IF(UPDATING OR INSERTING) THEN
       IF(:NEW.M_PRODUCT_ID IS NOT NULL) THEN
+        -- Checks UOM match
         SELECT C_UOM_ID
         INTO v_UOM_ID
         FROM M_PRODUCT
@@ -98,6 +102,42 @@ BEGIN
         IF(COALESCE(v_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
           RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)') ;
         END IF;
+        
+        -- Looks for a price for current product and business partner
+        IF(:NEW.C_BPARTNER_ID IS NOT NULL AND :NEW.INVOICEPRICE IS NULL) THEN
+          -- Looks for business partner price list
+          SELECT PL.M_PRICELIST_ID, PL.C_CURRENCY_ID 
+          INTO v_BP_PriceList_ID, v_BP_PL_Currency_ID
+          FROM C_BPARTNER BP, M_PRICELIST PL
+          WHERE BP.M_PRICELIST_ID = PL.M_PRICELIST_ID
+          AND BP.C_BPARTNER_ID = :NEW.C_BPARTNER_ID;
+          IF(v_BP_PriceList_ID IS NULL OR v_BP_PL_Currency_ID IS NULL) THEN
+            -- Looks for expense sheet header price list
+            SELECT PL.M_PRICELIST_ID, PL.C_CURRENCY_ID 
+            INTO v_BP_PriceList_ID, v_BP_PL_Currency_ID
+            FROM S_TIMEEXPENSE E, M_PRICELIST PL
+            WHERE E.M_PRICELIST_ID = PL.M_PRICELIST_ID
+            AND PL.M_PRICELIST_ID = (SELECT M_PriceList_ID FROM S_TimeExpense WHERE S_TimeExpense_ID = :NEW.S_TimeExpense_ID);
+            IF(v_BP_PriceList_ID IS NULL OR v_BP_PL_Currency_ID IS NULL) THEN
+              RAISE_APPLICATION_ERROR(-20555, 'Price not found for current partner and product.') ;              
+            END IF;
+          END IF;
+          -- Looks for price
+          SELECT COUNT(M_BOM_PriceStd(p.M_Product_ID,pv.M_PriceList_Version_ID))
+          INTO v_Count
+          FROM M_Product p, M_ProductPrice pp, M_Pricelist pl, M_PriceList_Version pv 
+          WHERE p.M_Product_ID=pp.M_Product_ID
+          AND pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
+          AND pv.M_PriceList_ID=pl.M_PriceList_ID
+          AND pv.IsActive='Y'
+          AND p.M_Product_ID = :NEW.M_PRODUCT_ID
+          AND pl.M_PriceList_ID = v_BP_PriceList_ID
+          AND pl.C_Currency_ID = v_BP_PL_Currency_ID
+          AND SIGN(TO_NUMBER(TO_DATE(COALESCE(:NEW.DateExpense, (SELECT DateReport FROM S_TimeExpense WHERE S_TimeExpense_ID = :NEW.S_TimeExpense_ID), NOW()))- to_date(pv.ValidFrom))) <> -1 ;
+          IF(v_Count = 0) THEN
+            RAISE_APPLICATION_ERROR(-20555, 'Price not found for current partner and product.') ;
+          END IF;
+        END IF;      
       END IF;
     END IF;
   END IF;
