@@ -369,6 +369,11 @@ public class Wad extends DefaultHandler {
       // Call to update the table identifiers
       log4j.info("Updating table identifiers");
       WadData.updateIdentifiers(wad.pool, quick ? "Y" : "N");
+
+      // Call to generate audit trail infrastructure
+      log4j.info("Re-generating audit trail infrastructure");
+      WadData.updateAuditTrail(wad.pool);
+
       // If generateTabs parameter is true, the action buttons must be
       // generated
       if (generateTabs) {

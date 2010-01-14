@@ -605,7 +605,7 @@ END;   $BODY$
 SELECT pg_temp.insert_recipient();
 /-- END
 
-CREATE OR REPLACE FUNCTION ad_create_audit_triggers()
+CREATE OR REPLACE FUNCTION ad_create_audit_triggers(p_pinstance_id character varying)
   RETURNS void AS
 $BODY1$ DECLARE 
 /*************************************************************************
@@ -620,7 +620,7 @@ $BODY1$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2009 Openbravo SL
+* All portions are Copyright (C) 2009-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -632,6 +632,9 @@ $BODY1$ DECLARE
   recordIdName VARCHAR(30);
   datatype VARCHAR(30); 
   clientinfo NUMERIC;
+  deleted NUMERIC :=0;
+  created NUMERIC :=0;
+  v_message VARCHAR(500);
 BEGIN 
   for cur_triggers in (select *
                          from user_triggers
@@ -639,6 +642,7 @@ BEGIN
     execute 'DROP TRIGGER '||cur_triggers.trigger_name||' ON '||cur_triggers.table_name;
     execute 'DROP FUNCTION '||cur_triggers.trigger_name||'()';  
     raise notice 'deleting %', cur_triggers.trigger_name;
+    deleted := deleted + 1;
   end loop;
 
   for cur_tables in (select *
@@ -803,8 +807,21 @@ EXECUTE(code);
       EXECUTE PROCEDURE '||triggerName||'()';
       execute(code);
       
+    created := created + 1;
 
   end loop;
+  
+  v_Message := '@Deleted@: '||deleted||' @Created@: '||created;
+  PERFORM AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
+  EXCEPTION
+WHEN OTHERS THEN
+  v_Message:= '@ERROR=' || SQLERRM;
+  RAISE NOTICE '%',v_Message ;
+  IF (p_PInstance_ID IS NOT NULL) THEN
+     PERFORM AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_Message) ;
+  END IF;
+  RETURN;
+  
 END ; $BODY1$
 LANGUAGE 'plpgsql' VOLATILE
 /-- END

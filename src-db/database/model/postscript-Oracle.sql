@@ -836,7 +836,7 @@ END;
 
 
 create or replace
-PROCEDURE AD_CREATE_AUDIT_TRIGGERS  
+PROCEDURE AD_CREATE_AUDIT_TRIGGERS(p_pinstance_id IN VARCHAR2)
 
 AS
 /*************************************************************************
@@ -851,7 +851,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2009 Openbravo SL
+* All portions are Copyright (C) 2009-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -864,11 +864,15 @@ AS
   recordIdName varchar2(30);
   datatype varchar2(30);
   clientinfo number;
+  deleted number :=0;
+  created number :=0;
+  v_message varchar2(500);
 BEGIN 
   for cur_triggers in (select trigger_name
                          from user_triggers
                         where trigger_name like 'AU\_%' escape '\') loop
     execute immediate 'drop trigger '||cur_triggers.trigger_name;
+    deleted := deleted + 1;
   end loop;
 
   for cur_tables in (select *
@@ -1011,7 +1015,18 @@ code := code ||
 'END
 ;';
 execute immediate(code);
+    created := created + 1;
   end loop;
+  v_Message := '@Deleted@: '||deleted||' @Created@: '||created;
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
+  EXCEPTION
+WHEN OTHERS THEN
+  v_Message:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_Message) ;
+  IF (p_PInstance_ID IS NOT NULL) THEN
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_Message) ;
+  END IF;
+  RETURN;
 END AD_CREATE_AUDIT_TRIGGERS;
 /-- END
 
