@@ -358,6 +358,7 @@ public class ApplyModules extends HttpSecureAppServlet {
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
+    PreparedStatement ps4 = null;
     PreparedStatement updateSession = null;
     AntExecutor ant = null;
     try {
@@ -426,6 +427,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       if (!rsErr.next()) {
         ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'");
         ps3.executeUpdate();
+        ps4 = getPreparedStatement("UPDATE AD_MODULE SET STATUS='A',ISINDEVELOPMENT='N' WHERE STATUS='P'");
+        ps4.executeUpdate();
       } else {
         ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB59'");
         ps3.executeUpdate();
@@ -447,6 +450,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         releasePreparedStatement(ps);
         releasePreparedStatement(ps2);
         releasePreparedStatement(ps3);
+        releasePreparedStatement(ps4);
         releasePreparedStatement(updateSession);
       } catch (SQLException e) {
         log4j.error("Error while updating the system status in the rebuild window.", e);
