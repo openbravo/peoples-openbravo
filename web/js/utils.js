@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5875';
+  var number = '5878';
   return number;
 }
 
@@ -101,12 +101,14 @@ function getObjAttribute(obj, attribute) {
     attribute_text = attribute_text.replace("\n","");
     attribute_text = attribute_text.replace("}","");
   }
+  attribute_text = attribute_text.replace(/^(\s|\&nbsp;)*|(\s|\&nbsp;)*$/g,"");
   return attribute_text;
 }
 
 function setObjAttribute(obj, attribute, attribute_text) {
   attribute = attribute.toLowerCase();
   attribute_text = attribute_text.toString();
+  attribute_text = attribute_text.replace(/^(\s|\&nbsp;)*|(\s|\&nbsp;)*$/g,"");
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
     obj.setAttribute(attribute, attribute_text);
   } else {
@@ -3167,7 +3169,15 @@ function readOnlyLogicElement(id, readonly) {
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
     obj.readOnly = true;
-      
+    if (obj.getAttribute('type') == "checkbox") {
+      var onclickTextA = getObjAttribute(obj, 'onclick');
+      var checkPatternA = "^[return false;]";
+      var checkRegExpA = new RegExp(checkPatternA);
+      if (!onclickTextA.match(checkRegExpA)) {
+        onclickTextA = 'return false;' + onclickTextA;
+      }
+      setObjAttribute(obj, 'onclick', onclickTextA);
+    }
     if (className.indexOf("Combo ")!=-1) {
       obj.className = className.replace("Combo","ComboReadOnly");
       if (obj.getAttribute("onChange")) {
@@ -3204,6 +3214,19 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
+
+    if (obj.getAttribute('type') == "checkbox") {
+      var onclickTextB = getObjAttribute(obj, 'onclick');
+      var checkPatternB = "^[return false;]";
+      var checkRegExpB = new RegExp(checkPatternB);
+      if (onclickTextB.match(checkRegExpB)) {
+        onclickTextB = onclickTextB.substring(13,onclickTextB.length);
+      }
+      onclickTextB = onclickTextB.replace('return false', 'return true');
+      setObjAttribute(obj, 'onclick', onclickTextB);
+    }
+
+
     if (obj.className.indexOf("Combo")!=-1) {
       if (obj.getAttribute("onChange")) {
         onchange_combo = obj.getAttribute("onChange").toString();
