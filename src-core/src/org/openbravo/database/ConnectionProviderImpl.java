@@ -148,7 +148,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
 
     KeyedObjectPoolFactory keyedObject = new StackKeyedObjectPoolFactory();
     ConnectionFactory connectionFactory = new OpenbravoDriverManagerConnectionFactory(dbServer,
-        dbLogin, dbPassword, dbSessionConfig);
+        dbLogin, dbPassword, dbSessionConfig, rdbms);
     @SuppressWarnings("unused")
     // required by dbcp
     PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(
