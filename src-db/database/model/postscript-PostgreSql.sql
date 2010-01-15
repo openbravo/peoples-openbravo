@@ -635,7 +635,18 @@ $BODY1$ DECLARE
   deleted NUMERIC :=0;
   created NUMERIC :=0;
   v_message VARCHAR(500);
+  v_isObps NUMERIC;
 BEGIN 
+  select count(*) 
+    into v_isObps
+    from ad_system
+   where Instance_key is not null
+     and activation_key is not null;
+     
+  if v_isObps = 0 then
+    RAISE EXCEPTION '%', '@OBPSNeededForAudit@' ; --OBTG:-20000--
+  end if;  	
+	
   for cur_triggers in (select *
                          from user_triggers
                         where trigger_name like 'au_%') loop

@@ -867,7 +867,18 @@ AS
   deleted number :=0;
   created number :=0;
   v_message varchar2(500);
+  v_isObps number;
 BEGIN 
+  select count(*) 
+    into v_isObps
+    from ad_system
+   where Instance_key is not null
+     and activation_key is not null;
+     
+  if v_isObps = 0 then
+    RAISE_APPLICATION_ERROR(-20000, '@OBPSNeededForAudit@') ;
+  end if;  
+
   for cur_triggers in (select trigger_name
                          from user_triggers
                         where trigger_name like 'AU\_%' escape '\') loop
