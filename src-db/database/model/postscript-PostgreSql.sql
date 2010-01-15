@@ -692,7 +692,25 @@ DECLARE
   V_ORG VARCHAR(32); 
   V_CLIENT VARCHAR(32); 
   V_CHANGE BOOLEAN;
+  V_ISAUDITED CHAR(1);
 BEGIN 
+';
+
+if (cur_tables.ad_table_id != '100') then
+code := code ||
+'
+  SELECT ISFULLYAUDITED
+    INTO V_ISAUDITED
+    FROM AD_TABLE
+   WHERE AD_TABLE_ID = '''||cur_tables.ad_table_id||''';
+  IF V_ISAUDITED = ''N'' THEN 
+    RETURN;
+  END IF;
+';
+end if;
+
+code := code ||
+'
   BEGIN
     SELECT AD_USER_ID, PROCESSTYPE, PROCESSID
       INTO V_USER_ID, V_PROCESS_TYPE, V_PROCESS_ID

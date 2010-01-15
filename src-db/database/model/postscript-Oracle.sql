@@ -920,7 +920,25 @@ DECLARE
   V_TIME DATE;
   V_ORG VARCHAR2(32);
   V_CLIENT VARCHAR2(32);
+  V_ISAUDITED CHAR(1);
 BEGIN 
+';
+
+if (cur_tables.ad_table_id != '100') then
+code := code ||
+'
+  SELECT ISFULLYAUDITED
+    INTO V_ISAUDITED
+    FROM AD_TABLE
+   WHERE AD_TABLE_ID = '''||cur_tables.ad_table_id||''';
+  IF V_ISAUDITED = ''N'' THEN 
+    RETURN;
+  END IF;
+';
+end if;
+
+code := code ||
+'
   BEGIN
     SELECT AD_USER_ID, PROCESSTYPE, PROCESSID
       INTO V_USER_ID, V_PROCESS_TYPE, V_PROCESS_ID
@@ -1017,6 +1035,7 @@ code := code ||
 execute immediate(code);
     created := created + 1;
   end loop;
+  
   v_Message := '@Deleted@: '||deleted||' @Created@: '||created;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
   EXCEPTION
