@@ -37,17 +37,6 @@ class OpenbravoDriverManagerConnectionFactory implements ConnectionFactory {
     _props = props;
   }
 
-  /**
-   * Deprecated: use instead
-   * {@link OpenbravoDriverManagerConnectionFactory#OpenbravoDriverManagerConnectionFactory(String, String, String, String, String)}
-   * Now rdbsm is necessary to properly initialize DB for audit trail
-   */
-  @Deprecated
-  public OpenbravoDriverManagerConnectionFactory(String connectUri, String uname, String passwd,
-      String dbSessionConfig) {
-    this(connectUri, uname, passwd, dbSessionConfig, null);
-  }
-
   public OpenbravoDriverManagerConnectionFactory(String connectUri, String uname, String passwd,
       String dbSessionConfig, String rdbsm) {
     _props = null;
