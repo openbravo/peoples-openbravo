@@ -609,7 +609,7 @@ public class Wad extends DefaultHandler {
             "org/openbravo/wad/ActionButtonDefault_data").createXmlDocument();
         xmlDocumentData.setData("structure16", defaults);
 
-        WadUtility.writeFile(fileReference, "ActionButtonDefault_data.xsql", xmlDocumentData
+        WadUtility.writeFile(fileReference, "ActionButtonSQLDefault_data.xsql", xmlDocumentData
             .print());
       }
     } catch (final Exception e) {

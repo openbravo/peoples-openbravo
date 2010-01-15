@@ -20,7 +20,7 @@
 
 
 
-<SqlClass name="ActionButtonDefaultData" package="org.openbravo.erpCommon.ad_actionButton">
+<SqlClass name="ActionButtonSQLDefaultData" package="org.openbravo.erpCommon.ad_actionButton">
 <FIELDS_TMP id="sectionActionProcess">
    &#60;SqlMethod name="selectActP<PARAMETER_TMP id="Reference16">table</PARAMETER_TMP>" type="preparedStatement" return="String" default=""&#62;
     &#60;SqlMethodComment&#62;Select for auxiliar field&#60;/SqlMethodComment&#62;

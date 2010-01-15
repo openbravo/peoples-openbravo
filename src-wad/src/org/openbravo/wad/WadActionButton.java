@@ -470,8 +470,9 @@ public class WadActionButton {
           if (data[i].defaultvalue.equals("") || data[i].defaultvalue.indexOf("@") == -1) {
             strDefault = "\"" + data[i].defaultvalue + "\"";
           } else if (data[i].defaultvalue.startsWith("@SQL=")) {
-            strDefault = (tabName.equals("") ? "ActionButtonDefault" : tabName) + "Data.selectActP"
-                + data[i].id + "_" + FormatUtilities.replace(data[i].columnname);
+            strDefault = (tabName.equals("") ? "ActionButtonSQLDefault" : tabName)
+                + "Data.selectActP" + data[i].id + "_"
+                + FormatUtilities.replace(data[i].columnname);
             strDefault += "(this"
                 + WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null, false,
                     isSOTrx, window);
