@@ -30721,8 +30721,8 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <VALUE><![CDATA[RegenerateAduit]]></VALUE>
-<!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <MSGTEXT><![CDATA[In order to take place this change it is necessary to run the "Update Audit Trail Infrastructure" process.]]></MSGTEXT>
+<!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <VALUE><![CDATA[RegenerateAudit]]></VALUE>
+<!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <MSGTEXT><![CDATA[In order to activate this change it is necessary to run the "Update Audit Trail Infrastructure" process.]]></MSGTEXT>
 <!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--6392EEEB7C6F433BB2465DECD8BAAF35-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6392EEEB7C6F433BB2465DECD8BAAF35--></AD_MESSAGE>
