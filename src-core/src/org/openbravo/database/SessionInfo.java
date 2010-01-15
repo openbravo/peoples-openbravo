@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class SessionInfo {
   static Logger log4j = Logger.getLogger(SessionInfo.class);
+  private static boolean isAuditActive = false;
   private static ThreadLocal<String> sessionId = new ThreadLocal<String>();
   private static ThreadLocal<String> userId = new ThreadLocal<String>();
   private static ThreadLocal<String> processType = new ThreadLocal<String>();
@@ -66,7 +67,6 @@ public class SessionInfo {
             .executeQuery();
 
         if (rs.next() && rs.getString(1).equals("0")) {
-          System.out.println("pg create");
           StringBuffer sql = new StringBuffer();
           sql.append("CREATE GLOBAL TEMPORARY TABLE AD_CONTEXT_INFO");
           sql.append("(AD_USER_ID VARCHAR(32), ");
@@ -89,6 +89,10 @@ public class SessionInfo {
    */
   static public void setDBSessionInfo(Connection conn) {
     try {
+      if (!isAuditActive) {
+        return;
+      }
+
       // Clean up temporary table
       getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
 
@@ -162,5 +166,9 @@ public class SessionInfo {
 
   public static String getSessionId() {
     return sessionId.get();
+  }
+
+  public static void setAuditActive(boolean isAuditActive) {
+    SessionInfo.isAuditActive = isAuditActive;
   }
 }

@@ -101,4 +101,12 @@
     ]]></Sql>
   </SqlMethod>
   
+    <SqlMethod name="isAudited" type="preparedStatement" return="boolean">
+    <Sql><![CDATA[
+        SELECT COUNT(*)
+          FROM AD_TABLE
+         WHERE ISFULLYAUDITED='Y'
+    ]]></Sql>
+  </SqlMethod>
+  
 </SqlClass>

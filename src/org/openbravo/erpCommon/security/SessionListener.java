@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 
 public class SessionListener implements HttpSessionListener, ServletContextListener {
 
@@ -115,6 +116,14 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       }
     } catch (ServletException e) {
       log.error("Error checking orphan sessions", e);
+    }
+
+    // Decide whether audit trail is active
+    try {
+      SessionInfo.setAuditActive(SessionLoginData
+          .isAudited((ConnectionProvider) SessionListener.context.getAttribute("openbravoPool")));
+    } catch (Exception e) {
+      log.error("Error activating audit trail", e);
     }
   }
 
