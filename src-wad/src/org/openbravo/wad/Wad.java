@@ -3471,7 +3471,11 @@ public class Wad extends DefaultHandler {
             data[i].xmltext += ", \"\"";
             data[i].xmltexttrl += ", \"\"";
           }
-          vecTotal.addElement(data[i]);
+
+          // Do not create combo reload for the same column that is being modified
+          if (!data[i].whereclause.replace("\"", "").equals(data[i].columnname)) {
+            vecTotal.addElement(data[i]);
+          }
         }
       }
     }

@@ -98,7 +98,8 @@ public class Buscador extends HttpSecureAppServlet {
         if (data == null || data.length == 0) {
           if (log4j.isDebugEnabled())
             log4j.debug("The columns defined were parent keys");
-          advisePopUp(request, response, "SearchNothing", Utility.messageBD(this, "SearchNothing", vars.getLanguage()));
+          advisePopUp(request, response, "SearchNothing", Utility.messageBD(this, "SearchNothing",
+              vars.getLanguage()));
         } else
           printPage(response, vars, strTab, data, strWindow, strWindowId, strIsSOTrx);
       }
@@ -172,6 +173,7 @@ public class Buscador extends HttpSecureAppServlet {
     xmlDocument.setParameter("script",
         (script.toString() + generateScript(data, strWindow, strTab)));
     xmlDocument.setParameter("tab", strTab);
+    xmlDocument.setParameter("windowId", strWindowId);
     xmlDocument.setParameter("window", strWindow);
     {
       OBError myMessage = vars.getMessage(strTab);
