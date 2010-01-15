@@ -493,9 +493,11 @@ function depurarSelector_validateSelector_wrapper(action) {
   		}
   	}
   	var selects = frm.getElementsByTagName('SELECT');
-  	for(var i=0; i < selects.length; i++) {
-  		paramsData[count++] = new Array(selects[i].name, selects[i].options[selects[i].selectedIndex].value);
-  	}
+    for(var i=0; i < selects.length; i++) {
+      if ((selects[i].selectedIndex) != -1) {
+        paramsData[count++] = new Array(selects[i].name, selects[i].options[selects[i].selectedIndex].value);
+      };
+    }
   	infoSelectFilters(paramsData);
   }
   
