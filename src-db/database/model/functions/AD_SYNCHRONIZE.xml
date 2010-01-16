@@ -1616,12 +1616,12 @@
 	  SELECT p_number INTO v_Result
 	    FROM ad_ep_instance_para
 	    WHERE ad_ep_instance_id = v_ep_instance
-	    AND parametername LIKE 'Result';
+	    AND parametername = 'Result';
 
 	  SELECT p_text INTO v_Message
 	    FROM ad_ep_instance_para
 	    WHERE ad_ep_instance_id = v_ep_instance
-	      AND parametername LIKE 'Message';
+	      AND parametername = 'Message';
 	 
 	  DELETE FROM ad_ep_instance_para WHERE ad_ep_instance_id = v_ep_instance;
 	END;
