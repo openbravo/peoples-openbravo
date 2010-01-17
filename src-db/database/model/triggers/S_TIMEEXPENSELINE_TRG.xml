@@ -119,7 +119,7 @@ BEGIN
             WHERE E.M_PRICELIST_ID = PL.M_PRICELIST_ID
             AND PL.M_PRICELIST_ID = (SELECT M_PriceList_ID FROM S_TimeExpense WHERE S_TimeExpense_ID = :NEW.S_TimeExpense_ID);
             IF(v_BP_PriceList_ID IS NULL OR v_BP_PL_Currency_ID IS NULL) THEN
-              RAISE_APPLICATION_ERROR(-20555, 'Price not found for current partner and product.') ;              
+              RAISE_APPLICATION_ERROR(-20555, 'Price not found for current partner and product.') ;
             END IF;
           END IF;
           -- Looks for price
