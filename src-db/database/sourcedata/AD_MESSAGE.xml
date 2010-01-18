@@ -27711,7 +27711,7 @@ For the other necessary values is taken the correspondent default values. Once t
 <!--1005300002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005300002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005300002-->  <VALUE><![CDATA[OrderWithoutLines]]></VALUE>
-<!--1005300002-->  <MSGTEXT><![CDATA[The order cannot be processed because it has no lines]]></MSGTEXT>
+<!--1005300002-->  <MSGTEXT><![CDATA[The order cannot be completed because it has no lines]]></MSGTEXT>
 <!--1005300002-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1005300002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005300002--></AD_MESSAGE>
