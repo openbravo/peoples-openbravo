@@ -74,6 +74,7 @@ public class DatabaseValidator implements SystemValidator {
     final SystemValidationResult result = new SystemValidationResult();
 
     // read the tables
+
     final OBCriteria<Table> tcs = OBDal.getInstance().createCriteria(Table.class);
     tcs.add(Expression.eq(Table.PROPERTY_VIEW, false));
     final List<Table> adTables = tcs.list();
@@ -123,12 +124,17 @@ public class DatabaseValidator implements SystemValidator {
             || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage()
                 .getModule().getId().equals(moduleId))) {
           checkTableWithoutPrimaryKey(dbTable, result);
-          checkForeignKeys(dbTable, result);
           checkMaxObjectNameLength(dbTable, result);
         }
         matchColumns(adTable, dbTable, result);
         tmpDBTablesByName.remove(dbTable.getName().toUpperCase());
       }
+    }
+    for (int i = 0; i < database.getTableCount(); i++) {
+      checkForeignKeys(database.getTable(i), result);
+    }
+    for (int i = 0; i < database.getModifiedTableCount(); i++) {
+      checkForeignKeys(database.getModifiedTable(i), result);
     }
 
     // only check this one if the global validate check is done
