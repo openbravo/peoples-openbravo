@@ -357,7 +357,7 @@ public class Wad extends DefaultHandler {
         TabsData tabsDataAux[];
         if (quick)
           tabsDataAux = TabsData.selectQuick(wad.pool);
-        else if (module.equals("%"))
+        else if (module.equals("%") || complete)
           tabsDataAux = TabsData.selectTabs(wad.pool, strCurrentWindow);
         else
           tabsDataAux = TabsData.selectTabsinModules(wad.pool, strCurrentWindow, module);
