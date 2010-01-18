@@ -20,6 +20,10 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -97,8 +101,6 @@ public class WindowTree extends HttpSecureAppServlet {
 
       out.print(strResult);
       out.close();
-      // response.sendRedirect(strDireccion + request.getServletPath() +
-      // "?Command=DEFAULT&inpTabId=" + strTabId);
     } else
       throw new ServletException();
   }
@@ -141,62 +143,11 @@ public class WindowTree extends HttpSecureAppServlet {
     menu.append(WindowTreeUtility.addNodeElement(TreeName, TreeDescription, CHILD_SHEETS, true, "",
         strDireccion, "clickItem(0, '" + Replace.replace(TreeName, "'", "\\'") + "', 'N');",
         "dblClickItem(0);", true, "0", ""));
-    // menu.append(WindowTreeUtility.addNodeElement(TreeName,
-    // TreeDescription, CHILD_SHEETS, true, "", strDireccion,
-    // "clickItem(0, '" + Replace.replace(TreeName, "'", "\\'") +
-    // "', 'N');", "", true, "0", ""));
-    menu.append(generateTree(WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable, "",
-        "", strTabId), strDireccion, "0", true));
+    WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable, "",
+        "", strTabId);
+    Map<String, List<WindowTreeData>> wtdTree = buildTree(wtd);
+    menu.append(generateTree(wtd, wtdTree, strDireccion, "0", true));
     menu.append("\n</ul>\n");
-    return menu.toString();
-  }
-
-  /**
-   * Auxiliar method to build the child nodes.
-   * 
-   * @param vars
-   *          Handler for the session info.
-   * @param key
-   *          key column name.
-   * @param strTreeID
-   *          Id for the tree.
-   * @param strParentID
-   *          Parent node id.
-   * @param editable
-   *          is editable?
-   * @param strTabId
-   *          tab id.
-   * @return String html with the tree.
-   * @throws ServletException
-   */
-  private String loadChildNodes(VariablesSecureApp vars, String key, String strTreeID,
-      String strParentID, boolean editable, String strTabId) throws ServletException {
-    String TreeType = WindowTreeUtility.getTreeType(key);
-    StringBuffer menu = new StringBuffer();
-    menu.append("<ul>\n");
-    String script = generateTree(WindowTreeUtility.getTree(this, vars, TreeType, strTreeID,
-        editable, strParentID, "", strTabId), strDireccion, strParentID, true);
-    if (!script.equals("")) {
-      String TreeName = "", TreeDescription = "";
-      WindowTreeData[] data = null;
-      if (strParentID.equals("0"))
-        data = WindowTreeData.selectTreeID(this,
-            Utility.getContext(this, vars, "#User_Client", ""), TreeType);
-      else
-        data = WindowTreeUtility.getTree(this, vars, TreeType, strTreeID, editable, "",
-            strParentID, strTabId);
-      if (data == null || data.length == 0) {
-        log4j.error("WindowTree.loadNodes() - Unknown TreeNode");
-        throw new ServletException("WindowTree.loadNodes() - Unknown TreeNode");
-      } else {
-        TreeName = data[0].name;
-        TreeDescription = data[0].description;
-      }
-      menu.append(WindowTreeUtility.addNodeElement(TreeName, TreeDescription, CHILD_SHEETS, true,
-          "", strDireccion, "", "", false, "0", ""));
-      menu.append(script);
-    }
-    menu.append("</ul>\n");
     return menu.toString();
   }
 
@@ -213,8 +164,8 @@ public class WindowTree extends HttpSecureAppServlet {
    *          Indicates if is the first or not.
    * @return String html with the tree.
    */
-  private String generateTree(WindowTreeData[] data, String strDireccion, String indice,
-      boolean isFirst) {
+  private String generateTree(WindowTreeData[] data, Map<String, List<WindowTreeData>> wtdTree,
+      String strDireccion, String indice, boolean isFirst) {
     if (data == null || data.length == 0)
       return "";
     if (log4j.isDebugEnabled())
@@ -222,32 +173,41 @@ public class WindowTree extends HttpSecureAppServlet {
     if (indice == null)
       indice = "0";
     boolean hayDatos = false;
-    StringBuffer strCabecera = new StringBuffer();
     StringBuffer strResultado = new StringBuffer();
-    strCabecera.append("<ul>");
+    strResultado.append("<ul>");
     isFirst = false;
-    for (int i = 0; i < data.length; i++) {
-      if (data[i].parentId.equals(indice)) {
+    List<WindowTreeData> subList = wtdTree.get(indice);
+    if (subList != null) {
+      for (WindowTreeData elem : subList) {
         hayDatos = true;
-        String strHijos = generateTree(data, strDireccion, data[i].nodeId, isFirst);
-        strResultado.append(WindowTreeUtility.addNodeElement(data[i].name, data[i].description,
-            CHILD_SHEETS, data[i].issummary.equals("Y"), WindowTreeUtility
-                .windowType(data[i].action), strDireccion, "clickItem('" + data[i].nodeId + "', '"
-                + Replace.replace(data[i].name, "'", "\\'") + "', '" + data[i].issummary + "');",
-            "dblClickItem('" + data[i].nodeId + "');", !strHijos.equals(""), data[i].nodeId,
-            data[i].action));
-        // strResultado.append(WindowTreeUtility.addNodeElement(data[i].name,
-        // data[i].description, CHILD_SHEETS,
-        // data[i].issummary.equals("Y"),
-        // WindowTreeUtility.windowType(data[i].action), strDireccion,
-        // "clickItem(" + data[i].nodeId + ", '" +
-        // Replace.replace(data[i].name, "'", "\\'") + "', '" +
-        // data[i].issummary + "');", "", !strHijos.equals(""),
-        // data[i].nodeId, data[i].action));
+        String strHijos = generateTree(data, wtdTree, strDireccion, elem.nodeId, isFirst);
+        strResultado
+            .append(WindowTreeUtility.addNodeElement(elem.name, elem.description, CHILD_SHEETS,
+                elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
+                strDireccion, "clickItem('" + elem.nodeId + "', '"
+                    + Replace.replace(elem.name, "'", "\\'") + "', '" + elem.issummary + "');",
+                "dblClickItem('" + elem.nodeId + "');", !strHijos.equals(""), elem.nodeId,
+                elem.action));
         strResultado.append(strHijos);
       }
     }
-    return (hayDatos ? (strCabecera.toString() + strResultado.toString() + "</li></ul>") : "");
+    strResultado.append("</li></ul>");
+    return (hayDatos ? strResultado.toString() : "");
+  }
+
+  private static Map<String, List<WindowTreeData>> buildTree(WindowTreeData[] input) {
+    Map<String, List<WindowTreeData>> resMap = new HashMap<String, List<WindowTreeData>>();
+
+    for (WindowTreeData elem : input) {
+      List<WindowTreeData> list = resMap.get(elem.parentId);
+      if (list == null) {
+        list = new ArrayList<WindowTreeData>();
+      }
+      list.add(elem);
+      resMap.put(elem.parentId, list);
+    }
+
+    return resMap;
   }
 
   /**
