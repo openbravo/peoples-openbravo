@@ -245,7 +245,8 @@ public class ModelProvider implements OBSingleton {
             if (mandatory != null) {
               p.setMandatory(mandatory);
             } else {
-              log.warn("Column " + p + " mandatory is null");
+              log.warn("Column " + p + " mandatory setting not found in the database metadata. "
+                  + "A cause can be that the column does not exist in the database schema");
             }
           }
         }

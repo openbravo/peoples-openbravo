@@ -84,7 +84,7 @@ public class ModelObject {
   }
 
   public String getIdentifier() {
-    return getClass().getName() + "(" + getId() + ")";
+    return getClass().getName() + "(" + getId() + ", " + getName() + ")";
   }
 
   public String getName() {
