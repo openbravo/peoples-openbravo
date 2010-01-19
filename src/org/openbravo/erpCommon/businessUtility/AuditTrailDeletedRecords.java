@@ -35,7 +35,11 @@ class AuditTrailDeletedRecords {
 
   static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
       String tabId, int startPosition, int rangeLength) {
+    return getDeletedRecords(conn, vars, tabId, null, null, startPosition, rangeLength);
+  }
 
+  static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
+      String tabId, String fkColumnName, String fkId, int startPosition, int rangeLength) {
     OBContext.enableAsAdminContext();
     StringBuffer sql = new StringBuffer();
     try {
@@ -88,7 +92,17 @@ class AuditTrailDeletedRecords {
 
       // apply where clause if exists
       if (tab.getSQLWhereClause() != null) {
-        sql.append(" where ").append(tab.getSQLWhereClause());
+        sql.append(" WHERE ").append(tab.getSQLWhereClause()).append("\n");
+      }
+
+      // Records for a given parent
+      if (fkColumnName != null && !fkColumnName.equals("") && fkId != null && !fkId.equals("")) {
+        if (tab.getSQLWhereClause() != null) {
+          sql.append(" AND ");
+        } else {
+          sql.append(" WHERE ");
+        }
+        sql.append(fkColumnName).append(" = '").append(fkId).append("'\n");
       }
 
       if (hasRange) {
