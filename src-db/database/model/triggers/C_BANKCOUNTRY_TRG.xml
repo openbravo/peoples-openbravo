@@ -18,41 +18,52 @@
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
-
   v_Count NUMBER;
-
-    
+  v_OldCountry NVARCHAR2(32);
+  v_NewCountry NVARCHAR2(32);
 BEGIN
-    
-    IF AD_isTriggerEnabled()='N' THEN RETURN;
-    END IF;
-
-
+  IF AD_isTriggerEnabled()='N' THEN
+    RETURN;
+  END IF;
   --  Default Accounts for all AcctSchema
   IF(UPDATING) THEN
-    IF (:NEW.C_LOCATION_ID <> :OLD.C_LOCATION_ID OR :NEW.C_LOCATION_ID IS NULL) THEN
-      SELECT COUNT(IBAN)
-      INTO v_Count
-      FROM C_BANKACCOUNT
-      WHERE C_BANK_ID=:NEW.C_BANK_ID;
-      IF (v_Count <> 0) THEN
+    -- If Bank information is modified, must be checked that:
+    -- 1: If a IBAN account was declared into this bank, the country of the bank still the same
+    SELECT COUNT(IBAN)
+    INTO v_Count
+    FROM C_BANKACCOUNT
+    WHERE C_BANK_ID=:NEW.C_BANK_ID;
+    
+    IF (v_Count <> 0) THEN
+      IF (:NEW.C_LOCATION_ID IS NULL) THEN
+        RAISE_APPLICATION_ERROR(-20259, 'An IBAN account is defined for this bank. Country must not be changed.') ;
+      END IF;
+      SELECT C_COUNTRY_ID
+      INTO v_OldCountry
+      FROM C_LOCATION
+      WHERE C_LOCATION_ID = :OLD.C_LOCATION_ID;
+
+      SELECT C_COUNTRY_ID
+      INTO v_NewCountry
+      FROM C_LOCATION
+      WHERE C_LOCATION_ID = :NEW.C_LOCATION_ID;
+      
+      IF (v_OldCountry <> v_NewCountry) THEN
         RAISE_APPLICATION_ERROR(-20259, 'An IBAN account is defined for this bank. Country must not be changed.') ;
       END IF;
     END IF;
+
+    -- 2: If an Spanish bank account was declared into this bank, nor bank code, nor branch code, nor digit control are null
     IF ((:NEW.CODEBANK IS NULL) OR (:NEW.CODEBRANCH IS NULL) OR (:NEW.DIGITCONTROL IS NULL)) THEN
       SELECT COUNT(CODEACCOUNT)
       INTO v_Count
       FROM C_BANKACCOUNT
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
-      IF (v_Count <> 0) THEN
+      IF (v_Count   <> 0) THEN
         RAISE_APPLICATION_ERROR(-20265, 'An Spanish account is defined for this bank. Bank Code, Branch Code and Control Digit must be defined') ;
       END IF;
     END IF;
   END IF;
-EXCEPTION
- WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20259, 'An IBAN account is defined for this bank. Country must not be changed.') ;
-END C_BANKCOUNTRY_TRG
-]]></body>
+END C_BANKCOUNTRY_TRG ]]></body>
     </trigger>
   </database>
