@@ -20,19 +20,21 @@ package org.openbravo.erpCommon.businessUtility;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.ExecuteQuery;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Tab;
 
 class AuditTrailDeletedRecords {
   private static Logger log4j = Logger.getLogger(AuditTrailDeletedRecords.class);
 
-  static FieldProvider[] getDeletedRecords(ConnectionProvider conn, String tabId,
-      int startPosition, int rangeLength) {
+  static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
+      String tabId, int startPosition, int rangeLength) {
 
     OBContext.enableAsAdminContext();
     StringBuffer sql = new StringBuffer();
@@ -52,8 +54,7 @@ class AuditTrailDeletedRecords {
       sql.append("SELECT \n");
       boolean firstItem = true;
       for (Column col : tab.getTable().getADColumnList()) {
-        // obtain
-
+        // obtain information for all columns
         if (!firstItem) {
           sql.append(", ");
         } else {
@@ -75,6 +76,14 @@ class AuditTrailDeletedRecords {
       sql.append("  AND AD_COLUMN_ID = '").append(
           ModelProvider.getInstance().getEntityByTableName(tableName).getIdProperties().get(0)
               .getColumnId()).append("'\n");
+
+      // Add security filter
+      sql.append(" AND AD_CLIENT_ID IN (").append(
+          Utility.getContext(conn, vars, "#User_Client", tab.getWindow().getId())).append(")\n");
+      sql.append(" AND AD_ORG_ID IN (").append(
+          Utility.getContext(conn, vars, "#AccessibleOrgTree", tab.getWindow().getId(), Integer
+              .parseInt(tab.getTable().getDataAccessLevel()))).append(")\n");
+
       sql.append("  ORDER BY TIME DESC").append(") ").append(tableName);
 
       // apply where clause if exists
