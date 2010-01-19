@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -28,6 +29,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Tab;
 
 class AuditTrailDeletedRecords {
+  private static Logger log4j = Logger.getLogger(AuditTrailDeletedRecords.class);
 
   static FieldProvider[] getDeletedRecords(ConnectionProvider conn, String tabId,
       int startPosition, int rangeLength) {
@@ -36,6 +38,9 @@ class AuditTrailDeletedRecords {
     StringBuffer sql = new StringBuffer();
     try {
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("Deleted records for tab:" + tab);
+      }
       String tableName = tab.getTable().getDBTableName();
       boolean hasRange = !(startPosition == 0 && rangeLength == 0);
       boolean hasRangeLimit = !(rangeLength == 0);
@@ -94,19 +99,17 @@ class AuditTrailDeletedRecords {
           sql.append(" OFFSET " + Integer.toString(startPosition));
         }
       }
-
-      System.out.println(sql);
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("SQL for deleted records:\n" + sql);
+      }
 
       ExecuteQuery q = new ExecuteQuery(conn, sql.toString(), null);
       return q.select();
     } catch (Exception e) {
-      // TODO: handle exception
-
+      log4j.error("Error in AuditTrailDeletedRecords", e);
     } finally {
       OBContext.resetAsAdminContext();
-
     }
     return null;
-
   }
 }
