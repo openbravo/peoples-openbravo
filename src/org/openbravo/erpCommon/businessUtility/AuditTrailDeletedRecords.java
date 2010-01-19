@@ -33,11 +33,43 @@ import org.openbravo.model.ad.ui.Tab;
 class AuditTrailDeletedRecords {
   private static Logger log4j = Logger.getLogger(AuditTrailDeletedRecords.class);
 
+  /**
+   * Same as
+   * {@link AuditTrailDeletedRecords#getDeletedRecords(ConnectionProvider, VariablesSecureApp, String, String, String, int, int)}
+   * without parent filtering.
+   * 
+   */
   static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
       String tabId, int startPosition, int rangeLength) {
     return getDeletedRecords(conn, vars, tabId, null, null, startPosition, rangeLength);
   }
 
+  /**
+   * Obtains the deleted records for a given tab. It applies the tab's where clause and security
+   * filters (client and organization).<br/>
+   * In case the fkColumnName and fkId parameters are not null nor empty, it queries for the records
+   * having this foreign key.
+   * 
+   * @param conn
+   *          {@link ConnectionProvider} with connection to DB
+   * @param vars
+   *          {@link VariablesSecureApp} used to obtain security info (role)
+   * @param tabId
+   *          Id for the tab to obtain the deleted records for
+   * @param fkColumnName
+   *          Column name in the tab's table that is a foreign key to obtain the deleted records
+   *          that are child of the given fkId. If this value is null or empty no filter for parents
+   *          will be applied.
+   * @param fkId
+   *          Id of the fkColumnName to filter by. This value only make sense in case fkColumnName
+   *          has value.
+   * @param startPosition
+   *          Offset for the returned result set.
+   * @param rangeLength
+   *          Maximum number of records returned.
+   * @return {@link FieldProvider}[] With the records matching the filters. The structure of the
+   *         FieldProvider is given by the current tab's table structure in Application Dictionary.
+   */
   static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
       String tabId, String fkColumnName, String fkId, int startPosition, int rangeLength) {
     OBContext.enableAsAdminContext();
