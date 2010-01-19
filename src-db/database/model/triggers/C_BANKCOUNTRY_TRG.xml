@@ -64,6 +64,7 @@ BEGIN
       END IF;
     END IF;
   END IF;
-END C_BANKCOUNTRY_TRG ]]></body>
+END C_BANKCOUNTRY_TRG
+]]></body>
     </trigger>
   </database>
