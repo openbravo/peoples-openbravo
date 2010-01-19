@@ -705,6 +705,28 @@ public class ModelProvider implements OBSingleton {
   }
 
   /**
+   * Returns an Entity based on the ID of the table belonging to the Entity. If no Entity is found
+   * then null is returned, no Exception is thrown.
+   * 
+   * @param tableId
+   *          the ID of the table belonging to the table
+   * @return the Entity or null if not found
+   */
+  public Entity getEntityByTableId(String tableId) {
+    if (model == null) {
+      getModel();
+    }
+
+    final Entity entity = entitiesByTableId.get(tableId);
+
+    if (entity == null) {
+      log.warn("Entity not found in runtime model for table id: " + tableId);
+    }
+
+    return entity;
+  }
+
+  /**
    * Searches for an Entity using the business object class implementing the Entity in the business
    * code. Throws a CheckException if the Entity can not be found.
    * 
