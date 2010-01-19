@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -37,8 +38,6 @@ public class AuditTrailDeletedRecords {
       String tableName = tab.getTable().getDBTableName();
       sql.append("SELECT * FROM (\n");
       sql.append("SELECT \n");
-      sql.append(" DISTINCT \n"); // FIXME: this is to obtain a single record per deletion, it
-      // should be done filtering by pk column
       boolean firstItem = true;
       for (Column col : tab.getTable().getADColumnList()) {
         // obtain
@@ -60,7 +59,10 @@ public class AuditTrailDeletedRecords {
 
       sql.append(" FROM AD_AUDIT_TRAIL T\n");
       sql.append("WHERE ACTION='D'\n");
-      sql.append("  AND AD_TABLE_ID = '").append(tab.getTable().getId()).append("'");
+      sql.append("  AND AD_TABLE_ID = '").append(tab.getTable().getId()).append("'\n");
+      sql.append("  AND AD_COLUMN_ID = '").append(
+          ModelProvider.getInstance().getEntityByTableName(tableName).getIdProperties().get(0)
+              .getColumnId()).append("'\n");
       sql.append(") ").append(tableName);
 
       // apply where clause if exists
