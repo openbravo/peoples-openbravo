@@ -46,6 +46,8 @@ var isOBTabBehavior = true;
 var isFirstTime = true;
 var isReadOnlyWindow =  false;
 
+var selectInputTextOnTab = true;
+
 var isGoingDown = null;
 var isGoingUp = null;
 
@@ -503,6 +505,7 @@ function putWindowElementFocus(obj, event) {
         obj.focus();
       }
     }
+    if(selectInputTextOnTab) obj.select();
   } catch (e) {
   }
 }
