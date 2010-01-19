@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2087,7 +2087,8 @@ public class TableSQLData implements Serializable {
           type = "dynamicEnum";
         } else if (prop.getProperty("AD_Reference_ID").equals("800101")) {
           type = "url";
-        } else if (prop.getProperty("AD_Reference_ID").equals("32")) {
+        } else if (prop.getProperty("AD_Reference_ID").equals("32")
+            || prop.getProperty("AD_Reference_ID").equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
           type = "img";
         } else if (prop.getProperty("AD_Reference_ID").equals("11")) {
           type = "integer";

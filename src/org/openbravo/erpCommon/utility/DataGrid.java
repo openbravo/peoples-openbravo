@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -334,6 +334,9 @@ public class DataGrid extends HttpSecureAppServlet {
             String value = data[j].getField(columnname);
             if (adReferenceId.equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
+            if (adReferenceId.equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
+              strRowsData.append("../utility/ShowImage?id=");
+            }
             // Numeric formats:
             // Decimal: 12, 22
             // Qty: 29
@@ -376,25 +379,20 @@ public class DataGrid extends HttpSecureAppServlet {
                 e.printStackTrace();
               }
             }
-            strRowsData.append(value
-                .replaceAll("<b>", "").replaceAll("<B>", "")
-                .replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "")
-                .replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;")
-                .replaceAll("<h1>", "&nbsp;").replaceAll("<H1>", "&nbsp;")
-                .replaceAll("</h1>", "&nbsp;").replaceAll("</H1>", "")
-                .replaceAll("<h2>", "&nbsp;").replaceAll("<H2>", "&nbsp;")
-                .replaceAll("</h2>", "&nbsp;").replaceAll("</H2>", "")
-                .replaceAll("<h3>", "&nbsp;").replaceAll("<H3>", "&nbsp;")
-                .replaceAll("</h3>", "&nbsp;").replaceAll("</H3>", "")
-                .replaceAll("<li>", "&nbsp;").replaceAll("<LI>", "&nbsp;")
-                .replaceAll("</li>", "&nbsp;").replaceAll("</LI>", "")
-                .replaceAll("<ul>", "&nbsp;").replaceAll("<UL>", "&nbsp;")
-                .replaceAll("</ul>", "&nbsp;").replaceAll("</UL>", ""));
+            strRowsData.append(value.replaceAll("<b>", "").replaceAll("<B>", "").replaceAll("</b>",
+                "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll("<I>", "").replaceAll(
+                "</i>", "").replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>",
+                "&nbsp;").replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;").replaceAll(
+                "<h1>", "&nbsp;").replaceAll("<H1>", "&nbsp;").replaceAll("</h1>", "&nbsp;")
+                .replaceAll("</H1>", "").replaceAll("<h2>", "&nbsp;").replaceAll("<H2>", "&nbsp;")
+                .replaceAll("</h2>", "&nbsp;").replaceAll("</H2>", "").replaceAll("<h3>", "&nbsp;")
+                .replaceAll("<H3>", "&nbsp;").replaceAll("</h3>", "&nbsp;").replaceAll("</H3>", "")
+                .replaceAll("<li>", "&nbsp;").replaceAll("<LI>", "&nbsp;").replaceAll("</li>",
+                    "&nbsp;").replaceAll("</LI>", "").replaceAll("<ul>", "&nbsp;").replaceAll(
+                    "<UL>", "&nbsp;").replaceAll("</ul>", "&nbsp;").replaceAll("</UL>", ""));
           } else {
-            if (headers[k].getField("adReferenceId").equals("32")) {
+            if (headers[k].getField("adReferenceId").equals("32")
+                || headers[k].getField("adReferenceId").equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
             } else
               strRowsData.append("&nbsp;");
