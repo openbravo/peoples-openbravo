@@ -27,9 +27,9 @@ import org.openbravo.erpCommon.utility.ExecuteQuery;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Tab;
 
-public class AuditTrailDeletedRecords {
+class AuditTrailDeletedRecords {
 
-  public static FieldProvider[] getDeletedRecords(ConnectionProvider conn, String tabId,
+  static FieldProvider[] getDeletedRecords(ConnectionProvider conn, String tabId,
       int startPosition, int rangeLength) {
 
     OBContext.enableAsAdminContext();
