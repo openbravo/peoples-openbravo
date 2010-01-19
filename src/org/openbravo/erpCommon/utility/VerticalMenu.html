@@ -40,7 +40,7 @@
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
     </script>
-    <script language="JavaScript" type="text/javascript">
+    <script type="text/javascript">
       function resizeMenu() {
         var mnu = document.getElementById("Menu_Client");
         var mleft = document.getElementById("MenuLeft");
@@ -101,8 +101,7 @@
           updateData();
           setTimeout("updateAlert()", 50000);
       }
-    </script>
-    <script language="JavaScript" type="text/javascript">
+
       function onLoadDo() {
         if (frames.name.indexOf('appFrame')!=-1) {
           location.href="../utility/Home.html";
@@ -139,26 +138,59 @@
 
       function validate(action, form, value) {
          var appFrame = top.frames.appFrame;
-         if(!appFrame.isUserChanges) {
-             return true;
+
+         try {
+           var isUserChanges = appFrame.isUserChanges;
+         } catch(e1) {
+           if(isDebugEnabled()) {
+             console.error("%o", e1);
+           }
          }
-         var loc = appFrame.location.toString();
-         if( loc.indexOf('Home.html') != -1 || typeof appFrame.depurar_validate_wrapper == 'undefined') {
-             return true;
+
+         if(typeof isUserChanges === 'undefined' || !appFrame.isUserChanges) {
+           return true;
          }
+
+         try {
+           var loc = appFrame.location.toString();
+         } catch(e2) {
+           if(isDebugEnabled()) {
+             console.error("%o", e2);
+           }
+         }
+
+         if(typeof loc === 'undefined' || loc.indexOf('Home.html') !== -1 || typeof appFrame.depurar_validate_wrapper === 'undefined') {
+           return true;
+         }
+
          return appFrame.depurar_validate_wrapper(action, form, value);
       }
 
       function getForm() {
-         var appForm = top.frames.appFrame.document.forms[0];
-         var loc = top.frames.appFrame.location.toString();
-         if(loc.indexOf('Home.html') != -1 || typeof(appForm) == 'undefined') {
-       	   return null;
+         try {
+            var appForm = top.frames.appFrame.document.forms[0];
+         } catch(e1) {
+           if(isDebugEnabled()) {
+             console.error("%o", e1);
+           }
          }
-         
-         if(typeof(appForm.inpLastFieldChanged) == 'undefined' || appForm.inpLastFieldChanged.value == "") {
+
+         try {
+           var loc = top.frames.appFrame.location.toString();
+         } catch(e2) {
+           if(isDebugEnabled()) {
+             console.error("%o", e2);
+           }
+         }
+
+         if(typeof loc === 'undefined' || typeof appForm === 'undefined' || loc.indexOf('Home.html') !== -1) {
            return null;
          }
+
+         if(typeof appForm.inpLastFieldChanged === 'undefined' || appForm.inpLastFieldChanged.value === "") {
+           return null;
+         }
+
          return appForm;
       }
     </script>

@@ -21,7 +21,7 @@
 <FIELD_TMP>
 <div id="xx_inp">
   <input type="hidden" name="inpxx" id="xx" value="" onchange="logChanges(this);xx();return true;"/>
-  <table id="buttonxx" onclick="openServletNewWindow(null, null, '../utility/ImageInfoBLOB?columnName=xx', 'BUTTON', null, true, 600, 900);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='xx';return true;" style="cursor: pointer;">
+  <table id="buttonxx" onclick="openServletNewWindow(null, null, '../utility/ImageInfoBLOB?columnName=xx', 'BUTTON', null, true, 600, 900);logChanges(document.getElementById('aa'));return false;" onmouseout="window.status='';return true;" onmouseover="window.status='xx';return true;" style="cursor: pointer;">
     <tr>
       <td><img src="../utility/ShowImage?id=xx" border=0 alt="xx" id="xx_R" title="xx" name="inpxx_R" class="xx"/></td>
     </tr>

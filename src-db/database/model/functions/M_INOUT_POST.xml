@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -117,154 +117,162 @@
     ELSE
       DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Post>>') ;
       v_Record_ID:=p_InOut_ID;
+      SELECT count(*)
+        INTO v_Count
+        FROM M_InOut
+        WHERE M_InOut_ID=v_Record_ID;
+      IF v_Count=0 THEN
+        FINISH_PROCESS:=true;
+      END IF;
     END IF;
   BEGIN --BODY
-  	SELECT AD_Client_ID, AD_Org_ID, CreatedBy, C_DocType_ID, DateAcct
-      INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct
-      FROM M_InOut
-      WHERE M_InOut_ID=v_Record_ID;
-    SELECT count(*)
-    INTO v_Count
-    FROM AD_CLIENTINFO
-    WHERE AD_CLIENT_ID=v_AD_Client_ID
-      AND CHECKINOUTORG='Y';
-    IF v_Count>0 THEN
-      v_ResultStr:='CheckingRestrictions - M_INOUT ORG IS IN C_BPARTNER ORG TREE';
+  	IF(NOT FINISH_PROCESS) THEN
+      SELECT AD_Client_ID, AD_Org_ID, CreatedBy, C_DocType_ID, DateAcct
+        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct
+        FROM M_InOut
+        WHERE M_InOut_ID=v_Record_ID;
       SELECT count(*)
       INTO v_Count
-      FROM M_InOut m,
-        C_BPartner bp
-      WHERE m.M_InOut_ID=v_Record_ID
-        AND m.C_BPARTNER_ID=bp.C_BPARTNER_ID
-        AND AD_IsOrgIncluded(m.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1;
+      FROM AD_CLIENTINFO
+      WHERE AD_CLIENT_ID=v_AD_Client_ID
+        AND CHECKINOUTORG='Y';
       IF v_Count>0 THEN
-        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInout@') ;
+        v_ResultStr:='CheckingRestrictions - M_INOUT ORG IS IN C_BPARTNER ORG TREE';
+        SELECT count(*)
+        INTO v_Count
+        FROM M_InOut m,
+          C_BPartner bp
+        WHERE m.M_InOut_ID=v_Record_ID
+          AND m.C_BPARTNER_ID=bp.C_BPARTNER_ID
+          AND AD_IsOrgIncluded(m.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1;
+        IF v_Count>0 THEN
+          RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInout@') ;
+        END IF;
       END IF;
-    END IF;
-    IF(NOT FINISH_PROCESS) THEN
-      v_ResultStr:='CheckingRestrictions';
-      SELECT COUNT(*)
-   INTO v_Count
-   FROM C_DocType,
-        M_InOut M
-   WHERE M_Inout_ID = v_Record_ID
-     AND C_DocType.DocBaseType IN ('MMR', 'MMS')
-    AND C_DocType.IsSOTrx=M.IsSOTrx
-    AND AD_ISORGINCLUDED(m.AD_Org_ID,C_DocType.AD_Org_ID, m.AD_Client_ID) <> -1
-     AND M.C_DOCTYPE_ID=C_DocType.C_DOCTYPE_ID;
-      IF v_Count=0 THEN
-        RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgDoctypeShipment@') ;
-      END IF;
-      SELECT COUNT(*), MAX(M.line)
-      INTO v_Count, v_line
-      FROM M_InOutLine M,
-        M_Product P
-      WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
-        AND P.M_ATTRIBUTESET_ID IS NOT NULL
-        AND P.M_ATTRIBUTESETINSTANCE_ID IS NULL
-        AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
-        AND M.M_INOUT_ID=v_Record_ID;
-      IF v_Count<>0 THEN
-        RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_line||' '||'@productWithoutAttributeSet@') ;
-      END IF;
-      SELECT COUNT(*), MAX(M.line)
-      INTO v_Count, v_Line
-      FROM M_InOut I,
-        M_InOutLine M,
-        M_AttributeSetInstance P
-      WHERE I.M_InOut_ID=M.M_InOut_ID
-        AND M.M_AttributeSetInstance_ID=P.M_AttributeSetInstance_ID
-        AND P.ISLOCKED='Y'
-        AND I.ISSOTRX='Y'
-        AND I.M_INOUT_ID=v_Record_ID;
-      IF v_Count<>0 THEN
-        RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@lockedProduct@') ;
-      END IF;
-	  -- check inout line instance location
-      SELECT COUNT(*), MAX(M.line)
-      INTO v_Count, v_Line
-      FROM M_InOutLine M,
-        M_Product P
-      WHERE M.M_InOut_ID=v_Record_ID
-		    AND M.M_Locator_ID IS NULL
-        AND p.m_product_id = m.m_product_id
-        AND p.isstocked = 'Y'
-        AND p.producttype = 'I';
-      IF v_Count <> 0 THEN
-        RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@InoutLineWithoutLocator@') ;
-      END IF;	  
-	  
-      -- Process Shipments
-
-   -- Set org lines like the header
-     UPDATE M_INOUTLINE
-      SET AD_ORG_ID = (SELECT AD_ORG_ID FROM M_INOUT WHERE M_INOUT_ID = v_Record_ID)
-    WHERE M_INOUT_ID = v_Record_ID;
-    
-    -- Check the header belongs to a organization where transactions are posible and ready to use
-    SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
-    INTO v_is_ready, v_is_tr_allow
-    FROM M_INOUT, AD_Org, AD_OrgType
-    WHERE AD_Org.AD_Org_ID=M_INOUT.AD_Org_ID
-    AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
-    AND M_INOUT.M_INOUT_ID=v_Record_ID;
-    IF (v_is_ready='N') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
-    END IF;
-    IF (v_is_tr_allow='N') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
-    END IF;
       
-    SELECT AD_ORG_CHK_DOCUMENTS('M_INOUT', 'M_INOUTLINE', v_Record_ID, 'M_INOUT_ID', 'M_INOUT_ID') INTO v_is_included FROM dual;
-    IF (v_is_included=-1) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
-    END IF;
-    
-    -- Check the period control is opened (only if it is legal entity with accounting)
-    -- Gets the BU or LE of the document
-    SELECT AD_GET_DOC_LE_BU('M_INOUT', v_Record_ID, 'M_INOUT_ID', 'LE')
-    INTO v_org_bule_id
-    FROM DUAL;
-    
-    SELECT AD_OrgType.IsAcctLegalEntity
-    INTO v_isacctle
-    FROM AD_OrgType, AD_Org
-    WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
-    AND AD_Org.AD_Org_ID=v_org_bule_id;
-    
-    IF (v_isacctle='Y') THEN    
-      SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_DocType_ID) 
-      INTO v_available_period
+     v_ResultStr:='CheckingRestrictions';
+     SELECT COUNT(*)
+     INTO v_Count
+     FROM C_DocType,
+          M_InOut M
+     WHERE M_Inout_ID = v_Record_ID
+       AND C_DocType.DocBaseType IN ('MMR', 'MMS')
+      AND C_DocType.IsSOTrx=M.IsSOTrx
+      AND AD_ISORGINCLUDED(m.AD_Org_ID,C_DocType.AD_Org_ID, m.AD_Client_ID) <> -1
+       AND M.C_DOCTYPE_ID=C_DocType.C_DOCTYPE_ID;
+        IF v_Count=0 THEN
+          RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgDoctypeShipment@') ;
+        END IF;
+        SELECT COUNT(*), MAX(M.line)
+        INTO v_Count, v_line
+        FROM M_InOutLine M,
+          M_Product P
+        WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
+          AND P.M_ATTRIBUTESET_ID IS NOT NULL
+          AND P.M_ATTRIBUTESETINSTANCE_ID IS NULL
+          AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
+          AND M.M_INOUT_ID=v_Record_ID;
+        IF v_Count<>0 THEN
+          RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_line||' '||'@productWithoutAttributeSet@') ;
+        END IF;
+        SELECT COUNT(*), MAX(M.line)
+        INTO v_Count, v_Line
+        FROM M_InOut I,
+          M_InOutLine M,
+          M_AttributeSetInstance P
+        WHERE I.M_InOut_ID=M.M_InOut_ID
+          AND M.M_AttributeSetInstance_ID=P.M_AttributeSetInstance_ID
+          AND P.ISLOCKED='Y'
+          AND I.ISSOTRX='Y'
+          AND I.M_INOUT_ID=v_Record_ID;
+        IF v_Count<>0 THEN
+          RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@lockedProduct@') ;
+        END IF;
+      -- check inout line instance location
+        SELECT COUNT(*), MAX(M.line)
+        INTO v_Count, v_Line
+        FROM M_InOutLine M,
+          M_Product P
+        WHERE M.M_InOut_ID=v_Record_ID
+          AND M.M_Locator_ID IS NULL
+          AND p.m_product_id = m.m_product_id
+          AND p.isstocked = 'Y'
+          AND p.producttype = 'I';
+        IF v_Count <> 0 THEN
+          RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@InoutLineWithoutLocator@') ;
+        END IF;	  
+      
+        -- Process Shipments
+  
+     -- Set org lines like the header
+       UPDATE M_INOUTLINE
+        SET AD_ORG_ID = (SELECT AD_ORG_ID FROM M_INOUT WHERE M_INOUT_ID = v_Record_ID)
+      WHERE M_INOUT_ID = v_Record_ID;
+      
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM M_INOUT, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=M_INOUT.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND M_INOUT.M_INOUT_ID=v_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;
+        
+      SELECT AD_ORG_CHK_DOCUMENTS('M_INOUT', 'M_INOUTLINE', v_Record_ID, 'M_INOUT_ID', 'M_INOUT_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      -- Check the period control is opened (only if it is legal entity with accounting)
+      -- Gets the BU or LE of the document
+      SELECT AD_GET_DOC_LE_BU('M_INOUT', v_Record_ID, 'M_INOUT_ID', 'LE')
+      INTO v_org_bule_id
       FROM DUAL;
       
-      IF (v_available_period<>1) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
-      END IF;
-    END IF;  
-
-      FOR Cur_InOut IN
-        (SELECT *
-        FROM M_INOUT
-        WHERE(M_InOut_ID=v_Record_ID
-          OR(v_Record_ID IS NULL
-          AND DocAction='CO'))
-          AND IsActive='Y'  FOR UPDATE
-        )
-      LOOP
-        DBMS_OUTPUT.PUT_LINE('Shipment_ID=' || Cur_InOut.M_InOut_ID || ', Doc=' || Cur_InOut.DocumentNo || ', Status=' || Cur_InOut.DocStatus || ', Action=' || Cur_InOut.DocAction) ;
-        v_ResultStr:='HeaderLoop';
-        /**
-        * Shipment not processed
-        */
-        IF(Cur_InOut.Processed='N' AND Cur_InOut.DocStatus='DR' AND Cur_InOut.DocAction='CO') THEN
-          -- For all active shipment lines
-          v_ResultStr:='HeaderLoop-1';
-          SELECT COUNT(*) INTO v_Aux
-			FROM M_InOutLine
-			WHERE M_InOut_ID = v_Record_ID;
-		  IF v_Aux=0 THEN
-			RAISE_APPLICATION_ERROR(-20000, '@ReceiptWithoutLines@');
-		  END IF;
+      SELECT AD_OrgType.IsAcctLegalEntity
+      INTO v_isacctle
+      FROM AD_OrgType, AD_Org
+      WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
+      AND AD_Org.AD_Org_ID=v_org_bule_id;
+      
+      IF (v_isacctle='Y') THEN    
+        SELECT C_CHK_OPEN_PERIOD(v_AD_Org_ID, v_DateAcct, NULL, v_DocType_ID) 
+        INTO v_available_period
+        FROM DUAL;
+        
+        IF (v_available_period<>1) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+        END IF;
+      END IF;  
+  
+        FOR Cur_InOut IN
+          (SELECT *
+          FROM M_INOUT
+          WHERE(M_InOut_ID=v_Record_ID
+            OR(v_Record_ID IS NULL
+            AND DocAction='CO'))
+            AND IsActive='Y'  FOR UPDATE
+          )
+        LOOP
+          DBMS_OUTPUT.PUT_LINE('Shipment_ID=' || Cur_InOut.M_InOut_ID || ', Doc=' || Cur_InOut.DocumentNo || ', Status=' || Cur_InOut.DocStatus || ', Action=' || Cur_InOut.DocAction) ;
+          v_ResultStr:='HeaderLoop';
+          /**
+          * Shipment not processed
+          */
+          IF(Cur_InOut.Processed='N' AND Cur_InOut.DocStatus='DR' AND Cur_InOut.DocAction='CO') THEN
+            -- For all active shipment lines
+            v_ResultStr:='HeaderLoop-1';
+            SELECT COUNT(*) INTO v_Aux
+        FROM M_InOutLine
+        WHERE M_InOut_ID = v_Record_ID;
+        IF v_Aux=0 THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ReceiptWithoutLines@');
+        END IF;
           FOR Cur_InOutLine IN
             (SELECT *
             FROM M_INOUTLINE

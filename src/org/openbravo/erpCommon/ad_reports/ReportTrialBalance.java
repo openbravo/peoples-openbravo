@@ -110,7 +110,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportTrialBalance|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
-      printPageDataPDF(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly,
+      printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly,
           strAccountFrom, strAccountTo, strAll, strcBpartnerId, strcAcctSchemaId);
     } else
       pageError(response);
@@ -331,10 +331,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly,
-      String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId,
-      String strcAcctSchemaId) throws IOException, ServletException {
+  private void printPageDataPDF(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg,
+      String strLevel, String strOnly, String strAccountFrom, String strAccountTo, String strAll,
+      String strcBpartnerId, String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     /*
@@ -431,7 +431,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     }
 
     String strResult = xmlDocument.print();
-    renderFO(strResult, response);
+    renderFO(strResult, request, response);
     /*
      * out.println(xmlDocument.print()); out.close();
      */

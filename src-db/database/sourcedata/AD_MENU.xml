@@ -3443,7 +3443,7 @@
 <!--800090-->  <AD_MENU_ID><![CDATA[800090]]></AD_MENU_ID>
 <!--800090-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800090-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800090-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800090-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800090-->  <NAME><![CDATA[Generate 347 Model]]></NAME>
 <!--800090-->  <DESCRIPTION><![CDATA[Generate model 347]]></DESCRIPTION>
 <!--800090-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -5313,8 +5313,8 @@
 <!--1005400002-->  <NAME><![CDATA[Register]]></NAME>
 <!--1005400002-->  <DESCRIPTION><![CDATA[Register your installation of Openbravo ERP in order to receive development and commercial updates and information]]></DESCRIPTION>
 <!--1005400002-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--1005400002-->  <ACTION><![CDATA[L]]></ACTION>
-<!--1005400002-->  <URL><![CDATA[http://www.openbravo.com/embedreg/form]]></URL>
+<!--1005400002-->  <ACTION><![CDATA[X]]></ACTION>
+<!--1005400002-->  <AD_FORM_ID><![CDATA[3D8AB0C824ED4C70ADE086D9CFE5DA1A]]></AD_FORM_ID>
 <!--1005400002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400002--></AD_MENU>
 

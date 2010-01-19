@@ -98,7 +98,7 @@ public class Buscador extends HttpSecureAppServlet {
         if (data == null || data.length == 0) {
           if (log4j.isDebugEnabled())
             log4j.debug("The columns defined were parent keys");
-          bdError(request, response, "SearchNothing", vars.getLanguage());
+          advisePopUp(request, response, "SearchNothing", Utility.messageBD(this, "SearchNothing", vars.getLanguage()));
         } else
           printPage(response, vars, strTab, data, strWindow, strWindowId, strIsSOTrx);
       }
