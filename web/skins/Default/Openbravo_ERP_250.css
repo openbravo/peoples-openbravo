@@ -7103,6 +7103,12 @@ a.Main_ToolBar_Button_Selected:active {
   background-image: url(Main/ToolBar/iconAudit.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
 }
 
+.Main_ToolBar_Button_Icon_AuditTrail {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Main/ToolBar/iconAuditTrail.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
 
 
 .Main_ToolBar_Button_Icon_New_disabled {
@@ -7257,6 +7263,12 @@ a.Main_ToolBar_Button_Selected:active {
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Main/ToolBar/iconAudit.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.Main_ToolBar_Button_Icon_AuditTrail_disabled {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Main/ToolBar/iconAuditTrail.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
 }
 
 
