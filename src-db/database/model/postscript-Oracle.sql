@@ -1001,6 +1001,7 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         AND c.ad_table_id = cur_tables.ad_table_id
                         and upper(c.columnname) = u.column_name
                         AND u.data_type != 'BLOB'
+                        and upper(c.columnname) not in ('CREATED','CREATEDBY','UPDATED', 'UPDATEDBY')
                         order by c.position) loop
       if (cur_cols.data_type in ('VARCHAR2', 'CHAR')) then
         datatype := 'CHAR';
