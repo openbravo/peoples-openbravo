@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,12 @@ public class Locator extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       removePageSessionVariables(vars);
       String strWarehouse = vars.getRequestGlobalVariable("inpNameValue", "Locator.warehousename");
+      if (strWarehouse.equals("") || strWarehouse == null) {
+        String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
+        if (!windowId.equals("") && windowId != null)
+          strWarehouse = LocatorData.selectname(this, Utility.getContext(this, vars,
+              "M_Warehouse_ID", windowId));
+      }
       strWarehouse = strWarehouse + "%";
       vars.setSessionValue("Locator.warehousename", strWarehouse);
       printPage(response, vars, "", strWarehouse);
@@ -67,6 +73,12 @@ public class Locator extends HttpSecureAppServlet {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Locator.name");
       String strWarehouse = vars
           .getRequestGlobalVariable("inpmWarehouseId", "Locator.mWarehouseId");
+      if ((strKeyValue.equals("") || strKeyValue == null)
+          && (strWarehouse.equals("") || strWarehouse == null)) {
+        String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
+        if (!windowId.equals("") && windowId != null)
+          strWarehouse = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
+      }
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("Locator.name", strKeyValue);
       vars.setSessionValue("Locator.warehousename", LocatorData.selectname(this, strWarehouse));
@@ -77,7 +89,7 @@ public class Locator extends HttpSecureAppServlet {
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
-        printPage(response, vars, strKeyValue, strWarehouse);
+        printPage(response, vars, strKeyValue, LocatorData.selectname(this, strWarehouse));
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -238,8 +250,8 @@ public class Locator extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "Locator.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        // on movePage action force executing countRows again
-        	strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
@@ -249,18 +261,18 @@ public class Locator extends HttpSecureAppServlet {
           // or
           // first
           // load
-        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        	if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-	        	oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-	        	oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-	        	rownum = "ROWNUM";
-        	} else {
-        		pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        	}
-        	strNumRows = LocatorData.countRows(this, rownum,Utility.getContext(this, vars,
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = LocatorData.countRows(this, rownum, Utility.getContext(this, vars,
               "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
               strWarehousename, strAisle, strBin, strLevel, pgLimit, oraLimit1, oraLimit2);
-          //strNumRows = String.valueOf(data.length);
+          // strNumRows = String.valueOf(data.length);
           vars.setSessionValue("Locator.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("Locator.numrows");
@@ -319,7 +331,8 @@ public class Locator extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
