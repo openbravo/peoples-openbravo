@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,6 +71,8 @@ public class Property {
   private Set<String> allowedValues;
   private Boolean allowDerivedRead;
   private boolean isClientOrOrganization;
+
+  private String columnId;
 
   private PropertyValidator validator;
 
@@ -137,6 +139,8 @@ public class Property {
     setInactive(!fromColumn.isActive());
 
     setModule(fromColumn.getModule());
+
+    setColumnId(fromColumn.getId());
   }
 
   // TODO: remove this hack when possible
@@ -952,5 +956,13 @@ public class Property {
 
   public void setActiveColumn(boolean isActiveColumn) {
     this.isActiveColumn = isActiveColumn;
+  }
+
+  public String getColumnId() {
+    return columnId;
+  }
+
+  public void setColumnId(String columnId) {
+    this.columnId = columnId;
   }
 }
