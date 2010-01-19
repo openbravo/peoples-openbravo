@@ -61,7 +61,7 @@ public class AuditTrailDeletedRecords {
         sql.append("   AND AD_COLUMN_ID='").append(col.getId()).append("'\n");
         sql.append("   AND ACTION='D'\n");
         sql.append("   AND RECORD_ID = T.RECORD_ID\n");
-        sql.append(" ) ").append(col.getDBColumnName()).append("\n");
+        sql.append(" ) as ").append(col.getDBColumnName()).append("\n");
       }
 
       sql.append(" FROM AD_AUDIT_TRAIL T\n");
@@ -91,7 +91,7 @@ public class AuditTrailDeletedRecords {
         } else {
           if (hasRangeLimit)
             sql.append(" LIMIT " + Integer.toString(rangeLength));
-          sql.append(" OFFSET " + Integer.toString(startPosition) + ")\n");
+          sql.append(" OFFSET " + Integer.toString(startPosition));
         }
       }
 
