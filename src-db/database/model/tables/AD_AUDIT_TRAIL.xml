@@ -101,5 +101,8 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <index name="AD_AUDIT_TRAIL_AD_TABLE_IDX" unique="false">
+        <index-column name="AD_TABLE_ID"/>
+      </index>
     </table>
   </database>
