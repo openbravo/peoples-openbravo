@@ -102,6 +102,12 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       data = new Object[getEntity().getProperties().size()];
     }
     final Property p = getEntity().getProperty(propName);
+    if (p.getIndexInEntity() >= data.length) {
+      throw new IllegalArgumentException("Property index (" + p.getIndexInEntity()
+          + ") is larger than or equal to property list size (" + data.length + "). "
+          + "This happens when setting property " + propName + " " + p + " with value " + value
+          + " in entity " + getEntity());
+    }
     data[p.getIndexInEntity()] = value;
   }
 
