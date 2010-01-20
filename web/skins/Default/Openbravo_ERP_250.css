@@ -9638,3 +9638,10 @@ td.Popup_SeparatorBar_bg {
   background-position: center center;
   background-image: url(Popup/WindowLogo/iconModuleInstall.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
 }
+
+.Popup_WindowLogo_Icon_auditTrail {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Popup/WindowLogo/iconAuditTrail.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+}
+
