@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,7 @@
         l.QtyOrdered-SUM(COALESCE(m.Qty,0)) AS QTY, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME AS RELATION_NAME, 
         l.C_OrderLine_ID,l.Line, l.ad_org_id, '' as STDPRECISION, 
         '' as M_InOutLine_ID, '' AS PriceActual, '' AS PriceList, '' AS PriceLimit, '' AS Description, '' as PriceStd,
-        '' AS QUANTITYORDER, '' AS M_Product_UOM_ID, '' AS M_ATTRIBUTESETINSTANCE_ID, '' AS M_Offer_ID 
+        '' AS QUANTITYORDER, '' AS M_Product_UOM_ID, '' AS M_ATTRIBUTESETINSTANCE_ID, '' AS M_Offer_ID, '' AS PricePrecision
         FROM C_ORDERLINE l left join M_MATCHPO m on  l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  AND m.C_InvoiceLine_ID IS NOT NULL, 
         C_ORDER o, C_UOM uom,  M_PRODUCT p
@@ -195,7 +195,7 @@
     <Sql>
       <![CDATA[
       SELECT (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.QTY ELSE B.QTY END) AS ID, 
-      A.C_UOM_ID,uom.UOMSymbol, A.M_Product_ID,p.NAME, A.C_OrderLine_ID,A.Line, cur.stdprecision, 
+      A.C_UOM_ID,uom.UOMSymbol, A.M_Product_ID,p.NAME, A.C_OrderLine_ID,A.Line, uom.stdprecision AS stdprecision, cur.priceprecision, 
       B.M_InOutLine_ID, A.Description, (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.quantityOrder ELSE B.quantityOrder END) AS quantityOrder, 
       (CASE WHEN B.M_InOutLine_ID IS NULL THEN A.M_Product_UOM_ID ELSE B.M_Product_UOM_ID END) AS M_Product_UOM_ID, A.M_ATTRIBUTESETINSTANCE_ID, A.ad_org_id
       FROM c_currency cur,C_UOM uom, M_PRODUCT p, 
@@ -228,7 +228,7 @@
       <![CDATA[
         SELECT (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN (l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)) ELSE il.MOVEMENTQTY END) AS ID, 
         l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME, 
-        l.C_OrderLine_ID,l.Line, max(cur.stdprecision) as stdprecision, il.M_InOutLine_ID as M_InOutLine_ID, l.Description,
+        l.C_OrderLine_ID,l.Line, max(uom.stdprecision) AS stdprecision, cur.priceprecision, il.M_InOutLine_ID as M_InOutLine_ID, l.Description,
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.quantityOrder*C_DIVIDE((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)),(l.QtyOrdered)) ELSE il.quantityOrder END) AS quantityOrder, 
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.M_Product_UOM_ID ELSE il.M_Product_UOM_ID END) AS M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
         FROM C_ORDERLINE l left join (SELECT M_InOutLine.* FROM M_InOutLine, M_InOut
@@ -240,7 +240,7 @@
         AND l.M_Product_ID=p.M_Product_ID 
         GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
         l.QTYINVOICED, il.M_InOutLine_ID, il.MovementQty, l.Description, l.quantityOrder, il.quantityOrder, 
-        l.M_Product_UOM_ID, il.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID,l.ad_org_id
+        l.M_Product_UOM_ID, il.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID,l.ad_org_id, cur.priceprecision
         HAVING (l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)) <> 0 
         ORDER BY l.Line
       ]]>
@@ -468,9 +468,11 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT plv.M_PriceList_Version_ID AS ID
-      FROM M_PRICELIST pl,M_PRICELIST_VERSION plv 
-      WHERE pl.M_PriceList_ID=plv.M_PriceList_ID AND plv.IsActive='Y'
+      SELECT plv.M_PriceList_Version_ID AS ID, cur.Priceprecision
+      FROM M_PRICELIST pl, M_PRICELIST_VERSION plv, C_CURRENCY cur
+      WHERE pl.M_PriceList_ID = plv.M_PriceList_ID 
+      AND pl.C_Currency_ID = cur.C_Currency_ID
+      AND plv.IsActive='Y'
       AND plv.ValidFrom <= TO_DATE(?) AND pl.M_PriceList_ID=? 
       ORDER BY plv.ValidFrom DESC
       ]]>

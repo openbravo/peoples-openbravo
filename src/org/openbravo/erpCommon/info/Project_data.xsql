@@ -60,6 +60,35 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
    </SqlMethod>
+   <SqlMethod name="countRows" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+      SELECT COUNT(*) AS VALUE FROM ( SELECT '0' AS RN1, B.* FROM (  
+        SELECT 1
+        FROM C_PROJECT P, C_BPARTNER B, AD_REF_LIST_V L 
+        WHERE P.C_BPARTNER_ID = B.C_BPARTNER_ID 
+        AND P.PROJECTSTATUS = L.VALUE 
+        AND L.AD_REFERENCE_ID = '800002' 
+        AND L.AD_LANGUAGE = ? 
+        AND P.AD_CLIENT_ID IN ('1') 
+        AND P.AD_ORG_ID IN ('1') 
+        AND P.ISACTIVE = 'Y' 
+        AND 1=1
+		) B
+		) A 
+      ]]></Sql>
+        <Field name="position" value="count"/>
+			<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
+        <Parameter name="language"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="key" ignoreValue="%" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" ignoreValue="%" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="bpartner" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.C_BPARTNER_ID = ? ]]></Parameter>
+         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
+        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
+        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
+   </SqlMethod>
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[

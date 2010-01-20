@@ -957,7 +957,7 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("FIRST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("PREVIOUS"), lastType, false));
-      // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
+      //toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
       // );
       toolbar.append(transformElementsToString(buttons.get("NEXT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST"), lastType, false));
@@ -969,8 +969,8 @@ public class ToolBar {
             "/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
         toolbar.append("</td>\n");
         toolbar.append("<td class=\"Main_ToolBar_textlabel_bg_body\">\n");
-        toolbar.append("<nobr id=\"bookmark\" class=\"Main_ToolBar_text_bookmark\">");
-        toolbar.append("</nobr>");
+        toolbar.append("<div id=\"bookmark\">\n");
+        toolbar.append("</div>\n");
         toolbar.append("</td>\n");
         toolbar.append("<td width=\"1\" class=\"Main_ToolBar_textlabel_bg_right\">");
         toolbar.append("<div style=\"padding: 0; margin: 0; border: 0; width: 9px;\" />");

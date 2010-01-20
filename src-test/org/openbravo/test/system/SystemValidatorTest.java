@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,11 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.system.DatabaseValidator;
 import org.openbravo.service.system.ModuleValidator;
@@ -55,7 +57,7 @@ public class SystemValidatorTest extends BaseTest {
   public void testSystemValidation() {
     setSystemAdministratorContext();
     final DatabaseValidator databaseValidator = new DatabaseValidator();
-    databaseValidator.setDatabase(createDatabaseObject());
+    databaseValidator.setDatabase(createDatabaseObject(null));
     final SystemValidationResult result = databaseValidator.validate();
     printResult(result, true);
   }
@@ -68,14 +70,14 @@ public class SystemValidatorTest extends BaseTest {
     setSystemAdministratorContext();
     for (Module module : OBDal.getInstance().createQuery(Module.class, "").list()) {
       final DatabaseValidator databaseValidator = new DatabaseValidator();
-      databaseValidator.setDatabase(createDatabaseObject());
+      databaseValidator.setDatabase(createDatabaseObject(module));
       databaseValidator.setValidateModule(module);
       final SystemValidationResult result = databaseValidator.validate();
       printResult(result, false);
     }
   }
 
-  private Database createDatabaseObject() {
+  private Database createDatabaseObject(Module module) {
     final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
 
     final BasicDataSource ds = new BasicDataSource();
@@ -89,6 +91,16 @@ public class SystemValidatorTest extends BaseTest {
     ds.setPassword(props.getProperty("bbdd.password"));
     Platform platform = PlatformFactory.createNewPlatformInstance(ds);
     platform.getModelLoader().setOnlyLoadTableColumns(true);
+
+    if (module != null) {
+      final String dbPrefix = module.getModuleDBPrefixList().get(0).getName();
+      final String excludeobjects = "com.openbravo.db.OpenbravoExcludeFilter";
+      final ExcludeFilter filter = DatabaseUtils.getExcludeFilter(excludeobjects);
+      filter.addPrefix(dbPrefix);
+
+      return platform.loadModelFromDatabase(filter, dbPrefix, true, module.getId());
+    }
+
     return platform.loadModelFromDatabase(null);
   }
 

@@ -716,7 +716,7 @@ public class CreateFile extends HttpSecureAppServlet {
     // -
     // E
     strBuf = strBuf.append(NLineas[0].ordenantes).append(NLineas[0].lineas)
-        .append(NLineas[0].hueco).append("\r\n");
+        .append(NLineas[0].hueco);
 
     if (!strMessage.equals("")) {
       printPage(response, vars, strKey, "", "", strMessage, false);

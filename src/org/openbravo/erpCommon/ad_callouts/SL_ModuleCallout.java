@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +39,14 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SL_ModuleCallout extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
+
+  /**
+   * Prevent navigation history in the callout
+   */
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {

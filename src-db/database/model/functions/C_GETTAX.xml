@@ -37,7 +37,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -175,7 +175,7 @@
          --   AND ((t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (v_BPTaxCategory IS NULL))
             AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
             AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
-          ORDER BY t.C_BP_TaxCategory_ID, t.C_Country_ID, t.To_Country_ID, t.C_Region_ID, t.To_Region_ID, ValidFrom
+          ORDER BY t.C_BP_TaxCategory_ID, t.C_Country_ID, t.To_Country_ID, t.C_Region_ID, t.To_Region_ID, t.ValidFrom DESC
           )
         LOOP
           v_TaxID := SEL1.C_Tax_ID;
@@ -216,7 +216,7 @@
               AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
             ORDER BY t.C_BP_TaxCategory_ID,t.C_Country_ID,
               t.C_Region_ID,
-              t.ValidFrom
+              t.ValidFrom DESC
             )
           LOOP
             v_TaxID := SEL2.C_Tax_ID;
@@ -236,7 +236,7 @@
               AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
               AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
               AND t.isActive = 'Y'
-            ORDER BY t.C_BP_TaxCategory_ID,t.ValidFrom
+            ORDER BY t.C_BP_TaxCategory_ID, t.ValidFrom DESC
             )
           LOOP
             v_TaxID := SEL3.C_Tax_ID;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -737,7 +737,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
           .getFieldProviderArray(upd);
       for (FieldProvider fp : upds) {
         String moduleId = fp.getField("moduleID");
-        FieldProviderFactory.setField(fp, "versionNoMin", minVersions.get(moduleId));
+        if (minVersions != null && minVersions.get(moduleId) != null
+            && !minVersions.get(moduleId).equals("")) {
+          FieldProviderFactory.setField(fp, "versionNoMin", Utility.messageBD(this,
+              "UpdateModuleNeed", vars.getLanguage())
+              + " " + minVersions.get(moduleId));
+        }
         FieldProviderFactory.setField(fp, "versionNoCurr", currentInstalledVersion(moduleId));
       }
       xmlDocument.setData("updates", upds);
