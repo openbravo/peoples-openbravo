@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -58,6 +59,12 @@ public class Locator extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       removePageSessionVariables(vars);
       String strWarehouse = vars.getRequestGlobalVariable("inpNameValue", "Locator.warehousename");
+      if (strWarehouse.equals("") || strWarehouse == null) {
+        String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
+        if (!windowId.equals("") && windowId != null)
+          strWarehouse = LocatorData.selectname(this, Utility.getContext(this, vars,
+              "M_Warehouse_ID", windowId));
+      }
       strWarehouse = strWarehouse + "%";
       vars.setSessionValue("Locator.warehousename", strWarehouse);
       printPage(response, vars, "", strWarehouse);
@@ -66,6 +73,12 @@ public class Locator extends HttpSecureAppServlet {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Locator.name");
       String strWarehouse = vars
           .getRequestGlobalVariable("inpmWarehouseId", "Locator.mWarehouseId");
+      if ((strKeyValue.equals("") || strKeyValue == null)
+          && (strWarehouse.equals("") || strWarehouse == null)) {
+        String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
+        if (!windowId.equals("") && windowId != null)
+          strWarehouse = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
+      }
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("Locator.name", strKeyValue);
       vars.setSessionValue("Locator.warehousename", LocatorData.selectname(this, strWarehouse));
@@ -76,7 +89,7 @@ public class Locator extends HttpSecureAppServlet {
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
-        printPage(response, vars, strKeyValue, strWarehouse);
+        printPage(response, vars, strKeyValue, LocatorData.selectname(this, strWarehouse));
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -107,6 +120,7 @@ public class Locator extends HttpSecureAppServlet {
     vars.removeSessionValue("Locator.bin");
     vars.removeSessionValue("Locator.level");
     vars.removeSessionValue("Locator.adorgid");
+    vars.removeSessionValue("Locator.currentPage");
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
@@ -174,6 +188,7 @@ public class Locator extends HttpSecureAppServlet {
     xmlDocument.setParameter("title", title);
     xmlDocument.setParameter("description", description);
     xmlDocument.setData("structure1", data);
+    xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
@@ -219,7 +234,7 @@ public class Locator extends HttpSecureAppServlet {
       String strNewFilter, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
-
+    int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
     String type = "Hidden";
@@ -233,16 +248,31 @@ public class Locator extends HttpSecureAppServlet {
       try {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-
+        page = TableSQLData.calcAndGetBackendPage(vars, "Locator.currentPage");
+        if (vars.getStringParameter("movePage", "").length() > 0) {
+          // on movePage action force executing countRows again
+          strNewFilter = "";
+        }
+        int oldOffset = offset;
+        offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+        log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
           // first
           // load
-          data = LocatorData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars,
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = LocatorData.countRows(this, rownum, Utility.getContext(this, vars,
               "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
-              strWarehousename, strAisle, strBin, strLevel, strOrderBy, "", "");
-          strNumRows = String.valueOf(data.length);
+              strWarehousename, strAisle, strBin, strLevel, pgLimit, oraLimit1, oraLimit2);
+          // strNumRows = String.valueOf(data.length);
           vars.setSessionValue("Locator.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("Locator.numrows");
@@ -301,7 +331,8 @@ public class Locator extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");

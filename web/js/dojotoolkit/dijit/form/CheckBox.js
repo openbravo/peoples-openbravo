@@ -31,7 +31,7 @@ dojo.declare(
 		// In case 2, the regular html inputs are invisible but still used by
 		// the user. They are turned quasi-invisible and overlay the background-image.
 
-		templateString:"<div class=\"dijitReset dijitInline\" waiRole=\"presentation\"\n\t><input\n\t \t${nameAttrSetting} type=\"${type}\" ${checkedAttrSetting}\n\t\tclass=\"dijitReset dijitCheckBoxInput\"\n\t\tdojoAttachPoint=\"focusNode\"\n\t \tdojoAttachEvent=\"onmouseover:_onMouse,onmouseout:_onMouse,onclick:_onClick\"\n/></div>\n",
+		templateString: dojo.cache("dijit.form", "templates/CheckBox.html", "<div class=\"dijitReset dijitInline\" waiRole=\"presentation\"\n\t><input\n\t \t${nameAttrSetting} type=\"${type}\" ${checkedAttrSetting}\n\t\tclass=\"dijitReset dijitCheckBoxInput\"\n\t\tdojoAttachPoint=\"focusNode\"\n\t \tdojoAttachEvent=\"onmouseover:_onMouse,onmouseout:_onMouse,onclick:_onClick\"\n/></div>\n"),
 
 		baseClass: "dijitCheckBox",
 
@@ -76,7 +76,7 @@ dojo.declare(
 			//		attr('value', val).
 			// description:
 			//		During initialization, just saves as attribute to the <input type=checkbox>.
-			//		
+			//
 			//		After initialization,
 			//		when passed a boolean, controls whether or not the CheckBox is checked.
 			//		If passed a string, changes the value attribute of the CheckBox (the one
@@ -112,7 +112,7 @@ dojo.declare(
 
 			this.inherited(arguments);
 		},
-		
+
 		 _fillContent: function(/*DomNode*/ source){
 			// Override Button::_fillContent() since it doesn't make sense for CheckBox,
 			// since CheckBox doesn't even have a container
@@ -129,7 +129,7 @@ dojo.declare(
 			this.value = this.params.value || "on";
 			dojo.attr(this.focusNode, 'value', this.value);
 		},
-		
+
 		_onFocus: function(){
 			if(this.id){
 				dojo.query("label[for='"+this.id+"']").addClass("dijitFocusedLabel");
@@ -171,7 +171,7 @@ dojo.declare(
 			if(value){
 				var _this = this;
 				// search for radio buttons with the same name that need to be unchecked
-				dojo.query("INPUT[type=radio]", this.focusNode.form||dojo.doc).forEach( // can't use name= since dojo.query doesn't support [] in the name
+				dojo.query("INPUT[type=radio]", this.focusNode.form || dojo.doc).forEach( // can't use name= since dojo.query doesn't support [] in the name
 					function(inputNode){
 						if(inputNode.name == _this.name && inputNode != _this.focusNode && inputNode.form == _this.focusNode.form){
 							var widget = dijit.getEnclosingWidget(inputNode);

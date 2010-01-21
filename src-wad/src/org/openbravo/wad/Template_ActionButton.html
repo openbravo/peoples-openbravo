@@ -51,6 +51,7 @@ window.onunload = reloadOpener; // Reload opener when closing/canceling
 function validate(action, form, value) {
   var frm = document.frmMain;
   var key = frm.inpKey;
+  try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
   return validateClient(action, form, value);
 }
 </script>
@@ -70,9 +71,12 @@ function submitThisPage(strCommand) {
 </script>
 <script language="JavaScript" type="text/javascript">
 function submitThisPageJasper() {
+  if (!validate()) { 
+    return false;
+  }
   var parameters = addArrayValue(parameters, "scrollbars", "1");
   openPopUp('../utility/PrintJR.html', 'JREPORT' + document.forms[0].inpadProcessId.value, null, null, null, null, false, null, true, false, parameters);
-  //submitCommandForm('DEFAULT', false, null, '../utility/PrintJR.html', 'JREPORT' + document.forms[0].inpadProcessId.value);
+  setProcessingMode('popup', false);
   return true;
 }
 

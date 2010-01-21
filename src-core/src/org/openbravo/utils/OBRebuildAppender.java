@@ -14,6 +14,7 @@ package org.openbravo.utils;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
@@ -62,16 +63,32 @@ public class OBRebuildAppender extends AppenderSkeleton {
         if (connection == null || connection.isClosed()) {
           connection = cp.getConnection();
         }
+        PreparedStatement ln = connection
+            .prepareStatement("SELECT coalesce(max(line_number)+1,1) FROM AD_ERROR_LOG");
+        ResultSet rs = ln.executeQuery();
+        String line_number;
+        if (rs.next()) {
+          line_number = rs.getString(1);
+        } else {
+          line_number = "1";
+        }
+
         String message = arg0.getMessage().toString();
         if (message.length() > 3000)
           message = message.substring(0, 2997) + "...";
         PreparedStatement ps = connection
-            .prepareStatement("INSERT INTO ad_error_log (ad_error_log_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, system_status, error_level, message) SELECT get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', system_status, ?,? FROM ad_system_info");
+            .prepareStatement("INSERT INTO ad_error_log (ad_error_log_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, system_status, error_level, message, line_number) SELECT get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', system_status, ?,?, to_number(?) FROM ad_system_info");
         ps.setString(1, arg0.getLevel().toString());
         ps.setString(2, arg0.getMessage().toString());
+        ps.setString(3, line_number);
         ps.executeUpdate();
       } catch (Exception e) {
-        System.err.println("Error while trying to insert into log table");
+        // We will not log an error if the insertion in the log table
+        // goes wrong for two different reasons:
+        // - First, it could cause problems if the message itself is redirected to the log again
+        // - Second, if the instance which is being rebuild doesn't yet have the log table, or the
+        // table is being recreated, the insertion will fail, and this is ok.
+        // We don't need to have log lines in the database in that case
       }
 
   }

@@ -146,6 +146,54 @@ function enableButton(id) {
   return true;
 }
 
+function disableFieldButton(id) {
+  var link = null;
+  try {
+    if (typeof id == "string") {
+      link = document.getElementById(id);
+    } else {
+      link = id;
+    }
+    if (link.tagName == 'A') {
+      if (link.className.indexOf('FieldButtonLink') != -1 && link.className.indexOf('FieldButtonLink_disabled') == -1) {
+        link.style.display = "none";
+        link.className = link.className.replace('FieldButtonLink', 'FieldButtonLink_disabled');
+        disableAttributeWithFunction(link, 'obj', 'onclick');
+        disableAttributeWithFunction(link, 'obj', 'onfocus');
+        disableAttributeWithFunction(link, 'obj', 'onkeypress');
+        disableAttributeWithFunction(link, 'obj', 'onkeyup');
+      }
+    }
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+function enableFieldButton(id) {
+  var link = null;
+  try {
+    if (typeof id == "string") {
+      link = document.getElementById(id);
+    } else {
+      link = id;
+    }
+    if (link.tagName == 'A') {
+      if (link.className.indexOf('FieldButtonLink_disabled') != -1) {
+        link.style.display = "block";
+        link.className = link.className.replace('FieldButtonLink_disabled', 'FieldButtonLink');
+        enableAttributeWithFunction(link, 'obj', 'onclick');
+        enableAttributeWithFunction(link, 'obj', 'onfocus');
+        enableAttributeWithFunction(link, 'obj', 'onkeypress');
+        enableAttributeWithFunction(link, 'obj', 'onkeyup');
+      }
+    }
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 function setWindowEditing(value) {
   isContextMenuOpened = false;
   var isNewWindow;

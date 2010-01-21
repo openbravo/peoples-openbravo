@@ -126,7 +126,7 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
           "ReportInvoiceCustomerEdition|SalesRepId");
       String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId",
           "ReportInvoiceCustomerEdition|cRegionId", IsIDFilter.instance);
-      printPagePdf(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId,
+      printPagePdf(request, response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId,
           strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct,
           strProjectpublic, strSalesRep, strcRegionId);
     } else
@@ -327,9 +327,9 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
-      String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId,
-      String strmCategoryId, String strProjectkind, String strProjectstatus,
+  private void printPagePdf(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcProjectId,
+      String strcBpartnerId, String strmCategoryId, String strProjectkind, String strProjectstatus,
       String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep,
       String strcRegionId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -349,7 +349,7 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     String strResult = xmlDocument.print();
     if (log4j.isDebugEnabled())
       log4j.debug(strResult);
-    renderFO(strResult, response);
+    renderFO(strResult, request, response);
   }
 
   public String getServletInfo() {

@@ -37,6 +37,7 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
+    Cur_Order RECORD;
     -- Record Info
     v_Client_ID VARCHAR2(32);
     v_Org_ID VARCHAR2(32);
@@ -591,6 +592,11 @@
      /**************************************************************************
         * Calculate Discounts
         *************************************************************************/
+        -- Delete first previous discounts if any and then recalculate them
+        DELETE
+        FROM C_ORDERLINE
+        WHERE C_ORDER_DISCOUNT_ID IS NOT NULL
+        AND C_ORDER_ID=v_Record_ID;
         v_CumDiscount:=0;
         v_OldCumDiscount:=0;
         v_Line:=10;
@@ -1286,7 +1292,18 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     END IF;
   END IF;
   -- We are done with standard sales orders
-  IF(v_DocAction IN('CO', 'CL', 'VO') AND v_DocSubTypeSO='SO') THEN
+IF (v_DocSubTypeSO = 'RM') THEN
+
+	FOR Cur_Order IN( SELECT ol.qtyordered from C_order o,C_orderline ol
+      where o.C_Order_ID = v_Record_ID
+      AND ol.C_Order_ID = o.C_Order_ID)
+	LOOP
+		IF (Cur_Order.qtyordered >0) THEN 
+			RAISE_APPLICATION_ERROR(-20000, '@ReturnMaterialOrderType@') ;
+		END IF;
+	END LOOP;
+	END IF;
+  IF(v_DocAction IN('CO', 'CL', 'VO') AND v_DocSubTypeSO IN('SO','RM')) THEN
     UPDATE C_ORDER
       SET DocStatus='CO',
       DocAction='--',

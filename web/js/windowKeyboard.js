@@ -46,6 +46,8 @@ var isOBTabBehavior = true;
 var isFirstTime = true;
 var isReadOnlyWindow =  false;
 
+var selectInputTextOnTab = true;
+
 var isGoingDown = null;
 var isGoingUp = null;
 
@@ -375,6 +377,8 @@ function drawWindowElementFocus(obj) {
     if(obj.tagName == 'A') {
       if (obj.className.indexOf(' Popup_Client_Help_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_LabelLink') != -1) {
         obj.className = obj.className + ' Popup_Client_Help_LabelLink_focus';
+      } else if (obj.className.indexOf('DataGrid_Popup_text_pagerange_focus') == -1 && obj.className.indexOf('DataGrid_Popup_text_pagerange') != -1) {
+        obj.className = obj.className + ' DataGrid_Popup_text_pagerange_focus';
       } else if (obj.className.indexOf('Popup_Client_Help_Icon_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_Icon_LabelLink') != -1) {
         obj.className = 'Popup_Client_Help_Icon_LabelLink_focus';
       } else if (obj.className.indexOf(' Popup_Client_UserOps_LabelLink_Selected_focus') == -1 && obj.className.indexOf('Popup_Client_UserOps_LabelLink_Selected') != -1) {
@@ -506,6 +510,7 @@ function putWindowElementFocus(obj, event) {
           obj.focus();
       }
     }
+    if(selectInputTextOnTab) obj.select();
   } catch (e) {
   }
 }
@@ -517,6 +522,7 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace(' Popup_Client_UserOps_LabelLink_focus','');
       obj.className = obj.className.replace(' Popup_Client_UserOps_LabelLink_Selected_focus','');
       obj.className = obj.className.replace(' Popup_Client_Help_LabelLink_focus','');
+      obj.className = obj.className.replace(' DataGrid_Popup_text_pagerange_focus','');
       obj.className = obj.className.replace(' LabelLink_focus','');
       obj.className = obj.className.replace(' LabelLink_noicon_focus','');
       obj.className = obj.className.replace('FieldButtonLink_focus','FieldButtonLink');
@@ -1081,10 +1087,14 @@ function executeAssociatedLink() {
   }
 }
 
-function getAssociatedFieldButton(type) {
+function getAssociatedFieldButton(input, type) {
   var fieldButton = null;
   var success = true;
-  fieldButton = focusedWindowElement;
+  if (typeof input == 'undefined' || input == null) {
+    fieldButton = focusedWindowElement;
+  } else {
+    fieldButton = input;
+  }
   if (type=='window') {
     try {
       //Go to the TD parent
@@ -1136,7 +1146,7 @@ function getAssociatedFieldButton(type) {
 
 function executeAssociatedFieldButton() {
   var fieldButton = null;
-  fieldButton = getAssociatedFieldButton('window');
+  fieldButton = getAssociatedFieldButton(null, 'window');
   if (fieldButton != null && fieldButton != false) {
     fieldButton.onclick();
     return true;

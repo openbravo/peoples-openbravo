@@ -30,7 +30,7 @@
       SELECT VALUE, COALESCE(mt.MSGTEXT, m.MSGTEXT) AS MSGTEXT, m.MSGTYPE 
       FROM AD_Message m left join ad_message_trl mt on m.ad_message_id = mt.ad_message_id 
                               and mt.ad_language = ? 
-      WHERE (m.msgtype = 'C' OR UPPER(m.value) in ('JSINVALID', 'JSMISSING', 'JSRANGE'))
+      WHERE (m.msgtype = 'C' OR UPPER(m.value) in ('JSINVALID', 'JSMISSING', 'JSRANGE', 'GRIDPREVIOUSPAGE', 'GRIDNEXTPAGE'))
       ORDER BY VALUE
     </Sql>
     <Parameter name="adLanguage"/>

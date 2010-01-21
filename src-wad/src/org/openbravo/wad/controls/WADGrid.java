@@ -40,8 +40,23 @@ public class WADGrid extends WADControl {
   private void generateJSCode() {
     addJSCode("DataGrid", "dojo.require(\"openbravo.widget.DataGrid\");");
     String str = "function updateHeader(liveGrid, offset) {\n"
-        + "  dojo.byId('bookmark').innerHTML = ((liveGrid.visibleRows>0)?(offset+1):0) + \" - \""
-        + "+ (offset+liveGrid.visibleRows) + \" / \" + liveGrid.metaData.getTotalRows();\n" + '}';
+        + "  var backendPageSize = liveGrid.getBackendPageSize();\n"
+        + "  var currPageStart = (liveGrid.metaData.getBackendPage()*backendPageSize);\n"
+        + "  var pageFull = (liveGrid.metaData.getTotalRows() >= backendPageSize);\n"
+        + "  var firstPage = (liveGrid.metaData.getBackendPage() == 0);\n"
+        + "  var res =  \"<nobr class='Main_ToolBar_text_bookmark'>\";\n"
+        + "  var strPrevious = getMessage(\"GridPreviousPage\");\n"
+        + "  var strNext = getMessage(\"GridNextPage\");\n"
+        + "\n"
+        + "  if (!firstPage) {\n"
+        + "    res = res + \"<a href='#' onclick='gridMovePage(\\\"PREVIOUSPAGE\\\")' class='Main_ToolBar_text_pagerange'>\" + strPrevious + \" \" + backendPageSize + \"</a>&nbsp;&nbsp;\";\n"
+        + "  }\n"
+        + "  res = res + ((liveGrid.visibleRows>0)?(currPageStart+offset+1):0) + \" - \""
+        + "+ (currPageStart+offset+liveGrid.visibleRows) + \" / \" + (currPageStart+liveGrid.metaData.getTotalRows());\n"
+        + "  if (pageFull) {\n"
+        + "    res = res + \"&nbsp;&nbsp;<a href='#' onclick='gridMovePage(\\\"NEXTPAGE\\\")' class='Main_ToolBar_text_pagerange'>\" + strNext + \" \" + backendPageSize + \"</a>\";\n"
+        + "  }\n" + "\n" + "  liveGrid.setGridPaging(!firstPage,pageFull);\n"
+        + "  res = res + \"</nobr>\";\n" + "  dojo.byId('bookmark').innerHTML = res;\n" + "}\n";
     addJSCode("updateHeader", str);
 
     StringBuffer text = new StringBuffer();
@@ -108,6 +123,13 @@ public class WADGrid extends WADControl {
     text.append("  return true;\n");
     text.append('}');
     addJSCode("updateGridDataAfterFilter", text.toString());
+
+    text = new StringBuffer();
+    text.append("function gridMovePage(direction) {\n");
+    text.append("  dijit.byId('").append(getData("id")).append("').gridMovePage(direction);\n");
+    text.append("  return true;\n");
+    text.append("}\n");
+    addJSCode("gridMovePage", text.toString());
   }
 
   public String toString() {

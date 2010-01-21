@@ -36,6 +36,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -307,6 +308,7 @@ public class ProductComplete extends HttpSecureAppServlet {
     xmlDocument.setParameter("title", title);
     xmlDocument.setParameter("description", description);
     xmlDocument.setData("structure1", data);
+    xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
@@ -354,7 +356,7 @@ public class ProductComplete extends HttpSecureAppServlet {
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
-
+    int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
     String type = "Hidden";
@@ -368,19 +370,34 @@ public class ProductComplete extends HttpSecureAppServlet {
       try {
         // build sql orderBy clause from parameters
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-
+        page = TableSQLData.calcAndGetBackendPage(vars, "ProjectData.currentPage");
+        if (vars.getStringParameter("movePage", "").length() > 0) {
+        // on movePage action force executing countRows again
+        	strNewFilter = "";
+        }
+        int oldOffset = offset;
+        offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+        log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
+        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+        	if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        			oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+        			oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+        			rownum = "ROWNUM";
+        	} else {
+        			pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+        	}
           if (strStore.equals("Y")) {
             // countRows is the same in en_US and +trl case, so a
             // single countRows method is used
-            strNumRows = ProductCompleteData.countRows(this, strKey, strName, strWarehouse,
-                strIsCalledFromProduction, vars.getRole(), strBpartner, strClients);
+            strNumRows = ProductCompleteData.countRows(this,rownum, strKey, strName, strWarehouse,
+                strIsCalledFromProduction, vars.getRole(), strBpartner, strClients,pgLimit, oraLimit1, oraLimit2);
           } else {
             // countRowsNotStored is the same in en_US and +trl case, so a
             // single countRows method is used
-            strNumRows = ProductCompleteData.countRowsNotStored(this, strKey, strName, strBpartner,
-                strClients, strOrgs, strIsCalledFromProduction);
+            strNumRows = ProductCompleteData.countRowsNotStored(this,rownum, strKey, strName, strBpartner,
+                strClients, strOrgs, strIsCalledFromProduction,pgLimit, oraLimit1, oraLimit2);
           }
 
           vars.setSessionValue("ProductComplete.numrows", strNumRows);
@@ -478,7 +495,7 @@ public class ProductComplete extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");

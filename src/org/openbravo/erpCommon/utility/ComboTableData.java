@@ -769,7 +769,14 @@ public class ComboTableData {
       throws Exception {
     int myIndex = this.index++;
     String name = ((fieldName != null && !fieldName.equals("")) ? fieldName : getObjectName());
-    String tableDirName = name.substring(0, name.length() - 3);
+
+    String tableDirName;
+    if (name.equalsIgnoreCase("createdby") || name.equalsIgnoreCase("updatedby")) {
+      tableDirName = "AD_User";
+      name = "AD_User_ID";
+    } else {
+      tableDirName = name.substring(0, name.length() - 3);
+    }
     ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(getPool(), tableDirName);
     addSelectField("td" + myIndex + "." + name, "ID");
 

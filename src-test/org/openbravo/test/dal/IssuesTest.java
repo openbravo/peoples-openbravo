@@ -29,6 +29,8 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.xml.EntityXMLException;
+import org.openbravo.dal.xml.XMLTypeConverter;
 import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Language;
@@ -49,6 +51,19 @@ import org.openbravo.test.base.BaseTest;
 
 public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=11812
+   */
+  public void test11812() {
+    assertTrue(24 == XMLTypeConverter.getInstance().fromXML(Long.class, "24.0"));
+    try {
+      XMLTypeConverter.getInstance().fromXML(Long.class, "24.5");
+      fail("No exception on 24.5");
+    } catch (EntityXMLException e) {
+      // expected
+    }
+  }
 
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=11461

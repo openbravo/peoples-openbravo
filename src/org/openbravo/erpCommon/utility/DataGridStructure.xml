@@ -25,6 +25,7 @@
   <PARAMETER id="fieldType" name="type" default="Hidden"/>
   <PARAMETER id="fieldTitle" name="title" default=""/>
   <PARAMETER id="fieldDescription" name="description" default=""/>
+  <PARAMETER id="datagrid" name="backendPageSize" attribute="backendPageSize" replace="0" default="0"/>
 
   <structure name="structure1">
     <FIELD id="fieldColumn" attribute="name">gridcolumnname</FIELD>

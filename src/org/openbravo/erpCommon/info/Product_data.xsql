@@ -87,21 +87,28 @@
    <SqlMethod name="countRows" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT count(*) as value
-        FROM M_Product p, M_ProductPrice pr
+      SELECT count(*) AS value FROM ( SELECT '0' AS rn1, B.*  FROM ( 
+        SELECT 1 FROM M_Product p, M_ProductPrice pr
         WHERE p.M_Product_ID=pr.M_Product_ID 
         AND p.IsSummary='N' 
         AND p.IsActive='Y' 
         AND pr.IsActive='Y'
         AND pr.M_PriceList_Version_ID = ?
         AND p.AD_Client_ID IN ('1') 
-        AND p.AD_Org_ID IN ('1') 
+        AND p.AD_Org_ID IN ('1')
+        AND 1=1
+      ) B
+      ) A 
       ]]></Sql>
+      <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="priceListVersion"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="p.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="p.AD_Org_ID IN (" text="'1'"/>
+      <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
+      <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
+      <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
   
    <SqlMethod name="set" type="constant" return="multiple">

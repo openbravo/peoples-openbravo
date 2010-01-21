@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -405,6 +405,7 @@ public class WadActionButton {
       String tabName, boolean genericActionButton, String processId) {
     if (fd == null)
       return "";
+
     final StringBuffer html = new StringBuffer();
     for (int i = 0; i < vecFields.size(); i++) {
       String field = vecFields.elementAt(i).toString();
@@ -435,7 +436,8 @@ public class WadActionButton {
           if (data[i].defaultvalue.equals("") || data[i].defaultvalue.indexOf("@") == -1) {
             strDefault = "\"" + data[i].defaultvalue + "\"";
           } else if (data[i].defaultvalue.startsWith("@SQL=")) {
-            strDefault = tabName + "Data.selectActP" + data[i].id + "_"
+            strDefault = (tabName.equals("") ? "ActionButtonSQLDefault" : tabName)
+                + "Data.selectActP" + data[i].id + "_"
                 + FormatUtilities.replace(data[i].columnname);
             strDefault += "(this"
                 + WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null, false,

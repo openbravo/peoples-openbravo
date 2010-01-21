@@ -149,7 +149,7 @@ dojo.declare("dojo.data.api.Read", null, {
 		return false; // boolean
 	},
 
-	isItemLoaded: function(/* anything */ something) {
+	isItemLoaded: function(/* anything */ something){
 		//	summary:
 		//		Returns false if isItem(something) is false.  Returns false if
 		//		if isItem(something) is true but the the item is not yet loaded
@@ -205,7 +205,7 @@ dojo.declare("dojo.data.api.Read", null, {
 		//		the callback functions will be called in the context of dojo.global().
 		//		For example, onItem.call(scope, item, request) vs. 
 		//		onItem.call(dojo.global(), item, request)
-		if (!this.isItemLoaded(keywordArgs.item)) {
+		if(!this.isItemLoaded(keywordArgs.item)){
 			throw new Error('Unimplemented API: dojo.data.api.Read.loadItem');
 		}
 	},
@@ -478,7 +478,7 @@ dojo.declare("dojo.data.api.Read", null, {
 		//		the extension class.
 		//
 		//	item:
-	   	//		The item to return the label for.
+		//		The item to return the label for.
 		//
 		//	returns: 
 		//		A user-readable string representing the item or undefined if no user-readable label can 
@@ -500,7 +500,7 @@ dojo.declare("dojo.data.api.Read", null, {
 		//		redundant information.
 		//
 		//	item:
-	   	//		The item to return the list of label attributes for.
+		//		The item to return the list of label attributes for.
 		//
 		//	returns: 
 		//		An array of attribute names that were used to generate the label, or null if public attributes 

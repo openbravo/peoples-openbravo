@@ -118,7 +118,7 @@ build.war: build a war file in the lib directory.
     <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+    <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" moduleJavaPackage="${module}"/>
   </target>
   
   <target name="load.logoimages">
@@ -133,6 +133,13 @@ build.war: build a war file in the lib directory.
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="clean '${base.config}/Openbravo.properties'" />
+      <classpath refid="project.class.path" />
+    </java>
+  </target>
+  
+  <target name="trl.remove.unused" if="translation">
+    <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
+      <arg line="remove '${base.config}/Openbravo.properties'" />
       <classpath refid="project.class.path" />
     </java>
   </target>
@@ -379,7 +386,8 @@ build.war: build a war file in the lib directory.
         
         <WADValidation propertiesFile="${base.config}/Openbravo.properties"
                        modules="${module}"
-                       stoponerror="${stopOnWadError}"/>
+                       stoponerror="${stopOnWadError}"
+                       friendlyWarnings="${friendlyWarnings}"/>
   </target>
   
   <target name="wad" depends="init, wadvalidation">
@@ -656,7 +664,7 @@ build.war: build a war file in the lib directory.
   </target>
 
 
-  <target name="eclipse.compile.complete" depends="clean,generate.entities,wad,sqlc,postsrc,translate">
+  <target name="eclipse.compile.complete" depends="clean,generate.entities,wad,sqlc,postsrc,translate, trl.remove.unused">
     <antcall target="update.build.timestamp" />
   </target>
 
@@ -666,7 +674,7 @@ build.war: build a war file in the lib directory.
   <target name="compile.src" depends="compileSqlc, postsrc, copy.files">
   </target>
 
-  <target name="compile.complete" depends="clean,generate.entities,wad,compileSqlc,postsrc,translate">
+  <target name="compile.complete" depends="clean,generate.entities,wad,compileSqlc,postsrc,translate, trl.remove.unused">
     <antcall target="update.build.timestamp" />
   </target>
 

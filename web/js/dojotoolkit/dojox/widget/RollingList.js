@@ -10,15 +10,15 @@ dojo._hasResource["dojox.widget.RollingList"] = true;
 dojo.provide("dojox.widget.RollingList");
 dojo.experimental("dojox.widget.RollingList");
 
-dojo.require("dijit._Templated");
 dojo.require("dijit.layout.ContentPane");
+dojo.require("dijit._Templated");
+dojo.require("dijit._Contained");
 dojo.require("dijit.layout._LayoutWidget");
 dojo.require("dijit.Menu");
 dojo.require("dojox.html.metrics");
 dojo.require("dijit.form.Button");
 
 dojo.require("dojo.i18n"); 
-dojo.requireLocalization("dojox.widget", "RollingList", null, "ROOT,ca,sk,sl,th"); 
 dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dojox.widget._RollingListPane",
@@ -66,7 +66,7 @@ dojo.declare("dojox.widget._RollingListPane",
 	//	the width (in px) for this pane
 	minWidth: 0,
 	
-	_setContentAndScroll: function(/*String|DomNode|Nodelist*/cont, isFakeContent){
+	_setContentAndScroll: function(/*String|DomNode|Nodelist*/cont, /*Boolean?*/isFakeContent){
 		// summary: sets the value of the content and scrolls it into view
 		this._setContent(cont, isFakeContent);
 		this.parentWidget.scrollIntoView(this);
@@ -135,21 +135,14 @@ dojo.declare("dojox.widget._RollingListPane",
 		}
 	},
 	
-	_loadCheck: function(){
+	_onShow: function(){
 		// summary: checks that the store is loaded
-		if(!this._started){
-			var c = this.connect(this, "startup", function(){
-				this.disconnect(c);
-				this._loadCheck();
-			});
-		}
-		var displayState = this.domNode && this._isShown();
-		if((this.store || this.items) && ((this.refreshOnShow && displayState) || (!this.isLoaded && displayState))){
-			this._loadQuery();
+		if((this.store || this.items) && ((this.refreshOnShow && this.domNode) || (!this.isLoaded && this.domNode))){
+			this.refresh();
 		}
 	},
 	
-	_loadQuery: function(){
+	_load: function(){
 		// summary: sets the "loading" message and then kicks off a query asyncronously
 		this.isLoaded = false;
 		if(this.items){
@@ -186,6 +179,7 @@ dojo.declare("dojox.widget._RollingListPane",
 	
 	_doQuery: function(){
 		// summary: either runs the query or loads potentially not-yet-loaded items.
+		if(!this.domNode){return;}
 		var preload = this.parentWidget.preloadItems;
 		preload = (preload === true || (this.items && this.items.length <= Number(preload)));
 		if(this.items && preload){
@@ -224,7 +218,7 @@ dojo.declare("dojox.widget._RollingListPane",
 					/* object | array */ newValue){	
 		// Summary: called when an item in the store has changed
 		if(this._hasItem(item)){
-			this._loadCheck(true);
+			this.refresh();
 		}
 	},
 	
@@ -235,9 +229,9 @@ dojo.declare("dojox.widget._RollingListPane",
 			(parentInfo && this.parentPane && this.parentPane._hasItem(parentInfo.item) &&
 			(sel = this.parentPane._getSelected()) && this.parentWidget._itemsMatch(sel.item, parentInfo.item))){
 			this.items.push(newItem);
-			this._loadCheck(true);
+			this.refresh();
 		}else if(parentInfo && this.parentPane && this._hasItem(parentInfo.item)){
-			this._loadCheck(true);
+			this.refresh();
 		}
 	},
 	
@@ -247,7 +241,7 @@ dojo.declare("dojox.widget._RollingListPane",
 			this.items = dojo.filter(this.items, function(i){
 				return (i != deletedItem);
 			});
-			this._loadCheck(true);
+			this.refresh();
 		}
 	},
 	
@@ -279,6 +273,10 @@ dojo.declare("dojox.widget._RollingListPane",
 		// summary:
 		//	called after a fetch or load - at this point, this.items should be
 		//  set and loaded.  Override this function to "do your stuff"
+		if(!this.onLoadDeferred){
+			this.cancel();
+			this.onLoadDeferred = new dojo.Deferred(dojo.hitch(this, "cancel"));
+		}
 		this._onLoadHandler();		
 	}
 			
@@ -298,14 +296,6 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 	// _menu: dijit.Menu
 	//  The menu that we will call addChild() on for adding items
 	_menu: null,
-	
-	_loadCheck: function(){
-		// summary: checks that the store is loaded
-		var displayState = this._isShown();
-		if((this.store || this.items) && ((this.refreshOnShow && displayState) || (!this.isLoaded && displayState))){
-			this._loadQuery();
-		}
-	},
 	
 	_setContent: function(/*String|DomNode|Nodelist*/cont){
 		if(!this._menu){
@@ -486,20 +476,6 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 		this._visibleLoadPending = window.setTimeout(dojo.hitch(this, "_loadVisibleItems"), 500);
 	},
 	
-	_layoutHack: function(){
-		// summary: work around table sizing bugs on FF2 by forcing redraw
-		//		note - this function is taken from dijit.form._FormWidget
-		if(dojo.isFF == 2 && !this._layoutHackHandle){
-			var node=this.domNode;
-			var old = node.style.opacity;
-			node.style.opacity = "0.999";
-			this._layoutHackHandle = setTimeout(dojo.hitch(this, function(){
-				this._layoutHackHandle = null;
-				node.style.opacity = old;
-			}), 0);
-		}
-	},
-	
 	_loadVisibleItems: function(){
 		// summary: loads the items that are currently visible in the pane
 		delete this._visibleLoadPending
@@ -550,7 +526,6 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 				oItem.destroy();
 			}, this);
 			this._checkScrollConnection(false);
-			this._layoutHack();
 		});
 		this._doLoadItems(itemsToLoad, onItems);
 	},
@@ -579,13 +554,6 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 				this.parentWidget._updateClass(i.domNode, "Item", {"Selected": (item && (i == item && !i.disabled))});
 			}, this);
 		}
-	},
-	
-	destroy: function(){
-		if(this._layoutHackHandle){
-			clearTimeout(this._layoutHackHandle);
-		}
-		this.inherited(arguments);
 	}
 });
 
@@ -593,9 +561,9 @@ dojo.declare("dojox.widget.RollingList",
 	[dijit._Widget, dijit._Templated, dijit._Container], {
 	// summary: a rolling list that can be tied to a data store with children
 		
-	// templatePath: string
-	//	our template to use
-	templateString:"<div class=\"dojoxRollingList ${className}\"\n\t><div class=\"dojoxRollingListContainer\" dojoAttachPoint=\"containerNode\" dojoAttachEvent=\"onkeypress:_onKey\"\n\t></div\n\t><div class=\"dojoxRollingListButtons\" dojoAttachPoint=\"buttonsNode\"\n        ><button dojoType=\"dijit.form.Button\" dojoAttachPoint=\"okButton\"\n\t\t\t\tdojoAttachEvent=\"onClick:_onExecute\">${okButtonLabel}</button\n        ><button dojoType=\"dijit.form.Button\" dojoAttachPoint=\"cancelButton\"\n\t\t\t\tdojoAttachEvent=\"onClick:_onCancel\">${cancelButtonLabel}</button\n\t></div\n></div>\n",
+	// templateString: String
+	//		The template to be used to construct the widget.
+	templateString: dojo.cache("dojox.widget", "RollingList/RollingList.html", "<div class=\"dojoxRollingList ${className}\"\n\t><div class=\"dojoxRollingListContainer\" dojoAttachPoint=\"containerNode\" dojoAttachEvent=\"onkeypress:_onKey\"\n\t></div\n\t><div class=\"dojoxRollingListButtons\" dojoAttachPoint=\"buttonsNode\"\n        ><button dojoType=\"dijit.form.Button\" dojoAttachPoint=\"okButton\"\n\t\t\t\tdojoAttachEvent=\"onClick:_onExecute\">${okButtonLabel}</button\n        ><button dojoType=\"dijit.form.Button\" dojoAttachPoint=\"cancelButton\"\n\t\t\t\tdojoAttachEvent=\"onClick:_onCancel\">${cancelButtonLabel}</button\n\t></div\n></div>\n"),
 	widgetsInTemplate: true,
 	
 	// className: string
@@ -725,7 +693,7 @@ dojo.declare("dojox.widget.RollingList",
 		}
 	},
 	
-	addChild: function(/*Widget*/ widget, /*int?*/ insertIndex){
+	addChild: function(/*dijit._Widget*/ widget, /*int?*/ insertIndex){
 		// summary: adds a child to this rolling list - if passed an insertIndex,
 		//  then all children from that index on will be removed and destroyed
 		//  before adding the child.
@@ -777,7 +745,7 @@ dojo.declare("dojox.widget.RollingList",
 		});
 	},
 	
-	scrollIntoView: function(/* Widget */ childWidget){
+	scrollIntoView: function(/*dijit._Widget*/ childWidget){
 		// summary: scrolls the given widget into view
 		if(this._scrollingTimeout){ 
 			window.clearTimeout(this._scrollingTimeout);
@@ -1013,7 +981,7 @@ dojo.declare("dojox.widget.RollingList",
 		var store = this.store;
 		if(!item || !store || !store.isItem(item)){
 			var i = new dijit.MenuItem({
-				label: dojo.i18n.getLocalization("dojox.widget", "RollingList", this.lang).empty,
+				label: "---",
 				disabled: true,
 				iconClass: "dojoxEmpty",
 				focus: function(){

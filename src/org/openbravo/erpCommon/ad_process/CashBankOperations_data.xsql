@@ -42,15 +42,14 @@
 		SELECT P.AD_ORG_ID AS PADRE, C.C_BANKACCOUNT_ID AS ID, C.DISPLAYEDACCOUNT AS NAME
 		FROM AD_ORG O, AD_ORG P, C_BANKACCOUNT C
 		WHERE O.AD_ORG_ID = C.AD_ORG_ID
-		  AND AD_ISORGINCLUDED(C.AD_ORG_ID,P.AD_ORG_ID,O.AD_CLIENT_ID) <> -1
-		  AND (P.AD_CLIENT_ID = O.AD_CLIENT_ID OR P.AD_ORG_ID = '0')
+		  AND AD_ISORGINCLUDED(P.AD_ORG_ID,C.AD_ORG_ID,P.AD_CLIENT_ID) <> -1
 		  AND O.AD_ORG_ID IN ('1')
-		  AND O.AD_CLIENT_ID IN ('2')
+		  AND P.AD_CLIENT_ID IN ('2')
 		ORDER BY PADRE, NAME
       ]]>
       </Sql>
       <Parameter name="adOrgId" optional="true" type="replace" after="AND O.AD_ORG_ID IN (" text="'1'"/>
-      <Parameter name="adClientId" optional="true" type="replace" after="AND O.AD_CLIENT_ID IN (" text="'2'"/>
+      <Parameter name="adClientId" optional="true" type="replace" after="AND P.AD_CLIENT_ID IN (" text="'2'"/>
    </SqlMethod>
    <SqlMethod name="selectCashDouble" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -59,16 +58,15 @@
 		SELECT P.AD_ORG_ID AS PADRE, C.C_CASHBOOK_ID AS ID, AD_COLUMN_IDENTIFIER(TO_CHAR('C_CASHBOOK'),TO_CHAR(C.C_CASHBOOK_ID),TO_CHAR(?)) AS NAME
 		FROM AD_ORG O, AD_ORG P, C_CASHBOOK C
 		WHERE O.AD_ORG_ID = C.AD_ORG_ID
-		  AND AD_ISORGINCLUDED(C.AD_ORG_ID,P.AD_ORG_ID,O.AD_CLIENT_ID) <> -1
-		  AND (P.AD_CLIENT_ID = O.AD_CLIENT_ID OR P.AD_ORG_ID = '0')
+		  AND AD_ISORGINCLUDED(P.AD_ORG_ID,C.AD_ORG_ID,P.AD_CLIENT_ID) <> -1
 		  AND O.AD_ORG_ID IN ('1')
-		  AND O.AD_CLIENT_ID IN ('2')
+		  AND P.AD_CLIENT_ID IN ('2')
 		ORDER BY PADRE, NAME
       ]]>
       </Sql>
       <Parameter name="adLanguage"/>
       <Parameter name="adOrgId" optional="true" type="replace" after="AND O.AD_ORG_ID IN (" text="'1'"/>
-      <Parameter name="adClientId" optional="true" type="replace" after="AND O.AD_CLIENT_ID IN (" text="'2'"/>
+      <Parameter name="adClientId" optional="true" type="replace" after="AND P.AD_CLIENT_ID IN (" text="'2'"/>
    </SqlMethod>
   <SqlMethod name="select" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>

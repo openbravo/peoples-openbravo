@@ -125,7 +125,7 @@ dojo.declare("dojox.widget.gauge._Gauge",[dijit._Widget, dijit._Templated, dijit
 
 	// internal data
 	gaugeContent: undefined,
-	templateString:"<div>\n\t<div class=\"dojoxGaugeContent\" dojoAttachPoint=\"gaugeContent\"></div>\n\t<div dojoAttachPoint=\"containerNode\"></div>\n\t<div dojoAttachPoint=\"mouseNode\"></div>\n</div>\n",
+	templateString: dojo.cache("dojox.widget.gauge", "_Gauge.html", "<div>\n\t<div class=\"dojoxGaugeContent\" dojoAttachPoint=\"gaugeContent\"></div>\n\t<div dojoAttachPoint=\"containerNode\"></div>\n\t<div dojoAttachPoint=\"mouseNode\"></div>\n</div>\n"),
 	_backgroundDefault: {color: '#E0E0E0'},
 	_rangeData: null,
 	_indicatorData: null,
@@ -193,9 +193,9 @@ dojo.declare("dojox.widget.gauge._Gauge",[dijit._Widget, dijit._Templated, dijit
 				this.removeIndicator(oldTicks._ticks[i]);
 			}
 		}
-		var t = { length: newTicks.length, 
-				  offset: newTicks.offset,
-				  noChange: true};
+		var t = {length: newTicks.length, 
+					offset: newTicks.offset,
+					noChange: true};
 		if(newTicks.color){ t.color = newTicks.color; }
 		if(newTicks.font){ t.font = newTicks.font; }
 		newTicks._ticks = [];
@@ -690,15 +690,15 @@ dojo.declare("dojox.widget.gauge._Indicator",[dijit._Widget, dijit._Contained, d
 	// The title of the indicator, to be displayed next to it's input box for the text-representation.
 	title: "",
 
-	templateString:"<div class=\"dojoxGaugeIndicatorDiv\">\n\t<label class=\"dojoxGaugeIndicatorLabel\" for=\"${title}\">${title}:</label>\n\t<input class=\"dojoxGaugeIndicatorInput\" name=\"${title}\" size=\"5\" value=\"${value}\" dojoAttachPoint=\"valueNode\" dojoAttachEvent=\"onchange:_update\"></input>\n</div>\n",
+	templateString: dojo.cache("dojox.widget.gauge", "_Indicator.html", "<div class=\"dojoxGaugeIndicatorDiv\">\n\t<label class=\"dojoxGaugeIndicatorLabel\" for=\"${title}\">${title}:</label>\n\t<input class=\"dojoxGaugeIndicatorInput\" name=\"${title}\" size=\"5\" value=\"${value}\" dojoAttachPoint=\"valueNode\" dojoAttachEvent=\"onchange:_update\"></input>\n</div>\n"),
 
-	startup: function() {
+	startup: function(){
 		if(this.onDragMove){
 			this.onDragMove = dojo.hitch(this.onDragMove);
 		}
 	},
 
-	postCreate: function() {
+	postCreate: function(){
 		if(this.title === ""){
 			dojo.style(this.domNode, "display", "none");
 		}

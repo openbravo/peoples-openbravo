@@ -71,7 +71,7 @@
 
    <SqlMethod name="countRows" type="preparedStatement" return="String">
       <Sql> <![CDATA[
-            SELECT count(*) FROM ( select bp.c_bpartner_id
+            SELECT count(*) AS VALUE FROM ( SELECT '0' AS RN1, B.* FROM ( select 1
             FROM C_BPARTNER_LOCATION l left join AD_USER c on l.C_BPartner_Location_ID = c.C_BPartner_Location_ID and c.isactive='Y'
                                        left join C_LOCATION a on l.C_Location_ID=a.C_Location_ID
                                        left join C_REGION on a.C_REGION_ID = C_REGION.C_REGION_ID,
@@ -82,9 +82,11 @@
             AND bp.AD_Org_ID IN ('1')
             AND l.IsActive='Y'
             AND 1=1
-            GROUP BY bp.C_BPartner_ID, bp.VALUE, bp.NAME, bp.SO_CreditLimit, bp.SO_CreditUsed, bp.ActualLifetimeValue, bp.URL) a
+            ) B
+            ) A 
       ]]></Sql>
         <Field name="position" value="count"/>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="bp.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="bp.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" ignoreValue="%" optional="true" after="AND 1=1"><![CDATA[AND UPPER(bp.Value) LIKE UPPER(?) ]]></Parameter>
@@ -95,6 +97,9 @@
         <Parameter name="clients" optional="true" type="none" after="AND 1=1"><![CDATA[AND bp.ISCUSTOMER = 'Y' ]]></Parameter>
         <Parameter name="vendors" optional="true" type="none" after="AND 1=1"><![CDATA[AND bp.ISVENDOR ='Y']]></Parameter>
         <Parameter name="ciudad" ignoreValue="%" optional="true" after="AND 1=1"><![CDATA[AND UPPER(a.City) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
+        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
+        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
 </SqlClass>

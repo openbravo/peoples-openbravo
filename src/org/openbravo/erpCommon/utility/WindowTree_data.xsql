@@ -146,11 +146,13 @@
    <SqlMethod name="selectElementValue" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.C_ElementValue_ID AS ID, AD_COLUMN_IDENTIFIER(to_char('c_elementvalue'),to_char(m.C_ElementValue_ID), to_char(?)) as Name,m.Description,m.IsSummary 
-        FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.C_ElementValue_ID AS ID, 
+                m.value||' - '||coalesce(mt.name, m.name) as Name,m.Description,m.IsSummary 
+        FROM C_ElementValue m left join c_elementvalue_trl mt on mt.c_elementvalue_id = m.c_elementvalue_id
+                                  and mt.ad_language = ?,
+             AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
                                 AND tn.Node_ID=tb.Node_ID 
-                                AND tb.AD_User_ID = ? , 
-          C_ElementValue m
+                                AND tb.AD_User_ID = ?  
         WHERE tn.Node_ID = m.C_ElementValue_ID 
         AND tn.AD_Tree_ID = ? 
         AND m.C_Element_ID = ? 

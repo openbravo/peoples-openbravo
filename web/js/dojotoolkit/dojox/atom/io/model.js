@@ -12,7 +12,6 @@ dojo.provide("dojox.atom.io.model");
 dojo.require("dojox.xml.parser");
 dojo.require("dojo.string");
 dojo.require("dojo.date.stamp");
-dojo.requireLocalization("dojox.atom.io", "messages", null, "");
 
 dojox.atom.io.model._Constants = {
 	//	summary: 
@@ -148,7 +147,7 @@ dojox.atom.io.model.util = {
 		//	description: 
 		//		Utility function to escape XML special characters in an HTML string.
 		//
-		// 	str: 
+		//	str: 
 		//		The string to escape
 		//	returns: 
 		//		HTML String with special characters (<,>,&, ", etc,) escaped.
@@ -305,7 +304,7 @@ dojo.declare('dojox.atom.io.model.Node', null, {
 dojo.declare("dojox.atom.io.model.AtomItem",dojox.atom.io.model.Node,{
 	 constructor: function(args){
 		this.ATOM_URI = dojox.atom.io.model._Constants.ATOM_URI;
-		this.links = null;				  		//Array of Link
+		this.links = null;						//Array of Link
 		this.authors = null;					//Array of Person
 		this.categories = null;					//Array of Category
 		this.contributors = null;				//Array of Person   
@@ -608,7 +607,7 @@ dojo.declare("dojox.atom.io.model.Category",dojox.atom.io.model.Node,{
 	buildFromDom: function(/*DOM node*/node){
 		//	summary: 
 		//		Function to do construction of the Category data from the DOM node containing it.
-		// 	description: 
+		//	description: 
 		//		Function to do construction of the Category data from the DOM node containing it.
 		//
 		//	node: 
@@ -938,7 +937,7 @@ dojo.declare("dojox.atom.io.model.Entry",dojox.atom.io.model.AtomItem,{
 		//	description: 
 		//		Function to get the href that allows editing of this feed entry.
 		//
-		// 	returns: 
+		//	returns: 
 		//		The href that specifies edit capability.
 		if(this.links === null || this.links.length === 0){
 			return null;
@@ -998,8 +997,7 @@ dojo.declare("dojox.atom.io.model.Feed",dojox.atom.io.model.AtomItem,{
 		//	entry: 
 		//		The entry object to add.
 		if(!entry.id){
-			var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-			throw new Error(_nlsResources.noId);
+			throw new Error("The entry object must be assigned an ID attribute.");
 		}
 		if(!this.entries){this.entries = [];}
 		entry.feedUrl = this.getSelfHref();
@@ -1152,9 +1150,7 @@ dojo.declare("dojox.atom.io.model.Service",dojox.atom.io.model.AtomItem,{
 		//
 		//	node: 
 		//		The DOM node to process for content.
-		var href;
 		var i;
-		var len = node.childNodes ? node.childNodes.length : 0;
 		this.workspaces = [];
 		if(node.tagName != "service"){
 			// FIXME: Need 0.9 DOM util...
@@ -1246,10 +1242,9 @@ dojo.declare("dojox.atom.io.model.Workspace",dojox.atom.io.model.AtomItem,{
 					if(name === "title"){
 						this.title = dojox.xml.parser.textContent(child);
 					}
-				}else{/*Only accept the PURL name_space for now */
-					var _nlsResources = dojo.i18n.getLocalization("dojox.atom.io", "messages");
-					throw new Error(_nlsResources.badNS);
 				}
+				//FIXME: Add an extension point so others can impl different namespaces.  For now just
+				//ignore unknown namespace tags.
 			}
 		}
 	}

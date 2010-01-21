@@ -8,7 +8,6 @@
 if(!dojo._hasResource["dojox.date.hebrew.locale"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.date.hebrew.locale"] = true;
 dojo.provide("dojox.date.hebrew.locale");
-dojo.experimental("dojox.date.hebrew.locale");
 
 
 dojo.require("dojox.date.hebrew.Date");
@@ -105,6 +104,9 @@ dojo.requireLocalization("dojo.cldr", "hebrew", null, "ROOT,ar,he");
 				case 'S':
 					s = Math.round(dateObject.getMilliseconds() * Math.pow(10, l-3)); pad = true;
 					break;
+				case 'z': 
+					s = "";
+					break;
 				default:
 					throw new Error("dojox.date.hebrew.locale.formatPattern: invalid pattern char: "+pattern);
 			}
@@ -168,6 +170,7 @@ dojox.date.hebrew.locale._parseInfo = function(/*oblect?*/options){
 	options = options || {};
 	var locale = dojo.i18n.normalizeLocale(options.locale);
 	var bundle = dojox.date.hebrew.locale._getHebrewBundle(locale);
+
 	var formatLength = options.formatLength || 'short';
 	var datePattern = options.datePattern || bundle["dateFormat-" + formatLength];
 	var timePattern = options.timePattern || bundle["timeFormat-" + formatLength];
@@ -178,7 +181,7 @@ dojox.date.hebrew.locale._parseInfo = function(/*oblect?*/options){
 	}else if(options.selector == 'time'){
 		pattern = timePattern;
 	}else{
-		pattern = (typeof (timePattern) == "undefined") ? datePattern : datePattern + ' ' + timePattern; //hebrew resource file does not contain time patterns - a bug?
+		pattern = (timePattern === undefined) ? datePattern : datePattern + ' ' + timePattern; //hebrew resource file does not contain time patterns - a bug?
 	}
 
 	var tokens = [];
@@ -256,7 +259,7 @@ dojox.date.hebrew.locale.parse= function(/*String*/value, /*object?*/options){
 					}
 					v = dojo.indexOf(months, v);
 					if(v == -1){
-//						console.debug("dojox.date.hebrew.locale.parse: Could not parse month name: '" + v + "'.");
+//					console.debug("dojox.date.hebrew.locale.parse: Could not parse month name: '" + v + "'.");
 						return false;
 					}
 					mLength = l;
@@ -324,11 +327,10 @@ dojox.date.hebrew.locale.parse= function(/*String*/value, /*object?*/options){
 		result[3] = 0; //12am -> 0
 	}
 	var dateObject = new dojox.date.hebrew.Date(result[0], result[1], result[2], result[3], result[4], result[5], result[6]); // hebrew.Date
-	//for non leap year, the  index of the full month start from nisan should be decreased by 1
-	if((mLength > 2) && (result[1] > 5) && !dateObject.isLeapYear(dateObject.getFullYear())){
-		dateObject = new dojox.date.hebrew.Date(result[0], result[1]-1, result[2], result[3], result[4], result[5], result[6]);
-	}	
-
+	//for non leap year, the index of the short month start from adar should be increased by 1
+	if(mLength < 3 && result[1] >= 5 && !dateObject.isLeapYear(dateObject.getFullYear())){
+		dateObject.setMonth(result[1]+1);
+	}
 	return dateObject; // hebrew.Date 
 };
 

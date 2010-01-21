@@ -22,7 +22,11 @@ dojo.require("dojox.rpc.Rest");
 		if(timeStamp && Rest._timeStamps){
 			Rest._timeStamps[defaultId] = timeStamp;
 		}
-		return value && dojox.json.ref.resolveJson(value, {
+		var hrefProperty = service._schema && service._schema.hrefProperty;
+		if(hrefProperty){
+			dojox.json.ref.refAttribute = hrefProperty;
+		}
+		value = value && dojox.json.ref.resolveJson(value, {
 			defaultId: defaultId, 
 			index: Rest._index,
 			timeStamps: timeStamp && Rest._timeStamps,
@@ -31,9 +35,11 @@ dojo.require("dojox.rpc.Rest");
 			idAttribute: jr.getIdAttribute(service),
 			schemas: jr.schemas,
 			loader:	jr._loader,
+			idAsRef: service.idAsRef, 
 			assignAbsoluteIds: true
 		});
-		
+		dojox.json.ref.refAttribute  = "$ref";
+		return value;
 	}
 	jr = dojox.rpc.JsonRest={
 		serviceClass: dojox.rpc.Rest,
@@ -65,13 +71,44 @@ dojo.require("dojox.rpc.Rest");
 							if(!(object.__id in alreadyRecorded)){// if it has already been saved, we don't want to repeat it
 								// record that we are saving
 								alreadyRecorded[object.__id] = object;
-								actions.push({method:"put",target:object,content:object});
+								if(kwArgs.incrementalUpdates 
+									&& !pathParts){ // I haven't figured out how we would do incremental updates on sub-objects yet
+									// make an incremental update using a POST
+									var incremental = (typeof kwArgs.incrementalUpdates == 'function' ?
+										kwArgs.incrementalUpdates : function(){
+											incremental = {};
+											for(var j in object){
+												if(object.hasOwnProperty(j)){
+													if(object[j] !== old[j]){
+														incremental[j] = object[j];
+													}
+												}else if(old.hasOwnProperty(j)){
+													// we can't use incremental updates to remove properties
+													return null;
+												}
+											}
+											return incremental;
+										})(object, old);
+								}
+								
+								if(incremental){
+									actions.push({method:"post",target:object, content: incremental});
+								}
+								else{
+									actions.push({method:"put",target:object,content:object});
+								}
 							}
 						}else{
 							// new object
-							
-							actions.push({method:"post",target:{__id:jr.getServiceAndId(object.__id).service.servicePath},
-													content:object});
+							var service = jr.getServiceAndId(object.__id).service;
+							var idAttribute = jr.getIdAttribute(service);
+							if((idAttribute in object) && !kwArgs.alwaysPostNewItems){
+								// if the id attribute is specified, then we should know the location
+								actions.push({method:"put",target:object, content:object});
+							}else{
+								actions.push({method:"post",target:{__id:service.servicePath},
+														content:object});
+							}
 						}
 					}else if(old){
 						// deleted object
@@ -82,11 +119,16 @@ dojo.require("dojox.rpc.Rest");
 				}
 			}
 			dojo.connect(kwArgs,"onError",function(){
-				var postCommitDirtyObjects = dirtyObjects;
-				dirtyObjects = savingObjects;
-				var numDirty = 0; // make sure this does't do anything if it is called again
-				jr.revert(); // revert if there was an error
-				dirtyObjects = postCommitDirtyObjects;
+				if(kwArgs.revertOnError !== false){
+					var postCommitDirtyObjects = dirtyObjects;
+					dirtyObjects = savingObjects;
+					var numDirty = 0; // make sure this does't do anything if it is called again
+					jr.revert(); // revert if there was an error
+					dirtyObjects = postCommitDirtyObjects;
+				}
+				else{
+					dirtyObjects = dirtyObject.concat(savingObjects); 
+				}
 			});
 			jr.sendToServer(actions, kwArgs);
 			return actions;
@@ -148,7 +190,7 @@ dojo.require("dojox.rpc.Rest");
 						}catch(e){}
 						if(!(--left)){
 							if(kwArgs.onComplete){
-								kwArgs.onComplete.call(kwArgs.scope);
+								kwArgs.onComplete.call(kwArgs.scope, actions);
 							}
 						}
 						return value;
@@ -177,20 +219,38 @@ dojo.require("dojox.rpc.Rest");
 				var dirty = dirtyObjects[i];
 				var object = dirty.object;
 				var old = dirty.old;
+				var store = dojox.data._getStoreForItem(object || old);
+				
 				if(!(service && (object || old) && 
 					(object || old).__id.indexOf(service.servicePath))){
 					// if we are in the specified store or if this is a global revert
 					if(object && old){
 						// changed
 						for(var j in old){
-							if(old.hasOwnProperty(j)){
+							if(old.hasOwnProperty(j) && object[j] !== old[j]){
+								if(store){
+									store.onSet(object, j, object[j], old[j]);
+								}
 								object[j] = old[j];
 							}
 						}
 						for(j in object){
 							if(!old.hasOwnProperty(j)){
+								if(store){
+									store.onSet(object, j, object[j]);
+								}
 								delete object[j];
 							}
+						}
+					}else if(!old){
+						// was an addition, remove it
+						if(store){
+							store.onDelete(object);
+						}
+					}else{
+						// was a deletion, we will add it back
+						if(store){
+							store.onNew(old);
 						}
 					}
 					delete (object || old).__isDirty;
@@ -305,7 +365,7 @@ dojo.require("dojox.rpc.Rest");
 			if(schema){
 				if(!(idAttr = schema._idAttr)){
 					for(var i in schema.properties){
-						if(schema.properties[i].identity){
+						if(schema.properties[i].identity || (schema.properties[i].link == "self")){
 							schema._idAttr = idAttr = i;
 						}
 					}
@@ -359,11 +419,12 @@ dojo.require("dojox.rpc.Rest");
 		},
 		query: function(service, id, args){
 			var deferred = service(id, args);
+			
 			deferred.addCallback(function(result){
 				if(result.nodeType && result.cloneNode){
 					// return immediately if it is an XML document
 					return result;
-				}
+				}				
 				return resolveJson(service, deferred, result, typeof id != 'string' || (args && (args.start || args.count)) ? undefined: id);
 			});
 			return deferred;			

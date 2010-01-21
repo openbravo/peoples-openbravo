@@ -127,6 +127,10 @@ public abstract class AcctServer {
   public static final String STATUS_Posted = "Y";
   /** Document Status */
   public static final String STATUS_Error = "E";
+  /** Document Status */
+  public static final String STATUS_InvalidCost = "C";
+  /** Document Status */
+  public static final String STATUS_DocumentLocked = "L";
 
   /** AR Invoices */
   public static final String DOCTYPE_ARInvoice = "ARI";
@@ -296,7 +300,7 @@ public abstract class AcctServer {
           con = connectionProvider.getTransactionConnection();
         }
       }
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled() && data != null)
         log4j.debug("AcctServer - Run -" + data.length + " IDs [" + strIDs + "]");
       // Create Automatic Matching
       // match (vars, this,con);
@@ -529,7 +533,7 @@ public abstract class AcctServer {
       if (AcctServerData.update(conn, tableName, strClave) != 1) {
         log4j.warn("AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID="
             + strClave);
-        Status = "L"; // Status locked document
+        setStatus(STATUS_DocumentLocked); // Status locked document
         return false;
       } else
         AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
@@ -546,7 +550,7 @@ public abstract class AcctServer {
         success++;
       } else {
         errors++;
-        Status = AcctServer.STATUS_Error;
+        // Status = AcctServer.STATUS_Error;
         save(conn);
       }
     } catch (ServletException e) {
@@ -656,7 +660,7 @@ public abstract class AcctServer {
       if (!save(conn)) { // contains unlock
         // conn.releaseRollbackConnection(con);
         unlock(conn);
-        Status = AcctServer.STATUS_Error;
+        // Status = AcctServer.STATUS_Error;
       }
       // conn.releaseCommitConnection(con);
       // *** Transaction End ***
@@ -716,8 +720,8 @@ public abstract class AcctServer {
     if (log4j.isDebugEnabled())
       log4j.debug("loadDocument " + data.length);
 
-    Status = STATUS_Error;
-    String Name = "";
+    setStatus(STATUS_Error);
+    Name = "";
     AD_Client_ID = data[0].getField("AD_Client_ID");
     AD_Org_ID = data[0].getField("AD_Org_ID");
     C_BPartner_ID = data[0].getField("C_BPartner_ID");
@@ -921,6 +925,8 @@ public abstract class AcctServer {
     }
     if (m_fact[index] == null)
       return STATUS_Error;
+    if (Status.equals(STATUS_InvalidCost))
+      return Status;
     Status = STATUS_PostPrepared;
 
     // if (log4j.isDebugEnabled())
@@ -952,7 +958,7 @@ public abstract class AcctServer {
           AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
               .newInstance();
           if (!newTemplate.execute(this, as, conn, con, vars)) {
-            Status = AcctServer.STATUS_Error;
+            setStatus(AcctServer.STATUS_Error);
             break;
           }
         } catch (Exception e) {
@@ -1292,7 +1298,6 @@ public abstract class AcctServer {
    */
   public final Account getAccount(String AcctType, AcctSchema as, ConnectionProvider conn) {
     BigDecimal AMT = null;
-    BigDecimal ZERO = new BigDecimal("0");
     AcctServerData[] data = null;
     // if (log4j.isDebugEnabled())
     // log4j.debug("*******************************getAccount 1: AcctType:-->"
@@ -1307,7 +1312,7 @@ public abstract class AcctServer {
         AMT = new BigDecimal(getAmount(AMTTYPE_Charge));
         // if (log4j.isDebugEnabled())
         // log4j.debug("AcctServer - *******************AMT;-->" + AMT);
-        int cmp = AMT.compareTo(ZERO);
+        int cmp = AMT.compareTo(BigDecimal.ZERO);
         // if (log4j.isDebugEnabled())
         // log4j.debug("AcctServer - ******************* CMP: " + cmp);
         if (cmp == 0)
@@ -1500,7 +1505,11 @@ public abstract class AcctServer {
 
   public String getStatus() {
     return Status;
-  } // end of getServletInfo() method
+  }
+
+  public void setStatus(String strStatus) {
+    Status = strStatus;
+  }
 
   public ConnectionProvider getConnectionProvider() {
     return connectionProvider;

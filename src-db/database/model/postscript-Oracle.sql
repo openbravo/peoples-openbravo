@@ -807,13 +807,44 @@ BEGIN
 END AD_GET_RDBMS;
 /-- END
  
+--Inserts an alert recipient for available updates
+--See issue:  https://issues.openbravo.com/view.php?id=11743
+BEGIN
+    INSERT INTO ad_alertrecipient(ad_client_id, ad_org_id, isactive, created, createdby,
+                              updated, updatedby, ad_alertrecipient_id, ad_alertrule_id,
+                              ad_role_id, sendemail)
+         VALUES('0', '0', 'Y', now(), '100', now(), '100', '8CC1347628D148FABA1FC26622F4B070', '1005400000', '0', 'N');
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/-- END
 
---Regenerate mappings and classnames for tabs in modules (issue #11431)
+--Inserts role access for new register window
+--See issue:  https://issues.openbravo.com/view.php?id=11349
+BEGIN
+    INSERT INTO ad_form_access(ad_form_access_id, ad_form_id, ad_role_id,
+                               ad_client_id, ad_org_id, isactive, created,
+                               createdby, updated, updatedby, isreadwrite)
+    VALUES('41263F39F7614270808A955844B07A7F', '3D8AB0C824ED4C70ADE086D9CFE5DA1A', '0', '0', '0', 'Y', now(), '0', now(), '0', 'Y');
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/-- END
+
+BEGIN
+   EXECUTE IMMEDIATE 'alter trigger ad_tab_mod_trg disable';
+END;
+/-- END
+
 update ad_tab set name = 'M'||name where ad_module_id != '0'
 /-- END
  
 update ad_tab set name = substr(name,2) where ad_module_id != '0'
 /-- END
+
+BEGIN
+   EXECUTE IMMEDIATE 'alter trigger ad_tab_mod_trg enable';
+END;
+/-- END
+
 
 CALL DBA_RECOMPILE(NULL)
 /-- END

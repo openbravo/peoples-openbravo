@@ -25,6 +25,7 @@
   <PARAMETER id="xx" name="callout" attribute="onchange" replace="xx();"/>
   <PARAMETER id="buttonxx" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="buttonxx" name="columnName" attribute="onclick" replace="xx"/>
+  <PARAMETER id="buttonxx" name="columnName" attribute="onclick" replace="aa"/>
   <PARAMETER id="buttonxx" name="columnNameInp" attribute="onclick" replace="yy"/>
   <PARAMETER id="buttonxx" name="columnNameInp" attribute="onclick" replace="zz"/>
   <PARAMETER id="buttonxx" name="name" attribute="onmouseover" replace="xx"/>

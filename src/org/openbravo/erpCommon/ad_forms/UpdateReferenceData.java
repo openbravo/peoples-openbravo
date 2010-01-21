@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2008-2009 Openbravo SL
+ * All portions are Copyright (C) 2008-2010 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,8 +21,6 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +30,6 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -254,8 +251,6 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
           }
-
-          return "";
         }
       } else
         return "WrongModules";
@@ -266,36 +261,6 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
 
   private String replaceNL(String val) {
     return val.replaceAll("\n", "<br/>");
-  }
-
-  /**
-   * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
-   * @param modules
-   * @return
-   */
-  private UpdateReferenceDataData[] orderModuleByDependency(UpdateReferenceDataData[] modules) {
-    if (modules == null || modules.length == 0)
-      return null;
-    ArrayList<String> list = new ArrayList<String>();
-    for (int i = 0; i < modules.length; i++) {
-      list.add(modules[i].adModuleId);
-    }
-    List<String> orderList = null;
-    try {
-      orderList = ModuleUtiltiy.orderByDependency(list);
-    } catch (Exception e) {
-      log4j.error("Error ordering modules", e);
-      orderList = list;
-    }
-    UpdateReferenceDataData[] rt = new UpdateReferenceDataData[orderList.size()];
-    for (int i = 0; i < orderList.size(); i++) {
-      int j = 0;
-      while (j < modules.length && !modules[j].adModuleId.equals(orderList.get(i)))
-        j++;
-      rt[i] = modules[j];
-    }
-    return rt;
   }
 
 }

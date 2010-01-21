@@ -69,7 +69,7 @@
    <SqlMethod name="countRows" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-      		SELECT COUNT(*) AS  C_ELEMENTVALUE_ID
+      		SELECT COUNT(*) AS VALUE FROM ( SELECT '0' AS RN1, B.* FROM ( SELECT 1
 	            FROM C_ELEMENTVALUE C,
 	            AD_ORG O
 	            WHERE EXISTS (SELECT 1 FROM C_ACCTSCHEMA_ELEMENT
@@ -81,7 +81,12 @@
 	            AND C.ISACTIVE = 'Y'
 	            AND C.AD_Client_ID IN ('1')
 	            AND C.AD_Org_ID IN ('1')
+	            AND 3=3
+	            ) B
+	            ) A 
       ]]></Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="value" optional="true" after="AND 2=2"><![CDATA[ AND (C.VALUE IS NULL  OR UPPER(C.VALUE) LIKE UPPER(?)) ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="AND 2=2"><![CDATA[ AND UPPER(C.NAME) LIKE UPPER(?) ]]></Parameter>
@@ -89,6 +94,9 @@
         <Parameter name="elementValue" optional="true" after="AND 2=2"><![CDATA[ AND C.C_ELEMENTVALUE_ID = ? ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_Org_ID IN (" text="'1'"/>
+         <Parameter name="pgLimit" type="argument" optional="true" after="AND 3=3"><![CDATA[LIMIT ]]></Parameter>
+        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
+        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">

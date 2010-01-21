@@ -16,7 +16,7 @@ dojo.declare("dojox.av.widget.PlayButton", [dijit._Widget, dijit._Templated], {
 	// summary:
 	//		A Play/Pause button widget to use with dojox.av.widget.Player
 	//
-	templateString:"<div class=\"PlayPauseToggle Pause\" dojoAttachEvent=\"click:onClick\">\n    <div class=\"icon\"></div>\n</div>\n",
+	templateString: dojo.cache("dojox.av.widget", "resources/PlayButton.html", "<div class=\"PlayPauseToggle Pause\" dojoAttachEvent=\"click:onClick\">\n    <div class=\"icon\"></div>\n</div>\n"),
 	//
 	postCreate: function(){
 		// summary:

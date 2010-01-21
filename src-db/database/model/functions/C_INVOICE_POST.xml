@@ -231,8 +231,7 @@ cWithHoldId varchar2(32);
     --* There are invoice lines
     --* There are tax lines
     --* There are both invoice and tax lines 
-    IF((v_DocStatus='DR' AND v_DocAction='CO')
-       OR (v_DocStatus='CO' AND v_DocAction='RE')) THEN
+    IF((v_DocStatus='DR' AND v_DocAction='CO')) THEN
           SELECT COUNT(*)
           INTO V_InvoiceLines_count
           FROM C_INVOICE
@@ -1597,7 +1596,7 @@ cWithHoldId varchar2(32);
                   WHERE AD_Client_ID=v_Client_ID
                     AND isActive='Y'
                     AND isDefault='Y'
-                    AND AD_Org_ID=v_ad_org_id;
+                    AND AD_IsOrgIncluded(v_ad_org_id,AD_ORG_ID, AD_Client_ID)<>-1;
                   IF v_cashBook IS NULL THEN
                       RAISE_APPLICATION_ERROR(-20000, '@NoDefaultCashBook@');
                   END IF;

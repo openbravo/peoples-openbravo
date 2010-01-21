@@ -86,6 +86,11 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
   multipleRowSelection: true,
   templateString: "<div></div>",
   templateCssPath: null, // Defined in the skin --- DataGrid.css
+  backendPageSize: 0,
+
+  getBackendPageSize: function() {
+    return this.backendPageSize;
+  },
 
 /**
 * Dojo's function to recreate the control properties in its build process.
@@ -374,7 +379,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
     } catch (ignored) {column.innerHTML="";}
     var textNode = createTextCellElement(column);*/
     if (column && column.type.name == 'url' && newContent != '') { editingElement.innerHTML = "<a href=\"" + newContent + "\" target=_blank><img src=\"../web/js/openbravo/templates/popup1.gif\" border=\"0\" title=\"Link\" alt=\"Link\"></a>&nbsp;" + newContent; }
-    if (column && column.type.name == 'img' && newContent != '') { editingElement.innerHTML = "<img src=\"" + newContent + "\" border=\"0\" height=\"15px\">"; }
+    if (column && column.type.name == 'img' && newContent != '') { editingElement.innerHTML = "<a onclick=\"openPopUp('" + newContent + "', 'Image', '70%', '70%'); return false;\" href=\"" + newContent + "\"><img src=\"" + newContent + "\" border=\"0\" height=\"15px\"></a>"; }
     else { editingElement.innerHTML = newContent; }
     //editingElement.appendChild(textNode);
   },
@@ -1789,8 +1794,9 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
     }));
     this.sortCols.reverse();
     this.sortDirs.reverse();
-    this.resetContents();
-    this.requestContentRefresh(0);
+
+    // on resort, add movePage parameter for notify backend to change backendPage
+    gridMovePage("FIRSTPAGE");
   },
 
 /**
@@ -1931,7 +1937,36 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
       this.requestContentRefresh(this.unprocessedRequest.requestOffset);
       this.unprocessedRequest = null
     }
+  },
+  
+/**
+ * Shows or hides the move page button above and below the vertical scrollbar.
+ */
+  setGridPaging: function(showPrevious, showNext) {
+    if (showPrevious) {
+      document.getElementById('prevRange_table').style.display = "";
+      document.getElementById('fillGapRange_table').style.display = "none";
+    } else {
+      document.getElementById('prevRange_table').style.display = "none";
+      document.getElementById('fillGapRange_table').style.display = "";
+    }
+    if (showNext) {
+      document.getElementById('nextRange_table').style.display = "";
+    } else {
+      document.getElementById('nextRange_table').style.display = "none";
+    }
+  },
+
+/**
+ * Moves the backend page in the specified direction by sending a DATA request
+ * with an additional movePage parameter and refreshes the displayed rows.
+ */
+  gridMovePage: function(direction) {
+    this.requestParams["movePage"] = direction;
+    this.refreshGridDataAfterFilter();
+    this.requestParams["movePage"] = "";
   }
+
 });
 
 /**
@@ -2001,6 +2036,12 @@ dojo.declare("openbravo.widget.DataGrid.Parser", null, {
           }
         }
       }
+
+      // get backendPageSize and store for later use (getters + lineNumbers)
+      var strPageSize = datagrids[0].getAttribute('backendPageSize');
+      var backendPageSize = parseInt(strPageSize);
+      this.datagrid.backendPageSize = backendPageSize;
+
       var validators = datagrids[0].getElementsByTagName('validator');
       for (var i = 0; i < validators.length; i++) {
         openbravo.loadScriptFromUrl(validators[i].getAttribute("src"));
@@ -2631,7 +2672,7 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
           }
           var textNode = createTextCellElement(column);*/
           if (column.type.name == 'url' && value != '') { this.rowNode.cells[i].innerHTML = "<a href=\"" + value + "\" target=_blank><img src=\"../web/js/openbravo/templates/popup1.gif\" border=\"0\ title=\"Link\" alt=\"Link\"></a>&nbsp;" + value; }
-          if (column.type.name == 'img' && value != '') { this.rowNode.cells[i].innerHTML = "<img src=\"" + value + "\" border=\"0\" height=\"15px\">"; }
+          if (column.type.name == 'img' && value != '') { this.rowNode.cells[i].innerHTML = "<a onclick=\"openPopUp('" + value + "', 'Image', '70%', '70%'); return false;\" href=\"" + value + "\"><img src=\"" + value + "\" border=\"0\" height=\"15px\"></a>"; }
           else { this.rowNode.cells[i].innerHTML = value; }
           //this.rowNode.cells[i].appendChild(textNode);
         }
@@ -2957,6 +2998,7 @@ dojo.declare("openbravo.widget.DataGrid.MetaData", null, {
     this.setOptions(options);
     this.ArrowHeight = 16;
     this.columnCount = columnCount;
+    this.backendPage = 0;
   },
 
 /**
@@ -2995,6 +3037,13 @@ dojo.declare("openbravo.widget.DataGrid.MetaData", null, {
 */
   setTotalRows: function(n) {
     this.totalRows = n;
+  },
+
+/**
+ * Returns the current backend page corresponding to the last DATA response received.
+ */
+  getBackendPage: function() {
+    return this.backendPage;
   },
 
 /**
@@ -3071,7 +3120,7 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     var table = this.liveGrid.table;
     var headerHeight = table.parentNode.firstChild.offsetHeight;
     var scrollerStyle = this.scrollerDiv.style;
-    scrollerStyle.top         = headerHeight - 17;
+    scrollerStyle.top         = headerHeight - 16;
     scrollerStyle.height      = visibleHeight + "px";
     var totalHeight = parseInt(visibleHeight * this.metaData.getTotalRows()/this.metaData.getPageSize());
     this.heightDiv.style.height = totalHeight + "px" ;
@@ -3320,6 +3369,12 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
     var rowsElement = xmldata[0].getElementsByTagName('rows')[0];
     this.updateUI = rowsElement.getAttribute("update_ui") == "true"
       var numRows = parseInt(rowsElement.getAttribute("numRows"));
+    var strPage = rowsElement.getAttribute("backendPage");
+    if (!strPage) {
+      strPage = "0"; // fallback if backendPage attribute is not set by serverside backend
+    }
+    var backendPage = parseInt(strPage);
+    this.metaData.backendPage = backendPage;
     if(this.isFilter) {
       this.metaData.totalRows = numRows;
       this.liveGrid.setTotalRows(numRows);
@@ -3338,7 +3393,8 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
       for ( var i=0 ; i < trs.length; i++ ) {
         var row = newRows[i] = this.liveGrid.createRowObject(this.lastOffset + i); 
         var cells = trs[i].getElementsByTagName("td");
-        var values = [this.lastOffset + i + 1];
+        // linenumber calculation
+        var values = [(backendPage * this.liveGrid.getBackendPageSize()) + this.lastOffset + i + 1];
         for ( var j=0; j < cells.length ; j++ ) {
           var cell = cells[j];
           var cellContent = dojox.data.dom.textContent(cell);
