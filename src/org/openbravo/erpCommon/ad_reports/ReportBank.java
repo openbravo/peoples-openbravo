@@ -115,8 +115,8 @@ public class ReportBank extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
         + "');"));
     xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-        this, Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(
-            this, vars, "#AccessibleOrgTree", "ReportBank")));
+        this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportBank"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank")));
 
     out.println(xmlDocument.print());
     out.close();
@@ -156,8 +156,8 @@ public class ReportBank extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
           + "');"));
       xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-          this, Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(
-              this, vars, "#AccessibleOrgTree", "ReportBank")));
+          this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportBank"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank")));
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBankEdit")
           .createXmlDocument();
