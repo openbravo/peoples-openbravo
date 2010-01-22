@@ -488,6 +488,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
   private static FieldProvider[] formatDeps4Display(ModuleDependency[] deps,
       VariablesSecureApp vars, ConnectionProvider conn) {
+    @SuppressWarnings("unchecked")
     HashMap<String, String>[] res = new HashMap[deps.length];
 
     for (int i = 0; i < deps.length; i++) {
