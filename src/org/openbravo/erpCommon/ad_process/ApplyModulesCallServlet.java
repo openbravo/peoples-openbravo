@@ -33,9 +33,6 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.service.system.ReloadContext;
-import org.openbravo.service.system.RestartTomcat;
-import org.openbravo.xmlEngine.XmlDocument;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
@@ -51,94 +48,13 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("TOMCAT")) {
-      printPageTomcat(request, response, vars);
-    } else if (vars.commandIn("UPDATESTATUS")) {
+    if (vars.commandIn("UPDATESTATUS")) {
       update(response, vars);
     } else if (vars.commandIn("REQUESTERRORSTATE")) {
       requesterrorstate(response, vars);
     } else if (vars.commandIn("GETERR")) {
       getError(response, vars);
-    } else if (vars.commandIn("RESTART")) {
-      restartApplicationServer(response, vars);
-    } else if (vars.commandIn("RELOAD")) {
-      reloadContext(response, vars);
     }
-  }
-
-  /**
-   * Prints a page that only allows the user to restart or reload Tomcat
-   */
-  private void printPageTomcat(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars) throws IOException, ServletException {
-
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/RestartTomcat").createXmlDocument();
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  /**
-   * Reloads the application context to after building the application to apply modules.
-   * 
-   * @param response
-   *          the HttpServletResponse to write to
-   * @param vars
-   *          the application variables
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void reloadContext(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/RestartingContext").createXmlDocument();
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    final String message = Utility.messageBD(this, "CONTEXT_RELOAD", vars.getLanguage());
-    xmlDocument.setParameter("message", Utility.formatMessageBDToHtml(message));
-
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    response.flushBuffer();
-
-    ReloadContext.reload();
-  }
-
-  /**
-   * Restarts the application server after building the application to apply modules.
-   * 
-   * @param response
-   *          the HttpServletResponse to write to
-   * @param vars
-   *          the application variables
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void restartApplicationServer(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/RestartingContext").createXmlDocument();
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    final String message = Utility.messageBD(this, "TOMCAT_RESTART", vars.getLanguage());
-    xmlDocument.setParameter("message", Utility.formatMessageBDToHtml(message));
-
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    response.flushBuffer();
-
-    RestartTomcat.restart();
   }
 
   /**
@@ -148,6 +64,9 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
   private ApplyModulesResponse fillResponse(VariablesSecureApp vars, String state,
       String defaultState) {
     String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
+    if (ln == null || ln.equals("")) {
+      return null;
+    }
     int lastlinenumber;
     if (ln == null || ln.equals("")) {
       lastlinenumber = 0;
@@ -231,6 +150,10 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
    * status of the system (and warnings/errors that happened in the current state)
    */
   private void update(HttpServletResponse response, VariablesSecureApp vars) {
+    String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
+    if (ln == null || ln.equals("")) {
+      return;
+    }
     PreparedStatement ps = null;
     try {
       ps = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
@@ -263,6 +186,10 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
    * not updated and the build process already finished them
    */
   private void requesterrorstate(HttpServletResponse response, VariablesSecureApp vars) {
+    String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
+    if (ln == null || ln.equals("")) {
+      return;
+    }
     String state = vars.getStringParameter("reqStatus");
     ApplyModulesResponse resp = fillResponse(vars, state, "Success");
     response.setContentType("text/plain; charset=UTF-8");
@@ -284,6 +211,10 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
    */
   private void getError(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
+    String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
+    if (ln == null || ln.equals("")) {
+      return;
+    }
     OBError error = new OBError();
     PreparedStatement ps;
     PreparedStatement ps2;

@@ -186,12 +186,12 @@
     //Restarts tomcat/Reloads tomcat/Just closes the window
     function restart() {
       if (document.frmMain.option[0].checked) {
-        window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModulesCallServlet.html', '_self', null, false);
+        window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
         restarting=true;
         closeThisPage();
         return false;
       } else if (document.frmMain.option[1].checked) {
-        window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModulesCallServlet.html', '_self', null, false);
+        window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
         restarting=true;
         closeThisPage();
         return false;
