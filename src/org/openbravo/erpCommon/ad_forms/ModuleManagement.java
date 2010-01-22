@@ -967,7 +967,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
       }
 
-      if (im.getModulesToInstall().length == 1) {
+      if ((im.getModulesToInstall().length == 1 && im.getModulesToInstall()[0].getModuleID()
+          .equals("0"))
+          || (im.getModulesToUpdate().length == 1 && im.getModulesToUpdate()[0].getModuleID()
+              .equals("0"))) {
         String msgOBPSRequired = Utility.messageBD(this, "OBPS_SUBSCRIPTION_REQUIRED", vars
             .getLanguage());
         msgOBPSRequired = msgOBPSRequired.replace("@MODULE_LIST@", notSubscribed);
