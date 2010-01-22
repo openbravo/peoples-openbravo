@@ -44,9 +44,9 @@ public class DocMovement extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocMovementData.select(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocMovementData.select(conn, stradClientId, Id));
   }
 
   /**
@@ -149,6 +149,11 @@ public class DocMovement extends AcctServer {
       log4jDocMovement.debug("DocMovement - Before calculating the costs for line i = " + i);
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal b_Costs = new BigDecimal(costs);
+      if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
+        setStatus(STATUS_InvalidCost);
+        continue;
+      } else
+        setStatus(STATUS_Error);// Default status. LoadDocument
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
           .getC_Currency_ID(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),

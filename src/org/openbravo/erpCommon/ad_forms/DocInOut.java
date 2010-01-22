@@ -45,9 +45,9 @@ public class DocInOut extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocInOutData.selectRegistro(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocInOutData.selectRegistro(conn, stradClientId, Id));
   }
 
   /**
@@ -163,6 +163,12 @@ public class DocInOut extends AcctServer {
         log4jDocInOut.debug("(MatShipment) - DR account: "
             + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
         log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
+        BigDecimal b_Costs = new BigDecimal(costs);
+        if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
+          setStatus(STATUS_InvalidCost);
+          continue;
+        } else
+          setStatus(STATUS_Error);// Default status. LoadDocument
         // CoGS DR
         dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn), as
             .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
@@ -191,6 +197,12 @@ public class DocInOut extends AcctServer {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
         String costs = line.getProductCosts(DateAcct, as, conn, con);
+        BigDecimal b_Costs = new BigDecimal(costs);
+        if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
+          setStatus(STATUS_InvalidCost);
+          continue;
+        } else
+          setStatus(STATUS_Error);// Default status. LoadDocument
 
         // If there exists cost for the product, but it is equals to zero, then no line is added,
         // but no error is thrown. If this is the only line in the document, yes an error will be

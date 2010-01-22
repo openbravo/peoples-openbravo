@@ -504,7 +504,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         error.setType("Error");
         error.setTitle(Utility.messageBD(myPool, "Error", vars.getLanguage()));
         error.setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
-            + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">"
+            + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\">"
             + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>.");
 
       } else {
@@ -514,10 +514,11 @@ public class ApplyModules extends HttpSecureAppServlet {
         if (rs2.next()) {
           error.setType("Warning");
           error.setTitle(Utility.messageBD(myPool, "Warning", vars.getLanguage()));
-          error.setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage())
-              + "<a href=\"http://wiki.openbravo.com/wiki/UpgradeTips\" target=\"_blank\">"
-              + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>."
-              + Utility.messageBD(myPool, "BuildWarning2", vars.getLanguage()));
+          error
+              .setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage())
+                  + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\">"
+                  + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>."
+                  + Utility.messageBD(myPool, "BuildWarning2", vars.getLanguage()));
 
         } else {
           error.setType("Success");

@@ -150,17 +150,14 @@ public class Posted extends HttpSecureAppServlet {
       } else if (!acct.post(strKey, false, vars, this, con) || acct.errors != 0) {
         releaseRollbackConnection(con);
         String strStatus = acct.getStatus();
-        // return (Utility.messageBD(this, "ProcessRunError",
-        // vars.getLanguage()) + "\\n" + acct.getInfo(vars));
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-            strStatus.equals("L") ? "@OtherPostingProcessActive@" : "@ProcessRunError@");
-        if (strStatus.equals("L"))
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), strStatus
+            .equals(AcctServer.STATUS_DocumentLocked) ? "@OtherPostingProcessActive@" : strStatus
+            .equals(AcctServer.STATUS_InvalidCost) ? "@InvalidCost@" : "@ProcessRunError@");
+        if (strStatus.equals(AcctServer.STATUS_DocumentLocked))
           myMessage.setType("Warning");
         myMessage.setMessage(myMessage.getMessage());
         return myMessage;
       }
-      // Create Automatic Matching
-      // acct.match (vars, this,con);
       releaseCommitConnection(con);
     } catch (Exception e) {
       log4j.error(e);
@@ -257,11 +254,6 @@ public class Posted extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    /*
-     * String message = vars.getSessionValue("Posted|message"); if (!message.equals("")) message =
-     * "alert('" + message + "');"; vars.removeSessionValue("Posted|message");
-     * xmlDocument.setParameter("message", message);
-     */
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
         .getLanguage()));
