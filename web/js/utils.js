@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5956';
+  var number = '5959';
   return number;
 }
 
@@ -841,7 +841,11 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);
   }
-  winPopUp.onunload = function(){putFocusOnMenu();}
+  winPopUp.onunload = function() {
+    if (winPopUp.location.href != "about:blank" && winPopUp.location.href.indexOf("utility/PopupLoading.html") == -1) {
+      putFocusOnMenu();
+    }
+  }
   if (closeControl) window.onunload = function(){winPopUp.close();}
   if (doSubmit) {
     if (isPopup==true && hasLoading == true) synchronizedSubmitCommandForm(getArrayValue(parameters, "Command", "DEFAULT"), (getArrayValue(parameters, "debug", false)==true), null, url, _name, target, checkChanges);
