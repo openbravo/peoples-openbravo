@@ -27,7 +27,7 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <Sql>
     <![CDATA[
-      SELECT BANKACCOUNT, 
+      SELECT AD_COLUMN_IDENTIFIER(TO_CHAR('C_BankAccount'), TO_CHAR(BANKACCOUNTID), TO_CHAR(?)) as BANKACCOUNT, 
              INITIALBALANCE,
              TRUNC(NOW()) AS CURRENTDATE, 
              INCOME, 
@@ -45,7 +45,7 @@
              '' AS ISRECEIPT,
              '' AS URL,
              '' AS ISRECEIPTMESSAGE FROM (     
-            SELECT (B.CODEBANK || '/' || B.CODEBRANCH || B.DIGITCONTROL || BA.CODEACCOUNT || '.' || BA.DIGITCONTROL) AS BANKACCOUNT,
+            SELECT BA.C_BANKACCOUNT_ID AS BANKACCOUNTID,
              SUM(c_currency_convert(STMTAMT, BL.C_CURRENCY_ID, BA.C_CURRENCY_ID, BL.VALUTADATE, NULL, ba.ad_client_id, ba.ad_org_id)) AS INITIALBALANCE,
              COALESCE((SELECT SUM(c_currency_convert(DP.AMOUNT, dp.C_CURRENCY_ID, ba.c_Currency_ID, dp.dateplanned,null, ba.ad_client_id, ba.ad_org_id))
                 FROM C_DEBT_PAYMENT_V DP
@@ -98,26 +98,25 @@
              BA.C_BANKACCOUNT_ID
       FROM C_BANKSTATEMENTLINE BL,
            C_BANKSTATEMENT     BS,
-           C_BANK              B,
            C_BANKACCOUNT       BA
       WHERE BS.C_BANKSTATEMENT_ID = BL.C_BANKSTATEMENT_ID
         AND BA.C_BANKACCOUNT_ID = BS.C_BANKACCOUNT_ID
-        AND BA.C_BANK_ID = B.C_BANK_ID 
         AND BS.PROCESSED='Y'  
         AND BS.STATEMENTDATE <= NOW()
         AND 3=3
-        AND B.AD_CLIENT_ID IN ('1')
-        AND B.AD_ORG_ID IN ('1') 
-       GROUP BY (B.CODEBANK || '/' || B.CODEBRANCH || B.DIGITCONTROL || BA.CODEACCOUNT || '.' || BA.DIGITCONTROL), BA.C_BANKACCOUNT_ID, ba.c_Currency_ID, ba.ad_client_id, ba.ad_org_id 
+        AND BA.AD_CLIENT_ID IN ('1')
+        AND BA.AD_ORG_ID IN ('1') 
+       GROUP BY BA.C_BANKACCOUNT_ID, ba.c_Currency_ID, ba.ad_client_id, ba.ad_org_id 
        ) AAA  
        ORDER BY 1
      ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="language"/>
     <Parameter name="dateMax" optional="true" after="AND 1=1"><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
     <Parameter name="dateMax" optional="true" after="AND 2=2"><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
     <Parameter name="bankaccount" optional="true" after="AND 3=3"><![CDATA[ AND BA.C_BANKACCOUNT_ID = ? ]]></Parameter>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND B.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND B.AD_ORG_ID IN (" text="'1'"/> 
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND BA.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND BA.AD_ORG_ID IN (" text="'1'"/> 
   </SqlMethod>
 
  <SqlMethod name="selectLines" type="preparedStatement" return="multiple">
