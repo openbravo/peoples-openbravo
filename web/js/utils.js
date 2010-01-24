@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5959';
+  var number = '5967';
   return number;
 }
 
@@ -3169,6 +3169,7 @@ function readOnlyLogicElement(id, readonly) {
   obj = getReference(id);
   className = obj.className;
   var onchange_combo = null;
+  var newOnChange_combo = null;
  
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
@@ -3182,31 +3183,17 @@ function readOnlyLogicElement(id, readonly) {
       }
       setObjAttribute(obj, 'onclick', onclickTextA);
     }
-    if (className.indexOf("Combo ")!=-1) {
-      obj.className = className.replace("Combo","ComboReadOnly");
+    if (className.indexOf("Combo ")!=-1 || className.indexOf("ComboKey ")!=-1) {
+      if (className.indexOf("Combo ")!=-1) obj.className = className.replace("Combo","ComboReadOnly");
+      else if (className.indexOf("ComboKey ")!=-1) obj.className = className.replace("ComboKey","ComboKeyReadOnly");
+      disableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
+        onchange_combo = getObjAttribute(obj, 'onChange');
       } else {
         onchange_combo = "";
       }
-      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo);
-     }
-    if (className.indexOf("ComboKey ")!=-1) {
-      obj.className = className.replace("ComboKey","ComboKeyReadOnly");
-      if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
-      } else {
-        onchange_combo = "";
-      }
-      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo);
+      newOnChange_combo = "selectCombo(this, '"+obj.value+"');" + onchange_combo;
+      setObjAttribute(obj, 'onChange', newOnChange_combo);
     }
     if (className.indexOf("LabelText ")!=-1)
       obj.className = className.replace("LabelText","LabelTextReadOnly");
@@ -3230,20 +3217,16 @@ function readOnlyLogicElement(id, readonly) {
       setObjAttribute(obj, 'onclick', onclickTextB);
     }
 
-
     if (obj.className.indexOf("Combo")!=-1) {
+      enableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
+        onchange_combo = getObjAttribute(obj, 'onChange');
       } else {
         onchange_combo = "";
       }
       if (onchange_combo.indexOf("selectCombo")!=-1) {
-        var newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
-        obj.setAttribute("onChange",newOnChange_combo); 
+        newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
+        setObjAttribute(obj, 'onChange', newOnChange_combo);
       }
     }
     if ((obj.className.indexOf("TextBox_")!=-1)||(obj.className.indexOf("TextArea_")!=-1)) {
