@@ -40,8 +40,9 @@ class AuditTrailDeletedRecords {
    * 
    */
   static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
-      String tabId, int startPosition, int rangeLength) {
-    return getDeletedRecords(conn, vars, tabId, null, null, startPosition, rangeLength);
+      String tabId, int startPosition, int rangeLength, String dateFrom, String dateTo, String user) {
+    return getDeletedRecords(conn, vars, tabId, null, null, startPosition, rangeLength, dateFrom,
+        dateTo, user);
   }
 
   /**
@@ -67,11 +68,18 @@ class AuditTrailDeletedRecords {
    *          Offset for the returned result set.
    * @param rangeLength
    *          Maximum number of records returned.
+   * @param dateFrom
+   *          optional parameter to filter by time
+   * @param dateTo
+   *          optional parameter to filter by time
+   * @param user
+   *          optional parameter to filter by user
    * @return {@link FieldProvider}[] With the records matching the filters. The structure of the
    *         FieldProvider is given by the current tab's table structure in Application Dictionary.
    */
   static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
-      String tabId, String fkColumnName, String fkId, int startPosition, int rangeLength) {
+      String tabId, String fkColumnName, String fkId, int startPosition, int rangeLength,
+      String dateFrom, String dateTo, String user) {
     OBContext.enableAsAdminContext();
     StringBuffer sql = new StringBuffer();
     try {
@@ -87,15 +95,11 @@ class AuditTrailDeletedRecords {
       if (hasRange && conn.getRDBMS().equalsIgnoreCase("ORACLE")) {
         sql.append("SELECT ROWNUM AS RN1, ").append(tableName).append(".* FROM(\n");
       }
-      sql.append("SELECT \n");
-      boolean firstItem = true;
+      sql
+          .append("SELECT record_id as rowkey, time as audittrailtime, ad_user_id as audittrailuser, processType as audittrailprocesstype, process_id as audittrailprocessid\n");
       for (Column col : tab.getTable().getADColumnList()) {
         // obtain information for all columns
-        if (!firstItem) {
-          sql.append(", ");
-        } else {
-          firstItem = false;
-        }
+        sql.append(", ");
         sql
             .append("(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NCHAR), TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE))\n");
         sql.append("  FROM AD_AUDIT_TRAIL\n");
@@ -119,6 +123,17 @@ class AuditTrailDeletedRecords {
       sql.append(" AND AD_ORG_ID IN (").append(
           Utility.getContext(conn, vars, "#AccessibleOrgTree", tab.getWindow().getId(), Integer
               .parseInt(tab.getTable().getDataAccessLevel()))).append(")\n");
+      // optional filters from UI
+      if (dateFrom != null && !dateFrom.isEmpty()) {
+        sql.append(" AND time >= TO_DATE('" + dateFrom + "')");
+      }
+      if (dateTo != null && !dateTo.isEmpty()) {
+        sql.append(" AND time <= TO_DATE('" + dateTo + "')");
+
+      }
+      if (user != null && !user.isEmpty()) {
+        sql.append(" AND ad_user_id = '" + user + "'");
+      }
 
       sql.append("  ORDER BY TIME DESC").append(") ").append(tableName);
 
