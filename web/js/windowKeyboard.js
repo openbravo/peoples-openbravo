@@ -483,6 +483,8 @@ function drawWindowElementFocus(obj) {
       isFirstTime = false;
     } else if (currentWindowElementType == 'genericTree') {
       isFirstTime = false;
+    } else if (currentWindowElementType == 'scSelector') {  //Added for support Smartclient Selector
+      isFirstTime = false;
     } else {
     }
   } catch (e) {
@@ -501,6 +503,9 @@ function putWindowElementFocus(obj, event) {
     } else if (currentWindowElementType == 'genericTree') {
       obj.focus();
       focusGenericTree();
+    } else if (currentWindowElementType == 'scSelector') {  //Added for support Smartclient Selector
+      //obj.focus(); *Commented because it fails with IE*
+      focusScSelector(obj.getAttribute('id'));
     } else {
       // added for Smartclient support
       if (obj.focusInItem) {
@@ -584,6 +589,7 @@ function eraseWindowElementFocus(obj) {
       blurGrid();
     } else if (previousWindowElementType == 'genericTree') {
       blurGenericTree();
+    } else if (previousWindowElementType == 'scSelector') {  //Added for support Smartclient Selector
     } else {
     }
   } catch (e) {
@@ -613,7 +619,10 @@ function mustBeJumped(obj) {
 
 function mustBeIgnored(obj) {
   if (obj.style.display == 'none') return true;
-  if (obj.getAttribute('type') == 'hidden') return true;
+  if (obj.getAttribute('type') == 'hidden') {
+    if (obj.getAttribute('onreset') == null) return true;  //Added for support Smartclient Selector
+    if (obj.getAttribute('onreset').indexOf('resetSelector()')==-1) return true;  //Added for support Smartclient Selector
+  }
   if (obj.getAttribute('readonly') == 'true' && obj.getAttribute('tabindex') != '1') return true;
   if (obj.readOnly && obj.getAttribute('tabindex') != '1') return true;
   if (obj.getAttribute('disabled') == 'true') return true;
@@ -621,6 +630,9 @@ function mustBeIgnored(obj) {
   if (obj.className.indexOf('LabelLink')!=-1 && obj.className.indexOf('_LabelLink')==-1 && obj.className.indexOf('LabelLink_')==-1) return true;
   if (obj.className.indexOf('FieldButtonLink')!=-1) return true;
   if (obj.className.indexOf('ButtonLink_disabled')!=-1) return true;
+  if (obj.getAttribute('id')) {
+    if (obj.getAttribute('id').indexOf('isc_') != -1) return true;  //Added for support Smartclient Selector
+  }
   return false;
 }
 
@@ -641,6 +653,13 @@ function couldHaveFocus(obj) {
   try {
     if (obj.tagName == 'INPUT' && obj.getAttribute('id') == 'genericTree_dummy_input') {
       currentWindowElementType = 'genericTree';
+      return true;
+    }
+  } catch(e) {
+  }
+  try {  //Added for support Smartclient Selector
+    if (obj.tagName == 'INPUT' && obj.getAttribute('type') == 'hidden' && obj.getAttribute('onreset').indexOf('resetSelector()')!=-1) {
+      currentWindowElementType = 'scSelector';
       return true;
     }
   } catch(e) {
@@ -1547,6 +1566,13 @@ function focusGenericTree() {
 function blurGenericTree() {
   try {
     if (typeof gt_focusedNode != "undefined") { gt_blurTreeContainer('genericTree','id'); }
+  } catch(e) {}
+}
+
+function focusScSelector(id) {  //Added for support Smartclient Selector
+  try {
+    var scSelector_focusCommand = "sc_" + id + ".selectorField.selector.focus()";
+    eval(scSelector_focusCommand);
   } catch(e) {}
 }
 
