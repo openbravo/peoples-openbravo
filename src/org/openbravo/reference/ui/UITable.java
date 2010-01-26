@@ -11,15 +11,16 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.reference.ui;
 
-public class UITable {
+public class UITable extends UIReference {
   public UITable(String reference, String subreference) {
+    super(reference, subreference);
   }
 
 }

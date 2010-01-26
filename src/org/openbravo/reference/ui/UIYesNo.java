@@ -18,8 +18,9 @@
  */
 package org.openbravo.reference.ui;
 
-public class UIYesNo {
+public class UIYesNo extends UIReference {
   public UIYesNo(String reference, String subreference) {
+    super(reference, subreference);
   }
 
 }
