@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5967';
+  var number = '5982';
   return number;
 }
 
@@ -4174,6 +4174,13 @@ function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupI
   if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
   if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
+  var isTextSelected = false;
+  if (obj.value.length > 0) {
+    if (getCaretPosition(obj).start !=  getCaretPosition(obj).end && getCaretPosition(obj).end == obj.value.length) {
+      isTextSelected = true;
+    }
+  }
+
   var oldCaretPosition = getCaretPosition(obj).start;
   var newCaretPosition = returnNewCaretPosition(obj, oldCaretPosition, groupSeparator);
 
@@ -4185,6 +4192,9 @@ function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupI
   var plainNumber = returnPlainNumber(number, decSeparator, groupSeparator);
   obj.value = plainNumber;
   setCaretToPos(obj, newCaretPosition);
+  if (isTextSelected == true && selectInputTextOnTab) {
+    obj.select();
+  }
 }
 
 /**
