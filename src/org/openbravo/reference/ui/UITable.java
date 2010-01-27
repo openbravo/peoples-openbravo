@@ -18,9 +18,72 @@
  */
 package org.openbravo.reference.ui;
 
+import java.util.Properties;
+
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.TableSQLData;
+import org.openbravo.reference.Reference;
+
 public class UITable extends UIReference {
   public UITable(String reference, String subreference) {
     super(reference, subreference);
+  }
+
+  public void generateSQL(TableSQLData table, Properties prop) throws Exception {
+    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"), prop
+        .getProperty("ColumnName"));
+    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R", table
+        .getTableName()
+        + "." + prop.getProperty("ColumnName"), false);
+  }
+
+  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
+      String identifierName, String realName, boolean tableRef) throws Exception {
+    if (field == null)
+      return;
+
+    String fieldName = field.getProperty("ColumnName");
+
+    int myIndex = tableSql.index++;
+    ComboTableQueryData trd[] = ComboTableQueryData
+        .selectRefTable(tableSql.getPool(), subReference);
+    if (trd == null || trd.length == 0)
+      return;
+    String tables = "(SELECT ";
+    if (trd[0].isvaluedisplayed.equals("Y")) {
+      tableSql.addSelectField("td" + myIndex + ".VALUE", identifierName);
+      tables += "value, ";
+    }
+    tables += trd[0].keyname + " AS tableID, " + trd[0].name + " FROM ";
+    Properties fieldsAux = fieldToProperties(trd[0]);
+    tables += trd[0].tablename + ") td" + myIndex;
+    tables += " on " + parentTableName + "." + fieldName + " = td" + myIndex + ".tableID";
+    tableSql.addFromField(tables, "td" + myIndex, realName);
+
+    UIReference linkedReference = Reference.getUIReference(
+        fieldsAux.getProperty("AD_Reference_ID"), fieldsAux.getProperty("AD_Reference_Value_ID"));
+    linkedReference.identifier(tableSql, "td" + myIndex, fieldsAux, identifierName, realName, true);
+  }
+
+  /**
+   * Transform a fieldprovider into a Properties object.
+   * 
+   * @param field
+   *          FieldProvider object.
+   * @return Properties with the FieldProvider information.
+   * @throws Exception
+   */
+  private Properties fieldToProperties(FieldProvider field) throws Exception {
+    Properties aux = new Properties();
+    if (field != null) {
+      aux.setProperty("ColumnName", field.getField("name"));
+      aux.setProperty("TableName", field.getField("tablename"));
+      aux.setProperty("AD_Reference_ID", field.getField("reference"));
+      aux.setProperty("AD_Reference_Value_ID", field.getField("referencevalue"));
+      aux.setProperty("IsMandatory", field.getField("required"));
+      aux.setProperty("ColumnNameSearch", field.getField("columnname"));
+    }
+    return aux;
   }
 
 }

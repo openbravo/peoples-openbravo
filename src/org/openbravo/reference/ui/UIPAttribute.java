@@ -18,9 +18,29 @@
  */
 package org.openbravo.reference.ui;
 
-public class UIPAttribute extends UIReference {
+import java.util.Properties;
+
+import org.openbravo.erpCommon.utility.TableSQLData;
+
+public class UIPAttribute extends UITableDir {
   public UIPAttribute(String reference, String subreference) {
     super(reference, subreference);
   }
 
+  public void generateSQL(TableSQLData table, Properties prop) throws Exception {
+    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"), prop
+        .getProperty("ColumnName"));
+    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R", table
+        .getTableName()
+        + "." + prop.getProperty("ColumnName"), false);
+  }
+
+  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
+      String identifierName, String realName, boolean tableRef) throws Exception {
+    if (field == null)
+      return;
+
+    field.setProperty("ColumnNameSearch", "AD_Reference_Value_ID");
+    super.identifier(tableSql, parentTableName, field, identifierName, realName, tableRef);
+  }
 }

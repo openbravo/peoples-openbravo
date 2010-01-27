@@ -18,9 +18,28 @@
  */
 package org.openbravo.reference.ui;
 
+import java.util.Properties;
+
+import org.openbravo.erpCommon.utility.TableSQLData;
+
 public class UIImage extends UIReference {
   public UIImage(String reference, String subreference) {
     super(reference, subreference);
+  }
+
+  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
+      String identifierName, String realName, boolean tableRef) throws Exception {
+    if (field == null)
+      return;
+
+    int myIndex = tableSql.index++;
+    tableSql.addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '"
+        + TableSQLData.INACTIVE_DATA + "' ELSE '' END) || td" + myIndex + ".imageURL)",
+        identifierName);
+    String tables = "(select IsActive, AD_Image_ID, ImageURL from AD_Image) td" + myIndex;
+    tables += " on " + parentTableName + "." + field.getProperty("ColumnNameSearch");
+    tables += " = td" + myIndex + ".AD_Image_ID";
+    tableSql.addFromField(tables, "td" + myIndex, realName);
   }
 
 }

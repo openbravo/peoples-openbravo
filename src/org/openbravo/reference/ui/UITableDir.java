@@ -18,9 +18,86 @@
  */
 package org.openbravo.reference.ui;
 
+import java.util.Properties;
+
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.TableSQLData;
+import org.openbravo.reference.Reference;
+
 public class UITableDir extends UIReference {
   public UITableDir(String reference, String subreference) {
     super(reference, subreference);
   }
 
+  public void generateSQL(TableSQLData table, Properties prop) throws Exception {
+    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"), prop
+        .getProperty("ColumnName"));
+    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R", table
+        .getTableName()
+        + "." + prop.getProperty("ColumnName"), false);
+  }
+
+  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
+      String identifierName, String realName, boolean tableRef) throws Exception {
+    if (field == null)
+      return;
+
+    int myIndex = tableSql.index++;
+    String name = field.getProperty("ColumnNameSearch");
+    String tableDirName = name.substring(0, name.length() - 3);
+    if (subReference != null && !subReference.equals("")) {
+      TableSQLQueryData[] search = TableSQLQueryData.searchInfo(tableSql.getPool(), subReference);
+      if (search != null && search.length != 0) {
+        name = search[0].columnname;
+        tableDirName = search[0].tablename;
+      }
+    } else {
+      if (name.equalsIgnoreCase("CreatedBy") || name.equalsIgnoreCase("UpdatedBy")) {
+        tableDirName = "AD_User";
+        name = "AD_User_ID";
+      }
+    }
+    ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(tableSql.getPool(),
+        tableDirName);
+    String tables = "(SELECT " + name;
+    for (int i = 0; i < trd.length; i++) {
+      // exclude tabledir pk-column as it has already been added in the line above
+      if (!trd[i].name.equals(name)) {
+        tables += ", " + trd[i].name;
+      }
+    }
+    tables += " FROM ";
+    tables += tableDirName + ") td" + myIndex;
+    tables += " on " + parentTableName + "." + field.getProperty("ColumnName") + " = td" + myIndex
+        + "." + name + "\n";
+    tableSql.addFromField(tables, "td" + myIndex, realName);
+    for (int i = 0; i < trd.length; i++) {
+      Properties linkedRefProp = fieldToProperties(trd[i]);
+      UIReference linkedReference = Reference.getUIReference(linkedRefProp
+          .getProperty("AD_Reference_ID"), linkedRefProp.getProperty("AD_Reference_Value_ID"));
+      linkedReference.identifier(tableSql, "td" + myIndex, linkedRefProp, identifierName, realName,
+          false);
+    }
+  }
+
+  /**
+   * Transform a fieldprovider into a Properties object.
+   * 
+   * @param field
+   *          FieldProvider object.
+   * @return Properties with the FieldProvider information.
+   * @throws Exception
+   */
+  private Properties fieldToProperties(FieldProvider field) throws Exception {
+    Properties aux = new Properties();
+    if (field != null) {
+      aux.setProperty("ColumnName", field.getField("name"));
+      aux.setProperty("TableName", field.getField("tablename"));
+      aux.setProperty("AD_Reference_ID", field.getField("reference"));
+      aux.setProperty("AD_Reference_Value_ID", field.getField("referencevalue"));
+      aux.setProperty("IsMandatory", field.getField("required"));
+      aux.setProperty("ColumnNameSearch", field.getField("columnname"));
+    }
+    return aux;
+  }
 }
