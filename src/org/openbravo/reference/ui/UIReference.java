@@ -22,6 +22,10 @@ import java.util.Properties;
 
 import org.openbravo.erpCommon.utility.TableSQLData;
 
+/**
+ * Base implementation for UI objects
+ * 
+ */
 public class UIReference {
 
   protected String reference;
@@ -32,10 +36,28 @@ public class UIReference {
     this.subReference = subreference;
   }
 
+  /**
+   * Generates the sql needed for TableSQLData class
+   */
   public void generateSQL(TableSQLData table, Properties field) throws Exception {
     identifier(table, table.getTableName(), field, field.getProperty("ColumnName"), table
         .getTableName()
         + "." + field.getProperty("ColumnName"), false);
+  }
+
+  /**
+   * Obtains the type of data to be shown in the grid mode
+   * 
+   */
+  public String getGridType() {
+    return "string";
+  }
+
+  /**
+   * Includes the needed casting (TO_DATE...) to compose SQL
+   */
+  public String addSQLCasting(String column) {
+    return column;
   }
 
   protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,

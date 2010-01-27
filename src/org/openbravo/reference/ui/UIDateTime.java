@@ -18,7 +18,7 @@
  */
 package org.openbravo.reference.ui;
 
-public class UIDateTime extends UIReference {
+public class UIDateTime extends UIDate {
   public UIDateTime(String reference, String subreference) {
     super(reference, subreference);
   }

@@ -68,4 +68,8 @@ public class UIList extends UIReference {
             realName);
     tableSql.addFromParameter("#AD_LANGUAGE", "LANGUAGE", realName);
   }
+
+  public String getGridType() {
+    return "dynamicEnum";
+  }
 }

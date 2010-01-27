@@ -42,4 +42,8 @@ public class UIImage extends UIReference {
     tableSql.addFromField(tables, "td" + myIndex, realName);
   }
 
+  public String getGridType() {
+    return "img";
+  }
+
 }

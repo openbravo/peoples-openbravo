@@ -86,4 +86,8 @@ public class UITable extends UIReference {
     return aux;
   }
 
+  public String getGridType() {
+    return "dynamicEnum";
+  }
+
 }

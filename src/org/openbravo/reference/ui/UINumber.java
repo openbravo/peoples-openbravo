@@ -23,4 +23,7 @@ public class UINumber extends UIReference {
     super(reference, subreference);
   }
 
+  public String getGridType() {
+    return "float";
+  }
 }

@@ -23,4 +23,8 @@ public class UIDate extends UIReference {
     super(reference, subreference);
   }
 
+  public String addSQLCasting(String column) {
+    return "TO_DATE(" + column + ")";
+  }
+
 }

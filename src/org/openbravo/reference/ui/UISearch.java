@@ -18,10 +18,12 @@
  */
 package org.openbravo.reference.ui;
 
-
 public class UISearch extends UITableDir {
   public UISearch(String reference, String subreference) {
     super(reference, subreference);
   }
 
+  public String getGridType() {
+    return "string";
+  }
 }

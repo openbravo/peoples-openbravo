@@ -23,4 +23,7 @@ public class UIInteger extends UIReference {
     super(reference, subreference);
   }
 
+  public String getGridType() {
+    return "integer";
+  }
 }

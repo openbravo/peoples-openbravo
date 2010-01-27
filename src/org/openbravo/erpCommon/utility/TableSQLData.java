@@ -1665,11 +1665,13 @@ public class TableSQLData implements Serializable {
         _alias = _alias.substring(0, _alias.length() - 2);
       }
       int position = -1;
-      String reference = "";
+      UIReference reference = null;
       Properties myProps = getColumnPosition(_alias);
       if (myProps != null) {
         position = Integer.valueOf(myProps.getProperty("Position")).intValue();
-        reference = myProps.getProperty("AD_Reference_ID");
+
+        reference = Reference.getUIReference(myProps.getProperty("AD_Reference_ID"), myProps
+            .getProperty("AD_Reference_Value_ID"));
       }
       if (position != -1) {
         addOrderByPosition(Integer.toString(position));
@@ -1680,8 +1682,8 @@ public class TableSQLData implements Serializable {
         if (aux != null && !aux.equals(""))
           orderField = aux;
       }
-      if (reference.equals("15") || reference.equals("16") || reference.equals("24")) {
-        orderField = "TO_DATE(" + orderField + ")";
+      if (reference != null) {
+        orderField = reference.addSQLCasting(orderField);
       }
     }
     return orderField + " " + orderDirection;
@@ -1744,23 +1746,11 @@ public class TableSQLData implements Serializable {
         dataAux.setData("isvisible", ((prop.getProperty("IsDisplayed").equals("Y") && prop
             .getProperty("ShowInRelation").equals("Y")) ? "true" : "false"));
         dataAux.setData("name", prop.getProperty("Name"));
-        String type = "string";
-        if (prop.getProperty("AD_Reference_ID").equals("17")
-            || prop.getProperty("AD_Reference_ID").equals("18")
-            || prop.getProperty("AD_Reference_ID").equals("19")) {
-          type = "dynamicEnum";
-        } else if (prop.getProperty("AD_Reference_ID").equals("800101")) {
-          type = "url";
-        } else if (prop.getProperty("AD_Reference_ID").equals("32")
-            || prop.getProperty("AD_Reference_ID").equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
-          type = "img";
-        } else if (prop.getProperty("AD_Reference_ID").equals("11")) {
-          type = "integer";
-        } else if (prop.getProperty("AD_Reference_ID").equals("12")
-            || prop.getProperty("AD_Reference_ID").equals("22")
-            || prop.getProperty("AD_Reference_ID").equals("800008")) {
-          type = "float";
-        }
+
+        UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"), prop
+            .getProperty("AD_Reference_Value_ID"));
+        String type = reference.getGridType();
+
         dataAux.setData("type", type);
         String strWidth = "";
 

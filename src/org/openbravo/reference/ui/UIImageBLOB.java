@@ -23,4 +23,8 @@ public class UIImageBLOB extends UIReference {
     super(reference, subreference);
   }
 
+  public String getGridType() {
+    return "img";
+  }
+
 }
