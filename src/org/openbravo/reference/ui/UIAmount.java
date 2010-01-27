@@ -21,6 +21,7 @@ package org.openbravo.reference.ui;
 public class UIAmount extends UIReference {
   public UIAmount(String reference, String subreference) {
     super(reference, subreference);
+    addSecondaryFilter = true;
   }
 
   public String getGridType() {

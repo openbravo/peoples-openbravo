@@ -18,7 +18,7 @@
  */
 package org.openbravo.reference.ui;
 
-public class UIMemo extends UIReference {
+public class UIMemo extends UIString {
   public UIMemo(String reference, String subreference) {
     super(reference, subreference);
   }

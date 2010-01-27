@@ -19,7 +19,10 @@
 package org.openbravo.reference.ui;
 
 import java.util.Properties;
+import java.util.Vector;
 
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 
 /**
@@ -30,10 +33,13 @@ public class UIReference {
 
   protected String reference;
   protected String subReference;
+  // addSecondaryFilter is used to add a "to" filter in the standard getFilter method
+  protected boolean addSecondaryFilter;
 
   public UIReference(String reference, String subreference) {
     this.reference = reference;
     this.subReference = subreference;
+    this.addSecondaryFilter = false;
   }
 
   /**
@@ -58,6 +64,37 @@ public class UIReference {
    */
   public String addSQLCasting(String column) {
     return column;
+  }
+
+  /**
+   * Obtains filter for TableSQLData
+   */
+  public void getFilter(SQLReturnObject result, boolean isNewFilter, VariablesSecureApp vars,
+      TableSQLData tableSQL, Vector<String> filter, Vector<String> filterParams, Properties prop)
+      throws Exception {
+    String aux;
+    if (isNewFilter) {
+      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName"), tableSQL
+          .getTabID()
+          + "|param" + prop.getProperty("ColumnName"));
+    } else {
+      aux = vars.getSessionValue(tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
+    }
+    // The filter is not applied if the parameter value is null or
+    // parameter value is '%' for string references.
+    if (!aux.equals("")) {
+      UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
+          .getProperty("ColumnName"), reference, true, aux);
+    }
+    if (addSecondaryFilter) {
+      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName") + "_f",
+          tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName") + "_f");
+      if (!aux.equals("")) {
+        UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
+            .getProperty("ColumnName")
+            + "_f", reference, false, aux);
+      }
+    }
   }
 
   protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,

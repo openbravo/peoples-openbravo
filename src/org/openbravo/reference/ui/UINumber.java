@@ -21,6 +21,7 @@ package org.openbravo.reference.ui;
 public class UINumber extends UIReference {
   public UINumber(String reference, String subreference) {
     super(reference, subreference);
+    addSecondaryFilter = true;
   }
 
   public String getGridType() {

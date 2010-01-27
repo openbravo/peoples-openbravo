@@ -21,6 +21,7 @@ package org.openbravo.reference.ui;
 public class UIDate extends UIReference {
   public UIDate(String reference, String subreference) {
     super(reference, subreference);
+    addSecondaryFilter = true;
   }
 
   public String addSQLCasting(String column) {

@@ -21,6 +21,7 @@ package org.openbravo.reference.ui;
 public class UIQuantity extends UIReference {
   public UIQuantity(String reference, String subreference) {
     super(reference, subreference);
+    addSecondaryFilter = true;
   }
 
 }

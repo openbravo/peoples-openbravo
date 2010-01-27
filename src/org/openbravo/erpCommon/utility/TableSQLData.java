@@ -474,7 +474,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the tab id.
    */
-  String getTabID() {
+  public String getTabID() {
     return getParameter(internalPrefix + "AD_Tab_ID");
   }
 

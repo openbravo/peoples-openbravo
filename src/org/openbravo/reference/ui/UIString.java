@@ -18,9 +18,40 @@
  */
 package org.openbravo.reference.ui;
 
+import java.util.Properties;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
+
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.TableSQLData;
+
 public class UIString extends UIReference {
   public UIString(String reference, String subreference) {
     super(reference, subreference);
   }
 
+  public void getFilter(SQLReturnObject result, boolean isNewFilter, VariablesSecureApp vars,
+      TableSQLData tableSQL, Vector<String> filter, Vector<String> filterParams, Properties prop)
+      throws ServletException {
+    String aux;
+    if (isNewFilter) {
+      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName"), tableSQL
+          .getTabID()
+          + "|param" + prop.getProperty("ColumnName"));
+    } else {
+      aux = vars.getSessionValue(tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
+    }
+    // The filter is not applied if the parameter value is null or
+    // parameter value is '%' for string references.
+    if (!aux.equals("")) {
+      if (!aux.equals("%")) {
+        UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
+            .getProperty("ColumnName"), reference, true, aux);
+      } else {
+        filter.addElement("1=1");
+      }
+    }
+  }
 }

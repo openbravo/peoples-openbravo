@@ -19,8 +19,10 @@
 package org.openbravo.reference.ui;
 
 import java.util.Properties;
+import java.util.Vector;
 
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 
 /**
@@ -137,4 +139,73 @@ class UIReferenceUtility {
     return aux;
   }
 
+  /**
+   * Formats the filter to get the correct output (adds TO_DATE, TO_NUMBER...).
+   * 
+   * @param tablename
+   *          String with the table name.
+   * @param columnname
+   *          String with the column name.
+   * @param reference
+   *          String with the reference id.
+   * @param first
+   *          Boolean to know if is the first or not.
+   * @return String with the formated field.
+   */
+  static String formatFilter(String tablename, String columnname, String reference, boolean first) {
+    if (columnname == null || columnname.equals("") || tablename == null || tablename.equals("")
+        || reference == null || reference.equals(""))
+      return "";
+    StringBuffer text = new StringBuffer();
+    if (reference.equals("15") || reference.equals("16") || reference.equals("24")) {
+      text.append("TO_DATE(").append(reference.equals("24") ? "TO_CHAR(" : "").append(tablename)
+          .append(".").append(columnname).append(
+              (reference.equals("24") ? ", 'HH24:MI:SS'), 'HH24:MI:SS'" : "")).append(") ");
+      if (first)
+        text.append(">= ");
+      else {
+        if (reference.equals("24"))
+          text.append("<=");
+        else
+          text.append("< ");
+      }
+      text.append("TO_DATE(?").append((reference.equals("24") ? ", 'HH24:MI:SS'" : "")).append(")");
+      if (!first && !reference.equals("24"))
+        text.append("+1");
+    } else if (reference.equals("11") || reference.equals("12") || reference.equals("13")
+        || reference.equals("22") || reference.equals("29") || reference.equals("800008")
+        || reference.equals("800019")) {
+      text.append(tablename).append(".").append(columnname).append(" ");
+      if (first)
+        text.append(">= ");
+      else
+        text.append("<= ");
+      text.append("TO_NUMBER(?)");
+    } else if (reference.equals("10") || reference.equals("14") || reference.equals("34")) {
+      String aux = "";
+      if (!columnname.equalsIgnoreCase("Value") && !columnname.equalsIgnoreCase("DocumentNo"))
+        aux = "C_IGNORE_ACCENT";
+      text.append(aux).append("(");
+      text.append(tablename).append(".").append(columnname).append(") LIKE ");
+      text.append(aux).append("(?)");
+    } else if (reference.equals("35")) {
+      text
+          .append(
+              "(SELECT UPPER(DESCRIPTION) FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = ")
+          .append(tablename).append(".").append(columnname).append(") LIKE C_IGNORE_ACCENT(?)");
+    } else {
+      text.append(tablename).append(".").append(columnname).append(" = ?");
+    }
+    return text.toString();
+  }
+
+  public static void addFilter(Vector<String> filter, Vector<String> filterParams,
+      SQLReturnObject result, TableSQLData tableSQL, String columnName, String reference,
+      boolean first, String aux) {
+    filter.addElement(UIReferenceUtility.formatFilter(tableSQL.getTableName(), columnName,
+        reference, first));
+    filterParams.addElement("Param" + columnName);
+    result.setData("Param" + columnName, aux);
+
+  }
 }
