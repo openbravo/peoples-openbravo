@@ -413,9 +413,11 @@
 
   function gt_checkToggleNode(element, type) {
     var node = gt_returnNodeObject(element, type);
-    var nodeId = node.getAttribute('id').replace('node_','');
-    if (document.getElementById('inpNodes_' + nodeId)) {
-      document.getElementById('inpNodes_' + nodeId).checked = !document.getElementById('inpNodes_' + nodeId).checked;
+    if (typeof node != "undefined") {
+      var nodeId = node.getAttribute('id').replace('node_','');
+      if (document.getElementById('inpNodes_' + nodeId)) {
+        document.getElementById('inpNodes_' + nodeId).checked = !document.getElementById('inpNodes_' + nodeId).checked;
+      }
     }
   }
 
