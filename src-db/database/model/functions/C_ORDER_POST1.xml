@@ -1029,59 +1029,13 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
         HeaderNotAdded:=FALSE;
         v_TaxBaseAmt:=v_TaxBaseAmt + Cur_Tax.HeaderNet;
       END IF;
-      IF(Cur_Tax.IsSummary='N') THEN
-        v_LineNo := v_LineNo + 10;
-        xTaxAmt:=ROUND(v_TaxBaseAmt * Cur_Tax.Rate / 100, Cur_Tax.StdPrecision) ;
-        xGrandTotal:=xGrandTotal + v_TaxBaseAmt + xTaxAmt;
-        --
-        INSERT
-        INTO C_ORDERTAX
-          (
-            C_OrderTax_ID, C_Order_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, Created, CreatedBy, Updated,
-            UpdatedBy, TaxBaseAmt, TaxAmt, Line
-          )
-          VALUES
-          (
-            get_uuid(), v_Record_ID, Cur_Tax.C_Tax_ID, v_Client_ID, v_Org_ID,
-             'Y', now(), v_UpdatedBy, now(),
-            v_UpdatedBy, v_TaxBaseAmt, xTaxAmt, v_LineNo
-          )
-          ;
-      ELSE -- Multiple Taxes
-        xGrandTotal:=xGrandTotal + v_TaxBaseAmt;
-        v_FirstLine := TRUE;
-        FOR Cur_MultiTax IN
-                          (SELECT C_Tax_ID, Rate, CASCADE
-                             FROM C_TAX
-                            WHERE Parent_Tax_ID=Cur_Tax.C_Tax_ID
-                            ORDER BY Line)
-        LOOP
-          v_LineNo := v_LineNo + 10;
-          IF ((Cur_MultiTax.CASCADE = 'Y') AND (NOT v_FirstLine)) THEN   --cannot apply cascade to the first line
-            v_ActualBaseAmt := xGrandTotal;
-          ELSE
-            v_ActualBaseAmt := v_TaxBaseAmt;
-          END IF;
-          xTaxAmt:=ROUND(v_ActualBaseAmt * Cur_MultiTax.Rate / 100, Cur_Tax.StdPrecision) ;
-          v_FirstLine := FALSE;
-          xGrandTotal:=xGrandTotal + xTaxAmt;
-          --
-          INSERT INTO C_ORDERTAX
-            (
-              C_OrderTax_ID, C_Order_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
-              IsActive, Created, CreatedBy, Updated,
-              UpdatedBy, TaxBaseAmt, TaxAmt, Line
-            )
-            VALUES
-            (
-              get_uuid(), v_Record_ID, Cur_MultiTax.C_Tax_ID, v_Client_ID, v_Org_ID,
-               'Y', now(), v_UpdatedBy, now(),
-              v_UpdatedBy, v_ActualBaseAmt, xTaxAmt, v_LineNo
-            );
-        END LOOP;
-      END IF;
+      C_ORDERTAX_INSERT(v_Record_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, v_TaxBaseAmt, Cur_Tax.StdPrecision);
     END LOOP; -- Insert New Taxes
+    SELECT COALESCE(SUM(TAXAMT), 0)
+    INTO xGrandTotal
+    FROM C_ORDERTAX
+    WHERE C_ORDER_ID = v_Record_ID;
+    xGrandTotal:=xGrandTotal+ xTotalLines;    
     -- Update Header
     UPDATE C_ORDER
       SET TotalLines=xTotalLines,
