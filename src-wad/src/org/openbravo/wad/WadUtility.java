@@ -802,6 +802,8 @@ public class WadUtility {
     try {
       Class<?> c = Class.forName(classname);
       control = (WADControl) c.newInstance();
+      control.setReference(parentRef);
+      control.setSubreference(subRef);
     } catch (ClassNotFoundException ex) {
       log4j.warn("Couldn't find class: " + classname);
       control = new WADControl();

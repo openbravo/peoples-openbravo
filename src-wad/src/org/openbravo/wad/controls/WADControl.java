@@ -44,6 +44,8 @@ public class WADControl {
   private String onload = "";
   protected static ConnectionProvider conn = null;
   protected static String sqlDateFormat;
+  protected String reference;
+  protected String subreference;
 
   private WADLabelControl label;
 
@@ -539,5 +541,21 @@ public class WADControl {
 
   public boolean isDate() {
     return false;
+  }
+
+  public String getReference() {
+    return reference;
+  }
+
+  public void setReference(String reference) {
+    this.reference = reference;
+  }
+
+  public String getSubreference() {
+    return subreference;
+  }
+
+  public void setSubreference(String subreference) {
+    this.subreference = subreference;
   }
 }
