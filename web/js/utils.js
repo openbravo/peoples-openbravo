@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5982';
+  var number = '5983';
   return number;
 }
 
@@ -790,6 +790,9 @@ function addUrlParameters(data) {
 function openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading) {
   var adds = "";
   var isPopup = null;
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+    _name = _name.replace(/ /g,"_"); //To fix strange issue with IE8 that window name declared as var xx = window.open can not have spaces
+  }
   // Deprecated in 2.50, search for the old frameAplication and the new appFrame
   if (_name!='appFrame' && _name!='frameAplicacion' && _name!='frameMenu') isPopup =  true;
   else isPopup = false;
@@ -1486,8 +1489,10 @@ function keyControl(pushedKey) {
     return false;
   }
   if (isKeyboardLocked==false && !isCtrlPressed && !isAltPressed && pushedKey.type=='keydown' && pressedKeyCode!='16' && pressedKeyCode!='17' && pressedKeyCode!='18') {
-    if (focusedWindowElement.tagName == 'SELECT') {
-      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
+    if (typeof focusedWindowElement != "undefined") {
+      if (focusedWindowElement.tagName == 'SELECT') {
+        if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
+      }
     }
   }
   return true;
