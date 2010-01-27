@@ -40,7 +40,11 @@ public class Reference {
     if (ref != null) {
       implemenationClass = ref.getImpl();
       if (implemenationClass == null) {
-        implemenationClass = ref.getParentReference().getImpl();
+        if (ref.getParentReference() != null) {
+          implemenationClass = ref.getParentReference().getImpl();
+        } else {
+          log.error("No reference implementation found for " + ref);
+        }
       }
     } else {
       ref = OBDal.getInstance().get(org.openbravo.model.ad.domain.Reference.class, referenceId);
@@ -48,12 +52,16 @@ public class Reference {
     }
 
     try {
-      Class<UIReference> c = (Class<UIReference>) Class.forName(implemenationClass);
-      Constructor constructor = c.getConstructor(new Class[] { String.class, String.class });
-      String params[] = new String[2];
-      params[0] = referenceId;
-      params[1] = subreferenceID;
-      return (UIReference) constructor.newInstance((Object[]) params);
+      if (implemenationClass != null) {
+        Class<UIReference> c = (Class<UIReference>) Class.forName(implemenationClass);
+        Constructor constructor = c.getConstructor(new Class[] { String.class, String.class });
+        String params[] = new String[2];
+        params[0] = referenceId;
+        params[1] = subreferenceID;
+        return (UIReference) constructor.newInstance((Object[]) params);
+      } else {
+        return new UIReference(referenceId, subreferenceID);
+      }
     } catch (Exception e) {
       log.error("Error getting class for reference " + referenceId + ", subreference "
           + subreferenceID + ". Getting default UIReference.", e);
