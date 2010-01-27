@@ -18,6 +18,12 @@
  */
 package org.openbravo.reference.ui;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.Utility;
+
 public class UINumber extends UIReference {
   public UINumber(String reference, String subreference) {
     super(reference, subreference);
@@ -26,5 +32,18 @@ public class UINumber extends UIReference {
 
   public String getGridType() {
     return "float";
+  }
+
+  public String formatGridValue(VariablesSecureApp vars, String value) {
+    String rt = value;
+    try {
+      DecimalFormat numberFormatDecimal = Utility.getFormat(vars, "euroRelation");
+      if (numberFormatDecimal != null) {
+        rt = numberFormatDecimal.format(new BigDecimal(value));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return rt;
   }
 }

@@ -97,6 +97,16 @@ public class UIReference {
     }
   }
 
+  /**
+   * This method is called to show the value in the grid, it is intended to format the value
+   * properly
+   * 
+   * @param vars
+   */
+  public String formatGridValue(VariablesSecureApp vars, String value) {
+    return value;
+  }
+
   protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
       String identifierName, String realName, boolean tableRef) throws Exception {
 

@@ -18,9 +18,27 @@
  */
 package org.openbravo.reference.ui;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.Utility;
+
 public class UIGeneralQuantity extends UIReference {
   public UIGeneralQuantity(String reference, String subreference) {
     super(reference, subreference);
   }
 
+  public String formatGridValue(VariablesSecureApp vars, String value) {
+    String rt = value;
+    try {
+      DecimalFormat numberFormat = Utility.getFormat(vars, "generalQtyRelation");
+      if (numberFormat != null) {
+        rt = numberFormat.format(new BigDecimal(value));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return rt;
+  }
 }

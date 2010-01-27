@@ -18,6 +18,8 @@
  */
 package org.openbravo.reference.ui;
 
+import org.openbravo.base.secureApp.VariablesSecureApp;
+
 public class UIImageBLOB extends UIReference {
   public UIImageBLOB(String reference, String subreference) {
     super(reference, subreference);
@@ -25,6 +27,10 @@ public class UIImageBLOB extends UIReference {
 
   public String getGridType() {
     return "img";
+  }
+
+  public String formatGridValue(VariablesSecureApp vars, String value) {
+    return "../utility/ShowImage?id=" + value;
   }
 
 }
