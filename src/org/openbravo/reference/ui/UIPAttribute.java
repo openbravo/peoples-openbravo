@@ -40,7 +40,7 @@ public class UIPAttribute extends UITableDir {
         + "." + prop.getProperty("ColumnName"), false);
   }
 
-  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
+  public void identifier(TableSQLData tableSql, String parentTableName, Properties field,
       String identifierName, String realName, boolean tableRef) throws Exception {
     if (field == null)
       return;
