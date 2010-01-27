@@ -21,6 +21,7 @@ package org.openbravo.reference;
 import java.lang.reflect.Constructor;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.reference.ui.UIReference;
 
@@ -32,41 +33,46 @@ public class Reference {
     String implemenationClass;
 
     org.openbravo.model.ad.domain.Reference ref = null;
-
-    if (subreferenceID != null && !subreferenceID.equals("")) {
-      ref = OBDal.getInstance().get(org.openbravo.model.ad.domain.Reference.class, subreferenceID);
-    }
-
-    if (ref != null) {
-      implemenationClass = ref.getImpl();
-      if (implemenationClass == null) {
-        if (ref.getParentReference() != null) {
-          implemenationClass = ref.getParentReference().getImpl();
-        } else {
-          log.error("No reference implementation found for " + ref);
-        }
-      }
-    } else {
-      ref = OBDal.getInstance().get(org.openbravo.model.ad.domain.Reference.class, referenceId);
-      implemenationClass = ref.getImpl();
-    }
-
+    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+    OBContext.getOBContext().setInAdministratorMode(true);
     try {
-      if (implemenationClass != null) {
-        Class<UIReference> c = (Class<UIReference>) Class.forName(implemenationClass);
-        Constructor constructor = c.getConstructor(new Class[] { String.class, String.class });
-        String params[] = new String[2];
-        params[0] = referenceId;
-        params[1] = subreferenceID;
-        return (UIReference) constructor.newInstance((Object[]) params);
+      if (subreferenceID != null && !subreferenceID.equals("")) {
+        ref = OBDal.getInstance()
+            .get(org.openbravo.model.ad.domain.Reference.class, subreferenceID);
+      }
+
+      if (ref != null) {
+        implemenationClass = ref.getImpl();
+        if (implemenationClass == null) {
+          if (ref.getParentReference() != null) {
+            implemenationClass = ref.getParentReference().getImpl();
+          } else {
+            log.error("No reference implementation found for " + ref);
+          }
+        }
       } else {
+        ref = OBDal.getInstance().get(org.openbravo.model.ad.domain.Reference.class, referenceId);
+        implemenationClass = ref.getImpl();
+      }
+
+      try {
+        if (implemenationClass != null) {
+          Class<UIReference> c = (Class<UIReference>) Class.forName(implemenationClass);
+          Constructor constructor = c.getConstructor(new Class[] { String.class, String.class });
+          String params[] = new String[2];
+          params[0] = referenceId;
+          params[1] = subreferenceID;
+          return (UIReference) constructor.newInstance((Object[]) params);
+        } else {
+          return new UIReference(referenceId, subreferenceID);
+        }
+      } catch (Exception e) {
+        log.error("Error getting class for reference " + referenceId + ", subreference "
+            + subreferenceID + ". Getting default UIReference.", e);
         return new UIReference(referenceId, subreferenceID);
       }
-    } catch (Exception e) {
-      log.error("Error getting class for reference " + referenceId + ", subreference "
-          + subreferenceID + ". Getting default UIReference.", e);
-      return new UIReference(referenceId, subreferenceID);
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(adminMode);
     }
-
   }
 }
