@@ -20,7 +20,6 @@ package org.openbravo.reference.ui;
 
 import java.util.Properties;
 
-import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.reference.Reference;
 
@@ -55,7 +54,7 @@ public class UITable extends UIReference {
       tables += "value, ";
     }
     tables += trd[0].keyname + " AS tableID, " + trd[0].name + " FROM ";
-    Properties fieldsAux = fieldToProperties(trd[0]);
+    Properties fieldsAux = UIReferenceUtility.fieldToProperties(trd[0]);
     tables += trd[0].tablename + ") td" + myIndex;
     tables += " on " + parentTableName + "." + fieldName + " = td" + myIndex + ".tableID";
     tableSql.addFromField(tables, "td" + myIndex, realName);
@@ -63,27 +62,6 @@ public class UITable extends UIReference {
     UIReference linkedReference = Reference.getUIReference(
         fieldsAux.getProperty("AD_Reference_ID"), fieldsAux.getProperty("AD_Reference_Value_ID"));
     linkedReference.identifier(tableSql, "td" + myIndex, fieldsAux, identifierName, realName, true);
-  }
-
-  /**
-   * Transform a fieldprovider into a Properties object.
-   * 
-   * @param field
-   *          FieldProvider object.
-   * @return Properties with the FieldProvider information.
-   * @throws Exception
-   */
-  private Properties fieldToProperties(FieldProvider field) throws Exception {
-    Properties aux = new Properties();
-    if (field != null) {
-      aux.setProperty("ColumnName", field.getField("name"));
-      aux.setProperty("TableName", field.getField("tablename"));
-      aux.setProperty("AD_Reference_ID", field.getField("reference"));
-      aux.setProperty("AD_Reference_Value_ID", field.getField("referencevalue"));
-      aux.setProperty("IsMandatory", field.getField("required"));
-      aux.setProperty("ColumnNameSearch", field.getField("columnname"));
-    }
-    return aux;
   }
 
   public String getGridType() {
