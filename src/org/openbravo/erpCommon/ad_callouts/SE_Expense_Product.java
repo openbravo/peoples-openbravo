@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -181,7 +181,8 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       if (convAmount.scale() > stdPrecisionConv)
         convAmount = convAmount.setScale(stdPrecisionConv, BigDecimal.ROUND_HALF_UP);
       resultado.append(", new Array(\"inpconvertedamt\", "
-          + (convAmount.compareTo(BigDecimal.ZERO) == 0 ? "" : convAmount.toPlainString()) + ")");
+          + (convAmount.compareTo(BigDecimal.ZERO) == 0 ? "\"\"" : convAmount.toPlainString())
+          + ")");
     }
     if (strChanged.equals("inpmProductId") && !cCurrencyID.equals("")) {
       resultado.append(", new Array(\"inpcCurrencyId\", \"" + cCurrencyID + "\")");
