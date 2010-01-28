@@ -277,14 +277,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISATTRSETVALUEREQUIRED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="ISDEFAULTATTRSETVALUE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -361,9 +353,7 @@
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ISATTRSETVALREQ_CHK"><![CDATA[ISATTRSETVALUEREQUIRED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISBOM_CHECK"><![CDATA[ISBOM IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ISDEFATTRSETVAL_CHK"><![CDATA[ISDEFAULTATTRSETVALUE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISINVOICEPRINTDE_CHK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPICKLISTPRINTD_CHK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPURCHASED_CHECK"><![CDATA[ISPURCHASED IN ('Y', 'N')]]></check>
