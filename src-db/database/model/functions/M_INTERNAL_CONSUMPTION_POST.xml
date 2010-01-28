@@ -92,11 +92,11 @@
         M_Product P
       WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
         AND P.M_ATTRIBUTESET_ID IS NOT NULL
-        AND P.M_ATTRIBUTESETINSTANCE_ID IS NULL
+        AND (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE <> 'F')
         AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
         AND M.M_Internal_Consumption_ID=Record_ID;
       IF v_Count<>0 THEN
-       RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_line||' '||'@productWithoutAttributeSet@') ;
+       RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
       END IF;
     END IF;--END_PROCESS
     IF(NOT END_PROCESS) THEN

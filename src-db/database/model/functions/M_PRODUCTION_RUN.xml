@@ -484,7 +484,7 @@
             M_PRODUCT P
           WHERE PL.M_PRODUCT_ID=P.M_PRODUCT_ID
             AND P.M_ATTRIBUTESET_ID IS NOT NULL
-            AND P.M_ATTRIBUTESETINSTANCE_ID IS NULL
+            AND (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE <> 'F')
             AND COALESCE(PL.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
             AND PL.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
             AND pp.M_Production_ID=v_Record_ID;
@@ -495,7 +495,7 @@
             M_PRODUCT P
           WHERE PL.M_PRODUCT_ID=P.M_PRODUCT_ID
             AND P.M_ATTRIBUTESET_ID IS NOT NULL
-            AND P.M_ATTRIBUTESETINSTANCE_ID IS NULL
+            AND (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE <> 'F')
             AND COALESCE(PL.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
             AND PL.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
             AND pp.M_Production_ID=v_Record_ID;
