@@ -24,10 +24,10 @@ import java.text.DecimalFormat;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.Utility;
 
-public class UIAmount extends UIReference {
+public class UIAmount extends UINumber {
   public UIAmount(String reference, String subreference) {
     super(reference, subreference);
-    addSecondaryFilter = true;
+    relationFormat = "euroRelation";
   }
 
   public String getGridType() {

@@ -18,9 +18,26 @@
  */
 package org.openbravo.reference.ui;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
+
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.BuscadorData;
+
 public class UIYesNo extends UIReference {
   public UIYesNo(String reference, String subreference) {
     super(reference, subreference);
+  }
+
+  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
+      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
+      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+    UIList list = new UIList("17", "47209D76F3EE4B6D84222C5BDF170AA2");
+    list
+        .generateFilterHtml(strHtml, vars, fields, strTab, strWindow, script, strIsSOTrx, vecScript, null);
   }
 
 }

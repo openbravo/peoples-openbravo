@@ -18,6 +18,7 @@
  */
 package org.openbravo.reference.ui;
 
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -30,6 +31,7 @@ import org.openbravo.erpCommon.utility.TableSQLData;
  * 
  */
 class UIReferenceUtility {
+  public static final int MAX_TEXTBOX_LENGTH = 150;
 
   /**
    * Checks whether there is trl for the table and creates the query if needed.
@@ -206,6 +208,11 @@ class UIReferenceUtility {
         reference, first));
     filterParams.addElement("Param" + columnName);
     result.setData("Param" + columnName, aux);
+  }
 
+  public static void addUniqueElement(ArrayList<String> list, String value) {
+    if (!list.contains(value)) {
+      list.add(value);
+    }
   }
 }

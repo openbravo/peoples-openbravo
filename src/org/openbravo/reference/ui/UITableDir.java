@@ -18,12 +18,25 @@
  */
 package org.openbravo.reference.ui;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Vector;
 
+import javax.servlet.ServletException;
+
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.BuscadorData;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.TableSQLData;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.reference.Reference;
+import org.openbravo.utils.FormatUtilities;
 
 public class UITableDir extends UIReference {
+
   public UITableDir(String reference, String subreference) {
     super(reference, subreference);
   }
@@ -81,5 +94,115 @@ public class UITableDir extends UIReference {
 
   public String getGridType() {
     return "dynamicEnum";
+  }
+
+  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
+      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
+      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+    // Table,
+    // TableDir, Yes/No, direct search
+    strHtml.append("<td class=\"Combo_ContentCell\" colspan=\"3\">");
+    strHtml.append("<select ");
+    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
+        "\" ");
+    // attach comboReload call if needed
+    Vector<String> comboReloadFields = getComboReloadFields(conn, strTab);
+    if (isInVector(comboReloadFields, fields.columnname)) {
+      strHtml.append("onchange=\"reloadComboReloads(this.name);return true; \" id=\"idParam")
+          .append(FormatUtilities.replace(fields.columnname)).append("\" ");
+    } else {
+      strHtml.append("onchange=\"return true; \" id=\"idParam").append(
+          FormatUtilities.replace(fields.columnname)).append("\" ");
+    }
+    if (Integer.valueOf(fields.fieldlength).intValue() < (UIReferenceUtility.MAX_TEXTBOX_LENGTH / 4)) {
+      strHtml.append("class=\"Combo Combo_OneCell_width\"");
+    } else if (Integer.valueOf(fields.fieldlength).intValue() < (UIReferenceUtility.MAX_TEXTBOX_LENGTH / 2)) {
+      strHtml.append("class=\"Combo Combo_TwoCells_width\"");
+    } else {
+      strHtml.append("class=\"Combo Combo_ThreeCells_width\"");
+    }
+    strHtml.append(">");
+    strHtml.append("<option value=\"\"></option>\n");
+    try {
+
+      ComboTableData comboTableData = new ComboTableData(vars, conn, reference, fields.columnname,
+          subReference, fields.adValRuleId, Utility.getContext(conn, vars, "#AccessibleOrgTree",
+              strWindow), Utility.getContext(conn, vars, "#User_Client", strWindow), 0);
+      comboTableData.fillParametersFromSearch(strTab, strWindow);
+      FieldProvider[] data = comboTableData.select(false);
+      comboTableData = null;
+      for (int j = 0; j < data.length; j++) {
+        strHtml.append("<option value=\"");
+        strHtml.append(data[j].getField("ID"));
+        strHtml.append("\" ");
+        if (data[j].getField("ID").equalsIgnoreCase(fields.value))
+          strHtml.append("selected");
+        strHtml.append(">");
+        strHtml.append(data[j].getField("NAME"));
+        strHtml.append("</option>\n");
+      }
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    strHtml.append("</select>\n");
+  }
+
+  /**
+   * Gets list of fields which have a comboReload associated to trigger reloads of dependent combos.
+   * Change in logic needs to be synchronized with copy in wad
+   * 
+   * @return List of columnnames of fields with have a comboReload associated
+   */
+  private static Vector<String> getComboReloadFields(ConnectionProvider pool, String strTab)
+      throws ServletException {
+    final BuscadorData[] dataReload = BuscadorData.selectValidationTab(pool, strTab);
+
+    final Vector<String> vecReloads = new Vector<String>();
+    if (dataReload != null && dataReload.length > 0) {
+      for (int z = 0; z < dataReload.length; z++) {
+        String code = dataReload[z].whereclause
+            + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue.equals("")) ? " AND "
+                : "") + dataReload[z].referencevalue;
+
+        if (code.equals("") && dataReload[z].type.equals("R"))
+          code = "@AD_Org_ID@";
+        getComboReloadText(code, vecReloads, dataReload[z].columnname);
+      }
+    }
+    return vecReloads;
+  }
+
+  private static boolean isInVector(Vector<String> vec, String field) {
+    for (String aux : vec) {
+      if (aux.equalsIgnoreCase(field))
+        return true;
+    }
+    return false;
+  }
+
+  private static void getComboReloadText(String token, Vector<String> vecComboReload,
+      String columnname) {
+    int i = token.indexOf("@");
+    while (i != -1) {
+      token = token.substring(i + 1);
+      if (!token.startsWith("SQL")) {
+        i = token.indexOf("@");
+        if (i != -1) {
+          String strAux = token.substring(0, i);
+          token = token.substring(i + 1);
+          getComboReloadTextTranslate(strAux, vecComboReload, columnname);
+        }
+      }
+      i = token.indexOf("@");
+    }
+  }
+
+  private static void getComboReloadTextTranslate(String token, Vector<String> vecComboReload,
+      String columnname) {
+    if (token == null || token.trim().equals(""))
+      return;
+    if (!token.equalsIgnoreCase(columnname))
+      if (!isInVector(vecComboReload, token))
+        vecComboReload.addElement(token);
   }
 }

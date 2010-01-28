@@ -18,12 +18,20 @@
  */
 package org.openbravo.reference.ui;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.servlet.ServletException;
+
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.BuscadorData;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
+import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.utils.FormatUtilities;
 
 /**
  * Base implementation for UI objects
@@ -35,11 +43,14 @@ public class UIReference {
   protected String subReference;
   // addSecondaryFilter is used to add a "to" filter in the standard getFilter method
   protected boolean addSecondaryFilter;
+  protected ConnectionProvider conn;
+  protected String strReplaceWith;
 
   public UIReference(String reference, String subreference) {
     this.reference = reference;
     this.subReference = subreference;
     this.addSecondaryFilter = false;
+    this.conn = new DalConnectionProvider();
   }
 
   /**
@@ -118,6 +129,52 @@ public class UIReference {
       tableSql.addSelectField(UIReferenceUtility.formatField(reference, tableSql, (parentTableName
           + "." + field.getProperty("ColumnName"))), identifierName);
     }
+  }
+
+  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
+      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
+      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+    if ((Integer.valueOf(fields.fieldlength).intValue() > UIReferenceUtility.MAX_TEXTBOX_LENGTH)) { // Memo
+      // //
+      // REplace
+      // with
+      // reference
+      // //
+      // 1-2-3
+      // cells
+      // doing
+      // <
+      // MAX_TEXTBOX_LENGTH/4
+      // /2
+      // >
+      // /2
+      strHtml.append("<td>");
+      strHtml
+          .append("<textarea class=\"dojoValidateValid TextArea_TwoCells_width TextArea_Medium_height\" ");
+      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
+          "\" ");
+      strHtml.append("cols=\"50\" rows=\"3\" ");
+      strHtml.append(">");
+      strHtml.append(fields.value);
+      strHtml.append("</textarea>\n");
+    } else {
+      strHtml.append("<td class=\"TextBox_ContentCell\">");
+      strHtml.append("<input type=\"text\" class=\"dojoValidateValid TextBox_OneCell_width\" ");
+      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
+          "\" ");
+      strHtml.append("maxlength=\"").append(fields.fieldlength).append("\" ");
+      strHtml.append("value=\"").append(fields.value).append("\" ");
+      strHtml.append(">");
+      strHtml.append("</td>");// <td class=\"FieldButton_bg\">");
+    }
+  }
+
+  public void setReplaceWith(String replaceWith) {
+    this.strReplaceWith = replaceWith;
+  }
+
+  public boolean hasSecondaryFilter() {
+    return addSecondaryFilter;
   }
 
 }
