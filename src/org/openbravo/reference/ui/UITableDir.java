@@ -205,4 +205,27 @@ public class UITableDir extends UIReference {
       if (!isInVector(vecComboReload, token))
         vecComboReload.addElement(token);
   }
+
+  public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
+      StringBuffer paramsData) {
+    paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
+        FormatUtilities.replace(field.columnname)).append("\" , ");
+    params.append(", \"inpParam").append(FormatUtilities.replace(field.columnname)).append("\",");
+    params.append(" escape(");
+    paramsData.append("((frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+        ".selectedIndex!=-1)?");
+    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+        ".options[");
+    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+        ".selectedIndex].value:");
+    paramsData.append("\"\"));\n");
+    params.append("((frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+        ".selectedIndex!=-1)?");
+    params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+        ".options[");
+    params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+        ".selectedIndex].value:");
+    params.append("\"\")");
+    params.append(")");
+  }
 }

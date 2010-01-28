@@ -111,6 +111,18 @@ public class UISearch extends UITableDir {
     }
   }
 
+  public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
+      StringBuffer paramsData) {
+    if (subReference == null || subReference.equals("")) {
+      // If not subreference work as tableDir
+      super.generateFilterAcceptScript(field, params, paramsData);
+    } else {
+      // Call base one
+      UIReference ref = new UIReference(reference, subReference);
+      ref.generateFilterAcceptScript(field, params, paramsData);
+    }
+  }
+
   private String searchsCommand(BuscadorData efd, boolean fromButton, String tabId,
       String windowId, String strIsSOTrx) {
     StringBuffer params = new StringBuffer();

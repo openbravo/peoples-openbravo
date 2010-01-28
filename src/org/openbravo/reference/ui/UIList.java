@@ -87,4 +87,11 @@ public class UIList extends UIReference {
     tableDir.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, script, strIsSOTrx,
         vecScript, null);
   }
+
+  public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
+      StringBuffer paramsData) {
+    UITableDir tableDir = new UITableDir(reference, subReference);
+    tableDir.generateFilterAcceptScript(field, params, paramsData);
+  }
+
 }

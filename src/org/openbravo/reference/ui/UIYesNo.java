@@ -36,8 +36,13 @@ public class UIYesNo extends UIReference {
       BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
       ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
     UIList list = new UIList("17", "47209D76F3EE4B6D84222C5BDF170AA2");
-    list
-        .generateFilterHtml(strHtml, vars, fields, strTab, strWindow, script, strIsSOTrx, vecScript, null);
+    list.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, script, strIsSOTrx,
+        vecScript, null);
   }
 
+  public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
+      StringBuffer paramsData) {
+    UITableDir tableDir = new UITableDir(reference, subReference);
+    tableDir.generateFilterAcceptScript(field, params, paramsData);
+  }
 }

@@ -63,6 +63,21 @@ public class UIReference {
   }
 
   /**
+   * Helper method called from generateSQL to create the SQL for the identifier
+   */
+  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
+      String identifierName, String realName, boolean tableRef) throws Exception {
+    if (field == null)
+      return;
+
+    if (!UIReferenceUtility.checkTableTranslation(tableSql, parentTableName, field, reference,
+        identifierName, realName, tableRef)) {
+      tableSql.addSelectField(UIReferenceUtility.formatField(reference, tableSql, (parentTableName
+          + "." + field.getProperty("ColumnName"))), identifierName);
+    }
+  }
+
+  /**
    * Obtains the type of data to be shown in the grid mode
    * 
    */
@@ -118,36 +133,14 @@ public class UIReference {
     return value;
   }
 
-  protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
-      String identifierName, String realName, boolean tableRef) throws Exception {
-
-    if (field == null)
-      return;
-
-    if (!UIReferenceUtility.checkTableTranslation(tableSql, parentTableName, field, reference,
-        identifierName, realName, tableRef)) {
-      tableSql.addSelectField(UIReferenceUtility.formatField(reference, tableSql, (parentTableName
-          + "." + field.getProperty("ColumnName"))), identifierName);
-    }
-  }
-
+  /**
+   * Generates the HTML code for the input used to display the reference in the filter popup
+   */
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
       BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
       ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
-    if ((Integer.valueOf(fields.fieldlength).intValue() > UIReferenceUtility.MAX_TEXTBOX_LENGTH)) { // Memo
-      // //
-      // REplace
-      // with
-      // reference
-      // //
-      // 1-2-3
-      // cells
-      // doing
-      // <
-      // MAX_TEXTBOX_LENGTH/4
-      // /2
-      // >
-      // /2
+    if ((Integer.valueOf(fields.fieldlength).intValue() > UIReferenceUtility.MAX_TEXTBOX_LENGTH)) {
+      // Memo replace with reference 1-2-3 cells doing < MAX_TEXTBOX_LENGTH/4 /2 > /2
       strHtml.append("<td>");
       strHtml
           .append("<textarea class=\"dojoValidateValid TextArea_TwoCells_width TextArea_Medium_height\" ");
@@ -165,8 +158,40 @@ public class UIReference {
       strHtml.append("maxlength=\"").append(fields.fieldlength).append("\" ");
       strHtml.append("value=\"").append(fields.value).append("\" ");
       strHtml.append(">");
-      strHtml.append("</td>");// <td class=\"FieldButton_bg\">");
+      strHtml.append("</td>");
     }
+  }
+
+  /**
+   * Generates the body for the accept (aceptar) script called from filter pop-up when OK button is
+   * clicked.
+   */
+  public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
+      StringBuffer paramsData) {
+    paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
+        FormatUtilities.replace(field.columnname)).append("\" , ");
+    params.append(", \"inpParam").append(FormatUtilities.replace(field.columnname)).append("\",");
+    params.append(" escape(");
+
+    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+        ".value);\n");
+
+    params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
+        .append(".value");
+
+    if (addSecondaryFilter) {
+      paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
+          FormatUtilities.replace(field.columnname)).append("_f\", ");
+      paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+          "_f.value);\n");
+      params.append("), \"inpParam").append(FormatUtilities.replace(field.columnname)).append(
+          "_f\",");
+      params.append(" escape(");
+      params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
+          "_f.value");
+    }
+
+    params.append(")");
   }
 
   public void setReplaceWith(String replaceWith) {
