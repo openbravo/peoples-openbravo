@@ -33,11 +33,9 @@ public class UIYesNo extends UIReference {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
-      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
     UIList list = new UIList("17", "47209D76F3EE4B6D84222C5BDF170AA2");
-    list.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, script, strIsSOTrx,
-        vecScript, null);
+    list.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, vecScript, null);
   }
 
   public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,

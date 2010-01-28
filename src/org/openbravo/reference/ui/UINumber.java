@@ -59,11 +59,10 @@ public class UINumber extends UIReference {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
-      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
+      Vector<Object> vecKeys) throws IOException, ServletException {
 
     Random rnd = new Random();
-    int randomId4Num1 = rnd.nextInt(10000);
     int randomId4Num2 = rnd.nextInt(10000);
     int randomId4Num3 = rnd.nextInt(10000);
 

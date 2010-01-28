@@ -35,8 +35,7 @@ public class UITime extends UIDate {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
-      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
 
     UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/TimeTextBox.js");
     strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");

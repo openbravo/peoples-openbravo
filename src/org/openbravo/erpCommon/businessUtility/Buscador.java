@@ -242,6 +242,7 @@ public class Buscador extends HttpSecureAppServlet {
     for (BuscadorData field : fields) {
       UIReference reference = Reference.getUIReference(field.reference, field.referencevalue);
       reference.setReplaceWith(strReplaceWith);
+      reference.setStrIsSOTrx(strIsSOTrx);
 
       if (Integer.valueOf(field.displaylength).intValue() > MAX_TEXTBOX_DISPLAY) {
         field.displaylength = Integer.toString(MAX_TEXTBOX_DISPLAY);
@@ -254,8 +255,7 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append(field.name);
       }
       strHtml.append("</span></td>\n");
-      reference.generateFilterHtml(strHtml, vars, field, strTab, strWindow, script, strIsSOTrx,
-          listScript, vecKeys);
+      reference.generateFilterHtml(strHtml, vars, field, strTab, strWindow, listScript, vecKeys);
       strHtml.append("</td></tr>\n");
     }
 

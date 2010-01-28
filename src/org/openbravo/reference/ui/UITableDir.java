@@ -97,8 +97,7 @@ public class UITableDir extends UIReference {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
-      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
     // Table,
     // TableDir, Yes/No, direct search
     strHtml.append("<td class=\"Combo_ContentCell\" colspan=\"3\">");

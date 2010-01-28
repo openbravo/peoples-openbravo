@@ -38,14 +38,13 @@ public class UISearch extends UITableDir {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
-      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
+      Vector<Object> vecKeys) throws IOException, ServletException {
 
     if (subReference == null || subReference.equals("")) {
       // If not subreference work as tableDir
       reference = "19";
-      super.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, script, strIsSOTrx,
-          vecScript, vecKeys);
+      super.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, vecScript, vecKeys);
     } else {
       strHtml.append("<td class=\"TextBox_btn_ContentCell\" colspan=\"3\">\n");
       strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\">\n");
@@ -94,7 +93,7 @@ public class UISearch extends UITableDir {
       } else if (fields.reference.equals("31")) {
         strMethod = locatorCommands(fields, false, strWindow);
       } else {
-        strMethod = searchsCommand(fields, false, strTab, strWindow, strIsSOTrx);
+        strMethod = searchsCommand(fields, false, strTab, strWindow);
       }
 
       strMethod = "new keyArrayItem(\"ENTER\", \"" + strMethod + "\", \"inpParam"
@@ -106,7 +105,7 @@ public class UISearch extends UITableDir {
       } else if (fields.reference.equals("31")) {
         strHtml.append(locator(fields, strWindow));
       } else {
-        strHtml.append(searchs(fields, strTab, strWindow, strIsSOTrx));
+        strHtml.append(searchs(fields, strTab, strWindow));
       }
     }
   }
@@ -123,8 +122,7 @@ public class UISearch extends UITableDir {
     }
   }
 
-  private String searchsCommand(BuscadorData efd, boolean fromButton, String tabId,
-      String windowId, String strIsSOTrx) {
+  private String searchsCommand(BuscadorData efd, boolean fromButton, String tabId, String windowId) {
     StringBuffer params = new StringBuffer();
     StringBuffer html = new StringBuffer();
     String strMethodName = "openSearch";
@@ -134,7 +132,7 @@ public class UISearch extends UITableDir {
     }
     params.append(", 'WindowID'");
     params.append(", '").append(windowId).append("'");
-    if (strIsSOTrx.equals("Y") || strIsSOTrx.equals("N")) {
+    if (strIsSOTrx != null && (strIsSOTrx.equals("Y") || strIsSOTrx.equals("N"))) {
       params.append(", 'inpisSOTrxTab'");
       params.append(", '").append(strIsSOTrx).append("'");
     }
@@ -187,7 +185,7 @@ public class UISearch extends UITableDir {
     return html.toString();
   }
 
-  private String searchs(BuscadorData efd, String tabId, String windowId, String strIsSOTrx) {
+  private String searchs(BuscadorData efd, String tabId, String windowId) {
     StringBuffer html = new StringBuffer();
     if (efd.searchname.toUpperCase().indexOf("BUSINESS") != -1) {
       html.append("<input type=\"hidden\" name=\"inpParam").append(
@@ -208,8 +206,8 @@ public class UISearch extends UITableDir {
     }
     html.append("<td class=\"FieldButton_bg\">");
     html.append("<a href=\"#\" class=\"FieldButtonLink\" ");
-    html.append("onClick=\"").append(searchsCommand(efd, true, tabId, windowId, strIsSOTrx))
-        .append("return false;\" ");
+    html.append("onClick=\"").append(searchsCommand(efd, true, tabId, windowId)).append(
+        "return false;\" ");
     html
         .append(
             "onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Search';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n<img width=\"16\" height=\"16\" alt=\"")

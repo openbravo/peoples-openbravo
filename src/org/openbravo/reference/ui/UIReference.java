@@ -45,6 +45,7 @@ public class UIReference {
   protected boolean addSecondaryFilter;
   protected ConnectionProvider conn;
   protected String strReplaceWith;
+  protected String strIsSOTrx;
 
   public UIReference(String reference, String subreference) {
     this.reference = reference;
@@ -136,27 +137,27 @@ public class UIReference {
   /**
    * Generates the HTML code for the input used to display the reference in the filter popup
    */
-  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
-      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
-    if ((Integer.valueOf(fields.fieldlength).intValue() > UIReferenceUtility.MAX_TEXTBOX_LENGTH)) {
+  public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars, BuscadorData field,
+      String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys)
+      throws IOException, ServletException {
+    if ((Integer.valueOf(field.fieldlength).intValue() > UIReferenceUtility.MAX_TEXTBOX_LENGTH)) {
       // Memo replace with reference 1-2-3 cells doing < MAX_TEXTBOX_LENGTH/4 /2 > /2
       strHtml.append("<td>");
       strHtml
           .append("<textarea class=\"dojoValidateValid TextArea_TwoCells_width TextArea_Medium_height\" ");
-      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
+      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(field.columnname)).append(
           "\" ");
       strHtml.append("cols=\"50\" rows=\"3\" ");
       strHtml.append(">");
-      strHtml.append(fields.value);
+      strHtml.append(field.value);
       strHtml.append("</textarea>\n");
     } else {
       strHtml.append("<td class=\"TextBox_ContentCell\">");
       strHtml.append("<input type=\"text\" class=\"dojoValidateValid TextBox_OneCell_width\" ");
-      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
+      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(field.columnname)).append(
           "\" ");
-      strHtml.append("maxlength=\"").append(fields.fieldlength).append("\" ");
-      strHtml.append("value=\"").append(fields.value).append("\" ");
+      strHtml.append("maxlength=\"").append(field.fieldlength).append("\" ");
+      strHtml.append("value=\"").append(field.value).append("\" ");
       strHtml.append(">");
       strHtml.append("</td>");
     }
@@ -194,12 +195,26 @@ public class UIReference {
     params.append(")");
   }
 
+  /**
+   * Used to compose urls
+   */
   public void setReplaceWith(String replaceWith) {
     this.strReplaceWith = replaceWith;
   }
 
+  /**
+   * Secondary filter is true when the filter pop-up shows 2 fields
+   */
   public boolean hasSecondaryFilter() {
     return addSecondaryFilter;
+  }
+
+  /**
+   * Sales transaction. Set value if needed in any of the subclasses for any purpose. It is
+   * defaulted to null.
+   */
+  public void setStrIsSOTrx(String strIsSOTrx) {
+    this.strIsSOTrx = strIsSOTrx;
   }
 
 }

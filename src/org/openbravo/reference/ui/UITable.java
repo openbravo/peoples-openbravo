@@ -76,11 +76,9 @@ public class UITable extends UIReference {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
-      ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
     UITableDir tableDir = new UITableDir(reference, subReference);
-    tableDir.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, script, strIsSOTrx,
-        vecScript, null);
+    tableDir.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, vecScript, null);
   }
 
   public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
