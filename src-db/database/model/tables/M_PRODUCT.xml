@@ -277,6 +277,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ATTRSETVALUETYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -350,6 +354,7 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
+      <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[(M_ATTRIBUTESETINSTANCE_ID IS NOT NULL) OR (ATTRSETVALUETYPE IS NULL)]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
