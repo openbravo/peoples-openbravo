@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -251,16 +250,6 @@ public class DataGrid extends HttpSecureAppServlet {
     log4j.debug("relativeOffset: " + offset + " absoluteOffset: " + absoluteOffset);
     offset = absoluteOffset;
 
-    // values used for formatting Amounts (read from Format.xml file)
-    DecimalFormat numberFormatDecimal = Utility.getFormat(vars, "euroRelation");
-    // values used for formatting Quantities (read from Format.xml file)
-    DecimalFormat numberFormatQuantity = Utility.getFormat(vars, "qtyRelation");
-    // values used for formatting Prices (read from Format.xml file)
-    DecimalFormat numberFormatPrice = Utility.getFormat(vars, "priceRelation");
-    // values used for formatting General (read from Format.xml file)
-    DecimalFormat numberFormatGeneral = Utility.getFormat(vars, "generalQtyRelation");
-    // values used for formatting Integer (read from Format.xml file)
-    DecimalFormat numberFormatInteger = Utility.getFormat(vars, "integerRelation");
     if (tableSQL != null && headers != null) {
       try {
         // Prepare SQL adding the user filter parameters
