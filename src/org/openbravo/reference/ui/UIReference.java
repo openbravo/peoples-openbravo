@@ -110,15 +110,15 @@ public class UIReference {
     // parameter value is '%' for string references.
     if (!aux.equals("")) {
       UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
-          .getProperty("ColumnName"), reference, true, aux);
+          .getProperty("ColumnName"), prop.getProperty("ColumnName"), reference, true, aux);
     }
     if (addSecondaryFilter) {
       aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName") + "_f",
           tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName") + "_f");
       if (!aux.equals("")) {
         UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
-            .getProperty("ColumnName")
-            + "_f", reference, false, aux);
+            .getProperty("ColumnName"), prop.getProperty("ColumnName") + "_f", reference, false,
+            aux);
       }
     }
   }

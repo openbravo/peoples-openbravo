@@ -48,7 +48,7 @@ public class UIString extends UIReference {
     if (!aux.equals("")) {
       if (!aux.equals("%")) {
         UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
-            .getProperty("ColumnName"), reference, true, aux);
+            .getProperty("ColumnName"), prop.getProperty("ColumnName"), reference, true, aux);
       } else {
         filter.addElement("1=1");
       }

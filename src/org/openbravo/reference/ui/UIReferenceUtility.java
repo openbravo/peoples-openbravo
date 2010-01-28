@@ -202,12 +202,12 @@ class UIReferenceUtility {
   }
 
   public static void addFilter(Vector<String> filter, Vector<String> filterParams,
-      SQLReturnObject result, TableSQLData tableSQL, String columnName, String reference,
-      boolean first, String aux) {
-    filter.addElement(UIReferenceUtility.formatFilter(tableSQL.getTableName(), columnName,
+      SQLReturnObject result, TableSQLData tableSQL, String realColumnName,
+      String filterColumnName, String reference, boolean first, String aux) {
+    filter.addElement(UIReferenceUtility.formatFilter(tableSQL.getTableName(), realColumnName,
         reference, first));
-    filterParams.addElement("Param" + columnName);
-    result.setData("Param" + columnName, aux);
+    filterParams.addElement("Param" + filterColumnName);
+    result.setData("Param" + filterColumnName, aux);
   }
 
   public static void addUniqueElement(ArrayList<String> list, String value) {
