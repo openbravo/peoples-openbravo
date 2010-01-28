@@ -179,6 +179,7 @@ public class Utility {
    *          String with the reference.
    * @return True if is a datetime or false if not.
    */
+  @Deprecated
   public static boolean isDateTime(String reference) {
     if (reference == null || reference.equals(""))
       return false;

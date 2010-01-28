@@ -100,18 +100,11 @@ public class UINumber extends UIReference {
         "_f\" ");
     strHtml.append("maxlength=\"").append(fields.fieldlength).append("\" ");
     strHtml.append("value=\"").append(value).append("\" ");
-    if (Utility.isDecimalNumber(fields.reference))
-      strHtml
-          .append("outputformat=\"qtyEdition\" ")
-          .append(
-              "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ")
-          .append("id=\"").append(randomId4Num3).append("\" ");
-    else if (Utility.isIntegerNumber(fields.reference))
-      strHtml
-          .append("outputformat=\"qtyEdition\" ")
-          .append(
-              "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ")
-          .append("id=\"").append(randomId4Num3).append("\" ");
+    strHtml
+        .append("outputformat=\"qtyEdition\" ")
+        .append(
+            "onfocus=\"numberInputEvent('onfocus', this);\" onblur=\"numberInputEvent('onblur', this);\" onkeydown=\"numberInputEvent('onkeydown', this, event);\" onchange=\"numberInputEvent('onchange', this);\" ")
+        .append("id=\"").append(randomId4Num3).append("\" ");
     strHtml.append(">");
 
     strHtml
