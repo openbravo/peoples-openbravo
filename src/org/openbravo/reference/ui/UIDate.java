@@ -42,10 +42,10 @@ public class UIDate extends UIReference {
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
       BuscadorData fields, String strTab, String strWindow, StringBuffer script, String strIsSOTrx,
       ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
-    UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/calendar.js");
-    UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "calendar-"
+    UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/jscalendar/calendar.js");
+    UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/jscalendar/lang/calendar-"
         + vars.getLanguage().substring(0, 2) + ".js\"");
-    UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/DateTextBox.js");
+    UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/default/DateTextBox.js");
 
     strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
     strHtml
