@@ -352,20 +352,26 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="eclipse.compile" depends="init">
+    <fail unless="eclipse.running" message="eclipse.* tasks must be executed inside Eclipse" />
     <ant dir="${base.src.core}" target="build.jar" inheritAll="true" inheritRefs="true" />
     <ant dir="${base.src.trl}" target="build.jar" inheritAll="true" inheritRefs="true" />
     <ant dir="${base.src.wad}" target="build.jar" inheritAll="true" inheritRefs="true" />
     <ant dir="${base.src}" target="eclipse.compile" inheritAll="true" inheritRefs="true" />
+    <echo message="Refreshing project..." level="info" />
     <eclipse.refreshLocal resource="openbravo" depth="infinite" />
+    <echo message="Building project..." level="info" />
     <eclipse.incrementalBuild project="openbravo" kind="incremental" />
   </target>
 
   <target name="eclipse.compile.complete" depends="init">
+    <fail unless="eclipse.running" message="eclipse.* tasks must be executed inside Eclipse" />
     <ant dir="${base.src.core}" target="build.jar" inheritAll="true" inheritRefs="true" />
     <ant dir="${base.src.trl}" target="build.jar" inheritAll="true" inheritRefs="true" />
     <ant dir="${base.src.wad}" target="build.jar" inheritAll="true" inheritRefs="true" />
     <ant dir="${base.src}" target="eclipse.compile.complete" inheritAll="true" inheritRefs="true" />
+    <echo message="Refreshing project..." level="info" />
     <eclipse.refreshLocal resource="openbravo" depth="infinite" />
+    <echo message="Building project..." level="info" />
     <eclipse.incrementalBuild project="openbravo" kind="full" />
   </target>
 
@@ -528,6 +534,8 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="eclipse.install.source" depends="init, create.database">
+    <fail unless="eclipse.running" message="eclipse.* tasks must be executed inside Eclipse" />
+    <echo message="Building OpenbravoCore project..." level="info" />
     <eclipse.incrementalBuild project="OpenbravoCore" kind="full"/>
     <antcall target="eclipse.wad.lib"/>
     <antcall target="eclipse.trl.lib"/>

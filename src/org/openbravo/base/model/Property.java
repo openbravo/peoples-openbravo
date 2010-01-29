@@ -54,6 +54,7 @@ public class Property {
   private Property referencedProperty;
   private String name;
   private String columnName;
+  private String columnId;
   private boolean isActiveColumn = false;
   private String nameOfColumn; // AD_COLUMN.NAME
   // note defaultValue contains the value as it exists in the db, for booleans
@@ -104,7 +105,7 @@ public class Property {
     setParent(fromColumn.isParent());
     setColumnName(fromColumn.getColumnName());
     setNameOfColumn(fromColumn.getName());
-
+    setColumnId(fromColumn.getId());
     setDomainType(fromColumn.getDomainType());
 
     setDefaultValue(fromColumn.getDefaultValue());
@@ -958,4 +959,11 @@ public class Property {
   public void setPrimitiveType(Class<?> primitiveType) {
   }
 
+  public String getColumnId() {
+    return columnId;
+  }
+
+  public void setColumnId(String columnId) {
+    this.columnId = columnId;
+  }
 }
