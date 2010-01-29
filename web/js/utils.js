@@ -3181,7 +3181,7 @@ function readOnlyLogicElement(id, readonly) {
     obj.readOnly = true;
     if (getObjFeatures(obj).indexOf("scSelector") != -1) {  //Added for support Smartclient Selector
       try {
-        var scSelector_disableCommand = "sc_" + id + ".enableSelector()";
+        var scSelector_disableCommand = "sc_" + id + ".disableSelector()";
         eval(scSelector_disableCommand);
       } catch(e) {}
     }
@@ -3219,7 +3219,7 @@ function readOnlyLogicElement(id, readonly) {
 
     if (getObjFeatures(obj).indexOf("scSelector") != -1) {  //Added for support Smartclient Selector
       try {
-        var scSelector_enableCommand = "sc_" + id + ".disableSelector()";
+        var scSelector_enableCommand = "sc_" + id + ".enableSelector()";
         eval(scSelector_enableCommand);
       } catch(e) {}
     }
