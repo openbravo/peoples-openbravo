@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -27,9 +29,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class UsedByLink extends HttpSecureAppServlet {
@@ -101,12 +109,22 @@ public class UsedByLink extends HttpSecureAppServlet {
 
     UsedByLinkData[] data = null;
 
-    if (vars.getLanguage().equals("en_US"))
-      data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), vars.getRole(),
-          keyColumn, tableId);
-    else
-      data = UsedByLinkData.selectLanguage(this, vars.getClient(), vars.getLanguage(), vars
-          .getRole(), keyColumn, tableId);
+    // Obtain the list of tables that are linked to the current one using DAL, this list will return
+    // any reference including user defined ones. It will be joined with the old ones because
+    // currently it doesn't support views.
+    StringBuffer linkedTablesQuery = new StringBuffer();
+    for (LinkedTable linkedTable : getLinkedTables(tableId)) {
+      if (linkedTablesQuery.length() != 0) {
+        linkedTablesQuery.append(", ");
+      }
+      linkedTablesQuery.append(linkedTable.toQueryString());
+    }
+    if (linkedTablesQuery.length() == 0) {
+      linkedTablesQuery.append("'--'");
+    }
+
+    data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), vars.getRole(),
+        keyColumn, tableId, linkedTablesQuery.toString());
 
     if (data != null && data.length > 0) {
       final Vector<Object> vecTotal = new Vector<Object>();
@@ -343,6 +361,54 @@ public class UsedByLink extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("getAditionalWhereClause - result: " + result);
     return result;
+  }
+
+  /**
+   * Obtains a list of all tables that link to the tableId
+   * 
+   */
+  private List<LinkedTable> getLinkedTables(String tableId) {
+    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+    OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      Table table = OBDal.getInstance().get(Table.class, tableId);
+      String tableName = table.getDBTableName();
+
+      final List<LinkedTable> linkedTables = new ArrayList<LinkedTable>();
+      for (Entity entity : ModelProvider.getInstance().getModel()) {
+        for (Property property : entity.getProperties()) {
+          // ignore one-to-many (a list of children)
+          if (!property.isOneToMany() && property.getColumnName() != null
+              && property.getTargetEntity() != null
+              && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)) {
+            final LinkedTable linkedTable = new LinkedTable();
+            linkedTable.setTableName(entity.getTableName());
+            linkedTable.setColumnName(property.getColumnName());
+            linkedTables.add(linkedTable);
+          }
+        }
+      }
+      return linkedTables;
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(adminMode);
+    }
+  }
+
+  private static class LinkedTable {
+    private String tableName;
+    private String columnName;
+
+    public void setTableName(String tableName) {
+      this.tableName = tableName;
+    }
+
+    public void setColumnName(String columnName) {
+      this.columnName = columnName;
+    }
+
+    public String toQueryString() {
+      return "'" + tableName + "." + columnName + "'";
+    }
   }
 
   @Override
