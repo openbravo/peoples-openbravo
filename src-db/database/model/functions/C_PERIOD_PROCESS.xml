@@ -35,6 +35,7 @@
   v_Record_ID VARCHAR2(32);
   v_Record_ID_Log VARCHAR2(32);
   v_Count NUMBER:=0;
+  v_Count2 NUMBER:=0;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Document RECORD;
@@ -76,6 +77,14 @@ BEGIN
       WHERE C_PeriodControl_Log_ID=v_Record_ID_Log;   
       -- Action: Open if not permanently closed
       IF(p_PeriodAction='O') THEN
+
+        SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count2 FROM C_PERIOD, C_PERIODCONTROL, C_YEAR WHERE
+          C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID AND C_PERIODCONTROL.PERIODSTATUS IN ('C') AND C_YEAR.YEAR>p_YearName
+          AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID AND C_YEAR.C_CALENDAR_ID = p_Calendar;
+        IF (v_Count2>=1) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@FeatureYearClosed@');
+        END IF;
+        
               
         IF (p_IsRecursive='N') THEN
           FOR Cur_Document IN

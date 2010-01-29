@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="BuscadorData" package="org.openbravo.erpCommon.businessUtility" acessModifier="public">
+<SqlClass name="BuscadorData" package="org.openbravo.erpCommon.businessUtility" accessModifier="public">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

@@ -123,8 +123,8 @@ public class ReportBankJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
         + "');"));
     xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-        this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(
-            this, vars, "#AccessibleOrgTree", "ReportBankJR")));
+        this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR")));
 
     out.println(xmlDocument.print());
     out.close();
@@ -163,8 +163,8 @@ public class ReportBankJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
           + "');"));
       xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-          this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(
-              this, vars, "#AccessibleOrgTree", "ReportBankJR")));
+          this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR")));
     } else {
       // initialBalance = new BigDecimal(
       // ReportBankJRData.BeginningBalance(this, Utility.getContext(this,
