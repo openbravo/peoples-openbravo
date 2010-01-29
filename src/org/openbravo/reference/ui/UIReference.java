@@ -46,12 +46,14 @@ public class UIReference {
   protected ConnectionProvider conn;
   protected String strReplaceWith;
   protected String strIsSOTrx;
+  protected boolean numeric;
 
   public UIReference(String reference, String subreference) {
     this.reference = reference;
     this.subReference = subreference;
     this.addSecondaryFilter = false;
     this.conn = new DalConnectionProvider();
+    this.numeric = false;
   }
 
   /**
@@ -215,6 +217,10 @@ public class UIReference {
    */
   public void setStrIsSOTrx(String strIsSOTrx) {
     this.strIsSOTrx = strIsSOTrx;
+  }
+
+  public boolean isNumberic() {
+    return numeric;
   }
 
 }

@@ -39,6 +39,7 @@ public class UINumber extends UIReference {
     super(reference, subreference);
     addSecondaryFilter = true;
     relationFormat = "euroRelation";
+    numeric = true;
   }
 
   public String getGridType() {

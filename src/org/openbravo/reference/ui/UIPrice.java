@@ -28,6 +28,7 @@ public class UIPrice extends UIReference {
   public UIPrice(String reference, String subreference) {
     super(reference, subreference);
     addSecondaryFilter = true;
+    numeric = true;
   }
 
   public String getGridType() {
