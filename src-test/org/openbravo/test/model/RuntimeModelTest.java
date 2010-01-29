@@ -200,6 +200,20 @@ public class RuntimeModelTest extends BaseTest {
   }
 
   /**
+   * Tests that all non-one-to-many/not-one-to-one/not-composite id columns have a column
+   */
+  public void testColumnIdSet() {
+    for (Entity entity : ModelProvider.getInstance().getModel()) {
+      for (Property property : entity.getProperties()) {
+        if (property.isOneToMany() || property.isOneToOne() || property.isCompositeId()) {
+          continue;
+        }
+        assertNotNull("Property " + property + " does not have a columnid ", property.getColumnId());
+      }
+    }
+  }
+
+  /**
    * Tests that parent references are only allowed for specific reference types.
    * 
    * @see Column#getReference()
