@@ -3179,6 +3179,12 @@ function readOnlyLogicElement(id, readonly) {
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
     obj.readOnly = true;
+    if (getObjFeatures(obj).indexOf("scSelector") != -1) {  //Added for support Smartclient Selector
+      try {
+        var scSelector_disableCommand = "sc_" + id + ".selectorField.setDisabled(true)";
+        eval(scSelector_disableCommand);
+      } catch(e) {}
+    }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextA = getObjAttribute(obj, 'onclick');
       var checkPatternA = "^[return false;]";
@@ -3211,6 +3217,12 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
 
+    if (getObjFeatures(obj).indexOf("scSelector") != -1) {  //Added for support Smartclient Selector
+      try {
+        var scSelector_enableCommand = "sc_" + id + ".selectorField.setDisabled(false)";
+        eval(scSelector_enableCommand);
+      } catch(e) {}
+    }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextB = getObjAttribute(obj, 'onclick');
       var checkPatternB = "^[return false;]";
@@ -3287,6 +3299,40 @@ function autoCompleteNumber(obj, isFloatAllowed, isNegativeAllowed, evt) {
     }
   }
   return true;
+}
+
+/**
+* Return the most significant features of an object.
+* @param {Object} field Reference to the field that will be inspected.
+* @returns The features as a string.
+* @type String
+*/
+function getObjFeatures(obj) {
+  if (typeof obj == "string") {
+    obj = document.getElementById(obj);
+  }
+  var objType = ""
+  if (obj.tagName.toLowerCase() == 'input') {
+    objType += "input";
+    objType += " ";
+    objType += obj.getAttribute('type');
+    objType += " ";
+    if (obj.getAttribute('onreset')) {
+      if (obj.getAttribute('onreset').indexOf('resetSelector()')!=-1) {
+        objType += "scSelector";
+        objType += " ";
+      }
+    }
+  }
+  if (obj.getAttribute('readonly') == 'true' || obj.readOnly) {
+    objType += "readonly";
+    objType += " ";
+  }
+  if (obj.getAttribute('disabled') == 'true' || obj.disabled) {
+    objType += "disabled";
+    objType += " ";
+  }
+  return objType;
 }
 
 /**

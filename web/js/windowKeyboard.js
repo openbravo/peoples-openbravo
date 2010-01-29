@@ -619,9 +619,8 @@ function mustBeJumped(obj) {
 
 function mustBeIgnored(obj) {
   if (obj.style.display == 'none') return true;
-  if (obj.getAttribute('type') == 'hidden') {
-    if (obj.getAttribute('onreset') == null) return true;  //Added for support Smartclient Selector
-    if (obj.getAttribute('onreset').indexOf('resetSelector()')==-1) return true;  //Added for support Smartclient Selector
+  if (obj.getAttribute('type') == 'hidden' && getObjFeatures(obj).indexOf("scSelector") == -1) {  //Added for support Smartclient Selector
+    return true;
   }
   if (obj.getAttribute('readonly') == 'true' && obj.getAttribute('tabindex') != '1') return true;
   if (obj.readOnly && obj.getAttribute('tabindex') != '1') return true;
@@ -658,7 +657,7 @@ function couldHaveFocus(obj) {
   } catch(e) {
   }
   try {  //Added for support Smartclient Selector
-    if (obj.tagName == 'INPUT' && obj.getAttribute('type') == 'hidden' && obj.getAttribute('onreset').indexOf('resetSelector()')!=-1) {
+    if (getObjFeatures(obj).indexOf('scSelector')!=-1) {
       currentWindowElementType = 'scSelector';
       return true;
     }
