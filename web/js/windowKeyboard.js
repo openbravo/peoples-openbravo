@@ -505,7 +505,7 @@ function putWindowElementFocus(obj, event) {
         obj.focus();
       }
     }
-    if(selectInputTextOnTab) obj.select();
+    if(selectInputTextOnTab && event!='onclick' && event!='onmousedown') obj.select();
   } catch (e) {
   }
 }
