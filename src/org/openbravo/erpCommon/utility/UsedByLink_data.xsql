@@ -68,9 +68,8 @@
              AND UPPER(?) = 'C_LOCATION_ID'
         UNION
             SELECT AD_COLUMN_ID
-              FROM AD_COLUMN C, AD_TABLE T
-             WHERE T.AD_TABLE_ID = C.AD_TABLE_ID
-               AND TABLENAME||'.'||COLUMNNAME IN ('1')
+              FROM AD_COLUMN
+             WHERE AD_COLUMN_ID IN ('1')
         ) A, AD_TABLE T, AD_COLUMN C, AD_MENU M, 
         AD_WINDOW W left join  AD_WINDOW_TRL Wt on W.AD_WINDOW_ID = Wt.AD_WINDOW_ID 
                                                 AND Wt.AD_LANGUAGE  = ?,
@@ -104,7 +103,7 @@
     <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
-    <Parameter name="tabColList" type="replace" optional="true" after="AND TABLENAME||'.'||COLUMNNAME IN (" text="'1'"/>
+    <Parameter name="colList" type="replace" optional="true" after="WHERE AD_COLUMN_ID IN (" text="'1'"/>
   </SqlMethod>
   
   

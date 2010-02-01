@@ -382,8 +382,7 @@ public class UsedByLink extends HttpSecureAppServlet {
               && property.getTargetEntity() != null
               && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)) {
             final LinkedTable linkedTable = new LinkedTable();
-            linkedTable.setTableName(entity.getTableName());
-            linkedTable.setColumnName(property.getColumnName());
+            linkedTable.setColumnId(property.getColumnId());
             linkedTables.add(linkedTable);
           }
         }
@@ -395,19 +394,14 @@ public class UsedByLink extends HttpSecureAppServlet {
   }
 
   private static class LinkedTable {
-    private String tableName;
-    private String columnName;
+    private String columnId;
 
-    public void setTableName(String tableName) {
-      this.tableName = tableName;
-    }
-
-    public void setColumnName(String columnName) {
-      this.columnName = columnName;
+    public void setColumnId(String columnId) {
+      this.columnId = columnId;
     }
 
     public String toQueryString() {
-      return "'" + tableName + "." + columnName + "'";
+      return "'" + columnId + "'";
     }
   }
 
