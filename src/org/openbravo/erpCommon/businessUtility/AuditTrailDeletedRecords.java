@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.businessUtility;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -31,7 +30,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Tab;
 
 class AuditTrailDeletedRecords {
-  private static Logger log4j = Logger.getLogger(AuditTrailDeletedRecords.class);
+  private static final Logger log4j = Logger.getLogger(AuditTrailDeletedRecords.class);
 
   /**
    * Same as
@@ -40,9 +39,10 @@ class AuditTrailDeletedRecords {
    * 
    */
   static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
-      String tabId, int startPosition, int rangeLength, String dateFrom, String dateTo, String user) {
-    return getDeletedRecords(conn, vars, tabId, null, null, startPosition, rangeLength, dateFrom,
-        dateTo, user);
+      String tabId, int startPosition, int rangeLength, boolean onlyCount, String dateFrom,
+      String dateTo, String user) {
+    return getDeletedRecords(conn, vars, tabId, null, null, startPosition, rangeLength, onlyCount,
+        dateFrom, dateTo, user);
   }
 
   /**
@@ -74,22 +74,27 @@ class AuditTrailDeletedRecords {
    *          optional parameter to filter by time
    * @param user
    *          optional parameter to filter by user
+   * @param onlyCount
+   *          if true, only count rows in resultset, if false return all rows
+   * 
    * @return {@link FieldProvider}[] With the records matching the filters. The structure of the
    *         FieldProvider is given by the current tab's table structure in Application Dictionary.
    */
   static FieldProvider[] getDeletedRecords(ConnectionProvider conn, VariablesSecureApp vars,
       String tabId, String fkColumnName, String fkId, int startPosition, int rangeLength,
-      String dateFrom, String dateTo, String user) {
-    OBContext.enableAsAdminContext();
+      boolean onlyCount, String dateFrom, String dateTo, String user) {
     StringBuffer sql = new StringBuffer();
+
     try {
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      if (log4j.isDebugEnabled()) {
-        log4j.debug("Deleted records for tab:" + tab);
-      }
+      log4j.debug("Deleted records for tab:" + tab);
       String tableName = tab.getTable().getDBTableName();
       boolean hasRange = !(startPosition == 0 && rangeLength == 0);
       boolean hasRangeLimit = !(rangeLength == 0);
+
+      if (onlyCount) {
+        sql.append("SELECT count(*) AS counter FROM (");
+      }
 
       sql.append("SELECT * FROM (\n");
       if (hasRange && conn.getRDBMS().equalsIgnoreCase("ORACLE")) {
@@ -169,6 +174,11 @@ class AuditTrailDeletedRecords {
           sql.append(" OFFSET " + Integer.toString(startPosition));
         }
       }
+
+      if (onlyCount) {
+        sql.append(") countable");
+      }
+
       if (log4j.isDebugEnabled()) {
         log4j.debug("SQL for deleted records:\n" + sql);
       }
@@ -177,8 +187,6 @@ class AuditTrailDeletedRecords {
       return q.select();
     } catch (Exception e) {
       log4j.error("Error in AuditTrailDeletedRecords", e);
-    } finally {
-      OBContext.resetAsAdminContext();
     }
     return null;
   }
