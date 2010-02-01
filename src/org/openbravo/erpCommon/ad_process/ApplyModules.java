@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -228,7 +228,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       props.setProperty("log4j.rootCategory", "INFO,DB");
       PropertyConfigurator.configure(props);
 
-      ant = new AntExecutor(vars.getSessionValue("#sourcePath"));
+      String sourcePath = vars.getSessionValue("#sourcePath");
+      ant = new AntExecutor(sourcePath);
 
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
@@ -251,6 +252,9 @@ public class ApplyModules extends HttpSecureAppServlet {
         tasks.add("compile.complete.deploy");
         ant.setProperty("apply.on.create", "true");
       } else {
+        if (isWadLibNeeded(sourcePath)) {
+          tasks.add("wad.lib");
+        }
         if (ApplyModulesData.compileCompleteNeeded(this)) {
           // compile complete is needed for templates because in this case it is not needed which
           // elements belong to the template and for uninistalling modules in order to remove old
@@ -266,7 +270,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
       updateSession.setString(1, currentUser.getId());
       updateSession.executeUpdate();
-      ant.runTask(tasks);
+      // ant.runTask(tasks);
 
       PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
       psErr.executeQuery();
@@ -302,6 +306,30 @@ public class ApplyModules extends HttpSecureAppServlet {
       }
       OBContext.getOBContext().setInAdministratorMode(admin);
     }
+  }
+
+  /**
+   * Checks whether WAD needs to be rebuilt. It is needed to rebuild WAD in case the modules to be
+   * applied have sources to be included in openbravo-wad.jar, this is when they have code in
+   * src-wad directory.
+   * 
+   * @param sourcePath
+   *          Root directory for Openbravo instance
+   * @return true if wad needs to be rebuilt
+   */
+  private boolean isWadLibNeeded(String sourcePath) {
+    try {
+      ApplyModulesData[] data = ApplyModulesData.selectUnappliedModules(this);
+      for (ApplyModulesData mod : data) {
+        File f = new File(sourcePath + "/modules/" + mod.name + "/src-wad");
+        if (f.exists()) {
+          return true;
+        }
+      }
+    } catch (Exception e) {
+      log4j.error("Error", e);
+    }
+    return false;
   }
 
   /**
