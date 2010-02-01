@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,11 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.model.ad.ui.Tab;
 
 public class ToolBar {
   private static Logger log4j = Logger.getLogger(ToolBar.class);
@@ -44,13 +48,29 @@ public class ToolBar {
   private boolean isEditable = false;
   private boolean hasAttachments = false;
   private boolean email = false;
+  private String tabId;
 
   public void setEmail(boolean email) {
     this.email = email;
   }
 
+  /**
+   * If the ToolBar is created for a generated window, this functions sets the tabId of that Tab.
+   * 
+   * Used inside the class to enable/disable functionality based on the concrete tab
+   * 
+   * @param tabId
+   *          tabId of the creator tab, if the ToolBar is for a generated window
+   */
+  public void setTabId(String tabId) {
+    this.tabId = tabId;
+  }
+
   Hashtable<String, HTMLElement> buttons = new Hashtable<String, HTMLElement>();
 
+  /**
+   * Constructor used by the grid view of all generated windows.
+   */
   public ToolBar(ConnectionProvider _conn, String _language, String _action, boolean _isNew,
       String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting,
       String _windowName, String _baseDirection, boolean _debug) {
@@ -103,6 +123,9 @@ public class ToolBar {
         _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, false, false);
   }
 
+  /**
+   * Constructor used by the edit view of all generated windows.
+   */
   public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action,
       boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting,
       String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow,
@@ -204,6 +227,18 @@ public class ToolBar {
       return "changeAuditStatus();";
     } else if (name.equals("AUDIT_RELATION")) {
       return "changeAuditStatusRelation();";
+    } else if (name.equals("AUDIT_TRAIL")) {
+      // open audit trail popup if exactly one record is selected, otherwise show error message
+      return ((grid_id == null || grid_id.equals("")) ? ""
+          : "if (dijit.byId('"
+              + grid_id
+              + "').getSelectedRows() =='' || dijit.byId('"
+              + grid_id
+              + "').getSelectedRows().length > 1) {showJSMessage(28);resizeArea(true);calculateMsgBoxWidth();return false;} ")
+
+          + " openServletNewWindow('POPUP_HISTORY', false, '../businessUtility/AuditTrail.html?inpRecordId=' + "
+          + ((grid_id == null || grid_id.equals("")) ? keyfield + ".value" : "dijit.byId('"
+              + grid_id + "').getSelectedRows()") + ", 'AuditTrail', null, true, 600, 900, true);";
     } else if (grid_id != null && !grid_id.equals("") && name.equals("PREVIOUS")) {
       return "dijit.byId('grid').goToPreviousRow();";
     } else if (grid_id != null && !grid_id.equals("") && name.equals("NEXT")) {
@@ -285,6 +320,8 @@ public class ToolBar {
         .messageBD(conn, "HideAudit", language), getButtonScript("AUDIT_RELATION"), true));
     buttons.put("AUDIT_SHOW_RELATION_DISABLED", new ToolBar_Button(base_direction, "Audit", Utility
         .messageBD(conn, "ShowAudit", language), getButtonScript("AUDIT_RELATION"), false));
+    buttons.put("AUDIT_TRAIL", new ToolBar_Button(base_direction, "AuditTrail", Utility.messageBD(
+        conn, "AuditTrail", language), getButtonScript("AUDIT_TRAIL"), false));
     buttons.put("SEPARATOR5", new ToolBar_Space(base_direction));
     buttons.put("FIRST", new ToolBar_Button(base_direction, "First", Utility.messageBD(conn,
         "GotoFirst", language), getButtonScript("FIRST")));
@@ -319,6 +356,33 @@ public class ToolBar {
     buttons.put("HR1", new ToolBar_HR());
     buttons.put("RELATED_INFO", new ToolBar_Button(base_direction, "RelatedInfo", Utility
         .messageBD(conn, "Linked Items", language), getButtonScript("RELATED_INFO")));
+  }
+
+  /**
+   * Utility function to change the visibility of the 'Audit Trail' icon.
+   * 
+   * community instances: always shown
+   * 
+   * activated instances: shown if isFullyAudited for the table
+   */
+  @SuppressWarnings("static-access")
+  private void changeAuditTrailVisibility() {
+    if (tabId != null) {
+      boolean oldAdminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      try {
+        ActivationKey ak = new ActivationKey();
+        if (ak.isActiveInstance()) {
+          // is an obps instance
+          Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+          if (!tab.getTable().isFullyAudited()) {
+            // remove icon
+            removeElement("AUDIT_TRAIL");
+          }
+        }
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(oldAdminMode);
+      }
+    }
   }
 
   public void prepareInfoTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
@@ -360,6 +424,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_TRAIL");
 
     if (!hasPrevious)
       removeElement("PREVIOUS_RELATION");
@@ -392,6 +457,7 @@ public class ToolBar {
     if (isNew) {
       removeElement("AUDIT_SHOW_EDITION_DISABLED");
       removeElement("AUDIT_SHOW_EDITION_ENABLED");
+      removeElement("AUDIT_TRAIL");
     } else {
       if (isAuditEnabled)
         removeElement("AUDIT_SHOW_EDITION_DISABLED");
@@ -426,6 +492,8 @@ public class ToolBar {
       removeReadOnly();
     if (uiPattern.equals("SR")) // single record
       removeSingleRecord();
+
+    changeAuditTrailVisibility();
   }
 
   public void prepareEditionTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest,
@@ -513,6 +581,8 @@ public class ToolBar {
       removeAllTests();
     if (isReadOnly)
       removeReadOnly();
+
+    changeAuditTrailVisibility();
   }
 
   // AL New toolbars
@@ -571,6 +641,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_TRAIL");
   }
 
   // Simple toolbar with save button
@@ -618,6 +689,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_TRAIL");
   }
 
   public void prepareRelationBarTemplate(boolean hasPrevious, boolean hasNext) {
@@ -678,6 +750,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_TRAIL");
   }
 
   public void prepareSimpleExcelToolBarTemplate(String excelScript) {
@@ -722,6 +795,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_TRAIL");
 
   }
 
@@ -763,6 +837,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_TRAIL");
   }
 
   // AL
@@ -805,6 +880,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_TRAIL");
   }
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
@@ -844,6 +920,7 @@ public class ToolBar {
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_TRAIL");
   }
 
   private void removeAllTests() {
@@ -948,6 +1025,7 @@ public class ToolBar {
           lastType, false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"),
           lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("AUDIT_TRAIL"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ORDERBY"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ORDERBY_FILTERED"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType, false));
