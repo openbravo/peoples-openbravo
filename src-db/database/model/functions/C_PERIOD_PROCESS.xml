@@ -35,6 +35,7 @@
   v_Record_ID VARCHAR2(32);
   v_Record_ID_Log VARCHAR2(32);
   v_Count NUMBER:=0;
+  v_Count2 NUMBER:=0;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Document RECORD;
@@ -42,7 +43,9 @@
   -- Parameter Variables
   p_Organization C_PeriodControl_Log.AD_Org_ID%TYPE;
   p_IsRecursive C_PeriodControl_Log.IsRecursive%TYPE;
+  p_Calendar C_PeriodControl_Log.C_Calendar_ID%TYPE;
   p_Year C_PeriodControl_Log.C_Year_ID%TYPE;
+  p_YearName C_Year.Year%TYPE;
   p_PeriodNO C_PeriodControl_Log.PeriodNO%TYPE;
   p_DocBaseType C_PeriodControl_Log.DocBaseType%TYPE;
   p_PeriodAction C_PeriodControl_Log.PeriodAction%TYPE;
@@ -62,10 +65,10 @@ BEGIN
     FROM AD_PInstance
     WHERE AD_PInstance_ID=p_PInstance_ID;
     
-    SELECT AD_Client_ID, AD_Org_ID, ISRecursive, C_Year_ID, PeriodNO, DocBaseType, PeriodAction, Processing
-    INTO v_AD_Client_ID, p_Organization, p_IsRecursive, p_Year, p_PeriodNO, p_DocBaseType, p_PeriodAction, p_Processing
-    FROM C_PeriodControl_Log
-    WHERE C_PeriodControl_Log_ID=v_Record_ID_Log;
+    SELECT L.AD_Client_ID, L.AD_Org_ID, L.C_Calendar_ID, L.ISRecursive, L.C_Year_ID, C_Year.Year, L.PeriodNO, L.DocBaseType, L.PeriodAction, L.Processing
+    INTO v_AD_Client_ID, p_Organization, p_Calendar, p_IsRecursive, p_Year, p_YearName, p_PeriodNO, p_DocBaseType, p_PeriodAction, p_Processing
+    FROM C_PeriodControl_Log L, C_Year
+    WHERE L.C_PeriodControl_Log_ID=v_Record_ID_Log AND C_Year.C_Year_Id = L.C_Year_Id;
       
     IF (p_Processing='N') THEN 
       
@@ -74,6 +77,14 @@ BEGIN
       WHERE C_PeriodControl_Log_ID=v_Record_ID_Log;   
       -- Action: Open if not permanently closed
       IF(p_PeriodAction='O') THEN
+
+        SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count2 FROM C_PERIOD, C_PERIODCONTROL, C_YEAR WHERE
+          C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID AND C_PERIODCONTROL.PERIODSTATUS IN ('C') AND C_YEAR.YEAR>p_YearName
+          AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID AND C_YEAR.C_CALENDAR_ID = p_Calendar;
+        IF (v_Count2>=1) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@FeatureYearClosed@');
+        END IF;
+        
               
         IF (p_IsRecursive='N') THEN
           FOR Cur_Document IN
@@ -116,10 +127,10 @@ BEGIN
         
         -- Action: Close if not permanently closed
       ELSIF(p_PeriodAction='C') THEN
-        SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count FROM C_PERIOD, C_PERIODCONTROL, C_YEAR WHERE 
-          C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID AND C_PERIODCONTROL.PERIODSTATUS='O' AND C_YEAR.YEAR<p_Year
-          AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID;                  
-        IF (v_Count>=1) THEN           
+        SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count FROM C_PERIOD, C_PERIODCONTROL, C_YEAR WHERE
+          C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID AND C_PERIODCONTROL.PERIODSTATUS IN ('N','O') AND C_YEAR.YEAR<p_YearName
+          AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID AND C_YEAR.C_CALENDAR_ID = p_Calendar;
+        IF (v_Count>=1) THEN
           RAISE_APPLICATION_ERROR(-20000, '@YearNotClose@');
         END IF;
         IF (p_IsRecursive='Y') THEN

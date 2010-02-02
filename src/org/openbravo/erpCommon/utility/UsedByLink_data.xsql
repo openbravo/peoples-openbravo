@@ -334,4 +334,17 @@
     <Parameter name="language"/>
     <Parameter name="adTableId"/>
   </SqlMethod>
+  <SqlMethod name="getCountOfSelfReference" type="preparedStatement" return="String" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as ID 
+        FROM AD_TABLE 
+        WHERE AD_TABLE_ID = ? 
+        AND TABLENAME = ?
+      ]]>
+    </Sql>
+    <Parameter name="adTableId"/>
+    <Parameter name="tableName"/>
+  </SqlMethod>
 </SqlClass>

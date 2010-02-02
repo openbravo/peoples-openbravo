@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,11 +120,18 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     DirFilter dirFilter = null;
     String relativePath = "";
 
-    if ((argv.length == 2) && argv[0].equals("clean")) {
-      log4j.debug("clean AD_TEXTINTERFACES");
-      final Translate translate = new Translate(argv[1]);
-      translate.clean();
-      return;
+    if ((argv.length == 2)) {
+      if (argv[0].equals("clean")) {
+        log4j.debug("clean AD_TEXTINTERFACES");
+        final Translate translate = new Translate(argv[1]);
+        translate.clean();
+        return;
+      } else if (argv[0].equals("remove")) {
+        log4j.debug("remove AD_TEXTINTERFACES");
+        final Translate translate = new Translate(argv[1]);
+        translate.remove();
+        return;
+      }
     }
 
     if (argv.length < 3) {
@@ -171,7 +178,15 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     try {
       TranslateData.clean(pool);
     } catch (final Exception e) {
-      log4j.error(e.toString());
+      log4j.error("clean error", e);
+    }
+  }
+
+  private void remove() {
+    try {
+      TranslateData.remove(pool);
+    } catch (final Exception e) {
+      log4j.error("remove error", e);
     }
   }
 

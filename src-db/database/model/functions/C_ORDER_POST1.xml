@@ -592,6 +592,11 @@
      /**************************************************************************
         * Calculate Discounts
         *************************************************************************/
+        -- Delete first previous discounts if any and then recalculate them
+        DELETE
+        FROM C_ORDERLINE
+        WHERE C_ORDER_DISCOUNT_ID IS NOT NULL
+        AND C_ORDER_ID=v_Record_ID;
         v_CumDiscount:=0;
         v_OldCumDiscount:=0;
         v_Line:=10;

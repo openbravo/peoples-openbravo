@@ -19,12 +19,15 @@
 
 package org.openbravo.base.session;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.util.Check;
 
 /**
@@ -49,6 +52,9 @@ public class OBPropertiesProvider {
   }
 
   public Properties getOpenbravoProperties() {
+    if (obProperties == null) {
+      readPropertiesFromDevelopmentProject();
+    }
     return obProperties;
   }
 
@@ -84,4 +90,30 @@ public class OBPropertiesProvider {
       throw new OBException(e);
     }
   }
+
+  // tries to read the properties from the openbravo development project
+  private void readPropertiesFromDevelopmentProject() {
+    // get the location of the current class file
+    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
+    File f = new File(url.getPath());
+    File propertiesFile = null;
+    while (f.getParentFile() != null && f.getParentFile().exists()) {
+      f = f.getParentFile();
+      final File configDirectory = new File(f, "config");
+      if (configDirectory.exists()) {
+        propertiesFile = new File(configDirectory, "Openbravo.properties");
+        if (propertiesFile.exists()) {
+          // found it and break
+          break;
+        }
+      }
+    }
+    if (propertiesFile == null) {
+      return;
+    }
+    setProperties(propertiesFile.getAbsolutePath());
+    OBConfigFileProvider.getInstance().setFileLocation(
+        propertiesFile.getParentFile().getAbsolutePath());
+  }
+
 }

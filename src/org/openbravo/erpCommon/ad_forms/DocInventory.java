@@ -44,9 +44,9 @@ public class DocInventory extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocInventoryData.select(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocInventoryData.select(conn, stradClientId, Id));
   }
 
   /**
@@ -160,6 +160,12 @@ public class DocInventory extends AcctServer {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       log4jDocInventory.debug("CreateFact - before DR - Costs: " + costs);
+      BigDecimal b_Costs = new BigDecimal(costs);
+      if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
+        setStatus(STATUS_InvalidCost);
+        continue;
+      } else
+        setStatus(STATUS_Error);// Default status. LoadDocument
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
           .getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
@@ -169,7 +175,6 @@ public class DocInventory extends AcctServer {
       dr.setM_Locator_ID(line.m_M_Locator_ID);
       log4jDocInventory.debug("CreateFact - before CR");
       // InventoryDiff DR CR
-      BigDecimal b_Costs = new BigDecimal(costs);
       // or Charge
       Account invDiff = line.getChargeAccount(as, b_Costs.negate(), conn);
       log4jDocInventory.debug("CreateFact - after getChargeAccount");

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -488,6 +488,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
   private static FieldProvider[] formatDeps4Display(ModuleDependency[] deps,
       VariablesSecureApp vars, ConnectionProvider conn) {
+    @SuppressWarnings("unchecked")
     HashMap<String, String>[] res = new HashMap[deps.length];
 
     for (int i = 0; i < deps.length; i++) {
@@ -737,7 +738,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
           .getFieldProviderArray(upd);
       for (FieldProvider fp : upds) {
         String moduleId = fp.getField("moduleID");
-        FieldProviderFactory.setField(fp, "versionNoMin", minVersions.get(moduleId));
+        if (minVersions != null && minVersions.get(moduleId) != null
+            && !minVersions.get(moduleId).equals("")) {
+          FieldProviderFactory.setField(fp, "versionNoMin", Utility.messageBD(this,
+              "UpdateModuleNeed", vars.getLanguage())
+              + " " + minVersions.get(moduleId));
+        }
         FieldProviderFactory.setField(fp, "versionNoCurr", currentInstalledVersion(moduleId));
       }
       xmlDocument.setData("updates", upds);
@@ -961,7 +967,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
       }
 
-      if (im.getModulesToInstall().length == 1) {
+      if ((im.getModulesToInstall().length == 1 && im.getModulesToInstall()[0].getModuleID()
+          .equals("0"))
+          || (im.getModulesToUpdate().length == 1 && im.getModulesToUpdate()[0].getModuleID()
+              .equals("0"))) {
         String msgOBPSRequired = Utility.messageBD(this, "OBPS_SUBSCRIPTION_REQUIRED", vars
             .getLanguage());
         msgOBPSRequired = msgOBPSRequired.replace("@MODULE_LIST@", notSubscribed);

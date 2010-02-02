@@ -32,7 +32,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocProduction extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4j = Logger.getLogger(DocProduction.class);
+  static Logger log4jDocProduction = Logger.getLogger(DocProduction.class);
 
   private String SeqNo = "0";
 
@@ -46,9 +46,9 @@ public class DocProduction extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, conn);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocProductionData.selectRegistro(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocProductionData.selectRegistro(conn, stradClientId, Id));
   }
 
   /**
@@ -64,7 +64,7 @@ public class DocProduction extends AcctServer {
     loadDocumentType(); // lines require doc type
     // Contained Objects
     p_lines = loadLines(conn);
-    log4j.debug("Record_ID = " + Record_ID + " - Lines=" + p_lines.length);
+    log4jDocProduction.debug("Record_ID = " + Record_ID + " - Lines=" + p_lines.length);
     return false;
   } // loadDocumentDetails
 
@@ -79,9 +79,9 @@ public class DocProduction extends AcctServer {
 
     try {
       data = DocLineProductionData.select(conn, Record_ID);
-      log4j.debug("LoadLines: data.len" + data.length + " record_ID " + Record_ID);
+      log4jDocProduction.debug("LoadLines: data.len" + data.length + " record_ID " + Record_ID);
     } catch (ServletException e) {
-      log4j.warn(e);
+      log4jDocProduction.warn(e);
     }
 
     //
@@ -135,22 +135,28 @@ public class DocProduction extends AcctServer {
             .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
-        log4j.error("Error while creating new instance for DocProductionTemplate - " + e);
+        log4jDocProduction.error("Error while creating new instance for DocProductionTemplate - "
+            + e);
       }
     }
-    log4j.debug("createFact - Inicio");
+    log4jDocProduction.debug("createFact - Inicio");
     // create Fact Header
     Fact fact = null;
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-    log4j.debug("createFact - object created");
+    log4jDocProduction.debug("createFact - object created");
     // Lines
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       String costs = line.getProductCosts(DateAcct, as, conn, con);
       BigDecimal dCosts = new BigDecimal(costs);
-      costs = dCosts.toString();
-      log4j.debug("DocProduction - createFact - line.m_Productiontype - " + line.m_Productiontype);
+      if (dCosts.compareTo(BigDecimal.ZERO) == 0) {
+        setStatus(STATUS_InvalidCost);
+        continue;
+      } else
+        setStatus(STATUS_Error);// Default status. LoadDocument
+      log4jDocProduction.debug("DocProduction - createFact - line.m_Productiontype - "
+          + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {
         fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
             .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
@@ -175,7 +181,7 @@ public class DocProduction extends AcctServer {
    * @return the log4j
    */
   public static Logger getLog4j() {
-    return log4j;
+    return log4jDocProduction;
   }
 
   /**
@@ -183,7 +189,7 @@ public class DocProduction extends AcctServer {
    *          the log4j to set
    */
   public static void setLog4j(Logger log4j) {
-    DocProduction.log4j = log4j;
+    DocProduction.log4jDocProduction = log4j;
   }
 
   /**
@@ -209,26 +215,26 @@ public class DocProduction extends AcctServer {
   }
 
   public String nextSeqNo(String oldSeqNo) {
-    log4j.debug("DocAmortization - oldSeqNo = " + oldSeqNo);
+    log4jDocProduction.debug("DocAmortization - oldSeqNo = " + oldSeqNo);
     BigDecimal seqNo = new BigDecimal(oldSeqNo);
     SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
-    log4j.debug("DocAmortization - nextSeqNo = " + SeqNo);
+    log4jDocProduction.debug("DocAmortization - nextSeqNo = " + SeqNo);
     return SeqNo;
   }
 
   /**
    * Get the account for Accounting Schema
    * 
-   * @param M_Warehouse_ID
+   * @param strmWarehouseId
    *          warehouse
    * @param as
    *          accounting schema
    * @return Account
    */
-  public final Account getAccountWarehouse(String M_Warehouse_ID, AcctSchema as,
+  public final Account getAccountWarehouse(String strmWarehouseId, AcctSchema as,
       ConnectionProvider conn) throws ServletException {
     AcctServerData[] data = null;
-    data = AcctServerData.selectWDifferencesAcct(conn, M_Warehouse_ID, as.getC_AcctSchema_ID());
+    data = AcctServerData.selectWDifferencesAcct(conn, strmWarehouseId, as.getC_AcctSchema_ID());
     // Get Acct
     String Account_ID = "";
     if (data != null && data.length != 0) {
@@ -246,7 +252,7 @@ public class DocProduction extends AcctServer {
     try {
       acct = Account.getAccount(conn, Account_ID);
     } catch (ServletException e) {
-      log4j.warn(e);
+      log4jDocProduction.warn(e);
     }
     return acct;
   }

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,6 +94,7 @@
   <![CDATA[
      SELECT COUNT(*) FROM C_TAXPAYMENT WHERE PROCESSED='Y' 
      AND AD_CLIENT_ID = ?
+     AND AD_Org_ID IN ('1')
      AND ((DATEFROM <= TO_DATE(?) AND DATETO >=TO_DATE(?)
      OR DATEFROM <= TO_DATE(?) AND DATETO >=TO_DATE(?))
      OR 
@@ -102,6 +103,7 @@
       ]]>
   </Sql>
   <Parameter name="adClientId"/>
+  <Parameter name="adUserOrg" type="replace" optional="true" after="AND AD_Org_ID IN (" text="'1'"/>
   <Parameter name="DateFrom"/>
   <Parameter name="DateFrom"/>
   <Parameter name="DateTo"/>

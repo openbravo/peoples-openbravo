@@ -47,7 +47,6 @@ public class RuntimeModelTest extends BaseTest {
   // don't initialize dal layer for model tests
   @Override
   protected void setUp() throws Exception {
-    setConfigPropertyFiles();
     super.setUp();
   }
 
@@ -197,6 +196,20 @@ public class RuntimeModelTest extends BaseTest {
         log.debug(tableName);
     }
     assertEquals(0, tables.size());
+  }
+
+  /**
+   * Tests that all non-one-to-many/not-one-to-one/not-composite id columns have a column
+   */
+  public void testColumnIdSet() {
+    for (Entity entity : ModelProvider.getInstance().getModel()) {
+      for (Property property : entity.getProperties()) {
+        if (property.isOneToMany() || property.isOneToOne() || property.isCompositeId()) {
+          continue;
+        }
+        assertNotNull("Property " + property + " does not have a columnid ", property.getColumnId());
+      }
+    }
   }
 
   /**

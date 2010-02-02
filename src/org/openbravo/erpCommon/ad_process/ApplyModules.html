@@ -54,50 +54,53 @@
 
     //Changes the status of one node (corresponding icon, ...)
     function progList_changeNode(node, newStatus, text) {
-      node=node.toString();
-      if (newStatus == "Success") {
-        document.getElementById("processing_" + node).innerHTML = " ";
-        document.getElementById("processing_" + node).style.display = "none";
-        document.getElementById("error_" + node).style.display = "none";
-        document.getElementById("exception_" + node).style.display = "none";
-        document.getElementById("warning_" + node).style.display = "none";
-      } else if (newStatus == "Error") {
-        document.getElementById("processing_" + node).innerHTML = " ";
-        document.getElementById("processing_" + node).style.display = "none";
-        document.getElementById("error_" + node).style.display = "";
-        document.getElementById("exception_" + node).style.display = "none";
-        document.getElementById("warning_" + node).style.display = "none";
-      } else if (newStatus == "Exception") {
-        document.getElementById("processing_" + node).innerHTML = " ";
-        document.getElementById("processing_" + node).style.display = "none";
-        document.getElementById("error_" + node).style.display = "none";
-        document.getElementById("exception_" + node).style.display = "";
-        document.getElementById("warning_" + node).style.display = "none";
-      } else if (newStatus == "Warning") {
-        document.getElementById("processing_" + node).innerHTML = " ";
-        document.getElementById("processing_" + node).style.display = "none";
-        document.getElementById("error_" + node).style.display = "none";
-        document.getElementById("exception_" + node).style.display = "none";
-        document.getElementById("warning_" + node).style.display = "";
-      } else if (newStatus == "Pending") {
-        document.getElementById("processing_" + node).innerHTML = " ";
-        document.getElementById("processing_" + node).style.display = "none";
-        document.getElementById("error_" + node).style.display = "none";
-        document.getElementById("exception_" + node).style.display = "none";
-        document.getElementById("warning_" + node).style.display = "none";
-      } else if (newStatus == "Processing") {
-        if (text) {
-          document.getElementById("processing_" + node).innerHTML = text;
-        } else {
-          document.getElementById("processing_" + node).innerHTML = " ";
+      try {
+        node=node.toString();
+        if (newStatus == "Success") {
+          document.getElementById("processing_" + node).innerHTML = " ";
+          document.getElementById("processing_" + node).style.display = "none";
+          document.getElementById("error_" + node).style.display = "none";
+          document.getElementById("exception_" + node).style.display = "none";
+          document.getElementById("warning_" + node).style.display = "none";
+        } else if (newStatus == "Error") {
+          document.getElementById("processing_" + node).innerHTML = " ";
+          document.getElementById("processing_" + node).style.display = "none";
+          document.getElementById("error_" + node).style.display = "";
+          document.getElementById("exception_" + node).style.display = "none";
+          document.getElementById("warning_" + node).style.display = "none";
+        } else if (newStatus == "Exception") {
+          document.getElementById("processing_" + node).innerHTML = " ";
+          document.getElementById("processing_" + node).style.display = "none";
+          document.getElementById("error_" + node).style.display = "none";
+          document.getElementById("exception_" + node).style.display = "";
+          document.getElementById("warning_" + node).style.display = "none";
+        } else if (newStatus == "Warning") {
+          document.getElementById("processing_" + node).innerHTML = " ";
+          document.getElementById("processing_" + node).style.display = "none";
+          document.getElementById("error_" + node).style.display = "none";
+          document.getElementById("exception_" + node).style.display = "none";
+          document.getElementById("warning_" + node).style.display = "";
+        } else if (newStatus == "Pending") {
+          document.getElementById("processing_" + node).innerHTML = " ";
+          document.getElementById("processing_" + node).style.display = "none";
+          document.getElementById("error_" + node).style.display = "none";
+          document.getElementById("exception_" + node).style.display = "none";
+          document.getElementById("warning_" + node).style.display = "none";
+        } else if (newStatus == "Processing") {
+          if (text) {
+            document.getElementById("processing_" + node).innerHTML = text;
+          } else {
+            document.getElementById("processing_" + node).innerHTML = " ";
+          }
+          document.getElementById("processing_" + node).style.display = "";
+          document.getElementById("error_" + node).style.display = "none";
+          document.getElementById("exception_" + node).style.display = "none";
+          document.getElementById("warning_" + node).style.display = "none";
         }
-        document.getElementById("processing_" + node).style.display = "";
-        document.getElementById("error_" + node).style.display = "none";
-        document.getElementById("exception_" + node).style.display = "none";
-        document.getElementById("warning_" + node).style.display = "none";
-      }
+      } catch(e) {}
     }
     function progList_changeIcon(node, newStatus, text) {
+      try {
         node=node.toString();
         if (newStatus == "Success") {
           document.getElementById("icon_" + node).className = "CheckList_Icon_Success";
@@ -112,11 +115,14 @@
         } else if (newStatus == "Processing") {
           document.getElementById("icon_" + node).className = "CheckList_Icon_Processing";
         }
-      }
+      } catch(e) {}
+    }
 
     //Sets text of textarea
     function progList_setTextToTextArea(text) {
-      document.getElementById('warningsAndErrors').innerHTML = text;
+      try {
+        document.getElementById('warningsAndErrors').innerHTML = text;
+      } catch(e) {}
     }
 
     //Adds text to the textarea
@@ -158,7 +164,7 @@
       var output = minutes_string + ":" + seconds_string;
       document.getElementById(targetvar).innerHTML=output;
 
-      submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModules.html", false, null, null);
+      submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
 
       if (lc_isTimerEnabled) {
         setTimeout(function() {LocalTimer(targetvar, referenceDate);},1000);
@@ -217,6 +223,7 @@
           showJSMessage(22);
         } else {
           //Expecting msg in JSON format
+          strText = strText.toString();
           var msg = eval("("+strText+")");
           initialize_MessageBox('messageBoxID');
           setValues_MessageBox('messageBoxID',msg.OBError.type, msg.OBError.title, msg.OBError.message);
@@ -318,6 +325,7 @@
         }
         pending_states=pending_states-1;
         if(start===true){
+          strText = strText.toString();
           var msg = eval("("+strText+")");
  
           var state=msg.Response.state;
@@ -362,7 +370,7 @@
         if (XMLHttpRequestObj.responseText) {
           strText = XMLHttpRequestObj.responseText;
         }
-
+        strText = strText.toString();
         var msg = eval("("+strText+")");
           
         var state=msg.Response.state;
@@ -372,7 +380,7 @@
             processing = false;
             top.opener.setProcessingMode('window', false);
             var frm = document.frmMain;
-            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModules.html", false, null, null);
+            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
           }
           start=true;
           var errorStatus=msg.Response.statusofstate;
@@ -382,7 +390,7 @@
             for(i=current_state;i<stateindex;i++){
               //We need to ask for warning/error state for the intermediate status
               document.getElementById("reqStatus").value=possible_states[i];
-              submitXmlHttpRequest(askForErrorStatus, null, "REQUESTERRORSTATE", "ApplyModules.html", false, null, null);
+              submitXmlHttpRequest(askForErrorStatus, null, "REQUESTERRORSTATE", "ApplyModulesCallServlet.html", false, null, null);
             }
           }
  
@@ -408,7 +416,7 @@
     	processing = false;
     	top.opener.setProcessingMode('window', false);
     	var frm = document.frmMain;
-    	return submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModules.html", false, null, null);
+    	return submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
       }
     	        
     }
