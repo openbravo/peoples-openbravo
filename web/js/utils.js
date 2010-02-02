@@ -3179,11 +3179,8 @@ function readOnlyLogicElement(id, readonly) {
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
     obj.readOnly = true;
-    if (getObjFeatures(obj).indexOf("scSelector") != -1) {  //Added for support Smartclient Selector
-      try {
-        var scSelector_disableCommand = "sc_" + id + ".disableSelector()";
-        eval(scSelector_disableCommand);
-      } catch(e) {}
+    if (obj.setReadOnly) {
+    	obj.setReadOnly(true);
     }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextA = getObjAttribute(obj, 'onclick');
@@ -3216,12 +3213,8 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
-
-    if (getObjFeatures(obj).indexOf("scSelector") != -1) {  //Added for support Smartclient Selector
-      try {
-        var scSelector_enableCommand = "sc_" + id + ".enableSelector()";
-        eval(scSelector_enableCommand);
-      } catch(e) {}
+    if (obj.setReadOnly) {
+    	obj.setReadOnly(false);
     }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextB = getObjAttribute(obj, 'onclick');
