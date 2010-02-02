@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -22,6 +22,7 @@
   TYPE RECORD IS REF CURSOR;
   v_Acct_ID VARCHAR2(32);
   Cur_Defaults RECORD;
+  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
 
 BEGIN
 
@@ -70,6 +71,19 @@ BEGIN
   ELSIF (UPDATING) THEN
     UPDATE A_ASSET_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
     WHERE A_ASSET_ID = :new.A_ASSET_ID;
+  END IF;
+  IF (INSERTING OR UPDATING) THEN
+   --Does not allow to change the attribute set value
+   -- for products which attribute set value type is Fixed
+   IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
+    SELECT ATTRSETVALUETYPE 
+    INTO v_AttrSetValueType
+    FROM M_PRODUCT 
+    WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
+    IF (v_AttrSetValueType='F') THEN
+     RAISE_APPLICATION_ERROR(-20556, 'Attribute Set Value Type is Fixed for this product. Please delete the Attribute Set Value.');
+    END IF;
+   END IF;
   END IF;
 EXCEPTION
 WHEN NO_DATA_FOUND THEN

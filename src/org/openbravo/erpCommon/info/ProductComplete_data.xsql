@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -216,9 +216,11 @@
           0 || '#' || '' || '#' || 0 || '#' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey
       FROM ( SELECT '0' AS RN1, A.* FROM ( 
         SELECT P.M_PRODUCT_ID, P.DISCONTINUED, P.VALUE, P.NAME, P.NAME AS NAME_HIDDEN, 0 AS QTY, U1.NAME AS C_UOM1, 
-        0 AS QTYORDER, NULL AS C_UOM2, A.DESCRIPTION AS ATTRIBUTE, 
+        0 AS QTYORDER, NULL AS C_UOM2, 
+        (CASE WHEN (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE<>'F') THEN (CASE WHEN P.ATTRSETVALUETYPE='D' THEN A.DESCRIPTION ELSE NULL END) ELSE NULL END) AS ATTRIBUTE, 
         NULL AS LOCATOR, 
-        P.M_ATTRIBUTESETINSTANCE_ID, NULL AS M_LOCATOR_ID, 
+        (CASE WHEN (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE<>'F') THEN (CASE WHEN P.ATTRSETVALUETYPE='D' THEN P.M_ATTRIBUTESETINSTANCE_ID ELSE NULL END) ELSE NULL END) AS M_ATTRIBUTESETINSTANCE_ID,
+        NULL AS M_LOCATOR_ID, 
         P.C_UOM_ID AS C_UOM1_ID, NULL AS C_UOM2_ID, 0 AS QTY_REF, 0 AS QUANTITYORDER_REF, 0 AS SERVIDO_BINARY
         FROM M_PRODUCT P left join M_ATTRIBUTESETINSTANCE A  on P.M_ATTRIBUTESETINSTANCE_ID = A.M_ATTRIBUTESETINSTANCE_ID, 
              C_UOM U1
@@ -241,7 +243,7 @@
         <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="pgLimit" type="argument" optional="true" after="ORDER BY P.VALUE"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") A"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
+        <Parameter name="oraLimit1" type="argument" optional="true" after=") A "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
         <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
@@ -253,9 +255,11 @@
           0 || '#' || '' || '#' || 0 || '#' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey
       FROM ( SELECT '0' AS RN1, A.* FROM ( 
         SELECT P.M_PRODUCT_ID, P.DISCONTINUED, P.VALUE, P.NAME, P.NAME AS NAME_HIDDEN, 0 AS QTY, U1TRL.NAME AS C_UOM1, 
-        0 AS QTYORDER, NULL AS C_UOM2, A.DESCRIPTION AS ATTRIBUTE, 
+        0 AS QTYORDER, NULL AS C_UOM2,
+        (CASE WHEN (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE<>'F') THEN (CASE WHEN P.ATTRSETVALUETYPE='D' THEN A.DESCRIPTION ELSE NULL END) ELSE NULL END) AS ATTRIBUTE, 
         NULL AS LOCATOR, 
-        P.M_ATTRIBUTESETINSTANCE_ID, NULL AS M_LOCATOR_ID, 
+        (CASE WHEN (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE<>'F') THEN (CASE WHEN P.ATTRSETVALUETYPE='D' THEN P.M_ATTRIBUTESETINSTANCE_ID ELSE NULL END) ELSE NULL END) AS M_ATTRIBUTESETINSTANCE_ID,
+        NULL AS M_LOCATOR_ID, 
         P.C_UOM_ID AS C_UOM1_ID, NULL AS C_UOM2_ID, 0 AS QTY_REF, 0 AS QUANTITYORDER_REF, 0 AS SERVIDO_BINARY
         FROM M_PRODUCT P left join M_ATTRIBUTESETINSTANCE A on P.M_ATTRIBUTESETINSTANCE_ID = A.M_ATTRIBUTESETINSTANCE_ID,
              C_UOM U1    left join C_UOM_TRL U1TRL on U1TRL.C_UOM_ID= U1.C_UOM_ID 
@@ -280,7 +284,7 @@
         <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="pgLimit" type="argument" optional="true" after="ORDER BY P.VALUE"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") A"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
+        <Parameter name="oraLimit1" type="argument" optional="true" after=") A "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
         <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 

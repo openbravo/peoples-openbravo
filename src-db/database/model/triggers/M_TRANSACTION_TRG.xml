@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -58,6 +58,19 @@ BEGIN
   END IF;
   IF INSERTING OR UPDATING THEN
     M_UPDATE_INVENTORY(:NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID, :NEW.UPDATEDBY, :NEW.M_PRODUCT_ID, :NEW.M_LOCATOR_ID, :NEW.M_ATTRIBUTESETINSTANCE_ID, :NEW.C_UOM_ID, :NEW.M_PRODUCT_UOM_ID, :NEW.MOVEMENTQTY, :NEW.QUANTITYORDER, v_DATEINVENTORY, -:NEW.MOVEMENTQTY, -:NEW.QUANTITYORDER) ;
+  END IF;
+  IF (INSERTING OR UPDATING) THEN
+   --Does not allow to change the attribute set value
+   -- for products which attribute set value type is Fixed
+   IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
+    SELECT ATTRSETVALUETYPE 
+    INTO v_AttrSetValueType
+    FROM M_PRODUCT 
+    WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
+    IF (v_AttrSetValueType='F') THEN
+     RAISE_APPLICATION_ERROR(-20556, 'Attribute Set Value Type is Fixed for this product. Please delete the Attribute Set Value.');
+    END IF;
+   END IF;
   END IF;
 END M_TRANSACTION_TRG
 ]]></body>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,12 +28,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -119,7 +121,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inppriceactual\", "
         + (strPriceActual.equals("") ? "\"\"" : strPriceActual) + "),");
     PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
-    if (dataPAttr != null && dataPAttr.length > 0) {
+    if (dataPAttr != null && dataPAttr.length > 0 && dataPAttr[0].attrsetvaluetype.equals("D")) {
       PAttributeSetData[] data2 = PAttributeSetData.select(this, dataPAttr[0].mAttributesetId);
       if (PAttributeSet.isInstanceAttributeSet(data2)) {
         resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
@@ -130,7 +132,17 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
             + FormatUtilities.replaceJS(dataPAttr[0].description) + "\"),");
       }
+    } else {
+      resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
+      resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
     }
+    String strattrsetvaluetype = "";
+    final Product product = OBDal.getInstance().get(Product.class, strMProductID);
+    if (product != null) {
+      strattrsetvaluetype = product.getAttributeSetValueType();
+    }
+    resultado.append("new Array(\"inpattrsetvaluetype\", \""
+        + FormatUtilities.replaceJS(strattrsetvaluetype) + "\"),\n");
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
     resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
     resultado.append("new Array(\"inpcCurrencyId\", "
