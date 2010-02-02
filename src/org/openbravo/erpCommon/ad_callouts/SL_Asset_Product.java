@@ -48,8 +48,6 @@ public class SL_Asset_Product extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
       String strTabId = vars.getStringParameter("inpTabId");
 
       String strMProductID = vars.getStringParameter("inpmProductId");
@@ -66,41 +64,39 @@ public class SL_Asset_Product extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
       String strMProductID, String strPAttr) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Asset_Product';\n\n");
-    resultado.append("var respuesta = new Array(");
+    StringBuffer result = new StringBuffer();
+    result.append("var calloutName='SL_Asset_Product';\n\n");
+    result.append("var respuesta = new Array(");
     PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
     if (dataPAttr != null && dataPAttr.length > 0 && dataPAttr[0].attrsetvaluetype.equals("D")) {
       PAttributeSetData[] data2 = PAttributeSetData.select(this, dataPAttr[0].mAttributesetId);
       if (PAttributeSet.isInstanceAttributeSet(data2)) {
-        resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
-        resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
+        result.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
+        result.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
       } else {
-        resultado.append("new Array(\"inpmAttributesetinstanceId\", \""
+        result.append("new Array(\"inpmAttributesetinstanceId\", \""
             + dataPAttr[0].mAttributesetinstanceId + "\"),");
-        resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
+        result.append("new Array(\"inpmAttributesetinstanceId_R\", \""
             + FormatUtilities.replaceJS(dataPAttr[0].description) + "\"),");
       }
     } else {
-      resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
-      resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
+      result.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
+      result.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
     }
     String strattrsetvaluetype = "";
     final Product product = OBDal.getInstance().get(Product.class, strMProductID);
     if (product != null) {
       strattrsetvaluetype = product.getAttributeSetValueType();
     }
-    resultado.append("new Array(\"inpattrsetvaluetype\", \""
+    result.append("new Array(\"inpattrsetvaluetype\", \""
         + FormatUtilities.replaceJS(strattrsetvaluetype) + "\"),\n");
-    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-    resultado.append(");\n");
+    result.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
+    result.append(");\n");
 
-    xmlDocument.setParameter("array", resultado.toString());
+    xmlDocument.setParameter("array", result.toString());
     xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

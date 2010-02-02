@@ -102,15 +102,12 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
           + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars
               .getLanguage())) + "\"),");
     }
-
-    if (!strAttribute.equals("")) {
-      if (strAttribute.startsWith("\""))
-        strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
-      resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),");
-      resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-          + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strAttribute))
-          + "\"),");
-    }
+    if (strAttribute.startsWith("\""))
+      strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
+    resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),\n");
+    resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
+        + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strAttribute))
+        + "\"),\n");
     String strattrsetvaluetype = "";
     final Product product = OBDal.getInstance().get(Product.class, strMProductID);
     if (product != null) {
