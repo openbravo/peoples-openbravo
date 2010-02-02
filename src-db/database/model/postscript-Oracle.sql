@@ -1031,7 +1031,7 @@ OR DELETING OR INSERTING) THEN
     INSERT INTO AD_AUDIT_TRAIL 
            (AD_AUDIT_TRAIL_ID, AD_USER_ID, AD_TABLE_ID, AD_COLUMN_ID, 
            PROCESSTYPE, PROCESS_ID, RECORD_ID, RECORD_REVISION, ACTION, 
-           TIME, OLD_'||datatype||', NEW_'||datatype||',
+           EVENT_TIME, OLD_'||datatype||', NEW_'||datatype||',
            AD_CLIENT_ID, AD_ORG_ID)
           VALUES
            (GET_UUID, V_USER_ID, '''|| cur_tables.ad_table_id||''', '''||cur_cols.ad_column_id||''', 

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW AD_AUDIT_TRAIL_V">
-    <view name="AD_AUDIT_TRAIL_V"><![CDATA[SELECT t.ad_audit_trail_id, t.ad_client_id, t.ad_org_id, t.isactive, t.created, t.createdby, t.updated, t.updatedby, t.ad_table_id, t.record_id, t.record_revision, t.ad_user_id, t.time, t.processtype, t.process_id, t.action, t.ad_column_id, t.old_char, t.new_char, t.old_nchar, t.new_nchar, t.old_number, t.new_number, t.old_date, t.new_date, 
+    <view name="AD_AUDIT_TRAIL_V"><![CDATA[SELECT t.ad_audit_trail_id, t.ad_client_id, t.ad_org_id, t.isactive, t.created, t.createdby, t.updated, t.updatedby, t.ad_table_id, t.record_id, t.record_revision, t.ad_user_id, t.event_time, t.processtype, t.process_id, t.action, t.ad_column_id, t.old_char, t.new_char, t.old_nchar, t.new_nchar, t.old_number, t.new_number, t.old_date, t.new_date, 
         CASE
             WHEN t.processtype = 'P' THEN ( SELECT to_char(p.name)
                FROM ad_process p
