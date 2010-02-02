@@ -101,7 +101,7 @@ class AuditTrailDeletedRecords {
         sql.append("SELECT ROWNUM AS RN1, ").append(tableName).append(".* FROM(\n");
       }
       sql
-          .append("SELECT record_id as rowkey, time as audittrailtime, ad_user_id as audittrailuser, processType as audittrailprocesstype, process_id as audittrailprocessid\n");
+          .append("SELECT record_id as rowkey, event_time as audittrailtime, ad_user_id as audittrailuser, processType as audittrailprocesstype, process_id as audittrailprocessid\n");
       for (Column col : tab.getTable().getADColumnList()) {
         // obtain information for all columns
         sql.append(", ");
@@ -130,17 +130,17 @@ class AuditTrailDeletedRecords {
               .parseInt(tab.getTable().getDataAccessLevel()))).append(")\n");
       // optional filters from UI
       if (dateFrom != null && !dateFrom.isEmpty()) {
-        sql.append(" AND time >= TO_DATE('" + dateFrom + "')");
+        sql.append(" AND event_time >= TO_DATE('" + dateFrom + "')");
       }
       if (dateTo != null && !dateTo.isEmpty()) {
-        sql.append(" AND time <= TO_DATE('" + dateTo + "')");
+        sql.append(" AND event_time <= TO_DATE('" + dateTo + "')");
 
       }
       if (user != null && !user.isEmpty()) {
         sql.append(" AND ad_user_id = '" + user + "'");
       }
 
-      sql.append("  ORDER BY TIME DESC").append(") ").append(tableName);
+      sql.append("  ORDER BY event_TIME DESC").append(") ").append(tableName);
 
       // apply where clause if exists
       if (tab.getSQLWhereClause() != null) {
