@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -218,7 +218,8 @@
           -- For every Production Plan
           FOR CUR_PP IN
             (SELECT M_PRODUCTIONPLAN.*,
-              M_PRODUCT.C_UOM_ID,  M_PRODUCT.M_AttributeSetInstance_ID 
+              M_PRODUCT.C_UOM_ID,  
+              (CASE WHEN M_PRODUCT.ATTRSETVALUETYPE<>'D' THEN NULL ELSE M_PRODUCT.M_AttributeSetInstance_ID END) AS M_AttributeSetInstance_ID
             FROM M_PRODUCTIONPLAN,
               M_PRODUCT
             WHERE M_PRODUCTIONPLAN.M_Product_ID=M_PRODUCT.M_Product_ID
@@ -325,7 +326,9 @@
                         M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
                         AD_Org_ID, IsActive, Created, CreatedBy,
                         Updated, UpdatedBy, M_Product_ID, C_UOM_ID,
-                        MovementQty, M_Locator_ID, M_AttributeSetInstance_ID, M_Product_UOM_ID,
+                        MovementQty, M_Locator_ID, 
+                        M_AttributeSetInstance_ID, 
+                        M_Product_UOM_ID,
                         QuantityOrder
                       )
                       VALUES
@@ -333,7 +336,9 @@
                         NextNo, CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
                         CUR_BOM.Org_ID, 'Y', now(), '0',
                         now(), '0', CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
-                        -v_Qty, v_storage.M_Locator_ID, v_storage.M_AttributeSetInstance_ID, v_storage.M_Product_UOM_ID,
+                        -v_Qty, v_storage.M_Locator_ID, 
+                        (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=CUR_BOM.M_ProductBOM_ID)<>'F' THEN v_storage.M_AttributeSetInstance_ID ELSE NULL END), 
+                        v_storage.M_Product_UOM_ID,
                         -v_QtyOrder
                       )
                       ;
