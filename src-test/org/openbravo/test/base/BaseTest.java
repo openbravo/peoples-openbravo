@@ -83,7 +83,8 @@ public class BaseTest extends TestCase {
   /**
    * Reads the configuration properties from the property files.
    * 
-   * @deprecated not used anymore, behavior has been implemented in the {@link OBPropertiesProvider}
+   * @deprecated Behavior has been implemented in the {@link OBPropertiesProvider}. Is now done
+   *             automatically when initializing the DAL layer.
    */
   protected void setConfigPropertyFiles() {
   }
