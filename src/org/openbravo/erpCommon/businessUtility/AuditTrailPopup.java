@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
@@ -48,7 +49,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.info.SelectorUtility;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
@@ -64,10 +64,16 @@ import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.FieldTrl;
 import org.openbravo.model.ad.ui.Form;
+import org.openbravo.model.ad.ui.FormTrl;
+import org.openbravo.model.ad.ui.Message;
+import org.openbravo.model.ad.ui.MessageTrl;
+import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.model.ad.ui.Task;
+import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.model.ad.ui.Workflow;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -75,6 +81,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   private static final String auditActionsReferenceId = "4C36DC179A5F40DC80B3F3798E121152";
+  private static final String adMessageIdForProcess = "437";
+  private static final String adMessageIdForWindow = "614";
+  private static final String adMessageIdForForm = "D9912E810888475ABB8DFF416196FB5E";
+  private static final String adMessageIdForCallout = "13F1AE1374AD4054BE7FD3743B56F266";
 
   private static final String[] colNamesHistory = { "time", "action", "user", "process", "column",
       "old_value", "new_value", "rowkey" };
@@ -90,7 +100,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    // TODO: add check for ad_window_access via the tabId, to verify that the user has read-access
+    // FIXME: add check for ad_window_access via the tabId, to verify that the user has read-access
 
     // all code runs in adminMode to get read access to i.e. Tab,TabTrl,AD_Audit_Trail entities
     boolean oldAdminMode = OBContext.getOBContext().setInAdministratorMode(true);
@@ -138,6 +148,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         String strNewFilter = vars.getStringParameter("newFilter");
         String strOffset = vars.getStringParameter("offset", IsPositiveIntFilter.instance);
         String strPageSize = vars.getStringParameter("page_size", IsPositiveIntFilter.instance);
+        // not used right now, as grid is defined as non-sortable
         String strSortCols = vars.getInStringParameter("sort_cols", columnFilterHistory);
         String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
         printGridDataHistory(response, vars, tableId, recordId, userId, columnId, dateFrom, dateTo,
@@ -185,6 +196,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         String strNewFilter = vars.getStringParameter("newFilter");
         String strOffset = vars.getStringParameter("offset", IsPositiveIntFilter.instance);
         String strPageSize = vars.getStringParameter("page_size", IsPositiveIntFilter.instance);
+        // not used right now, as grid is defined as non-sortable
         String strSortCols = vars.getInStringParameter("sort_cols", columnFilterHistory);
         String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
         printGridDataDeleted(response, vars, tabId, tableId, dateFrom, dateTo, userId, strSortCols,
@@ -315,8 +327,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
     String text = Utility.messageBD(this, recordStatus, vars.getLanguage());
     text = text.replace("@recordidentifier@", identifier);
-    // TODO: switch to showing the window name instead
-    text = text.replace("@tabname@", getTranslatedTabName(tabId));
+    text = text.replace("@windowname@", getTranslatedWindowName(tabId));
 
     xmlDocument.setParameter("recordIdentifierText", text);
 
@@ -329,27 +340,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  /**
-   * Gets the translated tab name for the currently active language, or the untranslated tab name as
-   * a fall-back.
-   * 
-   * @param tabId
-   *          id of the tab
-   */
-  private String getTranslatedTabName(String tabId) {
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    Language lang = OBContext.getOBContext().getLanguage();
-
-    OBCriteria<TabTrl> c = OBDal.getInstance().createCriteria(TabTrl.class);
-    c.add(Expression.eq(TabTrl.PROPERTY_LANGUAGE, lang));
-    c.add(Expression.eq(TabTrl.PROPERTY_TAB, tab));
-    List<TabTrl> list = c.list();
-    if (!list.isEmpty()) {
-      return list.get(0).getName();
-    }
-    return tab.getName();
   }
 
   private String try2GetIdentifier(Table table, String recordId) {
@@ -485,9 +475,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     Date dateTo = parseDate(strDateTo, dateFormat);
 
     try {
-      // build sql orderBy clause
-      String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-
       if (strNewFilter.equals("1") || strNewFilter.equals("")) {
         // New filter or first load -> get total rows for filter
         strNumRows = getCountRowsHistory(tableId, recordId, userId, columnId, dateFrom, dateTo);
@@ -566,7 +553,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private String getCountRowsHistory(String tableId, String recordId, String userId,
       String columnId, Date dateFrom, Date dateTo) {
     long s1 = System.currentTimeMillis();
-    // TODO: OBQuery, or manual client/org filter?
+    // FIXME: OBQuery, or manual client/org filter?
     String hql = "select count(*) from AD_Audit_Trail_Raw where table = :table and recordID = :record";
     if (!userId.isEmpty()) {
       hql += " and userContact = :userId";
@@ -720,7 +707,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     gridCol.setData("issortable", "false");
     data.add(gridCol);
 
-    // TODO: optimize fetch mode for trl+column
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     List<Field> fields = getFieldListForTab(vars, tab);
     for (Field field : fields) {
@@ -732,8 +718,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       gridCol.setData("iskey", "false");
       gridCol.setData("isvisible", "true");
 
-      // TODO: field name translation?
-      gridCol.setData("name", field.getName());
+      // TODO: optimize fetch for translation
+      gridCol
+          .setData("name", getTranslatedFieldName(field, OBContext.getOBContext().getLanguage()));
       gridCol.setData("type", "string");
 
       gridCol.setData("width", calculateColumnWidth(field.getDisplayedLength()));
@@ -754,9 +741,24 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     c.add(Expression.eq(Field.PROPERTY_TAB, tab));
     c.add(Expression.eq(Field.PROPERTY_DISPLAYED, Boolean.TRUE));
     c.add(Expression.eq(Field.PROPERTY_SHOWINGRIDVIEW, Boolean.TRUE));
+    c.setFetchMode("column", FetchMode.JOIN); // optimize column association
     c.addOrderBy(Field.PROPERTY_SEQUENCENUMBER, true);
     List<Field> fields = c.list();
     return fields;
+  }
+
+  private String getTranslatedFieldName(Field field, Language lang) {
+    OBCriteria<FieldTrl> c = OBDal.getInstance().createCriteria(FieldTrl.class);
+    c.add(Expression.eq(FieldTrl.PROPERTY_FIELD, field));
+    c.add(Expression.eq(FieldTrl.PROPERTY_LANGUAGE, lang));
+    List<FieldTrl> l = c.list();
+    if (l.isEmpty()) {
+      log4j.error("baseName: " + field.getName());
+      return field.getName();
+    }
+    // assuming (field,language) is unique
+    log4j.error("trl'ed name: " + l.get(0).getName());
+    return l.get(0).getName();
   }
 
   /**
@@ -795,9 +797,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     Date dateTo = parseDate(strDateTo, dateFormat);
 
     try {
-      // build sql orderBy clause
-      String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-
       if (strNewFilter.equals("1") || strNewFilter.equals("")) {
         // New filter or first load
         strNumRows = getCountRowsDeleted(vars, tabId, tableId, offset, pageSize, strDateFrom,
@@ -810,20 +809,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       // get data
       data = getDataRowsDeleted(headers, vars, tabId, tableId, offset, pageSize, strDateFrom,
           strDateTo, userId);
-    } catch (ServletException e) {
-      log4j.error("Error getting row data: ", e);
-      OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-      if (!myError.isConnectionAvailable()) {
-        bdErrorAjax(response, "Error", "Connection Error", "No database connection");
-        return;
-      } else {
-        type = myError.getType();
-        title = myError.getTitle();
-        if (!myError.getMessage().startsWith("<![CDATA["))
-          description = "<![CDATA[" + myError.getMessage() + "]]>";
-        else
-          description = myError.getMessage();
-      }
     } catch (Exception e) {
       log4j.error("Error getting row data: ", e);
       type = "Error";
@@ -1021,20 +1006,21 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
    * @param process
    *          uuid pointing to a model table defined via processType
    */
-  private static String getFormattedProcess(String processType, String process) {
+  private String getFormattedProcess(String processType, String process) {
     if (processType == null || process == null) {
       return " ";
     }
 
-    // TODO: translation for processType label and object names
-
     if ("X".equals(processType)) {
-      return "Form: " + OBDal.getInstance().get(Form.class, process).getName();
+      String formLabel = getTranslatedMessage(adMessageIdForForm);
+      return formLabel + ": " + getTranslatedFormName(process);
     }
     if ("P".equals(processType) || "R".equals(processType)) {
-      return "Process: "
-          + OBDal.getInstance().get(org.openbravo.model.ad.ui.Process.class, process).getName();
+      String processLabel = getTranslatedMessage(adMessageIdForProcess);
+      return processLabel + ": " + getTranslatedProcessName(process);
     }
+    // no translation for the next four, as either no _trl table exists, or the application elements
+    // are not used/don't trigger db-changes
     if ("T".equals(processType)) {
       return "Task: " + OBDal.getInstance().get(Task.class, process).getName();
     }
@@ -1045,13 +1031,64 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       return "Workflow: " + OBDal.getInstance().get(Workflow.class, process).getName();
     }
     if ("C".equals(processType)) {
-      return "Callout: " + OBDal.getInstance().get(Callout.class, process).getName();
+      String calloutLabel = getTranslatedMessage(adMessageIdForCallout);
+      return calloutLabel + ": " + OBDal.getInstance().get(Callout.class, process).getName();
     }
     // all other cases -> Tab
-    return "Window: " + OBDal.getInstance().get(Tab.class, process).getWindow().getName();
+    String windowLabel = getTranslatedMessage(adMessageIdForWindow);
+    return windowLabel + ": " + getTranslatedWindowName(process);
   }
 
-  // TODO: column name translation (i.e. via ad_element)
+  private String getTranslatedMessage(String msgId) {
+    Message msg = OBDal.getInstance().get(Message.class, msgId);
+    OBCriteria<MessageTrl> c = OBDal.getInstance().createCriteria(MessageTrl.class);
+    c.add(Expression.eq(MessageTrl.PROPERTY_MESSAGE, msg));
+    c.add(Expression.eq(MessageTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    List<MessageTrl> l = c.list();
+    if (l.isEmpty()) {
+      return msg.getMessageText();
+    }
+    return l.get(0).getMessageText();
+  }
+
+  private String getTranslatedWindowName(String tabId) {
+    Window w = OBDal.getInstance().get(Tab.class, tabId).getWindow();
+    OBCriteria<WindowTrl> c = OBDal.getInstance().createCriteria(WindowTrl.class);
+    c.add(Expression.eq(WindowTrl.PROPERTY_WINDOW, w));
+    c.add(Expression.eq(WindowTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    List<WindowTrl> l = c.list();
+    if (l.isEmpty()) {
+      return w.getName();
+    }
+    return l.get(0).getName();
+  }
+
+  private String getTranslatedProcessName(String processId) {
+    org.openbravo.model.ad.ui.Process p = OBDal.getInstance().get(
+        org.openbravo.model.ad.ui.Process.class, processId);
+    OBCriteria<ProcessTrl> c = OBDal.getInstance().createCriteria(ProcessTrl.class);
+    c.add(Expression.eq(ProcessTrl.PROPERTY_PROCESS, p));
+    c.add(Expression.eq(ProcessTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    List<ProcessTrl> l = c.list();
+    if (l.isEmpty()) {
+      return p.getName();
+    }
+    return l.get(0).getName();
+  }
+
+  private String getTranslatedFormName(String formId) {
+    Form f = OBDal.getInstance().get(Form.class, formId);
+    OBCriteria<FormTrl> c = OBDal.getInstance().createCriteria(FormTrl.class);
+    c.add(Expression.eq(FormTrl.PROPERTY_SPECIALFORM, f));
+    c.add(Expression.eq(FormTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    List<FormTrl> l = c.list();
+    if (l.isEmpty()) {
+      return f.getName();
+    }
+    return l.get(0).getName();
+  }
+
+  // FIXME: column name translation (i.e. via ad_element)
   private String getFormattedColumn(AuditTrailRaw auditRow) {
     String columnId = auditRow.getColumn();
     Column col = OBDal.getInstance().get(Column.class, columnId);
