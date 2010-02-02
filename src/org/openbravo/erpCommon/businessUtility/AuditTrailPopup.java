@@ -720,14 +720,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     gridCol.setData("issortable", "false");
     data.add(gridCol);
 
-    // TODO: ordering consistent with grid view
+    // TODO: optimize fetch mode for trl+column
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    List<Field> fields = tab.getADFieldList();
+    List<Field> fields = getFieldListForTab(vars, tab);
     for (Field field : fields) {
-      // filter by field with isShownInGridView
-      if (!field.isShowInGridView()) {
-        continue;
-      }
       Column col = field.getColumn();
       gridCol = new SQLReturnObject();
       gridCol.setData("columnname", col.getDBColumnName());
@@ -748,6 +744,19 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     SQLReturnObject[] result = new SQLReturnObject[data.size()];
     data.toArray(result);
     return result;
+  }
+
+  /**
+   * Get the ordered list of fields shown in a grid view of a specific tab.
+   */
+  private List<Field> getFieldListForTab(VariablesSecureApp vars, Tab tab) {
+    OBCriteria<Field> c = OBDal.getInstance().createCriteria(Field.class);
+    c.add(Expression.eq(Field.PROPERTY_TAB, tab));
+    c.add(Expression.eq(Field.PROPERTY_DISPLAYED, Boolean.TRUE));
+    c.add(Expression.eq(Field.PROPERTY_SHOWINGRIDVIEW, Boolean.TRUE));
+    c.addOrderBy(Field.PROPERTY_SEQUENCENUMBER, true);
+    List<Field> fields = c.list();
+    return fields;
   }
 
   /**
@@ -907,6 +916,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
           row.getField("audittrailprocesstype"), row.getField("audittrailprocessid")));
       // copy and beautify data columns
       for (Field field : tab.getADFieldList()) {
+        // no need to format hidden fields
+        if (!field.isShowInGridView() || !field.isDisplayed()) {
+          continue;
+        }
         Column col = field.getColumn();
         String value = row.getField(col.getDBColumnName());
         // beautify it
