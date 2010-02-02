@@ -79,7 +79,7 @@ BEGIN
     FROM M_PRODUCT 
     WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
     IF (v_AttrSetValueType='F') THEN
-     RAISE_APPLICATION_ERROR(-20556, 'Attribute Set Value Type is Fixed for this product. Please delete the Attribute Set Value.');
+     RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
     END IF;
    END IF;
   END IF;
