@@ -34,6 +34,7 @@ v_ParentTax C_TAX.C_TAX_ID%TYPE;
 TYPE RECORD IS REF CURSOR;
       Cur_taxes RECORD;
 v_Level NUMBER;
+v_Count NUMBER;
 BEGIN
   v_Level:=p_Level;
     FOR Cur_taxes IN
@@ -45,6 +46,14 @@ BEGIN
     LOOP
       IF (Cur_taxes.IsSummary='Y') THEN
         v_Level:=C_TAX_GET_LEVEL(Cur_taxes.C_Tax_ID, p_TargetTax, v_Level);
+        SELECT COUNT(C_TAX_ID)
+        INTO v_Count
+        FROM C_TAX 
+        WHERE C_TAX_ISMEMBER(Cur_taxes.C_Tax_ID, p_TargetTax)=1
+        AND C_TAX_ID=p_TargetTax;
+        IF(v_Count=1) THEN
+          RETURN v_Level;
+        END IF;
         --v_Level:=v_Level + 1;
       END IF;
       IF (Cur_taxes.IsSummary='N') THEN
