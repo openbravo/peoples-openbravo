@@ -45,7 +45,7 @@ public class UIPAttribute extends UITableDir {
     if (field == null)
       return;
 
-    field.setProperty("ColumnNameSearch", "AD_Reference_Value_ID");
+    field.setProperty("ColumnNameSearch", "M_AttributeSetInstance_ID");
     super.identifier(tableSql, parentTableName, field, identifierName, realName, tableRef);
   }
 
