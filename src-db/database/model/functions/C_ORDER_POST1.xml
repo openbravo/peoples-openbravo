@@ -991,7 +991,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
     Cur_Tax RECORD;
     Cur_MultiTax RECORD;
     xTotalLines NUMBER:=0;
-    v_TaxBaseAmt NUMBER:=0;
+    v_LineNetAmt NUMBER:=0;
     xTaxAmt NUMBER:=0;
     xGrandTotal NUMBER:=0;
     HeaderNotAdded BOOLEAN:=TRUE;
@@ -1000,36 +1000,40 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
     v_lineNo NUMBER:= 0;
   BEGIN
     v_ResultStr:='DeleteOldTaxes';
+    DELETE FROM C_ORDERLINETAX  WHERE C_OrderLine_ID IN (SELECT C_OrderLine_ID from C_OrderLine
+                                                        WHERE C_Order_ID = v_Record_ID);
     DELETE FROM C_ORDERTAX  WHERE C_Order_ID=v_Record_ID;
     -- For all Tax Rates
     v_ResultStr:='InsertNewTaxes';
     FOR Cur_Tax IN
-      (SELECT l.C_Tax_ID, o.IsTaxIncluded,
-        SUM(l.LineNetAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS LineNet,
+      (SELECT l.C_OrderLine_ID, l.C_Tax_ID, o.IsTaxIncluded,
+        SUM(l.LineNetAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS LineNetAmt,
+        SUM(l.TaxBaseAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS TaxBaseAmt,
         SUM(o.FreightAmt) + SUM(coalesce(o.ChargeAmt,0)) AS HeaderNet,
-        t.Rate, t.IsSummary, c.StdPrecision
+        t.Rate, t.IsSummary, c.StdPrecision, t.BaseAmount, o.C_Order_ID
       FROM C_ORDER o,  C_ORDERLINE l,
            C_TAX t, C_CURRENCY c
       WHERE o.C_Order_ID=l.C_Order_ID
         AND o.C_Order_ID=v_Record_ID -- Parameter
         AND l.C_Tax_ID=t.C_Tax_ID
         AND o.C_Currency_ID=c.C_Currency_ID
-      GROUP BY l.C_Tax_ID,
+      GROUP BY l.C_OrderLine_ID, l.C_Tax_ID,
         o.IsTaxIncluded,
         t.Rate,
         t.IsSummary,
-        c.StdPrecision
-      ORDER BY 3 DESC
+        c.StdPrecision,
+        t.BaseAmount, 
+        o.C_Order_ID
+      ORDER BY 4 DESC
       )
     LOOP
-      v_TaxBaseAmt:=Cur_Tax.LineNet;
-      xTotalLines:=xTotalLines + v_TaxBaseAmt; -- w/o Header Freight/Charge
-
+      v_LineNetAmt:=Cur_Tax.LineNetAmt;
+      xTotalLines:=xTotalLines + v_LineNetAmt; -- w/o Header Freight/Charge
       IF(HeaderNotAdded) THEN --  add header net to first tax
         HeaderNotAdded:=FALSE;
-        v_TaxBaseAmt:=v_TaxBaseAmt + Cur_Tax.HeaderNet;
+        v_LineNetAmt:=v_LineNetAmt + Cur_Tax.HeaderNet;
       END IF;
-      C_ORDERTAX_INSERT(v_Record_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, v_TaxBaseAmt, Cur_Tax.StdPrecision);
+      C_ORDERLINETAX_INSERT(Cur_Tax.C_Order_ID, Cur_Tax.C_OrderLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
     END LOOP; -- Insert New Taxes
     SELECT COALESCE(SUM(TAXAMT), 0)
     INTO xGrandTotal

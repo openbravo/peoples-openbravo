@@ -1162,20 +1162,24 @@ cWithHoldId varchar2(32);
           v_C_InvoiceTax_ID VARCHAR2(32);
         BEGIN
           v_ResultStr:='DeleteOldTaxes';
+          DELETE FROM C_INVOICELINETAX  WHERE C_InvoiceLine_ID IN (SELECT C_InvoiceLine_ID from C_InvoiceLine
+                                                    WHERE C_Invoice_ID = v_Record_ID);
           DELETE FROM C_INVOICETAX
            WHERE C_Invoice_ID=v_Record_ID
              AND Recalculate = 'Y';
           -- For all Tax Rates
           v_ResultStr:='InsertNewTaxes';
           FOR Cur_Tax IN
-            (SELECT l.C_Tax_ID,
+            (SELECT l.C_InvoiceLine_ID, l.C_Tax_ID,
               i.IsTaxIncluded,
-              COALESCE(SUM(l.LineNetAmt), 0) + COALESCE(SUM(l.ChargeAmt), 0) AS LineNet,
+              COALESCE(SUM(l.LineNetAmt),0) + COALESCE(SUM(l.ChargeAmt), 0) AS LineNetAmt,
+              COALESCE(SUM(l.TaxBaseAmt), 0) + COALESCE(SUM(l.ChargeAmt), 0) AS TaxBaseAmt,
               COALESCE(SUM(i.ChargeAmt), 0) AS HeaderNet,
               t.Rate,
               t.IsSummary,
               c.StdPrecision,
-              t.Cascade
+              t.Cascade,
+              t.BaseAmount
             FROM C_INVOICE i,
               C_INVOICELINE l,
               C_TAX t,
@@ -1184,30 +1188,24 @@ cWithHoldId varchar2(32);
               AND i.C_Invoice_ID=v_Record_ID -- Parameter
               AND l.C_Tax_ID=t.C_Tax_ID
               AND i.C_Currency_ID=c.C_Currency_ID
-            GROUP BY l.C_Tax_ID,
+            GROUP BY l.C_InvoiceLine_ID, 
+              l.C_Tax_ID,
               i.IsTaxIncluded,
               t.Rate,
               t.IsSummary,
               c.StdPrecision,
-              t.Cascade
-            ORDER BY 3 DESC
+              t.Cascade,
+              t.BaseAmount
+            ORDER BY 4 DESC
             )
           LOOP
-            xTaxBaseAmt:=Cur_Tax.LineNet;
+            xTaxBaseAmt:=Cur_Tax.LineNetAmt;
             v_TotalLines:=v_TotalLines + xTaxBaseAmt; -- w/o Header Freight/Charge
             IF(HeaderNotAdded) THEN -- add header to first
               HeaderNotAdded:=FALSE;
               xTaxBaseAmt:=xTaxBaseAmt + Cur_Tax.HeaderNet;
             END IF;
-            IF(Cur_Tax.Cascade='Y') THEN
-              SELECT COALESCE(SUM(TAXAMT), 0)
-              INTO v_PreviousTaxAmt
-              FROM C_INVOICETAX
-              WHERE C_INVOICE_ID = v_Record_ID;
-            ELSE
-              v_PreviousTaxAmt:=0;
-            END IF;
-            C_INVOICETAX_INSERT(v_Record_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, xTaxBaseAmt, v_PreviousTaxAmt, Cur_Tax.StdPrecision);
+            C_INVOICELINETAX_INSERT(v_Record_ID, Cur_Tax.C_InvoiceLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
           END LOOP; -- Insert New Taxes
           -- Update Header
           SELECT COALESCE(SUM(TaxAmt),0)
