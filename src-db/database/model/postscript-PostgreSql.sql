@@ -715,7 +715,7 @@ code := code ||
     FROM AD_TABLE
    WHERE AD_TABLE_ID = '''||cur_tables.ad_table_id||''';
   IF V_ISAUDITED = ''N'' THEN 
-    RETURN;
+    IF TG_OP = ''DELETE'' THEN RETURN OLD; ELSE RETURN NEW; END IF;
   END IF;
 ';
 end if;
