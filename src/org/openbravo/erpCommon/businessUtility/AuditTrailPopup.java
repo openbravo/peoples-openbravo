@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.FetchMode;
-import org.hibernate.Query;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.openbravo.base.filter.IsIDFilter;
@@ -553,40 +552,27 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private String getCountRowsHistory(String tableId, String recordId, String userId,
       String columnId, Date dateFrom, Date dateTo) {
     long s1 = System.currentTimeMillis();
-    // FIXME: OBQuery, or manual client/org filter?
-    String hql = "select count(*) from AD_Audit_Trail_Raw where table = :table and recordID = :record";
-    if (!userId.isEmpty()) {
-      hql += " and userContact = :userId";
-    }
-    if (!columnId.isEmpty()) {
-      hql += " and column = :columnId";
-    }
-    if (dateFrom != null) {
-      hql += " and eventTime >= :dateFrom";
-    }
-    if (dateTo != null) {
-      hql += " and eventTime <= :dateTo";
-    }
-    Query q = OBDal.getInstance().getSession().createQuery(hql);
-    q.setParameter("table", tableId);
-    q.setParameter("record", recordId);
-    if (!userId.isEmpty()) {
-      q.setParameter("userId", userId);
-    }
-    if (!columnId.isEmpty()) {
-      q.setParameter("columnId", columnId);
-    }
-    if (dateFrom != null) {
-      q.setParameter("dateFrom", dateFrom);
-    }
-    if (dateTo != null) {
-      q.setParameter("dateTo", dateTo);
-    }
 
-    Long count = (Long) q.list().get(0);
+    OBCriteria<AuditTrailRaw> crit = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
+    crit.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, tableId));
+    crit.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+    if (!userId.isEmpty()) {
+      crit.add(Expression.eq(AuditTrailRaw.PROPERTY_USERCONTACT, userId));
+    }
+    if (!columnId.isEmpty()) {
+      crit.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, columnId));
+    }
+    if (dateFrom != null) {
+      crit.add(Expression.ge(AuditTrailRaw.PROPERTY_EVENTTIME, dateFrom));
+    }
+    if (dateTo != null) {
+      crit.add(Expression.le(AuditTrailRaw.PROPERTY_EVENTTIME, dateTo));
+    }
+    int count = crit.count();
 
     long s2 = System.currentTimeMillis();
     log4j.debug("getCountRowsHistory took: " + (s2 - s1) + " result= " + count);
+
     return String.valueOf(count);
   }
 
