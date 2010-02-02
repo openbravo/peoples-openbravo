@@ -354,17 +354,17 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       c.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, table.getId()));
       c.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
       c.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, prop.getColumnId()));
-      List<AuditTrailRaw> l = c.list();
+      AuditTrailRaw atr = (AuditTrailRaw) c.uniqueResult();
       String value = "(unknown)";
-      if (!l.isEmpty()) {
+      if (atr != null) {
         // get formatted old value
-        value = getFormattedValue(l.get(0), false);
+        value = getFormattedValue(atr, false);
       }
       result.append(value);
-      result.append(' '); // delimiter between columns
+      result.append(" - "); // delimiter between columns
     }
     // remove ' ' after last column
-    result.setLength(result.length() - 1);
+    result.setLength(result.length() - 3);
     return result.toString();
   }
 
@@ -599,7 +599,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     crit.setFirstResult(offset);
     crit.setMaxResults(pageSize);
     List<AuditTrailRaw> rows = crit.list();
-    log4j.error("numRows: " + rows.size());
 
     /*
      * beautify result logic is kept simple: iterate over main query result and do needed extra
@@ -737,14 +736,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     OBCriteria<FieldTrl> c = OBDal.getInstance().createCriteria(FieldTrl.class);
     c.add(Expression.eq(FieldTrl.PROPERTY_FIELD, field));
     c.add(Expression.eq(FieldTrl.PROPERTY_LANGUAGE, lang));
-    List<FieldTrl> l = c.list();
-    if (l.isEmpty()) {
-      log4j.error("baseName: " + field.getName());
+    FieldTrl trl = (FieldTrl) c.uniqueResult();
+    if (trl == null) {
       return field.getName();
     }
-    // assuming (field,language) is unique
-    log4j.error("trl'ed name: " + l.get(0).getName());
-    return l.get(0).getName();
+    return trl.getName();
   }
 
   /**
@@ -847,9 +843,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private String getCountRowsDeleted(VariablesSecureApp vars, String tabId, String tableId,
       int offset, int pageSize, String dateFrom, String dateTo, String userId) {
-    log4j.error("countRowsDeleted - tableId:" + tableId);
     long s1 = System.currentTimeMillis();
-    // TODO: specify correct offset,pageSize if we want to convert to pagedGrid
     FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId, 0, 0,
         true, dateFrom, dateTo, userId);
     String countResult = rows[0].getField("counter");
@@ -1030,11 +1024,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     OBCriteria<MessageTrl> c = OBDal.getInstance().createCriteria(MessageTrl.class);
     c.add(Expression.eq(MessageTrl.PROPERTY_MESSAGE, msg));
     c.add(Expression.eq(MessageTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
-    List<MessageTrl> l = c.list();
-    if (l.isEmpty()) {
+    MessageTrl trl = (MessageTrl) c.uniqueResult();
+    if (trl == null) {
       return msg.getMessageText();
     }
-    return l.get(0).getMessageText();
+    return trl.getMessageText();
   }
 
   private String getTranslatedWindowName(String tabId) {
@@ -1042,11 +1036,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     OBCriteria<WindowTrl> c = OBDal.getInstance().createCriteria(WindowTrl.class);
     c.add(Expression.eq(WindowTrl.PROPERTY_WINDOW, w));
     c.add(Expression.eq(WindowTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
-    List<WindowTrl> l = c.list();
-    if (l.isEmpty()) {
+    WindowTrl trl = (WindowTrl) c.uniqueResult();
+    if (trl == null) {
       return w.getName();
     }
-    return l.get(0).getName();
+    return trl.getName();
   }
 
   private String getTranslatedProcessName(String processId) {
@@ -1055,11 +1049,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     OBCriteria<ProcessTrl> c = OBDal.getInstance().createCriteria(ProcessTrl.class);
     c.add(Expression.eq(ProcessTrl.PROPERTY_PROCESS, p));
     c.add(Expression.eq(ProcessTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
-    List<ProcessTrl> l = c.list();
-    if (l.isEmpty()) {
+    ProcessTrl trl = (ProcessTrl) c.uniqueResult();
+    if (trl == null) {
       return p.getName();
     }
-    return l.get(0).getName();
+    return trl.getName();
   }
 
   private String getTranslatedFormName(String formId) {
@@ -1067,11 +1061,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     OBCriteria<FormTrl> c = OBDal.getInstance().createCriteria(FormTrl.class);
     c.add(Expression.eq(FormTrl.PROPERTY_SPECIALFORM, f));
     c.add(Expression.eq(FormTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
-    List<FormTrl> l = c.list();
-    if (l.isEmpty()) {
+    FormTrl trl = (FormTrl) c.uniqueResult();
+    if (trl == null) {
       return f.getName();
     }
-    return l.get(0).getName();
+    return trl.getName();
   }
 
   // FIXME: column name translation (i.e. via ad_element)
@@ -1152,10 +1146,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       String referencedPropertyName, String value) {
     OBCriteria<BaseOBObject> c = OBDal.getInstance().createCriteria(targetEntityName);
     c.add(Expression.eq(referencedPropertyName, value));
-    List<BaseOBObject> l = c.list();
-    if (!l.isEmpty()) {
-      // assume referencedProperty is unique -> use first value retrieved
-      BaseOBObject bob = l.get(0);
+    BaseOBObject bob = (BaseOBObject) c.uniqueResult();
+    if (bob != null) {
       String targetIdentifier = (bob != null) ? bob.getIdentifier() : "(deleted)";
       return targetIdentifier;
     }
@@ -1176,20 +1168,21 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         org.openbravo.model.ad.domain.List.class);
     critList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, listRef));
     critList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, value));
-    List<org.openbravo.model.ad.domain.List> resList = critList.list();
-    if (resList.isEmpty()) {
+    org.openbravo.model.ad.domain.List list = (org.openbravo.model.ad.domain.List) critList
+        .uniqueResult();
+    if (list == null) {
       return value;
     }
     // check if we have a translation
     OBCriteria<ListTrl> critListTrl = OBDal.getInstance().createCriteria(ListTrl.class);
-    critListTrl.add(Expression.eq(ListTrl.PROPERTY_LISTREFERENCE, resList.get(0)));
+    critListTrl.add(Expression.eq(ListTrl.PROPERTY_LISTREFERENCE, list));
     critListTrl.add(Expression
         .eq(ListTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
-    List<ListTrl> resListTrl = critListTrl.list();
-    if (!resListTrl.isEmpty()) {
-      return resListTrl.get(0).getName();
+    ListTrl trl = (ListTrl) critListTrl.uniqueResult();
+    if (trl != null) {
+      return trl.getName();
     } else {
-      return resList.get(0).getName();
+      return list.getName();
     }
   }
 
