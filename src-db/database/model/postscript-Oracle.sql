@@ -849,7 +849,7 @@ END;
 update ad_reference
    set parentreference_id =( CASE VALIDATIONTYPE WHEN 'S' THEN '30' WHEN 'L' THEN '17' WHEN 'T' THEN '18' end)
    where validationtype in ('S','L','T')
-   and parentreference_id is null;
+   and parentreference_id is null
 /-- END
 
 CALL DBA_RECOMPILE(NULL)
