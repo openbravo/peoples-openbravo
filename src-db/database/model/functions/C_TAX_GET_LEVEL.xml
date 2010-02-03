@@ -28,7 +28,7 @@
 ************************************************************************/
 
 /*
-* For the given target tax, it returns level. Level indicates the sequence number for the calculation of the given tax in its tree
+* For the given target tax, it returns level. Level indicates the sequence NUMBER for the calculation of the given tax in its tree
 */
 v_ParentTax C_TAX.C_TAX_ID%TYPE;
 TYPE RECORD IS REF CURSOR;
