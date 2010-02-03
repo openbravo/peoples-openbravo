@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICELINETAX_INSERT">
     <function name="C_INVOICELINETAX_INSERT" type="NULL">
+      <parameter name="p_org_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <parameter name="p_invoice_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -56,14 +59,13 @@
   v_LineNo C_INVOICETAX.LINE%TYPE;
   v_Rate C_TAX.RATE%TYPE;
   v_Client_ID VARCHAR2(32) ;
-  v_Org_ID VARCHAR2(32) ;
   TYPE RECORD IS REF CURSOR;
     Cur_Taxes RECORD;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN --BODY
     v_TaxBaseAmount:=0;
-    SELECT ISSUMMARY, CASCADE, RATE, BASEAMOUNT, AD_CLIENT_ID, AD_ORG_ID, C_TAXBASE_ID
-    INTO v_IsSummary, v_Cascade, v_Rate, v_BaseAmount, v_Client_ID, v_Org_ID, v_C_TaxBase_ID
+    SELECT ISSUMMARY, CASCADE, RATE, BASEAMOUNT, AD_CLIENT_ID, C_TAXBASE_ID
+    INTO v_IsSummary, v_Cascade, v_Rate, v_BaseAmount, v_Client_ID, v_C_TaxBase_ID
     FROM C_TAX
     WHERE C_TAX_ID = p_tax_id;
     IF(v_BaseAmount='LNA' OR v_BaseAmount='LNATAX') THEN
@@ -100,7 +102,7 @@
       IsActive, Created, CreatedBy, Updated,
       UpdatedBy, TaxBaseAmt, TaxAmt, Line)
       VALUES (
-      GET_UUID(), p_invoiceline_id, p_invoice_id, p_tax_id, v_Client_ID, v_Org_ID,
+      GET_UUID(), p_invoiceline_id, p_invoice_id, p_tax_id, v_Client_ID, p_org_id,
       'Y', now(), p_user_id, now(),
       p_user_id, v_TaxBaseAmount, ROUND(v_TaxBaseAmount*v_Rate / 100, p_StdPrecision), v_LineNo);
     ELSE
@@ -110,7 +112,7 @@
         WHERE Parent_Tax_ID=p_tax_id
         ORDER BY Line)
       LOOP
-        C_INVOICELINETAX_INSERT(p_invoice_id, p_invoiceline_id, p_user_id, p_originaltax_id, Cur_Taxes.C_Tax_ID, p_LineNetAmt, p_AlternateTaxBaseAmt, p_StdPrecision);
+        C_INVOICELINETAX_INSERT(p_org_id, p_invoice_id, p_invoiceline_id, p_user_id, p_originaltax_id, Cur_Taxes.C_Tax_ID, p_LineNetAmt, p_AlternateTaxBaseAmt, p_StdPrecision);
       END LOOP;
     END IF;
     RETURN;

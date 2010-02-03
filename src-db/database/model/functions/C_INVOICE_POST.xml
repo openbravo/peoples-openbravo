@@ -1205,7 +1205,7 @@ cWithHoldId varchar2(32);
               HeaderNotAdded:=FALSE;
               xTaxBaseAmt:=xTaxBaseAmt + Cur_Tax.HeaderNet;
             END IF;
-            C_INVOICELINETAX_INSERT(v_Record_ID, Cur_Tax.C_InvoiceLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
+            C_INVOICELINETAX_INSERT(v_Org_ID, v_Record_ID, Cur_Tax.C_InvoiceLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
           END LOOP; -- Insert New Taxes
           -- Update Header
           SELECT COALESCE(SUM(TaxAmt),0)

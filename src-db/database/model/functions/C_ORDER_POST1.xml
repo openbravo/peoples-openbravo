@@ -1033,7 +1033,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
         HeaderNotAdded:=FALSE;
         v_LineNetAmt:=v_LineNetAmt + Cur_Tax.HeaderNet;
       END IF;
-      C_ORDERLINETAX_INSERT(Cur_Tax.C_Order_ID, Cur_Tax.C_OrderLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
+      C_ORDERLINETAX_INSERT(v_Org_ID, Cur_Tax.C_Order_ID, Cur_Tax.C_OrderLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
     END LOOP; -- Insert New Taxes
     SELECT COALESCE(SUM(TAXAMT), 0)
     INTO xGrandTotal
