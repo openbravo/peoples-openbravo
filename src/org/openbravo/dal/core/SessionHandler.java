@@ -196,7 +196,6 @@ public class SessionHandler implements OBNotSingleton {
     setSession(createSession());
     getSession().setFlushMode(FlushMode.COMMIT);
     Check.isTrue(tx == null, "tx must be null before begin");
-
     tx = getSession().beginTransaction();
     log.debug("Transaction started");
   }

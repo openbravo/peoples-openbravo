@@ -73,8 +73,6 @@ public class Property {
   private Boolean allowDerivedRead;
   private boolean isClientOrOrganization;
 
-  private String columnId;
-
   private PropertyValidator validator;
 
   private boolean isCompositeId;
@@ -140,8 +138,6 @@ public class Property {
     setInactive(!fromColumn.isActive());
 
     setModule(fromColumn.getModule());
-
-    setColumnId(fromColumn.getId());
   }
 
   // TODO: remove this hack when possible
