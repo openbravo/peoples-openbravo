@@ -504,8 +504,8 @@ function putWindowElementFocus(obj, event) {
       obj.focus();
       focusGenericTree();
     } else if (currentWindowElementType == 'custom') {  //Added for custom element support
-      if (obj.setFocusLogic) {
-        obj.setFocusLogic('focus');
+      if (obj.focusLogic) {
+        obj.focusLogic('focus');
       }
     } else {
       if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
@@ -588,8 +588,8 @@ function eraseWindowElementFocus(obj) {
     } else if (previousWindowElementType == 'genericTree') {
       blurGenericTree();
     } else if (previousWindowElementType == 'custom') {  //Added for custom element support
-      if (obj.setFocusLogic) {
-        obj.setFocusLogic('blur');
+      if (obj.focusLogic) {
+        obj.focusLogic('blur');
       }
     } else {
     }
@@ -619,8 +619,8 @@ function mustBeJumped(obj) {
 }
 
 function mustBeIgnored(obj) {
-  if (obj.setFocusLogic) {  //Added for custom element support
-    return obj.setFocusLogic('mustBeIgnored');
+  if (obj.focusLogic) {  //Added for custom element support
+    return obj.focusLogic('mustBeIgnored');
   }
   if (obj.style.display == 'none') return true;
   if (obj.getAttribute('type') == 'hidden') {
@@ -661,7 +661,7 @@ function couldHaveFocus(obj) {
   } catch(e) {
   }
   try {  //Added for custom element support
-    if (obj.setFocusLogic) {
+    if (obj.focusLogic) {
       currentWindowElementType = 'custom';
       return true;
     }
