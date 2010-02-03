@@ -30834,7 +30834,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--69155DDA0CA84861A828892DB4DC2E7C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--69155DDA0CA84861A828892DB4DC2E7C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--69155DDA0CA84861A828892DB4DC2E7C-->  <VALUE><![CDATA[M_PRODUCT_ATSETVALTYPE_CHK]]></VALUE>
-<!--69155DDA0CA84861A828892DB4DC2E7C-->  <MSGTEXT><![CDATA[Blank the Attribute Set Value Type field value before deleting the Attribute Set Value field value.]]></MSGTEXT>
+<!--69155DDA0CA84861A828892DB4DC2E7C-->  <MSGTEXT><![CDATA[Please specify in the Use Attribute Set Value As field how the Attribute Set Value defined will be used.]]></MSGTEXT>
 <!--69155DDA0CA84861A828892DB4DC2E7C-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--69155DDA0CA84861A828892DB4DC2E7C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--69155DDA0CA84861A828892DB4DC2E7C--></AD_MESSAGE>
