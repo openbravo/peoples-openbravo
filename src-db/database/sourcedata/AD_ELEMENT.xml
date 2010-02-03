@@ -24898,11 +24898,10 @@ Commercial modules can have a fee to be payed before they can be installed.]]></
 <!--7E36B60C210930F0E040007F01016399-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7E36B60C210930F0E040007F01016399-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7E36B60C210930F0E040007F01016399-->  <COLUMNNAME><![CDATA[Attrsetvaluetype]]></COLUMNNAME>
-<!--7E36B60C210930F0E040007F01016399-->  <NAME><![CDATA[Attribute Set Value Type]]></NAME>
-<!--7E36B60C210930F0E040007F01016399-->  <PRINTNAME><![CDATA[Attribute Set Value Type]]></PRINTNAME>
+<!--7E36B60C210930F0E040007F01016399-->  <NAME><![CDATA[Use Attribute Set Value As]]></NAME>
+<!--7E36B60C210930F0E040007F01016399-->  <PRINTNAME><![CDATA[Use Attribute Set Value As]]></PRINTNAME>
 <!--7E36B60C210930F0E040007F01016399-->  <DESCRIPTION><![CDATA[A distinct Attribute Set Value characteristic.]]></DESCRIPTION>
-<!--7E36B60C210930F0E040007F01016399-->  <HELP><![CDATA[* Default: This means that the attribute set value defined will be defaulted in each of the transactions. In other words, the user will not have to care about setting it each time when creating transactions such as goods receipts and shipments.
-* Fixed: This means that the attribute set value will always have this value and no other value will be allowed for it. ]]></HELP>
+<!--7E36B60C210930F0E040007F01016399-->  <HELP><![CDATA[Permits to define different types of Attribute Set Values, depending on their usage.]]></HELP>
 <!--7E36B60C210930F0E040007F01016399-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7E36B60C210930F0E040007F01016399--></AD_ELEMENT>
 
