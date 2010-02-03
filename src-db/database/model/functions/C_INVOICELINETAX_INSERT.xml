@@ -121,6 +121,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
   RAISE;
-END C_INVOICELINETAX_INSERT]]></body>
+END C_INVOICELINETAX_INSERT
+]]></body>
     </function>
   </database>

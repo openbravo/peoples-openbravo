@@ -90,6 +90,7 @@ BEGIN
     AND C_TAX_ID = :OLD.C_TAX_ID
     AND TAXAMT=0 AND TAXBASEAMT=0;
   END IF;
-END C_INVOICELINETAX_TRG]]></body>
+END C_INVOICELINETAX_TRG
+]]></body>
     </trigger>
   </database>

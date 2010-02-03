@@ -37,6 +37,7 @@ BEGIN
   ELSE
     RETURN C_TAX_GET_ROOT(v_ParentTax);
   END IF;
-END C_TAX_GET_ROOT]]></body>
+END C_TAX_GET_ROOT
+]]></body>
     </function>
   </database>

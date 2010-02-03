@@ -64,6 +64,7 @@ BEGIN
       END IF;
     END LOOP;
   RETURN v_Level;
-END C_TAX_GET_LEVEL]]></body>
+END C_TAX_GET_LEVEL
+]]></body>
     </function>
   </database>
