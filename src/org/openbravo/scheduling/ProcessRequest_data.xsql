@@ -71,7 +71,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	UPDATE AD_Process_Request
-      	SET Updated = NOW(), Status = ?
+      	SET Status = ?
       	WHERE AD_Process_Request_ID = ?
     ]]></Sql>
     <Parameter name="status"/>
@@ -81,7 +81,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	UPDATE AD_Process_Request
-      	SET Updated = NOW(), Status = ?,
+      	SET Status = ?,
       	Next_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
       	Scheduled_Finish = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS')
       	WHERE AD_Process_Request_ID = ?
@@ -95,7 +95,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	UPDATE AD_Process_Request
-      	SET Updated = NOW(), Status = ?, Channel = ?,
+      	SET Status = ?, Channel = ?,
       	Previous_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
       	Next_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
       	Scheduled_Finish = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS')
@@ -112,7 +112,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	UPDATE AD_Process_Request
-      	SET Updated = NOW(), Updatedby = ?, AD_User_ID = ?, Status = ?, Channel = ?, 
+      	SET Updatedby = ?, AD_User_ID = ?, Status = ?, Channel = ?,
       	Previous_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
       	Next_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
       	Scheduled_Finish = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),

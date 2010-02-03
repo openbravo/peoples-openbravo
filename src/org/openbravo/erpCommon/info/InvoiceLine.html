@@ -29,6 +29,7 @@
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
@@ -90,6 +91,28 @@ function onloadFunctions() {
   function onResizeDo(){
     resizeAreaInfo(true);
   }
+
+  function gridMovePage(direction) {
+	  dijit.byId('grid').gridMovePage(direction);
+	return true;
+  }
+ function updateHeader(liveGrid, offset) {
+	var backendPageSize = liveGrid.getBackendPageSize();
+	var currPageStart = (liveGrid.metaData.getBackendPage()*backendPageSize);
+	var pageFull = (liveGrid.metaData.getTotalRows() >= backendPageSize);
+	var firstPage = (liveGrid.metaData.getBackendPage() == 0);
+	var res = "<nobr class='DataGrid_Popup_text_bookmark'>";
+	if (!firstPage) {
+		res = res + "<a href='#' onclick='gridMovePage(\"PREVIOUSPAGE\"); setWindowElementFocus(\"grid_table_dummy_input\",\"id\");' class='DataGrid_Popup_text_pagerange' id='prevPage_link'>" + getMessage("GridPreviousPage") + " " + backendPageSize +"</a>&nbsp;|&nbsp;";
+	}
+	res = res + ((liveGrid.visibleRows>0)?(currPageStart+offset+1):0) + " - "+ (currPageStart+offset+liveGrid.visibleRows) + " / " + (currPageStart+liveGrid.metaData.getTotalRows());
+	if (pageFull) {
+		res = res + "&nbsp;|&nbsp;<a href='#' onclick='gridMovePage(\"NEXTPAGE\"); setWindowElementFocus(\"grid_table_dummy_input\",\"id\");' class='DataGrid_Popup_text_pagerange' id='nextPage_link'>" + getMessage("GridNextPage") + " " + backendPageSize +"</a>";
+	}
+	res = res + "</nobr>";
+	liveGrid.setGridPaging(!firstPage,pageFull);
+	dojo.byId('bookmark').innerHTML = res;
+   }
 </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -706,6 +729,15 @@ function onloadFunctions() {
                   <td><input type="text" class="DataGrid_Table_Dummy_Input" id="grid_table_dummy_input"></input></td>
                 </tr>
               </table>
+              <table width="100%" cellspacing="0" cellpadding="0" border="0" id="grid_bookmark">
+			                  <tr>
+			                    <td class="DataGrid_Popup_text_container">
+			                      <div id="bookmark">
+			                        <nobr class='DataGrid_Popup_text_bookmark'>&nbsp;</nobr>
+			                      </div>
+			                    </td>
+			                  </tr>
+			                </table>
 							<table width="100%" cellspacing="0" cellpadding="0" border="0" class="Main_Client_TableRelation" id="grid_table">
 								<tr>
 									<td>

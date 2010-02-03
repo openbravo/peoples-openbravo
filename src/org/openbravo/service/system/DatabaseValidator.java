@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,6 +74,7 @@ public class DatabaseValidator implements SystemValidator {
     final SystemValidationResult result = new SystemValidationResult();
 
     // read the tables
+
     final OBCriteria<Table> tcs = OBDal.getInstance().createCriteria(Table.class);
     tcs.add(Expression.eq(Table.PROPERTY_VIEW, false));
     final List<Table> adTables = tcs.list();
@@ -122,12 +123,17 @@ public class DatabaseValidator implements SystemValidator {
             .getDataPackage().getModule().getId().equals(moduleId)))
             && !adTable.getDBTableName().equalsIgnoreCase("AD_AUDIT_TRAIL")) {
           checkTableWithoutPrimaryKey(dbTable, result);
-          checkForeignKeys(dbTable, result);
           checkMaxObjectNameLength(dbTable, result);
         }
         matchColumns(adTable, dbTable, result);
         tmpDBTablesByName.remove(dbTable.getName().toUpperCase());
       }
+    }
+    for (int i = 0; i < database.getTableCount(); i++) {
+      checkForeignKeys(database.getTable(i), result);
+    }
+    for (int i = 0; i < database.getModifiedTableCount(); i++) {
+      checkForeignKeys(database.getModifiedTable(i), result);
     }
 
     // only check this one if the global validate check is done
@@ -388,6 +394,8 @@ public class DatabaseValidator implements SystemValidator {
       if (prim == String.class) {
         checkType(dbColumn, dbTable, result, new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR",
             "CLOB" });
+        // there are too many differences which make this check not relevant/practical at the moment
+        // checkLength(dbColumn, dbTable, result, property.getFieldLength());
       } else if (prim == Long.class) {
         checkType(dbColumn, dbTable, result, "DECIMAL");
       } else if (prim == Integer.class) {
@@ -458,7 +466,10 @@ public class DatabaseValidator implements SystemValidator {
     if (dbColumn.getSizeAsInt() != expectedLength) {
       result.addError(SystemValidationType.WRONG_LENGTH, "Column " + dbTable.getName() + "."
           + dbColumn.getName() + " has incorrect length, expecting " + expectedLength + " but was "
-          + dbColumn.getSizeAsInt());
+          + dbColumn.getSizeAsInt() + ". If this a foreign key column then the expected "
+          + "length is either 32 (a uuid) or based on"
+          + " the fieldLength (so not the db columnlength) of the referenced column"
+          + ", as defined in AD_COLUMN.");
     }
   }
 

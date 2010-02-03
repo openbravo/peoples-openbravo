@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -357,7 +357,7 @@ public class Wad extends DefaultHandler {
         TabsData tabsDataAux[];
         if (quick)
           tabsDataAux = TabsData.selectQuick(wad.pool);
-        else if (module.equals("%"))
+        else if (module.equals("%") || complete)
           tabsDataAux = TabsData.selectTabs(wad.pool, strCurrentWindow);
         else
           tabsDataAux = TabsData.selectTabsinModules(wad.pool, strCurrentWindow, module);
@@ -392,6 +392,7 @@ public class Wad extends DefaultHandler {
           wad.processActionButtonGenerics(fileActionButton);
           wad.processActionButtonXmlGenerics(fileActionButton);
           wad.processActionButtonHtmlGenerics(fileActionButton);
+          wad.processActionButtonSQLDefaultGenerics(fileActionButton);
         } else
           log4j.info("No changes in generic action button responser");
 
@@ -580,6 +581,44 @@ public class Wad extends DefaultHandler {
     } catch (final IOException e) {
       e.printStackTrace();
       log4j.error("Problem of IOExceptio in process of ActionButton_Responser");
+    }
+  }
+
+  /**
+   * Generates the action button's xsql file for the action buttons called directly from menu. This
+   * xsql file contains all the queries needed for SQL default values in generated parameters.
+   * 
+   * @param fileReference
+   *          The path where to create the files.
+   */
+  private void processActionButtonSQLDefaultGenerics(File fileReference) {
+    try {
+      log4j.info("Processing ActionButtonDefault_data.xsql");
+
+      ProcessRelationData defaults[] = ProcessRelationData.selectXSQLGenericsParams(pool);
+      if (defaults != null && defaults.length > 0) {
+        for (int i = 0; i < defaults.length; i++) {
+          final Vector<Object> vecParametros = new Vector<Object>();
+          defaults[i].reference = defaults[i].adProcessId + "_"
+              + FormatUtilities.replace(defaults[i].columnname);
+          defaults[i].defaultvalue = WadUtility.getSQLWadContext(defaults[i].defaultvalue,
+              vecParametros);
+          final StringBuffer parametros = new StringBuffer();
+          for (final Enumeration<Object> e = vecParametros.elements(); e.hasMoreElements();) {
+            final String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
+            parametros.append("\n" + paramsElement);
+          }
+          defaults[i].whereclause = parametros.toString();
+        }
+        XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate(
+            "org/openbravo/wad/ActionButtonDefault_data").createXmlDocument();
+        xmlDocumentData.setData("structure16", defaults);
+
+        WadUtility.writeFile(fileReference, "ActionButtonSQLDefault_data.xsql", xmlDocumentData
+            .print());
+      }
+    } catch (final Exception e) {
+      log4j.error(e);
     }
   }
 
@@ -3437,7 +3476,11 @@ public class Wad extends DefaultHandler {
             data[i].xmltext += ", \"\"";
             data[i].xmltexttrl += ", \"\"";
           }
-          vecTotal.addElement(data[i]);
+
+          // Do not create combo reload for the same column that is being modified
+          if (!data[i].whereclause.replace("\"", "").equals(data[i].columnname)) {
+            vecTotal.addElement(data[i]);
+          }
         }
       }
     }

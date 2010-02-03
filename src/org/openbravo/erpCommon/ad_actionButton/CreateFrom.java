@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2009 Openbravo SL
+ * All portions are Copyright (C) 2001-2010 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1412,6 +1412,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0";
     CreateFromInvoiceData[] data = null;
+    CreateFromInvoiceData[] dataAux = null;
     OBError myMessage = null;
     Connection conn = null;
     try {
@@ -1421,8 +1422,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this, strClaves);
         else
           data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, strClaves);
-        final CreateFromInvoiceData[] dataAux = CreateFromInvoiceData.selectPriceList(conn, this,
-            strDateInvoiced, strPriceList);
+        dataAux = CreateFromInvoiceData.selectPriceList(conn, this, strDateInvoiced, strPriceList);
         if (dataAux == null || dataAux.length == 0) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(),
               "PriceListVersionNotFound");
@@ -1448,7 +1448,14 @@ public class CreateFrom extends HttpSecureAppServlet {
           else
             C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
 
-          final int stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
+          final int stdPrecision;
+          final int curPrecision;
+          stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
+          if (strType.equals("SHIPMENT")) {
+            curPrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
+          } else {
+            curPrecision = Integer.valueOf(data[i].priceprecision).intValue();
+          }
           if (!data[i].cOrderlineId.equals("")) {
             price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
             if (price != null && price.length > 0) {
@@ -1471,7 +1478,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           }
           BigDecimal LineNetAmt = (new BigDecimal(priceActual))
               .multiply(new BigDecimal(data[i].id));
-          LineNetAmt = LineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          LineNetAmt = LineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
           try {
             CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
                 data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,

@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5759';
+  var number = '5983';
   return number;
 }
 
@@ -101,12 +101,14 @@ function getObjAttribute(obj, attribute) {
     attribute_text = attribute_text.replace("\n","");
     attribute_text = attribute_text.replace("}","");
   }
+  attribute_text = attribute_text.replace(/^(\s|\&nbsp;)*|(\s|\&nbsp;)*$/g,"");
   return attribute_text;
 }
 
 function setObjAttribute(obj, attribute, attribute_text) {
   attribute = attribute.toLowerCase();
   attribute_text = attribute_text.toString();
+  attribute_text = attribute_text.replace(/^(\s|\&nbsp;)*|(\s|\&nbsp;)*$/g,"");
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
     obj.setAttribute(attribute, attribute_text);
   } else {
@@ -363,9 +365,9 @@ function removeOnUnloadHandler(form) {
 function checkForChanges(f) {
 	var form = f;
 	
-	if (form == null) {
-		if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
-			if(top.opener != null) { // is a pop-up window
+	if (form === null) {
+		if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
+			if(top.opener !== null) { // is a pop-up window
 				form = top.opener.top.appFrame.document.forms[0];
 			}
 		}
@@ -374,13 +376,13 @@ function checkForChanges(f) {
 		}
 	}
 	
-	if(typeof form == 'undefined') {
+	if(typeof form === 'undefined') {
 		return true;
 	}
 	
 	var autosave = null;
-	if(frames.name.indexOf('appFrame')==-1 && frames.name.indexOf('frameMenu')==-1) {
-		if(top.opener != null) { // is a pop-up window
+	if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
+		if(top.opener !== null) { // is a pop-up window
 		  autosave = top.opener.top.frameMenu.autosave;
 		}
 	}
@@ -388,8 +390,8 @@ function checkForChanges(f) {
 	  autosave = top.frameMenu.autosave;
 	}
 	
-	if(typeof autosave == 'undefined' || !autosave) { // 2.40 behavior		
-		if (inputValue(form.inpLastFieldChanged)!="") {
+	if(typeof autosave === 'undefined' || !autosave) { // 2.40 behavior		
+		if (inputValue(form.inpLastFieldChanged) !== "") {
 			if (!showJSMessage(26))
 				return false;
 		}
@@ -399,16 +401,35 @@ function checkForChanges(f) {
 		return true;
 	}
 	else {
-		if(typeof top.appFrame == 'undefined'){
+		if(typeof top.appFrame === 'undefined'){
 			return true;
-		}		
-		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
-		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
+		}
+
+		try {
+		  var promptConfirmation = typeof top.appFrame.confirmOnChanges === 'undefined' ? true : top.appFrame.confirmOnChanges;
+		} catch(e) {
+		  if(isDebugEnabled()) {
+            console.error("%o", e);
+		  }
+		}
+
+		try {
+		  var hasUserChanges = typeof top.appFrame.isUserChanges === 'undefined' ? false : top.appFrame.isUserChanges;
+		} catch(e) {
+		  if(isDebugEnabled()) {
+            console.error("%o", e);
+		  }
+		}
+
+        if(typeof promptConfirmation === 'undefined' || typeof hasUserChanges === 'undefined') { // Nothing to be done
+          return true;
+        }
+
 		if (form.inpLastFieldChanged && (hasUserChanges || isButtonClick || isTabClick)) { // if the inpLastFieldChanged exists and there is a user change
 			var autoSaveFlag = autosave;		
 			if (promptConfirmation && hasUserChanges) {
 				autoSaveFlag = showJSMessage(25);
-				if(typeof top.appFrame.confirmOnChanges != 'undefined' && autoSaveFlag) {
+				if(typeof top.appFrame.confirmOnChanges !== 'undefined' && autoSaveFlag) {
 					top.appFrame.confirmOnChanges = false;
 				}
 			}
@@ -510,7 +531,7 @@ function dispatchEventChange(target) {
  */
 function depurar_validate_wrapper(action, form, value) {
   // if new-style validate-function exists => call it
-  if (typeof validate == "function") {
+  if (typeof validate === "function") {
     return validate(action, form, value);
   } else {
     // call old-style depurar function
@@ -769,6 +790,9 @@ function addUrlParameters(data) {
 function openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading) {
   var adds = "";
   var isPopup = null;
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+    _name = _name.replace(/ /g,"_"); //To fix strange issue with IE8 that window name declared as var xx = window.open can not have spaces
+  }
   // Deprecated in 2.50, search for the old frameAplication and the new appFrame
   if (_name!='appFrame' && _name!='frameAplicacion' && _name!='frameMenu') isPopup =  true;
   else isPopup = false;
@@ -820,7 +844,11 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);
   }
-  winPopUp.onunload = function(){putFocusOnMenu();}
+  winPopUp.onunload = function() {
+    if (winPopUp.location.href != "about:blank" && winPopUp.location.href.indexOf("utility/PopupLoading.html") == -1) {
+      putFocusOnMenu();
+    }
+  }
   if (closeControl) window.onunload = function(){winPopUp.close();}
   if (doSubmit) {
     if (isPopup==true && hasLoading == true) synchronizedSubmitCommandForm(getArrayValue(parameters, "Command", "DEFAULT"), (getArrayValue(parameters, "debug", false)==true), null, url, _name, target, checkChanges);
@@ -1461,8 +1489,10 @@ function keyControl(pushedKey) {
     return false;
   }
   if (isKeyboardLocked==false && !isCtrlPressed && !isAltPressed && pushedKey.type=='keydown' && pressedKeyCode!='16' && pressedKeyCode!='17' && pressedKeyCode!='18') {
-    if (focusedWindowElement.tagName == 'SELECT') {
-      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
+    if (typeof focusedWindowElement != "undefined") {
+      if (focusedWindowElement.tagName == 'SELECT') {
+        if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
+      }
     }
   }
   return true;
@@ -3144,36 +3174,31 @@ function readOnlyLogicElement(id, readonly) {
   obj = getReference(id);
   className = obj.className;
   var onchange_combo = null;
+  var newOnChange_combo = null;
  
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
     obj.readOnly = true;
-      
-    if (className.indexOf("Combo ")!=-1) {
-      obj.className = className.replace("Combo","ComboReadOnly");
+    if (obj.getAttribute('type') == "checkbox") {
+      var onclickTextA = getObjAttribute(obj, 'onclick');
+      var checkPatternA = "^[return false;]";
+      var checkRegExpA = new RegExp(checkPatternA);
+      if (!onclickTextA.match(checkRegExpA)) {
+        onclickTextA = 'return false;' + onclickTextA;
+      }
+      setObjAttribute(obj, 'onclick', onclickTextA);
+    }
+    if (className.indexOf("Combo ")!=-1 || className.indexOf("ComboKey ")!=-1) {
+      if (className.indexOf("Combo ")!=-1) obj.className = className.replace("Combo","ComboReadOnly");
+      else if (className.indexOf("ComboKey ")!=-1) obj.className = className.replace("ComboKey","ComboKeyReadOnly");
+      disableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
+        onchange_combo = getObjAttribute(obj, 'onChange');
       } else {
         onchange_combo = "";
       }
-      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo);
-     }
-    if (className.indexOf("ComboKey ")!=-1) {
-      obj.className = className.replace("ComboKey","ComboKeyReadOnly");
-      if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
-      } else {
-        onchange_combo = "";
-      }
-      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo);
+      newOnChange_combo = "selectCombo(this, '"+obj.value+"');" + onchange_combo;
+      setObjAttribute(obj, 'onChange', newOnChange_combo);
     }
     if (className.indexOf("LabelText ")!=-1)
       obj.className = className.replace("LabelText","LabelTextReadOnly");
@@ -3185,19 +3210,28 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
+
+    if (obj.getAttribute('type') == "checkbox") {
+      var onclickTextB = getObjAttribute(obj, 'onclick');
+      var checkPatternB = "^[return false;]";
+      var checkRegExpB = new RegExp(checkPatternB);
+      if (onclickTextB.match(checkRegExpB)) {
+        onclickTextB = onclickTextB.substring(13,onclickTextB.length);
+      }
+      onclickTextB = onclickTextB.replace('return false', 'return true');
+      setObjAttribute(obj, 'onclick', onclickTextB);
+    }
+
     if (obj.className.indexOf("Combo")!=-1) {
+      enableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
+        onchange_combo = getObjAttribute(obj, 'onChange');
       } else {
         onchange_combo = "";
       }
       if (onchange_combo.indexOf("selectCombo")!=-1) {
-        var newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
-        obj.setAttribute("onChange",newOnChange_combo); 
+        newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
+        setObjAttribute(obj, 'onChange', newOnChange_combo);
       }
     }
     if ((obj.className.indexOf("TextBox_")!=-1)||(obj.className.indexOf("TextArea_")!=-1)) {
@@ -4145,6 +4179,13 @@ function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupI
   if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
   if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
+  var isTextSelected = false;
+  if (obj.value.length > 0) {
+    if (getCaretPosition(obj).start !=  getCaretPosition(obj).end && getCaretPosition(obj).end == obj.value.length) {
+      isTextSelected = true;
+    }
+  }
+
   var oldCaretPosition = getCaretPosition(obj).start;
   var newCaretPosition = returnNewCaretPosition(obj, oldCaretPosition, groupSeparator);
 
@@ -4156,6 +4197,9 @@ function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupI
   var plainNumber = returnPlainNumber(number, decSeparator, groupSeparator);
   obj.value = plainNumber;
   setCaretToPos(obj, newCaretPosition);
+  if (isTextSelected == true && selectInputTextOnTab) {
+    obj.select();
+  }
 }
 
 /**

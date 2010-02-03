@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -485,11 +485,11 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       BigDecimal qtyOrder = new BigDecimal("0");
       boolean insertLine = false;
 
-      RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(this, strOrderDate,
-          RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strPriceListVersionId,
-          cCurrencyId, strOrg, strWarehouse, RequisitionToOrderData.billto(this, strVendor).equals(
-              "") ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
-              : RequisitionToOrderData.billto(this, strVendor), strSelected);
+      RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(this, cCurrencyId,
+          strOrderDate, strOrg, strWarehouse, RequisitionToOrderData.billto(this, strVendor)
+              .equals("") ? RequisitionToOrderData.cBPartnerLocationId(this, strVendor)
+              : RequisitionToOrderData.billto(this, strVendor), RequisitionToOrderData
+              .cBPartnerLocationId(this, strVendor), strPriceListVersionId, strSelected);
       for (int i = 0; lines != null && i < lines.length; i++) {
         if (i == 0)
           strCOrderlineID = SequenceIdData.getUUID();
@@ -524,7 +524,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
                 strOrderDate, lines[i].description, lines[i].mProductId,
                 lines[i].mAttributesetinstanceId, strWarehouse, lines[i].cUomId, qtyOrder
                     .toPlainString(), cCurrencyId, lines[i].pricelist, lines[i].priceactual,
-                lines[i].pricelimit, lines[i].tax, "", lines[i].discount);
+                strPriceListId, lines[i].pricelimit, lines[i].tax, "", lines[i].discount);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

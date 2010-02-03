@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,7 +72,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       String strOrganization = vars.getStringParameter("organization");
       String strCompleteAuto = vars.getStringParameter("inpShowNullComplete");
 
-      OBError myMessage = processButton(vars, strBPartner, strDatefrom, strDateto, strDateOrdered,
+      OBError myMessage;
+      myMessage = new OBError();
+      myMessage = processButton(vars, strBPartner, strDatefrom, strDateto, strDateOrdered,
           strOrganization, strCompleteAuto);
       vars.setMessage("ExpenseSOrder", myMessage);
 
@@ -85,12 +87,13 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
   private OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom,
       String strDateto, String strDateOrdered, String strOrganization, String strCompleteAuto) {
     StringBuffer textoMensaje = new StringBuffer();
+    StringBuffer txtOrder = new StringBuffer();
     Connection conn = null;
 
     OBError myMessage = null;
     myMessage = new OBError();
     myMessage.setTitle("");
-    String strCust = "";
+    int total = 0;
     try {
       conn = getTransactionConnection();
       ExpenseSOrderData[] data = ExpenseSOrderData.select(this, strBPartner, strDatefrom,
@@ -100,117 +103,237 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       String strOldOrganization = "-1";
       String strOldBPartner = "-1";
       String strOldProject = "-1";
-      String strDocStatus = "DR";
-      String strDocAction = "CO";
-      String strProcessing = "N";
       String strCOrderId = "";
-      String strCCurrencyId = "";
-      String strBPCCurrencyId = "";
-      String strDateexpense = "";
-      String priceactual = "";
-      String pricelist = "";
-      String pricelimit = "";
-      String docType = "0";
-      String docTargetType = "";
       int line = 0;
-      int total = 0;
       // ArrayList order = new ArrayList();
       for (int i = 0; data != null && i < data.length; i++) {
-        docTargetType = ExpenseSOrderData.cDoctypeTarget(conn, this, data[i].adClientId,
-            data[i].adOrgId);
-
-        if ((!data[i].cBpartnerId.equals(strOldBPartner)
-            || !data[i].cProjectId.equals(strOldProject) || !data[i].adOrgId
-            .equals(strOldOrganization))
-            && !strCOrderId.equals("")) {
-          releaseCommitConnection(conn);
-          // Automatically processes Sales Order
-          if (strCompleteAuto.equals("Y")) {
-            try {
-              OBError myError = processOrder(vars, strCOrderId);
-              if (myError != null)
-                textoMensaje.append(" -> ").append(myError.getMessage());
-            } catch (ServletException ex) {
-              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-              return myMessage;
-            }
-          }
-          conn = getTransactionConnection();
-        }
-        // Creates a new sales order header, if required
+        // If the sales order header information (business partner, project and organization) is not
+        // the same as the previous data line, complete the previous sales order, create a new sales
+        // order header and insert the first line
         if (!data[i].cBpartnerId.equals(strOldBPartner)
             || !data[i].cProjectId.equals(strOldProject)
             || !data[i].adOrgId.equals(strOldOrganization)) {
-
-          line = 0;
-          if (total != 0)
-            textoMensaje.append("<br>");
-          total++;
-
+          // Complete previous order
+          if (!strCOrderId.equals("") && strCOrderId != null) {
+            // Automatically processes Sales Order
+            releaseCommitConnection(conn);
+            if (strCompleteAuto.equals("Y")) {
+              try {
+                myMessage = processOrder(vars, strCOrderId);
+                if (myMessage != null)
+                  txtOrder.append(" -> ").append(myMessage.getMessage());
+              } catch (ServletException ex) {
+                myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+                myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+                    + Integer.toString(total) + "<br/>"
+                    + textoMensaje.append(myMessage.getMessage()).toString());
+                return myMessage;
+              }
+            }
+            textoMensaje.append(txtOrder).append("<br/>");
+            txtOrder = new StringBuffer();
+            total++;
+            conn = getTransactionConnection();
+          }
+          // Create a new sales order header
           strOldBPartner = data[i].cBpartnerId;
           strOldProject = data[i].cProjectId;
           strOldOrganization = data[i].adOrgId;
-          strCust = data[i].bpname;
-
-          if (data[i].mPricelistId.equals("")) {
-            throw new Exception("PricelistNotdefined");
-          } else {
-            // Selects the currency of the business partner price
-            // list, that can be different from the currency of the
-            // expense
-            strBPCCurrencyId = ExpenseSOrderData.selectCurrency(this, data[i].mPricelistId);
-          }
-
-          BpartnerMiscData[] data1 = BpartnerMiscData.select(this, data[i].cBpartnerId);
-
-          if (data1[0].paymentrule.equals("")) {
-            throw new Exception("FormofPaymentNotdefined");
-          }
-
           strCOrderId = SequenceIdData.getUUID();
-          // order.add(strCOrderId);
+
+          myMessage = insertOrderHeader(conn, vars, strCOrderId, strDateOrdered, data[i]);
+          if (myMessage != null) {
+            if (myMessage.getType() != "Error") {
+              txtOrder.append(myMessage.getMessage());
+            } else {
+              myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+                  + Integer.toString(total) + "<br/>"
+                  + textoMensaje.append(myMessage.getMessage()).toString());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
+          }
+
+          // Insert first order line
+          line = 10;
+          myMessage = insertOrderLine(conn, vars, strOrganization, strCOrderId, line,
+              strDateOrdered, data[i]);
+          if (myMessage != null) {
+            if (myMessage.getType() != "Error") {
+              txtOrder.append(myMessage.getMessage());
+            } else {
+              myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+                  + Integer.toString(total) + "<br/>"
+                  + textoMensaje.append(myMessage.getMessage()).toString());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
+          }
+        } else { // Keep adding lines to the same sales order header
+          line = line + 10;
+          myMessage = insertOrderLine(conn, vars, strOrganization, strCOrderId, line,
+              strDateOrdered, data[i]);
+          if (myMessage != null) {
+            if (myMessage.getType() != "Error") {
+              txtOrder.append(myMessage.getMessage());
+            } else {
+              myMessage.setMessage(textoMensaje.append(
+                  Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+                      + Integer.toString(total) + "<br/>" + myMessage.getMessage()).toString());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
+          }
+        }
+        // If we are in the last data line, complete the order
+        if (i + 1 == data.length) {
+          // Automatically processes Sales Order
+          releaseCommitConnection(conn);
+          if (strCompleteAuto.equals("Y")) {
+            try {
+              myMessage = processOrder(vars, strCOrderId);
+              if (myMessage != null)
+                txtOrder.append(" -> ").append(myMessage.getMessage());
+            } catch (ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+                  + Integer.toString(total) + "<br/>"
+                  + textoMensaje.append(myMessage.getMessage()).toString());
+              return myMessage;
+            }
+          }
+          textoMensaje.append(txtOrder).append("<br/>");
+          txtOrder = new StringBuffer();
+          total++;
+          conn = getTransactionConnection();
+        }
+      }
+      releaseCommitConnection(conn);
+      myMessage.setType("Success");
+      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+          + Integer.toString(total) + "<br/>" + textoMensaje.toString());
+      return myMessage;
+    } catch (Exception ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      try {
+        if (conn != null)
+          releaseRollbackConnection(conn);
+        return myMessage;
+      } catch (Exception ignored) {
+      }
+    }
+    return myMessage;
+  }
+
+  // Creates a sales order header.
+  private OBError insertOrderHeader(Connection conn, VariablesSecureApp vars, String strCOrderId,
+      String strDateOrdered, ExpenseSOrderData data) throws SQLException {
+    OBError myMessage = null;
+    myMessage = new OBError();
+
+    String strDocStatus = "DR";
+    String strDocAction = "CO";
+    String strProcessing = "N";
+    String docType = "0";
+    String strCust = data.bpname;
+
+    if (data.mPricelistId.equals("")) {
+      myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
+          + strCust + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage())
+          + ".");
+      return myMessage;
+    } else {
+      try {
+        // Selects the currency of the business partner price
+        // list, that can be different from the currency of the
+        // expense
+        String strBPCCurrencyId = ExpenseSOrderData.selectCurrency(this, data.mPricelistId);
+
+        BpartnerMiscData[] data1 = null;
+        data1 = BpartnerMiscData.select(this, data.cBpartnerId);
+
+        if (data1[0].paymentrule.equals("") || data1[0].paymentrule == null) {
+          myMessage.setType("Error");
+          myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
+              + strCust + ' '
+              + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()) + ".");
+          return myMessage;
+        } else {
+          String docTargetType = ExpenseSOrderData.cDoctypeTarget(conn, this, data.adClientId,
+              data.adOrgId);
           String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", docTargetType,
               docTargetType, false, true);
-          // Catch database error message
-          try {
-            ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId,
-                data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction,
-                strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered,
-                strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this,
-                    data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId)
-                    .equals("") ? ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId)
-                    : ExpenseSOrderData.billto(this, data[i].cBpartnerId), strBPCCurrencyId,
-                data1[0].paymentrule, data1[0].cPaymenttermId.equals("") ? ExpenseSOrderData
-                    .selectPaymentTerm(this, data[i].adClientId) : data1[0].cPaymenttermId,
-                data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule, data1[0].deliveryrule
-                    .equals("") ? "A" : data1[0].deliveryrule, "I", data1[0].deliveryviarule
-                    .equals("") ? "D" : data1[0].deliveryviarule,
-                data[i].mWarehouseId.equals("") ? vars.getWarehouse() : data[i].mWarehouseId,
-                data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
-          } catch (ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-            return myMessage;
-          }
-          textoMensaje.append(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage()))
-              .append(" ").append(strDocumentNo).append(" ").append(
-                  Utility.messageBD(this, "beenCreated", vars.getLanguage()));
+          ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data.adClientId, data.adOrgId,
+              vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType,
+              docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data.cBpartnerId,
+              ExpenseSOrderData.cBPartnerLocationId(this, data.cBpartnerId), ExpenseSOrderData
+                  .billto(this, data.cBpartnerId).equals("") ? ExpenseSOrderData
+                  .cBPartnerLocationId(this, data.cBpartnerId) : ExpenseSOrderData.billto(this,
+                  data.cBpartnerId), strBPCCurrencyId, data1[0].paymentrule,
+              data1[0].cPaymenttermId.equals("") ? ExpenseSOrderData.selectPaymentTerm(this,
+                  data.adClientId) : data1[0].cPaymenttermId, data1[0].invoicerule.equals("") ? "I"
+                  : data1[0].invoicerule, data1[0].deliveryrule.equals("") ? "A"
+                  : data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("") ? "D"
+                  : data1[0].deliveryviarule, data.mWarehouseId.equals("") ? vars.getWarehouse()
+                  : data.mWarehouseId, data.mPricelistId, data.cProjectId, data.cActivityId,
+              data.cCampaignId);
+          myMessage.setType("Success");
+          myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+          myMessage.setMessage(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage())
+              + " " + strDocumentNo + " "
+              + Utility.messageBD(this, "beenCreated", vars.getLanguage()));
         }
+      } catch (ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        return myMessage;
+      }
+    }
+    return myMessage;
+  }
 
-        // Determines the date of the expense (strDateExpense)
-        strDateexpense = data[i].dateexpense.equals("") ? data[i].datereport : data[i].dateexpense;
-        strDateexpense = strDateexpense.equals("") ? DateTimeData.today(this) : strDateexpense;
+  // Creates an order line.
+  private OBError insertOrderLine(Connection conn, VariablesSecureApp vars, String strOrganization,
+      String strCOrderId, Integer line, String strDateOrdered, ExpenseSOrderData data)
+      throws IOException, SQLException {
+    OBError myMessage = null;
+    myMessage = new OBError();
 
-        // Gets the tax for the sales order line
-        String strCTaxID = Tax.get(this, data[i].mProductId, strDateOrdered, data[i].adOrgId,
-            data[i].mWarehouseId.equals("") ? vars.getWarehouse() : data[i].mWarehouseId,
-            ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData
-                .cBPartnerLocationId(this, data[i].cBpartnerId), data[i].cProjectId, true);
-        if (strCTaxID.equals(""))
-          throw new Exception("TaxNotFound");
+    String strExpenseSheetDocno = data.documentno;
+    String strExpenseSheetLineno = data.line;
 
+    String priceactual = "";
+    String pricelist = "";
+    String pricelimit = "";
+
+    // Catch database error message
+    try {
+      // Determines the date of the expense (strDateExpense)
+      String strDateexpense = data.dateexpense.equals("") ? data.datereport : data.dateexpense;
+      strDateexpense = strDateexpense.equals("") ? DateTimeData.today(this) : strDateexpense;
+
+      // Gets the tax for the sales order line
+      String strCTaxID = Tax.get(this, data.mProductId, strDateOrdered, data.adOrgId,
+          data.mWarehouseId.equals("") ? vars.getWarehouse() : data.mWarehouseId, ExpenseSOrderData
+              .cBPartnerLocationId(this, data.cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(
+              this, data.cBpartnerId), data.cProjectId, true);
+      if (strCTaxID.equals("") || strCTaxID == null) {
+        myMessage.setType("Error");
+        myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+        myMessage.setMessage(Utility.messageBD(this, "ExpenseSheetNo", vars.getLanguage()) + " "
+            + strExpenseSheetDocno + ", " + Utility.messageBD(this, "line", vars.getLanguage())
+            + " " + strExpenseSheetLineno + ": "
+            + Utility.messageBD(this, "TaxNotFound", vars.getLanguage()) + ".");
+        return myMessage;
+      } else {
         // Currency of the expense line
-        strCCurrencyId = data[i].cCurrencyId;
+        String strCCurrencyId = data.cCurrencyId;
+
+        // Currency of the business partner price list
+        String strBPCCurrencyId = ExpenseSOrderData.selectCurrency(this, data.mPricelistId);
 
         String strPrecision = "0";
         String strPricePrecision = "0";
@@ -220,9 +343,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
         // If there is no invoice price, looks for the prices in the
         // pricelist of the business partner
-        if (data[i].invoiceprice == null || data[i].invoiceprice.equals("")) {
-          ExpenseSOrderData[] data3 = ExpenseSOrderData.selectPrice(this, data[i].mProductId,
-              data[i].mPricelistId, strBPCCurrencyId);
+        if (data.invoiceprice == null || data.invoiceprice.equals("")) {
+          ExpenseSOrderData[] data3 = ExpenseSOrderData.selectPrice(this, data.mProductId,
+              data.mPricelistId, strBPCCurrencyId);
           for (int j = 0; data3 != null && j < data3.length; j++) {
             if (data3[j].validfrom == null || data3[j].validfrom.equals("")
                 || !DateTimeData.compare(this, strDateexpense, data3[j].validfrom).equals("-1")) {
@@ -234,7 +357,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
         } else {
           // If there is an invoice price, it takes it and makes
           // currency conversions, if necessary
-          priceactual = data[i].invoiceprice;
+          priceactual = data.invoiceprice;
           pricelist = "0";
           pricelimit = "0";
 
@@ -253,141 +376,82 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
           }
         }
 
-        // Recalculates precisions for the business partner pricelist
-        // currency
-        ExpenseSOrderData[] data4 = ExpenseSOrderData.selectPrecisions(this, strBPCCurrencyId);
-        if (data4 != null && data4.length > 0) {
-          strPrecision = data4[0].stdprecision.equals("") ? "0" : data4[0].stdprecision;
-          strPricePrecision = data4[0].priceprecision.equals("") ? "0" : data4[0].priceprecision;
-        }
-        int StdPrecision = Integer.valueOf(strPrecision).intValue();
-        int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
-        priceActual = (priceactual.equals("") ? ZERO : (new BigDecimal(priceactual)));
-        priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-        priceList = (pricelist.equals("") ? ZERO : (new BigDecimal(pricelist)));
-        priceList = priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-        priceLimit = (pricelimit.equals("") ? ZERO : (new BigDecimal(pricelimit)));
-        priceLimit = priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-
-        // Calculating discount
-        if (priceList.compareTo(BigDecimal.ZERO) == 0)
-          discount = ZERO;
-        else {
-          if (log4j.isDebugEnabled())
-            log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
-          if (log4j.isDebugEnabled())
-            log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
-          discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
-              BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
-        }
-        if (log4j.isDebugEnabled())
-          log4j.debug("Discount: " + discount.toString());
-        if (discount.scale() > StdPrecision) {
-          discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-        }
-        if (log4j.isDebugEnabled())
-          log4j.debug("Discount rounded: " + discount.toString());
-
-        priceactual = priceActual.toString();
-        pricelist = priceList.toString();
-        pricelimit = priceLimit.toString();
-        strDiscount = discount.toString();
-
-        if (priceactual.equals(""))
-          priceactual = "0";
-        if (pricelist.equals(""))
-          pricelist = "0";
-        if (pricelimit.equals(""))
-          pricelimit = "0";
-        if (strDiscount.equals(""))
-          strDiscount = "0";
-
-        String strCOrderlineID = SequenceIdData.getUUID();
-
-        if (line == 0) {
-          line = 10;
-        } else {
-          line = line + 10;
-        }
-        // Catch database error message
-        try {
-          ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId,
-              strOrganization.equals("") ? data[i].adOrgId : strOrganization, vars.getUser(),
-              strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData
-                  .cBPartnerLocationId(this, data[i].cBpartnerId), strDateOrdered, strDateOrdered,
-              data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("") ? vars
-                  .getWarehouse() : data[i].mWarehouseId, data[i].cUomId.equals("") ? Utility
-                  .getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder") : data[i].cUomId,
-              data[i].qty, strBPCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID,
-              data[i].sResourceassignmentId, strDiscount);
-        } catch (ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(conn);
+        // If priceactual is null
+        if (priceactual.equals("") || priceactual == null) {
+          myMessage.setType("Error");
+          myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          myMessage.setMessage(Utility.messageBD(this, "ExpenseSheetNo", vars.getLanguage()) + " "
+              + strExpenseSheetDocno + ", " + Utility.messageBD(this, "line", vars.getLanguage())
+              + " " + strExpenseSheetLineno + ": "
+              + Utility.messageBD(this, "PriceNotFound", vars.getLanguage()) + ".");
           return myMessage;
-        }
-        // Catch database error message
-        try {
+        } else {
+          // Recalculates precisions for the business partner pricelist
+          // currency
+          ExpenseSOrderData[] data4 = ExpenseSOrderData.selectPrecisions(this, strBPCCurrencyId);
+          if (data4 != null && data4.length > 0) {
+            strPrecision = data4[0].stdprecision.equals("") ? "0" : data4[0].stdprecision;
+            strPricePrecision = data4[0].priceprecision.equals("") ? "0" : data4[0].priceprecision;
+          }
+          int StdPrecision = Integer.valueOf(strPrecision).intValue();
+          int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
+          priceActual = (priceactual.equals("") ? ZERO : (new BigDecimal(priceactual)));
+          priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+          priceList = (pricelist.equals("") ? ZERO : (new BigDecimal(pricelist)));
+          priceList = priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+          priceLimit = (pricelimit.equals("") ? ZERO : (new BigDecimal(pricelimit)));
+          priceLimit = priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+
+          // Calculating discount
+          if (priceList.compareTo(BigDecimal.ZERO) == 0)
+            discount = ZERO;
+          else {
+            if (log4j.isDebugEnabled())
+              log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
+            if (log4j.isDebugEnabled())
+              log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
+            discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
+                BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
+          }
+          if (log4j.isDebugEnabled())
+            log4j.debug("Discount: " + discount.toString());
+          if (discount.scale() > StdPrecision) {
+            discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+          }
+          if (log4j.isDebugEnabled())
+            log4j.debug("Discount rounded: " + discount.toString());
+
+          priceactual = priceActual.toString();
+          pricelist = priceList.toString();
+          pricelimit = priceLimit.toString();
+          strDiscount = discount.toString();
+
+          String strCOrderlineID = SequenceIdData.getUUID();
+
+          ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data.adClientId,
+              strOrganization.equals("") ? data.adOrgId : strOrganization, vars.getUser(),
+              strCOrderId, Integer.toString(line), data.cBpartnerId, ExpenseSOrderData
+                  .cBPartnerLocationId(this, data.cBpartnerId), strDateOrdered, strDateOrdered,
+              data.description, data.mProductId, data.mWarehouseId.equals("") ? vars.getWarehouse()
+                  : data.mWarehouseId, data.cUomId.equals("") ? Utility.getContext(this, vars,
+                  "#C_UOM_ID", "ExpenseSOrder") : data.cUomId, data.qty, strBPCCurrencyId,
+              pricelist, priceactual, data.mPricelistId, pricelimit, strCTaxID,
+              data.sResourceassignmentId, strDiscount);
+
           // Updates expense line with the sales order line ID
           ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID,
-              data[i].sTimeexpenselineId);
-        } catch (ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(conn);
-          return myMessage;
+              data.sTimeexpenselineId);
         }
       }
-
-      releaseCommitConnection(conn);
-      if (!strCOrderId.equals("")) {
-        // Automatically processes Sales Order
-        if (strCompleteAuto.equals("Y")) {
-          try {
-            OBError myError = processOrder(vars, strCOrderId);
-            if (myError != null)
-              textoMensaje.append(" -> ").append(myError.getMessage());
-          } catch (ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            return myMessage;
-          }
-        }
-      }
-      if (total != 0)
-        textoMensaje.append("<br>");
-      myMessage.setType("Success");
-      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myMessage
-          .setMessage(textoMensaje.toString()
-              + Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
-              + Integer.toString(total));
-      return myMessage;
-    } catch (Exception e) {
-      try {
-        if (conn != null)
-          releaseRollbackConnection(conn);
-      } catch (Exception ignored) {
-      }
-      e.printStackTrace();
-      log4j.warn("Rollback in transaction");
-      myMessage.setType("Error");
-      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      if (e.getMessage().equals("PricelistNotdefined")) {
-        myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
-            + strCust + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
-      } else if (e.getMessage().equals("FormofPaymentNotdefined")) {
-        myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
-            + strCust + ' '
-            + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
-      } else if (e.getMessage().equals("TaxNotFound")) {
-        myMessage.setMessage(Utility.messageBD(this, "TaxNotFound", vars.getLanguage()));
-      } else {
-        myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-      }
+    } catch (ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       return myMessage;
     }
+    return myMessage;
   }
 
-  private OBError processOrder(VariablesSecureApp vars, String strCOrderId) throws ServletException,
-      NoConnectionAvailableException, SQLException {
+  private OBError processOrder(VariablesSecureApp vars, String strCOrderId)
+      throws ServletException, NoConnectionAvailableException, SQLException {
     Connection conn = null;
     conn = getTransactionConnection();
 
@@ -406,6 +470,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     ActionButtonData.process104(this, pinstance);
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
     myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+
+    releaseCommitConnection(conn);
 
     return myMessage;
   }
@@ -497,6 +563,6 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
   }
 
   public String getServletInfo() {
-    return "Servlet Project set Type";
+    return "Servlet Create Sales Orders from Expenses";
   } // end of getServletInfo() method
 }

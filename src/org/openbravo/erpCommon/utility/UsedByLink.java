@@ -181,12 +181,20 @@ public class UsedByLink extends HttpSecureAppServlet {
     xmlDocument.setParameter("tabID", TabId);
     xmlDocument.setParameter("windowID", strWindow);
     xmlDocument.setParameter("keyColumn", keyColumn);
-    xmlDocument.setParameter("keyName", "inp" + Sqlc.TransformaNombreColumna(keyColumn));
-    xmlDocument.setParameter("keyId", keyId);
     xmlDocument.setParameter("adTabId", strAD_TAB_ID);
     xmlDocument.setParameter("tableName", strTABLENAME);
-    xmlDocument.setParameter("columnName", strCOLUMNNAME);
     xmlDocument.setParameter("tableId", adTableId);
+    // We have to check whether we have self reference or not
+    String selfReferenceCount = UsedByLinkData.getCountOfSelfReference(this, adTableId,
+        strTABLENAME);
+    if (selfReferenceCount.equals("0")) {
+      xmlDocument.setParameter("keyName", "inp" + Sqlc.TransformaNombreColumna(keyColumn));
+      xmlDocument.setParameter("keyId", keyId);
+      xmlDocument.setParameter("columnName", strCOLUMNNAME);
+    } else {
+      xmlDocument.setParameter("columnName", keyColumn);
+    }
+
     xmlDocument.setParameter("recordIdentifier", UsedByLinkData.selectIdentifier(this, keyId, vars
         .getLanguage(), adTableId));
     if (vars.getLanguage().equals("en_US")) {

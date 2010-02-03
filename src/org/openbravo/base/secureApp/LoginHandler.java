@@ -25,6 +25,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -61,8 +62,14 @@ public class LoginHandler extends HttpBaseServlet {
         req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
         checkLicenseAndGo(res, vars, strUserAuth);
       } else {
-        goToRetry(res, vars, null, "Identification failure. Try again.", "Error",
-            "../security/Login_FS.html");
+        Client systemClient = OBDal.getInstance().get(Client.class, "0");
+
+        String failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", systemClient
+            .getLanguage().getLanguage());
+        String failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", systemClient
+            .getLanguage().getLanguage());
+
+        goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
       }
     }
   }
@@ -173,12 +180,9 @@ public class LoginHandler extends HttpBaseServlet {
     xmlDocument.setParameter("messageType", msgType);
     xmlDocument.setParameter("action", action);
     xmlDocument.setParameter("messageTitle", title);
-    xmlDocument
-        .setParameter(
-            "messageMessage",
-            (message != null && !message.equals("")) ? message
-                : "Please enter your username and password. "
-                    + "<br>You must also ensure that your browser accepts cookies.<br>Press back to return.");
+    String msg = (message != null && !message.equals("")) ? message
+        : "Please enter your username and password.";
+    xmlDocument.setParameter("messageMessage", msg.replaceAll("\\\\n", "<br>"));
 
     response.setContentType("text/html");
     final PrintWriter out = response.getWriter();

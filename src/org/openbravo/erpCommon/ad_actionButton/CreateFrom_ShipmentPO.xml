@@ -61,7 +61,7 @@
     <FIELD id="funcEvenOddRowxx" attribute="id" replace="xx">rownum</FIELD>
 
 		<FIELD id="fieldID" attribute="value">id</FIELD>
-		<FIELD id="fieldQuantity" attribute="value" format="integerEdition">qty</FIELD>
+		<FIELD id="fieldQuantity" attribute="value" format="qtyEdition">qty</FIELD>
 		<FIELD id="fieldQuantity" attribute="name" replace="xx">id</FIELD>
 		<FIELD id="fieldSecQuantity" attribute="value" format="integerEdition">secqty</FIELD>
 		<FIELD id="fieldSecQuantity" attribute="name" replace="xx">id</FIELD>

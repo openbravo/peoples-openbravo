@@ -22,24 +22,97 @@ package org.openbravo.test.dal;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.process.ProcessInstance;
+import org.openbravo.model.ad.utility.ATTest;
+import org.openbravo.model.ad.utility.Line;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests the {@link CallStoredProcedure} class.
+ * Tests the {@link CallStoredProcedure} class and the {@link CallProcess} class.
  * 
  * @author mtaal
  */
 
 public class DalStoredProcedureTest extends BaseTest {
+
+  private final static int NUM_OF_TEST_LINES = 5;
+
+  /**
+   * Tests the {@link CallProcess} class
+   */
+  public void testCallProcess() {
+    setSystemAdministratorContext();
+    final ATTest attest = OBProvider.getInstance().get(ATTest.class);
+    attest.setName("junittest");
+    attest.setDescription("junittest");
+    attest.setFileName("junittest");
+    attest.setCopyLines(true);
+    attest.setDeleted(false);
+    attest.setIntroduction("junittest");
+    attest.setType("M");
+
+    for (int i = 0; i < NUM_OF_TEST_LINES; i++) {
+      final Line line = OBProvider.getInstance().get(Line.class);
+      line.setTest(attest);
+      line.setArg1(i + "_arg1");
+      line.setArg2(i + "_arg2");
+      line.setArg3(i + "_arg3");
+      line.setArgNo(new Long(i));
+      line.setSequenceNumber(new Long(i));
+      line.setHelp1(i + "_H1");
+      line.setHelp2(i + "_H2");
+      line.setHelp3(i + "_H3");
+      line.setType("T");
+      attest.getLineList().add(line);
+    }
+    OBDal.getInstance().save(attest);
+
+    final ATTest copyToTest = OBProvider.getInstance().get(ATTest.class);
+    copyToTest.setName("copyToTest");
+    copyToTest.setDescription("copyToTest");
+    copyToTest.setFileName("copyToTest");
+    copyToTest.setCopyLines(true);
+    copyToTest.setDeleted(false);
+    copyToTest.setIntroduction("copyToTest");
+    copyToTest.setType("M");
+    OBDal.getInstance().save(copyToTest);
+
+    OBDal.getInstance().flush();
+
+    final Map<String, String> parameters = new HashMap<String, String>();
+    parameters.put("AT_Test_ID", attest.getId());
+
+    final org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
+        org.openbravo.model.ad.ui.Process.class, "800096");
+    assertNotNull("No copy test line process defined with id 800096", process);
+    assertNotNull("id of attest not set", attest.getId());
+    assertEquals(NUM_OF_TEST_LINES, attest.getLineList().size());
+    assertEquals(0, copyToTest.getLineList().size());
+    final ProcessInstance pInstance = CallProcess.getInstance().call(process, copyToTest.getId(),
+        parameters);
+    OBDal.getInstance().getSession().refresh(attest);
+    OBDal.getInstance().getSession().refresh(copyToTest);
+    assertEquals("@Copied@=5 lines", pInstance.getErrorMsg());
+    assertEquals(NUM_OF_TEST_LINES, attest.getLineList().size());
+    assertEquals(NUM_OF_TEST_LINES, copyToTest.getLineList().size());
+
+    // always rollback to prevent updating the db
+    OBDal.getInstance().rollbackAndClose();
+  }
+
   /**
    * Tests calling database procedures using the dal connection provider
    */

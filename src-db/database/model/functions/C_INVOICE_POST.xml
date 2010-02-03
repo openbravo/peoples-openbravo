@@ -231,8 +231,7 @@ cWithHoldId varchar2(32);
     --* There are invoice lines
     --* There are tax lines
     --* There are both invoice and tax lines 
-    IF((v_DocStatus='DR' AND v_DocAction='CO')
-       OR (v_DocStatus='CO' AND v_DocAction='RE')) THEN
+    IF((v_DocStatus='DR' AND v_DocAction='CO')) THEN
           SELECT COUNT(*)
           INTO V_InvoiceLines_count
           FROM C_INVOICE
@@ -1155,6 +1154,7 @@ cWithHoldId varchar2(32);
           xTaxBaseAmt NUMBER:=0;
           xTaxAmt NUMBER:=0;
           v_TaxNoRecalculable NUMBER:=0;
+          v_PreviousTaxAmt NUMBER:=0;
           HeaderNotAdded BOOLEAN:=TRUE;
           v_LineNo NUMBER:=0;
           v_ActualBaseAmt NUMBER;
@@ -1162,19 +1162,24 @@ cWithHoldId varchar2(32);
           v_C_InvoiceTax_ID VARCHAR2(32);
         BEGIN
           v_ResultStr:='DeleteOldTaxes';
+          DELETE FROM C_INVOICELINETAX  WHERE C_InvoiceLine_ID IN (SELECT C_InvoiceLine_ID from C_InvoiceLine
+                                                    WHERE C_Invoice_ID = v_Record_ID);
           DELETE FROM C_INVOICETAX
            WHERE C_Invoice_ID=v_Record_ID
              AND Recalculate = 'Y';
           -- For all Tax Rates
           v_ResultStr:='InsertNewTaxes';
           FOR Cur_Tax IN
-            (SELECT l.C_Tax_ID,
+            (SELECT l.C_InvoiceLine_ID, l.C_Tax_ID,
               i.IsTaxIncluded,
-              COALESCE(SUM(l.LineNetAmt), 0) + COALESCE(SUM(l.ChargeAmt), 0) AS LineNet,
+              COALESCE(SUM(l.LineNetAmt),0) + COALESCE(SUM(l.ChargeAmt), 0) AS LineNetAmt,
+              COALESCE(SUM(l.TaxBaseAmt), 0) + COALESCE(SUM(l.ChargeAmt), 0) AS TaxBaseAmt,
               COALESCE(SUM(i.ChargeAmt), 0) AS HeaderNet,
               t.Rate,
               t.IsSummary,
-              c.StdPrecision
+              c.StdPrecision,
+              t.Cascade,
+              t.BaseAmount
             FROM C_INVOICE i,
               C_INVOICELINE l,
               C_TAX t,
@@ -1183,77 +1188,24 @@ cWithHoldId varchar2(32);
               AND i.C_Invoice_ID=v_Record_ID -- Parameter
               AND l.C_Tax_ID=t.C_Tax_ID
               AND i.C_Currency_ID=c.C_Currency_ID
-            GROUP BY l.C_Tax_ID,
+            GROUP BY l.C_InvoiceLine_ID, 
+              l.C_Tax_ID,
               i.IsTaxIncluded,
               t.Rate,
               t.IsSummary,
-              c.StdPrecision
-            ORDER BY 3 DESC
+              c.StdPrecision,
+              t.Cascade,
+              t.BaseAmount
+            ORDER BY 4 DESC
             )
           LOOP
-            xTaxBaseAmt:=Cur_Tax.LineNet;
+            xTaxBaseAmt:=Cur_Tax.LineNetAmt;
             v_TotalLines:=v_TotalLines + xTaxBaseAmt; -- w/o Header Freight/Charge
             IF(HeaderNotAdded) THEN -- add header to first
               HeaderNotAdded:=FALSE;
               xTaxBaseAmt:=xTaxBaseAmt + Cur_Tax.HeaderNet;
             END IF;
-            IF(Cur_Tax.IsSummary='N') THEN
-              v_LineNo := v_LineNo + 10;
-              xTaxAmt:=ROUND(xTaxBaseAmt * Cur_Tax.Rate / 100, Cur_Tax.StdPrecision) ;
-              v_GrandTotal:=v_GrandTotal + xTaxBaseAmt + xTaxAmt;
-              --
-              Ad_Sequence_Next('C_InvoiceTax', v_Org_ID, v_C_InvoiceTax_ID);
-              INSERT
-              INTO C_INVOICETAX
-                (
-                  C_InvoiceTax_ID, C_Invoice_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
-                  IsActive, Created, CreatedBy, Updated,
-                  UpdatedBy, TaxBaseAmt, TaxAmt, Line, Recalculate
-                )
-                VALUES
-                (
-                  v_C_InvoiceTax_ID, v_Record_ID, Cur_Tax.C_Tax_ID, v_Client_ID, v_Org_ID,
-                   'Y', now(), v_UpdatedBy, now(),
-                  v_UpdatedBy, xTaxBaseAmt, xTaxAmt, v_LineNo,'Y'
-                )
-                ;
-            ELSE -- Multiple Taxes
-              v_GrandTotal:=v_GrandTotal + xTaxBaseAmt;
-              v_FirstLine := TRUE;
-              FOR Cur_MultiTax IN
-                (SELECT C_Tax_ID, Rate, CASCADE
-                   FROM C_TAX
-                  WHERE Parent_Tax_ID=Cur_Tax.C_Tax_ID
-                  ORDER BY Line)
-              LOOP
-                v_LineNo := v_LineNo + 10;
-                IF ((Cur_MultiTax.CASCADE = 'Y') AND (NOT v_FirstLine)) THEN   --cannot apply cascade to the first line
-                  v_ActualBaseAmt := v_GrandTotal;
-                ELSE
-                  v_ActualBaseAmt := xTaxBaseAmt;
-                END IF;
-                v_FirstLine := FALSE;
-
-                xTaxAmt:=ROUND(v_ActualBaseAmt * Cur_MultiTax.Rate / 100, Cur_Tax.StdPrecision) ;
-                v_GrandTotal:=v_GrandTotal + xTaxAmt;
-                --
-                Ad_Sequence_Next('C_InvoiceTax', v_Org_ID, v_C_InvoiceTax_ID);
-                INSERT
-                INTO C_INVOICETAX
-                  (
-                    C_InvoiceTax_ID, C_Invoice_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
-                    IsActive, Created, CreatedBy, Updated,
-                    UpdatedBy, TaxBaseAmt, TaxAmt, Line, Recalculate
-                  )
-                  VALUES
-                  (
-                    v_C_InvoiceTax_ID, v_Record_ID, Cur_MultiTax.C_Tax_ID, v_Client_ID, v_Org_ID,
-                     'Y', now(), v_UpdatedBy, now(),
-                    v_UpdatedBy, v_ActualBaseAmt, xTaxAmt, v_LineNo, 'Y'
-                  )
-                  ;
-              END LOOP;
-            END IF;
+            C_INVOICELINETAX_INSERT(v_Record_ID, Cur_Tax.C_InvoiceLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
           END LOOP; -- Insert New Taxes
           -- Update Header
           SELECT COALESCE(SUM(TaxAmt),0)
@@ -1266,6 +1218,11 @@ cWithHoldId varchar2(32);
     FROM dual;
 
           v_GrandTotal:=C_Currency_Round(v_GrandTotal+v_TaxNoRecalculable, v_Currency_ID, NULL) ;
+          SELECT COALESCE(SUM(TAXAMT), 0)
+          INTO v_GrandTotal
+          FROM C_INVOICETAX
+          WHERE C_INVOICE_ID = v_Record_ID;
+          v_GrandTotal:=v_GrandTotal+ v_TotalLines;
           UPDATE C_INVOICE
             SET TotalLines=v_TotalLines,
             GrandTotal=v_GrandTotal,
@@ -1597,7 +1554,7 @@ cWithHoldId varchar2(32);
                   WHERE AD_Client_ID=v_Client_ID
                     AND isActive='Y'
                     AND isDefault='Y'
-                    AND AD_Org_ID=v_ad_org_id;
+                    AND AD_IsOrgIncluded(v_ad_org_id,AD_ORG_ID, AD_Client_ID)<>-1;
                   IF v_cashBook IS NULL THEN
                       RAISE_APPLICATION_ERROR(-20000, '@NoDefaultCashBook@');
                   END IF;

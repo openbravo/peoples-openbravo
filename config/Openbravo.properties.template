@@ -135,3 +135,12 @@ isMinorVersion=false
 # with role System Administrator
 
 safe.mode=false
+
+##############
+# Hibernate #
+##############
+
+# if this property is set then the mapping will be written to the file
+# defined by this property, note the value should be the complete path 
+# including the file name and extension.
+# hibernate.hbm.file=/tmp/hibernate.hbm.xml

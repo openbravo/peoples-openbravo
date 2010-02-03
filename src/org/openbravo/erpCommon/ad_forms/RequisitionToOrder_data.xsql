@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -119,34 +119,27 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, LOCKQTY, M_REQUISITIONLINE.DESCRIPTION, C_UOM_ID, 
+        SELECT M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, LOCKQTY, DESCRIPTION, C_UOM_ID, 
           M_REQUISITIONLINE_ID, '' AS C_ORDERLINE_ID,
           COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) AS PRICELIST,
           COALESCE(M_PRODUCTPRICE.PRICELIMIT, LOCKPRICE) AS PRICELIMIT,
           COALESCE(M_PRODUCTPRICE.PRICESTD, LOCKPRICE) AS PRICESTD,
-          ROUND(COALESCE(LOCKPRICE, M_GET_OFFERS_PRICE(TO_DATE(?), (SELECT C_BPARTNER_ID FROM C_BPARTNER_LOCATION WHERE C_BPARTNER_LOCATION_ID = ?), M_REQUISITIONLINE.M_PRODUCT_ID, M_PRODUCTPRICE.PRICESTD, LOCKQTY, (SELECT M_PRICELIST_ID FROM M_PRICELIST_VERSION WHERE M_PRICELIST_VERSION_ID = ?))),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) AS PRICEACTUAL,
+          ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) AS PRICEACTUAL,
           CASE WHEN COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) = 0 THEN 0 ELSE
-          ROUND((COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) - COALESCE(LOCKPRICE, M_GET_OFFERS_PRICE(TO_DATE(?), (SELECT C_BPARTNER_ID FROM C_BPARTNER_LOCATION WHERE C_BPARTNER_LOCATION_ID = ?), M_REQUISITIONLINE.M_PRODUCT_ID, M_PRODUCTPRICE.PRICESTD, LOCKQTY, (SELECT M_PRICELIST_ID FROM M_PRICELIST_VERSION WHERE M_PRICELIST_VERSION_ID = ?))))/
+          ROUND((COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) - COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD))/
                    COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE)*100,
                 (SELECT STDPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) END AS DISCOUNT,
           C_GetTax(M_REQUISITIONLINE.M_PRODUCT_ID, to_date(?), ?, ?, ?, ?, null, 'N') AS TAX,
           CASE WHEN LOCKQTY < (M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY) THEN 'N' ELSE 'Y' END AS TO_CLOSE
-        FROM M_REQUISITION, M_REQUISITIONLINE LEFT JOIN M_PRODUCTPRICE
+        FROM M_REQUISITIONLINE LEFT JOIN M_PRODUCTPRICE
                                          ON M_REQUISITIONLINE.M_PRODUCT_ID = M_PRODUCTPRICE.M_PRODUCT_ID
                                             AND M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = ?
         WHERE 1=1
-        AND M_REQUISITION.M_REQUISITION_ID = M_REQUISITIONLINE.M_REQUISITION_ID
         ORDER BY M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, SUPPLIERNOTES, 
-                 ROUND(COALESCE(LOCKPRICE, M_GET_OFFERS_PRICE(TO_DATE(?), (SELECT C_BPARTNER_ID FROM C_BPARTNER_LOCATION WHERE C_BPARTNER_LOCATION_ID = ?), M_REQUISITIONLINE.M_PRODUCT_ID, M_PRODUCTPRICE.PRICESTD, LOCKQTY, (SELECT M_PRICELIST_ID FROM M_PRICELIST_VERSION WHERE M_PRICELIST_VERSION_ID = ?))),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?))
+                 ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?))
         ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="orderdate"/>
-    <Parameter name="shipto"/>
-    <Parameter name="pricelistversion"/>
     <Parameter name="currency"/>
-    <Parameter name="orderdate"/>
-    <Parameter name="shipto"/>
-    <Parameter name="pricelistversion"/>
     <Parameter name="currency"/>
     <Parameter name="orderdate"/>
     <Parameter name="org"/>
@@ -155,9 +148,6 @@
     <Parameter name="shipto"/>
     <Parameter name="pricelistversion"/>
     <Parameter name="parRequisitionLines" optional="true" type="argument" after="WHERE 1=1" text=" AND M_RequisitionLine_ID IN"/>
-    <Parameter name="orderdate"/>
-    <Parameter name="shipto"/>
-    <Parameter name="pricelistversion"/>
     <Parameter name="currency"/>
   </SqlMethod>
   <SqlMethod name="selectVendor" type="preparedStatement" return="Multiple">
@@ -456,7 +446,7 @@
     <Parameter name="mProductId"/>
     <Parameter name="priceactual"/>
     <Parameter name="qtyordered"/>
-    <Parameter name="pricelist"/>
+    <Parameter name="pricelistid"/>
     <Parameter name="pricelimit"/>
     <Parameter name="cTaxId"/>
     <Parameter name="sResourceassignmentId"/>

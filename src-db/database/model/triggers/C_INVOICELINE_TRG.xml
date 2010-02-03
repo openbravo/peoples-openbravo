@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2009 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -80,134 +80,6 @@ IF (UPDATING) THEN
  ELSE
   v_ID := :OLD.C_Invoice_ID;
  END IF;
-
- -- ReadOnly Check
- SELECT  processed
-   INTO v_Processed
- FROM C_INVOICE
- WHERE C_Invoice_ID=v_ID;
-
-
-  -- Round Base - Should do Rounding here
-  IF (INSERTING OR UPDATING) THEN
-   SELECT C_CURRENCY_ID INTO v_Currency FROM C_INVOICE WHERE C_INVOICE_ID = :NEW.C_Invoice_ID;
-  ELSE
-   SELECT C_CURRENCY_ID INTO v_Currency FROM C_INVOICE WHERE C_INVOICE_ID = :OLD.C_Invoice_ID;
-  END IF;
-  SELECT STDPRECISION INTO v_Prec FROM C_CURRENCY WHERE C_CURRENCY_ID = v_Currency;
-
- IF (INSERTING OR UPDATING) THEN
-  v_LineNetAmt := ROUND(:NEW.LineNetAmt, v_Prec);
-  v_ChargeAmt := ROUND(:NEW.ChargeAmt, v_Prec);
- END IF;
-
-
- IF(v_Processed = 'N') THEN
-
-  -- Subtract old Amount
-  IF (DELETING OR UPDATING) THEN
-   -- Get old Tax Info
-   SELECT  SUM(TaxBaseAmt)
-     INTO v_oldTaxBaseAmt
-   FROM  C_INVOICETAX
-   WHERE C_Invoice_ID = :OLD.C_Invoice_ID
-     AND C_Tax_ID = :OLD.C_Tax_ID
-     AND Recalculate='Y';
-   DBMS_OUTPUT.PUT_LINE('Old TaxBaseAmt=' || v_oldTaxBaseAmt);
-   --
-   v_oldLine := COALESCE(:OLD.LineNetAmt,0) + COALESCE(:OLD.ChargeAmt,0);
-   IF (v_oldTaxBaseAmt IS NOT NULL) THEN
-    DBMS_OUTPUT.PUT_LINE('Update NewLineAmt -= ' || v_oldLine);
-    UPDATE  C_INVOICETAX
-      SET TaxBaseAmt = TaxBaseAmt - v_oldLine
-    WHERE C_Invoice_ID = :OLD.C_Invoice_ID
-        AND C_Tax_ID = :OLD.C_Tax_ID;
-   END IF;
-   -- Calculate old tax with 2 digits precision
-   UPDATE C_INVOICETAX
-     SET TaxAmt = (SELECT ROUND(C_INVOICETAX.TaxBaseAmt * t.Rate / 100, 2)
-         FROM C_TAX t WHERE C_INVOICETAX.C_Tax_ID=t.C_Tax_ID),
-        Updated = now(),
-     UpdatedBy = '0'
-   WHERE C_Invoice_ID = :OLD.C_Invoice_ID
-     AND C_Tax_ID = :OLD.C_Tax_ID
-     AND Recalculate='Y';
-  END IF;
-
-  -- Add new Amount
-  IF (INSERTING OR UPDATING) THEN
-   -- Get new Tax Info
-   SELECT  SUM(TaxBaseAmt)
-     INTO v_newTaxBaseAmt
-   FROM  C_INVOICETAX
-   WHERE C_Invoice_ID = :NEW.C_Invoice_ID
-     AND C_Tax_ID = :NEW.C_Tax_ID
-     AND Recalculate='Y';
-   DBMS_OUTPUT.PUT_LINE('New TaxBaseAmt=' || v_newTaxBaseAmt);
-   --
-   v_newLine := COALESCE(v_LineNetAmt,0) + COALESCE(v_ChargeAmt,0);
-   IF (v_newTaxBaseAmt IS NULL) THEN
-    IF (:NEW.C_Tax_ID IS NOT NULL) THEN  -- comment line has tax == null
-     DBMS_OUTPUT.PUT_LINE('Insert NewLineAmt = ' || v_newLine);
-     Ad_Sequence_Next('C_InvoiceTax', :new.AD_Org_ID, v_CinvoiceTaxID);
-     INSERT INTO C_INVOICETAX
-      (C_InvoiceTax_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
-      C_Invoice_ID, C_Tax_ID, TaxBaseAmt, TaxAmt, Recalculate)
-     VALUES
-      (v_CinvoiceTaxID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, 'Y', now(), :NEW.UpdatedBy, now(), :NEW.UpdatedBy,
-      :NEW.C_Invoice_ID, :NEW.C_Tax_ID, v_newLine, 0, 'Y');
-     END IF;
-   ELSE
-    DBMS_OUTPUT.PUT_LINE('Update NewLineAmt += ' || v_newLine);
-    UPDATE  C_INVOICETAX
-      SET TaxBaseAmt = TaxBaseAmt + v_newLine
-    WHERE C_Invoice_ID=:NEW.C_Invoice_ID
-        AND C_Tax_ID=:NEW.C_Tax_ID
-        AND Recalculate='Y';
-   END IF;
-   -- Calculate new tax with 2 digits precision
-   UPDATE C_INVOICETAX
-     SET TaxAmt = (SELECT ROUND(C_INVOICETAX.TaxBaseAmt * t.Rate / 100, 2)
-         FROM C_TAX t WHERE C_INVOICETAX.C_Tax_ID=t.C_Tax_ID),
-        Updated = now(),
-     UpdatedBy = :NEW.UpdatedBy
-   WHERE C_Invoice_ID=:NEW.C_Invoice_ID
-     AND C_Tax_ID=:NEW.C_Tax_ID
-     AND Recalculate='Y';
-  END IF;
-
-  -- Get Total Tax
-  IF (INSERTING OR UPDATING) THEN
-   SELECT  SUM(TaxAmt)  -- might be null
-     INTO v_taxAmt
-   FROM C_INVOICETAX
-   WHERE C_Invoice_ID = :NEW.C_Invoice_ID
-   AND Recalculate='Y';
-   DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
-
-   -- Update Header
-   UPDATE  C_INVOICE
-     SET TotalLines = TotalLines - v_oldLine + v_newLine,
-     GrandTotal = TotalLines - v_oldLine + v_newLine + COALESCE(v_taxAmt, 0)
-   --  Updated = SysDate -- Don't update as otherwise it does not save changes
-   WHERE C_Invoice_ID = :NEW.C_Invoice_ID;
-  ELSE -- DELETING
-   SELECT  SUM(TaxAmt)  -- might be null
-     INTO v_taxAmt
-   FROM C_INVOICETAX
-   WHERE C_Invoice_ID = :OLD.C_Invoice_ID
-   AND Recalculate='Y';
-   DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
-
-   -- Update Header
-   UPDATE  C_INVOICE
-     SET TotalLines = TotalLines - v_oldLine + v_newLine,
-     GrandTotal = TotalLines - v_oldLine + v_newLine + COALESCE(v_taxAmt, 0)
-   --  Updated = SysDate -- Don't update as otherwise it does not save changes
-   WHERE C_Invoice_ID = :OLD.C_Invoice_ID;
-  END IF;
- END IF;
-
 END C_INVOICELINE_TRG
 ]]></body>
     </trigger>

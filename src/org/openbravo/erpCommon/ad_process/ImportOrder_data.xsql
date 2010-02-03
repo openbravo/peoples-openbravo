@@ -1287,7 +1287,7 @@
         FROM I_Order
 				WHERE I_IsImported='N'
 				AND AD_Client_ID = ?
-				ORDER BY AD_Org_ID, DocTypeName, DocumentNo, DateOrdered, C_BPartner_ID, BillTo_ID, C_BPartner_Location_ID, I_Order_ID
+				ORDER BY DateOrdered,DocumentNo,AD_Org_ID, DocTypeName, C_BPartner_ID, BillTo_ID, C_BPartner_Location_ID, I_Order_ID
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>

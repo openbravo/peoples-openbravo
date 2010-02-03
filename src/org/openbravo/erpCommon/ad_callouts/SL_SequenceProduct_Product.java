@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -97,8 +97,8 @@ public class SL_SequenceProduct_Product extends HttpSecureAppServlet {
       if (tld != null && tld.length > 0) {
         resultado.append("new Array(");
         for (int i = 0; i < tld.length; i++) {
-          resultado.append("new Array(" + tld[i].getField("id") + ", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
+          resultado.append("new Array(" + "\"" + FormatUtilities.replaceJS(tld[i].getField("id"))
+              + "\"" + ", \"" + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
               + (tld[i].getField("id").equalsIgnoreCase(strmProductUOMId) ? "true" : "false")
               + "\")");
           if (i < tld.length - 1)
@@ -125,8 +125,8 @@ public class SL_SequenceProduct_Product extends HttpSecureAppServlet {
       if (tld != null && tld.length > 0) {
         resultado.append("new Array(");
         for (int i = 0; i < tld.length; i++) {
-          resultado.append("new Array(" + tld[i].getField("id") + ", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
+          resultado.append("new Array(" + "\"" + FormatUtilities.replaceJS(tld[i].getField("id"))
+              + "\"" + ", \"" + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
               + (tld[i].getField("id").equalsIgnoreCase(strmProductUOMId) ? "true" : "false")
               + "\")");
           if (i < tld.length - 1)

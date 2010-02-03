@@ -35,6 +35,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -155,6 +156,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
     xmlDocument.setParameter("title", title);
     xmlDocument.setParameter("description", description);
     xmlDocument.setData("structure1", data);
+    xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
@@ -195,7 +197,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
-
+    int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
     String type = "Hidden";
@@ -209,15 +211,30 @@ public class ProductMultiple extends HttpSecureAppServlet {
       try {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-
+        page = TableSQLData.calcAndGetBackendPage(vars, "ProjectData.currentPage");
+        if (vars.getStringParameter("movePage", "").length() > 0) {
+        	// on movePage action force executing countRows again
+        	strNewFilter = "";
+        }
+        int oldOffset = offset;
+        offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+        log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
           // first
           // load
-          strNumRows = ProductMultipleData.countRows(this, strKey, strName, strProductCategory,
+        	 String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+        	 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+	        	 oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+	        	 oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+	        	 rownum = "ROWNUM";
+        	 } else {
+        		 pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+        	 }
+          strNumRows = ProductMultipleData.countRows(this,rownum, strKey, strName, strProductCategory,
               Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
-                  .getSelectorOrgs(this, vars, strOrg));
+                  .getSelectorOrgs(this, vars, strOrg),pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
@@ -277,7 +294,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -335,7 +352,15 @@ public class ProductMultiple extends HttpSecureAppServlet {
     try {
       // build sql orderBy clause
       String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-
+      String strPage = vars.getSessionValue("ProductMultiple|currentPage", "0");
+      int page = Integer.valueOf(strPage);
+      
+      int oldMinOffset = minOffset;
+      int oldMaxOffset = maxOffset;
+      minOffset = (page * TableSQLData.maxRowsPerGridPage) + minOffset;
+      maxOffset = (page * TableSQLData.maxRowsPerGridPage) + maxOffset;
+      log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
+      log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset); 
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit1 = String.valueOf(maxOffset);

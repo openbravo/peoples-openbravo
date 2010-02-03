@@ -79,9 +79,9 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
         if (strBPartner != null && !strBPartner.equals("")) {
           strBPartnerId = strBPartner;
           strBPartnerName = SEExpenseBPProjectData.selectBPName(this, strProjectId);
+          resultado.append(", new Array(\"inpcBpartnerId\", \"" + strBPartnerId + "\")\n");
+          resultado.append(", new Array(\"inpcBpartnerId_R\", \"" + strBPartnerName + "\")\n");
         }
-        resultado.append(", new Array(\"inpcBpartnerId\", \"" + strBPartnerId + "\")\n");
-        resultado.append(", new Array(\"inpcBpartnerId_R\", \"" + strBPartnerName + "\")\n");
       }
     } else if (strChanged.equals("inpcBpartnerId")) {
       // If business partner changed...
@@ -97,10 +97,11 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
           // business partner, take the last project of that business
           // partner (if any).
           if (strBPartnerProject == null || strBPartnerProject.equals("")) {
-            strReset = "1";
+            //strReset = "1";
             strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId);
             if (strProject != null && !strProject.equals("")) {
               strProjectId = strProject;
+              resultado.append("new Array(\"inpcProjectId\", \"" + strProjectId + "\")\n");
             } else {
               strProjectId = "";
             }
@@ -119,7 +120,6 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
           resultado.append("new Array(\"inpcProjectphaseId\", \"\"),\n");
           resultado.append("new Array(\"inpcProjecttaskId\", \"\"),\n");
         }
-        resultado.append("new Array(\"inpcProjectId\", \"" + strProjectId + "\")\n");
       }
     }
 

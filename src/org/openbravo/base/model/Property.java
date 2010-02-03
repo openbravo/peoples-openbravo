@@ -52,6 +52,7 @@ public class Property {
   private Property referencedProperty;
   private String name;
   private String columnName;
+  private String columnId;
   private boolean isActiveColumn = false;
   private String nameOfColumn; // AD_COLUMN.NAME
   // note defaultValue contains the value as it exists in the db, for booleans
@@ -110,7 +111,7 @@ public class Property {
     setParent(fromColumn.isParent());
     setColumnName(fromColumn.getColumnName());
     setNameOfColumn(fromColumn.getName());
-
+    setColumnId(fromColumn.getId());
     setDefaultValue(fromColumn.getDefaultValue());
 
     // use of the mandatory is restricted because there are many cases whereby it is set to

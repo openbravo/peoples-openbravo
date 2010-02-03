@@ -151,8 +151,11 @@ CREATE or REPLACE FUNCTION update_dateFormat
 RETURNS varchar AS '
 DECLARE
 BEGIN
-  EXECUTE ''CREATE OR REPLACE FUNCTION dateFormat() RETURNS VARCHAR AS '''' DECLARE BEGIN  RETURN '''''''''' || format || ''''''''''; EXCEPTION WHEN OTHERS THEN RETURN NULL; END; '''' LANGUAGE ''''plpgsql'''' IMMUTABLE; '';
-  RETURN ''dateFormat modified'';
+  IF (dateformat() <> format) THEN
+    EXECUTE ''CREATE OR REPLACE FUNCTION dateFormat() RETURNS VARCHAR AS '''' DECLARE BEGIN  RETURN '''''''''' || format || ''''''''''; EXCEPTION WHEN OTHERS THEN RETURN NULL; END; '''' LANGUAGE ''''plpgsql'''' IMMUTABLE; '';
+    RETURN ''dateFormat modified'';
+  END IF;
+  RETURN ''dateFormat not modified'';
 END;
 ' LANGUAGE 'plpgsql' VOLATILE
 /-- END

@@ -37,6 +37,7 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
+    Cur_Order RECORD;
     -- Record Info
     v_Client_ID VARCHAR2(32);
     v_Org_ID VARCHAR2(32);
@@ -591,6 +592,11 @@
      /**************************************************************************
         * Calculate Discounts
         *************************************************************************/
+        -- Delete first previous discounts if any and then recalculate them
+        DELETE
+        FROM C_ORDERLINE
+        WHERE C_ORDER_DISCOUNT_ID IS NOT NULL
+        AND C_ORDER_ID=v_Record_ID;
         v_CumDiscount:=0;
         v_OldCumDiscount:=0;
         v_Line:=10;
@@ -985,7 +991,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
     Cur_Tax RECORD;
     Cur_MultiTax RECORD;
     xTotalLines NUMBER:=0;
-    v_TaxBaseAmt NUMBER:=0;
+    v_LineNetAmt NUMBER:=0;
     xTaxAmt NUMBER:=0;
     xGrandTotal NUMBER:=0;
     HeaderNotAdded BOOLEAN:=TRUE;
@@ -994,88 +1000,46 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
     v_lineNo NUMBER:= 0;
   BEGIN
     v_ResultStr:='DeleteOldTaxes';
+    DELETE FROM C_ORDERLINETAX  WHERE C_OrderLine_ID IN (SELECT C_OrderLine_ID from C_OrderLine
+                                                        WHERE C_Order_ID = v_Record_ID);
     DELETE FROM C_ORDERTAX  WHERE C_Order_ID=v_Record_ID;
     -- For all Tax Rates
     v_ResultStr:='InsertNewTaxes';
     FOR Cur_Tax IN
-      (SELECT l.C_Tax_ID, o.IsTaxIncluded,
-        SUM(l.LineNetAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS LineNet,
+      (SELECT l.C_OrderLine_ID, l.C_Tax_ID, o.IsTaxIncluded,
+        SUM(l.LineNetAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS LineNetAmt,
+        SUM(l.TaxBaseAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS TaxBaseAmt,
         SUM(o.FreightAmt) + SUM(coalesce(o.ChargeAmt,0)) AS HeaderNet,
-        t.Rate, t.IsSummary, c.StdPrecision
+        t.Rate, t.IsSummary, c.StdPrecision, t.BaseAmount, o.C_Order_ID
       FROM C_ORDER o,  C_ORDERLINE l,
            C_TAX t, C_CURRENCY c
       WHERE o.C_Order_ID=l.C_Order_ID
         AND o.C_Order_ID=v_Record_ID -- Parameter
         AND l.C_Tax_ID=t.C_Tax_ID
         AND o.C_Currency_ID=c.C_Currency_ID
-      GROUP BY l.C_Tax_ID,
+      GROUP BY l.C_OrderLine_ID, l.C_Tax_ID,
         o.IsTaxIncluded,
         t.Rate,
         t.IsSummary,
-        c.StdPrecision
-      ORDER BY 3 DESC
+        c.StdPrecision,
+        t.BaseAmount, 
+        o.C_Order_ID
+      ORDER BY 4 DESC
       )
     LOOP
-      v_TaxBaseAmt:=Cur_Tax.LineNet;
-      xTotalLines:=xTotalLines + v_TaxBaseAmt; -- w/o Header Freight/Charge
-
+      v_LineNetAmt:=Cur_Tax.LineNetAmt;
+      xTotalLines:=xTotalLines + v_LineNetAmt; -- w/o Header Freight/Charge
       IF(HeaderNotAdded) THEN --  add header net to first tax
         HeaderNotAdded:=FALSE;
-        v_TaxBaseAmt:=v_TaxBaseAmt + Cur_Tax.HeaderNet;
+        v_LineNetAmt:=v_LineNetAmt + Cur_Tax.HeaderNet;
       END IF;
-      IF(Cur_Tax.IsSummary='N') THEN
-        v_LineNo := v_LineNo + 10;
-        xTaxAmt:=ROUND(v_TaxBaseAmt * Cur_Tax.Rate / 100, Cur_Tax.StdPrecision) ;
-        xGrandTotal:=xGrandTotal + v_TaxBaseAmt + xTaxAmt;
-        --
-        INSERT
-        INTO C_ORDERTAX
-          (
-            C_OrderTax_ID, C_Order_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, Created, CreatedBy, Updated,
-            UpdatedBy, TaxBaseAmt, TaxAmt, Line
-          )
-          VALUES
-          (
-            get_uuid(), v_Record_ID, Cur_Tax.C_Tax_ID, v_Client_ID, v_Org_ID,
-             'Y', now(), v_UpdatedBy, now(),
-            v_UpdatedBy, v_TaxBaseAmt, xTaxAmt, v_LineNo
-          )
-          ;
-      ELSE -- Multiple Taxes
-        xGrandTotal:=xGrandTotal + v_TaxBaseAmt;
-        v_FirstLine := TRUE;
-        FOR Cur_MultiTax IN
-                          (SELECT C_Tax_ID, Rate, CASCADE
-                             FROM C_TAX
-                            WHERE Parent_Tax_ID=Cur_Tax.C_Tax_ID
-                            ORDER BY Line)
-        LOOP
-          v_LineNo := v_LineNo + 10;
-          IF ((Cur_MultiTax.CASCADE = 'Y') AND (NOT v_FirstLine)) THEN   --cannot apply cascade to the first line
-            v_ActualBaseAmt := xGrandTotal;
-          ELSE
-            v_ActualBaseAmt := v_TaxBaseAmt;
-          END IF;
-          xTaxAmt:=ROUND(v_ActualBaseAmt * Cur_MultiTax.Rate / 100, Cur_Tax.StdPrecision) ;
-          v_FirstLine := FALSE;
-          xGrandTotal:=xGrandTotal + xTaxAmt;
-          --
-          INSERT INTO C_ORDERTAX
-            (
-              C_OrderTax_ID, C_Order_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
-              IsActive, Created, CreatedBy, Updated,
-              UpdatedBy, TaxBaseAmt, TaxAmt, Line
-            )
-            VALUES
-            (
-              get_uuid(), v_Record_ID, Cur_MultiTax.C_Tax_ID, v_Client_ID, v_Org_ID,
-               'Y', now(), v_UpdatedBy, now(),
-              v_UpdatedBy, v_ActualBaseAmt, xTaxAmt, v_LineNo
-            );
-        END LOOP;
-      END IF;
+      C_ORDERLINETAX_INSERT(Cur_Tax.C_Order_ID, Cur_Tax.C_OrderLine_ID, v_UpdatedBy, Cur_Tax.C_Tax_ID, Cur_Tax.C_Tax_ID, Cur_Tax.LineNetAmt, Cur_Tax.TaxBaseAmt, Cur_Tax.StdPrecision);
     END LOOP; -- Insert New Taxes
+    SELECT COALESCE(SUM(TAXAMT), 0)
+    INTO xGrandTotal
+    FROM C_ORDERTAX
+    WHERE C_ORDER_ID = v_Record_ID;
+    xGrandTotal:=xGrandTotal+ xTotalLines;    
     -- Update Header
     UPDATE C_ORDER
       SET TotalLines=xTotalLines,
@@ -1286,7 +1250,18 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     END IF;
   END IF;
   -- We are done with standard sales orders
-  IF(v_DocAction IN('CO', 'CL', 'VO') AND v_DocSubTypeSO='SO') THEN
+IF (v_DocSubTypeSO = 'RM') THEN
+
+	FOR Cur_Order IN( SELECT ol.qtyordered from C_order o,C_orderline ol
+      where o.C_Order_ID = v_Record_ID
+      AND ol.C_Order_ID = o.C_Order_ID)
+	LOOP
+		IF (Cur_Order.qtyordered >0) THEN 
+			RAISE_APPLICATION_ERROR(-20000, '@ReturnMaterialOrderType@') ;
+		END IF;
+	END LOOP;
+	END IF;
+  IF(v_DocAction IN('CO', 'CL', 'VO') AND v_DocSubTypeSO IN('SO','RM')) THEN
     UPDATE C_ORDER
       SET DocStatus='CO',
       DocAction='--',

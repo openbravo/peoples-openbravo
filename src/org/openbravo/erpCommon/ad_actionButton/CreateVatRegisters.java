@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -128,7 +128,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     if (strProcessed.equalsIgnoreCase("N")) {
       // check for already used periods)
       BigDecimal CrossPeriodCount = new BigDecimal(TaxPayment.selectCrossPeriodCount(this, vars
-          .getClient(), strDatefrom, strDateto));
+          .getClient(), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
+          taxpayment[0].adOrgId), strDatefrom, strDateto));
       if (CrossPeriodCount.intValue() > 0) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this,
             "PeriodsDontMatch", vars.getLanguage()));
