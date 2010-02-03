@@ -270,7 +270,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
       updateSession.setString(1, currentUser.getId());
       updateSession.executeUpdate();
-      // ant.runTask(tasks);
+      ant.runTask(tasks);
 
       PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
       psErr.executeQuery();
