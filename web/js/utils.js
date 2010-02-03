@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5983';
+  var number = '6097';
   return number;
 }
 
@@ -3310,12 +3310,6 @@ function getObjFeatures(obj) {
     objType += " ";
     objType += obj.getAttribute('type');
     objType += " ";
-    if (obj.getAttribute('onreset')) {
-      if (obj.getAttribute('onreset').indexOf('resetSelector()')!=-1) {
-        objType += "scSelector";
-        objType += " ";
-      }
-    }
   }
   if (obj.getAttribute('readonly') == 'true' || obj.readOnly) {
     objType += "readonly";

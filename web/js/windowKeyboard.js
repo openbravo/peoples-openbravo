@@ -483,7 +483,7 @@ function drawWindowElementFocus(obj) {
       isFirstTime = false;
     } else if (currentWindowElementType == 'genericTree') {
       isFirstTime = false;
-    } else if (currentWindowElementType == 'scSelector') {  //Added for support Smartclient Selector
+    } else if (currentWindowElementType == 'custom') {  //Added for custom element support
       isFirstTime = false;
     } else {
     }
@@ -503,16 +503,14 @@ function putWindowElementFocus(obj, event) {
     } else if (currentWindowElementType == 'genericTree') {
       obj.focus();
       focusGenericTree();
-    } else if (currentWindowElementType == 'scSelector') {  //Added for support Smartclient Selector
-      //obj.focus(); *Commented because it fails with IE*
-      focusScSelector(obj.getAttribute('id'));
+    } else if (currentWindowElementType == 'custom') {  //Added for custom element support
+      if (obj.setFocusLogic) {
+        obj.setFocusLogic('focus');
+      }
     } else {
-      // added for Smartclient support
-      if (obj.focusInItem) {
-        obj.focusInItem();
-      } else if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+      if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
       } else {
-          obj.focus();
+        obj.focus();
       }
     }
     if(selectInputTextOnTab && event!='onclick' && event!='onmousedown') obj.select();
@@ -589,7 +587,10 @@ function eraseWindowElementFocus(obj) {
       blurGrid();
     } else if (previousWindowElementType == 'genericTree') {
       blurGenericTree();
-    } else if (previousWindowElementType == 'scSelector') {  //Added for support Smartclient Selector
+    } else if (previousWindowElementType == 'custom') {  //Added for custom element support
+      if (obj.setFocusLogic) {
+        obj.setFocusLogic('blur');
+      }
     } else {
     }
   } catch (e) {
@@ -618,8 +619,11 @@ function mustBeJumped(obj) {
 }
 
 function mustBeIgnored(obj) {
+  if (obj.setFocusLogic) {  //Added for custom element support
+    return obj.setFocusLogic('mustBeIgnored');
+  }
   if (obj.style.display == 'none') return true;
-  if (obj.getAttribute('type') == 'hidden' && getObjFeatures(obj).indexOf("scSelector") == -1) {  //Added for support Smartclient Selector
+  if (obj.getAttribute('type') == 'hidden') {
     return true;
   }
   if (obj.getAttribute('readonly') == 'true' && obj.getAttribute('tabindex') != '1') return true;
@@ -656,9 +660,9 @@ function couldHaveFocus(obj) {
     }
   } catch(e) {
   }
-  try {  //Added for support Smartclient Selector
-    if (getObjFeatures(obj).indexOf('scSelector')!=-1) {
-      currentWindowElementType = 'scSelector';
+  try {  //Added for custom element support
+    if (obj.setFocusLogic) {
+      currentWindowElementType = 'custom';
       return true;
     }
   } catch(e) {
@@ -1565,13 +1569,6 @@ function focusGenericTree() {
 function blurGenericTree() {
   try {
     if (typeof gt_focusedNode != "undefined") { gt_blurTreeContainer('genericTree','id'); }
-  } catch(e) {}
-}
-
-function focusScSelector(id) {  //Added for support Smartclient Selector
-  try {
-    var scSelector_focusCommand = "sc_" + id + ".selectorField.selector.focus()";
-    eval(scSelector_focusCommand);
   } catch(e) {}
 }
 
