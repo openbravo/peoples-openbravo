@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6034';
+  var number = '6035';
   return number;
 }
 
@@ -4281,6 +4281,9 @@ function returnPlainNumber(number, decSeparator, groupSeparator) {
 * @type String
 */
 function returnFormattedToCalc(number, decSeparator, groupSeparator) {
+  if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+  if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+
   var calcNumber = number;
   calcNumber = returnPlainNumber(calcNumber, decSeparator, groupSeparator);
   calcNumber = calcNumber.replace(decSeparator, '.');
