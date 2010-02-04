@@ -2073,8 +2073,8 @@ You find the current status in the Document Status field. The options are listed
 <!--316-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--316-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--316-->  <COLUMNNAME><![CDATA[GrandTotal]]></COLUMNNAME>
-<!--316-->  <NAME><![CDATA[Grand Total Amount]]></NAME>
-<!--316-->  <PRINTNAME><![CDATA[Grand Total]]></PRINTNAME>
+<!--316-->  <NAME><![CDATA[Total Gross Amount]]></NAME>
+<!--316-->  <PRINTNAME><![CDATA[Total Gross Amount]]></PRINTNAME>
 <!--316-->  <DESCRIPTION><![CDATA[The final monetary amount (including taxes) charge listed in a document.]]></DESCRIPTION>
 <!--316-->  <HELP><![CDATA[The Grand Total displays the total amount including Tax and Freight in document currency]]></HELP>
 <!--316-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -3572,8 +3572,8 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--519-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--519-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--519-->  <COLUMNNAME><![CDATA[PriceActual]]></COLUMNNAME>
-<!--519-->  <NAME><![CDATA[Unit Price]]></NAME>
-<!--519-->  <PRINTNAME><![CDATA[Unit Price]]></PRINTNAME>
+<!--519-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--519-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--519-->  <DESCRIPTION><![CDATA[The price that will be paid for a specified item.]]></DESCRIPTION>
 <!--519-->  <HELP><![CDATA[The actual price indicates the price for a product in source currency.]]></HELP>
 <!--519-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -3585,8 +3585,8 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--520-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--520-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--520-->  <COLUMNNAME><![CDATA[PriceList]]></COLUMNNAME>
-<!--520-->  <NAME><![CDATA[List Price]]></NAME>
-<!--520-->  <PRINTNAME><![CDATA[List Price]]></PRINTNAME>
+<!--520-->  <NAME><![CDATA[Net List Price]]></NAME>
+<!--520-->  <PRINTNAME><![CDATA[Net List Price]]></PRINTNAME>
 <!--520-->  <DESCRIPTION><![CDATA[The official price of a product in a specified currency.]]></DESCRIPTION>
 <!--520-->  <HELP><![CDATA[The List Price is the official price stated by the selected pricelist and the currency of the document.]]></HELP>
 <!--520-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -4350,8 +4350,8 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--598-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--598-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--598-->  <COLUMNNAME><![CDATA[TotalLines]]></COLUMNNAME>
-<!--598-->  <NAME><![CDATA[Summed Line Amount]]></NAME>
-<!--598-->  <PRINTNAME><![CDATA[Total Lines]]></PRINTNAME>
+<!--598-->  <NAME><![CDATA[Total Net Amount]]></NAME>
+<!--598-->  <PRINTNAME><![CDATA[Total Net Amount]]></PRINTNAME>
 <!--598-->  <DESCRIPTION><![CDATA[The final sum of all line totals made to a specified document or transaction (not including taxes).]]></DESCRIPTION>
 <!--598-->  <HELP><![CDATA[The Total amount displays the total of all lines in document currency]]></HELP>
 <!--598-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -5427,8 +5427,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--957-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--957-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--957-->  <COLUMNNAME><![CDATA[PriceStd]]></COLUMNNAME>
-<!--957-->  <NAME><![CDATA[Standard Price]]></NAME>
-<!--957-->  <PRINTNAME><![CDATA[Std Price]]></PRINTNAME>
+<!--957-->  <NAME><![CDATA[Net Standard Price]]></NAME>
+<!--957-->  <PRINTNAME><![CDATA[Net Standard Price]]></PRINTNAME>
 <!--957-->  <DESCRIPTION><![CDATA[The regular or normal price of a product in the respective price list.]]></DESCRIPTION>
 <!--957-->  <HELP><![CDATA[The Standard Price indicates the standard or normal price for a product on this price list]]></HELP>
 <!--957-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -25093,8 +25093,8 @@ Commercial modules can have a fee to be payed before they can be installed.]]></
 <!--9F815073C39E4506A1C74BB3667C6B57-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9F815073C39E4506A1C74BB3667C6B57-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9F815073C39E4506A1C74BB3667C6B57-->  <COLUMNNAME><![CDATA[PriceActual]]></COLUMNNAME>
-<!--9F815073C39E4506A1C74BB3667C6B57-->  <NAME><![CDATA[Net Unit Price]]></NAME>
-<!--9F815073C39E4506A1C74BB3667C6B57-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
+<!--9F815073C39E4506A1C74BB3667C6B57-->  <NAME><![CDATA[Unit Price]]></NAME>
+<!--9F815073C39E4506A1C74BB3667C6B57-->  <PRINTNAME><![CDATA[Unit Price]]></PRINTNAME>
 <!--9F815073C39E4506A1C74BB3667C6B57-->  <DESCRIPTION><![CDATA[The price that will be paid for a specified item.]]></DESCRIPTION>
 <!--9F815073C39E4506A1C74BB3667C6B57-->  <HELP><![CDATA[The actual price indicates the price for a product in source currency.]]></HELP>
 <!--9F815073C39E4506A1C74BB3667C6B57-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -25247,8 +25247,8 @@ Commercial modules can have a fee to be payed before they can be installed.]]></
 <!--CD57A1DBADD440EC9551AE6BC51E8643-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--CD57A1DBADD440EC9551AE6BC51E8643-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CD57A1DBADD440EC9551AE6BC51E8643-->  <COLUMNNAME><![CDATA[PriceStd]]></COLUMNNAME>
-<!--CD57A1DBADD440EC9551AE6BC51E8643-->  <NAME><![CDATA[Net Standard Price]]></NAME>
-<!--CD57A1DBADD440EC9551AE6BC51E8643-->  <PRINTNAME><![CDATA[Net Standard Price]]></PRINTNAME>
+<!--CD57A1DBADD440EC9551AE6BC51E8643-->  <NAME><![CDATA[Standard Price]]></NAME>
+<!--CD57A1DBADD440EC9551AE6BC51E8643-->  <PRINTNAME><![CDATA[Std Price]]></PRINTNAME>
 <!--CD57A1DBADD440EC9551AE6BC51E8643-->  <DESCRIPTION><![CDATA[The regular or normal price of a product in the respective price list.]]></DESCRIPTION>
 <!--CD57A1DBADD440EC9551AE6BC51E8643-->  <HELP><![CDATA[The Standard Price indicates the standard or normal price for a product on this price list]]></HELP>
 <!--CD57A1DBADD440EC9551AE6BC51E8643-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -25325,8 +25325,8 @@ Commercial modules can have a fee to be payed before they can be installed.]]></
 <!--E46619B0FD944516A50C9B18E0E4E727-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E46619B0FD944516A50C9B18E0E4E727-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E46619B0FD944516A50C9B18E0E4E727-->  <COLUMNNAME><![CDATA[GrandTotal]]></COLUMNNAME>
-<!--E46619B0FD944516A50C9B18E0E4E727-->  <NAME><![CDATA[Total Gross Amount]]></NAME>
-<!--E46619B0FD944516A50C9B18E0E4E727-->  <PRINTNAME><![CDATA[Total Gross Amount]]></PRINTNAME>
+<!--E46619B0FD944516A50C9B18E0E4E727-->  <NAME><![CDATA[Grand Total Amount]]></NAME>
+<!--E46619B0FD944516A50C9B18E0E4E727-->  <PRINTNAME><![CDATA[Grand Total]]></PRINTNAME>
 <!--E46619B0FD944516A50C9B18E0E4E727-->  <DESCRIPTION><![CDATA[The final monetary amount (including taxes) charge listed in a document.]]></DESCRIPTION>
 <!--E46619B0FD944516A50C9B18E0E4E727-->  <HELP><![CDATA[The Grand Total displays the total amount including Tax and Freight in document currency]]></HELP>
 <!--E46619B0FD944516A50C9B18E0E4E727-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -25351,8 +25351,8 @@ Commercial modules can have a fee to be payed before they can be installed.]]></
 <!--F3BF680089754BAC858ECFF2D5D0F232-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F3BF680089754BAC858ECFF2D5D0F232-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F3BF680089754BAC858ECFF2D5D0F232-->  <COLUMNNAME><![CDATA[TotalLines]]></COLUMNNAME>
-<!--F3BF680089754BAC858ECFF2D5D0F232-->  <NAME><![CDATA[Total Net Amount]]></NAME>
-<!--F3BF680089754BAC858ECFF2D5D0F232-->  <PRINTNAME><![CDATA[Total Net Amount]]></PRINTNAME>
+<!--F3BF680089754BAC858ECFF2D5D0F232-->  <NAME><![CDATA[Summed Line Amount]]></NAME>
+<!--F3BF680089754BAC858ECFF2D5D0F232-->  <PRINTNAME><![CDATA[Total Lines]]></PRINTNAME>
 <!--F3BF680089754BAC858ECFF2D5D0F232-->  <DESCRIPTION><![CDATA[The final sum of all line totals made to a specified document or transaction (not including taxes).]]></DESCRIPTION>
 <!--F3BF680089754BAC858ECFF2D5D0F232-->  <HELP><![CDATA[The Total amount displays the total of all lines in document currency.]]></HELP>
 <!--F3BF680089754BAC858ECFF2D5D0F232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
