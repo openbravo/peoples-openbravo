@@ -75,7 +75,12 @@ dojo.declare("dijit.layout._TabButton",
 	//		The CSS class applied to the domNode.
 	baseClass: "dijitTab",
 
-	templateString: dojo.cache("dijit.layout", "templates/_TabButton.html", "<div waiRole=\"presentation\" dojoAttachPoint=\"titleNode\" dojoAttachEvent='onclick:onClick,onmouseenter:_onMouse,onmouseleave:_onMouse'>\n    <div waiRole=\"presentation\" class='dijitTabInnerDiv' dojoAttachPoint='innerDiv'>\n        <div waiRole=\"presentation\" class='dijitTabContent' dojoAttachPoint='tabContent,focusNode'>\n\t        <img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='iconNode' waiRole=\"presentation\"/>\n\t        <span dojoAttachPoint='containerNode' class='tabLabel'></span>\n\t        <span class=\"closeButton\" dojoAttachPoint='closeNode'\n\t        \t\tdojoAttachEvent='onclick: onClickCloseButton, onmouseenter: _onCloseButtonEnter, onmouseleave: _onCloseButtonLeave'>\n\t        \t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='closeIcon' class='closeImage' waiRole=\"presentation\"/>\n\t            <span dojoAttachPoint='closeText' class='closeText'>x</span>\n\t        </span>\n        </div>\n    </div>\n</div>\n"),
+	// Apply dijitTabCloseButtonHover when close button is hovered
+	cssStateNodes: {
+		closeNode: "dijitTabCloseButton"
+	},
+
+	templateString: dojo.cache("dijit.layout", "templates/_TabButton.html", "<div waiRole=\"presentation\" dojoAttachPoint=\"titleNode\" dojoAttachEvent='onclick:onClick'>\n    <div waiRole=\"presentation\" class='dijitTabInnerDiv' dojoAttachPoint='innerDiv'>\n        <div waiRole=\"presentation\" class='dijitTabContent' dojoAttachPoint='tabContent,focusNode'>\n\t        <img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='iconNode' waiRole=\"presentation\"/>\n\t        <span dojoAttachPoint='containerNode' class='tabLabel'></span>\n\t        <span class=\"dijitTabCloseButton\" dojoAttachPoint='closeNode'\n\t        \t\tdojoAttachEvent='onclick: onClickCloseButton'>\n\t        \t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='closeIcon' class='dijitTabCloseIcon' waiRole=\"presentation\"/>\n\t            <span dojoAttachPoint='closeText' class='dijitTabCloseText'>x</span>\n\t        </span>\n        </div>\n    </div>\n</div>\n"),
 
 	// Override _FormWidget.scrollOnFocus.
 	// Don't scroll the whole tab container into view when the button is focused.
@@ -153,18 +158,6 @@ dojo.declare("dijit.layout._TabButton",
 			delete this._closeMenu;
 		}
 		this.inherited(arguments);
-	},
-
-	_onCloseButtonEnter: function(){
-		// summary:
-		//		Handler when mouse is moved over the close icon (the X)
-		dojo.addClass(this.closeNode, "closeButton-hover");
-	},
-
-	_onCloseButtonLeave: function(){
-		// summary:
-		//		Handler when mouse is moved off the close icon (the X)
-		dojo.removeClass(this.closeNode, "closeButton-hover");
 	}
 });
 

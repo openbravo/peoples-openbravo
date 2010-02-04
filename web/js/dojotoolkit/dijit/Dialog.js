@@ -15,6 +15,7 @@ dojo.require("dojo.fx");
 
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
+dojo.require("dijit._CssStateMixin");
 dojo.require("dijit.form._FormMixin");
 dojo.require("dijit._DialogMixin");
 dojo.require("dijit.DialogUnderlay");
@@ -35,7 +36,7 @@ dijit._underlay = function(kwArgs){
 
 dojo.declare(
 	"dijit._DialogBase",
-	[dijit._Templated, dijit.form._FormMixin, dijit._DialogMixin],
+	[dijit._Templated, dijit.form._FormMixin, dijit._DialogMixin, dijit._CssStateMixin],
 	{
 		// summary:
 		//		A modal dialog Widget
@@ -53,7 +54,13 @@ dojo.declare(
 		// |	dojo.body().appendChild(foo.domNode);
 		// |	foo.startup();
 
-		templateString: dojo.cache("dijit", "templates/Dialog.html", "<div class=\"dijitDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dijitDialogTitleBar\">\n\t<span dojoAttachPoint=\"titleNode\" class=\"dijitDialogTitle\" id=\"${id}_title\"></span>\n\t<span dojoAttachPoint=\"closeButtonNode\" class=\"dijitDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel, onmouseenter: _onCloseEnter, onmouseleave: _onCloseLeave\" title=\"${buttonCancel}\">\n\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\" title=\"${buttonCancel}\">x</span>\n\t</span>\n\t</div>\n\t\t<div dojoAttachPoint=\"containerNode\" class=\"dijitDialogPaneContent\"></div>\n</div>\n"),
+		templateString: dojo.cache("dijit", "templates/Dialog.html", "<div class=\"dijitDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dijitDialogTitleBar\">\n\t<span dojoAttachPoint=\"titleNode\" class=\"dijitDialogTitle\" id=\"${id}_title\"></span>\n\t<span dojoAttachPoint=\"closeButtonNode\" class=\"dijitDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\" title=\"${buttonCancel}\">\n\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\" title=\"${buttonCancel}\">x</span>\n\t</span>\n\t</div>\n\t\t<div dojoAttachPoint=\"containerNode\" class=\"dijitDialogPaneContent\"></div>\n</div>\n"),
+		
+		baseClass: "dijitDialog",
+		
+		cssStateNodes: {
+			closeButtonNode: "dijitDialogCloseIcon"
+		},
 
 		attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
 			title: [
@@ -257,9 +264,13 @@ dojo.declare(
 				wasPlaying = true;
 				this._fadeOut.stop();
 			}
-			if(this.open || wasPlaying){
+			
+			// Hide the underlay, unless the underlay widget has already been destroyed
+			// because we are being called during page unload (when all widgets are destroyed)
+			if((this.open || wasPlaying) && !dijit._underlay._destroyed){
 				dijit._underlay.hide();
 			}
+
 			if(this._moveable){
 				this._moveable.destroy();
 			}
@@ -491,22 +502,6 @@ dojo.declare(
 				setTimeout(dojo.hitch(dijit,"focus",this._savedFocus), 25);
 			}
 			this.inherited(arguments);
-		},
-
-		_onCloseEnter: function(){
-			// summary:
-			//		Called when user hovers over close icon
-			// tags:
-			//		private
-			dojo.addClass(this.closeButtonNode, "dijitDialogCloseIcon-hover");
-		},
-
-		_onCloseLeave: function(){
-			// summary:
-			//		Called when user stops hovering over close icon
-			// tags:
-			//		private
-			dojo.removeClass(this.closeButtonNode, "dijitDialogCloseIcon-hover");
 		}
 	}
 );

@@ -862,6 +862,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
     var header = openbravo.widget.DataGrid.html.getParentByType(evt.target, "th");
     var columnNo = dojo.indexOf(header.parentNode.cells, header);
     var column = this.columns.get(columnNo);
+    this.drawTotalNumber("", header);
     if (column != null && this.selectedRows.count() > 0) {
       var index = column.index;
       if (!this.lastHoveredColumn || this.lastHoveredColumn.index != index) {
@@ -876,24 +877,40 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
             var offset = currentRow.value.offset;
             if (this.buffer.isInRange(offset)) {
               var bufferedRow = this.buffer.getRow(offset);
-              total += parseFloat(bufferedRow.getValue(index));
+              if (returnFormattedToCalc) {
+                total += parseFloat(returnFormattedToCalc(bufferedRow.getValue(index)));
+              } else {
+                total += parseFloat(bufferedRow.getValue(index));
+              }
             } else { dataInBuffer = false; }
           }
           if (!dataInBuffer){
             this.requestColumnTotals(column.name);
           } else {
             this.lastAddition = total;
-            window.status = parseFloat(this.lastAddition);
+            this.drawTotalNumber(this.lastAddition, header);
           }
         } else {
-          window.status = "";
+          this.drawTotalNumber("", header);
         }
       } else {
         var type = this.lastHoveredColumn.type.name;
         if (type == "integer" || type == "float"){
-          window.status = parseFloat(this.lastAddition);
+          this.drawTotalNumber(this.lastAddition, header);
         }
       }
+    }
+  },
+
+/**
+* Updated just the drawn total number.
+* @param {String} number - the number to show
+* @param {Object} header - the associated column header
+*/
+  drawTotalNumber : function (number, header) {
+    window.status = number;
+    if (header) {
+      header.setAttribute('title', number);
     }
   },
 

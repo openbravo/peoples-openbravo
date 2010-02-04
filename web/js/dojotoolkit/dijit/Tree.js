@@ -16,11 +16,12 @@ dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dijit._Container");
 dojo.require("dijit._Contained");
+dojo.require("dijit._CssStateMixin");
 dojo.require("dojo.cookie");
 
 dojo.declare(
 	"dijit._TreeNode",
-	[dijit._Widget, dijit._Templated, dijit._Container, dijit._Contained],
+	[dijit._Widget, dijit._Templated, dijit._Container, dijit._Contained, dijit._CssStateMixin],
 {
 	// summary:
 	//		Single node within a tree.   This class is used internally
@@ -55,7 +56,15 @@ dojo.declare(
 	//		then after dojo.data query it becomes "LOADING" and, finally "LOADED"
 	state: "UNCHECKED",
 
-	templateString: dojo.cache("dijit", "templates/TreeNode.html", "<div class=\"dijitTreeNode\" waiRole=\"presentation\"\n\t><div dojoAttachPoint=\"rowNode\" class=\"dijitTreeRow\" waiRole=\"presentation\" dojoAttachEvent=\"onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick\"\n\t\t><img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint=\"expandoNode\" class=\"dijitTreeExpando\" waiRole=\"presentation\"\n\t\t><span dojoAttachPoint=\"expandoNodeText\" class=\"dijitExpandoText\" waiRole=\"presentation\"\n\t\t></span\n\t\t><span dojoAttachPoint=\"contentNode\"\n\t\t\tclass=\"dijitTreeContent\" waiRole=\"presentation\">\n\t\t\t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint=\"iconNode\" class=\"dijitTreeIcon\" waiRole=\"presentation\"\n\t\t\t><span dojoAttachPoint=\"labelNode\" class=\"dijitTreeLabel\" wairole=\"treeitem\" tabindex=\"-1\" waiState=\"selected-false\" dojoAttachEvent=\"onfocus:_onLabelFocus, onblur:_onLabelBlur\"></span>\n\t\t</span\n\t></div>\n\t<div dojoAttachPoint=\"containerNode\" class=\"dijitTreeContainer\" waiRole=\"presentation\" style=\"display: none;\"></div>\n</div>\n"),
+	templateString: dojo.cache("dijit", "templates/TreeNode.html", "<div class=\"dijitTreeNode\" waiRole=\"presentation\"\n\t><div dojoAttachPoint=\"rowNode\" class=\"dijitTreeRow\" waiRole=\"presentation\" dojoAttachEvent=\"onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick\"\n\t\t><img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint=\"expandoNode\" class=\"dijitTreeExpando\" waiRole=\"presentation\"\n\t\t><span dojoAttachPoint=\"expandoNodeText\" class=\"dijitExpandoText\" waiRole=\"presentation\"\n\t\t></span\n\t\t><span dojoAttachPoint=\"contentNode\"\n\t\t\tclass=\"dijitTreeContent\" waiRole=\"presentation\">\n\t\t\t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint=\"iconNode\" class=\"dijitTreeIcon\" waiRole=\"presentation\"\n\t\t\t><span dojoAttachPoint=\"labelNode\" class=\"dijitTreeLabel\" wairole=\"treeitem\" tabindex=\"-1\" waiState=\"selected-false\" dojoAttachEvent=\"onfocus:_onLabelFocus\"></span>\n\t\t</span\n\t></div>\n\t<div dojoAttachPoint=\"containerNode\" class=\"dijitTreeContainer\" waiRole=\"presentation\" style=\"display: none;\"></div>\n</div>\n"),
+
+	baseClass: "dijitTreeNode",
+
+	// For hover effect for tree node, and focus effect for label
+	cssStateNodes: {
+		rowNode: "dijitTreeRow",
+		labelNode: "dijitTreeLabel"
+	},
 
 	attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
 		label: {node: "labelNode", type: "innerText"},
@@ -63,6 +72,8 @@ dojo.declare(
 	}),
 
 	postCreate: function(){
+		this.inherited(arguments);
+
 		// set expand icon for leaf
 		this._setExpando();
 
@@ -391,22 +402,12 @@ dojo.declare(
 
 	_onLabelFocus: function(evt){
 		// summary:
-		//		Called when this node is focused (possibly programatically)
+		//		Called when this row is focused (possibly programatically)
+		//		Note that we aren't using _onFocus() builtin to dijit
+		//		because it's called when focus is moved to a descendant TreeNode.
 		// tags:
 		//		private
-		dojo.addClass(this.labelNode, "dijitTreeLabelFocused");
 		this.tree._onNodeFocus(this);
-	},
-
-	_onLabelBlur: function(evt){
-		// summary:
-		//		Called when focus was moved away from this node, either to
-		//		another TreeNode or away from the Tree entirely.
-		//		Note that we aren't using _onFocus/_onBlur builtin to dijit
-		//		because _onBlur() isn't called when focus is moved to my child TreeNode.
-		// tags:
-		//		private
-		dojo.removeClass(this.labelNode, "dijitTreeLabelFocused");
 	},
 
 	setSelected: function(/*Boolean*/ selected){
@@ -419,7 +420,7 @@ dojo.declare(
 		var labelNode = this.labelNode;
 		labelNode.setAttribute("tabIndex", selected ? "0" : "-1");
 		dijit.setWaiState(labelNode, "selected", selected);
-		dojo.toggleClass(this.rowNode, "dijitTreeNodeSelected", selected);
+		dojo.toggleClass(this.rowNode, "dijitTreeRowSelected", selected);
 	},
 
 	_onClick: function(evt){
@@ -442,7 +443,6 @@ dojo.declare(
 		//		Handler for onmouseenter event on a node
 		// tags:
 		//		private
-		dojo.addClass(this.rowNode, "dijitTreeNodeHover");
 		this.tree._onNodeMouseEnter(this, evt);
 	},
 
@@ -451,7 +451,6 @@ dojo.declare(
 		//		Handler for onmouseenter event on a node
 		// tags:
 		//		private
-		dojo.removeClass(this.rowNode, "dijitTreeNodeHover");
 		this.tree._onNodeMouseLeave(this, evt);
 	}
 });
@@ -1395,12 +1394,14 @@ dojo.declare(
 
 	_onNodeMouseEnter: function(/*dijit._Widget*/ node){
 		// summary:
-		//		Called when mouse is over a node (onmouseenter event)
+		//		Called when mouse is over a node (onmouseenter event),
+		//		this is monitored by the DND code
 	},
 
 	_onNodeMouseLeave: function(/*dijit._Widget*/ node){
 		// summary:
-		//		Called when mouse is over a node (onmouseenter event)
+		//		Called when mouse leaves a node (onmouseleave event),
+		//		this is monitored by the DND code
 	},
 
 	//////////////// Events from the model //////////////////////////

@@ -155,7 +155,7 @@ dijit.typematic = {
 				dijit.typematic.stop();
 			}),
 			dc(node, "mousemove", this, function(evt){
-				dojo.stopEvent(evt);
+				evt.preventDefault();
 			}),
 			dc(node, "dblclick", this, function(evt){
 				dojo.stopEvent(evt);

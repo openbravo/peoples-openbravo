@@ -70,7 +70,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       try {
         printPage(response, vars, strBPartner, strOrderType, strIsSOTrx, strWindowId, strLocation,
             strContact, strProjectId, strTabId, strDeliveryRule, strUserRep, strPaymentrule,
-            strPaymentterm, strInvoiceRule, strPriceList,strDeliveryViaRule);
+            strPaymentterm, strInvoiceRule, strPriceList, strDeliveryViaRule);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -82,7 +82,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       String strOrderType, String strIsSOTrx, String strWindowId, String strLocation,
       String strContact, String strProjectId, String strTabId, String strDeliveryRule0,
       String strUserRep0, String strPaymentrule0, String strPaymentterm0, String strInvoiceRule0,
-      String strPriceList0,String strDeliveryViaRule0) throws IOException, ServletException {
+      String strPriceList0, String strDeliveryViaRule0) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
@@ -91,8 +91,8 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strDeliveryRule, strPaymentrule, strPaymentterm, strMwarehouse, strInvoiceRule, strPriceList, strUserRep, strDeleiveryViaRule;
-    strDeliveryRule = strPaymentrule = strPaymentterm = strMwarehouse = strInvoiceRule = strPriceList = strUserRep = strDeleiveryViaRule = "";
+    String strDeliveryRule, strPaymentrule, strPaymentterm, strMwarehouse, strInvoiceRule, strPriceList, strUserRep, strDeliveryViaRule;
+    strDeliveryRule = strPaymentrule = strPaymentterm = strMwarehouse = strInvoiceRule = strPriceList = strUserRep = strDeliveryViaRule = "";
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
       strDeliveryRule = data[0].deliveryrule.equals("") ? strDeliveryRule0 : data[0].deliveryrule;
@@ -105,8 +105,8 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       strInvoiceRule = data[0].invoicerule.equals("") ? strInvoiceRule0 : data[0].invoicerule;
       strPriceList = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
       strPriceList = strPriceList.equals("") ? strPriceList0 : strPriceList;
-      strDeleiveryViaRule = data[0].deliveryviarule.equals("") ? strDeliveryViaRule0 : data[0].deliveryviarule ;
-      
+      strDeliveryViaRule = data[0].deliveryviarule.equals("") ? strDeliveryViaRule0
+          : data[0].deliveryviarule;
     }
     strMwarehouse = SEOrderBPartnerData.mWarehouse(this, strBPartner);
 
@@ -263,7 +263,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       resultado.append("null");
     resultado.append("\n),");
     resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentrule + "\"),");
-    resultado.append("new Array(\"inpdeliveryviarule\", \"" + strDeleiveryViaRule + "\"),");
+    resultado.append("new Array(\"inpdeliveryviarule\", \"" + strDeliveryViaRule + "\"),");
     resultado.append("new Array(\"inpcPaymenttermId\", \""
         + (strPaymentterm.equals("") ? SEOrderBPartnerData.selectPaymentTerm(this, Utility
             .getContext(this, vars, "#User_Client", strWindowId)) : strPaymentterm) + "\"),");

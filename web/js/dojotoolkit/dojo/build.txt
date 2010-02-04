@@ -51,6 +51,7 @@ dojo.js:
 /opt/dojo-svn/deploy/dojo/date/locale.js
 /opt/dojo-svn/deploy/dojo/cache.js
 /opt/dojo-svn/deploy/dijit/_Templated.js
+/opt/dojo-svn/deploy/dijit/_CssStateMixin.js
 /opt/dojo-svn/deploy/dijit/Calendar.js
 /opt/dojo-svn/deploy/dijit/form/_FormWidget.js
 /opt/dojo-svn/deploy/dijit/form/TextBox.js
