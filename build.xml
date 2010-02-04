@@ -630,7 +630,7 @@ export.database: exports database structure and data to xml files.
     </java>
   </target>
   
-  <target name="apply.modules.compile">
+  <target name="apply.modules.compile" depends="wad.lib">
     <antcall target="apply.modules.compile.simple"/>
     <antcall target="apply.modules.compile.complete"/>
   </target>

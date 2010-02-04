@@ -252,9 +252,6 @@ public class ApplyModules extends HttpSecureAppServlet {
         tasks.add("compile.complete.deploy");
         ant.setProperty("apply.on.create", "true");
       } else {
-        if (isWadLibNeeded(sourcePath)) {
-          tasks.add("wad.lib");
-        }
         if (ApplyModulesData.compileCompleteNeeded(this)) {
           // compile complete is needed for templates because in this case it is not needed which
           // elements belong to the template and for uninistalling modules in order to remove old
@@ -306,30 +303,6 @@ public class ApplyModules extends HttpSecureAppServlet {
       }
       OBContext.getOBContext().setInAdministratorMode(admin);
     }
-  }
-
-  /**
-   * Checks whether WAD needs to be rebuilt. It is needed to rebuild WAD in case the modules to be
-   * applied have sources to be included in openbravo-wad.jar, this is when they have code in
-   * src-wad directory.
-   * 
-   * @param sourcePath
-   *          Root directory for Openbravo instance
-   * @return true if wad needs to be rebuilt
-   */
-  private boolean isWadLibNeeded(String sourcePath) {
-    try {
-      ApplyModulesData[] data = ApplyModulesData.selectUnappliedModules(this);
-      for (ApplyModulesData mod : data) {
-        File f = new File(sourcePath + "/modules/" + mod.name + "/src-wad");
-        if (f.exists()) {
-          return true;
-        }
-      }
-    } catch (Exception e) {
-      log4j.error("Error", e);
-    }
-    return false;
   }
 
   /**
