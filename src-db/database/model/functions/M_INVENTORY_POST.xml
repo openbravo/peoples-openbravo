@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -126,6 +126,7 @@
     WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
       AND P.M_ATTRIBUTESET_ID IS NOT NULL
       AND (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE <> 'F')
+      AND (SELECT ISONEATTRSETVALREQUIRED FROM M_ATTRIBUTESET WHERE M_ATTRIBUTESET_ID = P.M_ATTRIBUTESET_ID) = 'Y'
       AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
       AND M.M_Inventory_ID=v_Record_ID;
     IF v_Count<>0 THEN

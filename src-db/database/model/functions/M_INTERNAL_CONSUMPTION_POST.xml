@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2009 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -93,6 +93,7 @@
       WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
         AND P.M_ATTRIBUTESET_ID IS NOT NULL
         AND (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE <> 'F')
+        AND (SELECT ISONEATTRSETVALREQUIRED FROM M_ATTRIBUTESET WHERE M_ATTRIBUTESET_ID = P.M_ATTRIBUTESET_ID) = 'Y'
         AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
         AND M.M_Internal_Consumption_ID=Record_ID;
       IF v_Count<>0 THEN
