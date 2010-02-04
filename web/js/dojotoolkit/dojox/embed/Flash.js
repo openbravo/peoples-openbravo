@@ -60,7 +60,8 @@ dojo.provide("dojox.embed.Flash");
 				for(p in kwArgs.vars){
 					a.push(p + '=' + kwArgs.vars[p]);
 				}
-				path += ((path.indexOf("?") == -1) ? "?" : "&") + a.join("&");
+				kwArgs.params.FlashVars = a.join("&");
+				delete kwArgs.vars;
 			}
 			// FIXME: really? +'s?
 			var s = '<object id="' + kwArgs.id + '" '
@@ -137,12 +138,12 @@ dojo.provide("dojox.embed.Flash");
 				for(p in kwArgs.vars){
 					a.push(p + '=' + kwArgs.vars[p]);
 				}
-				path += ((path.indexOf("?") == -1) ? "?" : "&") + a.join("&");
+				kwArgs.params.flashVars = a.join("&");
+				delete kwArgs.vars;
 			}
 			var s = '<embed type="application/x-shockwave-flash" '
 				+ 'src="' + path + '" '
 				+ 'id="' + kwArgs.id + '" '
-				//+ 'name="' + kwArgs.id + '" '
 				+ 'width="' + kwArgs.width + '" '
 				+ 'height="' + kwArgs.height + '"'
 				+ ((kwArgs.style)?' style="' + kwArgs.style + '" ':'')
@@ -277,7 +278,7 @@ dojo.provide("dojox.embed.Flash");
 				if(kwArgs && node){
 					this.init(kwArgs, node);
 				}else{
-					this.onError("embed.Flash was not provided with teh proper arguments.");
+					this.onError("embed.Flash was not provided with the proper arguments.");
 				}
 			}else{
 				if(!this.available){
