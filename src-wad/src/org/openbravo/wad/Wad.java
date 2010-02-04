@@ -2968,8 +2968,8 @@ public class Wad extends DefaultHandler {
 
             WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
                 data[i].referencevalue);
-            control.columnIdentifier(tables[0].tablename, true, tables[0], vecCounters, true,
-                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1, vecTables,
+                vecWhere, vecParameters, vecTableParameters);
 
             where.append(tables[0].whereclause);
             data[i].tablename = "TableList";
@@ -3012,8 +3012,8 @@ public class Wad extends DefaultHandler {
 
             WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
                 data[i].referencevalue);
-            control.columnIdentifier(table_Name, true, data[i], vecCounters, true, vecFields1,
-                vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables, vecWhere,
+                vecParameters, vecTableParameters);
 
             data[i].xmltext = "";
             if (vecTableParameters.size() > 0) {
@@ -3127,8 +3127,8 @@ public class Wad extends DefaultHandler {
 
             WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
                 data[i].referencevalue);
-            control.columnIdentifier(tables[0].tablename, true, tables[0], vecCounters, true,
-                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1, vecTables,
+                vecWhere, vecParameters, vecTableParameters);
 
             where.append(tables[0].whereclause);
 
@@ -3172,8 +3172,8 @@ public class Wad extends DefaultHandler {
 
             WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
                 data[i].referencevalue);
-            control.columnIdentifier(table_Name, true, data[i], vecCounters, true, vecFields1,
-                vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables, vecWhere,
+                vecParameters, vecTableParameters);
 
             data[i].xmltext = "";
             if (vecTableParameters.size() > 0) {

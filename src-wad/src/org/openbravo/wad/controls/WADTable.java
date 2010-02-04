@@ -42,10 +42,9 @@ public class WADTable extends WADList {
     return true;
   }
 
-  public String columnIdentifier(String tableName, boolean required, FieldsData fields,
-      Vector<Object> vecCounters, boolean translated, Vector<Object> vecFields,
-      Vector<Object> vecTable, Vector<Object> vecWhere, Vector<Object> vecParameters,
-      Vector<Object> vecTableParameters, String sqlDateFormat) throws ServletException {
+  public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
+      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
+      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
     if (fields == null)
       return "";
     StringBuffer texto = new StringBuffer();
@@ -83,8 +82,8 @@ public class WADTable extends WADList {
     WADControl control = WadUtility.getWadControlClass(conn, fieldsAux.reference,
         fieldsAux.adReferenceValueId);
     texto.append(control
-        .columnIdentifier("table" + itable, required, fieldsAux, vecCounters, translated,
-            vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat));
+        .columnIdentifier("table" + itable, fieldsAux, vecCounters, vecFields, vecTable,
+            vecWhere, vecParameters, vecTableParameters));
     ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
     itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
     return texto.toString();

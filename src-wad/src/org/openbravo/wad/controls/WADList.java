@@ -236,10 +236,9 @@ public class WADList extends WADControl {
     return true;
   }
 
-  public String columnIdentifier(String tableName, boolean required, FieldsData fields,
-      Vector<Object> vecCounters, boolean translated, Vector<Object> vecFields,
-      Vector<Object> vecTable, Vector<Object> vecWhere, Vector<Object> vecParameters,
-      Vector<Object> vecTableParameters, String sqlDateFormat) throws ServletException {
+  public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
+      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
+      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
     if (fields == null)
       return "";
     StringBuffer texto = new StringBuffer();

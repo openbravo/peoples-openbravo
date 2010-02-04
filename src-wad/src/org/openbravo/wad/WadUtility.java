@@ -154,8 +154,8 @@ public class WadUtility {
     } else {
       WADControl control = WadUtility.getWadControlClass(conn, fields.reference,
           fields.adReferenceValueId);
-      return control.columnIdentifier(tableName, required, fields, vecCounters, translated,
-          vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+      return control.columnIdentifier(tableName, fields, vecCounters, vecFields, vecTable,
+          vecWhere, vecParameters, vecTableParameters);
     }
 
   }

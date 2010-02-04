@@ -37,10 +37,9 @@ public class WADID extends WADControl {
     initialize();
   }
 
-  public String columnIdentifier(String tableName, boolean required, FieldsData fields,
-      Vector<Object> vecCounters, boolean translated, Vector<Object> vecFields,
-      Vector<Object> vecTable, Vector<Object> vecWhere, Vector<Object> vecParameters,
-      Vector<Object> vecTableParameters, String sqlDateFormat) throws ServletException {
+  public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
+      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
+      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
     if (fields == null)
       return "";
     StringBuffer texto = new StringBuffer();
@@ -57,8 +56,8 @@ public class WADID extends WADControl {
       WADControl control = WadUtility.getWadControlClass(conn, fdi[i].reference,
           fdi[i].adReferenceValueId);
 
-      texto.append(control.columnIdentifier(tableName, required, fdi[i], vecCounters, translated,
-          vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat));
+      texto.append(control.columnIdentifier(tableName, fdi[i], vecCounters, vecFields, vecTable,
+          vecWhere, vecParameters, vecTableParameters));
       ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
       itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
     }
