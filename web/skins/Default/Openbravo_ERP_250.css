@@ -5951,7 +5951,7 @@ a.Main_NavBar_RightButton:active .Main_NavBar_RightButton_Icon_help {
 }
 /*TabTitle*/
 
-.tabTitle {
+span.tabTitle {
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 11pt;
   font-weight: bold;
