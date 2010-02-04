@@ -27,10 +27,10 @@ import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 
 /**
- * Utility methods used bu UIRefernce classes
+ * Utility methods used by UIRefernce classes
  * 
  */
-class UIReferenceUtility {
+public class UIReferenceUtility {
   public static final int MAX_TEXTBOX_LENGTH = 150;
 
   /**

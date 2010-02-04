@@ -153,6 +153,7 @@ public class UIReference {
       strHtml.append(">");
       strHtml.append(field.value);
       strHtml.append("</textarea>\n");
+      strHtml.append("</td>");
     } else {
       strHtml.append("<td class=\"TextBox_ContentCell\">");
       strHtml.append("<input type=\"text\" class=\"dojoValidateValid TextBox_OneCell_width\" ");

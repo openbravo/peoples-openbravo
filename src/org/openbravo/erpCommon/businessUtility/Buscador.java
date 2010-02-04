@@ -256,7 +256,7 @@ public class Buscador extends HttpSecureAppServlet {
       }
       strHtml.append("</span></td>\n");
       reference.generateFilterHtml(strHtml, vars, field, strTab, strWindow, listScript, vecKeys);
-      strHtml.append("</td></tr>\n");
+      strHtml.append("</tr>\n");
     }
 
     script.append("\nfunction enableLocalShortcuts() {\n");
