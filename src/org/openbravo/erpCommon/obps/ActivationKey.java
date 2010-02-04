@@ -149,7 +149,7 @@ public class ActivationKey {
       InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
       instanceProperties = new Properties();
 
-      .load(reader);
+      instanceProperties.load(reader);
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
