@@ -232,10 +232,7 @@ public class ToolBar {
       return ((grid_id == null || grid_id.equals("")) ? ""
           : "if (dijit.byId('"
               + grid_id
-              + "').getSelectedRows() =='' || dijit.byId('"
-              + grid_id
               + "').getSelectedRows().length > 1) {showJSMessage(28);resizeArea(true);calculateMsgBoxWidth();return false;} ")
-
           + " openServletNewWindow('POPUP_HISTORY', false, '../businessUtility/AuditTrail.html?inpRecordId=' + "
           + ((grid_id == null || grid_id.equals("")) ? keyfield + ".value" : "dijit.byId('"
               + grid_id + "').getSelectedRows()") + ", 'AuditTrail', null, true, 600, 900, true);";
@@ -1035,7 +1032,7 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("FIRST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("FIRST_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("PREVIOUS"), lastType, false));
-      //toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
+      // toolbar.append("<td class=\"TB_Bookmark\" width=\"5px\"><nobr id=\"bookmark\"></nobr></td>\n"
       // );
       toolbar.append(transformElementsToString(buttons.get("NEXT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST"), lastType, false));

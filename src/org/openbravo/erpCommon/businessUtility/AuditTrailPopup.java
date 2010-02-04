@@ -63,6 +63,8 @@ import org.openbravo.model.ad.domain.Callout;
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.ad.ui.Element;
+import org.openbravo.model.ad.ui.ElementTrl;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
 import org.openbravo.model.ad.ui.Form;
@@ -87,7 +89,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static final String adMessageIdForCallout = "13F1AE1374AD4054BE7FD3743B56F266";
   private static final String adValRuleIdForFields = "9C6989B15CEA4987A502C0F5FF02B171";
 
-  private static final String[] colNamesHistory = { "time", "action", "user", "process", "column",
+  private static final String[] colNamesHistory = { "time", "action", "user", "process", "field",
       "old_value", "new_value", "rowkey" };
   private static final RequestFilter columnFilterHistory = new ValueListFilter(colNamesHistory);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
@@ -120,8 +122,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         String tabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
         String tableId = vars.getGlobalVariable("inpTableId", "AuditTrail.tableId",
             IsIDFilter.instance);
-        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId",
-            IsIDFilter.instance);
+        // recordId is optional as popup can be called from empty grid
+        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false,
+            false, false, "", IsIDFilter.instance);
         printPagePopupHistory(response, vars, tabId, tableId, recordId);
 
       } else if (vars.commandIn("STRUCTURE_HISTORY")) {
@@ -166,11 +169,13 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         vars.removeSessionValue("AuditTrail.tableId");
 
         // read request params, and save in session
-        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId",
-            IsIDFilter.instance);
         String tabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
         String tableId = vars.getGlobalVariable("inpTableId", "AuditTrail.tableId",
             IsIDFilter.instance);
+
+        // recordId is optional as popup can be called from empty grid
+        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false,
+            false, false, "", IsIDFilter.instance);
         printPagePopupDeleted(response, vars, recordId, tabId, tableId);
 
       } else if (vars.commandIn("STRUCTURE_DELETED")) {
@@ -311,26 +316,45 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       log4j.error("Error getting adField combo content", e);
     }
 
-    // fill current record status/data table
-    Table table = OBDal.getInstance().get(Table.class, tableId);
-    BaseOBObject bob = OBDal.getInstance().get(table.getName(), recordId);
-
-    // get record status (still exists, or deleted)
     String recordStatus;
     String identifier;
-    if (bob != null) {
-      // for existing records we use the current identifier
-      recordStatus = "AUDIT_HISTORY_RECORD_EXISTS";
-      identifier = bob.getIdentifier();
+    Table table = OBDal.getInstance().get(Table.class, tableId);
 
+    // popup called from a record or empty grid?
+    if (recordId.isEmpty()) {
+      recordStatus = "AUDIT_HISTORY_RECORD_NONE";
+      identifier = "";
     } else {
-      // for deleted record we build the identifier manually
-      recordStatus = "AUDIT_HISTORY_RECORD_DELETED";
-      identifier = try2GetIdentifier(table, recordId);
+      // called with a recordId
+      // fill current record status/data table
+      BaseOBObject bob = OBDal.getInstance().get(table.getName(), recordId);
+      if (bob != null) {
+        // for existing records we use the current identifier
+        recordStatus = "AUDIT_HISTORY_RECORD_EXISTS";
+        identifier = bob.getIdentifier();
+      } else {
+        // for deleted record we build the identifier manually
+        recordStatus = "AUDIT_HISTORY_RECORD_DELETED";
+        identifier = try2GetIdentifier(table, recordId);
+      }
     }
+
+    // name of the business element shown (i.e. Business Partner)
+    String elementName = table.getDBTableName() + "_ID";
+    String elementNameDisplay;
+    String hql = "as e where upper(e.dBColumnName) = :elementName";
+    OBQuery<Element> qe = OBDal.getInstance().createQuery(Element.class, hql);
+    qe.setNamedParameter("elementName", elementName.toUpperCase());
+    Element e = qe.uniqueResult();
+    if (e == null) {
+      elementNameDisplay = "(deleted)";
+    } else {
+      elementNameDisplay = getTranslatedElementName(e, OBContext.getOBContext().getLanguage());
+    }
+
     String text = Utility.messageBD(this, recordStatus, vars.getLanguage());
     text = text.replace("@recordidentifier@", identifier);
-    text = text.replace("@windowname@", getTranslatedWindowName(tabId));
+    text = text.replace("@elementname@", elementNameDisplay);
 
     xmlDocument.setParameter("recordIdentifierText", text);
 
@@ -343,6 +367,17 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String getTranslatedElementName(Element element, Language language) {
+    OBCriteria<ElementTrl> c = OBDal.getInstance().createCriteria(ElementTrl.class);
+    c.add(Expression.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
+    c.add(Expression.eq(ElementTrl.PROPERTY_LANGUAGE, language));
+    ElementTrl trl = (ElementTrl) c.uniqueResult();
+    if (trl == null) {
+      return element.getName();
+    }
+    return trl.getName();
   }
 
   private String try2GetIdentifier(Table table, String recordId) {
