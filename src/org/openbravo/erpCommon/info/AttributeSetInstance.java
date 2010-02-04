@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,11 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -94,10 +96,20 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       if (log4j.isDebugEnabled())
         log4j.debug("strNameValue: " + strNameValue);
-      if (!strAttributeSet.equals(""))
-        printPage(response, vars, strNameValue, strAttributeSet, strProductInstance, strWindowId,
-            strTabId, strLocator, strIsSOTrx, strProduct);
-      else
+      String strAttrSetValueType = "";
+      final Product product = OBDal.getInstance().get(Product.class, strProduct);
+      if (product != null) {
+        strAttrSetValueType = product.getUseAttributeSetValueAs();
+      }
+      if (!strAttributeSet.equals("")) {
+        if (strAttrSetValueType.equals("F"))
+          advisePopUp(request, response, "INFO", Utility
+              .messageBD(this, "Info", vars.getLanguage()), Utility.messageBD(this,
+              "AttrSetValTypeSpecification", vars.getLanguage()));
+        else
+          printPage(response, vars, strNameValue, strAttributeSet, strProductInstance, strWindowId,
+              strTabId, strLocator, strIsSOTrx, strProduct);
+      } else
         advisePopUp(request, response, "INFO", Utility.messageBD(this, "Info", vars.getLanguage()),
             Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
     } else if (vars.commandIn("SAVE")) {
