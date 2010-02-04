@@ -32,6 +32,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -87,13 +88,19 @@ public class SL_GlobalUse_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strPAttr + "\"),\n");
     resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
         + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strPAttr)) + "\"),\n");
-    String strattrsetvaluetype = "";
+    String strAttrSet, strAttrSetValueType;
+    strAttrSet = strAttrSetValueType = "";
     final Product product = OBDal.getInstance().get(Product.class, strMProductID);
     if (product != null) {
-      strattrsetvaluetype = product.getAttributeSetValueType();
+      AttributeSet attributeset = product.getAttributeSet();
+      if (attributeset != null)
+        strAttrSet = product.getAttributeSet().toString();
+      strAttrSetValueType = product.getUseAttributeSetValueAs();
     }
+    resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
+        + "\"),\n");
     resultado.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(strattrsetvaluetype) + "\"),\n");
+        + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
     // String strProductUomId = SLGlobalUseProduct.selectProductUomId(this,
     // strMProductID);
 

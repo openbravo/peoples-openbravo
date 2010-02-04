@@ -28,10 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -86,13 +84,10 @@ public class SL_Asset_Product extends HttpSecureAppServlet {
       result.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
       result.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
     }
-    String strattrsetvaluetype = "";
-    final Product product = OBDal.getInstance().get(Product.class, strMProductID);
-    if (product != null) {
-      strattrsetvaluetype = product.getAttributeSetValueType();
-    }
+    result.append("new Array(\"inpattributeset\", \""
+        + FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId) + "\"),\n");
     result.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(strattrsetvaluetype) + "\"),\n");
+        + FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype) + "\"),\n");
     result.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
     result.append(");\n");
 

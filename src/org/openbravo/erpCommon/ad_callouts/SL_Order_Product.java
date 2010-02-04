@@ -29,14 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -167,13 +165,10 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
         resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
       }
-      String strattrsetvaluetype = "";
-      final Product product = OBDal.getInstance().get(Product.class, strMProductID);
-      if (product != null) {
-        strattrsetvaluetype = product.getAttributeSetValueType();
-      }
+      resultado.append("new Array(\"inpattributeset\", \""
+          + FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId) + "\"),\n");
       resultado.append("new Array(\"inpattrsetvaluetype\", \""
-          + FormatUtilities.replaceJS(strattrsetvaluetype) + "\"),\n");
+          + FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype) + "\"),\n");
       strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
       resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
     }

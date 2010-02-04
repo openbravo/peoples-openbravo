@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
@@ -80,13 +81,19 @@ public class SL_PC_Case_Product extends HttpSecureAppServlet {
     }
     result.append("new Array(\"inpmAttributesetinstanceId_R\", \""
         + FormatUtilities.replaceJS(strattrsetvaluesdescr) + "\"),\n");
-    String strattrsetvaluetype = "";
+    String strAttrSet, strAttrSetValueType;
+    strAttrSet = strAttrSetValueType = "";
     final Product product = OBDal.getInstance().get(Product.class, strMProductID);
     if (product != null) {
-      strattrsetvaluetype = product.getAttributeSetValueType();
+      AttributeSet attributeset = product.getAttributeSet();
+      if (attributeset != null)
+        strAttrSet = product.getAttributeSet().toString();
+      strAttrSetValueType = product.getUseAttributeSetValueAs();
     }
+    result.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
+        + "\"),\n");
     result.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(strattrsetvaluetype) + "\"),\n");
+        + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
     result.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
     result.append(");\n");
 
