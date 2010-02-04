@@ -149,7 +149,7 @@ public class ActivationKey {
       InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
       instanceProperties = new Properties();
 
-      instanceProperties.load(reader);
+      .load(reader);
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
@@ -263,16 +263,36 @@ public class ActivationKey {
     return strPublicKey;
   }
 
-  public boolean hasActivationKey() {
-    return hasActivationKey;
-  }
-
+  /**
+   * Returns true when the instance currently is OBPS active, this is when it has a valid activation
+   * key.
+   */
   public boolean isActive() {
     return isActive;
   }
 
+  /**
+   * Returns true when the instance currently is OBPS active. It is similar as
+   * {@link ActivationKey#isActive}, but it is static and is initialized whenever the ActivationKey
+   * class is instantiated.
+   */
   public static boolean isActiveInstance() {
     return opsLog;
+  }
+
+  /**
+   * Returns true when the instance has a activation key and the activation file has been loaded. It
+   * doesn't verify is still valid.
+   */
+  public boolean isOPSInstance() {
+    return instanceProperties != null;
+  }
+
+  /**
+   * Returns true in case the instance has activation key though it might not be valid or activated
+   */
+  public boolean hasActivationKey() {
+    return hasActivationKey;
   }
 
   public String getErrorMessage() {
@@ -281,10 +301,6 @@ public class ActivationKey {
 
   public String getMessageType() {
     return messageType;
-  }
-
-  public boolean isOPSInstance() {
-    return instanceProperties != null;
   }
 
   /**
