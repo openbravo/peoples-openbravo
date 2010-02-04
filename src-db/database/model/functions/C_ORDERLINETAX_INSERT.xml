@@ -19,10 +19,10 @@
       <parameter name="p_tax_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_linenetamt" type="VARCHAR" mode="in">
+      <parameter name="p_linenetamt" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_alternatetaxbaseamt" type="VARCHAR" mode="in">
+      <parameter name="p_alternatetaxbaseamt" type="NUMERIC" mode="in">
         <default/>
       </parameter>
       <parameter name="p_stdprecision" type="NUMERIC" mode="in">
