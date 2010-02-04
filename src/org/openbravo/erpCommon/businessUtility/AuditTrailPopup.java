@@ -47,6 +47,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -84,6 +85,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static final String adMessageIdForWindow = "614";
   private static final String adMessageIdForForm = "D9912E810888475ABB8DFF416196FB5E";
   private static final String adMessageIdForCallout = "13F1AE1374AD4054BE7FD3743B56F266";
+  private static final String adValRuleIdForFields = "9C6989B15CEA4987A502C0F5FF02B171";
 
   private static final String[] colNamesHistory = { "time", "action", "user", "process", "column",
       "old_value", "new_value", "rowkey" };
@@ -133,13 +135,14 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         }
         String tableId = vars.getGlobalVariable("inpTableId", "AuditTrail.tableId",
             IsIDFilter.instance);
+        String tabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
         String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId",
             IsIDFilter.instance);
 
         // filter fields
         String userId = vars.getGlobalVariable("inpUser", "AuditTrail.userId", "",
             IsIDFilter.instance);
-        String columnId = vars.getGlobalVariable("inpColumn", "AuditTrail.columnId", "",
+        String fieldId = vars.getGlobalVariable("inpField", "AuditTrail.fieldId", "",
             IsIDFilter.instance);
         String dateFrom = vars.getGlobalVariable("inpDateFrom", "AuditTrail.dateFrom", "");
         String dateTo = vars.getGlobalVariable("inpDateTo", "AuditTrail.dateTo", "");
@@ -150,8 +153,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         // not used right now, as grid is defined as non-sortable
         String strSortCols = vars.getInStringParameter("sort_cols", columnFilterHistory);
         String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
-        printGridDataHistory(response, vars, tableId, recordId, userId, columnId, dateFrom, dateTo,
-            strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
+        printGridDataHistory(response, vars, tableId, tabId, recordId, userId, fieldId, dateFrom,
+            dateTo, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
 
       } else if (vars.commandIn("POPUP_DELETED")) {
         // popup showing all deleted records of a single tab
@@ -247,7 +250,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private void removePageSessionVariables(VariablesSecureApp vars) {
     vars.removeSessionValue("AuditTrail.userId");
-    vars.removeSessionValue("AuditTrail.columnId");
+    vars.removeSessionValue("AuditTrail.fieldId");
     vars.removeSessionValue("AuditTrail.dateFrom");
     vars.removeSessionValue("AuditTrail.dateTo");
   }
@@ -293,18 +296,19 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       log4j.error("Error getting adUser combo content", e);
     }
 
-    // fields combobox (filtered to be in same table)
+    // fields combobox (filtered to be in same tab)
     try {
-      // ad_reference.19 == TableDir, ad_val_rul.100 == "AD_Column must be in AD_Table"
-      ComboTableData cmd = new ComboTableData(vars, this, "19", "AD_Column_ID", "", "100", Utility
-          .getContext(this, vars, "#AccessibleOrgTree", "AuditTrailPopup"), Utility.getContext(
-          this, vars, "#User_Client", "AuditTrailPopup"), 0);
+      // ad_reference.19 == TableDir
+      ComboTableData cmd = new ComboTableData(vars, this, "19", "AD_Field_ID", "",
+          adValRuleIdForFields, Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "AuditTrailPopup"),
+          Utility.getContext(this, vars, "#User_Client", "AuditTrailPopup"), 0);
       SQLReturnObject params = new SQLReturnObject();
-      params.setData("AD_Table_ID", tableId); // parameter for the validation
+      params.setData("AD_Tab_ID", tabId); // parameter for the validation
       cmd.fillParameters(params, "AuditTrailPopup", "");
-      xmlDocument.setData("reportAD_Column_ID", "liststructure", cmd.select(false));
+      xmlDocument.setData("reportAD_Field_ID", "liststructure", cmd.select(false));
     } catch (Exception e) {
-      log4j.error("Error getting adColumn combo content", e);
+      log4j.error("Error getting adField combo content", e);
     }
 
     // fill current record status/data table
@@ -450,9 +454,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   }
 
   private void printGridDataHistory(HttpServletResponse response, VariablesSecureApp vars,
-      String tableId, String recordId, String userId, String columnId, String strDateFrom,
-      String strDateTo, String strOrderCols, String strOrderDirs, String strOffset,
-      String strPageSize, String strNewFilter) throws IOException, ServletException {
+      String tableId, String tabId, String recordId, String userId, String fieldId,
+      String strDateFrom, String strDateTo, String strOrderCols, String strOrderDirs,
+      String strOffset, String strPageSize, String strNewFilter) throws IOException,
+      ServletException {
 
     log4j.debug("DATA_HISTORY: tableId: " + tableId + " recordId: " + recordId);
 
@@ -473,6 +478,13 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     Date dateFrom = parseDate(strDateFrom, dateFormat);
     Date dateTo = parseDate(strDateTo, dateFormat);
 
+    // get columnId matching the fieldId
+    String columnId = "";
+    if (fieldId != null && !fieldId.isEmpty()) {
+      Field field = OBDal.getInstance().get(Field.class, fieldId);
+      columnId = field.getColumn().getId();
+    }
+
     try {
       if (strNewFilter.equals("1") || strNewFilter.equals("")) {
         // New filter or first load -> get total rows for filter
@@ -483,8 +495,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       }
 
       // get data (paged by offset, pageSize)
-      data = getDataRowsHistory(tableId, recordId, userId, columnId, dateFrom, dateTo, offset,
-          pageSize, vars.getLanguage());
+      data = getDataRowsHistory(tableId, tabId, recordId, userId, columnId, dateFrom, dateTo,
+          offset, pageSize, vars.getLanguage());
     } catch (ServletException e) {
       log4j.error("Error getting row data: ", e);
       OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
@@ -576,9 +588,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return String.valueOf(count);
   }
 
-  private FieldProvider[] getDataRowsHistory(String tableId, String recordId, String userId,
-      String columnId, Date dateFrom, Date dateTo, int offset, int pageSize, String language)
-      throws ServletException {
+  private FieldProvider[] getDataRowsHistory(String tableId, String tabId, String recordId,
+      String userId, String columnId, Date dateFrom, Date dateTo, int offset, int pageSize,
+      String language) throws ServletException {
 
     OBCriteria<AuditTrailRaw> crit = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
     crit.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, tableId));
@@ -615,7 +627,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       resRow.setData("action", getFormattedAction(actions, row.getAction()));
       resRow.setData("user", getFormattedUser(row.getUserContact()));
       resRow.setData("process", getFormattedProcess(row.getProcessType(), row.getProcess()));
-      resRow.setData("column", getFormattedColumn(row));
+      resRow.setData("column", getFormattedField(tabId, row));
       resRow.setData("old_value", getFormattedValue(row, false));
       resRow.setData("new_value", getFormattedValue(row, true));
       resRow.setData("rowkey", row.getId());
@@ -1068,16 +1080,19 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return trl.getName();
   }
 
-  // FIXME: column name translation (i.e. via ad_element)
-  private String getFormattedColumn(AuditTrailRaw auditRow) {
-    String columnId = auditRow.getColumn();
-    Column col = OBDal.getInstance().get(Column.class, columnId);
-    if (col == null) {
-      // column might have been deleted in the model
+  // TODO: optimize field+trl fetching
+  private String getFormattedField(String tabId, AuditTrailRaw auditRow) {
+    OBQuery<Field> qf = OBDal.getInstance().createQuery(Field.class,
+        "as f where f.tab.id = :tabId and f.column.id = :columnId");
+    qf.setNamedParameter("tabId", tabId);
+    qf.setNamedParameter("columnId", auditRow.getColumn());
+    Field field = qf.uniqueResult();
+    if (field == null) {
       return "(deleted)";
     }
-
-    return col.getName();
+    String fieldNameTranslated = getTranslatedFieldName(field, OBContext.getOBContext()
+        .getLanguage());
+    return fieldNameTranslated;
   }
 
   private String getFormattedValue(AuditTrailRaw auditRow, boolean newValue) {

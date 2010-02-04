@@ -44,8 +44,8 @@
         <ARGUMENT name="parameterListSelected" withId="AD_User_ID"/>
     </SUBREPORT>
 
-    <SUBREPORT id="reportAD_Column_ID" name="reportAD_Column_ID" report="org/openbravo/erpCommon/reference/List">
-        <ARGUMENT name="parameterListSelected" withId="AD_Column_ID"/>
+    <SUBREPORT id="reportAD_Field_ID" name="reportAD_Field_ID" report="org/openbravo/erpCommon/reference/List">
+        <ARGUMENT name="parameterListSelected" withId="AD_Field_ID"/>
     </SUBREPORT>
 
     <PARAMETER id="recordIdentifierText" name="recordIdentifierText" />
