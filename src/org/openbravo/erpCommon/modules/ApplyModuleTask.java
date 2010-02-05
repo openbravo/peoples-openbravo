@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.modules;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalInitializingTask;
@@ -34,6 +35,7 @@ import org.openbravo.erpCommon.utility.AntExecutor;
 public class ApplyModuleTask extends DalInitializingTask {
   // private String propertiesFile;
   private String obDir;
+  static Logger log4j = Logger.getLogger(DalInitializingTask.class);
 
   public static void main(String[] args) {
     final String srcPath = args[0];
@@ -44,6 +46,33 @@ public class ApplyModuleTask extends DalInitializingTask {
       antExecutor.runTask("apply.module.forked");
     } catch (final Exception e) {
       throw new OBException(e);
+    }
+  }
+
+  public void execute() {
+    // Initialize DAL only in case it is needed: modules have refrence data to be loaded
+    CPStandAlone pool = new CPStandAlone(propertiesFile);
+    ApplyModuleData[] ds = null;
+    try {
+      ds = ApplyModuleData.selectClientReferenceModules(pool);
+    } catch (Exception e) {
+      log4j.error("Error checking modules with reference data", e);
+    }
+    if (ds != null && ds.length > 0) {
+      // Initialize DAL and execute
+      super.execute();
+    } else {
+      try {
+        System.out.println("1");
+        ds = ApplyModuleData.selectTranslationModules(pool);
+      } catch (Exception e) {
+        log4j.error("Error checking modules with translation data", e);
+      }
+      if (ds != null && ds.length > 0) {
+        // Execute without DAL
+        doExecute();
+      }
+      // do not execute if not reference data nor translations present
     }
   }
 
