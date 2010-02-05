@@ -35,7 +35,7 @@ import org.openbravo.erpCommon.utility.AntExecutor;
 public class ApplyModuleTask extends DalInitializingTask {
   // private String propertiesFile;
   private String obDir;
-  static Logger log4j = Logger.getLogger(DalInitializingTask.class);
+  private static final Logger log4j = Logger.getLogger(DalInitializingTask.class);
 
   public static void main(String[] args) {
     final String srcPath = args[0];
@@ -63,7 +63,6 @@ public class ApplyModuleTask extends DalInitializingTask {
       super.execute();
     } else {
       try {
-        System.out.println("1");
         ds = ApplyModuleData.selectTranslationModules(pool);
       } catch (Exception e) {
         log4j.error("Error checking modules with translation data", e);
