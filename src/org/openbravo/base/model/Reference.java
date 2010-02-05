@@ -31,6 +31,7 @@ import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.util.OBClassLoader;
 
@@ -117,8 +118,15 @@ public class Reference extends ModelObject {
     if (domainType != null) {
       return domainType;
     }
+    String modelImplementationClass = getModelImplementationClassName();
+    if (modelImplementationClass == null) {
+      log
+          .error("Reference " + this
+              + " has a modelImpl which is null, using String as the default");
+      modelImplementationClass = StringDomainType.class.getName();
+    }
     try {
-      final Class<?> clz = OBClassLoader.getInstance().loadClass(getModelImplementationClassName());
+      final Class<?> clz = OBClassLoader.getInstance().loadClass(modelImplementationClass);
       domainType = (DomainType) clz.newInstance();
       domainType.setReference(this);
     } catch (Exception e) {
