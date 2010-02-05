@@ -501,8 +501,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     long s1 = System.currentTimeMillis();
 
-    // get list of field-id's in the tab into (columnId, Field) pairs
-    String hql = "as f where f.tab.id = :tabId";
+    // get list of field-id's, excluding the ones with reference ID (13)
+    String hql = "as f where f.tab.id = :tabId and f.column.reference.id <> '13'";
     OBQuery<Field> qf = OBDal.getInstance().createQuery(Field.class, hql);
     qf.setNamedParameter("tabId", tabId);
     List<Field> fieldList = qf.list();
@@ -511,7 +511,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       fields.put(f.getColumn().getId(), f);
     }
 
-    SQLReturnObject[] headers = getHeadersHistory(vars);
     FieldProvider[] data = null;
     String type = "Hidden";
     String title = "";
@@ -587,10 +586,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
-        for (int k = 0; k < headers.length; k++) {
+        for (String columnname : colNamesHistory) {
           strRowsData.append("      <td><![CDATA[");
-          String columnname = headers[k].getField("columnname");
-
           // formatting already done
           strRowsData.append(data[j].getField(columnname));
           strRowsData.append("]]></td>\n");
@@ -854,8 +851,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       }
 
       // get data
-      data = getDataRowsDeleted(headers, vars, tabId, tableId, offset, pageSize, strDateFrom,
-          strDateTo, userId);
+      data = getDataRowsDeleted(vars, tabId, tableId, offset, pageSize, strDateFrom, strDateTo,
+          userId);
     } catch (Exception e) {
       log4j.error("Error getting row data: ", e);
       type = "Error";
@@ -918,9 +915,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return countResult;
   }
 
-  private FieldProvider[] getDataRowsDeleted(SQLReturnObject[] headers, VariablesSecureApp vars,
-      String tabId, String tableId, int offset, int pageSize, String dateFrom, String dateTo,
-      String userId) {
+  private FieldProvider[] getDataRowsDeleted(VariablesSecureApp vars, String tabId, String tableId,
+      int offset, int pageSize, String dateFrom, String dateTo, String userId) {
 
     long s1 = System.currentTimeMillis();
     FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId, offset,
