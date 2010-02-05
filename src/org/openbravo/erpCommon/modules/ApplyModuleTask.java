@@ -35,7 +35,7 @@ import org.openbravo.erpCommon.utility.AntExecutor;
 public class ApplyModuleTask extends DalInitializingTask {
   // private String propertiesFile;
   private String obDir;
-  private static final Logger log4j = Logger.getLogger(DalInitializingTask.class);
+  private static final Logger log4j = Logger.getLogger(ApplyModuleTask.class);
 
   public static void main(String[] args) {
     final String srcPath = args[0];
