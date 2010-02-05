@@ -23,8 +23,11 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -498,6 +501,16 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     long s1 = System.currentTimeMillis();
 
+    // get list of field-id's in the tab into (columnId, Field) pairs
+    String hql = "as f where f.tab.id = :tabId";
+    OBQuery<Field> qf = OBDal.getInstance().createQuery(Field.class, hql);
+    qf.setNamedParameter("tabId", tabId);
+    List<Field> fieldList = qf.list();
+    Map<String, Field> fields = new HashMap<String, Field>(fieldList.size());
+    for (Field f : fieldList) {
+      fields.put(f.getColumn().getId(), f);
+    }
+
     SQLReturnObject[] headers = getHeadersHistory(vars);
     FieldProvider[] data = null;
     String type = "Hidden";
@@ -523,15 +536,16 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     try {
       if (strNewFilter.equals("1") || strNewFilter.equals("")) {
         // New filter or first load -> get total rows for filter
-        strNumRows = getCountRowsHistory(tableId, recordId, userId, columnId, dateFrom, dateTo);
+        strNumRows = getCountRowsHistory(tableId, fields.keySet(), recordId, userId, columnId,
+            dateFrom, dateTo);
         vars.setSessionValue("AuditTrail.numrows", strNumRows);
       } else {
         strNumRows = vars.getSessionValue("AuditTrail.numrows");
       }
 
       // get data (paged by offset, pageSize)
-      data = getDataRowsHistory(tableId, tabId, recordId, userId, columnId, dateFrom, dateTo,
-          offset, pageSize, vars.getLanguage());
+      data = getDataRowsHistory(tableId, tabId, fields, recordId, userId, columnId, dateFrom,
+          dateTo, offset, pageSize, vars.getLanguage());
     } catch (ServletException e) {
       log4j.error("Error getting row data: ", e);
       OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
@@ -596,13 +610,15 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     log4j.debug("printGridDataHistory took: " + (s2 - s1));
   }
 
-  private String getCountRowsHistory(String tableId, String recordId, String userId,
-      String columnId, Date dateFrom, Date dateTo) {
+  private String getCountRowsHistory(String tableId, Collection<String> columnIds, String recordId,
+      String userId, String columnId, Date dateFrom, Date dateTo) {
     long s1 = System.currentTimeMillis();
 
     OBCriteria<AuditTrailRaw> crit = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
     crit.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, tableId));
     crit.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+    // filter to only show rows which have their column shown in the tab
+    crit.add(Expression.in(AuditTrailRaw.PROPERTY_COLUMN, columnIds));
     if (!userId.isEmpty()) {
       crit.add(Expression.eq(AuditTrailRaw.PROPERTY_USERCONTACT, userId));
     }
@@ -623,13 +639,15 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return String.valueOf(count);
   }
 
-  private FieldProvider[] getDataRowsHistory(String tableId, String tabId, String recordId,
-      String userId, String columnId, Date dateFrom, Date dateTo, int offset, int pageSize,
-      String language) throws ServletException {
+  private FieldProvider[] getDataRowsHistory(String tableId, String tabId,
+      Map<String, Field> tabFields, String recordId, String userId, String columnId, Date dateFrom,
+      Date dateTo, int offset, int pageSize, String language) throws ServletException {
 
     OBCriteria<AuditTrailRaw> crit = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
     crit.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, tableId));
     crit.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+    // filter to only show rows which have their column shown in the tab
+    crit.add(Expression.in(AuditTrailRaw.PROPERTY_COLUMN, tabFields.keySet()));
     crit.addOrder(Order.desc(AuditTrailRaw.PROPERTY_EVENTTIME));
     if (!userId.isEmpty()) {
       crit.add(Expression.eq(AuditTrailRaw.PROPERTY_USERCONTACT, userId));
@@ -662,7 +680,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       resRow.setData("action", getFormattedAction(actions, row.getAction()));
       resRow.setData("user", getFormattedUser(row.getUserContact()));
       resRow.setData("process", getFormattedProcess(row.getProcessType(), row.getProcess()));
-      resRow.setData("column", getFormattedField(tabId, row));
+      resRow.setData("field", getFormattedField(tabFields, row));
       resRow.setData("old_value", getFormattedValue(row, false));
       resRow.setData("new_value", getFormattedValue(row, true));
       resRow.setData("rowkey", row.getId());
@@ -1115,16 +1133,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return trl.getName();
   }
 
-  // TODO: optimize field+trl fetching
-  private String getFormattedField(String tabId, AuditTrailRaw auditRow) {
-    OBQuery<Field> qf = OBDal.getInstance().createQuery(Field.class,
-        "as f where f.tab.id = :tabId and f.column.id = :columnId");
-    qf.setNamedParameter("tabId", tabId);
-    qf.setNamedParameter("columnId", auditRow.getColumn());
-    Field field = qf.uniqueResult();
-    if (field == null) {
-      return "(deleted)";
-    }
+  // TODO: optimize trl fetching
+  private String getFormattedField(Map<String, Field> tabFields, AuditTrailRaw auditRow) {
+    Field field = tabFields.get(auditRow.getColumn());
+
     String fieldNameTranslated = getTranslatedFieldName(field, OBContext.getOBContext()
         .getLanguage());
     return fieldNameTranslated;
