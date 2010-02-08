@@ -15,6 +15,7 @@
   v_qtyorderold  NUMBER;
   v_STOCKED   NUMBER;
   v_UOM_ID    varchar2(32);
+  V_COUNT  NUMBER;
 /******************************************************************************
  * The contents of this file are subject to the   Compiere License  Version 1.1
  * ("License"); You may not use this file except in compliance with the License
@@ -64,6 +65,14 @@ BEGIN
         v_qtyorder := :NEW.QUANTITYORDER;
     END IF;
  END IF;
+ IF (:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
+    SELECT COUNT(*) INTO V_COUNT FROM C_ORDERLINE ol,M_INOUTLINE il WHERE ol.C_ORDERLINE_ID = il.C_ORDERLINE_ID 
+    AND il.M_INOUTLINE_ID = :NEW.M_INOUTLINE_ID 
+    AND il.MOVEMENTQTY > ol.QTYORDERED;
+          IF(V_COUNT <> 0) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@MovementQtyCheck@');
+          END IF;
+  END IF;
  IF (UPDATING) THEN
   IF (COALESCE(:OLD.C_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
     IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
