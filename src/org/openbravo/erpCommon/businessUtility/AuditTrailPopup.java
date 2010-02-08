@@ -219,11 +219,13 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
   }
 
+  /**
+   * If the instance is not activated, show error message.
+   */
   private boolean checkIfEnabled(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException {
-    // instance not activated? -> disable feature and show message
-    ActivationKey ak = new ActivationKey();
-    if (ak.isActive()) {
+    // ActivationKey already initialized in i.e. HSAS, so just take static info
+    if (ActivationKey.isActiveInstance()) {
       return true;
     }
     String titleText = Utility.messageBD(this, "AUDIT_TRAIL", vars.getLanguage());

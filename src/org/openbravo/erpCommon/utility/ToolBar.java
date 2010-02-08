@@ -362,13 +362,12 @@ public class ToolBar {
    * 
    * activated instances: shown if isFullyAudited for the table
    */
-  @SuppressWarnings("static-access")
   private void changeAuditTrailVisibility() {
     if (tabId != null) {
       boolean oldAdminMode = OBContext.getOBContext().setInAdministratorMode(true);
       try {
-        ActivationKey ak = new ActivationKey();
-        if (ak.isActiveInstance()) {
+        // ActivationKey already initialized in i.e. HSAS, so just take static info
+        if (ActivationKey.isActiveInstance()) {
           // is an obps instance
           Tab tab = OBDal.getInstance().get(Tab.class, tabId);
           if (!tab.getTable().isFullyAudited()) {
