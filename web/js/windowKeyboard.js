@@ -613,6 +613,9 @@ function removeWindowElementFocus(obj) {
 }
 
 function mustBeJumped(obj) {
+  if (obj.focusLogic) {  //Added for custom element support
+    return obj.focusLogic('mustBeJumped');
+  }
   if (obj.style.display == 'none') return true;
   if (obj.getAttribute('id') == 'genericTree') { return true; }
   return false;
@@ -633,9 +636,6 @@ function mustBeIgnored(obj) {
   if (obj.className.indexOf('LabelLink')!=-1 && obj.className.indexOf('_LabelLink')==-1 && obj.className.indexOf('LabelLink_')==-1) return true;
   if (obj.className.indexOf('FieldButtonLink')!=-1) return true;
   if (obj.className.indexOf('ButtonLink_disabled')!=-1) return true;
-  if (obj.getAttribute('id')) {
-    if (obj.getAttribute('id').indexOf('isc_') != -1) return true;  //Added for support Smartclient Selector
-  }
   return false;
 }
 
@@ -663,7 +663,7 @@ function couldHaveFocus(obj) {
   try {  //Added for custom element support
     if (obj.focusLogic) {
       currentWindowElementType = 'custom';
-      return true;
+      return obj.focusLogic('couldHaveFocus');
     }
   } catch(e) {
   }
