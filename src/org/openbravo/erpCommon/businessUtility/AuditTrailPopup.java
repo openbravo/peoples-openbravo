@@ -345,7 +345,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       } else {
         // for deleted record we build the identifier manually
         recordStatus = "AUDIT_HISTORY_RECORD_DELETED";
-        identifier = try2GetIdentifier(table, recordId);
+        Entity tableEntity = ModelProvider.getInstance().getEntity(table.getName());
+        identifier = try2GetIdentifierViaPK(tableEntity, recordId);
       }
     }
 
@@ -388,33 +389,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       return element.getName();
     }
     return trl.getName();
-  }
-
-  private String try2GetIdentifier(Table table, String recordId) {
-    StringBuilder result = new StringBuilder();
-
-    // loop over identifier columns and concatenate identifier value manually
-    // if one of these identifiers cannot be retrieved use fall-back string for it
-    Entity tableEntity = ModelProvider.getInstance().getEntity(table.getName());
-    for (Property prop : tableEntity.getIdentifierProperties()) {
-      // get value for the property from audit data
-      OBCriteria<AuditTrailRaw> c = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
-      c.add(Expression.eq(AuditTrailRaw.PROPERTY_ACTION, "D"));
-      c.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, table.getId()));
-      c.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
-      c.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, prop.getColumnId()));
-      AuditTrailRaw atr = (AuditTrailRaw) c.uniqueResult();
-      String value = "(unknown)";
-      if (atr != null) {
-        // get formatted old value
-        value = getFormattedValue(atr, false);
-      }
-      result.append(value);
-      result.append(" - "); // delimiter between columns
-    }
-    // remove ' ' after last column
-    result.setLength(result.length() - 3);
-    return result.toString();
   }
 
   private void printPagePopupDeleted(HttpServletResponse response, VariablesSecureApp vars,
@@ -1185,38 +1159,85 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       // try generic lookup or fk-target value
       if (referencedCp == null) {
         // use targetEntity's pk as lookup key (like in TableDir case)
-        return getFkTargetIdentifierViaPK(col, value);
+        return getFkTargetIdentifierViaPK(targetEntity, value);
       }
-      return getFkTargetIdentifierViaReferencedColumn(targetEntity.getName(), referencedCp
-          .getName(), value);
+      return getFkTargetIdentifierViaReferencedColumn(targetEntity, referencedCp, value);
     }
 
     // no special formatting for reference value -> just return the value
     return value;
   }
 
-  private String getFkTargetIdentifierViaPK(Column col, String fkValue) {
-    Table table = col.getTable();
-    Entity tableEntity = ModelProvider.getInstance().getEntity(table.getName());
-
-    String targetIdentifier = fkValue;
-    BaseOBObject bob = OBDal.getInstance().get(
-        tableEntity.getPropertyByColumnName(col.getDBColumnName()).getTargetEntity().getName(),
-        fkValue);
-    targetIdentifier = (bob != null) ? bob.getIdentifier() : "(deleted)";
-    return targetIdentifier;
+  /**
+   * Returns the identifier for a given Entity,pk-value combination. If the target record cannot be
+   * found, a lookup of the record in the deleted audit-data is performed.
+   */
+  private String getFkTargetIdentifierViaPK(Entity targetEntity, String fkValue) {
+    BaseOBObject bob = OBDal.getInstance().get(targetEntity.getName(), fkValue);
+    if (bob != null) {
+      return bob.getIdentifier();
+    }
+    // try to get identifier from audit data
+    return try2GetIdentifierViaPK(targetEntity, fkValue);
   }
 
-  private String getFkTargetIdentifierViaReferencedColumn(String targetEntityName,
-      String referencedPropertyName, String value) {
-    OBCriteria<BaseOBObject> c = OBDal.getInstance().createCriteria(targetEntityName);
-    c.add(Expression.eq(referencedPropertyName, value));
+  /**
+   * Returns the identifier for a given Entity,fk-field,fk-field-value combination. If the target
+   * record cannot be found, a lookup of the record in the deleted audit-data is performed.
+   */
+  private String getFkTargetIdentifierViaReferencedColumn(Entity targetEntity,
+      Property referencedProperty, String value) {
+    OBCriteria<BaseOBObject> c = OBDal.getInstance().createCriteria(targetEntity.getName());
+    c.add(Expression.eq(referencedProperty.getName(), value));
     BaseOBObject bob = (BaseOBObject) c.uniqueResult();
     if (bob != null) {
-      String targetIdentifier = (bob != null) ? bob.getIdentifier() : "(deleted)";
-      return targetIdentifier;
+      return bob.getIdentifier();
     }
-    return "(deleted)";
+    // try to get identifier from audit data
+    return try2GetIdentifierViaReferencedColumn(targetEntity, referencedProperty, value);
+  }
+
+  private String try2GetIdentifierViaReferencedColumn(Entity targetEntity,
+      Property referencedProperty, String value) {
+    // lookup record in audit data (for deleted records) to get its recordId
+    OBCriteria<AuditTrailRaw> c = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
+    c.add(Expression.eq(AuditTrailRaw.PROPERTY_ACTION, "D"));
+    c.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, targetEntity.getTableId()));
+    // c.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+    c.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, referencedProperty.getColumnId()));
+    c.add(Expression.eq(AuditTrailRaw.PROPERTY_OLDCHAR, value));
+    AuditTrailRaw atr = (AuditTrailRaw) c.uniqueResult();
+    if (atr == null) {
+      return "(unknown)";
+    }
+    // then use the record-id to do the identifier lookup
+    return try2GetIdentifierViaPK(targetEntity, atr.getRecordID());
+  }
+
+  private String try2GetIdentifierViaPK(Entity targetEntity, String recordId) {
+    StringBuilder result = new StringBuilder();
+
+    // loop over identifier columns and concatenate identifier value manually
+    // if one of these identifiers cannot be retrieved use fall-back string for it
+    for (Property prop : targetEntity.getIdentifierProperties()) {
+      // get value for the property from audit data
+      OBCriteria<AuditTrailRaw> c = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
+      c.add(Expression.eq(AuditTrailRaw.PROPERTY_ACTION, "D"));
+      c.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, targetEntity.getTableId()));
+      c.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+      c.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, prop.getColumnId()));
+      AuditTrailRaw atr = (AuditTrailRaw) c.uniqueResult();
+      String value = "(unknown)";
+      if (atr != null) {
+        // get formatted old value
+        value = getFormattedValue(atr, false);
+      }
+      result.append(value);
+      result.append(" - "); // delimiter between columns
+    }
+    // remove ' ' after last column
+    result.setLength(result.length() - 3);
+    return result.toString();
   }
 
   /**
