@@ -2528,10 +2528,10 @@ You find the current status in the Document Status field. The options are listed
 <!--382-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--382-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--382-->  <COLUMNNAME><![CDATA[IsIdentifier]]></COLUMNNAME>
-<!--382-->  <NAME><![CDATA[Identifier]]></NAME>
+<!--382-->  <NAME><![CDATA[Used as Record Identifier]]></NAME>
 <!--382-->  <PRINTNAME><![CDATA[Identifier]]></PRINTNAME>
 <!--382-->  <DESCRIPTION><![CDATA[This column is part of the record identifier]]></DESCRIPTION>
-<!--382-->  <HELP><![CDATA[The Identifier checkbox indicates that this column is part of the identifier or key for this table.]]></HELP>
+<!--382-->  <HELP><![CDATA[The Identifier checkbox indicates that this column is part of the identifier or key for this table]]></HELP>
 <!--382-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--382--></AD_ELEMENT>
 
@@ -9553,10 +9553,11 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1656-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1656-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1656-->  <COLUMNNAME><![CDATA[IsSelectionColumn]]></COLUMNNAME>
-<!--1656-->  <NAME><![CDATA[Filter Column]]></NAME>
+<!--1656-->  <NAME><![CDATA[Used as Filter Column]]></NAME>
 <!--1656-->  <PRINTNAME><![CDATA[Selection]]></PRINTNAME>
 <!--1656-->  <DESCRIPTION><![CDATA[Is this column used for finding rows in windows]]></DESCRIPTION>
-<!--1656-->  <HELP><![CDATA[If selected, the column is listed in the first find window tab and in the selection part of the window]]></HELP>
+<!--1656-->  <HELP><![CDATA[
+If selected, this column will be used in the Search Window as an available filter criteria.]]></HELP>
 <!--1656-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1656--></AD_ELEMENT>
 
@@ -21860,10 +21861,11 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1006100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006100000-->  <COLUMNNAME><![CDATA[Isfirstfocusedfield]]></COLUMNNAME>
-<!--1006100000-->  <NAME><![CDATA[Is First Focused Field]]></NAME>
+<!--1006100000-->  <NAME><![CDATA[First Focused Field]]></NAME>
 <!--1006100000-->  <PRINTNAME><![CDATA[Is First Focused Field]]></PRINTNAME>
 <!--1006100000-->  <DESCRIPTION><![CDATA[Is First Focused Field]]></DESCRIPTION>
-<!--1006100000-->  <HELP><![CDATA[When it is active this field will be focused by default when the tab is opened.]]></HELP>
+<!--1006100000-->  <HELP><![CDATA[
+When it is active this field will be focused by default when the tab is opened.]]></HELP>
 <!--1006100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1006100000--></AD_ELEMENT>
 
