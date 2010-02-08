@@ -102,7 +102,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         strAttrSetValueType = product.getUseAttributeSetValueAs();
       }
       if (!strAttributeSet.equals("")) {
-        if (strAttrSetValueType != null && strAttrSetValueType.equals("F"))
+        if ("F".equals(strAttrSetValueType))
           advisePopUp(request, response, "INFO", Utility
               .messageBD(this, "Info", vars.getLanguage()), Utility.messageBD(this,
               "AttrSetValTypeSpecification", vars.getLanguage()));
