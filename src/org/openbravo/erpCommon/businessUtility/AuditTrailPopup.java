@@ -106,7 +106,12 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    // FIXME: add check for ad_window_access via the tabId, to verify that the user has read-access
+    String accesTabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
+    if (!hasGeneralAccess(vars, "W", accesTabId)) {
+      // do security check based on tabId passed in
+      bdErrorGeneralPopUp(request, response, Utility.messageBD(this, "Error", vars.getLanguage()),
+          Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
+    }
 
     // all code runs in adminMode to get read access to i.e. Tab,TabTrl,AD_Audit_Trail entities
     boolean oldAdminMode = OBContext.getOBContext().setInAdministratorMode(true);
