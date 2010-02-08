@@ -73,8 +73,11 @@
     ELSIF (v_BaseAmount='TBA' OR v_BaseAmount='TBATAX') THEN
       v_TaxBaseAmount:=p_AlternateTaxBaseAmt;
     END IF;
+    IF (v_TaxBaseAmount IS NULL) THEN
+      v_TaxBaseAmount:=0;
+    END IF;
     IF (v_BaseAmount='TAX' OR v_BaseAmount='LNATAX' OR v_BaseAmount='TBATAX') THEN
-      SELECT SUM(TAXAMT) + v_TaxBaseAmount
+      SELECT COALESCE(SUM(TAXAMT),0) + v_TaxBaseAmount
       INTO v_TaxBaseAmount
       FROM C_ORDERLINETAX, C_TAX
       WHERE C_ORDERLINETAX.C_TAX_ID = C_TAX.C_TAX_ID
