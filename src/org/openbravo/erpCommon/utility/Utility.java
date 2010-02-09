@@ -703,6 +703,7 @@ public class Utility {
 
   /**
    * Parse the given string searching the @ elements to translate with the correct values.
+   * Parameters are directly inserted in the returned String.
    * 
    * @param conn
    *          Handler for the database connection.
@@ -716,6 +717,16 @@ public class Utility {
    */
   public static String parseContext(ConnectionProvider conn, VariablesSecureApp vars,
       String context, String window) {
+    return parseContext(conn, vars, context, window, null);
+  }
+
+  /**
+   * Parse the given string searching the @ elements to translate with the correct values. If params
+   * is not null it adds a ? symbol in the context and adds the actual value to the params Vector,
+   * other case the actual value is replaced in the context.
+   */
+  public static String parseContext(ConnectionProvider conn, VariablesSecureApp vars,
+      String context, String window, Vector<String> params) {
     if (context == null || context.equals(""))
       return "";
     final StringBuffer strOut = new StringBuffer();
@@ -734,7 +745,12 @@ public class Utility {
       defStr = getContext(conn, vars, token, window);
       if (defStr.equals(""))
         return "";
-      strOut.append(defStr);
+      if (params != null) {
+        params.add(defStr);
+        strOut.append("?");
+      } else {
+        strOut.append(defStr);
+      }
       value = value.substring(j + 1);
       i = value.indexOf("@");
     }

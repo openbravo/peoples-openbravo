@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import java.util.Vector;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -143,8 +145,14 @@ class AuditTrailDeletedRecords {
       sql.append("  ORDER BY event_TIME DESC").append(") ").append(tableName);
 
       // apply where clause if exists
-      if (tab.getSQLWhereClause() != null) {
-        sql.append(" WHERE ").append(tab.getSQLWhereClause()).append("\n");
+      String whereClause = tab.getSQLWhereClause();
+      Vector<String> params = new Vector<String>();
+      if (whereClause != null) {
+        if (whereClause.indexOf("@") != -1) {
+          whereClause = Utility.parseContext(conn, vars, whereClause, tab.getWindow().getId(),
+              params);
+        }
+        sql.append(" WHERE ").append(whereClause).append("\n");
       }
 
       // Records for a given parent
@@ -183,7 +191,7 @@ class AuditTrailDeletedRecords {
         log4j.debug("SQL for deleted records:\n" + sql);
       }
 
-      ExecuteQuery q = new ExecuteQuery(conn, sql.toString(), null);
+      ExecuteQuery q = new ExecuteQuery(conn, sql.toString(), params);
       return q.select();
     } catch (Exception e) {
       log4j.error("Error in AuditTrailDeletedRecords", e);
