@@ -45,6 +45,7 @@
   v_taxAmt NUMBER;
   v_Prec C_CURRENCY.STDPRECISION%TYPE;
   v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
+  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
     
 BEGIN
     
@@ -240,6 +241,19 @@ END IF;
   END IF;
  END IF;
 
+ IF (INSERTING OR UPDATING) THEN
+  --Does not allow to change the attribute set value
+  -- for products which attribute set value type is Fixed
+  IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
+   SELECT ATTRSETVALUETYPE 
+   INTO v_AttrSetValueType
+   FROM M_PRODUCT 
+   WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
+   IF (v_AttrSetValueType='F') THEN
+    RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
+   END IF;
+  END IF;
+ END IF;
 
 END C_ORDERLINE_TRG2
 ]]></body>

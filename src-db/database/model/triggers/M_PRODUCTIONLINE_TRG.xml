@@ -11,6 +11,7 @@
   V_STOCKED       NUMBER;
   v_MOVEMENTQTY   NUMBER;
   v_QUANTITYORDER NUMBER;
+  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   /*************************************************************************
   * The contents of this file are subject to the Compiere Public
   * License 1.1 ("License"); You may not use this file except in
@@ -26,7 +27,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -107,6 +108,19 @@ BEGIN
         M_UPDATE_INVENTORY(:NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID, :NEW.UPDATEDBY, :NEW.M_PRODUCT_ID, :NEW.M_LOCATOR_ID, :NEW.M_ATTRIBUTESETINSTANCE_ID, :NEW.C_UOM_ID, :NEW.M_PRODUCT_UOM_ID, NULL, NULL, NULL, v_MOVEMENTQTY, v_QUANTITYORDER) ;
       END IF;
     END IF;
+  END IF;
+  IF (INSERTING OR UPDATING) THEN
+   --Does not allow to change the attribute set value
+   -- for products which attribute set value type is Fixed
+   IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
+    SELECT ATTRSETVALUETYPE 
+    INTO v_AttrSetValueType
+    FROM M_PRODUCT 
+    WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
+    IF (v_AttrSetValueType='F') THEN
+     RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
+    END IF;
+   END IF;
   END IF;
 END M_PRODUCTIONLINE_TRG
 ]]></body>
