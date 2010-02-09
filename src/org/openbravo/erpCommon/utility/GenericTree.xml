@@ -31,6 +31,7 @@
     <FIELD id="icon2_xx" attribute="id" replace="xx">nodeId</FIELD>
     <FIELD id="inpNodes_xx" attribute="value">nodeId</FIELD>
     <FIELD id="inpNodes_xx" attribute="id" replace="xx">nodeId</FIELD>
+    <FIELD id="inpNodes_xx" attribute="onclick" replace="xx">position</FIELD>
     <FIELD id="link_xx" attribute="onclick">linkclick</FIELD>
     <FIELD id="link_xx">linkname</FIELD>
     <FIELD id="link_xx" attribute="id" replace="xx">nodeId</FIELD>
