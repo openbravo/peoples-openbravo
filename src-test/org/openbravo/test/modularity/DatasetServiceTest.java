@@ -63,12 +63,14 @@ public class DatasetServiceTest extends BaseTest {
     final List<DataSet> dss = obc.list();
     setSystemAdministratorContext();
     for (final DataSet ds : dss) {
-      for (final DataSetTable dt : ds.getDataSetTableList()) {
-        try {
-          // just test but do nothing with return value
-          DataSetService.getInstance().getExportableObjects(dt, "0", parameters);
-        } catch (final Exception e) {
-          log.debug(ds.getName() + ": " + dt.getEntityName() + ": " + e.getMessage());
+      if (!ds.getName().equalsIgnoreCase("AD") && !ds.getName().equalsIgnoreCase("ADRD")) {
+        for (final DataSetTable dt : ds.getDataSetTableList()) {
+          try {
+            // just test but do nothing with return value
+            DataSetService.getInstance().getExportableObjects(dt, "0", parameters);
+          } catch (final Exception e) {
+            log.debug(ds.getName() + ": " + dt.getEntityName() + ": " + e.getMessage());
+          }
         }
       }
     }
@@ -87,8 +89,10 @@ public class DatasetServiceTest extends BaseTest {
     parameters.put("ClientID", "0");
 
     for (final DataSet ds : dss) {
-      final String xml = DataExportService.getInstance().exportDataSetToXML(ds, "0", parameters);
-      log.debug(xml);
+      if (!ds.getName().equalsIgnoreCase("AD") && !ds.getName().equalsIgnoreCase("ADRD")) {
+        final String xml = DataExportService.getInstance().exportDataSetToXML(ds, "0", parameters);
+        log.debug(xml);
+      }
     }
   }
 
@@ -124,29 +128,31 @@ public class DatasetServiceTest extends BaseTest {
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     final List<DataSet> ds = obc.list();
     for (final DataSet d : ds) {
-      log.debug("Exporting DataSet: " + d.getName());
-      log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-      final List<DataSetTable> dts = d.getDataSetTableList();
-      for (final DataSetTable dt : dts) {
-        log.debug("Exporting DataSetTable: " + dt.getTable().getName());
-        final List<DataSetColumn> dcs = dt.getDataSetColumnList();
+      if (!d.getName().equalsIgnoreCase("AD") && !d.getName().equalsIgnoreCase("ADRD")) {
+        log.debug("Exporting DataSet: " + d.getName());
+        log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        final List<DataSetTable> dts = d.getDataSetTableList();
+        for (final DataSetTable dt : dts) {
+          log.debug("Exporting DataSetTable: " + dt.getTable().getName());
+          final List<DataSetColumn> dcs = dt.getDataSetColumnList();
 
-        final List<BaseOBObject> bobs = dss.getExportableObjects(dt, "0", parameters);
-        for (final BaseOBObject bob : bobs) {
-          final List<Property> ps = dss.getExportableProperties(bob, dt, dcs);
-          final StringBuilder sb = new StringBuilder();
-          sb.append(bob.getIdentifier() + " has " + ps.size() + " properties to export");
-          // . Values: ");
-          // for (Property p : ps) {
-          // final Object value = bob.get(p.getName());
-          // sb.append(", " + p.getName() + ": ");
-          // if (value instanceof BaseOBObject) {
-          // sb.append(((BaseOBObject) value).getIdentifier());
-          // } else {
-          // sb.append(value);
-          // }
-          // log.debug(sb.toString());
-          // }
+          final List<BaseOBObject> bobs = dss.getExportableObjects(dt, "0", parameters);
+          for (final BaseOBObject bob : bobs) {
+            final List<Property> ps = dss.getExportableProperties(bob, dt, dcs);
+            final StringBuilder sb = new StringBuilder();
+            sb.append(bob.getIdentifier() + " has " + ps.size() + " properties to export");
+            // . Values: ");
+            // for (Property p : ps) {
+            // final Object value = bob.get(p.getName());
+            // sb.append(", " + p.getName() + ": ");
+            // if (value instanceof BaseOBObject) {
+            // sb.append(((BaseOBObject) value).getIdentifier());
+            // } else {
+            // sb.append(value);
+            // }
+            // log.debug(sb.toString());
+            // }
+          }
         }
       }
     }
