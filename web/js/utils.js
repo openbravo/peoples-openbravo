@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6035';
+  var number = '6067';
   return number;
 }
 
@@ -114,6 +114,23 @@ function setObjAttribute(obj, attribute, attribute_text) {
   } else {
     obj[attribute]=new Function(attribute_text);
   }
+}
+
+/**
+* Get the array of elements with a given name and tag. Its purpose is to supply the lack of document.getElementsByName support in IE
+* @param {name} string Required - The desired name to search
+* @param {tag} string Required - The tag of the desired name array
+*/
+function getElementsByName(name, tag) {
+  tag = tag.toLowerCase()
+  var inputs = document.getElementsByTagName(tag);
+  var divArray = [];
+  for (var i=0; i<inputs.length; i++){
+    if (inputs.item(i).getAttribute('name') == name){
+      divArray.push(inputs.item(i));
+    }
+  }
+  return divArray;
 }
 
 
