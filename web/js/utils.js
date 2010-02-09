@@ -3416,15 +3416,15 @@ function checkFieldChange(elementToCheck) {
 */
 function windowUndo(form) {
   form.reset();
-  form.inpLastFieldChanged.value = '';
-  setWindowEditing(false);
-  displayLogic();
   for (var i=0; i < form.elements.length; i++) {
     var element = form.elements[i];
     if (element.doReset) {
       element.doReset();
     }
   }
+  form.inpLastFieldChanged.value = '';
+  setWindowEditing(false);
+  displayLogic();
 }
 
 /**
