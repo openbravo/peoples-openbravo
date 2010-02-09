@@ -157,6 +157,8 @@
       <Parameter name="parentTab"/>
       <Parameter name="adTableId"/>
   </SqlMethod>
+
+<!-- method copied to src/src/org/openbravo/erpCommon/businessUtility/AuditTrailPopup_data.xsql, both copies need to stay in sync -->
   <SqlMethod name="parentsColumnName" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
       <Sql><![CDATA[
@@ -176,6 +178,8 @@
       <Parameter name="tab"/>
       <Parameter name="parentTab"/>
   </SqlMethod>
+
+<!-- method copied to src/src/org/openbravo/erpCommon/businessUtility/AuditTrailPopup_data.xsql, both copies need to stay in sync -->
   <SqlMethod name="parentsColumnReal" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
       <Sql>

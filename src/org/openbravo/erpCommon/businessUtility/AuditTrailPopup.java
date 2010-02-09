@@ -147,8 +147,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         String tableId = vars.getGlobalVariable("inpTableId", "AuditTrail.tableId",
             IsIDFilter.instance);
         String tabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
-        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId",
-            IsIDFilter.instance);
+        // recordId is optional as popup can be called from empty grid
+        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false,
+            false, false, "", IsIDFilter.instance);
 
         // filter fields
         String userId = vars.getGlobalVariable("inpUser", "AuditTrail.userId", "",
@@ -268,6 +269,12 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     vars.removeSessionValue("AuditTrail.fieldId");
     vars.removeSessionValue("AuditTrail.dateFrom");
     vars.removeSessionValue("AuditTrail.dateTo");
+    // only remove the following values on initial open of the popup, not on a filter change
+    if (vars.getStringParameter("newFilter").equals("1")) {
+      return;
+    }
+    vars.removeSessionValue("AuditTrail.fkColumnName");
+    vars.removeSessionValue("AuditTrail.fkId");
   }
 
   private void printPagePopupHistory(HttpServletResponse response, VariablesSecureApp vars,
@@ -351,17 +358,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
 
     // name of the business element shown (i.e. Business Partner)
-    String elementName = table.getDBTableName() + "_ID";
-    String elementNameDisplay;
-    String hql = "as e where upper(e.dBColumnName) = :elementName";
-    OBQuery<Element> qe = OBDal.getInstance().createQuery(Element.class, hql);
-    qe.setNamedParameter("elementName", elementName.toUpperCase());
-    Element e = qe.uniqueResult();
-    if (e == null) {
-      elementNameDisplay = "(deleted)";
-    } else {
-      elementNameDisplay = getTranslatedElementName(e, OBContext.getOBContext().getLanguage());
-    }
+    String elementNameDisplay = getElementNameForTable(table, OBContext.getOBContext()
+        .getLanguage());
 
     String text = Utility.messageBD(this, recordStatus, vars.getLanguage());
     text = text.replace("@recordidentifier@", identifier);
@@ -380,6 +378,27 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     out.close();
   }
 
+  /**
+   * Gets the translated name of the business element stored in a table.
+   * 
+   * Done by a lookup of <tableName>+'_ID' in ad_element and ad_element_trl.
+   */
+  private String getElementNameForTable(Table table, Language language) {
+    // name of the business element shown (i.e. Business Partner)
+    String elementName = table.getDBTableName() + "_ID";
+    String elementNameDisplay;
+    String hql = "as e where upper(e.dBColumnName) = :elementName";
+    OBQuery<Element> qe = OBDal.getInstance().createQuery(Element.class, hql);
+    qe.setNamedParameter("elementName", elementName.toUpperCase());
+    Element e = qe.uniqueResult();
+    if (e == null) {
+      elementNameDisplay = "(deleted)";
+    } else {
+      elementNameDisplay = getTranslatedElementName(e, OBContext.getOBContext().getLanguage());
+    }
+    return elementNameDisplay;
+  }
+
   private String getTranslatedElementName(Element element, Language language) {
     OBCriteria<ElementTrl> c = OBDal.getInstance().createCriteria(ElementTrl.class);
     c.add(Expression.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
@@ -392,7 +411,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   }
 
   private void printPagePopupDeleted(HttpServletResponse response, VariablesSecureApp vars,
-      String recordId, String tabId, String tableId) throws IOException {
+      String recordId, String tabId, String tableId) throws IOException, ServletException {
     log4j.debug("POPUP_DELETED - recordId: " + recordId + ", tabId: " + tabId + ", tableId: "
         + tableId);
 
@@ -436,6 +455,63 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     xmlDocument.setParameter("recordId", recordId);
     xmlDocument.setParameter("tabId", tabId);
     xmlDocument.setParameter("tableId", tableId);
+
+    // check if opened from a non-toplevel tab, if so then filter by parent record
+    // in both cases add message to info area, telling the user about filter/no-filter
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    String parentTabId = AuditTrailPopupData.selectParentTab(myPool, tabId);
+    if (parentTabId == null) {
+      // top-level tab
+      log4j.debug("Deleted records view opened for top-level tab");
+      String text = Utility
+          .messageBD(this, "AUDIT_HISTORY_DELETED_TOPLEVELTAB", vars.getLanguage());
+      String elementCurrentTab = getElementNameForTable(tab.getTable(), OBContext.getOBContext()
+          .getLanguage());
+      text = text.replace("@elementnameCurrentTab@", elementCurrentTab);
+      xmlDocument.setParameter("recordIdentifierText", text);
+
+    } else {
+      // child-tab of another tab
+      Tab parentTab = OBDal.getInstance().get(Tab.class, parentTabId);
+      log4j.debug("Deleted records view opened for child tab. Parent is: " + parentTabId);
+
+      // code taken from wad to get the columns linking to the parent tab
+      AuditTrailPopupData[] parentsFieldsData;
+      parentsFieldsData = AuditTrailPopupData.parentsColumnName(this, parentTabId, tabId);
+
+      if (parentsFieldsData == null || parentsFieldsData.length == 0) {
+        parentsFieldsData = AuditTrailPopupData.parentsColumnReal(this, parentTabId, tabId);
+      }
+      for (AuditTrailPopupData atpd : parentsFieldsData) {
+        // according to wad-generated windows, should only be a single field
+        // try to get value from session
+        String windowId = tab.getWindow().getId();
+        String sessionVar = windowId + "|" + atpd.name;
+        String parentValue = vars.getSessionValue(sessionVar);
+        log4j.debug("Link to parent - columnName: " + atpd.name + " sessionValue: " + parentValue);
+
+        // name of the business element shown (i.e. Business Partner)
+        String elementCurrentTab = getElementNameForTable(tab.getTable(), OBContext.getOBContext()
+            .getLanguage());
+        String elementParentTab = getElementNameForTable(parentTab.getTable(), OBContext
+            .getOBContext().getLanguage());
+
+        // get identifier for current record in parent tab
+        BaseOBObject bob = OBDal.getInstance().get(parentTab.getTable().getName(), parentValue);
+        String parentIdentifier = bob.getIdentifier();
+
+        String text = Utility.messageBD(this, "AUDIT_HISTORY_DELETED_CHILDTAB", vars.getLanguage());
+        text = text.replace("@elementnameCurrentTab@", elementCurrentTab);
+        text = text.replace("@elementnameParentTab@", elementParentTab);
+        text = text.replace("@parentIdentifier@", parentIdentifier);
+
+        xmlDocument.setParameter("recordIdentifierText", text);
+
+        // save values for use in DATA request
+        vars.setSessionValue("AuditTrail.fkColumnName", atpd.name);
+        vars.setSessionValue("AuditTrail.fkId", parentValue);
+      }
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -821,19 +897,23 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     Date dateFrom = parseDate(strDateFrom, dateFormat);
     Date dateTo = parseDate(strDateTo, dateFormat);
 
+    // read optional values for parent filter
+    String fkColumnName = vars.getSessionValue("AuditTrail.fkColumnName");
+    String fkId = vars.getSessionValue("AuditTrail.fkId");
+
     try {
       if (strNewFilter.equals("1") || strNewFilter.equals("")) {
         // New filter or first load
-        strNumRows = getCountRowsDeleted(vars, tabId, tableId, offset, pageSize, strDateFrom,
-            strDateTo, userId);
+        strNumRows = getCountRowsDeleted(vars, tabId, tableId, fkColumnName, fkId, offset,
+            pageSize, strDateFrom, strDateTo, userId);
         vars.setSessionValue("AuditTrail.numrows", strNumRows);
       } else {
         strNumRows = vars.getSessionValue("AuditTrail.numrows");
       }
 
       // get data
-      data = getDataRowsDeleted(vars, tabId, tableId, offset, pageSize, strDateFrom, strDateTo,
-          userId);
+      data = getDataRowsDeleted(vars, tabId, tableId, fkColumnName, fkId, offset, pageSize,
+          strDateFrom, strDateTo, userId);
     } catch (Exception e) {
       log4j.error("Error getting row data: ", e);
       type = "Error";
@@ -885,10 +965,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   }
 
   private String getCountRowsDeleted(VariablesSecureApp vars, String tabId, String tableId,
-      int offset, int pageSize, String dateFrom, String dateTo, String userId) {
+      String fkColumnName, String fkId, int offset, int pageSize, String dateFrom, String dateTo,
+      String userId) {
     long s1 = System.currentTimeMillis();
-    FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId, 0, 0,
-        true, dateFrom, dateTo, userId);
+    FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId,
+        fkColumnName, fkId, 0, 0, true, dateFrom, dateTo, userId);
     String countResult = rows[0].getField("counter");
     long t1 = System.currentTimeMillis();
 
@@ -897,7 +978,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   }
 
   private FieldProvider[] getDataRowsDeleted(VariablesSecureApp vars, String tabId, String tableId,
-      int offset, int pageSize, String dateFrom, String dateTo, String userId) {
+      String fkColumnName, String fkId, int offset, int pageSize, String dateFrom, String dateTo,
+      String userId) {
 
     long s1 = System.currentTimeMillis();
     FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId, offset,

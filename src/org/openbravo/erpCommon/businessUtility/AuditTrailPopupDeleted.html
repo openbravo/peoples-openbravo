@@ -81,11 +81,10 @@ function focusOnField() {
 </script>
 <script type="text/javascript">    
   function validateSelector(action) {
-    var pos; var keys;  var key; var text; var parameter;
-        pos = getSelectedPos();
-        key = getSelectedValues();
-        console.log("key is: " + key);
-    submitCommandForm('POPUP_HISTORY', false, null, 'AuditTrail.html?inpRecordId=' + key);
+    if (dijit.byId('grid').getSelectedRows() != '') {
+      var key = getSelectedValues();
+      submitCommandForm('POPUP_HISTORY', false, null, 'AuditTrail.html?inpRecordId=' + key);
+    }
   }
 </script>
 </head>
@@ -122,6 +121,24 @@ function focusOnField() {
           <tr>
             <td class="Popup_SeparatorBar_bg"></td>
           </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
+          <tr>
+            <td class="Popup_InfoBar_Icon_cell"><img src="../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info"/></td>
+
+            <td class="Popup_InfoBar_text_table">
+              <table>
+                <tr>
+                  <td class="Popup_InfoBar_text" id="recordIdentifierText"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
         </table>
       </td>
     </tr>
