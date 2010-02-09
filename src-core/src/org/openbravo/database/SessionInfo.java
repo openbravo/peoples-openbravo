@@ -37,6 +37,8 @@ public class SessionInfo {
   private static ThreadLocal<String> userId = new ThreadLocal<String>();
   private static ThreadLocal<String> processType = new ThreadLocal<String>();
   private static ThreadLocal<String> processId = new ThreadLocal<String>();
+  private static ThreadLocal<Connection> sessionConnection = new ThreadLocal<Connection>();
+  private static ThreadLocal<Boolean> changedInfo = new ThreadLocal<Boolean>();
 
   /**
    * Sets to null all session information
@@ -46,6 +48,21 @@ public class SessionInfo {
     userId.set(null);
     processType.set(null);
     processId.set(null);
+    changedInfo.set(null);
+    // close connection
+    Connection conn = sessionConnection.get();
+    try {
+      if (conn != null && !conn.isClosed()) {
+        if (log4j.isDebugEnabled()) {
+          log4j.debug("Close session's connection");
+        }
+        conn.setAutoCommit(true);
+        conn.close();
+      }
+    } catch (SQLException e) {
+      log4j.error("Error closing connection", e);
+    }
+    sessionConnection.set(null);
   }
 
   /**
@@ -84,15 +101,32 @@ public class SessionInfo {
   /**
    * Inserts in the session table the information about the Openbravo session
    * 
+   * 
    * @param conn
    *          Connection where the session information will be stored in
+   * @param onlyIfChanged
+   *          Updates database info only in case there are changes since the last time it was set
    */
+  static public void setDBSessionInfo(Connection conn, boolean onlyIfChanged) {
+    if (!isAuditActive || (onlyIfChanged && (changedInfo.get() == null || !changedInfo.get()))) {
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("No session info set isAuditActive: " + isAuditActive + " - changes in info: "
+            + changedInfo.get());
+      }
+      return;
+    }
+    setDBSessionInfo(conn);
+  }
+
   static public void setDBSessionInfo(Connection conn) {
     try {
       if (!isAuditActive) {
         return;
       }
 
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("set session info");
+      }
       // Clean up temporary table
       getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
 
@@ -104,9 +138,27 @@ public class SessionInfo {
       ps.setString(3, SessionInfo.getProcessType());
       ps.setString(4, SessionInfo.getProcessId());
       ps.executeUpdate();
+      changedInfo.set(false);
+
     } catch (Exception e) {
       log4j.error("Error setting audit info", e);
     }
+  }
+
+  static public Connection getSessionConnection() {
+    Connection conn = sessionConnection.get();
+    try {
+      if (conn == null || conn.isClosed()) {
+        return null;
+      }
+    } catch (SQLException e) {
+      log4j.error("Error checking connection", e);
+      return null;
+    }
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("Reuse session's connection");
+    }
+    return conn;
   }
 
   private static PreparedStatement getPreparedStatement(Connection conn, String SQLPreparedStatement)
@@ -137,7 +189,10 @@ public class SessionInfo {
   }
 
   static public void setUserId(String user) {
-    userId.set(user);
+    if (user == null || !user.equals(getUserId())) {
+      userId.set(user);
+      changedInfo.set(true);
+    }
   }
 
   static public String getUserId() {
@@ -145,7 +200,10 @@ public class SessionInfo {
   }
 
   public static void setProcessId(String processId) {
-    SessionInfo.processId.set(processId);
+    if (processId == null || !processId.equals(getProcessId())) {
+      SessionInfo.processId.set(processId);
+      changedInfo.set(true);
+    }
   }
 
   public static String getProcessId() {
@@ -153,7 +211,10 @@ public class SessionInfo {
   }
 
   public static void setProcessType(String processType) {
-    SessionInfo.processType.set(processType);
+    if (processType == null || !processType.equals(getProcessType())) {
+      SessionInfo.processType.set(processType);
+      changedInfo.set(true);
+    }
   }
 
   public static String getProcessType() {
@@ -161,7 +222,10 @@ public class SessionInfo {
   }
 
   public static void setSessionId(String session) {
-    sessionId.set(session);
+    if (session == null || !session.equals(getSessionId())) {
+      sessionId.set(session);
+      changedInfo.set(true);
+    }
   }
 
   public static String getSessionId() {
@@ -170,5 +234,9 @@ public class SessionInfo {
 
   public static void setAuditActive(boolean isAuditActive) {
     SessionInfo.isAuditActive = isAuditActive;
+  }
+
+  public static void setSessionConnection(Connection conn) {
+    sessionConnection.set(conn);
   }
 }

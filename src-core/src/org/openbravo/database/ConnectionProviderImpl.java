@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2008 Openbravo S.L.
+ * Copyright (C) 2001-2010 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -193,18 +193,42 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (poolName == null || poolName.equals(""))
       throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
     Connection conn = null;
+    // try to get the connection from the session to use a single connection for the whole request
+    conn = SessionInfo.getSessionConnection();
+    if (conn == null) {
+      // No connection in the session, take a new one and attach it to the session
+      conn = getNewConnection(poolName);
+      SessionInfo.setSessionConnection(conn);
+    } else {
+      // Update session info if needed
+      SessionInfo.setDBSessionInfo(conn, true);
+    }
+    return conn;
+  }
+
+  private Connection getNewConnection() throws NoConnectionAvailableException {
+    return getNewConnection(defaultPoolName);
+  }
+
+  /**
+   * Gets a new connection without trying to obtain the sessions's one
+   */
+  private Connection getNewConnection(String poolName) throws NoConnectionAvailableException {
+    if (poolName == null || poolName.equals(""))
+      throw new NoConnectionAvailableException("Couldn´t get a connection for an unnamed pool");
+    Connection conn = null;
     try {
       conn = DriverManager
           .getConnection("jdbc:apache:commons:dbcp:" + contextName + "_" + poolName);
+      // Set session info for the connection, but do not attach the connection to the session since
+      // it shouldn't be reused
+      SessionInfo.setDBSessionInfo(conn);
     } catch (SQLException ex) {
       log4j.error("Error getting connection", ex);
       throw new NoConnectionAvailableException(
           "There are no connections available in jdbc:apache:commons:dbcp:" + contextName + "_"
               + poolName);
     }
-
-    SessionInfo.setDBSessionInfo(conn);
-
     return conn;
   }
 
@@ -213,6 +237,30 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public boolean releaseConnection(Connection conn) {
+    if (conn == null)
+      return false;
+    try {
+      conn.commit();
+      if (SessionInfo.getSessionConnection() == null && !conn.isClosed()) {
+        // close connection if it's not attached to session, other case it will be closed when the
+        // request is done
+        if (log4j.isDebugEnabled()) {
+          log4j.debug("close connection directly (no connection in session)");
+        }
+        conn.setAutoCommit(true);
+        conn.close();
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Close for transactional connections
+   */
+  private boolean closeConnection(Connection conn) {
     if (conn == null)
       return false;
     try {
@@ -226,7 +274,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    Connection conn = getConnection();
+    Connection conn = getNewConnection();
     if (conn == null)
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
     conn.setAutoCommit(false);
@@ -237,7 +285,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (conn == null)
       return;
     conn.commit();
-    releaseConnection(conn);
+    closeConnection(conn);
   }
 
   public void releaseRollbackConnection(Connection conn) throws SQLException {
@@ -251,7 +299,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       return;
     }
     conn.rollback();
-    releaseConnection(conn);
+    closeConnection(conn);
   }
 
   public PreparedStatement getPreparedStatement(String SQLPreparedStatement) throws Exception {
