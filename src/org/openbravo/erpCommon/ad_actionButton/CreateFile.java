@@ -704,8 +704,9 @@ public class CreateFile extends HttpSecureAppServlet {
       // -
       // D
       // (common)
-      strBuf = strBuf.append("016").append(Lineas[i].concepto).append(Principio[0].hueco).append(
-          "\r\n");
+      strBuf = strBuf.append("016").append(
+          Lineas[i].concepto.replaceAll("\r", " ").replaceAll("\n", " "))
+          .append(Principio[0].hueco).append("\r\n");
 
       contador += 6;
     }

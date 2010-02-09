@@ -57,7 +57,7 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="PROCEDURENAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="PROCEDURENAME" primaryKey="false" required="false" type="NVARCHAR" size="30" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

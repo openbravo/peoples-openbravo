@@ -124,18 +124,8 @@
 
   function gt_getElementsByName(name,tag) {
     if (tag == null || tag == 'null' || tag == '') { tag='div' }
-    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
-      var inputs = document.getElementsByTagName(tag);
-      var divArray = [];
-      for(var i=0; i<inputs.length; i++){
-        if(inputs.item(i).getAttribute('name') == name ){
-          divArray.push(inputs.item(i));
-        }
-      }
-      return divArray;
-    } else {
-      return document.getElementsByName(name);
-    }
+    var divArray = getElementsByName(name, tag);
+    return divArray;
   }
 
   function gt_getElementByName(name) {

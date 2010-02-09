@@ -37,6 +37,14 @@
   v_Insert BOOLEAN :=FALSE;
   v_Precision NUMBER;
   v_PriceList_ID VARCHAR2(32);
+  v_Processed C_ORDER.PROCESSED%TYPE;
+  v_ID VARCHAR2(32);
+  v_oldLine NUMBER;
+  v_newLineNetAmt NUMBER;
+  v_newLineAlternate NUMBER;
+  v_taxAmt NUMBER;
+  v_Prec C_CURRENCY.STDPRECISION%TYPE;
+  v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
     
 BEGIN
@@ -44,7 +52,11 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
+IF (DELETING) THEN
+  v_ID:=:OLD.C_ORDER_ID;
+ELSE
+  v_ID:=:NEW.C_ORDER_ID;
+END IF;
 
  IF UPDATING THEN
   IF ((:NEW.DateOrdered != :OLD.DateOrdered)
@@ -177,19 +189,72 @@ BEGIN
    END IF;
   END LOOP;
  END IF;
+
+
+  /**************************************************************************
+   * Calculate Tax, etc.
+   */
+ SELECT processed, stdPrecision
+   INTO v_Processed, v_Prec
+ FROM C_Order, C_Currency
+ WHERE C_Order.C_Currency_ID = C_Currency.C_Currency_ID
+ AND C_Order_ID=v_ID;
+ v_oldLine:=0;
+ v_newLineNetAmt:=0;
+ IF(v_Processed='N') THEN
+  -- Calculate taxes
+  IF(UPDATING) THEN
+  v_oldLine:= COALESCE(:old.LineNetAmt,0) + COALESCE(:old.FreightAmt,0) + COALESCE(:old.ChargeAmt,0);
+  END IF;  
+  IF (INSERTING OR UPDATING) THEN
+   DELETE FROM C_ORDERLINETAX WHERE C_ORDERLINE_ID = :new.C_OrderLine_ID;
+   v_newLineNetAmt := COALESCE(:new.LineNetAmt,0) + COALESCE(:new.FreightAmt,0) + COALESCE(:new.ChargeAmt,0);
+   v_newLineAlternate := COALESCE(:new.TaxBaseAmt,0) + COALESCE(:new.FreightAmt,0) + COALESCE(:new.ChargeAmt,0);
+   SELECT BaseAmount INTO v_BaseAmount
+   FROM C_TAX
+   WHERE C_TAX_ID = :new.C_Tax_ID;
+   C_ORDERLINETAX_INSERT(:new.AD_Org_ID, :new.C_Order_ID, :new.C_OrderLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);
+  -- Get Total Tax Amt
+   SELECT SUM(TaxAmt)
+     INTO v_taxAmt
+   FROM C_OrderTax
+   WHERE C_Order_ID=:new.C_Order_ID;
+  -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
+   -- Update Header
+   UPDATE C_Order
+     SET TotalLines = TotalLines - v_oldLine + v_newLineNetAmt,
+     GrandTotal = TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
+   --  Updated = SysDate -- Don't update as otherwise it does not save changes
+   WHERE C_Order_ID = :new.C_Order_ID;
+  ELSE -- DELETING
+   SELECT SUM(TaxAmt)
+     INTO v_taxAmt
+   FROM C_OrderTax
+   WHERE C_Order_ID=:old.C_Order_ID;
+  -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
+   -- Update Header
+   UPDATE C_Order
+     SET TotalLines = TotalLines - v_oldLine + v_newLineNetAmt,
+     GrandTotal = TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
+   --  Updated = SysDate -- Don't update as otherwise it does not save changes
+   WHERE C_Order_ID=:old.C_Order_ID;
+  END IF;
+ END IF;
+
  IF (INSERTING OR UPDATING) THEN
-   --Does not allow to change the attribute set value
-   -- for products which attribute set value type is Fixed
-   IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
-    SELECT ATTRSETVALUETYPE 
-    INTO v_AttrSetValueType
-    FROM M_PRODUCT 
-    WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
-    IF (v_AttrSetValueType='F') THEN
-     RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
-    END IF;
+  --Does not allow to change the attribute set value
+  -- for products which attribute set value type is Fixed
+  IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
+   SELECT ATTRSETVALUETYPE 
+   INTO v_AttrSetValueType
+   FROM M_PRODUCT 
+   WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
+   IF (v_AttrSetValueType='F') THEN
+    RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
    END IF;
   END IF;
+ END IF;
+
 END C_ORDERLINE_TRG2
 ]]></body>
     </trigger>

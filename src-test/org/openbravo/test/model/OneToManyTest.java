@@ -24,6 +24,7 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.test.base.BaseTest;
@@ -46,6 +47,7 @@ public class OneToManyTest extends BaseTest {
     setBigBazaarUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
+    addReadWriteAccess(OrderLineTax.class);
     final OBCriteria<Order> order = OBDal.getInstance().createCriteria(Order.class);
     // order.add(Expression.eq("id", "1000019"));
     for (final Order o : order.list()) {
@@ -66,6 +68,7 @@ public class OneToManyTest extends BaseTest {
     setBigBazaarUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
+    addReadWriteAccess(OrderLineTax.class);
     final OBCriteria<Order> orders = OBDal.getInstance().createCriteria(Order.class);
     orders.add(Expression.eq(Order.PROPERTY_DOCUMENTSTATUS, "DR")); // Draft
     // document
@@ -97,6 +100,7 @@ public class OneToManyTest extends BaseTest {
     setBigBazaarUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
+    addReadWriteAccess(OrderLineTax.class);
     final OBCriteria<Order> orders = OBDal.getInstance().createCriteria(Order.class);
     orders.add(Expression.eq(Order.PROPERTY_DOCUMENTSTATUS, "DR"));
 
@@ -126,6 +130,7 @@ public class OneToManyTest extends BaseTest {
     setBigBazaarUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
+    addReadWriteAccess(OrderLineTax.class);
 
     final OBCriteria<OrderLine> lines = OBDal.getInstance().createCriteria(OrderLine.class);
     lines.add(Expression.eq(OrderLine.PROPERTY_ID, lineId));

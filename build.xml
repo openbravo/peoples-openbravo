@@ -554,7 +554,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
-    <antcall target="db.apply.modules" />
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
   <target name="update.database.mod" depends="init, core.lib, database.lib">
@@ -577,10 +577,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="db.apply.modules" if="apply.modules.on.create">
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
-  </target>
-
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
     <antcall target="generate.entities" />
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
@@ -592,9 +588,8 @@ export.database: exports database structure and data to xml files.
   <target name="apply.modules">
     <antcall target="update.database.mod" />
     <updatesystemstatus v="RB21"/>
-    <antcall target="generate.entities" />
+    <!--<antcall target="generate.entities" />-->
 
-    <updatesystemstatus v="RB31"/>
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <condition property="apply.modules.complete.compilation.var">
@@ -624,6 +619,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="apply.module">
+    <updatesystemstatus v="RB31"/>
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />

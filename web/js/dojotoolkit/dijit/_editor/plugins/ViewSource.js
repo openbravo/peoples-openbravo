@@ -190,6 +190,7 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 
 				this.sourceArea.value = html;
 				var is = dojo.marginBox(ed.iframe.parentNode);
+
 				dojo.marginBox(this.sourceArea, {
 					w: is.w,
 					h: is.h
@@ -266,10 +267,22 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 				dojo.style(this.sourceArea, "display", "none");
 				dojo.style(ed.iframe, "display", "block");
 				delete ed._sourceQueryCommandEnabled;
-
+                
 				//Trigger a check for command enablement/disablement.
 				this.editor.onDisplayChanged();
 			}
+			// Call a delayed resize to wait for some things to display in header/footer.
+			setTimeout(dojo.hitch(this, function(){
+				// Make resize calls.
+				var parent = ed.domNode.parentNode;
+				if(parent){
+					var container = dijit.getEnclosingWidget(parent);
+					if(container && container.resize){
+						container.resize();
+					}
+				}
+                ed.resize()
+			}), 300);
 		}catch(e){
 			console.log(e);
 		}
@@ -281,13 +294,20 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 		// tags:
 		//		private
 		var ed = this.editor;
-		var tb = dojo.position(ed.toolbar.domNode);
+		var tbH = ed.getHeaderHeight();
+		var fH = ed.getFooterHeight();
 		var eb = dojo.position(ed.domNode);
 
+		// Styles are now applied to the internal source container, so we have
+		// to subtract them off.
+		var containerPadding = dojo._getPadBorderExtents(ed.iframe.parentNode);
+		var containerMargin = dojo._getMarginExtents(ed.iframe.parentNode);
+
 		var extents = dojo._getPadBorderExtents(ed.domNode);
+		var mExtents = dojo._getMarginExtents(ed.domNode);
 		var edb = {
-			w: eb.w - extents.w,
-			h: eb.h - (tb.h + extents.h)
+			w: eb.w - (extents.w + mExtents.w),
+			h: eb.h - (tbH + extents.h + mExtents.h + fH)
 		};
 
 		// Fullscreen gets odd, so we need to check for the FS plugin and
@@ -296,7 +316,7 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 			//Okay, probably in FS, adjust.
 			var vp = dijit.getViewport();
 			edb.w = (vp.w - extents.w);
-			edb.h = (vp.h - (tb.h + extents.h));
+			edb.h = (vp.h - (tbH + extents.h + fH));
 		}
 
 		if(dojo.isIE){
@@ -314,9 +334,13 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 			edb.h = Math.floor((edb.h + 0.9) / _ie7zoom);
 		}
 
-
 		dojo.marginBox(this.sourceArea, {
-			w: edb.w,
+			w: edb.w - (containerPadding.w + containerMargin.w),
+			h: edb.h - (containerPadding.h + containerMargin.h)
+		});
+
+		// Scale the parent container too in this case.
+		dojo.marginBox(ed.iframe.parentNode, {
 			h: edb.h
 		});
 	},
@@ -340,12 +364,6 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 			borderStyle: "none"
 		});
 		dojo.place(this.sourceArea, ed.iframe, "before");
-		dojo.style(this.sourceArea.parentNode, {
-			padding: "0px",
-			margin: "0px",
-			borderWidth: "0px",
-			borderStyle: "none"
-		});
 
 		if(dojo.isIE && ed.iframe.parentNode.lastChild !== ed.iframe){
 			// There's some weirdo div in IE used for focus control

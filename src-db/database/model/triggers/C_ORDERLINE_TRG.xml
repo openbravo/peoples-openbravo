@@ -23,13 +23,13 @@
   * file and version.
   *************************************************************************/
 
-  TYPE RECORD IS REF CURSOR;
-
   v_newTaxBaseAmt NUMBER;
   v_oldTaxBaseAmt NUMBER;
   v_oldLine NUMBER:= 0;
-  v_newLine NUMBER:= 0;
+  v_newLineNetAmt NUMBER:= 0;
+  v_newLineAlternate NUMBER:= 0;
   v_taxAmt NUMBER:= 0;
+  v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
   v_HasTaxLine  BOOLEAN := FALSE;
   v_Prec   NUMBER;
   v_ID   VARCHAR2(32);
@@ -40,7 +40,6 @@
   v_taxBaseAmt NUMBER;
   v_rate NUMBER;
   v_isSummary CHAR(1);
-  Cur_MultiTax RECORD;
   xTaxAmt NUMBER:=0;
   
     
@@ -109,16 +108,15 @@ IF (UPDATING) THEN
   v_ID := :old.C_Order_ID;
  END IF;
 
- SELECT processed
-   INTO v_Processed
- FROM C_Order
- WHERE C_Order_ID=v_ID;
-
-
+ SELECT StdPrecision
+ INTO v_Prec
+ FROM C_Currency, C_Order
+ WHERE C_Currency.C_Currency_ID = C_Order.C_Currency_ID
+ AND C_Order_ID = v_ID;
  /**
   * Round Base
   */
- v_Prec := 2;
+ --v_Prec := 2;
  IF (INSERTING OR UPDATING) THEN
      -- Modified by I.Ciordia. Sometimes js fails calculting lineNet
   :new.LineNetAmt := ROUND(:new.QtyOrdered*:new.PriceActual, v_Prec);-- Modified by I.Ciordia
@@ -126,174 +124,6 @@ IF (UPDATING) THEN
   :new.ChargeAmt := ROUND(:new.ChargeAmt, v_Prec);
  END IF;
 
-
-  /**************************************************************************
-   * Calculate Tax, etc.
-   */
- IF(v_Processed='N') THEN
-  -- Subtract old Amount
-  IF (DELETING OR UPDATING) THEN
-   -- Get old Tax Info
-   SELECT SUM(TaxBaseAmt)
-     INTO v_oldTaxBaseAmt
-   FROM C_OrderTax
-   WHERE C_Order_ID=:old.C_Order_ID
-     AND C_Tax_ID=:old.C_Tax_ID;
-  -- DBMS_OUTPUT.PUT_LINE('Old TaxBaseAmt=' || v_oldTaxBaseAmt);
-   --
-   v_oldLine := COALESCE(:old.LineNetAmt,0) + COALESCE(:old.FreightAmt,0) + COALESCE(:old.ChargeAmt,0);
-   IF (v_oldTaxBaseAmt IS NOT NULL) THEN
-   -- DBMS_OUTPUT.PUT_LINE('Update NewLineAmt -= ' || v_oldLine);
-    UPDATE C_OrderTax
-      SET TaxBaseAmt = TaxBaseAmt - v_oldLine
-    WHERE C_Order_ID=:old.C_Order_ID
-      AND C_Tax_ID=:old.C_Tax_ID;
-   END IF;
-
-   SELECT TaxBaseAmt 
-     INTO v_taxBaseAmt 
-   FROM C_OrderTax 
-   WHERE C_Order_ID=:old.C_Order_ID 
-     AND C_Tax_ID=:old.C_Tax_ID;
-
-   SELECT Rate 
-     INTO v_rate 
-   FROM C_Tax 
-   WHERE C_Tax_ID=:old.C_Tax_ID;
-
-   SELECT IsSummary 
-     INTO v_isSummary 
-   FROM C_TAX t 
-   WHERE C_Tax_ID=(SELECT C_Tax_ID 
-		   FROM C_OrderTax 
-		   WHERE C_Order_ID=:old.C_Order_ID 
-		     AND C_Tax_ID=:old.C_Tax_ID);
-	
-   IF(v_isSummary='N') THEN
-     UPDATE C_OrderTax
-     SET TaxAmt = ROUND(v_taxBaseAmt * v_rate / 100, v_Prec),
-	 Updated = now(),
-	 UpdatedBy = '0'
-     WHERE C_Order_ID=:old.C_Order_ID
-     AND C_Tax_ID=:old.C_Tax_ID;
-   ELSE
-     FOR Cur_MultiTax IN
-        (SELECT C_Tax_ID, Rate, CASCADE
-	 FROM C_TAX
-	 WHERE Parent_Tax_ID=:old.C_Tax_ID
-	 ORDER BY Line)
-     LOOP
-       xTaxAmt:=xTaxAmt + ROUND(v_taxBaseAmt * Cur_MultiTax.Rate / 100, v_Prec);
-     END LOOP;
-
-     UPDATE C_OrderTax
-     SET TaxAmt = xTaxAmt,
-	 Updated = now(),
-	 UpdatedBy = '0'
-     WHERE C_Order_ID=:old.C_Order_ID
-     AND C_Tax_ID=:old.C_Tax_ID;
-   END IF;
-  END IF;
-
-  -- Add new Amount
-  IF (INSERTING OR UPDATING) THEN
-   -- Get new Tax Info
-   SELECT SUM(TaxBaseAmt)
-     INTO v_newTaxBaseAmt
-   FROM C_OrderTax
-   WHERE C_Order_ID=:new.C_Order_ID
-     AND C_Tax_ID=:new.C_Tax_ID;
-  -- DBMS_OUTPUT.PUT_LINE('New TaxBaseAmt=' || v_newTaxBaseAmt);
-   --
-   v_newLine := COALESCE(:new.LineNetAmt,0) + COALESCE(:new.FreightAmt,0) + COALESCE(:new.ChargeAmt,0);
-   IF (v_newTaxBaseAmt IS NULL) THEN
-   -- DBMS_OUTPUT.PUT_LINE('Insert NewLineAmt = ' || v_newLine);
-    INSERT INTO C_OrderTax
-     (c_OrderTax_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
-     C_Order_ID, C_Tax_ID, TaxBaseAmt, taxAmt)
-    VALUES
-     (get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.UpdatedBy, now(), :new.UpdatedBy,
-     :new.C_Order_ID, :new.C_Tax_ID, v_newLine, 0);
-   ELSE
-   -- DBMS_OUTPUT.PUT_LINE('Update NewLineAmt += ' || v_newLine);
-    UPDATE C_OrderTax
-      SET TaxBaseAmt = TaxBaseAmt + v_newLine
-    WHERE C_Order_ID=:new.C_Order_ID
-      AND C_Tax_ID=:new.C_Tax_ID;
-   END IF;
-
-   SELECT TaxBaseAmt 
-     INTO v_taxBaseAmt 
-   FROM C_OrderTax 
-   WHERE C_Order_ID=:new.C_Order_ID 
-     AND C_Tax_ID=:new.C_Tax_ID;
-
-   SELECT Rate 
-     INTO v_rate 
-   FROM C_Tax 
-   WHERE C_Tax_ID=:new.C_Tax_ID;
-
-   SELECT IsSummary 
-     INTO v_isSummary 
-   FROM C_TAX t 
-   WHERE C_Tax_ID=(SELECT C_Tax_ID 
-		   FROM C_OrderTax 
-		   WHERE C_Order_ID=:new.C_Order_ID 
-		     AND C_Tax_ID=:new.C_Tax_ID);
-	
-   IF(v_isSummary='N') THEN
-     UPDATE C_OrderTax
-     SET TaxAmt = ROUND(v_taxBaseAmt * v_rate / 100, v_Prec),
-	 Updated = now(),
-	 UpdatedBy = '0'
-     WHERE C_Order_ID=:new.C_Order_ID
-     AND C_Tax_ID=:new.C_Tax_ID;
-   ELSE
-     FOR Cur_MultiTax IN
-        (SELECT C_Tax_ID, Rate, CASCADE
-	 FROM C_TAX
-	 WHERE Parent_Tax_ID=:new.C_Tax_ID
-	 ORDER BY Line)
-     LOOP
-       xTaxAmt:=xTaxAmt + ROUND(v_taxBaseAmt * Cur_MultiTax.Rate / 100, v_Prec);
-     END LOOP;
-
-     UPDATE C_OrderTax
-     SET TaxAmt = xTaxAmt,
-	 Updated = now(),
-	 UpdatedBy = '0'
-     WHERE C_Order_ID=:new.C_Order_ID
-     AND C_Tax_ID=:new.C_Tax_ID;
-   END IF;
-  END IF;
-
-  -- Get Total Tax Amt
-  IF (INSERTING OR UPDATING) THEN
-   SELECT SUM(TaxAmt)
-     INTO v_taxAmt
-   FROM C_OrderTax
-   WHERE C_Order_ID=:new.C_Order_ID;
-  -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
-   -- Update Header
-   UPDATE C_Order
-     SET TotalLines = TotalLines - v_oldLine + v_newLine,
-     GrandTotal = TotalLines - v_oldLine + v_newLine + COALESCE(v_taxAmt, 0)
-   --  Updated = SysDate -- Don't update as otherwise it does not save changes
-   WHERE C_Order_ID = :new.C_Order_ID;
-  ELSE -- DELETING
-   SELECT SUM(TaxAmt)
-     INTO v_taxAmt
-   FROM C_OrderTax
-   WHERE C_Order_ID=:old.C_Order_ID;
-  -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
-   -- Update Header
-   UPDATE C_Order
-     SET TotalLines = TotalLines - v_oldLine + v_newLine,
-     GrandTotal = TotalLines - v_oldLine + v_newLine + COALESCE(v_taxAmt, 0)
-   --  Updated = SysDate -- Don't update as otherwise it does not save changes
-   WHERE C_Order_ID=:old.C_Order_ID;
-  END IF;
- END IF;
 
 END C_ORDERLINE_TRG
 ]]></body>

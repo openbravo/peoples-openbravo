@@ -55,7 +55,7 @@ dojo.declare("dijit.form.Button",
 
 	baseClass: "dijitButton",
 
-	templateString: dojo.cache("dijit.form", "templates/Button.html", "<span class=\"dijit dijitReset dijitLeft dijitInline\"\n\tdojoAttachEvent=\"onclick:_onButtonClick,onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\"\n\t><span class=\"dijitReset dijitRight dijitInline\"\n\t\t><span class=\"dijitReset dijitInline dijitButtonNode\"\n\t\t\t><button class=\"dijitReset dijitStretch dijitButtonContents\"\n\t\t\t\tdojoAttachPoint=\"titleNode,focusNode\"\n\t\t\t\t${nameAttrSetting} type=\"${type}\" value=\"${value}\" waiRole=\"button\" waiState=\"labelledby-${id}_label\"\n\t\t\t\t><span class=\"dijitReset dijitInline\" dojoAttachPoint=\"iconNode\"\n\t\t\t\t\t><span class=\"dijitReset dijitToggleButtonIconChar\">&#10003;</span\n\t\t\t\t></span\n\t\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"\n\t\t\t\t\tid=\"${id}_label\"\n\t\t\t\t\tdojoAttachPoint=\"containerNode\"\n\t\t\t\t></span\n\t\t\t></button\n\t\t></span\n\t></span\n></span>\n"),
+	templateString: dojo.cache("dijit.form", "templates/Button.html", "<span class=\"dijit dijitReset dijitLeft dijitInline\"\n\tdojoAttachEvent=\"onclick:_onButtonClick\"\n\t><span class=\"dijitReset dijitRight dijitInline\"\n\t\t><span class=\"dijitReset dijitInline dijitButtonNode\"\n\t\t\t><button class=\"dijitReset dijitStretch dijitButtonContents\"\n\t\t\t\tdojoAttachPoint=\"titleNode,focusNode\"\n\t\t\t\t${nameAttrSetting} type=\"${type}\" value=\"${value}\" waiRole=\"button\" waiState=\"labelledby-${id}_label\"\n\t\t\t\t><span class=\"dijitReset dijitInline\" dojoAttachPoint=\"iconNode\"\n\t\t\t\t\t><span class=\"dijitReset dijitToggleButtonIconChar\">&#10003;</span\n\t\t\t\t></span\n\t\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"\n\t\t\t\t\tid=\"${id}_label\"\n\t\t\t\t\tdojoAttachPoint=\"containerNode\"\n\t\t\t\t></span\n\t\t\t></button\n\t\t></span\n\t></span\n></span>\n"),
 
 	attributeMap: dojo.delegate(dijit.form._FormWidget.prototype.attributeMap, {
 		label: { node: "containerNode", type: "innerHTML" },
@@ -170,7 +170,7 @@ dojo.declare("dijit.form.DropDownButton", [dijit.form.Button, dijit._Container, 
 
 	baseClass : "dijitDropDownButton",
 
-	templateString: dojo.cache("dijit.form", "templates/DropDownButton.html", "<span class=\"dijit dijitReset dijitLeft dijitInline\"\n\tdojoAttachPoint=\"_buttonNode\"\n\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\"\n\t><span class='dijitReset dijitRight dijitInline'\n\t\t><span class='dijitReset dijitInline dijitButtonNode'\n\t\t\t><button class=\"dijitReset dijitStretch dijitButtonContents\"\n\t\t\t\t${nameAttrSetting} type=\"${type}\" value=\"${value}\"\n\t\t\t\tdojoAttachPoint=\"focusNode,titleNode,_arrowWrapperNode\"\n\t\t\t\twaiRole=\"button\" waiState=\"haspopup-true,labelledby-${id}_label\"\n\t\t\t\t><span class=\"dijitReset dijitInline\"\n\t\t\t\t\tdojoAttachPoint=\"iconNode\"\n\t\t\t\t></span\n\t\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"\n\t\t\t\t\tdojoAttachPoint=\"containerNode,_popupStateNode\"\n\t\t\t\t\tid=\"${id}_label\"\n\t\t\t\t></span\n\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonInner\">&thinsp;</span\n\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonChar\">&#9660;</span\n\t\t\t></button\n\t\t></span\n\t></span\n></span>\n"),
+	templateString: dojo.cache("dijit.form", "templates/DropDownButton.html", "<span class=\"dijit dijitReset dijitLeft dijitInline\"\n\tdojoAttachPoint=\"_buttonNode\"\n\t><span class='dijitReset dijitRight dijitInline'\n\t\t><span class='dijitReset dijitInline dijitButtonNode'\n\t\t\t><button class=\"dijitReset dijitStretch dijitButtonContents\"\n\t\t\t\t${nameAttrSetting} type=\"${type}\" value=\"${value}\"\n\t\t\t\tdojoAttachPoint=\"focusNode,titleNode,_arrowWrapperNode\"\n\t\t\t\twaiRole=\"button\" waiState=\"haspopup-true,labelledby-${id}_label\"\n\t\t\t\t><span class=\"dijitReset dijitInline\"\n\t\t\t\t\tdojoAttachPoint=\"iconNode\"\n\t\t\t\t></span\n\t\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"\n\t\t\t\t\tdojoAttachPoint=\"containerNode,_popupStateNode\"\n\t\t\t\t\tid=\"${id}_label\"\n\t\t\t\t></span\n\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonInner\">&thinsp;</span\n\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonChar\">&#9660;</span\n\t\t\t></button\n\t\t></span\n\t></span\n></span>\n"),
 
 	_fillContent: function(){
 		// Overrides Button._fillContent().
@@ -200,6 +200,7 @@ dojo.declare("dijit.form.DropDownButton", [dijit.form.Button, dijit._Container, 
 			this.dropDown = dijit.byNode(dropDownNode);
 			delete this.dropDownContainer;
 		}
+		dijit.popup.moveOffScreen(this.dropDown.domNode);
 
 		this.inherited(arguments);
 	},
@@ -216,7 +217,7 @@ dojo.declare("dijit.form.DropDownButton", [dijit.form.Button, dijit._Container, 
 		var dropDown = this.dropDown;
 		if(!dropDown){ return; }
 		if(!this.isLoaded()){
-			var handler = dojo.connect(dropDown, "onLoad", function(){
+			var handler = dojo.connect(dropDown, "onLoad", this, function(){
 				dojo.disconnect(handler);
 				this.openDropDown();
 			});
@@ -250,7 +251,7 @@ dojo.declare("dijit.form.ComboButton", dijit.form.DropDownButton, {
 	// |	dojo.body().appendChild(button1.domNode);
 	//
 
-	templateString: dojo.cache("dijit.form", "templates/ComboButton.html", "<table class='dijit dijitReset dijitInline dijitLeft'\n\tcellspacing='0' cellpadding='0' waiRole=\"presentation\"\n\t><tbody waiRole=\"presentation\"><tr waiRole=\"presentation\"\n\t\t><td class=\"dijitReset dijitStretch dijitButtonNode\"><button id=\"${id}_button\" class=\"dijitReset dijitButtonContents\"\n\t\t\tdojoAttachEvent=\"onclick:_onButtonClick,onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse,onkeypress:_onButtonKeyPress\"  dojoAttachPoint=\"titleNode\"\n\t\t\twaiRole=\"button\" waiState=\"labelledby-${id}_label\"\n\t\t\t><div class=\"dijitReset dijitInline\" dojoAttachPoint=\"iconNode\" waiRole=\"presentation\"></div\n\t\t\t><div class=\"dijitReset dijitInline dijitButtonText\" id=\"${id}_label\" dojoAttachPoint=\"containerNode\" waiRole=\"presentation\"></div\n\t\t></button></td\n\t\t><td id=\"${id}_arrow\" class='dijitReset dijitRight dijitButtonNode dijitArrowButton'\n\t\t\tdojoAttachPoint=\"_popupStateNode,focusNode,_buttonNode\"\n\t\t\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onkeypress:_onArrowKeyPress\"\n\t\t\tstateModifier=\"DownArrow\"\n\t\t\ttitle=\"${optionsTitle}\" ${nameAttrSetting}\n\t\t\twaiRole=\"button\" waiState=\"haspopup-true\"\n\t\t\t><div class=\"dijitReset dijitArrowButtonInner\" waiRole=\"presentation\">&thinsp;</div\n\t\t\t><div class=\"dijitReset dijitArrowButtonChar\" waiRole=\"presentation\">&#9660;</div\n\t\t></td\n\t></tr></tbody\n></table>\n"),
+	templateString: dojo.cache("dijit.form", "templates/ComboButton.html", "<table class='dijit dijitReset dijitInline dijitLeft'\n\tcellspacing='0' cellpadding='0' waiRole=\"presentation\"\n\t><tbody waiRole=\"presentation\"><tr waiRole=\"presentation\"\n\t\t><td class=\"dijitReset dijitStretch dijitButtonNode\" dojoAttachPoint=\"buttonNode\"><button id=\"${id}_button\" class=\"dijitReset dijitButtonContents\"\n\t\t\tdojoAttachEvent=\"onclick:_onButtonClick,onkeypress:_onButtonKeyPress\" dojoAttachPoint=\"titleNode\"\n\t\t\twaiRole=\"button\" waiState=\"labelledby-${id}_label\"\n\t\t\t><div class=\"dijitReset dijitInline\" dojoAttachPoint=\"iconNode\" waiRole=\"presentation\"></div\n\t\t\t><div class=\"dijitReset dijitInline dijitButtonText\" id=\"${id}_label\" dojoAttachPoint=\"containerNode\" waiRole=\"presentation\"></div\n\t\t></button></td\n\t\t><td id=\"${id}_arrow\" class='dijitReset dijitRight dijitButtonNode dijitArrowButton'\n\t\t\tdojoAttachPoint=\"_popupStateNode,focusNode,_buttonNode\"\n\t\t\tdojoAttachEvent=\"onkeypress:_onArrowKeyPress\"\n\t\t\ttitle=\"${optionsTitle}\" ${nameAttrSetting}\n\t\t\twaiRole=\"button\" waiState=\"haspopup-true\"\n\t\t\t><div class=\"dijitReset dijitArrowButtonInner\" waiRole=\"presentation\">&thinsp;</div\n\t\t\t><div class=\"dijitReset dijitArrowButtonChar\" waiRole=\"presentation\">&#9660;</div\n\t\t></td\n\t></tr></tbody\n></table>\n"),
 
 	attributeMap: dojo.mixin(dojo.clone(dijit.form.Button.prototype.attributeMap), {
 		id: "",
@@ -264,16 +265,20 @@ dojo.declare("dijit.form.ComboButton", dijit.form.DropDownButton, {
 
 	baseClass: "dijitComboButton",
 
+	// Set classes like dijitButtonContentsHover or dijitArrowButtonActive depending on
+	// mouse action over specified node
+	cssStateNodes: {
+		"buttonNode": "dijitButtonNode",
+		"titleNode": "dijitButtonContents",
+		"_popupStateNode": "dijitDownArrowButton"
+	},
+
 	_focusedNode: null,
 
 	postCreate: function(){
 		this.inherited(arguments);
-		this._focalNodes = [this.titleNode, this._popupStateNode];
+
 		var isIE = dojo.isIE;
-		dojo.forEach(this._focalNodes, dojo.hitch(this, function(node){
-			this.connect(node, isIE? "onactivate" : "onfocus", this._onNodeFocus);
-			this.connect(node, isIE? "ondeactivate" : "onblur", this._onNodeBlur);
-		}));
 		if(isIE && (isIE < 8 || dojo.isQuirks)){ // fixed in IE8/strict
 			with(this.titleNode){ // resize BUTTON tag so parent TD won't inherit extra padding
 				style.width = scrollWidth + "px";
@@ -284,22 +289,6 @@ dojo.declare("dijit.form.ComboButton", dijit.form.DropDownButton, {
 		}
 	},
 
-	_onNodeFocus: function(evt){
-		this._focusedNode = evt.currentTarget;
-		var fnc = this._focusedNode == this.focusNode ? "dijitDownArrowButtonFocused" : "dijitButtonContentsFocused";
-		dojo.addClass(this._focusedNode, fnc);
-	},
-
-	_onNodeBlur: function(evt){
-		var fnc = evt.currentTarget == this.focusNode ? "dijitDownArrowButtonFocused" : "dijitButtonContentsFocused";
-		dojo.removeClass(evt.currentTarget, fnc);
-	},
-
-	_onBlur: function(){
-		this.inherited(arguments);
-		this._focusedNode = null;
-	},
-	
 	_onButtonKeyPress: function(/*Event*/ evt){
 		// summary:
 		//		Handler for right arrow key when focus is on left part of button
@@ -351,12 +340,11 @@ dojo.declare("dijit.form.ToggleButton", dijit.form.Button, {
 		this.attr('checked', !this.checked);
 	},
 
-	_setCheckedAttr: function(/*Boolean*/ value){
+	_setCheckedAttr: function(/*Boolean*/ value, /* Boolean? */ priorityChange){
 		this.checked = value;
 		dojo.attr(this.focusNode || this.domNode, "checked", value);
 		dijit.setWaiState(this.focusNode || this.domNode, "pressed", value);
-		this._setStateClass();
-		this._handleOnChange(value, true);
+		this._handleOnChange(value, priorityChange);
 	},
 
 	setChecked: function(/*Boolean*/ checked){

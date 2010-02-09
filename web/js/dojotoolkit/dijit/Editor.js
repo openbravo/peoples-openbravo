@@ -9,6 +9,7 @@ if(!dojo._hasResource["dijit.Editor"]){ //_hasResource checks added by build. Do
 dojo._hasResource["dijit.Editor"] = true;
 dojo.provide("dijit.Editor");
 dojo.require("dijit._editor.RichText");
+
 dojo.require("dijit.Toolbar");
 dojo.require("dijit.ToolbarSeparator");
 dojo.require("dijit._editor._Plugin");
@@ -16,6 +17,7 @@ dojo.require("dijit._editor.plugins.EnterKeyHandling");
 dojo.require("dijit._editor.range");
 dojo.require("dijit._Container");
 dojo.require("dojo.i18n");
+dojo.require("dijit.layout._LayoutWidget");
 dojo.requireLocalization("dijit._editor", "commands", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare(
@@ -99,12 +101,16 @@ dojo.declare(
 			if(!this.toolbar){
 				// if we haven't been assigned a toolbar, create one
 				this.toolbar = new dijit.Toolbar({});
-				dojo.place(this.toolbar.domNode, this.editingArea, "before");
+				this.header.appendChild(this.toolbar.domNode);
 			}
 
 			dojo.forEach(this.plugins, this.addPlugin, this);
 			this.onNormalizedDisplayChanged(); //update toolbar button status
 //			}catch(e){ console.debug(e); }
+
+			dojo.addClass(this.iframe.parentNode, "dijitEditorIFrameContainer");
+			dojo.addClass(this.iframe, "dijitEditorIFrame");
+			dojo.attr(this.iframe, "allowTransparency", true);
 
 			this.toolbar.startup();
 		},
@@ -194,8 +200,14 @@ dojo.declare(
 			//		protected
 
 			// Converts the iframe (or rather the <div> surrounding it) to take all the available space
-			// except what's needed for the toolbar
-			this.editingArea.style.height = (this._contentBox.h - dojo.marginBox(this.toolbar.domNode).h)+"px";
+			// except what's needed for the header (toolbars) and footer (breadcrumbs, etc).
+			// A class was added to the iframe container and some themes style it, so we have to
+			// calc off the added margins and padding too. See tracker: #10662
+			var areaHeight = (this._contentBox.h - 
+				(this.getHeaderHeight() + this.getFooterHeight() + 
+				 dojo._getPadBorderExtents(this.iframe.parentNode).h +
+				 dojo._getMarginExtents(this.iframe.parentNode).h));
+			this.editingArea.style.height = areaHeight + "px";
 			if(this.iframe){
 				this.iframe.style.height="100%";
 			}

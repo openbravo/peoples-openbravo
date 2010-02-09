@@ -127,13 +127,6 @@
 	margin: 0;
 }
 
-.dijitClickableRegion {
-	/* An InlineEditBox in view mode (click this to edit the text) */
-	background-color: #e2ebf2;
-	cursor: text;
-}
-
-
 .dijitDisplayNone {
 	/* hide something.  Use this as a class rather than element.style so another class can override */
 	display:none !important;
@@ -307,8 +300,7 @@
 .dijitReadOnly *,
 .dijitDisabled *,
 .dijitReadOnly,
-.dijitDisabled,
-.dijitDisabledClickableRegion {	/* a region the user would be able to click on, but it's disabled */
+.dijitDisabled {	/* a region the user would be able to click on, but it's disabled */
 	cursor: not-allowed !important;
 }
 
@@ -404,7 +396,7 @@ table .dijitComboButton .dijitButtonNode {
 	width: 8em;
 }
 
-/* rules for safari to deal with fuzzy blue focus border */
+/* rules for webkit to deal with fuzzy blue focus border */
 .dijitTextBox input:focus,
 .dijitComboBox input:focus,
 .dijitSpinner input:focus {
@@ -412,9 +404,8 @@ table .dijitComboButton .dijitButtonNode {
 }
 .dijitTextBoxFocused,
 .dijitComboBoxFocused,
-.dijitSpinnerFocused, .dijitSpinnerUpArrowActive, .dijitSpinnerDownArrowActive,
+.dijitSpinnerFocused,
 .dijitTextAreaFocused {
-	/* should we display focus like we do on other browsers, or use the safari standard focus indicator?? */
 	outline: auto 5px -webkit-focus-ring-color;
 }
 
@@ -552,7 +543,7 @@ table .dijitComboButton .dijitButtonNode {
 
 .dijit_a11y .dijitProgressBarTile{
 	/* a11y:  The border provides visibility in high-contrast mode */
-	border-width:4px;
+	border-width:2px;
 	border-style:solid;
 	background-color:transparent !important;
 }
@@ -623,39 +614,13 @@ table .dijitComboButton .dijitButtonNode {
 .dijitTooltipConnector {
 	position: absolute;
 }
+.dijit_a11y .dijitTooltipConnector {
+	display: none;	/* won't show b/c it's background-image; hide to avoid border gap */
+}
 
 .dijitTooltipData {
 	display:none;
 }
-/* MOW: using actual images at this time ??? close???
-/* draw an arrow with CSS only * /
-.dijitTooltipConnector {
-	/* the border on the triangle * /
-	font-size: 0; line-height: 0%; width: 0;
-	border-top: none;
-	border-bottom: 14px solid black;
-	border-left: 7px solid transparent;
-	border-right: 7px solid transparent;
-	top: -14px;
-	left: 3px;
-	z-index: 2;
-}
-
-.dijitTooltipConnector div {
-	/* the background of the triangle * /
-	font-size: 0; line-height: 0%; width: 0;
-	position: absolute;
-	border-bottom: 10px solid #b8b5b5;
-	border-left: 5px solid transparent;
-	border-right: 5px solid transparent;
-	top: 6px;
-	left: -5px;
-	z-index: 3;
-}
-
-*/
-
-
 
 /* Layout widgets. This is essential CSS to make layout work (it isn't "styling" CSS)
    make sure that the position:absolute in dijitAlign* overrides other classes */
@@ -840,64 +805,83 @@ body .dijitAlignClient { position: absolute; }
 	overflow: hidden;
 }
 
-/* Color Palette */
+/* Color Palette
+ * Sizes designed so that table cell positions match icons in underlying image,
+ * which appear at 20x20 intervals.
+ */
 
 .dijitColorPalette {
-	border:1px solid #999;
-	background:#fff;
-	-moz-border-radius:3pt;
+	border: 1px solid #999;
+	background: #fff;
+	position: relative;
 }
 
 img.dijitColorPaletteUnder {
-	border-style:none;
-	position:absolute;
-	left:0;
-	top:0;
+	/* This single image contains the "icons" for every color in the color palette, and sits behind the transparent <table> */
+	border-style: none;
+	position: absolute;
+	left: 0;
+	top: 0;
 }
-.dijitColorPaletteInner {
+.dijitColorPalette .dijitPaletteTable {
+	/* Table that holds the palette cells, and overlays image file with color swatches.
+	 * padding/margin to align table with image.
+	 */
+	padding: 2px 3px 3px 3px;
 	position: relative;
-	overflow:hidden;
-	outline:0;
+	overflow: hidden;
+	outline: 0;
+	border-collapse: separate;
 }
-.dijitPaletteCell {
-	width: 20px;
+.dj_ie6 .dijitColorPalette .dijitPaletteTable,
+.dj_ie7 .dijitColorPalette .dijitPaletteTable,
+.dj_iequirks .dijitColorPalette .dijitPaletteTable {
+	/* using padding above so that focus border isn't cutoff on moz/webkit,
+	 * but using margin on IE because padding doesn't seem to work
+	 */
+	padding: 0;
+	margin: 2px 3px 3px 3px;
+}
+
+.dijitColorPalette .dijitPaletteCell {
+	/* <td> in the <table>, matching size of color swatches embedded in the img.dijitColorPaletteUnder */
 	height: 20px;
-	position: absolute;
-	overflow: hidden;
-	z-index: 10;
-	outline-width: 0;
+	width: 20px;
+	font-size: 1px;
+	vertical-align: middle;
+	text-align: center;
 }
-.dijitPaletteImg {
-	width: 16px; /*This is the width of one color in the provided palettes. */
-	height: 14px; /* Height of one color in the provided palettes. */
-	position: absolute;
-	top: 1px;
-	left: 1px;
-	overflow: hidden;
+.dijitColorPalette .dijitPaletteImg {
+	/* transparent (but clickable) <img> node inside of each <td>, overlaying the color swatch.
+	 * displays border around a color swatch
+	 */
+	width: 16px;
+	height: 14px;
+	border: 1px solid #999;
 	cursor: default;
-	border:1px solid #999;
-	/* -moz-border-radius:2pt; */
+		vertical-align: middle;
+}
+.dijitPaletteTable td {
+		padding: 0px;
+}
+.dijitColorPalette .dijitPaletteCellHover .dijitPaletteImg {
+	/* hovered color swatch */
+	border: 1px solid #000;
 }
 
-.dijitPaletteCellHighlight img {
-	width: 14px; /*This is the width of one color in the provided palettes. */
-	height: 12px; /* Height of one color in the provided palettes. */
-	position: absolute;
-	top: 1px;
-	left: 1px;
-	overflow: hidden;
-	cursor: default;
-	border:2px solid #000;
-	outline:1px solid #dedede;
-	/* -moz-border-radius:0; */
+.dijitColorPalette .dijitPaletteCellActive .dijitPaletteImg,
+.dijitColorPalette .dijitPaletteCellSelected .dijitPaletteImg {
+	border: 2px solid #000;
 }
 
-.dijit_a11y .dijitPaletteCell {
-	background-color:transparent !important;
+
+.dijit_a11y .dijitColorPalette .dijitPaletteTable,
+.dijit_a11y .dijitColorPalette .dijitPaletteCell,
+.dijit_a11y .dijitColorPalette .dijitPaletteImg {
+	background-color: transparent !important;
 }
-.dijit_a11y .dijitPaletteImg {
-	background-color:transparent !important;
-}
+
+/* AccordionContainer */
 
 .dijitAccordionContainer {
 	border:1px solid #b7b7b7;
@@ -913,7 +897,7 @@ img.dijitColorPaletteUnder {
 .dijitAccordionTitle {
 	cursor: pointer;
 }
-.dijitAccordionFocused  {
+.dijitAccordionTitleFocused  {
 	text-decoration: underline;
 }
 
@@ -926,16 +910,19 @@ img.dijitColorPaletteUnder {
 }
 
 .dijit_a11y .dijitAccordionTitle .arrowTextUp,
-.dijit_a11y .dijitAccordionTitle-selected .arrowTextDown {
+.dijit_a11y .dijitAccordionTitleSelected .arrowTextDown {
 	display: inline;
 }
 
-.dijit_a11y .dijitAccordionTitle-selected .arrowTextUp {
+.dijit_a11y .dijitAccordionTitleSelected .arrowTextUp {
 	display: none;
 }
 
 /* Calendar */
 
+.dijitCalendarContainer {
+	width: auto;	/* in case user has specified a width for the TABLE nodes, see #10553 */
+}
 .dijitCalendarContainer thead tr th, .dijitCalendarContainer thead tr td, .dijitCalendarContainer tbody tr td, .dijitCalendarContainer tfoot tr td {
 	padding: 0;
 }
@@ -1166,19 +1153,10 @@ img.dijitColorPaletteUnder {
 	border-right: 0px;
 }
 
-div.dijitTabBtnDisabled, .dj_ie div.dijitTabBtnDisabled {
+div.dijitTabDisabled, .dj_ie div.dijitTabDisabled {
 	cursor: auto;
 }
-/*
-div.dijitTabBtnDisabled img {
-	opacity: 0.3;
-}
 
-
-.dj_ie div.dijitTabBtnDisabled img {
-	filter: gray() alpha(opacity=30);
-}
-*/
 .dijitTab {
 	position:relative;
 	cursor:pointer;
@@ -1233,25 +1211,25 @@ div.dijitTabBtnDisabled img {
 }
 
 
-.dijitTab .closeButton {
+.dijitTab .dijitTabCloseButton {
 	margin-left: 1em;
 }
 
 /* images off, high-contrast mode styles */
-.dijitTab .closeText {
+.dijitTab .dijitTabCloseText {
 	display:none;
 }
 
-.dijit_a11y .closeText {
+.dijit_a11y .dijitTabCloseText {
 	display:inline;
 	margin: 0px 6px;
 }
 
-.dijit_a11y .dijitTab .closeImage {
+.dijit_a11y .dijitTab .dijitTabCloseIcon {
 	display:none;
 }
 
-.dijit_a11y .closeButton-hover .closeText {
+.dijit_a11y .dijitTabCloseButtonHover .dijitTabCloseText {
 	border:thin solid;
 }
 .dijit_a11y .dijitTabChecked {
@@ -1271,28 +1249,25 @@ div.dijitTabBtnDisabled img {
     border: none !important;
 }
 
-.dijitInlineEditor {
-	/* span around an inline-editable value when in edit mode */
-	position:relative;
-	vertical-align:bottom;
-}
-.dj_ie .dijitInlineEditor {
-	vertical-align:middle;
+/* InlineEditBox */
+.dijitInlineEditBoxDisplayMode{
+	border: 1px solid transparent;	/* so keyline (border) on hover can appear without screen jump */
 }
 
-.dijitInlineValue {
-	/* span around an inline-editable value when NOT in edit mode */
+.dj_ie6 .dijitInlineEditBoxDisplayMode {
+	border: none;				/* except that IE6 doesn't support transparent borders */
 }
 
-.dijitInlineEditor .dijitButtonContainer {
-	/* div around the buttons -- makes them float below the field */
-	position:absolute;
-	right:0;
-	overflow:visible;
+.dijitInlineEditBoxDisplayModeHover,
+.dj_ie6 .dijitInlineEditBoxDisplayModeHover {
+	/* An InlineEditBox in view mode (click this to edit the text) */
+	background-color: #e2ebf2;
+	border: solid 1px black;
+	cursor: text;
 }
 
-.dijitInlineEditor .saveButton,
-.dijitInlineEditor .cancelButton {
+.dijitInlineEditBoxDisplayModeDisabled {
+	cursor: not-allowed;
 }
 
 /* Tree */
@@ -1641,7 +1616,7 @@ div.dijitTabBtnDisabled img {
 	top: expression(eval((document.documentElement||document.body).scrollTop));
 }
 
-.RichTextEditable {
+.dijitEditor {
 	display: block;	/* prevents glitch on FF with InlineEditBox, see #8404 */
 }
 
@@ -1858,3 +1833,9 @@ div.dijitTabBtnDisabled img {
 	width: auto;
 	margin: 0px 4px;
 }
+
+/* Used in cases, such as FullScreen plugin, when we need to force stuff to static positioning. */
+.dijitForceStatic {
+	position: static !important;
+}
+
