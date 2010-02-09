@@ -122,15 +122,28 @@ function setObjAttribute(obj, attribute, attribute_text) {
 * @param {tag} string Required - The tag of the desired name array
 */
 function getElementsByName(name, tag) {
-  tag = tag.toLowerCase()
-  var inputs = document.getElementsByTagName(tag);
-  var divArray = [];
-  for (var i=0; i<inputs.length; i++){
-    if (inputs.item(i).getAttribute('name') == name){
-      divArray.push(inputs.item(i));
+  var resultArray = [];
+  if (!tag || tag == "" || tag == null || typeof tag == "undefined") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+      var inputs = document.all;
+      for (var i=0; i<inputs.length; i++){
+        if (inputs.item(i).getAttribute('name') == name){
+          resultArray.push(inputs.item(i));
+        }
+      }
+    } else {
+      resultArray = document.getElementsByName(name);
+    }
+  } else {
+    tag = tag.toLowerCase()
+    var inputs = document.getElementsByTagName(tag);
+    for (var i=0; i<inputs.length; i++){
+      if (inputs.item(i).getAttribute('name') == name){
+        resultArray.push(inputs.item(i));
+      }
     }
   }
-  return divArray;
+  return resultArray;
 }
 
 
