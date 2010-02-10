@@ -2528,10 +2528,10 @@ You find the current status in the Document Status field. The options are listed
 <!--382-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--382-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--382-->  <COLUMNNAME><![CDATA[IsIdentifier]]></COLUMNNAME>
-<!--382-->  <NAME><![CDATA[Identifier]]></NAME>
+<!--382-->  <NAME><![CDATA[Used as Record Identifier]]></NAME>
 <!--382-->  <PRINTNAME><![CDATA[Identifier]]></PRINTNAME>
 <!--382-->  <DESCRIPTION><![CDATA[This column is part of the record identifier]]></DESCRIPTION>
-<!--382-->  <HELP><![CDATA[The Identifier checkbox indicates that this column is part of the identifier or key for this table.]]></HELP>
+<!--382-->  <HELP><![CDATA[The Identifier checkbox indicates that this column is part of the identifier or key for this table]]></HELP>
 <!--382-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--382--></AD_ELEMENT>
 
@@ -9553,10 +9553,11 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1656-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1656-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1656-->  <COLUMNNAME><![CDATA[IsSelectionColumn]]></COLUMNNAME>
-<!--1656-->  <NAME><![CDATA[Filter Column]]></NAME>
+<!--1656-->  <NAME><![CDATA[Used as Filter Column]]></NAME>
 <!--1656-->  <PRINTNAME><![CDATA[Selection]]></PRINTNAME>
 <!--1656-->  <DESCRIPTION><![CDATA[Is this column used for finding rows in windows]]></DESCRIPTION>
-<!--1656-->  <HELP><![CDATA[If selected, the column is listed in the first find window tab and in the selection part of the window]]></HELP>
+<!--1656-->  <HELP><![CDATA[
+If selected, this column will be used in the Search Window as an available filter criteria.]]></HELP>
 <!--1656-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1656--></AD_ELEMENT>
 
@@ -11757,8 +11758,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--2019-->  <NAME><![CDATA[Attribute Set Value]]></NAME>
 <!--2019-->  <PRINTNAME><![CDATA[Attribute Set Instance]]></PRINTNAME>
 <!--2019-->  <DESCRIPTION><![CDATA[An attribute associated with a product as part of an attribute set.]]></DESCRIPTION>
-<!--2019-->  <HELP><![CDATA[
-The values of the actual Product Attributes]]></HELP>
+<!--2019-->  <HELP><![CDATA[The values of the actual Product Attributes]]></HELP>
 <!--2019-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2019--></AD_ELEMENT>
 
@@ -21860,10 +21860,11 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1006100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006100000-->  <COLUMNNAME><![CDATA[Isfirstfocusedfield]]></COLUMNNAME>
-<!--1006100000-->  <NAME><![CDATA[Is First Focused Field]]></NAME>
+<!--1006100000-->  <NAME><![CDATA[First Focused Field]]></NAME>
 <!--1006100000-->  <PRINTNAME><![CDATA[Is First Focused Field]]></PRINTNAME>
 <!--1006100000-->  <DESCRIPTION><![CDATA[Is First Focused Field]]></DESCRIPTION>
-<!--1006100000-->  <HELP><![CDATA[When it is active this field will be focused by default when the tab is opened.]]></HELP>
+<!--1006100000-->  <HELP><![CDATA[
+When it is active this field will be focused by default when the tab is opened.]]></HELP>
 <!--1006100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1006100000--></AD_ELEMENT>
 
@@ -25067,6 +25068,19 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--7E35F16BB0F6C186E040007F010014C7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7E35F16BB0F6C186E040007F010014C7--></AD_ELEMENT>
 
+<!--7E36B60C210930F0E040007F01016399--><AD_ELEMENT>
+<!--7E36B60C210930F0E040007F01016399-->  <AD_ELEMENT_ID><![CDATA[7E36B60C210930F0E040007F01016399]]></AD_ELEMENT_ID>
+<!--7E36B60C210930F0E040007F01016399-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--7E36B60C210930F0E040007F01016399-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--7E36B60C210930F0E040007F01016399-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--7E36B60C210930F0E040007F01016399-->  <COLUMNNAME><![CDATA[Attrsetvaluetype]]></COLUMNNAME>
+<!--7E36B60C210930F0E040007F01016399-->  <NAME><![CDATA[Use Attribute Set Value As]]></NAME>
+<!--7E36B60C210930F0E040007F01016399-->  <PRINTNAME><![CDATA[Use Attribute Set Value As]]></PRINTNAME>
+<!--7E36B60C210930F0E040007F01016399-->  <DESCRIPTION><![CDATA[A distinct Attribute Set Value characteristic.]]></DESCRIPTION>
+<!--7E36B60C210930F0E040007F01016399-->  <HELP><![CDATA[Permits to define different types of Attribute Set Values, depending on their usage.]]></HELP>
+<!--7E36B60C210930F0E040007F01016399-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--7E36B60C210930F0E040007F01016399--></AD_ELEMENT>
+
 <!--7E3C2453261B31A7E040007F0100680C--><AD_ELEMENT>
 <!--7E3C2453261B31A7E040007F0100680C-->  <AD_ELEMENT_ID><![CDATA[7E3C2453261B31A7E040007F0100680C]]></AD_ELEMENT_ID>
 <!--7E3C2453261B31A7E040007F0100680C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -25146,6 +25160,19 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--7E9AFA2B29D70A4AE040007F010123FD-->  <PRINTNAME><![CDATA[Process Description]]></PRINTNAME>
 <!--7E9AFA2B29D70A4AE040007F010123FD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7E9AFA2B29D70A4AE040007F010123FD--></AD_ELEMENT>
+
+<!--7EC3B5CF03729057E040007F010110BF--><AD_ELEMENT>
+<!--7EC3B5CF03729057E040007F010110BF-->  <AD_ELEMENT_ID><![CDATA[7EC3B5CF03729057E040007F010110BF]]></AD_ELEMENT_ID>
+<!--7EC3B5CF03729057E040007F010110BF-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--7EC3B5CF03729057E040007F010110BF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--7EC3B5CF03729057E040007F010110BF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--7EC3B5CF03729057E040007F010110BF-->  <COLUMNNAME><![CDATA[Isoneattrsetvalrequired]]></COLUMNNAME>
+<!--7EC3B5CF03729057E040007F010110BF-->  <NAME><![CDATA[Require At Least One Value]]></NAME>
+<!--7EC3B5CF03729057E040007F010110BF-->  <PRINTNAME><![CDATA[Require At Least One Value]]></PRINTNAME>
+<!--7EC3B5CF03729057E040007F010110BF-->  <DESCRIPTION><![CDATA[At least one attribute set value will be required in transactions.]]></DESCRIPTION>
+<!--7EC3B5CF03729057E040007F010110BF-->  <HELP><![CDATA[At least one attribute set value will be required in transactions.]]></HELP>
+<!--7EC3B5CF03729057E040007F010110BF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--7EC3B5CF03729057E040007F010110BF--></AD_ELEMENT>
 
 <!--80044AA0505611DEBC12001CC0B8EF99--><AD_ELEMENT>
 <!--80044AA0505611DEBC12001CC0B8EF99-->  <AD_ELEMENT_ID><![CDATA[80044AA0505611DEBC12001CC0B8EF99]]></AD_ELEMENT_ID>

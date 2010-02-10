@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2009 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -65,6 +65,8 @@
     v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
     v_org_bule_id AD_Org.AD_Org_ID%TYPE;
     v_AD_Org_ID VARCHAR2(32);
+    v_prodline NUMBER;
+    v_line NUMBER;
   BEGIN
     -- Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -234,18 +236,18 @@
       END IF;
     END IF; --FINISH_PROCESS
     IF (NOT FINISH_PROCESS) THEN
-      SELECT COUNT(*)
-      INTO v_Count
+      SELECT COUNT(*), MAX(pp.line), MAX(PL.LINE)
+      INTO v_Count, v_prodline, v_line
       FROM M_PRODUCTIONPLAN PP, M_PRODUCTIONLINE PL, M_PRODUCT P
       WHERE PL.M_PRODUCT_ID=P.M_PRODUCT_ID
         AND P.M_ATTRIBUTESET_ID IS NOT NULL
-        AND P.M_ATTRIBUTESETINSTANCE_ID IS NULL
+        AND (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE <> 'F')
+        AND (SELECT ISONEATTRSETVALREQUIRED FROM M_ATTRIBUTESET WHERE M_ATTRIBUTESET_ID = P.M_ATTRIBUTESET_ID) = 'Y'
         AND COALESCE(PL.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
         AND PL.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
         AND pp.M_Production_ID=v_Record_ID;
       IF v_Count<>0 THEN
-        v_Message:='@LinesWithoutAttributeSet@';
-        RAISE_APPLICATION_ERROR(-20000, v_Message);
+        RAISE_APPLICATION_ERROR(-20000, '@inProductionPlan@'||' '||'@line@'||' '||v_prodline||', '||'@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
         FINISH_PROCESS:=TRUE;
       END IF;
     END IF;

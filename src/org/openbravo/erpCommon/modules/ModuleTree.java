@@ -141,7 +141,7 @@ public class ModuleTree extends GenericTree {
         modules[i].linkclick = "gt_getUpdateDescription('" + modules[i].nodeId
             + "'); return false;";
       }
-      if (modules[i].status.equals("I")) {
+      if (modules[i].status.equals("I") || modules[i].status.equals("P")) {
         modules[i].linkname = Utility.messageBD(conn, "ApplyModules", lang) + ", "
             + Utility.messageBD(conn, "RebuildNow", lang);
         modules[i].linkclick = "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;";

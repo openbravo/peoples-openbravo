@@ -20,6 +20,7 @@
 package org.openbravo.dal.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -373,6 +374,8 @@ public class OBQuery<E extends BaseOBObject> {
         final Object value = localNamedParameters.get(name);
         if (value instanceof BaseOBObject) {
           qry.setEntity(name, value);
+        } else if (value instanceof Collection<?>) {
+          qry.setParameterList(name, (Collection<?>) value);
         } else {
           qry.setParameter(name, value);
         }

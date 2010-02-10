@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -41,6 +41,7 @@
     v_seq_name				             VARCHAR2(32);
     v_Sequence_No			             VARCHAR2(32);
     v_C_AcctSchema_ID			         VARCHAR2(32);
+    v_Count 	 	               NUMBER;
   			
 BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -72,7 +73,6 @@ BEGIN
     WHERE M_PRODUCT_ID=:new.M_PRODUCT_ID;
   END IF;
 
-  RETURN;
  ELSIF (INSERTING) THEN
   v_C_AcctSchema_ID:=null;
   --   For all AcctSchema create ...
@@ -193,6 +193,27 @@ BEGIN
          
  ELSIF (DELETING) THEN
     DELETE FROM AD_TreeNodePR WHERE AD_Client_ID = :old.AD_Client_ID AND Node_ID = :old.M_Product_ID;
+ END IF;
+ IF (INSERTING OR UPDATING) THEN
+    -- Checks on the attribute set value
+    IF (COALESCE(:new.M_AttributeSetInstance_ID, '0') != '0') THEN
+       IF (:new.M_AttributeSet_ID IS NULL) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@SelectAttrSetDeleteAttrSetValue@');
+       ELSE
+          SELECT COUNT(*)
+	  INTO v_Count
+	  FROM M_ATTRIBUTESETINSTANCE
+	  WHERE M_ATTRIBUTESETINSTANCE_ID = :new.M_AttributeSetInstance_ID
+	  AND M_ATTRIBUTESET_ID = :new.M_AttributeSet_ID;
+          IF (v_Count = 0) THEN
+             RAISE_APPLICATION_ERROR(-20000, '@MismatchAttrSetAttrSetValue@');
+          END IF;
+       END IF;
+    ELSE
+       IF (:new.AttrSetValueType IS NOT NULL) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@DeleteAttrSetValueType@');
+       END IF;
+    END IF;
  END IF;
 EXCEPTION
  WHEN NO_DATA_FOUND THEN

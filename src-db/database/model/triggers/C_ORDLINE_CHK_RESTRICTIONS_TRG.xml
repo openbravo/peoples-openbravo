@@ -67,7 +67,7 @@ BEGIN
         ) THEN
         IF (v_Processed='Y' AND v_Docaction <> 'CL') THEN
           RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
-        ELSIF (v_IsSOTrx ='Y' AND v_DocStatus = 'DR' AND (:OLD.QTYDELIVERED <> 0 OR :OLD.QTYINVOICED <> 0)) THEN
+        ELSIF (v_IsSOTrx ='Y' AND v_DocStatus = 'DR' AND (:OLD.QTYDELIVERED <> 0 OR :OLD.QTYINVOICED <> 0) AND (COALESCE(:OLD.PRICEACTUAL, 0) = COALESCE(:NEW.PRICEACTUAL, 0) OR :OLD.QTYINVOICED <> 0)) THEN
           RAISE_APPLICATION_ERROR(-20000, '@DeliveredInvoicedOrderline@');
         END IF;
       ELSIF (v_IsSOTrx = 'Y' AND ABS(:new.QtyInvoiced) > ABS(:new.QtyOrdered)) THEN

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6035';
+  var number = '6071';
   return number;
 }
 
@@ -114,6 +114,36 @@ function setObjAttribute(obj, attribute, attribute_text) {
   } else {
     obj[attribute]=new Function(attribute_text);
   }
+}
+
+/**
+* Get the array of elements with a given name and tag. Its purpose is to supply the lack of document.getElementsByName support in IE
+* @param {name} string Required - The desired name to search
+* @param {tag} string Required - The tag of the desired name array
+*/
+function getElementsByName(name, tag) {
+  var resultArray = [];
+  if (!tag || tag == "" || tag == null || typeof tag == "undefined") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+      var inputs = document.all;
+      for (var i=0; i<inputs.length; i++){
+        if (inputs.item(i).getAttribute('name') == name){
+          resultArray.push(inputs.item(i));
+        }
+      }
+    } else {
+      resultArray = document.getElementsByName(name);
+    }
+  } else {
+    tag = tag.toLowerCase()
+    var inputs = document.getElementsByTagName(tag);
+    for (var i=0; i<inputs.length; i++){
+      if (inputs.item(i).getAttribute('name') == name){
+        resultArray.push(inputs.item(i));
+      }
+    }
+  }
+  return resultArray;
 }
 
 

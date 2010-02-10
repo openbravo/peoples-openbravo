@@ -202,10 +202,12 @@ END IF;
    DELETE FROM C_INVOICELINETAX WHERE C_INVOICELINE_ID = :new.C_InvoiceLine_ID;
    v_newLineNetAmt := COALESCE(:new.LineNetAmt,0);
    v_newLineAlternate := COALESCE(:new.TaxBaseAmt,0);
-   SELECT BaseAmount INTO v_BaseAmount
-   FROM C_TAX
-   WHERE C_TAX_ID = :new.C_Tax_ID;
-   C_INVOICELINETAX_INSERT(:new.AD_Org_ID, :new.C_Invoice_ID, :new.C_InvoiceLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);
+   IF(:new.C_Tax_ID IS NOT NULL) THEN
+     SELECT BaseAmount INTO v_BaseAmount
+     FROM C_TAX
+     WHERE C_TAX_ID = :new.C_Tax_ID;
+     C_INVOICELINETAX_INSERT(:new.AD_Org_ID, :new.C_Invoice_ID, :new.C_InvoiceLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);
+   END IF;
   -- Get Total Tax Amt
    SELECT SUM(TaxAmt)
      INTO v_taxAmt
