@@ -228,6 +228,7 @@
   </SqlMethod>
 
 
+<!-- method copied to src/src/org/openbravo/erpCommon/businessUtility/AuditTrailPopup_data.xsql, both copies need to stay in sync -->
   <SqlMethod name="selectSubtabs" type="preparedStatement" return="multiple">
     <SqlMethodComment>Subtabs of the tab of the parameter</SqlMethodComment>
       <Sql><![CDATA[

@@ -76,6 +76,7 @@ import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.model.ad.ui.Task;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
@@ -415,8 +416,39 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     log4j.debug("POPUP_DELETED - recordId: " + recordId + ", tabId: " + tabId + ", tableId: "
         + tableId);
 
+    // first check, if this is an open following a history -> deleted link? or a follow into a child
+    // tab link from the deleted records view
+    String parentLinkFilter = vars.getStringParameter("inpParentLinkFilter", IsIDFilter.instance);
+
+    String[] discard = {};
+    // check if child-tabs exists and build links below the grid
+    AuditTrailPopupData[] childTabs = AuditTrailPopupData.selectSubtabs(this, tabId);
+    StringBuilder links = new StringBuilder();
+    if (childTabs.length == 0) {
+      discard = new String[1];
+      discard[0] = "childTabsLinksArea";
+    } else {
+      discard = new String[0];
+      links.append(Utility.messageBD(this, "AUDIT_HISTORY_CHILDTAB_TEXT", vars.getLanguage()));
+      links.append(' ');
+      for (AuditTrailPopupData childTab : childTabs) {
+        log4j.error("Child-tab: " + childTab.tabid + " - " + childTab.tabname);
+        Tab cTab = OBDal.getInstance().get(Tab.class, childTab.tabid);
+        String translatedTabName = getTranslatedTabName(cTab);
+        String childTableId = cTab.getTable().getId();
+        String oneLink = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"gotoChild("
+            + childTab.tabid + ", " + childTableId + "); return false;\">" + translatedTabName
+            + "</a>";
+        links.append(oneLink).append(", ");
+      }
+      links.setLength(links.length() - 2);
+    }
+
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/AuditTrailPopupDeleted").createXmlDocument();
+        "org/openbravo/erpCommon/businessUtility/AuditTrailPopupDeleted", discard)
+        .createXmlDocument();
+
+    xmlDocument.setParameter("childTabsLinksArea", links.toString());
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -482,13 +514,25 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       if (parentsFieldsData == null || parentsFieldsData.length == 0) {
         parentsFieldsData = AuditTrailPopupData.parentsColumnReal(this, parentTabId, tabId);
       }
-      for (AuditTrailPopupData atpd : parentsFieldsData) {
-        // according to wad-generated windows, should only be a single field
-        // try to get value from session
-        String windowId = tab.getWindow().getId();
-        String sessionVar = windowId + "|" + atpd.name;
-        String parentValue = vars.getSessionValue(sessionVar);
-        log4j.debug("Link to parent - columnName: " + atpd.name + " sessionValue: " + parentValue);
+      // according to wad-generated windows, should only be a single field
+      if (parentsFieldsData != null && parentsFieldsData.length > 0) {
+        AuditTrailPopupData atpd = parentsFieldsData[0];
+
+        // followed child link?
+        String parentValue;
+        if (!parentLinkFilter.isEmpty()) {
+          // use value from incoming request
+          parentValue = parentLinkFilter;
+          log4j
+              .debug("Link to parent - columnName: " + atpd.name + " requestValue: " + parentValue);
+        } else {
+          // try to get value from session
+          String windowId = tab.getWindow().getId();
+          String sessionVar = windowId + "|" + atpd.name;
+          parentValue = vars.getSessionValue(sessionVar);
+          log4j
+              .debug("Link to parent - columnName: " + atpd.name + " sessionValue: " + parentValue);
+        }
 
         // name of the business element shown (i.e. Business Partner)
         String elementCurrentTab = getElementNameForTable(tab.getTable(), OBContext.getOBContext()
@@ -496,9 +540,16 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         String elementParentTab = getElementNameForTable(parentTab.getTable(), OBContext
             .getOBContext().getLanguage());
 
-        // get identifier for current record in parent tab
+        // get identifier for current record in parent tab (existing or deleted record)
+        String parentIdentifier;
         BaseOBObject bob = OBDal.getInstance().get(parentTab.getTable().getName(), parentValue);
-        String parentIdentifier = bob.getIdentifier();
+        if (bob != null) {
+          parentIdentifier = bob.getIdentifier();
+        } else {
+          Entity tableEntity = ModelProvider.getInstance()
+              .getEntity(parentTab.getTable().getName());
+          parentIdentifier = try2GetIdentifierViaPK(tableEntity, parentValue);
+        }
 
         String text = Utility.messageBD(this, "AUDIT_HISTORY_DELETED_CHILDTAB", vars.getLanguage());
         text = text.replace("@elementnameCurrentTab@", elementCurrentTab);
@@ -982,8 +1033,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       String userId) {
 
     long s1 = System.currentTimeMillis();
-    FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId, offset,
-        pageSize, false, dateFrom, dateTo, userId);
+    FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId,
+        fkColumnName, fkId, offset, pageSize, false, dateFrom, dateTo, userId);
     long s2 = System.currentTimeMillis();
 
     /*
@@ -1153,6 +1204,17 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       return msg.getMessageText();
     }
     return trl.getMessageText();
+  }
+
+  private String getTranslatedTabName(Tab tab) {
+    OBCriteria<TabTrl> c = OBDal.getInstance().createCriteria(TabTrl.class);
+    c.add(Expression.eq(TabTrl.PROPERTY_TAB, tab));
+    c.add(Expression.eq(TabTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    TabTrl trl = (TabTrl) c.uniqueResult();
+    if (trl == null) {
+      return tab.getName();
+    }
+    return trl.getName();
   }
 
   private String getTranslatedWindowName(String tabId) {

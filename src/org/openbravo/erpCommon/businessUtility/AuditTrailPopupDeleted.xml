@@ -51,5 +51,6 @@
     <PARAMETER id="paramLinkBack" name="tabId" attribute="href" replace="yy" />
     <PARAMETER id="paramLinkBack" name="tableId" attribute="href" replace="zz" />
 
+    <PARAMETER id="childTabsLinksArea" name="childTabsLinksArea" />
 	<DISCARD id="discard"/>
 </REPORT>
