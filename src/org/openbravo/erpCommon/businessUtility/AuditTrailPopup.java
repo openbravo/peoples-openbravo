@@ -432,7 +432,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       links.append(Utility.messageBD(this, "AUDIT_HISTORY_CHILDTAB_TEXT", vars.getLanguage()));
       links.append(' ');
       for (AuditTrailPopupData childTab : childTabs) {
-        log4j.error("Child-tab: " + childTab.tabid + " - " + childTab.tabname);
         Tab cTab = OBDal.getInstance().get(Tab.class, childTab.tabid);
         String translatedTabName = getTranslatedTabName(cTab);
         String childTableId = cTab.getTable().getId();
