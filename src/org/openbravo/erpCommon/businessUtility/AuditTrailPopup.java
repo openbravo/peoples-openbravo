@@ -1142,12 +1142,17 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return action;
   }
 
-  private static String getFormattedUser(String userId) {
+  private String getFormattedUser(String userId) {
     if (userId == null) {
       return " ";
     }
     User u = OBDal.getInstance().get(User.class, userId);
-    return u.getName();
+    if (u != null) {
+      return u.getName();
+    }
+    // get value via deleted record audit data
+    Entity userEntity = ModelProvider.getInstance().getEntity(User.ENTITY_NAME);
+    return try2GetIdentifierViaPK(userEntity, userId);
   }
 
   /**
