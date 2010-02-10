@@ -2016,9 +2016,9 @@ public class TableSQLData implements Serializable {
         if (aux != null && !aux.equals(""))
           orderField = aux;
       }
-      if (reference.equals("15") || reference.equals("16") || reference.equals("24")) {
-        orderField = "TO_DATE(" + orderField + ")";
-      }
+      // if (reference.equals("15") || reference.equals("16") || reference.equals("24")) {
+      // orderField = "TO_DATE(" + orderField + ")";
+      // }
     }
     return orderField + " " + orderDirection;
   }
