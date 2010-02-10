@@ -86,6 +86,7 @@ export.database: exports database structure and data to xml files.
   <property name="jakarta.home" location="${env.CATALINA_HOME}" />
   <property name="module" value="%" />
   <property name="apply.on.create" value="false" />
+  <property name="apply.on.update" value="true" />
   <property name="obx.export.RD" value="false" />
   <property name="obx.export.DB" value="false" />
   <property name="obx.export.CS" value="false" />
@@ -126,6 +127,13 @@ export.database: exports database structure and data to xml files.
     <or>
       <equals arg1="yes" arg2="${apply.on.create}" />
       <equals arg1="true" arg2="${apply.on.create}" />
+    </or>
+  </condition>
+
+  <condition property="apply.modules.on.update">
+    <or>
+      <equals arg1="yes" arg2="${apply.on.update}" />
+      <equals arg1="true" arg2="${apply.on.update}" />
     </or>
   </condition>
 
@@ -577,7 +585,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="db.apply.modules" if="apply.modules.on.create">
+  <target name="db.apply.modules" if="apply.modules.on.update">
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
