@@ -156,6 +156,7 @@ export.database.structure: Exports the database structure in the xml's files.
           UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
           CALL AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL WHERE STATUS IS NULL OR STATUS='I';
+          UPDATE AD_MODULE SET ISINDEVELOPMENT='N' WHERE ISINDEVELOPMENT IS NULL;
           CALL AD_LANGUAGE_CREATE(NULL);
         </transaction>
     </sql>
@@ -173,6 +174,7 @@ export.database.structure: Exports the database structure in the xml's files.
           UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
           SELECT AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL WHERE STATUS IS NULL OR STATUS='I';
+          UPDATE AD_MODULE SET ISINDEVELOPMENT='N' WHERE ISINDEVELOPMENT IS NULL;
           SELECT AD_LANGUAGE_CREATE(NULL);
         </transaction>
     </sql>

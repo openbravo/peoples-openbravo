@@ -85,7 +85,7 @@ export.database: exports database structure and data to xml files.
   <property name="build.docs" location="docs/api" />
   <property name="jakarta.home" location="${env.CATALINA_HOME}" />
   <property name="module" value="%" />
-  <property name="apply.on.create" value="false" />
+  <property name="apply.on.create" value="true" />
   <property name="obx.export.RD" value="false" />
   <property name="obx.export.DB" value="false" />
   <property name="obx.export.CS" value="false" />
@@ -554,7 +554,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
+    <antcall target="db.apply.modules" />
   </target>
 
   <target name="update.database.mod" depends="init, core.lib, database.lib">
@@ -575,6 +575,10 @@ export.database: exports database structure and data to xml files.
 
   <target name="export.config.script" depends="init, core.lib">
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="db.apply.modules" if="apply.modules.on.create">
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
