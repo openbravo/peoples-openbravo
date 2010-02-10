@@ -71,9 +71,11 @@ class AuditTrailDeletedRecords {
    * @param rangeLength
    *          Maximum number of records returned.
    * @param dateFrom
-   *          optional parameter to filter by time
+   *          optional parameter to filter by time (format: #AD_SqlDateTimeFormat as defined in
+   *          Openbravo.properties)
    * @param dateTo
-   *          optional parameter to filter by time
+   *          optional parameter to filter by time (format: #AD_SqlDateTimeFormat as defined in
+   *          Openbravo.properties)
    * @param user
    *          optional parameter to filter by user
    * @param onlyCount
@@ -130,12 +132,17 @@ class AuditTrailDeletedRecords {
       sql.append(" AND AD_ORG_ID IN (").append(
           Utility.getContext(conn, vars, "#AccessibleOrgTree", tab.getWindow().getId(), Integer
               .parseInt(tab.getTable().getDataAccessLevel()))).append(")\n");
-      // optional filters from UI
+      // optional filters from UI - pass via params as they come in unfiltered
+      Vector<String> params = new Vector<String>();
       if (dateFrom != null && !dateFrom.isEmpty()) {
-        sql.append(" AND event_time >= TO_DATE('" + dateFrom + "')");
+        sql.append(" AND event_time >= TO_DATE(?, '"
+            + vars.getSessionValue("#AD_SqlDateTimeFormat") + "')");
+        params.add(dateFrom);
       }
       if (dateTo != null && !dateTo.isEmpty()) {
-        sql.append(" AND event_time <= TO_DATE('" + dateTo + "')");
+        sql.append(" AND event_time <= TO_DATE(?, '"
+            + vars.getSessionValue("#AD_SqlDateTimeFormat") + "')");
+        params.add(dateTo);
 
       }
       if (user != null && !user.isEmpty()) {
@@ -146,7 +153,6 @@ class AuditTrailDeletedRecords {
 
       // apply where clause if exists
       String whereClause = tab.getSQLWhereClause();
-      Vector<String> params = new Vector<String>();
       if (whereClause != null) {
         if (whereClause.indexOf("@") != -1) {
           whereClause = Utility.parseContext(conn, vars, whereClause, tab.getWindow().getId(),

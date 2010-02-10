@@ -303,9 +303,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     // display/save-formats for the datetime fields
     xmlDocument
         .setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getJavaDateFormat());
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getJavaDataTimeFormat());
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getJavaDateFormat());
+    xmlDocument.setParameter("dateTosaveFormat", vars.getJavaDataTimeFormat());
 
     // user combobox (restricted to login users only)
     try {
@@ -466,9 +466,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     // display/save-formats for the datetime fields
     xmlDocument
         .setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getJavaDateFormat());
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getJavaDateFormat());
+    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
 
     // user combobox (restricted to login users only)
     try {
@@ -939,13 +939,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     String strNumRows = "0";
     int offset = Integer.valueOf(strOffset).intValue();
     int pageSize = Integer.valueOf(strPageSize).intValue();
-
-    // parse dateTime filter fields
-    String strDateFormat = vars.getJavaDataTimeFormat();
-    SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-    // parsing is done to verify dateFormat
-    Date dateFrom = parseDate(strDateFrom, dateFormat);
-    Date dateTo = parseDate(strDateTo, dateFormat);
 
     // read optional values for parent filter
     String fkColumnName = vars.getSessionValue("AuditTrail.fkColumnName");
