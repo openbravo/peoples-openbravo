@@ -363,6 +363,11 @@ public class ToolBar {
    * activated instances: shown if isFullyAudited for the table
    */
   private void changeAuditTrailVisibility() {
+    // always hide button in the audit trail window
+    if ("3690EB6BA1614375A6F058BBA61B19BC".equals(tabId)) {
+      removeElement("AUDIT_TRAIL");
+      return;
+    }
     if (tabId != null) {
       boolean oldAdminMode = OBContext.getOBContext().setInAdministratorMode(true);
       try {
