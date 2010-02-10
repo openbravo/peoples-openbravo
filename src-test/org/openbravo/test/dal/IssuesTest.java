@@ -23,12 +23,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.dal.xml.EntityXMLException;
 import org.openbravo.dal.xml.XMLTypeConverter;
 import org.openbravo.data.UtilSql;
@@ -36,6 +39,8 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
+import org.openbravo.model.ad.ui.Message;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -44,6 +49,13 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=11461 When saving business object in S/C data level
  * then access level exception is thrown for the child object
  * 
+ * - https://issues.openbravo.com/view.php?id=12202 OBQuery does not support list parameter
+ * 
+ * - https://issues.openbravo.com/view.php?id=12201 OBContext is not using system language as
+ * default language
+ * 
+ * - https://issues.openbravo.com/view.php?id=12143 OBQuery class should add convenience method
+ * uniqueResult similar to the OBCriteria class
  * 
  * @author mtaal
  * @author iperdomo
@@ -51,6 +63,48 @@ import org.openbravo.test.base.BaseTest;
 
 public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12202
+   */
+  public void test12202() {
+    setSystemAdministratorContext();
+    final List<Module> modules = OBDal.getInstance().createCriteria(Module.class).list();
+
+    final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
+        "module in (:modules)");
+    messages.setNamedParameter("modules", modules);
+    assertFalse(messages.list().isEmpty());
+
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12201
+   */
+  public void test12201() {
+    setSystemAdministratorContext();
+    assertEquals("0", OBContext.getOBContext().getUser().getId());
+    assertTrue(null == OBContext.getOBContext().getUser().getDefaultLanguage());
+    assertTrue(OBContext.getOBContext().getLanguage().isSystemLanguage());
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12143
+   */
+  public void test12143() {
+    setSystemAdministratorContext();
+    final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class, null);
+    try {
+      messages.uniqueResult();
+      fail();
+    } catch (Exception e) {
+      // should fail as there is more than one result
+    }
+    final OBQuery<Organization> organizations = OBDal.getInstance().createQuery(Organization.class,
+        "id='0'");
+    final Organization organization = organizations.uniqueResult();
+    assertNotNull(organization);
+  }
 
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=11812
@@ -82,7 +136,7 @@ public class IssuesTest extends BaseTest {
     form.setDescription("description");
     form.setHelpComment("help");
     form.setModule(module);
-    form.setJavaClassName("org.openbravo.test");
+    form.setJavaClassName(module.getJavaPackage() + ".test");
 
     FormTrl formTrl = OBProvider.getInstance().get(FormTrl.class);
     formTrl.setHelpComment("help");
