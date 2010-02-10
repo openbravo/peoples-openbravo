@@ -89,13 +89,6 @@ public class UIReference {
   }
 
   /**
-   * Includes the needed casting (TO_DATE...) to compose SQL
-   */
-  public String addSQLCasting(String column) {
-    return column;
-  }
-
-  /**
    * Obtains filter for TableSQLData
    */
   public void getFilter(SQLReturnObject result, boolean isNewFilter, VariablesSecureApp vars,

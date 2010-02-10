@@ -35,12 +35,9 @@ public class UIDate extends UIReference {
     addSecondaryFilter = true;
   }
 
-  public String addSQLCasting(String column) {
-    return "TO_DATE(" + column + ")";
-  }
-
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
+      Vector<Object> vecKeys) throws IOException, ServletException {
     UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/jscalendar/calendar.js");
     UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/jscalendar/lang/calendar-"
         + vars.getLanguage().substring(0, 2) + ".js\"");

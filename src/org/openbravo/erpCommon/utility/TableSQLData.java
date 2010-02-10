@@ -1682,9 +1682,6 @@ public class TableSQLData implements Serializable {
         if (aux != null && !aux.equals(""))
           orderField = aux;
       }
-      if (reference != null) {
-        orderField = reference.addSQLCasting(orderField);
-      }
     }
     return orderField + " " + orderDirection;
   }
