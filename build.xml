@@ -85,7 +85,7 @@ export.database: exports database structure and data to xml files.
   <property name="build.docs" location="docs/api" />
   <property name="jakarta.home" location="${env.CATALINA_HOME}" />
   <property name="module" value="%" />
-  <property name="apply.on.create" value="true" />
+  <property name="apply.on.create" value="false" />
   <property name="obx.export.RD" value="false" />
   <property name="obx.export.DB" value="false" />
   <property name="obx.export.CS" value="false" />
