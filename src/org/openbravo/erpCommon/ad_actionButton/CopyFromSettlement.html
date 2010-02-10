@@ -52,27 +52,6 @@
           return true;
     }
   </script>
-  <script type="text/javascript">
-    function validate(action) {
-      var frm=document.frmMain;
-      if (action=="FIND") {
-        if (frm.inpDateFrom.value==null || frm.inpDateFrom.value=="") {
-          setWindowElementFocus(frm.inpDateFrom);
-          frm.inpDateFrom.select();
-          showJSMessage(1);
-          setTimeout('resizeAreaCreateFrom()',100);
-          return false;
-        } else if (frm.inpDateTo.value==null || frm.inpDateTo.value=="") {
-          setWindowElementFocus(frm.inpDateTo);
-          frm.inpDateTo.select();
-          showJSMessage(1);
-          setTimeout('resizeAreaCreateFrom()',100);
-          return false;
-        }
-      }
-      return true;
-    }
-  </script>
   <script language="JavaScript" type="text/javascript">
     var selectedRow = "";
     function selectActual(obj) {
@@ -317,7 +296,7 @@
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>                    
+                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>                    
                     </td>
                     <td class="FieldButton_bg">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='xx'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;" >
@@ -338,7 +317,7 @@
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
+                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
                     </td>
                     <td class="FieldButton_bg">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='xx'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" >
@@ -370,7 +349,7 @@
                   <button type="button" 
                     id="buttonSearch" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('FIND', true, null, null, null);return false;" 
+                    onclick="submitCommandForm('FIND', false, null, null, null);return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

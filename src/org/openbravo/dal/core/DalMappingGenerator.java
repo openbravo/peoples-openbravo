@@ -33,6 +33,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.Check;
 
 /**
@@ -44,6 +45,8 @@ import org.openbravo.base.util.Check;
 
 public class DalMappingGenerator implements OBSingleton {
   private static final Logger log = Logger.getLogger(DalMappingGenerator.class);
+
+  private final static String HIBERNATE_FILE_PROPERTY = "hibernate.hbm.file";
 
   private final static String TEMPLATE_FILE = "template.hbm.xml";
   private final static String MAIN_TEMPLATE_FILE = "template_main.hbm.xml";
@@ -89,9 +92,12 @@ public class DalMappingGenerator implements OBSingleton {
       log.debug(result);
     }
 
-    if (false) {
+    final String hibernateFileLocation = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties().getProperty(HIBERNATE_FILE_PROPERTY);
+
+    if (hibernateFileLocation != null) {
       try {
-        final File f = new File("/tmp/hibernate.hbm.xml");
+        final File f = new File(hibernateFileLocation);
         if (f.exists()) {
           f.delete();
         }
@@ -100,7 +106,8 @@ public class DalMappingGenerator implements OBSingleton {
         fw.write(result);
         fw.close();
       } catch (final Exception e) {
-        throw new OBException(e);
+        // ignoring exception for the rest
+        log.error("Exception when saving hibernate mapping in " + hibernateFileLocation, e);
       }
     }
     return result;

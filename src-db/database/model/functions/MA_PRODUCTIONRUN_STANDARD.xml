@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -271,7 +271,9 @@
                           MA_GlobalUse_ID, M_Production_ID, AD_Client_ID, AD_Org_ID,
                           IsActive, Created, CreatedBy, Updated,
                           UpdatedBy, M_Product_ID, C_UOM_ID, MovementQty,
-                          M_Locator_ID, M_AttributeSetInstance_ID, M_Product_UOM_ID,
+                          M_Locator_ID, 
+                          M_AttributeSetInstance_ID, 
+                          M_Product_UOM_ID,
                           QuantityOrder
                         )
                         VALUES
@@ -279,7 +281,9 @@
                           v_GlobalUse_ID, Cur_WRPUsed.M_Production_ID, Cur_WRPUsed.Client_ID, Cur_WRPUsed.Org_ID,
                            'Y', now(), '0', now(),
                           '0', Cur_WRPUsed.M_Product_ID, Cur_WRPUsed.C_UOM_ID, 0,
-                          v_storage.M_Locator_ID, v_storage.M_AttributeSetInstance_ID, v_storage.M_Product_UOM_ID,
+                          v_storage.M_Locator_ID, 
+                          (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=Cur_WRPUsed.M_Product_ID)<>'F' THEN v_storage.M_AttributeSetInstance_ID ELSE NULL END), 
+                          v_storage.M_Product_UOM_ID,
                           (CASE
                              WHEN v_QtyOrder is null THEN null
                              ELSE 0
@@ -297,7 +301,8 @@
                         M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
                         AD_Org_ID, IsActive, Created, CreatedBy,
                         Updated, UpdatedBy, M_Product_ID, C_UOM_ID,
-                        MovementQty, ProductionType, M_Locator_ID, M_AttributeSetInstance_ID,
+                        MovementQty, ProductionType, M_Locator_ID, 
+                        M_AttributeSetInstance_ID,
                         M_Product_UOM_ID, QuantityOrder
                       )
                       VALUES
@@ -305,7 +310,8 @@
                         v_ProductionLine_ID, v_Record_ID, v_Line, Cur_WRPUsed.Client_ID,
                         Cur_WRPUsed.Org_ID, 'Y', now(), 0,
                         now(), 0, Cur_WRPUsed.M_Product_ID, Cur_WRPUsed.C_UOM_ID,
-                        (CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_Qty END), '-', v_storage.M_Locator_ID, v_storage.M_AttributeSetInstance_ID,
+                        (CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_Qty END), '-', v_storage.M_Locator_ID, 
+                        (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=Cur_WRPUsed.M_Product_ID)<>'F' THEN v_storage.M_AttributeSetInstance_ID ELSE NULL END),
                         v_storage.M_Product_UOM_ID,
                         (CASE v_NoQty
                           WHEN 'Y' THEN (CASE

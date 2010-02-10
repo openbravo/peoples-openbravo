@@ -221,14 +221,14 @@ function messageResponse(paramArray, XMLHttpRequestObj) {
  */
 function setValidationMessages() {
   var missing = getMessage("Missing");
-  var missingElements = document.getElementsByName("missingText");  
+  var missingElements = getElementsByName("missingText", "div");
   for (i = 0; i < missingElements.length; i++) {
     missingElements[i].innerHTML = missing;
   }
   
   var invalid = getMessage("Invalid");
-  var invalidElements = document.getElementsByName("invalidText");
+  var invalidElements = getElementsByName("invalidText", "div");
   for (i = 0; i < invalidElements.length; i++) {
-	  invalidElements[i].innerHTML = invalid;
+    invalidElements[i].innerHTML = invalid;
   }
 }

@@ -17,7 +17,7 @@ dojo.require("dojox.html.entities");
 
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dojox.editor.plugins", "InsertEntity", null, "ROOT");
+dojo.requireLocalization("dojox.editor.plugins", "InsertEntity", null, "ROOT,ko");
 
 dojo.declare("dojox.editor.plugins.InsertEntity",dijit._editor._Plugin,{
 	// summary:

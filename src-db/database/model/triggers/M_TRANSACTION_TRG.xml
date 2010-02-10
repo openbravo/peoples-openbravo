@@ -18,15 +18,16 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_DATEINVENTORY DATE;
   v_UOM_ID VARCHAR2(32) ;
   v_ATTRIBUTESET_ID VARCHAR2(32);
-  v_ATTRIBUTESETINSTANCE_ID VARCHAR2(32);
+  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   v_Name NVARCHAR2(60);
+  v_IsOneAtSetValReq M_Attributeset.Isoneattrsetvalrequired%TYPE;
     
 BEGIN
     
@@ -35,14 +36,15 @@ BEGIN
 
 
   IF INSERTING OR UPDATING THEN
-    SELECT C_UOM_ID, M_ATTRIBUTESET_ID, M_ATTRIBUTESETINSTANCE_ID, name
-    INTO v_UOM_ID, v_attributeset_id, v_ATTRIBUTESETINSTANCE_ID, v_name
-    FROM M_PRODUCT
-    WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
+    SELECT P.NAME, P.C_UOM_ID, P.M_ATTRIBUTESET_ID, A.ISONEATTRSETVALREQUIRED, P.ATTRSETVALUETYPE
+    INTO v_name, v_UOM_ID, v_attributeset_id, v_IsOneAtSetValReq, v_AttrSetValueType 
+    FROM M_PRODUCT P LEFT JOIN M_ATTRIBUTESET A
+    ON A.M_ATTRIBUTESET_ID = P.M_ATTRIBUTESET_ID
+    WHERE P.M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
     IF(COALESCE(v_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
       RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)') ;
     END IF;
-    IF(v_attributeset_id IS NOT NULL AND v_ATTRIBUTESETINSTANCE_ID IS NULL AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0') = '0') THEN
+    IF(v_attributeset_id IS NOT NULL AND (v_AttrSetValueType IS NULL OR v_AttrSetValueType <> 'F') AND v_IsOneAtSetValReq = 'Y' AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0') = '0') THEN
       RAISE_APPLICATION_ERROR(-20112, 'There are some products without attribute: ' || v_Name) ;
     END IF;
     SELECT MAX(MOVEMENTDATE)
@@ -58,6 +60,19 @@ BEGIN
   END IF;
   IF INSERTING OR UPDATING THEN
     M_UPDATE_INVENTORY(:NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID, :NEW.UPDATEDBY, :NEW.M_PRODUCT_ID, :NEW.M_LOCATOR_ID, :NEW.M_ATTRIBUTESETINSTANCE_ID, :NEW.C_UOM_ID, :NEW.M_PRODUCT_UOM_ID, :NEW.MOVEMENTQTY, :NEW.QUANTITYORDER, v_DATEINVENTORY, -:NEW.MOVEMENTQTY, -:NEW.QUANTITYORDER) ;
+  END IF;
+  IF (INSERTING OR UPDATING) THEN
+   --Does not allow to change the attribute set value
+   -- for products which attribute set value type is Fixed
+   IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
+    SELECT ATTRSETVALUETYPE 
+    INTO v_AttrSetValueType
+    FROM M_PRODUCT 
+    WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
+    IF (v_AttrSetValueType='F') THEN
+     RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
+    END IF;
+   END IF;
   END IF;
 END M_TRANSACTION_TRG
 ]]></body>

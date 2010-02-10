@@ -19,8 +19,6 @@
 
 package org.openbravo.test.base;
 
-import java.io.File;
-import java.net.URL;
 import java.sql.SQLException;
 
 import junit.framework.TestCase;
@@ -31,7 +29,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalLayerInitializer;
@@ -79,38 +76,17 @@ public class BaseTest extends TestCase {
    */
   protected void initializeDalLayer() throws Exception {
     if (!DalLayerInitializer.getInstance().isInitialized()) {
-      setConfigPropertyFiles();
       DalLayerInitializer.getInstance().initialize(true);
     }
   }
 
   /**
    * Reads the configuration properties from the property files.
+   * 
+   * @deprecated Behavior has been implemented in the {@link OBPropertiesProvider}. Is now done
+   *             automatically when initializing the DAL layer.
    */
   protected void setConfigPropertyFiles() {
-    // get the location of the current class file
-    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
-    File f = new File(url.getPath());
-    File propertiesFile = null;
-    while (f.getParentFile() != null && f.getParentFile().exists()) {
-      f = f.getParentFile();
-      final File configDirectory = new File(f, "config");
-      if (configDirectory.exists()) {
-        propertiesFile = new File(configDirectory, "Openbravo.properties");
-        if (propertiesFile.exists()) {
-          // found it and break
-          break;
-        }
-      }
-    }
-    if (propertiesFile == null) {
-      throw new OBException("The testrun assumes that it is run from "
-          + "within eclipse and that the Openbravo.properties "
-          + "file is located as a grandchild of the 7th ancestor " + "of this class");
-    }
-    OBPropertiesProvider.getInstance().setProperties(propertiesFile.getAbsolutePath());
-    OBConfigFileProvider.getInstance().setFileLocation(
-        propertiesFile.getParentFile().getAbsolutePath());
   }
 
   /**

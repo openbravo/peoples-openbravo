@@ -13,7 +13,7 @@ dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dojox.editor.plugins", "ShowBlockNodes", null, "ROOT");
+dojo.requireLocalization("dojox.editor.plugins", "ShowBlockNodes", null, "ROOT,ko");
 
 dojo.declare("dojox.editor.plugins.ShowBlockNodes",dijit._editor._Plugin,{
 	// summary:

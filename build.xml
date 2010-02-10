@@ -85,7 +85,7 @@ export.database: exports database structure and data to xml files.
   <property name="build.docs" location="docs/api" />
   <property name="jakarta.home" location="${env.CATALINA_HOME}" />
   <property name="module" value="%" />
-  <property name="apply.on.create" value="false" />
+  <property name="apply.on.create" value="true" />
   <property name="obx.export.RD" value="false" />
   <property name="obx.export.DB" value="false" />
   <property name="obx.export.CS" value="false" />
@@ -592,9 +592,8 @@ export.database: exports database structure and data to xml files.
   <target name="apply.modules">
     <antcall target="update.database.mod" />
     <updatesystemstatus v="RB21"/>
-    <antcall target="generate.entities" />
+    <!--<antcall target="generate.entities" />-->
 
-    <updatesystemstatus v="RB31"/>
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <condition property="apply.modules.complete.compilation.var">
@@ -624,6 +623,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="apply.module">
+    <updatesystemstatus v="RB31"/>
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />

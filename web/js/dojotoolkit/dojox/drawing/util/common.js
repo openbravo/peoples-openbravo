@@ -13,7 +13,7 @@ dojo.require("dojox.math.round");
 (function(){
 	
 	var uidMap = {};
-
+	var start = 0;
 	dojox.drawing.util.common	= {
 		// summary:
 		//		A collection of common methods used for DojoX Drawing.
@@ -195,6 +195,10 @@ dojo.require("dojox.math.round");
 		},
 		
 		// helpers
+		idSetStart: function(num){
+			start=num;
+		},
+		
 		uid: function(/* ? String */str){
 			// summary:
 			//		Creates a unique ID.
@@ -204,7 +208,7 @@ dojo.require("dojox.math.round");
 			//			and used in the id. Otherwise 'shape' is used.
 			//
 			str = str || "shape";
-			uidMap[str] = uidMap[str]===undefined ? 0 : uidMap[str] + 1;
+			uidMap[str] = uidMap[str]===undefined ? start : uidMap[str] + 1;
 			return str + uidMap[str]; // String
 		},
 		

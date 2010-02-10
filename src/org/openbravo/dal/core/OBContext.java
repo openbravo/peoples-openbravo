@@ -619,8 +619,8 @@ public class OBContext implements OBNotSingleton {
         setLanguage(getUser().getDefaultLanguage());
       } else {
         final Language l = getOne(Language.class, "select l from " + Language.class.getName()
-            + " l where l." + Language.PROPERTY_ACTIVE + "='Y' order by l." + Language.PROPERTY_ID
-            + " asc");
+            + " l where l." + Language.PROPERTY_ACTIVE + "='Y' and systemLanguage=true order by l."
+            + Language.PROPERTY_ID + " asc");
         Hibernate.initialize(l);
         setLanguage(l);
       }

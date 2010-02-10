@@ -62,11 +62,11 @@ dojo.declare("dijit._editor.plugins.Print",dijit._editor._Plugin,{
 			// IE requires the frame to be focused for
 			// print to work, but since this is okay for all
 			// no special casing.
-			if(!dojo.isOpera){
+			if(!dojo.isOpera && !dojo.isChrome){
 				dijit.focus(edFrame);
 				edFrame.contentWindow.print();
 			}else{
-				// Opera doesn't let you print single frames.
+				// Neither Opera nor Chrome 3 et you print single frames.
 				// So, open a new 'window', print it, and close it.
 				// Also, can't use size 0x0, have to use 1x1
 				var edDoc = this.editor.document;
@@ -109,5 +109,6 @@ dojo.subscribe(dijit._scopeName + ".Editor.getPlugin",null,function(o){
 		o.plugin = new dijit._editor.plugins.Print({command: "print"});
 	}
 });
+
 
 }

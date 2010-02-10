@@ -378,7 +378,8 @@ function callbackAttachmentIcon(paramXMLParticular, XMLHttpRequestObj) {
 function checkAttachmentIcon(){
   if(document.getElementById('buttonAttachment')) {
     var paramXMLReq = null;
-    submitXmlHttpRequest(callbackAttachmentIcon, null, 'CHECK', "../businessUtility/TabAttachments_FS.html?inpKey=" +document.getElementsByName(document.frmMain.inpKeyName.value)[0].value , false, null, paramXMLReq);
+    var elementInput = getElementsByName(document.frmMain.inpKeyName.value, 'input')[0];
+    submitXmlHttpRequest(callbackAttachmentIcon, null, 'CHECK', "../businessUtility/TabAttachments_FS.html?inpKey=" + elementInput.value , false, null, paramXMLReq);
   }
 }
 

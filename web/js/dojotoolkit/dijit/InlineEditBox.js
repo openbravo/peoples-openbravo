@@ -131,6 +131,7 @@ dojo.declare("dijit.InlineEditBox",
 		}
 
 		this.attr('value', this.value || this.displayNode.innerHTML);
+		dojo.addClass(this.displayNode, 'dijitInlineEditBoxDisplayMode');
 	},
 
 	setDisabled: function(/*Boolean*/ disabled){
@@ -153,22 +154,25 @@ dojo.declare("dijit.InlineEditBox",
 		}else{
 			this.displayNode.setAttribute("tabIndex", 0);
 		}
+		dojo.toggleClass(this.displayNode, "dijitInlineEditBoxDisplayModeDisabled", disabled);
 	},
 
 	_onMouseOver: function(){
 		// summary:
-		//		Handler for onmouseover event.
+		//		Handler for onmouseover and onfocus event.
 		// tags:
 		//		private
-		dojo.addClass(this.displayNode, this.disabled ? "dijitDisabledClickableRegion" : "dijitClickableRegion");
+		if(!this.disabled){
+			dojo.addClass(this.displayNode, "dijitInlineEditBoxDisplayModeHover");
+		}
 	},
 
 	_onMouseOut: function(){
 		// summary:
-		//		Handler for onmouseout event.
+		//		Handler for onmouseout and onblur event.
 		// tags:
 		//		private
-		dojo.removeClass(this.displayNode, this.disabled ? "dijitDisabledClickableRegion" : "dijitClickableRegion");
+		dojo.removeClass(this.displayNode, "dijitInlineEditBoxDisplayModeHover");
 	},
 
 	_onClick: function(/*Event*/ e){
@@ -397,7 +401,7 @@ dojo.declare(
 		var editorParams = this.inlineEditBox.editorParams;
 		editorParams.style = editStyle;
 		editorParams[ "displayedValue" in cls.prototype ? "displayedValue" : "value"] = this.value;
-		var ew = this.editWidget = new cls(editorParams, this.editorPlaceholder);
+		var ew = (this.editWidget = new cls(editorParams, this.editorPlaceholder));
 
 		if(this.inlineEditBox.autoSave){
 			// Hide the save/cancel buttons since saving is done by simply tabbing away or

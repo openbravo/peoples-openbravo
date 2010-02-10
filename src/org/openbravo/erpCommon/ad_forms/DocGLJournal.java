@@ -113,7 +113,7 @@ public class DocGLJournal extends AcctServer {
         }
         docLine.setAccount(acct);
         // -- Set Org from account (x-org)
-        docLine.setAD_Org_ID(acct.getAD_Org_ID());
+        docLine.setAD_Org_ID(data[i].adOrgId);
         //
         list.add(docLine);
       }

@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -98,10 +98,11 @@
     WHERE AD_Language.IsActive='Y'  
       AND AD_Element.AD_Module_ID = M.AD_Module_ID
       AND AD_Language.AD_Language != M.AD_Language
-      AND AD_Language.IsSystemLanguage='Y'  
-      AND(AD_Element_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Element_ID, AD_Language FROM AD_Element_Trl)
-      ;
+      AND AD_Language.IsSystemLanguage='Y'
+      AND NOT EXISTS (SELECT 1 FROM AD_ELEMENT_TRL
+                       WHERE AD_ELEMENT_ID = AD_Element.AD_Element_ID 
+                         AND AD_LANGUAGE = AD_Language.AD_Language);
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Element ' || v_rowcount) ;
@@ -117,9 +118,9 @@
       AND AD_Language.IsSystemLanguage='Y'  
       AND M.AD_MODULE_ID = AD_FieldGroup.AD_MODULE_ID
       AND M.AD_LANGUAGE != AD_Language.AD_Language
-      AND(AD_FieldGroup_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_FieldGroup_ID, AD_Language FROM AD_FieldGroup_Trl)
-      ;
+      AND NOT EXISTS (SELECT 1 FROM AD_FieldGroup_TRL
+                 WHERE AD_FieldGroup_ID = AD_FieldGroup.AD_FieldGroup_ID 
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_FieldGroup ' || v_rowcount) ;
@@ -134,9 +135,11 @@
     WHERE AD_Language.IsActive='Y'  
     AND AD_Field.AD_Module_ID = M.AD_Module_ID
     AND M.AD_Language != AD_Language.AD_Language
-    AND AD_Language.IsSystemLanguage='Y'  AND(AD_Field_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Field_ID, AD_Language FROM AD_Field_Trl)
-      ;
+    AND AD_Language.IsSystemLanguage='Y' 
+    AND NOT EXISTS (SELECT 1 FROM AD_Field_TRL
+                 WHERE AD_Field_ID = AD_Field.AD_Field_ID 
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
+      
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Field ' || v_rowcount) ;
@@ -154,9 +157,10 @@
     AND M.AD_MODULE_ID = AD_Form.AD_MODULE_ID
     AND M.AD_Language != AD_Language.AD_Language
     AND AD_Language.IsSystemLanguage='Y'  
-    AND(AD_Form_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Form_ID, AD_Language FROM AD_Form_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Form_TRL
+                 WHERE AD_Form_ID = AD_Form.AD_Form_ID 
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Form ' || v_rowcount) ;
@@ -174,9 +178,10 @@
     AND AD_Language.IsSystemLanguage='Y'  
     AND AD_MENU.AD_MODULE_ID = M.AD_MODULE_ID
     AND M.AD_Language != AD_Language.AD_Language
-    AND(AD_Menu_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Menu_ID, AD_Language FROM AD_Menu_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Menu_TRL
+                 WHERE AD_Menu_ID = AD_Menu.AD_Menu_id 
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Menu ' || v_rowcount) ;
@@ -191,9 +196,9 @@
     WHERE AD_Language.IsActive='Y'  
     AND AD_Language.IsSystemLanguage='Y'  
     AND M.AD_MODULE_ID = AD_Message.AD_MODULE_ID
-    AND(AD_Message_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Message_ID, AD_Language FROM AD_Message_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Message_trl
+                 WHERE AD_Message_ID = AD_Message.AD_Message_id
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Message ' || v_rowcount) ;
@@ -212,9 +217,10 @@
     AND AD_Language.IsSystemLanguage='Y'  
     AND M.AD_MODULE_ID = AD_Process.AD_MODULE_ID
     AND M.AD_LANGUAGE != AD_Language.AD_Language
-    AND(AD_Process_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Process_ID, AD_Language FROM AD_Process_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Process_trl
+                 WHERE AD_Process_ID = AD_Process.AD_Process_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language);
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Process ' || v_rowcount) ;
@@ -233,9 +239,10 @@
     AND P.AD_PROCESS_ID = AD_Process_Para.AD_PROCESS_ID
     AND M.AD_MODULE_ID = P.AD_MODULE_ID
     AND M.AD_Language != AD_Language.AD_Language
-    AND(AD_Process_Para_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Process_Para_ID, AD_Language FROM AD_Process_Para_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Process_Para_Trl
+                 WHERE AD_Process_Para_id = AD_Process_Para.AD_Process_Para_id
+                   AND AD_LANGUAGE = AD_Language.AD_Language);  
+      
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Process_Para ' || v_rowcount) ;
@@ -253,9 +260,9 @@
     AND AD_Language.IsSystemLanguage='Y'  
     AND M.AD_MODULE_ID = AD_Reference.AD_MODULE_ID
     AND M.AD_Language != AD_Language.AD_Language
-    AND(AD_Reference_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Reference_ID, AD_Language FROM AD_Reference_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Reference_TRL
+                 WHERE AD_Reference_ID = AD_Reference.AD_Reference_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language);  
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Reference ' || v_rowcount) ;
@@ -274,9 +281,10 @@
     AND R.AD_REFERENCE_ID = AD_Ref_List.AD_REFERENCE_ID
     AND R.AD_MODULE_ID = M.AD_MODULE_ID
     AND M.AD_Language != AD_Language.AD_Language
-    AND(AD_Ref_List_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Ref_List_ID, AD_Language FROM AD_Ref_List_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Ref_List_TRL
+                 WHERE AD_Ref_List_ID = AD_Ref_List.AD_Ref_List_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language);  
+                   
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Ref_List ' || v_rowcount) ;
@@ -293,9 +301,9 @@
     AND AD_Language.IsSystemLanguage='Y'  
     AND M.AD_MODULE_ID = AD_Tab.AD_MODULE_ID
     AND M.AD_Language != AD_Language.AD_Language
-    AND(AD_Tab_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Tab_ID, AD_Language FROM AD_Tab_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Tab_TRL
+                 WHERE AD_Tab_ID = AD_Tab.AD_Tab_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language);  
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Tab ' || v_rowcount) ;
@@ -310,9 +318,11 @@
       )
     SELECT get_uuid(), AD_Task_ID, AD_Language, AD_Task.Name, AD_Task.Description, AD_Task.Help, 'N', '0', '0', '0', '0'
     FROM AD_Task, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Task_ID, AD_Language) NOT IN
-      (SELECT AD_Task_ID, AD_Language FROM AD_Task_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND NOT EXISTS (SELECT 1 FROM AD_Task_TRL
+                 WHERE AD_Task_ID = AD_Task.AD_Task_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language);  
+                   
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Task ' || v_rowcount) ;
@@ -330,9 +340,10 @@
     AND AD_Language.IsSystemLanguage='Y'  
     and m.ad_module_id = AD_Workflow.ad_module_id
     AND M.AD_Language != AD_Language.AD_Language
-    AND(AD_Workflow_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Workflow_ID, AD_Language FROM AD_Workflow_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Workflow_TRL
+                 WHERE AD_Workflow_ID = AD_Workflow.AD_Workflow_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language);  
+                   
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Workflow ' || v_rowcount) ;
@@ -350,9 +361,10 @@
     and AD_WF_Node.AD_Workflow_id = w.AD_Workflow_id
     and m.ad_module_id = w.ad_module_id
     AND M.AD_Language != AD_Language.AD_Language
-    AND(AD_WF_Node.AD_WF_Node_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_WF_Node_ID, AD_Language FROM AD_WF_Node_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_WF_Node_TRL
+                 WHERE AD_WF_Node_ID = AD_WF_Node.AD_WF_Node_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_WF_Node ' || v_rowcount) ;
@@ -367,9 +379,10 @@
     AND AD_Language.IsSystemLanguage='Y'  
     and m.ad_module_id = AD_Window.ad_module_id
     AND M.AD_Language != AD_Language.AD_Language
-    AND(AD_Window_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Window_ID, AD_Language FROM AD_Window_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_Window_TRL
+                 WHERE AD_Window_ID = AD_Window.AD_Window_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Window ' || v_rowcount) ;
@@ -385,9 +398,11 @@
       )
     SELECT get_uuid(), AD_Month_ID, AD_Language.AD_Language, AD_Month.Name, 'N', '0', '0', AD_Month.AD_Client_ID, AD_Month.AD_Org_ID
     FROM AD_Month, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Month_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_Month_ID, AD_Language FROM AD_Month_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+     AND NOT EXISTS (SELECT 1 FROM AD_Month_TRL
+                 WHERE AD_Month_ID = AD_Month.AD_Month_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Month ' || v_rowcount) ;
@@ -402,9 +417,11 @@
       )
     SELECT get_uuid(), C_Country_ID, AD_Language.AD_Language, C_Country.Name, C_Country.Description, C_Country.RegionName, C_Country.DisplaySequence, 'N', '0', '0', C_Country.AD_Client_ID, C_Country.AD_Org_ID
     FROM C_Country, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_Country_ID, AD_Language.AD_Language) NOT IN
-      (SELECT C_Country_ID, AD_Language FROM C_Country_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND NOT EXISTS (SELECT 1 FROM C_Country_TRL
+                 WHERE C_Country_ID = C_Country.C_Country_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+                   
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_Country ' || v_rowcount) ;
@@ -419,9 +436,11 @@
       )
     SELECT get_uuid(), C_Currency_ID, AD_Language.AD_Language, C_Currency.CurSymbol, C_Currency.Description, 'N', '0', '0', C_Currency.AD_Client_ID, C_Currency.AD_Org_ID
     FROM C_Currency, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_Currency_ID, AD_Language.AD_Language) NOT IN
-      (SELECT C_Currency_ID, AD_Language FROM C_Currency_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND NOT EXISTS (SELECT 1 FROM C_Currency_TRL
+                 WHERE C_Currency_ID = C_Currency.C_Currency_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_Currency ' || v_rowcount) ;
@@ -438,9 +457,11 @@
       )
     SELECT get_uuid(), C_DocType_ID, AD_Language, C_DocType.Name, C_DocType.PrintName, C_DocType.DocumentNote, 'N', '0', '0', C_DocType.AD_Client_ID, C_DocType.AD_Org_ID
     FROM C_DocType, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_DocType_ID, AD_Language) NOT IN
-      (SELECT C_DocType_ID, AD_Language FROM C_DocType_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+     AND NOT EXISTS (SELECT 1 FROM C_DocType_TRL
+                 WHERE C_DocType_ID = C_DocType.C_DocType_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_DocType ' || v_rowcount) ;
@@ -454,9 +475,11 @@
       )
     SELECT get_uuid(), C_ElementValue_ID, AD_Language, C_ElementValue.Name, C_ElementValue.Description, 'N', '0', '0', C_ElementValue.AD_Client_ID, C_ElementValue.AD_Org_ID
     FROM C_ElementValue, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_ElementValue_ID, AD_Language) NOT IN
-      (SELECT C_ElementValue_ID, AD_Language FROM C_ElementValue_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+     AND NOT EXISTS (SELECT 1 FROM C_ElementValue_TRL
+                 WHERE C_ElementValue_ID = C_ElementValue.C_ElementValue_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_ElementValue ' || v_rowcount) ;
@@ -469,9 +492,11 @@
       )
     SELECT get_uuid(), C_Greeting_ID, AD_Language, C_Greeting.Name, C_Greeting.Greeting, 'N', '0', '0', C_Greeting.AD_Client_ID, C_Greeting.AD_Org_ID
     FROM C_Greeting, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_Greeting_ID, AD_Language) NOT IN
-      (SELECT C_Greeting_ID, AD_Language FROM C_Greeting_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND NOT EXISTS (SELECT 1 FROM C_Greeting_TRL
+                 WHERE C_Greeting_ID = C_Greeting.C_Greeting_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_Greeting ' || v_rowcount) ;
@@ -484,9 +509,11 @@
       )
     SELECT get_uuid(), C_PaymentTerm_ID, AD_Language, C_PaymentTerm.Name, C_PaymentTerm.Description, C_PaymentTerm.DocumentNote, 'N', '0', '0', C_PaymentTerm.AD_Client_ID, C_PaymentTerm.AD_Org_ID
     FROM C_PaymentTerm, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_PaymentTerm_ID, AD_Language) NOT IN
-      (SELECT C_PaymentTerm_ID, AD_Language FROM C_PaymentTerm_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND NOT EXISTS (SELECT 1 FROM C_PaymentTerm_TRL
+                 WHERE C_PaymentTerm_ID = C_PaymentTerm.C_PaymentTerm_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+    
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_PaymentTerm ' || v_rowcount) ;
@@ -499,9 +526,11 @@
       )
     SELECT get_uuid(), C_TaxCategory_ID, AD_Language, C_TaxCategory.Name, C_TaxCategory.Description, 'N', '0', '0', C_TaxCategory.AD_Client_ID, C_TaxCategory.AD_Org_ID
     FROM C_TaxCategory, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_TaxCategory_ID, AD_Language) NOT IN
-      (SELECT C_TaxCategory_ID, AD_Language FROM C_TaxCategory_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+     AND NOT EXISTS (SELECT 1 FROM C_TaxCategory_TRL
+                 WHERE C_TaxCategory_ID = C_TaxCategory.C_TaxCategory_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+                   
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_TaxCategory ' || v_rowcount) ;
@@ -514,9 +543,11 @@
       )
     SELECT get_uuid(), C_UOM_ID, AD_Language, C_UOM.Name, C_UOM.Description, C_UOM.UOMSymbol, 'N', '0', '0', C_UOM.AD_Client_ID, C_UOM.AD_Org_ID
     FROM C_UOM, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_UOM_ID, AD_Language) NOT IN
-      (SELECT C_UOM_ID, AD_Language FROM C_UOM_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND NOT EXISTS (SELECT 1 FROM C_UOM_TRL
+                 WHERE C_UOM_ID = C_UOM.C_UOM_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_UOM ' || v_rowcount) ;
@@ -529,9 +560,12 @@
       )
     SELECT get_uuid(), C_Tax_ID, AD_Language, C_Tax.Name, C_Tax.Description, C_Tax.TaxIndicator, 'N', '0', '0', C_Tax.AD_Client_ID, C_Tax.AD_Org_ID
     FROM C_Tax, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_Tax_ID, AD_Language) NOT IN
-      (SELECT C_Tax_ID, AD_Language FROM C_Tax_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+    AND NOT EXISTS (SELECT 1 FROM C_Tax_TRL
+                 WHERE C_Tax_ID = C_Tax.C_Tax_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_Tax ' || v_rowcount) ;
@@ -544,9 +578,11 @@
       )
     SELECT get_uuid(), M_Product_ID, AD_Language, M_Product.Name, M_Product.DocumentNote, 'N', '0', '0', M_Product.AD_Client_ID, M_Product.AD_Org_ID
     FROM M_Product, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(M_Product_ID, AD_Language) NOT IN
-      (SELECT M_Product_ID, AD_Language FROM M_Product_Trl)
-      ;
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
+     AND NOT EXISTS (SELECT 1 FROM M_Product_TRL
+                 WHERE M_Product_ID = M_Product.M_Product_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+    
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- M_Product ' || v_rowcount) ;
@@ -564,9 +600,10 @@
     AND AD_Language.IsSystemLanguage='Y'  
     and m.ad_module_id = AD_TextInterfaces.AD_MODULE_ID
     and m.ad_language != AD_Language.AD_Language
-    AND(AD_TextInterfaces_ID, AD_Language.AD_Language) NOT IN
-      (SELECT AD_TextInterfaces_ID, AD_Language FROM AD_TextInterfaces_Trl)
-      ;
+    AND NOT EXISTS (SELECT 1 FROM AD_TextInterfaces_TRL
+                 WHERE AD_TextInterfaces_ID = AD_TextInterfaces.AD_TextInterfaces_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_TextInterfaces ' || v_rowcount) ;

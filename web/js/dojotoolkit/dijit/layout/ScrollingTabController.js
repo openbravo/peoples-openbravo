@@ -423,7 +423,7 @@ dojo.declare("dijit.layout.ScrollingTabController",
 		//		If the direction is 1, the widget scrolls to the right, if it is
 		//		-1, it scrolls to the left.
 
-		if(node && dojo.hasClass(node, "dijitTabBtnDisabled")){return;}
+		if(node && dojo.hasClass(node, "dijitTabDisabled")){return;}
 
 		var sWidth = dojo.style(this.scrollNode, "width");
 		var d = (sWidth * 0.75) * direction;
@@ -437,27 +437,21 @@ dojo.declare("dijit.layout.ScrollingTabController",
 
 	_setButtonClass: function(scroll){
 		// summary:
-		//		Adds or removes a class to the left and right scroll buttons
-		//		to indicate whether each one is enabled/disabled.
-		// description:
-		//		If the tabs are scrolled all the way to the left, the class
-		//		'dijitTabBtnDisabled' is added to the left button.
-		//		If the tabs are scrolled all the way to the right, the class
-		//		'dijitTabBtnDisabled' is added to the right button.
+		//		Disables the left scroll button if the tabs are scrolled all the way to the left,
+		//		or the right scroll button in the opposite case.
 		// scroll: Integer
 		//		amount of horizontal scroll
 
-		var cls = "dijitTabBtnDisabled",
-			scrollBounds = this._getScrollBounds();
-		dojo.toggleClass(this._leftBtn.domNode, cls, scroll <= scrollBounds.min);
-		dojo.toggleClass(this._rightBtn.domNode, cls, scroll >= scrollBounds.max);
+		var scrollBounds = this._getScrollBounds();
+		this._leftBtn.attr("disabled", scroll <= scrollBounds.min);
+		this._rightBtn.attr("disabled", scroll >= scrollBounds.max);
 	}
 });
 
 dojo.declare("dijit.layout._ScrollingTabControllerButton",
 	dijit.form.Button,
 	{
-		baseClass: "dijitTab",
+		baseClass: "dijitTab tabStripButton",
 
 		buttonType: "",
 
@@ -465,7 +459,7 @@ dojo.declare("dijit.layout._ScrollingTabControllerButton",
 
 		tabPosition: "top",
 
-		templateString: dojo.cache("dijit.layout", "templates/_ScrollingTabControllerButton.html", "<div id=\"${id}-${buttonType}\" class=\"tabStripButton dijitTab ${buttonClass} tabStripButton-${tabPosition}\"\n\t\tdojoAttachEvent=\"onclick:_onButtonClick,onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\">\n\t<div role=\"presentation\" wairole=\"presentation\" class=\"dijitTabInnerDiv\" dojoattachpoint=\"innerDiv,focusNode\">\n\t\t<div role=\"presentation\" wairole=\"presentation\" class=\"dijitTabContent dijitButtonContents\" dojoattachpoint=\"tabContent\">\n\t\t\t<img src=\"${_blankGif}\"/>\n\t\t\t<span dojoAttachPoint=\"containerNode,titleNode\" class=\"dijitButtonText\"></span>\n\t\t</div>\n\t</div>\n</div>\n"),
+		templateString: dojo.cache("dijit.layout", "templates/_ScrollingTabControllerButton.html", "<div id=\"${id}-${buttonType}\" class=\"tabStripButton dijitTab ${buttonClass} tabStripButton-${tabPosition}\"\n\t\tdojoAttachEvent=\"onclick:_onButtonClick\">\n\t<div role=\"presentation\" wairole=\"presentation\" class=\"dijitTabInnerDiv\" dojoattachpoint=\"innerDiv,focusNode\">\n\t\t<div role=\"presentation\" wairole=\"presentation\" class=\"dijitTabContent dijitButtonContents\" dojoattachpoint=\"tabContent\">\n\t\t\t<img src=\"${_blankGif}\"/>\n\t\t\t<span dojoAttachPoint=\"containerNode,titleNode\" class=\"dijitButtonText\"></span>\n\t\t</div>\n\t</div>\n</div>\n"),
 
 		// Override inherited tabIndex: 0 from dijit.form.Button, because user shouldn't be
 		// able to tab to the left/right/menu buttons
