@@ -34,6 +34,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -575,6 +576,10 @@ public class DataGrid extends HttpSecureAppServlet {
       title = "Error";
       description = Utility.messageBD(this, "NoWriteAccess", vars.getLanguage());
     } else {
+      // Set session info before deleting
+      SessionInfo.setProcessType("W");
+      SessionInfo.setProcessId(strTab);
+
       Vector<String> parametersData = null;
       String rows = vars.getInStringParameter("rows", IsIDFilter.instance);
       StringBuffer SqlDataBuffer = new StringBuffer();
