@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6071';
+  var number = '6107';
   return number;
 }
 
@@ -3209,6 +3209,9 @@ function readOnlyLogicElement(id, readonly) {
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
     obj.readOnly = true;
+    if (obj.setReadOnly) {
+    	obj.setReadOnly(true);
+    }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextA = getObjAttribute(obj, 'onclick');
       var checkPatternA = "^[return false;]";
@@ -3240,7 +3243,9 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
-
+    if (obj.setReadOnly) {
+    	obj.setReadOnly(false);
+    }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextB = getObjAttribute(obj, 'onclick');
       var checkPatternB = "^[return false;]";
@@ -3317,6 +3322,34 @@ function autoCompleteNumber(obj, isFloatAllowed, isNegativeAllowed, evt) {
     }
   }
   return true;
+}
+
+/**
+* Return the most significant features of an object.
+* @param {Object} field Reference to the field that will be inspected.
+* @returns The features as a string.
+* @type String
+*/
+function getObjFeatures(obj) {
+  if (typeof obj == "string") {
+    obj = document.getElementById(obj);
+  }
+  var objType = ""
+  if (obj.tagName.toLowerCase() == 'input') {
+    objType += "input";
+    objType += " ";
+    objType += obj.getAttribute('type');
+    objType += " ";
+  }
+  if (obj.getAttribute('readonly') == 'true' || obj.readOnly) {
+    objType += "readonly";
+    objType += " ";
+  }
+  if (obj.getAttribute('disabled') == 'true' || obj.disabled) {
+    objType += "disabled";
+    objType += " ";
+  }
+  return objType;
 }
 
 /**
@@ -3413,6 +3446,12 @@ function checkFieldChange(elementToCheck) {
 */
 function windowUndo(form) {
   form.reset();
+  for (var i=0; i < form.elements.length; i++) {
+    var element = form.elements[i];
+    if (element.doReset) {
+      element.doReset();
+    }
+  }
   form.inpLastFieldChanged.value = '';
   setWindowEditing(false);
   displayLogic();

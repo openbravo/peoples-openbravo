@@ -75,7 +75,6 @@ public class Wad extends DefaultHandler {
   static final int IMAGE_RELATION_HEIGHT = 16;
   static final int IMAGE_BUTTON_WIDTH = 16;
   static final int IMAGE_BUTTON_HEIGHT = 16;
-  static final String IMAGE_DEFAULT = "blank.gif";
   XmlEngine xmlEngine;
   protected WadConnection pool;
   String strSystemSeparator;
@@ -1143,142 +1142,12 @@ public class Wad extends DefaultHandler {
     final Vector<Object> vecSelCol = new Vector<Object>(0);
     if (selCol != null) {
       for (int i = 0; i < selCol.length; i++) {
+
         selCol[i].htmltext = "strParam" + selCol[i].columnname + ".equals(\"\")";
         selCol[i].columnnameinp = FormatUtilities.replace(selCol[i].columnname);
-
-        if (WadUtility.isGeneralNumber(selCol[i].reference)
-            || WadUtility.isDecimalNumber(selCol[i].reference)
-            || WadUtility.isPriceNumber(selCol[i].reference)
-            || WadUtility.isIntegerNumber(selCol[i].reference)
-            || WadUtility.isQtyNumber(selCol[i].reference)
-            || WadUtility.isDateField(selCol[i].reference)
-            || WadUtility.isTimeField(selCol[i].reference)
-            || WadUtility.isDateTimeField(selCol[i].reference)) {
-          final EditionFieldsData aux = new EditionFieldsData();
-          aux.adColumnId = selCol[i].adColumnId;
-          aux.name = selCol[i].name;
-          aux.reference = selCol[i].reference;
-          aux.referencevalue = selCol[i].referencevalue;
-          aux.adValRuleId = selCol[i].adValRuleId;
-          aux.fieldlength = selCol[i].fieldlength;
-          aux.displaylength = selCol[i].displaylength;
-          aux.columnname = selCol[i].columnname + "_f";
-          aux.realcolumnname = selCol[i].realcolumnname;
-          aux.columnnameinp = selCol[i].columnnameinp;
-          aux.value = selCol[i].value;
-          aux.adWindowId = selCol[i].adWindowId;
-          aux.htmltext = "strParam" + aux.columnname + ".equals(\"\")";
-          selCol[i].xmltext = " + ((strParam" + selCol[i].columnname + ".equals(\"\") || strParam"
-              + selCol[i].columnname + ".equals(\"%\"))?\"\":\" AND ";
-          if (WadUtility.isTimeField(selCol[i].reference)) {
-            selCol[i].xmltext += "TO_CHAR(" + tableName + "." + selCol[i].realcolumnname
-                + ", 'HH24:MI:SS') >= ";
-            selCol[i].xsqltext = "TO_CHAR(" + tableName + "." + selCol[i].realcolumnname
-                + ", 'HH24:MI:SS') >= ";
-          } else {
-            selCol[i].xmltext += "(" + tableName + "." + selCol[i].realcolumnname + ") >= ";
-            selCol[i].xsqltext = tableName + "." + selCol[i].realcolumnname + " >= ";
-          }
-          if (WadUtility.isDateField(selCol[i].reference)
-              || WadUtility.isTimeField(selCol[i].reference)
-              || WadUtility.isDateTimeField(selCol[i].reference)) {
-            selCol[i].xmltext += "TO_TIMESTAMP('";
-            selCol[i].xsqltext += "TO_TIMESTAMP";
-          }
-          selCol[i].xmltext += "\" + strParam" + selCol[i].columnname + " + \"";
-          if (WadUtility.isTimeField(selCol[i].reference))
-            selCol[i].xmltext += "', 'HH24:MI:SS')";
-          else if (WadUtility.isDateField(selCol[i].reference)
-              || WadUtility.isDateTimeField(selCol[i].reference))
-            selCol[i].xmltext += "')";
-          selCol[i].xmltext += " \")";
-          selCol[i].xsqltext += "(?"
-              + (WadUtility.isTimeField(selCol[i].reference) ? ", 'HH24:MI:SS'" : "") + ") ";
-          aux.columnnameinp = FormatUtilities.replace(selCol[i].columnname) + "_f";
-          aux.xmltext = " + ((strParam" + aux.columnname + ".equals(\"\") || strParam"
-              + aux.columnname + ".equals(\"%\"))?\"\":\" AND";
-          if (WadUtility.isTimeField(selCol[i].reference)) {
-            aux.xmltext += "TO_CHAR(" + tableName + "." + aux.realcolumnname + ", 'HH24:MI:SS') < ";
-            aux.xsqltext = "TO_CHAR(" + tableName + "." + aux.realcolumnname + ", 'HH24:MI:SS') < ";
-          } else {
-            aux.xmltext += "(" + tableName + "." + aux.realcolumnname + ") < ";
-            aux.xsqltext = tableName + "." + aux.realcolumnname + " < ";
-          }
-
-          if (WadUtility.isDateField(selCol[i].reference)
-              || WadUtility.isTimeField(selCol[i].reference)
-              || WadUtility.isDateTimeField(selCol[i].reference)) {
-            aux.xmltext += "TO_TIMESTAMP('";
-            aux.xsqltext += "TO_TIMESTAMP";
-          } else if (WadUtility.isGeneralNumber(selCol[i].reference)
-              || WadUtility.isDecimalNumber(selCol[i].reference)
-              || WadUtility.isPriceNumber(selCol[i].reference)
-              || WadUtility.isIntegerNumber(selCol[i].reference)
-              || WadUtility.isQtyNumber(selCol[i].reference) || selCol[i].reference.equals("13")) {
-            aux.xmltext += "TO_NUMBER('";
-            aux.xsqltext += "TO_NUMBER";
-          }
-          aux.xmltext += "\" + strParam" + aux.columnname + " + \"";
-          if (WadUtility.isTimeField(selCol[i].reference))
-            aux.xmltext += "', 'HH24:MI:SS')";
-          else if (WadUtility.isDateField(selCol[i].reference)
-              || WadUtility.isDateTimeField(selCol[i].reference))
-            aux.xmltext += "')";
-          else if (WadUtility.isGeneralNumber(selCol[i].reference)
-              || WadUtility.isDecimalNumber(selCol[i].reference)
-              || WadUtility.isPriceNumber(selCol[i].reference)
-              || WadUtility.isIntegerNumber(selCol[i].reference)
-              || WadUtility.isQtyNumber(selCol[i].reference) || selCol[i].reference.equals("13"))
-            aux.xmltext += "')";
-          aux.xmltext += " + 1 \")";
-          aux.xsqltext += "(?"
-              + (WadUtility.isTimeField(selCol[i].reference) ? ", 'HH24:MI:SS'" : "") + ") + 1 ";
-          vecAuxSelCol.addElement(aux);
-        } else {
-          selCol[i].xmltext = " + ((strParam" + selCol[i].columnname + ".equals(\"\") || strParam"
-              + selCol[i].columnname + ".equals(\"%\"))?\"\":\" AND ";
-          if (WadUtility.isLikeType(selCol[i].reference)
-              && !WadUtility.isSearchValueColumn(selCol[i].realcolumnname)) {
-            selCol[i].xmltext += "C_IGNORE_ACCENT";
-          }
-          selCol[i].xmltext += "(" + tableName + "." + selCol[i].realcolumnname + ")";
-          if (WadUtility.isLikeType(selCol[i].reference)
-              && !WadUtility.isSearchValueColumn(selCol[i].realcolumnname)) {
-            selCol[i].xmltext += " LIKE C_IGNORE_ACCENT('";
-          } else if (WadUtility.isLikeType(selCol[i].reference)
-              && WadUtility.isSearchValueColumn(selCol[i].realcolumnname)) {
-            selCol[i].xmltext += " LIKE ('";
-          } else {
-            selCol[i].xmltext += " = (";
-            if (WadUtility.isTextData(selCol[i].reference)
-                || WadUtility.isLikeType(selCol[i].reference))
-              selCol[i].xmltext += "'";
-          }
-          selCol[i].xmltext += "\" + strParam" + selCol[i].columnname + " + \"";
-          if (WadUtility.isLikeType(selCol[i].reference)) {
-            selCol[i].xmltext += "'";
-          } else if (WadUtility.isTextData(selCol[i].reference)) {
-            selCol[i].xmltext += "'";
-          }
-          selCol[i].xmltext += ") \")";
-          selCol[i].xsqltext = "";
-          if (WadUtility.isLikeType(selCol[i].reference)
-              && !WadUtility.isSearchValueColumn(selCol[i].realcolumnname)) {
-            selCol[i].xsqltext = "C_IGNORE_ACCENT";
-          }
-          selCol[i].xsqltext += "(" + tableName + "." + selCol[i].realcolumnname + ")";
-          if (WadUtility.isLikeType(selCol[i].reference)
-              && !WadUtility.isSearchValueColumn(selCol[i].realcolumnname)) {
-            selCol[i].xsqltext += " LIKE C_IGNORE_ACCENT";
-          } else if (WadUtility.isLikeType(selCol[i].reference)
-              && WadUtility.isSearchValueColumn(selCol[i].realcolumnname)) {
-            selCol[i].xsqltext += " LIKE ";
-          } else {
-            selCol[i].xsqltext += " = ";
-          }
-          selCol[i].xsqltext += "(?)";
-          // selCol[i].xsqltext += " AND ";
-        }
+        WADControl control = WadUtility.getWadControlClass(pool, selCol[i].reference,
+            selCol[i].referencevalue);
+        control.processSelCol(tableName, selCol[i], vecAuxSelCol);
 
         vecSelCol.addElement(selCol[i]);
       }
@@ -1330,7 +1199,6 @@ public class Wad extends DefaultHandler {
     final int itable = 0;
     final Vector<Object> vecCounters = new Vector<Object>();
     final Vector<Object> vecOrderAux = new Vector<Object>();
-    String strOrder = "";
     vecCounters.addElement(Integer.toString(itable));
     vecCounters.addElement(Integer.toString(ilist));
     FieldsData[] fieldsData = null;
@@ -1340,7 +1208,9 @@ public class Wad extends DefaultHandler {
           && !fieldsData[i].columnname.equalsIgnoreCase("CreatedBy")
           && !fieldsData[i].columnname.equalsIgnoreCase("Updated")
           && !fieldsData[i].columnname.equalsIgnoreCase("UpdatedBy")) {
-        if (WadUtility.isTimeField(fieldsData[i].reference)) {
+
+        // hardcoded these special cases
+        if (fieldsData[i].reference.equals("24")) {
           vecFields.addElement("TO_CHAR(" + tableName + "." + fieldsData[i].name
               + ", 'HH24:MI:SS') AS " + fieldsData[i].name);
         } else if (fieldsData[i].reference.equals("20")) {
@@ -1354,165 +1224,10 @@ public class Wad extends DefaultHandler {
           vecFields.addElement(tableName + "." + fieldsData[i].name);
         }
 
-        if (fieldsData[i].reference.equals("19") && // TableDir
-            fieldsData[i].isdisplayed.equals("Y")) {
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          log4j.debug("Identifier of: " + fieldsData[i].name);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" (");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name
-              + "R");
-        } else if (fieldsData[i].reference.equals("17") && fieldsData[i].isdisplayed.equals("Y")) { // List
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" ( ");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name
-              + "R");
-        } else if (fieldsData[i].reference.equals("18") && fieldsData[i].isdisplayed.equals("Y")) { // Table
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" ( ");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name
-              + "R");
-        } else if (fieldsData[i].reference.equals("32") && fieldsData[i].isdisplayed.equals("Y")) {
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" ( ");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '" + IMAGE_DEFAULT + "' ELSE " + strFields.toString() + ") END) AS "
-              + fieldsData[i].name + "R");
-        } else if ((fieldsData[i].reference.equals("30") || fieldsData[i].reference.equals("31")
-            || fieldsData[i].reference.equals("35") || fieldsData[i].reference.equals("25") || fieldsData[i].reference
-            .equals("800011"))
-            && fieldsData[i].isdisplayed.equals("Y")) { // Searchs
-          final Vector<Object> vecSubFields = new Vector<Object>();
-          WadUtility.columnIdentifier(pool, tableName, fieldsData[i].required.equals("Y"),
-              fieldsData[i], vecCounters, false, vecSubFields, vecTables, vecWhere, vecParameters,
-              vecTableParameters, sqlDateFormat);
-          log4j.debug("Identifier of: " + fieldsData[i].name);
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" (");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields.append(" || ' - ' || ");
-            }
-            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
-          }
-          strOrder = strFields.toString() + ")";
-          vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name
-              + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name
-              + "R");
-        } else if (fieldsData[i].reference.equals("21") && fieldsData[i].isdisplayed.equals("Y")) { // Location
-          final StringBuffer strFields = new StringBuffer();
-          strFields.append(" (CASE WHEN " + tableName + "." + fieldsData[i].columnname
-              + " IS NULL THEN '' ELSE TO_CHAR(C_Location_Identifier(" + tableName + "."
-              + fieldsData[i].columnname + ")) END)");
-          log4j.debug("Location field: " + strFields.toString());
-          strOrder = strFields.toString();
-          strFields.append(" AS " + fieldsData[i].name + "R");
-          vecFields.addElement(strFields.toString());
-        } else if (fieldsData[i].reference.equals("28") && fieldsData[i].isdisplayed.equals("Y")
-            && !fieldsData[i].referencevalue.equals("")
-            && !fieldsData[i].name.equalsIgnoreCase("ChangeProjectStatus")) { // Button
-          ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-          ilist++;
-          vecFields.addElement("list" + ilist + ".name as " + fieldsData[i].name + "_BTN");
-          strOrder = "list" + ilist + ".name";
-          final StringBuffer strWhere = new StringBuffer();
-          if (fieldsData[i].name.equalsIgnoreCase("DocAction")) {
-            strWhere.append(" AND (CASE " + tableName + "." + fieldsData[i].name
-                + " WHEN '--' THEN 'CL' ELSE TO_CHAR(" + tableName + "." + fieldsData[i].name
-                + ") END) = " + "list" + ilist + ".value");
-          } else {
-            strWhere.append(" AND " + tableName + "." + fieldsData[i].name + " = TO_CHAR(list"
-                + ilist + ".value)");
-          }
-          vecTables.addElement("left join ad_ref_list_v list" + ilist + " on (" + "list" + ilist
-              + ".ad_reference_id = '" + fieldsData[i].referencevalue + "' and list" + ilist
-              + ".ad_language = ? " + strWhere.toString() + ")");
-          vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-          vecCounters.set(1, Integer.toString(ilist));
-        } else {
-          strOrder = tableName + "." + fieldsData[i].name;
-        }
-        if (!fieldsData[i].reference.equals("23") && !fieldsData[i].reference.equals("14")
-            && !fieldsData[i].reference.equals("34") && !fieldsData[i].reference.equals("13")
-            && !fieldsData[i].reference.equals("26") && !fieldsData[i].reference.equals("32")
-            && !fieldsData[i].sortno.equals("")) {
-          final String[] aux = {
-              new String(fieldsData[i].name),
-              new String(strOrder
-                  + (fieldsData[i].name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
-          vecOrderAux.addElement(aux);
-        }
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsData[i].reference,
+            fieldsData[i].referencevalue);
+        control.processTable(strTab, vecFields, vecTables, vecWhere, vecOrderAux, vecParameters,
+            tableName, vecTableParameters, fieldsData[i], vecFieldParameters, vecCounters);
       }
     }
     final FieldsData sfd1[] = FieldsData.selectSequence(pool, strTab);
@@ -2057,47 +1772,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("searchName", strHighVolume);
     xmlDocument.setParameter("searchVariables", strParamHighVolume);
     xmlDocument.setParameter("searchComparations", strHighVolumeComp);
-    {
-      final StringBuffer fieldsRelationStructure = new StringBuffer();
-      FieldsData[] fieldsDataSelect = null;
-      fieldsDataSelect = copyarray(fieldsDataSelectAux);
-      fieldsRelationStructure
-          .append("strData.append(\"\\\"\").append(Replace.replace(Replace.replace(Replace.replace(data[contadorData].");
-      fieldsRelationStructure.append(Sqlc.TransformaNombreColumna(keyColumnName));
-      fieldsRelationStructure
-          .append(", \"\\r\", \"\"), \"\\n\", \"<br>\"), \"\\\"\", \"\\\\\\\"\")).append(\"\\\"\");\n");
-      for (int i = 0; i < fieldsDataSelect.length; i++) {
-        if (fieldsDataSelect[i].showinrelation.equals("Y")
-            && fieldsDataSelect[i].isencrypted.equals("N")
-            && (fieldsDataSelect[i].isdisplayed.equals("Y"))) {
-          if (parentsFieldsData.length == 0
-              || !parentsFieldsData[0].name.equals(fieldsDataSelect[i].name)) {
-            fieldsRelationStructure.append("strData.append(\",\");\n");
-            fieldsRelationStructure
-                .append("strData.append(\"\\\"\").append(Replace.replace(Replace.replace(Replace.replace(data[contadorData].");
-            if ((fieldsDataSelect[i].reference.equals("17")
-                || fieldsDataSelect[i].reference.equals("18") || fieldsDataSelect[i].reference
-                .equals("19"))
-                && fieldsDataSelect[i].isdisplayed.equals("Y")) { // List
-              fieldsDataSelect[i].name = fieldsDataSelect[i].name + "R"; // _REF
-            } else if ((fieldsDataSelect[i].reference.equals("30")
-                || fieldsDataSelect[i].reference.equals("800011")
-                || fieldsDataSelect[i].reference.equals("31")
-                || fieldsDataSelect[i].reference.equals("35")
-                || fieldsDataSelect[i].reference.equals("25")
-                || fieldsDataSelect[i].reference.equals("21") || fieldsDataSelect[i].reference
-                .equals("32"))
-                && fieldsDataSelect[i].isdisplayed.equals("Y")) {
-              fieldsDataSelect[i].name = fieldsDataSelect[i].name + "R";
-            }
-            fieldsRelationStructure.append(Sqlc.TransformaNombreColumna(fieldsDataSelect[i].name));
-            fieldsRelationStructure
-                .append(", \"\\r\", \"\"), \"\\n\", \"<br>\"), \"\\\"\", \"\\\\\\\"\")).append(\"\\\"\");\n");
-          }
-        }
-      }
-      xmlDocument.setParameter("fieldsRelation", fieldsRelationStructure.toString());
-    }
+
     if (WadUtility.findField(vecFields, "adClientId"))
       xmlDocument.setParameter("clientId", "data.adClientId");
     else
@@ -2127,7 +1802,6 @@ public class Wad extends DefaultHandler {
           .size() > 0) ? ", vars.getLanguage()" : "");
     }
     FieldsData[] fieldsData = null;
-    final Vector<Object> vector = new Vector<Object>();
     boolean defaultValue;
     {
       final Vector<Object> vecFieldsSelect = new Vector<Object>();
@@ -2141,16 +1815,10 @@ public class Wad extends DefaultHandler {
           fieldsData1[i].name = Sqlc.TransformaNombreColumna(fieldsData1[i].name);
           fieldsData1[i].columnname = fieldsData1[i].name;
           defaultValue = false;
-          if (!fieldsData1[i].reference.equals("23")
-              && !WadUtility.isDateTimeField(fieldsData1[i].reference)
-              && !fieldsData1[i].reference.equals("20")
-              && !WadUtility.isDecimalNumber(fieldsData1[i].reference)
-              && !WadUtility.isQtyNumber(fieldsData1[i].reference)
-              && !WadUtility.isPriceNumber(fieldsData1[i].reference)
-              && !WadUtility.isIntegerNumber(fieldsData1[i].reference)
-              && !WadUtility.isGeneralNumber(fieldsData1[i].reference)
-              && WadUtility.columnRelationFormat(fieldsData1[i], false, MAX_COL_SIZE_RELATION))
-            vector.addElement(fieldsData1[i]);
+
+          WADControl control = WadUtility.getWadControlClass(pool, fieldsData1[i].reference,
+              fieldsData1[i].adReferenceValueId);
+
           if (fieldsData1[i].reference.equals("20")) {
             fieldsData1[i].xmltext = ", \"N\"";
             defaultValue = true;
@@ -2162,7 +1830,7 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].xmltext = ", windowId + \"|" + fieldsData1[i].realname + "\"";
             fieldsData1[i].type = "RequestGlobalVariable";
           } else if (fieldsData1[i].issessionattr.equals("Y")) {
-            if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+            if (control.isNumericType()) {
               fieldsData1[i].xmltext = ", vars.getSessionValue(windowId + \"|"
                   + fieldsData1[i].realname + "\")";
             } else {
@@ -2187,7 +1855,7 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].type = "RequiredStringParameter";
           }
 
-          if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+          if (control.isNumericType()) {
             if (fieldsData1[i].required.equals("Y")) {
               fieldsData1[i].type = "RequiredNumericParameter";
             } else {
@@ -2195,7 +1863,7 @@ public class Wad extends DefaultHandler {
             }
           }
 
-          if (WadActionButton.isNumericType(fieldsData1[i].reference)) {
+          if (control.isNumericType()) {
             fieldsData1[i].trytext = " try { ";
             fieldsData1[i].catchtext = " } catch (ServletException paramEx) { ex = paramEx; } ";
           } else {
@@ -2213,9 +1881,7 @@ public class Wad extends DefaultHandler {
             fieldsData1[i].htmltexttrl = ")";
           }
           vecFieldsSelect.addElement(fieldsData1[i]);
-          if ((WadUtility.isSearchType(fieldsData1[i].reference) || WadUtility
-              .isSelectType(fieldsData1[i].reference))
-              && fieldsData1[i].isdisplayed.equals("Y")) {
+          if (control.has2UIFields() && fieldsData1[i].isdisplayed.equals("Y")) {
             FieldsData fieldsData2 = null;
             fieldsData2 = copyarrayElement(fieldsData1[i]);
             fieldsData2.name += "r";// (WadUtility.isSearchType(fieldsData1[i].reference)?"D":"r");
@@ -2229,9 +1895,6 @@ public class Wad extends DefaultHandler {
       fieldsData = new FieldsData[vecFieldsSelect.size()];
       vecFieldsSelect.copyInto(fieldsData);
     }
-
-    final FieldsData[] fieldsTruncate = new FieldsData[vector.size()];
-    vector.copyInto(fieldsTruncate);
 
     // Campos del Session actual
     // Fields of the current Session
@@ -2372,7 +2035,7 @@ public class Wad extends DefaultHandler {
     }
 
     xmlDocument.setData("structure1", fieldsData);
-    xmlDocument.setData("structure2", fieldsTruncate);
+
     xmlDocument.setData("structure7", auxiliarFields);
     xmlDocument.setData("structure27", auxiliarFields);
     xmlDocument.setData("structure8", fieldsParentSession);
@@ -2458,10 +2121,10 @@ public class Wad extends DefaultHandler {
         } else if (sfd[i].accesslevel.equals("6")
             && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
           sfd[i].defaultvalue = "\"0\"";
-        } else if (!sfd[i].referencevalue.equals("13")) {
+        } else if (!sfd[i].referencevalue.equals("13")) { // ID
           sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \""
               + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \""
-              + WadUtility.getWadDefaultValue(sfd[i]) + "\", dataField)";
+              + WadUtility.getWadDefaultValue(pool, sfd[i]) + "\", dataField)";
         } else {
           sfd[i].defaultvalue = "\"\"";
         }
@@ -2471,25 +2134,8 @@ public class Wad extends DefaultHandler {
       } else {
         sfd[i].defaultvalue = "strP" + sfd[i].columnname;
       }
-      if ((sfd[i].referencevalue.equals("30") || sfd[i].referencevalue.equals("31")
-          || sfd[i].referencevalue.equals("35") || sfd[i].referencevalue.equals("25") || sfd[i].reference
-          .equals("800011"))
-          && sfd[i].isdisplayed.equals("Y"))
-        strDefaultValues.append(", " + tabName + "Data.selectDef" + sfd[i].reference + "_"
-            + (isSelect++) + "(this, " + sfd[i].defaultvalue + ")");
-      else if (sfd[i].referencevalue.equals("28") && sfd[i].isdisplayed.equals("Y")
-          && !sfd[i].type.equals(""))
-        strDefaultValues.append(
-            ", (vars.getLanguage().equals(\"en_US\")?ListData.selectName(this, \"").append(
-            sfd[i].type).append("\", ").append(sfd[i].defaultvalue).append(
-            "):ListData.selectNameTrl(this, vars.getLanguage(), \"").append(sfd[i].type).append(
-            "\", ").append(sfd[i].defaultvalue).append("))");
-      else if (sfd[i].referencevalue.equals("21") && sfd[i].isdisplayed.equals("Y"))
-        strDefaultValues.append(", LocationSearchData.locationAddress(this, " + sfd[i].defaultvalue
-            + ")");
-      else if (sfd[i].referencevalue.equals("32") && sfd[i].isdisplayed.equals("Y"))
-        strDefaultValues.append(", " + tabName + "Data.selectDef" + sfd[i].reference + "_"
-            + (isSelect++) + "(this, " + sfd[i].defaultvalue + ")");
+      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].referencevalue, sfd[i].type);
+      isSelect = control.addAdditionDefaulJavaFields(strDefaultValues, sfd[i], tabName, isSelect);
     }
 
     final StringBuffer controlsJavaSource = new StringBuffer();
@@ -3006,113 +2652,19 @@ public class Wad extends DefaultHandler {
           fieldsDef[i].whereclause = parametros.toString();
           v.addElement(fieldsDef[i]);
         }
-        if ((fieldsDef[i].referencevalue.equals("30") || fieldsDef[i].referencevalue.equals("31")
-            || fieldsDef[i].referencevalue.equals("35") || fieldsDef[i].reference.equals("800011") || fieldsDef[i].referencevalue
-            .equals("25"))
-            && fieldsDef[i].isdisplayed.equals("Y")) {
-          final FieldsData fd = new FieldsData();
-          fd.reference = fieldsDef[i].reference + "_" + (itable++);
-          fd.name = fieldsDef[i].columnname + "R";
-          String tableN = "";
-          EditionFieldsData[] dataSearchs = null;
-          if (fieldsDef[i].referencevalue.equals("30"))
-            dataSearchs = EditionFieldsData.selectSearchs(pool, "", fieldsDef[i].type);
-          if (dataSearchs == null || dataSearchs.length == 0) {
-            if (fieldsDef[i].referencevalue.equals("25"))
-              tableN = "C_ValidCombination";
-            else if (fieldsDef[i].referencevalue.equals("31"))
-              tableN = "M_Locator";
-            else if (fieldsDef[i].referencevalue.equals("35"))
-              tableN = "M_AttributeSetInstance";
-            else if (fieldsDef[i].referencevalue.equals("800011"))
-              tableN = "M_Product";
-            else if (fieldsDef[i].name.equalsIgnoreCase("createdBy")
-                || fieldsDef[i].name.equalsIgnoreCase("updatedBy"))
-              tableN = "AD_User";
-            else
-              tableN = fieldsDef[i].name.substring(0, fieldsDef[i].name.length() - 3);
-            if (fieldsDef[i].referencevalue.equals("25"))
-              fieldsDef[i].name = "C_ValidCombination_ID";
-            else if (fieldsDef[i].referencevalue.equals("31"))
-              fieldsDef[i].name = "M_Locator_ID";
-            else if (fieldsDef[i].referencevalue.equals("35"))
-              fieldsDef[i].name = "M_AttributeSetInstance_ID";
-            else if (fieldsDef[i].referencevalue.equals("800011"))
-              fieldsDef[i].name = "M_Product_ID";
-            else if (fieldsDef[i].name.equalsIgnoreCase("createdBy")
-                || fieldsDef[i].name.equalsIgnoreCase("updatedBy"))
-              fieldsDef[i].name = "AD_User_ID";
-          } else {
-            tableN = dataSearchs[0].reference;
-            fieldsDef[i].name = dataSearchs[0].columnname;
-          }
-          final Vector<Object> vecFields2 = new Vector<Object>();
-          final Vector<Object> vecTables2 = new Vector<Object>();
-          final Vector<Object> vecWhere2 = new Vector<Object>();
-          int itable2 = 0;
-          vecTables2.addElement(tableN + " table1");
-          itable2 = fieldsOfSearch2(tableN, fieldsDef[i].name, fieldsDef[i].required, vecFields2,
-              vecTables2, vecWhere2, itable2, fieldsDef[i].referencevalue, fieldsDef[i].type);
-          final StringBuffer strFields2 = new StringBuffer();
-          strFields2.append(" ( ");
-          boolean boolFirst = true;
-          for (final Enumeration<Object> e = vecFields2.elements(); e.hasMoreElements();) {
-            final String tableField = (String) e.nextElement();
-            log4j.debug("  field: " + tableField);
-            if (boolFirst) {
-              boolFirst = false;
-            } else {
-              strFields2.append(" || ' - ' || ");
-            }
-            strFields2.append("COALESCE(TO_CHAR(").append(tableField).append("), '') ");
-          }
-          strFields2.append(") as ").append(fieldsDef[i].columnname);
-          final StringBuffer fields = new StringBuffer();
-          fields.append("SELECT ").append(strFields2);
-          fields.append(" FROM ");
-          for (int j = 0; j < vecTables2.size(); j++) {
-            fields.append(vecTables2.elementAt(j));
-          }
-          fields.append(" WHERE table1.isActive='Y'");
-          for (int j = 0; j < vecWhere2.size(); j++) {
-            fields.append(vecWhere2.elementAt(j));
-          }
-          fields.append(" AND table1." + fieldsDef[i].name + " = ? ");
-          fd.defaultvalue = fields.toString();
-          fd.whereclause = "<Parameter name=\"" + fd.name + "\"/>";
-          v.addElement(fd);
-        } else if (fieldsDef[i].referencevalue.equals("32") && fieldsDef[i].isdisplayed.equals("Y")) {
-          final FieldsData fd = new FieldsData();
-          fd.reference = fieldsDef[i].reference + "_" + (itable++);
-          fd.name = fieldsDef[i].columnname + "R";
-          final String tableN = "AD_Image";
-          fieldsDef[i].name = fieldsDef[i].name;
-          final Vector<Object> vecTables2 = new Vector<Object>();
-          final Vector<Object> vecWhere2 = new Vector<Object>();
-          vecTables2.addElement(tableN + " table1");
-          final StringBuffer strFields2 = new StringBuffer();
-          strFields2.append(" ( table1.ImageURL ) AS ").append(fieldsDef[i].columnname);
-          final StringBuffer fields = new StringBuffer();
-          fields.append("SELECT ").append(strFields2);
-          fields.append(" FROM ");
-          for (int j = 0; j < vecTables2.size(); j++) {
-            fields.append(vecTables2.elementAt(j));
-          }
-          fields.append(" WHERE table1.isActive='Y'");
-          for (int j = 0; j < vecWhere2.size(); j++) {
-            fields.append(vecWhere2.elementAt(j));
-          }
-          fields.append(" AND table1." + fieldsDef[i].name + " = ? ");
-          fd.defaultvalue = fields.toString();
-          fd.whereclause = "<Parameter name=\"" + fd.name + "\"/>";
-          v.addElement(fd);
-        }
+
+        // Calculate additional defaults
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].referencevalue,
+            fieldsDef[i].type);
+        itable = control.addAdditionDefaulSQLFields(v, fieldsDef[i], itable);
       }
       final FieldsData[] fd = new FieldsData[v.size()];
       v.copyInto(fd);
       xmlDocumentXsql.setData("structure10", fd);
     }
     {
+      // default values for search references in parameter windows for action buttons
+      // keep it hardcoded by now
       final ProcessRelationData[] data = ProcessRelationData.selectXSQL(pool, strTab);
       if (data != null) {
         for (int i = 0; i < data.length; i++) {
@@ -3168,7 +2720,7 @@ public class Wad extends DefaultHandler {
       final FieldsData fieldsDataUpdate[] = FieldsData.selectUpdatables(pool, strTab);
       for (int i = 0; i < fieldsDataUpdate.length; i++) { // *** i=1?
         fieldsDataUpdate[i].name = ((i > 0) ? ", " : "") + fieldsDataUpdate[i].name;
-        if (WadUtility.isTimeField(fieldsDataUpdate[i].reference))
+        if (fieldsDataUpdate[i].reference.equals("24"))
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?,'HH24:MI:SS')";
         else if (fieldsDataUpdate[i].reference.equals("16")) { // datetime
           fieldsDataUpdate[i].xmlFormat = "TO_DATE(?, ?)";
@@ -3222,7 +2774,7 @@ public class Wad extends DefaultHandler {
             && !fieldsDataValue[i].name.equalsIgnoreCase("CreatedBy")
             && !fieldsDataValue[i].name.equalsIgnoreCase("Updated")
             && !fieldsDataValue[i].name.equalsIgnoreCase("UpdatedBy")) {
-          if (WadUtility.isTimeField(fieldsDataValue[i].reference)) {
+          if (fieldsDataValue[i].reference.equals("24")) {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, 'HH24:MI:SS')";
           } else if (fieldsDataValue[i].reference.equals("16")) {
             // datetime
@@ -3264,6 +2816,7 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setData("structure7", fieldsDataParameterInsert1);
     }
     {
+      // generate set() method
       final FieldsData fieldsDataDefaults[] = FieldsData.selectDefaultValue(pool, "", strTab);
       final Vector<Object> vecDDef = new Vector<Object>();
       for (int i = 0; i < fieldsDataDefaults.length; i++) {
@@ -3276,14 +2829,14 @@ public class Wad extends DefaultHandler {
           vecDDef.addElement(fieldsDataDefaults[i]);
           modified = true;
         }
-        if ((fieldsDataDefaults[i].referencevalue.equals("30")
-            || fieldsDataDefaults[i].reference.equals("800011")
-            || fieldsDataDefaults[i].referencevalue.equals("31")
-            || fieldsDataDefaults[i].referencevalue.equals("32")
-            || fieldsDataDefaults[i].referencevalue.equals("35")
-            || fieldsDataDefaults[i].referencevalue.equals("21") || fieldsDataDefaults[i].referencevalue
-            .equals("25"))
-            && fieldsDataDefaults[i].isdisplayed.equals("Y")) {
+
+        // add another field for default special cases with more than 1 field
+        WADControl control = WadUtility.getWadControlClass(pool,
+            fieldsDataDefaults[i].referencevalue, fieldsDataDefaults[i].type);
+        if (fieldsDataDefaults[i].isdisplayed.equals("Y")
+            && control.addAdditionDefaulJavaFields(new StringBuffer(), fieldsDataDefaults[i],
+                tabName, 0) != 0) {
+
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
               .TransformaNombreColumna(fieldsDataDefaults[i].name))
@@ -3295,6 +2848,7 @@ public class Wad extends DefaultHandler {
         } else if (fieldsDataDefaults[i].referencevalue.equals("28")
             && fieldsDataDefaults[i].isdisplayed.equals("Y")
             && !fieldsDataDefaults[i].type.equals("")) {
+          // Button special case
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
               .TransformaNombreColumna(fieldsDataDefaults[i].name))
@@ -3336,6 +2890,8 @@ public class Wad extends DefaultHandler {
    * Generates the combo reloads for the tab. Combo reloads are the callouts to reloads the values
    * of the subordinated combos in the tab.
    * 
+   * By now combo reloads are created only for core list, table and table dir references
+   * 
    * @param fileDir
    *          Path where to generate the file.
    * @param strTab
@@ -3361,6 +2917,9 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("tabId", strTab);
     final Vector<Object> vecReloads = new Vector<Object>();
     final Vector<Object> vecTotal = new Vector<Object>();
+    final Vector<Object> vecCounters = new Vector<Object>();
+    vecCounters.addElement("0");
+    vecCounters.addElement("0");
     FieldsData[] result = null;
 
     for (int i = 0; i < data.length; i++) {
@@ -3411,8 +2970,12 @@ public class Wad extends DefaultHandler {
             final Vector<Object> vecWhere = new Vector<Object>();
             final Vector<Object> vecParameters = new Vector<Object>();
             final Vector<Object> vecTableParameters = new Vector<Object>();
-            WadUtility.columnIdentifier(pool, tables[0].tablename, true, tables[0], 0, 0, true,
-                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
+            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
+                data[i].referencevalue);
+            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1, vecTables,
+                vecWhere, vecParameters, vecTableParameters);
+
             where.append(tables[0].whereclause);
             data[i].tablename = "TableList";
             data[i].htmltext = "select" + tables[0].referencevalue;
@@ -3451,8 +3014,12 @@ public class Wad extends DefaultHandler {
             final Vector<Object> vecWhere = new Vector<Object>();
             final Vector<Object> vecParameters = new Vector<Object>();
             final Vector<Object> vecTableParameters = new Vector<Object>();
-            WadUtility.columnIdentifier(pool, table_Name, true, tableDir[0], 0, 0, true,
-                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
+            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
+                data[i].referencevalue);
+            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables, vecWhere,
+                vecParameters, vecTableParameters);
+
             data[i].xmltext = "";
             if (vecTableParameters.size() > 0) {
               data[i].xmltext = ", vars.getLanguage()";
@@ -3519,6 +3086,9 @@ public class Wad extends DefaultHandler {
 
       final Vector<Object> vecReloads = new Vector<Object>();
       final Vector<Object> vecTotal = new Vector<Object>();
+      final Vector<Object> vecCounters = new Vector<Object>();
+      vecCounters.addElement("0");
+      vecCounters.addElement("0");
 
       FieldsData[] result = null;
 
@@ -3559,9 +3129,14 @@ public class Wad extends DefaultHandler {
             final Vector<Object> vecWhere = new Vector<Object>();
             final Vector<Object> vecParameters = new Vector<Object>();
             final Vector<Object> vecTableParameters = new Vector<Object>();
-            WadUtility.columnIdentifier(pool, tables[0].tablename, true, tables[0], 0, 0, true,
-                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
+            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
+                data[i].referencevalue);
+            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1, vecTables,
+                vecWhere, vecParameters, vecTableParameters);
+
             where.append(tables[0].whereclause);
+
             data[i].tablename = "TableList";
             data[i].htmltext = "select" + tables[0].referencevalue;
             if (!tables[0].columnname.equals("")) {
@@ -3599,8 +3174,12 @@ public class Wad extends DefaultHandler {
             final Vector<Object> vecWhere = new Vector<Object>();
             final Vector<Object> vecParameters = new Vector<Object>();
             final Vector<Object> vecTableParameters = new Vector<Object>();
-            WadUtility.columnIdentifier(pool, table_Name, true, tableDir[0], 0, 0, true,
-                vecFields1, vecTables, vecWhere, vecParameters, vecTableParameters, sqlDateFormat);
+
+            WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
+                data[i].referencevalue);
+            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables, vecWhere,
+                vecParameters, vecTableParameters);
+
             data[i].xmltext = "";
             if (vecTableParameters.size() > 0) {
               data[i].xmltext = ", vars.getLanguage()";
@@ -4419,10 +3998,12 @@ public class Wad extends DefaultHandler {
       firstFocus = "'firstElement'";
     } else {
       String id = ff[0].columnname;
-      if (WadUtility.isSearchType(ff[0].reference))
+      String reference = ff[0].reference;
+      if (reference.equals("21") || reference.equals("25") || reference.equals("30")
+          || reference.equals("31") || reference.equals("32") || reference.equals("35")
+          || reference.equals("800013") || reference.equals("800011"))
         id += "_R";
-      if (ff[0].reference.equals("17") || ff[0].reference.equals("18")
-          || ff[0].reference.equals("19"))
+      if (reference.equals("17") || reference.equals("18") || reference.equals("19"))
         id = "report" + id + "_S";
       firstFocus = "'" + id + "', 'id'";
     }
@@ -4619,188 +4200,6 @@ public class Wad extends DefaultHandler {
   }
 
   /**
-   * Auxiliar method to get the query for a tableDir control.
-   * 
-   * @param tableInit
-   *          The name of the parent table.
-   * @param name
-   *          The name of the reference column.
-   * @param required
-   *          Is a required join
-   * @param vecFields
-   *          Vector with the select clause.
-   * @param vecTables
-   *          Vector with the from clause.
-   * @param vecWhere
-   *          Vector with the where clause.
-   * @throws ServletException
-   */
-  public void fieldsOfTableDir(String tableInit, String name, String required,
-      Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere)
-      throws ServletException {
-    final int ilength = name.length();
-    final String tableName = name.substring(0, ilength - 3);
-    final FieldsData fdi[] = FieldsData.identifierColumns(pool, tableName);
-    vecTables.addElement("left join " + tableName + " on (" + tableInit + "." + name + " = "
-        + tableName + "." + name + ")");
-    for (int i = 0; i < fdi.length; i++) {
-      if (fdi[i].reference.equals("19"))
-        fieldsOfTableDir(tableName, fdi[i].name, fdi[i].required, vecFields, vecTables, vecWhere);
-      else
-        vecFields.addElement(tableName + "." + fdi[i].name);
-    }
-  }
-
-  /**
-   * Auxiliar method to get the query for a search control.
-   * 
-   * @param tableInit
-   *          The name of the parent table.
-   * @param name
-   *          The name of the reference column.
-   * @param FilterName
-   *          The filtered name with the real name of the reference column.
-   * @param required
-   *          Is a required join.
-   * @param vecFields
-   *          Vector with the select clause.
-   * @param vecTables
-   *          Vector with the from clause.
-   * @param vecWhere
-   *          Vector with the where clause.
-   * @param itable
-   *          Index to naming the alias of the join tables.
-   * @param reference
-   *          The reference id.
-   * @param referencevalue
-   *          The id of the reference value.
-   * @return Int with the new index to naming the aliases.
-   * @throws ServletException
-   */
-  public int fieldsOfSearch(String tableInit, String name, String FilterName, String required,
-      Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere, int itable,
-      String reference, String referencevalue) throws ServletException {
-    itable++;
-    final int tableNum = itable;
-    EditionFieldsData[] dataSearchs = null;
-    if (reference.equals("30") && !referencevalue.equals(""))
-      dataSearchs = EditionFieldsData.selectSearchs(pool, "", referencevalue);
-    String tableName = "";
-    if (dataSearchs == null || dataSearchs.length == 0) {
-      final int ilength = FilterName.length();
-      if (reference.equals("25"))
-        tableName = "C_ValidCombination";
-      else if (reference.equals("31"))
-        tableName = "M_Locator";
-      else if (reference.equals("800011"))
-        tableName = "M_Product";
-      else
-        tableName = FilterName.substring(0, ilength - 3);
-      if (reference.equals("25"))
-        FilterName = "C_ValidCombination_ID";
-      else if (reference.equals("31"))
-        FilterName = "M_Locator_ID";
-      else if (reference.equals("800011"))
-        FilterName = "M_Product_ID";
-    } else {
-      tableName = dataSearchs[0].reference;
-      FilterName = dataSearchs[0].columnname;
-    }
-    final FieldsData fdi[] = FieldsData.identifierColumns(pool, tableName);
-    final StringBuffer fieldsAux = new StringBuffer();
-    for (int i = 0; i < fdi.length; i++) {
-      if (!fdi[i].columnname.equalsIgnoreCase(FilterName))
-        fieldsAux.append(", ").append(fdi[i].columnname);
-    }
-    vecTables.addElement("left join (select " + FilterName + fieldsAux.toString() + " from "
-        + tableName + ") table" + tableNum + " on (" + tableInit + "." + name + " = table"
-        + tableNum + "." + FilterName + ")");
-    for (int i = 0; i < fdi.length; i++) {
-      if (fdi[i].reference.equals("30") || fdi[i].reference.equals("31")
-          || fdi[i].reference.equals("35") || fdi[i].reference.equals("25")
-          || fdi[i].reference.equals("800011") || fdi[i].reference.equals("19")) {
-        itable = fieldsOfSearch("table" + tableNum, fdi[i].name, fdi[i].columnname, required,
-            vecFields, vecTables, vecWhere, itable, fdi[i].reference, fdi[i].referencevalue);
-      } else {
-        vecFields.addElement("table" + tableNum + "." + fdi[i].columnname);
-      }
-    }
-    return itable;
-  }
-
-  /**
-   * Auxiliar method to get the query for a search control. This'll be used to build combo's
-   * controls.
-   * 
-   * @param tableInit
-   *          The name of the parent table.
-   * @param name
-   *          The name of the reference column.
-   * @param required
-   *          Is a required join.
-   * @param vecFields
-   *          Vector with the select clause.
-   * @param vecTables
-   *          Vector with the from clause.
-   * @param vecWhere
-   *          Vector with the where clause.
-   * @param itable
-   *          Index to naming the alias of the join tables.
-   * @param reference
-   *          The reference id.
-   * @param referencevalue
-   *          The id of the reference value.
-   * @return Int with the new index to naming the aliases.
-   * @throws ServletException
-   */
-  public int fieldsOfSearch2(String tableInit, String name, String required,
-      Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere, int itable,
-      String reference, String referencevalue) throws ServletException {
-    itable++;
-    final int tableNum = itable;
-    String tableName = "";
-    EditionFieldsData[] dataSearchs = null;
-    if (reference.equals("30") && !referencevalue.equals(""))
-      dataSearchs = EditionFieldsData.selectSearchs(pool, "", referencevalue);
-    if (dataSearchs == null || dataSearchs.length == 0) {
-      final int ilength = name.length();
-      if (reference.equals("25"))
-        tableName = "C_ValidCombination";
-      else if (reference.equals("31"))
-        tableName = "M_Locator";
-      else if (reference.equals("800011"))
-        tableName = "M_Product";
-      else
-        tableName = name.substring(0, ilength - 3);
-      if (reference.equals("25"))
-        name = "C_ValidCombination_ID";
-      else if (reference.equals("31"))
-        name = "M_Locator_ID";
-      else if (reference.equals("800011"))
-        name = "M_Product_ID";
-    } else {
-      tableName = dataSearchs[0].reference;
-      name = dataSearchs[0].columnname;
-    }
-    final FieldsData fdi[] = FieldsData.identifierColumns(pool, tableName);
-    if (itable > 1) {
-      vecTables.addElement(" left join " + tableName + " table" + tableNum + " on (" + tableInit
-          + "." + name + " = table" + tableNum + "." + name + ")");
-    }
-    for (int i = 0; i < fdi.length; i++) {
-      if (fdi[i].reference.equals("30") || fdi[i].reference.equals("800011")
-          || fdi[i].reference.equals("31") || fdi[i].reference.equals("35")
-          || fdi[i].reference.equals("25")) {
-        itable = fieldsOfSearch2("table" + tableNum, fdi[i].columnname, fdi[i].required, vecFields,
-            vecTables, vecWhere, itable, fdi[i].reference, fdi[i].referencevalue);
-      } else {
-        vecFields.addElement("table" + tableNum + "." + fdi[i].columnname);
-      }
-    }
-    return itable;
-  }
-
-  /**
    * Method to prepare the XmlEngine object, which is the one in charged of the templates.
    * 
    * @param fileConnection
@@ -4827,6 +4226,7 @@ public class Wad extends DefaultHandler {
    */
   public void createPool(String strFileConnection) {
     pool = new WadConnection(strFileConnection);
+    WADControl.setConnection(pool);
   }
 
   /**
@@ -4912,6 +4312,7 @@ public class Wad extends DefaultHandler {
       jsDateFormat = properties.getProperty("dateFormat.js");
       log4j.info("jsDateFormat: " + jsDateFormat);
       sqlDateFormat = properties.getProperty("dateFormat.sql");
+      WADControl.setDateFormat(sqlDateFormat);
       log4j.info("sqlDateFormat: " + sqlDateFormat);
     } catch (final IOException e) {
       // catch possible io errors from readLine()

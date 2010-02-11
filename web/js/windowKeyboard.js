@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -335,7 +335,9 @@ function setWindowElementFocus(obj, type, event) {
     removeWindowElementFocus(focusedWindowElement_tmp);
     focusedWindowElement = obj;
     focusedWindowElement_tmp = focusedWindowElement;
-    if(!frameLocked) putWindowElementFocus(focusedWindowElement, event);
+    if(!frameLocked) {
+      putWindowElementFocus(focusedWindowElement, event);
+    }
   }
 }
 
@@ -481,6 +483,8 @@ function drawWindowElementFocus(obj) {
       isFirstTime = false;
     } else if (currentWindowElementType == 'genericTree') {
       isFirstTime = false;
+    } else if (currentWindowElementType == 'custom') {  //Added for custom element support
+      isFirstTime = false;
     } else {
     }
   } catch (e) {
@@ -499,6 +503,10 @@ function putWindowElementFocus(obj, event) {
     } else if (currentWindowElementType == 'genericTree') {
       obj.focus();
       focusGenericTree();
+    } else if (currentWindowElementType == 'custom') {  //Added for custom element support
+      if (obj.focusLogic) {
+        obj.focusLogic('focus');
+      }
     } else {
       if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
       } else {
@@ -579,6 +587,10 @@ function eraseWindowElementFocus(obj) {
       blurGrid();
     } else if (previousWindowElementType == 'genericTree') {
       blurGenericTree();
+    } else if (previousWindowElementType == 'custom') {  //Added for custom element support
+      if (obj.focusLogic) {
+        obj.focusLogic('blur');
+      }
     } else {
     }
   } catch (e) {
@@ -601,14 +613,22 @@ function removeWindowElementFocus(obj) {
 }
 
 function mustBeJumped(obj) {
+  if (obj.focusLogic) {  //Added for custom element support
+    return obj.focusLogic('mustBeJumped');
+  }
   if (obj.style.display == 'none') return true;
   if (obj.getAttribute('id') == 'genericTree') { return true; }
   return false;
 }
 
 function mustBeIgnored(obj) {
+  if (obj.focusLogic) {  //Added for custom element support
+    return obj.focusLogic('mustBeIgnored');
+  }
   if (obj.style.display == 'none') return true;
-  if (obj.getAttribute('type') == 'hidden') return true;
+  if (obj.getAttribute('type') == 'hidden') {
+    return true;
+  }
   if (obj.getAttribute('readonly') == 'true' && obj.getAttribute('tabindex') != '1') return true;
   if (obj.readOnly && obj.getAttribute('tabindex') != '1') return true;
   if (obj.getAttribute('disabled') == 'true') return true;
@@ -637,6 +657,13 @@ function couldHaveFocus(obj) {
     if (obj.tagName == 'INPUT' && obj.getAttribute('id') == 'genericTree_dummy_input') {
       currentWindowElementType = 'genericTree';
       return true;
+    }
+  } catch(e) {
+  }
+  try {  //Added for custom element support
+    if (obj.focusLogic) {
+      currentWindowElementType = 'custom';
+      return obj.focusLogic('couldHaveFocus');
     }
   } catch(e) {
   }

@@ -29,8 +29,9 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.reference.Reference;
+import org.openbravo.reference.ui.UIReference;
 
 /**
  * @author Fernando Iriazabal
@@ -41,7 +42,7 @@ public class TableSQLData implements Serializable {
   private static Logger log4j = Logger.getLogger(TableSQLData.class);
   private final String internalPrefix = "@@";
   private static final String FIELD_CONCAT = " || ' - ' || ";
-  private static final String INACTIVE_DATA = "**";
+  public static final String INACTIVE_DATA = "**";
   private VariablesSecureApp vars;
   private ConnectionProvider pool;
   private Hashtable<String, String> parameters = new Hashtable<String, String>();
@@ -65,7 +66,7 @@ public class TableSQLData implements Serializable {
   private Vector<QueryFieldStructure> internalOrderBy = new Vector<QueryFieldStructure>();
   private Vector<String> orderByPosition = new Vector<String>();
   private Vector<String> orderByDirection = new Vector<String>();
-  private int index = 0;
+  public int index = 0;
   private boolean isSameTable = false;
 
   /**
@@ -123,7 +124,7 @@ public class TableSQLData implements Serializable {
    *          String with the value.
    * @throws Exception
    */
-  void setParameter(String name, String value) throws Exception {
+  public void setParameter(String name, String value) throws Exception {
     if (name == null || name.equals(""))
       throw new Exception("Invalid parameter name");
     if (this.parameters == null)
@@ -429,7 +430,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Handler of session info.
    */
-  VariablesSecureApp getVars() {
+  public VariablesSecureApp getVars() {
     return this.vars;
   }
 
@@ -451,7 +452,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return Handler of database connection.
    */
-  ConnectionProvider getPool() {
+  public ConnectionProvider getPool() {
     return this.pool;
   }
 
@@ -473,7 +474,7 @@ public class TableSQLData implements Serializable {
    * 
    * @return String with the tab id.
    */
-  String getTabID() {
+  public String getTabID() {
     return getParameter(internalPrefix + "AD_Tab_ID");
   }
 
@@ -820,7 +821,7 @@ public class TableSQLData implements Serializable {
    * @param _alias
    *          String with the alias.
    */
-  void addSelectField(String _field, String _alias) {
+  public void addSelectField(String _field, String _alias) {
     addSelectField(_field, _alias, false);
   }
 
@@ -902,7 +903,7 @@ public class TableSQLData implements Serializable {
    * @param _alias
    *          String with the alias.
    */
-  void addFromField(String _field, String _alias, String _realName) {
+  public void addFromField(String _field, String _alias, String _realName) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM", _realName);
     if (this.from == null)
       this.from = new Vector<QueryFieldStructure>();
@@ -1133,7 +1134,7 @@ public class TableSQLData implements Serializable {
    * @param _fieldName
    *          String with the field of this parameter.
    */
-  void addFromParameter(String _parameter, String _fieldName, String _realName) {
+  public void addFromParameter(String _parameter, String _fieldName, String _realName) {
     if (this.paramFrom == null)
       this.paramFrom = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM",
@@ -1484,349 +1485,12 @@ public class TableSQLData implements Serializable {
     addFromField(getTableName(), getTableName(), getTableName());
     for (Enumeration<Properties> e = headers.elements(); e.hasMoreElements();) {
       Properties prop = e.nextElement();
-      String ref = prop.getProperty("AD_Reference_ID");
-      if (ref.equals("17") || ref.equals("18") || ref.equals("19") || ref.equals("30")
-          || ref.equals("31") || ref.equals("35") || ref.equals("25") || ref.equals("800011")) {
-        addSelectField(getTableName() + "." + prop.getProperty("ColumnName"), prop
-            .getProperty("ColumnName"));
-        identifier(getTableName(), prop, prop.getProperty("ColumnName") + "_R", getTableName()
-            + "." + prop.getProperty("ColumnName"), false);
-      } else {
-        identifier(getTableName(), prop, prop.getProperty("ColumnName"), getTableName() + "."
-            + prop.getProperty("ColumnName"), false);
-      }
+
+      UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"), prop
+          .getProperty("AD_Reference_Value_ID"));
+      reference.generateSQL(this, prop);
     }
     setWindowFilters();
-  }
-
-  /**
-   * Auxiliar method to build the query with the recursive process to build the foreigns to the
-   * references. It adds fields to the select clause and, if needed, to the from clause.
-   * 
-   * This method is called from TableSQLData.generateSQL()
-   * 
-   * @param parentTableName
-   *          String with the name of the parent table.
-   * @param field
-   *          String with the list of properties of the field to prepare identifier.
-   * @param identifierName
-   *          String with the identifier name.
-   * @param realName
-   *          String identifying tableName.fieldName, this is maintained through recursivity
-   * @param tableRef
-   *          In case the parent reference is a table the actual name for the column is always
-   *          tableID (used for translation)
-   * @throws Exception
-   */
-  void identifier(String parentTableName, Properties field, String identifierName, String realName,
-      boolean tableRef) throws Exception {
-    String reference;
-    if (field == null)
-      return;
-    else
-      reference = field.getProperty("AD_Reference_ID");
-
-    if (reference.equals("17")) {
-      setListQuery(parentTableName, field.getProperty("ColumnName"), field
-          .getProperty("AD_Reference_Value_ID"), identifierName, realName);
-    } else if (reference.equals("18")) {
-      setTableQuery(parentTableName, field.getProperty("ColumnName"), field
-          .getProperty("AD_Reference_Value_ID"), identifierName, realName);
-    } else if (reference.equals("19")) {
-      // TableDir
-      setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field
-          .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
-          realName);
-    } else if (reference.equals("35")) {
-      // PAttribute
-      setTableDirQuery(parentTableName, "M_AttributeSetInstance_ID", field
-          .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
-          realName);
-    } else if (reference.equals("30")) {
-      // Search
-      setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field
-          .getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName,
-          realName);
-    } else if (reference.equals("32")) {
-      // Image
-      setImageQuery(parentTableName, field.getProperty("ColumnNameSearch"), identifierName,
-          realName);
-    } else if (reference.equals("28")) {
-      // Button
-      if (field.getProperty("AD_Reference_Value_ID") != null
-          && !field.getProperty("AD_Reference_Value_ID").equals("")) {
-        setListQuery(parentTableName, field.getProperty("ColumnName"), field
-            .getProperty("AD_Reference_Value_ID"), identifierName, realName);
-      } else
-        addSelectField(formatField((parentTableName + "." + field.getProperty("ColumnName")),
-            reference), identifierName);
-    } else {
-      if (!checkTableTranslation(parentTableName, field, reference, identifierName, realName,
-          tableRef)) {
-        addSelectField(formatField((parentTableName + "." + field.getProperty("ColumnName")),
-            reference), identifierName);
-      }
-    }
-  }
-
-  /**
-   * Checks if the table has any translated table and makes the joins.
-   * 
-   * @param tableName
-   *          String with the name of the table.
-   * @param field
-   *          String with the name of the field.
-   * @param reference
-   *          String with the id of the reference.
-   * @param identifierName
-   *          String with the identifier name. * @param tableRef In case the parent reference is a
-   *          table the actual name for the column is always tableID
-   * @return Boolean to know if the translation were found.
-   * 
-   * @throws Exception
-   */
-  private boolean checkTableTranslation(String tableName, Properties field, String reference,
-      String identifierName, String realName, boolean tableRef) throws Exception {
-    if (tableName == null || tableName.equals("") || field == null)
-      return false;
-    ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(getPool(), field
-        .getProperty("TableName"), field.getProperty("ColumnName"));
-    if (data == null || data.length == 0)
-      return false;
-    int myIndex = this.index++;
-    addSelectField("(CASE WHEN td_trl" + myIndex + "." + data[0].columnname + " IS NULL THEN "
-        + formatField((tableName + "." + field.getProperty("ColumnName")), reference) + " ELSE "
-        + formatField(("td_trl" + myIndex + "." + data[0].columnname), reference) + " END)",
-        identifierName);
-
-    String columnName;
-    if (tableRef) {
-      columnName = "tableID";
-    } else {
-      columnName = data[0].reference;
-    }
-    addFromField("(SELECT AD_Language, " + data[0].reference + ", " + data[0].columnname + " FROM "
-        + data[0].tablename + ") td_trl" + myIndex + " on " + tableName + "." + columnName
-        + " = td_trl" + myIndex + "." + data[0].reference + " AND td_trl" + myIndex
-        + ".AD_Language = ?", "td_trl" + myIndex, realName);
-    addFromParameter("#AD_LANGUAGE", "LANGUAGE", realName);
-    return true;
-  }
-
-  /**
-   * Formats the fields to get a correct output.
-   * 
-   * @param field
-   *          String with the field.
-   * @param reference
-   *          String with the reference id.
-   * @return String with the formated field.
-   */
-  private String formatField(String field, String reference) {
-    String result = "";
-    if (field == null)
-      return "";
-    else if (reference == null || reference.length() == 0)
-      return field;
-
-    if (reference.equals("11")) {
-      // INTEGER
-      result = "CAST(" + field + " AS INTEGER)";
-    } else if (reference.equals("12")/* AMOUNT */
-        || reference.equals("22") /* NUMBER */
-        || reference.equals("23") /* ROWID */
-        || reference.equals("29") /* QUANTITY */
-        || reference.equals("800008") /* PRICE */
-        || reference.equals("800019")/* GENERAL QUANTITY */) {
-      result = "TO_NUMBER(" + field + ")";
-    } else if (reference.equals("15")) {
-      // DATE
-      result = "TO_CHAR("
-          + field
-          + (getVars() == null ? ""
-              : (", '" + getVars().getSessionValue("#AD_SqlDateFormat") + "'")) + ")";
-    } else if (reference.equals("16")) {
-      // DATE-TIME
-      result = "TO_CHAR("
-          + field
-          + (getVars() == null ? ""
-              : (", '" + getVars().getSessionValue("#AD_SqlDateTimeFormat") + "'")) + ")";
-    } else if (reference.equals("24")) {
-      // TIME
-      result = "TO_CHAR(" + field + ", 'HH24:MI:SS')";
-    } else if (reference.equals("20")) {
-      // YESNO
-      result = "COALESCE(" + field + ", 'N')";
-    } else if (reference.equals("23")) {
-      // Binary
-      result = field;
-    } else {
-      result = "COALESCE(TO_CHAR(" + field + "),'')";
-    }
-
-    return result;
-  }
-
-  /**
-   * Transform a fieldprovider into a Properties object.
-   * 
-   * @param field
-   *          FieldProvider object.
-   * @return Properties with the FieldProvider information.
-   * @throws Exception
-   */
-  private Properties fieldToProperties(FieldProvider field) throws Exception {
-    Properties aux = new Properties();
-    if (field != null) {
-      aux.setProperty("ColumnName", field.getField("name"));
-      aux.setProperty("TableName", field.getField("tablename"));
-      aux.setProperty("AD_Reference_ID", field.getField("reference"));
-      aux.setProperty("AD_Reference_Value_ID", field.getField("referencevalue"));
-      aux.setProperty("IsMandatory", field.getField("required"));
-      aux.setProperty("ColumnNameSearch", field.getField("columnname"));
-    }
-    return aux;
-  }
-
-  /**
-   * Sets the image type field in he query.
-   * 
-   * @param tableName
-   *          String with the table name.
-   * @param fieldName
-   *          String with the field name.
-   * @param identifierName
-   *          String with the identifier name.
-   * @throws Exception
-   */
-  private void setImageQuery(String tableName, String fieldName, String identifierName,
-      String realName) throws Exception {
-    int myIndex = this.index++;
-    addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '" + INACTIVE_DATA
-        + "' ELSE '' END) || td" + myIndex + ".imageURL)", identifierName);
-    String tables = "(select IsActive, AD_Image_ID, ImageURL from AD_Image) td" + myIndex;
-    tables += " on " + tableName + "." + fieldName;
-    tables += " = td" + myIndex + ".AD_Image_ID";
-    addFromField(tables, "td" + myIndex, realName);
-  }
-
-  /**
-   * Sets the list reference type in the query.
-   * 
-   * @param tableName
-   *          String with the table name.
-   * @param fieldName
-   *          String with the field name.
-   * @param referenceValue
-   *          String with the reference value.
-   * @param identifierName
-   *          String with the identifier name.
-   * @throws Exception
-   */
-  private void setListQuery(String tableName, String fieldName, String referenceValue,
-      String identifierName, String realName) throws Exception {
-    int myIndex = this.index++;
-    addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '" + INACTIVE_DATA
-        + "' ELSE '' END) || (CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex
-        + ".name ELSE td_trl" + myIndex + ".name END))", identifierName);
-    String tables = "(select IsActive, ad_ref_list_id, ad_reference_id, value, name from ad_ref_list) td"
-        + myIndex;
-    tables += " on ";
-    if (fieldName.equalsIgnoreCase("DocAction"))
-      tables += "(CASE " + tableName + "." + fieldName + " WHEN '--' THEN 'CL' ELSE TO_CHAR("
-          + tableName + "." + fieldName + ") END)";
-    else
-      tables += tableName + "." + fieldName;
-    tables += " = td" + myIndex + ".value AND td" + myIndex + ".ad_reference_id = ?";
-    addFromField(tables, "td" + myIndex, realName);
-    addFromParameter("TD" + myIndex + ".AD_REFERENCE_ID", "KEY", realName);
-    setParameter("TD" + myIndex + ".AD_REFERENCE_ID", referenceValue);
-    addFromField("(SELECT ad_language, name, ad_ref_list_id from ad_ref_list_trl) td_trl" + myIndex
-        + " on td" + myIndex + ".ad_ref_list_id = td_trl" + myIndex + ".ad_ref_list_id AND td_trl"
-        + myIndex + ".ad_language = ?", "td_trl" + myIndex, realName);
-    addFromParameter("#AD_LANGUAGE", "LANGUAGE", realName);
-  }
-
-  /**
-   * Sets the table reference type in the query.
-   * 
-   * @param tableName
-   *          String with the table name.
-   * @param fieldName
-   *          String with the field name.
-   * @param referenceValue
-   *          String with the reference value.
-   * @param identifierName
-   *          String with the identifier name.
-   * @param realName
-   *          String identifying field, used for recursive call
-   * @throws Exception
-   */
-  private void setTableQuery(String tableName, String fieldName, String referenceValue,
-      String identifierName, String realName) throws Exception {
-    int myIndex = this.index++;
-    ComboTableQueryData trd[] = ComboTableQueryData.selectRefTable(getPool(), referenceValue);
-    if (trd == null || trd.length == 0)
-      return;
-    String tables = "(SELECT ";
-    if (trd[0].isvaluedisplayed.equals("Y")) {
-      addSelectField("td" + myIndex + ".VALUE", identifierName);
-      tables += "value, ";
-    }
-    tables += trd[0].keyname + " AS tableID, " + trd[0].name + " FROM ";
-    Properties fieldsAux = fieldToProperties(trd[0]);
-    tables += trd[0].tablename + ") td" + myIndex;
-    tables += " on " + tableName + "." + fieldName + " = td" + myIndex + ".tableID";
-    addFromField(tables, "td" + myIndex, realName);
-    identifier("td" + myIndex, fieldsAux, identifierName, realName, true);
-  }
-
-  /**
-   * Sets the table dir reference type in the query.
-   * 
-   * @param tableName
-   *          String with the table name.
-   * @param fieldName
-   *          String with the field name.
-   * @param parentFieldName
-   *          String with the parent field name.
-   * @param referenceValue
-   *          String with the reference value.
-   * @param identifierName
-   *          String with the identifier name.
-   * @throws Exception
-   */
-  private void setTableDirQuery(String tableName, String fieldName, String parentFieldName,
-      String referenceValue, String identifierName, String realName) throws Exception {
-    int myIndex = this.index++;
-    String name = fieldName;
-    String tableDirName = name.substring(0, name.length() - 3);
-    if (referenceValue != null && !referenceValue.equals("")) {
-      TableSQLQueryData[] search = TableSQLQueryData.searchInfo(getPool(), referenceValue);
-      if (search != null && search.length != 0) {
-        name = search[0].columnname;
-        tableDirName = search[0].tablename;
-      }
-    } else {
-      if (name.equalsIgnoreCase("CreatedBy") || name.equalsIgnoreCase("UpdatedBy")) {
-        tableDirName = "AD_User";
-        name = "AD_User_ID";
-      }
-    }
-    ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(getPool(), tableDirName);
-    String tables = "(SELECT " + name;
-    for (int i = 0; i < trd.length; i++) {
-      // exclude tabledir pk-column as it has already been added in the line above
-      if (!trd[i].name.equals(name)) {
-        tables += ", " + trd[i].name;
-      }
-    }
-    tables += " FROM ";
-    tables += tableDirName + ") td" + myIndex;
-    tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name + "\n";
-    addFromField(tables, "td" + myIndex, realName);
-    for (int i = 0; i < trd.length; i++)
-      identifier("td" + myIndex, fieldToProperties(trd[i]), identifierName, realName, false);
   }
 
   /**
@@ -2001,11 +1665,13 @@ public class TableSQLData implements Serializable {
         _alias = _alias.substring(0, _alias.length() - 2);
       }
       int position = -1;
-      String reference = "";
+      UIReference reference = null;
       Properties myProps = getColumnPosition(_alias);
       if (myProps != null) {
         position = Integer.valueOf(myProps.getProperty("Position")).intValue();
-        reference = myProps.getProperty("AD_Reference_ID");
+
+        reference = Reference.getUIReference(myProps.getProperty("AD_Reference_ID"), myProps
+            .getProperty("AD_Reference_Value_ID"));
       }
       if (position != -1) {
         addOrderByPosition(Integer.toString(position));
@@ -2080,23 +1746,11 @@ public class TableSQLData implements Serializable {
         dataAux.setData("isvisible", ((prop.getProperty("IsDisplayed").equals("Y") && prop
             .getProperty("ShowInRelation").equals("Y")) ? "true" : "false"));
         dataAux.setData("name", prop.getProperty("Name"));
-        String type = "string";
-        if (prop.getProperty("AD_Reference_ID").equals("17")
-            || prop.getProperty("AD_Reference_ID").equals("18")
-            || prop.getProperty("AD_Reference_ID").equals("19")) {
-          type = "dynamicEnum";
-        } else if (prop.getProperty("AD_Reference_ID").equals("800101")) {
-          type = "url";
-        } else if (prop.getProperty("AD_Reference_ID").equals("32")
-            || prop.getProperty("AD_Reference_ID").equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
-          type = "img";
-        } else if (prop.getProperty("AD_Reference_ID").equals("11")) {
-          type = "integer";
-        } else if (prop.getProperty("AD_Reference_ID").equals("12")
-            || prop.getProperty("AD_Reference_ID").equals("22")
-            || prop.getProperty("AD_Reference_ID").equals("800008")) {
-          type = "float";
-        }
+
+        UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"), prop
+            .getProperty("AD_Reference_Value_ID"));
+        String type = reference.getGridType();
+
         dataAux.setData("type", type);
         String strWidth = "";
 

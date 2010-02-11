@@ -77,10 +77,10 @@
 <!--115-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--115-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--115-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--115-->  <NAME><![CDATA[AD_Reference List or Table]]></NAME>
-<!--115-->  <DESCRIPTION><![CDATA[List or Table validation choices]]></DESCRIPTION>
+<!--115-->  <NAME><![CDATA[AD_Reference Subreference]]></NAME>
+<!--115-->  <DESCRIPTION><![CDATA[Subreference validation choices]]></DESCRIPTION>
 <!--115-->  <TYPE><![CDATA[S]]></TYPE>
-<!--115-->  <CODE><![CDATA[AD_Reference.ValidationType=(CASE @AD_Reference_ID@ WHEN '17' THEN 'L' WHEN '25' THEN 'L' WHEN '30' THEN 'S' WHEN '28' THEN 'L' ELSE 'T' END)]]></CODE>
+<!--115-->  <CODE><![CDATA[AD_Reference.ParentReference_ID=@AD_Reference_ID@]]></CODE>
 <!--115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--115--></AD_VAL_RULE>
 

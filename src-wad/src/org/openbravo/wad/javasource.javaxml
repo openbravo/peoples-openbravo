@@ -672,12 +672,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return data;
   }
 
-   private <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] getRelationData(<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data) {
-    if (data!=null) {
-      for (int i=0;i&#60;data.length;i++) {<FIELDS_TMP id="sectionDetailgetRelationData">        data[i].<FIELD_TMP id="fieldRelationName">claveAlmacen</FIELD_TMP> = FormatUtilities.truncate(data[i].<FIELD_TMP id="fieldRelationName">claveAlmacen</FIELD_TMP>, <FIELD_TMP id="fieldMaxLength">35</FIELD_TMP>);</FIELDS_TMP>}
-    }
-    return data;
-  }
 
 <PARAMETER_TMP id="parent">  private void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
       <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="parentwhereclause"></PARAMETER_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel));

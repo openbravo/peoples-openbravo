@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -143,7 +143,7 @@ public class DalMappingGenerator implements OBSingleton {
 
     // now handle the standard columns
     for (final Property p : entity.getProperties()) {
-      if (p.isId() && p.isPrimitive()) { // handled separately
+      if (p.isId()) { // && p.isPrimitive()) { // handled separately
         continue;
       }
 
@@ -272,8 +272,8 @@ public class DalMappingGenerator implements OBSingleton {
         "Method can only handle primary keys with one column");
     final Property p = entity.getIdProperties().get(0);
     final StringBuffer sb = new StringBuffer();
-    sb.append(TAB2 + "<id name=\"" + p.getName() + "\" type=\"" + p.getPrimitiveType().getName()
-        + "\" " + getAccessorAttribute() + " column=\"" + p.getColumnName() + "\">" + NL);
+    sb.append(TAB2 + "<id name=\"" + p.getName() + "\" type=\"string\" " + getAccessorAttribute()
+        + " column=\"" + p.getColumnName() + "\">" + NL);
     if (p.getIdBasedOnProperty() != null) {
       sb.append(TAB3 + "<generator class=\"foreign\">" + NL);
       sb.append(TAB2 + TAB2 + "<param name=\"property\">" + p.getIdBasedOnProperty().getName()

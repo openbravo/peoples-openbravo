@@ -639,6 +639,13 @@ END;   $BODY$
 SELECT pg_temp.insert_register_form_access();
 /-- END
 
+--update parent reference for old modules
+update ad_reference
+   set parentreference_id =( CASE VALIDATIONTYPE WHEN 'S' THEN '30' WHEN 'L' THEN '17' WHEN 'T' THEN '18' end)
+   where validationtype in ('S','L','T')
+   and parentreference_id is null;
+/-- END
+
 CREATE OR REPLACE FUNCTION ad_create_audit_triggers(p_pinstance_id character varying)
   RETURNS void AS
 $BODY1$ DECLARE 

@@ -44,40 +44,6 @@ public class WadActionButton {
   static final int IMAGE_EDITION_HEIGHT = 16;
 
   /**
-   * Checks if the given reference is a numeric type
-   * 
-   * @param reference
-   *          The reference to check.
-   * @return Boolean that indicates if the reference is a numeric type or not.
-   */
-  public static boolean isNumericType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    if (WadUtility.isGeneralNumber(reference) || WadUtility.isDecimalNumber(reference)
-        || WadUtility.isPriceNumber(reference) || WadUtility.isIntegerNumber(reference)
-        || WadUtility.isQtyNumber(reference)) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Checks if the given reference is a date type
-   * 
-   * @param reference
-   *          The reference to check.
-   * @return Boolean that indicates if the reference is a date type or not.
-   */
-  public static boolean isDateType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    if (WadUtility.isDateTimeField(reference)) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Generates the action button call for the java of the window.
    * 
    * @param conn
@@ -139,7 +105,7 @@ public class WadActionButton {
             vecParams.addElement("changeprojectstatus");
           } else
             fab[i].processParams = "";
-          fab[i].processParams += getProcessParamsJava(data, fab[i], vecParams, false);
+          fab[i].processParams += getProcessParamsJava(conn, data, fab[i], vecParams, false);
           fab[i].processCode = "ActionButtonData.process" + fab[i].adProcessId
               + "(this, pinstance);\n";
         }
@@ -208,7 +174,7 @@ public class WadActionButton {
           }
 
           fab[i].processParams = "";
-          fab[i].processParams += getProcessParamsJava(data, fab[i], vecParams, true);
+          fab[i].processParams += getProcessParamsJava(conn, data, fab[i], vecParams, true);
           fab[i].processCode = "new " + fab[i].classname + "().execute(pb);";
         }
       }
@@ -280,7 +246,7 @@ public class WadActionButton {
             vecParams.addElement("changeprojectstatus");
           } else
             fab[i].processParams = "";
-          fab[i].processParams += getProcessParamsJava(data, fab[i], vecParams, false);
+          fab[i].processParams += getProcessParamsJava(conn, data, fab[i], vecParams, false);
           fab[i].processCode = "ActionButtonData.process" + fab[i].adProcessId
               + "(this, pinstance);\n";
         }
@@ -323,7 +289,7 @@ public class WadActionButton {
             data = ProcessRelationData.selectParameters(conn, "", fab[i].adProcessId);
           } catch (final ServletException e) {
           }
-          fab[i].processParams = getProcessParamsJava(data, fab[i], vecParams, true);
+          fab[i].processParams = getProcessParamsJava(conn, data, fab[i], vecParams, true);
         }
 
         fab[i].processCode = "new " + fab[i].classname + "().execute(pb);";
@@ -603,7 +569,7 @@ public class WadActionButton {
    *          Vector of parameters.
    * @return String with all the calls.
    */
-  public static String getProcessParamsJava(ProcessRelationData[] data,
+  public static String getProcessParamsJava(ConnectionProvider conn, ProcessRelationData[] data,
       ActionButtonRelationData fd, Vector<Object> vecParams, boolean isGenericJava) {
     if (fd == null)
       return "";
@@ -613,7 +579,9 @@ public class WadActionButton {
       for (int i = 0; i < data.length; i++) {
         html.append("String str" + Sqlc.TransformaNombreColumna(data[i].columnname));
 
-        if (WadActionButton.isNumericType(data[i].reference)) {
+        WADControl control = WadUtility.getWadControlClass(conn, data[i].reference,
+            data[i].adReferenceValueId);
+        if (control.isNumericType()) {
           html.append(" = vars.getNumericParameter");
         } else {
           html.append(" = vars.getStringParameter");
@@ -629,9 +597,8 @@ public class WadActionButton {
                   ");\n");
         } else {
           html.append("PInstanceProcessData.insertPInstanceParam"
-              + (isNumericType(data[i].adReferenceId) ? "Number"
-                  : (isDateType(data[i].adReferenceId) ? "Date" : "")) + "(this, pinstance, \""
-              + data[i].seqno + "\", \"" + data[i].columnname + "\", str"
+              + (control.isNumericType() ? "Number" : (control.isDate() ? "Date" : ""))
+              + "(this, pinstance, \"" + data[i].seqno + "\", \"" + data[i].columnname + "\", str"
               + Sqlc.TransformaNombreColumna(data[i].columnname)
               + ", vars.getClient(), vars.getOrg(), vars.getUser());\n");
         }
@@ -950,285 +917,6 @@ public class WadActionButton {
     WadUtility.writeFile(fileDir, (fd.columnname + fd.reference) + ".html", xmlDocument.print());
   }
 
-  /*
-   * ########################################################################## #############
-   */
-  /**
-   * Sets the correct format parameter for the xml, which depends on the column type.
-   * 
-   * @param data
-   *          Object with the column info.
-   */
-  public static void xmlFormatAttribute(ProcessRelationData data) {
-    if (data == null)
-      return;
-    if (WadUtility.isIntegerNumber(data.adReferenceId))
-      data.xmlFormat = "INTEGER";
-    else if (WadUtility.isDecimalNumber(data.adReferenceId))
-      data.xmlFormat = "EURO";
-    else if (WadUtility.isQtyNumber(data.adReferenceId))
-      data.xmlFormat = "QTY";
-    else if (WadUtility.isPriceNumber(data.adReferenceId))
-      data.xmlFormat = "PRICE";
-  }
-
-  /**
-   * Returns the string with the xml fields for the xml file.
-   * 
-   * @param fd
-   *          Object with the column info.
-   * @param completeName
-   *          Complete name of the column.
-   * @param maxTextboxLength
-   *          Maximum size for a textbox control.
-   * @param forcedAttribute
-   *          Indicates if the column is a parameter or not.
-   * @return String with the xml code.
-   */
-  public static String xmlFields(ProcessRelationData fd, String completeName, int maxTextboxLength,
-      boolean forcedAttribute) {
-    final StringBuffer html = new StringBuffer();
-    final String strSystemSeparator = System.getProperty("file.separator");
-
-    if (forcedAttribute) {
-      html.append("<PARAMETER ");
-      html.append("id=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("name=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("attribute=\"value\"");
-      if (WadUtility.isDecimalNumber(fd.adReferenceId))
-        html.append(" format=\"euroEdition\"");
-      else if (WadUtility.isQtyNumber(fd.adReferenceId))
-        html.append(" format=\"qtyEdition\"");
-      else if (WadUtility.isPriceNumber(fd.adReferenceId))
-        html.append(" format=\"priceEdition\"");
-      else if (WadUtility.isIntegerNumber(fd.adReferenceId))
-        html.append(" format=\"integerEdition\"");
-      else if (WadUtility.isGeneralNumber(fd.adReferenceId))
-        html.append(" format=\"generalQtyEdition\"");
-      html.append(">");
-      html.append("</PARAMETER>");
-    } else if (fd.adReferenceId.equals("17") || fd.adReferenceId.equals("18")
-        || fd.adReferenceId.equals("19")) { // List
-      html.append(xmlFields(fd, completeName, maxTextboxLength, true));
-      if (fd.isdisplayed.equals("Y")) {
-        html.append("\n<SUBREPORT id=\"report" + Sqlc.TransformaNombreColumna(fd.columnname)
-            + completeName + "\" name=\"report" + Sqlc.TransformaNombreColumna(fd.columnname)
-            + completeName + "\"");
-        html.append(" report=\"org" + strSystemSeparator + "openbravo" + strSystemSeparator
-            + "erpCommon" + strSystemSeparator + "reference" + strSystemSeparator + "List\">\n");
-        html.append("  <ARGUMENT name=\"parameterListSelected\" withId=\""
-            + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\"/>\n");
-        html.append("</SUBREPORT>\n");
-      }
-    } else if (fd.adReferenceId.equals("20") && fd.isdisplayed.equals("Y")) { // YesNo
-      html.append("<PARAMETER ");
-      html.append("id=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("name=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("boolean=\"checked\" withId=\"paramCheck\"");
-      html.append(">");
-      html.append("</PARAMETER>");
-    } else if (fd.adReferenceId.equals("28") && fd.isdisplayed.equals("Y")
-        && !fd.adReferenceValueId.equals("")) { // Button
-      html.append("<PARAMETER ");
-      html.append("id=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("name=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append(" attribute=\"value\">");
-      html.append(Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "</PARAMETER>");
-      html.append("<PARAMETER ");
-      html.append("id=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "_BTN\" ");
-      html.append("name=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\">");
-      html.append("</PARAMETER>");
-    } else if ((fd.adReferenceId.equals("34") || fd.adReferenceId.equals("14"))
-        && fd.isdisplayed.equals("Y")) {
-      html.append("<PARAMETER ");
-      html.append("id=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("name=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append(">");
-      html.append("</PARAMETER>");
-    } else if (Integer.valueOf(fd.fieldlength).intValue() > maxTextboxLength
-        && fd.isdisplayed.equals("Y")) {
-      html.append("<PARAMETER ");
-      html.append("id=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("name=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      if (WadUtility.isDecimalNumber(fd.adReferenceId))
-        html.append(" format=\"euroEdition\"");
-      else if (WadUtility.isQtyNumber(fd.adReferenceId))
-        html.append(" format=\"qtyEdition\"");
-      else if (WadUtility.isPriceNumber(fd.adReferenceId))
-        html.append(" format=\"priceEdition\"");
-      else if (WadUtility.isIntegerNumber(fd.adReferenceId))
-        html.append(" format=\"integerEdition\"");
-      else if (WadUtility.isGeneralNumber(fd.adReferenceId))
-        html.append(" format=\"generalQtyEdition\"");
-      html.append(">");
-      html.append("</PARAMETER>");
-    } else {
-      html.append("<PARAMETER ");
-      html.append("id=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("name=\"" + Sqlc.TransformaNombreColumna(fd.columnname) + completeName + "\" ");
-      html.append("attribute=\"value\"");
-      if (WadUtility.isDecimalNumber(fd.adReferenceId))
-        html.append(" format=\"euroEdition\"");
-      else if (WadUtility.isQtyNumber(fd.adReferenceId))
-        html.append(" format=\"qtyEdition\"");
-      else if (WadUtility.isPriceNumber(fd.adReferenceId))
-        html.append(" format=\"priceEdition\"");
-      else if (WadUtility.isIntegerNumber(fd.adReferenceId))
-        html.append(" format=\"integerEdition\"");
-      else if (WadUtility.isGeneralNumber(fd.adReferenceId))
-        html.append(" format=\"generalQtyEdition\"");
-      html.append(">");
-      html.append("</PARAMETER>");
-    }
-
-    return html.toString();
-  }
-
-  /**
-   * Returns the specific class for the column.
-   * 
-   * @param efd
-   *          Object with the column info.
-   * @return String with the class.
-   */
-  public static String classRequiredUpdateable(ProcessRelationData efd) {
-    final StringBuffer htmltext = new StringBuffer();
-    String strAux = "";
-    if (WadUtility.isGeneralNumber(efd.adReferenceId)
-        || WadUtility.isDecimalNumber(efd.adReferenceId)
-        || WadUtility.isQtyNumber(efd.adReferenceId) || WadUtility.isPriceNumber(efd.adReferenceId)
-        || WadUtility.isIntegerNumber(efd.adReferenceId)) {
-      strAux = " number";
-    }
-    String strType = "dojoValidateValid";
-    String classType = "TextBox";
-    if (WadUtility.isSelectType(efd.adReferenceId)) {
-      strType = "Combo";
-      classType = "Combo";
-    }
-    if (efd.required.equals("Y"))
-      htmltext.append(" class=\"").append(strType).append(" required").append(strAux).append(" ")
-          .append(classType).append("_OneCell_width\" ");
-    else if (!strAux.equals(""))
-      htmltext.append(" class=\"").append(strType).append(strAux).append(" ").append(classType)
-          .append("_OneCell_width\" ");
-
-    return htmltext.toString();
-  }
-
-  /**
-   * Returns the code of a control in html.
-   * 
-   * @param efd
-   *          Object with the column info.
-   * @param completeName
-   *          Suffix for the name.
-   * @param completeID
-   *          Suffix for the id.
-   * @param isupdateable
-   *          If is an updateable column.
-   * @param maxTextboxLength
-   *          Maximum size for the textbox control.
-   * @param forcedAttribute
-   *          If is an attribute.
-   * @param isdesigne
-   *          If is a design control.
-   * @return String with the html code.
-   */
-  public static String htmlFields(ProcessRelationData efd, String completeName, String completeID,
-      boolean isupdateable, int maxTextboxLength, boolean forcedAttribute, boolean isdesigne) {
-    final StringBuffer html = new StringBuffer();
-
-    if (forcedAttribute) {
-      html.append("<input type=\"hidden\"");
-      html.append(" name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnname) + completeName);
-      html.append("\" id=\"" + Sqlc.TransformaNombreColumna(efd.columnname) + completeID
-          + "\" value=\"");
-      if (!isdesigne)
-        html.append("xxV");
-      if (WadUtility.isGeneralNumber(efd.adReferenceId)
-          || WadUtility.isDecimalNumber(efd.adReferenceId)
-          || WadUtility.isQtyNumber(efd.adReferenceId)
-          || WadUtility.isPriceNumber(efd.adReferenceId))
-        html.append("\" onkeydown=\"autoCompleteNumber(this, true, true, event);return true;");
-      else if (WadUtility.isIntegerNumber(efd.adReferenceId))
-        html.append("\" onkeydown=\"autoCompleteNumber(this, false, true, event);return true;");
-      html.append("\">");
-    } else if ((efd.adReferenceId.equals("17") || efd.adReferenceId.equals("18") || efd.adReferenceId
-        .equals("19"))
-        && efd.isdisplayed.equals("Y")) { // List or Table or TableDir
-      html.append("<select name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnname)
-          + completeName + "\"");
-      html.append(classRequiredUpdateable(efd));
-      html.append(" id=\"report");
-      html.append(efd.columnname + completeID + "_S\"");
-      html.append(">");
-      if (!efd.required.equals("Y"))
-        html.append("<option value=\"\"></option>");
-      html.append("<div id=\"report");
-      html.append(Sqlc.TransformaNombreColumna(efd.columnname) + completeID + "\"></div>");
-      html.append("</select>");
-    } else if ((efd.adReferenceId.equals("34") || efd.adReferenceId.equals("14") || (!efd.adReferenceId
-        .equals("20") && (Integer.valueOf(efd.fieldlength).intValue() > maxTextboxLength)))
-        && efd.isdisplayed.equals("Y")) { // TEXTAREA
-      html.append("<textarea cols=\"" + efd.fieldlength + "\" rows=\"3\" name=\"inp"
-          + Sqlc.TransformaNombreColumna(efd.columnname));
-      html.append(completeName + "\" id=\"" + Sqlc.TransformaNombreColumna(efd.columnname)
-          + completeID + "\" ");
-      html.append(classRequiredUpdateable(efd));
-      html.append(">");
-      if (!isdesigne)
-        html.append("xxV");
-      html.append("</textarea>");
-    } else {
-      html.append("<input type=\"");
-      if (efd.isdisplayed.equals("N")) {
-        html.append("hidden\"");
-      } else if (efd.adReferenceId.equals("20")) { // YesNo
-        html.append("checkbox\"");
-      } else {
-        html.append("text\"");
-        if (WadUtility.isGeneralNumber(efd.adReferenceId)
-            || WadUtility.isDecimalNumber(efd.adReferenceId)
-            || WadUtility.isQtyNumber(efd.adReferenceId)
-            || WadUtility.isPriceNumber(efd.adReferenceId))
-          html.append(" onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\"");
-        else if (WadUtility.isIntegerNumber(efd.adReferenceId))
-          html.append(" onkeydown=\"autoCompleteNumber(this, false, true, event);return true;\"");
-        html.append(" size=\"" + efd.fieldlength + "\" ");
-        html.append(classRequiredUpdateable(efd));
-        if (!WadUtility.isSearchType(efd.adReferenceId))
-          html.append(" maxlength=\"" + efd.fieldlength + "\"");
-      }
-      html.append(" name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnname) + completeName);
-      html.append("\" id=\"" + Sqlc.TransformaNombreColumna(efd.columnname) + completeID + "\" ");
-      html.append("value=\"");
-      if (efd.isdisplayed.equals("N")) {
-        if (!isdesigne)
-          html.append("xxV");
-      } else if (efd.adReferenceId.equals("20")) {
-        html.append("Y");
-      } else {
-        if (!isdesigne)
-          html.append("xxV");
-      }
-      html.append("\"");
-      if (efd.isdisplayed.equals("Y") && isupdateable && WadUtility.isDateField(efd.adReferenceId)) { // Date.
-        // Put
-        // a
-        // calendar
-        html.append(" onkeyup=\"auto_completar_fecha(this);return true;\"");
-      } else if (efd.isdisplayed.equals("Y") && isupdateable
-          && WadUtility.isTimeField(efd.adReferenceId)) { // Time. Put
-        // a clock
-        html.append(" onkeyup=\"auto_completar_hora(this, true);return true;\"");
-      }
-      html.append(">");
-    }
-
-    return html.toString();
-  }
-
   /**
    * Searchs a field in a vector.
    * 
@@ -1249,155 +937,4 @@ public class WadActionButton {
     return "";
   }
 
-  /**
-   * Generates the js command for the searchs.
-   * 
-   * @param efd
-   *          Object with the column info.
-   * @param fromButton
-   *          Boolean that indicates if is a button.
-   * @param vecFields
-   *          Vector with the fields.
-   * @param conn
-   *          Object with the database connection.
-   * @return String with the js command.
-   */
-  public static String searchsCommand(ProcessRelationData efd, boolean fromButton,
-      Vector<Object> vecFields, ConnectionProvider conn) {
-    final StringBuffer params = new StringBuffer();
-    final StringBuffer html = new StringBuffer();
-    final String strName = FormatUtilities.replace(efd.searchname.trim());
-    if (!fromButton) {
-      params.append(", 'Command'");
-      params.append(", 'KEY'");
-    }
-    params.append(", 'WindowID'");
-    params.append(", document.frmMain.inpwindowId.value");
-    String searchName = ((efd.reference != null && efd.reference.equals("31")) ? "/info/Locator"
-        : "/info/" + strName)
-        + "_FS.html";
-    EditionFieldsData[] fieldsSearch = null;
-    try {
-      if (efd.reference != null && efd.reference.equals("30") && efd.adReferenceValueId != null
-          && !efd.adReferenceValueId.equals(""))
-        fieldsSearch = EditionFieldsData.selectSearchs(conn, "I", efd.adReferenceValueId);
-    } catch (final ServletException ex) {
-      ex.printStackTrace();
-    }
-    if (fieldsSearch != null && fieldsSearch.length > 0) {
-      searchName = fieldsSearch[0].mappingname;
-      if (!fieldsSearch[0].referencevalue.equals("")) {
-        for (int i = 0; i < fieldsSearch.length; i++) {
-          final String field = findField(vecFields, fieldsSearch[i].referencevalue);
-          if (!field.equals("")) {
-            params.append(", 'inp").append(fieldsSearch[i].columnnameinp).append("'");
-            params
-                .append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-          }
-        }
-      }
-    } else {
-      if (efd.name.equalsIgnoreCase("PRODUCT")) {
-        String field = findField(vecFields, "m_pricelist_id");
-        if (!field.equals("")) {
-          params.append(", 'inpPriceList'");
-          params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-        }
-        field = findField(vecFields, "m_warehouse_id");
-        if (!field.equals("")) {
-          params.append(", 'inpWarehouse'");
-          params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-        }
-        field = findField(vecFields, "dateordered");
-        if (!field.equals("")) {
-          params.append(", 'inpDate'");
-          params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-        }
-      }
-    }
-    html.append("openSearch(null, null, '..").append(searchName).append(
-        "', null, false, 'frmMain', 'inp").append(Sqlc.TransformaNombreColumna(efd.columnname))
-        .append("', 'inp").append(Sqlc.TransformaNombreColumna(efd.columnname)).append(
-            "_R', document.frmMain.inp").append(Sqlc.TransformaNombreColumna(efd.columnname))
-        .append("_R.value").append(params.toString()).append(");");
-    return html.toString();
-  }
-
-  /**
-   * Generates the html code of the search button.
-   * 
-   * @param efd
-   *          Object with the column info.
-   * @param maxTextboxLength
-   *          Maximum size for a textbox control.
-   * @param vecFields
-   *          Vector with the fields.
-   * @param conn
-   *          Object with the database connection.
-   * @return String with the button code.
-   */
-  public static String searchs(ProcessRelationData efd, int maxTextboxLength,
-      Vector<Object> vecFields, ConnectionProvider conn) {
-    final StringBuffer html = new StringBuffer();
-    String strName = FormatUtilities.replace(efd.searchname.trim());
-    if (efd.adReferenceId.equals("31")) {
-      strName = "Locator";
-    } else if (efd.name.toUpperCase().indexOf("BUSINESS") != -1) {
-      html.append(htmlFields(efd, "_LOC", "_LOC", true, maxTextboxLength, true, true));
-      html.append(htmlFields(efd, "_CON", "_CON", true, maxTextboxLength, true, true));
-    } else if (efd.name.equalsIgnoreCase("PRODUCT")) {
-      html.append(htmlFields(efd, "_PLIST", "_PLIST", true, maxTextboxLength, true, true));
-      html.append(htmlFields(efd, "_PSTD", "_PSTD", true, maxTextboxLength, true, true));
-      html.append(htmlFields(efd, "_UOM", "_UOM", true, maxTextboxLength, true, true));
-      html.append(htmlFields(efd, "_PLIM", "_PLIM", true, maxTextboxLength, true, true));
-      html.append(htmlFields(efd, "_CURR", "_CURR", true, maxTextboxLength, true, true));
-    }
-    html.append("<a href=\"#\"");
-    html.append("onClick=\"" + searchsCommand(efd, true, vecFields, conn) + "return false;\" ");
-    html.append("onMouseOut=\"window.status='';return true;\"");
-    html.append("onMouseOver=\"window.status='").append(efd.referenceName).append(
-        "';return true;\" class=\"windowbutton\"><img width=\"").append(IMAGE_EDITION_WIDTH)
-        .append("\" height=\"").append(IMAGE_EDITION_HEIGHT).append("\" alt=\"").append(efd.name)
-        .append("\" title=\"").append(efd.name).append("\"");
-    html.append(" border=\"0\" src=\"../../../../../web/images/" + strName + ".jpg\" id=\"button"
-        + strName + "\"></a>");
-    return html.toString();
-  }
-
-  /**
-   * Generates the html code of the product search button.
-   * 
-   * @param efd
-   *          Object with the column info.
-   * @param maxTextboxLength
-   *          Maximum size of the textbox control.
-   * @param vecFields
-   *          Vector with the fields.
-   * @param conn
-   *          Object with the database connection.
-   * @return String with the control code.
-   */
-  public static String productSearch(ProcessRelationData efd, int maxTextboxLength,
-      Vector<Object> vecFields, ConnectionProvider conn) {
-    final StringBuffer html = new StringBuffer();
-    efd.searchname = "Product Complete";
-    html.append(htmlFields(efd, "_LOC", "_LOC", true, maxTextboxLength, true, true));
-    html.append(htmlFields(efd, "_ATR", "_ATR", true, maxTextboxLength, true, true));
-    html.append(htmlFields(efd, "_PQTY", "_PQTY", true, maxTextboxLength, true, true));
-    html.append(htmlFields(efd, "_PUOM", "_PUOM", true, maxTextboxLength, true, true));
-    html.append(htmlFields(efd, "_QTY", "_QTY", true, maxTextboxLength, true, true));
-    html.append(htmlFields(efd, "_UOM", "_UOM", true, maxTextboxLength, true, true));
-
-    html.append("<a href=\"#\"");
-    html.append("onClick=\"" + searchsCommand(efd, true, vecFields, conn) + "return false;\" ");
-    html.append("onMouseOut=\"window.status='';return true;\"");
-    html.append("onMouseOver=\"window.status='").append(efd.referenceName).append(
-        "';return true;\" class=\"windowbutton\"><img width=\"").append(IMAGE_EDITION_WIDTH)
-        .append("\" height=\"").append(IMAGE_EDITION_HEIGHT).append("\" alt=\"").append(efd.name)
-        .append("\" title=\"").append(efd.name).append("\"");
-    html.append(" border=\"0\" src=\"../../../../../web/images/"
-        + FormatUtilities.replace(efd.searchname.trim()) + ".jpg\" id=\"button"
-        + FormatUtilities.replace(efd.searchname.trim()) + "\"></a>");
-    return html.toString();
-  }
 }

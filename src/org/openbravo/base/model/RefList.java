@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,17 @@
 
 package org.openbravo.base.model;
 
+import org.apache.log4j.Logger;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
+
 /**
  * A limited mapping of the ref_list to support validation of string types.
  * 
  * @author mtaal
  */
 public class RefList extends ModelObject {
+  private static final Logger log = Logger.getLogger(RefList.class);
 
   private Reference reference;
 
@@ -36,6 +41,13 @@ public class RefList extends ModelObject {
 
   public void setReference(Reference reference) {
     this.reference = reference;
+    final DomainType domainType = reference.getDomainType();
+    if (!(domainType instanceof StringEnumerateDomainType)) {
+      log.error("Domain type of reference " + reference.getId()
+          + " is not a TableDomainType but a " + domainType);
+    } else {
+      ((StringEnumerateDomainType) domainType).addEnumerateValue(value);
+    }
   }
 
   public String getValue() {
@@ -46,7 +58,10 @@ public class RefList extends ModelObject {
     this.value = value;
   }
 
+  /**
+   * @deprecated, functionality is now implemented in {@link #setReference(Reference)}
+   */
   public void setAllowedValue() {
-    reference.addAllowedValue(value);
   }
+
 }

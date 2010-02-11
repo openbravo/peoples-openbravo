@@ -21,8 +21,6 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -35,6 +33,8 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
+import org.openbravo.reference.Reference;
+import org.openbravo.reference.ui.UIReference;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -251,16 +251,6 @@ public class DataGrid extends HttpSecureAppServlet {
     log4j.debug("relativeOffset: " + offset + " absoluteOffset: " + absoluteOffset);
     offset = absoluteOffset;
 
-    // values used for formatting Amounts (read from Format.xml file)
-    DecimalFormat numberFormatDecimal = Utility.getFormat(vars, "euroRelation");
-    // values used for formatting Quantities (read from Format.xml file)
-    DecimalFormat numberFormatQuantity = Utility.getFormat(vars, "qtyRelation");
-    // values used for formatting Prices (read from Format.xml file)
-    DecimalFormat numberFormatPrice = Utility.getFormat(vars, "priceRelation");
-    // values used for formatting General (read from Format.xml file)
-    DecimalFormat numberFormatGeneral = Utility.getFormat(vars, "generalQtyRelation");
-    // values used for formatting Integer (read from Format.xml file)
-    DecimalFormat numberFormatInteger = Utility.getFormat(vars, "integerRelation");
     if (tableSQL != null && headers != null) {
       try {
         // Prepare SQL adding the user filter parameters
@@ -332,54 +322,14 @@ public class DataGrid extends HttpSecureAppServlet {
 
           if ((data[j].getField(columnname)) != null) {
             String adReferenceId = headers[k].getField("adReferenceId");
-            String value = data[j].getField(columnname);
+
+            UIReference reference = Reference.getUIReference(adReferenceId, adReferenceId);
+            String value = reference.formatGridValue(vars, data[j].getField(columnname));
+
+            // Old Image reference, leave it as is
             if (adReferenceId.equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            if (adReferenceId.equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
-              strRowsData.append("../utility/ShowImage?id=");
-            }
-            // Numeric formats:
-            // Decimal: 12, 22
-            // Qty: 29
-            // Price: 800008
-            // Integer: 11
-            // General: 800019
-            if ((adReferenceId.equals("12") || adReferenceId.equals("22"))
-                && numberFormatDecimal != null) {
-              try {
-                value = numberFormatDecimal.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            if ((adReferenceId.equals("29")) && numberFormatQuantity != null) {
-              try {
-                value = numberFormatQuantity.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            if ((adReferenceId.equals("800008")) && numberFormatPrice != null) {
-              try {
-                value = numberFormatPrice.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            if ((adReferenceId.equals("11")) && numberFormatInteger != null) {
-              try {
-                value = numberFormatInteger.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            if ((adReferenceId.equals("800019")) && numberFormatGeneral != null) {
-              try {
-                value = numberFormatGeneral.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
+
             strRowsData.append(value.replaceAll("<b>", "").replaceAll("<B>", "").replaceAll("</b>",
                 "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll("<I>", "").replaceAll(
                 "</i>", "").replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>",

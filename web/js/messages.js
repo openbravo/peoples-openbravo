@@ -108,7 +108,7 @@ function getType(index) {
 		1.- Confirm -> muestra una ventana de confirmación que tiene 2 botones (OK y CANCEL)
 		2.- Prompt -> muestra una ventana de petición de un parámetro con 2 botones (OK y CANCEL)
 */
-function showMessage(_text, _type, _defaultValue) {
+function showStdMessage(_text, _type, _defaultValue) {
 	switch (_type) {
 	case 1:return confirm(_text);
 			 break;
@@ -117,6 +117,11 @@ function showMessage(_text, _type, _defaultValue) {
 	default: alert(_text);
 	}
 	return true;
+}
+
+// Deprecated in 2.50, use showStdMessage instead
+function showMessage(_text, _type, _defaultValue) {
+  return showStdMessage(_text, _type, _defaultValue);
 }
 
 // Deprecated in 2.50, use showJSMessage instead
@@ -145,7 +150,7 @@ function showJSMessage(index, _language, clean)
 	}
 	var type = getType(index, _language);
 	if (type==null) type=gDefaultType;
-	return showMessage(strMessage, type, strDefault);
+	return showStdMessage(strMessage, type, strDefault);
 }
 
 
