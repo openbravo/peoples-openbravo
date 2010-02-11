@@ -219,7 +219,7 @@
           FOR CUR_PP IN
             (SELECT M_PRODUCTIONPLAN.*,
               M_PRODUCT.C_UOM_ID,  
-              (CASE WHEN M_PRODUCT.ATTRSETVALUETYPE<>'D' THEN NULL ELSE M_PRODUCT.M_AttributeSetInstance_ID END) AS M_AttributeSetInstance_ID
+              (CASE WHEN M_PRODUCT.ATTRSETVALUETYPE='D' THEN M_PRODUCT.M_AttributeSetInstance_ID ELSE NULL END) AS M_AttributeSetInstance_ID
             FROM M_PRODUCTIONPLAN,
               M_PRODUCT
             WHERE M_PRODUCTIONPLAN.M_Product_ID=M_PRODUCT.M_Product_ID
@@ -337,7 +337,7 @@
                         CUR_BOM.Org_ID, 'Y', now(), '0',
                         now(), '0', CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
                         -v_Qty, v_storage.M_Locator_ID, 
-                        (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=CUR_BOM.M_ProductBOM_ID)<>'F' THEN v_storage.M_AttributeSetInstance_ID ELSE NULL END), 
+                        (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=CUR_BOM.M_ProductBOM_ID)='F' THEN NULL ELSE v_storage.M_AttributeSetInstance_ID END), 
                         v_storage.M_Product_UOM_ID,
                         -v_QtyOrder
                       )
