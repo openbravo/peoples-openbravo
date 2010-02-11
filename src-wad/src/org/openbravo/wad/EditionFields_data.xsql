@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,7 @@
 
 
 
-<SqlClass name="EditionFieldsData" package="org.openbravo.wad">
+<SqlClass name="EditionFieldsData" package="org.openbravo.wad" accessModifier="public">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql><![CDATA[
@@ -32,7 +32,8 @@
       ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) as displaylogic, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup, ad_field.ad_tab_id as tabid, '' as ad_column_id, ad_column.ad_val_rule_id, '' as displaylength, '' as value, '' as ad_window_id, 
       AD_COLUMN.ValueMin, AD_COLUMN.ValueMax, REPLACE(REPLACE(REPLACE(REPLACE(ad_column.columnname, 'Substitute', 'M_Product'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') as realName, mom.mappingname as java_class_name, '' as realcolumnname, '' as xsqltext, ad_column.isEncrypted AS isColumnEncrypted, ad_column.isDesencryptable, 
       ad_reference.name as reference_name, ad_reference.name as reference_name_trl, '' AS CLASSNAME, '' AS MAPPINGNAME, ad_callout.name as calloutname, 
-      moc.classname as classname_callout, momc.mappingname as mappingname_callout, '' AS COLUMNNAME_END, ad_field.isactive, ad_column.readonlylogic 
+      moc.classname as classname_callout, momc.mappingname as mappingname_callout, '' AS COLUMNNAME_END, ad_field.isactive, ad_column.readonlylogic, 
+      ad_column.ad_reference_id, ad_column.ad_reference_value_id
       FROM ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id
                      left join ad_process on ad_column.ad_process_id = ad_process.ad_process_id
                      left join ad_reference on ad_column.ad_reference_id = ad_reference.ad_reference_id
@@ -67,7 +68,7 @@
                    else 'Y'
                end), 'Y', 'N', 'N', c.FIELDLENGTH, c.name, null, 
              null, 'Y', '@ShowAudit@=''Y''', 'N', '1000100001' as fieldgroup, tb.ad_tab_id, null, null, null, null, null, null, null, c.columnname, 
-             null, null, null, 'N', 'N', r.name, r.name, null, null, null, null, null, null, 'Y', null
+             null, null, null, 'N', 'N', r.name, r.name, null, null, null, null, null, null, 'Y', null, c.ad_reference_id, c.ad_reference_value_id
        from ad_column c, ad_tab tb, ad_reference r
       where c.ad_table_id = tb.ad_table_id
         and upper(columnname) in ('CREATED', 'CREATEDBY', 'UPDATED', 'UPDATEDBY')
@@ -167,33 +168,6 @@
     <Parameter name="tab"/>
   </SqlMethod>
 
-  <SqlMethod name="selectionColumns" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
-      ad_field.name as Name, ismandatory as required, ad_reference_value_id as referenceValue, 
-      ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
-      isSameLine as issameline, isDisplayed as isdisplayed, isupdateable as isupdateable, 
-      isparent, ad_column.FIELDLENGTH, ad_element.name as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, ad_field.DISPLAYLOGIC, ad_field.ad_tab_id as tabid, 
-      ad_callout.name as calloutname, moc.classname as classname_callout, momc.mappingname as mappingname_callout
-      FROM ad_field, 
-           ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id
-           left join ad_callout on ad_column.ad_callout_id = ad_callout.ad_callout_id 
-           left join ad_model_object moc on ad_callout.ad_callout_id = moc.ad_callout_id 
-                              AND moc.action = 'C' 
-                              AND moc.isactive = 'Y'
-                              AND moc.isdefault = 'Y' 
-           left join ad_model_object_mapping momc on moc.ad_model_object_id = momc.ad_model_object_id 
-                              AND momc.isactive = 'Y' 
-                              AND momc.isdefault = 'Y'
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        AND ad_field.ad_tab_id = ?
-        AND upper(ad_column.columnname) in ('VALUE', 'NAME', 'DESCRIPTION')
-      ORDER BY ad_field.SEQNO
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
   <SqlMethod name="fieldGroupName" type="preparedStatement" return="String" default="">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql>
@@ -254,13 +228,14 @@
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql><![CDATA[
       SELECT R.NAME, T.TABLENAME AS REFERENCE, C.COLUMNNAME AS COLUMNNAME, RSC.NAME AS COLUMNNAMEINP, 
-      RSC.COLUMNNAME AS REFERENCEVALUE, MO.CLASSNAME, MOM.MAPPINGNAME, RSC.COLUMN_SUFFIX AS COLUMNNAME_END 
+      RSC.COLUMNNAME AS REFERENCEVALUE, MO.CLASSNAME, MOM.MAPPINGNAME, RSC.COLUMN_SUFFIX AS COLUMNNAME_END,
+      c.ad_column_id
       FROM AD_REFERENCE R left join AD_REF_SEARCH RS  on R.AD_REFERENCE_ID = RS.AD_REFERENCE_ID 
                           left join AD_REF_SEARCH_COLUMN RSC on RS.AD_REF_SEARCH_ID = RSC.AD_REF_SEARCH_ID
                                 AND RSC.COLUMNTYPE = ?, 
            AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_MAPPING MOM, 
            AD_TABLE T, AD_COLUMN C 
-      WHERE R.VALIDATIONTYPE = 'S' 
+      WHERE R.parentreference_id = '30' 
       AND R.AD_REFERENCE_ID = ?
       AND R.AD_REFERENCE_ID = MO.AD_REFERENCE_ID
       AND MO.ACTION = 'S' 

@@ -19,8 +19,10 @@
 package org.openbravo.wad.controls;
 
 import java.util.Properties;
+import java.util.Vector;
 
-import org.openbravo.wad.WadUtility;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.wad.EditionFieldsData;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADNumber extends WADControl {
@@ -182,24 +184,127 @@ public class WADNumber extends WADControl {
 
   private void setFormat(XmlDocument xmlDocument) {
     xmlDocument.setParameter("columnName", getData("ColumnName"));
-    if (WadUtility.isDecimalNumber(getData("AD_Reference_ID"))) {
+    if (isDecimalNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "euroEdition");
       xmlDocument.setParameter("outputFormat", "euroEdition");
-    } else if (WadUtility.isQtyNumber(getData("AD_Reference_ID"))) {
+    } else if (isQtyNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "qtyEdition");
       xmlDocument.setParameter("outputFormat", "qtyEdition");
-    } else if (WadUtility.isPriceNumber(getData("AD_Reference_ID"))) {
+    } else if (isPriceNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "priceEdition");
       xmlDocument.setParameter("outputFormat", "priceEdition");
-    } else if (WadUtility.isIntegerNumber(getData("AD_Reference_ID"))) {
+    } else if (isIntegerNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "integerEdition");
       xmlDocument.setParameter("outputFormat", "integerEdition");
-    } else if (WadUtility.isGeneralNumber(getData("AD_Reference_ID"))) {
+    } else if (isGeneralNumber(getData("AD_Reference_ID"))) {
       xmlDocument.setParameter("columnFormat", "generalQtyEdition");
       xmlDocument.setParameter("outputFormat", "generalQtyEdition");
     } else {
       xmlDocument.setParameter("columnFormat", "qtyEdition");
       xmlDocument.setParameter("outputFormat", "generalQtyEdition");
+    }
+  }
+
+  private boolean isDecimalNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return (reference.equals("12") || reference.equals("22"));
+  }
+
+  private boolean isGeneralNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return reference.equals("800019");
+  }
+
+  private boolean isQtyNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return reference.equals("29");
+  }
+
+  private boolean isPriceNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return reference.equals("800008");
+
+  }
+
+  private boolean isIntegerNumber(String reference) {
+    if (reference == null || reference.equals(""))
+      return false;
+    return reference.equals("11");
+  }
+
+  public boolean isNumericType() {
+    return true;
+  }
+
+  public String getSQLCasting() {
+    return "TO_NUMBER";
+  }
+
+  public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
+    final EditionFieldsData aux = new EditionFieldsData();
+    aux.adColumnId = selCol.adColumnId;
+    aux.name = selCol.name;
+    aux.reference = selCol.reference;
+    aux.referencevalue = selCol.referencevalue;
+    aux.adValRuleId = selCol.adValRuleId;
+    aux.fieldlength = selCol.fieldlength;
+    aux.displaylength = selCol.displaylength;
+    aux.columnname = selCol.columnname + "_f";
+    aux.realcolumnname = selCol.realcolumnname;
+    aux.columnnameinp = selCol.columnnameinp;
+    aux.value = selCol.value;
+    aux.adWindowId = selCol.adWindowId;
+    aux.htmltext = "strParam" + aux.columnname + ".equals(\"\")";
+    selCol.xmltext = " + ((strParam" + selCol.columnname + ".equals(\"\") || strParam"
+        + selCol.columnname + ".equals(\"%\"))?\"\":\" AND ";
+
+    selCol.xmltext += "(" + tableName + "." + selCol.realcolumnname + ") >= ";
+    selCol.xsqltext = tableName + "." + selCol.realcolumnname + " >= ";
+
+    selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
+    selCol.xmltext += " \")";
+    selCol.xsqltext += "(?" + ") ";
+    aux.columnnameinp = FormatUtilities.replace(selCol.columnname) + "_f";
+    aux.xmltext = " + ((strParam" + aux.columnname + ".equals(\"\") || strParam" + aux.columnname
+        + ".equals(\"%\"))?\"\":\" AND";
+
+    aux.xmltext += "(" + tableName + "." + aux.realcolumnname + ") < ";
+    aux.xsqltext = tableName + "." + aux.realcolumnname + " < ";
+
+    aux.xmltext += "TO_NUMBER('";
+    aux.xsqltext += "TO_NUMBER";
+
+    aux.xmltext += "\" + strParam" + aux.columnname + " + \"";
+
+    aux.xmltext += "')";
+    aux.xmltext += " + 1 \")";
+    aux.xsqltext += "(?" + ") + 1 ";
+    vecAuxSelCol.addElement(aux);
+
+  }
+
+  public String getDisplayLogic(boolean display, boolean isreadonly) {
+    StringBuffer displayLogic = new StringBuffer();
+
+    displayLogic.append(super.getDisplayLogic(display, isreadonly));
+
+    if (!getData("IsReadOnly").equals("Y") && !isreadonly) {
+      displayLogic.append("displayLogicElement('");
+      displayLogic.append(getData("ColumnName"));
+      displayLogic.append("_btt', ").append(display ? "true" : "false").append(");\n");
+    }
+    return displayLogic.toString();
+  }
+
+  public String getDefaultValue() {
+    if (getData("required").equals("Y")) {
+      return "0";
+    } else {
+      return "";
     }
   }
 }

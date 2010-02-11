@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="VALIDATIONTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="VALIDATIONTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -57,6 +57,26 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
       </column>
+      <column name="ISBASEREFERENCE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA[CASE WHEN VALIDATIONTYPE='D' THEN 'Y' ELSE 'N' END]]></onCreateDefault>
+      </column>
+      <column name="PARENTREFERENCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA[CASE VALIDATIONTYPE WHEN 'S' THEN '30' WHEN 'L' THEN '17' WHEN 'T' THEN '18' ELSE NULL END]]></onCreateDefault>
+      </column>
+      <column name="MODEL_IMPL" primaryKey="false" required="false" type="VARCHAR" size="300" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="WAD_IMPL" primaryKey="false" required="false" type="VARCHAR" size="300" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UI_IMPL" primaryKey="false" required="false" type="VARCHAR" size="300" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_REFERENCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -65,6 +85,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_REFERENCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REFERENCE" name="AD_REFERENCE_AD_REFERENCE">
+        <reference local="PARENTREFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <unique name="AD_REFERENCE_NAME">
         <unique-column name="NAME"/>

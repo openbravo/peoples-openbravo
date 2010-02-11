@@ -18,10 +18,18 @@
  */
 package org.openbravo.wad.controls;
 
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
 
 import org.openbravo.data.Sqlc;
 import org.openbravo.utils.FormatUtilities;
+import org.openbravo.wad.EditionFieldsData;
+import org.openbravo.wad.FieldsData;
+import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADSearch extends WADControl {
@@ -254,5 +262,221 @@ public class WADSearch extends WADControl {
 
   public String toJava() {
     return "";
+  }
+
+  public boolean has2UIFields() {
+    return true;
+  }
+
+  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+    if (fieldsDef.isdisplayed.equals("Y")) {
+      final FieldsData fd = new FieldsData();
+      fd.reference = fieldsDef.reference + "_" + (itable++);
+      fd.name = fieldsDef.columnname + "R";
+      String tableN = "";
+      EditionFieldsData[] dataSearchs = null;
+      if (fieldsDef.referencevalue.equals("30"))
+        try {
+          dataSearchs = EditionFieldsData.selectSearchs(conn, "", fieldsDef.type);
+        } catch (ServletException e2) {
+          // TODO Auto-generated catch block
+          e2.printStackTrace();
+        }
+      if (dataSearchs == null || dataSearchs.length == 0) {
+        if (fieldsDef.referencevalue.equals("25"))
+          tableN = "C_ValidCombination";
+        else if (fieldsDef.referencevalue.equals("31"))
+          tableN = "M_Locator";
+        else if (fieldsDef.referencevalue.equals("35"))
+          tableN = "M_AttributeSetInstance";
+        else if (fieldsDef.referencevalue.equals("800011"))
+          tableN = "M_Product";
+        else if (fieldsDef.name.equalsIgnoreCase("createdBy")
+            || fieldsDef.name.equalsIgnoreCase("updatedBy"))
+          tableN = "AD_User";
+        else
+          tableN = fieldsDef.name.substring(0, fieldsDef.name.length() - 3);
+        if (fieldsDef.referencevalue.equals("25"))
+          fieldsDef.name = "C_ValidCombination_ID";
+        else if (fieldsDef.referencevalue.equals("31"))
+          fieldsDef.name = "M_Locator_ID";
+        else if (fieldsDef.referencevalue.equals("35"))
+          fieldsDef.name = "M_AttributeSetInstance_ID";
+        else if (fieldsDef.referencevalue.equals("800011"))
+          fieldsDef.name = "M_Product_ID";
+        else if (fieldsDef.name.equalsIgnoreCase("createdBy")
+            || fieldsDef.name.equalsIgnoreCase("updatedBy"))
+          fieldsDef.name = "AD_User_ID";
+      } else {
+        tableN = dataSearchs[0].reference;
+        fieldsDef.name = dataSearchs[0].columnname;
+      }
+      final Vector<Object> vecFields2 = new Vector<Object>();
+      final Vector<Object> vecTables2 = new Vector<Object>();
+      final Vector<Object> vecWhere2 = new Vector<Object>();
+      int itable2 = 0;
+      vecTables2.addElement(tableN + " table1");
+      try {
+        itable2 = fieldsOfSearch2(tableN, fieldsDef.name, fieldsDef.required, vecFields2,
+            vecTables2, vecWhere2, itable2, fieldsDef.referencevalue, fieldsDef.type);
+      } catch (ServletException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      final StringBuffer strFields2 = new StringBuffer();
+      strFields2.append(" ( ");
+      boolean boolFirst = true;
+      for (final Enumeration<Object> e = vecFields2.elements(); e.hasMoreElements();) {
+        final String tableField = (String) e.nextElement();
+        if (boolFirst) {
+          boolFirst = false;
+        } else {
+          strFields2.append(" || ' - ' || ");
+        }
+        strFields2.append("COALESCE(TO_CHAR(").append(tableField).append("), '') ");
+      }
+      strFields2.append(") as ").append(fieldsDef.columnname);
+      final StringBuffer fields = new StringBuffer();
+      fields.append("SELECT ").append(strFields2);
+      fields.append(" FROM ");
+      for (int j = 0; j < vecTables2.size(); j++) {
+        fields.append(vecTables2.elementAt(j));
+      }
+      fields.append(" WHERE table1.isActive='Y'");
+      for (int j = 0; j < vecWhere2.size(); j++) {
+        fields.append(vecWhere2.elementAt(j));
+      }
+      fields.append(" AND table1." + fieldsDef.name + " = ? ");
+      fd.defaultvalue = fields.toString();
+      fd.whereclause = "<Parameter name=\"" + fd.name + "\"/>";
+      v.addElement(fd);
+    }
+    return itable;
+  }
+
+  // Replcae Wad one for this
+  private int fieldsOfSearch2(String tableInit, String name, String required,
+      Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere, int itable,
+      String reference, String referencevalue) throws ServletException {
+    itable++;
+    final int tableNum = itable;
+    String tableName = "";
+    EditionFieldsData[] dataSearchs = null;
+    if (reference.equals("30") && !referencevalue.equals(""))
+      dataSearchs = EditionFieldsData.selectSearchs(conn, "", referencevalue);
+    if (dataSearchs == null || dataSearchs.length == 0) {
+      final int ilength = name.length();
+      if (reference.equals("25"))
+        tableName = "C_ValidCombination";
+      else if (reference.equals("31"))
+        tableName = "M_Locator";
+      else if (reference.equals("800011"))
+        tableName = "M_Product";
+      else
+        tableName = name.substring(0, ilength - 3);
+      if (reference.equals("25"))
+        name = "C_ValidCombination_ID";
+      else if (reference.equals("31"))
+        name = "M_Locator_ID";
+      else if (reference.equals("800011"))
+        name = "M_Product_ID";
+    } else {
+      tableName = dataSearchs[0].reference;
+      name = dataSearchs[0].columnname;
+    }
+    final FieldsData fdi[] = FieldsData.identifierColumns(conn, tableName);
+    if (itable > 1) {
+      vecTables.addElement(" left join " + tableName + " table" + tableNum + " on (" + tableInit
+          + "." + name + " = table" + tableNum + "." + name + ")");
+    }
+    for (int i = 0; i < fdi.length; i++) {
+      if (fdi[i].reference.equals("30") || fdi[i].reference.equals("800011")
+          || fdi[i].reference.equals("31") || fdi[i].reference.equals("35")
+          || fdi[i].reference.equals("25")) {
+        itable = fieldsOfSearch2("table" + tableNum, fdi[i].columnname, fdi[i].required, vecFields,
+            vecTables, vecWhere, itable, fdi[i].reference, fdi[i].referencevalue);
+      } else {
+        vecFields.addElement("table" + tableNum + "." + fdi[i].columnname);
+      }
+    }
+    return itable;
+  }
+
+  public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
+      String tabName, int itable) {
+    if (fieldsDef.isdisplayed.equals("Y")) {
+      strDefaultValues.append(", " + tabName + "Data.selectDef" + fieldsDef.reference + "_"
+          + (itable++) + "(this, " + fieldsDef.defaultvalue + ")");
+    }
+    return itable;
+  }
+
+  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, Vector<Object> vecTableParameters, FieldsData field,
+      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
+      IOException {
+
+    String strOrder = "";
+    if (field.isdisplayed.equals("Y")) {
+      final Vector<Object> vecSubFields = new Vector<Object>();
+      WadUtility.columnIdentifier(conn, tableName, field.required.equals("Y"), field, vecCounters,
+          false, vecSubFields, vecTables, vecWhere, vecParameters, vecTableParameters,
+          sqlDateFormat);
+      final StringBuffer strFields = new StringBuffer();
+      strFields.append(" (");
+      boolean boolFirst = true;
+      for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
+        final String tableField = (String) e.nextElement();
+        if (boolFirst) {
+          boolFirst = false;
+        } else {
+          strFields.append(" || ' - ' || ");
+        }
+        strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
+      }
+      strOrder = strFields.toString() + ")";
+      vecFields.addElement("(CASE WHEN " + tableName + "." + field.name + " IS NULL THEN '' ELSE "
+          + strFields.toString() + ") END) AS " + field.name + "R");
+    } else {
+      strOrder = tableName + "." + field.name;
+    }
+
+    final String[] aux = { new String(field.name),
+        new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
+    vecOrder.addElement(aux);
+  }
+
+  public boolean isLink() {
+    return true;
+  }
+
+  public String getLinkColumnId() {
+    try {
+      EditionFieldsData[] dataSearchs = EditionFieldsData.selectSearchs(conn, "",
+          getData("AD_Reference_Value_ID"));
+      if (dataSearchs != null && dataSearchs.length != 0) {
+        return dataSearchs[0].adColumnId;
+      } else {
+        String strTableName = getData("ColumnNameSearch");
+        strTableName = strTableName.substring(0, (strTableName.length() - 3));
+        return WADSearchData.getLinkColumn(conn, strTableName);
+      }
+    } catch (Exception e) {
+      return "";
+    }
+  }
+
+  public String getDisplayLogic(boolean display, boolean isreadonly) {
+    StringBuffer displayLogic = new StringBuffer();
+
+    displayLogic.append(super.getDisplayLogic(display, isreadonly));
+
+    if (!getData("IsReadOnly").equals("Y") && !isreadonly) {
+      displayLogic.append("displayLogicElement('");
+      displayLogic.append(getData("ColumnName"));
+      displayLogic.append("_btt', ").append(display ? "true" : "false").append(");\n");
+    }
+    return displayLogic.toString();
   }
 }

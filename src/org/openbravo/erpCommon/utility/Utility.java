@@ -109,23 +109,25 @@ public class Utility {
   }
 
   /**
-   * Checks if a getNumericParameters is needed based on a reference
+   * Checks if a getNumericParameters is needed based on a reference. Deprecated, use UIReference.
    * 
    * @param reference
    * @return true if the passed reference represents a numeric type, false otherwise.
    */
+  @Deprecated
   public static boolean isNumericParameter(String reference) {
     return (!Utility.isID(reference) && (Utility.isDecimalNumber(reference) || Utility
         .isIntegerNumber(reference)));
   }
 
   /**
-   * Checks if the reference is an ID
+   * Checks if the reference is an ID. Deprecated, use UIReference.
    * 
    * @param reference
    *          String with the reference
    * @return True if is a ID reference
    */
+  @Deprecated
   public static boolean isID(String reference) {
     if (reference == null || reference.equals("")) {
       return false;
@@ -134,12 +136,13 @@ public class Utility {
   }
 
   /**
-   * Checks if the references is a decimal number type.
+   * Checks if the references is a decimal number type. Deprecated, use UIReference.
    * 
    * @param reference
    *          String with the reference.
    * @return True if is a decimal or false if not.
    */
+  @Deprecated
   public static boolean isDecimalNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
@@ -154,12 +157,13 @@ public class Utility {
   }
 
   /**
-   * Checks if the references is an integer number type.
+   * Checks if the references is an integer number type. Deprecated, use UIReference.
    * 
    * @param reference
    *          String with the reference.
    * @return True if is an integer or false if not.
    */
+  @Deprecated
   public static boolean isIntegerNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
@@ -173,12 +177,13 @@ public class Utility {
   }
 
   /**
-   * Checks if the references is a datetime type.
+   * Checks if the references is a datetime type. Deprecated, use UIReference.
    * 
    * @param reference
    *          String with the reference.
    * @return True if is a datetime or false if not.
    */
+  @Deprecated
   public static boolean isDateTime(String reference) {
     if (reference == null || reference.equals(""))
       return false;

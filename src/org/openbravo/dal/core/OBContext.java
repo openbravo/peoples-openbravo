@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -654,8 +654,8 @@ public class OBContext implements OBNotSingleton {
     final Query qry = SessionHandler.getInstance().createQuery(qryStr);
     qry.setMaxResults(1);
     final List<?> result = qry.list();
-    if (doCheck) {
-      Check.isTrue(result.size() == 1, "The query '" + qryStr + "' returned " + result.size()
+    if (doCheck && result.size() != 1) {
+      log.error("The query '" + qryStr + "' returned " + result.size()
           + " results while only 1 result was expected");
     }
     if (result.size() == 0) {
