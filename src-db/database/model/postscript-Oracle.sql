@@ -1016,22 +1016,22 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         order by c.position) loop
       if (cur_cols.data_type in ('VARCHAR2', 'CHAR')) then
         datatype := 'CHAR';
-        code := code || 'IF ((UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.''))';
+        code := code || 'IF (UPDATING AND ((COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.'')) OR ((:NEW.'||cur_cols.COLUMN_NAME||' IS NULL) AND :OLD.'||cur_cols.COLUMN_NAME||'=''.'') OR ((:OLD.'||cur_cols.COLUMN_NAME||' IS NULL) AND :NEW.'||cur_cols.COLUMN_NAME||'=''.'')))';
       elsif (cur_cols.data_type in ('NVARCHAR2', 'NCHAR')) then
         datatype := 'NCHAR';
-        code := code || 'IF ((UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.''))';
+         code := code || 'IF (UPDATING AND ((COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.'')) OR ((:NEW.'||cur_cols.COLUMN_NAME||' IS NULL) AND :OLD.'||cur_cols.COLUMN_NAME||'=''.'') OR ((:OLD.'||cur_cols.COLUMN_NAME||' IS NULL) AND :NEW.'||cur_cols.COLUMN_NAME||'=''.'')))';
       elsif (cur_cols.data_type in ('DATE')) then
         datatype := 'DATE';
-        code := code || 'IF ((UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', now()) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', now()))';
+        code := code || 'IF (UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', now()) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', now()))';
       else
         datatype := 'NUMBER';
-        code := code || 'IF ((UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', -1) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', -1))';
+        code := code || 'IF (UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', -1) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', -1))';
       end if;
       
       
       code := code ||
 '
-OR DELETING OR INSERTING) THEN
+OR DELETING OR INSERTING THEN
     IF (UPDATING OR INSERTING) THEN
       V_NEW_'||datatype||' := :NEW.'||cur_cols.COLUMN_NAME||';
     END IF;
@@ -1049,7 +1049,8 @@ OR DELETING OR INSERTING) THEN
            v_process_type, v_process_id, v_record_id, v_record_rev, v_action, 
            v_time, v_old_'||datatype||', v_new_'||datatype||',
            V_CLIENT, V_ORG);
-  END IF;';
+  END IF;
+';
     end loop;
  
 code := code ||

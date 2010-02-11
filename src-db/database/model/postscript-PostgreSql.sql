@@ -815,7 +815,7 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
         datatype := 'CHAR';
         code := code || '
    IF TG_OP = ''UPDATE'' THEN
-     V_CHANGE = COALESCE(new.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(old.'||cur_cols.COLUMN_NAME||',''.'');
+     V_CHANGE = (COALESCE(new.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(old.'||cur_cols.COLUMN_NAME||',''.'') OR (new.'||cur_cols.COLUMN_NAME||' IS NULL AND old.'||cur_cols.COLUMN_NAME||'=''.'') OR (old.'||cur_cols.COLUMN_NAME||' IS NULL AND new.'||cur_cols.COLUMN_NAME||'=''.'') );
    END IF;';
       elsif (cur_cols.data_type in ('TIMESTAMP')) then
         datatype := 'DATE';
@@ -828,7 +828,8 @@ code := code || '
         code := code || '
    IF TG_OP = ''UPDATE'' THEN
      V_CHANGE = COALESCE(new.'||cur_cols.COLUMN_NAME||', -1) != COALESCE(old.'||cur_cols.COLUMN_NAME||', -1);
-   END IF;';
+   END IF;
+';
       end if;
       
       
@@ -853,7 +854,8 @@ code := code || '
            v_process_type, v_process_id, v_record_id, v_record_rev, v_action, 
            v_time, v_old_'||datatype||', v_new_'||datatype||',
            V_CLIENT, V_ORG);
-  END IF;';
+  END IF;
+';
     end loop;
  
 code := code ||
