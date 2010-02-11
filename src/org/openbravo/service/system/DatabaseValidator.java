@@ -119,9 +119,9 @@ public class DatabaseValidator implements SystemValidator {
       } else if (view != null) {
         dbViews.remove(view.getName().toUpperCase());
       } else {
-        if ((moduleId == null || (adTable.getDataPackage().getModule() != null && adTable
-            .getDataPackage().getModule().getId().equals(moduleId)))
-            && !adTable.getDBTableName().equalsIgnoreCase("AD_AUDIT_TRAIL")) {
+        if (moduleId == null
+            || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage()
+                .getModule().getId().equals(moduleId))) {
           checkTableWithoutPrimaryKey(dbTable, result);
           checkMaxObjectNameLength(dbTable, result);
         }
