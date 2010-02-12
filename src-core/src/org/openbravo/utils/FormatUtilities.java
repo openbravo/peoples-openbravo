@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2008 Openbravo S.L.
+ * Copyright (C) 2001-2010 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -73,7 +73,7 @@ public class FormatUtilities {
     String sanitized = text;
     String[] tags = { "<[/]?applet>", "<[/]?body>", "<[/]?embed>", "<[/]?frame>", "<[/]?script>",
         "<[/]?frameset>", "<[/]?html>", "<[/]?iframe>", "<[/]?img>", "<[/]?style>", "<[/]?layer>",
-        "<[/]?link>", "<[/]?ilayer>", "<[/]?meta>", "<[/]?object>" };
+        "<[/]?link>", "<[/]?ilayer>", "<[/]?meta>", "<[/]?object>", "\\r" };
     for (int i = 0; i < tags.length; i++)
       sanitized = sanitized.replaceAll("(?i)" + tags[i], "");
     return sanitized;
