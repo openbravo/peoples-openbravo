@@ -3996,6 +3996,12 @@ function resizeAreaInfo(isOnResize) {
   client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
 
   try {
+    if (document.getElementById("grid_toptext")) {
+      document.getElementById('grid_toptext').style.width = w - 50;
+    }
+    if (document.getElementById("grid_bottomtext")) {
+      document.getElementById('grid_bottomtext').style.width = w - 50;
+    }
     if (isOnResize) dijit.byId('grid').onResize();
   } catch (e) {}
 }

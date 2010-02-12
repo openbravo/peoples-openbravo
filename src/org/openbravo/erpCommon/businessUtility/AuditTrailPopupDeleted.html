@@ -439,11 +439,11 @@ function focusOnField() {
                 <table width="100%" cellspacing="0" cellpadding="0" border="0" class="Main_Client_TableRelation" id="grid_table">
                   <tr>
                     <td class="DataGrid_Popup_text_container" style="text-align:left">
-                      <div id="bookmark">
-                        <nobr class="DataGrid_Popup_text_bookmark">
+                      <div id="grid_toptext">
+                        <span class="DataGrid_Popup_text_bookmark">
                           <a class="LabelLink_noicon" href="AuditTrail.html?Command=POPUP_HISTORY&inpRecordId=xx&inpTabId=yy&inpTableId=zz" id="paramLinkBack">Back to history</a>
                           <a class="LabelLink_noicon" href="#" onclick="validateSelector(); return false;" id="paramLinkHistorySelected">Show history of selected record</a>
-                        </nobr>
+                        </span>
                       </div>
                     </td>
                   </tr>
@@ -465,8 +465,8 @@ function focusOnField() {
                   </tr>
                   <tr>
                     <td class="DataGrid_Popup_text_container" style="text-align:left; padding-top: 6px;">
-                      <div id="bookmark">
-                        <nobr class="DataGrid_Popup_text_bookmark" id="childTabsLinksArea"></nobr>
+                      <div id="grid_bottomtext">
+                        <span class="DataGrid_Popup_text_bookmark" id="childTabsLinksArea"></span>
                       </div>
                     </td>
                   </tr>
