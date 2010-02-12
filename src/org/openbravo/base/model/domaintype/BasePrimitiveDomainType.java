@@ -50,4 +50,14 @@ public abstract class BasePrimitiveDomainType extends BaseDomainType implements 
       throw ve;
     }
   }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getFormatId()
+   */
+  public String getFormatId() {
+    return null;
+  }
+
 }

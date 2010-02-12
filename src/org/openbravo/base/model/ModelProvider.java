@@ -69,6 +69,7 @@ public class ModelProvider implements OBSingleton {
   private HashMap<String, Entity> entitiesByClassName = null;
   private HashMap<String, Entity> entitiesByTableName = null;
   private HashMap<String, Entity> entitiesByTableId = null;
+  private HashMap<String, Reference> referencesById = null;
   // a list because for small numbers a list is faster than a hashmap
   private List<Entity> entitiesWithTreeType = null;
   private List<Module> modules;
@@ -146,10 +147,12 @@ public class ModelProvider implements OBSingleton {
 
       tables = list(session, Table.class);
 
+      referencesById = new HashMap<String, Reference>();
       final List<Reference> references = list(session, Reference.class);
       for (Reference reference : references) {
         reference.getDomainType().setModelProvider(this);
         reference.getDomainType().initialize();
+        referencesById.put(reference.getId(), reference);
       }
 
       // read the columns in one query and assign them to the table
@@ -822,6 +825,16 @@ public class ModelProvider implements OBSingleton {
           + reference + ", refval: " + referenceValue + "]");
     }
     return c;
+  }
+
+  /**
+   * Returns a reference instance from the org.openbravo.base.model package.
+   * 
+   * @param referenceId
+   * @return the reference identified by the referenceId, if not found then null is returned
+   */
+  public Reference getReference(String referenceId) {
+    return referencesById.get(referenceId);
   }
 
   /**

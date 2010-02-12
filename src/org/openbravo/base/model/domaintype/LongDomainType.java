@@ -49,4 +49,12 @@ public class LongDomainType extends BasePrimitiveDomainType {
     super.checkIsValidValue(property, value);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getFormatId()
+   */
+  public String getFormatId() {
+    return "integer";
+  }
 }

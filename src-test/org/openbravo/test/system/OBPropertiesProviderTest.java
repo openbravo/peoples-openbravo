@@ -17,33 +17,30 @@
  ************************************************************************
  */
 
-package org.openbravo.base.model.domaintype;
+package org.openbravo.test.system;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.test.base.BaseTest;
 
 /**
- * The ModelReference implements the reference extensions used for the Data Access Layer. See <a
- * href
- * ="http://wiki.openbravo.com/wiki/Projects/Reference_Extension/Technical_Documentation#DAL">here
- * </a> for more information.
+ * Test the {@link OBPropertiesProvider} class.
  * 
  * @author mtaal
  */
 
-public interface PrimitiveDomainType extends DomainType {
+public class OBPropertiesProviderTest extends BaseTest {
 
   /**
-   * The primitive type class (for example java.lang.Long) if this is a primitive type.
-   * 
-   * @return the class representing the primitive type
+   * Test the {@link OBPropertiesProvider#getFormatXMLDocument()} method.
    */
-  Class<?> getPrimitiveType();
-
-  /**
-   * Returns the id of the format definition to use for this domain type. Is normally only relevant
-   * for numeric domain types. The id is the prefix part of the name in the Format.xml file. So for
-   * example the id 'integer' maps to all the Format.xml entries with integer as a prefix.
-   * 
-   * @return the name of the format definition in the format.xml, if not relevant then null is
-   *         returned.
-   */
-  String getFormatId();
+  public void testFormatXMLRead() {
+    setSystemAdministratorContext();
+    final Document xmlFormat = OBPropertiesProvider.getInstance().getFormatXMLDocument();
+    for (Object object : xmlFormat.getRootElement().elements()) {
+      final Element element = (Element) object;
+      assertEquals("Number", element.getName());
+    }
+  }
 }
