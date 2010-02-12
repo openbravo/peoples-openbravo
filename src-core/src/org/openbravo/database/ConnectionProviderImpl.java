@@ -241,13 +241,18 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (conn == null)
       return false;
     try {
-      conn.commit();
-      if (SessionInfo.getSessionConnection() == null && !conn.isClosed()) {
+      if (SessionInfo.getSessionConnection() == null) {
         // close connection if it's not attached to session, other case it will be closed when the
         // request is done
         log4j.debug("close connection directly (no connection in session)");
-        conn.setAutoCommit(true);
-        conn.close();
+        if (!conn.isClosed()) {
+          conn.setAutoCommit(true);
+          conn.close();
+        }
+      } else {
+        // commit current transaction and leave the connection open attached to the session to be
+        // reused
+        conn.commit();
       }
     } catch (Exception ex) {
       log4j.error("Error on releaseConnection", ex);
