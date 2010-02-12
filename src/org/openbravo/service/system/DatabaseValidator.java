@@ -238,6 +238,11 @@ public class DatabaseValidator implements SystemValidator {
           continue;
         }
 
+        // ignore ad_audit_trail as fk's are omitted on purpose
+        if (entity.getTableName().equalsIgnoreCase("ad_audit_trail")) {
+          continue;
+        }
+
         boolean found = false;
         for (ForeignKey fk : table.getForeignKeys()) {
           for (Reference reference : fk.getReferences()) {
