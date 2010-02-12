@@ -144,3 +144,8 @@ safe.mode=false
 # defined by this property, note the value should be the complete path 
 # including the file name and extension.
 # hibernate.hbm.file=/tmp/hibernate.hbm.xml
+
+#####################
+# Advanced settings #
+#####################
+build.maxmemory=512M
