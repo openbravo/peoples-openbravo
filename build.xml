@@ -167,8 +167,12 @@ export.database: exports database structure and data to xml files.
   <property name="lib" location="${jakarta.home}/common" />
   <property name="jakarta.context" location="${jakarta.base}/webapps/${context.name}" />
 
-  <condition property="build.maxmemory" value="512M">
-    <isset property="build.maxmemory"/>
+  <condition property="build.maxmemory" value="1024M" else="512M">
+    <or>
+      <equals arg1="${os.arch}" arg2="amd64" />
+      <equals arg1="${os.arch}" arg2="x86_64" />
+      <equals arg1="${os.arch}" arg2="ia64" />
+    </or>
   </condition>
 
   <condition property="no.java.home" value="true">
