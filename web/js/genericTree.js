@@ -106,7 +106,9 @@
     return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
   }
   
-  function gt_getUpdateDescription(id){
+  function gt_getUpdateDescription(evt, id){
+    if (!evt) evt = window.event;
+    evt.cancelBubble = true;
     var frm = document.frmMain;
     frm.inpNodeId.value = id;
     var paramXMLReq = new Array('anchor');

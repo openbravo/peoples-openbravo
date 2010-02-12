@@ -138,7 +138,7 @@ public class ModuleTree extends GenericTree {
     for (int i = 0; i < modules.length; i++) {
       if (!modules[i].updateAvailable.equals("")) {
         modules[i].linkname = Utility.messageBD(conn, "UpdateAvailable", lang);
-        modules[i].linkclick = "gt_getUpdateDescription('" + modules[i].nodeId
+        modules[i].linkclick = "gt_getUpdateDescription(event, '" + modules[i].nodeId
             + "'); return false;";
       }
       if (modules[i].status.equals("I") || modules[i].status.equals("P")) {
