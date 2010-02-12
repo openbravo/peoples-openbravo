@@ -697,8 +697,9 @@ public class ModelProvider implements OBSingleton {
    * @return the Entity or null if not found
    */
   public Entity getEntityByTableName(String tableName) {
-    if (model == null)
+    if (model == null) {
       getModel();
+    }
     final Entity entity = entitiesByTableName.get(tableName.toUpperCase());
     // is null for views
     // if (entity == null) {

@@ -55,14 +55,12 @@ build.war: build a war file in the lib directory.
 
 <project name="openbravo sources" default="compile" basedir=".">
 
-  <path id="yuicompressor.classpath">
-    <fileset dir="../lib/build">
-      <include name="**/yuicompressor-2.4.2.jar" />
-      <include name="**/YUIAnt.jar" />
-    </fileset>
-  </path>
   <taskdef name="yuicompress" classname="com.yahoo.platform.yui.compressor.YUICompressTask">
-    <classpath refid="yuicompressor.classpath" />
+    <classpath>
+      <pathelement location="${base.lib}/build/yuicompressor-2.4.2.jar" />
+      <pathelement location="${base.lib}/build/ob-rhino-1.6R7.jar" />
+      <pathelement location="${base.lib}/build/YUIAnt.jar" />
+    </classpath>
   </taskdef>
 
   <condition property="minimizeJSandCSSbool">
