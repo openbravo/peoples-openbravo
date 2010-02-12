@@ -36,4 +36,34 @@ public class BigDecimalDomainType extends BasePrimitiveDomainType {
   public Class<?> getPrimitiveType() {
     return BigDecimal.class;
   }
+
+  public static class Quantity extends BigDecimalDomainType {
+    public String getFormatId() {
+      return "qty";
+    }
+  }
+
+  public static class GeneralQuantity extends BigDecimalDomainType {
+    public String getFormatId() {
+      return "generalQty";
+    }
+  }
+
+  public static class Number extends BigDecimalDomainType {
+    public String getFormatId() {
+      return "euro";
+    }
+  }
+
+  public static class Amount extends BigDecimalDomainType {
+    public String getFormatId() {
+      return "euro";
+    }
+  }
+
+  public static class Price extends BigDecimalDomainType {
+    public String getFormatId() {
+      return "price";
+    }
+  }
 }

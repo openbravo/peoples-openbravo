@@ -33,11 +33,10 @@ public class WADValidatorTask extends Task {
     CPStandAlone conn = new CPStandAlone(propertiesFile);
     WADValidator val = new WADValidator(conn, modules, friendlyWarnings);
     WADValidationResult result = val.validate();
-    if (friendlyWarnings) {
-      result.printFriendlyLog();
-    } else {
+    if (!friendlyWarnings) {
       result.printLog(stoponerror);
     }
+    result.printFriendlyLog();
     if (result.hasErrors() && stoponerror) {
       throw new BuildException("WAD verification has errors");
     }

@@ -161,7 +161,7 @@ public class WADValidationResult {
     }
     message2 += "Openbravo naming rules.";
     log.info(message + message2);
-    log.info("The rebuild process has completed successfully but this module2");
+    log.info("The rebuild process has completed successfully but this module");
     log.info("might cause conflicts with other modules in the future.");
     log.info("Please request the author of this module to produce a new version");
     log.info("that addresses these violations.");

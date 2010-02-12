@@ -136,7 +136,13 @@ public class Reference extends ModelObject {
     return domainType;
   }
 
-  private String getModelImplementationClassName() {
+  /**
+   * Also calls the parent reference ({@link #getParentReference()}) to find the modelImpl (
+   * {@link #getModelImpl()}).
+   * 
+   * @return the modelImpl or if not set, the value set in the parent.
+   */
+  public String getModelImplementationClassName() {
     if (getModelImpl() == null && getParentReference() != null) {
       return getParentReference().getModelImplementationClassName();
     }

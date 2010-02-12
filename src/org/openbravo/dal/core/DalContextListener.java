@@ -71,6 +71,10 @@ public class DalContextListener implements ServletContextListener {
     if (is != null) {
       OBPropertiesProvider.getInstance().setProperties(is);
     }
+    final InputStream formatInputStream = context.getResourceAsStream("/WEB-INF/Format.xml");
+    if (formatInputStream != null) {
+      OBPropertiesProvider.getInstance().setFormatXML(formatInputStream);
+    }
 
     // set our own config file provider which uses the servletcontext
     OBConfigFileProvider.getInstance().setServletContext(context);

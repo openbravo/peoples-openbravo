@@ -19,7 +19,6 @@
 
 package org.openbravo.base.model.domaintype;
 
-
 /**
  * The ModelReference implements the reference extensions used for the Data Access Layer. See <a
  * href
@@ -37,4 +36,14 @@ public interface PrimitiveDomainType extends DomainType {
    * @return the class representing the primitive type
    */
   Class<?> getPrimitiveType();
+
+  /**
+   * Returns the id of the format definition to use for this domain type. Is normally only relevant
+   * for numeric domain types. The id is the prefix part of the name in the Format.xml file. So for
+   * example the id 'integer' maps to all the Format.xml entries with integer as a prefix.
+   * 
+   * @return the name of the format definition in the format.xml, if not relevant then null is
+   *         returned.
+   */
+  String getFormatId();
 }
