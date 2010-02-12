@@ -31,50 +31,68 @@ import org.apache.log4j.Logger;
  * 
  */
 public class SessionInfo {
-  static Logger log4j = Logger.getLogger(SessionInfo.class);
+  private static final Logger log4j = Logger.getLogger(SessionInfo.class);
+
+  /**
+   * updated on context start and via SL_AuditTable. used to switch on/off the audit trail system
+   */
   private static boolean isAuditActive = false;
+
+  /*
+   * The following variables track per thread the information about the current 'user' of the thread
+   * (this info is later at getConnection() time passed into a temporary AD_CONTEXT_INFO table to be
+   * available to the generated audit triggers.
+   */
   private static ThreadLocal<String> sessionId = new ThreadLocal<String>();
   private static ThreadLocal<String> userId = new ThreadLocal<String>();
   private static ThreadLocal<String> processType = new ThreadLocal<String>();
   private static ThreadLocal<String> processId = new ThreadLocal<String>();
+
+  /*
+   * To optimize updating of the AD_CONTEXT_INFO information, getConnection() is changed to return
+   * the same connection on all getConnection() calls done inside the same request when possible.
+   * Then the ad_context_info does not need to be updated so often (as the data doesn't change so
+   * often for a specific connection).
+   */
   private static ThreadLocal<Connection> sessionConnection = new ThreadLocal<Connection>();
   private static ThreadLocal<Boolean> changedInfo = new ThreadLocal<Boolean>();
 
   /**
-   * Sets to null all session information
+   * Sets all session information to null. Called at the end of http-request handling, to reset the
+   * audit information for that thread.
    */
-  static public void init() {
+  public static void init() {
     sessionId.set(null);
     userId.set(null);
     processType.set(null);
     processId.set(null);
     changedInfo.set(null);
-    // close connection
+    // if there is an open connection associated to get current request, close it
     Connection conn = sessionConnection.get();
     try {
       if (conn != null && !conn.isClosed()) {
-        if (log4j.isDebugEnabled()) {
-          log4j.debug("Close session's connection");
-        }
+        log4j.debug("Close session's connection");
         conn.setAutoCommit(true);
         conn.close();
       }
     } catch (SQLException e) {
-      log4j.error("Error closing connection", e);
+      log4j.error("Error closing sessionConnection", e);
     }
     sessionConnection.set(null);
   }
 
   /**
    * Creates the needed infrastructure for audit. Which is temporary session table for PostgreSQL
-   * connections
+   * connections.
+   * 
+   * Called whenever a new physical db-connection is created.
    * 
    * @param conn
    *          Connection to database
    * @param rdbms
    *          Database, only action is take for POSTGRESQL
    */
-  static public void initDB(Connection conn, String rdbms) {
+  public static void initDB(Connection conn, String rdbms) {
     try {
       if (rdbms != null && rdbms.equals("POSTGRE")) {
         // Create temporary table
@@ -99,15 +117,17 @@ public class SessionInfo {
   }
 
   /**
-   * Inserts in the session table the information about the Openbravo session
+   * Inserts in the session table the information about the Openbravo session.
    * 
+   * This methods optimizes the ad_context_info update away, if the 'user'-info associated with a
+   * connection didn't change
    * 
    * @param conn
    *          Connection where the session information will be stored in
    * @param onlyIfChanged
    *          Updates database info only in case there are changes since the last time it was set
    */
-  static public void setDBSessionInfo(Connection conn, boolean onlyIfChanged) {
+  static void setDBSessionInfo(Connection conn, boolean onlyIfChanged) {
     if (!isAuditActive || (onlyIfChanged && (changedInfo.get() == null || !changedInfo.get()))) {
       if (log4j.isDebugEnabled()) {
         log4j.debug("No session info set isAuditActive: " + isAuditActive + " - changes in info: "
@@ -118,15 +138,19 @@ public class SessionInfo {
     setDBSessionInfo(conn);
   }
 
-  static public void setDBSessionInfo(Connection conn) {
+  /**
+   * Inserts in the session table the information about the Openbravo session.
+   * 
+   * @param conn
+   *          Connection where the session information will be stored in
+   */
+  public static void setDBSessionInfo(Connection conn) {
     try {
       if (!isAuditActive) {
         return;
       }
 
-      if (log4j.isDebugEnabled()) {
-        log4j.debug("set session info");
-      }
+      log4j.debug("set session info");
       // Clean up temporary table
       getPreparedStatement(conn, "delete from ad_context_info").executeUpdate();
 
@@ -145,7 +169,10 @@ public class SessionInfo {
     }
   }
 
-  static public Connection getSessionConnection() {
+  /**
+   * Return the connection associated with the current session, if there is one.
+   */
+  static Connection getSessionConnection() {
     Connection conn = sessionConnection.get();
     try {
       if (conn == null || conn.isClosed()) {
@@ -155,9 +182,7 @@ public class SessionInfo {
       log4j.error("Error checking connection", e);
       return null;
     }
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("Reuse session's connection");
-    }
+    log4j.debug("Reuse session's connection");
     return conn;
   }
 
@@ -188,14 +213,14 @@ public class SessionInfo {
     return (ps);
   }
 
-  static public void setUserId(String user) {
+  public static void setUserId(String user) {
     if (user == null || !user.equals(getUserId())) {
       userId.set(user);
       changedInfo.set(true);
     }
   }
 
-  static public String getUserId() {
+  public static String getUserId() {
     return userId.get();
   }
 
@@ -236,7 +261,7 @@ public class SessionInfo {
     SessionInfo.isAuditActive = isAuditActive;
   }
 
-  public static void setSessionConnection(Connection conn) {
+  static void setSessionConnection(Connection conn) {
     sessionConnection.set(conn);
   }
 }
