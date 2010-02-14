@@ -178,7 +178,7 @@
         v_Line:=0;
         v_ResultStr:='ProdRunProduct P+ Processing';
         FOR Cur_WRPProduct IN
-          (SELECT wrpp.*, COALESCE(po.M_Locator_ID, p.M_Locator_ID) AS M_Locator_ID, p.name as pname
+          (SELECT wrpp.*, COALESCE(po.M_Locator_ID, p.M_Locator_ID) AS M_Locator_ID, p.name as pname, p.M_AttributeSetInstance_ID, p.AttrSetValueType
           FROM M_Product p, MA_WRPhaseProduct wrpp
             left join M_Product_Org po on wrpp.M_Product_ID = po.M_Product_ID
                                     AND po.AD_Org_ID = v_PlanOrg_ID
@@ -200,7 +200,8 @@
               M_ProductionLine_ID, AD_Client_ID, AD_Org_ID, Created,
               Createdby, Isactive, M_ProductionPlan_ID, M_Product_ID,
               Productiontype, MovementQty, Updated, Updatedby,
-              C_UOM_ID, M_Locator_ID, Line
+              C_UOM_ID, M_Locator_ID, 
+	      Line, M_AttributeSetInstance_ID
             )
             VALUES
             (
@@ -212,7 +213,7 @@
                                                     FROM M_LOCATOR L, M_WAREHOUSE W
                                                     WHERE L.M_WAREHOUSE_ID = W.M_WAREHOUSE_ID
                                                     AND W.AD_ORG_ID = v_PlanOrg_ID)),
-              v_Line
+              v_Line, (CASE WHEN Cur_WRPProduct.AttrSetValueType='D' THEN Cur_WRPProduct.M_AttributeSetInstance_ID ELSE NULL END)
             )
             ;
           --v_Line:=v_Line + 10;
@@ -282,7 +283,7 @@
                            'Y', now(), '0', now(),
                           '0', Cur_WRPUsed.M_Product_ID, Cur_WRPUsed.C_UOM_ID, 0,
                           v_storage.M_Locator_ID, 
-                          (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=Cur_WRPUsed.M_Product_ID)<>'F' THEN v_storage.M_AttributeSetInstance_ID ELSE NULL END), 
+                          (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=Cur_WRPUsed.M_Product_ID)='F' THEN NULL ELSE v_storage.M_AttributeSetInstance_ID END), 
                           v_storage.M_Product_UOM_ID,
                           (CASE
                              WHEN v_QtyOrder is null THEN null
@@ -311,7 +312,7 @@
                         Cur_WRPUsed.Org_ID, 'Y', now(), 0,
                         now(), 0, Cur_WRPUsed.M_Product_ID, Cur_WRPUsed.C_UOM_ID,
                         (CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_Qty END), '-', v_storage.M_Locator_ID, 
-                        (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=Cur_WRPUsed.M_Product_ID)<>'F' THEN v_storage.M_AttributeSetInstance_ID ELSE NULL END),
+                        (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=Cur_WRPUsed.M_Product_ID)='F' THEN NULL ELSE v_storage.M_AttributeSetInstance_ID END),
                         v_storage.M_Product_UOM_ID,
                         (CASE v_NoQty
                           WHEN 'Y' THEN (CASE
