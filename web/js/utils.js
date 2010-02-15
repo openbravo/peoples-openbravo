@@ -4861,7 +4861,7 @@ function manageDecPoint(obj, decSeparator, evt) {
 * @type String
 */
 function replaceAt(string, what, ini, end) {
-  if (end == null || end == "null" || end == "") {
+  if (typeof end == "undefined" || end == null || end == "null" || end == "") {
     end = ini;
   }
   if (ini > end) {
