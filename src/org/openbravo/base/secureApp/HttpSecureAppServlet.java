@@ -56,6 +56,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.SessionLogin;
@@ -184,11 +185,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     } catch (final Exception ignored) {
     }
 
+    String strUserAuth;
+
     try {
 
       OBContext.enableAsAdminContext();
 
-      final String strUserAuth = m_AuthManager.authenticate(request, response);
+      strUserAuth = m_AuthManager.authenticate(request, response);
       variables = new Variables(request); // Rebuild variable, auth-mgr could set the role
 
       boolean loggedOK = false;
@@ -321,7 +324,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       super.initialize(request, response);
       final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
+
+      SessionInfo.setUserId(strUserAuth);
+      SessionInfo.setSessionId(vars1.getSessionValue("#AD_Session_ID"));
+
       if (vars1.getRole().equals("") || hasAccess(vars1)) {
+        if (classInfo.id != null && !classInfo.id.equals("")) {
+          SessionInfo.setProcessId(classInfo.id);
+          SessionInfo.setProcessType(classInfo.type);
+        }
+
         // Autosave logic
         final Boolean saveRequest = (Boolean) request.getAttribute("autosave");
         final String strTabId = vars1.getStringParameter("inpTabId");

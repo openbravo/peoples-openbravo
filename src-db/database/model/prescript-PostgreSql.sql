@@ -1437,7 +1437,11 @@ begin
           WHEN 12 THEN 'INSERT, DELETE' 
           END)||p.prosrc) AS trg_md5 
           FROM pg_trigger trg, pg_class tbl, pg_proc p 
-          WHERE trg.tgrelid = tbl.oid AND trg.tgfoid = p.oid AND tbl.relname !~ '^pg_' AND trg.tgname !~ '^RI'
+          WHERE trg.tgrelid = tbl.oid 
+            AND trg.tgfoid = p.oid 
+            AND tbl.relname !~ '^pg_' 
+            AND trg.tgname !~ '^RI'
+            AND UPPER(trg.tgname) NOT LIKE 'AU_%'
           order by trg.tgname) loop
     v_md5 := md5(v_md5||i.trg_md5);
   end loop;

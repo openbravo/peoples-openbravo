@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
+import org.openbravo.test.dal.DalUtilTest;
 import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.model.UniqueConstraintTest;
@@ -66,6 +67,7 @@ public class AllQuickAntTaskTests {
     // suite.addTestSuite(DalPerformanceProductTest.class);
     // suite.addTestSuite(DalQueryTest.class);
     suite.addTestSuite(DalTest.class);
+    suite.addTestSuite(DalUtilTest.class);
     suite.addTestSuite(DalConnectionProviderTest.class);
     // suite.addTestSuite(DynamicEntityTest.class);
     // suite.addTestSuite(HiddenUpdateTest.class);

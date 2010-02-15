@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -133,9 +133,8 @@ public class ApplyModule {
 
       final ApplyModuleData[] ds = ApplyModuleData.selectClientReferenceModules(pool);
 
-      ModuleUtiltiy.orderModuleByDependency(ds);
-
       if (ds != null && ds.length > 0) {
+        ModuleUtiltiy.orderModuleByDependency(ds);
         // build list of reference data modules which have files to import
         List<ApplyModuleData> dsToImport = new ArrayList<ApplyModuleData>();
         for (ApplyModuleData amd : ds) {

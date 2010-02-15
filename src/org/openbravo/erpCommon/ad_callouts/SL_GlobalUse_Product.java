@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,9 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.plm.AttributeSet;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -85,7 +88,19 @@ public class SL_GlobalUse_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strPAttr + "\"),\n");
     resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
         + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strPAttr)) + "\"),\n");
-
+    String strAttrSet, strAttrSetValueType;
+    strAttrSet = strAttrSetValueType = "";
+    final Product product = OBDal.getInstance().get(Product.class, strMProductID);
+    if (product != null) {
+      AttributeSet attributeset = product.getAttributeSet();
+      if (attributeset != null)
+        strAttrSet = product.getAttributeSet().toString();
+      strAttrSetValueType = product.getUseAttributeSetValueAs();
+    }
+    resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
+        + "\"),\n");
+    resultado.append("new Array(\"inpattrsetvaluetype\", \""
+        + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
     // String strProductUomId = SLGlobalUseProduct.selectProductUomId(this,
     // strMProductID);
 
@@ -97,9 +112,9 @@ public class SL_GlobalUse_Product extends HttpSecureAppServlet {
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
             "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLOrderProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
+                "SLGlobalUseProduct"), Utility.getContext(this, vars, "#User_Client",
+                "SLGlobalUseProduct"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLGlobalUseProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;
       } catch (Exception ex) {
@@ -125,9 +140,9 @@ public class SL_GlobalUse_Product extends HttpSecureAppServlet {
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
             "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLOrderProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
+                "SLGlobalUseProduct"), Utility.getContext(this, vars, "#User_Client",
+                "SLGlobalUseProduct"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLGlobalUseProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;
       } catch (Exception ex) {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,10 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.plm.AttributeSet;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -69,10 +72,10 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strMProductID,
-      String strWindowId, String strTabId, String strAttribute, String strUOM,
-      String strRequisition, String strPriceListId, String strChanged) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strMProductID, String strWindowId, String strTabId, String strAttribute,
+      String strUOM, String strRequisition, String strPriceListId, String strChanged)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -131,26 +134,36 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
     }
 
     if (strChanged.equals("inpmProductId")) {
-      resultado
-          .append("new Array(\"inpcUomId\", "
-          + (strUOM.equals("") ? "\"\"" : "\"" + strUOM + "\"")
-          + "),\n");
+      resultado.append("new Array(\"inpcUomId\", "
+          + (strUOM.equals("") ? "\"\"" : "\"" + strUOM + "\"") + "),\n");
       if (strAttribute.startsWith("\""))
         strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
       resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),\n");
       resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
           + FormatUtilities.replaceJS(SLRequisitionLineProductData.attribute(this, strAttribute))
           + "\"),\n");
-
+      String strAttrSet, strAttrSetValueType;
+      strAttrSet = strAttrSetValueType = "";
+      final Product product = OBDal.getInstance().get(Product.class, strMProductID);
+      if (product != null) {
+        AttributeSet attributeset = product.getAttributeSet();
+        if (attributeset != null)
+          strAttrSet = product.getAttributeSet().toString();
+        strAttrSetValueType = product.getUseAttributeSetValueAs();
+      }
+      resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
+          + "\"),\n");
+      resultado.append("new Array(\"inpattrsetvaluetype\", \""
+          + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
       String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
       resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
       resultado.append("new Array(\"inpmProductUomId\", ");
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLRequisitionLineProduct"), Utility.getContext(this, vars, "#User_Client",
-                "SLRequisitionLineProduct"), 0);
+            "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, vars,
+                "#AccessibleOrgTree", "SLRequisitionLineProduct"), Utility.getContext(this, vars,
+                "#User_Client", "SLRequisitionLineProduct"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, strTabId, "");
         tld = comboTableData.select(false);
         comboTableData = null;

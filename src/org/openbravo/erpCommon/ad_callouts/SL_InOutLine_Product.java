@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,9 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.plm.AttributeSet;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -100,15 +103,26 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
           + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars
               .getLanguage())) + "\"),");
     }
-
-    if (!strAttribute.equals("")) {
-      if (strAttribute.startsWith("\""))
-        strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
-      resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),");
-      resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-          + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strAttribute))
-          + "\"),");
+    if (strAttribute.startsWith("\""))
+      strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
+    resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),\n");
+    resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
+        + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strAttribute))
+        + "\"),\n");
+    String strAttrSet, strAttrSetValueType;
+    strAttrSet = strAttrSetValueType = "";
+    final Product product = OBDal.getInstance().get(Product.class, strMProductID);
+    if (product != null) {
+      AttributeSet attributeset = product.getAttributeSet();
+      if (attributeset != null)
+        strAttrSet = product.getAttributeSet().toString();
+      strAttrSetValueType = product.getUseAttributeSetValueAs();
     }
+    resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
+        + "\"),\n");
+    resultado.append("new Array(\"inpattrsetvaluetype\", \""
+        + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
+
     // This 'if' is used when the delivery note is created based in a
     // sale-order, to make it not ask for the quantity of the delivery-note
     // and to modify it with the quantity of product in the warehouse.

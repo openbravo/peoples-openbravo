@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5983';
+  var number = '6248';
   return number;
 }
 
@@ -114,6 +114,36 @@ function setObjAttribute(obj, attribute, attribute_text) {
   } else {
     obj[attribute]=new Function(attribute_text);
   }
+}
+
+/**
+* Get the array of elements with a given name and tag. Its purpose is to supply the lack of document.getElementsByName support in IE
+* @param {name} string Required - The desired name to search
+* @param {tag} string Required - The tag of the desired name array
+*/
+function getElementsByName(name, tag) {
+  var resultArray = [];
+  if (!tag || tag == "" || tag == null || typeof tag == "undefined") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+      var inputs = document.all;
+      for (var i=0; i<inputs.length; i++){
+        if (inputs.item(i).getAttribute('name') == name){
+          resultArray.push(inputs.item(i));
+        }
+      }
+    } else {
+      resultArray = document.getElementsByName(name);
+    }
+  } else {
+    tag = tag.toLowerCase()
+    var inputs = document.getElementsByTagName(tag);
+    for (var i=0; i<inputs.length; i++){
+      if (inputs.item(i).getAttribute('name') == name){
+        resultArray.push(inputs.item(i));
+      }
+    }
+  }
+  return resultArray;
 }
 
 
@@ -3179,6 +3209,9 @@ function readOnlyLogicElement(id, readonly) {
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
     obj.readOnly = true;
+    if (obj.setReadOnly) {
+    	obj.setReadOnly(true);
+    }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextA = getObjAttribute(obj, 'onclick');
       var checkPatternA = "^[return false;]";
@@ -3210,7 +3243,9 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
-
+    if (obj.setReadOnly) {
+    	obj.setReadOnly(false);
+    }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextB = getObjAttribute(obj, 'onclick');
       var checkPatternB = "^[return false;]";
@@ -3287,6 +3322,34 @@ function autoCompleteNumber(obj, isFloatAllowed, isNegativeAllowed, evt) {
     }
   }
   return true;
+}
+
+/**
+* Return the most significant features of an object.
+* @param {Object} field Reference to the field that will be inspected.
+* @returns The features as a string.
+* @type String
+*/
+function getObjFeatures(obj) {
+  if (typeof obj == "string") {
+    obj = document.getElementById(obj);
+  }
+  var objType = ""
+  if (obj.tagName.toLowerCase() == 'input') {
+    objType += "input";
+    objType += " ";
+    objType += obj.getAttribute('type');
+    objType += " ";
+  }
+  if (obj.getAttribute('readonly') == 'true' || obj.readOnly) {
+    objType += "readonly";
+    objType += " ";
+  }
+  if (obj.getAttribute('disabled') == 'true' || obj.disabled) {
+    objType += "disabled";
+    objType += " ";
+  }
+  return objType;
 }
 
 /**
@@ -3383,6 +3446,12 @@ function checkFieldChange(elementToCheck) {
 */
 function windowUndo(form) {
   form.reset();
+  for (var i=0; i < form.elements.length; i++) {
+    var element = form.elements[i];
+    if (element.doReset) {
+      element.doReset();
+    }
+  }
   form.inpLastFieldChanged.value = '';
   setWindowEditing(false);
   displayLogic();
@@ -3927,6 +3996,12 @@ function resizeAreaInfo(isOnResize) {
   client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
 
   try {
+    if (document.getElementById("grid_toptext")) {
+      document.getElementById('grid_toptext').style.width = w - 50;
+    }
+    if (document.getElementById("grid_bottomtext")) {
+      document.getElementById('grid_bottomtext').style.width = w - 50;
+    }
     if (isOnResize) dijit.byId('grid').onResize();
   } catch (e) {}
 }
@@ -4281,6 +4356,9 @@ function returnPlainNumber(number, decSeparator, groupSeparator) {
 * @type String
 */
 function returnFormattedToCalc(number, decSeparator, groupSeparator) {
+  if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+  if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+
   var calcNumber = number;
   calcNumber = returnPlainNumber(calcNumber, decSeparator, groupSeparator);
   calcNumber = calcNumber.replace(decSeparator, '.');

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,6 +43,88 @@ import org.openbravo.base.util.Check;
  */
 
 public class DalUtil {
+
+  private static final String IDENTIFIER_PART_PATH = "_identifier";
+
+  /**
+   * Translates a so-called property path to a property. The passed entity is the starting entity.
+   * For example the property: organization.name and entity: Product will result in the
+   * Organization.name property to be returned.
+   * 
+   * @param entity
+   *          the start entity for the property path
+   * @param propertyPath
+   *          the property path, dot-separated property names
+   * @return the found property
+   */
+  public static Property getPropertyFromPath(Entity entity, String propertyPath) {
+    final String[] parts = propertyPath.split("\\.");
+    Entity currentEntity = entity;
+    Property result = null;
+    for (String part : parts) {
+      // only consider it as an identifier if it is called an identifier and
+      // the entity does not accidentally have an identifier property
+      // && !currentEntity.hasProperty(part)
+      // NOTE disabled for now, there is one special case: AD_Column.IDENTIFIER
+      // which is NOT HANDLED
+      if (part.equals(IDENTIFIER_PART_PATH)) {
+        // pick the first identifier property
+        if (currentEntity.getIdentifierProperties().isEmpty()) {
+          return null;
+        }
+        return currentEntity.getIdentifierProperties().get(0);
+      }
+      if (!currentEntity.hasProperty(part)) {
+        return null;
+      }
+      result = currentEntity.getProperty(part);
+      if (result.getTargetEntity() != null) {
+        currentEntity = result.getTargetEntity();
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Translates a so-called property path to a property. The passed entity is the starting entity.
+   * For example the property: organization.name and entity: Product will result in the
+   * Organization.name property to be returned.
+   * 
+   * @param entity
+   *          the start entity for the property path
+   * @param propertyPath
+   *          the property path, dot-separated property names
+   * @return the found property
+   */
+  public static Object getValueFromPath(BaseOBObject bob, String propertyPath) {
+    final String[] parts = propertyPath.split("\\.");
+    BaseOBObject currentBob = bob;
+    Property result = null;
+    Object value = null;
+    for (String part : parts) {
+      // only consider it as an identifier if it is called an identifier and
+      // the entity does not accidentally have an identifier property
+      // && !currentEntity.hasProperty(part)
+      // NOTE disabled for now, there is one special case: AD_Column.IDENTIFIER
+      // which is NOT HANDLED
+      if (part.equals(IDENTIFIER_PART_PATH)) {
+        return bob.getIdentifier();
+      }
+      final Entity currentEntity = currentBob.getEntity();
+      if (!currentEntity.hasProperty(part)) {
+        return null;
+      }
+      value = currentBob.get(part);
+      // if there is a next step, just make it
+      // if it is last then we stop anyway
+      if (value instanceof BaseOBObject) {
+        currentBob = (BaseOBObject) value;
+      } else {
+        return value;
+      }
+    }
+    return result;
+  }
 
   /**
    * Copies a BaseOBObject and all its children (see {@link Entity#getParentProperties() parent}).

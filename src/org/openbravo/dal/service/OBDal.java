@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.engine.SessionImplementor;
+import org.hibernate.jdbc.BorrowedConnectionProxy;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -83,7 +84,16 @@ public class OBDal implements OBSingleton {
     // before returning a connection always flush all other hibernate actions
     // to the database.
     flush();
-    return ((SessionImplementor) SessionHandler.getInstance().getSession()).connection();
+
+    // NOTE: workaround for this issue:
+    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
+    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
+    try {
+      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
+      return ((SessionImplementor) SessionHandler.getInstance().getSession()).connection();
+    } finally {
+      Thread.currentThread().setContextClassLoader(currentLoader);
+    }
   }
 
   /**

@@ -20,12 +20,14 @@
 package org.openbravo.dal.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -65,7 +67,34 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
-   * Queries the database using the where clauses and addition active, client and organization
+   * Queries the database using the where clauses and additional active, client and organization
+   * filters.
+   * 
+   * @return single result or null
+   * @throws HibernateException
+   *           if the query returns more than one result
+   * @see OBQuery#uniqueResultObject() uniqueResultObject for a version returning an Object
+   */
+  @SuppressWarnings("unchecked")
+  public E uniqueResult() {
+    return (E) createQuery().uniqueResult();
+  }
+
+  /**
+   * Queries the database using the where clauses and additional active, client and organization
+   * filters.
+   * 
+   * @return single result of type Object or null
+   * @throws HibernateException
+   *           if the query returns more than one result
+   * @see OBQuery#uniqueResult() uniqueResult for a type-safe version
+   */
+  public Object uniqueResultObject() {
+    return createQuery().uniqueResult();
+  }
+
+  /**
+   * Queries the database using the where clauses and additional active, client and organization
    * filters. The order in the list is determined by order by clause.
    * 
    * @return list of objects retrieved from the database
@@ -345,6 +374,8 @@ public class OBQuery<E extends BaseOBObject> {
         final Object value = localNamedParameters.get(name);
         if (value instanceof BaseOBObject) {
           qry.setEntity(name, value);
+        } else if (value instanceof Collection<?>) {
+          qry.setParameterList(name, (Collection<?>) value);
         } else {
           qry.setParameter(name, value);
         }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -228,7 +228,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       props.setProperty("log4j.rootCategory", "INFO,DB");
       PropertyConfigurator.configure(props);
 
-      ant = new AntExecutor(vars.getSessionValue("#sourcePath"));
+      String sourcePath = vars.getSessionValue("#sourcePath");
+      ant = new AntExecutor(sourcePath);
 
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();

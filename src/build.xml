@@ -55,14 +55,12 @@ build.war: build a war file in the lib directory.
 
 <project name="openbravo sources" default="compile" basedir=".">
 
-  <path id="yuicompressor.classpath">
-    <fileset dir="../lib/build">
-      <include name="**/yuicompressor-2.4.2.jar" />
-      <include name="**/YUIAnt.jar" />
-    </fileset>
-  </path>
   <taskdef name="yuicompress" classname="com.yahoo.platform.yui.compressor.YUICompressTask">
-    <classpath refid="yuicompressor.classpath" />
+    <classpath>
+      <pathelement location="${base.lib}/build/yuicompressor-2.4.2.jar" />
+      <pathelement location="${base.lib}/build/ob-rhino-1.6R7.jar" />
+      <pathelement location="${base.lib}/build/YUIAnt.jar" />
+    </classpath>
   </taskdef>
 
   <condition property="minimizeJSandCSSbool">
@@ -309,7 +307,7 @@ build.war: build a war file in the lib directory.
   
   <target name="compileSqlc" depends="sqlc">
     <updatesystemstatus v="RB43"/>
-    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" excludes="${base.modules}/src-wad/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path" />
     </javac>
     
@@ -361,6 +359,21 @@ build.war: build a war file in the lib directory.
     </copy>
     <copy todir="${build}">
       <fileset dir="${basedir}" includes="**/*.properties" />
+    </copy>
+    
+    <!-- also compile the domaintypes in modules -->
+    <javac srcdir="${basedir}/../" includes="modules/*/src/**/model/domaintype/**/*.java" destdir="${build}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+      <classpath refid="project.class.path" />
+    </javac>
+    
+    <!-- copy all configuration files in modules to the output path also -->
+    <copy todir="${build}" encoding="UTF-8">
+      <fileset dir="${base.modules}">
+          <include name="*/src/**/*" />
+          <exclude name="*/src/**/*.java" />
+          <exclude name="*/src/**/*.xsql" />
+      </fileset>
+      <mapper type="regexp" from="(.*\${file.separator}src)(.*)" to="\2" />
     </copy>
   </target>
 
@@ -438,6 +451,13 @@ build.war: build a war file in the lib directory.
         <include name="*/src/**/*.srpt" />
         <include name="*/src/**/*.jrxml" />
         <include name="*/src/**/*.jasper" />
+      </fileset>
+      <mapper type="regexp" from="(.*\${file.separator}src)(.*)" to="\2" />
+    </copy>
+    <copy todir="${build}">
+      <fileset dir="${base.modules}">
+        <include name="*/src/**" />
+        <exclude name="*/src/**/*.java" />
       </fileset>
       <mapper type="regexp" from="(.*\${file.separator}src)(.*)" to="\2" />
     </copy>

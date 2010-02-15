@@ -86,6 +86,7 @@ export.database: exports database structure and data to xml files.
   <property name="jakarta.home" location="${env.CATALINA_HOME}" />
   <property name="module" value="%" />
   <property name="apply.on.create" value="false" />
+  <property name="apply.on.update" value="true" />
   <property name="obx.export.RD" value="false" />
   <property name="obx.export.DB" value="false" />
   <property name="obx.export.CS" value="false" />
@@ -129,6 +130,13 @@ export.database: exports database structure and data to xml files.
     </or>
   </condition>
 
+  <condition property="apply.modules.on.update">
+    <or>
+      <equals arg1="yes" arg2="${apply.on.update}" />
+      <equals arg1="true" arg2="${apply.on.update}" />
+    </or>
+  </condition>
+
   <condition property="obx.exp.DB">
     <or>
       <equals arg1="yes" arg2="${obx.export.DB}" />
@@ -158,7 +166,14 @@ export.database: exports database structure and data to xml files.
   <property name="log.path" location="${jakarta.base}/logs" />
   <property name="lib" location="${jakarta.home}/common" />
   <property name="jakarta.context" location="${jakarta.base}/webapps/${context.name}" />
-  <property name="build.maxmemory" value="512M" />
+
+  <condition property="build.maxmemory" value="1024M" else="512M">
+    <or>
+      <equals arg1="${os.arch}" arg2="amd64" />
+      <equals arg1="${os.arch}" arg2="x86_64" />
+      <equals arg1="${os.arch}" arg2="ia64" />
+    </or>
+  </condition>
 
   <condition property="no.java.home" value="true">
     <not>
@@ -577,7 +592,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="db.apply.modules" if="apply.modules.on.create">
+  <target name="db.apply.modules" if="apply.modules.on.update">
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
@@ -592,9 +607,8 @@ export.database: exports database structure and data to xml files.
   <target name="apply.modules">
     <antcall target="update.database.mod" />
     <updatesystemstatus v="RB21"/>
-    <antcall target="generate.entities" />
+    <!--<antcall target="generate.entities" />-->
 
-    <updatesystemstatus v="RB31"/>
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <condition property="apply.modules.complete.compilation.var">
@@ -624,13 +638,14 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="apply.module">
+    <updatesystemstatus v="RB31"/>
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
     </java>
   </target>
   
-  <target name="apply.modules.compile">
+  <target name="apply.modules.compile" depends="wad.lib">
     <antcall target="apply.modules.compile.simple"/>
     <antcall target="apply.modules.compile.complete"/>
   </target>

@@ -10,6 +10,7 @@ dojo._hasResource["dijit._editor.RichText"] = true;
 dojo.provide("dijit._editor.RichText");
 
 dojo.require("dijit._Widget");
+dojo.require("dijit._CssStateMixin");
 dojo.require("dijit._editor.selection");
 dojo.require("dijit._editor.range");
 dojo.require("dijit._editor.html");
@@ -42,7 +43,7 @@ if(!dojo.config["useXDomain"] || dojo.config["allowXdRichTextSave"]){
 	}
 }
 
-dojo.declare("dijit._editor.RichText", dijit._Widget, {
+dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 	constructor: function(params){
 		// summary:
 		//		dijit._editor.RichText is the core of dijit.Editor, which provides basic
@@ -113,6 +114,8 @@ dojo.declare("dijit._editor.RichText", dijit._Widget, {
 		this.onLoadDeferred = new dojo.Deferred();
 	},
 
+	baseClass: "dijitEditor",
+
 	// inheritWidth: Boolean
 	//		whether to inherit the parent's width or simply use 100%
 	inheritWidth: false,
@@ -176,6 +179,9 @@ dojo.declare("dijit._editor.RichText", dijit._Widget, {
 		if("textarea" == this.domNode.tagName.toLowerCase()){
 			console.warn("RichText should not be used with the TEXTAREA tag.  See dijit._editor.RichText docs.");
 		}
+
+		this.inherited(arguments);
+
 		dojo.publish(dijit._scopeName + "._editor.RichText::init", [this]);
 		this.open();
 		this.setupDefaultShortcuts();
@@ -376,9 +382,14 @@ dojo.declare("dijit._editor.RichText", dijit._Widget, {
 		if(dn.nodeName && dn.nodeName == "LI"){
 			dn.innerHTML = " <br>";
 		}
-
+	
+		// Construct the editor div structure.
+		this.header = dn.ownerDocument.createElement("div");
+		dn.appendChild(this.header);
 		this.editingArea = dn.ownerDocument.createElement("div");
 		dn.appendChild(this.editingArea);
+		this.footer = dn.ownerDocument.createElement("div");
+		dn.appendChild(this.footer);
 
 		// User has pressed back/forward button so we lost the text in the editor, but it's saved
 		// in a hidden <textarea> (which contains the data for all the editors on this page),
@@ -454,7 +465,7 @@ dojo.declare("dijit._editor.RichText", dijit._Widget, {
 			dn.lastChild.style.marginTop = "-1.2em";
 		}
 
-		dojo.addClass(this.domNode, "RichTextEditable");
+		dojo.addClass(this.domNode, this.baseClass);
 	},
 
 	//static cache variables shared among all instance of this class
@@ -499,7 +510,7 @@ dojo.declare("dijit._editor.RichText", dijit._Widget, {
 			lineHeight = "normal";
 		}
 		var userStyle = "";
-		this.style.replace(/(^|;)(line-|font-?)[^;]+/g, function(match){ userStyle += match.replace(/^;/g,"") + ';'; });
+		this.style.replace(/(^|;)\s*(line-|font-?)[^;]+/ig, function(match){ userStyle += match.replace(/^;/ig,"") + ';'; });
 
 		// need to find any associated label element and update iframe document title
 		var label=dojo.query('label[for="'+this.id+'"]');
@@ -1613,7 +1624,7 @@ dojo.declare("dijit._editor.RichText", dijit._Widget, {
 		}
 		delete this.iframe;
 
-		dojo.removeClass(this.domNode, "RichTextEditable");
+		dojo.removeClass(this.domNode, this.baseClass);
 		this.isClosed = true;
 		this.isLoaded = false;
 
@@ -1797,6 +1808,36 @@ dojo.declare("dijit._editor.RichText", dijit._Widget, {
 			rv = this.document.execCommand("inserthtml", false, argument);
 		}
 		return rv;
+	},
+
+	getHeaderHeight: function(){
+		// summary:
+		//		A function for obtaining the height of the header node
+		return this._getNodeChildrenHeight(this.header); // Number
+	},
+
+	getFooterHeight: function(){
+		// summary:
+		//		A function for obtaining the height of the footer node
+        return this._getNodeChildrenHeight(this.footer); // Number
+	},
+
+	_getNodeChildrenHeight: function(node){
+		// summary:
+		//		An internal function for computing the cumulative height of all child nodes of 'node'
+		// node:
+		//		The node to process the children of;
+		var h = 0;
+		if(node && node.childNodes){
+			// IE didn't compute it right when position was obtained on the node directly is some cases, 
+			// so we have to walk over all the children manually.
+			var i; 
+			for(i = 0; i < node.childNodes.length; i++){ 
+				var size = dojo.position(node.childNodes[i]); 
+				h += size.h;   
+			} 
+		}
+		return h; // Number
 	}
 });
 

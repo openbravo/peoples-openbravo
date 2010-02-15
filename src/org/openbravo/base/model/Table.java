@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,10 +66,26 @@ public class Table extends ModelObject {
     this.tableName = tableName;
   }
 
+  /**
+   * Note the columns are not set by hibernate or through a hibernate mapping. For performance
+   * reasons they are set explicitly in the {@link ModelProvider}. See the assignColumnsToTable
+   * method in that class.
+   * 
+   * This collection is only set and used within the {@link ModelProvider} initialize method. It
+   * should not be used in other places. In other cases perform a direct database query to get the
+   * columns of a table.
+   * 
+   * @return the list of Column instances of this table
+   */
   public List<Column> getColumns() {
     return columns;
   }
 
+  /**
+   * Note the columns are not set by hibernate or through a hibernate mapping. For performance
+   * reasons they are set explicitly in the {@link ModelProvider}. See the assignColumnsToTable
+   * method in that class.
+   */
   public void setColumns(List<Column> columns) {
     this.columns = columns;
   }
@@ -146,7 +162,7 @@ public class Table extends ModelObject {
   public void setReferenceTypes(ModelProvider modelProvider) {
     for (final Column c : columns) {
       if (!c.isPrimitiveType())
-        c.setReferenceType(modelProvider);
+        c.setReferenceType();
     }
   }
 

@@ -845,6 +845,239 @@ BEGIN
 END;
 /-- END
 
+--update parent reference for old modules
+update ad_reference
+   set parentreference_id =( CASE VALIDATIONTYPE WHEN 'S' THEN '30' WHEN 'L' THEN '17' WHEN 'T' THEN '18' end)
+   where validationtype in ('S','L','T')
+   and parentreference_id is null
+/-- END
+
+create or replace
+PROCEDURE AD_CREATE_AUDIT_TRIGGERS(p_pinstance_id IN VARCHAR2)
+
+AS
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2009-2010 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  code CLOB;
+  TYPE RECORD IS REF CURSOR;
+  cur_triggers RECORD;
+  cur_tables RECORD;
+  cur_cols RECORD;
+  triggerName varchar2(30);
+  recordIdName varchar2(30);
+  datatype varchar2(30);
+  clientinfo number;
+  deleted number :=0;
+  created number :=0;
+  v_message varchar2(500);
+  v_isObps number;
+BEGIN 
+  select count(*) 
+    into v_isObps
+    from ad_system
+   where Instance_key is not null
+     and activation_key is not null;
+     
+  if v_isObps = 0 then
+    RAISE_APPLICATION_ERROR(-20000, '@OBPSNeededForAudit@') ;
+  end if;  
+
+  for cur_triggers in (select trigger_name
+                         from user_triggers
+                        where trigger_name like 'AU\_%' escape '\') loop
+    execute immediate 'drop trigger '||cur_triggers.trigger_name;
+    deleted := deleted + 1;
+  end loop;
+
+  for cur_tables in (select *
+                       from ad_table
+                      where isfullyaudited = 'Y'
+                      AND ISVIEW='N'
+                      order by tablename) loop
+    dbms_output.put_line('Creating trigger for table '||cur_tables.tablename);
+    triggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23)||'_TRG';
+    
+    select count(*) into clientinfo
+      from dual
+     where exists (select 1 from ad_column
+                    where ad_table_id = cur_tables.ad_table_id
+                     and lower(columnname)='ad_client_id')
+       and exists (select 1 from ad_column
+                    where ad_table_id = cur_tables.ad_table_id
+                     and lower(columnname)='ad_org_id');                     
+                     
+    
+    select columnname
+      into recordIdName
+      from ad_column
+     where ad_table_id = cur_tables.ad_table_id
+       and iskey='Y';
+    
+      code := 'create or replace TRIGGER '||triggerName||' 
+AFTER INSERT OR UPDATE OR DELETE
+ON '|| cur_tables.tablename||' FOR EACH ROW
+DECLARE
+  V_USER_ID VARCHAR2(32);
+  V_PROCESS_TYPE VARCHAR2(60);
+  V_PROCESS_ID VARCHAR2(32);
+  V_RECORD_ID VARCHAR2(32);
+  V_RECORD_REV NUMBER;
+  V_ACTION CHAR(1);
+  V_NEW_CHAR VARCHAR2(4000) := NULL;
+  V_OLD_CHAR VARCHAR2(4000) := NULL;
+  V_NEW_NCHAR NVARCHAR2(2000) := NULL;
+  V_OLD_NCHAR NVARCHAR2(2000) := NULL;
+  V_OLD_NUMBER NUMBER := NULL;
+  V_NEW_NUMBER NUMBER := NULL;
+  V_OLD_DATE DATE := NULL;
+  V_NEW_DATE DATE := NULL;
+  V_TIME DATE;
+  V_ORG VARCHAR2(32);
+  V_CLIENT VARCHAR2(32);
+  V_ISAUDITED CHAR(1);
+BEGIN 
+';
+
+if (cur_tables.ad_table_id != '100') then
+code := code ||
+'
+  SELECT ISFULLYAUDITED
+    INTO V_ISAUDITED
+    FROM AD_TABLE
+   WHERE AD_TABLE_ID = '''||cur_tables.ad_table_id||''';
+  IF V_ISAUDITED = ''N'' THEN 
+    RETURN;
+  END IF;
+';
+end if;
+
+code := code ||
+'
+  BEGIN
+    SELECT AD_USER_ID, PROCESSTYPE, PROCESSID
+      INTO V_USER_ID, V_PROCESS_TYPE, V_PROCESS_ID
+      FROM AD_CONTEXT_INFO;
+  EXCEPTION WHEN OTHERS THEN NULL;
+  END;
+  
+  V_TIME := NOW();
+ 
+  IF UPDATING THEN 
+    V_RECORD_ID := :NEW.'||recordIdName||';
+    V_ACTION := ''U'';';
+if (clientinfo!=0) then
+code := code ||'
+    V_CLIENT := :NEW.AD_CLIENT_ID;
+    V_ORG := :NEW.AD_ORG_ID;';
+end if;
+code := code ||'
+  ELSIF INSERTING THEN
+    V_RECORD_ID := :NEW.'||recordIdName||';
+    V_ACTION := ''I'';';
+if (clientinfo!=0) then
+code := code ||'
+    V_CLIENT := :NEW.AD_CLIENT_ID;
+    V_ORG := :NEW.AD_ORG_ID;';
+end if;
+code := code ||'
+  ELSE
+    V_RECORD_ID := :OLD.'||recordIdName||';
+    V_ACTION := ''D'';';
+if (clientinfo!=0) then
+code := code ||'
+    V_CLIENT := :OLD.AD_CLIENT_ID;
+    V_ORG := :OLD.AD_ORG_ID;';
+end if;
+code := code ||'
+  END IF;
+
+SELECT COALESCE(MAX(RECORD_REVISION),0)+1
+      INTO V_RECORD_REV
+      FROM AD_AUDIT_TRAIL
+     WHERE AD_TABLE_ID='''|| cur_tables.ad_table_id||'''
+       AND RECORD_ID=V_RECORD_ID;
+';
+       
+    for cur_cols in (select *
+                       from user_tab_columns u, aD_column c
+                      where table_name = upper(cur_tables.tablename)
+                        AND c.ad_table_id = cur_tables.ad_table_id
+                        and upper(c.columnname) = u.column_name
+                        AND u.data_type != 'BLOB'
+                        and upper(c.columnname) not in ('CREATED','CREATEDBY','UPDATED', 'UPDATEDBY')
+                        order by c.position) loop
+      if (cur_cols.data_type in ('VARCHAR2', 'CHAR')) then
+        datatype := 'CHAR';
+        code := code || 'IF (UPDATING AND ((COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.'')) OR ((:NEW.'||cur_cols.COLUMN_NAME||' IS NULL) AND :OLD.'||cur_cols.COLUMN_NAME||'=''.'') OR ((:OLD.'||cur_cols.COLUMN_NAME||' IS NULL) AND :NEW.'||cur_cols.COLUMN_NAME||'=''.'')))';
+      elsif (cur_cols.data_type in ('NVARCHAR2', 'NCHAR')) then
+        datatype := 'NCHAR';
+         code := code || 'IF (UPDATING AND ((COALESCE(:NEW.'||cur_cols.COLUMN_NAME||',''.'') != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||',''.'')) OR ((:NEW.'||cur_cols.COLUMN_NAME||' IS NULL) AND :OLD.'||cur_cols.COLUMN_NAME||'=''.'') OR ((:OLD.'||cur_cols.COLUMN_NAME||' IS NULL) AND :NEW.'||cur_cols.COLUMN_NAME||'=''.'')))';
+      elsif (cur_cols.data_type in ('DATE')) then
+        datatype := 'DATE';
+        code := code || 'IF (UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', now()) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', now()))';
+      else
+        datatype := 'NUMBER';
+        code := code || 'IF (UPDATING AND COALESCE(:NEW.'||cur_cols.COLUMN_NAME||', -1) != COALESCE(:OLD.'||cur_cols.COLUMN_NAME||', -1))';
+      end if;
+      
+      
+      code := code ||
+'
+OR DELETING OR INSERTING THEN
+    IF (UPDATING OR INSERTING) THEN
+      V_NEW_'||datatype||' := :NEW.'||cur_cols.COLUMN_NAME||';
+    END IF;
+    IF (UPDATING OR DELETING) THEN
+      V_OLD_'||datatype||' := :OLD.'||cur_cols.COLUMN_NAME||';
+    END IF;
+    
+    INSERT INTO AD_AUDIT_TRAIL 
+           (AD_AUDIT_TRAIL_ID, AD_USER_ID, AD_TABLE_ID, AD_COLUMN_ID, 
+           PROCESSTYPE, PROCESS_ID, RECORD_ID, RECORD_REVISION, ACTION, 
+           EVENT_TIME, OLD_'||datatype||', NEW_'||datatype||',
+           AD_CLIENT_ID, AD_ORG_ID)
+          VALUES
+           (GET_UUID, V_USER_ID, '''|| cur_tables.ad_table_id||''', '''||cur_cols.ad_column_id||''', 
+           v_process_type, v_process_id, v_record_id, v_record_rev, v_action, 
+           v_time, v_old_'||datatype||', v_new_'||datatype||',
+           V_CLIENT, V_ORG);
+  END IF;
+';
+    end loop;
+ 
+code := code ||
+'END
+;';
+execute immediate(code);
+    created := created + 1;
+  end loop;
+  
+  v_Message := '@Deleted@: '||deleted||' @Created@: '||created;
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
+  EXCEPTION
+WHEN OTHERS THEN
+  v_Message:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_Message) ;
+  IF (p_PInstance_ID IS NOT NULL) THEN
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_Message) ;
+  END IF;
+  RETURN;
+END AD_CREATE_AUDIT_TRIGGERS;
+/-- END
 
 CALL DBA_RECOMPILE(NULL)
 /-- END

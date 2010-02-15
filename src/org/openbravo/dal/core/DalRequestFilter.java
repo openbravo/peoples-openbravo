@@ -29,6 +29,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.openbravo.database.SessionInfo;
+
 /**
  * The DalRequestFilter ensures that the request thread is handled inside of a
  * {@link DalThreadHandler DalThreadHandler} this ensures that all requests are handled within a
@@ -86,6 +88,10 @@ public class DalRequestFilter implements Filter {
           // set the obcontext in the session
           OBContext.setOBContextInSession((HttpServletRequest) request, OBContext.getOBContext());
         }
+
+        // set to null all the session info
+        SessionInfo.init();
+
         super.doFinal(errorOccured);
       }
     };

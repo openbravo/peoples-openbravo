@@ -510,10 +510,18 @@ function calculateNumRows() {
    var related_info_cont = document.getElementById("related_info_cont");
    var client_height = document.getElementById("client_middle").clientHeight;
    var grid_bookmark_height = 0;
+   var grid_toptext_height = 0;
+   var grid_bottomtext_height = 0;
    if (document.getElementById("grid_bookmark")) {
      grid_bookmark_height = document.getElementById("grid_bookmark").clientHeight;
    }
-   client_height = client_height - grid_bookmark_height - grid_header_height - (related_info_cont?related_info_cont.clientHeight:0) - (messagebox_cont?messagebox_cont.clientHeight:0);
+   if (document.getElementById("grid_toptext")) {
+     grid_bookmark_height = document.getElementById("grid_toptext").clientHeight + 8;
+   }
+   if (document.getElementById("grid_bottomtext")) {
+     grid_bookmark_height = document.getElementById("grid_bottomtext").clientHeight + 8;
+   }
+   client_height = client_height - grid_bookmark_height - grid_header_height - grid_toptext_height - grid_bottomtext_height - (related_info_cont?related_info_cont.clientHeight:0) - (messagebox_cont?messagebox_cont.clientHeight:0);
    client_height = client_height - 20;
    var numRows = (client_height)/(grid_row_height);
    numRows = parseInt(numRows);

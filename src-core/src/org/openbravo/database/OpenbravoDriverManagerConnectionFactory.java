@@ -26,6 +26,7 @@ class OpenbravoDriverManagerConnectionFactory implements ConnectionFactory {
   protected String _passwd;
   protected Properties _props;
   protected String _dbSessionConfig;
+  protected String _rdbsm;
 
   public OpenbravoDriverManagerConnectionFactory(String connectUri, Properties props) {
     _connectUri = null;
@@ -37,16 +38,14 @@ class OpenbravoDriverManagerConnectionFactory implements ConnectionFactory {
   }
 
   public OpenbravoDriverManagerConnectionFactory(String connectUri, String uname, String passwd,
-      String dbSessionConfig) {
-    _connectUri = null;
-    _uname = null;
-    _passwd = null;
+      String dbSessionConfig, String rdbsm) {
     _props = null;
     _dbSessionConfig = null;
     _connectUri = connectUri;
     _uname = uname;
     _passwd = passwd;
     _dbSessionConfig = dbSessionConfig;
+    _rdbsm = rdbsm;
   }
 
   public Connection createConnection() throws SQLException {
@@ -72,6 +71,8 @@ class OpenbravoDriverManagerConnectionFactory implements ConnectionFactory {
       stmt = conn.createStatement();
       if (!_dbSessionConfig.equals(""))
         rset = stmt.executeQuery(_dbSessionConfig);
+      // set infrastructure for auditing
+      SessionInfo.initDB(conn, _rdbsm);
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {

@@ -188,7 +188,7 @@ public class ComboTableData {
         Integer.valueOf(_reference).intValue();
       } catch (Exception ignore) {
         if (!Utility.isUUIDString(_reference))
-          _reference = ComboTableQueryData.getReferenceID(getPool(), _reference, "D");
+          _reference = ComboTableQueryData.getBaseReferenceID(getPool(), _reference);
       }
     }
     setParameter(internalPrefix + "reference", _reference);
@@ -239,7 +239,7 @@ public class ComboTableData {
           // Looking reference by name! This shouldn't be used, name is prone to change. It only
           // looks in core names
           _reference = ComboTableQueryData.getReferenceID(getPool(), _reference,
-              (getReferenceType().equals("17") ? "L" : "T"));
+              getReferenceType());
           if (_reference == null || _reference.equals("")) {
             throw new OBException(Utility.messageBD(pool, "ReferenceNotFound", vars.getLanguage())
                 + " " + _reference);

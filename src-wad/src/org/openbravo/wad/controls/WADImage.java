@@ -18,11 +18,19 @@
  */
 package org.openbravo.wad.controls;
 
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Vector;
 
+import javax.servlet.ServletException;
+
+import org.openbravo.wad.FieldsData;
+import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADImage extends WADControl {
+  private static final String IMAGE_DEFAULT = "blank.gif";
 
   public WADImage() {
   }
@@ -111,5 +119,98 @@ public class WADImage extends WADControl {
       text.append("}\n");
     }
     return text.toString();
+  }
+
+  public boolean has2UIFields() {
+    return true;
+  }
+
+  public String columnIdentifier(String tableName, FieldsData fields, Vector<Object> vecCounters,
+      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
+      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
+    if (fields == null)
+      return "";
+    StringBuffer texto = new StringBuffer();
+    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+
+    ilist++;
+    if (tableName != null && tableName.length() != 0) {
+      vecTable.addElement("left join (select AD_Image_ID, ImageURL from AD_Image) list" + ilist
+          + " on (" + tableName + "." + fields.name + " = list" + ilist + ".AD_Image_ID) ");
+    } else {
+      vecTable.addElement("AD_Image list" + ilist);
+    }
+    texto.append("list").append(ilist).append(".ImageURL");
+    vecFields.addElement(texto.toString());
+    vecCounters.set(0, Integer.toString(itable));
+    vecCounters.set(1, Integer.toString(ilist));
+    return texto.toString();
+  }
+
+  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+    if (fieldsDef.isdisplayed.equals("Y")) { // Image
+      final FieldsData fd = new FieldsData();
+      fd.reference = fieldsDef.reference + "_" + (itable++);
+      fd.name = fieldsDef.columnname + "R";
+      final String tableN = "AD_Image";
+      fieldsDef.name = fieldsDef.name;
+      final Vector<Object> vecTables2 = new Vector<Object>();
+      final Vector<Object> vecWhere2 = new Vector<Object>();
+      vecTables2.addElement(tableN + " table1");
+      final StringBuffer strFields2 = new StringBuffer();
+      strFields2.append(" ( table1.ImageURL ) AS ").append(fieldsDef.columnname);
+      final StringBuffer fields = new StringBuffer();
+      fields.append("SELECT ").append(strFields2);
+      fields.append(" FROM ");
+      for (int j = 0; j < vecTables2.size(); j++) {
+        fields.append(vecTables2.elementAt(j));
+      }
+      fields.append(" WHERE table1.isActive='Y'");
+      for (int j = 0; j < vecWhere2.size(); j++) {
+        fields.append(vecWhere2.elementAt(j));
+      }
+      fields.append(" AND table1." + fieldsDef.name + " = ? ");
+      fd.defaultvalue = fields.toString();
+      fd.whereclause = "<Parameter name=\"" + fd.name + "\"/>";
+      v.addElement(fd);
+    }
+    return itable;
+  }
+
+  public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
+      String tabName, int itable) {
+    if (fieldsDef.isdisplayed.equals("Y")) {
+      strDefaultValues.append(", " + tabName + "Data.selectDef" + fieldsDef.reference + "_"
+          + (itable++) + "(this, " + fieldsDef.defaultvalue + ")");
+    }
+    return itable;
+  }
+
+  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, Vector<Object> vecTableParameters, FieldsData field,
+      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
+      IOException {
+    if (field.isdisplayed.equals("Y")) {
+      final Vector<Object> vecSubFields = new Vector<Object>();
+      WadUtility.columnIdentifier(conn, tableName, field.required.equals("Y"), field, vecCounters,
+          false, vecSubFields, vecTables, vecWhere, vecParameters, vecTableParameters,
+          sqlDateFormat);
+      final StringBuffer strFields = new StringBuffer();
+      strFields.append(" ( ");
+      boolean boolFirst = true;
+      for (final Enumeration<Object> e = vecSubFields.elements(); e.hasMoreElements();) {
+        final String tableField = (String) e.nextElement();
+        if (boolFirst) {
+          boolFirst = false;
+        } else {
+          strFields.append(" || ' - ' || ");
+        }
+        strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
+      }
+      vecFields.addElement("(CASE WHEN " + tableName + "." + field.name + " IS NULL THEN '"
+          + IMAGE_DEFAULT + "' ELSE " + strFields.toString() + ") END) AS " + field.name + "R");
+    }
   }
 }

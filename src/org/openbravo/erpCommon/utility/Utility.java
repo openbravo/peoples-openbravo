@@ -109,23 +109,25 @@ public class Utility {
   }
 
   /**
-   * Checks if a getNumericParameters is needed based on a reference
+   * Checks if a getNumericParameters is needed based on a reference. Deprecated, use UIReference.
    * 
    * @param reference
    * @return true if the passed reference represents a numeric type, false otherwise.
    */
+  @Deprecated
   public static boolean isNumericParameter(String reference) {
     return (!Utility.isID(reference) && (Utility.isDecimalNumber(reference) || Utility
         .isIntegerNumber(reference)));
   }
 
   /**
-   * Checks if the reference is an ID
+   * Checks if the reference is an ID. Deprecated, use UIReference.
    * 
    * @param reference
    *          String with the reference
    * @return True if is a ID reference
    */
+  @Deprecated
   public static boolean isID(String reference) {
     if (reference == null || reference.equals("")) {
       return false;
@@ -134,12 +136,13 @@ public class Utility {
   }
 
   /**
-   * Checks if the references is a decimal number type.
+   * Checks if the references is a decimal number type. Deprecated, use UIReference.
    * 
    * @param reference
    *          String with the reference.
    * @return True if is a decimal or false if not.
    */
+  @Deprecated
   public static boolean isDecimalNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
@@ -154,12 +157,13 @@ public class Utility {
   }
 
   /**
-   * Checks if the references is an integer number type.
+   * Checks if the references is an integer number type. Deprecated, use UIReference.
    * 
    * @param reference
    *          String with the reference.
    * @return True if is an integer or false if not.
    */
+  @Deprecated
   public static boolean isIntegerNumber(String reference) {
     if (reference == null || reference.equals(""))
       return false;
@@ -173,12 +177,13 @@ public class Utility {
   }
 
   /**
-   * Checks if the references is a datetime type.
+   * Checks if the references is a datetime type. Deprecated, use UIReference.
    * 
    * @param reference
    *          String with the reference.
    * @return True if is a datetime or false if not.
    */
+  @Deprecated
   public static boolean isDateTime(String reference) {
     if (reference == null || reference.equals(""))
       return false;
@@ -703,6 +708,7 @@ public class Utility {
 
   /**
    * Parse the given string searching the @ elements to translate with the correct values.
+   * Parameters are directly inserted in the returned String.
    * 
    * @param conn
    *          Handler for the database connection.
@@ -716,6 +722,16 @@ public class Utility {
    */
   public static String parseContext(ConnectionProvider conn, VariablesSecureApp vars,
       String context, String window) {
+    return parseContext(conn, vars, context, window, null);
+  }
+
+  /**
+   * Parse the given string searching the @ elements to translate with the correct values. If params
+   * is not null it adds a ? symbol in the context and adds the actual value to the params Vector,
+   * other case the actual value is replaced in the context.
+   */
+  public static String parseContext(ConnectionProvider conn, VariablesSecureApp vars,
+      String context, String window, Vector<String> params) {
     if (context == null || context.equals(""))
       return "";
     final StringBuffer strOut = new StringBuffer();
@@ -734,7 +750,12 @@ public class Utility {
       defStr = getContext(conn, vars, token, window);
       if (defStr.equals(""))
         return "";
-      strOut.append(defStr);
+      if (params != null) {
+        params.add(defStr);
+        strOut.append("?");
+      } else {
+        strOut.append(defStr);
+      }
       value = value.substring(j + 1);
       i = value.indexOf("@");
     }

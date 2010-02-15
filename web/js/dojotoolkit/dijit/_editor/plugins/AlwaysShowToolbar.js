@@ -99,7 +99,7 @@ dojo.declare("dijit._editor.plugins.AlwaysShowToolbar", dijit._editor._Plugin,
 
 		var isIE6 = dojo.isIE < 7;
 		if(!this._handleScroll){ return; }
-		var tdn = this.editor.toolbar.domNode;
+		var tdn = this.editor.header;
 		var db = dojo.body;
 
 		if(!this._scrollSetUp){
@@ -180,7 +180,7 @@ dojo.declare("dijit._editor.plugins.AlwaysShowToolbar", dijit._editor._Plugin,
 //		clearInterval(this.scrollInterval);
 
 		if(dojo.isIE < 7){
-			dojo.removeClass(this.editor.toolbar.domNode, 'dijitIEFixedToolbar');
+			dojo.removeClass(this.editor.header, 'dijitIEFixedToolbar');
 		}
 	}
 });

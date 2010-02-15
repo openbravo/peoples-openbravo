@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -106,7 +106,9 @@
     return submitXmlHttpRequest(gt_callbackDescription, frm, "DESCRIPTION", "../utility/GenericTreeServlet.html", false, null, paramXMLReq);
   }
   
-  function gt_getUpdateDescription(id){
+  function gt_getUpdateDescription(evt, id){
+    if (!evt) evt = window.event;
+    evt.cancelBubble = true;
     var frm = document.frmMain;
     frm.inpNodeId.value = id;
     var paramXMLReq = new Array('anchor');
@@ -124,18 +126,8 @@
 
   function gt_getElementsByName(name,tag) {
     if (tag == null || tag == 'null' || tag == '') { tag='div' }
-    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
-      var inputs = document.getElementsByTagName(tag);
-      var divArray = [];
-      for(var i=0; i<inputs.length; i++){
-        if(inputs.item(i).getAttribute('name') == name ){
-          divArray.push(inputs.item(i));
-        }
-      }
-      return divArray;
-    } else {
-      return document.getElementsByName(name);
-    }
+    var divArray = getElementsByName(name, tag);
+    return divArray;
   }
 
   function gt_getElementByName(name) {
@@ -411,12 +403,22 @@
     }
   }
 
-  function gt_checkToggleNode(element, type) {
+  function gt_checkToggleNode(element, type, isClick) {
     var node = gt_returnNodeObject(element, type);
     if (typeof node != "undefined") {
       var nodeId = node.getAttribute('id').replace('node_','');
       if (document.getElementById('inpNodes_' + nodeId)) {
-        document.getElementById('inpNodes_' + nodeId).checked = !document.getElementById('inpNodes_' + nodeId).checked;
+        if (isClick == true && navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+          gt_setActiveUninstall();
+        } else if (isClick == true) {
+          setTimeout(function () {
+            document.getElementById('inpNodes_' + nodeId).checked = !document.getElementById('inpNodes_' + nodeId).checked;
+            gt_setActiveUninstall();
+          },10);
+        } else {
+          document.getElementById('inpNodes_' + nodeId).checked = !document.getElementById('inpNodes_' + nodeId).checked;
+          gt_setActiveUninstall();
+        }
       }
     }
   }
@@ -456,14 +458,14 @@
   }
   
   function gt_setActiveUninstall() {
-	disableButton('buttonUninstall');
+    disableButton('buttonUninstall');
     boxes = gt_getElementsByName('inpNodes','input');
-	for (i=0; i<boxes.length; i++) {
-	  if (boxes[i].checked == true) {
-	    enableButton('buttonUninstall');
-	    return;
-	  }
-	}
+    for (i=0; i<boxes.length; i++) {
+      if (boxes[i].checked == true) {
+        enableButton('buttonUninstall');
+        return;
+      }
+    }
   }
 
   function gt_adjustTreeWidth() {

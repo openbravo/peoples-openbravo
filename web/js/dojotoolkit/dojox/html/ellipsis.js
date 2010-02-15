@@ -9,6 +9,17 @@ if(!dojo._hasResource["dojox.html.ellipsis"]){ //_hasResource checks added by bu
 dojo._hasResource["dojox.html.ellipsis"] = true;
 dojo.provide("dojox.html.ellipsis");
 
+/*=====
+dojox.html.ellipsis = {
+	// summary: offers cross-browser support for text-overflow: ellipsis
+	//
+	// description: Add "dojoxEllipsis" on any node that you want to ellipsis-ize. In order to function properly,
+	//	the node with the dojoxEllipsis class set on it should be a child of a node with a defined width.
+	//	It should also be a block-level element (i.e. <div>) - it will not work on td elements.
+	//	NOTE: When using the dojoxEllipsis class within tables, the table needs to have the table-layout: fixed style
+}
+=====*/
+
 (function(d){
 	if(d.isMoz){
 		// The delay (in ms) to wait so that we don't keep querying when many 

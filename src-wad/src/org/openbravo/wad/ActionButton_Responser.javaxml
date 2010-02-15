@@ -31,6 +31,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.database.SessionInfo;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -60,6 +61,10 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
     } else if (command.startsWith("SAVE_BUTTONActionButton"))
       strProcessId = command.substring("SAVE_BUTTONActionButton".length());
    
+    //set process type and id for audit
+    SessionInfo.setProcessType("P");
+    SessionInfo.setProcessId(strProcessId);
+    
     if (!vars.commandIn("DEFAULT") &amp;&amp; !hasGeneralAccess(vars, "P", strProcessId)) {
       bdErrorGeneralPopUp(request, response, Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
     }

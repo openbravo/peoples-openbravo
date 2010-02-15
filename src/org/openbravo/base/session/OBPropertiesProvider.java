@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,11 +21,14 @@ package org.openbravo.base.session;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.util.Check;
@@ -39,9 +42,10 @@ import org.openbravo.base.util.Check;
 public class OBPropertiesProvider {
   private final Logger log = Logger.getLogger(OBPropertiesProvider.class);
 
-  private Properties obProperties = null;
-
   private static OBPropertiesProvider instance = new OBPropertiesProvider();
+
+  private Properties obProperties = null;
+  private Document formatXML;
 
   public static synchronized OBPropertiesProvider getInstance() {
     return instance;
@@ -56,6 +60,30 @@ public class OBPropertiesProvider {
       readPropertiesFromDevelopmentProject();
     }
     return obProperties;
+  }
+
+  public Document getFormatXMLDocument() {
+    if (formatXML == null) {
+      final File file = getFileFromDevelopmentPath("Format.xml");
+      if (file != null) {
+        try {
+          SAXReader reader = new SAXReader();
+          formatXML = reader.read(new FileReader(file));
+        } catch (Exception e) {
+          throw new IllegalStateException(e);
+        }
+      }
+    }
+    return formatXML;
+  }
+
+  public void setFormatXML(InputStream is) {
+    try {
+      SAXReader reader = new SAXReader();
+      formatXML = reader.read(is);
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   public void setProperties(InputStream is) {
@@ -93,21 +121,7 @@ public class OBPropertiesProvider {
 
   // tries to read the properties from the openbravo development project
   private void readPropertiesFromDevelopmentProject() {
-    // get the location of the current class file
-    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
-    File f = new File(url.getPath());
-    File propertiesFile = null;
-    while (f.getParentFile() != null && f.getParentFile().exists()) {
-      f = f.getParentFile();
-      final File configDirectory = new File(f, "config");
-      if (configDirectory.exists()) {
-        propertiesFile = new File(configDirectory, "Openbravo.properties");
-        if (propertiesFile.exists()) {
-          // found it and break
-          break;
-        }
-      }
-    }
+    final File propertiesFile = getFileFromDevelopmentPath("Openbravo.properties");
     if (propertiesFile == null) {
       return;
     }
@@ -116,4 +130,22 @@ public class OBPropertiesProvider {
         propertiesFile.getParentFile().getAbsolutePath());
   }
 
+  private File getFileFromDevelopmentPath(String fileName) {
+    // get the location of the current class file
+    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
+    File f = new File(url.getPath());
+    File propertiesFile = null;
+    while (f.getParentFile() != null && f.getParentFile().exists()) {
+      f = f.getParentFile();
+      final File configDirectory = new File(f, "config");
+      if (configDirectory.exists()) {
+        propertiesFile = new File(configDirectory, fileName);
+        if (propertiesFile.exists()) {
+          // found it and break
+          break;
+        }
+      }
+    }
+    return propertiesFile;
+  }
 }

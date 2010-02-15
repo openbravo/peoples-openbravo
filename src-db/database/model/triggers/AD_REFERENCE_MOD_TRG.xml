@@ -72,10 +72,13 @@ BEGIN
         COALESCE(:NEW.Name , '.') != COALESCE(:OLD.Name , '.') OR
         COALESCE(:NEW.Description , '.') != COALESCE(:OLD.Description , '.') OR
         COALESCE(:NEW.Help , '.') != COALESCE(:OLD.Help , '.') OR
-        COALESCE(:NEW.ValidationType , '.') != COALESCE(:OLD.ValidationType , '.') OR
         COALESCE(:NEW.VFormat , '.') != COALESCE(:OLD.VFormat , '.') OR
         COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.') OR
-        1=2) THEN
+        :NEW.ISBASEREFERENCE      != :NEW.ISBASEREFERENCE                        OR                                                                                                                      
+        COALESCE(:NEW.PARENTREFERENCE_ID,'.')   != COALESCE(:NEW.PARENTREFERENCE_ID,'.') OR                                                                                                                                                  
+        COALESCE(:NEW.MODEL_IMPL        ,'.')   != COALESCE(:NEW.MODEL_IMPL        ,'.') OR                                                                                                                                                  
+        COALESCE(:NEW.WAD_IMPL          ,'.')   != COALESCE(:NEW.WAD_IMPL          ,'.') OR                                                                                                                                                  
+        COALESCE(:NEW.UI_IMPL           ,'.')   != COALESCE(:NEW.UI_IMPL           ,'.')) THEN
       RAISE_APPLICATION_ERROR(-20532, 'Cannot update an object in a module not in developement and without an active template');
     END IF;
   END IF;
@@ -83,6 +86,13 @@ BEGIN
   IF ((DELETING OR INSERTING) AND devModule='N') THEN
     RAISE_APPLICATION_ERROR(-20533, 'Cannot insert/delete objects in a module not in development.');
   END IF;
+
+  IF (UPDATING OR INSERTING) THEN
+    IF :NEW.ISBASEREFERENCE = 'N' AND :NEW.PARENTREFERENCE_ID IS NULL THEN
+        RAISE_APPLICATION_ERROR(-20000, '@IF_NOT_BASE_THEN_PARENT_MANDATORY@');
+    END IF;
+  END IF;
+
 END AD_REFERENCE_MOD_TRG
 ]]></body>
     </trigger>

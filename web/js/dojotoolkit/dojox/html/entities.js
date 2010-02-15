@@ -13,7 +13,7 @@ dojo.provide("dojox.html.entities");
 	//		Entity characters for HTML, represented as an array of 
 	//		character code, entity name (minus & and ; wrapping.
 
-	_applyEncodingMap = function(str, map){
+	var _applyEncodingMap = function(str, map){
 		// summary:
 		//		Private internal function for performing encoding of entity characters.
 		// tags:
@@ -50,7 +50,7 @@ dojo.provide("dojox.html.entities");
 		return str;
 	};
 
-	_applyDecodingMap = function(str, map){
+	var _applyDecodingMap = function(str, map){
 		// summary:
 		//		Private internal function for performing deecoding of entity characters.
 		// tags:

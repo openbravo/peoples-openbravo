@@ -37,6 +37,7 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
@@ -89,7 +90,6 @@ public class DatabaseValidator implements SystemValidator {
     // 3) table present on both sides, column match check
 
     final org.apache.ddlutils.model.Table[] dbTables = getDatabase().getTables();
-
     final Map<String, org.apache.ddlutils.model.Table> dbTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>();
     for (org.apache.ddlutils.model.Table dbTable : dbTables) {
       dbTablesByName.put(dbTable.getName().toUpperCase(), dbTable);
@@ -139,8 +139,9 @@ public class DatabaseValidator implements SystemValidator {
 
     // only check this one if the global validate check is done
     for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
-      // ignore errors related to C_TEMP_SELECTION
-      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+      // ignore errors related to C_TEMP_SELECTION and AD_CONTEXT_INFO
+      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")
+          && !dbTable.getName().toUpperCase().startsWith("AD_CONTEXT_INFO")) {
         result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
             + dbTable.getName() + " present in the database "
             + " but not defined in the Application Dictionary");
@@ -234,6 +235,11 @@ public class DatabaseValidator implements SystemValidator {
         // ignore this specific case
         if (entity.getTableName().equalsIgnoreCase("ad_module_log")
             && colName.equalsIgnoreCase("ad_module_id")) {
+          continue;
+        }
+
+        // ignore ad_audit_trail as fk's are omitted on purpose
+        if (entity.getTableName().equalsIgnoreCase("ad_audit_trail")) {
           continue;
         }
 
@@ -391,7 +397,7 @@ public class DatabaseValidator implements SystemValidator {
       }
     } else if (property != null && property.getPrimitiveObjectType() != null) {
       final Class<?> prim = property.getPrimitiveObjectType();
-      if (prim == String.class) {
+      if (prim == String.class || property.getDomainType() instanceof ButtonDomainType) {
         checkType(dbColumn, dbTable, result, new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR",
             "CLOB" });
         // there are too many differences which make this check not relevant/practical at the moment

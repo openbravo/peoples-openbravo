@@ -108,7 +108,7 @@ function getType(index) {
 		1.- Confirm -> muestra una ventana de confirmación que tiene 2 botones (OK y CANCEL)
 		2.- Prompt -> muestra una ventana de petición de un parámetro con 2 botones (OK y CANCEL)
 */
-function showMessage(_text, _type, _defaultValue) {
+function showStdMessage(_text, _type, _defaultValue) {
 	switch (_type) {
 	case 1:return confirm(_text);
 			 break;
@@ -117,6 +117,11 @@ function showMessage(_text, _type, _defaultValue) {
 	default: alert(_text);
 	}
 	return true;
+}
+
+// Deprecated in 2.50, use showStdMessage instead
+function showMessage(_text, _type, _defaultValue) {
+  return showStdMessage(_text, _type, _defaultValue);
 }
 
 // Deprecated in 2.50, use showJSMessage instead
@@ -145,7 +150,7 @@ function showJSMessage(index, _language, clean)
 	}
 	var type = getType(index, _language);
 	if (type==null) type=gDefaultType;
-	return showMessage(strMessage, type, strDefault);
+	return showStdMessage(strMessage, type, strDefault);
 }
 
 
@@ -216,14 +221,14 @@ function messageResponse(paramArray, XMLHttpRequestObj) {
  */
 function setValidationMessages() {
   var missing = getMessage("Missing");
-  var missingElements = document.getElementsByName("missingText");  
+  var missingElements = getElementsByName("missingText", "div");
   for (i = 0; i < missingElements.length; i++) {
     missingElements[i].innerHTML = missing;
   }
   
   var invalid = getMessage("Invalid");
-  var invalidElements = document.getElementsByName("invalidText");
+  var invalidElements = getElementsByName("invalidText", "div");
   for (i = 0; i < invalidElements.length; i++) {
-	  invalidElements[i].innerHTML = invalid;
+    invalidElements[i].innerHTML = invalid;
   }
 }

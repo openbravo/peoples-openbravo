@@ -21,6 +21,7 @@ package org.openbravo.scheduling;
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -47,6 +48,12 @@ public class DefaultJob implements Job {
       bundle.setConnection((ConnectionProvider) jec.get(ProcessBundle.CONNECTION));
       bundle.setConfig((ConfigParameters) jec.get(ProcessBundle.CONFIG_PARAMS));
       bundle.setLog(new ProcessLogger(bundle.getConnection()));
+
+      // Set audit info
+      SessionInfo.setUserId(bundle.getContext().getUser());
+      SessionInfo.setProcessType("P");
+      SessionInfo.setProcessId(bundle.getProcessId());
+
       process.execute(bundle);
 
     } catch (final Exception e) {

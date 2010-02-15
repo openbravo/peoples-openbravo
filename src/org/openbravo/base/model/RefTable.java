@@ -11,13 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.base.model;
+
+import org.apache.log4j.Logger;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.TableDomainType;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Ref_Table table in the application
@@ -27,6 +31,9 @@ package org.openbravo.base.model;
  */
 
 public class RefTable extends ModelObject {
+  private static final Logger log = Logger.getLogger(RefTable.class);
+
+  private Reference reference;
 
   private Column column;
 
@@ -36,5 +43,20 @@ public class RefTable extends ModelObject {
 
   public void setColumn(Column column) {
     this.column = column;
+  }
+
+  public Reference getReference() {
+    return reference;
+  }
+
+  public void setReference(Reference reference) {
+    this.reference = reference;
+    final DomainType domainType = reference.getDomainType();
+    if (!(domainType instanceof TableDomainType)) {
+      log.error("Domain type of reference " + reference.getId()
+          + " is not a TableDomainType but a " + domainType);
+    } else {
+      ((TableDomainType) domainType).setRefTable(this);
+    }
   }
 }

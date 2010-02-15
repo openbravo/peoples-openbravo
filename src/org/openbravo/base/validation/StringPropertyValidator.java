@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,12 +73,6 @@ public class StringPropertyValidator extends BasePropertyValidator {
       // TODO: i18n this
       return "Value (" + value + ")  is too long, it has length " + str.length()
           + ", the maximum allowed length is " + getFieldLength();
-    }
-
-    final Property p = getProperty();
-    if (p.doCheckAllowedValue() && !p.isAllowedValue(str)) {
-      return "Value (" + value + ") is not allowed, it should be one of the following values: "
-          + p.getAllowedValues() + " but it is value " + str;
     }
     return null;
   }
