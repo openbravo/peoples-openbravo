@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,27 +49,27 @@
    <SqlMethod name="selectTrl" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Menu_ID AS ID, t.Name,t.Description,m.IsSummary,
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Menu_ID AS ID, 
+               COALESCE (t.Name, m.Name) as name,t.Description,m.IsSummary,
         m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID, m.AD_Workflow_ID, m.AD_Task_ID, Mo.ISINDEVELOPMENT
         FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID  
                                                       AND tn.Node_ID=tb.Node_ID
                                                       AND tb.AD_User_ID  = ? , 
-             AD_Menu m, AD_Menu_Trl t,
+             AD_Menu m left join AD_Menu_Trl t on m.AD_Menu_ID = t.AD_Menu_ID 
+                                               AND t.AD_Language = ?
+                                               AND m.AD_Menu_ID = t.AD_Menu_ID,
              AD_Module Mo
-        WHERE  m.AD_Menu_ID = t.AD_Menu_ID    
-        AND tn.Node_ID = m.AD_Menu_ID 
+        WHERE  tn.Node_ID = m.AD_Menu_ID 
         AND tn.AD_Tree_ID = ? 
-        AND t.AD_Language = ? 
         AND Mo.AD_Module_ID = m.AD_Module_ID
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        
         <Parameter name="adUserId"/>
+        <Parameter name="adLanguage"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
         <Parameter name="adTreeId"/>
-        <Parameter name="adLanguage"/>
    </SqlMethod>
    <SqlMethod name="selectOrg" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

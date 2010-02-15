@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -109,14 +109,9 @@ class WindowTreeUtility {
       log4j.debug("WindowTreeUtility.getTree() - TreeID: " + TreeID);
     WindowTreeData[] data = null;
     String strEditable = (editable ? "editable" : "");
-    boolean isBaseLanguage = vars.getLanguage().equals("en_US");
     if (TreeType.equals("MM")) {
-      if (isBaseLanguage)
-        data = WindowTreeData.select(conn, vars.getUser(), strEditable, strParentID, strNodeId,
-            TreeID);
-      else
-        data = WindowTreeData.selectTrl(conn, vars.getUser(), strEditable, strParentID, strNodeId,
-            TreeID, vars.getLanguage());
+      data = WindowTreeData.selectTrl(conn, vars.getUser(), vars.getLanguage(), strEditable,
+          strParentID, strNodeId, TreeID);
     } else if (TreeType.equals("OO"))
       data = WindowTreeData.selectOrg(conn, vars.getUser(), strEditable, strParentID, strNodeId,
           TreeID);
