@@ -301,6 +301,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="PO_C_INCOTERMS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="SO_C_INCOTERMS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
@@ -351,6 +359,12 @@
       </foreign-key>
       <foreign-key foreignTable="C_BP_TAXCATEGORY" name="C_BPARTNER_SO_BP_TAXCATEGORY">
         <reference local="SO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_INCOTERMS" name="C_INCOTERMS_CBPARTNER_PO">
+        <reference local="PO_C_INCOTERMS_ID" foreign="C_INCOTERMS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_INCOTERMS" name="C_INCOTERMS_CBPARTNER_SO">
+        <reference local="SO_C_INCOTERMS_ID" foreign="C_INCOTERMS_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_CBPARTNER">
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
