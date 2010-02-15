@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+  <database name="VIEW FIN_PAYMENT_DETAIL_V">
+    <view name="FIN_PAYMENT_DETAIL_V"><![CDATA[SELECT pd.fin_payment_detail_id AS fin_payment_detail_v_id, pd.ad_client_id, pd.ad_org_id, pd.isactive, pd.created, pd.createdby, pd.updated, pd.updatedby, pd.fin_payment_schedule_id AS fin_payment_schedule_v_id, p.paymentdate, p.fin_paymentmethod_id, pd.amount, p.c_currency_id, p.documentno AS payment
+   FROM fin_payment p, fin_payment_detail pd
+  WHERE pd.fin_payment_id = p.fin_payment_id]]></view>
+  </database>
