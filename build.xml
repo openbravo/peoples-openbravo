@@ -607,7 +607,6 @@ export.database: exports database structure and data to xml files.
   <target name="apply.modules">
     <antcall target="update.database.mod" />
     <updatesystemstatus v="RB21"/>
-    <!--<antcall target="generate.entities" />-->
 
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
