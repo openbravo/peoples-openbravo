@@ -436,8 +436,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         Tab cTab = OBDal.getInstance().get(Tab.class, childTab.tabid);
         String translatedTabName = getTranslatedTabName(cTab);
         String childTableId = cTab.getTable().getId();
-        String oneLink = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"gotoChild("
-            + childTab.tabid + ", " + childTableId + "); return false;\">" + translatedTabName
+        String oneLink = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"gotoChild('"
+            + childTab.tabid + "', '" + childTableId + "'); return false;\">" + translatedTabName
             + "</a>";
         links.append(oneLink).append(", ");
       }
