@@ -213,7 +213,7 @@ public class UIReference {
     this.strIsSOTrx = strIsSOTrx;
   }
 
-  public boolean isNumberic() {
+  public boolean isNumeric() {
     return numeric;
   }
 

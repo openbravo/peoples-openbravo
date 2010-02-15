@@ -95,7 +95,7 @@ public class PrintJR extends HttpSecureAppServlet {
       String paramValue = "";
 
       UIReference ref = Reference.getUIReference(processparams[i].reference, null);
-      if (ref.isNumberic()) {
+      if (ref.isNumeric()) {
         paramValue = vars.getNumericParameter(strParamname);
       } else {
         paramValue = vars.getStringParameter(strParamname);
