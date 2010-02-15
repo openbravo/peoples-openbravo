@@ -81,6 +81,7 @@ import org.openbravo.model.ad.ui.Task;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.model.ad.ui.Workflow;
+import org.openbravo.reference.ui.UIReference;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class AuditTrailPopup extends HttpSecureAppServlet {
@@ -354,7 +355,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         // for deleted record we build the identifier manually
         recordStatus = "AUDIT_HISTORY_RECORD_DELETED";
         Entity tableEntity = ModelProvider.getInstance().getEntity(table.getName());
-        identifier = try2GetIdentifierViaPK(tableEntity, recordId);
+        identifier = try2GetIdentifierViaPK(vars, tableEntity, recordId);
       }
     }
 
@@ -547,7 +548,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         } else {
           Entity tableEntity = ModelProvider.getInstance()
               .getEntity(parentTab.getTable().getName());
-          parentIdentifier = try2GetIdentifierViaPK(tableEntity, parentValue);
+          parentIdentifier = try2GetIdentifierViaPK(vars, tableEntity, parentValue);
         }
 
         String text = Utility.messageBD(this, "AUDIT_HISTORY_DELETED_CHILDTAB", vars.getLanguage());
@@ -650,7 +651,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       }
 
       // get data (paged by offset, pageSize)
-      data = getDataRowsHistory(tableId, tabId, fields, recordId, userId, columnId, dateFrom,
+      data = getDataRowsHistory(vars, tableId, tabId, fields, recordId, userId, columnId, dateFrom,
           dateTo, offset, pageSize, vars.getLanguage());
     } catch (ServletException e) {
       log4j.error("Error getting row data: ", e);
@@ -743,7 +744,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return String.valueOf(count);
   }
 
-  private FieldProvider[] getDataRowsHistory(String tableId, String tabId,
+  private FieldProvider[] getDataRowsHistory(VariablesSecureApp vars, String tableId, String tabId,
       Map<String, Field> tabFields, String recordId, String userId, String columnId, Date dateFrom,
       Date dateTo, int offset, int pageSize, String language) throws ServletException {
 
@@ -782,11 +783,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       SQLReturnObject resRow = new SQLReturnObject();
       resRow.setData("time", getFormattedTime(row.getEventTime()));
       resRow.setData("action", getFormattedAction(actions, row.getAction()));
-      resRow.setData("user", getFormattedUser(row.getUserContact()));
+      resRow.setData("user", getFormattedUser(vars, row.getUserContact()));
       resRow.setData("process", getFormattedProcess(row.getProcessType(), row.getProcess()));
       resRow.setData("field", getFormattedField(tabFields, row));
-      resRow.setData("old_value", getFormattedValue(row, false));
-      resRow.setData("new_value", getFormattedValue(row, true));
+      resRow.setData("old_value", getFormattedValue(vars, row, false));
+      resRow.setData("new_value", getFormattedValue(vars, row, true));
       resRow.setData("rowkey", row.getId());
       resRows.add(resRow);
     }
@@ -1043,7 +1044,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       // copy static fields to result
       resRow.setData("rowkey", row.getField("rowkey"));
       resRow.setData("audittrailtime", row.getField("audittrailtime"));
-      resRow.setData("audittrailuser", getFormattedUser(row.getField("audittrailuser")));
+      resRow.setData("audittrailuser", getFormattedUser(vars, row.getField("audittrailuser")));
       resRow.setData("audittrailprocess", getFormattedProcess(
           row.getField("audittrailprocesstype"), row.getField("audittrailprocessid")));
       // copy and beautify data columns
@@ -1055,7 +1056,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         Column col = field.getColumn();
         String value = row.getField(col.getDBColumnName());
         // beautify it
-        value = getFormattedValue(col, value);
+        value = getFormattedValue(vars, col, value);
         resRow.setData(col.getDBColumnName(), value);
       }
       resRows.add(resRow);
@@ -1134,7 +1135,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return action;
   }
 
-  private String getFormattedUser(String userId) {
+  private String getFormattedUser(VariablesSecureApp vars, String userId) {
     if (userId == null) {
       return " ";
     }
@@ -1144,7 +1145,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
     // get value via deleted record audit data
     Entity userEntity = ModelProvider.getInstance().getEntity(User.ENTITY_NAME);
-    return try2GetIdentifierViaPK(userEntity, userId);
+    return try2GetIdentifierViaPK(vars, userEntity, userId);
   }
 
   /**
@@ -1260,13 +1261,13 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return fieldNameTranslated;
   }
 
-  private String getFormattedValue(AuditTrailRaw auditRow, boolean newValue) {
+  private String getFormattedValue(VariablesSecureApp vars, AuditTrailRaw auditRow, boolean newValue) {
     String value = newValue ? getNew(auditRow) : getOld(auditRow);
     Column col = OBDal.getInstance().get(Column.class, auditRow.getColumn());
-    return getFormattedValue(col, value);
+    return getFormattedValue(vars, col, value);
   }
 
-  private String getFormattedValue(Column col, String value) {
+  private String getFormattedValue(VariablesSecureApp vars, Column col, String value) {
     if (col == null) {
       // column might have been deleted in the model
       return value;
@@ -1300,34 +1301,38 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       // try generic lookup or fk-target value
       if (referencedCp == null) {
         // use targetEntity's pk as lookup key (like in TableDir case)
-        return getFkTargetIdentifierViaPK(targetEntity, value);
+        return getFkTargetIdentifierViaPK(vars, targetEntity, value);
       }
-      return getFkTargetIdentifierViaReferencedColumn(targetEntity, referencedCp, value);
+      return getFkTargetIdentifierViaReferencedColumn(vars, targetEntity, referencedCp, value);
     }
 
-    // no special formatting for reference value -> just return the value
-    return value;
+    // format all other value according to their defined reference
+    String adReferenceId = col.getReference().getId();
+    UIReference reference = org.openbravo.reference.Reference.getUIReference(adReferenceId,
+        adReferenceId);
+    return reference.formatGridValue(vars, value);
   }
 
   /**
    * Returns the identifier for a given Entity,pk-value combination. If the target record cannot be
    * found, a lookup of the record in the deleted audit-data is performed.
    */
-  private String getFkTargetIdentifierViaPK(Entity targetEntity, String fkValue) {
+  private String getFkTargetIdentifierViaPK(VariablesSecureApp vars, Entity targetEntity,
+      String fkValue) {
     BaseOBObject bob = OBDal.getInstance().get(targetEntity.getName(), fkValue);
     if (bob != null) {
       return bob.getIdentifier();
     }
     // try to get identifier from audit data
-    return try2GetIdentifierViaPK(targetEntity, fkValue);
+    return try2GetIdentifierViaPK(vars, targetEntity, fkValue);
   }
 
   /**
    * Returns the identifier for a given Entity,fk-field,fk-field-value combination. If the target
    * record cannot be found, a lookup of the record in the deleted audit-data is performed.
    */
-  private String getFkTargetIdentifierViaReferencedColumn(Entity targetEntity,
-      Property referencedProperty, String value) {
+  private String getFkTargetIdentifierViaReferencedColumn(VariablesSecureApp vars,
+      Entity targetEntity, Property referencedProperty, String value) {
     OBCriteria<BaseOBObject> c = OBDal.getInstance().createCriteria(targetEntity.getName());
     c.add(Expression.eq(referencedProperty.getName(), value));
     BaseOBObject bob = (BaseOBObject) c.uniqueResult();
@@ -1335,10 +1340,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       return bob.getIdentifier();
     }
     // try to get identifier from audit data
-    return try2GetIdentifierViaReferencedColumn(targetEntity, referencedProperty, value);
+    return try2GetIdentifierViaReferencedColumn(vars, targetEntity, referencedProperty, value);
   }
 
-  private String try2GetIdentifierViaReferencedColumn(Entity targetEntity,
+  private String try2GetIdentifierViaReferencedColumn(VariablesSecureApp vars, Entity targetEntity,
       Property referencedProperty, String value) {
     // lookup record in audit data (for deleted records) to get its recordId
     OBCriteria<AuditTrailRaw> c = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
@@ -1352,10 +1357,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       return "(unknown)";
     }
     // then use the record-id to do the identifier lookup
-    return try2GetIdentifierViaPK(targetEntity, atr.getRecordID());
+    return try2GetIdentifierViaPK(vars, targetEntity, atr.getRecordID());
   }
 
-  private String try2GetIdentifierViaPK(Entity targetEntity, String recordId) {
+  private String try2GetIdentifierViaPK(VariablesSecureApp vars, Entity targetEntity,
+      String recordId) {
     StringBuilder result = new StringBuilder();
 
     // loop over identifier columns and concatenate identifier value manually
@@ -1371,7 +1377,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       String value = "(unknown)";
       if (atr != null) {
         // get formatted old value
-        value = getFormattedValue(atr, false);
+        value = getFormattedValue(vars, atr, false);
       }
       result.append(value);
       result.append(" - "); // delimiter between columns
