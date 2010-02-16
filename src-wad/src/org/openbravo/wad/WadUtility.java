@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -829,8 +829,10 @@ public class WadUtility {
       FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields,
       String windowId, Vector<Object> vecContext, boolean isreadonly) {
     String code = auxControl.getData("ReadOnlyLogic");
-    if (code == null || code.equals(""))
+    if (code == null || code.equals("") || auxControl.getData("IsUpdateable").equals("N")
+        || auxControl.getData("IsReadOnly").equals("Y")) {
       return "";
+    }
     StringBuffer _displayLogic = new StringBuffer();
     String element = auxControl.getData("ColumnName");
     if (auxControl.getType().equals("Combo"))
