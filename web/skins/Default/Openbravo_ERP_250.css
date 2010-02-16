@@ -3378,6 +3378,52 @@ table.MessageBoxERROR .MessageBox_TextSeparator {
   font-size: 3px;
 }
 
+table.MessageBoxERROR a.MessageBox_TextLink {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #ffd6d6;
+}
+
+table.MessageBoxERROR a.MessageBox_TextLink:active {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #ffd6d6;
+}
+
+table.MessageBoxERROR a.MessageBox_TextLink:visited {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #ffd6d6;
+}
+
+table.MessageBoxERROR a.MessageBox_TextLink:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #fff0f0;
+}
+
+table.MessageBoxERROR a.MessageBox_TextLink_focus {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
+  color: #2985BA;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #2985BA;
+  outline: none;
+}
+
 
 /* Info CSS */
 
@@ -3506,6 +3552,52 @@ table.MessageBoxINFO .MessageBox_TextDescription {
 table.MessageBoxINFO .MessageBox_TextSeparator {
   height: 3px;
   font-size: 3px;
+}
+
+table.MessageBoxINFO a.MessageBox_TextLink {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #d6efff;
+}
+
+table.MessageBoxINFO a.MessageBox_TextLink:active {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #d6efff;
+}
+
+table.MessageBoxINFO a.MessageBox_TextLink:visited {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #d6efff;
+}
+
+table.MessageBoxINFO a.MessageBox_TextLink:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #f0f0ff;
+}
+
+table.MessageBoxINFO a.MessageBox_TextLink_focus {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
+  color: #2985BA;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #2985BA;
+  outline: none;
 }
 
 
@@ -3638,6 +3730,52 @@ table.MessageBoxSUCCESS .MessageBox_TextSeparator {
   font-size: 3px;
 }
 
+table.MessageBoxSUCCESS a.MessageBox_TextLink {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #ebffe1;
+}
+
+table.MessageBoxSUCCESS a.MessageBox_TextLink:active {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #ebffe1;
+}
+
+table.MessageBoxSUCCESS a.MessageBox_TextLink:visited {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #ebffe1;
+}
+
+table.MessageBoxSUCCESS a.MessageBox_TextLink:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #f0fff0;
+}
+
+table.MessageBoxSUCCESS a.MessageBox_TextLink_focus {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
+  color: #2985BA;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #2985BA;
+  outline: none;
+}
+
 
 /* Warning CSS */
 
@@ -3766,6 +3904,52 @@ table.MessageBoxWARNING .MessageBox_TextDescription {
 table.MessageBoxWARNING .MessageBox_TextSeparator {
   height: 3px;
   font-size: 3px;
+}
+
+table.MessageBoxWARNING a.MessageBox_TextLink {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #635a0e;
+}
+
+table.MessageBoxWARNING a.MessageBox_TextLink:active {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #635a0e;
+}
+
+table.MessageBoxWARNING a.MessageBox_TextLink:visited {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #635a0e;
+}
+
+table.MessageBoxWARNING a.MessageBox_TextLink:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #A69610;
+}
+
+table.MessageBoxWARNING a.MessageBox_TextLink_focus {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
+  color: #2985BA;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #2985BA;
+  outline: none;
 }
 
 /*

@@ -411,6 +411,8 @@ function drawWindowElementFocus(obj) {
         obj.className = 'Popup_Workflow_Button_focus';
       } else if (obj.className.indexOf('Popup_Workflow_text_focus') == -1 && obj.className.indexOf('Popup_Workflow_text') != -1) {
         obj.className = 'Popup_Workflow_text_focus';
+      } else if (obj.className.indexOf('MessageBox_TextLink_focus') == -1 && obj.className.indexOf('MessageBox_TextLink') != -1) {
+        obj.className = 'MessageBox_TextLink_focus';
       }
       isFirstTime = false;
     } else if (obj.tagName == 'BUTTON') {
@@ -540,6 +542,7 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace('Popup_Workflow_Button_focus','Popup_Workflow_Button');
       obj.className = obj.className.replace('Popup_Workflow_text_focus','Popup_Workflow_text');
       obj.className = obj.className.replace('Popup_Client_Help_Icon_LabelLink_focus','Popup_Client_Help_Icon_LabelLink');
+      obj.className = obj.className.replace('MessageBox_TextLink_focus','MessageBox_TextLink');
     } else if (obj.tagName == 'BUTTON') {
       obj.className = obj.className.replace('ButtonLink_focus','ButtonLink');
     } else if (obj.tagName == 'SELECT') {
