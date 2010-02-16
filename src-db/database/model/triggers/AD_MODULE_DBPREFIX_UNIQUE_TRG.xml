@@ -19,7 +19,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-
+  
   numWrongModules NUMBER;
     
 BEGIN
@@ -28,7 +28,12 @@ BEGIN
     END IF;
 
 
-  select count(*) into numWrongModules from ad_module_dbprefix where ad_module_id<>'0' group by ad_module_id having count(*)>1;
+  select count(*) 
+    into numWrongModules 
+    from (select 1 
+            from ad_module_dbprefix 
+           where ad_module_id<>'0' 
+           group by ad_module_id having count(*)>1) f;
 
 
 
