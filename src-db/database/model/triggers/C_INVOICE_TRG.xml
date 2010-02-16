@@ -27,6 +27,8 @@
     * Title: Check in deleting, invoice not processed
     ************************************************************************/
    v_n NUMBER;
+   v_count NUMBER;
+   v_result NUMBER;
         
 BEGIN
     
@@ -56,7 +58,15 @@ BEGIN
     OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))))
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
-
+    IF(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0')) THEN 
+        SELECT COUNT(*) INTO V_COUNT FROM C_INVOICELINE WHERE C_INVOICE_ID = :NEW.C_INVOICE_ID;
+        IF(V_COUNT > 0) THEN
+           SELECT COUNT(*) INTO V_RESULT FROM C_INVOICELINE WHERE C_INVOICE_ID = :NEW.C_INVOICE_ID AND AD_ISORGINCLUDED(:NEW.AD_ORG_ID,AD_ORG_ID,:NEW.AD_CLIENT_ID) <> -1;
+           IF(V_RESULT = 0) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@orgnizationHeaderCheck@') ;
+           END IF;
+        END IF;
+    END IF;
       IF (COALESCE(:OLD.C_BPartner_ID, '0')!=COALESCE(:NEW.C_BPartner_ID, '0')) OR (COALESCE(:OLD.M_PriceList_ID,'0') != COALESCE(:NEW.M_PriceList_ID,'0'))  THEN
       SELECT COUNT(*)
         INTO v_n
