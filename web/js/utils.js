@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6383';
+  var number = '6440';
   return number;
 }
 
@@ -85,6 +85,94 @@ function revisionControl(number) {
   } else {
     return true;
   }
+}
+
+/**
+* Gets information of the browser
+* @param {name} string Required - It could be "name", "version", "nameAndVersion" or "complete"
+*/
+function getBrowserInfo(param) {
+  var navUserAgent = navigator.userAgent.toUpperCase();
+  var browserName = "Unknown";
+  var browserVersion = "";
+  var browserMajorVersion = "";
+  var i=0
+  if (navUserAgent.indexOf("MSIE") >= 0) {
+    browserName = "Microsoft Internet Explorer";
+    i=navUserAgent.indexOf("MSIE")+5;
+  } else if (navUserAgent.indexOf("FIREFOX") >= 0) {
+    browserName = "Mozilla Firefox";
+    i=navUserAgent.indexOf("FIREFOX")+8;
+  } else if (navUserAgent.indexOf("ICEWEASEL") >= 0) {
+    browserName = "IceWeasel";
+    i=navUserAgent.indexOf("ICEWEASEL")+10;
+  } else if (navUserAgent.indexOf("CHROME") >= 0) {
+    browserName = "Google Chrome";
+    i=navUserAgent.indexOf("CHROME")+7;
+  } else if (navUserAgent.indexOf("OPERA") >= 0) {
+    browserName = "Opera";
+    if (navUserAgent.indexOf("VERSION") != -1) {
+      i=navUserAgent.indexOf("VERSION")+8;
+    } else {
+      i=navUserAgent.indexOf("OPERA")+6;
+    }
+  } else if (navUserAgent.indexOf("SAFARI") >= 0) {
+    browserName = "Safari";
+    if (navUserAgent.indexOf("VERSION") != -1) {
+      i=navUserAgent.indexOf("VERSION")+8;
+    } else {
+      i=navUserAgent.indexOf("SAFARI")+7;
+    }
+  } else if (navUserAgent.indexOf("NETSCAPE") >= 0) {
+    browserName = "Netscape";
+    i=navUserAgent.indexOf("NETSCAPE")+9;
+  } else if (navUserAgent.indexOf("KONQUEROR") >= 0) {
+    browserName = "Konqueror";
+    i=navUserAgent.indexOf("KONQUEROR")+10;
+  }
+  if (i!=0) {
+    while (navUserAgent.substring(i, i+1) != " " && navUserAgent.substring(i, i+1) != ";" && i < navUserAgent.length) {
+      browserVersion += navUserAgent.substring(i, i+1);
+      i++;
+    }
+  }
+  var browserNameAndVersion = browserName + " " + browserVersion;
+  browserMajorVersion = browserVersion;
+  if (browserMajorVersion.indexOf(".") != -1) {
+    browserMajorVersion = browserMajorVersion.substring(0, browserVersion.indexOf("."));
+    browserMajorVersion = parseInt(browserMajorVersion);
+  }
+  if (param == "name") {
+    return browserName;
+  } else if (param == "version") {
+    return browserVersion;
+  } else if (param == "majorVersion") {
+    return browserMajorVersion;
+  } else if (param == "nameAndVersion" || typeof param == "undefined" || param == "" || param == null) {
+    return browserNameAndVersion;
+  } else {
+    return false;
+  }
+}
+
+/**
+* Checks if the browser is a supported one
+*/
+function checkBrowserCompatibility() {
+  var browserName = getBrowserInfo("name");
+  var browserVersion = getBrowserInfo("version");
+  var browserMajorVersion = getBrowserInfo("majorVersion");
+  var isValid = false;
+  if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
+    if (browserMajorVersion >= 3) {
+      isValid = true;
+    }
+  } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
+    if (browserMajorVersion >= 7) {
+      isValid = true;
+    }
+  }
+  return isValid;
 }
 
 
