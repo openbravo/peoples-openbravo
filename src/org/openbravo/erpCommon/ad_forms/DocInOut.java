@@ -155,6 +155,7 @@ public class DocInOut extends AcctServer {
     // Line pointers
     FactLine dr = null;
     FactLine cr = null;
+    String strScale = DocInOutData.selectClientCurrencyPrecission(conn, vars.getClient());
 
     // Sales
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
@@ -164,7 +165,8 @@ public class DocInOut extends AcctServer {
         log4jDocInOut.debug("(MatShipment) - DR account: "
             + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
         log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
-        BigDecimal b_Costs = new BigDecimal(costs).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
+            RoundingMode.HALF_UP);
         String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
           setStatus(STATUS_InvalidCost);
@@ -199,7 +201,8 @@ public class DocInOut extends AcctServer {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
         String costs = line.getProductCosts(DateAcct, as, conn, con);
-        BigDecimal b_Costs = new BigDecimal(costs).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
+            RoundingMode.HALF_UP);
         String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
           setStatus(STATUS_InvalidCost);
