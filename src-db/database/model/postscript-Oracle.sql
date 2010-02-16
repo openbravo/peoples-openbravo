@@ -844,13 +844,25 @@ BEGIN
    EXECUTE IMMEDIATE 'alter trigger ad_tab_mod_trg enable';
 END;
 /-- END
+ 
 
 --update parent reference for old modules
+BEGIN
+   EXECUTE IMMEDIATE 'alter trigger ad_reference_mod_trg disable';
+END;
+/-- END
+
 update ad_reference
    set parentreference_id =( CASE VALIDATIONTYPE WHEN 'S' THEN '30' WHEN 'L' THEN '17' WHEN 'T' THEN '18' end)
    where validationtype in ('S','L','T')
    and parentreference_id is null
 /-- END
+
+BEGIN
+   EXECUTE IMMEDIATE 'alter trigger ad_reference_mod_trg enable';
+END;
+/-- END
+ 
 
 create or replace
 PROCEDURE AD_CREATE_AUDIT_TRIGGERS(p_pinstance_id IN VARCHAR2)
