@@ -70,7 +70,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6248';
+  var number = '6383';
   return number;
 }
 
@@ -319,12 +319,29 @@ function setChangedField(field, form) {
 }
 
 /**
+ * Checks if Autosave is enabled or not
+ * @return true if autosave is enable, otherwise false
+ */
+function isAutosaveEnabled() {
+  var autosave;
+  if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
+    if(top.opener !== null) { // is a pop-up window
+      autosave = top.opener.top.frameMenu.autosave;
+    }
+  }
+  else {
+    autosave = top.frameMenu.autosave;
+  }
+  return autosave;
+}
+
+/**
  * Logs a User click to flag the document as changed
  * @param hiddenInput HTML input part of the button UI
  * @return
  */
 function logClick(hiddenInput) {
-  var autosave = top.frameMenu.autosave;
+  var autosave = isAutosaveEnabled();
   if(typeof autosave == "undefined" || !autosave) {
     return;
   }
@@ -410,15 +427,7 @@ function checkForChanges(f) {
 		return true;
 	}
 	
-	var autosave = null;
-	if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
-		if(top.opener !== null) { // is a pop-up window
-		  autosave = top.opener.top.frameMenu.autosave;
-		}
-	}
-	else {
-	  autosave = top.frameMenu.autosave;
-	}
+	var autosave = isAutosaveEnabled();
 	
 	if(typeof autosave === 'undefined' || !autosave) { // 2.40 behavior		
 		if (inputValue(form.inpLastFieldChanged) !== "") {
@@ -507,13 +516,8 @@ function sendDirectLink(form, columnName, parentKey, url, keyId, tableId, newTar
   if (form == null) form = document.forms[0];
   var frmDebug = document.forms[0];
   var action = "DEFAULT";
-  var autosave = null;  
-  if(top.opener != null) { // is a pop-up window
-    autosave = top.opener.top.frameMenu.autosave;
-  }
-  else {
-    autosave = top.frameMenu.autosave;
-  }
+  var autosave = isAutosaveEnabled();
+
   if(autosave && isUserChanges) {
 	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
 	if (!depurar_validate_wrapper(action, form, "")) return false;

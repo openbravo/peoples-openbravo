@@ -80,7 +80,8 @@
 <!--115-->  <NAME><![CDATA[AD_Reference Subreference]]></NAME>
 <!--115-->  <DESCRIPTION><![CDATA[Subreference validation choices]]></DESCRIPTION>
 <!--115-->  <TYPE><![CDATA[S]]></TYPE>
-<!--115-->  <CODE><![CDATA[AD_Reference.ParentReference_ID=@AD_Reference_ID@]]></CODE>
+<!--115-->  <CODE><![CDATA[AD_Reference.ParentReference_ID=@AD_Reference_ID@
+OR (@AD_Reference_ID@ = '28' and AD_Reference.ParentReference_ID='17')]]></CODE>
 <!--115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--115--></AD_VAL_RULE>
 

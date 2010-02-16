@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -219,12 +219,18 @@
                            FROM AD_ELEMENT e 
                           WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
                             AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y'),
-                   Name=(SELECT NAME
-                           FROM AD_ELEMENT
-                          WHERE AD_ELEMENT_ID = (SELECT MAX(AD_Element_ID)
+                   Name=(SELECT (CASE WHEN MT.AD_MODULE_ID = C.AD_MODULE_ID OR AD_ELEMENT.NAME LIKE P.NAME||'_%' THEN AD_ELEMENT.NAME ELSE 'EM_'||P.NAME||'_'||AD_ELEMENT.NAME END)
+                           FROM AD_ELEMENT, AD_MODULE_DBPREFIX P, AD_MODULE MT, AD_TABLE T, AD_PACKAGE PA
+                            WHERE AD_ELEMENT_ID = (SELECT MAX(AD_Element_ID)
                                                    FROM AD_ELEMENT e 
                                                   WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
-                                                    AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y'))
+                                                    AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y')
+                            AND T.AD_TABLE_ID = C.AD_TABLE_ID
+                            AND T.AD_PACKAGE_ID = PA.AD_PACKAGE_ID
+                            AND MT.AD_MODULE_ID = PA.AD_MODULE_ID                                                    
+                            AND P.AD_MODULE_DBPREFIX_ID = (SELECT MAX(AD_MODULE_DBPREFIX_ID)
+                                                            FROM AD_MODULE_DBPREFIX P1
+                                                          WHERE P1.AD_MODULE_ID = C.Ad_MODULE_ID))
     WHERE AD_Element_ID IS NULL
       AND EXISTS (SELECT 1 
                     FROM AD_MODULE M
