@@ -392,11 +392,12 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     String hql = "as e where upper(e.dBColumnName) = :elementName";
     OBQuery<Element> qe = OBDal.getInstance().createQuery(Element.class, hql);
     qe.setNamedParameter("elementName", elementName.toUpperCase());
-    Element e = qe.uniqueResult();
-    if (e == null) {
+    List<Element> lElem = qe.list();
+    if (lElem.isEmpty()) {
       elementNameDisplay = "(deleted)";
     } else {
-      elementNameDisplay = getTranslatedElementName(e, OBContext.getOBContext().getLanguage());
+      elementNameDisplay = getTranslatedElementName(lElem.get(0), OBContext.getOBContext()
+          .getLanguage());
     }
     return elementNameDisplay;
   }
@@ -420,16 +421,18 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     // first check, if this is an open following a history -> deleted link? or a follow into a child
     // tab link from the deleted records view
     String parentLinkFilter = vars.getStringParameter("inpParentLinkFilter", IsIDFilter.instance);
+    boolean haveParentLink = (parentLinkFilter != null && !parentLinkFilter.isEmpty());
+    List<String> discards = new ArrayList<String>();
+    if (haveParentLink) {
+      discards.add("discardLinkBack");
+    }
 
-    String[] discard = {};
     // check if child-tabs exists and build links below the grid
     AuditTrailPopupData[] childTabs = AuditTrailPopupData.selectSubtabs(this, tabId);
     StringBuilder links = new StringBuilder();
     if (childTabs.length == 0) {
-      discard = new String[1];
-      discard[0] = "childTabsLinksArea";
+      discards.add("childTabsLinksArea");
     } else {
-      discard = new String[0];
       links.append(Utility.messageBD(this, "AUDIT_HISTORY_CHILDTAB_TEXT", vars.getLanguage()));
       links.append(' ');
       for (AuditTrailPopupData childTab : childTabs) {
@@ -443,7 +446,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       }
       links.setLength(links.length() - 2);
     }
-
+    String[] discard = new String[discards.size()];
+    discards.toArray(discard);
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/businessUtility/AuditTrailPopupDeleted", discard)
         .createXmlDocument();
@@ -781,7 +785,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     List<SQLReturnObject> resRows = new ArrayList<SQLReturnObject>(rows.size());
     for (AuditTrailRaw row : rows) {
       SQLReturnObject resRow = new SQLReturnObject();
-      resRow.setData("time", getFormattedTime(row.getEventTime()));
+      resRow.setData("time", getFormattedTime(vars, row.getEventTime()));
       resRow.setData("action", getFormattedAction(actions, row.getAction()));
       resRow.setData("user", getFormattedUser(vars, row.getUserContact()));
       resRow.setData("process", getFormattedProcess(row.getProcessType(), row.getProcess()));
@@ -1043,7 +1047,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       // copy static fields to result
       resRow.setData("rowkey", row.getField("rowkey"));
-      resRow.setData("audittrailtime", row.getField("audittrailtime"));
+      resRow.setData("audittrailtime", getFormattedTime(vars, row.getField("audittrailtime")));
       resRow.setData("audittrailuser", getFormattedUser(vars, row.getField("audittrailuser")));
       resRow.setData("audittrailprocess", getFormattedProcess(
           row.getField("audittrailprocesstype"), row.getField("audittrailprocessid")));
@@ -1117,9 +1121,15 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     return result;
   }
 
-  private static String getFormattedTime(Date time) {
+  private static String getFormattedTime(VariablesSecureApp vars, Date time) {
+    SimpleDateFormat format = new SimpleDateFormat(vars.getJavaDataTimeFormat());
+    return format.format(time);
+  }
+
+  // used for deleted records view, time already comes in a sqldatetimeformat
+  private static String getFormattedTime(VariablesSecureApp vars, String time) {
     // currently no-op
-    return String.valueOf(time);
+    return time;
   }
 
   /*
