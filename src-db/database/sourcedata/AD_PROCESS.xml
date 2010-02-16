@@ -5881,11 +5881,10 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--58763832F5F3485CAD33B8B9FCD6C640-->  <VALUE><![CDATA[UpdateAuditTrail]]></VALUE>
 <!--58763832F5F3485CAD33B8B9FCD6C640-->  <NAME><![CDATA[Update Audit Trail Infrastructure]]></NAME>
 <!--58763832F5F3485CAD33B8B9FCD6C640-->  <DESCRIPTION><![CDATA[Update Audit Trail Infrastructure]]></DESCRIPTION>
-<!--58763832F5F3485CAD33B8B9FCD6C640-->  <HELP><![CDATA[This process updates the required infrastructure to track complete audit for the tables selected as Fully Audited.<br/>
-
-Before executing this process take into account:<br/>
--The background process scheduler will be stopped while this process is being executed.<br/>
--The completion of this process can take several minutes depending one the number of tables to be audited.]]></HELP>
+<!--58763832F5F3485CAD33B8B9FCD6C640-->  <HELP><![CDATA[This process updates the infrastructure for a complete audit of the selected tables.<br/>
+This process:<br/>
+- Will Stop the background process scheduler during process execution<br/>
+- Can take several minutes. Do not close the browser during execution.]]></HELP>
 <!--58763832F5F3485CAD33B8B9FCD6C640-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--58763832F5F3485CAD33B8B9FCD6C640-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--58763832F5F3485CAD33B8B9FCD6C640-->  <ISREPORT><![CDATA[N]]></ISREPORT>
