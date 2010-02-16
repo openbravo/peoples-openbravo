@@ -81,7 +81,18 @@
          WHERE ISACTIVE = 'Y'
     ]]></Sql>
    </SqlMethod>
-   
+
+   <SqlMethod name="selectSQL" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT AD_ALERTRULE_ID, SQL, NAME
+          FROM AD_ALERTRULE
+         WHERE ISACTIVE = 'Y'
+           AND AD_CLIENT_ID = ?
+    ]]></Sql>
+    <Parameter name="adClientId"/>
+   </SqlMethod>
+
   <SqlMethod name="InsertAlert" type="preparedStatement" return="rowcount">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -133,20 +144,31 @@
    
    <SqlMethod name="prepareMails" type="preparedStatement" return="multiple">
      <Sql><![CDATA[
-          SELECT C.SMTPHOST,
-                 REQUESTUSER,
-                 REQUESTUSERPW,
-                 C.REQUESTEMAIL AS MAILFROM,
-                 U.EMAIL AS MAILTO,
-                 C.AD_LANGUAGE
-            FROM AD_ALERTRECIPIENT R,
-                 AD_USER U,
-                 AD_CLIENT C
-           WHERE AD_ALERTRULE_ID = ?
-             AND SENDEMAIL = 'Y'
-             AND R.AD_USER_ID = U.AD_USER_ID
-             AND C.AD_CLIENT_ID = U.AD_CLIENT_ID
+        select c.smtphost, c.requestuser, c.requestuserpw, c.requestemail as mailfrom, 
+               u.email as mailto, c.ad_language, c.ad_client_id
+          from ad_alertrecipient  ar, ad_user_roles ur, ad_user u, ad_client c
+          where ar.ad_alertrule_id = ?
+            and ur.ad_role_id = ar.ad_role_id
+            and ur.ad_client_id = ar.ad_client_id
+            and ur.ad_user_id = u.ad_user_id
+            and u.ad_client_id = c.ad_client_id
+            and c.requestuser is not null
+            and c.requestuserpw is not null
+            and u.email is not null
+            and ar.ad_user_id is null
+        union
+        select c.smtphost, c.requestuser, c.requestuserpw, c.requestemail as mailfrom, 
+               u.email as mailto, c.ad_language, c.ad_client_id
+          from ad_alertrecipient  ar, ad_user u, ad_client c
+          where ar.ad_alertrule_id = ?
+            and ar.ad_client_id = u.ad_client_id
+            and u.ad_client_id = c.ad_client_id
+            and c.requestuser is not null
+            and c.requestuserpw is not null
+            and u.email is not null
+            and ar.ad_user_id is not null
       ]]></Sql>
+      <Parameter name="alertRuleId"/>
       <Parameter name="alertRuleId"/>
    </SqlMethod>
    
