@@ -569,24 +569,7 @@
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_Tax ' || v_rowcount) ;
-    INSERT
-    INTO M_Product_Trl
-      (
-        M_Product_Trl_ID, M_Product_ID, AD_Language, Name, DocumentNote,
-        IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
-        AD_Org_ID
-      )
-    SELECT get_uuid(), M_Product_ID, AD_Language, M_Product.Name, M_Product.DocumentNote, 'N', '0', '0', M_Product.AD_Client_ID, M_Product.AD_Org_ID
-    FROM M_Product, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
-     AND NOT EXISTS (SELECT 1 FROM M_Product_TRL
-                 WHERE M_Product_ID = M_Product.M_Product_ID
-                   AND AD_LANGUAGE = AD_Language.AD_Language); 
-    
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Created:=v_Created + v_rowcount;
-    DBMS_OUTPUT.PUT_LINE('- M_Product ' || v_rowcount) ;
-    ----------------------------------------------------------------------
+     ----------------------------------------------------------------------
     INSERT
     INTO AD_TextInterfaces_Trl
       (
