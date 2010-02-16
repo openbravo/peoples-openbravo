@@ -38,11 +38,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -338,15 +336,15 @@ public class HttpsUtils {
       throw new UnsupportedOperationException();
     }
 
-    public void checkClientTrusted(X509Certificate[] chain, String authType)
+    public void checkClientTrusted(X509Certificate[] chn, String authType)
         throws CertificateException {
       throw new UnsupportedOperationException();
     }
 
-    public void checkServerTrusted(X509Certificate[] chain, String authType)
+    public void checkServerTrusted(X509Certificate[] chn, String authType)
         throws CertificateException {
-      this.chain = chain;
-      tm.checkServerTrusted(chain, authType);
+      this.chain = chn;
+      tm.checkServerTrusted(chn, authType);
     }
   }
 
@@ -379,23 +377,16 @@ public class HttpsUtils {
       System.setProperty("java.net.useSystemProxies", "false");
     }
     try {
-      InetAddress address = InetAddress.getByName("openbravo.com");
-      log4j.info("Name: " + address.getHostName());
-      log4j.info("Addr: " + address.getHostAddress());
-      log4j.info("Reach: " + address.isReachable(3000));
       // Double check.
-      URL url = new URL("http://www.openbravo.com");
+      URL url = new URL("https://butler.openbravo.com");
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setConnectTimeout(3000);
       conn.connect();
-      if (conn.getResponseCode() != 200) {
+      if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
         return false;
       }
-    } catch (UnknownHostException e) {
-      log4j.error("Unable to lookup openbravo.com", e);
-      return false;
-    } catch (IOException e) {
-      log4j.error("Unable to reach openbravo.com", e);
+    } catch (Exception e) {
+      log4j.error("Unable to reach butler.openbravo.com", e);
       return false;
     }
     return true;
