@@ -516,10 +516,10 @@ function calculateNumRows() {
      grid_bookmark_height = document.getElementById("grid_bookmark").clientHeight;
    }
    if (document.getElementById("grid_toptext")) {
-     grid_bookmark_height = document.getElementById("grid_toptext").clientHeight + 8;
+     grid_toptext_height = document.getElementById("grid_toptext").clientHeight;
    }
    if (document.getElementById("grid_bottomtext")) {
-     grid_bookmark_height = document.getElementById("grid_bottomtext").clientHeight + 8;
+     grid_bottomtext_height = document.getElementById("grid_bottomtext").clientHeight;
    }
    client_height = client_height - grid_bookmark_height - grid_header_height - grid_toptext_height - grid_bottomtext_height - (related_info_cont?related_info_cont.clientHeight:0) - (messagebox_cont?messagebox_cont.clientHeight:0);
    client_height = client_height - 20;
