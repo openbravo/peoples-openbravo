@@ -9,9 +9,9 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
- * The Original Code is Openbravo ERP. 
+ * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,8 +61,15 @@ public class ShowImage extends HttpSecureAppServlet {
       if (img != null) {
         byte[] imageBytes = img.getBindaryData();
         if (imageBytes != null) {
+
+          final String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(imageBytes);
+
+          if (!mimeType.equals("")) {
+            response.setContentType(mimeType);
+          }
           OutputStream out = response.getOutputStream();
           response.setContentLength(imageBytes.length);
+
           out.write(imageBytes);
           out.close();
         }
