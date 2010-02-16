@@ -31,7 +31,7 @@ import org.openbravo.service.db.CallProcess;
 
 public class UpdateAuditTrail implements Process {
 
-  private Logger log4j = Logger.getLogger(this.getClass());
+  private static final Logger log4j = Logger.getLogger(UpdateAuditTrail.class);
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -39,9 +39,10 @@ public class UpdateAuditTrail implements Process {
 
     // Check whether it is a OBPS instance
     if (!ActivationKey.isActiveInstance()) {
-      msg.setType("Error");
-      msg.setTitle("@Error@");
-      msg.setMessage("@OBPSNeededForAudit@");
+      msg.setType("Info");
+      msg.setTitle("");
+      msg
+          .setMessage("@FEATURE_OBPS_ONLY@<br/><a class=\"MessageBox_TextLink\" href=\"http://www.openbravo.com/product/erp/module/acquire\" target=\"_blank\">@LEARN_HOW@</a>&nbsp;@ACTIVATE_INSTANCE@");
       bundle.setResult(msg);
       return;
     }
