@@ -42,6 +42,7 @@
            <div class="Tree_Text_Separator"></div>
              <div class="Tree_Text_Update">
                <a href="#" id="link_xx" class="LabelLink_noicon" onclick="xx">xxLinkName</a>
+               <a href="#" id="link1_xx" class="LabelLink_noicon" onclick="xx">xxLinkName</a>
               </div>
            </div>
          <span id="returnTextxx" class="LabelText"></span>
