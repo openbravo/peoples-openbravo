@@ -256,7 +256,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
             + Utility.messageBD(this, "ApplyModules", lang)
             + ", <a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900);return false;\">"
             + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
-        return rt;
       }
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
       // Check if last build was done but Tomcat wasn't restarted
@@ -270,6 +269,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // Check for updates
       total = ModuleManagementData.selectUpdate(this);
       if (!total.equals("0")) {
+        if (!rt.isEmpty()) {
+          rt += "&nbsp;";
+        }
         rt += total
             + "&nbsp;"
             + Utility.messageBD(this, "UpdateAvailable", lang)

@@ -189,7 +189,7 @@ export.database.structure: Exports the database structure in the xml's files.
         </fileset>
       </classpath>
       <transaction>
-          UPDATE AD_MODULE SET STATUS='A',ISINDEVELOPMENT='N' WHERE STATUS='P';
+          UPDATE AD_MODULE SET STATUS='A' WHERE STATUS='P';
           DELETE FROM AD_MODULE WHERE STATUS = 'U';
       </transaction>
     </sql>

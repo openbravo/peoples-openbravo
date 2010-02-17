@@ -1484,7 +1484,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                 data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                 data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                 priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder,
-                data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd);
+                data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd,
+                data[i].taxbaseamt);
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

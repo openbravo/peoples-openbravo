@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -118,11 +118,11 @@ var baseDirectory = "../../../../../web/";
   }
   
   function scanForUpdates(){
-	if (document.getElementById('notifications').className.indexOf('Tree_Actions_Invisible') != -1) {
+    if (document.getElementById('notifications').className.indexOf('Tree_Actions_Invisible') != -1) {
       changeClass('notifications', 'Tree_Actions_Invisible', 'Tree_Actions_Processing', true);
-	} else {
-	  changeClass('notifications', 'Tree_Actions', 'Tree_Actions_Processing', true);
-	}
+    } else {
+      changeClass('notifications', 'Tree_Actions', 'Tree_Actions_Processing', true);
+    }
     var paramXMLReq = null;
     return submitXmlHttpRequest(scan_callback, document.frmMain, "SCAN", "ModuleManagement.html", false, null, paramXMLReq);
   }
@@ -130,6 +130,12 @@ var baseDirectory = "../../../../../web/";
   function installUpdate(id){
     frmMain.inpcUpdate.value = id;
     openServletNewWindow('UPDATE', false, 'ModuleManagement.html', 'Update', null, true, 700, 900);
+  }
+
+  function uninstallModule(){
+    if (showJSMessage(29)) {
+      submitCommandForm('UNINSTALL', false, null, 'ModuleManagement.html', '_self', null, true);
+    }
   }
   </script>
 </head>
@@ -361,7 +367,7 @@ var baseDirectory = "../../../../../web/";
                             <button type="button" 
                               id="buttonUninstall" 
                               class="ButtonLink" 
-                              onclick="submitCommandForm('UNINSTALL', false, null, 'ModuleManagement.html', '_self', null, true);return false;" 
+                              onclick="uninstallModule();return false;" 
                               onfocus="buttonEvent('onfocus', this); window.status='Uninstall selected'; return true;" 
                               onblur="buttonEvent('onblur', this);" 
                               onkeyup="buttonEvent('onkeyup', this);" 

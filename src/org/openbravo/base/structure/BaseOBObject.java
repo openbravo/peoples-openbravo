@@ -68,8 +68,10 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   // without a security check
   protected void setDefaultValue(String propName, Object value) {
     if (!getEntity().hasProperty(propName)) {
-      log.warn("Property " + propName + " does not exist for entity " + getEntityName()
-          + ". This is not necessarily a problem, this can happen when modules are uninstalled.");
+      // ignoring warning as this always happens when the database needs to be updated
+      // or when uninstalling modules.
+      // log.warn("Property " + propName + " does not exist for entity " + getEntityName()
+      // + ". This is not necessarily a problem, this can happen when modules are uninstalled.");
       return;
     }
     try {

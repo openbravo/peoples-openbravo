@@ -78,12 +78,12 @@ function redirectWhenPopup() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if ((!revisionControl('6446')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('6440')) || (isOpsInstance() != isOpsInstanceCached())) {
       alert("Your browser's cache has outdated files. Please clean it and reload the page.");
     }
 
     if (!checkBrowserCompatibility()) {
-      alert("Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:\n * Mozilla Firefox 3.0 or higher\n * Microsoft Internet Explorer 7.0 or higher");
+      alert("Your browser \"" +  getBrowserInfo("nameAndVersion") + "\" is not officially supported.\n\nOpenbravo has not been tested on your browser.\n\nYou can continue at your own risk or use one of these supported browsers:\n * Mozilla Firefox 3.0 or higher\n * Microsoft Internet Explorer 7.0 or higher");
     }
   }
 

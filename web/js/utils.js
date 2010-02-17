@@ -49,6 +49,8 @@ var isAltPressed = null;
 var isTabBlocked = false;
 var pressedKeyCode = null;
 var isInputFile = false;
+var ExternalKeyDownFunction;
+var ExternalKeyUpFunction;
 
 var isPageLoading = true;
 var isUserChanges = false;
@@ -70,7 +72,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6446';
+  var number = '6440';
   return number;
 }
 
@@ -1674,8 +1676,40 @@ function enableShortcuts(type) {
     } catch (e) {
     }
   }
-  document.onkeydown=keyControl;
-  document.onkeyup=keyControl;  
+  keyDownManagement();
+  keyUpManagement();
+}
+
+function keyDownManagement() {
+  if (document.onkeydown) {
+    ExternalKeyDownFunction = document.onkeydown;
+  }
+  document.onkeydown=keyDownExecution;
+}
+
+function keyDownExecution(evt) {
+  if (!evt) evt = window.event;
+  var response = keyControl(evt);
+  if (typeof ExternalKeyDownFunction == "function") {
+    var responseExternal = ExternalKeyDownFunction(evt);
+  }
+  return response;
+}
+
+function keyUpManagement() {
+  if (document.onkeyup) {
+    ExternalKeyUpFunction = document.onkeyup;
+  }
+  document.onkeyup=keyUpExecution;
+}
+
+function keyUpExecution(evt) {
+  if (!evt) evt = window.event;
+  var response = keyControl(evt);
+  if (typeof ExternalKeyUpFunction == "function") {
+    var responseExternal = ExternalKeyUpFunction(evt);
+  }
+  return response;
 }
 
 /**
@@ -4949,7 +4983,7 @@ function manageDecPoint(obj, decSeparator, evt) {
 * @type String
 */
 function replaceAt(string, what, ini, end) {
-  if (end == null || end == "null" || end == "") {
+  if (typeof end == "undefined" || end == null || end == "null" || end == "") {
     end = ini;
   }
   if (ini > end) {

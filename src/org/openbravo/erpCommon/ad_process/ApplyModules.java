@@ -275,7 +275,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       if (!rsErr.next()) {
         ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'");
         ps3.executeUpdate();
-        ps4 = getPreparedStatement("UPDATE AD_MODULE SET STATUS='A',ISINDEVELOPMENT='N' WHERE STATUS='P'");
+        ps4 = getPreparedStatement("UPDATE AD_MODULE SET STATUS='A' WHERE STATUS='P'");
         ps4.executeUpdate();
       } else {
         ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB59'");

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2009 Openbravo S.L.
+ * Copyright (C) 2001-2010 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -243,20 +243,29 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             strRole = variables.getRole();
 
             if (strRole.equals("")) {
+              // use default role
               strRole = DefaultOptionsData.defaultRole(this, strUserAuth);
-              if (strRole == null)
+              if (strRole == null || !LoginUtils.validUserRole(this, strUserAuth, strRole)) {
+                // if default not set or not valid take any one
                 strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
+              }
             }
             validateDefault(strRole, strUserAuth, "Role");
 
             strOrg = DefaultOptionsData.defaultOrg(this, strUserAuth);
-            if (strOrg == null)
+            // use default org
+            if (strOrg == null || !LoginUtils.validRoleOrg(this, strRole, strOrg)) {
+              // if default not set or not valid take any one
               strOrg = DefaultOptionsData.getDefaultOrg(this, strRole);
+            }
             validateDefault(strOrg, strRole, "Org");
 
             strClient = DefaultOptionsData.defaultClient(this, strUserAuth);
-            if (strClient == null)
+            // use default client
+            if (strClient == null || !LoginUtils.validRoleClient(this, strRole, strClient)) {
+              // if default not set or not valid take any one
               strClient = DefaultOptionsData.getDefaultClient(this, strRole);
+            }
             validateDefault(strClient, strRole, "Client");
 
             strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);

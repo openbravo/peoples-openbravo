@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION FIN_GEN_PAYMENTSCHEDULE_INV">
+    <function name="FIN_GEN_PAYMENTSCHEDULE_INV" type="NULL">
+      <parameter name="p_ep_instance" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2010 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+
+p_message VARCHAR(2000);
+p_record_id VARCHAR(60);
+p_docAction VARCHAR(60);
+p_user VARCHAR(60);
+p_result NUMBER;
+
+v_Client_ID VARCHAR2(32);
+v_Org_ID VARCHAR2(32);
+v_ResultStr VARCHAR2(2000):='';
+v_DocTypeTarget_ID VARCHAR2(32);
+v_IsSOTrx C_INVOICE.IsSOTrx%TYPE;
+v_GrandTotal NUMBER:=0;
+v_PaymentTerm C_INVOICE.C_PaymentTerm_ID%TYPE;
+v_PaymentRule C_INVOICE.PaymentRule%TYPE;
+v_Currency_ID VARCHAR2(32);
+v_BPartner_ID VARCHAR2(32);
+v_DateInvoiced DATE;
+v_TotalLines NUMBER;
+
+TYPE RECORD IS REF CURSOR;
+Cur_Params RECORD;
+
+BEGIN
+
+  FOR Cur_Params IN (
+    SELECT *
+    FROM ad_ep_instance_para
+    WHERE ad_ep_instance_id = p_ep_instance
+    ) LOOP
+    IF (cur_params.parametername LIKE 'DocAction') THEN
+      p_docaction := Cur_Params.p_string;
+    ELSIF (cur_params.parametername LIKE 'Record_ID') THEN
+      p_record_id := cur_params.p_string;
+    ELSIF (cur_params.parametername LIKE 'User') THEN
+      p_user := cur_params.p_string;
+    ELSIF (cur_params.parametername LIKE 'Message') THEN
+      p_message := cur_params.p_text;
+    ELSIF (cur_params.parametername LIKE 'Result') THEN
+      p_result := cur_params.p_number;
+    END IF;
+  END LOOP;
+
+  -- Reading the invoice
+  v_ResultStr:='ReadingInvoice';
+  SELECT ad_client_id, ad_org_id, c_doctypetarget_id, IsSOTrx,
+      grandtotal, C_PaymentTerm_ID, PaymentRule, C_Currency_ID,
+      C_BPartner_ID, DateInvoiced, totallines
+  INTO v_Client_ID, v_Org_ID, v_DocTypeTarget_ID, v_IsSOTrx,
+      v_GrandTotal, v_PaymentTerm, v_PaymentRule, v_Currency_ID,
+      v_BPartner_ID, v_DateInvoiced, v_totallines
+  FROM c_invoice
+  WHERE c_invoice_id=p_record_id;
+
+  IF (p_docaction = 'CO') THEN
+    DECLARE
+      cur_orders RECORD;
+      cur_payments RECORD;
+      v_paidamt NUMBER:=0;
+      v_TargetDocBaseType C_DOCTYPE.DocBaseType%TYPE;
+      v_MultiplierARC NUMBER:=1;
+      v_pendingAmount NUMBER;
+      v_plannedDate DATE;
+      v_paymentAmount NUMBER;
+/*      CUR_PAYMENTS RECORD;
+      v_GenDebt_PaymentID varchar2(32);
+      v_SettlementDocTypeID varchar2(32) ;
+      v_settlement_ID VARCHAR2(32) ;
+      v_CB_Curr VARCHAR2(32) ;
+      v_SDocument_No C_SETTLEMENT.DocumentNo%TYPE;*/
+    BEGIN
+      v_ResultStr:='Generating FIN_PAYMENT_SCHEDULE';
+      -- Is it a Credit Memo:4
+      SELECT docbasetype
+        INTO v_TargetDocBaseType
+      FROM c_doctype
+      WHERE c_doctype_id=v_DocTypeTarget_ID;
+      IF v_TargetDocBaseType in ('ARC','APC') THEN
+        v_MultiplierARC:=-1;
+      END IF;
+  
+      --Insert manual (isAutomaticGenerated='N') payments
+      v_ResultStr:='Update scheduled payment from orders';
+      FOR cur_orders IN (
+          SELECT DISTINCT c_orderline.c_order_id AS order_id, fin_payment_schedule.paidamt,
+              fin_payment_schedule_id
+          FROM c_invoiceline, c_orderline, fin_payment_schedule
+          WHERE c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
+            AND c_orderline.c_order_id = fin_payment_schedule.c_order_id
+            AND c_invoiceline.c_invoice_id = p_record_id
+        ) LOOP
+        UPDATE fin_payment_schedule
+        SET amount = paidamt,
+            outstandingamt = 0,
+            c_invoice_id = p_record_id
+        WHERE fin_payment_schedule_id = cur_orders.fin_payment_schedule_id;
+        v_paidamt := v_paidamt + cur_orders.paidamt;
+      END LOOP;
+  
+      --Insert Generated Payments
+      v_pendingAmount:=v_GrandTotal - v_paidamt;
+    
+      FOR cur_payments IN (
+          SELECT line, percentage, onremainder, excludetax,
+                 COALESCE(paymentrule, v_paymentrule) AS paymentrule, 
+                 fixmonthday, fixmonthday2, fixmonthday3, netdays,
+                 fixmonthoffset, netday, isnextbusinessday
+          FROM c_paymenttermline
+          WHERE c_paymentterm_id=v_paymentterm
+          UNION
+          -- Header of paymentTerm is processed at last
+          SELECT 9999 AS line, 100 AS percentage, 'Y' AS onremainder, 'N' AS excludetax,
+                v_paymentRule AS paymentrule,
+                 fixmonthday, fixmonthday2, fixmonthday3, netdays,
+                 fixmonthoffset, netday, isnextbusinessday
+          FROM c_paymentterm
+          WHERE c_paymentterm_id=v_paymentterm
+          ORDER BY line
+        ) LOOP
+        v_plannedDate:=C_Paymentduedate(v_bpartner_id, v_issotrx, cur_payments.fixmonthday, cur_payments.fixmonthday2, cur_payments.fixmonthday3, cur_payments.netdays, cur_payments.fixmonthoffset, cur_payments.netday, cur_payments.isnextbusinessday, v_dateinvoiced);
+
+        IF(cur_payments.excludetax='Y') THEN
+          -- if excludeTax = 'Y', percentage is aplied on the TotalLines
+          v_paymentAmount:=C_Currency_Round(v_totallines * cur_payments.percentage/100, v_currency_id, NULL);
+        ELSIF(cur_payments.onremainder='N') THEN
+          -- if onRemainder = 'N', percentage is aplied on the GrandTotal
+          v_paymentAmount:=C_Currency_Round(v_grandtotal * cur_payments.percentage/100, v_currency_id, NULL);
+        ELSE
+          v_paymentAmount:=C_Currency_Round(v_pendingamount * cur_payments.percentage/100, v_currency_id, NULL);
+        END IF;
+        v_pendingamount := v_pendingamount - v_paymentamount;
+
+        IF (v_paidamt < v_paymentamount) THEN
+          v_paymentamount := v_paymentamount - v_paidamt;
+          v_paidamt := 0;
+
+          v_ResultStr:='Inserting in FIN_PAYMENT_SCHEDULE table';
+          v_pendingAmount:=v_pendingAmount - v_paymentAmount;
+          INSERT INTO fin_payment_schedule
+          (
+            fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
+            created, createdby, updated, updatedby,
+            c_invoice_id, c_currency_id, c_order_id,
+            fin_paymentmethod_id, amount, duedate,
+            outstandingamt
+           ) VALUES (
+            get_uuid(), v_client_id, v_org_id, 'Y',
+            now(), p_user, now(), p_user,
+            p_record_id, v_currency_id, null,
+            'to-do',
+            C_Currency_Round((v_paymentamount * v_multiplierarc), v_currency_id, NULL), v_planneddate,
+            C_Currency_Round((v_paymentamount * v_multiplierarc), v_currency_id, NULL)
+          );
+        ELSE
+          --do not insert payment schedule
+          v_paidamt := v_paidamt - v_paymentamount;
+        END IF;
+      END LOOP;
+    END;
+  ELSIF (p_docaction = 'RE') THEN
+    DECLARE
+      v_count NUMBER;
+      v_paymentno VARCHAR2(40);
+    BEGIN
+      SELECT count(*), max(p.documentno)
+        INTO v_count, v_paymentno
+      FROM fin_payment_schedule ps, fin_payment_detail pd, fin_payment p
+      WHERE ps.fin_payment_schedule_id = pd.fin_payment_schedule_id
+        AND pd.fin_payment_id = p.fin_payment_id
+        AND ps.c_invoice_id = p_record_id;
+      IF (v_count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@InvoiceWithPayments@' || ' ' || v_paymentno);
+      END IF;
+    END;
+  END IF;
+
+EXCEPTION
+WHEN OTHERS THEN
+  DBMS_OUTPUT.PUT_LINE('FIN_GENERATE_PAYMENT_SCHEDULE exception: '|| v_ResultStr);
+  RAISE;
+END FIN_GEN_PAYMENTSCHEDULE_INV
+]]></body>
+    </function>
+  </database>

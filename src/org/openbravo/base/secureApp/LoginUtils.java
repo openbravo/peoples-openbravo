@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2010 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -60,23 +60,42 @@ public class LoginUtils {
     }
   }
 
+  static boolean validUserRole(ConnectionProvider conn, String strUserAuth, String strRol)
+      throws ServletException {
+    boolean valid = SeguridadData.isUserRole(conn, strUserAuth, strRol);
+    if (!valid) {
+      log4j.error("Login role is not in user roles list");
+      log4j.error("User: " + strUserAuth);
+      log4j.error("Role: " + strRol);
+    }
+    return valid;
+  }
+
+  static boolean validRoleClient(ConnectionProvider conn, String strRol, String strCliente)
+      throws ServletException {
+    boolean valid = SeguridadData.isRoleClient(conn, strRol, strCliente);
+    if (!valid) {
+      log4j.error("Login client is not in role clients list");
+    }
+    return valid;
+  }
+
+  static boolean validRoleOrg(ConnectionProvider conn, String strRol, String strOrg)
+      throws ServletException {
+    boolean valid = SeguridadData.isLoginRoleOrg(conn, strRol, strOrg);
+    if (!valid) {
+      log4j.error("Login organization is not in role organizations list");
+    }
+    return valid;
+  }
+
   public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars,
       String strUserAuth, String strLanguage, String strIsRTL, String strRol, String strCliente,
       String strOrg, String strAlmacen) throws ServletException {
 
     // Check session options
-    if (!SeguridadData.isUserRole(conn, strUserAuth, strRol)) {
-      log4j.error("Login role is not in user roles list");
-      log4j.error("User: " + strUserAuth);
-      log4j.error("Role: " + strRol);
-      return false;
-    }
-    if (!SeguridadData.isRoleClient(conn, strRol, strCliente)) {
-      log4j.error("Login client is not in role clients list");
-      return false;
-    }
-    if (!SeguridadData.isLoginRoleOrg(conn, strRol, strOrg)) {
-      log4j.error("Login organization is not in role organizations list");
+    if (!validUserRole(conn, strUserAuth, strRol) || !validRoleClient(conn, strRol, strCliente)
+        || !validRoleOrg(conn, strRol, strOrg)) {
       return false;
     }
 

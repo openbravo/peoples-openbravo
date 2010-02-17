@@ -35,7 +35,7 @@
         '' AS CHARGEAMT, '' AS PRIORITYRULE, '' AS DATEPRINTED, '' AS C_INVOICE_ID, '' AS CREATEFROM, '' AS GENERATETO,
         '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS SALESREP_ID, '' AS NOPACKAGES, '' AS PICKDATE, '' AS SHIPDATE,
         '' AS TRACKINGNO, '' AS AD_ORGTRX_ID, '' AS C_PROJECT_ID, '' AS C_CAMPAIGN_ID, '' AS C_ACTIVITY_ID, '' AS USER1_ID,
-        '' AS USER2_ID, '' AS UPDATELINES, '' AS M_COSTING_ID
+        '' AS USER2_ID, '' AS UPDATELINES, '' AS M_COSTING_ID, '' AS stdprecision
         FROM DUAL
      ]]>
      </Sql>
@@ -67,5 +67,15 @@
      </Sql>
      <Parameter name="date"/>
      <Parameter name="mProductId"/>
+  </SqlMethod>
+  <SqlMethod name="selectClientCurrencyPrecission" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      select stdprecision 
+      from c_currency cu, ad_client cl
+       where cu.c_currency_id=cl.c_currency_id
+         and cl.ad_client_id=?
+    </Sql>
+    <Parameter name="adClientId"/>
   </SqlMethod>
 </SqlClass>

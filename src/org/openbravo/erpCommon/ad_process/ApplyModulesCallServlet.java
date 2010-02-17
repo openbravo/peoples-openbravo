@@ -226,8 +226,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         error.setType("Error");
         error.setTitle(Utility.messageBD(myPool, "Error", vars.getLanguage()));
         error.setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
-            + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\">"
-            + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>.");
+            + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\" class=\"MessageBox_TextLink\">"
+            + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>");
 
       } else {
         ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN'");
@@ -238,8 +238,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
           error.setTitle(Utility.messageBD(myPool, "Warning", vars.getLanguage()));
           error
               .setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage())
-                  + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\">"
-                  + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>."
+                  + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\" class=\"MessageBox_TextLink\">"
+                  + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>"
                   + Utility.messageBD(myPool, "BuildWarning2", vars.getLanguage()));
 
         } else {

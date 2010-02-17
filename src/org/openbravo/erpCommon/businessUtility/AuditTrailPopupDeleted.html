@@ -155,7 +155,7 @@ function focusOnField() {
 
     <tr>
       <td>
-        <div class="Popup_ContentPane_Client" style="overflow: auto; height: 185px;" id="client_top">
+        <div class="Popup_ContentPane_Client" style="overflow: auto; height: 125px;" id="client_top">
           <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
 
             <tr>
@@ -184,7 +184,7 @@ function focusOnField() {
             </tr>
 
                   <tr>
-                    <td class="TitleCell"><span class="LabelText">From Date</span></td>
+                    <td class="TitleCell"><span class="LabelText">Modification time from</span></td>
                     <td colspan="2" class="TextBox_btn_ContentCell" id="paramDateFrom_inp_td">
                         <div id="paramDateFrom_inp">
                         <table border="0" cellspacing="0" cellpadding="0" summary="" class="">
@@ -275,7 +275,7 @@ function focusOnField() {
                         </div>
                         </td>       
                      
-                    <td class="TitleCell"><span class="LabelText">To</span></td>
+                    <td class="TitleCell"><span class="LabelText">Modification time to</span></td>
                     <td colspan="3" class="TextBox_btn_ContentCell" id="paramDateTo_inp_td">
                         <div id="paramDateTo_inp">
                         <table border="0" cellspacing="0" cellpadding="0" summary="" class="">
@@ -441,8 +441,8 @@ function focusOnField() {
                     <td class="DataGrid_Popup_text_container" style="text-align:left">
                       <div id="grid_toptext">
                         <span class="DataGrid_Popup_text_bookmark">
-                          <a class="LabelLink_noicon" href="AuditTrail.html?Command=POPUP_HISTORY&inpRecordId=xx&inpTabId=yy&inpTableId=zz" id="paramLinkBack">Back to history</a>
-                          <a class="LabelLink_noicon" href="#" onclick="validateSelector(); return false;" id="paramLinkHistorySelected">Show history of selected record</a>
+                          <span id="discardLinkBack"><a class="LabelLink_noicon" style="padding-right: 6px;" href="AuditTrail.html?Command=POPUP_HISTORY&inpRecordId=xx&inpTabId=yy&inpTableId=zz" id="paramLinkBack">Back to history</a></span>
+                          <a class="LabelLink_noicon" href="#" onclick="validateSelector(); return false;" id="paramLinkHistorySelected">View history of selected deleted record below</a>
                         </span>
                       </div>
                     </td>

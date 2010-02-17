@@ -17,6 +17,7 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.util.ArrayList;
 
@@ -154,6 +155,7 @@ public class DocInOut extends AcctServer {
     // Line pointers
     FactLine dr = null;
     FactLine cr = null;
+    String strScale = DocInOutData.selectClientCurrencyPrecission(conn, vars.getClient());
 
     // Sales
     if (DocumentType.equals(AcctServer.DOCTYPE_MatShipment)) {
@@ -163,7 +165,9 @@ public class DocInOut extends AcctServer {
         log4jDocInOut.debug("(MatShipment) - DR account: "
             + line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn));
         log4jDocInOut.debug("(MatShipment) - DR costs: " + costs);
-        BigDecimal b_Costs = new BigDecimal(costs);
+        BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
+            RoundingMode.HALF_UP);
+        String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
           setStatus(STATUS_InvalidCost);
           continue;
@@ -171,7 +175,7 @@ public class DocInOut extends AcctServer {
           setStatus(STATUS_Error);// Default status. LoadDocument
         // CoGS DR
         dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn), as
-            .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            .getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
         dr.setM_Locator_ID(line.m_M_Locator_ID);
         dr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
@@ -180,10 +184,10 @@ public class DocInOut extends AcctServer {
         // Loc
         log4jDocInOut.debug("(MatShipment) - CR account: "
             + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
-        log4jDocInOut.debug("(MatShipment) - CR costs: " + costs);
+        log4jDocInOut.debug("(MatShipment) - CR costs: " + strCosts);
         // Inventory CR
         cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-            .getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            .getC_Currency_ID(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
         cr.setM_Locator_ID(line.m_M_Locator_ID);
         cr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
@@ -197,7 +201,9 @@ public class DocInOut extends AcctServer {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_lines[i];
         String costs = line.getProductCosts(DateAcct, as, conn, con);
-        BigDecimal b_Costs = new BigDecimal(costs);
+        BigDecimal b_Costs = new BigDecimal(costs).setScale(new Integer(strScale),
+            RoundingMode.HALF_UP);
+        String strCosts = b_Costs.toString();
         if (b_Costs.compareTo(BigDecimal.ZERO) == 0) {
           setStatus(STATUS_InvalidCost);
           continue;
@@ -212,11 +218,11 @@ public class DocInOut extends AcctServer {
 
           log4jDocInOut.debug("(matReceipt) - DR account: "
               + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
-          log4jDocInOut.debug("(matReceipt) - DR costs: " + costs);
+          log4jDocInOut.debug("(matReceipt) - DR costs: " + strCosts);
           // Inventory DR
           dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-              .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-              conn);
+              .getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
           dr.setM_Locator_ID(line.m_M_Locator_ID);
           dr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
           // Loc
@@ -224,11 +230,11 @@ public class DocInOut extends AcctServer {
           // Loc
           log4jDocInOut.debug("(matReceipt) - CR account: "
               + line.getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
-          log4jDocInOut.debug("(matReceipt) - CR costs: " + costs);
+          log4jDocInOut.debug("(matReceipt) - CR costs: " + strCosts);
           // NotInvoicedReceipt CR
           cr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-              as.getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-              conn);
+              as.getC_Currency_ID(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
           cr.setM_Locator_ID(line.m_M_Locator_ID);
           cr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
           // Loc
