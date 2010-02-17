@@ -270,7 +270,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       total = ModuleManagementData.selectUpdate(this);
       if (!total.equals("0")) {
         if (!rt.isEmpty()) {
-          rt += "&nbsp;";
+          rt += "&nbsp;/&nbsp;";
         }
         rt += total
             + "&nbsp;"
