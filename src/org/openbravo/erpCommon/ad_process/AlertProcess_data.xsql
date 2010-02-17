@@ -163,6 +163,7 @@
           where ar.ad_alertrule_id = ?
             and ar.ad_client_id = u.ad_client_id
             and u.ad_client_id = c.ad_client_id
+            and ar.ad_user_id = u.ad_user_id
             and c.requestuser is not null
             and c.requestuserpw is not null
             and u.email is not null
