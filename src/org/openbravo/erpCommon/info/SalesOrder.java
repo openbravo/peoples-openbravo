@@ -37,6 +37,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -117,6 +118,7 @@ public class SalesOrder extends HttpSecureAppServlet {
     vars.removeSessionValue("SalesOrder.grandtotalto");
     vars.removeSessionValue("SalesOrder.order");
     vars.removeSessionValue("SalesOrder.adorgid");
+    vars.removeSessionValue("SalesOrderInfo.currentPage");
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue)
@@ -181,7 +183,7 @@ public class SalesOrder extends HttpSecureAppServlet {
       log4j.debug("Output: print page structure");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
-
+    xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
     String title = "";
@@ -241,6 +243,7 @@ public class SalesOrder extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
+    int page = 0;
     int offset = Integer.valueOf(strOffset).intValue();
     int pageSize = Integer.valueOf(strPageSize).intValue();
 
@@ -248,16 +251,34 @@ public class SalesOrder extends HttpSecureAppServlet {
       try {
         // build sql orderBy clause from parameters
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
+        
+        page = TableSQLData.calcAndGetBackendPage(vars, "SalesOrderInfo.currentPage");
+        if (vars.getStringParameter("movePage", "").length() > 0) {
+        	// on movePage action force executing countRows again
+        	strNewFilter = "";
+        }
+    	int oldOffset = offset;
+    	offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+    	log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
 
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
-          strNumRows = SalesOrderData.countRows(this, Utility.getContext(this, vars,
-              "#User_Client", "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
-              strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,
-                  strDateTo, "1"), strCal1, strCalc2);
-          vars.setSessionValue("SalesOrder.numrows", strNumRows);
+       // calculate params for sql limit/offset or rownum clause
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        	  oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+        	  oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+        	  rownum = "ROWNUM";
+          } else {
+        	  pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = SalesOrderData.countRows(this,rownum,Utility.getContext(this, vars,
+                  "#User_Client", "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
+                  strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,
+                      strDateTo, "1"), strCal1, strCalc2,pgLimit, oraLimit1, oraLimit2);
+          vars.setSessionValue("SalesOrderInfo.numrows", strNumRows);
         } else {
-          strNumRows = vars.getSessionValue("SalesOrder.numrows");
+          strNumRows = vars.getSessionValue("SalesOrderInfo.numrows");
         }
 
         // Filtering result
@@ -317,7 +338,8 @@ public class SalesOrder extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+     "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");

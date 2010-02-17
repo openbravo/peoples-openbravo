@@ -505,6 +505,7 @@
       	WHERE AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
       	AND (IsLegalEntity='Y' OR IsBusinessUnit='Y')
       	AND AD_Org.AD_Client_ID IN ('1')
+        AND AD_Org.ISACTIVE='Y'
       </Sql>
       <Parameter name="adUserClient" type="replace" optional="true" after="AD_Org.AD_Client_ID IN (" text="'1'"/>
    </SqlMethod>

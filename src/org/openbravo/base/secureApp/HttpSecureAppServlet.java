@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2009 Openbravo S.L.
+ * Copyright (C) 2001-2010 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -56,6 +56,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.SessionLogin;
@@ -184,11 +185,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     } catch (final Exception ignored) {
     }
 
+    String strUserAuth;
+
     try {
 
       OBContext.enableAsAdminContext();
 
-      final String strUserAuth = m_AuthManager.authenticate(request, response);
+      strUserAuth = m_AuthManager.authenticate(request, response);
       variables = new Variables(request); // Rebuild variable, auth-mgr could set the role
 
       boolean loggedOK = false;
@@ -240,20 +243,29 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             strRole = variables.getRole();
 
             if (strRole.equals("")) {
+              // use default role
               strRole = DefaultOptionsData.defaultRole(this, strUserAuth);
-              if (strRole == null)
+              if (strRole == null || !LoginUtils.validUserRole(this, strUserAuth, strRole)) {
+                // if default not set or not valid take any one
                 strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
+              }
             }
             validateDefault(strRole, strUserAuth, "Role");
 
             strOrg = DefaultOptionsData.defaultOrg(this, strUserAuth);
-            if (strOrg == null)
+            // use default org
+            if (strOrg == null || !LoginUtils.validRoleOrg(this, strRole, strOrg)) {
+              // if default not set or not valid take any one
               strOrg = DefaultOptionsData.getDefaultOrg(this, strRole);
+            }
             validateDefault(strOrg, strRole, "Org");
 
             strClient = DefaultOptionsData.defaultClient(this, strUserAuth);
-            if (strClient == null)
+            // use default client
+            if (strClient == null || !LoginUtils.validRoleClient(this, strRole, strClient)) {
+              // if default not set or not valid take any one
               strClient = DefaultOptionsData.getDefaultClient(this, strRole);
+            }
             validateDefault(strClient, strRole, "Client");
 
             strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
@@ -321,7 +333,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       super.initialize(request, response);
       final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
+
+      SessionInfo.setUserId(strUserAuth);
+      SessionInfo.setSessionId(vars1.getSessionValue("#AD_Session_ID"));
+
       if (vars1.getRole().equals("") || hasAccess(vars1)) {
+        if (classInfo.id != null && !classInfo.id.equals("")) {
+          SessionInfo.setProcessId(classInfo.id);
+          SessionInfo.setProcessType(classInfo.type);
+        }
+
         // Autosave logic
         final Boolean saveRequest = (Boolean) request.getAttribute("autosave");
         final String strTabId = vars1.getStringParameter("inpTabId");

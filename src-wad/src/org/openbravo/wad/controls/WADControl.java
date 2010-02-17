@@ -18,12 +18,19 @@
  */
 package org.openbravo.wad.controls;
 
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.servlet.ServletException;
+
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.wad.EditionFieldsData;
+import org.openbravo.wad.FieldsData;
+import org.openbravo.wad.TableRelationData;
+import org.openbravo.wad.WadUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 
@@ -35,7 +42,10 @@ public class WADControl {
   XmlEngine xmlEngine;
   private String validation = "";
   private String onload = "";
-  private ConnectionProvider conn = null;
+  protected static ConnectionProvider conn = null;
+  protected static String sqlDateFormat;
+  protected String reference;
+  protected String subreference;
 
   private WADLabelControl label;
 
@@ -69,12 +79,12 @@ public class WADControl {
     }
   }
 
-  public void setConnection(ConnectionProvider _conn) {
-    this.conn = _conn;
+  public static void setConnection(ConnectionProvider _conn) {
+    conn = _conn;
   }
 
   public ConnectionProvider getConnection() {
-    return this.conn;
+    return conn;
   }
 
   public void setReportEngine(XmlEngine _xmlEngine) {
@@ -144,7 +154,7 @@ public class WADControl {
     return css;
   }
 
-  public String replaceHTML(String text) {
+  protected String replaceHTML(String text) {
     text = text.replace("<HTML>", "");
     text = text.replace("<HEAD>", "");
     text = text.replace("<BODY>", "");
@@ -333,5 +343,218 @@ public class WADControl {
     label = new WADLabelControl(WADLabelControl.FIELD_LABEL, null, null, columnId, column, null,
         null, getData("IsLinkable"), getData("KeyColumnName"), getData("ColumnNameInp"),
         getData("AD_Table_ID"), columnLink);
+  }
+
+  /**
+   * Checks whether the reference is a numeric value
+   * 
+   * @return true in case the reference is numeric
+   */
+  public boolean isNumericType() {
+    return false;
+  }
+
+  /**
+   * Checks whether there are two ui fields for the control. These 2 fields are used in case the
+   * displayed value is different than the actual one in database, for example for list or table
+   * references.
+   * 
+   * @return true in case there are 2 ui fields
+   */
+  public boolean has2UIFields() {
+    return false;
+  }
+
+  /**
+   * Generates SQL identifier
+   */
+  public String columnIdentifier(String tableName, FieldsData field, Vector<Object> vecCounters,
+      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
+      Vector<Object> vecParameters, Vector<Object> vecTableParameters) throws ServletException {
+    if (field == null)
+      return "";
+    StringBuffer texto = new StringBuffer();
+    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+    if (field.istranslated.equals("Y")
+        && TableRelationData.existsTableColumn(conn, field.tablename + "_TRL", field.name)) {
+      FieldsData fdi[] = FieldsData.tableKeyColumnName(conn, field.tablename);
+      if (fdi == null || fdi.length == 0) {
+        vecFields.addElement(WadUtility
+            .applyFormat(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
+                + field.name, field.reference, sqlDateFormat));
+        texto.append(WadUtility
+            .applyFormat(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
+                + field.name, field.reference, sqlDateFormat));
+      } else {
+        vecTable.addElement("left join (select " + fdi[0].name + ",AD_Language"
+            + (!fdi[0].name.equalsIgnoreCase(field.name) ? (", " + field.name) : "") + " from "
+            + field.tablename + "_TRL) tableTRL" + itable + " on (" + tableName + "."
+            + fdi[0].name + " = tableTRL" + itable + "." + fdi[0].name + " and tableTRL" + itable
+            + ".AD_Language = ?) ");
+        vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
+        vecFields.addElement(WadUtility.applyFormat("(CASE WHEN tableTRL" + itable + "."
+            + field.name + " IS NULL THEN TO_CHAR(" + tableName + "." + field.name
+            + ") ELSE TO_CHAR(tableTRL" + itable + "." + field.name + ") END)", field.reference,
+            sqlDateFormat));
+        texto.append(WadUtility.applyFormat("(CASE WHEN tableTRL" + itable + "." + field.name
+            + " IS NULL THEN TO_CHAR(" + tableName + "." + field.name + ") ELSE TO_CHAR(tableTRL"
+            + itable + "." + field.name + ") END)", field.reference, sqlDateFormat));
+      }
+    } else {
+      vecFields.addElement(WadUtility.applyFormat(
+          ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
+          field.reference, sqlDateFormat));
+      texto.append(WadUtility.applyFormat(
+          ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
+          field.reference, sqlDateFormat));
+    }
+    vecCounters.set(0, Integer.toString(itable));
+    vecCounters.set(1, Integer.toString(ilist));
+    return texto.toString();
+  }
+
+  /**
+   * Adds to the vector the additional SQL default fields. This is used for search element which
+   * have a calculated addition to UI field. Whenever this method is overridden it should also be
+   * overridden the {@link #addAdditionDefaulJavaFields(StringBuffer, FieldsData, String, int)}
+   * method
+   */
+  public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
+    return itable;
+  }
+
+  /**
+   * Adds to the vector the additional Java logic default fields. This is used for search element
+   * which have a calculated addition to UI field. Whenever this method is overridden it should also
+   * be overridden the {@link #addAdditionDefaulSQLFields(Vector, FieldsData, int)} method
+   */
+  public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
+      String tabName, int itable) {
+    return itable;
+  }
+
+  /**
+   * Obtains the SQL casting depending on the data type
+   * 
+   */
+  public String getSQLCasting() {
+    return "";
+  }
+
+  /**
+   * Prepares SQL query calculating all fields and parameters required
+   * 
+   * @param vecCounters
+   */
+  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, Vector<Object> vecTableParameters, FieldsData field,
+      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
+      IOException {
+    String strOrder = tableName + "." + field.name;
+
+    final String[] aux = { new String(field.name),
+        new String(strOrder + (field.name.equalsIgnoreCase("DocumentNo") ? " DESC" : "")) };
+    vecOrder.addElement(aux);
+  }
+
+  public static void setDateFormat(String dateFormat) {
+    sqlDateFormat = dateFormat;
+  }
+
+  /**
+   * Processes selection columns.
+   */
+  public void processSelCol(String tableName, EditionFieldsData selCol, Vector<Object> vecAuxSelCol) {
+    selCol.xmltext = " + ((strParam" + selCol.columnname + ".equals(\"\") || strParam"
+        + selCol.columnname + ".equals(\"%\"))?\"\":\" AND ";
+
+    selCol.xmltext += "(" + tableName + "." + selCol.realcolumnname + ")";
+
+    selCol.xmltext += " = (";
+    if (isText())
+      selCol.xmltext += "'";
+
+    selCol.xmltext += "\" + strParam" + selCol.columnname + " + \"";
+    if (isText()) {
+      selCol.xmltext += "'";
+    }
+    selCol.xmltext += ") \")";
+    selCol.xsqltext = "";
+
+    selCol.xsqltext += "(" + tableName + "." + selCol.realcolumnname + ")";
+
+    selCol.xsqltext += " = ";
+
+    selCol.xsqltext += "(?)";
+
+  }
+
+  /**
+   * Determines whether the reference is a foreign key to another table. Used to generate links
+   * 
+   */
+  public boolean isLink() {
+    return false;
+  }
+
+  /**
+   * Determines whether the reference is text
+   * 
+   */
+  public boolean isText() {
+    return false;
+  }
+
+  /**
+   * In case the control is a link this method should return the id for the column the link is for
+   */
+  public String getLinkColumnId() {
+    return "";
+  }
+
+  /**
+   * Returns the display javascript logic
+   * 
+   */
+  public String getDisplayLogic(boolean display, boolean isreadonly) {
+    StringBuffer displayLogic = new StringBuffer();
+
+    displayLogic.append("displayLogicElement('");
+    displayLogic.append(getData("ColumnName"));
+    displayLogic.append("_lbl_td', ").append(display ? "true" : "false").append(");\n");
+    displayLogic.append("displayLogicElement('");
+    displayLogic.append(getData("ColumnName"));
+    displayLogic.append("_lbl', ").append(display ? "true" : "false").append(");\n");
+
+    return displayLogic.toString();
+  }
+
+  /**
+   * Obtains default value for the field
+   */
+  public String getDefaultValue() {
+    return "";
+  }
+
+  public boolean isDate() {
+    return false;
+  }
+
+  public String getReference() {
+    return reference;
+  }
+
+  public void setReference(String reference) {
+    this.reference = reference;
+  }
+
+  public String getSubreference() {
+    return subreference;
+  }
+
+  public void setSubreference(String subreference) {
+    this.subreference = subreference;
   }
 }

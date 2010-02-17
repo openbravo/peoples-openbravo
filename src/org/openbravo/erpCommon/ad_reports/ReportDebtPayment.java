@@ -373,8 +373,9 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("cBankAccount", strcbankaccount);
     xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-        this, Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility
-            .getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment")));
+        this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client",
+            "ReportDebtPayment"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+            "ReportDebtPayment")));
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
         .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
             .getContext(this, vars, "#User_Client", ""), strC_BPartner_ID));

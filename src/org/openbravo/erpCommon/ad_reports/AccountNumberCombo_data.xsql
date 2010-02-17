@@ -28,12 +28,13 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT C_BANKACCOUNT_ID AS ID, (C_BANK.NAME || '-' || COALESCE(TO_CHAR(C_BANK.CODEBANK),'') || '/' || COALESCE(TO_CHAR(C_BANK.CODEBRANCH),'') || COALESCE(TO_CHAR(C_BANK.DIGITCONTROL),'') || COALESCE(TO_CHAR(C_BANKACCOUNT.DIGITCONTROL),'') || COALESCE(TO_CHAR(C_BANKACCOUNT.CODEACCOUNT),'')) AS name
+      SELECT C_BANKACCOUNT_ID AS ID, AD_COLUMN_IDENTIFIER(TO_CHAR('C_BankAccount'), TO_CHAR(C_BANKACCOUNT.C_BANKACCOUNT_ID), TO_CHAR(?)) AS name
       FROM C_BANK, C_BANKACCOUNT
       WHERE C_BANK.C_BANK_ID = C_BANKACCOUNT.C_BANK_ID 
       AND C_BANK.AD_CLIENT_ID IN ('1')
       AND C_BANK.AD_ORG_ID IN ('1')
      ]]></Sql>
+    <Parameter name="language"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_BANK.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_BANK.AD_ORG_ID IN (" text="'1'"/>
   </SqlMethod>

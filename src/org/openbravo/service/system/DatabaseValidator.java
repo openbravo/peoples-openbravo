@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
@@ -74,6 +75,7 @@ public class DatabaseValidator implements SystemValidator {
     final SystemValidationResult result = new SystemValidationResult();
 
     // read the tables
+
     final OBCriteria<Table> tcs = OBDal.getInstance().createCriteria(Table.class);
     tcs.add(Expression.eq(Table.PROPERTY_VIEW, false));
     final List<Table> adTables = tcs.list();
@@ -88,7 +90,6 @@ public class DatabaseValidator implements SystemValidator {
     // 3) table present on both sides, column match check
 
     final org.apache.ddlutils.model.Table[] dbTables = getDatabase().getTables();
-
     final Map<String, org.apache.ddlutils.model.Table> dbTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>();
     for (org.apache.ddlutils.model.Table dbTable : dbTables) {
       dbTablesByName.put(dbTable.getName().toUpperCase(), dbTable);
@@ -123,18 +124,24 @@ public class DatabaseValidator implements SystemValidator {
             || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage()
                 .getModule().getId().equals(moduleId))) {
           checkTableWithoutPrimaryKey(dbTable, result);
-          checkForeignKeys(dbTable, result);
           checkMaxObjectNameLength(dbTable, result);
         }
         matchColumns(adTable, dbTable, result);
         tmpDBTablesByName.remove(dbTable.getName().toUpperCase());
       }
     }
+    for (int i = 0; i < database.getTableCount(); i++) {
+      checkForeignKeys(database.getTable(i), result);
+    }
+    for (int i = 0; i < database.getModifiedTableCount(); i++) {
+      checkForeignKeys(database.getModifiedTable(i), result);
+    }
 
     // only check this one if the global validate check is done
     for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
-      // ignore errors related to C_TEMP_SELECTION
-      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+      // ignore errors related to C_TEMP_SELECTION and AD_CONTEXT_INFO
+      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")
+          && !dbTable.getName().toUpperCase().startsWith("AD_CONTEXT_INFO")) {
         result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
             + dbTable.getName() + " present in the database "
             + " but not defined in the Application Dictionary");
@@ -228,6 +235,11 @@ public class DatabaseValidator implements SystemValidator {
         // ignore this specific case
         if (entity.getTableName().equalsIgnoreCase("ad_module_log")
             && colName.equalsIgnoreCase("ad_module_id")) {
+          continue;
+        }
+
+        // ignore ad_audit_trail as fk's are omitted on purpose
+        if (entity.getTableName().equalsIgnoreCase("ad_audit_trail")) {
           continue;
         }
 
@@ -385,9 +397,11 @@ public class DatabaseValidator implements SystemValidator {
       }
     } else if (property != null && property.getPrimitiveObjectType() != null) {
       final Class<?> prim = property.getPrimitiveObjectType();
-      if (prim == String.class) {
+      if (prim == String.class || property.getDomainType() instanceof ButtonDomainType) {
         checkType(dbColumn, dbTable, result, new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR",
             "CLOB" });
+        // there are too many differences which make this check not relevant/practical at the moment
+        // checkLength(dbColumn, dbTable, result, property.getFieldLength());
       } else if (prim == Long.class) {
         checkType(dbColumn, dbTable, result, "DECIMAL");
       } else if (prim == Integer.class) {
@@ -458,7 +472,10 @@ public class DatabaseValidator implements SystemValidator {
     if (dbColumn.getSizeAsInt() != expectedLength) {
       result.addError(SystemValidationType.WRONG_LENGTH, "Column " + dbTable.getName() + "."
           + dbColumn.getName() + " has incorrect length, expecting " + expectedLength + " but was "
-          + dbColumn.getSizeAsInt());
+          + dbColumn.getSizeAsInt() + ". If this a foreign key column then the expected "
+          + "length is either 32 (a uuid) or based on"
+          + " the fieldLength (so not the db columnlength) of the referenced column"
+          + ", as defined in AD_COLUMN.");
     }
   }
 

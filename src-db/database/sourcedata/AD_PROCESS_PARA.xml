@@ -3574,8 +3574,7 @@ You find the current status in the Document Status field. The options are listed
 <!--357-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--357-->  <NAME><![CDATA[Attribute Set Value]]></NAME>
 <!--357-->  <DESCRIPTION><![CDATA[An attribute associated with a product as part of an attribute set.]]></DESCRIPTION>
-<!--357-->  <HELP><![CDATA[
-The values of the actual Product Attributes]]></HELP>
+<!--357-->  <HELP><![CDATA[The values of the actual Product Attributes]]></HELP>
 <!--357-->  <AD_PROCESS_ID><![CDATA[224]]></AD_PROCESS_ID>
 <!--357-->  <SEQNO><![CDATA[70]]></SEQNO>
 <!--357-->  <AD_REFERENCE_ID><![CDATA[35]]></AD_REFERENCE_ID>
@@ -4749,6 +4748,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800055-->  <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
 <!--800055-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
 <!--800055-->  <ISRANGE><![CDATA[N]]></ISRANGE>
+<!--800055-->  <DEFAULTVALUE><![CDATA[@SQL=SELECT (NOW()+90) as d FROM DUAL]]></DEFAULTVALUE>
 <!--800055-->  <AD_ELEMENT_ID><![CDATA[1581]]></AD_ELEMENT_ID>
 <!--800055--></AD_PROCESS_PARA>
 

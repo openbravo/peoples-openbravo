@@ -151,8 +151,11 @@ CREATE or REPLACE FUNCTION update_dateFormat
 RETURNS varchar AS '
 DECLARE
 BEGIN
-  EXECUTE ''CREATE OR REPLACE FUNCTION dateFormat() RETURNS VARCHAR AS '''' DECLARE BEGIN  RETURN '''''''''' || format || ''''''''''; EXCEPTION WHEN OTHERS THEN RETURN NULL; END; '''' LANGUAGE ''''plpgsql'''' IMMUTABLE; '';
-  RETURN ''dateFormat modified'';
+  IF (dateformat() <> format) THEN
+    EXECUTE ''CREATE OR REPLACE FUNCTION dateFormat() RETURNS VARCHAR AS '''' DECLARE BEGIN  RETURN '''''''''' || format || ''''''''''; EXCEPTION WHEN OTHERS THEN RETURN NULL; END; '''' LANGUAGE ''''plpgsql'''' IMMUTABLE; '';
+    RETURN ''dateFormat modified'';
+  END IF;
+  RETURN ''dateFormat not modified'';
 END;
 ' LANGUAGE 'plpgsql' VOLATILE
 /-- END
@@ -1434,7 +1437,11 @@ begin
           WHEN 12 THEN 'INSERT, DELETE' 
           END)||p.prosrc) AS trg_md5 
           FROM pg_trigger trg, pg_class tbl, pg_proc p 
-          WHERE trg.tgrelid = tbl.oid AND trg.tgfoid = p.oid AND tbl.relname !~ '^pg_' AND trg.tgname !~ '^RI'
+          WHERE trg.tgrelid = tbl.oid 
+            AND trg.tgfoid = p.oid 
+            AND tbl.relname !~ '^pg_' 
+            AND trg.tgname !~ '^RI'
+            AND UPPER(trg.tgname) NOT LIKE 'AU_%'
           order by trg.tgname) loop
     v_md5 := md5(v_md5||i.trg_md5);
   end loop;

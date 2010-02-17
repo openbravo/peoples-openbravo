@@ -30,7 +30,7 @@
           SELECT VALUE, NAME, DATEACCT,
               SUM(AMTACCTDR) AS AMTACCTDR, SUM(AMTACCTCR) AS AMTACCTCR, (SUM(AMTACCTDR)-SUM(AMTACCTCR)) AS TOTAL,
               FACT_ACCT_GROUP_ID, ID, groupbyid, groupbyname,
-              MIN(DESCRIPTION) AS DESCRIPTION,
+              DESCRIPTION,
               0 AS TOTALACCTDR, 0 AS TOTALACCTCR, 0 AS TOTALACCTSUB,
               0 AS PREVIOUSDEBIT, 0 AS PREVIOUSCREDIT, 0 AS PREVIOUSTOTAL,
               0 AS FINALDEBIT, 0 AS FINALCREDIT, 0 AS FINALTOTAL,
@@ -76,9 +76,9 @@
               AND 2=2
               AND 3=3) D
             WHERE 6=6
-            GROUP BY groupbyname, groupbyid, VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, ISDEBIT
+            GROUP BY groupbyname, groupbyid, VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
             HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0
-            ORDER  BY groupbyname, groupbyid, VALUE, NAME, ID, DATEACCT,  FACT_ACCT_GROUP_ID, ISDEBIT
+            ORDER  BY groupbyname, groupbyid, VALUE, NAME, ID, DATEACCT,  FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
           ) C
         ) B WHERE 1=1
       ) A ORDER BY  groupbyname, groupbyid, VALUE, DATEACCT, FACT_ACCT_GROUP_ID
@@ -108,7 +108,7 @@
     <Parameter name="accountId" optional="true" after="WHERE 6=6"><![CDATA[AND ID = ? ]]></Parameter>
     <Parameter name="factAcctId" optional="true" after="WHERE 6=6"><![CDATA[and to_char(DATEACCT,'J')||FACT_ACCT_GROUP_ID < ? ]]></Parameter>
     <Parameter name="cBPartner" optional="true" after="WHERE 6=6"><![CDATA[AND groupbyid = ? ]]></Parameter>
-    <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT_GROUP_ID, ISDEBIT"><![CDATA[ LIMIT ]]></Parameter>
+    <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT"><![CDATA[ LIMIT ]]></Parameter>
     <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
     <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
@@ -120,7 +120,7 @@
       SELECT VALUE, NAME, DATEACCT,
           SUM(AMTACCTDR) AS AMTACCTDR, SUM(AMTACCTCR) AS AMTACCTCR,
           FACT_ACCT_GROUP_ID, ID, bpid, bpname, pdid, pdname, pjid, pjname,
-          MIN(DESCRIPTION) AS DESCRIPTION
+          DESCRIPTION
       FROM
         (SELECT FACT_ACCT.ACCTVALUE AS VALUE, FACT_ACCT.ACCTDESCRIPTION AS NAME,
             DATEACCT, AMTACCTDR, AMTACCTCR,
@@ -153,9 +153,9 @@
           AND 2=2
           AND 3=3) D
         WHERE 6=6
-        GROUP BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pdid, pjname, pjid, ISDEBIT
+        GROUP BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, description, bpname, bpid, pdname, pdid, pjname, pjid, ISDEBIT
         HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0
-        ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pdid, pjname, pjid, ISDEBIT
+        ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, description,  bpname, bpid, pdname, pdid, pjname, pjid, ISDEBIT
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="parDateFrom" optional="true" after="where 5=5"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2007-2009 Openbravo SL
+ * All portions are Copyright (C) 2007-2010 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,8 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
+import org.openbravo.reference.Reference;
+import org.openbravo.reference.ui.UIReference;
 import org.openbravo.utils.Replace;
 
 public class PrintJR extends HttpSecureAppServlet {
@@ -92,7 +94,8 @@ public class PrintJR extends HttpSecureAppServlet {
       strParamname = "inp" + Sqlc.TransformaNombreColumna(processparams[i].paramname);
       String paramValue = "";
 
-      if (Utility.isNumericParameter(processparams[i].reference)) {
+      UIReference ref = Reference.getUIReference(processparams[i].reference, null);
+      if (ref.isNumeric()) {
         paramValue = vars.getNumericParameter(strParamname);
       } else {
         paramValue = vars.getStringParameter(strParamname);

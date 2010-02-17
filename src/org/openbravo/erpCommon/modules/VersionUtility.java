@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -537,20 +537,32 @@ public class VersionUtility {
    * 
    * @param modulesToInstall
    *          In param. New modules to install, with its dependencies.
+   * @param modulesToUpdate
+   *          In param. Modules to install, with its dependencies.
    * @param obErrors
    *          Out param. Errors in dependencies. Null if no errors.
    * @return true if all dependencies can be resolved without need of download any package from
    *         central repository, false in other case.
    */
   static public boolean checkLocal(VariablesSecureApp vars, Module[] modulesToInstall,
-      OBError obErrors) throws Exception {
+      Module[] modulesToUpdate, OBError obErrors) throws Exception {
     Vector<String> vecErrors = new Vector<String>();
 
-    boolean checked = installModulesLocal(modulesToInstall, null, vecErrors);
+    boolean checked = installModulesLocal(modulesToInstall, modulesToUpdate, vecErrors);
 
     String[] errors = vecErrors.toArray(new String[0]);
     getOBError(obErrors, pool, vars, errors);
     return checked;
+
+  }
+
+  /**
+   * @deprecated used
+   *             {@link VersionUtility#checkLocal(VariablesSecureApp, Module[], Module[], OBError)}
+   */
+  static public boolean checkLocal(VariablesSecureApp vars, Module[] modulesToInstall,
+      OBError obErrors) throws Exception {
+    return checkLocal(vars, modulesToInstall, null, obErrors);
 
   }
 

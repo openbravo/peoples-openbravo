@@ -46,7 +46,6 @@ public class UtilsTest extends BaseTest {
   // don't initialize dal layer for model tests
   @Override
   protected void setUp() throws Exception {
-    setConfigPropertyFiles();
     super.setUp();
   }
 

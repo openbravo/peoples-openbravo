@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,8 @@ public class NavigationBar {
     if (!validateChangesOnRefresh) {
       toolbar.append("document.frmMain.autosave.value='N'; ");
     }
-    toolbar.append("submitCommandForm('DEFAULT', false, null, '").append(servlet_action);
+    toolbar.append("submitCommandForm('DEFAULT', ").append(
+        validateChangesOnRefresh ? "true" : "false").append(", null, '").append(servlet_action);
     toolbar.append("', '_self', null, ").append(validateChangesOnRefresh ? "true" : "false")
         .append(");return false;\" border=\"0\" onmouseover=\"window.status='");
     auxText = Utility.messageBD(conn, "Refresh", language);

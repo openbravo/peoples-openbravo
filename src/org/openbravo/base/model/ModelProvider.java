@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,9 @@ import org.hibernate.classic.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
+import org.openbravo.base.model.domaintype.OneToManyDomainType;
+import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.SessionFactoryController;
@@ -60,15 +63,13 @@ public class ModelProvider implements OBSingleton {
   private List<Entity> model = null;
   private List<Table> tables = null;
   private HashMap<String, Table> tablesByTableName = null;
-  private List<RefTable> refTable = null;
-  private List<RefSearch> refSearch = null;
   private Map<String, RefTable> refTableMap = new HashMap<String, RefTable>();
   private Map<String, RefSearch> refSearchMap = new HashMap<String, RefSearch>();
-  private List<RefList> refList = null;
   private HashMap<String, Entity> entitiesByName = null;
   private HashMap<String, Entity> entitiesByClassName = null;
   private HashMap<String, Entity> entitiesByTableName = null;
   private HashMap<String, Entity> entitiesByTableId = null;
+  private HashMap<String, Reference> referencesById = null;
   // a list because for small numbers a list is faster than a hashmap
   private List<Entity> entitiesWithTreeType = null;
   private List<Module> modules;
@@ -143,25 +144,39 @@ public class ModelProvider implements OBSingleton {
     final Transaction tx = session.beginTransaction();
     try {
       log.debug("Read model from db");
+
       tables = list(session, Table.class);
+
+      referencesById = new HashMap<String, Reference>();
+      final List<Reference> references = list(session, Reference.class);
+      for (Reference reference : references) {
+        reference.getDomainType().setModelProvider(this);
+        reference.getDomainType().initialize();
+        referencesById.put(reference.getId(), reference);
+      }
 
       // read the columns in one query and assign them to the table
       final List<Column> cols = readColumns(session);
       assignColumnsToTable(cols);
 
-      refTable = list(session, RefTable.class);
-      refSearch = list(session, RefSearch.class);
-      refList = list(session, RefList.class);
+      // reading will automatically link the reftable, refsearch and reflist
+      // to the reference
+      final List<RefTable> refTables = list(session, RefTable.class);
+      final List<RefSearch> refSearches = list(session, RefSearch.class);
+      list(session, RefList.class);
       modules = retrieveModules(session);
       tables = removeInvalidTables(tables);
 
-      for (final RefTable rt : refTable) {
+      // maintained for api support of the
+      // getColumnByReference method
+      for (final RefTable rt : refTables) {
         refTableMap.put(rt.getId(), rt);
       }
-      for (final RefSearch rs : refSearch) {
+      for (final RefSearch rs : refSearches) {
         // note mapped by reference id
         refSearchMap.put(rs.getReference(), rs);
       }
+      // see remark above
 
       // this map stores the mapped tables
       tablesByTableName = new HashMap<String, Table>();
@@ -177,11 +192,11 @@ public class ModelProvider implements OBSingleton {
       for (final Table t : tablesByTableName.values()) {
         t.setReferenceTypes(ModelProvider.instance);
       }
-
-      log.debug("Setting List Values for columns");
-      for (final RefList rl : refList) {
-        rl.setAllowedValue();
-      }
+      //
+      // log.debug("Setting List Values for columns");
+      // for (final RefList rl : refList) {
+      // rl.setAllowedValue();
+      // }
 
       model = new ArrayList<Entity>();
       entitiesByName = new HashMap<String, Entity>();
@@ -233,7 +248,8 @@ public class ModelProvider implements OBSingleton {
             if (mandatory != null) {
               p.setMandatory(mandatory);
             } else {
-              log.warn("Column " + p + " mandatory is null");
+              log.warn("Column " + p + " mandatory setting not found in the database metadata. "
+                  + "A cause can be that the column does not exist in the database schema");
             }
           }
         }
@@ -327,11 +343,6 @@ public class ModelProvider implements OBSingleton {
   private void clearLists() {
     tables = null;
     tablesByTableName = null;
-    refTable = null;
-    refSearch = null;
-    refTableMap = new HashMap<String, RefTable>();
-    refSearchMap = new HashMap<String, RefSearch>();
-    refList = null;
   }
 
   @SuppressWarnings("unchecked")
@@ -386,6 +397,17 @@ public class ModelProvider implements OBSingleton {
             thisProp.getEntity().getIdentifierProperties().remove(thisProp);
             continue;
           }
+
+          // can occur if the column is read and returned through a
+          // module provided Domain Type
+          if (thatColumn.getProperty() == null) {
+            final Entity entity = getEntityByTableName(thatColumn.getTable().getTableName());
+            Check.isNotNull(entity, "No entity found using tablename "
+                + thatColumn.getTable().getTableName() + " for column " + thatColumn);
+            final Property property = entity.getPropertyByColumnName(thatColumn.getColumnName());
+            thatColumn.setProperty(property);
+          }
+
           // targetentity is set within setReferencedProperty
           final Property thatProperty = thatColumn.getProperty();
           thisProp.setReferencedProperty(thatProperty);
@@ -400,11 +422,12 @@ public class ModelProvider implements OBSingleton {
     final List<Table> localTables = allTables;
     for (final Table t : localTables) {
       // taking into account inactive tables for now...
-      if (false && !t.isActive()) {
-        log.debug("Table " + t.getName() + " is not active ignoring it");
-        toRemove.add(t);
-        continue;
-      }
+
+      // if (false && !t.isActive()) {
+      // log.debug("Table " + t.getName() + " is not active ignoring it");
+      // toRemove.add(t);
+      // continue;
+      // }
 
       if (t.getPrimaryKeyColumns().size() == 0) {
         log.debug("Ignoring table " + t.getName() + " because it has no primary key columns");
@@ -514,40 +537,43 @@ public class ModelProvider implements OBSingleton {
   private void createIdReferenceProperty(Entity e) {
     Check.isTrue(e.getIdProperties().size() == 1 && !e.getIdProperties().get(0).isPrimitive(),
         "Expect one id property for the entity and it should be a reference type");
-    final Property p = e.getIdProperties().get(0);
-    log.debug("Handling many-to-one reference for " + p);
+    final Property idProperty = e.getIdProperties().get(0);
+    log.debug("Handling many-to-one reference for " + idProperty);
     Check.isTrue(e.getIdProperties().size() == 1,
         "Foreign-key id-properties are only handled if there is one in an entity " + e.getName());
     // create a reference property
     final Property newProp = new Property();
     newProp.setEntity(e);
     newProp.setId(false);
-    newProp.setIdentifier(p.isIdentifier());
+    newProp.setIdentifier(idProperty.isIdentifier());
     newProp.setMandatory(true);
-    newProp.setPrimitive(false);
-    newProp.setTargetEntity(p.getTargetEntity());
+    newProp.setDomainType(idProperty.getDomainType());
+    newProp.setColumnName(idProperty.getColumnName());
+    newProp.setTargetEntity(idProperty.getTargetEntity());
+    newProp.setReferencedProperty(idProperty.getTargetEntity().getIdProperties().get(0));
     newProp.setOneToOne(true);
 
     // the name is the name of the class of the target without
     // the package part and with the first character lowercased
-    final String propName = p.getSimpleTypeName().substring(0, 1).toLowerCase()
-        + p.getSimpleTypeName().substring(1);
+    final String propName = idProperty.getSimpleTypeName().substring(0, 1).toLowerCase()
+        + idProperty.getSimpleTypeName().substring(1);
     newProp.setName(propName);
     e.addProperty(newProp);
 
     // and change the old id property to a primitive one
-    final Property targetIdProp = p.getTargetEntity().getIdProperties().get(0);
+    // this assumes that the column in the target entity is itself
+    // not a foreign key!
+    final Property targetIdProp = idProperty.getTargetEntity().getIdProperties().get(0);
     Check
         .isTrue(
             targetIdProp.isPrimitive(),
             "Entity "
                 + e
                 + ", The ID property of the referenced class should be primitive, an other case is not supported");
-    p.setPrimitive(true);
-    p.setIdBasedOnProperty(newProp);
-    p.setIdentifier(false);
-    p.setTargetEntity(null);
-    p.setPrimitiveType(targetIdProp.getPrimitiveType());
+    idProperty.setDomainType(targetIdProp.getDomainType());
+    idProperty.setIdBasedOnProperty(newProp);
+    idProperty.setIdentifier(false);
+    idProperty.setTargetEntity(null);
   }
 
   private void createCompositeId(Entity e) {
@@ -558,7 +584,9 @@ public class ModelProvider implements OBSingleton {
     compId.setId(true);
     compId.setIdentifier(false);
     compId.setMandatory(true);
-    compId.setPrimitive(false);
+    final StringDomainType domainType = new StringDomainType();
+    domainType.setModelProvider(this);
+    compId.setDomainType(domainType);
     compId.setCompositeId(true);
     compId.setName("id");
     // compId is added to the entity below
@@ -578,14 +606,6 @@ public class ModelProvider implements OBSingleton {
     e.addProperty(compId);
   }
 
-  private void dumpPropertyNames(Entity e) {
-    System.err.println("\n++++++++++++++++++++++++++++++++++++++");
-    System.err.println(">>> " + e.getName());
-    for (Property p : e.getProperties()) {
-      System.err.println(p.getName());
-    }
-  }
-
   private void createPropertyInParentEntity(Entity e) {
     for (final Property p : e.getParentProperties()) {
       if (p.getReferencedProperty() == null) {
@@ -603,7 +623,9 @@ public class ModelProvider implements OBSingleton {
     newProp.setId(false);
     newProp.setIdentifier(false);
     newProp.setMandatory(false);
-    newProp.setPrimitive(false);
+    final OneToManyDomainType domainType = new OneToManyDomainType();
+    domainType.setModelProvider(this);
+    newProp.setDomainType(domainType);
     newProp.setTargetEntity(childProperty.getEntity());
     newProp.setReferencedProperty(childProperty);
     newProp.setOneToOne(false);
@@ -637,7 +659,7 @@ public class ModelProvider implements OBSingleton {
    * @return the Table object
    * @throws CheckException
    */
-  private Table getTable(String tableName) throws CheckException {
+  public Table getTable(String tableName) throws CheckException {
     if (tablesByTableName == null)
       getModel();
     // search case insensitive!
@@ -675,13 +697,36 @@ public class ModelProvider implements OBSingleton {
    * @return the Entity or null if not found
    */
   public Entity getEntityByTableName(String tableName) {
-    if (model == null)
+    if (model == null) {
       getModel();
+    }
     final Entity entity = entitiesByTableName.get(tableName.toUpperCase());
     // is null for views
     // if (entity == null) {
     // log.warn("Table name: " + tableName + " not found in runtime model");
     // }
+    return entity;
+  }
+
+  /**
+   * Returns an Entity based on the ID of the table belonging to the Entity. If no Entity is found
+   * then null is returned, no Exception is thrown.
+   * 
+   * @param tableId
+   *          the ID of the table belonging to the table
+   * @return the Entity or null if not found
+   */
+  public Entity getEntityByTableId(String tableId) {
+    if (model == null) {
+      getModel();
+    }
+
+    final Entity entity = entitiesByTableId.get(tableId);
+
+    if (entity == null) {
+      log.warn("Entity not found in runtime model for table id: " + tableId);
+    }
+
     return entity;
   }
 
@@ -704,6 +749,9 @@ public class ModelProvider implements OBSingleton {
     return entity;
   }
 
+  /**
+   * @deprecated, use {@link ForeignKeyDomainType#getForeignKeyColumn(String)}
+   */
   protected Column getColumnByReference(String reference, String referenceValue,
       char validationType, String columnName) throws CheckException {
     Column c = null;
@@ -744,8 +792,10 @@ public class ModelProvider implements OBSingleton {
       try {
         c = getTable(sTable).getPrimaryKeyColumns().get(0);
       } catch (final Exception e) {
-
         e.printStackTrace();
+        Check.fail("Reference column for " + columnName + " not found in runtime model [ref: "
+            + reference + ", refval: " + referenceValue + "], encountered exception "
+            + e.getMessage());
       }
 
     } else if (reference.equals(Reference.TABLE)) {
@@ -771,10 +821,21 @@ public class ModelProvider implements OBSingleton {
         }
       }
     }
-    if (c == null)
+    if (c == null) {
       Check.fail("Reference column for " + columnName + " not found in runtime model [ref: "
           + reference + ", refval: " + referenceValue + "]");
+    }
     return c;
+  }
+
+  /**
+   * Returns a reference instance from the org.openbravo.base.model package.
+   * 
+   * @param referenceId
+   * @return the reference identified by the referenceId, if not found then null is returned
+   */
+  public Reference getReference(String referenceId) {
+    return referencesById.get(referenceId);
   }
 
   /**

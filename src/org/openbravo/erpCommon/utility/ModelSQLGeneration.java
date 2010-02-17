@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,8 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.reference.Reference;
+import org.openbravo.reference.ui.UIReference;
 
 /**
  * @author Fernando Iriazabal
@@ -130,145 +132,26 @@ public class ModelSQLGeneration {
   private static SQLReturnObject getFilter(VariablesSecureApp vars, TableSQLData tableSQL,
       Vector<String> filter, Vector<String> filterParams) throws Exception {
     SQLReturnObject result = new SQLReturnObject();
-    if (tableSQL == null)
+    if (tableSQL == null) {
       return result;
+    }
     boolean isNewFilter = !vars.getStringParameter("newFilter").equals("");
     Vector<Properties> filters = tableSQL.getFilteredStructure("IsSelectionColumn", "Y");
-    if (filters == null || filters.size() == 0)
+    if (filters == null || filters.size() == 0) {
       filters = tableSQL.getFilteredStructure("IsIdentifier", "Y");
-    if (filters == null || filters.size() == 0)
+    }
+    if (filters == null || filters.size() == 0) {
       return result;
+    }
     tableSQL.addAuditFields(filters);
-    if (isNewFilter) {
-      for (Enumeration<Properties> e = filters.elements(); e.hasMoreElements();) {
-        Properties prop = e.nextElement();
-        String aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName"),
-            tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
-        // The filter is not applied if the parameter value is null or
-        // parameter value is '%' for string references.
-        if (!aux.equals("")) {
-          if (!aux.equals("%")
-              || (!prop.getProperty("AD_Reference_ID").equals("10")
-                  && !prop.getProperty("AD_Reference_ID").equals("14")
-                  && !prop.getProperty("AD_Reference_ID").equals("34") && !prop.getProperty(
-                  "AD_Reference_ID").equals("35"))) {
-            filter.addElement(formatFilter(tableSQL.getTableName(), prop.getProperty("ColumnName"),
-                prop.getProperty("AD_Reference_ID"), true));
-            filterParams.addElement("Param" + prop.getProperty("ColumnName"));
-            result.setData("Param" + prop.getProperty("ColumnName"), aux);
-          } else {
-            filter.addElement("1=1");
-          }
-        }
-        final String adRefId = prop.getProperty("AD_Reference_ID");
-        if (Utility.isDecimalNumber(adRefId) || Utility.isIntegerNumber(adRefId)
-            || Utility.isDateTime(adRefId)) {
-          aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName") + "_f",
-              tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName") + "_f");
-          if (!aux.equals("")) {
-            filter.addElement(formatFilter(tableSQL.getTableName(), prop.getProperty("ColumnName"),
-                prop.getProperty("AD_Reference_ID"), false));
-            filterParams.addElement("Param" + prop.getProperty("ColumnName") + "_f");
-            result.setData("Param" + prop.getProperty("ColumnName") + "_f", aux);
-          }
-        }
-      }
-    } else {
-      for (Enumeration<Properties> e = filters.elements(); e.hasMoreElements();) {
-        Properties prop = e.nextElement();
-        String aux = vars.getSessionValue(tableSQL.getTabID() + "|param"
-            + prop.getProperty("ColumnName"));
-        // The filter is not applied if the parameter value is null or
-        // parameter value is '%' for string references.
-        if (!aux.equals("")) {
-          if (!aux.equals("%")
-              || (!prop.getProperty("AD_Reference_ID").equals("10")
-                  && !prop.getProperty("AD_Reference_ID").equals("14") && !prop.getProperty(
-                  "AD_Reference_ID").equals("34"))) {
-            filter.addElement(formatFilter(tableSQL.getTableName(), prop.getProperty("ColumnName"),
-                prop.getProperty("AD_Reference_ID"), true));
-            filterParams.addElement("Param" + prop.getProperty("ColumnName"));
-            result.setData("Param" + prop.getProperty("ColumnName"), aux);
-          } else {
-            filter.addElement("1=1");
-          }
-        }
-        final String adRefId = prop.getProperty("AD_Reference_ID");
-        if (Utility.isDecimalNumber(adRefId) || Utility.isIntegerNumber(adRefId)
-            || Utility.isDateTime(adRefId)) {
-          aux = vars.getSessionValue(tableSQL.getTabID() + "|param"
-              + prop.getProperty("ColumnName") + "_f");
-          if (!aux.equals("")) {
-            filter.addElement(formatFilter(tableSQL.getTableName(), prop.getProperty("ColumnName"),
-                prop.getProperty("AD_Reference_ID"), false));
-            filterParams.addElement("Param" + prop.getProperty("ColumnName") + "_f");
-            result.setData("Param" + prop.getProperty("ColumnName") + "_f", aux);
-          }
-        }
-      }
+
+    for (Enumeration<Properties> e = filters.elements(); e.hasMoreElements();) {
+      Properties prop = e.nextElement();
+      UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"), prop
+          .getProperty("AD_Reference_Value_ID"));
+      reference.getFilter(result, isNewFilter, vars, tableSQL, filter, filterParams, prop);
     }
     return result;
-  }
-
-  /**
-   * Formats the filter to get the correct output (adds TO_DATE, TO_NUMBER...).
-   * 
-   * @param tablename
-   *          String with the table name.
-   * @param columnname
-   *          String with the column name.
-   * @param reference
-   *          String with the reference id.
-   * @param first
-   *          Boolean to know if is the first or not.
-   * @return String with the formated field.
-   */
-  private static String formatFilter(String tablename, String columnname, String reference,
-      boolean first) {
-    if (columnname == null || columnname.equals("") || tablename == null || tablename.equals("")
-        || reference == null || reference.equals(""))
-      return "";
-    StringBuffer text = new StringBuffer();
-    if (reference.equals("15") || reference.equals("16") || reference.equals("24")) {
-      text.append("TO_DATE(").append(reference.equals("24") ? "TO_CHAR(" : "").append(tablename)
-          .append(".").append(columnname).append(
-              (reference.equals("24") ? ", 'HH24:MI:SS'), 'HH24:MI:SS'" : "")).append(") ");
-      if (first)
-        text.append(">= ");
-      else {
-        if (reference.equals("24"))
-          text.append("<=");
-        else
-          text.append("< ");
-      }
-      text.append("TO_DATE(?").append((reference.equals("24") ? ", 'HH24:MI:SS'" : "")).append(")");
-      if (!first && !reference.equals("24"))
-        text.append("+1");
-    } else if (reference.equals("11") || reference.equals("12") || reference.equals("13")
-        || reference.equals("22") || reference.equals("29") || reference.equals("800008")
-        || reference.equals("800019")) {
-      text.append(tablename).append(".").append(columnname).append(" ");
-      if (first)
-        text.append(">= ");
-      else
-        text.append("<= ");
-      text.append("TO_NUMBER(?)");
-    } else if (reference.equals("10") || reference.equals("14") || reference.equals("34")) {
-      String aux = "";
-      if (!columnname.equalsIgnoreCase("Value") && !columnname.equalsIgnoreCase("DocumentNo"))
-        aux = "C_IGNORE_ACCENT";
-      text.append(aux).append("(");
-      text.append(tablename).append(".").append(columnname).append(") LIKE ");
-      text.append(aux).append("(?)");
-    } else if (reference.equals("35")) {
-      text
-          .append(
-              "(SELECT UPPER(DESCRIPTION) FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = ")
-          .append(tablename).append(".").append(columnname).append(") LIKE C_IGNORE_ACCENT(?)");
-    } else {
-      text.append(tablename).append(".").append(columnname).append(" = ?");
-    }
-    return text.toString();
   }
 
   /**

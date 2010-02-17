@@ -18,7 +18,13 @@
  */
 package org.openbravo.wad.controls;
 
+import java.io.IOException;
 import java.util.Properties;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
+
+import org.openbravo.wad.FieldsData;
 
 public class WADText extends WADMemo {
 
@@ -28,5 +34,26 @@ public class WADText extends WADMemo {
   public WADText(Properties prop) {
     setInfo(prop);
     initialize();
+  }
+
+  public void processTable(String strTab, Vector<Object> vecFields, Vector<Object> vecTables,
+      Vector<Object> vecWhere, Vector<Object> vecOrder, Vector<Object> vecParameters,
+      String tableName, Vector<Object> vecTableParameters, FieldsData field,
+      Vector<String> vecFieldParameters, Vector<Object> vecCounters) throws ServletException,
+      IOException {
+    // Override this to do nothing
+  }
+
+  public String getDisplayLogic(boolean display, boolean isreadonly) {
+    StringBuffer displayLogic = new StringBuffer();
+
+    displayLogic.append(super.getDisplayLogic(display, isreadonly));
+
+    if (!getData("IsReadOnly").equals("Y") && !isreadonly) {
+      displayLogic.append("displayLogicElement('");
+      displayLogic.append(getData("ColumnName"));
+      displayLogic.append("_btt', ").append(display ? "true" : "false").append(");\n");
+    }
+    return displayLogic.toString();
   }
 }

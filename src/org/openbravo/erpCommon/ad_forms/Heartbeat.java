@@ -121,7 +121,7 @@ public class Heartbeat extends HttpSecureAppServlet {
         final Date today = new Date();
         if ((rPostponeDate == null || rPostponeDate.equals("")) || date.before(today)) {
           final String openRegistrationString = "\n function openRegistration() { "
-              + "\n var w = window.opener; " + "\n if(w) { " + "\n w.openRegistration(); "
+              + "\n var w = window.opener; " + "\n if(w) { " + "\n w.setTimeout(\"openRegistration();\",100); "
               + "\n } " + "\n return true; \n }";
           xmlDocument.setParameter("registration", openRegistrationString);
         } else {

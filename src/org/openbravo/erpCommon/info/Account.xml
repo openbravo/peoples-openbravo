@@ -30,6 +30,7 @@
 	<PARAMETER id="grid" name="grid_SortCols" attribute="sortcols" />
 	<PARAMETER id="grid" name="grid_SortDirs" attribute="sortdirs" />
 	<PARAMETER id="grid" name="grid_Default" attribute="defaultrow" />
+    <PARAMETER id="inpAcctSchema" name="inpAcctSchema" attribute="value"/>
 	<structure name="structure1">
 		<FIELD id="fieldValidCombination" attribute="value">cValidcombinationId</FIELD>
 		<FIELD id="fieldAlias" attribute="value">alias</FIELD>

@@ -21,7 +21,7 @@ dojo.require("dojox.editor.plugins.ToolbarLineBreak");
 dojo.require("dojo.i18n");
 dojo.require("dojo.string");
 
-dojo.requireLocalization("dojox.editor.plugins", "FindReplace", null, "ROOT");
+dojo.requireLocalization("dojox.editor.plugins", "FindReplace", null, "ROOT,ko");
 
 dojo.experimental("dojox.editor.plugins.FindReplace");
 
@@ -202,6 +202,7 @@ dojo.declare("dojox.editor.plugins.FindReplace",[dijit._editor._Plugin],{
 		//		Function to toggle whether or not find/replace is displayed.
 		//	tags:
 		//		private
+		var size = dojo.marginBox(this.editor.domNode);
 		if(show && !dojo.isOpera){
 			dojo.style(this._frToolbar.domNode, "display", "block");
 			if(!ignoreState){
@@ -213,7 +214,9 @@ dojo.declare("dojox.editor.plugins.FindReplace",[dijit._editor._Plugin],{
 				this._displayed = false;
 			}
 		}
-		this.editor.resize();
+
+		// Resize the editor.
+		this.editor.resize({h: size.h});
 	},
 
 	setToolbar: function(toolbar){

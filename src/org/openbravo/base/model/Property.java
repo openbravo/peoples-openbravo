@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
+import org.openbravo.base.model.domaintype.DateDomainType;
+import org.openbravo.base.model.domaintype.DatetimeDomainType;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.PropertyValidator;
 import org.openbravo.base.validation.ValidationException;
@@ -46,12 +50,11 @@ public class Property {
   private Entity entity;
   private Entity targetEntity;
   private boolean id;
-  private boolean primitive;
   private boolean isInactive;
-  private Class<?> primitiveType;
   private Property referencedProperty;
   private String name;
   private String columnName;
+  private String columnId;
   private boolean isActiveColumn = false;
   private String nameOfColumn; // AD_COLUMN.NAME
   // note defaultValue contains the value as it exists in the db, for booleans
@@ -71,6 +74,7 @@ public class Property {
   private Set<String> allowedValues;
   private Boolean allowDerivedRead;
   private boolean isClientOrOrganization;
+  private DomainType domainType;
 
   private PropertyValidator validator;
 
@@ -83,9 +87,6 @@ public class Property {
   private String transientCondition;
 
   private Module module;
-
-  private boolean isDatetime;
-  private boolean isDate;
 
   // keeps track of the index of this property in the entity.getProperties()
   // gives a lot of performance/memory improvements when getting property values
@@ -100,14 +101,12 @@ public class Property {
   public void initializeFromColumn(Column fromColumn) {
     fromColumn.setProperty(this);
     setId(fromColumn.isKey());
-    setPrimitive(fromColumn.isPrimitiveType());
-    setPrimitiveType(fromColumn.getPrimitiveType());
-    setDatetime(fromColumn.getReference().isDatetime());
-    setDate(fromColumn.getReference().isDate());
     setIdentifier(fromColumn.isIdentifier());
     setParent(fromColumn.isParent());
     setColumnName(fromColumn.getColumnName());
     setNameOfColumn(fromColumn.getName());
+    setColumnId(fromColumn.getId());
+    setDomainType(fromColumn.getDomainType());
 
     setDefaultValue(fromColumn.getDefaultValue());
 
@@ -244,11 +243,7 @@ public class Property {
   }
 
   public boolean isPrimitive() {
-    return primitive;
-  }
-
-  public void setPrimitive(boolean primitive) {
-    this.primitive = primitive;
+    return getDomainType() instanceof PrimitiveDomainType;
   }
 
   /**
@@ -283,11 +278,7 @@ public class Property {
   }
 
   public Class<?> getPrimitiveType() {
-    return primitiveType;
-  }
-
-  public void setPrimitiveType(Class<?> primitiveType) {
-    this.primitiveType = primitiveType;
+    return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
   }
 
   public String getColumnName() {
@@ -302,6 +293,8 @@ public class Property {
    * Is used by the code generation of entities. It will return a String which can be used to set in
    * the generated source code to initialize a property. For example if this is a boolean and the
    * default value in the database for the column is 'Y' then this method will return "true".
+   * 
+   * Will set the default value for a boolean in case it has not yet been set.
    * 
    * @return the java-valid default
    */
@@ -663,37 +656,25 @@ public class Property {
       return;
     }
 
-    if (isOneToMany() && (value instanceof List)) {
+    if (isOneToMany() && (value instanceof List<?>)) {
       return;
     }
 
-    if (!isPrimitive() && !(value instanceof BaseOBObjectDef)) {
-      final ValidationException ve = new ValidationException();
-      ve.addMessage(this, "Property " + this + " only allows reference instances of type "
-          + BaseOBObjectDef.class.getName() + " but the value is an instanceof "
-          + value.getClass().getName());
-      throw ve;
-    } else if (isPrimitive()) {
-      // this specific conversion is allowed
-      final boolean intToLong = getPrimitiveObjectType().isAssignableFrom(Long.class)
-          && value.getClass().isAssignableFrom(Integer.class);
+    // handle special case
+    final boolean isSpecialEnumerateCase = value instanceof String
+        && getColumnName().equalsIgnoreCase("changeprojectstatus");
+    if (!isSpecialEnumerateCase) {
+      getDomainType().checkIsValidValue(this, value);
+    }
 
-      if (!intToLong && !getPrimitiveObjectType().isInstance(value)) {
+    // check property characteristics
+    final PropertyValidator v = getValidator();
+    if (v != null) {
+      final String msg = v.validate(value);
+      if (msg != null) {
         final ValidationException ve = new ValidationException();
-        ve.addMessage(this, "Property " + this + " only allows instances of "
-            + getPrimitiveObjectType().getName() + " but the value is an instanceof "
-            + value.getClass().getName());
+        ve.addMessage(this, msg);
         throw ve;
-      }
-
-      final PropertyValidator v = getValidator();
-      if (v != null) {
-        final String msg = v.validate(value);
-        if (msg != null) {
-          final ValidationException ve = new ValidationException();
-          ve.addMessage(this, msg);
-          throw ve;
-        }
       }
     }
   }
@@ -931,19 +912,11 @@ public class Property {
   }
 
   public boolean isDatetime() {
-    return isDatetime;
-  }
-
-  public void setDatetime(boolean isDatetime) {
-    this.isDatetime = isDatetime;
+    return getDomainType() instanceof DatetimeDomainType;
   }
 
   public boolean isDate() {
-    return isDate;
-  }
-
-  public void setDate(boolean isDate) {
-    this.isDate = isDate;
+    return getDomainType() instanceof DateDomainType;
   }
 
   public boolean isActiveColumn() {
@@ -952,5 +925,45 @@ public class Property {
 
   public void setActiveColumn(boolean isActiveColumn) {
     this.isActiveColumn = isActiveColumn;
+  }
+
+  public DomainType getDomainType() {
+    return domainType;
+  }
+
+  public void setDomainType(DomainType domainType) {
+    this.domainType = domainType;
+  }
+
+  /**
+   * Deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
+   */
+  public void setDate(boolean isDate) {
+  }
+
+  /**
+   * Deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
+   */
+  public void setDatetime(boolean isDatetime) {
+  }
+
+  /**
+   * Deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
+   */
+  public void setPrimitive(boolean primitive) {
+  }
+
+  /**
+   * Deprecated not used anymore, is computed on the basis of the {@link #getDomainType()}.
+   */
+  public void setPrimitiveType(Class<?> primitiveType) {
+  }
+
+  public String getColumnId() {
+    return columnId;
+  }
+
+  public void setColumnId(String columnId) {
+    this.columnId = columnId;
   }
 }

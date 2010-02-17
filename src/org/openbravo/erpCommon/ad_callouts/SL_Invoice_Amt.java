@@ -148,6 +148,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
                 .getLanguage())) + "\"), ");
     }
     resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
+    resultado.append("new Array(\"inptaxbaseamt\", " + LineNetAmt.toString() + "),");
     resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + ")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

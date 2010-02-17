@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,180 +53,13 @@ public class WadUtility {
     PropertyConfigurator.configure("log4j.lcf");
   }
 
-  public static String columnIdentifier(ConnectionProvider conn, String tableName,
-      boolean required, FieldsData fields, int ilist, int itable, boolean translated,
-      Vector<Object> vecFields, Vector<Object> vecTable, Vector<Object> vecWhere,
-      Vector<Object> vecParameters, Vector<Object> vecTableParameters, String sqlDateFormat)
-      throws ServletException {
-    if (fields == null)
-      return "";
-    StringBuffer texto = new StringBuffer();
-    if (fields.reference.equals("17")) { // List
-      ilist++;
-      if (tableName != null && tableName.length() != 0) {
-        vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "."
-            + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = '"
-            + fields.referencevalue + "' and list" + ilist + ".ad_language = ?) ");
-        vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-      } else {
-        vecTable.addElement("ad_ref_list_v list" + ilist);
-        vecWhere.addElement(fields.referencevalue + " = " + "list" + ilist + ".ad_reference_id");
-        vecWhere.addElement("list" + ilist + ".ad_language = ? ");
-        vecParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-      }
-      texto.append("list").append(ilist).append(".name");
-      vecFields.addElement(texto.toString());
-    } else if (fields.reference.equals("18")) { // Table
-      itable++;
-      TableRelationData trd[] = TableRelationData.selectRefTable(conn, fields.referencevalue);
-      if (log4j.isDebugEnabled())
-        log4j.debug(" number of TableRelationData: " + trd.length);
-      vecTable
-          .addElement("left join (select "
-              + trd[0].keyname
-              + ((trd[0].isvaluedisplayed.equals("Y") && !trd[0].keyname.equalsIgnoreCase("value")) ? ", value"
-                  : "")
-              + (!trd[0].keyname.equalsIgnoreCase(trd[0].name) ? (", " + trd[0].name) : "")
-              + " from " + trd[0].tablename + ") table" + itable + " on (" + tableName + "."
-              + fields.name + " = table" + itable + "." + trd[0].keyname + ") ");
-      FieldsData fieldsAux = new FieldsData();
-      fieldsAux.name = trd[0].name;
-      fieldsAux.tablename = trd[0].tablename;
-      fieldsAux.reference = trd[0].reference;
-      fieldsAux.referencevalue = trd[0].referencevalue;
-      fieldsAux.required = trd[0].required;
-      fieldsAux.istranslated = trd[0].istranslated;
-      if (trd[0].isvaluedisplayed.equals("Y"))
-        texto.append("table" + itable + ".value || ' - ' || ");
-      texto.append(columnIdentifier(conn, "table" + itable, required, fieldsAux, ilist, itable,
-          translated, vecFields, vecTable, vecWhere, vecParameters, vecTableParameters,
-          sqlDateFormat));
-    } else if (fields.reference.equals("19")) { // TableDir
-      itable++;
-      int ilength = fields.name.length();
-      String tableDirName = fields.name.substring(0, ilength - 3);
-      FieldsData fdi[] = FieldsData.identifierColumns(conn, tableDirName);
-      vecTable.addElement("left join " + tableDirName + " on (" + tableName + "." + fields.name
-          + " = " + tableDirName + "." + fields.name + ") ");
-      for (int i = 0; i < fdi.length; i++) {
-        if (i > 0)
-          texto.append(" || ' - ' || ");
-        texto.append(columnIdentifier(conn, tableDirName, required, fdi[i], ilist, itable,
-            translated, vecFields, vecTable, vecWhere, vecParameters, vecTableParameters,
-            sqlDateFormat));
-      }
-    } else if (fields.reference.equals("30")) {
-      itable++;
-      EditionFieldsData[] dataSearchs = EditionFieldsData.selectSearchs(conn, "",
-          fields.referencevalue);
-      String tableDirName = "", fieldId = "";
-      if (dataSearchs == null || dataSearchs.length == 0) {
-        int ilength = fields.name.length();
-        if (fields.reference.equals("25"))
-          tableDirName = "C_ValidCombination";
-        else if (fields.reference.equals("31"))
-          tableDirName = "M_Locator";
-        else if (fields.reference.equals("800011"))
-          tableDirName = "M_Product";
-        else
-          tableDirName = fields.name.substring(0, ilength - 3);
-        if (fields.reference.equals("25"))
-          fieldId = "C_ValidCombination_ID";
-        else if (fields.reference.equals("31"))
-          fieldId = "M_Locator_ID";
-        else if (fields.reference.equals("800011"))
-          fieldId = "M_Product_ID";
-        else
-          fieldId = fields.name;
-      } else {
-        tableDirName = dataSearchs[0].reference;
-        fieldId = dataSearchs[0].columnname;
-      }
-      FieldsData fdi[] = FieldsData.identifierColumns(conn, tableDirName);
-      vecTable.addElement("left join " + tableDirName + " on (" + tableName + "." + fields.name
-          + " = " + tableDirName + "." + fieldId + ")");
-      for (int i = 0; i < fdi.length; i++) {
-        if (i > 0)
-          texto.append(" || ' - ' || ");
-        texto.append(columnIdentifier(conn, tableDirName, required, fdi[i], ilist, itable,
-            translated, vecFields, vecTable, vecWhere, vecParameters, vecTableParameters,
-            sqlDateFormat));
-      }
-    } else if (fields.reference.equals("31") || fields.reference.equals("35")
-        || fields.reference.equals("25") || fields.reference.equals("800011")) { // Search y Locator
-      itable++;
-      int ilength = fields.name.length();
-      String tableDirName = "";
-      if (fields.reference.equals("25"))
-        tableDirName = "C_ValidCombination";
-      else if (fields.reference.equals("31"))
-        tableDirName = "M_Locator";
-      else if (fields.reference.equals("35"))
-        tableDirName = "M_AttributeSetInstance";
-      else if (fields.reference.equals("800011"))
-        tableDirName = "M_Product";
-      else
-        tableDirName = fields.name.substring(0, ilength - 3);
-      String fieldId = "";
-      if (fields.reference.equals("25"))
-        fieldId = "C_ValidCombination_ID";
-      else if (fields.reference.equals("31"))
-        fieldId = "M_Locator_ID";
-      else if (fields.reference.equals("35"))
-        fieldId = "M_AttributeSetInstance_ID";
-      else if (fields.reference.equals("800011"))
-        fieldId = "M_Product_ID";
-      else
-        fieldId = fields.name;
-      FieldsData fdi[] = FieldsData.identifierColumns(conn, tableDirName);
-      vecTable.addElement("left join " + tableDirName + " on (" + tableName + "." + fields.name
-          + " = " + tableDirName + "." + fieldId + ")");
-      for (int i = 0; i < fdi.length; i++) {
-        if (i > 0)
-          texto.append(" || ' - ' || ");
-        texto.append(columnIdentifier(conn, tableDirName, required, fdi[i], ilist, itable,
-            translated, vecFields, vecTable, vecWhere, vecParameters, vecTableParameters,
-            sqlDateFormat));
-      }
-    } else {
-      if (fields.istranslated.equals("Y")
-          && TableRelationData.existsTableColumn(conn, fields.tablename + "_TRL", fields.name)) {
-        FieldsData fdi[] = FieldsData.tableKeyColumnName(conn, fields.tablename);
-        if (fdi == null || fdi.length == 0) {
-          vecFields.addElement(applyFormat(tableName + "." + fields.name, fields.reference,
-              sqlDateFormat));
-          texto.append(applyFormat(tableName + "." + fields.name, fields.reference, sqlDateFormat));
-        } else {
-          vecTable.addElement("left join (select " + fdi[0].name + ", AD_Language"
-              + (!fdi[0].name.equalsIgnoreCase(fields.name) ? (", " + fields.name) : "") + " from "
-              + fields.tablename + "_TRL) tableTRL" + itable + " on (" + tableName + "."
-              + fdi[0].name + " = tableTRL" + itable + "." + fdi[0].name + " and tableTRL" + itable
-              + ".AD_Language = ?) ");
-          vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-          vecFields.addElement(applyFormat("(CASE WHEN tableTRL" + itable + "." + fields.name
-              + " IS NULL THEN TO_CHAR(" + tableName + "." + fields.name
-              + ") ELSE TO_CHAR(tableTRL" + itable + "." + fields.name + ") END)",
-              fields.reference, sqlDateFormat));
-          texto.append(applyFormat("(CASE WHEN tableTRL" + itable + "." + fields.name
-              + " IS NULL THEN TO_CHAR(" + tableName + "." + fields.name
-              + ") ELSE TO_CHAR(tableTRL" + itable + "." + fields.name + ") END)",
-              fields.reference, sqlDateFormat));
-        }
-      } else {
-        vecFields.addElement(applyFormat(tableName + "." + fields.name, fields.reference,
-            sqlDateFormat));
-        texto.append(applyFormat(tableName + "." + fields.name, fields.reference, sqlDateFormat));
-      }
-    }
-    return texto.toString();
-  }
-
   public static String applyFormat(String text, String reference, String sqlDateFormat) {
-    if (isDateField(reference))
+    // used from WADControl column identifier, keep hardcoded for core references
+    if (reference.equals("15"))
       return "TO_CHAR(" + text + ", '" + sqlDateFormat + "')";
-    else if (isTimeField(reference))
+    else if (reference.equals("24"))
       return "TO_CHAR(" + text + ", 'HH24:MM:SS')";
-    else if (isDateTimeField(reference))
+    else if (reference.equals("16"))
       return "TO_CHAR(" + text + ", '" + sqlDateFormat + " HH24:MM:SS')";
     else
       text = "TO_CHAR(COALESCE(TO_CHAR(" + text + "), ''))";
@@ -240,96 +73,17 @@ public class WadUtility {
       throws ServletException {
     if (fields == null)
       return "";
-    StringBuffer texto = new StringBuffer();
-    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-    if (fields.reference.equals("13")) { // ID
-      FieldsData fdi[] = FieldsData.identifierColumns(conn, tableName);
-      for (int i = 0; i < fdi.length; i++) {
-        if (i > 0)
-          texto.append(" || ' - ' || ");
-        vecCounters.set(0, Integer.toString(itable));
-        vecCounters.set(1, Integer.toString(ilist));
-        texto.append(columnIdentifier(conn, tableName, required, fdi[i], vecCounters, translated,
-            vecFields, vecTable, vecWhere, vecParameters, vecTableParameters, sqlDateFormat));
-        ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-        itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-      }
-      if (texto.toString().equals("")) {
-        vecFields.addElement(((tableName != null && tableName.length() != 0) ? (tableName + ".")
-            : "")
-            + fields.name);
-        texto.append(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-            + fields.name);
-      }
-    } else if (fields.reference.equals("17")) { // List
-      ilist++;
-      if (tableName != null && tableName.length() != 0) {
-        vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "."
-            + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = '"
-            + fields.referencevalue + "' and list" + ilist + ".ad_language = ?) ");
-        vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-      } else {
-        vecTable.addElement("ad_ref_list_v list" + ilist);
-        vecWhere.addElement(fields.referencevalue + " = " + "list" + ilist + ".ad_reference_id ");
-        vecWhere.addElement("list" + ilist + ".ad_language = ? ");
-        vecParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-      }
-      texto.append("list").append(ilist).append(".name");
-      vecFields.addElement(texto.toString());
-      vecCounters.set(0, Integer.toString(itable));
-      vecCounters.set(1, Integer.toString(ilist));
-    } else if (fields.reference.equals("18")) { // Table
-      itable++;
-      TableRelationData trd[] = TableRelationData.selectRefTable(conn, fields.referencevalue);
-      if (log4j.isDebugEnabled())
-        log4j.debug(" number of TableRelationData: " + trd.length);
 
-      if (tableName != null && tableName.length() != 0) {
-        vecTable
-            .addElement("left join (select "
-                + trd[0].keyname
-                + ((trd[0].isvaluedisplayed.equals("Y") && !trd[0].keyname
-                    .equalsIgnoreCase("value")) ? ", value" : "")
-                + (!trd[0].keyname.equalsIgnoreCase(trd[0].name) ? (", " + trd[0].name) : "")
-                + " from " + trd[0].tablename + ") table" + itable + " on (" + tableName + "."
-                + fields.name + " = " + " table" + itable + "." + trd[0].keyname + ")");
-      } else {
-        vecTable.addElement(trd[0].tablename + " table" + itable);
-      }
-      FieldsData fieldsAux = new FieldsData();
-      fieldsAux.name = trd[0].name;
-      fieldsAux.tablename = trd[0].tablename;
-      fieldsAux.reference = trd[0].reference;
-      fieldsAux.referencevalue = trd[0].referencevalue;
-      fieldsAux.required = trd[0].required;
-      fieldsAux.istranslated = trd[0].istranslated;
-      vecCounters.set(0, Integer.toString(itable));
-      vecCounters.set(1, Integer.toString(ilist));
-      if (trd[0].isvaluedisplayed.equals("Y"))
-        texto.append("table" + itable + ".value || ' - ' || ");
-      texto.append(columnIdentifier(conn, "table" + itable, required, fieldsAux, vecCounters,
-          translated, vecFields, vecTable, vecWhere, vecParameters, vecTableParameters,
-          sqlDateFormat));
-      ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-      itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-    } else if (fields.reference.equals("32")) { // Image
-      ilist++;
-      if (tableName != null && tableName.length() != 0) {
-        vecTable.addElement("left join (select AD_Image_ID, ImageURL from AD_Image) list" + ilist
-            + " on (" + tableName + "." + fields.name + " = list" + ilist + ".AD_Image_ID) ");
-      } else {
-        vecTable.addElement("AD_Image list" + ilist);
-      }
-      texto.append("list").append(ilist).append(".ImageURL");
-      vecFields.addElement(texto.toString());
-      vecCounters.set(0, Integer.toString(itable));
-      vecCounters.set(1, Integer.toString(ilist));
-    } else if (fields.reference.equals("19") || fields.reference.equals("30")
+    if (fields.reference.equals("19") || fields.reference.equals("30")
         || fields.reference.equals("31") || fields.reference.equals("35")
-        || fields.reference.equals("25") || fields.reference.equals("800011")) { // TableDir, Search
-      // y
-      // Locator
+        || fields.reference.equals("25") || fields.reference.equals("800011")) {
+      // TableDir, Search and Locator
+      // Maintain this old code for convenience, rest of code moved to WADControl subclasses
+
+      StringBuffer texto = new StringBuffer();
+      int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+      int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+
       itable++;
       EditionFieldsData[] dataSearchs = null;
       if (fields.reference.equals("30"))
@@ -394,99 +148,16 @@ public class WadUtility {
         ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
         itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
       }
+      vecCounters.set(0, Integer.toString(itable));
+      vecCounters.set(1, Integer.toString(ilist));
+      return texto.toString();
     } else {
-      if (fields.istranslated.equals("Y")
-          && TableRelationData.existsTableColumn(conn, fields.tablename + "_TRL", fields.name)) {
-        FieldsData fdi[] = FieldsData.tableKeyColumnName(conn, fields.tablename);
-        if (fdi == null || fdi.length == 0) {
-          vecFields.addElement(applyFormat(
-              ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-                  + fields.name, fields.reference, sqlDateFormat));
-          texto.append(applyFormat(
-              ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-                  + fields.name, fields.reference, sqlDateFormat));
-        } else {
-          vecTable.addElement("left join (select " + fdi[0].name + ",AD_Language"
-              + (!fdi[0].name.equalsIgnoreCase(fields.name) ? (", " + fields.name) : "") + " from "
-              + fields.tablename + "_TRL) tableTRL" + itable + " on (" + tableName + "."
-              + fdi[0].name + " = tableTRL" + itable + "." + fdi[0].name + " and tableTRL" + itable
-              + ".AD_Language = ?) ");
-          vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
-          vecFields.addElement(applyFormat("(CASE WHEN tableTRL" + itable + "." + fields.name
-              + " IS NULL THEN TO_CHAR(" + tableName + "." + fields.name
-              + ") ELSE TO_CHAR(tableTRL" + itable + "." + fields.name + ") END)",
-              fields.reference, sqlDateFormat));
-          texto.append(applyFormat("(CASE WHEN tableTRL" + itable + "." + fields.name
-              + " IS NULL THEN TO_CHAR(" + tableName + "." + fields.name
-              + ") ELSE TO_CHAR(tableTRL" + itable + "." + fields.name + ") END)",
-              fields.reference, sqlDateFormat));
-        }
-      } else {
-        vecFields
-            .addElement(applyFormat(
-                ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-                    + fields.name, fields.reference, sqlDateFormat));
-        texto
-            .append(applyFormat(((tableName != null && tableName.length() != 0) ? (tableName + ".")
-                : "")
-                + fields.name, fields.reference, sqlDateFormat));
-      }
+      WADControl control = WadUtility.getWadControlClass(conn, fields.reference,
+          fields.adReferenceValueId);
+      return control.columnIdentifier(tableName, fields, vecCounters, vecFields, vecTable,
+          vecWhere, vecParameters, vecTableParameters);
     }
-    vecCounters.set(0, Integer.toString(itable));
-    vecCounters.set(1, Integer.toString(ilist));
-    return texto.toString();
-  }
 
-  /**
-   * Establece el tipo de class que le corresponde a un campo determinado de la edición
-   * 
-   * @param efd
-   *          - Estructura de tipo EditionFieldsData
-   * @return Devuelve un String con el parámetro class completo o un String vacío en caso de no
-   *         tener class asociado para el campo indicado.
-   */
-  public static String classRequiredUpdateable(EditionFieldsData efd, boolean isupdateable,
-      boolean tabIsReadOnly) {
-    StringBuffer htmltext = new StringBuffer();
-    String strAux = "";
-    try {
-      if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference)
-          || isIntegerNumber(efd.reference) || isGeneralNumber(efd.reference)
-          || isQtyNumber(efd.reference)) {
-        strAux = " number";
-      }
-      String strType = "dojoValidateValid";
-      String classType = "TextBox";
-      if (isSelectType(efd.reference)) {
-        strType = "Combo";
-        classType = "Combo";
-      }
-
-      if (efd.required.equals("Y") && !efd.columnname.equalsIgnoreCase("Value")) {
-        if (efd.isreadonly.equals("Y") || tabIsReadOnly) {
-          htmltext.append(" class=\"").append(strType).append(" required ").append(classType)
-              .append("_OneCell_width").append(strAux).append(" readonly\" ");
-        } else if (!isupdateable) {
-          htmltext.append(" class=\"").append(strType).append(" required ").append(classType)
-              .append("_OneCell_width").append(strAux).append(" readonly\" ");
-        } else {
-          htmltext.append(" class=\"").append(strType).append(" required ").append(classType)
-              .append("_OneCell_width").append(strAux).append("\" ");
-        }
-      } else if (efd.isreadonly.equals("Y") || tabIsReadOnly) {
-        htmltext.append(" class=\"").append(strType).append(" ").append(classType).append(
-            "_OneCell_width").append(strAux).append(" readonly\" ");
-      } else if (!isupdateable) {
-        htmltext.append(" class=\"").append(strType).append(" ").append(classType).append(
-            "_OneCell_width").append(strAux).append(" readonly\" ");
-      } else {
-        htmltext.append(" class=\"").append(strType).append(" ").append(classType).append(
-            "_OneCell_width").append(strAux).append("\" ");
-      }
-    } catch (Exception e) {
-      return "";
-    }
-    return htmltext.toString();
   }
 
   public static String buildSQL(String clause, Vector<Object> vecParameters) {
@@ -501,481 +172,22 @@ public class WadUtility {
     return where.toString();
   }
 
-  public static String columnRelationType(String reference) {
-    if (isDateField(reference))
-      return "DATE";
-    else if (isTimeField(reference))
-      return "TIME";
-    else if (isDateTimeField(reference))
-      return "DATETIME";
-    else if (reference.equals("20"))
-      return "YN";
-    else if (isDecimalNumber(reference))
-      return "DECIMAL";
-    else if (isQtyNumber(reference))
-      return "DECIMAL";
-    else if (isPriceNumber(reference))
-      return "DECIMAL";
-    else if (isIntegerNumber(reference))
-      return "INTEGER";
-    else if (isGeneralNumber(reference))
-      return "NUMBER";
-    else if (reference.equals("32"))
-      return "IMAGE";
-    else if (isLinkType(reference))
-      return "LINK";
-    else
-      return "TEXT";
-  }
-
-  public static boolean columnRelationFormat(FieldsData data, boolean header, int maxColSize)
-      throws IOException, ServletException {
-    if (data == null)
-      return false;
-    if (data.reference.equals("28"))
-      return false;
-    if (maxColSize > 0) {
-      if (Integer.valueOf(data.displaylength).intValue() > maxColSize)
-        data.displaylength = Integer.toString(maxColSize);
-      if (header && data.name.length() > Integer.valueOf(data.displaylength).intValue()) {
-        data.name = data.name.substring(0, Integer.valueOf(data.displaylength).intValue());
-      }
-    }
-    return true;
-  }
-
-  public static void xmlFormatAttribute(FieldsData data) {
-    if (data == null)
-      return;
-    if (data.isdisplayed.equals("Y")) {
-      if (isIntegerNumber(data.reference))
-        data.xmlFormat = "INTEGER";
-      else if (isDecimalNumber(data.reference))
-        data.xmlFormat = "EURO";
-      else if (isQtyNumber(data.reference))
-        data.xmlFormat = "QTY";
-      else if (isPriceNumber(data.reference))
-        data.xmlFormat = "PRICE";
-      else if (isGeneralNumber(data.reference))
-        data.xmlFormat = "GENERALQTY";
-      else
-        data.xmlFormat = "REPLACECHARACTERS";
-    }
-  }
-
-  public static String xmlFields(FieldsData fd, String completeName, int maxTextboxLength,
-      boolean forcedAttribute, boolean tabIsReadOnly) {
-    StringBuffer html = new StringBuffer();
-    String strSystemSeparator = System.getProperty("file.separator");
-
-    if (forcedAttribute) {
-      html.append("<FIELD ");
-      html.append("id=\"" + fd.name + completeName + "\" ");
-      html.append("attribute=\"value\"");
-      if (isDecimalNumber(fd.reference))
-        html.append(" format=\"euroEdition\"");
-      else if (isQtyNumber(fd.reference))
-        html.append(" format=\"qtyEdition\"");
-      else if (isPriceNumber(fd.reference))
-        html.append(" format=\"priceEdition\"");
-      else if (isIntegerNumber(fd.reference))
-        html.append(" format=\"integerEdition\"");
-      else if (isGeneralNumber(fd.reference))
-        html.append(" format=\"generalQtyEdition\"");
-      else
-        html.append(" replaceCharacters=\"htmlPreformated\"");
-      html.append(">");
-      html.append(fd.name + completeName + "</FIELD>");
-    } else if (fd.reference.equals("17") || fd.reference.equals("18") || fd.reference.equals("19")) { // List
-      html.append(xmlFields(fd, completeName, maxTextboxLength, true, tabIsReadOnly));
-      if (fd.isdisplayed.equals("Y")) {
-        html.append("\n<SUBREPORT id=\"report" + fd.name + completeName + "\" name=\"report"
-            + fd.name + completeName + "\"");
-        html.append(" report=\"org" + strSystemSeparator + "openbravo" + strSystemSeparator
-            + "erpCommon" + strSystemSeparator + "reference" + strSystemSeparator + "List\">\n");
-        html.append("  <ARGUMENT name=\"parameterListSelected\" withId=\"" + fd.name + completeName
-            + "\"/>\n");
-        html.append("</SUBREPORT>\n");
-      }
-      if (fd.isreadonly.equals("Y") || !fd.isupdateable.equals("Y") || tabIsReadOnly) {
-        html.append("<FIELD ");
-        html.append("id=\"report" + fd.name + completeName + "_S\" ");
-        html.append(" attribute=\"onchange\" replace=\"xx\"");
-        html.append(">");
-        html.append(fd.name + completeName + "</FIELD>");
-      }
-    } else if (fd.reference.equals("32")) { // Image
-      html.append(xmlFields(fd, "", maxTextboxLength, true, tabIsReadOnly));
-      if (fd.isdisplayed.equals("Y")) {
-        html.append("<FIELD id=\"" + fd.name + completeName + "\" name=\"" + fd.name + completeName
-            + "\" attribute=\"src\" replace=\"xx\">");
-        html.append(fd.name).append(completeName);
-        html.append("</FIELD>");
-      }
-    } else if (isLinkType(fd.reference)) {
-      html.append("<FIELD ");
-      html.append("id=\"" + fd.name + completeName + "\" ");
-      html.append("attribute=\"value\"");
-      html.append(" replaceCharacters=\"htmlPreformated\"");
-      html.append(">");
-      html.append(fd.name + completeName + "</FIELD>");
-    } else if (fd.reference.equals("20") && fd.isdisplayed.equals("Y")) { // YesNo
-      html.append("<FIELD ");
-      html.append("id=\"" + fd.name + completeName + "\" ");
-      html.append("boolean=\"checked\" withId=\"paramCheck\"");
-      html.append(">");
-      html.append(fd.name + completeName + "</FIELD>");
-    } else if (fd.reference.equals("28") && fd.isdisplayed.equals("Y")
-        && !fd.referencevalue.equals("") && !fd.columnname.equals("ChangeProjectStatus")) { // Button
-      html.append("<FIELD ");
-      html.append("id=\"" + fd.name + completeName + "\" ");
-      html.append("replaceCharacters=\"htmlPreformated\" ");
-      html.append(" attribute=\"value\">");
-      html.append(fd.name + completeName + "</FIELD>");
-      html.append("<FIELD ");
-      html.append("replaceCharacters=\"htmlPreformated\" ");
-      html.append("id=\"" + fd.name + completeName + "_BTN\">");
-      html.append(fd.name + completeName + "_BTN</FIELD>");
-    } else if (Integer.valueOf(fd.fieldlength).intValue() > maxTextboxLength
-        && fd.isdisplayed.equals("Y")) {
-      html.append("<FIELD ");
-      html.append("id=\"" + fd.name + completeName + "\" ");
-      if (isDecimalNumber(fd.reference))
-        html.append(" format=\"euroEdition\"");
-      else if (isQtyNumber(fd.reference))
-        html.append(" format=\"qtyEdition\"");
-      else if (isPriceNumber(fd.reference))
-        html.append(" format=\"priceEdition\"");
-      else if (isIntegerNumber(fd.reference))
-        html.append(" format=\"integerEdition\"");
-      else if (isGeneralNumber(fd.reference))
-        html.append(" format=\"generalQtyEdition\"");
-      else
-        html.append(" replaceCharacters=\"htmlPreformatedTextarea\"");
-      html.append(">");
-      html.append(fd.name + completeName + "</FIELD>");
-    } else {
-      html.append("<FIELD ");
-      html.append("id=\"" + fd.name + completeName + "\" ");
-      html.append("attribute=\"value\"");
-      if (isDecimalNumber(fd.reference))
-        html.append(" format=\"euroEdition\"");
-      else if (isQtyNumber(fd.reference))
-        html.append(" format=\"qtyEdition\"");
-      else if (isPriceNumber(fd.reference))
-        html.append(" format=\"priceEdition\"");
-      else if (isIntegerNumber(fd.reference))
-        html.append(" format=\"integerEdition\"");
-      else if (isGeneralNumber(fd.reference))
-        html.append(" format=\"generalQtyEdition\"");
-      else
-        html.append(" replaceCharacters=\"htmlPreformated\"");
-      html.append(">");
-      html.append(fd.name + completeName + "</FIELD>");
-    }
-
-    return html.toString();
-  }
-
-  public static String htmlFields(EditionFieldsData efd, String completeName, String completeID,
-      boolean isupdateable, int maxTextboxLength, boolean forcedAttribute, boolean isdesigne,
-      Vector<Object> vecCallOuts, String tabName, Vector<Object> vecDisplayLogic,
-      Vector<Object> vecReloads, boolean tabIsReadOnly, int textareaLength) {
-    StringBuffer html = new StringBuffer();
-    String onChange = ((isInVector(vecDisplayLogic, efd.columnname) && !tabIsReadOnly) ? "displayLogic();"
-        : "");
-    String logChanges = "logChanges(this);";
-    if (vecReloads != null && vecReloads.size() > 0 && efd.calloutname.equals("") && !tabIsReadOnly
-        && isInVector(vecReloads, efd.columnname)) {
-      efd.calloutname = "ComboReloads" + efd.tabid;
-      onChange += callouts(efd, vecCallOuts, maxTextboxLength, true);
-      // efd.callout="";
-    }
-    if (!forcedAttribute && efd.isdisplayed.equals("Y") && !efd.displaylogic.equals("")) {
-      html.append("<span id=\"" + efd.columnname + "_inp\">");
-    }
-    if (forcedAttribute) {
-      html.append("<input type=\"hidden\"");
-      html.append(" name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + completeName);
-      html.append("\" id=\"" + efd.columnname + completeID + "\" value=\"");
-      if (!isdesigne)
-        html.append("xxV");
-      if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference)
-          || isGeneralNumber(efd.reference) || isQtyNumber(efd.reference))
-        html.append("\" onkeydown=\"autoCompleteNumber(this, true, true, event);return true;");
-      else if (isIntegerNumber(efd.reference))
-        html.append("\" onkeydown=\"autoCompleteNumber(this, false, true, event);return true;");
-      html.append("\"");
-      html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-      html.append(" ></input>");
-    } else if ((efd.reference.equals("17") || efd.reference.equals("18") || efd.reference
-        .equals("19"))
-        && efd.isdisplayed.equals("Y")) { // List or Table or TableDir
-      StringBuffer html1 = new StringBuffer();
-      html.append("<select name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-          + completeName + "\"");
-      onChange = callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
-      // if (efd.isparent.equals("Y") || !isupdateable || tabIsReadOnly) {
-      if (log4j.isDebugEnabled())
-        log4j.debug("column: " + efd.columnname + "isUpdateable: " + isupdateable
-            + " tabReadOnly: " + tabIsReadOnly + " isUpdateable field: " + efd.isupdateable);
-      if (!isupdateable || tabIsReadOnly) {
-        html.append(" readonly=\"true\"");
-        onChange = "selectCombo(this, 'xx');";
-      }
-      html.append(" onchange=\"").append(logChanges).append(onChange).append("return true;\"");
-      html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-      html.append(" id=\"report");
-      html.append(efd.columnname + completeID + "_S\"");
-      html.append(">");
-      if (!efd.required.equals("Y"))
-        html.append("<option value=\"\"></option>");
-      html.append("<div id=\"report");
-      html.append(efd.columnname + completeID + "\"></div>");
-      html.append("</select>");
-      html.append(html1);
-    } else if (efd.reference.equals("23")) {
-      html.append("<input type=\"file\" ");
-      html.append(" size=\"" + efd.displaysize + "\" ");
-      html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-      html.append(" name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + completeName);
-      html.append("\" id=\"" + efd.columnname + completeID + "\" ");
-      html.append("value=\"");
-      if (!isdesigne)
-        html.append("xxV");
-      html.append("\"");
-      if (!tabIsReadOnly)
-        onChange = callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
-      if (!onChange.equals(""))
-        onChange = onChange + "return true;";
-      html.append(" onchange=\"").append(logChanges).append(onChange).append("\"");
-      if (!isupdateable || tabIsReadOnly) {
-        html.append(" readonly=\"true\"");
-      }
-      html.append("></input>");
-    } else if (efd.reference.equals("32")) {
-      if (!tabIsReadOnly && isupdateable) {
-        html.append("<a href=\"#\" onclick=\"");
-        html.append("openSearch(null, null, '../info/ImageInfo.html', null, false, 'frmMain', 'inp"
-            + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "', 'inp"
-            + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "_R', document.frmMain.inp"
-            + Sqlc.TransformaNombreColumna(efd.columnnameinp) + ".value);");
-        html.append("return false;\" onmouseover=\"window.status='").append(efd.referenceName)
-            .append("';return true;\" onmouseout=\"window.status='';return true;\">");
-      }
-      html.append("<img src=\"../../../../../web/images/xx\" border=\"0\"");
-      html.append(" width=\"").append(
-          (efd.displaysize.equals("") || IMAGE_EDITION_WIDTH < Integer.valueOf(efd.displaysize)
-              .intValue()) ? Integer.toString(IMAGE_EDITION_WIDTH) : efd.displaysize).append("\"");
-      html.append(" height=\"").append(
-          (efd.displaysize.equals("") || IMAGE_EDITION_HEIGHT < Integer.valueOf(efd.displaysize)
-              .intValue()) ? Integer.toString(IMAGE_EDITION_HEIGHT) : efd.displaysize)
-          .append("\" ");
-      html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-      html.append(" name=\"inp").append(Sqlc.TransformaNombreColumna(efd.columnnameinp)).append(
-          completeName);
-      html.append("\" id=\"").append(efd.columnname).append(completeID).append("\" alt=\"").append(
-          efd.name).append("\" title=\"").append(efd.name).append("\"");
-      if (!tabIsReadOnly)
-        onChange = callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
-      if (!onChange.equals(""))
-        onChange = onChange + "return true;";
-      html.append(" onchange=\"").append(logChanges).append(onChange).append("\"");
-      if (!isupdateable || tabIsReadOnly) {
-        html.append(" readonly=\"true\"");
-      }
-      html.append("></img>");
-      if (!tabIsReadOnly && isupdateable) {
-        html.append("</a>");
-      }
-    } else if (efd.reference.equals("34") && efd.isdisplayed.equals("Y")) { // MEMO
-      StringBuffer html1 = new StringBuffer();
-      double rowLength = ((Integer.valueOf(efd.fieldlength).intValue() * 20) / 4000);
-      if (rowLength < 3.0)
-        rowLength = 3.0;
-      html.append("<textarea cols=\"").append(textareaLength).append("\" rows=\"").append(
-          Double.toString(rowLength)).append("\" name=\"inp").append(
-          Sqlc.TransformaNombreColumna(efd.columnnameinp));
-      html.append(completeName).append("\" id=\"").append(efd.columnname).append(completeID)
-          .append("\" ");
-      onChange = callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
-      html.append(" onclick=\"").append(logChanges).append(onChange).append("return true;\"");
-      html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-      if (!isupdateable || tabIsReadOnly) {
-        html.append(" readonly=\"true\"");
-      }
-      html.append(" onkeypress=\"return handleFieldMaxLength(this, ").append(efd.fieldlength)
-          .append(");").append("\"");
-      html.append(">");
-      if (!isdesigne)
-        html.append("xxV");
-      html.append("</textarea>");
-      html.append(html1);
-    } else if (isLinkType(efd.reference)) {
-      html.append("<input type=\"text\" name=\"inp").append(
-          Sqlc.TransformaNombreColumna(efd.columnnameinp));
-      html.append(completeName).append("\" id=\"").append(efd.columnname).append(completeID)
-          .append("\" ");
-      onChange = callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
-      html.append(" onchange=\"").append(logChanges).append(onChange).append("return true;\"");
-      html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-      if (!isupdateable || tabIsReadOnly) {
-        html.append(" readonly=\"true\"");
-      }
-      html.append(" size=\"").append(efd.displaysize).append("\" ");
-      html.append(" maxlength=\"").append(efd.fieldlength).append("\" ");
-      html.append("value=\"");
-      if (!isdesigne)
-        html.append("xxV");
-      html.append("\">");
-    } else if (!efd.reference.equals("20")
-        && (Integer.valueOf(efd.fieldlength).intValue() > maxTextboxLength)
-        && efd.isdisplayed.equals("Y")) { // TEXTAREA
-      StringBuffer html1 = new StringBuffer();
-      double rowLength = ((Integer.valueOf(efd.fieldlength).intValue() * 20) / 4000);
-      if (rowLength < 3.0)
-        rowLength = 3.0;
-      html.append("<textarea cols=\"").append(textareaLength).append("\" rows=\"").append(
-          Double.toString(rowLength)).append("\" name=\"inp").append(
-          Sqlc.TransformaNombreColumna(efd.columnnameinp));
-      html.append(completeName).append("\" id=\"").append(efd.columnname).append(completeID)
-          .append("\" ");
-      onChange = callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
-      html.append(" onclick=\"").append(logChanges).append(onChange).append("return true;\"");
-      html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-      if (!isupdateable || tabIsReadOnly) {
-        html.append(" readonly=\"true\"");
-      }
-      html.append(" onkeypress=\"return handleFieldMaxLength(this, ").append(efd.fieldlength)
-          .append(");").append("\"");
-      html.append(">");
-      if (!isdesigne)
-        html.append("xxV");
-      html.append("</textarea>");
-      html.append(html1);
-    } else if (efd.reference.equals("28") && efd.isdisplayed.equals("Y")) {
-      html
-          .append("<table border=\"1\" cellpadding=\"0\" cellspacing=\"0\" summary=\"\" class=\"ActionButton\" onClick=\"");
-      html.append(buttonsCommand(efd, tabName + "_Edition.html") + "\">");
-      html.append("<tr class=\"ActionButton\"><td>");
-      html
-          .append("<img src=\"../../../../../web/images/ButtonProcess.gif\" border=\"0\" height=\"25\" width=\"25\" id=\"buttonProcess\"></td>");
-      html.append("<td class=\"Medio\">");
-      html.append(htmlFields(efd, completeName, completeID, isupdateable, maxTextboxLength, true,
-          isdesigne, vecCallOuts, tabName, vecDisplayLogic, vecReloads, tabIsReadOnly,
-          textareaLength));
-      html.append("<span id=\"" + efd.columnname + completeID + "_BTN\">");
-      html
-          .append((efd.referencevalue.equals("") || efd.columnname.equals("ChangeProjectStatus")) ? efd.name
-              : "xx");
-      html.append("</span>&nbsp;</td>");
-      html.append("</tr></table>");
-    } else {
-      StringBuffer html1 = new StringBuffer();
-      html.append("<input type=\"");
-      if (efd.isdisplayed.equals("N")) {
-        html.append("hidden\"");
-      } else if (efd.reference.equals("20")) { // YesNo
-        html.append("checkbox\"");
-      } else {
-        if (efd.isencrypted.equals("Y") || efd.iscolumnencrypted.equals("Y"))
-          html.append("password\"");
-        else
-          html.append("text\"");
-        if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference)
-            || isGeneralNumber(efd.reference) || isQtyNumber(efd.reference))
-          html.append(" onkeydown=\"autoCompleteNumber(this, true, true, event);return true;\"");
-        else if (isIntegerNumber(efd.reference))
-          html.append(" onkeydown=\"autoCompleteNumber(this, false, true, event);return true;\"");
-        html.append(" size=\"" + efd.displaysize + "\" ");
-        html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-        if (!isSearchType(efd.reference))
-          html.append(" maxlength=\"" + efd.fieldlength + "\"");
-      }
-      html.append(" name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + completeName);
-      html.append("\" id=\"" + efd.columnname + completeID + "\" ");
-      html.append("value=\"");
-      if (efd.isdisplayed.equals("N")) {
-        if (!isdesigne)
-          html.append("xxV");
-      } else if (efd.reference.equals("20")) {
-        html.append("Y");
-      } else {
-        if (!isdesigne)
-          html.append("xxV");
-      }
-      html.append("\"");
-      if (!tabIsReadOnly)
-        onChange = callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
-      onChange = logChanges + onChange + "return true;";
-
-      if (efd.reference.equals("14")
-          && Integer.valueOf(efd.fieldlength).intValue() > maxTextboxLength) {
-        html.append((!onChange.equals("") ? (" onblur=\"" + onChange + "\"") : ""));
-      } else if (efd.reference.equals("20")) {
-        if (!isupdateable || tabIsReadOnly)
-          onChange = "return false;";
-        html.append((!onChange.equals("") ? (" onclick=\"" + onChange + "\"") : ""));
-      } else {
-        html.append((!onChange.equals("") ? (" onchange=\"" + onChange + "\"") : ""));
-      }
-      if (efd.isdisplayed.equals("Y") && isupdateable
-          && (isDateField(efd.reference) || isTimeField(efd.reference))) { // Date.
-        // Put
-        // a
-        // calendar
-        html.append(" onkeyup=\"auto_completar_");
-        if (isDateField(efd.reference))
-          html.append("fecha(this");
-        else
-          html.append("hora(this, true");
-        html.append(");return true;\"");
-      }
-      if (!isupdateable || tabIsReadOnly) {
-        html.append(" readonly=\"true\"");
-      }
-      html.append("></input>");
-      html.append(html1);
-    }
-
-    if (!forcedAttribute && efd.isdisplayed.equals("Y") && !efd.displaylogic.equals("")) {
-      html.append("</span>");
-    }
-
-    return html.toString();
-  }
-
   public static void setLabel(ConnectionProvider conn, WADControl auxControl, boolean isSOTrx,
       String keyName) throws ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("processing WadUtility.setLabel() - field name: " + auxControl.getData("Name"));
     String strTableID = "", strColumnName = "", strTableName = "";
-    if (auxControl.getData("AD_Reference_ID").equals("18")) {
-      strTableID = TableLinkData.tableId(conn, auxControl.getData("AD_Reference_Value_ID"));
-      strColumnName = TableLinkData.columnName(conn, auxControl.getData("AD_Reference_Value_ID"));
-    } else if (auxControl.getData("AD_Reference_ID").equals("19")
-        || auxControl.getData("AD_Reference_ID").equals("30")
-        || auxControl.getData("AD_Reference_ID").equals("800011")) {
-      EditionFieldsData[] dataSearchs = null;
-      if (auxControl.getData("AD_Reference_ID").equals("30"))
-        dataSearchs = EditionFieldsData.selectSearchs(conn, "", auxControl
-            .getData("AD_Reference_Value_ID"));
-      if (auxControl.getData("AD_Reference_ID").equals("800011")) {
-        strTableName = "M_Product";
-        strColumnName = TableLinkData.keyColumnName(conn, strTableName);
-      } else if (dataSearchs != null && dataSearchs.length != 0) {
-        strTableName = dataSearchs[0].reference;
-        strColumnName = dataSearchs[0].columnname;
-      } else {
-        strTableName = auxControl.getData("ColumnNameSearch");
-        strTableName = strTableName.substring(0, (strTableName.length() - 3));
-        strColumnName = TableLinkData.keyColumnName(conn, strTableName);
-      }
-      strTableID = TableLinkData.tableNameId(conn, strTableName);
-    } else {
+
+    boolean linkable = auxControl.isLink();
+    if (!linkable) {
       auxControl.setData("IsLinkable", "N");
       return;
     }
+
+    String columnId = auxControl.getLinkColumnId();
+
+    strTableID = TableLinkData.tableId(conn, columnId);
+    strColumnName = TableLinkData.columnName(conn, columnId);
 
     if ((strTableID.equals("") || strColumnName.equals(""))
         && !(auxControl.getData("ColumnName").equalsIgnoreCase("updatedBy") || auxControl.getData(
@@ -1006,297 +218,6 @@ public class WadUtility {
     auxControl.setData("ColumnLabelText", strColumnName);
   }
 
-  public static void comboReloadScript(EditionFieldsData efd, Vector<Object> vecCallOuts,
-      Vector<Object> vecReloads, int maxTextboxLength, String strTab) {
-    if (vecReloads == null)
-      return;
-    if (isInVector(vecReloads, efd.columnnameinp)) {
-      if (efd.isdisplayed.equals("Y")
-          && (efd.reference.equals("21") || efd.reference.equals("30")
-              || efd.reference.equals("31") || efd.reference.equals("35")
-              || efd.reference.equals("25") || efd.reference.equals("800011"))
-          && efd.calloutname.equals("")) {
-        efd.calloutname = "ComboReloads" + strTab;
-        callouts(efd, vecCallOuts, maxTextboxLength, true);
-      }
-    }
-  }
-
-  public static String callouts(EditionFieldsData efd, Vector<Object> vecCallOuts,
-      int maxTextboxLength) {
-    return callouts(efd, vecCallOuts, maxTextboxLength, false);
-  }
-
-  public static String callouts(EditionFieldsData efd, Vector<Object> vecCallOuts,
-      int maxTextboxLength, boolean isReload) {
-    StringBuffer html = new StringBuffer();
-    boolean existCallOut = false;
-    if (!efd.calloutname.equals("")) {
-      if (efd.calloutname.startsWith("ComboReload"))
-        isReload = true;
-      String calloutName = FormatUtilities.replace(efd.calloutname);
-      if (efd.reference.equals("30") || efd.reference.equals("31") || efd.reference.equals("35")
-          || efd.reference.equals("25") || efd.reference.equals("800011")) {
-        boolean existDebug = false;
-        int i;
-        for (i = 0; i < vecCallOuts.size(); i++) {
-          CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-          if (data.name.equals("debugSearch")) {
-            existDebug = true;
-            break;
-          }
-        }
-        StringBuffer script = new StringBuffer();
-        if (existDebug) {
-          script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-              + "\") {\n");
-          /*
-           * if (isReload) { script.append("    submitCommandForm('" + efd.columnname +
-           * "', false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'hiddenFrame');"
-           * ); }
-           */
-          script.append("    " + (isReload ? "reload" : "callout") + calloutName + "(keyField);\n");
-          script.append("  }\n");
-          CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-          if (data.method.indexOf(script.toString()) == -1) {
-            StringBuffer complete = new StringBuffer();
-            String header = "function debugSearch(key, text, keyField) {\n";
-            int init = data.method.indexOf(header);
-            complete.append(data.method.substring(0, init + header.length()));
-            complete.append(script.toString());
-            complete.append(data.method.substring(init + header.length(), data.method.length()));
-            CallOutsStructure data1 = new CallOutsStructure();
-            data1.name = "debugSearch";
-            data1.method = complete.toString();
-            vecCallOuts.remove(i);
-            vecCallOuts.addElement(data1);
-          }
-        } else {
-          script.append("\nfunction debugSearch(key, text, keyField) {\n");
-          script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-              + "\") {\n");
-          script.append("    " + (isReload ? "reload" : "callout") + calloutName + "(keyField);\n");
-          script.append("  }\n");
-          script.append("return true;\n}");
-          CallOutsStructure data = new CallOutsStructure();
-          data.name = "debugSearch";
-          data.method = script.toString();
-          vecCallOuts.addElement(data);
-        }
-      } else {
-        if (isDateField(efd.reference)) { // Calendar
-          boolean existDebug = false;
-          int i;
-          for (i = 0; i < vecCallOuts.size(); i++) {
-            CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-            if (data.name.equals("debugCalendar")) {
-              existDebug = true;
-              break;
-            }
-          }
-          StringBuffer script = new StringBuffer();
-          if (existDebug) {
-            script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "\") {\n");
-            script.append("    " + (isReload ? "reload" : "callout") + calloutName
-                + "(keyField);\n");
-            script.append("  }\n");
-            CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-            if (data.method.indexOf(script.toString()) == -1) {
-              StringBuffer complete = new StringBuffer();
-              String header = "function debugCalendar(date, keyField) {\n";
-              int init = data.method.indexOf(header);
-              complete.append(data.method.substring(0, init + header.length()));
-              complete.append(script.toString());
-              complete.append(data.method.substring(init + header.length(), data.method.length()));
-              CallOutsStructure data1 = new CallOutsStructure();
-              data1.name = "debugCalendar";
-              data1.method = complete.toString();
-              vecCallOuts.remove(i);
-              vecCallOuts.addElement(data1);
-            }
-          } else {
-            script.append("\nfunction debugCalendar(date, keyField) {\n");
-            script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "\") {\n");
-            script.append("    " + (isReload ? "reload" : "callout") + calloutName
-                + "(keyField);\n");
-            script.append("  }\n");
-            script.append("return true;\n}");
-            CallOutsStructure data = new CallOutsStructure();
-            data.name = "debugCalendar";
-            data.method = script.toString();
-            vecCallOuts.addElement(data);
-          }
-        } else if (isTimeField(efd.reference)) { // Clock
-          boolean existDebug = false;
-          int i;
-          for (i = 0; i < vecCallOuts.size(); i++) {
-            CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-            if (data.name.equals("debugClock")) {
-              existDebug = true;
-              break;
-            }
-          }
-          StringBuffer script = new StringBuffer();
-          if (existDebug) {
-            script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "\") {\n");
-            script.append("    " + (isReload ? "reload" : "callout") + calloutName
-                + "(keyField);\n");
-            script.append("  }\n");
-            CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-            if (data.method.indexOf(script.toString()) == -1) {
-              StringBuffer complete = new StringBuffer();
-              String header = "function debugClock(time, keyField) {\n";
-              int init = data.method.indexOf(header);
-              complete.append(data.method.substring(0, init + header.length()));
-              complete.append(script.toString());
-              complete.append(data.method.substring(init + header.length(), data.method.length()));
-              CallOutsStructure data1 = new CallOutsStructure();
-              data1.name = "debugClock";
-              data1.method = complete.toString();
-              vecCallOuts.remove(i);
-              vecCallOuts.addElement(data1);
-            }
-          } else {
-            script.append("\nfunction debugClock(time, keyField) {\n");
-            script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "\") {\n");
-            script.append("    " + (isReload ? "reload" : "callout") + calloutName
-                + "(keyField);\n");
-            script.append("  }\n");
-            script.append("return true;\n}");
-            CallOutsStructure data = new CallOutsStructure();
-            data.name = "debugClock";
-            data.method = script.toString();
-            vecCallOuts.addElement(data);
-          }
-        } else if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference)
-            || isIntegerNumber(efd.reference) || isGeneralNumber(efd.reference)
-            || isQtyNumber(efd.reference)) { // Calculator
-          boolean existDebug = false;
-          int i;
-          for (i = 0; i < vecCallOuts.size(); i++) {
-            CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-            if (data.name.equals("debugCalculator")) {
-              existDebug = true;
-              break;
-            }
-          }
-          StringBuffer script = new StringBuffer();
-          if (existDebug) {
-            script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "\") {\n");
-            script.append("    " + (isReload ? "reload" : "callout") + calloutName
-                + "(keyField);\n");
-            script.append("  }\n");
-            CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-            if (data.method.indexOf(script.toString()) == -1) {
-              StringBuffer complete = new StringBuffer();
-              String header = "function debugCalculator(num, keyField) {\n";
-              int init = data.method.indexOf(header);
-              complete.append(data.method.substring(0, init + header.length()));
-              complete.append(script.toString());
-              complete.append(data.method.substring(init + header.length(), data.method.length()));
-              CallOutsStructure data1 = new CallOutsStructure();
-              data1.name = "debugCalculator";
-              data1.method = complete.toString();
-              vecCallOuts.remove(i);
-              vecCallOuts.addElement(data1);
-            }
-          } else {
-            script.append("\nfunction debugCalculator(num, keyField) {\n");
-            script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "\") {\n");
-            script.append("    " + (isReload ? "reload" : "callout") + calloutName
-                + "(keyField);\n");
-            script.append("  }\n");
-            script.append("return true;\n}");
-            CallOutsStructure data = new CallOutsStructure();
-            data.name = "debugCalculator";
-            data.method = script.toString();
-            vecCallOuts.addElement(data);
-          }
-        } else if (isLikeType(efd.reference)) { // Keyboard
-          boolean existDebug = false;
-          int i;
-          for (i = 0; i < vecCallOuts.size(); i++) {
-            CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-            if (data.name.equals("debugKeyboard")) {
-              existDebug = true;
-              break;
-            }
-          }
-          StringBuffer script = new StringBuffer();
-          if (existDebug) {
-            script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "\") {\n");
-            script.append("    " + (isReload ? "reload" : "callout") + calloutName
-                + "(keyField);\n");
-            script.append("  }\n");
-            CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-            if (data.method.indexOf(script.toString()) == -1) {
-              StringBuffer complete = new StringBuffer();
-              String header = "function debugKeyboard(text, keyField) {\n";
-              int init = data.method.indexOf(header);
-              complete.append(data.method.substring(0, init + header.length()));
-              complete.append(script.toString());
-              complete.append(data.method.substring(init + header.length(), data.method.length()));
-              CallOutsStructure data1 = new CallOutsStructure();
-              data1.name = "debugKeyboard";
-              data1.method = complete.toString();
-              vecCallOuts.remove(i);
-              vecCallOuts.addElement(data1);
-            }
-          } else {
-            script.append("\nfunction debugKeyboard(text, keyField) {\n");
-            script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "\") {\n");
-            script.append("    " + (isReload ? "reload" : "callout") + calloutName
-                + "(keyField);\n");
-            script.append("  }\n");
-            script.append("return true;\n}");
-            CallOutsStructure data = new CallOutsStructure();
-            data.name = "debugKeyboard";
-            data.method = script.toString();
-            vecCallOuts.addElement(data);
-          }
-        }
-        html.append((isReload ? "reload" : "callout") + calloutName + "(this.name);");
-      }
-
-      for (int i = 0; i < vecCallOuts.size(); i++) {
-        CallOutsStructure data = (CallOutsStructure) vecCallOuts.elementAt(i);
-        if (data.name.equals(calloutName)) {
-          existCallOut = true;
-          break;
-        }
-      }
-      if (!existCallOut) {
-        StringBuffer strCallOut = new StringBuffer();
-        if (isReload) {
-          strCallOut.append("\nfunction reload" + calloutName + "(changedField) {\n");
-          strCallOut
-              .append("    submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'hiddenFrame', null, null, true);\n");
-        } else {
-          strCallOut.append("\nfunction callout" + calloutName + "(changedField) {\n");
-          strCallOut
-              .append(
-                  "submitCommandFormParameter('DEFAULT', frmMain.inpLastFieldChanged, changedField, false, null, '..")
-              .append(efd.mappingnameCallout).append("', 'hiddenFrame', null, null, true);\n");
-        }
-        strCallOut.append("return true;\n");
-        strCallOut.append("}\n");
-        CallOutsStructure data = new CallOutsStructure();
-        data.name = efd.calloutname;
-        data.method = strCallOut.toString();
-        vecCallOuts.addElement(data);
-      }
-    }
-    return html.toString();
-  }
-
   public static String findField(ConnectionProvider conn, EditionFieldsData[] fields,
       EditionFieldsData[] auxiliars, String fieldName) {
     if (fields == null)
@@ -1310,350 +231,6 @@ public class WadUtility {
       if (auxiliars[i].columnname.equalsIgnoreCase(fieldName))
         return auxiliars[i].columnnameinp;
     return "";
-  }
-
-  public static String searchsCommand(EditionFieldsData efd, boolean fromButton, String tabId,
-      ConnectionProvider conn, String windowId, EditionFieldsData[] fieldsData,
-      EditionFieldsData[] auxiliarsData) {
-    StringBuffer params = new StringBuffer();
-    StringBuffer html = new StringBuffer();
-    String strMethodName = "openSearch";
-    if (!fromButton) {
-      params.append(", 'Command'");
-      params.append(", 'KEY'");
-    }
-    params.append(", 'WindowID'");
-    params.append(", '" + windowId + "'");
-    String field = findField(conn, fieldsData, auxiliarsData, "issotrxtab");
-    if (!field.equals("")) {
-      params.append(", 'inpisSOTrxTab'");
-      params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-    }
-    String searchName = (efd.reference.equals("25") ? "/info/Account" : ("/info/" + FormatUtilities
-        .replace(efd.searchname.trim())))
-        + "_FS.html";
-    EditionFieldsData[] fieldsSearch = null;
-    try {
-      fieldsSearch = EditionFieldsData.selectSearchs(conn, "I", efd.referencevalue);
-    } catch (ServletException ex) {
-      ex.printStackTrace();
-    }
-    if (fieldsSearch != null && fieldsSearch.length > 0) {
-      searchName = fieldsSearch[0].mappingname;
-      if (!fieldsSearch[0].referencevalue.equals("")) {
-        for (int i = 0; i < fieldsSearch.length; i++) {
-          field = findField(conn, fieldsData, auxiliarsData, fieldsSearch[i].referencevalue);
-          if (!field.equals("")) {
-            params.append(", 'inp").append(fieldsSearch[i].columnnameinp).append("'");
-            params
-                .append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-          }
-        }
-      }
-    } else if (efd.searchname.equalsIgnoreCase("PRODUCT COMPLETE")) {
-      field = findField(conn, fieldsData, auxiliarsData, "m_warehouse_id");
-      if (!field.equals("")) {
-        params.append(", 'inpWarehouse'");
-        params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-      }
-      field = findField(conn, fieldsData, auxiliarsData, "c_bpartner_id");
-      if (!field.equals("")) {
-        params.append(", 'inpBPartner'");
-        params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-      }
-    } else if (efd.searchname.toUpperCase().startsWith("ATTRIBUTE")) {
-      strMethodName = "openPAttribute";
-      params.append(", 'inpKeyValue'");
-      params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-          + ".value");
-      params.append(", 'inpwindowId'");
-      params.append(", document.frmMain.inpwindowId.value");
-      field = findField(conn, fieldsData, auxiliarsData, "m_product_id");
-      if (!field.equals("")) {
-        params.append(", 'inpProduct'");
-        params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-      }
-      field = findField(conn, fieldsData, auxiliarsData, "m_locator_id");
-      if (!field.equals("")) {
-        params.append(", 'inpLocatorId'");
-        params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-      }
-    } else if (efd.reference.equals("25")) {
-      field = findField(conn, fieldsData, auxiliarsData, "c_acctschema_id");
-      if (!field.equals("")) {
-        params.append(", 'inpAcctSchema'");
-        params.append(", inputValue(document.frmMain.inp" + Sqlc.TransformaNombreColumna(field)
-            + ")");
-      }
-    }
-    /*
-     * if (efd.searchname.equalsIgnoreCase("PRODUCT")) { field=findField(conn, fieldsData,
-     * auxiliarsData, "m_pricelist_id"); if (!field.equals("")) { params.append(", 'inpPriceList'");
-     * params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value"); }
-     * field=findField(conn, fieldsData, auxiliarsData, "m_warehouse_id"); if (!field.equals("")) {
-     * params.append(", 'inpWarehouse'"); params.append(", document.frmMain.inp" +
-     * Sqlc.TransformaNombreColumna(field) + ".value"); } field=findField(conn, fieldsData,
-     * auxiliarsData, "dateordered"); if (!field.equals("")) { params.append(", 'inpDate'");
-     * params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value"); } }
-     * else if (efd.searchname.equalsIgnoreCase("PROJECT")) { field=findField(conn, fieldsData,
-     * auxiliarsData, "c_bpartner_id"); if (!field.equals("")) { params.append(", 'inpBPartner'");
-     * params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value"); } }
-     * else if (efd.searchname.equalsIgnoreCase("PRODUCT COMPLETE")) { field=findField(conn,
-     * fieldsData, auxiliarsData, "m_warehouse_id"); if (!field.equals("")) {
-     * params.append(", 'inpWarehouse'"); params.append(", document.frmMain.inp" +
-     * Sqlc.TransformaNombreColumna(field) + ".value"); } field=findField(conn, fieldsData,
-     * auxiliarsData, "c_bpartner_id"); if (!field.equals("")) { params.append(", 'inpBPartner'");
-     * params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value"); } }
-     * else if (efd.searchname.equalsIgnoreCase("SALES ORDER LINE")) { field=findField(conn,
-     * fieldsData, auxiliarsData, "c_bpartner_id"); if (!field.equals("")) {
-     * params.append(", 'inpBPartner'"); params.append(", document.frmMain.inp" +
-     * Sqlc.TransformaNombreColumna(field) + ".value"); } field=findField(conn, fieldsData,
-     * auxiliarsData, "m_product_id"); if (!field.equals("")) { params.append(", 'inpProduct'");
-     * params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value"); } }
-     * else if (efd.searchname.equalsIgnoreCase("SHIPMENT/RECEPIT LINE")) { field=findField(conn,
-     * fieldsData, auxiliarsData, "c_bpartner_id"); if (!field.equals("")) {
-     * params.append(", 'inpBPartner'"); params.append(", document.frmMain.inp" +
-     * Sqlc.TransformaNombreColumna(field) + ".value"); } field=findField(conn, fieldsData,
-     * auxiliarsData, "m_product_id"); if (!field.equals("")) { params.append(", 'inpProduct'");
-     * params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value"); } }
-     * else if (efd.searchname.toUpperCase().startsWith("ATTRIBUTE")) { strMethodName =
-     * "openPAttribute"; params.append(", 'inpKeyValue'"); params.append(", document.frmMain.inp" +
-     * Sqlc.TransformaNombreColumna(efd.columnnameinp) + ".value");
-     * params.append(", 'inpwindowId'"); params.append(", document.frmMain.inpwindowId.value");
-     * field=findField(conn, fieldsData, auxiliarsData, "m_product_id"); if (!field.equals("")) {
-     * params.append(", 'inpProduct'"); params.append(", document.frmMain.inp" +
-     * Sqlc.TransformaNombreColumna(field) + ".value"); } field=findField(conn, fieldsData,
-     * auxiliarsData, "m_locator_id"); if (!field.equals("")) { params.append(", 'inpLocatorId'");
-     * params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value"); } }
-     * else if (efd.reference.equals("25")) { field=findField(conn, fieldsData, auxiliarsData,
-     * "c_acctschema_id"); if (!field.equals("")) { params.append(", 'inpAcctSchema'");
-     * params.append(", inputValue(document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) +
-     * ")"); } }
-     */
-    html.append(strMethodName + "(null, null, '.." + searchName + "', null, "
-        + ((efd.calloutname.equals("")) ? "false" : "true") + ", 'frmMain', 'inp"
-        + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "', 'inp"
-        + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "_R', document.frmMain.inp"
-        + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-        + "_R.value, 'inpIDValue', document.frmMain.inp"
-        + Sqlc.TransformaNombreColumna(efd.columnnameinp) + ".value" + params.toString() + ");");
-    return html.toString();
-  }
-
-  public static String productSearch(EditionFieldsData efd, int maxTextboxLength,
-      Vector<Object> vecCallOuts, String tabId, ConnectionProvider conn, String windowId,
-      EditionFieldsData[] fieldsData, EditionFieldsData[] auxiliarsData) {
-    StringBuffer html = new StringBuffer();
-    Vector<Object> vec = new Vector<Object>();
-    efd.searchname = "Product Complete";
-    html.append(htmlFields(efd, "_LOC", "_LOC", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_ATR", "_ATR", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_PQTY", "_PQTY", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_PUOM", "_PUOM", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_QTY", "_QTY", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_UOM", "_UOM", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_PLIST", "_PLIST", true, maxTextboxLength, true, true,
-        vecCallOuts, "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_PSTD", "_PSTD", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_PLIM", "_PLIM", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    html.append(htmlFields(efd, "_CURR", "_CURR", true, maxTextboxLength, true, true, vecCallOuts,
-        "", vec, null, false, 0));
-    if (!efd.displaylogic.equals("")) {
-      html.append("<span id=\"" + efd.columnname + "_btt\">");
-    }
-    html.append("<a href=\"#\"");
-    html.append("onClick=\""
-        + searchsCommand(efd, true, tabId, conn, windowId, fieldsData, auxiliarsData)
-        + "return false;\" ");
-    html.append("onMouseOut=\"window.status='';return true;\"");
-    html.append("onMouseOver=\"window.status='").append(efd.referenceName).append(
-        "';return true;\" class=\"windowbutton\"><img alt=\"").append(efd.name).append(
-        "\" title=\"").append(efd.name).append("\"");
-    html.append(" width=\"").append(IMAGE_BUTTON_WIDTH).append("\" height=\"").append(
-        IMAGE_BUTTON_HEIGHT).append("\" ");
-    html.append("border=\"0\" src=\"../../../../../web/images/"
-        + FormatUtilities.replace(efd.searchname.trim()) + ".jpg\" id=\"button"
-        + FormatUtilities.replace(efd.searchname.trim()) + "\"></a>");
-    if (!efd.displaylogic.equals("")) {
-      html.append("</span>");
-    }
-    return html.toString();
-  }
-
-  public static String searchs(EditionFieldsData efd, int maxTextboxLength,
-      Vector<Object> vecCallOuts, String tabId, ConnectionProvider conn, String windowId,
-      EditionFieldsData[] fieldsData, EditionFieldsData[] auxiliarsData) {
-    StringBuffer html = new StringBuffer();
-    Vector<Object> vec = new Vector<Object>();
-    EditionFieldsData[] fieldsSearch = null;
-    try {
-      fieldsSearch = EditionFieldsData.selectSearchs(conn, "O", efd.referencevalue);
-    } catch (ServletException ex) {
-      ex.printStackTrace();
-    }
-    if (fieldsSearch != null && fieldsSearch.length > 0) {
-      if (!fieldsSearch[0].columnnameinp.equals("")) {
-        String columnnameinp = efd.columnnameinp;
-        for (int i = 0; i < fieldsSearch.length; i++) {
-          efd.columnnameinp = fieldsSearch[i].columnnameinp;
-          html.append(htmlFields(efd, fieldsSearch[i].columnnameEnd, fieldsSearch[i].columnnameEnd,
-              true, maxTextboxLength, true, true, vecCallOuts, "", vec, null, false, 0));
-        }
-        efd.columnnameinp = columnnameinp;
-      }
-    }
-    /*
-     * if (efd.searchname.toUpperCase().indexOf("BUSINESS")!=-1) { html.append(htmlFields(efd,
-     * "_LOC", "_LOC", true, maxTextboxLength, true, true, vecCallOuts, "", vec, null, false, 0));
-     * html.append(htmlFields(efd, "_CON", "_CON", true, maxTextboxLength, true, true, vecCallOuts,
-     * "", vec, null, false, 0)); } else if (efd.searchname.equalsIgnoreCase("PRODUCT")) {
-     * html.append(htmlFields(efd, "_LOC", "_LOC", true, maxTextboxLength, true, true, vecCallOuts,
-     * "", vec, null, false, 0)); html.append(htmlFields(efd, "_ATR", "_ATR", true,
-     * maxTextboxLength, true, true, vecCallOuts, "", vec, null, false, 0));
-     * html.append(htmlFields(efd, "_PQTY", "_PQTY", true, maxTextboxLength, true, true,
-     * vecCallOuts, "", vec, null, false, 0)); html.append(htmlFields(efd, "_PUOM", "_PUOM", true,
-     * maxTextboxLength, true, true, vecCallOuts, "", vec, null, false, 0));
-     * html.append(htmlFields(efd, "_QTY", "_QTY", true, maxTextboxLength, true, true, vecCallOuts,
-     * "", vec, null, false, 0)); html.append(htmlFields(efd, "_PLIST", "_PLIST", true,
-     * maxTextboxLength, true, true, vecCallOuts, "", vec, null, false, 0));
-     * html.append(htmlFields(efd, "_PSTD", "_PSTD", true, maxTextboxLength, true, true,
-     * vecCallOuts, "", vec, null, false, 0)); html.append(htmlFields(efd, "_UOM", "_UOM", true,
-     * maxTextboxLength, true, true, vecCallOuts, "", vec, null, false, 0));
-     * html.append(htmlFields(efd, "_PLIM", "_PLIM", true, maxTextboxLength, true, true,
-     * vecCallOuts, "", vec, null, false, 0)); html.append(htmlFields(efd, "_CURR", "_CURR", true,
-     * maxTextboxLength, true, true, vecCallOuts, "", vec, null, false, 0)); }
-     */
-    if (!efd.displaylogic.equals("")) {
-      html.append("<span id=\"" + efd.columnname + "_btt\">");
-    }
-    html.append("<a href=\"#\"");
-    html.append("onClick=\""
-        + searchsCommand(efd, true, tabId, conn, windowId, fieldsData, auxiliarsData)
-        + "return false;\" ");
-    html.append("onMouseOut=\"window.status='';return true;\"");
-    html.append("onMouseOver=\"window.status='").append(efd.referenceName).append(
-        "';return true;\" class=\"windowbutton\"><img alt=\"").append(efd.name).append(
-        "\" title=\"").append(efd.name).append("\"");
-    html.append(" width=\"").append(IMAGE_BUTTON_WIDTH).append("\" height=\"").append(
-        IMAGE_BUTTON_HEIGHT).append("\" ");
-    html.append("border=\"0\" src=\"../../../../../web/images/"
-        + (efd.reference.equals("25") ? "Account" : FormatUtilities.replace(efd.searchname.trim()))
-        + ".jpg\" id=\"button" + FormatUtilities.replace(efd.searchname.trim()) + "\"></a>");
-    if (!efd.displaylogic.equals("")) {
-      html.append("</span>");
-    }
-    return html.toString();
-  }
-
-  public static String locatorCommands(EditionFieldsData efd, boolean fromButton, String tabId,
-      ConnectionProvider conn, String windowId, EditionFieldsData[] fieldsData,
-      EditionFieldsData[] auxiliarsData) {
-    StringBuffer params = new StringBuffer();
-    StringBuffer html = new StringBuffer();
-    if (!fromButton) {
-      params.append(", 'Command'");
-      params.append(", 'KEY'");
-    }
-    params.append(", 'WindowID'");
-    params.append(", '" + windowId + "'");
-    String field = findField(conn, fieldsData, auxiliarsData, "m_warehouse_id");
-    if (!field.equals("")) {
-      params.append(", 'inpmWarehouseId'");
-      params.append(", document.frmMain.inp" + Sqlc.TransformaNombreColumna(field) + ".value");
-    }
-    html.append("openSearch(null, null, '../info/Locator").append(
-        (efd.reference.equals("800013") ? "_Detail" : ""))
-        .append(
-            "_FS.html', null, " + ((efd.calloutname.equals("")) ? "false" : "true")
-                + ", 'frmMain', 'inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "', 'inp"
-                + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "_R', document.frmMain.inp"
-                + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-                + "_R.value, 'inpIDValue', document.frmMain.inp"
-                + Sqlc.TransformaNombreColumna(efd.columnnameinp) + ".value" + params.toString()
-                + ");");
-    return html.toString();
-  }
-
-  public static String locator(EditionFieldsData efd, int maxTextboxLength,
-      Vector<Object> vecCallOuts, String tabId, ConnectionProvider conn, String windowId,
-      EditionFieldsData[] fieldsData, EditionFieldsData[] auxiliarsData) {
-    StringBuffer html = new StringBuffer();
-
-    if (!efd.displaylogic.equals("")) {
-      html.append("<span id=\"" + efd.columnname + "_btt\">");
-    }
-    html.append("<a href=\"#\"");
-    html.append("onClick=\""
-        + locatorCommands(efd, true, tabId, conn, windowId, fieldsData, auxiliarsData)
-        + "return false;\" ");
-    html.append("onMouseOut=\"window.status='';return true;\"");
-    html.append("onMouseOver=\"window.status='").append(efd.referenceName).append(
-        "';return true;\" class=\"windowbutton\"><img alt=\"").append(efd.name).append(
-        "\" title=\"").append(efd.name).append("\"");
-    html.append(" width=\"").append(IMAGE_BUTTON_WIDTH).append("\" height=\"").append(
-        IMAGE_BUTTON_HEIGHT).append("\" ");
-    html
-        .append("border=\"0\" src=\"../../../../../web/images/Locator.jpg\" id=\"buttonLocator\"></a>");
-    if (!efd.displaylogic.equals("")) {
-      html.append("</span>");
-    }
-    return html.toString();
-  }
-
-  public static String locationCommands(EditionFieldsData efd) {
-    StringBuffer html = new StringBuffer();
-
-    html.append("openLocation(null, null, '../info/Location_FS.html', null, "
-        + ((efd.calloutname.equals("")) ? "false" : "true") + ", 'frmMain', 'inp"
-        + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "', 'inp"
-        + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "_R', document.frmMain.inp"
-        + Sqlc.TransformaNombreColumna(efd.columnnameinp)
-        + ".value, 'inpwindowId', document.frmMain.inpwindowId.value);");
-    return html.toString();
-  }
-
-  public static String location(EditionFieldsData efd) {
-    StringBuffer html = new StringBuffer();
-
-    if (!efd.displaylogic.equals("")) {
-      html.append("<span id=\"" + efd.columnname + "_btt\">");
-    }
-    html.append("<a href=\"#\"");
-    html.append("onClick=\"" + locationCommands(efd) + "return false;\" ");
-    html.append("onMouseOut=\"window.status='';return true;\"");
-    html.append("onMouseOver=\"window.status='").append(efd.referenceName).append(
-        "';return true;\" class=\"windowbutton\"><img alt=\"").append(efd.name).append(
-        "\" title=\"").append(efd.name).append("\"");
-    html.append(" width=\"").append(IMAGE_BUTTON_WIDTH).append("\" height=\"").append(
-        IMAGE_BUTTON_HEIGHT).append("\" ");
-    html
-        .append("border=\"0\" src=\"../../../../../web/images/Location.jpg\" id=\"buttonLocation\"></a>");
-    if (!efd.displaylogic.equals("")) {
-      html.append("</span>");
-    }
-    return html.toString();
-  }
-
-  public static String buttonsCommand(EditionFieldsData efd, String servletName) {
-    StringBuffer html = new StringBuffer();
-    if (efd.javaClassName.equals("")) {
-      html.append("openServletNewWindow('BUTTON" + FormatUtilities.replace(efd.columnname)
-          + efd.adProcessId + "', false, '" + servletName + "', 'BUTTON', null, true"
-          + (efd.columnname.equalsIgnoreCase("CreateFrom") ? ",600, 900" : "") + ");return false;");
-    } else {
-      html.append("openServletNewWindow('DEFAULT', false, '.."
-          + (efd.javaClassName.startsWith("/") ? "" : "/") + efd.javaClassName + "', 'BUTTON', '"
-          + efd.adProcessId + "', true" + ",600, 900" + ");return false;");
-    }
-    return html.toString();
   }
 
   public static String getSQLWadContext(String code, Vector<Object> vecParameters) {
@@ -1913,22 +490,13 @@ public class WadUtility {
     }
   }
 
-  public static String getWadDefaultValue(FieldsData fd) {
+  public static String getWadDefaultValue(ConnectionProvider pool, FieldsData fd) {
     if (fd == null)
       return "";
-    if (fd.referencevalue.equals("28") && !fd.name.toUpperCase().endsWith("_ID"))
-      return "N"; // Button
-    else if (fd.referencevalue.equals("20"))
-      return "N"; // YesNo
-    else if (fd.required.equals("Y")) {
-      if (isDecimalNumber(fd.referencevalue) || isPriceNumber(fd.referencevalue)
-          || isIntegerNumber(fd.referencevalue) || isGeneralNumber(fd.referencevalue)
-          || isQtyNumber(fd.referencevalue))
-        return "0";
-      // FIXME: It makes no sense that the default value for an ID or
-      // reference is zero
-    }
-    return "";
+    WADControl control = getWadControlClass(pool, fd.referencevalue, fd.type);
+    control.setData("name", fd.name.toUpperCase());
+    control.setData("required", fd.required);
+    return control.getDefaultValue();
   }
 
   public static String displayLogic(String code, Vector<Object> vecDL,
@@ -2117,123 +685,17 @@ public class WadUtility {
     return false;
   }
 
-  public static boolean isDecimalNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return (reference.equals("12") || reference.equals("22"));
-  }
-
-  public static boolean isGeneralNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("800019");
-  }
-
-  public static boolean isQtyNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("29");
-  }
-
-  public static boolean isPriceNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("800008");
-
-  }
-
-  public static boolean isIntegerNumber(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("11");
-  }
-
-  public static boolean isDateField(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("15");
-  }
-
-  public static boolean isTimeField(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("24");
-  }
-
-  public static boolean isDateTimeField(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-
-    return reference.equals("15") || reference.equals("16") || reference.equals("24");
-  }
-
-  public static boolean isLikeType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("10") || reference.equals("14") || reference.equals("34");
-  }
-
-  public static boolean isTextData(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("15") || reference.equals("20") || reference.equals("17");
-
-  }
-
   public static boolean isSearchValueColumn(String name) {
     if (name == null || name.equals(""))
       return false;
     return (name.equalsIgnoreCase("Value") || name.equalsIgnoreCase("DocumentNo"));
   }
 
-  public static boolean isSelectType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("17") || reference.equals("18") || reference.equals("19");
-  }
-
-  public static boolean isSearchType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("21") || reference.equals("25") || reference.equals("30")
-        || reference.equals("31") || reference.equals("32") || reference.equals("35")
-        || reference.equals("800013") || reference.equals("800011");
-  }
-
-  public static boolean isLinkType(String reference) {
-    if (reference == null || reference.equals(""))
-      return false;
-    return reference.equals("800101");
-  }
-
   public static String sqlCasting(ConnectionProvider conn, String reference, String referencevalue) {
     if (reference == null || reference.equals(""))
       return "";
-    else if (isDateTimeField(reference))
-      return "TO_DATE";
-    else if (reference.equals("19") || isSearchType(reference))
-      return "";
-    else if (isIntegerNumber(reference) || isPriceNumber(reference) || isQtyNumber(reference)
-        || isGeneralNumber(reference) || isDecimalNumber(reference))
-      return "TO_NUMBER";
-    else if (reference.equals("27") || reference.equals("33"))
-      return "TO_NUMBER";
-    else if (reference.equals("28") && (referencevalue.equals("11")))
-      return "TO_NUMBER";
-    else if (reference.equals("18")) {
-      if (referencevalue == null)
-        return "";
-      try {
-        TableRelationData trd[] = TableRelationData.selectRefTable(conn, referencevalue);
-        if (trd == null || trd.length == 0)
-          return "";
-        return sqlCasting(conn, trd[0].referencekey, trd[0].referencevaluekey);
-      } catch (ServletException ex) {
-        log4j.error("sqlCasting: " + ex);
-        return "";
-      }
-    } else
-      return "";
+    WADControl control = WadUtility.getWadControlClass(conn, reference, referencevalue);
+    return control.getSQLCasting();
   }
 
   public static void setPropertyValue(Properties _prop, FieldProvider _field, String _name,
@@ -2312,23 +774,47 @@ public class WadUtility {
     prop.setProperty("isReadOnlyDefinedTab", (isReadOnlyDefinedTab ? "Y" : "N"));
     prop.setProperty("hasParentsFields", (hasParentsFields ? "Y" : "N"));
 
-    String classname = "org.openbravo.wad.controls.WAD"
-        + FormatUtilities.replace(field.getField("referenceName"));
-    WADControl _myClass = null;
-    try {
-      Class<?> c = Class.forName(classname);
-      _myClass = (WADControl) c.newInstance();
-    } catch (ClassNotFoundException ex) {
-      log4j.warn("Couldn´t find class: " + classname);
-      _myClass = new WADControl();
-    }
-    _myClass.setConnection(conn);
+    WADControl _myClass = getWadControlClass(conn, field.getField("AD_Reference_ID"), field
+        .getField("AD_Reference_Value_ID"));
+
     _myClass.setReportEngine(xmlEngine);
     _myClass.setInfo(prop);
     _myClass.initialize();
-    _myClass.setConnection(null);
 
     return _myClass;
+  }
+
+  /**
+   * Obtains an instance of the WAD implementator for the reference passed as parameter
+   */
+  public static WADControl getWadControlClass(ConnectionProvider conn, String parentRef,
+      String subRef) {
+    String classname;
+    WADControl control;
+
+    try {
+      classname = WadUtilityData.getReferenceClassName(conn, subRef, parentRef);
+    } catch (ServletException e1) {
+      log4j.warn("Couldn't find reference classname ref " + parentRef + ", subRef " + subRef, e1);
+      return new WADControl();
+    }
+
+    try {
+      Class<?> c = Class.forName(classname);
+      control = (WADControl) c.newInstance();
+      control.setReference(parentRef);
+      control.setSubreference(subRef);
+    } catch (ClassNotFoundException ex) {
+      log4j.warn("Couldn't find class: " + classname);
+      control = new WADControl();
+    } catch (InstantiationException e) {
+      log4j.warn("Couldn't instanciate class: " + classname);
+      control = new WADControl();
+    } catch (IllegalAccessException e) {
+      log4j.warn("Illegal access class: " + classname);
+      control = new WADControl();
+    }
+    return control;
   }
 
   public static boolean isNewGroup(WADControl control, String strFieldGroup) {
@@ -2343,8 +829,10 @@ public class WadUtility {
       FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields,
       String windowId, Vector<Object> vecContext, boolean isreadonly) {
     String code = auxControl.getData("ReadOnlyLogic");
-    if (code == null || code.equals(""))
+    if (code == null || code.equals("") || auxControl.getData("IsUpdateable").equals("N")
+        || auxControl.getData("IsReadOnly").equals("Y")) {
       return "";
+    }
     StringBuffer _displayLogic = new StringBuffer();
     String element = auxControl.getData("ColumnName");
     if (auxControl.getType().equals("Combo"))
@@ -2400,35 +888,9 @@ public class WadUtility {
     _displayLogic.append("displayLogicElement('");
     _displayLogic.append(auxControl.getData("ColumnName"));
     _displayLogic.append("_inp', true);\n");
-    if (!auxControl.getData("AD_Reference_ID").equals("28")) {
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_lbl_td', true);\n");
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_lbl', true);\n");
-    }
-    if ((isGeneralNumber(auxControl.getData("AD_Reference_ID"))
-        || isDateField(auxControl.getData("AD_Reference_ID"))
-        || isTimeField(auxControl.getData("AD_Reference_ID"))
-        || isLikeType(auxControl.getData("AD_Reference_ID"))
-        || isDecimalNumber(auxControl.getData("AD_Reference_ID"))
-        || isQtyNumber(auxControl.getData("AD_Reference_ID"))
-        || isPriceNumber(auxControl.getData("AD_Reference_ID"))
-        || isIntegerNumber(auxControl.getData("AD_Reference_ID"))
-        || auxControl.getData("AD_Reference_ID").equals("21")
-        || auxControl.getData("AD_Reference_ID").equals("25")
-        || auxControl.getData("AD_Reference_ID").equals("30")
-        || auxControl.getData("AD_Reference_ID").equals("800011")
-        || auxControl.getData("AD_Reference_ID").equals("31")
-        || auxControl.getData("AD_Reference_ID").equals("32")
-        || auxControl.getData("AD_Reference_ID").equals("35") || isLinkType(auxControl
-        .getData("AD_Reference_ID")))
-        && !auxControl.getData("IsReadOnly").equals("Y") && !isreadonly) {
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_btt', true);\n");
-    }
+
+    _displayLogic.append(auxControl.getDisplayLogic(true, isreadonly));
+
     _displayLogic.append("} else {\n");
     _displayLogic.append("displayLogicElement('");
     _displayLogic.append(auxControl.getData("ColumnName"));
@@ -2436,35 +898,9 @@ public class WadUtility {
     _displayLogic.append("displayLogicElement('");
     _displayLogic.append(auxControl.getData("ColumnName"));
     _displayLogic.append("_inp', false);\n");
-    if (!auxControl.getData("AD_Reference_ID").equals("28")) {
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_lbl_td', false);\n");
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_lbl', false);\n");
-    }
-    if ((isGeneralNumber(auxControl.getData("AD_Reference_ID"))
-        || isDateField(auxControl.getData("AD_Reference_ID"))
-        || isTimeField(auxControl.getData("AD_Reference_ID"))
-        || isLikeType(auxControl.getData("AD_Reference_ID"))
-        || isDecimalNumber(auxControl.getData("AD_Reference_ID"))
-        || isQtyNumber(auxControl.getData("AD_Reference_ID"))
-        || isPriceNumber(auxControl.getData("AD_Reference_ID"))
-        || isIntegerNumber(auxControl.getData("AD_Reference_ID"))
-        || auxControl.getData("AD_Reference_ID").equals("21")
-        || auxControl.getData("AD_Reference_ID").equals("25")
-        || auxControl.getData("AD_Reference_ID").equals("30")
-        || auxControl.getData("AD_Reference_ID").equals("800011")
-        || auxControl.getData("AD_Reference_ID").equals("31")
-        || auxControl.getData("AD_Reference_ID").equals("35")
-        || auxControl.getData("AD_Reference_ID").equals("32") || isLinkType(auxControl
-        .getData("AD_Reference_ID")))
-        && !auxControl.getData("IsReadOnly").equals("Y") && !isreadonly) {
-      _displayLogic.append("displayLogicElement('");
-      _displayLogic.append(auxControl.getData("ColumnName"));
-      _displayLogic.append("_btt', false);\n");
-    }
+
+    _displayLogic.append(auxControl.getDisplayLogic(false, isreadonly));
+
     _displayLogic.append("}\n");
     return _displayLogic.toString();
   }

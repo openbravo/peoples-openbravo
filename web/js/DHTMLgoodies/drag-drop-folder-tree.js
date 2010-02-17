@@ -922,34 +922,35 @@ New features added:
 				}
 			}
 
-
 			var nodeId = 0;
 			var dhtmlgoodies_tree = document.getElementById(this.idOfTree);
 			var menuItems = dhtmlgoodies_tree.getElementsByTagName('LI');	// Get an array of all menu items
-			for(var no=0;no<menuItems.length;no++){
+			var menuItemsLen = menuItems.length;
+			for(var no=0;no<menuItemsLen;no++){
+				var currItem = menuItems[no];
 				// Is child var set ?
         var isElement = false;
-				var tmpVar = menuItems[no].getAttribute('isElement');
-				if(!tmpVar)tmpVar = menuItems[no].isElement;
+				var tmpVar = currItem.getAttribute('isElement');
+				if(!tmpVar)tmpVar = currItem.isElement;
 				if(tmpVar=='true')isElement=true;
 				// No children var set ?
 				var noChildren = false;
-				var tmpVar = menuItems[no].getAttribute('noChildren');
-				if(!tmpVar)tmpVar = menuItems[no].noChildren;
+				var tmpVar = currItem.getAttribute('noChildren');
+				if(!tmpVar)tmpVar = currItem.noChildren;
 				if(tmpVar=='true')noChildren=true;
 				// No drag var set ?
 				var noDrag = false;
-				var tmpVar = menuItems[no].getAttribute('noDrag');
-				if(!tmpVar)tmpVar = menuItems[no].noDrag;
+				var tmpVar = currItem.getAttribute('noDrag');
+				if(!tmpVar)tmpVar = currItem.noDrag;
 				if(tmpVar=='true')noDrag=true;
 				// No siblings var set ?
 				var noSiblings = false;
-				var tmpVar = menuItems[no].getAttribute('noSiblings');
-				if(!tmpVar)tmpVar = menuItems[no].noSiblings;
+				var tmpVar = currItem.getAttribute('noSiblings');
+				if(!tmpVar)tmpVar = currItem.noSiblings;
 				if(tmpVar=='true')noSiblings=true;
 
 				nodeId++;
-				var subItems = menuItems[no].getElementsByTagName('UL');
+				var subItems = currItem.getElementsByTagName('UL');
 				var img = document.createElement('IMG');
 				img.src = this.imageFolder + this.blankImage;
         img.className = this.plusClass;
@@ -961,20 +962,20 @@ New features added:
 					subItems[0].id = 'tree_ul_' + treeUlCounter;
 					treeUlCounter++;
 				}
-				var aTag = menuItems[no].getElementsByTagName('A')[0];
-				aTag.id = 'nodeATag' + menuItems[no].id.replace(/[^0-9]/gi,'');
+				var aTag = currItem.getElementsByTagName('A')[0];
+				aTag.id = 'nodeATag' + currItem.id.replace(/[^0-9]/gi,'');
 				aTag.ondblclick = JSTreeObj.showHideNode;
 				if(!noDrag)aTag.onmousedown = JSTreeObj.initDrag;
 				if(!noChildren)aTag.onmousemove = JSTreeObj.moveDragableNodes;
         aTag.onmouseout = JSTreeObj.clearDestination;
-				menuItems[no].insertBefore(img,aTag);
+        currItem.insertBefore(img,aTag);
 				//menuItems[no].id = 'dhtmlgoodies_treeNode' + nodeId;
 				var folderImg = document.createElement('IMG');
 				if(!noDrag)folderImg.onmousedown = JSTreeObj.initDrag;
 				if(!noSiblings)folderImg.onmousemove = JSTreeObj.moveDragableNodes;
         folderImg.onmouseout = JSTreeObj.clearDestination;
-				if(menuItems[no].className){
-					folderImg.src = this.imageFolder + menuItems[no].className;
+				if(currItem.className){
+					folderImg.src = this.imageFolder + currItem.className;
 				}else{
           folderImg.src = this.imageFolder + this.blankImage;
           if(isElement) { 
@@ -985,13 +986,13 @@ New features added:
 				}
         //folderImg.id = 'nodefolderImg' + menuItems[no].id.replace(/[^0-9]/gi,'');
 				folderImg.ondblclick = JSTreeObj.showHideNode;
-				menuItems[no].insertBefore(folderImg,aTag);
+				currItem.insertBefore(folderImg,aTag);
 
 				if(this.contextMenu){
-					var noDelete = menuItems[no].getAttribute('noDelete');
-					if(!noDelete)noDelete = menuItems[no].noDelete;
-					var noRename = menuItems[no].getAttribute('noRename');
-					if(!noRename)noRename = menuItems[no].noRename;
+					var noDelete = currItem.getAttribute('noDelete');
+					if(!noDelete)noDelete = currItem.noDelete;
+					var noRename = currItem.getAttribute('noRename');
+					if(!noRename)noRename = currItem.noRename;
 
 					if(noRename=='true' && noDelete=='true'){}else{
 						if(noDelete == 'true')this.contextMenu.attachToElement(aTag,false,menuModelRenameOnly);
@@ -1004,7 +1005,7 @@ New features added:
 
 
 
-			}
+			} // end for all items
 
 
 

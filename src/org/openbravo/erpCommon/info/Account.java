@@ -35,6 +35,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -265,6 +266,7 @@ public class Account extends HttpSecureAppServlet {
     xmlDocument.setParameter("grid_SortCols", "1");
     xmlDocument.setParameter("grid_SortDirs", "ASC");
     xmlDocument.setParameter("grid_Default", "0");
+    xmlDocument.setParameter("inpAcctSchema", strAcctSchema);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -288,6 +290,7 @@ public class Account extends HttpSecureAppServlet {
     xmlDocument.setParameter("title", title);
     xmlDocument.setParameter("description", description);
     xmlDocument.setData("structure1", data);
+    xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
@@ -329,7 +332,7 @@ public class Account extends HttpSecureAppServlet {
       String strNewFilter, String strAcctSchema) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
-
+    int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
     String type = "Hidden";
@@ -343,16 +346,31 @@ public class Account extends HttpSecureAppServlet {
       try {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-
+        page = TableSQLData.calcAndGetBackendPage(vars, "DebtPaymentInfo.currentPage");
+        if (vars.getStringParameter("movePage", "").length() > 0) {
+          // on movePage action force executing countRows again
+          strNewFilter = "";
+        }
+        int oldOffset = offset;
+        offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+        log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
           // filter
           // or
           // first
           // load
-          strNumRows = AccountData.countRows(this, strAcctSchema, strAlias, strCombination,
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = AccountData.countRows(this, rownum, strAcctSchema, strAlias, strCombination,
               strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
               Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this,
-                  vars, "#User_Org", "Account"));
+                  vars, "#User_Org", "Account"), pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("AccountInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("AccountInfo.numrows");
@@ -413,7 +431,8 @@ public class Account extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");

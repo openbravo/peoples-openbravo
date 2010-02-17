@@ -12,14 +12,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
 <FIELD_TMP>
         <FIELD_TMP id="sectionTree">
-         <div class="Tree_Row" id="node_xx" name="node_yy" onclick="gt_setFocusNode(this); gt_setActiveUninstall(); gt_getDescription('xx'); gt_checkToggleNode('xx', 'node'); return false;" onmouseover="gt_hoverNode(this);" onmouseout="gt_unhoverNode(this);">
+         <div class="Tree_Row" id="node_xx" name="node_yy" onclick="gt_setFocusNode(this); gt_getDescription('xx'); return false;" onmouseover="gt_hoverNode(this);" onmouseout="gt_unhoverNode(this);">
             <FIELD_TMP id="level">
               <!-- Put a vertical spotted line per level --> 
             </FIELD_TMP>
@@ -31,7 +31,7 @@
              </FIELD_TMP>
            </div>
            <div class="Tree_Checkbox_Spots_Closed" id="folderxx">
-            <div class="Tree_Checkbox_visible"><input id="inpNodes_xx" name="inpNodes" type="checkbox" value="xx"/></div>
+            <div class="Tree_Checkbox_visible"><input id="inpNodes_xx" name="inpNodes" type="checkbox" value="xx" onclick="gt_checkToggleNode('xx', 'node', true);" onfocus="this.blur();"/></div>
            </div>
            <div id="icon" class="Tree_Icon_Module">
              <div id="icon2_xx" class="Tree_Icon_Update"></div>
@@ -42,6 +42,7 @@
            <div class="Tree_Text_Separator"></div>
              <div class="Tree_Text_Update">
                <a href="#" id="link_xx" class="LabelLink_noicon" onclick="xx">xxLinkName</a>
+               <a href="#" id="link1_xx" class="LabelLink_noicon" onclick="xx">xxLinkName</a>
               </div>
            </div>
          <span id="returnTextxx" class="LabelText"></span>

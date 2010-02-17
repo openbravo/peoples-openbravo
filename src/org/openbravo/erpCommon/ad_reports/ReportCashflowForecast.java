@@ -92,9 +92,10 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     // ReportCashflowForecastData[] dataSummary =
     // ReportCashflowForecastData.select(this,Utility.getContext(this, vars, "#User_Client",
     // "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
-    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this, strDateMax,
-        "", Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this,
-            vars, "#AccessibleOrgTree", "ReportBank"));
+    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this, vars
+        .getLanguage(), strDateMax, "", Utility
+        .getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportBank"));
 
     if (!showDefault) {
       ReportCashflowForecastData[] dataDetail = null;
@@ -167,9 +168,10 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     // ReportCashflowForecastData.select(this,Utility.getContext(this, vars,
     // "#User_Client", "ReportBank"), Utility.getContext(this, vars,
     // "#AccessibleOrgTree", "ReportBank"));
-    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this, strDateMax,
-        "", Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this,
-            vars, "#AccessibleOrgTree", "ReportBank"));
+    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this, vars
+        .getLanguage(), strDateMax, "", Utility
+        .getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars,
+        "#AccessibleOrgTree", "ReportBank"));
 
     if (!showDefault) {
       ReportCashflowForecastData[][] data = null;
@@ -178,9 +180,9 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
 
       // dataAcct = ReportCashflowForecastData.select(this, strDateMax,
       // strBankAccount);
-      dataAcct = ReportCashflowForecastData.select(this, strDateMax, strBankAccount, Utility
-          .getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportBank"));
+      dataAcct = ReportCashflowForecastData.select(this, vars.getLanguage(), strDateMax,
+          strBankAccount, Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
       data = new ReportCashflowForecastData[dataAcct.length][];
 
       if (log4j.isDebugEnabled())
@@ -221,8 +223,9 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-        this, Utility.getContext(this, vars, "#User_Client", "ReportCashflowForecast"), Utility
-            .getContext(this, vars, "#AccessibleOrgTree", "ReportCashflowForecast")));
+        this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client",
+            "ReportCashflowForecast"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+            "ReportCashflowForecast")));
     xmlDocument.setParameter("cBankAccount", strBankAccount);
     xmlDocument.setParameter("dateFrom", strDateMax);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));

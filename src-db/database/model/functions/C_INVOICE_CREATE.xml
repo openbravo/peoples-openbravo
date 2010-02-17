@@ -106,7 +106,8 @@
           ol.Line,
           ol.DirectShip,
           ol.PriceStd,
-          ol.m_attributesetinstance_id
+          ol.m_attributesetinstance_id,
+          ol.taxbaseamt
         FROM M_INOUT s, M_INOUTLINE sl
         RIGHT JOIN C_ORDERLINE ol
           ON sl.C_OrderLine_ID=ol.C_OrderLine_ID
@@ -226,7 +227,7 @@
               WHERE o.C_Order_ID=l.C_Order_ID
                 AND l.QtyOrdered<>l.QtyInvoiced
               )
-            ORDER BY PriorityRule,
+            ORDER BY o.DateOrdered,PriorityRule,
               C_BPartner_ID,
               DocumentNo
             )
@@ -491,7 +492,7 @@
                         ChargeAmt, C_UOM_ID,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
-                        m_attributesetinstance_id
+                        m_attributesetinstance_id, taxbaseamt
                       )
                       VALUES
                       (
@@ -503,7 +504,7 @@
                         ptr_ol.ChargeAmt, ptr_ol.C_UOM_ID,
                         ptr_ol.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         v_QtyOrder, ptr_ol.M_Product_Uom_ID, ptr_ol.PriceStd,
-                        ptr_ol.m_attributesetinstance_id
+                        ptr_ol.m_attributesetinstance_id, ptr_ol.taxbaseamt
                       )
                       ;
                   END IF;--Next_O_Line
@@ -541,7 +542,7 @@
                         ChargeAmt, C_UOM_ID,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
-                        m_attributesetinstance_id
+                        m_attributesetinstance_id, taxbaseamt
                       )
                       VALUES
                       (
@@ -553,7 +554,7 @@
                         ptr_sl.ChargeAmt, ptr_sl.C_UOM_ID,
                         ptr_sl.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd,
-                        ptr_sl.m_attributesetinstance_id
+                        ptr_sl.m_attributesetinstance_id, ptr_sl.taxbaseamt
                       )
                       ;
                   END IF;--Next_S_Line
@@ -675,7 +676,8 @@
                 COALESCE(ol.ChargeAmt, 0) AS Line_ChargeAmt,
                 sh.movementDate,
                 ol.PriceStd,
-                ol.m_attributesetinstance_id
+                ol.m_attributesetinstance_id,
+                ol.taxbaseamt
               FROM M_INOUT sh,
                 M_INOUTLINE sl,
                 C_ORDER o,
@@ -1005,7 +1007,7 @@
                     ChargeAmt, C_UOM_ID,
                     C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     QuantityOrder, M_Product_Uom_ID, PriceStd,
-                    m_attributesetinstance_id
+                    m_attributesetinstance_id, taxbaseamt
                   )
                   VALUES
                   (
@@ -1017,7 +1019,7 @@
                     Cur_InvoiceSchedule.Line_ChargeAmt, Cur_InvoiceSchedule.C_UOM_ID,
                     Cur_InvoiceSchedule.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd,
-                    Cur_InvoiceSchedule.m_attributesetinstance_id
+                    Cur_InvoiceSchedule.m_attributesetinstance_id, Cur_InvoiceSchedule.taxbaseamt
                   )
                   ;
                 v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;

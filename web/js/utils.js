@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,8 @@ var isAltPressed = null;
 var isTabBlocked = false;
 var pressedKeyCode = null;
 var isInputFile = false;
+var ExternalKeyDownFunction;
+var ExternalKeyUpFunction;
 
 var isPageLoading = true;
 var isUserChanges = false;
@@ -70,7 +72,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5759';
+  var number = '6446';
   return number;
 }
 
@@ -87,6 +89,94 @@ function revisionControl(number) {
   }
 }
 
+/**
+* Gets information of the browser
+* @param {name} string Required - It could be "name", "version", "nameAndVersion" or "complete"
+*/
+function getBrowserInfo(param) {
+  var navUserAgent = navigator.userAgent.toUpperCase();
+  var browserName = "Unknown";
+  var browserVersion = "";
+  var browserMajorVersion = "";
+  var i=0
+  if (navUserAgent.indexOf("MSIE") >= 0) {
+    browserName = "Microsoft Internet Explorer";
+    i=navUserAgent.indexOf("MSIE")+5;
+  } else if (navUserAgent.indexOf("FIREFOX") >= 0) {
+    browserName = "Mozilla Firefox";
+    i=navUserAgent.indexOf("FIREFOX")+8;
+  } else if (navUserAgent.indexOf("ICEWEASEL") >= 0) {
+    browserName = "IceWeasel";
+    i=navUserAgent.indexOf("ICEWEASEL")+10;
+  } else if (navUserAgent.indexOf("CHROME") >= 0) {
+    browserName = "Google Chrome";
+    i=navUserAgent.indexOf("CHROME")+7;
+  } else if (navUserAgent.indexOf("OPERA") >= 0) {
+    browserName = "Opera";
+    if (navUserAgent.indexOf("VERSION") != -1) {
+      i=navUserAgent.indexOf("VERSION")+8;
+    } else {
+      i=navUserAgent.indexOf("OPERA")+6;
+    }
+  } else if (navUserAgent.indexOf("SAFARI") >= 0) {
+    browserName = "Safari";
+    if (navUserAgent.indexOf("VERSION") != -1) {
+      i=navUserAgent.indexOf("VERSION")+8;
+    } else {
+      i=navUserAgent.indexOf("SAFARI")+7;
+    }
+  } else if (navUserAgent.indexOf("NETSCAPE") >= 0) {
+    browserName = "Netscape";
+    i=navUserAgent.indexOf("NETSCAPE")+9;
+  } else if (navUserAgent.indexOf("KONQUEROR") >= 0) {
+    browserName = "Konqueror";
+    i=navUserAgent.indexOf("KONQUEROR")+10;
+  }
+  if (i!=0) {
+    while (navUserAgent.substring(i, i+1) != " " && navUserAgent.substring(i, i+1) != ";" && i < navUserAgent.length) {
+      browserVersion += navUserAgent.substring(i, i+1);
+      i++;
+    }
+  }
+  var browserNameAndVersion = browserName + " " + browserVersion;
+  browserMajorVersion = browserVersion;
+  if (browserMajorVersion.indexOf(".") != -1) {
+    browserMajorVersion = browserMajorVersion.substring(0, browserVersion.indexOf("."));
+    browserMajorVersion = parseInt(browserMajorVersion);
+  }
+  if (param == "name") {
+    return browserName;
+  } else if (param == "version") {
+    return browserVersion;
+  } else if (param == "majorVersion") {
+    return browserMajorVersion;
+  } else if (param == "nameAndVersion" || typeof param == "undefined" || param == "" || param == null) {
+    return browserNameAndVersion;
+  } else {
+    return false;
+  }
+}
+
+/**
+* Checks if the browser is a supported one
+*/
+function checkBrowserCompatibility() {
+  var browserName = getBrowserInfo("name");
+  var browserVersion = getBrowserInfo("version");
+  var browserMajorVersion = getBrowserInfo("majorVersion");
+  var isValid = false;
+  if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
+    if (browserMajorVersion >= 3) {
+      isValid = true;
+    }
+  } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
+    if (browserMajorVersion >= 7) {
+      isValid = true;
+    }
+  }
+  return isValid;
+}
+
 
 function getObjAttribute(obj, attribute) {
   attribute = attribute.toLowerCase();
@@ -101,17 +191,49 @@ function getObjAttribute(obj, attribute) {
     attribute_text = attribute_text.replace("\n","");
     attribute_text = attribute_text.replace("}","");
   }
+  attribute_text = attribute_text.replace(/^(\s|\&nbsp;)*|(\s|\&nbsp;)*$/g,"");
   return attribute_text;
 }
 
 function setObjAttribute(obj, attribute, attribute_text) {
   attribute = attribute.toLowerCase();
   attribute_text = attribute_text.toString();
+  attribute_text = attribute_text.replace(/^(\s|\&nbsp;)*|(\s|\&nbsp;)*$/g,"");
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
     obj.setAttribute(attribute, attribute_text);
   } else {
     obj[attribute]=new Function(attribute_text);
   }
+}
+
+/**
+* Get the array of elements with a given name and tag. Its purpose is to supply the lack of document.getElementsByName support in IE
+* @param {name} string Required - The desired name to search
+* @param {tag} string Required - The tag of the desired name array
+*/
+function getElementsByName(name, tag) {
+  var resultArray = [];
+  if (!tag || tag == "" || tag == null || typeof tag == "undefined") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+      var inputs = document.all;
+      for (var i=0; i<inputs.length; i++){
+        if (inputs.item(i).getAttribute('name') == name){
+          resultArray.push(inputs.item(i));
+        }
+      }
+    } else {
+      resultArray = document.getElementsByName(name);
+    }
+  } else {
+    tag = tag.toLowerCase()
+    var inputs = document.getElementsByTagName(tag);
+    for (var i=0; i<inputs.length; i++){
+      if (inputs.item(i).getAttribute('name') == name){
+        resultArray.push(inputs.item(i));
+      }
+    }
+  }
+  return resultArray;
 }
 
 
@@ -287,12 +409,29 @@ function setChangedField(field, form) {
 }
 
 /**
+ * Checks if Autosave is enabled or not
+ * @return true if autosave is enable, otherwise false
+ */
+function isAutosaveEnabled() {
+  var autosave;
+  if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
+    if(top.opener !== null) { // is a pop-up window
+      autosave = top.opener.top.frameMenu.autosave;
+    }
+  }
+  else {
+    autosave = top.frameMenu.autosave;
+  }
+  return autosave;
+}
+
+/**
  * Logs a User click to flag the document as changed
  * @param hiddenInput HTML input part of the button UI
  * @return
  */
 function logClick(hiddenInput) {
-  var autosave = top.frameMenu.autosave;
+  var autosave = isAutosaveEnabled();
   if(typeof autosave == "undefined" || !autosave) {
     return;
   }
@@ -378,15 +517,7 @@ function checkForChanges(f) {
 		return true;
 	}
 	
-	var autosave = null;
-	if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
-		if(top.opener !== null) { // is a pop-up window
-		  autosave = top.opener.top.frameMenu.autosave;
-		}
-	}
-	else {
-	  autosave = top.frameMenu.autosave;
-	}
+	var autosave = isAutosaveEnabled();
 	
 	if(typeof autosave === 'undefined' || !autosave) { // 2.40 behavior		
 		if (inputValue(form.inpLastFieldChanged) !== "") {
@@ -475,13 +606,8 @@ function sendDirectLink(form, columnName, parentKey, url, keyId, tableId, newTar
   if (form == null) form = document.forms[0];
   var frmDebug = document.forms[0];
   var action = "DEFAULT";
-  var autosave = null;  
-  if(top.opener != null) { // is a pop-up window
-    autosave = top.opener.top.frameMenu.autosave;
-  }
-  else {
-    autosave = top.frameMenu.autosave;
-  }
+  var autosave = isAutosaveEnabled();
+
   if(autosave && isUserChanges) {
 	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
 	if (!depurar_validate_wrapper(action, form, "")) return false;
@@ -788,6 +914,9 @@ function addUrlParameters(data) {
 function openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading) {
   var adds = "";
   var isPopup = null;
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+    _name = _name.replace(/ /g,"_"); //To fix strange issue with IE8 that window name declared as var xx = window.open can not have spaces
+  }
   // Deprecated in 2.50, search for the old frameAplication and the new appFrame
   if (_name!='appFrame' && _name!='frameAplicacion' && _name!='frameMenu') isPopup =  true;
   else isPopup = false;
@@ -839,7 +968,11 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);
   }
-  winPopUp.onunload = function(){putFocusOnMenu();}
+  winPopUp.onunload = function() {
+    if (winPopUp.location.href != "about:blank" && winPopUp.location.href.indexOf("utility/PopupLoading.html") == -1) {
+      putFocusOnMenu();
+    }
+  }
   if (closeControl) window.onunload = function(){winPopUp.close();}
   if (doSubmit) {
     if (isPopup==true && hasLoading == true) synchronizedSubmitCommandForm(getArrayValue(parameters, "Command", "DEFAULT"), (getArrayValue(parameters, "debug", false)==true), null, url, _name, target, checkChanges);
@@ -1480,8 +1613,10 @@ function keyControl(pushedKey) {
     return false;
   }
   if (isKeyboardLocked==false && !isCtrlPressed && !isAltPressed && pushedKey.type=='keydown' && pressedKeyCode!='16' && pressedKeyCode!='17' && pressedKeyCode!='18') {
-    if (focusedWindowElement.tagName == 'SELECT') {
-      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
+    if (typeof focusedWindowElement != "undefined") {
+      if (focusedWindowElement.tagName == 'SELECT') {
+        if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
+      }
     }
   }
   return true;
@@ -1541,8 +1676,40 @@ function enableShortcuts(type) {
     } catch (e) {
     }
   }
-  document.onkeydown=keyControl;
-  document.onkeyup=keyControl;  
+  keyDownManagement();
+  keyUpManagement();
+}
+
+function keyDownManagement() {
+  if (document.onkeydown) {
+    ExternalKeyDownFunction = document.onkeydown;
+  }
+  document.onkeydown=keyDownExecution;
+}
+
+function keyDownExecution(evt) {
+  if (!evt) evt = window.event;
+  var response = keyControl(evt);
+  if (typeof ExternalKeyDownFunction == "function") {
+    var responseExternal = ExternalKeyDownFunction(evt);
+  }
+  return response;
+}
+
+function keyUpManagement() {
+  if (document.onkeyup) {
+    ExternalKeyUpFunction = document.onkeyup;
+  }
+  document.onkeyup=keyUpExecution;
+}
+
+function keyUpExecution(evt) {
+  if (!evt) evt = window.event;
+  var response = keyControl(evt);
+  if (typeof ExternalKeyUpFunction == "function") {
+    var responseExternal = ExternalKeyUpFunction(evt);
+  }
+  return response;
 }
 
 /**
@@ -3163,36 +3330,34 @@ function readOnlyLogicElement(id, readonly) {
   obj = getReference(id);
   className = obj.className;
   var onchange_combo = null;
+  var newOnChange_combo = null;
  
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
     obj.readOnly = true;
-      
-    if (className.indexOf("Combo ")!=-1) {
-      obj.className = className.replace("Combo","ComboReadOnly");
+    if (obj.setReadOnly) {
+    	obj.setReadOnly(true);
+    }
+    if (obj.getAttribute('type') == "checkbox") {
+      var onclickTextA = getObjAttribute(obj, 'onclick');
+      var checkPatternA = "^[return false;]";
+      var checkRegExpA = new RegExp(checkPatternA);
+      if (!onclickTextA.match(checkRegExpA)) {
+        onclickTextA = 'return false;' + onclickTextA;
+      }
+      setObjAttribute(obj, 'onclick', onclickTextA);
+    }
+    if (className.indexOf("Combo ")!=-1 || className.indexOf("ComboKey ")!=-1) {
+      if (className.indexOf("Combo ")!=-1) obj.className = className.replace("Combo","ComboReadOnly");
+      else if (className.indexOf("ComboKey ")!=-1) obj.className = className.replace("ComboKey","ComboKeyReadOnly");
+      disableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
+        onchange_combo = getObjAttribute(obj, 'onChange');
       } else {
         onchange_combo = "";
       }
-      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo);
-     }
-    if (className.indexOf("ComboKey ")!=-1) {
-      obj.className = className.replace("ComboKey","ComboKeyReadOnly");
-      if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
-      } else {
-        onchange_combo = "";
-      }
-      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo);
+      newOnChange_combo = "selectCombo(this, '"+obj.value+"');" + onchange_combo;
+      setObjAttribute(obj, 'onChange', newOnChange_combo);
     }
     if (className.indexOf("LabelText ")!=-1)
       obj.className = className.replace("LabelText","LabelTextReadOnly");
@@ -3204,19 +3369,30 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
+    if (obj.setReadOnly) {
+    	obj.setReadOnly(false);
+    }
+    if (obj.getAttribute('type') == "checkbox") {
+      var onclickTextB = getObjAttribute(obj, 'onclick');
+      var checkPatternB = "^[return false;]";
+      var checkRegExpB = new RegExp(checkPatternB);
+      if (onclickTextB.match(checkRegExpB)) {
+        onclickTextB = onclickTextB.substring(13,onclickTextB.length);
+      }
+      onclickTextB = onclickTextB.replace('return false', 'return true');
+      setObjAttribute(obj, 'onclick', onclickTextB);
+    }
+
     if (obj.className.indexOf("Combo")!=-1) {
+      enableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
-        onchange_combo = obj.getAttribute("onChange").toString();
-        onchange_combo = onchange_combo.replace("function anonymous()\n","");
-        onchange_combo = onchange_combo.replace("function onchange()\n","");
-        onchange_combo = onchange_combo.replace("{\n","");
-        onchange_combo = onchange_combo.replace("\n}","");
+        onchange_combo = getObjAttribute(obj, 'onChange');
       } else {
         onchange_combo = "";
       }
       if (onchange_combo.indexOf("selectCombo")!=-1) {
-        var newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
-        obj.setAttribute("onChange",newOnChange_combo); 
+        newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
+        setObjAttribute(obj, 'onChange', newOnChange_combo);
       }
     }
     if ((obj.className.indexOf("TextBox_")!=-1)||(obj.className.indexOf("TextArea_")!=-1)) {
@@ -3272,6 +3448,34 @@ function autoCompleteNumber(obj, isFloatAllowed, isNegativeAllowed, evt) {
     }
   }
   return true;
+}
+
+/**
+* Return the most significant features of an object.
+* @param {Object} field Reference to the field that will be inspected.
+* @returns The features as a string.
+* @type String
+*/
+function getObjFeatures(obj) {
+  if (typeof obj == "string") {
+    obj = document.getElementById(obj);
+  }
+  var objType = ""
+  if (obj.tagName.toLowerCase() == 'input') {
+    objType += "input";
+    objType += " ";
+    objType += obj.getAttribute('type');
+    objType += " ";
+  }
+  if (obj.getAttribute('readonly') == 'true' || obj.readOnly) {
+    objType += "readonly";
+    objType += " ";
+  }
+  if (obj.getAttribute('disabled') == 'true' || obj.disabled) {
+    objType += "disabled";
+    objType += " ";
+  }
+  return objType;
 }
 
 /**
@@ -3368,6 +3572,12 @@ function checkFieldChange(elementToCheck) {
 */
 function windowUndo(form) {
   form.reset();
+  for (var i=0; i < form.elements.length; i++) {
+    var element = form.elements[i];
+    if (element.doReset) {
+      element.doReset();
+    }
+  }
   form.inpLastFieldChanged.value = '';
   setWindowEditing(false);
   displayLogic();
@@ -3912,6 +4122,12 @@ function resizeAreaInfo(isOnResize) {
   client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
 
   try {
+    if (document.getElementById("grid_toptext")) {
+      document.getElementById('grid_toptext').style.width = w - 50;
+    }
+    if (document.getElementById("grid_bottomtext")) {
+      document.getElementById('grid_bottomtext').style.width = w - 50;
+    }
     if (isOnResize) dijit.byId('grid').onResize();
   } catch (e) {}
 }
@@ -4164,6 +4380,13 @@ function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupI
   if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
   if (groupInterval == null || groupInterval == "") groupInterval = getGlobalGroupInterval();
 
+  var isTextSelected = false;
+  if (obj.value.length > 0) {
+    if (getCaretPosition(obj).start !=  getCaretPosition(obj).end && getCaretPosition(obj).end == obj.value.length) {
+      isTextSelected = true;
+    }
+  }
+
   var oldCaretPosition = getCaretPosition(obj).start;
   var newCaretPosition = returnNewCaretPosition(obj, oldCaretPosition, groupSeparator);
 
@@ -4175,6 +4398,9 @@ function focusNumberInput(obj, maskNumeric, decSeparator, groupSeparator, groupI
   var plainNumber = returnPlainNumber(number, decSeparator, groupSeparator);
   obj.value = plainNumber;
   setCaretToPos(obj, newCaretPosition);
+  if (isTextSelected == true && selectInputTextOnTab) {
+    obj.select();
+  }
 }
 
 /**
@@ -4256,6 +4482,9 @@ function returnPlainNumber(number, decSeparator, groupSeparator) {
 * @type String
 */
 function returnFormattedToCalc(number, decSeparator, groupSeparator) {
+  if (decSeparator == null || decSeparator == "") decSeparator = getGlobalDecSeparator();
+  if (groupSeparator == null || groupSeparator == "") groupSeparator = getGlobalGroupSeparator();
+
   var calcNumber = number;
   calcNumber = returnPlainNumber(calcNumber, decSeparator, groupSeparator);
   calcNumber = calcNumber.replace(decSeparator, '.');
@@ -4754,7 +4983,7 @@ function manageDecPoint(obj, decSeparator, evt) {
 * @type String
 */
 function replaceAt(string, what, ini, end) {
-  if (end == null || end == "null" || end == "") {
+  if (typeof end == "undefined" || end == null || end == "null" || end == "") {
     end = ini;
   }
   if (ini > end) {

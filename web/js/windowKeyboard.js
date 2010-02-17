@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,6 +45,8 @@ var isTabPressed = null;
 var isOBTabBehavior = true;
 var isFirstTime = true;
 var isReadOnlyWindow =  false;
+
+var selectInputTextOnTab = true;
 
 var isGoingDown = null;
 var isGoingUp = null;
@@ -333,7 +335,9 @@ function setWindowElementFocus(obj, type, event) {
     removeWindowElementFocus(focusedWindowElement_tmp);
     focusedWindowElement = obj;
     focusedWindowElement_tmp = focusedWindowElement;
-    if(!frameLocked) putWindowElementFocus(focusedWindowElement, event);
+    if(!frameLocked) {
+      putWindowElementFocus(focusedWindowElement, event);
+    }
   }
 }
 
@@ -373,6 +377,8 @@ function drawWindowElementFocus(obj) {
     if(obj.tagName == 'A') {
       if (obj.className.indexOf(' Popup_Client_Help_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_LabelLink') != -1) {
         obj.className = obj.className + ' Popup_Client_Help_LabelLink_focus';
+      } else if (obj.className.indexOf('DataGrid_Popup_text_pagerange_focus') == -1 && obj.className.indexOf('DataGrid_Popup_text_pagerange') != -1) {
+        obj.className = obj.className + ' DataGrid_Popup_text_pagerange_focus';
       } else if (obj.className.indexOf('Popup_Client_Help_Icon_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_Icon_LabelLink') != -1) {
         obj.className = 'Popup_Client_Help_Icon_LabelLink_focus';
       } else if (obj.className.indexOf(' Popup_Client_UserOps_LabelLink_Selected_focus') == -1 && obj.className.indexOf('Popup_Client_UserOps_LabelLink_Selected') != -1) {
@@ -405,6 +411,8 @@ function drawWindowElementFocus(obj) {
         obj.className = 'Popup_Workflow_Button_focus';
       } else if (obj.className.indexOf('Popup_Workflow_text_focus') == -1 && obj.className.indexOf('Popup_Workflow_text') != -1) {
         obj.className = 'Popup_Workflow_text_focus';
+      } else if (obj.className.indexOf('MessageBox_TextLink_focus') == -1 && obj.className.indexOf('MessageBox_TextLink') != -1) {
+        obj.className = 'MessageBox_TextLink_focus';
       }
       isFirstTime = false;
     } else if (obj.tagName == 'BUTTON') {
@@ -477,6 +485,8 @@ function drawWindowElementFocus(obj) {
       isFirstTime = false;
     } else if (currentWindowElementType == 'genericTree') {
       isFirstTime = false;
+    } else if (currentWindowElementType == 'custom') {  //Added for custom element support
+      isFirstTime = false;
     } else {
     }
   } catch (e) {
@@ -495,12 +505,17 @@ function putWindowElementFocus(obj, event) {
     } else if (currentWindowElementType == 'genericTree') {
       obj.focus();
       focusGenericTree();
+    } else if (currentWindowElementType == 'custom') {  //Added for custom element support
+      if (obj.focusLogic) {
+        obj.focusLogic('focus');
+      }
     } else {
       if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
       } else {
         obj.focus();
       }
     }
+    if(selectInputTextOnTab && event!='onclick' && event!='onmousedown') obj.select();
   } catch (e) {
   }
 }
@@ -512,6 +527,7 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace(' Popup_Client_UserOps_LabelLink_focus','');
       obj.className = obj.className.replace(' Popup_Client_UserOps_LabelLink_Selected_focus','');
       obj.className = obj.className.replace(' Popup_Client_Help_LabelLink_focus','');
+      obj.className = obj.className.replace(' DataGrid_Popup_text_pagerange_focus','');
       obj.className = obj.className.replace(' LabelLink_focus','');
       obj.className = obj.className.replace(' LabelLink_noicon_focus','');
       obj.className = obj.className.replace('FieldButtonLink_focus','FieldButtonLink');
@@ -526,6 +542,7 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace('Popup_Workflow_Button_focus','Popup_Workflow_Button');
       obj.className = obj.className.replace('Popup_Workflow_text_focus','Popup_Workflow_text');
       obj.className = obj.className.replace('Popup_Client_Help_Icon_LabelLink_focus','Popup_Client_Help_Icon_LabelLink');
+      obj.className = obj.className.replace('MessageBox_TextLink_focus','MessageBox_TextLink');
     } else if (obj.tagName == 'BUTTON') {
       obj.className = obj.className.replace('ButtonLink_focus','ButtonLink');
     } else if (obj.tagName == 'SELECT') {
@@ -573,6 +590,10 @@ function eraseWindowElementFocus(obj) {
       blurGrid();
     } else if (previousWindowElementType == 'genericTree') {
       blurGenericTree();
+    } else if (previousWindowElementType == 'custom') {  //Added for custom element support
+      if (obj.focusLogic) {
+        obj.focusLogic('blur');
+      }
     } else {
     }
   } catch (e) {
@@ -595,14 +616,22 @@ function removeWindowElementFocus(obj) {
 }
 
 function mustBeJumped(obj) {
+  if (obj.focusLogic) {  //Added for custom element support
+    return obj.focusLogic('mustBeJumped');
+  }
   if (obj.style.display == 'none') return true;
   if (obj.getAttribute('id') == 'genericTree') { return true; }
   return false;
 }
 
 function mustBeIgnored(obj) {
+  if (obj.focusLogic) {  //Added for custom element support
+    return obj.focusLogic('mustBeIgnored');
+  }
   if (obj.style.display == 'none') return true;
-  if (obj.getAttribute('type') == 'hidden') return true;
+  if (obj.getAttribute('type') == 'hidden') {
+    return true;
+  }
   if (obj.getAttribute('readonly') == 'true' && obj.getAttribute('tabindex') != '1') return true;
   if (obj.readOnly && obj.getAttribute('tabindex') != '1') return true;
   if (obj.getAttribute('disabled') == 'true') return true;
@@ -631,6 +660,13 @@ function couldHaveFocus(obj) {
     if (obj.tagName == 'INPUT' && obj.getAttribute('id') == 'genericTree_dummy_input') {
       currentWindowElementType = 'genericTree';
       return true;
+    }
+  } catch(e) {
+  }
+  try {  //Added for custom element support
+    if (obj.focusLogic) {
+      currentWindowElementType = 'custom';
+      return obj.focusLogic('couldHaveFocus');
     }
   } catch(e) {
   }

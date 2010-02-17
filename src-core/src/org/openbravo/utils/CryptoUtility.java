@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2007 Openbravo S.L.
+ * Copyright (C) 2001-2010 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -59,8 +59,7 @@ public class CryptoUtility {
       encString = s_cipher.doFinal(clearText.getBytes());
       result = new String(org.apache.commons.codec.binary.Base64.encodeBase64(encString), "UTF-8");
     } catch (Exception ex) {
-      ex.printStackTrace();
-      throw new ServletException("CryptoUtility.encrypt() - Can't init cipher");
+      throw new ServletException("CryptoUtility.encrypt() - Can't init cipher", ex);
     }
     return result;
   }
@@ -81,8 +80,7 @@ public class CryptoUtility {
       s_cipher.init(Cipher.DECRYPT_MODE, s_key, s_cipher.getParameters());
       out = s_cipher.doFinal(decode);
     } catch (Exception ex) {
-      ex.printStackTrace();
-      throw new ServletException("CryptoUtility.decrypt() - Can't init cipher");
+      throw new ServletException("CryptoUtility.decrypt() - Can't init cipher", ex);
     }
     return new String(out);
   }

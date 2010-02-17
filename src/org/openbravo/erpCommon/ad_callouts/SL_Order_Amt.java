@@ -280,6 +280,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     if (lineNetAmt.scale() > StdPrecision)
       lineNetAmt = lineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+    resultado.append("new Array(\"inptaxbaseamt\", " + lineNetAmt.toString() + "),");
     resultado.append("new Array(\"inplinenetamt\", " + lineNetAmt.toString() + ")");
 
     resultado.append(");");

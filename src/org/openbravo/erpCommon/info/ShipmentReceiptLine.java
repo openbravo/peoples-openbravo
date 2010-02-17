@@ -37,6 +37,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -184,6 +185,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
     vars.removeSessionValue("ShipmentReceiptLine.description");
     vars.removeSessionValue("ShipmentReceiptLine.order");
     vars.removeSessionValue("ShipmentReceiptLine.invoiced");
+    vars.removeSessionValue("ShipmentReceiptLine.currentPage");
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
@@ -266,6 +268,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
     xmlDocument.setParameter("title", title);
     xmlDocument.setParameter("description", description);
     xmlDocument.setData("structure1", data);
+    xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
@@ -311,7 +314,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
       String strPageSize, String strNewFilter, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
-
+    int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
     String type = "Hidden";
@@ -325,25 +328,37 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
       try {
         // build sql orderBy clause
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-
+        page = TableSQLData.calcAndGetBackendPage(vars, "ShipmentReceiptLine.currentPage");
+        if (vars.getStringParameter("movePage", "").length() > 0) {
+         // on movePage action force executing countRows again
+           strNewFilter = "";
+        }
+        int oldOffset = offset;
+        offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+        log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
+        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+        	if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        		oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+        		oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+        		rownum = "ROWNUM";
+        	} else {
+        		pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+        	}
           if (strSOTrx.equals("Y")) {
-            data = ShipmentReceiptLineData.select(this, "1", Utility.getContext(this, vars,
-                "#User_Client", "ShipmentReceiptLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct, strInvoiced, strOrderBy,
-                "", "");
+        	  strNumRows=ShipmentReceiptLineData.countRows(this, rownum, Utility.getContext(this, vars,
+        			             "#User_Client", "ShipmentReceiptLine"),
+        			              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
+        			              strOrder, strBpartnerId, strDateFrom,
+        			              DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct,strInvoiced, pgLimit,oraLimit1, oraLimit2);
           } else {
-            data = ShipmentReceiptLineData.selectSOTrx(this, "1", Utility.getContext(this, vars,
-                "#User_Client", "ShipmentReceiptLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct,
-                (strInvoiced.equals("Y") ? "=" : "<>"), strOrderBy, "", "");
+        	  strNumRows=ShipmentReceiptLineData.countRowsSO(this, rownum, Utility.getContext(this, vars,
+        			            "#User_Client", "ShipmentReceiptLine"),
+        			            Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
+        			            strOrder, strBpartnerId, strDateFrom,
+        			            DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct,(strInvoiced.equals("Y") ? "=" : "<>"),pgLimit, oraLimit1, oraLimit2);
           }
-          strNumRows = String.valueOf(data.length);
           vars.setSessionValue("ShipmentReceiptLine.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("ShipmentReceiptLine.numrows");
@@ -427,7 +442,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");

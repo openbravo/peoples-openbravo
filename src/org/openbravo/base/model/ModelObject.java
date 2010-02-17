@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,7 +84,7 @@ public class ModelObject {
   }
 
   public String getIdentifier() {
-    return getClass().getName() + "(" + getId() + ")";
+    return getClass().getName() + "(" + getId() + ", " + getName() + ")";
   }
 
   public String getName() {
@@ -101,5 +101,9 @@ public class ModelObject {
 
   public void setUpdated(Date updated) {
     this.updated = updated;
+  }
+
+  public String toString() {
+    return this.getClass().getName() + " [id: " + id + ", name: " + name + "]";
   }
 }

@@ -704,8 +704,9 @@ public class CreateFile extends HttpSecureAppServlet {
       // -
       // D
       // (common)
-      strBuf = strBuf.append("016").append(Lineas[i].concepto).append(Principio[0].hueco).append(
-          "\r\n");
+      strBuf = strBuf.append("016").append(
+          Lineas[i].concepto.replaceAll("\r", " ").replaceAll("\n", " "))
+          .append(Principio[0].hueco).append("\r\n");
 
       contador += 6;
     }
@@ -716,7 +717,7 @@ public class CreateFile extends HttpSecureAppServlet {
     // -
     // E
     strBuf = strBuf.append(NLineas[0].ordenantes).append(NLineas[0].lineas)
-        .append(NLineas[0].hueco).append("\r\n");
+        .append(NLineas[0].hueco);
 
     if (!strMessage.equals("")) {
       printPage(response, vars, strKey, "", "", strMessage, false);

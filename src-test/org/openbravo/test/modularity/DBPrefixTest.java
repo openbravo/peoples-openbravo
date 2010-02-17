@@ -131,6 +131,8 @@ public class DBPrefixTest extends BaseTest {
     boolean exception = false;
     try {
       // force dal commit to throw exception
+      OBDal.getInstance().flush();
+      OBDal.getInstance().remove(dbPrefix);
       OBDal.getInstance().commitAndClose();
     } catch (org.hibernate.exception.GenericJDBCException e) {
       exception = true;

@@ -68,8 +68,10 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   // without a security check
   protected void setDefaultValue(String propName, Object value) {
     if (!getEntity().hasProperty(propName)) {
-      log.warn("Property " + propName + " does not exist for entity " + getEntityName()
-          + ". This is not necessarily a problem, this can happen when modules are uninstalled.");
+      // ignoring warning as this always happens when the database needs to be updated
+      // or when uninstalling modules.
+      // log.warn("Property " + propName + " does not exist for entity " + getEntityName()
+      // + ". This is not necessarily a problem, this can happen when modules are uninstalled.");
       return;
     }
     try {
@@ -102,6 +104,12 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       data = new Object[getEntity().getProperties().size()];
     }
     final Property p = getEntity().getProperty(propName);
+    if (p.getIndexInEntity() >= data.length) {
+      throw new IllegalArgumentException("Property index (" + p.getIndexInEntity()
+          + ") is larger than or equal to property list size (" + data.length + "). "
+          + "This happens when setting property " + propName + " " + p + " with value " + value
+          + " in entity " + getEntity());
+    }
     data[p.getIndexInEntity()] = value;
   }
 

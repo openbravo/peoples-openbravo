@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -117,5 +117,13 @@ public class WADYesNo extends WADControl {
 
   public String toJava() {
     return "";
+  }
+
+  public String getDefaultValue() {
+    return "N";
+  }
+
+  public boolean isText() {
+    return true;
   }
 }

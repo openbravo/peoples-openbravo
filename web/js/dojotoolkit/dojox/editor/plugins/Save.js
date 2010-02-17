@@ -13,7 +13,7 @@ dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dojox.editor.plugins", "Save", null, "ROOT");
+dojo.requireLocalization("dojox.editor.plugins", "Save", null, "ROOT,ko");
 
 dojo.declare("dojox.editor.plugins.Save",dijit._editor._Plugin,{
 	// summary:
@@ -41,7 +41,7 @@ dojo.declare("dojox.editor.plugins.Save",dijit._editor._Plugin,{
 		// summary:
 		//		Over-ride for creation of the save button.
 		var strings = dojo.i18n.getLocalization("dojox.editor.plugins", "Save");
-		this.button = new dijit.form.ToggleButton({
+		this.button = new dijit.form.Button({
 			label: strings["save"],
 			showLabel: false,
 			iconClass: this.iconClassPrefix + " " + this.iconClassPrefix + "Save",

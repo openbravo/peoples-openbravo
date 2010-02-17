@@ -16,6 +16,7 @@ public class AlertProcess implements Process {
 
   private ConnectionProvider connection;
   private ProcessLogger logger;
+  private static final String SYSTEM_CLIENT_ID = "0";
 
   public void execute(ProcessBundle bundle) throws Exception {
 
@@ -25,7 +26,17 @@ public class AlertProcess implements Process {
     logger.log("Starting Alert Backgrouond Process. Loop " + counter + "\n");
 
     try {
-      AlertProcessData[] alertRule = AlertProcessData.selectSQL(connection);
+      AlertProcessData[] alertRule = null;
+      final String adClientId = bundle.getContext().getClient();
+
+      if (adClientId.equals(SYSTEM_CLIENT_ID)) {
+        // Process all clients
+        alertRule = AlertProcessData.selectSQL(connection);
+      } else {
+        // Filter by Process Request's client
+        alertRule = AlertProcessData.selectSQL(connection, adClientId);
+      }
+
       if (alertRule != null && alertRule.length != 0) {
 
         for (int i = 0; i < alertRule.length; i++) {
@@ -39,18 +50,17 @@ public class AlertProcess implements Process {
 
   /**
    * @param alertRule
-   * @param connection
+   * @param conn
    * @throws Exception
    */
-  private void processAlert(AlertProcessData alertRule, ConnectionProvider connection)
-      throws Exception {
+  private void processAlert(AlertProcessData alertRule, ConnectionProvider conn) throws Exception {
     logger.log("Processing rule " + alertRule.name + "\n");
 
     AlertProcessData[] alert = null;
 
     if (!alertRule.sql.equals("")) {
       try {
-        alert = AlertProcessData.selectAlert(connection, alertRule.sql);
+        alert = AlertProcessData.selectAlert(conn, alertRule.sql);
       } catch (Exception ex) {
         logger.log("Error processing: " + ex.getMessage() + "\n");
         return;
@@ -63,8 +73,8 @@ public class AlertProcess implements Process {
       ;
 
       for (int i = 0; i < alert.length; i++) {
-        if (AlertProcessData.existsReference(connection, alertRule.adAlertruleId,
-            alert[i].referencekeyId).equals("0")) {
+        if (AlertProcessData
+            .existsReference(conn, alertRule.adAlertruleId, alert[i].referencekeyId).equals("0")) {
 
           String adAlertId = SequenceIdData.getUUID();
 
@@ -72,10 +82,9 @@ public class AlertProcess implements Process {
               + alert[i].adClientId + " reference key: " + alert[i].referencekeyId + " created"
               + alert[i].created + "\n");
 
-          AlertProcessData.InsertAlert(connection, adAlertId, alert[i].adClientId,
-              alert[i].adOrgId, alert[i].created, alert[i].createdby, alertRule.adAlertruleId,
-              alert[i].recordId, alert[i].referencekeyId, alert[i].description, alert[i].adUserId,
-              alert[i].adRoleId);
+          AlertProcessData.InsertAlert(conn, adAlertId, alert[i].adClientId, alert[i].adOrgId,
+              alert[i].created, alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId,
+              alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
           insertions++;
 
           msg.append("\n\nAlert: " + alert[i].description + "\nRecord: " + alert[i].recordId);
@@ -84,20 +93,31 @@ public class AlertProcess implements Process {
 
       if (insertions > 0) {
         // Send mail
-        AlertProcessData[] mail = AlertProcessData
-            .prepareMails(connection, alertRule.adAlertruleId);
+        AlertProcessData[] mail = AlertProcessData.prepareMails(conn, alertRule.adAlertruleId);
 
         if (mail != null) {
           for (int i = 0; i < mail.length; i++) {
-            String head = Utility.messageBD(connection, "AlertMailHead", mail[i].adLanguage) + "\n";
+            String head = Utility.messageBD(conn, "AlertMailHead", mail[i].adLanguage) + "\n";
             EMail email = new EMail(null, mail[i].smtphost, mail[i].mailfrom, mail[i].mailto,
                 "[OB Alert] " + alertRule.name, head + msg);
-            String pwd = FormatUtilities.encryptDecrypt(mail[i].requestuserpw, false);
-            email.setEMailUser(mail[i].requestuser, pwd);
-            if ("OK".equals(email.send())) {
-              logger.log("Mail sent ok.");
+            String pwd = "";
+            try {
+              pwd = FormatUtilities.encryptDecrypt(mail[i].requestuserpw, false);
+            } catch (Exception e) {
+              logger.log("Error getting user password to send the mail: " + e.getMessage() + "\n");
+              logger.log("Check email password settings in Client configuration.\n");
+              continue;
+            }
+            if (!pwd.equals("")) {
+              email.setEMailUser(mail[i].requestuser, pwd);
+              if ("OK".equals(email.send())) {
+                logger.log("Mail sent ok.");
+              } else {
+                logger.log("Error sending mail.");
+              }
             } else {
-              logger.log("Error sending mail.");
+              logger
+                  .log("Sending email skipped. Check email password settings in Client configuration.\n");
             }
           }
         }
@@ -107,8 +127,7 @@ public class AlertProcess implements Process {
     // Update
     if (!alertRule.sql.equals("")) {
       try {
-        Integer count = AlertProcessData.updateAlert(connection, alertRule.adAlertruleId,
-            alertRule.sql);
+        Integer count = AlertProcessData.updateAlert(conn, alertRule.adAlertruleId, alertRule.sql);
         logger.log("updated alerts: " + count + "\n");
 
       } catch (Exception ex) {
@@ -116,5 +135,4 @@ public class AlertProcess implements Process {
       }
     }
   }
-
 }

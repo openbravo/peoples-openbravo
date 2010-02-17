@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2009 Openbravo SL
+ * All portions are Copyright (C) 2001-2010 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
@@ -56,6 +57,7 @@ public class CreateFrom extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
+
     if (vars.commandIn("DEFAULT")) {
       final String strKey = vars.getGlobalVariable("inpKey", "CreateFrom|key");
       final String strTableId = vars.getGlobalVariable("inpTableId", "CreateFrom|tableId");
@@ -177,6 +179,11 @@ public class CreateFrom extends HttpSecureAppServlet {
       final String strKey = vars.getRequiredStringParameter("inpKey");
       final String strTableId = vars.getStringParameter("inpTableId");
       final String strWindowId = vars.getStringParameter("inpWindowId");
+
+      // Set this special case for auditing
+      SessionInfo.setProcessType("CF");
+      SessionInfo.setProcessId(strTableId);
+
       final OBError myMessage = saveMethod(vars, strKey, strTableId, strProcessId, strWindowId);
       final String strTabId = vars.getGlobalVariable("inpTabId", "CreateFrom|tabId");
       vars.setMessage(strTabId, myMessage);
@@ -1405,6 +1412,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0";
     CreateFromInvoiceData[] data = null;
+    CreateFromInvoiceData[] dataAux = null;
     OBError myMessage = null;
     Connection conn = null;
     try {
@@ -1414,8 +1422,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this, strClaves);
         else
           data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, strClaves);
-        final CreateFromInvoiceData[] dataAux = CreateFromInvoiceData.selectPriceList(conn, this,
-            strDateInvoiced, strPriceList);
+        dataAux = CreateFromInvoiceData.selectPriceList(conn, this, strDateInvoiced, strPriceList);
         if (dataAux == null || dataAux.length == 0) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(),
               "PriceListVersionNotFound");
@@ -1441,7 +1448,14 @@ public class CreateFrom extends HttpSecureAppServlet {
           else
             C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
 
-          final int stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
+          final int stdPrecision;
+          final int curPrecision;
+          stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
+          if (strType.equals("SHIPMENT")) {
+            curPrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
+          } else {
+            curPrecision = Integer.valueOf(data[i].priceprecision).intValue();
+          }
           if (!data[i].cOrderlineId.equals("")) {
             price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
             if (price != null && price.length > 0) {
@@ -1464,13 +1478,14 @@ public class CreateFrom extends HttpSecureAppServlet {
           }
           BigDecimal LineNetAmt = (new BigDecimal(priceActual))
               .multiply(new BigDecimal(data[i].id));
-          LineNetAmt = LineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          LineNetAmt = LineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
           try {
             CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
                 data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                 data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                 priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder,
-                data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd);
+                data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd,
+                data[i].taxbaseamt);
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

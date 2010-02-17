@@ -30,7 +30,7 @@
         SELECT A_S.M_ATTRIBUTESET_ID, A_S.NAME, A_S.DESCRIPTION, A_S.GUARANTEEDAYS, A_S.ISGUARANTEEDATE, A_S.ISLOT, A_S.ISSERNO, 
         A_S.M_LOTCTL_ID, A_S.M_SERNOCTL_ID, A.ISLIST, A.NAME AS ELEMENTNAME, A.M_ATTRIBUTE_ID, 
         A.ISINSTANCEATTRIBUTE, '' AS M_ATTRIBUTESETINSTANCE_ID, '' as GUARANTEEDATE, '' as LOT, '' as SERNO, 
-        '' as M_ATTRIBUTEVALUE_ID, '' as VALUE, A.ISMANDATORY 
+        '' as M_ATTRIBUTEVALUE_ID, '' as VALUE, '' AS ATTRSETVALUETYPE, A.ISMANDATORY 
         FROM M_ATTRIBUTESET A_S left join M_ATTRIBUTEUSE A_U on a_s.M_ATTRIBUTESET_ID = a_u.M_ATTRIBUTESET_ID
                                 left join M_ATTRIBUTE A on A_U.M_ATTRIBUTE_ID = A.M_ATTRIBUTE_ID
                                                         and A_U.ISACTIVE = 'Y'
@@ -48,7 +48,7 @@
    <SqlMethod name="selectProductAttr" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-         SELECT P.m_attributeset_id, P.m_attributesetinstance_id, M.DESCRIPTION 
+         SELECT P.m_attributeset_id, P.m_attributesetinstance_id, P.attrsetvaluetype, M.DESCRIPTION 
          FROM M_PRODUCT P left join M_ATTRIBUTESETINSTANCE M on P.M_ATTRIBUTESETINSTANCE_ID = M.M_ATTRIBUTESETINSTANCE_ID
          WHERE P.m_product_id=?
       ]]></Sql>

@@ -22,7 +22,7 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
 
   @Override
   public String[] getExcludedTables() {
-    return new String[] { "PLAN_TABLE", "AD_SYSTEM_MODEL", "C_TEMP_SELECTION", "C_TEMP_SELECTION2" };
+    return new String[] { "PLAN_TABLE", "AD_SYSTEM_MODEL", "C_TEMP_SELECTION", "C_TEMP_SELECTION2", "AD_CONTEXT_INFO" };
   }
 
   public String[] getExcludedViews() {
@@ -43,7 +43,7 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
         "LOWEREQUALNUMERIC", "LOWEREQUALTIMESTAMP", "DBA_RECOMPILE", "DBA_AFTERIMPORT", "NOW",
         "UPDATE_DATEFORMAT", "GET_UUID", "HEX_TO_INT", "UUID_GENERATE_V4", "AD_ORG_CHK_DOCUMENTS",
         "AD_ORG_CHK_DOC_PAYMENTS", "C_CREATE_TEMPORARY_TABLES", "AD_DB_MODIFIED", "AD_GET_DOC_LE_BU",
-        "AD_GET_RDBMS"};
+        "AD_GET_RDBMS", "AD_CREATE_AUDIT_TRIGGERS"};
   }
 
 }

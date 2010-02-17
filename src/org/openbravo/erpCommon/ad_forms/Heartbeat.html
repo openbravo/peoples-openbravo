@@ -33,7 +33,7 @@
   function openRegistration() {
 	 var w = window.opener;
 	  	if(w) {
-	  		w.openRegistration();
+	  		w.setTimeout("openRegistration();",100);
 	  	}
 	  	return true;
    }

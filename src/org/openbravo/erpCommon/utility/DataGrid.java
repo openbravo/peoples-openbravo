@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,8 +21,6 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -34,6 +32,9 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.SessionInfo;
+import org.openbravo.reference.Reference;
+import org.openbravo.reference.ui.UIReference;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -149,16 +150,22 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Gets the total for the selected rows.
    * 
+   * @param vars
+   *          to get access to session and request parameters
    * @param tableSQL
-   *          Object hanler of tab's query
+   *          Object handler of tab's query
    * @return String with the total.
    */
-  private String getTotalRows(TableSQLData tableSQL) {
+  private String getTotalRows(VariablesSecureApp vars, TableSQLData tableSQL) {
     if (tableSQL == null)
       return "0";
     FieldProvider[] data = null;
     try {
-      ExecuteQuery execquery = new ExecuteQuery(this, tableSQL.getTotalSQL(), tableSQL
+      String currPageKey = tableSQL.getTabID() + "|" + "currentPage";
+      String strPage = vars.getSessionValue(currPageKey, "0");
+      int page = Integer.valueOf(strPage);
+
+      ExecuteQuery execquery = new ExecuteQuery(this, tableSQL.getTotalSQL(page), tableSQL
           .getParameterValuesTotalSQL());
       data = execquery.select();
     } catch (Exception ex) {
@@ -203,6 +210,7 @@ public class DataGrid extends HttpSecureAppServlet {
     xmlDocument.setParameter("type", type);
     xmlDocument.setParameter("title", title);
     xmlDocument.setParameter("description", description);
+    xmlDocument.setParameter("backendPageSize", String.valueOf(TableSQLData.maxRowsPerGridPage));
     xmlDocument.setData("structure1", data);
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
@@ -238,16 +246,11 @@ public class DataGrid extends HttpSecureAppServlet {
     String title = "";
     String description = "";
 
-    // values used for formatting Amounts (read from Format.xml file)
-    DecimalFormat numberFormatDecimal = Utility.getFormat(vars, "euroRelation");
-    // values used for formatting Quantities (read from Format.xml file)
-    DecimalFormat numberFormatQuantity = Utility.getFormat(vars, "qtyRelation");
-    // values used for formatting Prices (read from Format.xml file)
-    DecimalFormat numberFormatPrice = Utility.getFormat(vars, "priceRelation");
-    // values used for formatting General (read from Format.xml file)
-    DecimalFormat numberFormatGeneral = Utility.getFormat(vars, "generalQtyRelation");
-    // values used for formatting Integer (read from Format.xml file)
-    DecimalFormat numberFormatInteger = Utility.getFormat(vars, "integerRelation");
+    int page = TableSQLData.calcAndGetBackendPage(vars, tableSQL.getTabID() + "|" + "currentPage");
+    int absoluteOffset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+    log4j.debug("relativeOffset: " + offset + " absoluteOffset: " + absoluteOffset);
+    offset = absoluteOffset;
+
     if (tableSQL != null && headers != null) {
       try {
         // Prepare SQL adding the user filter parameters
@@ -301,7 +304,8 @@ public class DataGrid extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(getTotalRows(tableSQL)).append("\">\n");
+    strRowsData.append("  <rows numRows=\"").append(getTotalRows(vars, tableSQL)).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -318,70 +322,28 @@ public class DataGrid extends HttpSecureAppServlet {
 
           if ((data[j].getField(columnname)) != null) {
             String adReferenceId = headers[k].getField("adReferenceId");
-            String value = data[j].getField(columnname);
+
+            UIReference reference = Reference.getUIReference(adReferenceId, adReferenceId);
+            String value = reference.formatGridValue(vars, data[j].getField(columnname));
+
+            // Old Image reference, leave it as is
             if (adReferenceId.equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            // Numeric formats:
-            // Decimal: 12, 22
-            // Qty: 29
-            // Price: 800008
-            // Integer: 11
-            // General: 800019
-            if ((adReferenceId.equals("12") || adReferenceId.equals("22"))
-                && numberFormatDecimal != null) {
-              try {
-                value = numberFormatDecimal.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            if ((adReferenceId.equals("29")) && numberFormatQuantity != null) {
-              try {
-                value = numberFormatQuantity.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            if ((adReferenceId.equals("800008")) && numberFormatPrice != null) {
-              try {
-                value = numberFormatPrice.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            if ((adReferenceId.equals("11")) && numberFormatInteger != null) {
-              try {
-                value = numberFormatInteger.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            if ((adReferenceId.equals("800019")) && numberFormatGeneral != null) {
-              try {
-                value = numberFormatGeneral.format(new BigDecimal(value));
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            }
-            strRowsData.append(value
-                .replaceAll("<b>", "").replaceAll("<B>", "")
-                .replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "")
-                .replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;")
-                .replaceAll("<h1>", "&nbsp;").replaceAll("<H1>", "&nbsp;")
-                .replaceAll("</h1>", "&nbsp;").replaceAll("</H1>", "")
-                .replaceAll("<h2>", "&nbsp;").replaceAll("<H2>", "&nbsp;")
-                .replaceAll("</h2>", "&nbsp;").replaceAll("</H2>", "")
-                .replaceAll("<h3>", "&nbsp;").replaceAll("<H3>", "&nbsp;")
-                .replaceAll("</h3>", "&nbsp;").replaceAll("</H3>", "")
-                .replaceAll("<li>", "&nbsp;").replaceAll("<LI>", "&nbsp;")
-                .replaceAll("</li>", "&nbsp;").replaceAll("</LI>", "")
-                .replaceAll("<ul>", "&nbsp;").replaceAll("<UL>", "&nbsp;")
-                .replaceAll("</ul>", "&nbsp;").replaceAll("</UL>", ""));
+
+            strRowsData.append(value.replaceAll("<b>", "").replaceAll("<B>", "").replaceAll("</b>",
+                "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll("<I>", "").replaceAll(
+                "</i>", "").replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>",
+                "&nbsp;").replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;").replaceAll(
+                "<h1>", "&nbsp;").replaceAll("<H1>", "&nbsp;").replaceAll("</h1>", "&nbsp;")
+                .replaceAll("</H1>", "").replaceAll("<h2>", "&nbsp;").replaceAll("<H2>", "&nbsp;")
+                .replaceAll("</h2>", "&nbsp;").replaceAll("</H2>", "").replaceAll("<h3>", "&nbsp;")
+                .replaceAll("<H3>", "&nbsp;").replaceAll("</h3>", "&nbsp;").replaceAll("</H3>", "")
+                .replaceAll("<li>", "&nbsp;").replaceAll("<LI>", "&nbsp;").replaceAll("</li>",
+                    "&nbsp;").replaceAll("</LI>", "").replaceAll("<ul>", "&nbsp;").replaceAll(
+                    "<UL>", "&nbsp;").replaceAll("</ul>", "&nbsp;").replaceAll("</UL>", ""));
           } else {
-            if (headers[k].getField("adReferenceId").equals("32")) {
+            if (headers[k].getField("adReferenceId").equals("32")
+                || headers[k].getField("adReferenceId").equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
             } else
               strRowsData.append("&nbsp;");
@@ -409,7 +371,7 @@ public class DataGrid extends HttpSecureAppServlet {
    * @param vars
    *          Handler for the session info.
    * @param tableSQL
-   *          Object hanler of tab's query.
+   *          Object handler of tab's query.
    * @throws IOException
    * @throws ServletException
    */
@@ -424,6 +386,19 @@ public class DataGrid extends HttpSecureAppServlet {
     String description = "";
     FieldProvider[] data = null;
     FieldProvider[] res = null;
+
+    // get current page
+    String currPageKey = tableSQL.getTabID() + "|" + "currentPage";
+    String strPage = vars.getSessionValue(currPageKey, "0");
+    int page = Integer.valueOf(strPage);
+
+    int oldMinOffset = minOffset;
+    int oldMaxOffset = maxOffset;
+    minOffset = (page * TableSQLData.maxRowsPerGridPage) + minOffset;
+    maxOffset = (page * TableSQLData.maxRowsPerGridPage) + maxOffset;
+    log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
+    log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset);
+
     if (tableSQL != null) {
       try {
         // minOffset and maxOffset are zero based so pageSize is difference +1
@@ -551,6 +526,10 @@ public class DataGrid extends HttpSecureAppServlet {
       title = "Error";
       description = Utility.messageBD(this, "NoWriteAccess", vars.getLanguage());
     } else {
+      // Set session info before deleting
+      SessionInfo.setProcessType("W");
+      SessionInfo.setProcessId(strTab);
+
       Vector<String> parametersData = null;
       String rows = vars.getInStringParameter("rows", IsIDFilter.instance);
       StringBuffer SqlDataBuffer = new StringBuffer();

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -184,6 +184,10 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 <FIELDS_TMP id="sectionIsHighVolume4">    } else if (vars.commandIn("SEARCH")) {
 <PARAMETER_TMP id="sectionIsHighVolume5">vars.getRequestGlobalVariable("inpParam<FIELD_TMP id="searchName5">xx</FIELD_TMP>", tabId + "|param<FIELD_TMP id="searchName5">xx</FIELD_TMP>");
 </PARAMETER_TMP>
+        vars.getRequestGlobalVariable("inpParamUpdated", tabId + "|paramUpdated");
+        vars.getRequestGlobalVariable("inpParamUpdatedBy", tabId + "|paramUpdatedBy");
+        vars.getRequestGlobalVariable("inpParamCreated", tabId + "|paramCreated");
+        vars.getRequestGlobalVariable("inpparamCreatedBy", tabId + "|paramCreatedBy");
       <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
 </PARAMETER_TMP>
       
@@ -672,12 +676,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return data;
   }
 
-   private <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] getRelationData(<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data) {
-    if (data!=null) {
-      for (int i=0;i&#60;data.length;i++) {<FIELDS_TMP id="sectionDetailgetRelationData">        data[i].<FIELD_TMP id="fieldRelationName">claveAlmacen</FIELD_TMP> = FormatUtilities.truncate(data[i].<FIELD_TMP id="fieldRelationName">claveAlmacen</FIELD_TMP>, <FIELD_TMP id="fieldMaxLength">35</FIELD_TMP>);</FIELDS_TMP>}
-    }
-    return data;
-  }
 
 <PARAMETER_TMP id="parent">  private void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
       <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="parentwhereclause"></PARAMETER_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel));
@@ -741,7 +739,14 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         log4j.error("Error getting key position", e);
       }
       if (data!=null) {
-        if (data!=null) return Integer.valueOf(data);
+        // split offset -> (page,relativeOffset)
+        int absoluteOffset = Integer.valueOf(data);
+        int page = absoluteOffset / TableSQLData.maxRowsPerGridPage;
+        int relativeOffset = absoluteOffset % TableSQLData.maxRowsPerGridPage;
+        log4j.debug("getKeyPosition: absOffset: " + absoluteOffset + "=> page: " + page + " relOffset: " + relativeOffset);
+        String currPageKey = tabId + "|" + "currentPage";
+        vars.setSessionValue(currPageKey, String.valueOf(page));
+        return relativeOffset;
       }
     }
     return 0;
@@ -816,6 +821,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpWindows/<PARAMETER_TMP id="path">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation", discard).createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", false, "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "grid", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", strReplaceWith, false);
+    toolbar.setTabId(tabId);
     toolbar.prepareRelationTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, !vars.getSessionValue("#ShowTest", "N").equals("Y"), <PARAMETER_TMP id="paramIsReadOnly">readonly</PARAMETER_TMP>, Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -1001,6 +1007,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 
     xmlDocument.setParameter("tabId", tabId);
     ToolBar toolbar = new ToolBar(this, editableTab, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", (strCommand.equals("NEW") || boolNew || (dataField==null &amp;&amp; (data==null || data.length==0))), "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", strReplaceWith, true, false, false, Utility.hasTabAttachments(this, vars, tabId, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>));
+    toolbar.setTabId(tabId);
     toolbar.prepareEditionTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramUIPattern">readonly</PARAMETER_TMP>", Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 

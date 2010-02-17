@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,6 +95,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
     String strPriceActual = "";
+    String strHasSecondaryUOM = "";
 
     if (!strMProductID.equals("")) {
       SLOrderProductData[] dataOrder = SLOrderProductData.select(this, strCOrderId);
@@ -149,7 +150,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
     if (!strMProductID.equals("")) {
       PAttributeSetData[] dataPAttr = PAttributeSetData.selectProductAttr(this, strMProductID);
-      if (dataPAttr != null && dataPAttr.length > 0) {
+      if (dataPAttr != null && dataPAttr.length > 0 && dataPAttr[0].attrsetvaluetype.equals("D")) {
         PAttributeSetData[] data2 = PAttributeSetData.select(this, dataPAttr[0].mAttributesetId);
         if (PAttributeSet.isInstanceAttributeSet(data2)) {
           resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
@@ -160,10 +161,17 @@ public class SL_Order_Product extends HttpSecureAppServlet {
           resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
               + FormatUtilities.replaceJS(dataPAttr[0].description) + "\"),");
         }
+      } else {
+        resultado.append("new Array(\"inpmAttributesetinstanceId\", \"\"),");
+        resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"\"),");
       }
+      resultado.append("new Array(\"inpattributeset\", \""
+          + FormatUtilities.replaceJS(dataPAttr[0].mAttributesetId) + "\"),\n");
+      resultado.append("new Array(\"inpattrsetvaluetype\", \""
+          + FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype) + "\"),\n");
+      strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
+      resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
     }
-    String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
-    resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
 
     String strCTaxID = "";
     String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars,

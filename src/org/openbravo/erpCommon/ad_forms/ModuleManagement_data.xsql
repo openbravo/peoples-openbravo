@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * All portions are Copyright (C) 2008-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,11 +74,11 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
          SELECT COUNT(*) AS TOTAL
-           FROM (SELECT 1 
+           FROM (SELECT AD_MODULE_ID 
                    FROM AD_MODULE 
                   WHERE STATUS IN ('I','U','P')
-                  UNION ALL
-                 SELECT 1
+                  UNION
+                 SELECT AD_MODULE_ID
                    FROM AD_MODULE_INSTALL) A
       </Sql>
    </SqlMethod>

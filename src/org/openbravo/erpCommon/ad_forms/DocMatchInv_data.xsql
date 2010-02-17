@@ -25,7 +25,8 @@
         SELECT '' AS M_MATCHINV_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, '' AS ISACTIVE,
           '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS M_INOUTLINE_ID,
           '' AS C_INVOICELINE_ID, '' AS M_PRODUCT_ID, '' AS DATETRX, '' AS QTY, '' AS PROCESSING,
-          '' AS PROCESSED, '' AS POSTED, '' AS DATEACCT, '' AS DATEDOC, '' AS C_BPARTNER_ID
+          '' AS PROCESSED, '' AS POSTED, '' AS DATEACCT, '' AS DATEDOC, '' AS C_BPARTNER_ID,
+          '' AS LINENETAMT, '' AS C_CURRENCY_ID, '' AS stdprecision
         FROM DUAL
       ]]>
     </Sql>
@@ -55,15 +56,26 @@
     <Parameter name="mProductID"/>
     <Parameter name="date"/>
   </SqlMethod>
-  <SqlMethod name="selectInvoiceExpense" type="preparedStatement" return="string">
+  <SqlMethod name="selectInvoiceData" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT LINENETAMT
-      FROM C_INVOICELINE
-      WHERE AD_CLIENT_ID = ?
-        AND C_INVOICELINE_ID = ?
+      SELECT L.LINENETAMT, I.C_CURRENCY_ID, I.DATEACCT
+      FROM C_INVOICELINE L, C_INVOICE I
+      WHERE L.AD_CLIENT_ID = ?
+        AND L.C_INVOICELINE_ID = ?
+        AND I.C_INVOICE_ID = L.C_INVOICE_ID
     </Sql>
     <Parameter name="adClientId"/>
     <Parameter name="cInvoiceLineId"/>
+  </SqlMethod>
+  <SqlMethod name="selectClientCurrencyPrecission" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      select stdprecision 
+      from c_currency cu, ad_client cl
+       where cu.c_currency_id=cl.c_currency_id
+         and cl.ad_client_id=?
+    </Sql>
+    <Parameter name="adClientId"/>
   </SqlMethod>
 </SqlClass>
