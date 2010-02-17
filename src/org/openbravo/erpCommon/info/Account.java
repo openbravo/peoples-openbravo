@@ -266,6 +266,7 @@ public class Account extends HttpSecureAppServlet {
     xmlDocument.setParameter("grid_SortCols", "1");
     xmlDocument.setParameter("grid_SortDirs", "ASC");
     xmlDocument.setParameter("grid_Default", "0");
+    xmlDocument.setParameter("inpAcctSchema", strAcctSchema);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -347,8 +348,8 @@ public class Account extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "DebtPaymentInfo.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        // on movePage action force executing countRows again
-           strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
@@ -358,18 +359,18 @@ public class Account extends HttpSecureAppServlet {
           // or
           // first
           // load
-        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-            if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-               oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-               oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-               rownum = "ROWNUM";
-            } else {
-                pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-            }
-          strNumRows = AccountData.countRows(this, rownum,strAcctSchema, strAlias, strCombination,
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = AccountData.countRows(this, rownum, strAcctSchema, strAlias, strCombination,
               strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
               Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this,
-                  vars, "#User_Org", "Account"),pgLimit, oraLimit1, oraLimit2);
+                  vars, "#User_Org", "Account"), pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("AccountInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("AccountInfo.numrows");
@@ -430,7 +431,8 @@ public class Account extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
