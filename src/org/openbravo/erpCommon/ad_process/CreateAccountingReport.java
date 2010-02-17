@@ -391,7 +391,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
               data[i].levelAccount).intValue()
               && data[j].parent.equals(data[i].id)) {
             String total = data[j].total;
-            count.add(new BigDecimal(total));
+            count = count.add(new BigDecimal(total));
           }
         }
         data[i].total = String.valueOf(count);
