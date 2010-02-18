@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,8 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -58,6 +61,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     } else if (vars.commandIn("ALL")) {
       printPageDataSheet(response, vars, "0", true);
     } else if (vars.commandIn("ALERT")) {
+      pingSession(vars);
       printPageAlert(response, vars);
     } else if (vars.commandIn("LOADING")) {
       printPageLoadingMenu(response, vars);
@@ -65,11 +69,31 @@ public class VerticalMenu extends HttpSecureAppServlet {
       throw new ServletException();
   }
 
+  /**
+   * Updates the session's last ping value to keep trace of the last time the browser sent a ping
+   * for the current session.
+   */
+  private void pingSession(VariablesSecureApp vars) {
+    String sessionId = vars.getDBSession();
+    Date now = new Date();
+    log4j.debug("ping session:" + sessionId + " - time" + now);
+    if (sessionId != null && !sessionId.isEmpty()) {
+      boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+      try {
+        Session session = OBDal.getInstance().get(Session.class, sessionId);
+        session.setLastPing(now);
+      } catch (Exception e) {
+        log4j.error("Error in session ping", e);
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(adminMode);
+      }
+    }
+  }
+
   private void printPageAlert(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
 
     Integer alertCount = 0;
-
     final VerticalMenuData[] data = VerticalMenuData.selectAlertRules(this, vars.getUser(), vars
         .getRole());
     if (data != null && data.length != 0) {
