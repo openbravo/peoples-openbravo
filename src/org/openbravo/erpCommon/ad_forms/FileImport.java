@@ -119,7 +119,7 @@ public class FileImport extends HttpSecureAppServlet {
           constant = constant + 1;
         } else
           texto.append(parseField(data2[i].getField(String.valueOf(j - constant)),
-              data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+              data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint, ""));
         if (i == 0 && strFirstLineHeader.equalsIgnoreCase("Y"))
           texto.append("</th>");
         else
@@ -175,7 +175,8 @@ public class FileImport extends HttpSecureAppServlet {
             constant = constant + 1;
           } else
             strValues.append(parseField(data2[i].getField(String.valueOf(j - constant)),
-                data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+                data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint,
+                data[j].referencename));
           strValues.append("'");
           strFields.append(strValues);
           strValues.delete(0, strValues.length());
@@ -228,7 +229,11 @@ public class FileImport extends HttpSecureAppServlet {
   }
 
   private String parseField(String strTexto, String strLength, String strDataType,
-      String strDataFormat, String strDecimalPoint) throws ServletException {
+      String strDataFormat, String strDecimalPoint, String strReferenceName)
+      throws ServletException {
+    if (strReferenceName.equals("TableDir")) {
+      strLength = "32";
+    }
     if (strDataType.equals("D")) {
       strTexto = FileImportData.parseDate(this, strTexto, strDataFormat);
       return strTexto;
@@ -364,8 +369,10 @@ public class FileImport extends HttpSecureAppServlet {
             sb.append(data[j].constantvalue);
             constant = constant + 1;
           } else
-            sb.append(parseField(data2[i].getField(String.valueOf(j - constant)),
-                data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+            sb
+                .append(parseField(data2[i].getField(String.valueOf(j - constant)),
+                    data[j].fieldlength, data[j].datatype, data[j].dataformat,
+                    data[j].decimalpoint, ""));
           if (i == 0 && strFirstLineHeader.equalsIgnoreCase("Y"))
             sb.append("</th>");
           else

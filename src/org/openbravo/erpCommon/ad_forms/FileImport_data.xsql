@@ -28,10 +28,11 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
         SELECT f.SeqNo,c.ColumnName,f.StartNo,f.EndNo,f.DataType,c.FieldLength,
-        f.DataFormat,f.DecimalPoint,f.DivideBy100,f.ConstantValue,f.Callout, f.Name
-        FROM AD_ImpFormat_Row f,AD_Column c
+        f.DataFormat,f.DecimalPoint,f.DivideBy100,f.ConstantValue,f.Callout, f.Name, r.name AS referenceName
+        FROM AD_ImpFormat_Row f,AD_Column c, AD_Reference r
         WHERE AD_ImpFormat_ID = ?
         AND f.AD_Column_ID=c.AD_Column_ID
+        AND r.AD_Reference_ID=c.AD_Reference_ID
         ORDER BY SeqNo
       ]]></Sql>
     <Parameter name="adImpformatId"/>
