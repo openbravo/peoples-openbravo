@@ -61,7 +61,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     } else if (vars.commandIn("ALL")) {
       printPageDataSheet(response, vars, "0", true);
     } else if (vars.commandIn("ALERT")) {
-      pingSession(vars);
+      updateSessionLastActivity(vars);
       printPageAlert(response, vars);
     } else if (vars.commandIn("LOADING")) {
       printPageLoadingMenu(response, vars);
@@ -70,15 +70,16 @@ public class VerticalMenu extends HttpSecureAppServlet {
   }
 
   /**
-   * Updates the session's last ping value to keep trace of the last time the browser sent a ping
-   * for the current session.
+   * Updates last time the browser checked for alerts (ping) this info is later used (in
+   * {@link org.openbravo.erpCommon.obps.ActivationKey}) to find no longer used sessions because the
+   * browser was closed without the user explicitly closing the session.
    */
-  private void pingSession(VariablesSecureApp vars) {
+  private void updateSessionLastActivity(VariablesSecureApp vars) {
     String sessionId = vars.getDBSession();
     Date now = new Date();
     log4j.debug("ping session:" + sessionId + " - time" + now);
     if (sessionId != null && !sessionId.isEmpty()) {
-      boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
+      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
       try {
         Session session = OBDal.getInstance().get(Session.class, sessionId);
         session.setLastPing(now);

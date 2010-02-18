@@ -343,8 +343,7 @@ public class ActivationKey {
 
       // maxUsers==0 is unlimited concurrent users
       if (maxUsers != 0) {
-        boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-        OBContext.getOBContext().setInAdministratorMode(true);
+        boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
         int activeSessions = 0;
         try {
           activeSessions = getActiveSessions(currentSession);
@@ -380,8 +379,10 @@ public class ActivationKey {
   }
 
   /**
-   * Looks for all active sessions that haven't send a ping during last PING_TIMEOUT_SECS seconds
-   * and deactivates them.
+   * Looks for all active sessions that have not had activity during last
+   * {@link ActivationKey#PING_TIMEOUT_SECS} seconds and deactivates them. Activity is tracked by
+   * the requests the browser sends to look for alerts (see
+   * {@link org.openbravo.erpCommon.utility.VerticalMenu}).
    */
   private boolean deactivateTimeOutSessions() {
     // Last valid ping time is current time substract timeout seconds
@@ -418,7 +419,7 @@ public class ActivationKey {
     if (currentSession != null && !currentSession.equals("")) {
       obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSession));
     }
-    return obCriteria.list().size();
+    return obCriteria.count();
   }
 
   public String toString(ConnectionProvider conn, String lang) {
