@@ -83,6 +83,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
       try {
         Session session = OBDal.getInstance().get(Session.class, sessionId);
         session.setLastPing(now);
+        // flush to force commit in admin mode
+        OBDal.getInstance().flush();
       } catch (Exception e) {
         log4j.error("Error in session ping", e);
       } finally {
