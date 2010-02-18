@@ -21,18 +21,23 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.common.businesspartner.CustomerAccounts;
+import org.openbravo.model.common.businesspartner.VendorAccounts;
 
 public abstract class AcctServer {
   static Logger log4j = Logger.getLogger(AcctServer.class);
@@ -1427,6 +1432,49 @@ public abstract class AcctServer {
       log4j.warn(e);
     }
     return acct;
+  } // getAccount
+
+  /**
+   * Get the account for Accounting Schema
+   * 
+   * @param cBPartnerId
+   *          business partner id
+   * @param as
+   *          accounting schema
+   * @return Account
+   */
+  public final Account getAccountBPartner(String cBPartnerId, AcctSchema as, boolean isReceipt,
+      ConnectionProvider conn) throws ServletException {
+
+    String strValidCombination = "";
+    if (isReceipt) {
+      final StringBuilder whereClause = new StringBuilder();
+
+      whereClause.append(" as cusa ");
+      whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
+      whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+
+      final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance().createQuery(
+          CustomerAccounts.class, whereClause.toString());
+      final List<CustomerAccounts> customerAccounts = obqParameters.list();
+      if (customerAccounts != null && customerAccounts.size() > 0
+          && customerAccounts.get(0).getCustomerReceivablesNo() != null)
+        strValidCombination = customerAccounts.get(0).getCustomerReceivablesNo().getId();
+    } else {
+      final StringBuilder whereClause = new StringBuilder();
+
+      whereClause.append(" as cusa ");
+      whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
+      whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+
+      final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance().createQuery(
+          VendorAccounts.class, whereClause.toString());
+      final List<VendorAccounts> vendorAccounts = obqParameters.list();
+      if (vendorAccounts != null && vendorAccounts.size() > 0
+          && vendorAccounts.get(0).getVendorLiability() != null)
+        strValidCombination = vendorAccounts.get(0).getVendorLiability().getId();
+    }
+    return new Account(conn, strValidCombination);
   } // getAccount
 
   public FieldProvider[] getObjectFieldProvider() {

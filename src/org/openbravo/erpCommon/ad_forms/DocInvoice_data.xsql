@@ -35,7 +35,7 @@
         '' AS GRANDTOTAL, '' AS M_PRICELIST_ID, '' AS ISTAXINCLUDED, '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID, '' AS C_ACTIVITY_ID,
         '' AS ISPAID, '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE,
         '' AS AD_ORGTRX_ID, '' AS USER1_ID, '' AS USER2_ID, '' as AMOUNT, '' AS STATUS, '' AS ISRECEIPT, '' AS ISMANUAL, '' AS WRITEOFFAMT, 
-        '' AS C_DEBT_PAYMENT_ID
+        '' AS C_DEBT_PAYMENT_ID, '' as FIN_PAYMENT_SCHEDULE_ID, '' as FIN_PAYMENTMETHOD_ID
         FROM C_Tax t, C_InvoiceTax it
         WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Invoice_ID=?
      ]]>
@@ -64,6 +64,18 @@
       <![CDATA[
       SELECT (AMOUNT + coalesce(WITHHOLDINGAMOUNT,0)) AS AMOUNT, C_CURRENCY_ID, STATUS_INITIAL AS STATUS, ISRECEIPT, ISPAID, ISMANUAL, WRITEOFFAMT, C_DEBT_PAYMENT_ID
       FROM C_DEBT_PAYMENT
+      WHERE C_INVOICE_ID =?
+     ]]>
+     </Sql>
+     <Parameter name="invoice"/>
+   </SqlMethod>
+  <SqlMethod name="selectPayments" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT AMOUNT, C_CURRENCY_ID, FIN_PAYMENT_SCHEDULE_ID,
+      FIN_PAYMENTMETHOD_ID
+      FROM FIN_PAYMENT_SCHEDULE
       WHERE C_INVOICE_ID =?
      ]]>
      </Sql>

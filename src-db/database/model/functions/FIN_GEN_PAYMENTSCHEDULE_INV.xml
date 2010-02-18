@@ -157,7 +157,7 @@ BEGIN
           v_paidamt := 0;
 
           v_ResultStr:='Inserting in FIN_PAYMENT_SCHEDULE table';
-          v_pendingAmount:=v_pendingAmount - v_paymentAmount;
+          --v_pendingAmount:=v_pendingAmount - v_paymentAmount;
           INSERT INTO fin_payment_schedule
           (
             fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
@@ -193,6 +193,7 @@ BEGIN
       IF (v_count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@InvoiceWithPayments@' || ' ' || v_paymentno);
       END IF;
+      DELETE FROM fin_payment_schedule WHERE c_invoice_id = p_record_id;
     END;
   END IF;
 
