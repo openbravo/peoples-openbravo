@@ -192,6 +192,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       OBContext.enableAsAdminContext();
 
       strUserAuth = m_AuthManager.authenticate(request, response);
+
+      if (strUserAuth == null) {
+        // auth-manager return null after redirecting to the login page -> stop request-processing
+        return;
+      }
+
       variables = new Variables(request); // Rebuild variable, auth-mgr could set the role
 
       boolean loggedOK = false;
