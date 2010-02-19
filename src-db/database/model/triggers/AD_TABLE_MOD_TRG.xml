@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008-2009 Openbravo SL
+* All portions are Copyright (C) 2008-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -95,6 +95,35 @@ BEGIN
   
   IF ((DELETING OR INSERTING) AND devModule='N') THEN
     RAISE_APPLICATION_ERROR(-20533, 'Cannot insert/delete objects in a module not in development.');
+  END IF;
+  
+  --Check the only updated column is isFullyAudited. In this case maitin updated
+  --column as it was to prevent changes detection when trying to update database
+  IF (UPDATING AND 
+      COALESCE(:NEW.ISACTIVE             ,'.') = COALESCE(:OLD.ISACTIVE             ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.NAME                 ,'.') = COALESCE(:OLD.NAME                 ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.DESCRIPTION          ,'.') = COALESCE(:OLD.DESCRIPTION          ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.HELP                 ,'.') = COALESCE(:OLD.HELP                 ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.TABLENAME            ,'.') = COALESCE(:OLD.TABLENAME            ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.CLASSNAME            ,'.') = COALESCE(:OLD.CLASSNAME            ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ISVIEW               ,'.') = COALESCE(:OLD.ISVIEW               ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ACCESSLEVEL          ,'.') = COALESCE(:OLD.ACCESSLEVEL          ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.AD_WINDOW_ID         ,'.') = COALESCE(:OLD.AD_WINDOW_ID         ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ISSECURITYENABLED    ,'.') = COALESCE(:OLD.ISSECURITYENABLED    ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ISDELETEABLE         ,'.') = COALESCE(:OLD.ISDELETEABLE         ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ISHIGHVOLUME         ,'.') = COALESCE(:OLD.ISHIGHVOLUME         ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.IMPORTTABLE          ,'.') = COALESCE(:OLD.IMPORTTABLE          ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ISCHANGELOG          ,'.') = COALESCE(:OLD.ISCHANGELOG          ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.PO_WINDOW_ID         ,'.') = COALESCE(:OLD.PO_WINDOW_ID         ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ISDEFAULTACCT        ,'.') = COALESCE(:OLD.ISDEFAULTACCT        ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.SQL_RECORD_IDENTIFIER,'.') = COALESCE(:OLD.SQL_RECORD_IDENTIFIER,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.DEVELOPMENTSTATUS    ,'.') = COALESCE(:OLD.DEVELOPMENTSTATUS    ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.AD_PACKAGE_ID        ,'.') = COALESCE(:OLD.AD_PACKAGE_ID        ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.TREETYPE             ,'.') = COALESCE(:OLD.TREETYPE             ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ACCTDATE_COLUMN_ID   ,'.') = COALESCE(:OLD.ACCTDATE_COLUMN_ID   ,'.') AND                                                                                                                                                                            
+      COALESCE(:NEW.ACCTCLASSNAME        ,'.') = COALESCE(:OLD.ACCTCLASSNAME        ,'.') AND
+      :NEW.ISFULLYAUDITED != :OLD.ISFULLYAUDITED) THEN
+         :NEW.UPDATED := :OLD.UPDATED;
   END IF;
 END AD_TABLE_MOD_TRG
 ]]></body>
