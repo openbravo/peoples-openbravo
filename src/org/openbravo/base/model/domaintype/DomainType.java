@@ -67,6 +67,9 @@ public interface DomainType {
   /**
    * Is called during the initialization of the model layer. Is called after the
    * {@link #setModelProvider(ModelProvider)}.
+   * 
+   * Note: any subclass should clean-up and close database connections or hibernate sessions. If
+   * this is not done then the update.database task may hang when disabling foreign keys.
    */
   void initialize();
 

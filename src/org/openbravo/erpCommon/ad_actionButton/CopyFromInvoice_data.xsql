@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_InvoiceLine_ID FROM C_InvoiceLine 
+        SELECT C_InvoiceLine_ID, '' AS AD_ORG_ID, '' AS AD_CLIENT_ID FROM C_InvoiceLine 
         WHERE C_Invoice_ID = ? 
         AND AD_CLIENT_ID IN ('1') 
         AND AD_ORG_ID IN ('1') 
@@ -64,5 +64,16 @@
     <Parameter name="adUserId"/>
     <Parameter name="cInvoicelineId"/>
     <Parameter name="cInvoicelineId"/>
+  </SqlMethod>
+  <SqlMethod name="selectInvoice" type="preparedStatement" connection="true" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT AD_ORG_ID,AD_CLIENT_ID FROM C_Invoice 
+        WHERE C_Invoice_ID = ? 
+        AND ISACTIVE = 'Y'
+      ]]>
+    </Sql>
+    <Parameter name="cInvoiceId"/>
   </SqlMethod>
 </SqlClass>

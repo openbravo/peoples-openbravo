@@ -30,6 +30,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -70,6 +71,8 @@ public class ActivationKey {
 
   private boolean notActiveYet = false;
 
+  private static final Logger log4j = Logger.getLogger(ActivationKey.class);
+
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED
   }
@@ -79,6 +82,7 @@ public class ActivationKey {
   }
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
+  private static final int PING_TIMEOUT_SECS = 120;
 
   public ActivationKey() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
@@ -337,23 +341,31 @@ public class ActivationKey {
 
       Long maxUsers = new Long(getProperty("limitusers"));
 
+      // maxUsers==0 is unlimited concurrent users
       if (maxUsers != 0) {
-        boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-        OBContext.getOBContext().setInAdministratorMode(true);
-
-        OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
-        obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
-        if (currentSession != null && !currentSession.equals("")) {
-          obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSession));
+        boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+        int activeSessions = 0;
+        try {
+          activeSessions = getActiveSessions(currentSession);
+          log4j.info("Active sessions: " + activeSessions);
+          if (activeSessions >= maxUsers || (softUsers != null && activeSessions >= softUsers)) {
+            // Before raising concurrent users error, clean the session with ping timeout and try it
+            // again
+            if (deactivateTimeOutSessions()) {
+              activeSessions = getActiveSessions(currentSession);
+              log4j.info("Active sessions after timeout cleanup: " + activeSessions);
+            }
+          }
+        } catch (Exception e) {
+          log4j.error("Error checking sessions", e);
+        } finally {
+          OBContext.getOBContext().setInAdministratorMode(adminMode);
         }
-        int currentSessions = obCriteria.list().size();
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
-
-        if (currentSessions >= maxUsers) {
+        if (activeSessions >= maxUsers) {
           return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
         }
 
-        if (softUsers != null && currentSessions >= softUsers) {
+        if (softUsers != null && activeSessions >= softUsers) {
           result = LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
         }
       }
@@ -364,6 +376,50 @@ public class ActivationKey {
     }
 
     return result;
+  }
+
+  /**
+   * Looks for all active sessions that have not had activity during last
+   * {@link ActivationKey#PING_TIMEOUT_SECS} seconds and deactivates them. Activity is tracked by
+   * the requests the browser sends to look for alerts (see
+   * {@link org.openbravo.erpCommon.utility.VerticalMenu}).
+   */
+  private boolean deactivateTimeOutSessions() {
+    // Last valid ping time is current time substract timeout seconds
+    Calendar cal = Calendar.getInstance();
+    cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
+    Date lastValidPingTime = new Date(cal.getTimeInMillis());
+
+    OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+    obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
+    obCriteria.add(Expression.isNotNull(Session.PROPERTY_LASTPING));
+    obCriteria.add(Expression.lt(Session.PROPERTY_LASTPING, lastValidPingTime));
+    boolean sessionDeactivated = false;
+    for (Session expiredSession : obCriteria.list()) {
+      expiredSession.setSessionActive(false);
+      sessionDeactivated = true;
+      log4j.info("Deactivated session: " + expiredSession.getId()
+          + " beacuse of ping time out. Last ping: " + expiredSession.getLastPing()
+          + ". Last valid ping time: " + lastValidPingTime);
+    }
+    if (sessionDeactivated) {
+      OBDal.getInstance().flush();
+    } else {
+      log4j.debug("No ping timeout sessions");
+    }
+    return sessionDeactivated;
+  }
+
+  /**
+   * Returns the number of current active sessions
+   */
+  private int getActiveSessions(String currentSession) {
+    OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+    obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
+    if (currentSession != null && !currentSession.equals("")) {
+      obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSession));
+    }
+    return obCriteria.count();
   }
 
   public String toString(ConnectionProvider conn, String lang) {

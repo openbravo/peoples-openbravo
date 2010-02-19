@@ -72,7 +72,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6446';
+  var number = '6461';
   return number;
 }
 
@@ -1447,59 +1447,23 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            //if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
-            if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+            if ((keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey)) {
               if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
+            }
+            if ((keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey)) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
+                  return false;
+                } else {
                   return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
-              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
+                }
               } catch (e) {
                 startKeyPressEvent();
                 return true;
@@ -1534,9 +1498,11 @@ function keyControl(pushedKey) {
                 try {
                   eval(evalfuncTrl);
                   thereIsShortcut = true;
-                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                    return false; else 
+                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
+                    return false;
+                  } else {
                     return true;
+                  }
                 } catch (e) {
                   startKeyPressEvent();
                   return true;
@@ -1548,56 +1514,19 @@ function keyControl(pushedKey) {
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
             //if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) stopKeyPressEvent();
-            if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+            if ((keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey)) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
+                  return false;
+                } else {
                   return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
+                }
               } catch (e) {
                 startKeyPressEvent();
                 return true;

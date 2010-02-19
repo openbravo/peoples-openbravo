@@ -18,7 +18,7 @@
  */
 package org.openbravo.reference.ui;
 
-public class UIText extends UIReference {
+public class UIText extends UIString {
   public UIText(String reference, String subreference) {
     super(reference, subreference);
   }

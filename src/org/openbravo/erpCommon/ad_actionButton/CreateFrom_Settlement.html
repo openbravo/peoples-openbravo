@@ -70,10 +70,18 @@
       if (obj==null) return false;
       var price = document.frmMain.inpTotalPrice;
       var actualValue = Number(eval("document.frmMain.inpPrice" + obj.value + ".value"));
-
+      var radio = document.frmMain.inpcDebtPaymentId;
+      var flag = true
       if (obj.checked) {
+    	 for (var i=0;i<radio.length;i++) { 
+           if (!radio[i].checked)
+             flag = false;
+         }
+         if(flag)
+           document.frmMain.inpTodos.checked=true; 
          price.value = round(Number(price.value),2) + actualValue;
       } else {
+    	document.frmMain.inpTodos.checked=false;
         price.value = round(Number(price.value),2) - actualValue;
       }
 
@@ -113,12 +121,22 @@
         return submitCommandForm('FIND_SETTLEMENT', true);
       } else {
           var total = radio.length;
-        for (var i=0;i<total;i++) {
-              radio[i].checked=obj.checked;
-              frm.elements["inpwriteoff" + radio[i].value].disabled=!obj.checked;
-              frm.elements["inpispaid" + radio[i].value].disabled=!obj.checked;
-              updatePrice(radio[i]);
-        }
+          for (var i=0;i<total;i++) {
+        	  if (obj.checked) {
+        	     if (!radio[i].checked) {
+                    radio[i].checked=obj.checked;
+                    frm.elements["inpwriteoff" + radio[i].value].disabled=!obj.checked;
+                    frm.elements["inpispaid" + radio[i].value].disabled=!obj.checked;
+                    updatePrice(radio[i]);
+        	     }
+        	  }
+        	  else {
+                radio[i].checked=obj.checked;
+                frm.elements["inpwriteoff" + radio[i].value].disabled=!obj.checked;
+                frm.elements["inpispaid" + radio[i].value].disabled=!obj.checked;
+                updatePrice(radio[i]);
+        	  }
+          }
       }
       return true;
     }
