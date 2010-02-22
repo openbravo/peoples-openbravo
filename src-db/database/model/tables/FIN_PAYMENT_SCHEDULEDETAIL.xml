@@ -33,11 +33,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_PAYMENT_SCHEDULE_ORDER" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_PAYMENT_SCHEDULE_ORDER" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_PAYMENT_SCHEDULE_INVOICE" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_PAYMENT_SCHEDULE_INVOICE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
