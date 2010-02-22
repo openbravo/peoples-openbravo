@@ -187,7 +187,7 @@ BEGIN
       SELECT count(*), max(pd.paymentno)
         INTO v_count, v_paymentno
       FROM fin_payment_schedule ps, fin_payment_detail_v pd
-      WHERE ps.fin_payment_schedule_id = pd.fin_payment_schedule_invoice
+      WHERE ps.fin_payment_schedule_id = pd.fin_payment_sched_inv_v_id
         AND ps.c_invoice_id = p_record_id;
       IF (v_count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@InvoiceWithPayments@' || ' ' || v_paymentno);
