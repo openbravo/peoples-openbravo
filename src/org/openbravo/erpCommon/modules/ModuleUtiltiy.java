@@ -19,7 +19,6 @@
 
 package org.openbravo.erpCommon.modules;
 
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -209,16 +208,8 @@ public class ModuleUtiltiy {
     return rt;
   }
 
-  /**
-   * Obtains remotelly an obx for the desired moduleVersionID
-   * 
-   * @param im
-   *          {@link ImportModule} instance used to add the log
-   * @param moduleVersionID
-   *          ID for the module version to obtain
-   * @return An {@link InputStream} with containing the obx for the module (null if error)
-   */
-  public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
+  static RemoteModule getRemoteModule(ImportModule im, String moduleVersionID) {
+    RemoteModule remoteModule = new RemoteModule();
     WebServiceImplServiceLocator loc;
     WebServiceImpl ws = null;
     String strUrl = "";
@@ -236,7 +227,8 @@ public class ModuleUtiltiy {
       } catch (final ServletException ex) {
         log4j.error(ex);
       }
-      return null;
+      remoteModule.setError(true);
+      return remoteModule;
     }
 
     try {
@@ -244,15 +236,18 @@ public class ModuleUtiltiy {
       strUrl = ws.getURLforDownload(moduleVersionID);
     } catch (AxisFault e1) {
       im.addLog("@" + e1.getFaultCode() + "@", ImportModule.MSG_ERROR);
-      return null;
+      remoteModule.setError(true);
+      return remoteModule;
     } catch (RemoteException e) {
       im.addLog(e.getMessage(), ImportModule.MSG_ERROR);
-      return null;
+      remoteModule.setError(true);
+      return remoteModule;
     }
 
     if (isCommercial && !ActivationKey.isActiveInstance()) {
       im.addLog("@NotCommercialModulesAllowed@", ImportModule.MSG_ERROR);
-      return null;
+      remoteModule.setError(true);
+      return remoteModule;
     }
 
     try {
@@ -276,7 +271,12 @@ public class ModuleUtiltiy {
 
       if (conn.getResponseCode() == HttpServletResponse.SC_OK) {
         // OBX is ready to be used
-        return conn.getInputStream();
+        remoteModule.setObx(conn.getInputStream());
+        String size = conn.getHeaderField("Content-Length");
+        if (size != null) {
+          remoteModule.setSize(new Integer(size));
+        }
+        return remoteModule;
       }
 
       // There is an error, let's check for a parseable message
@@ -289,7 +289,22 @@ public class ModuleUtiltiy {
     } catch (Exception e) {
       im.addLog("@ErrorDownloadingOBX@ " + e.getMessage(), ImportModule.MSG_ERROR);
     }
-    return null;
-
+    remoteModule.setError(true);
+    return remoteModule;
   }
+
+  /**
+   * Obtains remotelly an obx for the desired moduleVersionID
+   * 
+   * @param im
+   *          {@link ImportModule} instance used to add the log
+   * @param moduleVersionID
+   *          ID for the module version to obtain
+   * @return An {@link InputStream} with containing the obx for the module (null if error)
+   */
+  // public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
+  // RemoteModule module = getRemoteModule(im, moduleVersionID);
+  // return module.getObx();
+  //
+  // }
 }
