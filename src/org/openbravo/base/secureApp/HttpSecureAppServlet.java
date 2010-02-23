@@ -64,6 +64,7 @@ import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.utils.FileUtility;
@@ -163,6 +164,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     Variables variables = new Variables(request);
+
     // VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // bdErrorGeneral(response, "Error", "No access");
@@ -309,8 +311,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             logout(request, response);
             return;
           }
-        } else
+        } else {
           variables.updateHistory(request);
+        }
       }
       if (log4j.isDebugEnabled()) {
         log4j.debug("Call to HttpBaseServlet.service");
@@ -1037,9 +1040,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strOrganizacion) throws ServletException {
     final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion, vars
         .getSessionValue("#AD_User_ID"));
+
     sl.setServerUrl(strDireccion);
-    sl.save(this);
-    vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
+    sl.setSessionID(vars.getDBSession());
+
+    // session_ID should have been created in LoginHandler
+    String sessionId = (String) request.getSession(false).getAttribute("#AD_Session_ID");
+    if (sessionId == null) {
+      sessionId = SequenceIdData.getUUID();
+      sl.save(this);
+    } else {
+      sl.update(this);
+    }
+    vars.setSessionValue("#AD_Session_ID", sessionId);
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,

@@ -18,11 +18,14 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.security.SessionLogin;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
@@ -57,9 +60,12 @@ public class LoginHandler extends HttpBaseServlet {
       final String strUser = vars.getRequiredStringParameter("user");
       final String strPass = vars.getStringParameter("password");
       final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
-
+      String sessionId = SequenceIdData.getUUID();
+      createDBSession(req, sessionId, strUser, strUserAuth);
       if (strUserAuth != null) {
-        req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
+        HttpSession session = req.getSession(true);
+        session.setAttribute("#Authenticated_user", strUserAuth);
+        session.setAttribute("#AD_Session_ID", sessionId);
         checkLicenseAndGo(res, vars, strUserAuth);
       } else {
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
@@ -71,6 +77,24 @@ public class LoginHandler extends HttpBaseServlet {
 
         goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
       }
+    }
+  }
+
+  /**
+   * Stores session in DB. If the user is valid, it is inserted in the createdBy column, if not user
+   * 0 is used.
+   */
+  private void createDBSession(HttpServletRequest req, String sessionID, String strUser,
+      String strUserAuth) {
+    try {
+      String usr = strUserAuth == null ? "0" : strUserAuth;
+
+      final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
+      sl.setServerUrl(strDireccion);
+      sl.setSessionID(sessionID);
+      sl.save(this);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 

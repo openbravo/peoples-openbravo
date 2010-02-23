@@ -101,14 +101,17 @@ public class SessionLogin {
       if (key == null || key.equals(""))
         throw new ServletException("SessionLogin.save() - key creation failed");
       setSessionID(key);
-      return SessionLoginData.insert(conn, getSessionID(), getClient(), getOrg(), getIsActive(),
-          getUser(), getWebSession(), getRemoteAddr(), getRemoteHost(), getProcessed(), serverUrl);
-    } else
-      return SessionLoginData.update(conn, getIsActive(), getUser(), getWebSession(),
-          getRemoteAddr(), getRemoteHost(), getProcessed(), getSessionID());
+    }
+    return SessionLoginData.insert(conn, getSessionID(), getClient(), getOrg(), getIsActive(),
+        getUser(), getWebSession(), getRemoteAddr(), getRemoteHost(), getProcessed(), serverUrl);
   }
 
-  private void setSessionID(String newValue) {
+  public int update(ConnectionProvider conn) throws ServletException {
+    return SessionLoginData.update(conn, getIsActive(), getUser(), getWebSession(),
+        getRemoteAddr(), getRemoteHost(), getProcessed(), getSessionID());
+  }
+
+  public void setSessionID(String newValue) {
     this.sessionID = (newValue == null) ? "" : newValue;
   }
 
