@@ -63,11 +63,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       String strQty = vars.getNumericParameter("inpqtyordered");
       String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
+      String strLineNetAmt = vars.getStringParameter("inplinenetamt");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,
             strPriceLimit, strPriceList, strCOrderId, strProduct, strUOM, strAttribute, strTabId,
-            strQty, strPriceStd, cancelPriceAd);
+            strQty, strPriceStd, cancelPriceAd, strLineNetAmt);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -78,8 +79,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strQtyOrdered, String strPriceActual, String strDiscount, String strPriceLimit,
       String strPriceList, String strCOrderId, String strProduct, String strUOM,
-      String strAttribute, String strTabId, String strQty, String strPriceStd, String cancelPriceAd)
-      throws IOException, ServletException {
+      String strAttribute, String strTabId, String strQty, String strPriceStd,
+      String cancelPriceAd, String strLineNetAmt) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
       log4j.debug("CHANGED:" + strChanged);
@@ -107,7 +108,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
     int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
-    BigDecimal qtyOrdered, priceActual, discount, priceLimit, priceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd;
+    BigDecimal qtyOrdered, priceActual, discount, priceLimit, priceList, stockSecurity, stockNoAttribute, stockAttribute, resultStock, priceStd, LineNetAmt;
 
     stockSecurity = new BigDecimal(strStockSecurity);
     qtyOrdered = (strQtyOrdered.equals("") ? ZERO : new BigDecimal(strQtyOrdered));
@@ -119,6 +120,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     priceList = (strPriceList.equals("") ? ZERO : (new BigDecimal(strPriceList))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
     priceStd = (strPriceStd.equals("") ? ZERO : (new BigDecimal(strPriceStd))).setScale(
+        PricePrecision, BigDecimal.ROUND_HALF_UP);
+    LineNetAmt = (strLineNetAmt.equals("") ? ZERO : (new BigDecimal(strLineNetAmt))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
     /*
      * if (enforcedLimit) { String strPriceVersion = ""; PriceListVersionComboData[] data1 =
@@ -132,9 +135,14 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Order_Amt';\n\n");
     resultado.append("var respuesta = new Array(");
 
+    if (strChanged.equals("inplinenetamt")) {
+      priceActual = LineNetAmt.divide(qtyOrdered, StdPrecision, BigDecimal.ROUND_HALF_UP);
+      if (priceActual.compareTo(BigDecimal.ZERO) == 0)
+        LineNetAmt = BigDecimal.ZERO;
+    }
     // Calculating prices for offers...
     SLOrderProductData[] dataOrder = SLOrderProductData.select(this, strCOrderId);
-    if (strChanged.equals("inppriceactual")) {
+    if (strChanged.equals("inppriceactual") || strChanged.equals("inplinenetamt")) {
       if (log4j.isDebugEnabled())
         log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
       if ("Y".equals(cancelPriceAd)) {
@@ -174,7 +182,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
      */
 
     // calculating discount
-    if (strChanged.equals("inppricelist") || strChanged.equals("inppriceactual")) {
+    if (strChanged.equals("inppricelist") || strChanged.equals("inppriceactual")
+        || strChanged.equals("inplinenetamt")) {
       if (priceList.compareTo(BigDecimal.ZERO) == 0)
         discount = ZERO;
       else {
@@ -261,7 +270,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
     if (log4j.isDebugEnabled())
       log4j.debug(resultado.toString());
-    if (!strChanged.equals("inpqtyordered")) { // Check PriceLimit
+    if (!strChanged.equals("inpqtyordered") || strChanged.equals("inplinenetamt")) { // Check
+      // PriceLimit
       boolean enforced = SLOrderAmtData.listPriceType(this, strPriceList);
       // Check Price Limit?
       if (enforced && priceLimit.compareTo(BigDecimal.ZERO) != 0
@@ -271,17 +281,20 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     }
 
     // Multiply
-    BigDecimal lineNetAmt;
     if ("Y".equals(cancelPriceAd)) {
-      lineNetAmt = qtyOrdered.multiply(priceStd);
+      LineNetAmt = qtyOrdered.multiply(priceStd);
     } else {
-      lineNetAmt = qtyOrdered.multiply(priceActual);
+      if (!strChanged.equals("inplinenetamt")) {
+        LineNetAmt = qtyOrdered.multiply(priceActual);
+        if (LineNetAmt.scale() > StdPrecision)
+          LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+      }
     }
-
-    if (lineNetAmt.scale() > StdPrecision)
-      lineNetAmt = lineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-    resultado.append("new Array(\"inptaxbaseamt\", " + lineNetAmt.toString() + "),");
-    resultado.append("new Array(\"inplinenetamt\", " + lineNetAmt.toString() + ")");
+    if (strChanged.equals("inplinenetamt"))
+      resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
+    if (!strChanged.equals("inplinenetamt") || priceActual.compareTo(BigDecimal.ZERO) == 0)
+      resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
+    resultado.append("new Array(\"inptaxbaseamt\", " + LineNetAmt.toString() + ")");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
