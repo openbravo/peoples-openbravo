@@ -25,7 +25,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.SessionLogin;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
@@ -60,8 +59,8 @@ public class LoginHandler extends HttpBaseServlet {
       final String strUser = vars.getRequiredStringParameter("user");
       final String strPass = vars.getStringParameter("password");
       final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
-      String sessionId = SequenceIdData.getUUID();
-      createDBSession(req, sessionId, strUser, strUserAuth);
+
+      String sessionId = createDBSession(req, strUser, strUserAuth);
       if (strUserAuth != null) {
         HttpSession session = req.getSession(true);
         session.setAttribute("#Authenticated_user", strUserAuth);
@@ -84,17 +83,17 @@ public class LoginHandler extends HttpBaseServlet {
    * Stores session in DB. If the user is valid, it is inserted in the createdBy column, if not user
    * 0 is used.
    */
-  private void createDBSession(HttpServletRequest req, String sessionID, String strUser,
-      String strUserAuth) {
+  private String createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {
     try {
       String usr = strUserAuth == null ? "0" : strUserAuth;
 
       final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
       sl.setServerUrl(strDireccion);
-      sl.setSessionID(sessionID);
       sl.save(this);
+      return sl.getSessionID();
     } catch (Exception e) {
       e.printStackTrace();
+      return null;
     }
   }
 

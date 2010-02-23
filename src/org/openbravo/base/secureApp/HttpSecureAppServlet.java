@@ -1041,11 +1041,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion, vars
         .getSessionValue("#AD_User_ID"));
 
-    sl.setServerUrl(strDireccion);
-    sl.setSessionID(vars.getDBSession());
-
     // session_ID should have been created in LoginHandler
     String sessionId = (String) request.getSession(false).getAttribute("#AD_Session_ID");
+    sl.setServerUrl(strDireccion);
+    sl.setSessionID(sessionId);
+
     if (sessionId == null) {
       sessionId = SequenceIdData.getUUID();
       sl.save(this);
