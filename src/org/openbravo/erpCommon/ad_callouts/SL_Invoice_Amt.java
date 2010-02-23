@@ -58,10 +58,11 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       String strPriceList = vars.getNumericParameter("inppricelist");
       String strPriceStd = vars.getNumericParameter("inppricestd");
+      String strLineNetAmt = vars.getStringParameter("inplinenetamt");
 
       try {
         printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId,
-            strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd);
+            strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd, strLineNetAmt);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -71,8 +72,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
 
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strQtyInvoice, String strPriceActual, String strInvoiceId, String strProduct,
-      String strPriceLimit, String strTabId, String strPriceList, String strPriceStd)
-      throws IOException, ServletException {
+      String strPriceLimit, String strTabId, String strPriceList, String strPriceStd,
+      String strLineNetAmt) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -92,6 +93,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       log4j.debug("strPriceActual: " + strPriceActual);
     if (log4j.isDebugEnabled())
       log4j.debug("strPriceLimit: " + strPriceLimit);
+    if (log4j.isDebugEnabled())
+      log4j.debug("strLineNetAmt: " + strLineNetAmt);
 
     BigDecimal qtyInvoice, priceActual, LineNetAmt, priceLimit, priceStd;
 
@@ -101,6 +104,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
         .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
     priceLimit = (!Utility.isBigDecimal(strPriceLimit) ? ZERO : (new BigDecimal(strPriceLimit)))
         .setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+    LineNetAmt = (!Utility.isBigDecimal(strLineNetAmt) ? ZERO : new BigDecimal(strLineNetAmt));
 
     StringBuffer resultado = new StringBuffer();
 
@@ -109,9 +113,14 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
 
     SLOrderProductData[] dataInvoice = SLOrderProductData.selectInvoice(this, strInvoiceId);
 
+    if (strChanged.equals("inplinenetamt")) {
+      priceActual = LineNetAmt.divide(qtyInvoice, StdPrecision, BigDecimal.ROUND_HALF_UP);
+    }
+    if (priceActual.compareTo(BigDecimal.ZERO) == 0)
+      LineNetAmt = BigDecimal.ZERO;
     // If unit price (actual price) changes, recalculates standard price
     // (std price) applying price adjustments (offers) if any
-    if (strChanged.equals("inppriceactual")) {
+    if (strChanged.equals("inppriceactual") || strChanged.equals("inplinenetamt")) {
       if (log4j.isDebugEnabled())
         log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
       priceStd = new BigDecimal(SLOrderProductData.getOffersStdPriceInvoice(this,
@@ -134,8 +143,9 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
         priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
     }
 
-    // Net amount of a line equals quantity x unit price (actual price)
-    LineNetAmt = qtyInvoice.multiply(priceActual);
+    if (!strChanged.equals("inplinenetamt"))
+      // Net amount of a line equals quantity x unit price (actual price)
+      LineNetAmt = qtyInvoice.multiply(priceActual);
 
     if (LineNetAmt.scale() > StdPrecision)
       LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
@@ -147,7 +157,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
             + FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice", vars
                 .getLanguage())) + "\"), ");
     }
-    resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
+    if (!strChanged.equals("inplinenetamt") || LineNetAmt.compareTo(BigDecimal.ZERO) == 0)
+      resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
     resultado.append("new Array(\"inptaxbaseamt\", " + LineNetAmt.toString() + "),");
     resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + ")");
     resultado.append(");");
