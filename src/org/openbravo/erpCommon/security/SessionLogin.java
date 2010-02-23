@@ -48,6 +48,8 @@ public class SessionLogin {
   protected String remoteHost;
   protected String processed = "N";
   protected String serverUrl;
+  private String username;
+  private String status;
 
   public SessionLogin(String ad_client_id, String ad_org_id, String ad_user_id)
       throws ServletException {
@@ -127,7 +129,9 @@ public class SessionLogin {
       session.setRemoteHost(getRemoteHost());
       session.setProcessed(getProcessed());
       session.setServerUrl(serverUrl);
-      session.setSessionActive(true);
+      session.setSessionActive(!status.equals("F"));
+      session.setLoginStatus(status);
+      session.setUsername(username);
       OBDal.getInstance().save(session);
       OBDal.getInstance().flush();
       setSessionID(session.getId());
@@ -229,5 +233,13 @@ public class SessionLogin {
 
   private boolean getProcessed() {
     return ((this.processed == null) ? false : this.processed.equals("Y"));
+  }
+
+  public void setUserName(String strUser) {
+    username = strUser;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 }

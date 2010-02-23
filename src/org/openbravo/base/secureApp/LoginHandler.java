@@ -65,8 +65,10 @@ public class LoginHandler extends HttpBaseServlet {
         HttpSession session = req.getSession(true);
         session.setAttribute("#Authenticated_user", strUserAuth);
         session.setAttribute("#AD_Session_ID", sessionId);
+        log4j.info("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
         checkLicenseAndGo(res, vars, strUserAuth);
       } else {
+        log4j.info("Failed user/password. Username: " + strUser + " -Session ID:" + sessionId);
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
         String failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", systemClient
@@ -88,6 +90,14 @@ public class LoginHandler extends HttpBaseServlet {
       String usr = strUserAuth == null ? "0" : strUserAuth;
 
       final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
+
+      if (strUserAuth == null) {
+        sl.setStatus("F");
+      } else {
+        sl.setStatus("S");
+      }
+
+      sl.setUserName(strUser);
       sl.setServerUrl(strDireccion);
       sl.save(this);
       return sl.getSessionID();
