@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2010 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -149,7 +149,13 @@ public class Posted extends HttpSecureAppServlet {
         return myMessage;
       } else if (!acct.post(strKey, false, vars, this, con) || acct.errors != 0) {
         releaseRollbackConnection(con);
-        myMessage = acct.getMessageResult();
+        String strStatus = acct.getStatus();
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), strStatus
+            .equals(AcctServer.STATUS_DocumentLocked) ? "@OtherPostingProcessActive@" : strStatus
+            .equals(AcctServer.STATUS_InvalidCost) ? "@InvalidCost@" : "@ProcessRunError@");
+        if (strStatus.equals(AcctServer.STATUS_DocumentLocked))
+          myMessage.setType("Warning");
+        myMessage.setMessage(myMessage.getMessage());
         return myMessage;
       }
       releaseCommitConnection(con);
