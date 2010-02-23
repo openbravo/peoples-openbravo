@@ -72,7 +72,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6461';
+  var number = '6472';
   return number;
 }
 
@@ -912,6 +912,7 @@ function addUrlParameters(data) {
 * @see #submitCommandForm
 */
 function openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading) {
+  var appUrl = getAppUrl();
   var adds = "";
   var isPopup = null;
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
@@ -963,7 +964,7 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   }
   if (isPopup == true && hasLoading == true) {
     isPopupLoadingWindowLoaded=false;
-    var urlLoading = '../utility/PopupLoading.html';
+    var urlLoading = appUrl + '/utility/PopupLoading.html';
     var winPopUp = window.open((doSubmit?urlLoading:url), _name, adds);
   } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);
@@ -1108,8 +1109,9 @@ function openPopUpDefaultSize(url, _name, height, width, closeControl, showstatu
 * @see #submitCommandForm
 */
 function openPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges) {
+  var appUrl = getAppUrl();
   var direct = (strDirectPrinting!="")?"Y":"N";
-  return submitCommandForm("DEFAULT", false, null, "../businessUtility/PrinterReports.html?inppdfpath=" + escape(strPage) + "&inpdirectprint=" + escape(direct) + "&inphiddenkey=" + escape(strHiddenKey) + ((strHiddenValue!=null)?"&inphiddenvalue=" + escape(strHiddenValue):""), "hiddenFrame", null, bolCheckChanges);
+  return submitCommandForm("DEFAULT", false, null, appUrl + "/businessUtility/PrinterReports.html?inppdfpath=" + escape(strPage) + "&inpdirectprint=" + escape(direct) + "&inphiddenkey=" + escape(strHiddenKey) + ((strHiddenValue!=null)?"&inphiddenvalue=" + escape(strHiddenValue):""), "hiddenFrame", null, bolCheckChanges);
 }
 
 /**
@@ -2329,8 +2331,9 @@ function menuHide(id) {
 * @see #changeClass
 */
 function menuExpand() {
+  var appUrl = getAppUrl();
   putFocusOnMenu();
-  submitCommandForm('ALL', false, null, '../utility/VerticalMenu.html', 'frameMenu');
+  submitCommandForm('ALL', false, null, appUrl + '/utility/VerticalMenu.html', 'frameMenu');
   return false;
 }
 
@@ -2341,8 +2344,9 @@ function menuExpand() {
 * @see #changeClass
 */
 function menuCollapse() {
+  var appUrl = getAppUrl();
   putFocusOnMenu();
-  submitCommandForm('DEFAULT', false, null, '../utility/VerticalMenu.html', 'frameMenu');
+  submitCommandForm('DEFAULT', false, null, appUrl + '/utility/VerticalMenu.html', 'frameMenu');
   return false;
 }
 
@@ -2373,17 +2377,20 @@ function getMenuExpandCollapse_status() {
 }
 
 function menuUserOptions() {
-  openServletNewWindow('DEFAULT', false, '../ad_forms/Role.html', 'ROLE', null, true, '460', '800');
+  var appUrl = getAppUrl();
+  openServletNewWindow('DEFAULT', false, appUrl + '/ad_forms/Role.html', 'ROLE', null, true, '460', '800');
   return true;
 }
 
 function menuQuit() {
-  submitCommandForm('DEFAULT', false, null, '../security/Logout.html', '_top');
+  var appUrl = getAppUrl();
+  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', '_top');
   return false;
 }
 
 function menuAlerts() {
-  submitCommandForm('DEFAULT', true, getForm(), '../ad_forms/AlertManagement.html', 'appFrame', false, true);
+  var appUrl = getAppUrl();
+  submitCommandForm('DEFAULT', true, getForm(), appUrl + '/ad_forms/AlertManagement.html', 'appFrame', false, true);
   return true;
 }
 
@@ -2442,14 +2449,8 @@ function executeMenuButton(id) {
 }
 
 function getAppUrl() {
-  var url = window.location.href;
-  var http = url.split('//')[0];
-  var nohttp = url.split('//')[1];
-  var urlItem = nohttp.split('/')
-  var appUrl=http + '//';
-  for (var i=0; i<urlItem.length-2; i++) {
-    appUrl = appUrl + urlItem[i] + '/';
-  }
+  var menuFrame = getFrame('frameMenu');
+  var appUrl = menuFrame.getAppUrlFromMenu();
   return appUrl;
 }
 
@@ -3866,6 +3867,7 @@ function isInArray(obj, text) {
 * Opens the Openbravo's about window
 */
 function about() {
+  var appUrl = getAppUrl();
   var complementosNS4 = ""
 
   var strHeight=500;
@@ -3875,12 +3877,7 @@ function about() {
   if (navigator.appName.indexOf("Netscape"))
     complementosNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
   var complementos = complementosNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=yes, scrollbars=yes, status=0, toolbar=0, titlebar=0";
-  if (typeof baseDirectory != "undefined") {
-    var winPopUp = window.open(baseDirectory + "../ad_forms/about.html", "ABOUT", complementos);
-  } else {
-    // Deprecated in 2.50, the following code is only for compatibility
-    var winPopUp = window.open(baseDirection + "../ad_forms/about.html", "ABOUT", complementos);
-  }
+  var winPopUp = window.open(appUrl + "/ad_forms/about.html", "ABOUT", complementos);
   if (winPopUp!=null) {
     winPopUp.focus();
     document.onunload = function(){winPopUp.close();};
@@ -3940,10 +3937,11 @@ function buttonEvent(event, obj) {
 * Returns to previous web
 */
 function goToPreviousPage() {
+  var appUrl = getAppUrl();
   //if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
   //  history.back();
   //} else {
-    openLink('../secureApp/GoBack.html', 'appFrame');
+    openLink(appUrl + 'secureApp/GoBack.html', 'appFrame');
   //}
 }
 
@@ -4139,12 +4137,13 @@ function calculateMsgBoxWidth() {
 * Change the status for show audit in Edition mode, in local javascript variable and in session value (with ajax)
 **/
 function changeAuditStatus() {
+  var appUrl = getAppUrl();
   if (strShowAudit=="Y") strShowAudit="N";
   else strShowAudit="Y";
   displayLogic();
   changeAuditIcon(strShowAudit);
   var paramXMLReq = null;
-  submitXmlHttpRequest(xx, null, 'CHANGE', "../utility/ChangeAudit", false, null, paramXMLReq);
+  submitXmlHttpRequest(xx, null, 'CHANGE', appUrl + "utility/ChangeAudit", false, null, paramXMLReq);
   return true;
 }
 
@@ -4152,8 +4151,9 @@ function changeAuditStatus() {
 * Change the status for show audit in Relation mode, in local javascript variable and in session value (with ajax)
 **/
 function changeAuditStatusRelation() {
+  var appUrl = getAppUrl();
   var paramXMLReq = null;
-  submitXmlHttpRequest(document.getElementById("buttonRefresh").onclick, null, 'CHANGE', "../utility/ChangeAudit", false, null, paramXMLReq);
+  submitXmlHttpRequest(document.getElementById("buttonRefresh").onclick, null, 'CHANGE', appUrl + "/utility/ChangeAudit", false, null, paramXMLReq);
   return true;
 }
 
