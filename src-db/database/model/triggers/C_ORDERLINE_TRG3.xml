@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ORDERLINE_TRG3">
-    <trigger name="C_ORDERLINE_TRG3" table="C_ORDERLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="C_ORDERLINE_TRG3" table="C_ORDERLINE" fires="before" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
 
 /*************************************************************************
@@ -19,24 +19,20 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  V_RATE NUMBER;
   V_PRECISION NUMBER;
 BEGIN
   IF AD_isTriggerEnabled()='N' THEN RETURN;
   END IF;
 
-  SELECT T.RATE INTO V_RATE FROM C_TAX T 
-  WHERE T.C_TAX_ID=:NEW.C_TAX_ID;
-
-  SELECT C.STDPRECISION INTO V_PRECISION FROM C_CURRENCY C
-  WHERE C.C_CURRENCY_ID=:NEW.C_CURRENCY_ID;
-
   IF(INSERTING OR UPDATING) THEN
+    SELECT C.STDPRECISION INTO V_PRECISION FROM C_CURRENCY C
+    WHERE C.C_CURRENCY_ID=:NEW.C_CURRENCY_ID;
+  
     IF (round(to_number(:NEW.QTYORDERED) * to_number(:NEW.PRICEACTUAL),V_PRECISION) != to_number(:NEW.LINENETAMT)) THEN
       RAISE_APPLICATION_ERROR(-20000, '@LineAmountNotCorrect@') ;
     END IF;
   END IF;
   END C_ORDERLINE_TRG3
-  ]]></body>
+]]></body>
     </trigger>
   </database>
