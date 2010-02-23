@@ -1710,7 +1710,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--192-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--192-->  <AD_COLUMN_ID><![CDATA[2760]]></AD_COLUMN_ID>
 <!--192-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--192-->  <WHERECLAUSE><![CDATA[(SELECT isActive FROM M_Product WHERE M_Product.M_Product_Id = M_ProductPrice.M_Product_Id ) = 'Y']]></WHERECLAUSE>
+<!--192-->  <WHERECLAUSE><![CDATA[EXISTS (SELECT 1 FROM M_Product WHERE M_Product.M_Product_Id = M_ProductPrice.M_Product_Id  AND M_Product.IsActive = 'Y')]]></WHERECLAUSE>
 <!--192-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--192-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
