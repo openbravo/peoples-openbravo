@@ -132,7 +132,6 @@
       }
       var charn= document.getElementById('warningsAndErrors').innerHTML.length;
       if(charn>2000){
-          stopAddingWarns=true;
           document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + "and more..." + "</p>";
         }
         else{
@@ -236,6 +235,8 @@
               progList_changeNode(node, 'Error');
               progList_changeIcon(node, 'Error');
           }
+          //Make a final call to requesterrorstate, to get the last errors/warnings, if they were any
+          submitXmlHttpRequest(askForErrorStatus, null, "REQUESTLASTERRORSTATE", "ApplyModulesCallServlet.html", false, null, null);
         }
       }
       return true;
