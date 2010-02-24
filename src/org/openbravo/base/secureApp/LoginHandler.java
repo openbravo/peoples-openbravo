@@ -116,6 +116,11 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
+  /**
+   * Delays the response of checking in case it is configured in Openbravo.properties
+   * (login.trial.delay.increment and login.trial.delay.max), and the current username has login
+   * attempts failed.
+   */
   private void delayResponse(UserLock lockSettings) {
     int delay = lockSettings.getDelay();
     if (delay > 0) {
@@ -302,6 +307,10 @@ public class LoginHandler extends HttpBaseServlet {
     return "User-login control Servlet";
   } // end of getServletInfo() method
 
+  /**
+   * Utility class to manage user locking and time delays
+   * 
+   */
   private class UserLock {
     private int delay;
     private int lockAfterTrials;
@@ -404,6 +413,9 @@ public class LoginHandler extends HttpBaseServlet {
       }
     }
 
+    /**
+     * A new failed log in attempt, increments the count of fails and blocks the user if needed
+     */
     public void addFail() {
       numberOfFails++;
       boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
