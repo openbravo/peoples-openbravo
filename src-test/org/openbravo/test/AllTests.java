@@ -34,6 +34,7 @@ import org.openbravo.test.dal.IssuesTest;
 import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.expression.EvaluationTest;
+import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.OneToManyTest;
 import org.openbravo.test.model.RuntimeModelTest;
 import org.openbravo.test.security.AccessLevelTest;
@@ -77,6 +78,7 @@ public class AllTests {
     // model
     suite.addTestSuite(RuntimeModelTest.class);
     suite.addTestSuite(OneToManyTest.class);
+    suite.addTestSuite(ClassLoaderTest.class);
 
     // expression
     suite.addTestSuite(EvaluationTest.class);
