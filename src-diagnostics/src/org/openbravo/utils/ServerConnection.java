@@ -34,9 +34,7 @@ public class ServerConnection {
     String serverUrl=new PropertiesManager("config/Openbravo.properties").getProperty(
     "tomcat.manager.url");
     serverUrl = serverUrl.substring(0,serverUrl.lastIndexOf('/'));
-    return new URL(new PropertiesManager("config/Openbravo.properties").getProperty(
-        "tomcat.manager.url").replace("/manager", "")
-        + "/OpenbravoDiagnostics/Check.html?Command=" + action + additionalParameters);
+    return new URL(serverUrl+ "/OpenbravoDiagnostics/Check.html?Command=" + action + additionalParameters);
   }
 
   public String getCheck(String action, String additionalParameters) {
