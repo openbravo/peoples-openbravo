@@ -67,9 +67,12 @@ BEGIN
   WHERE c_order_id = p_record_id;
 
   IF (p_docaction = 'CO') THEN
+    DECLARE
+      v_payment_schedule_order VARCHAR2(32);
+    BEGIN
     v_resultstr := 'Insert payment schedule on completion';
-    INSERT
-    INTO fin_payment_schedule
+    v_payment_schedule_order := get_uuid();
+    INSERT INTO fin_payment_schedule
     (
       fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
       created, createdby, updated, updatedby,
@@ -79,12 +82,30 @@ BEGIN
      )
     VALUES
     (
-      get_uuid(), v_Client_ID, v_Org_ID, 'Y',
+      v_payment_schedule_order, v_Client_ID, v_Org_ID, 'Y',
       now(), p_user, now(), p_user,
       null, v_currency_id, p_record_id,
       'to-do', v_grandtotal, v_orderdate,
       v_grandtotal
     );
+
+    INSERT INTO fin_payment_scheduledetail
+    (
+      fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
+      created, createdby, updated, updatedby,
+      fin_payment_schedule_order,
+      fin_payment_schedule_invoice, fin_payment_detail_id,
+      amount
+     )
+    VALUES
+    (
+      get_uuid(), v_Client_ID, v_Org_ID, 'Y',
+      now(), p_user, now(), p_user,
+      v_payment_schedule_order,
+      null, null,
+      v_grandtotal
+    );
+    END;
   ELSIF (p_docaction = 'RE') THEN
     -- check there is not any paid payment
     DECLARE

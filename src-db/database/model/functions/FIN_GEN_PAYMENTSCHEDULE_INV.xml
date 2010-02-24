@@ -76,20 +76,35 @@ BEGIN
 
   IF (p_docaction = 'CO') THEN
     DECLARE
-      cur_orders RECORD;
       cur_payments RECORD;
-      v_paidamt NUMBER:=0;
       v_TargetDocBaseType C_DOCTYPE.DocBaseType%TYPE;
       v_MultiplierARC NUMBER:=1;
       v_pendingAmount NUMBER;
       v_plannedDate DATE;
       v_paymentAmount NUMBER;
-/*      CUR_PAYMENTS RECORD;
-      v_GenDebt_PaymentID varchar2(32);
-      v_SettlementDocTypeID varchar2(32) ;
-      v_settlement_ID VARCHAR2(32) ;
-      v_CB_Curr VARCHAR2(32) ;
-      v_SDocument_No C_SETTLEMENT.DocumentNo%TYPE;*/
+      v_scheduledamount NUMBER;
+      v_invoicedamount NUMBER;
+      v_notassignedamount NUMBER;
+      v_scheduledetailamount NUMBER;
+      v_oldorder VARCHAR2(32) := '';
+      v_payment_schedule_invoice VARCHAR2(32);
+
+      CURSOR cur_order_schdet (invoice_id VARCHAR2) IS
+      SELECT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount AS amount,
+             fin_payment_scheduledetail_id,
+             fin_payment_scheduledetail.fin_payment_schedule_order,
+             fin_payment_scheduledetail.fin_payment_detail_id,
+             CASE WHEN fin_payment_scheduledetail.fin_payment_detail_id is not null THEN 'Y' ELSE 'N' END AS paid
+      FROM c_invoiceline, c_orderline, fin_payment_schedule, fin_payment_scheduledetail
+      WHERE c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
+        AND c_orderline.c_order_id = fin_payment_schedule.c_order_id
+        AND fin_payment_schedule.fin_payment_schedule_id = fin_payment_scheduledetail.fin_payment_schedule_order
+        AND fin_payment_scheduledetail.fin_payment_schedule_invoice is null
+        AND c_invoiceline.c_invoice_id = invoice_id
+      ORDER BY CASE WHEN fin_payment_scheduledetail.fin_payment_detail_id is not null THEN 0 ELSE 1 END, c_orderline.c_order_id;
+      order_schdet cur_order_schdet%ROWTYPE;
+      next_order BOOLEAN := FALSE;
+
     BEGIN
       v_ResultStr:='Generating FIN_PAYMENT_SCHEDULE';
       -- Is it a Credit Memo:4
@@ -100,28 +115,13 @@ BEGIN
       IF v_TargetDocBaseType in ('ARC','APC') THEN
         v_MultiplierARC:=-1;
       END IF;
-  
-      --Insert manual (isAutomaticGenerated='N') payments
-      v_ResultStr:='Update scheduled payment from orders';
-      FOR cur_orders IN (
-          SELECT DISTINCT c_orderline.c_order_id AS order_id, fin_payment_schedule.paidamt,
-              fin_payment_schedule_id
-          FROM c_invoiceline, c_orderline, fin_payment_schedule
-          WHERE c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
-            AND c_orderline.c_order_id = fin_payment_schedule.c_order_id
-            AND c_invoiceline.c_invoice_id = p_record_id
-        ) LOOP
-        UPDATE fin_payment_schedule
-        SET amount = paidamt,
-            outstandingamt = 0,
-            c_invoice_id = p_record_id
-        WHERE fin_payment_schedule_id = cur_orders.fin_payment_schedule_id;
-        v_paidamt := v_paidamt + cur_orders.paidamt;
-      END LOOP;
-  
-      --Insert Generated Payments
-      v_pendingAmount:=v_GrandTotal - v_paidamt;
-    
+
+      --Insert Payment Schedules for Invoices
+      v_pendingAmount:=v_GrandTotal;
+
+      OPEN cur_order_schdet(p_record_id);
+      FETCH cur_order_schdet INTO order_schdet;
+
       FOR cur_payments IN (
           SELECT line, percentage, onremainder, excludetax,
                  COALESCE(paymentrule, v_paymentrule) AS paymentrule, 
@@ -151,33 +151,130 @@ BEGIN
           v_paymentAmount:=C_Currency_Round(v_pendingamount * cur_payments.percentage/100, v_currency_id, NULL);
         END IF;
         v_pendingamount := v_pendingamount - v_paymentamount;
+        v_scheduledamount := C_Currency_Round((v_paymentamount * v_multiplierarc), v_currency_id, NULL);
 
-        IF (v_paidamt < v_paymentamount) THEN
-          v_paymentamount := v_paymentamount - v_paidamt;
-          v_paidamt := 0;
+        v_ResultStr:='Inserting in FIN_PAYMENT_SCHEDULE table';
+        v_payment_schedule_invoice := get_uuid();
+        INSERT INTO fin_payment_schedule
+        (
+          fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
+          created, createdby, updated, updatedby,
+          c_invoice_id, c_currency_id, c_order_id,
+          fin_paymentmethod_id, amount, duedate,
+          outstandingamt
+         ) VALUES (
+          v_payment_schedule_invoice, v_client_id, v_org_id, 'Y',
+          now(), p_user, now(), p_user,
+          p_record_id, v_currency_id, null,
+          'to-do',
+          v_scheduledamount, v_planneddate,
+          v_scheduledamount
+        );
+        --payment schedule detail
 
-          v_ResultStr:='Inserting in FIN_PAYMENT_SCHEDULE table';
-          --v_pendingAmount:=v_pendingAmount - v_paymentAmount;
-          INSERT INTO fin_payment_schedule
+        LOOP
+          IF(cur_order_schdet%NOTFOUND) THEN
+            EXIT;
+          END IF;
+          v_scheduledetailamount := order_schdet.amount;
+          IF (order_schdet.order_id <> v_oldorder) THEN
+            next_order := FALSE;
+            --get invoiced amount for the order
+            SELECT SUM(c_invoiceline.linenetamt+c_getinvoiceline_taxamount(c_invoiceline.c_invoiceline_id)) INTO v_invoicedamount
+            FROM c_invoiceline, c_orderline
+            WHERE c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
+              AND c_invoiceline.c_invoice_id = p_record_id
+              AND c_orderline.c_order_id = order_schdet.order_id;
+            --substract previously assigned amount
+            SELECT v_invoicedamount - SUM(psd.amount) INTO v_notassignedamount
+            FROM fin_payment_schedule ps_inv, fin_payment_scheduledetail psd,
+                 fin_payment_schedule ps_ord
+            WHERE ps_inv.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
+              AND psd.fin_payment_schedule_order = ps_ord.fin_payment_schedule_id
+              AND ps_inv.c_invoice_id = p_record_id
+              AND ps_ord.c_order_id = order_schdet.order_id;
+          END IF;
+          IF (v_notassignedamount <= 0) THEN
+            next_order := TRUE;
+          END IF;
+          --create a new payment schedule detail if necessary
+          IF (NOT next_order) THEN
+            IF (order_schdet.amount > v_notassignedamount) THEN
+              INSERT INTO fin_payment_scheduledetail
+              (
+                fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
+                created, createdby, updated, updatedby,
+                fin_payment_schedule_order,
+                fin_payment_schedule_invoice,
+                fin_payment_detail_id,
+                amount
+              )
+              VALUES
+              (
+                get_uuid(), v_Client_ID, v_Org_ID, 'Y',
+                now(), p_user, now(), p_user,
+                order_schdet.fin_payment_schedule_order,
+                null,
+                order_schdet.fin_payment_detail_id,
+                order_schdet.amount - v_notassignedamount
+              );
+              UPDATE fin_payment_scheduledetail
+              SET amount = v_notassignedamount,
+                  updated = now(),
+                  updatedby = p_user
+              WHERE fin_payment_scheduledetail_id = order_schdet.fin_payment_scheduledetail_id;
+              v_scheduledetailamount := v_notassignedamount;
+            END IF;
+
+            UPDATE fin_payment_scheduledetail
+            SET fin_payment_schedule_invoice = v_payment_schedule_invoice,
+                updated = now(),
+                updatedby = p_user
+            WHERE fin_payment_scheduledetail_id = order_schdet.fin_payment_scheduledetail_id;
+
+            IF (order_schdet.paid = 'Y')THEN
+              UPDATE fin_payment_schedule
+              SET outstandingamt = outstandingamt - v_scheduledetailamount,
+                  paidamt = paidamt + v_scheduledetailamount
+              WHERE fin_payment_schedule_id = v_payment_schedule_invoice;
+            END IF;
+
+            v_notassignedamount := v_notassignedamount - v_scheduledetailamount;
+            v_scheduledamount := v_scheduledamount - v_scheduledetailamount;
+            IF (v_scheduledamount <= 0) THEN
+              EXIT;
+            END IF;
+          END IF;
+
+          v_oldorder := order_schdet.order_id;
+          FETCH cur_order_schdet INTO order_schdet;
+          EXIT WHEN cur_order_schdet%NOTFOUND;
+        END LOOP;
+        IF (v_scheduledamount > 0 ) THEN
+          -- no orders, insert payment schdule detail with remaining amount
+          INSERT INTO fin_payment_scheduledetail
           (
-            fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
+            fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
             created, createdby, updated, updatedby,
-            c_invoice_id, c_currency_id, c_order_id,
-            fin_paymentmethod_id, amount, duedate,
-            outstandingamt
-           ) VALUES (
-            get_uuid(), v_client_id, v_org_id, 'Y',
+            fin_payment_schedule_order,
+            fin_payment_schedule_invoice,
+            fin_payment_detail_id,
+            amount
+          )
+          VALUES
+          (
+            get_uuid(), v_Client_ID, v_Org_ID, 'Y',
             now(), p_user, now(), p_user,
-            p_record_id, v_currency_id, null,
-            'to-do',
-            C_Currency_Round((v_paymentamount * v_multiplierarc), v_currency_id, NULL), v_planneddate,
-            C_Currency_Round((v_paymentamount * v_multiplierarc), v_currency_id, NULL)
+            null,
+            v_payment_schedule_invoice,
+            null,
+            v_scheduledamount
           );
-        ELSE
-          --do not insert payment schedule
-          v_paidamt := v_paidamt - v_paymentamount;
         END IF;
       END LOOP;
+
+      CLOSE cur_order_schdet;
+
     END;
   ELSIF (p_docaction = 'RE') THEN
     DECLARE
