@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -136,6 +137,10 @@ public abstract class AcctServer {
   public static final String STATUS_InvalidCost = "C";
   /** Document Status */
   public static final String STATUS_DocumentLocked = "L";
+  /** Document Status */
+  public static final String STATUS_DocumentDisabled = "D";
+
+  OBError messageResult = null;
 
   /** AR Invoices */
   public static final String DOCTYPE_ARInvoice = "ARI";
@@ -551,12 +556,20 @@ public abstract class AcctServer {
         log4j.warn(e);
       }
       FieldProvider data[] = getObjectFieldProvider();
-      if (getDocumentConfirmation(conn, Record_ID) && post(data, force, vars, conn, con)) {
-        success++;
-      } else {
+      try {
+        if (getDocumentConfirmation(conn, Record_ID) && post(data, force, vars, conn, con)) {
+          success++;
+        } else {
+          errors++;
+          if (messageResult == null)
+            setMessageResult(conn, vars, getStatus(), "");
+          save(conn);
+        }
+      } catch (Exception e) {
         errors++;
-        // Status = AcctServer.STATUS_Error;
+        Status = AcctServer.STATUS_Error;
         save(conn);
+        log4j.warn(e);
       }
     } catch (ServletException e) {
       log4j.error(e);
@@ -963,8 +976,7 @@ public abstract class AcctServer {
           AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
               .newInstance();
           if (!newTemplate.execute(this, as, conn, con, vars)) {
-            setStatus(AcctServer.STATUS_Error);
-            break;
+            return getStatus();
           }
         } catch (Exception e) {
           log4j.error("Error while creating new instance for AcctProcessTemplate - " + e);
@@ -972,7 +984,8 @@ public abstract class AcctServer {
         }
       }
     }
-
+    if (messageResult != null)
+      return getStatus();
     return STATUS_Posted;
   } // postLogic
 
@@ -1546,6 +1559,55 @@ public abstract class AcctServer {
     }
     return false;
   } // end of checkDocuments() method
+
+  void setMessageResult(OBError error) {
+    messageResult = error;
+  }
+
+  /*
+   * Sets OBError message for the given status
+   */
+  void setMessageResult(ConnectionProvider conn, VariablesSecureApp vars, String strStatus,
+      String strMessageType) {
+    if (strStatus == null || strStatus.equals(""))
+      strStatus = getStatus();
+    String strMessage = "";
+    if (messageResult == null)
+      messageResult = new OBError();
+    if (strMessageType == null || strMessageType.equals(""))
+      messageResult.setType("Error");
+    else
+      messageResult.setType(strMessageType);
+    if (strStatus.equals(STATUS_Error))
+      strMessage = "@ProcessRunError@";
+    else if (strStatus.equals(STATUS_DocumentLocked)) {
+      strMessage = "@OtherPostingProcessActive@";
+      messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_InvalidCost))
+      strMessage = "@InvalidCost@";
+    else if (strStatus.equals(STATUS_DocumentDisabled)) {
+      strMessage = "@DocumentDisabled@";
+      messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_InvalidAccount))
+      strMessage = "@InvalidAccount@";
+    else if (strStatus.equals(STATUS_PeriodClosed))
+      strMessage = "@PeriodClosed@";
+    else if (strStatus.equals(STATUS_NotConvertible))
+      strMessage = "@NotConvertible@";
+    else if (strStatus.equals(STATUS_NotBalanced))
+      strMessage = "@NotBalanced@";
+    else if (strStatus.equals(STATUS_NotPosted))
+      strMessage = "@NotPosted@";
+    else if (strStatus.equals(STATUS_PostPrepared))
+      strMessage = "@PostPrepared@";
+    else if (strStatus.equals(STATUS_Posted))
+      strMessage = "@Posted@";
+    messageResult.setMessage(Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage));
+  }
+
+  public OBError getMessageResult() {
+    return messageResult;
+  }
 
   public String getServletInfo() {
     return "Servlet for the accounting";
