@@ -31,6 +31,9 @@ import java.net.URL;
 public class ServerConnection {
 
   private URL getUrl(String action, String additionalParameters) throws MalformedURLException {
+    String serverUrl=new PropertiesManager("config/Openbravo.properties").getProperty(
+    "tomcat.manager.url");
+    serverUrl = serverUrl.substring(0,serverUrl.lastIndexOf('/'));
     return new URL(new PropertiesManager("config/Openbravo.properties").getProperty(
         "tomcat.manager.url").replace("/manager", "")
         + "/OpenbravoDiagnostics/Check.html?Command=" + action + additionalParameters);
