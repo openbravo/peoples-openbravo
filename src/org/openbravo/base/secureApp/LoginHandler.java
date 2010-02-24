@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -25,13 +26,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -60,45 +64,60 @@ public class LoginHandler extends HttpBaseServlet {
     req.getSession(true).setAttribute("#Authenticated_user", null);
 
     final String strUser = vars.getStringParameter("user");
-    UserBlockSettings blockSettings = new UserBlockSettings(strUser);
-    delayResponse(blockSettings);
 
-    if (strUser.equals("")) {
-      res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
-    } else {
-      final String strPass = vars.getStringParameter("password");
-      final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
+    OBContext.enableAsAdminContext();
+    try {
 
-      String sessionId = createDBSession(req, strUser, strUserAuth);
-      if (strUserAuth != null) {
-        HttpSession session = req.getSession(true);
-        session.setAttribute("#Authenticated_user", strUserAuth);
-        session.setAttribute("#AD_SESSION_ID", sessionId);
-        // #logginigIn attribute is used in HttpSecureAppServlet to determine whether the logging
-        // process is complete or not. At this stage is not complete, we only have a user ID, but no
-        // the rest of session info: client, org, role...
-        session.setAttribute("#LOGGINGIN", "Y");
-        log4j.info("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
-        checkLicenseAndGo(res, vars, strUserAuth, sessionId);
+      UserLock lockSettings = new UserLock(strUser);
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+
+      String language = systemClient.getLanguage().getLanguage();
+
+      delayResponse(lockSettings);
+
+      if (strUser.equals("")) {
+        res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
-        log4j.info("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
-        Client systemClient = OBDal.getInstance().get(Client.class, "0");
+        final String strPass = vars.getStringParameter("password");
+        final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
 
-        String failureTitle;
-        String failureMessage;
+        String sessionId = createDBSession(req, strUser, strUserAuth);
+        if (strUserAuth != null && !lockSettings.isLockedUser()) {
+          HttpSession session = req.getSession(true);
+          session.setAttribute("#Authenticated_user", strUserAuth);
+          session.setAttribute("#AD_SESSION_ID", sessionId);
+          // #logginigIn attribute is used in HttpSecureAppServlet to determine whether the logging
+          // process is complete or not. At this stage is not complete, we only have a user ID, but
+          // no the rest of session info: client, org, role...
+          session.setAttribute("#LOGGINGIN", "Y");
+          log4j.info("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
+          checkLicenseAndGo(res, vars, strUserAuth, sessionId);
+        } else {
+          String failureTitle;
+          String failureMessage;
+          if (strUserAuth == null) {
+            log4j.info("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
+            lockSettings.addFail(); // Adds fail to lock the user if needed
+            failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", language);
+            failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", language);
+          } else {
+            // lockSettings.isLockedUser()
+            failureTitle = Utility.messageBD(this, "LOCKED_USER_TITLE", language);
+            failureMessage = strUser + " " + Utility.messageBD(this, "LOCKED_USER_MSG", language);
+            log4j.info(strUser + " is blocked cannot activate session ID " + sessionId);
+            updateDBSession(sessionId, false, "LU");
+          }
 
-        failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", systemClient
-            .getLanguage().getLanguage());
-        failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", systemClient
-            .getLanguage().getLanguage());
-
-        goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
+          goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
+        }
       }
+    } finally {
+      OBContext.resetAsAdminContext();
     }
   }
 
-  private void delayResponse(UserBlockSettings blockSettings) {
-    int delay = blockSettings.getDelay();
+  private void delayResponse(UserLock lockSettings) {
+    int delay = lockSettings.getDelay();
     if (delay > 0) {
       log4j.info("Delaying response " + delay + " seconds because of the previous log in fails.");
       try {
@@ -219,7 +238,6 @@ public class LoginHandler extends HttpBaseServlet {
         updateDBSession(sessionId, msgType.equals("Warning"), "LBF");
         goToRetry(res, vars, msg, title, msgType, action);
       }
-
     } finally {
       OBContext.resetAsAdminContext();
     }
@@ -284,31 +302,16 @@ public class LoginHandler extends HttpBaseServlet {
     return "User-login control Servlet";
   } // end of getServletInfo() method
 
-  private class UserBlockSettings {
+  private class UserLock {
     private int delay;
-    private boolean blockedUser;
+    private int lockAfterTrials;
 
-    public UserBlockSettings(String userName) {
-      // Count the how many times this user has failed wihtout success
-      StringBuffer hql = new StringBuffer();
-      hql.append("  from ADSession s ");
-      hql.append(" where s.loginStatus='F'");
-      hql.append("   and s.username = :name");
-      hql
-          .append("   and s.creationDate > (select coalesce(max(s1.creationDate), s.creationDate-1)");
-      hql.append("                           from ADSession s1");
-      hql.append("                          where s1.username = s.username");
-      hql.append("                            and s1.loginStatus!='F')");
-      Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
-      q.setParameter("name", userName);
-      int numberOfFails = q.list().size();
-      if (numberOfFails == 0) {
-        delay = 0;
-        blockedUser = false;
-        return;
-      }
+    private String userName;
+    private int numberOfFails;
+    private User user;
 
-      // Read Openbravo.properties for blocking configuration. If it's properly configured, it tries
+    public UserLock(String userName) {
+      // Read Openbravo.properties for locking configuration. If it's properly configured, it tries
       // to read from the properties file in the source directory not to force to deploy the file to
       // change configuration.
       String sourcePath = globalParameters.getOBProperty("source.path", null);
@@ -326,9 +329,59 @@ public class LoginHandler extends HttpBaseServlet {
       } else {
         obProp = globalParameters.getOBProperties();
       }
-      int delayInc = Integer.parseInt(obProp.getProperty("login.trial.delay.increment", "0"));
-      int delayMax = Integer.parseInt(obProp.getProperty("login.trial.delay.max", "0"));
-      int blockAfterTrials = Integer.parseInt(obProp.getProperty("login.trial.user.block", "0"));
+      String propInc = obProp.getProperty("login.trial.delay.increment", "0");
+      String propMax = obProp.getProperty("login.trial.delay.max", "0");
+      String propLock = obProp.getProperty("login.trial.user.lock", "0");
+      if (propInc.equals("")) {
+        propInc = "0";
+      }
+      if (propMax.equals("")) {
+        propMax = "0";
+      }
+      if (propLock.equals("")) {
+        propLock = "0";
+      }
+      int delayInc;
+      int delayMax;
+      try {
+        delayInc = Integer.parseInt(propInc);
+      } catch (NumberFormatException e) {
+        log4j.error("Could not set login.trial.delay.increment property " + propInc, e);
+        delayInc = 0;
+      }
+      try {
+        delayMax = Integer.parseInt(propMax);
+      } catch (NumberFormatException e) {
+        log4j.error("Could not set login.trial.delay.max property " + propMax, e);
+        delayMax = 0;
+      }
+      try {
+        lockAfterTrials = Integer.parseInt(propLock);
+      } catch (NumberFormatException e) {
+        log4j.error("login.trial.user.lock " + propMax, e);
+        lockAfterTrials = 0;
+      }
+
+      this.userName = userName;
+      setUser();
+      // Count the how many times this user has failed wihtout success
+      StringBuffer hql = new StringBuffer();
+      hql.append("  from ADSession s ");
+      hql.append(" where s.loginStatus='F'");
+      hql.append("   and s.username = :name");
+      hql
+          .append("   and s.creationDate > (select coalesce(max(s1.creationDate), s.creationDate-1)");
+      hql.append("                           from ADSession s1");
+      hql.append("                          where s1.username = s.username");
+      hql.append("                            and s1.loginStatus!='F')");
+      Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
+      q.setParameter("name", userName);
+      numberOfFails = q.list().size();
+      if (numberOfFails == 0) {
+        delay = 0;
+        return;
+      }
+
       if (numberOfFails > 0) {
         log4j.info("Number of log in fails for user " + userName + ": " + numberOfFails);
       }
@@ -338,15 +391,49 @@ public class LoginHandler extends HttpBaseServlet {
         delay = delayMax;
       }
 
-      blockedUser = (numberOfFails != 0) && (numberOfFails >= blockAfterTrials);
+    }
+
+    private void setUser() {
+      OBCriteria<User> obCriteria = OBDal.getInstance().createCriteria(User.class);
+      obCriteria.add(Expression.eq(User.PROPERTY_USERNAME, userName));
+      List<User> users = obCriteria.list();
+      if (users.size() != 0) {
+        user = users.get(0);
+      } else {
+        user = null;
+      }
+    }
+
+    public void addFail() {
+      numberOfFails++;
+      boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
+      if (lockUser) {
+        // Try to lock the user in database
+        delay = 0;
+        if (user != null) {
+          try {
+            OBContext.setAdminContext();
+
+            user.setLocked(true);
+            OBDal.getInstance().flush();
+            log4j.info(userName + " is locked");
+            return;
+          } finally {
+            OBContext.resetAsAdminContext();
+          }
+        }
+      }
     }
 
     public int getDelay() {
       return delay;
     }
 
-    public boolean isBlockedUser() {
-      return blockedUser;
+    public boolean isLockedUser() {
+      if (lockAfterTrials == 0) {
+        return false;
+      }
+      return user != null && user.isLocked();
     }
   }
 }

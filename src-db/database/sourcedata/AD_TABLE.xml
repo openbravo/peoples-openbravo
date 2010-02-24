@@ -296,8 +296,7 @@ The Language needs to be a (verified) System Language]]></HELP>
 <!--114-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--114-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--114-->  <NAME><![CDATA[ADUser]]></NAME>
-<!--114-->  <DESCRIPTION><![CDATA[User
-Maintain User within the system - Internal or Business Partner Contact]]></DESCRIPTION>
+<!--114-->  <DESCRIPTION><![CDATA[User<BR>Maintain User within the system - Internal or Business Partner Contact]]></DESCRIPTION>
 <!--114-->  <HELP><![CDATA[The User Tab defines the log in for Users who have access to the system.
 The User identifies a unique user in the system. This could be an internal user or a business partner contact]]></HELP>
 <!--114-->  <TABLENAME><![CDATA[AD_User]]></TABLENAME>
