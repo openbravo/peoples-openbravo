@@ -66,6 +66,9 @@ public class LoginHandler extends HttpBaseServlet {
         HttpSession session = req.getSession(true);
         session.setAttribute("#Authenticated_user", strUserAuth);
         session.setAttribute("#AD_SESSION_ID", sessionId);
+        // #logginigIn attribute is used in HttpSecureAppServlet to determine whether the logging
+        // process is complete or not. At this stage is not complete, we only have a user ID, but no
+        // the rest of session info: client, org, role...
         session.setAttribute("#LOGGINGIN", "Y");
         log4j.info("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
         checkLicenseAndGo(res, vars, strUserAuth, sessionId);

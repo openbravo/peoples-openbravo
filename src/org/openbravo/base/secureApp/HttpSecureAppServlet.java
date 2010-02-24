@@ -1057,10 +1057,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     if (sessionId == null) {
       sessionId = SequenceIdData.getUUID();
       sl.save(this);
-    } else {
-      sl.update(this);
+      vars.setSessionValue("#AD_Session_ID", sessionId);
     }
-    vars.setSessionValue("#AD_Session_ID", sessionId);
+
+    // Logging process is finish, remove logging flag
     vars.setSessionValue("#loggingIn", null);
   }
 
