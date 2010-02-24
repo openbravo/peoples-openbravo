@@ -85,8 +85,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   private String servletClass = this.getClass().getName();
 
   private class Variables extends VariablesHistory {
+    private String loggingIn;
+
     public Variables(HttpServletRequest request) {
       super(request);
+      loggingIn = getSessionValue("#loggingIn");
     }
 
     public void updateHistory(HttpServletRequest request) {
@@ -105,6 +108,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     public void setHistoryCommand(String strCommand) {
       final String sufix = getCurrentHistoryIndex();
       setSessionValue("reqHistory.command" + sufix, strCommand);
+    }
+
+    public boolean isLoggingIn() {
+      return loggingIn == null || loggingIn.equals("Y");
     }
   }
 
@@ -204,7 +211,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
-      if (!variables.getDBSession().equals("")) {
+      if (!variables.isLoggingIn()) {
+        // log in process is completed, check whether the session in db is still active
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
         if (!loggedOK) {
           logout(request, response);
@@ -1042,7 +1050,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         .getSessionValue("#AD_User_ID"));
 
     // session_ID should have been created in LoginHandler
-    String sessionId = (String) request.getSession(false).getAttribute("#AD_Session_ID");
+    String sessionId = vars.getDBSession();
     sl.setServerUrl(strDireccion);
     sl.setSessionID(sessionId);
 
@@ -1053,6 +1061,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       sl.update(this);
     }
     vars.setSessionValue("#AD_Session_ID", sessionId);
+    vars.setSessionValue("#loggingIn", null);
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,

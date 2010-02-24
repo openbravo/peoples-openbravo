@@ -26,6 +26,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -64,11 +65,12 @@ public class LoginHandler extends HttpBaseServlet {
       if (strUserAuth != null) {
         HttpSession session = req.getSession(true);
         session.setAttribute("#Authenticated_user", strUserAuth);
-        session.setAttribute("#AD_Session_ID", sessionId);
+        session.setAttribute("#AD_SESSION_ID", sessionId);
+        session.setAttribute("#LOGGINGIN", "Y");
         log4j.info("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
-        checkLicenseAndGo(res, vars, strUserAuth);
+        checkLicenseAndGo(res, vars, strUserAuth, sessionId);
       } else {
-        log4j.info("Failed user/password. Username: " + strUser + " -Session ID:" + sessionId);
+        log4j.info("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
         String failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", systemClient
@@ -108,7 +110,7 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
-      String strUserAuth) throws IOException {
+      String strUserAuth, String sessionId) throws IOException {
     OBContext.enableAsAdminContext();
     try {
       ActivationKey ak = new ActivationKey();
@@ -131,12 +133,14 @@ public class LoginHandler extends HttpBaseServlet {
       // We check if there is a Openbravo Professional Subscription restriction in the license,
       // or if the last rebuild didn't go well. If any of these are true, then the user is
       // allowed to login only as system administrator
-      switch (ak.checkOPSLimitations(vars.getDBSession())) {
+      switch (ak.checkOPSLimitations(sessionId)) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
         String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED", vars
             .getLanguage());
         String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", vars
             .getLanguage());
+        log4j.info("Concurrent Users Reached - Session: " + sessionId);
+        updateDBSession(sessionId, msgType.equals("Warning"), "CUR");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       case NUMBER_OF_SOFT_USERS_REACHED:
@@ -144,21 +148,28 @@ public class LoginHandler extends HttpBaseServlet {
         title = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED_TITLE", vars.getLanguage());
         action = "../security/Menu.html";
         msgType = "Warning";
+        log4j.info("Soft Users Reached - Session: " + sessionId);
+        updateDBSession(sessionId, true, "SUR");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       case OPS_INSTANCE_NOT_ACTIVE:
         msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
+        log4j.info("Innactive OBPS instance - Session: " + sessionId);
+        updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       case MODULE_EXPIRED:
         msg = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED_TITLE", vars.getLanguage());
         StringBuffer expiredMoudules = new StringBuffer();
+        log4j.info("Expired modules - Session: " + sessionId);
         for (Module module : ak.getExpiredInstalledModules()) {
           expiredMoudules.append("<br/>").append(module.getName());
+          log4j.info("  module:" + module.getName());
         }
         msg += expiredMoudules.toString();
+        updateDBSession(sessionId, msgType.equals("Warning"), "ME");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       }
@@ -172,13 +183,31 @@ public class LoginHandler extends HttpBaseServlet {
           || sysInfo.getSystemStatus().equals("RB50")) {
         String msg = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED", vars.getLanguage());
         String title = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED_TITLE", vars.getLanguage());
+        log4j.info("Tomcat not restarted");
+        updateDBSession(sessionId, true, "RT");
         goToRetry(res, vars, msg, title, "Warning", "../security/Menu.html");
       } else {
         String msg = Utility.messageBD(myPool, "LAST_BUILD_FAILED", vars.getLanguage());
         String title = Utility.messageBD(myPool, "LAST_BUILD_FAILED_TITLE", vars.getLanguage());
+        updateDBSession(sessionId, msgType.equals("Warning"), "LBF");
         goToRetry(res, vars, msg, title, msgType, action);
       }
 
+    } finally {
+      OBContext.resetAsAdminContext();
+    }
+
+  }
+
+  private void updateDBSession(String sessionId, boolean sessionActive, String status) {
+    try {
+      OBContext.enableAsAdminContext();
+      Session session = OBDal.getInstance().get(Session.class, sessionId);
+      session.setSessionActive(sessionActive);
+      session.setLoginStatus(status);
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      log4j.error("Error updating session in DB", e);
     } finally {
       OBContext.resetAsAdminContext();
     }
