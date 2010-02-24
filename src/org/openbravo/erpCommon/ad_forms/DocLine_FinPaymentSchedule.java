@@ -32,6 +32,7 @@ public class DocLine_FinPaymentSchedule extends DocLine {
   String C_INVOICE_ID = "";
   String C_ORDER_ID = "";
   String C_BPARTNER_ID = "";
+  String PrepaidAmount = "";
 
   public DocLine_FinPaymentSchedule(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
@@ -109,6 +110,14 @@ public class DocLine_FinPaymentSchedule extends DocLine {
 
   public void setC_BPARTNER_ID(String c_bpartner_id) {
     C_BPARTNER_ID = c_bpartner_id;
+  }
+
+  public String getPrepaidAmount() {
+    return PrepaidAmount;
+  }
+
+  public void setPrepaidAmount(String prepaidAmount) {
+    PrepaidAmount = prepaidAmount;
   }
 
   public String getServletInfo() {

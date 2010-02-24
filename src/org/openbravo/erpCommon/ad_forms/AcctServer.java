@@ -1457,7 +1457,7 @@ public abstract class AcctServer {
    * @return Account
    */
   public final Account getAccountBPartner(String cBPartnerId, AcctSchema as, boolean isReceipt,
-      ConnectionProvider conn) throws ServletException {
+      boolean isPrepayment, ConnectionProvider conn) throws ServletException {
 
     String strValidCombination = "";
     if (isReceipt) {
@@ -1471,8 +1471,11 @@ public abstract class AcctServer {
           CustomerAccounts.class, whereClause.toString());
       final List<CustomerAccounts> customerAccounts = obqParameters.list();
       if (customerAccounts != null && customerAccounts.size() > 0
-          && customerAccounts.get(0).getCustomerReceivablesNo() != null)
+          && customerAccounts.get(0).getCustomerReceivablesNo() != null && !isPrepayment)
         strValidCombination = customerAccounts.get(0).getCustomerReceivablesNo().getId();
+      if (customerAccounts != null && customerAccounts.size() > 0
+          && customerAccounts.get(0).getCustomerPrepayment() != null && isPrepayment)
+        strValidCombination = customerAccounts.get(0).getCustomerPrepayment().getId();
     } else {
       final StringBuilder whereClause = new StringBuilder();
 
@@ -1484,8 +1487,11 @@ public abstract class AcctServer {
           VendorAccounts.class, whereClause.toString());
       final List<VendorAccounts> vendorAccounts = obqParameters.list();
       if (vendorAccounts != null && vendorAccounts.size() > 0
-          && vendorAccounts.get(0).getVendorLiability() != null)
+          && vendorAccounts.get(0).getVendorLiability() != null && !isPrepayment)
         strValidCombination = vendorAccounts.get(0).getVendorLiability().getId();
+      if (vendorAccounts != null && vendorAccounts.size() > 0
+          && vendorAccounts.get(0).getVendorPrepayment() != null && isPrepayment)
+        strValidCombination = vendorAccounts.get(0).getVendorPrepayment().getId();
     }
     return new Account(conn, strValidCombination);
   } // getAccount

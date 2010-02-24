@@ -181,6 +181,8 @@ public class DocInvoice extends AcctServer {
         dpLine.C_Currency_ID_From = data[i].cCurrencyId;
         dpLine.isPaid = data[i].ispaid;
         dpLine.Amount = data[i].amount;
+        dpLine.PrepaidAmount = data[i].prepaidamt;
+
         list.add(dpLine);
       }
     } catch (ServletException e) {
@@ -271,8 +273,12 @@ public class DocInvoice extends AcctServer {
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, conn),
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
               this.C_Currency_ID, getConvertedAmt(m_payments[i].Amount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+              this.C_Currency_ID, getConvertedAmt(m_payments[i].PrepaidAmount,
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
@@ -323,8 +329,12 @@ public class DocInvoice extends AcctServer {
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, conn),
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
               this.C_Currency_ID, "", getConvertedAmt(m_payments[i].Amount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].PrepaidAmount,
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
@@ -376,8 +386,12 @@ public class DocInvoice extends AcctServer {
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, conn),
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
               this.C_Currency_ID, "", getConvertedAmt(m_payments[i].Amount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].PrepaidAmount,
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
@@ -425,8 +439,12 @@ public class DocInvoice extends AcctServer {
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, conn),
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
               this.C_Currency_ID, getConvertedAmt(m_payments[i].Amount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+              this.C_Currency_ID, getConvertedAmt(m_payments[i].PrepaidAmount,
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
