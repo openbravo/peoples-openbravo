@@ -72,7 +72,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6490';
+  var number = '6494';
   return number;
 }
 
@@ -2928,11 +2928,38 @@ function formElementValue(form, ElementName, Value) {
  * @returns null if not find it, or a reference to the frame DOM element
  */
 function getFrame(frameName) {
-  var op = top.opener;
-  if(op == null) {
-    return top.frames[frameName];
+  var targetFrame;
+  if (frameName == 'main') {
+    targetFrame = 'window';
+    var targetFrame_parent = 'window.parent';
+    var targetFrame_opener = 'window.opener';
+    var securityEscape = 0;
+    var securityEscapeLimit = 50;
+
+    while (eval(targetFrame) !== eval(targetFrame_opener)) {
+      while (eval(targetFrame) !== eval(targetFrame_parent)) {
+        if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+          break;
+        }
+        targetFrame = targetFrame + '.parent';
+        targetFrame_parent = targetFrame + '.parent';
+        securityEscape = securityEscape + 1;
+      }
+      if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+        break;
+      }
+      targetFrame = targetFrame + '.opener';
+      targetFrame_opener = targetFrame + '.opener';
+      securityEscape = securityEscape + 1;
+      if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
+        break;
+      }
+    }
+    targetFrame = eval(targetFrame);
+  } else {
+    targetFrame = getFrame('main').frames[frameName];
   }
-  return op.top.frames[frameName];	
+  return targetFrame;
 }
 
 /**

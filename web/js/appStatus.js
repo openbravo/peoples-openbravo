@@ -275,22 +275,24 @@ function setGridRefreshing(value) {
 }
 
 function setMenuLoading(value) {
-  var frame = top.document;
-  var frameset = frame.getElementById("framesetMenu");
-  if (!frameset) 
+  var frameContainer = getFrame('main');
+  var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+  var isRTL = frameContainer.isRTL;
+  var menuWidth = frameContainer.menuWidth;
+  if (!framesetMenu)
     return false;
   try {
     if (value == true) {
-      if (top.isRTL == true) {
-        frameset.cols = "*,0%," + top.menuWidth;
+      if (isRTL == true) {
+        framesetMenu.cols = "*,0%," + menuWidth;
       } else {
-        frameset.cols = top.menuWidth + ",0%,*";
+        framesetMenu.cols = menuWidth + ",0%,*";
       }
     } else if (value == false) {
-      if (top.isRTL == true) {
-        frameset.cols = "*," + top.menuWidth + ",0%";
+      if (isRTL == true) {
+        framesetMenu.cols = "*," + menuWidth + ",0%";
       } else {
-        frameset.cols = "0%," + top.menuWidth + ",*";
+        framesetMenu.cols = "0%," + menuWidth + ",*";
       }
     }
   }
