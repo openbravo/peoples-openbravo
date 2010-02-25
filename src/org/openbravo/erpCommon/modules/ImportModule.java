@@ -569,6 +569,16 @@ public class ImportModule {
       log4j.error(e);
     }
 
+    // Do not maintain multiple backups for different old module's version, remove old existent
+    // backups
+    for (File existentBackup : dir.listFiles()) {
+      if (existentBackup.getName().startsWith(moduleInDB.javapackage + "-")
+          && existentBackup.getName().endsWith(".zip")) {
+        log4j.info("Deleting old backup file " + existentBackup.getName());
+        Utility.deleteDir(existentBackup);
+      }
+    }
+
     // Prepare backup for updates
     if (module.getModuleID().equals("0")) { // Updating core
       // set directories to zip
