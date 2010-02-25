@@ -85,8 +85,9 @@ BEGIN
       v_scheduledamount NUMBER;
       v_invoicedamount NUMBER;
       v_notassignedamount NUMBER;
+      v_assignedamount NUMBER;
       v_scheduledetailamount NUMBER;
-      v_oldorder VARCHAR2(32) := '';
+      v_oldorder VARCHAR2(32) := '-1';
       v_payment_schedule_invoice VARCHAR2(32);
 
       CURSOR cur_order_schdet (invoice_id VARCHAR2) IS
@@ -186,15 +187,16 @@ BEGIN
               AND c_invoiceline.c_invoice_id = p_record_id
               AND c_orderline.c_order_id = order_schdet.order_id;
             --substract previously assigned amount
-            SELECT v_invoicedamount - SUM(psd.amount) INTO v_notassignedamount
+            SELECT SUM(psd.amount) INTO v_assignedamount
             FROM fin_payment_schedule ps_inv, fin_payment_scheduledetail psd,
                  fin_payment_schedule ps_ord
             WHERE ps_inv.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
               AND psd.fin_payment_schedule_order = ps_ord.fin_payment_schedule_id
               AND ps_inv.c_invoice_id = p_record_id
               AND ps_ord.c_order_id = order_schdet.order_id;
+            v_notassignedamount := COALESCE(v_invoicedamount,0) - COALESCE(v_assignedamount,0);
           END IF;
-          IF (v_notassignedamount <= 0) THEN
+          IF (v_notassignedamount != 0) THEN
             next_order := TRUE;
           END IF;
           --create a new payment schedule detail if necessary
