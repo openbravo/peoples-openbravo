@@ -72,7 +72,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6472';
+  var number = '6490';
   return number;
 }
 
@@ -3941,7 +3941,7 @@ function goToPreviousPage() {
   //if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
   //  history.back();
   //} else {
-    openLink(appUrl + 'secureApp/GoBack.html', 'appFrame');
+    openLink(appUrl + '/secureApp/GoBack.html', 'appFrame');
   //}
 }
 
@@ -4143,7 +4143,7 @@ function changeAuditStatus() {
   displayLogic();
   changeAuditIcon(strShowAudit);
   var paramXMLReq = null;
-  submitXmlHttpRequest(xx, null, 'CHANGE', appUrl + "utility/ChangeAudit", false, null, paramXMLReq);
+  submitXmlHttpRequest(xx, null, 'CHANGE', appUrl + "/utility/ChangeAudit", false, null, paramXMLReq);
   return true;
 }
 
