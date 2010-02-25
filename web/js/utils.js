@@ -30,6 +30,8 @@ var arrGeneralChange=[];
 var dateFormat;
 var defaultDateFormat = "%d-%m-%Y";
 
+var mainFrame_windowObj = "";
+
 //Days of a Month
 var daysOfMonth = [[0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],  //No leap year
                    [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]]; //Leap year
@@ -2930,32 +2932,56 @@ function formElementValue(form, ElementName, Value) {
 function getFrame(frameName) {
   var targetFrame;
   if (frameName == 'main') {
-    targetFrame = 'window';
-    var targetFrame_parent = 'window.parent';
-    var targetFrame_opener = 'window.opener';
-    var securityEscape = 0;
-    var securityEscapeLimit = 50;
-
-    while (eval(targetFrame) !== eval(targetFrame_opener)) {
-      while (eval(targetFrame) !== eval(targetFrame_parent)) {
-        if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
-          break;
+    if (mainFrame_windowObj !== "") {  //to avoid make the 'main' frame search logic several times in the same html
+      targetFrame = mainFrame_windowObj;
+    } else {
+      var success = false;
+      try {  //some typical cases to avoid go into the logic loop. try-catch to avoid security issues when executing Openbravo inside a frame or iframe
+        if (parent.frameMenu) {
+          targetFrame = window.parent;
+          success = true;
+        } else if (top.opener.parent.frameMenu) {
+          targetFrame = window.top.opener.parent;
+          success = true;
+        } else if (top.opener.top.opener.parent.frameMenu) {
+          targetFrame = window.top.opener.top.opener.parent;
+          success = true;
         }
-        targetFrame = targetFrame + '.parent';
-        targetFrame_parent = targetFrame + '.parent';
-        securityEscape = securityEscape + 1;
+      } catch (e) {
+        success = false;
       }
-      if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
-        break;
+
+      if (success == false) {
+        targetFrame = 'window';
+        var targetFrame_parent = 'window.parent';
+        var targetFrame_opener = 'window.opener';
+        var securityEscape = 0;
+        var securityEscapeLimit = 50;
+
+        while (eval(targetFrame) !== eval(targetFrame_opener)) {
+          while (eval(targetFrame) !== eval(targetFrame_parent)) {
+            if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+              break;
+            }
+            targetFrame = targetFrame + '.parent';
+            targetFrame_parent = targetFrame + '.parent';
+            securityEscape = securityEscape + 1;
+          }
+          if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+            break;
+          }
+          targetFrame = targetFrame + '.opener';
+          targetFrame_opener = targetFrame + '.opener';
+          securityEscape = securityEscape + 1;
+          if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
+            break;
+          }
+        }
+        alert(targetFrame);
+        targetFrame = eval(targetFrame);
       }
-      targetFrame = targetFrame + '.opener';
-      targetFrame_opener = targetFrame + '.opener';
-      securityEscape = securityEscape + 1;
-      if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
-        break;
-      }
+      mainFrame_windowObj = targetFrame;
     }
-    targetFrame = eval(targetFrame);
   } else {
     targetFrame = getFrame('main').frames[frameName];
   }
