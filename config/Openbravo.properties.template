@@ -146,9 +146,9 @@ safe.mode=true
 # hibernate.hbm.file=/tmp/hibernate.hbm.xml
 
 
-#################
-# Blocking user #
-#################
+###################
+# Log in security #
+###################
 
 # If these properties are set, after log in trail failed the response time 
 # will be delayed, and the user can be blocked.
