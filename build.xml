@@ -641,7 +641,7 @@ export.database: exports database structure and data to xml files.
 
   <target name="apply.module">
     <updatesystemstatus v="RB31"/>
-    <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
+    <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
     </java>
