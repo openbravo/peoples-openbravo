@@ -196,7 +196,7 @@ BEGIN
               AND ps_ord.c_order_id = order_schdet.order_id;
             v_notassignedamount := COALESCE(v_invoicedamount,0) - COALESCE(v_assignedamount,0);
           END IF;
-          IF (v_notassignedamount != 0) THEN
+          IF (v_notassignedamount <= 0) THEN
             next_order := TRUE;
           END IF;
           --create a new payment schedule detail if necessary
@@ -252,7 +252,7 @@ BEGIN
           FETCH cur_order_schdet INTO order_schdet;
           EXIT WHEN cur_order_schdet%NOTFOUND;
         END LOOP;
-        IF (v_scheduledamount > 0 ) THEN
+        IF (v_scheduledamount != 0 ) THEN
           -- no orders, insert payment schdule detail with remaining amount
           INSERT INTO fin_payment_scheduledetail
           (
