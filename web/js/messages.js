@@ -43,6 +43,9 @@ if (typeof arrMessages == "undefined") {
 	} else if (top.opener.parent.frameMenu) {
 		arrMessages = top.opener.parent.frameMenu.arrMessages;
 		arrTypes = top.opener.parent.frameMenu.arrTypes;
+	} else if (top.opener.top.opener.parent.frameMenu) {
+		arrMessages = top.opener.top.opener.parent.frameMenu.arrMessages;
+		arrTypes = top.opener.top.opener.parent.frameMenu.arrTypes;
 	} else {
     arrMessages = getFrame('frameMenu').arrMessages;
     arrTypes = getFrame('frameMenu').arrTypes;
