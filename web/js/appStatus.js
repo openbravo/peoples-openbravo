@@ -331,8 +331,8 @@ function setProcessingMode(target, value, logo) {
     }
     document.getElementById('Processing_Container_Logo').style.display = (logo?"":"none");
   } else {
-    var frame_menu = top.frames['frameMenu'];
-    var frame_window = top.frames['appFrame'];
+    var frame_menu = getFrame('frameMenu');
+    var frame_window = getFrame('appFrame');
     var menu_code = frame_menu.document.getElementsByTagName('BODY')[0].innerHTML;
     var window_code = frame_window.document.getElementsByTagName('BODY')[0].innerHTML;
     isKeyboardLocked=value;
