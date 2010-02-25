@@ -31,7 +31,7 @@
 				select B.NAME AS BANK,b.codebank, b.codebranch, b.DIGITCONTROL as digitcontrol1, ba.DIGITCONTROL as digitcontrol2,
       ba.CODEACCOUNT,
 			LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0')||B.DIGITCONTROL||ba.DIGITCONTROL||LPAD(ba.CODEACCOUNT,10,'0') AS N_CUENTA,
-      lpad(rpad(c.NAME,40,' '),46,' ') AS ENTIDAD, rpad(c.NAME,40,' ') AS ENTIDAD19, oi.TAXID AS NIF, TO_CHAR(r.Duedate  ,'DD')||TO_CHAR(r.Duedate,'MM')||TO_CHAR(r.Duedate,'YY')AS DATEPLANNED, TO_CHAR(now(), 'DD')||TO_CHAR(now(), 'MM')||TO_CHAR(now(), 'YY') AS HOY,
+      lpad(rpad(o.NAME,40,' '),46,' ') AS ENTIDAD, rpad(o.NAME,40,' ') AS ENTIDAD19, oi.TAXID AS NIF, TO_CHAR(r.Duedate  ,'DD')||TO_CHAR(r.Duedate,'MM')||TO_CHAR(r.Duedate,'YY')AS DATEPLANNED, TO_CHAR(now(), 'DD')||TO_CHAR(now(), 'MM')||TO_CHAR(now(), 'YY') AS HOY,
 			LPAD(RPAD(LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0'),74,' '),94,' ') AS ENTOFI, LPAD(B.INE_NUMBER,61,' ') AS INE,
 			'' AS TERCERO,
       '' AS FECHA_FACTURA, '' AS FECHA_VENCIMIENTO, '' AS PAYAMT, '' AS CREDITCARDNUMBER, '' AS N_FACTURA, '' AS N_FACTURA19, '' AS CIUDAD, '' AS DIRECCION,
@@ -39,9 +39,11 @@
       from c_remittance r, ad_client c,
 					 c_bankAccount		ba,
 					 c_Bank						b,
-					 ad_orgInfo				oi
+					 ad_orgInfo				oi,
+                     ad_org                 o
 		 where r.ad_client_id = c.ad_client_id
 		 	 and   r.AD_ORG_ID = oi.ad_org_id
+             and oi.ad_org_id  = o.ad_org_id
 			 and r.C_BANKACCOUNT_ID = ba.c_bankAccount_id
 			 and b.c_bank_id = ba.c_bank_Id
        and r.C_Remittance_ID = ?
