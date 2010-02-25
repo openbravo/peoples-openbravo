@@ -75,6 +75,72 @@ public class DatabaseValidator implements SystemValidator {
     final SystemValidationResult result = new SystemValidationResult();
 
     // read the tables
+    Database db = getDatabase();
+    for (int i = 0; i < db.getFunctionCount(); i++) {
+      if (db.getFunction(i).getName().length() > 30) {
+        result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+            "Name of Function " + db.getFunction(i).getName()
+                + " is too long. Only 30 characters allowed.");
+      }
+    }
+    for (int i = 0; i < db.getTriggerCount(); i++) {
+      if (db.getTrigger(i).getName().length() > 30) {
+        result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+            "Name of Trigger " + db.getTrigger(i).getName()
+                + " is too long. Only 30 characters allowed.");
+      }
+    }
+    for (int i = 0; i < db.getViewCount(); i++) {
+      if (db.getView(i).getName().length() > 30) {
+        result
+            .addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+                "Name of View " + db.getView(i).getName()
+                    + " is too long. Only 30 characters allowed.");
+      }
+    }
+
+    for (int j = 0; j < db.getTableCount(); j++) {
+      org.apache.ddlutils.model.Table dbTable = db.getTable(j);
+      if (dbTable.getName().length() > 30) {
+        result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+            "Name of table " + dbTable.getName() + " is too long. Only 30 characters allowed.");
+      }
+      for (int i = 0; i < dbTable.getColumnCount(); i++) {
+        if (dbTable.getColumn(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of column " + dbTable.getForeignKey(i).getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+      for (int i = 0; i < dbTable.getCheckCount(); i++) {
+        if (dbTable.getCheck(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of Check " + dbTable.getCheck(i).getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+      for (int i = 0; i < dbTable.getForeignKeyCount(); i++) {
+        if (dbTable.getForeignKey(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of ForeignKey " + dbTable.getForeignKey(i).getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+      for (int i = 0; i < dbTable.getIndexCount(); i++) {
+        if (dbTable.getIndex(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of Index " + dbTable.getIndex(i).getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+      for (int i = 0; i < dbTable.getUniqueCount(); i++) {
+        if (dbTable.getUnique(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of Unique " + dbTable.getUnique(i).getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+    }
 
     final OBCriteria<Table> tcs = OBDal.getInstance().createCriteria(Table.class);
     tcs.add(Expression.eq(Table.PROPERTY_VIEW, false));
@@ -108,6 +174,7 @@ public class DatabaseValidator implements SystemValidator {
       final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getDBTableName()
           .toUpperCase());
       final View view = dbViews.get(adTable.getDBTableName().toUpperCase());
+
       if (view == null && dbTable == null) {
         // in Application Dictionary not in Physical Table
         if (moduleId == null
