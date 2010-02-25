@@ -148,12 +148,6 @@
       <foreign-key foreignTable="C_PERIOD" name="C_BUDGETLINE_C_PERIOD">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_BUDGETLINE_USER1">
-        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_BUDGETLINE_USER2">
-        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_C_BUDGETLINE">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
