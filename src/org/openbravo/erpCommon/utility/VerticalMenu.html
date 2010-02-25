@@ -137,7 +137,7 @@
       }
 
       function validate(action, form, value) {
-         var appFrame = top.frames.appFrame;
+         var appFrame = getFrame('appFrame');
 
          try {
            var isUserChanges = appFrame.isUserChanges;
@@ -174,7 +174,7 @@
 
       function getForm() {
          try {
-            var appForm = top.frames.appFrame.document.forms[0];
+            var appForm = getFrame('appFrame').document.forms[0];
          } catch(e1) {
            if(isDebugEnabled()) {
              console.error("%o", e1);
@@ -182,7 +182,7 @@
          }
 
          try {
-           var loc = top.frames.appFrame.location.toString();
+           var loc = getFrame('appFrame').location.toString();
          } catch(e2) {
            if(isDebugEnabled()) {
              console.error("%o", e2);
