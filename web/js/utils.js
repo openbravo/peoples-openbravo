@@ -415,15 +415,7 @@ function setChangedField(field, form) {
  * @return true if autosave is enable, otherwise false
  */
 function isAutosaveEnabled() {
-  var autosave;
-  if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
-    if(top.opener !== null) { // is a pop-up window
-      autosave = top.opener.top.frameMenu.autosave;
-    }
-  }
-  else {
-    autosave = top.frameMenu.autosave;
-  }
+  var autosave = getFrame('frameMenu').autosave;
   return autosave;
 }
 
@@ -505,14 +497,7 @@ function checkForChanges(f) {
 	var form = f;
 	
 	if (form === null) {
-		if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
-			if(top.opener !== null) { // is a pop-up window
-				form = top.opener.top.appFrame.document.forms[0];
-			}
-		}
-		else {
-			form = top.appFrame.document.forms[0];			
-		}
+		form = getFrame('appFrame').document.forms[0];
 	}
 	
 	if(typeof form === 'undefined') {
@@ -532,12 +517,12 @@ function checkForChanges(f) {
 		return true;
 	}
 	else {
-		if(typeof top.appFrame === 'undefined'){
+		if(typeof parent.appFrame === 'undefined'){
 			return true;
 		}
 
 		try {
-		  var promptConfirmation = typeof top.appFrame.confirmOnChanges === 'undefined' ? true : top.appFrame.confirmOnChanges;
+		  var promptConfirmation = typeof parent.appFrame.confirmOnChanges === 'undefined' ? true : parent.appFrame.confirmOnChanges;
 		} catch(e) {
 		  if(isDebugEnabled()) {
             console.error("%o", e);
@@ -545,7 +530,7 @@ function checkForChanges(f) {
 		}
 
 		try {
-		  var hasUserChanges = typeof top.appFrame.isUserChanges === 'undefined' ? false : top.appFrame.isUserChanges;
+		  var hasUserChanges = typeof parent.appFrame.isUserChanges === 'undefined' ? false : parent.appFrame.isUserChanges;
 		} catch(e) {
 		  if(isDebugEnabled()) {
             console.error("%o", e);
@@ -560,8 +545,8 @@ function checkForChanges(f) {
 			var autoSaveFlag = autosave;		
 			if (promptConfirmation && hasUserChanges) {
 				autoSaveFlag = showJSMessage(25);
-				if(typeof top.appFrame.confirmOnChanges !== 'undefined' && autoSaveFlag) {
-					top.appFrame.confirmOnChanges = false;
+				if(typeof parent.appFrame.confirmOnChanges !== 'undefined' && autoSaveFlag) {
+					parent.appFrame.confirmOnChanges = false;
 				}
 			}
 			if (autoSaveFlag) {
