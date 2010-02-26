@@ -54,6 +54,15 @@
     </script>
     <script language="JavaScript" type="text/javascript">
       function onLoadDo() {
+        try {
+          if (parent.frameMenu) {
+            document.frmMenu.target = "_parent";
+          } else {
+            document.frmMenu.target = "_self";
+          }
+        } catch (e) {
+          document.frmMenu.target = "_self";
+        }
         resizeMenu();
       }
 
@@ -208,7 +217,7 @@
       </tr>
     </table>
 
-    <form name="frmMenu" action="../security/Login_FS.html" method="post" target="_top">
+    <form name="frmMenu" action="../security/Login_FS.html" method="post" target="_self">
       <input type="hidden" name="Command" /> <input type="hidden" name="inpSelected" value="" />
     </form>
   </body>
