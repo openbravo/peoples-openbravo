@@ -30148,7 +30148,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <VALUE><![CDATA[JS24]]></VALUE>
-<!--2E175A7785AD4313B24D3E9034B05BAD-->  <MSGTEXT><![CDATA[The data can be incomplete because the server not replayed at specified time. Check the connection with the server. ]]></MSGTEXT>
+<!--2E175A7785AD4313B24D3E9034B05BAD-->  <MSGTEXT><![CDATA[Server is taking too long to respond. Data shown could be incomplete, please check the connection with the server and try again.]]></MSGTEXT>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2E175A7785AD4313B24D3E9034B05BAD--></AD_MESSAGE>
