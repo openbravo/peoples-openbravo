@@ -837,7 +837,6 @@ public class ImportModule {
 
     for (final DynaBean module : dModulesToInstall) {
       seqNo += 10;
-      module.set("ISINDEVELOPMENT", "Y");
       module.set("ISDEFAULT", "N");
       module.set("STATUS", "I");
       module.set("SEQNO", seqNo);
