@@ -2206,13 +2206,13 @@ function selectCombo(combo, key) {
 * @see #changeClass
 */
 function updateMenuIcon(id) {
-  if (!top.frameMenu) return false;
+  if (!parent.frameMenu) return false;
   else {
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) return false;
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) return false;
     try {
-      if (top.isMenuHide==true) changeClass(id, "_hide", "_show", true);
+      if (frameContainer.isMenuHide==true) changeClass(id, "_hide", "_show", true);
       else changeClass(id, "_show", "_hide", true);
     } catch (ignored) {}
     return true;
@@ -2227,10 +2227,11 @@ function updateMenuIcon(id) {
 * @see #changeClass
 */
 function menuShowHide(id) {
-  if (!top.frameMenu) {
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
-    if (top.isMenuHide == true) {
+    var frameContainer = getFrame('main');
+    if (frameContainer.isMenuHide == true) {
       menuShow(id);
     } else {
       menuHide(id);
@@ -2247,23 +2248,23 @@ function menuShowHide(id) {
 * @see #changeClass
 */
 function menuShow(id) {
-  if (!top.frameMenu) {
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
     if (id==null) {
       id = 'buttonMenu';
     }
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) {
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) {
       return false;
     }
-    if (top.isRTL == true) {
-      frameset.cols = "*," + top.menuWidth + ",0%";
+    if (frameContainer.isRTL == true) {
+      framesetMenu.cols = "*," + frameContainer.menuWidth + ",0%";
     } else {
-      frameset.cols = "0%," + top.menuWidth + ",*";
+      framesetMenu.cols = "0%," + frameContainer.menuWidth + ",*";
     }
-    top.isMenuHide = false;
+    frameContainer.isMenuHide = false;
     try {
       putFocusOnMenu();
     } catch(e) {
@@ -2283,23 +2284,23 @@ function menuShow(id) {
 * @see #changeClass
 */
 function menuHide(id) {
-  if (!top.frameMenu) {
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
     if (id==null) {
       id = 'buttonMenu';
     }
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) {
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) {
       return false;
     }
-    if (top.isRTL == true) {
-      frameset.cols = "*,0%,0%";
+    if (frameContainer.isRTL == true) {
+      framesetMenu.cols = "*,0%,0%";
     } else {
-      frameset.cols = "0%,0%,*";
+      framesetMenu.cols = "0%,0%,*";
     }
-    top.isMenuHide = true;
+    frameContainer.isMenuHide = true;
     try {
       putFocusOnWindow();
     } catch(e) {
@@ -2356,10 +2357,10 @@ function menuExpandCollapse() {
 }
 
 function getMenuExpandCollapse_status() {
-//  alert(top.frameMenu.getElementById('paramfieldDesplegar').getAttribute('id'));
+//  alert(getFrame('frameMenu').getElementById('paramfieldDesplegar').getAttribute('id'));
   var menuExpandCollapse_status;
-  if (top.frames['frameMenu'].document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
-  if (top.frames['frameMenu'].document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
+  if (getFrame('frameMenu').document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
+  if (getFrame('frameMenu').document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
   return menuExpandCollapse_status;
 }
 
