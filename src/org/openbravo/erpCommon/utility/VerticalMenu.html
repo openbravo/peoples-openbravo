@@ -91,7 +91,6 @@
       }
       
       function updateData() {
-        //var frm = document.frmTotalPedido;
         var paramXMLReq = null;
         return submitXmlHttpRequestWithParams(callback, null, 'ALERT', "VerticalMenu.html", false, "&ignoreForSessionTimeout=1", paramXMLReq);
       }
@@ -99,6 +98,9 @@
       function updateAlert()
       {
           updateData();
+          //Frequency of call to update alert is hardcoded to each 50s.
+          //This is used to update the number of active alerts as well as to know whether
+          //browser is still open to control active sessions. 
           setTimeout("updateAlert()", 50000);
       }
 
