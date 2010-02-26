@@ -2404,20 +2404,20 @@ function isVisibleElement(obj, appWindow) {
 
 function executeWindowButton(id,focus) {
   if (focus==null) focus=false;
-  var appWindow = top;
-  if(top.frames['appFrame'] || top.frames['frameMenu']) {
-    appWindow = top.frames['appFrame'];
-  } else if (top.frames['superior']) {
-    appWindow = top.frames['superior'];
-  } else if (top.frames['frameSuperior']) {
-    appWindow = top.frames['frameSuperior'];
-  } else if (top.frames['frameButton']) {
-    appWindow = top.frames['frameButton'];
-  } else if (top.frames['mainframe']) {
-    appWindow = top.frames['mainframe'];
+  var appWindow = parent;
+  if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
+    appWindow = parent.frames['appFrame'];
+  } else if (parent.frames['superior']) {
+    appWindow = parent.frames['superior'];
+  } else if (parent.frames['frameSuperior']) {
+    appWindow = parent.frames['frameSuperior'];
+  } else if (parent.frames['frameButton']) {
+    appWindow = parent.frames['frameButton'];
+  } else if (parent.frames['mainframe']) {
+    appWindow = parent.frames['mainframe'];
   }
   if (window.location.href.indexOf('ad_forms/Role.html') != -1) { //Exception for "Role" window
-    appWindow = top;
+    appWindow = parent;
   }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();
@@ -2427,9 +2427,9 @@ function executeWindowButton(id,focus) {
 }
 
 function executeMenuButton(id) {
-  var appWindow = top;
-  if(top.frames['appFrame'] || top.frames['frameMenu']) {
-    appWindow = top.frames['frameMenu'];
+  var appWindow = parent;
+  if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
+    appWindow = parent.frames['frameMenu'];
   } 
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     appWindow.document.getElementById(id).onclick();
@@ -2451,7 +2451,7 @@ function getAppUrl() {
 * @param {Boolean} grow If the window should 'grow' or set the new size immediately
 */
 function progressiveHideMenu(id, topSize, newSize, grow) {
-  var frame = top.document;
+  var frame = parent.document;
   var object = frame.getElementById(id);
   if (newSize==null) {
     var sizes = object.cols.split(",");
