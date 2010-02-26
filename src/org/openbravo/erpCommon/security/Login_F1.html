@@ -52,13 +52,13 @@ function buttonOK_click() {
 function redirectWhenPopup() {
   var permission = false;
   try {
-    if (top.opener.top.frames['appFrame']) {
+    if (top.opener.parent.frames['appFrame']) {
       permission = true;
     }
   }
   catch (e) {}
   if (top.opener && permission) {
-    top.opener.top.location.href = top.document.location.href;
+    top.opener.parent.location.href = top.document.location.href;
     top.window.close();
   }
 }

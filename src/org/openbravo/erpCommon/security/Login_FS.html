@@ -29,14 +29,14 @@
 <script language="JavaScript" type="text/javascript">
   function onMenuFocusDo() {
     try {
-      top.frames['frameMenu'].onFocusMenu();
+      parent.frames['frameMenu'].onFocusMenu();
       return true;
     } catch (e) {
     }
   }
   function onMenuBlurDo() {
     try {
-      top.frames['frameMenu'].onBlurMenu();
+      parent.frames['frameMenu'].onBlurMenu();
       return true;
     } catch (e) {
     }
