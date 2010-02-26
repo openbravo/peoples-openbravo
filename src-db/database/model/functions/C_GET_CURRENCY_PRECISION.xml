@@ -41,9 +41,9 @@ BEGIN
   WHERE C_Currency_ID = p_CurTo_ID;
    IF(p_prec_type = 'P') THEN
     RETURN v_PricePrecision;
-   ELSEIF(p_prec_type = 'C') THEN
+   ELSIF(p_prec_type = 'C') THEN
     RETURN v_CostPrecision;
-   ELSEIF(p_prec_type = 'A') THEN
+   ELSIF(p_prec_type = 'A') THEN
     RETURN v_StdPrecision;
   END IF;
 END C_GET_CURRENCY_PRECISION
