@@ -136,7 +136,7 @@ export.database.structure: Exports the database structure in the xml's files.
   </target>
 
   <target name="update.database.script">
-    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}"  basedir="${base.modules}/" dirFilter="*/src-db/database/model/" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
+    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}"  basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
   </target>
 
   <target name="export.database.structure">
