@@ -2384,7 +2384,7 @@ function menuAlerts() {
 
 function isVisibleElement(obj, appWindow) {
   if (appWindow == null || appWindow == 'null' || appWindow == '') {
-    appWindow = top;
+    appWindow = getFrame('main');
   }
   var parentElement = obj;
   try {
