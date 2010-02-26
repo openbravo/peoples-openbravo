@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -238,8 +238,8 @@ public class ComboTableData {
         if (!Utility.isUUIDString(_reference)) {
           // Looking reference by name! This shouldn't be used, name is prone to change. It only
           // looks in core names
-          _reference = ComboTableQueryData.getReferenceID(getPool(), _reference,
-              getReferenceType());
+          _reference = ComboTableQueryData
+              .getReferenceID(getPool(), _reference, getReferenceType());
           if (_reference == null || _reference.equals("")) {
             throw new OBException(Utility.messageBD(pool, "ReferenceNotFound", vars.getLanguage())
                 + " " + _reference);
@@ -688,6 +688,7 @@ public class ComboTableData {
           "ISACTIVE");
       addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
     }
+    addOrderByField("td" + myIndex + ".SeqNo");
     addOrderByField("(CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex
         + ".name ELSE td_trl" + myIndex + ".name END)");
   }
