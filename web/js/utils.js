@@ -2947,6 +2947,7 @@ function getFrame(frameName) {
         while (eval(targetFrame) !== eval(targetFrame_opener)) {
           while (eval(targetFrame) !== eval(targetFrame_parent)) {
             if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+              success = true;
               break;
             }
             targetFrame = targetFrame + '.parent';
@@ -2954,6 +2955,7 @@ function getFrame(frameName) {
             securityEscape = securityEscape + 1;
           }
           if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+            success = true;
             break;
           }
           targetFrame = targetFrame + '.opener';
@@ -2965,6 +2967,9 @@ function getFrame(frameName) {
         }
         alert(targetFrame);
         targetFrame = eval(targetFrame);
+      }
+      if (success == false) {
+        targetFrame = null;
       }
       mainFrame_windowObj = targetFrame;
     }
