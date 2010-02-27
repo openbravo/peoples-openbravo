@@ -51,6 +51,20 @@
         mnu.style.display = "";
       }
 
+      function buttonLogout_click() {
+        var target;
+        try {
+          if (parent.frameMenu) {
+            target = "_parent";
+          } else {
+            target = "_self";
+          }
+        } catch (e) {
+          target = "_self";
+        }
+        submitCommandForm('DEFAULT', false, null, '../security/Logout.html', target)
+        return false;
+      }
     </script>
     <script language="JavaScript" type="text/javascript">
       function onLoadDo() {
@@ -132,7 +146,7 @@
               <td colspan="2" class="Menu_ToolBar_textlabel_bg_body"><nobr><a class="Menu_ToolBar_text_username" href="#" onclick="menuUserOptions();"><span id="fieldUserName">Loading</span></a><nobr></td>
 
               <td width="1" class="Menu_ToolBar_textlabel_bg_right">
-                <a class="Menu_ToolBar_Button" href="#" onclick="menuQuit();" onmouseover="window.status='Close session';return true;" onmouseout="window.status='';return true;" id="buttonQuit"><img class="Menu_ToolBar_Button_Icon Menu_ToolBar_Button_Icon_logout" src="../../../../../web/images/blank.gif" onclick="submitCommandForm('DEFAULT', false, null, '../security/Logout.html', '_top');return false;" border="0" alt="Close session" title="Close session" /></a>
+                <a class="Menu_ToolBar_Button" href="#" onclick="menuQuit();" onmouseover="window.status='Close session';return true;" onmouseout="window.status='';return true;" id="buttonQuit"><img class="Menu_ToolBar_Button_Icon Menu_ToolBar_Button_Icon_logout" src="../../../../../web/images/blank.gif" onclick="buttonLogout_click();return false;" border="0" alt="Close session" title="Close session" /></a>
               </td>
 
               <td class="Menu_ToolBar_Space"></td>
