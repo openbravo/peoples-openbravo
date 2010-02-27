@@ -45,8 +45,18 @@ function validate(action)
 function onloadFunctions() {
 }
 function buttonOK_click() {
-    submitCommandForm('DEFAULT', false, null, '../secureApp/LoginHandler.html', '_top', true);
-    return false;
+  var target;
+  try {
+    if (parent.frameMenu) {
+      target = "_parent";
+    } else {
+      target = "_self";
+    }
+  } catch (e) {
+    target = "_self";
+  }
+  submitCommandForm('DEFAULT', false, null, '../secureApp/LoginHandler.html', target, true);
+  return false;
 }
 
 function redirectWhenPopup() {
