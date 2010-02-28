@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6529';
+  var number = '6531';
   return number;
 }
 
@@ -2975,7 +2975,6 @@ function getFrame(frameName) {
             break;
           }
         }
-        alert(targetFrame);
         targetFrame = eval(targetFrame);
       }
       if (success == false) {

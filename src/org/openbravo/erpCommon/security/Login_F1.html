@@ -88,7 +88,7 @@ function redirectWhenPopup() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if ((!revisionControl('6529')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('6531')) || (isOpsInstance() != isOpsInstanceCached())) {
       alert("Your browser's cache has outdated files. Please clean it and reload the page.");
     }
 
@@ -135,7 +135,7 @@ function redirectWhenPopup() {
 
       <div class="Login_ContentPane" style="overflow: auto;" id="client">
 
-        <table>
+        <table class="Login_ContentPane_Container_Table">
 
           <tr class="Login_Block_Separator_Top"><td></td></tr>
 

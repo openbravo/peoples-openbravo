@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,6 +94,10 @@ function selectFilters(params) {
    document.getElementById("grid_sample").style.display = "block";
    var grid_header_height = document.getElementById("grid_sample_header").clientHeight + 1;
    var grid_row_height = document.getElementById("grid_sample_row").clientHeight + 1;
+   if (getBrowserInfo('name').toUpperCase().indexOf("CHROME") != -1 || getBrowserInfo('name').toUpperCase().indexOf("SAFARI") != -1) {
+     grid_header_height = grid_header_height + 1;
+     grid_row_height = grid_row_height - 1;
+   }
    var messagebox_cont = document.getElementById("messageBoxID");
    var related_info_cont = document.getElementById("related_info_cont");
    var client_height = document.getElementById("client").clientHeight;
@@ -180,7 +184,7 @@ function selectFilters(params) {
     <td class="MessageBox_LeftMargin"></td>
     <td>
 
-      <table cellpadding="0" cellspacing="0" style="width: 100%;">
+      <table cellpadding="0" cellspacing="0" style="width: 100%; height: 100%">
         <tbody>
         <tr>
           <td class="MessageBox_LeftTrans">

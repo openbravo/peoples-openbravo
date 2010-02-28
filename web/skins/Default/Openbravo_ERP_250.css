@@ -2704,6 +2704,7 @@ a.FieldButtonLink_focus table.FieldButton .FieldButton_bg, table.FieldButton_foc
 
 table.FieldGroup {
   border: none;
+  width: 100%;
 }
 
 .FieldGroup_TopMargin {
@@ -2732,7 +2733,7 @@ table.FieldGroup {
   background-position: center center;
   background-image: url(Common/FieldGroup/labelBody.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
   white-space: nowrap;
-  text-align: left; /*~RTL   text-align: right; */
+  text-align: center;
   font-size: 8pt;
   color: #FFFFFF;
   font-weight: bold;
@@ -2766,6 +2767,19 @@ table.FieldGroup {
   border-top-style: none;
   vertical-align: middle;
 }
+
+.FieldGroupContent_Empty {
+  background-repeat: repeat-x;
+  background-position: center center;
+  width: 99%;
+  white-space: nowrap;
+  border-bottom-style: none;
+  border-left-style: none;
+  border-right-style: none;
+  border-top-style: none;
+  vertical-align: middle;
+}
+
 
 /*
  *************************
@@ -4527,8 +4541,7 @@ td.DimensionUDArrows_ContentCell {
 .Button_CenterAlign_ContentCell {
   border: 0px none;
   vertical-align: top;
-  text-align: -moz-center;
-  _text-align: center;
+  text-align: center;
   padding-top: 3px;
   _padding-top: 1px;
   border-collapse: collapse;
@@ -4538,8 +4551,7 @@ td.DimensionUDArrows_ContentCell {
 .Button_RightAlign_ContentCell {
   border: 0px none;
   vertical-align: top;
-  text-align: -moz-right; /*~RTL   text-align: -moz-left; */ 
-  _text-align: right; /*~RTL   _text-align: left; */
+  text-align: right; /*~RTL   text-align: left; */
   padding-right: 6px; /*~RTL   padding-left: 6px; */
   padding-top: 3px;
   _padding-top: 1px;
@@ -5186,6 +5198,10 @@ td.TextBox_MsgContainerVt_td {
   background-color: #505050;
 }
 
+.Login_ContentPane_Container_Table {
+  margin: 0 auto;
+}
+
 table.Login_TableEdition {
   vertical-align: middle;
   text-align: -moz-center;
@@ -5264,8 +5280,7 @@ table.Login_Home_TableEdition {
 
 td.Login_Home_Logo {
   vertical-align: middle;
-  text-align: -moz-center;
-  _text-align: center;
+  text-align: center;
   padding-bottom: 100px;
   border: 0px none;
   border-collapse: collapse;
@@ -5275,6 +5290,7 @@ td.Login_Home_Logo {
 .Login_Home_Logo_Icon {
   height: 217;
   width: 608;
+  margin: 0 auto;
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(../../../../utility/ShowImageLogo?logo=yourcompanybig);
@@ -8600,9 +8616,8 @@ a.Menu_ToolBar_Button:active {
 
 .Popup_Client_TableWorkflow {
   border: 0px none;
+  margin: 0 auto;
   margin-top: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
   margin-bottom: 20px;
   background-color : #E8E8E8;
   width: 290px;
@@ -8973,14 +8988,12 @@ a.Popup_Client_UserOps_LabelLink_Selected_focus {
 */
 
 td.Popup_Workflow_Button_ContentCell {
-  text-align: -moz-right;
-  _text-align: right;
+  text-align: right;
   padding: 5px 15px 5px 0px;
 }
 
 td.Popup_Workflow_arrow_ContentCell {
-  text-align: -moz-right;
-  _text-align: right;
+  text-align: right;
   padding: 4px 32px 2px 0px;
 }
 
@@ -8990,6 +9003,7 @@ td.Popup_Workflow_text_ContentCell {
 .Popup_Workflow_arrow {
   width: 10px;
   height: 10px;
+  margin-left: auto;
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Popup/_ParticularItems/Workflow/arrow.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
@@ -9029,8 +9043,7 @@ a.Popup_Workflow_text_focus {
 /* Buttons definition for ToolBar */
 a.Popup_Workflow_Button {
   display: block;
-  margin-left: 0px;
-  margin-right: 0px;
+  margin-left: auto;
   width: 44px;
   height: 44px;
   border: 0px;
@@ -9059,8 +9072,7 @@ a.Popup_Workflow_Button:active {
 
 a.Popup_Workflow_Button_focus {
   display: block;
-  margin-left: 0px;
-  margin-right: 0px;
+  margin-left: auto;
   width: 44px;
   height: 44px;
   border: 0px;
