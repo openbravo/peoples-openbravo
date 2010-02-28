@@ -2372,7 +2372,17 @@ function menuUserOptions() {
 
 function menuQuit() {
   var appUrl = getAppUrl();
-  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', '_top');
+  var target;
+  try {
+    if (parent.frameMenu) {
+      target = "_parent";
+    } else {
+      target = "_self";
+    }
+  } catch (e) {
+    target = "_self";
+  }
+  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', target);
   return false;
 }
 
