@@ -5660,9 +5660,27 @@ a.Main_LeftTabsBar_ButtonLeft {
   border: 0px;
   vertical-align: middle;
   -moz-outline-style: none;
+  outline: none;
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Main/LeftTabsBar/leftbutton.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+a.Main_LeftTabsBar_ButtonLeft_hidden {
+  display: block;
+  margin-left: 0px;
+  margin-right: 0px;
+  width: 25px;
+  height: 44px;
+  border: 0px;
+  vertical-align: middle;
+  -moz-outline-style: none;
+  outline: none;
+  text-decoration: none;
+  cursor: default;
+  background-repeat: repeat-y;
+  background-position: top left;
+  background-image: url(Main/LeftTabsBar/backgroundBorder.png);  /** sprite-ref: xxspritexx_H; sprite-alignment-ltr: repeat; */
 }
 
 a.Main_LeftTabsBar_ButtonLeft:visited {
@@ -5727,6 +5745,7 @@ a.Main_LeftTabsBar_ButtonRight {
   border: 0px;
   vertical-align: middle;
   -moz-outline-style: none;
+  outline: none;
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Main/LeftTabsBar/rightbutton.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
@@ -5745,6 +5764,7 @@ a.Main_LeftTabsBar_ButtonRight:active {
   background-position: center center;
   background-image: url(Main/LeftTabsBar/rightbutton.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
   -moz-outline-style: none;
+  outline: none;
 }
 
 .Main_LeftTabsBar_ButtonRight_selected {

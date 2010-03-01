@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6531';
+  var number = '6538';
   return number;
 }
 
@@ -1812,6 +1812,28 @@ function getObjChild(obj) {
 }
 
 /**
+* Returns the object parent of a HTML object
+* @param {obj} object
+* @returns the object if exist. Else it returns false
+* @type Object
+*/
+function getObjParent(obj) {
+  try {
+    obj = obj.parentNode;
+    for (;;) {
+      if (obj.nodeType != '1') {
+        obj = obj.parentNode;
+      } else {
+        break;
+      }
+    }
+    return obj;
+  } catch(e) {
+    return false;
+  }
+}
+
+/**
 * Fills a combo with a data from an Array. Allows to set a default selected item, defined as boolean field in the Array.
 * @param {Object} combo A reference to the combo object.
 * @param {Array} dataArray Array containing the data for the combo. The structure of the array must be value, text, selected. Value is value of the item, text the string that will show the combo, an selected a boolean value to set if the item should appear selected.
@@ -2200,23 +2222,76 @@ function selectCombo(combo, key) {
 
 /**
 * Function Description
+* Hides the button to show/hide the menu
+* @param {String} id The ID of the element
+*/
+function hideMenuIcon(id) {
+  var imgTag = document.getElementById(id);
+  var aTag = getObjParent(imgTag);
+  if (parent.frameMenu) {
+    getFrame('main').isMenuBlock=true;
+  }
+  if (aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") == -1) {
+    aTag.className = "Main_LeftTabsBar_ButtonLeft_hidden";
+    imgTag.className = "Main_LeftTabsBar_ButtonLeft_Icon";
+    disableAttributeWithFunction(aTag, 'obj', 'onclick');
+  }
+}
+
+/**
+* Function Description
+* Shows the button to show/hide the menu
+* @param {String} id The ID of the element
+*/
+function showMenuIcon(id) {
+  var imgTag = document.getElementById(id);
+  var aTag = getObjParent(imgTag);
+  if (parent.frameMenu) {
+    getFrame('main').isMenuBlock=false;
+  }
+  if (aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") != -1) {
+    aTag.className = "Main_LeftTabsBar_ButtonLeft";
+    imgTag.className = "Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide";
+    enableAttributeWithFunction(aTag, 'obj', 'onclick');
+    updateMenuIcon(id);
+  }
+}
+
+/**
+* Function Description
 * Shows or hides a window in the application
 * @param {String} id The ID of the element
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
 function updateMenuIcon(id) {
-  if (!parent.frameMenu) return false;
+  if (!parent.frameMenu) {
+    hideMenuIcon(id);
+    return false;
+  }
   else {
     var frameContainer = getFrame('main');
     var framesetMenu = frameContainer.document.getElementById("framesetMenu");
     if (!framesetMenu) return false;
     try {
-      if (frameContainer.isMenuHide==true) changeClass(id, "_hide", "_show", true);
-      else changeClass(id, "_show", "_hide", true);
-    } catch (ignored) {}
+      if (frameContainer.isMenuBlock==true) {
+        menuHide(id, false);
+        hideMenuIcon(id);
+      } else {
+        showMenuIcon(id);
+      }
+    } catch (ignored) {
+    }
+    try {
+      if (frameContainer.isMenuHide==true && frameContainer.isMenuBlock==false) {
+        changeClass(id, "_hide", "_show", true);
+      } else {
+        changeClass(id, "_show", "_hide", true);
+      }
+    } catch (ignored) {
+    }
     return true;
-  } 
+  }
 }
 
 /**
@@ -2247,7 +2322,11 @@ function menuShowHide(id) {
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
-function menuShow(id) {
+function menuShow(id, updateIcon) {
+  if (typeof updateIcon === "undefined" || updateIcon === null || updateIcon === "null" || updateIcon === "") {
+    updateIcon = true;
+  }
+
   if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
@@ -2269,9 +2348,11 @@ function menuShow(id) {
       putFocusOnMenu();
     } catch(e) {
     }
-    try {
-      updateMenuIcon(id);
-    } catch (e) {}
+    if (updateIcon != false) {
+      try {
+        updateMenuIcon(id);
+      } catch (e) {}
+    }
     return true;
   }
 }
@@ -2283,7 +2364,11 @@ function menuShow(id) {
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
-function menuHide(id) {
+function menuHide(id, updateIcon) {
+  if (typeof updateIcon === "undefined" || updateIcon === null || updateIcon === "null" || updateIcon === "") {
+    updateIcon = true;
+  }
+
   if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
@@ -2305,9 +2390,11 @@ function menuHide(id) {
       putFocusOnWindow();
     } catch(e) {
     }
-    try {
-      updateMenuIcon(id);
-    } catch (e) {}
+    if (updateIcon != false) {
+      try {
+        updateMenuIcon(id);
+      } catch (e) {}
+    }
     return true;
   }
 }
