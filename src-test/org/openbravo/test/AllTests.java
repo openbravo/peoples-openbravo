@@ -32,6 +32,7 @@ import org.openbravo.test.dal.DynamicEntityTest;
 import org.openbravo.test.dal.HiddenUpdateTest;
 import org.openbravo.test.dal.IssuesTest;
 import org.openbravo.test.dal.MappingGenerationTest;
+import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.model.ClassLoaderTest;
@@ -74,6 +75,7 @@ public class AllTests {
     suite.addTestSuite(DalConnectionProviderTest.class);
     suite.addTestSuite(DalCopyTest.class);
     suite.addTestSuite(DalStoredProcedureTest.class);
+    suite.addTestSuite(ReadByNameTest.class);
 
     // model
     suite.addTestSuite(RuntimeModelTest.class);
