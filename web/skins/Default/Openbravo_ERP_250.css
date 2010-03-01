@@ -3262,6 +3262,11 @@ td.MessageBox_RightMargin {
   width: 20px;
 }
 
+table.MessageBox_Container {
+  width: 100%;
+  height: 100%;
+}
+
 
 /* Error CSS */
 
