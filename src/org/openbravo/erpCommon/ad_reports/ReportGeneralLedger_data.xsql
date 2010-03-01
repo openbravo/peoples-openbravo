@@ -248,7 +248,6 @@
         WHERE Y.C_YEAR_ID = P.C_YEAR_ID
           AND P.C_PERIOD_ID = PC.C_PERIOD_ID
           AND P.STARTDATE <= TO_DATE(?)
-          AND PC.PERIODSTATUS = 'O'
           AND PC.AD_CLIENT_ID IN ('1')
           AND PC.AD_ORG_ID IN ('1')
         GROUP BY Y.YEAR
