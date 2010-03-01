@@ -58,7 +58,7 @@
         (SELECT COST
         FROM M_COSTING
         WHERE DATEFROM <= p_MovementDate
-          AND DATETO >= p_MovementDate
+          AND DATETO > p_MovementDate
           AND M_PRODUCT_ID = p_Product_ID
           AND(v_CostType IS NULL
           OR v_CostType = COSTTYPE)
