@@ -398,6 +398,7 @@ public class ImportModule {
     RemoteModule remoteModule = ModuleUtiltiy.getRemoteModule(this, module.getModuleVersionID());
 
     if (remoteModule.isError()) {
+      addLog(module.getName(), MSG_ERROR);
       log4j.error("Error downloading module");
       return false;
     }
