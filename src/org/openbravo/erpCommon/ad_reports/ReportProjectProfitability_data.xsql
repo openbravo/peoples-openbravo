@@ -28,15 +28,24 @@
       <![CDATA[
         SELECT P.NAME AS PROJECTNAME, P.DATECONTRACT AS INITDATE, BPRESP.NAME AS RESPONSIBLE,
           P.AD_ORG_ID AS ORG, BPCLIENT.NAME AS PARTNER, ORG.NAME AS ORGNAME,PT.NAME AS PROJECTTYPE,
-          C_CURRENCY_ISOSYM(?) AS CONVISOSYM, 
+          C_CURRENCY_ISOSYM(?) AS CONVISOSYM,
+
           C_CURRENCY_CONVERT(COALESCE(P.SERVREVENUE,0), P.C_CURRENCY_ID, ?, TO_DATE(COALESCE(P.DATECONTRACT, P.DATEFINISH, NOW())), NULL, P.AD_CLIENT_ID, P.AD_ORG_ID) AS PLANREVENUE, 
-          C_CURRENCY_CONVERT(COALESCE(P.SERVCOST,0), P.C_CURRENCY_ID, ?, TO_DATE(COALESCE(P.DATECONTRACT, P.DATEFINISH, NOW())), NULL, P.AD_CLIENT_ID, P.AD_ORG_ID) AS PLANCOST, 
+          C_CURRENCY_CONVERT(COALESCE(P.SERVCOST,0), P.C_CURRENCY_ID, ?, TO_DATE(COALESCE(P.DATECONTRACT, P.DATEFINISH, NOW())), NULL, P.AD_CLIENT_ID, P.AD_ORG_ID) AS PLANCOST,
+          C_CURRENCY_CONVERT(COALESCE(P.SERVSERCOST,0), P.C_CURRENCY_ID, ?, TO_DATE(COALESCE(P.DATECONTRACT, P.DATEFINISH, NOW())), NULL, P.AD_CLIENT_ID, P.AD_ORG_ID) AS PLANSERVICES,
+          C_CURRENCY_CONVERT(COALESCE(P.SERVOUTCOST,0), P.C_CURRENCY_ID, ?, TO_DATE(COALESCE(P.DATECONTRACT, P.DATEFINISH, NOW())), NULL, P.AD_CLIENT_ID, P.AD_ORG_ID) AS PLANOUTSOURCED,
+
           C_CURRENCY_CONVERT(COALESCE(P.EXPREINVOICING,0), P.C_CURRENCY_ID, ?, TO_DATE(COALESCE(P.DATECONTRACT, P.DATEFINISH, NOW())), NULL, P.AD_CLIENT_ID, P.AD_ORG_ID) AS PLANREINVOICING, 
           C_CURRENCY_CONVERT(COALESCE(P.EXPEXPENSES,0), P.C_CURRENCY_ID, ?, TO_DATE(COALESCE(P.DATECONTRACT, P.DATEFINISH, NOW())), NULL, P.AD_CLIENT_ID, P.AD_ORG_ID) AS PLANEXPENSES,
+
           COALESCE(SERREV.AMOUNT,0) AS REALREVENUE, 
-          COALESCE(COST.COST,0) AS REALCOST, 
+          (COALESCE(COST.COST,0) + COALESCE(SEROUT.AMOUNT,0)) AS REALCOST,
+          COALESCE(COST.COST,0) AS REALSERVICES,
+          COALESCE(SEROUT.AMOUNT,0) AS REALOUTSOURCED,
+
           COALESCE(EXPREI.AMOUNT,0) AS REALREINVOICED, 
           COALESCE(EXPEXP.AMOUNT,0) AS REALEXPENSES,
+
           COALESCE(COLLECTED.AMOUNT,0) AS COLLECTED, 
           '' AS NODE_ID, '' AS ISSUMMARY
         FROM C_BPartner bpclient, AD_Org org, 
@@ -52,6 +61,7 @@
            AND S_TimeExpense.Processed = 'Y'
            AND 1=1            
            GROUP BY S_TimeExpenseLine.C_Project_ID) cost ON p.C_Project_ID = cost.C_Project_ID
+
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ia.c_project_id ELSE ila.c_project_id END AS C_Project,
@@ -102,6 +112,7 @@
              AND il.c_invoice_discount_id IS NULL
              AND p.producttype <> 'S') BBB
            GROUP BY c_Project) exprei ON p.C_Project_ID = exprei.C_Project
+
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ic.c_project_id ELSE ila.c_project_id END AS C_Project,
@@ -123,8 +134,38 @@
              AND ic.AD_Org_ID IN ('3')
              AND ic.AD_Client_ID IN ('3')
              AND (ila.c_project_id IS NOT NULL OR ic.c_project_id IS NOT NULL)
-             AND ic.issotrx = 'N') CCC
+             AND ic.issotrx = 'N'
+             AND p.producttype <> 'S') CCC
            GROUP BY c_Project) expexp ON p.C_Project_ID = expexp.C_Project
+
+                      LEFT JOIN (SELECT c_Project, sum(amount) as amount
+           FROM (
+           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ie.c_project_id ELSE ila.c_project_id END AS C_Project,
+                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL
+                  THEN COALESCE(C_CURRENCY_CONVERT(il.linenetamt, ie.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ie.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID),0) *
+                  (1 + (CASE WHEN ie.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ie.totallines, ie.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ie.DATEINVOICED, NOW())), NULL, ie.AD_CLIENT_ID, ie.AD_ORG_ID) - disc.dis_amt)) END))
+                  ELSE COALESCE(C_CURRENCY_CONVERT(ila.amt, ie.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ie.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID),0) *
+                  (1 + (CASE WHEN ie.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ie.totallines, ie.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ie.DATEINVOICED, NOW())), NULL, ie.AD_CLIENT_ID, ie.AD_ORG_ID) - disc.dis_amt)) END)) END AS amount
+           FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
+             C_Invoice ie left join (SELECT il.c_invoice_id, sum(C_CURRENCY_CONVERT(il.linenetamt, ie.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ie.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID)) as dis_amt
+                                      FROM c_invoiceline il, c_invoice ie
+                                      WHERE il.c_invoice_discount_id IS NOT NULL
+                                      AND il.c_invoice_id= ie.c_invoice_id
+                                      GROUP BY il.c_invoice_id) disc ON ie.C_Invoice_ID = disc.C_Invoice_ID
+           WHERE ie.C_Invoice_ID = il.C_Invoice_ID
+             AND il.M_Product_ID = p.M_Product_ID
+             AND ie.processed = 'Y'
+             AND 7=7
+             AND ie.AD_Org_ID IN ('7')
+             AND ie.AD_Client_ID IN ('7')
+             AND (ila.c_project_id IS NOT NULL OR ie.c_project_id IS NOT NULL)
+             AND ie.issotrx = 'N'
+             AND p.producttype = 'S') CCC
+           GROUP BY c_Project) serout ON p.C_Project_ID = serout.C_Project
+
+
+
+
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN id.c_project_id ELSE ila.c_project_id END AS C_Project,
@@ -155,6 +196,8 @@
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyBase"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="datefrom2" optional="true" after="AND 1=1"><![CDATA[ AND s_timeexpense.DATEREPORT >= to_date(?) ]]></Parameter>
@@ -177,6 +220,7 @@
     <Parameter name="dateto2" optional="true" after="AND 3=3"><![CDATA[ AND ib.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="org" optional="true" type="replace" after="AND ib.AD_Org_ID IN (" text="'2'"/>
     <Parameter name="client" optional="true" type="replace" after="AND ib.AD_Client_ID IN (" text="'2'"/>
+
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
@@ -186,6 +230,17 @@
     <Parameter name="dateto2" optional="true" after="AND 4=4"><![CDATA[ AND ic.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="org" optional="true" type="replace" after="AND ic.AD_Org_ID IN (" text="'3'"/>
     <Parameter name="client" optional="true" type="replace" after="AND ic.AD_Client_ID IN (" text="'3'"/>
+
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="datefrom2" optional="true" after="AND 7=7"><![CDATA[ AND ie.dateinvoiced >= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 7=7"><![CDATA[ AND ie.dateinvoiced  < to_date(?) ]]></Parameter>
+    <Parameter name="org" optional="true" type="replace" after="AND ie.AD_Org_ID IN (" text="'7'"/>
+    <Parameter name="client" optional="true" type="replace" after="AND ie.AD_Client_ID IN (" text="'7'"/>
+
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="datefrom2" optional="true" after="AND 5=5"><![CDATA[ AND id.dateinvoiced >= to_date(?) ]]></Parameter>
