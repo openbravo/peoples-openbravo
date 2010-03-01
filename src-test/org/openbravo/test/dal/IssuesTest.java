@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * All portions are Copyright (C) 2009-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,9 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
 import org.openbravo.model.ad.ui.Message;
+import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -56,6 +58,9 @@ import org.openbravo.test.base.BaseTest;
  * 
  * - https://issues.openbravo.com/view.php?id=12143 OBQuery class should add convenience method
  * uniqueResult similar to the OBCriteria class
+ * 
+ * - https://issues.openbravo.com/view.php?id=12497: Active property should have default value ==
+ * true if no explicit default is defined
  * 
  * @author mtaal
  * @author iperdomo
@@ -193,5 +198,15 @@ public class IssuesTest extends BaseTest {
       log.error("Error " + e.getMessage(), e);
     }
     OBDal.getInstance().rollbackAndClose();
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12497
+   */
+  public void test12497() {
+    final InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
+    assertTrue(invoiceLine.isActive());
+    Location bpLoc = OBProvider.getInstance().get(Location.class);
+    assertTrue(bpLoc.isActive());
   }
 }

@@ -313,7 +313,7 @@ public class Property {
     }
 
     if (defaultValue == null && isBoolean()) {
-      if (getName().equalsIgnoreCase("isactive")) {
+      if (getName().equalsIgnoreCase("active")) {
         log
             .debug("Property "
                 + this
