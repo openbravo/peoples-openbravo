@@ -208,6 +208,10 @@ public class ModuleUtiltiy {
     return rt;
   }
 
+  /**
+   * Obtains remotelly an obx for the desired moduleVersionID
+   * 
+   */
   static RemoteModule getRemoteModule(ImportModule im, String moduleVersionID) {
     RemoteModule remoteModule = new RemoteModule();
     WebServiceImplServiceLocator loc;
@@ -292,19 +296,4 @@ public class ModuleUtiltiy {
     remoteModule.setError(true);
     return remoteModule;
   }
-
-  /**
-   * Obtains remotelly an obx for the desired moduleVersionID
-   * 
-   * @param im
-   *          {@link ImportModule} instance used to add the log
-   * @param moduleVersionID
-   *          ID for the module version to obtain
-   * @return An {@link InputStream} with containing the obx for the module (null if error)
-   */
-  // public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
-  // RemoteModule module = getRemoteModule(im, moduleVersionID);
-  // return module.getObx();
-  //
-  // }
 }
