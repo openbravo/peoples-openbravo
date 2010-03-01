@@ -277,8 +277,22 @@ public class Property {
     this.targetEntity = targetEntity;
   }
 
+  /**
+   * @return the primitive type defined by the domain type of the property.
+   * @see #getDomainType()
+   * @see PrimitiveDomainType#getPrimitiveType()
+   */
   public Class<?> getPrimitiveType() {
     return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
+  }
+
+  /**
+   * @return the type used in the hibernate mapping for a primitive typed property.
+   * @see #getDomainType()
+   * @see PrimitiveDomainType#getHibernateType()
+   */
+  public Class<?> getHibernateType() {
+    return ((PrimitiveDomainType) getDomainType()).getHibernateType();
   }
 
   public String getColumnName() {

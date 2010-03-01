@@ -34,6 +34,15 @@ public abstract class BasePrimitiveDomainType extends BaseDomainType implements 
   /*
    * (non-Javadoc)
    * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getHibernateType()
+   */
+  public Class<?> getHibernateType() {
+    return getPrimitiveType();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see
    * org.openbravo.base.model.domaintype.DomainType#checkIsValidValue(org.openbravo.base.model.Property
    * , java.lang.Object)
