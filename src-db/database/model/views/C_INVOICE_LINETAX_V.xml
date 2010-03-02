@@ -1,55 +1,55 @@
 <?xml version="1.0"?>
   <database name="VIEW C_INVOICE_LINETAX_V">
-    <view name="C_INVOICE_LINETAX_V"><![CDATA[((( SELECT il.ad_client_id, il.ad_org_id, il.isactive, il.created, il.createdby, il.updated, il.updatedby, 'en_US' AS ad_language, il.c_invoice_id, il.c_invoiceline_id, il.c_tax_id, il.line, 
-        CASE
-            WHEN il.qtyinvoiced <> 0 OR il.m_product_id IS NOT NULL THEN il.qtyinvoiced
-            ELSE NULL
-        END AS qtyinvoiced, 
-        CASE
-            WHEN il.qtyinvoiced <> 0 OR il.m_product_id IS NOT NULL THEN uom.uomsymbol
-            ELSE NULL
-        END AS uomsymbol, COALESCE(p.name, il.description) AS name, 
-        CASE
-            WHEN p.name IS NOT NULL THEN il.description
-            ELSE NULL
-        END AS description, p.documentnote, p.upc, p.sku, p.value AS productvalue, ra.description AS resourcedescription, 
-        CASE
-            WHEN i.isdiscountprinted = 'Y' AND (il.pricelist <> 0 OR il.m_product_id IS NOT NULL) THEN il.pricelist
-            ELSE NULL
-        END AS pricelist, 
-        CASE
-            WHEN i.isdiscountprinted = 'Y' AND il.pricelist > il.priceactual THEN (il.pricelist - il.priceactual) / il.pricelist * 100
-            ELSE NULL
-        END AS discount, 
-        CASE
-            WHEN il.priceactual <> 0 OR il.m_product_id IS NOT NULL THEN il.priceactual
-            ELSE NULL
-        END AS priceactual, 
-        CASE
-            WHEN il.linenetamt <> 0 OR il.m_product_id IS NOT NULL THEN il.linenetamt
-            ELSE NULL
-        END AS linenetamt
-   FROM c_invoiceline il
-   JOIN c_uom uom ON il.c_uom_id = uom.c_uom_id
-   JOIN c_invoice i ON il.c_invoice_id = i.c_invoice_id
-   LEFT JOIN m_product p ON il.m_product_id = p.m_product_id
-   LEFT JOIN s_resourceassignment ra ON il.s_resourceassignment_id = ra.s_resourceassignment_id
+    <view name="C_INVOICE_LINETAX_V"><![CDATA[(        (        (         SELECT il.ad_client_id, il.ad_org_id, il.isactive, il.created, il.createdby, il.updated, il.updatedby, 'en_US' AS ad_language, il.c_invoice_id, il.c_invoiceline_id, il.c_tax_id, il.line, 
+                                        CASE
+                                            WHEN il.qtyinvoiced <> 0 OR il.m_product_id IS NOT NULL THEN il.qtyinvoiced
+                                            ELSE NULL
+                                        END AS qtyinvoiced, 
+                                        CASE
+                                            WHEN il.qtyinvoiced <> 0 OR il.m_product_id IS NOT NULL THEN uom.uomsymbol
+                                            ELSE NULL
+                                        END AS uomsymbol, COALESCE(p.name, il.description) AS name, 
+                                        CASE
+                                            WHEN p.name IS NOT NULL THEN il.description
+                                            ELSE NULL
+                                        END AS description, p.documentnote, p.upc, p.sku, p.value AS productvalue, ra.description AS resourcedescription, 
+                                        CASE
+                                            WHEN i.isdiscountprinted = 'Y' AND (il.pricelist <> 0 OR il.m_product_id IS NOT NULL) THEN il.pricelist
+                                            ELSE NULL
+                                        END AS pricelist, 
+                                        CASE
+                                            WHEN i.isdiscountprinted = 'Y' AND il.pricelist > il.priceactual THEN (il.pricelist - il.priceactual) / il.pricelist * 100
+                                            ELSE NULL
+                                        END AS discount, 
+                                        CASE
+                                            WHEN il.priceactual <> 0 OR il.m_product_id IS NOT NULL THEN il.priceactual
+                                            ELSE NULL
+                                        END AS priceactual, 
+                                        CASE
+                                            WHEN il.linenetamt <> 0 OR il.m_product_id IS NOT NULL THEN il.linenetamt
+                                            ELSE NULL
+                                        END AS linenetamt
+                                   FROM c_invoiceline il
+                              JOIN c_uom uom ON il.c_uom_id = uom.c_uom_id
+                         JOIN c_invoice i ON il.c_invoice_id = i.c_invoice_id
+                    LEFT JOIN m_product p ON il.m_product_id = p.m_product_id
+               LEFT JOIN s_resourceassignment ra ON il.s_resourceassignment_id = ra.s_resourceassignment_id
+                        UNION 
+                                 SELECT il.ad_client_id, il.ad_org_id, il.isactive, il.created, il.createdby, il.updated, il.updatedby, 'en_US' AS ad_language, il.c_invoice_id, il.c_invoiceline_id, il.c_tax_id, il.line + b.line / 100 AS line, il.qtyinvoiced * b.bomqty AS qtyinvoiced, uom.uomsymbol, p.name, b.description, p.documentnote, p.upc, p.sku, p.value AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
+                                   FROM m_product_bom b
+                              JOIN c_invoiceline il ON b.m_product_id = il.m_product_id
+                         JOIN m_product bp ON bp.m_product_id = il.m_product_id AND bp.isbom = 'Y' AND bp.isverified = 'Y' AND bp.isinvoiceprintdetails = 'Y'
+                    JOIN m_product p ON b.m_productbom_id = p.m_product_id
+               JOIN c_uom uom ON p.c_uom_id = uom.c_uom_id)
+                UNION 
+                         SELECT il.ad_client_id, il.ad_org_id, il.isactive, il.created, il.createdby, il.updated, il.updatedby, 'en_US' AS ad_language, il.c_invoice_id, il.c_invoiceline_id, il.c_tax_id, il.line, NULL AS qtyinvoiced, NULL AS uomsymbol, il.description AS name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
+                           FROM c_invoiceline il
+                          WHERE il.c_uom_id IS NULL)
+        UNION 
+                 SELECT c_invoice.ad_client_id, c_invoice.ad_org_id, c_invoice.isactive, c_invoice.created, c_invoice.createdby, c_invoice.updated, c_invoice.updatedby, 'en_US' AS ad_language, c_invoice.c_invoice_id, NULL AS c_invoiceline_id, NULL AS c_tax_id, 9998 AS line, NULL AS qtyinvoiced, NULL AS uomsymbol, NULL AS name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
+                   FROM c_invoice)
 UNION 
- SELECT il.ad_client_id, il.ad_org_id, il.isactive, il.created, il.createdby, il.updated, il.updatedby, 'en_US' AS ad_language, il.c_invoice_id, il.c_invoiceline_id, il.c_tax_id, il.line + b.line / 100 AS line, il.qtyinvoiced * b.bomqty AS qtyinvoiced, uom.uomsymbol, p.name, b.description, p.documentnote, p.upc, p.sku, p.value AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
-   FROM m_product_bom b
-   JOIN c_invoiceline il ON b.m_product_id = il.m_product_id
-   JOIN m_product bp ON bp.m_product_id = il.m_product_id AND bp.isbom = 'Y' AND bp.isverified = 'Y' AND bp.isinvoiceprintdetails = 'Y'
-   JOIN m_product p ON b.m_productbom_id = p.m_product_id
-   JOIN c_uom uom ON p.c_uom_id = uom.c_uom_id)
-UNION 
- SELECT il.ad_client_id, il.ad_org_id, il.isactive, il.created, il.createdby, il.updated, il.updatedby, 'en_US' AS ad_language, il.c_invoice_id, il.c_invoiceline_id, il.c_tax_id, il.line, NULL AS qtyinvoiced, NULL AS uomsymbol, il.description AS name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
-   FROM c_invoiceline il
-  WHERE il.c_uom_id IS NULL)
-UNION 
- SELECT c_invoice.ad_client_id, c_invoice.ad_org_id, c_invoice.isactive, c_invoice.created, c_invoice.createdby, c_invoice.updated, c_invoice.updatedby, 'en_US' AS ad_language, c_invoice.c_invoice_id, NULL AS c_invoiceline_id, NULL AS c_tax_id, 9998 AS line, NULL AS qtyinvoiced, NULL AS uomsymbol, NULL AS name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
-   FROM c_invoice)
-UNION 
- SELECT it.ad_client_id, it.ad_org_id, it.isactive, it.created, it.createdby, it.updated, it.updatedby, 'en_US' AS ad_language, it.c_invoice_id, NULL AS c_invoiceline_id, it.c_tax_id, 9999 AS line, NULL AS qtyinvoiced, NULL AS uomsymbol, t.name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, it.taxbaseamt AS priceactual, it.taxamt AS linenetamt
-   FROM c_invoicetax it
-   JOIN c_tax t ON it.c_tax_id = t.c_tax_id]]></view>
+         SELECT it.ad_client_id, it.ad_org_id, it.isactive, it.created, it.createdby, it.updated, it.updatedby, 'en_US' AS ad_language, it.c_invoice_id, NULL AS c_invoiceline_id, it.c_tax_id, 9999 AS line, NULL AS qtyinvoiced, NULL AS uomsymbol, t.name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, it.taxbaseamt AS priceactual, it.taxamt AS linenetamt
+           FROM c_invoicetax it
+      JOIN c_tax t ON it.c_tax_id = t.c_tax_id]]></view>
   </database>
