@@ -23,7 +23,6 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -39,8 +38,6 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class ErrorTextParserTest extends BaseTest {
-
-  private static final Logger log = Logger.getLogger(ErrorTextParserTest.class);
 
   public void testDuplicatePrimaryKey() throws Exception {
     doErrorTextParserTest(1);
@@ -80,6 +77,10 @@ public class ErrorTextParserTest extends BaseTest {
     ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
     VariablesSecureApp vars = new VariablesSecureApp("", "", "");
     Connection con = conn.getTransactionConnection();
+
+    // set core to development to avoid the _mod_ trigger restrictions
+    ErrorTextParserTestData.setCoreInDevelopment(con, conn);
+
     String errorMessage = "";
     String expectedErrorMessage = "";
     try {

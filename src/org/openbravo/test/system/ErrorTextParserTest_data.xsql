@@ -27,6 +27,12 @@
      </Sql>
    </SqlMethod>
 
+   <SqlMethod name="setCoreInDevelopment" type="preparedStatement" connection="true" return="rowCount">
+      <Sql>
+        UPDATE AD_MODULE SET isindevelopment = 'Y' WHERE AD_MODULE_ID = '0'
+      </Sql>
+   </SqlMethod>
+
    <SqlMethod name="insertUserPK" type="preparedStatement" connection="true" return="rowCount">
       <Sql>
         INSERT INTO AD_USER (AD_USER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME)
