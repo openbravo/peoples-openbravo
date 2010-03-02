@@ -266,13 +266,13 @@ var baseDirectory = "../../../../../web/";
                     <span class="LabelText">Subscription Status</span>
                   </td>
                   <td id="OPSActive" colspan="5" class="TitleCell" style="text-align:left;">
-                    <span class="Label_ReadOnly_Text" ><span style="color:green;">Active</span>.<span id="OPSExpirationTime">&nbsp;You have&nbsp;<span id="OPSdaysLeft">xx</span>&nbsp;days left before your&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>&nbsp;expires.</span></span>
+                    <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:green;" id="subStatus_active">Active</span>.<span id="OPSExpirationTime">&nbsp;You have&nbsp;<span id="OPSdaysLeft">xx</span>&nbsp;days left before your&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>&nbsp;expires.</span></span>
                   </td>
                   <td id="OPSNoActiveYet" colspan="5" class="TitleCell" style="text-align:left;">
-                    <span class="Label_ReadOnly_Text" ><span style="color:red;">No Active Yet</span>.</span>
+                    <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:red;" id="subStatus_unactive">No Active Yet</span>.</span>
                   </td>
                   <td id="OPSExpired" colspan="5" class="TitleCell" style="text-align:left;">
-                    <p class="Label_ReadOnly_Text"><span class="Label_ReadOnly_Text" ><span style="color:red;">Expired</span>.</p>
+                    <p class="Label_ReadOnly_Text"><span class="Label_ReadOnly_Text" id="subStatus"><span style="color:red;" id="subStatus_expired">Expired</span></span>.</p>
                     <p class="Label_ReadOnly_Text"><span id="OPSExpirationTime">You need to renew the System’s Openbravo Professional Subscription. Users will not be able to login, until you do so.</span></p>
                   </td>
                 </tr>
@@ -282,7 +282,7 @@ var baseDirectory = "../../../../../web/";
                     <span class="LabelText">Subscription Status</span>
                   </td>
                   <td colspan="5" class="TitleCell" style="text-align:left;">
-                    <p class="Label_ReadOnly_Text"><span style="color:red;">Inactive</span>.</p>
+                    <p class="Label_ReadOnly_Text"><span class="Label_ReadOnly_Text" id="subStatus"><span style="color:red;" id="subStatus_inactive">Inactive</span></span>.</p>
                     <p class="Label_ReadOnly_Text">You are now running Openbravo ERP Community. Openbravo provides this software as is, without any warranties of any kind.</p>
                     <p class="Label_ReadOnly_Text">If you are looking for a professional supported system, you should upgrade to Openbravo ERP Professional.</p>
                     <p>&nbsp;</p>
