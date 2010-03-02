@@ -27,7 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Login extends HttpBaseServlet {
@@ -43,13 +45,22 @@ public class Login extends HttpBaseServlet {
       String strTheme = "ltr/Default";
       if (!vars.getTheme().equals(""))
         strTheme = vars.getTheme();
-      vars.clearSession(false);
-      printPageIdentificacion(response, strTheme);
+        vars.clearSession(false);
 
-      // } else if (vars.commandIn("OPTIONS")) {
-      // if (vars.getUser().equals("")) printPageIdentificacion(response);
-      // else printPageOptions(response, vars);
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
+      String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient
+          .getLanguage().getLanguage());
+      String browserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED", systemClient
+          .getLanguage().getLanguage());
+      String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient
+          .getLanguage().getLanguage());
+
+      printPageIdentificacion(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+
+ // } else if (vars.commandIn("OPTIONS")) {
+ //   if (vars.getUser().equals("")) printPageIdentificacion(response);
+ //   else printPageOptions(response, vars);
     } else if (vars.commandIn("BLANK")) {
       printPageBlank(response, vars);
     } else if (vars.commandIn("CHECK")) {
@@ -154,14 +165,31 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  private void printPageIdentificacion(HttpServletResponse response, String strTheme)
-      throws IOException, ServletException {
+  private void printPageIdentificacion(HttpServletResponse response, String strTheme, 
+      String cacheMsg, String browserMsg, String orHigherMsg) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", strTheme);
     xmlDocument.setParameter("itService", SessionLoginData.selectSupportContact(this));
+
+    String cacheMsgFinal = (cacheMsg != null && !cacheMsg.equals("")) ? cacheMsg
+        : "Your browser's cache has outdated files. Please clean it and reload the page.";
+    cacheMsgFinal = "var cacheMsg = \"" + cacheMsgFinal + "\"";
+    xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
+
+    String orHigherMsgFinal = (orHigherMsg != null && !orHigherMsg.equals("")) ? orHigherMsg
+        : "or higher";
+
+    String browserMsgFinal = (browserMsg != null && !browserMsg.equals("")) ? browserMsg
+        : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
+
+    browserMsgFinal = browserMsgFinal
+        + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
+        + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsgFinal;
+    browserMsgFinal = "var browserMsg = \"" + browserMsgFinal + "\"";
+    xmlDocument.setParameter("browserMsg", browserMsgFinal.replaceAll("\\n", "\n"));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

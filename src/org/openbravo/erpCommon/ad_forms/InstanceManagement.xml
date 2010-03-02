@@ -30,5 +30,5 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="instanceInfo" name="instanceInfo" default=""/>
   <PARAMETER id="OPSdaysLeft" name="OPSdaysLeft" dafault=""/>
-
+  <PARAMETER id="cacheMsg" name="cacheMsg" default=""/>
 </REPORT>

@@ -30,6 +30,8 @@
 <script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=true" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=false" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = "xx";</script>
+<script language="JavaScript" type="text/javascript" id="browserMsg">var browserMsg = "xx";</script>
 <script language="JavaScript" type="text/javascript">
 
 function validate(action)
@@ -88,12 +90,12 @@ function redirectWhenPopup() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if ((!revisionControl('6543')) || (isOpsInstance() != isOpsInstanceCached())) {
-      alert("Your browser's cache has outdated files. Please clean it and reload the page.");
+    if ((!revisionControl('6553')) || (isOpsInstance() != isOpsInstanceCached())) {
+      alert(cacheMsg);
     }
 
     if (!checkBrowserCompatibility()) {
-      alert("Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:\n * Mozilla Firefox 3.0 or higher\n * Microsoft Internet Explorer 7.0 or higher");
+      alert(browserMsg);
     }
   }
 
