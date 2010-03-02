@@ -102,7 +102,7 @@ public class ErrorTextParserTest extends BaseTest {
         ErrorTextParserTestData.insertClientWithName(con, conn, "System", "System");
         break;
       case 5:
-        expectedErrorMessage = "There is already a Month Translation with the same (Month, Language). (Month, Language) must be unique. You must change the values entered.";
+        expectedErrorMessage = "There is already a Month Translation with the same (Language, Month). (Language, Month) must be unique. You must change the values entered.";
         ErrorTextParserTestData.insertMonthTrl(con, conn);
         break;
       case 6:
