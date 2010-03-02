@@ -50,6 +50,7 @@ import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
+import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.xml.ClientExportImportTest;
@@ -116,6 +117,7 @@ public class AllAntTaskTests {
     // system
     suite.addTestSuite(SystemServiceTest.class);
     suite.addTestSuite(SystemValidatorTest.class);
+    suite.addTestSuite(ErrorTextParserTest.class);
 
     // xml
     suite.addTestSuite(ClientExportImportTest.class);
