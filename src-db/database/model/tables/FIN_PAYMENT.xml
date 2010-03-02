@@ -93,14 +93,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROCESS_PAYMENT" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="RECONCILE_PAYMENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="C_DOCTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault><![CDATA[SELECT max(C_DocType_ID) from C_DocType WHERE c_doctype.ad_client_id = fin_payment_.ad_client_id AND AD_ISORGINCLUDED(FIN_Payment_.AD_Org_ID,C_DocType.AD_Org_ID, FIN_Payment_.AD_Client_ID) <> -1 AND C_DocType.DocBaseType IN ('APP', 'ARR') AND C_DocType.IsSOTrx=Fin_Payment_.isreceipt]]></onCreateDefault>
