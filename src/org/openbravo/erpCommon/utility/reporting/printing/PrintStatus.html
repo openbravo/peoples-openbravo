@@ -50,7 +50,7 @@ function checkStatus()
 	else
 	{
 		document.getElementById("paramTitulo").innerHTML = "Process not completed successfully";
-		document.getElementById("bmMessage").innerHTML = "No emails were send. Please check if the documents are 'completed'.";
+		document.getElementById("messageBoxIDTitle").innerHTML = "No emails were send. Please check if the documents are 'completed'.";
 	}
 }
 </script>
@@ -147,11 +147,11 @@ function checkStatus()
                                       <td class="MessageBox_Icon_ContentCell">
                                         <div class="MessageBox_Icon"></div>
                                       </td>
-                                      <td style="vertical-align: top;">
+                                      <td style="vertical-align: top;" id="messageBoxIDContent">
                                         <span>
 
-                                          <div class="MessageBox_TextTitle" id="bmMessage">Email(s) sent successfully</div>
-                                          <div class="MessageBox_TextDescription" id="paramTexto"></div>
+                                          <div class="MessageBox_TextTitle" id="messageBoxIDTitle">Email(s) sent successfully</div>
+                                          <div class="MessageBox_TextDescription" id="messageBoxIDMessage"></div>
                                           <div class="MessageBox_TextSeparator"></div>
                                         </span>
                                       </td>

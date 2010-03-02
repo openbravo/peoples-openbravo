@@ -24,6 +24,6 @@
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="paramTipo" name="ParamTipo" replace="ERROR" attribute="class" />
-	<PARAMETER id="paramTitulo" name="ParamTitulo"/>
-	<PARAMETER id="paramTexto" name="ParamTexto"/> 
+	<PARAMETER id="messageBoxIDTitle" name="ParamTitulo"/>
+	<PARAMETER id="messageBoxIDMessage" name="ParamTexto"/> 
 </REPORT>
