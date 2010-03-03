@@ -62,7 +62,7 @@ class ErrorTextParserORACLE extends ErrorTextParser {
       }
 
       // assure same column order across (oracle,postgresql) by sorting results in java
-      Arrays.sort(cols);
+      Arrays.sort(res);
 
       return res;
     } catch (ServletException se) {
