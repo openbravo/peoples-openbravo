@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6553';
+  var number = '6601';
   return number;
 }
 
@@ -3439,8 +3439,9 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
+    setObjAttribute(obj, 'readOnly', "false");
     if (obj.setReadOnly) {
-    	obj.setReadOnly(false);
+      obj.setReadOnly(false);
     }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextB = getObjAttribute(obj, 'onclick');
@@ -3454,6 +3455,7 @@ function readOnlyLogicElement(id, readonly) {
     }
 
     if (obj.className.indexOf("Combo")!=-1) {
+      obj.className = className.replace("NoUpdatable","");
       enableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
         onchange_combo = getObjAttribute(obj, 'onChange');
