@@ -88,7 +88,7 @@
     <Parameter name="adOrgId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.AD_ORG_ID = ? "/>
     <Parameter name="ischarge" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.ISPAID = ? "/>
     <Parameter name="invoice" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND EXISTS (SELECT 1 FROM C_INVOICE WHERE p.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID AND DOCUMENTNO LIKE TO_CHAR(?))"/>
-    <Parameter name="StatusPayment" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.STATUS = ? "/>
+    <Parameter name="StatusPayment" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.STATUS = TO_CHAR(?) "/>
     <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 <= ]]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
   </SqlMethod>
