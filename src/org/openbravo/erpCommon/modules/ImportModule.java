@@ -707,9 +707,9 @@ public class ImportModule {
     for (Module module : modulesToInstall) {
       try {
         // remove module from db (in case it is already there)
-        ImportModuleData.deleteDependencies(pool, module.getModuleID());
-        ImportModuleData.deleteDBPrefix(pool, module.getModuleID());
-        ImportModuleData.deleteModule(pool, module.getModuleID());
+        ImportModuleData.cleanModuleDependencyInstall(pool, module.getModuleID());
+        ImportModuleData.cleanModuleDBPrefixInstall(pool, module.getModuleID());
+        ImportModuleData.cleanModuleInstall(pool, module.getModuleID());
       } catch (final Exception e) {
         log4j.error(e);
         addLog("Error deleting module " + module.getName() + " from db. " + e.getMessage(),
@@ -729,9 +729,9 @@ public class ImportModule {
     for (Module module : modulesToUpdate) {
       // remove module from db (in case it is already there)
       try {
-        ImportModuleData.deleteDependencies(pool, module.getModuleID());
-        ImportModuleData.deleteDBPrefix(pool, module.getModuleID());
-        ImportModuleData.deleteModule(pool, module.getModuleID());
+        ImportModuleData.cleanModuleDependencyInstall(pool, module.getModuleID());
+        ImportModuleData.cleanModuleDBPrefixInstall(pool, module.getModuleID());
+        ImportModuleData.cleanModuleInstall(pool, module.getModuleID());
       } catch (final Exception e) {
         log4j.error(e);
         addLog("Error deleting module " + module.getName() + " from db. " + e.getMessage(),

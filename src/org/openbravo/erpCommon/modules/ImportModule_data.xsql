@@ -122,33 +122,6 @@
       <Parameter name="action"/>
    </SqlMethod>
    
-   <SqlMethod name="deleteDependencies" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        DELETE FROM AD_MODULE_DEPENDENCY_INST
-         WHERE AD_MODULE_ID = ?
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
-   <SqlMethod name="deleteDBPrefix" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        DELETE FROM AD_MODULE_DBPREFIX_INSTALL
-         WHERE AD_MODULE_ID = ?
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
-   <SqlMethod name="deleteModule" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        DELETE FROM AD_MODULE_INSTALL
-         WHERE AD_MODULE_ID = ?
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
    <SqlMethod name="getParentNode" type="preparedStatement" return="string">
      <Sql>
        SELECT AD_MODULE_ID
