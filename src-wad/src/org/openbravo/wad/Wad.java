@@ -1037,7 +1037,8 @@ public class Wad extends DefaultHandler {
          *************************************************/
         processTabXSQLSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName,
             windowName, keyColumnName, tabsData.adColumnsortorderId, tabsData.adColumnsortyesnoId,
-            vecParameters, vecTableParameters, tabsData.javapackage);
+            vecParameters, vecTableParameters, tabsData.javapackage, strWhere.toString(), strOrder
+                .toString());
         /************************************************
          * JAVA of the SORT TAB
          *************************************************/
@@ -2236,14 +2237,16 @@ public class Wad extends DefaultHandler {
    *          Vector with the where clause parameters.
    * @param vecTableParametersTop
    *          Vector with the from clause parameters.
+   * @param whereClause
+   * @param orderBy
    * @throws ServletException
    * @throws IOException
    */
   private void processTabXSQLSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab,
       String tabName, String tableName, String windowName, String keyColumnName,
       String strColumnSortOrderId, String strColumnSortYNId, Vector<Object> vecParametersTop,
-      Vector<Object> vecTableParametersTop, String javaPackage) throws ServletException,
-      IOException {
+      Vector<Object> vecTableParametersTop, String javaPackage, String whereClause, String orderBy)
+      throws ServletException, IOException {
     log4j.debug("Processing Sort Tab xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     final String[] discard = { "", "", "hasOrgKey" };
@@ -2272,7 +2275,13 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setParameter("paramKeyParent", Sqlc
           .TransformaNombreColumna(parentsFieldsData[0].name));
     }
-    final String strOrder = " ORDER BY " + tableName + "." + strSortField;
+    String strOrder = " ORDER BY " + tableName + "." + strSortField;
+
+    orderBy = orderBy.replace("ORDER BY 1", "").trim();
+    orderBy = orderBy.replace("ORDER BY", "");
+    if (!orderBy.isEmpty()) {
+      strOrder += ", " + orderBy;
+    }
 
     String strFields = "";
     String strTables = "";
@@ -2302,6 +2311,12 @@ public class Wad extends DefaultHandler {
       for (int i = 0; i < vecWhere.size(); i++) {
         strWhere += "\n AND " + vecWhere.elementAt(i).toString();
       }
+
+      if (!strWhere.isEmpty()) {
+        strWhere += "\n AND ";
+      }
+      strWhere += whereClause;
+
     }
 
     xmlDocumentXsql.setParameter("fields", strFields);
