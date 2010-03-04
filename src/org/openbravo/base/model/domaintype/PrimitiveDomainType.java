@@ -38,15 +38,6 @@ public interface PrimitiveDomainType extends DomainType {
   Class<?> getPrimitiveType();
 
   /**
-   * The type used in the hibernate mapping. Most of the time is the same as the
-   * {@link #getPrimitiveType()}. Can be used to set a hibnernate user type class. See the hibernate
-   * documentation for more information on this.
-   * 
-   * @return the class representing the hibernate type
-   */
-  Class<?> getHibernateType();
-
-  /**
    * Returns the id of the format definition to use for this domain type. Is normally only relevant
    * for numeric domain types. The id is the prefix part of the name in the Format.xml file. So for
    * example the id 'integer' maps to all the Format.xml entries with integer as a prefix.

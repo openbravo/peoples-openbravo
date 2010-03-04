@@ -31,10 +31,14 @@ import org.openbravo.base.validation.ValidationException;
 
 public abstract class BasePrimitiveDomainType extends BaseDomainType implements PrimitiveDomainType {
 
-  /*
-   * (non-Javadoc)
+  /**
+   * The type used in the hibernate mapping. Most of the time is the same as the
+   * {@link #getPrimitiveType()}. Can be used to set a hibnernate user type class. See the hibernate
+   * documentation for more information on this.
    * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getHibernateType()
+   * This method will be moved to the PrimitiveDomainType in a later stage.
+   * 
+   * @return the class representing the hibernate type
    */
   public Class<?> getHibernateType() {
     return getPrimitiveType();

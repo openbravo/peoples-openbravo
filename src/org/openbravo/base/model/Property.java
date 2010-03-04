@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
+import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
@@ -292,7 +293,10 @@ public class Property {
    * @see PrimitiveDomainType#getHibernateType()
    */
   public Class<?> getHibernateType() {
-    return ((PrimitiveDomainType) getDomainType()).getHibernateType();
+    if (getDomainType() instanceof BasePrimitiveDomainType) {
+      return ((BasePrimitiveDomainType) getDomainType()).getHibernateType();
+    }
+    return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
   }
 
   public String getColumnName() {
