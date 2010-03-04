@@ -474,7 +474,7 @@ public class ImportModule {
         return false;
       }
     } catch (IOException e) {
-      addLog(module.getName() + "(" + module.getPackageName() + ") @ErrorGettingModule@ "
+      addLog("@ErrorGettingModule@ " + module.getName() + "(" + module.getPackageName() + ") :"
           + e.getMessage(), MSG_ERROR);
       return false;
     }
@@ -549,7 +549,7 @@ public class ImportModule {
     } catch (final Exception e) {
       log4j.error(e.getMessage(), e);
       if (!(e instanceof PermissionException)) {
-        addLog(module.getName() + "(" + module.getPackageName() + ") @ErrorGettingModule@ "
+        addLog("@ErrorGettingModule@ " + module.getName() + "(" + module.getPackageName() + ") :"
             + e.getMessage(), MSG_ERROR);
       }
       rollback();
@@ -827,7 +827,11 @@ public class ImportModule {
    * 
    */
   void addLog(String m, int level) {
-    log4j.info(m);
+    if (level == MSG_ERROR) {
+      log4j.error(m);
+    } else {
+      log4j.info(m);
+    }
     if (level > logLevel) {
       logLevel = level;
       log = new StringBuffer(m);
