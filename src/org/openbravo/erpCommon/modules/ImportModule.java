@@ -26,6 +26,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -44,6 +49,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.axis.AxisFault;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.io.DataReader;
@@ -54,6 +60,8 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.Zip;
@@ -395,7 +403,7 @@ public class ImportModule {
    */
   private boolean downloadRemoteModule(Module module) {
     log4j.info("Downloading " + module.getPackageName() + " " + module.getVersionNo());
-    RemoteModule remoteModule = ModuleUtiltiy.getRemoteModule(this, module.getModuleVersionID());
+    RemoteModule remoteModule = getRemoteModule(module.getModuleVersionID());
 
     if (remoteModule.isError()) {
       addLog(module.getName(), MSG_ERROR);
@@ -1399,6 +1407,95 @@ public class ImportModule {
     public PermissionException(String msg) {
       super(msg);
     }
+  }
+
+  /**
+   * Obtains remotely an obx for the desired moduleVersionID
+   * 
+   */
+  private RemoteModule getRemoteModule(String moduleVersionID) {
+    RemoteModule remoteModule = new RemoteModule();
+    WebServiceImplServiceLocator loc;
+    WebServiceImpl ws = null;
+    String strUrl = "";
+    boolean isCommercial;
+
+    try {
+      loc = new WebServiceImplServiceLocator();
+      ws = loc.getWebService();
+    } catch (final Exception e) {
+      log4j.error(e);
+      addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
+      try {
+        ImportModuleData.insertLog(ImportModule.pool, (vars == null ? "0" : vars.getUser()), "",
+            "", "", "Couldn't contact with webservice server", "E");
+      } catch (final ServletException ex) {
+        log4j.error(ex);
+      }
+      remoteModule.setError(true);
+      return remoteModule;
+    }
+
+    try {
+      isCommercial = ws.isCommercial(moduleVersionID);
+      strUrl = ws.getURLforDownload(moduleVersionID);
+    } catch (AxisFault e1) {
+      addLog("@" + e1.getFaultCode() + "@", ImportModule.MSG_ERROR);
+      remoteModule.setError(true);
+      return remoteModule;
+    } catch (RemoteException e) {
+      addLog(e.getMessage(), ImportModule.MSG_ERROR);
+      remoteModule.setError(true);
+      return remoteModule;
+    }
+
+    if (isCommercial && !ActivationKey.isActiveInstance()) {
+      addLog("@NotCommercialModulesAllowed@", ImportModule.MSG_ERROR);
+      remoteModule.setError(true);
+      return remoteModule;
+    }
+
+    try {
+      URL url = new URL(strUrl);
+      HttpURLConnection conn = null;
+
+      if (strUrl.startsWith("https://")) {
+        ActivationKey ak = new ActivationKey();
+        String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
+        conn = HttpsUtils.sendHttpsRequest(url, instanceKey, "localhost-1", "changeit");
+      } else {
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Keep-Alive", "300");
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+        conn.setUseCaches(false);
+        conn.setAllowUserInteraction(false);
+      }
+
+      if (conn.getResponseCode() == HttpServletResponse.SC_OK) {
+        // OBX is ready to be used
+        remoteModule.setObx(conn.getInputStream());
+        String size = conn.getHeaderField("Content-Length");
+        if (size != null) {
+          remoteModule.setSize(new Integer(size));
+        }
+        return remoteModule;
+      }
+
+      // There is an error, let's check for a parseable message
+      String msg = conn.getHeaderField("OB-ErrMessage");
+      if (msg != null) {
+        addLog(msg, ImportModule.MSG_ERROR);
+      } else {
+        addLog("@ErrorDownloadingOBX@ " + conn.getResponseCode(), ImportModule.MSG_ERROR);
+      }
+    } catch (Exception e) {
+      addLog("@ErrorDownloadingOBX@ " + e.getMessage(), ImportModule.MSG_ERROR);
+    }
+    remoteModule.setError(true);
+    return remoteModule;
   }
 
 }
