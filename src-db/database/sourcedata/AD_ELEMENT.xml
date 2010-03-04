@@ -19058,7 +19058,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800697-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800697-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800697-->  <COLUMNNAME><![CDATA[Servcost]]></COLUMNNAME>
-<!--800697-->  <NAME><![CDATA[Total Service Cost]]></NAME>
+<!--800697-->  <NAME><![CDATA[Service Cost]]></NAME>
 <!--800697-->  <PRINTNAME><![CDATA[Total Service cost]]></PRINTNAME>
 <!--800697-->  <HELP><![CDATA[Expected total cost of services provided. The real number will originate from all expense sheets (lines marked as Time Sheet) related to this project.]]></HELP>
 <!--800697-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -22936,7 +22936,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--53066A102E244DA3B414196A502849C0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--53066A102E244DA3B414196A502849C0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--53066A102E244DA3B414196A502849C0-->  <COLUMNNAME><![CDATA[Servsercost]]></COLUMNNAME>
-<!--53066A102E244DA3B414196A502849C0-->  <NAME><![CDATA[Service Cost]]></NAME>
+<!--53066A102E244DA3B414196A502849C0-->  <NAME><![CDATA[Services Provided Cost]]></NAME>
 <!--53066A102E244DA3B414196A502849C0-->  <PRINTNAME><![CDATA[Service Cost]]></PRINTNAME>
 <!--53066A102E244DA3B414196A502849C0-->  <HELP><![CDATA[Expected cost of services provided. The real number will originate from all expense sheets (lines marked as Time Sheet) related to this project.]]></HELP>
 <!--53066A102E244DA3B414196A502849C0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
