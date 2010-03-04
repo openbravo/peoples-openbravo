@@ -70,6 +70,7 @@
     <defaultOrganization xsi:nil="true"/>
     <defaultRole xsi:nil="true"/>
     <defaultWarehouse xsi:nil="true"/>
+    <locked>false</locked>
   </ADUser>
   <ADUser id="1000020">
     <id>1000020</id>
@@ -104,6 +105,7 @@
     <defaultOrganization xsi:nil="true"/>
     <defaultRole xsi:nil="true"/>
     <defaultWarehouse xsi:nil="true"/>
+    <locked>false</locked>
   </ADUser>
   <ADSequence id="1000099">
     <id>1000099</id>
