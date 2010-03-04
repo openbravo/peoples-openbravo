@@ -308,7 +308,7 @@ public class ImportModule {
       if (checked || force) {
         if (installLocally) {
           for (Module module : modulesToUpdate) {
-            preapreUpdate(module);
+            prepareUpdate(module);
           }
 
           // Just pick the first module, to install/update as the rest of them are inside the obx
@@ -486,7 +486,7 @@ public class ImportModule {
 
     for (Module module : modulesToUpdate) {
       InputStream obx = getTemporaryOBX(module);
-      preapreUpdate(module);
+      prepareUpdate(module);
       if (obx == null || !installLocalModule(module, obx, false)) {
         return;
       }
@@ -552,11 +552,11 @@ public class ImportModule {
   }
 
   /**
-   * Prapares a backup for rollback of updates and removes the files within the directories to
+   * Prepares a backup for rollback of updates and removes the files within the directories to
    * update, making thus the update like an installation from scratch.
    * 
    */
-  private void preapreUpdate(Module module) {
+  private void prepareUpdate(Module module) {
     final File dir = new File(obDir + "/backup_install");
     if (!dir.exists())
       dir.mkdirs();
