@@ -225,7 +225,7 @@ public class ImportModule {
             "Cannot perform installation correctly: " + errors.getMessage()
                 + (force ? ". Forced anyway" : ""), "E");
       } catch (final ServletException ex) {
-        log4j.error(ex);
+        log4j.error("Error inserting log", ex);
       }
     }
     return checked;
@@ -322,13 +322,13 @@ public class ImportModule {
         }
       }
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error("Error installing module", e);
       addLog(e.toString(), MSG_ERROR);
       try {
         ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "", e
             .toString(), "E");
       } catch (final ServletException ex) {
-        log4j.error(ex);
+        log4j.error("Error inserting log", ex);
       }
       rollback();
     }
@@ -701,7 +701,7 @@ public class ImportModule {
       ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
           "Rollback installation", "E");
     } catch (final ServletException ex) {
-      log4j.error(ex);
+      log4j.error("Error in rollback adding log", ex);
     }
 
     for (Module module : modulesToInstall) {
@@ -711,7 +711,7 @@ public class ImportModule {
         ImportModuleData.cleanModuleDBPrefixInstall(pool, module.getModuleID());
         ImportModuleData.cleanModuleInstall(pool, module.getModuleID());
       } catch (final Exception e) {
-        log4j.error(e);
+        log4j.error("Error deleting module " + module.getName(), e);
         addLog("Error deleting module " + module.getName() + " from db. " + e.getMessage(),
             MSG_ERROR);
       }
@@ -733,7 +733,7 @@ public class ImportModule {
         ImportModuleData.cleanModuleDBPrefixInstall(pool, module.getModuleID());
         ImportModuleData.cleanModuleInstall(pool, module.getModuleID());
       } catch (final Exception e) {
-        log4j.error(e);
+        log4j.error("Error deleting module" + module.getName(), e);
         addLog("Error deleting module " + module.getName() + " from db. " + e.getMessage(),
             MSG_ERROR);
       }
@@ -1236,7 +1236,7 @@ public class ImportModule {
         }
       }
     } catch (final ServletException e) {
-      log4j.error(e);
+      log4j.error("Error inserting log", e);
     }
   }
 
@@ -1264,12 +1264,12 @@ public class ImportModule {
         updates = ws.moduleScanForUpdates(currentlyInstalledModules);
       } catch (final Exception e) {
         // do nothing just log the error
-        log4j.error(e);
+        log4j.error("Scan for updates coulnd't contact WS", e);
         try {
           ImportModuleData.insertLog(conn, user, "", "", "",
               "Scan for updates: Couldn't contact with webservice server", "E");
         } catch (final ServletException ex) {
-          log4j.error(e);
+          log4j.error("Error inserting log", e);
         }
         return updateModules; // return empty hashmap
       }
@@ -1291,16 +1291,16 @@ public class ImportModule {
         ImportModuleData.insertLog(conn, (vars == null ? "0" : vars.getUser()), "", "", "",
             "Total: found " + updateModules.size() + " updates", "S");
       } catch (final ServletException ex) {
-        log4j.error(ex);
+        log4j.error("Error inserting log", ex);
       }
       return updateModules;
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error("Scan for updates failed", e);
       try {
         ImportModuleData.insertLog(conn, (vars == null ? "0" : vars.getUser()), "", "", "",
             "Scan for updates: Error: " + e.toString(), "E");
       } catch (final ServletException ex) {
-        log4j.error(ex);
+        log4j.error("Error inserting log", ex);
       }
       return new HashMap<String, String>();
     }
@@ -1321,7 +1321,7 @@ public class ImportModule {
       parentId = ImportModuleData.getParentNode(conn, node);
     } catch (final ServletException e) {
       // do nothing just stop adding elements
-      log4j.error(e);
+      log4j.error("Error adding parent node", e);
       return;
     }
     if (parentId == null || parentId.equals(""))
@@ -1344,7 +1344,7 @@ public class ImportModule {
     try {
       data = ImportModuleData.selectInstalled(conn);
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting installed modules", e);
     }
     if (data != null) {
       for (int i = 0; i < data.length; i++) {
