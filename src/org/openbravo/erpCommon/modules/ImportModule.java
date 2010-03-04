@@ -316,7 +316,9 @@ public class ImportModule {
       if (checked || force) {
         if (installLocally) {
           for (Module module : modulesToUpdate) {
-            prepareUpdate(module);
+            if (!prepareUpdate(module)) {
+              return;
+            }
           }
 
           // Just pick the first module, to install/update as the rest of them are inside the obx
@@ -494,7 +496,9 @@ public class ImportModule {
 
     for (Module module : modulesToUpdate) {
       InputStream obx = getTemporaryOBX(module);
-      prepareUpdate(module);
+      if (!prepareUpdate(module)) {
+        return;
+      }
       if (obx == null || !installLocalModule(module, obx, false)) {
         return;
       }
@@ -564,7 +568,7 @@ public class ImportModule {
    * update, making thus the update like an installation from scratch.
    * 
    */
-  private void prepareUpdate(Module module) {
+  private boolean prepareUpdate(Module module) {
     final File dir = new File(obDir + "/backup_install");
     if (!dir.exists())
       dir.mkdirs();
@@ -575,7 +579,11 @@ public class ImportModule {
     try {
       moduleInDB = ImportModuleData.getModule(pool, module.getModuleID());
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting module from db", e);
+    }
+    if (moduleInDB == null) {
+      addLog("@ErrorDoingBackup@ " + module.getName(), MSG_ERROR);
+      return false;
     }
 
     // Do not maintain multiple backups for different old module's version, remove old existent
@@ -598,34 +606,34 @@ public class ImportModule {
         Zip.zip(core, obDir + "/backup_install/" + moduleInDB.javapackage + "-"
             + moduleInDB.version + ".zip", obDir);
       } catch (final Exception e) {
-        e.printStackTrace();
+        log4j.error("Error zipping module " + module.getName());
+        addLog("@ErrorDoingBackup@ " + module.getName(), MSG_ERROR);
+        return false;
       }
       log4j.info("Removing old core version files...");
       Utility.deleteDir(core);
     } else {
       // updating a module different than core
 
-      if (moduleInDB != null) {
-        String moduleDir = obDir + "/modules/" + moduleInDB.javapackage;
-        File moduleDirFile = new File(moduleDir);
-        if (!moduleDirFile.exists()) {
-          // nothing to backup, do not create empty zip
-          return;
-        }
-        try {
-          Zip.zip(moduleDir, obDir + "/backup_install/" + moduleInDB.javapackage + "-"
-              + moduleInDB.version + ".zip");
-          // Delete directory to be updated
-          log4j.info("Removing old module version files...");
-          Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
-        } catch (final Exception e) {
-          log4j.error(e);
-        }
-      } else {
-        log4j.error("module " + module.getName()
-            + " not found in DB. Backup and old package skipped!");
+      String moduleDir = obDir + "/modules/" + moduleInDB.javapackage;
+      File moduleDirFile = new File(moduleDir);
+      if (!moduleDirFile.exists()) {
+        // nothing to backup, do not create empty zip
+        return true;
+      }
+      try {
+        Zip.zip(moduleDir, obDir + "/backup_install/" + moduleInDB.javapackage + "-"
+            + moduleInDB.version + ".zip");
+        // Delete directory to be updated
+        log4j.info("Removing old module version files...");
+        Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
+      } catch (final Exception e) {
+        log4j.error("Error zipping module " + module.getName());
+        addLog("@ErrorDoingBackup@ " + module.getName(), MSG_ERROR);
+        return false;
       }
     }
+    return true;
   }
 
   /**
