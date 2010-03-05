@@ -28,7 +28,6 @@ import org.openbravo.base.validation.ValidationException;
  * 
  * @author mtaal
  */
-
 public abstract class BasePrimitiveDomainType extends BaseDomainType implements PrimitiveDomainType {
 
   /**

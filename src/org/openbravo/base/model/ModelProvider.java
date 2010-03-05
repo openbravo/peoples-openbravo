@@ -20,6 +20,7 @@
 package org.openbravo.base.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -836,6 +837,15 @@ public class ModelProvider implements OBSingleton {
    */
   public Reference getReference(String referenceId) {
     return referencesById.get(referenceId);
+  }
+
+  /**
+   * Returns all reference (instance from the org.openbravo.base.model package).
+   * 
+   * @return the references
+   */
+  public Collection<Reference> getAllReferences() {
+    return referencesById.values();
   }
 
   /**
