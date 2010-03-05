@@ -419,6 +419,8 @@ public class LoginHandler extends HttpBaseServlet {
     public void addFail() {
       numberOfFails++;
       boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
+      log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
+          + numberOfFails);
       if (lockUser) {
         // Try to lock the user in database
         delay = 0;
