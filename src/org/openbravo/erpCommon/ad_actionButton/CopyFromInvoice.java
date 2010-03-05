@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -84,8 +85,17 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
         for (i = 0; i < data.length; i++) {
           String strSequence = SequenceIdData.getUUID();
           try {
+            String strWindowId = vars.getStringParameter("inpwindowId");
+            String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
+            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+
+            String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
+                dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
+                dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId, strIsSOTrx
+                    .equals("Y"));
+
             CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-                dataInvoice[0].adOrgId, vars.getUser(), data[i].cInvoicelineId);
+                dataInvoice[0].adOrgId, vars.getUser(), data[i].cInvoicelineId, strCTaxID);
           } catch (ServletException ex) {
             myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
