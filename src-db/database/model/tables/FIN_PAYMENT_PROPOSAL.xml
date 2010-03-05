@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISRECEIPT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISRECEIPT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_BPARTNER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PAYMENTDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="PAYMENTDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -73,11 +73,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REFERENCENO" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false">
+      <column name="REFERENCENO" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STATUS" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false">
+      <column name="STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -86,14 +86,6 @@
         <onCreateDefault/>
       </column>
       <column name="PROCESSING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="PROCESS_PROPOSAL" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="ADD_SCHEDULED_PAYMENTS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
