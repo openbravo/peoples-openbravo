@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,20 @@
     </Sql>
     <Parameter name="reference"/>
   </SqlMethod>
+  
+   <SqlMethod name="isValueDisplayed" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+       SELECT count(*) as isvaluedisplayed
+         FROM ad_reference
+        WHERE ad_reference_id = ?
+          AND isvaluedisplayed = 'Y'
+      ]]>
+    </Sql>
+    <Parameter name="reference"/>
+  </SqlMethod>
+  
   <SqlMethod name="identifierColumns" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

@@ -658,11 +658,27 @@ public class ComboTableData {
    */
   private void setListQuery(String tableName, String fieldName, String referenceValue)
       throws Exception {
+    boolean isValueDisplayed = ComboTableQueryData.isValueDisplayed(getPool(),
+        ((referenceValue != null && !referenceValue.equals("")) ? referenceValue
+            : getObjectReference()));
+
     int myIndex = this.index++;
     addSelectField("td" + myIndex + ".value", "id");
-    addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '" + INACTIVE_DATA
-        + "' ELSE '' END) || (CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex
-        + ".name ELSE td_trl" + myIndex + ".name END))", "NAME");
+
+    StringBuffer identifier = new StringBuffer();
+    // Add inactive data info
+    identifier.append("((CASE td").append(myIndex).append(".isActive WHEN 'N' THEN '").append(
+        INACTIVE_DATA).append("' ELSE '' END) ");
+    // Add value
+    if (isValueDisplayed) {
+      identifier.append(" || td").append(myIndex).append(".value ||' - '");
+    }
+
+    // Add name
+    identifier.append("|| (CASE WHEN td_trl").append(myIndex).append(".name IS NULL THEN td")
+        .append(myIndex).append(".name ELSE td_trl").append(myIndex).append(".name END))");
+
+    addSelectField(identifier.toString(), "NAME");
     addSelectField("(CASE WHEN td_trl" + myIndex + ".description IS NULL THEN td" + myIndex
         + ".description ELSE td_trl" + myIndex + ".description END)", "DESCRIPTION");
     String tables = "ad_ref_list td" + myIndex;
