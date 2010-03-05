@@ -130,6 +130,7 @@ BEGIN
                  fixmonthoffset, netday, isnextbusinessday
           FROM c_paymenttermline
           WHERE c_paymentterm_id=v_paymentterm
+            AND isactive = 'Y'
           UNION
           -- Header of paymentTerm is processed at last
           SELECT 9999 AS line, 100 AS percentage, 'Y' AS onremainder, 'N' AS excludetax,
