@@ -405,6 +405,8 @@ public class LoginHandler extends HttpBaseServlet {
     private void setUser() {
       OBCriteria<User> obCriteria = OBDal.getInstance().createCriteria(User.class);
       obCriteria.add(Expression.eq(User.PROPERTY_USERNAME, userName));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
       List<User> users = obCriteria.list();
       if (users.size() != 0) {
         user = users.get(0);
@@ -420,7 +422,7 @@ public class LoginHandler extends HttpBaseServlet {
       numberOfFails++;
       boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
       log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
-          + numberOfFails);
+          + numberOfFails + " - user:" + user);
       if (lockUser) {
         // Try to lock the user in database
         delay = 0;
