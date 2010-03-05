@@ -26,9 +26,11 @@ setMessage_MessageBox= function(/*String*/ id, /*String*/ title, /*String*/ mess
     var div1 = document.createElement("div");
     div1.appendChild(document.createTextNode(title));
     div1.className = "MessageBox_TextTitle";
+    div1.id = "messageBoxIDTitle";
     var div2 = document.createElement("div");
     div2.innerHTML = message;
     div2.className = "MessageBox_TextDescription";
+    div2.id = "messageBoxIDMessage";
     var div3 = document.createElement("div");
     div3.className = "MessageBox_TextSeparator";
     span.appendChild(div1);
