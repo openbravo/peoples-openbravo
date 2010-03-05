@@ -885,6 +885,12 @@ AS
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   code CLOB;
+  
+  cursor_id integer;
+  number_of_chunks integer;
+  codeSplit dbms_sql.varchar2s;
+  ret_val integer;
+  
   TYPE RECORD IS REF CURSOR;
   cur_triggers RECORD;
   cur_tables RECORD;
@@ -897,6 +903,22 @@ AS
   created number :=0;
   v_message varchar2(500);
   v_isObps number;
+  
+  
+  FUNCTION splitClob(code clob, splitcode out dbms_sql.varchar2s ) RETURN number AS 
+  v_chunks number :=0;
+  cnt number;
+  v_chunk_size number := 250;
+  BEGIN
+       cnt := dbms_lob.getlength(code);
+      v_chunks := floor(cnt / v_chunk_size) + 1;
+      FOR i IN 0 .. v_chunks
+      LOOP
+        splitcode(i) := dbms_lob.substr(code, v_chunk_size, (i * v_chunk_size) + 1);
+      END LOOP;
+      return v_chunks;
+  END;
+  
 BEGIN 
   select count(*) 
     into v_isObps
@@ -1074,7 +1096,12 @@ OR DELETING OR INSERTING THEN
 code := code ||
 'END
 ;';
-execute immediate(code);
+cursor_id :=dbms_sql.open_cursor;
+number_of_chunks := splitClob(code, codeSplit);
+dbms_sql.parse(cursor_id, codeSplit, 0, number_of_chunks, NULL , dbms_sql.native); 
+ret_val := dbms_sql.execute(cursor_id);
+DBMS_SQL.close_cursor(cursor_id);
+
     created := created + 1;
   end loop;
   
