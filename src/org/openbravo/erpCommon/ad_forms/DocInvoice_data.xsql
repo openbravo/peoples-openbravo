@@ -26,7 +26,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT it.C_Tax_ID, t.Name, t.Rate, it.TaxBaseAmt, it.TaxAmt, '' AS C_INVOICE_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID,
+        SELECT t.IsTaxUndeductable as rateTaxUndeductable, (select IsTaxUndeductable from ad_orginfo o where o.ad_org_id=it.ad_org_id) as orgTaxUndeductable, it.C_Tax_ID, t.Name, t.Rate, t.IsTaxDeductable, it.TaxBaseAmt, it.TaxAmt, '' AS C_INVOICE_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID,
         '' AS ISACTIVE, '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS ISSOTRX, '' AS DOCUMENTNO,
         '' AS DOCSTATUS, '' AS DOCACTION, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED, '' AS C_DOCTYPE_ID, '' AS C_DOCTYPETARGET_ID,
         '' AS C_ORDER_ID, '' AS DESCRIPTION, '' AS ISTRANSFERRED, '' AS ISPRINTED, '' AS SALESREP_ID, '' AS DATEINVOICED,
@@ -35,13 +35,13 @@
         '' AS GRANDTOTAL, '' AS M_PRICELIST_ID, '' AS ISTAXINCLUDED, '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID, '' AS C_ACTIVITY_ID,
         '' AS ISPAID, '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE,
         '' AS AD_ORGTRX_ID, '' AS USER1_ID, '' AS USER2_ID, '' as AMOUNT, '' AS STATUS, '' AS ISRECEIPT, '' AS ISMANUAL, '' AS WRITEOFFAMT, 
-        '' AS C_DEBT_PAYMENT_ID
+        '' AS C_DEBT_PAYMENT_ID, '' AS P_REVENUE_ACCT, '' AS P_EXPENSE_ACCT
         FROM C_Tax t, C_InvoiceTax it
         WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Invoice_ID=?
      ]]>
      </Sql>
      <Parameter name="invoice"/>
-   </SqlMethod>
+  </SqlMethod>
   <SqlMethod name="selectRegistro" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -58,6 +58,7 @@
      <Parameter name="client"/>
      <Parameter name="id"/>
    </SqlMethod>
+   
   <SqlMethod name="selectDebtPayments" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -69,6 +70,24 @@
      </Sql>
      <Parameter name="invoice"/>
    </SqlMethod>
+    <SqlMethod name="selectProductAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT a.P_Revenue_Acct, a.P_Expense_Acct, t.TaxAmt
+        FROM M_Product_Acct a, C_InvoiceLineTax t, C_InvoiceLine l, M_Product p 
+        WHERE t.C_InvoiceLine_Id = l.C_InvoiceLine_Id 
+        AND l.M_Product_Id = p.M_Product_Id 
+        AND p.M_Product_Id = a.M_Product_Id 
+        AND a.C_AcctSchema_Id = ? 
+        AND t.C_Tax_Id= ? 
+        AND t.C_Invoice_Id= ? 
+     ]]>
+     </Sql>
+     <Parameter name="acctSchemaId"/>
+     <Parameter name="taxId"/>
+     <Parameter name="invoiceId"/>
+    </SqlMethod>
   <SqlMethod name="updateProductPO" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
