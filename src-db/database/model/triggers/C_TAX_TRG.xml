@@ -45,6 +45,10 @@ BEGIN
 
 
   IF(INSERTING) THEN
+     --isTaxUndeductable and isTaxDeductable should not be true at the same time.
+     IF(:NEW.ISTAXUNDEDUCTABLE = 'Y' AND :NEW.ISTAXDEDUCTABLE='Y') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@InvalidCombinationOfTaxDeductableFlag@') ;
+     END IF;
     -- Tax Account Defaults
     FOR Cur_Defaults IN
       (
@@ -128,6 +132,10 @@ BEGIN
   END IF;
   -- Inserting
   IF(UPDATING) THEN
+    --isTaxUndeductable and isTaxDeductable should not be true at the same time.
+     IF(:NEW.ISTAXUNDEDUCTABLE = 'Y' AND :NEW.ISTAXDEDUCTABLE='Y') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@InvalidCombinationOfTaxDeductableFlag@') ;
+     END IF;
     UPDATE C_TAX_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
     WHERE C_TAX_ID = :new.C_TAX_ID;
     IF((COALESCE(:old.TaxIndicator, '.') <> COALESCE(:NEW.TaxIndicator, '.')
