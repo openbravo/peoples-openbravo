@@ -540,6 +540,7 @@ export.database: exports database structure and data to xml files.
 
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
+    <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
     <!--
@@ -558,6 +559,8 @@ export.database: exports database structure and data to xml files.
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
+    <updatesystemstatus v="RB51"/>
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="create.database" depends="init, core.lib, database.lib">

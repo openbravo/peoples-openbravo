@@ -804,6 +804,7 @@ build.war: build a war file in the lib directory.
       </zipfileset>
       <classes dir="${build}" />
     </war>
+    <updatesystemstatus v="RB51"/>
   </target>
 
   <target name="generate-wsdd">

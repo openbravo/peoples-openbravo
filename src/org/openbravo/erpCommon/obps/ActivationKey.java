@@ -391,9 +391,12 @@ public class ActivationKey {
     Date lastValidPingTime = new Date(cal.getTimeInMillis());
 
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
-    obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
-    obCriteria.add(Expression.isNotNull(Session.PROPERTY_LASTPING));
-    obCriteria.add(Expression.lt(Session.PROPERTY_LASTPING, lastValidPingTime));
+
+    // sesion_active='Y' and (lastPing is null or lastPing<lastValidPing)
+    obCriteria.add(Expression.and(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true), Expression
+        .or(Expression.isNull(Session.PROPERTY_LASTPING), Expression.lt(Session.PROPERTY_LASTPING,
+            lastValidPingTime))));
+
     boolean sessionDeactivated = false;
     for (Session expiredSession : obCriteria.list()) {
       expiredSession.setSessionActive(false);

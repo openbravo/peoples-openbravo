@@ -134,7 +134,7 @@ isMinorVersion=false
 # wasn't restarted, users will only be able to login in the application 
 # with role System Administrator
 
-safe.mode=false
+safe.mode=true
 
 ##############
 # Hibernate #
