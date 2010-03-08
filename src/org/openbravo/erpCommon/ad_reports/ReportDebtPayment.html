@@ -58,6 +58,11 @@ function onloadFunctions() {
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
 }
 function validate(){
+  if (frmMain.inpCurrencyId.value == null || frmMain.inpCurrencyId.value == "") {
+       setWindowElementFocus(frmMain.inpCurrencyId);
+       showJSMessage(7);
+       return false;
+   }
   markCheckedAllElements(document.frmMain.inpcBPartnerId_IN);
   return true;
 }
@@ -463,9 +468,12 @@ function validate(){
               <td class="TitleCell"><span class="LabelText">Payable</span></td>
               <td class="Radio_Check_ContentCell"><span class="Radio_container_NOT_Focused"><input type="radio" name="inpReceipt" value="N" checked="" id="paramPayable"></input></span>
               </td>
-              <td class="TitleCell"></td>
-              <td class="ContentCell">
-              </td>
+              <td class="TitleCell"><span class="LabelText">Currency</span></td>
+                  <td class="Combo_ContentCell">
+                    <select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                    <option value=""><div id="reportC_Currency_ID"></div></option>
+                    </select>
+              </td> 
             </tr>
             <tr>
               <td colspan="6">

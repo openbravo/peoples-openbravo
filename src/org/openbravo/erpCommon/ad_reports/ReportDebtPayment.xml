@@ -61,11 +61,15 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  <PARAMETER id="paramC_Currency_ID" name="ccurrencyid" attribute="value"/>
 
   <PARAMETER id="param2" name="param2" default="2"/>
 
   <SUBREPORT id="reportCBPartnerId_IN" name="reportCBPartnerId_IN" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected"/>
+  </SUBREPORT>
+  <SUBREPORT id="reportC_Currency_ID" name="reportC_Currency_ID" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramC_Currency_ID"/>
   </SUBREPORT>
 
   <structure name="structure1">
@@ -77,9 +81,9 @@
     <FIELD id="fieldDescription">description</FIELD>
     <FIELD id="fieldDateplanned">dateplanned</FIELD>
     <FIELD id="fieldDocumentno">invoice</FIELD>
-    <FIELD id="fieldCurrency">currency</FIELD>
+    <FIELD id="fieldCurrency">convisosym</FIELD>
     <FIELD id="fieldPaymentRule">paymentrule</FIELD>
-    <FIELD id="fieldAmount" format="euroInform">amount</FIELD>
+    <FIELD id="fieldAmount" format="euroInform">convamount</FIELD>
     <FIELD id="fieldWriteoffamt" format="euroInform">writeoffamt</FIELD>
     <FIELD id="fieldDebtCancel">debtcancel</FIELD>
     <FIELD id="fieldDebtGenerate">debtgenerate</FIELD>
@@ -101,8 +105,8 @@
     <SUBREPORT id="reportC_ACCOUNTNUMBER" name="reportC_ACCOUNTNUMBER" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramC_BANKACCOUNT_ID"/>
     </SUBREPORT>
-    <FUNCTION id="fieldSumAmount" name="SUM" format="euroInform">amount</FUNCTION>
-    <FUNCTION id="fieldSumAmountTotal" name="SUM" format="euroInform">amount</FUNCTION>
+    <FUNCTION id="fieldSumAmount" name="SUM" format="euroInform">convamount</FUNCTION>
+    <FUNCTION id="fieldSumAmountTotal" name="SUM" format="euroInform">convamount</FUNCTION>
     <SECTION id="sectionBpartner" field="bpartner"/>
     <SECTION id="sectionStatus" field="status"/>
     <SECTION id="sectionDetail"/>
@@ -115,9 +119,9 @@
     <FIELD id="fieldDescription2">description</FIELD>
     <FIELD id="fieldDateplanned2">dateplanned</FIELD>
     <FIELD id="fieldDocumentno2">invoice</FIELD>
-    <FIELD id="fieldCurrency2">currency</FIELD>
+    <FIELD id="fieldCurrency2">convisosym</FIELD>
     <FIELD id="fieldPaymentRule2">paymentrule</FIELD>
-    <FIELD id="fieldAmount2" format="euroInform">amount</FIELD>
+    <FIELD id="fieldAmount2" format="euroInform">convamount</FIELD>
     <FIELD id="fieldWriteoffamt2" format="euroInform">writeoffamt</FIELD>
     <FIELD id="fieldDebtCancel2">debtcancel</FIELD>
     <FIELD id="fieldDebtGenerate2">debtgenerate</FIELD>
@@ -130,8 +134,8 @@
     <FIELD id="fieldCDebtPaymentId2" attribute="onclick" replace="yy">cDebtPaymentId</FIELD>
     <FIELD id="fieldCDebtPaymentId22" attribute="onclick" replace="zz">cDebtPaymentId</FIELD>
     <FIELD id="fieldCDebtPaymentId22" attribute="onclick" replace="xx">path</FIELD>
-    <FUNCTION id="fieldSumAmount22" name="SUM" format="euroInform">amount</FUNCTION>
-    <FUNCTION id="fieldSumAmountTotal22" name="SUM" format="euroInform">amount</FUNCTION>
+    <FUNCTION id="fieldSumAmount22" name="SUM" format="euroInform">convamount</FUNCTION>
+    <FUNCTION id="fieldSumAmountTotal22" name="SUM" format="euroInform">convamount</FUNCTION>
 
 
     <SECTION id="sectionStatus2" field="status"/>"
@@ -146,9 +150,9 @@
     <FIELD id="fieldDescription3">description</FIELD>
     <FIELD id="fieldDateplanned3">dateplanned</FIELD>
     <FIELD id="fieldDocumentno3">invoice</FIELD>
-    <FIELD id="fieldAmount3" format="euroInform">amount</FIELD>
+    <FIELD id="fieldAmount3" format="euroInform">convamount</FIELD>
     <FIELD id="fieldWriteoffamt3" format="euroInform">writeoffamt</FIELD>
-     <FIELD id="fieldCurrency3">currency</FIELD>
+     <FIELD id="fieldCurrency3">convisosym</FIELD>
      <FIELD id="fieldPaymentRule3">paymentrule</FIELD>
      <FIELD id="fieldDebtCancel3">debtcancel</FIELD>
      <FIELD id="fieldDebtGenerate3">debtgenerate</FIELD>
@@ -158,8 +162,8 @@
      <FIELD id="fieldCDebtPaymentId4" attribute="onclick" replace="yy">cDebtPaymentId</FIELD>
      <FIELD id="fieldCDebtPaymentId5" attribute="onclick" replace="zz">cDebtPaymentId</FIELD>
     <FIELD id="fieldCDebtPaymentId5" attribute="onclick" replace="xx">path</FIELD>
-     <FUNCTION id="fieldSumAmount33" name="SUM" format="euroInform">amount</FUNCTION>
-    <FUNCTION id="fieldSumAmountTotal33" name="SUM" format="euroInform">amount</FUNCTION>
+     <FUNCTION id="fieldSumAmount33" name="SUM" format="euroInform">convamount</FUNCTION>
+    <FUNCTION id="fieldSumAmountTotal33" name="SUM" format="euroInform">convamount</FUNCTION>
     <SECTION id="sectionBankAcc" field="bankacc"/>
     <SECTION id="sectionDetail3"/>
     <SECTION id="sectionStatus3" field="status"/>
@@ -173,9 +177,9 @@
     <FIELD id="fieldDescription4">description</FIELD>
     <FIELD id="fieldDateplanned4">dateplanned</FIELD>
     <FIELD id="fieldDocumentno4">invoice</FIELD>
-    <FIELD id="fieldAmount4" format="euroInform">amount</FIELD>
+    <FIELD id="fieldAmount4" format="euroInform">convamount</FIELD>
     <FIELD id="fieldWriteoffamt4" format="euroInform">writeoffamt</FIELD>
-     <FIELD id="fieldCurrency4">currency</FIELD>
+     <FIELD id="fieldCurrency4">convisosym</FIELD>
      <FIELD id="fieldPaymentRule4">paymentrule</FIELD>
      <FIELD id="fieldDebtCancel4">debtcancel</FIELD>
      <FIELD id="fieldDebtGenerate4">debtgenerate</FIELD>
@@ -187,8 +191,8 @@
     <FIELD id="fieldCDebtPaymentId7" attribute="onclick" replace="xx">path</FIELD>
     <FIELD id="idfieldCInvoiceId4" attribute="onclick" replace="xx">cInvoiceId</FIELD>
     <FIELD id="idfieldCInvoiceId4" attribute="onclick" replace="yy">invoiceType</FIELD>
-     <FUNCTION id="fieldSumAmount44" name="SUM" format="euroInform">amount</FUNCTION>
-    <FUNCTION id="fieldSumAmountTotal44" name="SUM" format="euroInform">amount</FUNCTION>
+     <FUNCTION id="fieldSumAmount44" name="SUM" format="euroInform">convamount</FUNCTION>
+    <FUNCTION id="fieldSumAmountTotal44" name="SUM" format="euroInform">convamount</FUNCTION>
     <SECTION id="sectionAll" field="bpartner"/>
     <SECTION id="sectionAllBankAcc" field="bankacc"/>
     <SECTION id="sectionDetail4"/>
