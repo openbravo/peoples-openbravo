@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,22 +45,22 @@ public class Login extends HttpBaseServlet {
       String strTheme = "ltr/Default";
       if (!vars.getTheme().equals(""))
         strTheme = vars.getTheme();
-        vars.clearSession(false);
+      vars.clearSession(false);
 
       Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
-      String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient
-          .getLanguage().getLanguage());
+      String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient.getLanguage()
+          .getLanguage());
       String browserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED", systemClient
           .getLanguage().getLanguage());
-      String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient
-          .getLanguage().getLanguage());
+      String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
+          .getLanguage());
 
       printPageIdentificacion(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
 
- // } else if (vars.commandIn("OPTIONS")) {
- //   if (vars.getUser().equals("")) printPageIdentificacion(response);
- //   else printPageOptions(response, vars);
+      // } else if (vars.commandIn("OPTIONS")) {
+      // if (vars.getUser().equals("")) printPageIdentificacion(response);
+      // else printPageOptions(response, vars);
     } else if (vars.commandIn("BLANK")) {
       printPageBlank(response, vars);
     } else if (vars.commandIn("CHECK")) {
@@ -165,7 +165,7 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  private void printPageIdentificacion(HttpServletResponse response, String strTheme, 
+  private void printPageIdentificacion(HttpServletResponse response, String strTheme,
       String cacheMsg, String browserMsg, String orHigherMsg) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
@@ -185,8 +185,7 @@ public class Login extends HttpBaseServlet {
     String browserMsgFinal = (browserMsg != null && !browserMsg.equals("")) ? browserMsg
         : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
 
-    browserMsgFinal = browserMsgFinal
-        + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
+    browserMsgFinal = browserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
         + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsgFinal;
     browserMsgFinal = "var browserMsg = \"" + browserMsgFinal + "\"";
     xmlDocument.setParameter("browserMsg", browserMsgFinal.replaceAll("\\n", "\n"));
