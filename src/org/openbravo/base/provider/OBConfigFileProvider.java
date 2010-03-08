@@ -57,10 +57,22 @@ public class OBConfigFileProvider implements OBSingleton {
   private String classPathLocation;
   private ServletContext servletContext;
 
+  /**
+   * @return the directory containing the Openbravo.properties file, so <b>not</b> the full path
+   *         including the filename (Openbravo.properties) but the path to and including the
+   *         directory.
+   */
   public String getFileLocation() {
     return fileLocation;
   }
 
+  /**
+   * @param fileLocation
+   *          the path to the directory which contains the openbravo properties file
+   *          (Openbravo.properties). The path does not include the Openbravo.properties file
+   *          itself.
+   * @see #getFileLocation()
+   */
   public void setFileLocation(String fileLocation) {
     this.fileLocation = fileLocation;
   }

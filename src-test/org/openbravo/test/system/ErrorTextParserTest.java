@@ -23,10 +23,8 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.test.base.BaseTest;
@@ -73,8 +71,7 @@ public class ErrorTextParserTest extends BaseTest {
   }
 
   private void doErrorTextParserTest(int testCase) throws Exception {
-    String propFile = OBConfigFileProvider.getInstance().getFileLocation();
-    ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
+    ConnectionProvider conn = getConnectionProvider();
     VariablesSecureApp vars = new VariablesSecureApp("", "", "");
     Connection con = conn.getTransactionConnection();
 
