@@ -17,7 +17,7 @@
 * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
 * All Rights Reserved.
 * Contributor(s): Openbravo SL
-* Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+* Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
 *
 * Specifically, this derivative work is based upon the following Compiere
 * file and version.
@@ -83,8 +83,7 @@ BEGIN
          WHERE AD_Process_ID = :NEW.AD_Process_ID;
 
       UPDATE AD_Column
-         SET NAME = :NEW.NAME,
-             Description = :NEW.Description,
+         SET Description = :NEW.Description,
              HELP = :NEW.HELP,
              Updated = now()
        WHERE AD_Process_ID = :NEW.AD_Process_ID
