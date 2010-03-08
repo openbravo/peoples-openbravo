@@ -24,13 +24,13 @@ import javax.servlet.ServletException;
 public class SL_Project_Service extends SimpleCallout {
 
     @Override
-    protected void execute() throws ServletException {
+    protected void execute(CalloutInfo info) throws ServletException {
         
-        BigDecimal serviceSerCost = getBigDecimalParameter("inpservsercost");
-        BigDecimal serviceOutCost = getBigDecimalParameter("inpservoutcost");
+        BigDecimal serviceSerCost = info.getBigDecimalParameter("inpservsercost");
+        BigDecimal serviceOutCost = info.getBigDecimalParameter("inpservoutcost");
         
         BigDecimal serviceTotalCost = serviceSerCost.add(serviceOutCost);
         
-        addResult("inpservcost", serviceTotalCost);
+        info.addResult("inpservcost", serviceTotalCost);
     }
 }

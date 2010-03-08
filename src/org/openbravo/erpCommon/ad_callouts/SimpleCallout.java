@@ -36,113 +36,31 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private StringBuffer result;
-    private int rescounter;
-    private int selectcounter;
+    protected abstract void execute(CalloutInfo info) throws ServletException;
 
-    protected VariablesSecureApp vars;
-
-
-    protected abstract void execute() throws ServletException;
-
-    protected String getLastFieldChanged() {
-      return vars.getStringParameter("inpLastFieldChanged");
-    }
-
-    protected String getTabId() {
-        return vars.getStringParameter("inpTabId");
-    }
-
-    protected String getStringParameter(String param) {
-        return vars.getStringParameter(param);
-    }
-
-    protected BigDecimal getBigDecimalParameter(String param) throws ServletException {
-        return new BigDecimal(vars.getNumericParameter(param, "0"));
-    }
-
-    protected void addSelect(String param) {
-
-        if (rescounter > 0) {
-            result.append(',');
-        }
-        rescounter++;
-        result.append("\nnew Array(\"");
-        result.append(param);
-        result.append("\", ");
-
-        selectcounter = 0;
-    }
-
-    protected void addSelectResult(String name, String value) {
-        addSelectResult(name, value, false);
-    }
-
-    protected void addSelectResult(String name, String value, boolean selected) {
-
-        if (selectcounter > 0) {
-            result.append(',');
-        }
-        selectcounter++;
-        result.append("new Array(\"");
-        result.append(name);
-        result.append("\", \"");
-        result.append(FormatUtilities.replaceJS(value));
-        result.append("\",");
-        result.append(selected ? "true" : "false");
-        result.append(")");
-    }
-
-    protected void endSelect() {
-        if (selectcounter == 0) {
-            result.append("null");
-        }
-        result.append(")");
-    }
-
-    protected void addResult(String param, Object value) {
-
-        if (rescounter > 0) {
-            result.append(',');
-        }
-        rescounter++;
-
-        result.append("\nnew Array(\"");
-        result.append(param);
-        result.append("\", ");
-        result.append(value == null ? "null" : value.toString());
-        result.append(")");
-    }
-
-    protected void addResult(String param, String value) {
-        addResult(param, (Object) value == null ? null : "\"" + FormatUtilities.replaceJS(value) + "\"");
-    }
-
+    @Override
     public void init(ServletConfig config) {
         super.init(config);
         boolHist = false;
     }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        vars = new VariablesSecureApp(request);
-        result = new StringBuffer();
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
         if (vars.commandIn("DEFAULT")) {
             try {
-                printPage(response);
+                printPage(response, vars);
             } catch (ServletException ex) {
                 pageErrorCallOut(response);
             }
         } else {
             pageError(response);
         }
-
-        result = null;
-        vars = null;
     }
 
-    private void printPage(HttpServletResponse response) throws IOException, ServletException {
+    private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
 
         if (log4j.isDebugEnabled()) {
             log4j.debug("Output: dataSheet");
@@ -151,15 +69,11 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
         XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-        result.append("var calloutName='");
-        result.append(getSimpleClassName());
-        result.append("';\nvar respuesta = new Array(");
+        CalloutInfo info = new CalloutInfo(vars, getSimpleClassName());
 
-        rescounter = 0;
-        execute();
+        execute(info);
 
-        result.append(");");
-        xmlDocument.setParameter("array", result.toString());
+        xmlDocument.setParameter("array", info.finishResult());
         xmlDocument.setParameter("frameName", "appFrame");
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter out = response.getWriter();
@@ -167,13 +81,116 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
         out.close();
     }
 
-    protected String getSimpleClassName() {
+    private String getSimpleClassName() {
         String classname = getClass().getName();
         int i = classname.lastIndexOf(".");
         if (i < 0) {
             return classname;
         } else {
             return classname.substring(i + 1);
+        }
+    }
+
+    protected static class CalloutInfo {
+
+        private StringBuffer result;
+        private int rescounter;
+        private int selectcounter;
+
+        public VariablesSecureApp vars;
+
+        private CalloutInfo(VariablesSecureApp vars, String classname) {
+            this.vars = vars;
+
+            result = new StringBuffer();
+            result.append("var calloutName='");
+            result.append(classname);
+            result.append("';\nvar respuesta = new Array(");
+
+            rescounter = 0;
+            selectcounter = 0;
+        }
+
+        private String finishResult() {
+            result.append(");");
+            return result.toString();
+        }
+
+        public String getLastFieldChanged() {
+          return vars.getStringParameter("inpLastFieldChanged");
+        }
+
+        public String getTabId() {
+            return vars.getStringParameter("inpTabId");
+        }
+
+        public String getWindowId() {
+            return vars.getStringParameter("inpwindowId");
+        }
+
+        public String getStringParameter(String param) {
+            return vars.getStringParameter(param);
+        }
+
+        public BigDecimal getBigDecimalParameter(String param) throws ServletException {
+            return new BigDecimal(vars.getNumericParameter(param, "0"));
+        }
+
+        public void addSelect(String param) {
+
+            if (rescounter > 0) {
+                result.append(',');
+            }
+            rescounter++;
+            result.append("\nnew Array(\"");
+            result.append(param);
+            result.append("\", ");
+
+            selectcounter = 0;
+        }
+
+        public void addSelectResult(String name, String value) {
+            addSelectResult(name, value, false);
+        }
+
+        public void addSelectResult(String name, String value, boolean selected) {
+
+            if (selectcounter > 0) {
+                result.append(',');
+            }
+            selectcounter++;
+            result.append("new Array(\"");
+            result.append(name);
+            result.append("\", \"");
+            result.append(FormatUtilities.replaceJS(value));
+            result.append("\",");
+            result.append(selected ? "true" : "false");
+            result.append(")");
+        }
+
+        public void endSelect() {
+            if (selectcounter == 0) {
+                result.append("null");
+            }
+            result.append(")");
+        }
+
+        public void addResult(String param, Object value) {
+
+            if (rescounter > 0) {
+                result.append(',');
+            }
+            rescounter++;
+
+            result.append("\nnew Array(\"");
+            result.append(param);
+            result.append("\", ");
+            result.append(value == null ? "null" : value.toString());
+            result.append(")");
+        }
+
+        public void addResult(String param, String value) {
+            addResult(param, (Object) value == null ? null : "\"" + FormatUtilities.replaceJS(value) + "\"");
         }
     }
 }
