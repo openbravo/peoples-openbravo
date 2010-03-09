@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
@@ -39,15 +40,29 @@ public class Login extends HttpBaseServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("LOGIN")) {
-      if (log4j.isDebugEnabled())
-        log4j.debug("Command: Login");
-      String strTheme = "ltr/Default";
-      if (!vars.getTheme().equals(""))
-        strTheme = vars.getTheme();
-      vars.clearSession(false);
+    Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
-      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+    // Get theme (skin)
+    OBContext.enableAsAdminContext();
+    String strTheme = "";
+    try {
+      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+          org.openbravo.model.ad.system.System.class, "0");
+      if (sys != null && !sys.getTADTheme().isEmpty()) {
+        strTheme = (systemClient.getLanguage().isRTLLanguage() ? "rtl/" : "ltr/")
+            + sys.getTADTheme();
+      }
+    } finally {
+      OBContext.resetAsAdminContext();
+    }
+    if (strTheme.isEmpty()) {
+      strTheme = "ltr/Default";
+    }
+
+    if (vars.commandIn("LOGIN")) {
+      log4j.debug("Command: Login");
+
+      vars.clearSession(false);
 
       String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient.getLanguage()
           .getLanguage());
@@ -58,9 +73,6 @@ public class Login extends HttpBaseServlet {
 
       printPageIdentificacion(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
 
-      // } else if (vars.commandIn("OPTIONS")) {
-      // if (vars.getUser().equals("")) printPageIdentificacion(response);
-      // else printPageOptions(response, vars);
     } else if (vars.commandIn("BLANK")) {
       printPageBlank(response, vars);
     } else if (vars.commandIn("CHECK")) {
@@ -71,29 +83,10 @@ public class Login extends HttpBaseServlet {
       out.print(checkString);
       out.close();
     } else if (vars.commandIn("WELCOME")) {
-      String strTheme = "ltr/Default";
-      if (!vars.getTheme().equals(""))
-        strTheme = vars.getTheme();
-      if (log4j.isDebugEnabled())
-        log4j.debug("Command: Welcome");
+      log4j.debug("Command: Welcome");
       printPageWelcome(response, strTheme);
     } else if (vars.commandIn("LOGO")) {
       printPageLogo(response, vars);
-
-      // } else if (vars.commandIn("LOGED")) {
-      // String target = vars.getSessionValue("target");
-      // printPageFrameIdentificacion(response,
-      // "../utility/VerticalMenu.html",
-      // (target.equals("")?"../utility/Home.html":target));
-      //
-      // } else if (vars.commandIn("CLOSE_SESSION")) {
-      // vars.clearSession(true);
-      // if (log4j.isDebugEnabled()) log4j.debug("Cerrando session");
-      // if (!vars.getDBSession().equals(""))
-      // SessionLoginData.saveProcessed(this, vars.getUser(),
-      // vars.getDBSession());
-      // response.sendRedirect(strDireccion + request.getServletPath());
-
     } else {
       String textDirection = vars.getSessionValue("#TextDirection", "LTR");
       printPageFrameIdentificacion(response, "Login_Welcome.html?Command=WELCOME",
