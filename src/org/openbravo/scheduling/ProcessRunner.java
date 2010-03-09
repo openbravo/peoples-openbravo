@@ -67,7 +67,7 @@ public class ProcessRunner {
     final ProcessContext ctx = bundle.getContext();
     ProcessRequestData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(), ctx
         .getUser(), requestId, bundle.getProcessId(), ctx.getUser(), status, "Direct", ctx
-        .toString(), "", null, null, null, null);
+        .toString(), "", null, null, null);
 
     final String executionId = SequenceIdData.getUUID();
     final long startTime = System.currentTimeMillis();
