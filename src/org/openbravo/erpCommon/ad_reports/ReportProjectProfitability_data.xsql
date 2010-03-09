@@ -71,11 +71,13 @@
                   ELSE COALESCE(C_CURRENCY_CONVERT(ila.amt, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID),0) * 
                   (1 + (CASE WHEN ia.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ia.totallines, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, ia.AD_CLIENT_ID, ia.AD_ORG_ID) - disc.dis_amt)) END)) END AS amount
            FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
-             C_Invoice ia left join (SELECT il.c_invoice_id, sum(C_CURRENCY_CONVERT(il.linenetamt, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID)) as dis_amt
-                                         FROM c_invoiceline il, c_invoice ia
-                                        WHERE il.c_invoice_discount_id IS NOT NULL
-                                        AND il.c_invoice_id= ia.c_invoice_id
-                                        GROUP BY il.c_invoice_id) disc ON ia.C_Invoice_ID = disc.C_Invoice_ID
+             C_Invoice ia left join (SELECT il1.c_invoice_id, sum(C_CURRENCY_CONVERT(il1.linenetamt, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, il1.AD_CLIENT_ID, il1.AD_ORG_ID)) as dis_amt
+                                         FROM c_invoiceline il1, c_invoice ia
+                                        WHERE il1.c_invoice_discount_id IS NOT NULL
+                                        AND il1.c_invoice_id= ia.c_invoice_id
+                                        AND il1.AD_Org_ID IN ('10')
+                                        AND il1.AD_Client_ID IN ('10')
+                                        GROUP BY il1.c_invoice_id) disc ON ia.C_Invoice_ID = disc.C_Invoice_ID
            WHERE ia.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
              AND ia.issotrx = 'Y'
@@ -96,11 +98,13 @@
                   ELSE COALESCE(C_CURRENCY_CONVERT(ila.amt, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID),0) * 
                   (1 + (CASE WHEN ib.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ib.totallines, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, ib.AD_CLIENT_ID, ib.AD_ORG_ID) - disc.dis_amt)) END)) END AS amount
            FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
-             C_Invoice ib left join (SELECT il.c_invoice_id, sum(C_CURRENCY_CONVERT(il.linenetamt, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID)) as dis_amt
-                                         FROM c_invoiceline il, c_invoice ib 
-                                        WHERE il.c_invoice_discount_id IS NOT NULL
-                                        AND il.c_invoice_id= ib.c_invoice_id
-                                        GROUP BY il.c_invoice_id) disc ON ib.C_Invoice_ID = disc.C_Invoice_ID
+             C_Invoice ib left join (SELECT il2.c_invoice_id, sum(C_CURRENCY_CONVERT(il2.linenetamt, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, il2.AD_CLIENT_ID, il2.AD_ORG_ID)) as dis_amt
+                                         FROM c_invoiceline il2, c_invoice ib 
+                                        WHERE il2.c_invoice_discount_id IS NOT NULL
+                                        AND il2.c_invoice_id= ib.c_invoice_id
+                                        AND il2.AD_Org_ID IN ('11')
+                                        AND il2.AD_Client_ID IN ('11')
+                                        GROUP BY il2.c_invoice_id) disc ON ib.C_Invoice_ID = disc.C_Invoice_ID
            WHERE ib.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
              AND ib.issotrx = 'Y'
@@ -122,11 +126,13 @@
                   ELSE COALESCE(C_CURRENCY_CONVERT(ila.amt, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID),0) * 
                   (1 + (CASE WHEN ic.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ic.totallines, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, ic.AD_CLIENT_ID, ic.AD_ORG_ID) - disc.dis_amt)) END)) END AS amount
            FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
-             C_Invoice ic left join (SELECT il.c_invoice_id, sum(C_CURRENCY_CONVERT(il.linenetamt, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID)) as dis_amt
-                                      FROM c_invoiceline il, c_invoice ic 
-                                      WHERE il.c_invoice_discount_id IS NOT NULL
-                                      AND il.c_invoice_id= ic.c_invoice_id
-                                      GROUP BY il.c_invoice_id) disc ON ic.C_Invoice_ID = disc.C_Invoice_ID
+             C_Invoice ic left join (SELECT il3.c_invoice_id, sum(C_CURRENCY_CONVERT(il3.linenetamt, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, il3.AD_CLIENT_ID, il3.AD_ORG_ID)) as dis_amt
+                                      FROM c_invoiceline il3, c_invoice ic 
+                                      WHERE il3.c_invoice_discount_id IS NOT NULL
+                                      AND il3.c_invoice_id= ic.c_invoice_id
+                                      AND il3.AD_Org_ID IN ('12')
+                                      AND il3.AD_Client_ID IN ('12')
+                                      GROUP BY il3.c_invoice_id) disc ON ic.C_Invoice_ID = disc.C_Invoice_ID
            WHERE ic.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
              AND ic.processed = 'Y'
@@ -207,6 +213,8 @@
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
+    <Parameter name="org" optional="true" type="replace" after="AND il1.AD_Org_ID IN (" text="'10'"/>
+    <Parameter name="client" optional="true" type="replace" after="AND il1.AD_Client_ID IN (" text="'10'"/>    
     <Parameter name="datefrom2" optional="true" after="AND 2=2"><![CDATA[ AND ia.dateinvoiced >= to_date(?) ]]></Parameter>
     <Parameter name="dateto2" optional="true" after="AND 2=2"><![CDATA[ AND ia.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="org" optional="true" type="replace" after="AND ia.AD_Org_ID IN (" text="'1'"/>
@@ -216,6 +224,8 @@
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
+    <Parameter name="org" optional="true" type="replace" after="AND il2.AD_Org_ID IN (" text="'11'"/>
+    <Parameter name="client" optional="true" type="replace" after="AND il2.AD_Client_ID IN (" text="'11'"/>        
     <Parameter name="datefrom2" optional="true" after="AND 3=3"><![CDATA[ AND ib.dateinvoiced >= to_date(?) ]]></Parameter>
     <Parameter name="dateto2" optional="true" after="AND 3=3"><![CDATA[ AND ib.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="org" optional="true" type="replace" after="AND ib.AD_Org_ID IN (" text="'2'"/>
@@ -226,6 +236,8 @@
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
+    <Parameter name="org" optional="true" type="replace" after="AND il3.AD_Org_ID IN (" text="'12'"/>
+    <Parameter name="client" optional="true" type="replace" after="AND il3.AD_Client_ID IN (" text="'12'"/>       
     <Parameter name="datefrom2" optional="true" after="AND 4=4"><![CDATA[ AND ic.dateinvoiced >= to_date(?) ]]></Parameter>
     <Parameter name="dateto2" optional="true" after="AND 4=4"><![CDATA[ AND ic.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="org" optional="true" type="replace" after="AND ic.AD_Org_ID IN (" text="'3'"/>
