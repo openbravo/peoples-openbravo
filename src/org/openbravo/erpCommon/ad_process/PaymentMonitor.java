@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -70,7 +71,11 @@ public class PaymentMonitor {
     final OBQuery<DebtPayment> obqParameters = OBDal.getInstance().createQuery(DebtPayment.class,
         whereClause);
     obqParameters.setNamedParameter("invoice", invoice.getId());
-
+    // For Background process execution at system level
+    if (OBContext.getOBContext().isInAdministratorMode()) {
+      obqParameters.setFilterOnReadableClients(false);
+      obqParameters.setFilterOnReadableOrganization(false);
+    }
     final List<DebtPayment> payments = obqParameters.list();
     ArrayList<Long> allDaysToDue = new ArrayList<Long>();
     for (DebtPayment payment : payments) {

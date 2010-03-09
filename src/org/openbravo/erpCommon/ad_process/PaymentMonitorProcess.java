@@ -2,6 +2,7 @@ package org.openbravo.erpCommon.ad_process;
 
 import java.util.List;
 
+import org.hibernate.LockMode;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -33,10 +34,17 @@ public class PaymentMonitorProcess extends DalBaseProcess {
       }
       final List<Invoice> invoices = obqParameters.list();
       for (Invoice invoice : invoices) {
+        OBDal.getInstance().getSession().lock(Invoice.ENTITY_NAME, invoice, LockMode.NONE);
         PaymentMonitor.updateInvoice(invoice);
         counter++;
+        OBDal.getInstance().getSession().flush();
+        OBDal.getInstance().getSession().clear();
+        if (counter % 50 == 0) {
+          logger.log("Invoices updated: " + counter + "\n");
+        }
       }
-      logger.log("Invoices updated: " + counter + "\n");
+      if (counter % 50 != 0)
+        logger.log("Invoices updated: " + counter + "\n");
     } catch (Exception e) {
       // catch any possible exception and throw it as a Quartz
       // JobExecutionException
