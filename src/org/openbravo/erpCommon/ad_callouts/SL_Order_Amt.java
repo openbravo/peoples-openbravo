@@ -136,7 +136,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
 
     if (strChanged.equals("inplinenetamt")) {
-      priceActual = LineNetAmt.divide(qtyOrdered, StdPrecision, BigDecimal.ROUND_HALF_UP);
+      priceActual = LineNetAmt.divide(qtyOrdered, PricePrecision, BigDecimal.ROUND_HALF_UP);
       if (priceActual.compareTo(BigDecimal.ZERO) == 0)
         LineNetAmt = BigDecimal.ZERO;
     }

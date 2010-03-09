@@ -114,7 +114,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     SLOrderProductData[] dataInvoice = SLOrderProductData.selectInvoice(this, strInvoiceId);
 
     if (strChanged.equals("inplinenetamt")) {
-      priceActual = LineNetAmt.divide(qtyInvoice, StdPrecision, BigDecimal.ROUND_HALF_UP);
+      priceActual = LineNetAmt.divide(qtyInvoice, PricePrecision, BigDecimal.ROUND_HALF_UP);
     }
     if (priceActual.compareTo(BigDecimal.ZERO) == 0)
       LineNetAmt = BigDecimal.ZERO;
