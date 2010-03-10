@@ -196,5 +196,6 @@
         <unique-column name="USERNAME"/>
       </unique>
       <check name="AD_USER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_USER_ISLOCKED_CHECK"><![CDATA[ISLOCKED IN ('Y', 'N')]]></check>
     </table>
   </database>
