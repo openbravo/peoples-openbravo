@@ -56,7 +56,12 @@ public class UITableDir extends UIReference {
 
     int myIndex = tableSql.index++;
     String name = field.getProperty("ColumnNameSearch");
-    String tableDirName = name.substring(0, name.length() - 3);
+    String tableDirName;
+    if (field.containsKey("tableDirName")) {
+      tableDirName = field.getProperty("tableDirName");
+    } else {
+      tableDirName = name.substring(0, name.length() - 3);
+    }
     if (subReference != null && !subReference.equals("")) {
       TableSQLQueryData[] search = TableSQLQueryData.searchInfo(tableSql.getPool(), subReference);
       if (search != null && search.length != 0) {
@@ -97,7 +102,8 @@ public class UITableDir extends UIReference {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
+      Vector<Object> vecKeys) throws IOException, ServletException {
     // Table,
     // TableDir, Yes/No, direct search
     strHtml.append("<td class=\"Combo_ContentCell\" colspan=\"3\">");
