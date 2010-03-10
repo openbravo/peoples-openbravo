@@ -65,6 +65,8 @@ public class OBScheduler {
 
   public static String dateTimeFormat;
 
+  public static String sqlDateTimeFormat;
+
   private OBScheduler() {
   }
 
@@ -138,9 +140,11 @@ public class OBScheduler {
     final String channel = bundle.getChannel().toString();
     final ProcessContext context = bundle.getContext();
 
-    ProcessRequestData.insert(getConnection(), context.getOrganization(), context.getClient(),
-        context.getUser(), context.getUser(), requestId, processId, context.getUser(), SCHEDULED,
-        channel.toString(), context.toString(), bundle.getParamsDefalated(), null, null, null);
+    ProcessRequestData
+        .insert(getConnection(), context.getOrganization(), context.getClient(), context.getUser(),
+            context.getUser(), requestId, processId, context.getUser(), SCHEDULED, channel
+                .toString(), context.toString(), bundle.getParamsDefalated(), null, null, null,
+            null);
 
     schedule(requestId, bundle, jobClass);
   }
@@ -210,7 +214,8 @@ public class OBScheduler {
     try {
       sched.unscheduleJob(requestId, OB_GROUP);
       sched.deleteJob(requestId, OB_GROUP);
-      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, format(new Date()), requestId);
+      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, format(new Date()),
+          OBScheduler.sqlDateTimeFormat, requestId);
     } catch (final Exception e) {
       log.error("An error occurred unscheduling process " + requestId, e);
     }
@@ -238,6 +243,8 @@ public class OBScheduler {
     schdlr.addGlobalTriggerListener(monitor);
 
     dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
+    sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();
+
     ProcessRequestData[] data = null;
     try {
       data = ProcessRequestData.selectByStatus(getConnection(), SCHEDULED);
