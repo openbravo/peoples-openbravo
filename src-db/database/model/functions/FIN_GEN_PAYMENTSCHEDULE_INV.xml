@@ -27,6 +27,10 @@ p_docAction VARCHAR(60);
 p_user VARCHAR(60);
 p_result NUMBER;
 
+v_PaidAmount NUMBER; 
+V_OutstandingAmount NUMBER;
+V_DueAmount NUMBER;
+
 v_Client_ID VARCHAR2(32);
 v_Org_ID VARCHAR2(32);
 v_ResultStr VARCHAR2(2000):='';
@@ -90,7 +94,7 @@ BEGIN
       v_oldorder VARCHAR2(32) := '-1';
       v_payment_schedule_invoice VARCHAR2(32);
 
-      CURSOR cur_order_schdet (invoice_id VARCHAR2) IS
+      CURSOR cur_order_schdet (invoice_id VARCHAR) IS
       SELECT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount AS amount,
              fin_payment_scheduledetail_id,
              fin_payment_scheduledetail.fin_payment_schedule_order,
@@ -277,8 +281,41 @@ BEGIN
       END LOOP;
 
       CLOSE cur_order_schdet;
+ 
+-- Reading Data from FIN_PAYMENT_SCHEDULE
+SELECT 
+	sum(PAIDAMT) as PaidAmount,sum(AMOUNT)-sum(PAIDAMT) as OutstandingAmount
+  INTO 
+	v_PaidAmount,v_OutstandingAmount
+  FROM 
+	FIN_PAYMENT_SCHEDULE 
+  WHERE 
+	C_INVOICE_ID=P_RECORD_ID --P_RECORD_ID;
+group by c_invoice_id;
 
-    END;
+-- Getting DueAmount from FIN_PAYMENT_SCHEDULE for the Invoice
+SELECT 
+	
+	sum(amount) -sum(paidamt)as DueAmount
+  INTO 
+	
+	V_DueAmount
+  FROM 
+	FIN_PAYMENT_SCHEDULE 
+  WHERE 
+	C_INVOICE_ID=P_RECORD_ID	--P_RECORD_ID;
+	AND duedate<now()
+group by c_invoice_id;
+--Updating Payment Monitor values into C_INVOICE
+  UPDATE C_INVOICE SET               
+                TOTALPAID = v_PaidAmount,
+                OUTSTANDINGAMT = v_OutstandingAmount,
+                DUEAMT =  V_DueAmount
+	WHERE 
+		C_INVOICE_ID = P_RECORD_ID;
+
+END;
+    
   ELSIF (p_docaction = 'RE') THEN
     DECLARE
       v_count NUMBER;
