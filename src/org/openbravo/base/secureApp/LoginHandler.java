@@ -373,8 +373,8 @@ public class LoginHandler extends HttpBaseServlet {
 
       this.userName = userName;
       setUser();
-      // Count the how many times this user has failed wihtout success
-      StringBuffer hql = new StringBuffer();
+      // Count the how many times this user has failed without success
+      StringBuilder hql = new StringBuilder();
       hql.append("select count(*)");
       hql.append("  from ADSession s ");
       hql.append(" where s.loginStatus='F'");
