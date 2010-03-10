@@ -64,7 +64,6 @@ import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.utils.FileUtility;
@@ -111,7 +110,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     }
 
     public boolean isLoggingIn() {
-      return loggingIn == null || loggingIn.equals("Y");
+      return loggingIn == null || loggingIn.equals("") || loggingIn.equals("Y");
     }
   }
 
@@ -1054,14 +1053,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     sl.setServerUrl(strDireccion);
     sl.setSessionID(sessionId);
 
-    if (sessionId == null) {
-      sessionId = SequenceIdData.getUUID();
+    if (sessionId == null || sessionId.equals("")) {
+      sl.setStatus("S");
       sl.save(this);
-      vars.setSessionValue("#AD_Session_ID", sessionId);
+      vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
     }
 
     // Logging process is finish, remove logging flag
-    vars.setSessionValue("#loggingIn", null);
+    vars.setSessionValue("#loggingIn", "N");
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
