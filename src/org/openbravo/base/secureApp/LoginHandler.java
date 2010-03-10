@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -90,13 +89,14 @@ public class LoginHandler extends HttpBaseServlet {
           // process is complete or not. At this stage is not complete, we only have a user ID, but
           // no the rest of session info: client, org, role...
           session.setAttribute("#LOGGINGIN", "Y");
-          log4j.info("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
+          log4j.debug("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
           checkLicenseAndGo(res, vars, strUserAuth, sessionId);
         } else {
           String failureTitle;
           String failureMessage;
           if (strUserAuth == null) {
-            log4j.info("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
+            log4j
+                .debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
             lockSettings.addFail(); // Adds fail to lock the user if needed
             failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", language);
             failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", language);
@@ -104,7 +104,7 @@ public class LoginHandler extends HttpBaseServlet {
             // lockSettings.isLockedUser()
             failureTitle = Utility.messageBD(this, "LOCKED_USER_TITLE", language);
             failureMessage = strUser + " " + Utility.messageBD(this, "LOCKED_USER_MSG", language);
-            log4j.info(strUser + " is blocked cannot activate session ID " + sessionId);
+            log4j.debug(strUser + " is blocked cannot activate session ID " + sessionId);
             updateDBSession(sessionId, false, "LU");
           }
 
@@ -124,11 +124,11 @@ public class LoginHandler extends HttpBaseServlet {
   private void delayResponse(UserLock lockSettings) {
     int delay = lockSettings.getDelay();
     if (delay > 0) {
-      log4j.info("Delaying response " + delay + " seconds because of the previous log in fails.");
+      log4j.debug("Delaying response " + delay + " seconds because of the previous login failed.");
       try {
         Thread.sleep(delay * 1000);
       } catch (InterruptedException e) {
-        log4j.error("Error delaying log in response", e);
+        log4j.error("Error delaying login response", e);
       }
     }
 
@@ -190,7 +190,7 @@ public class LoginHandler extends HttpBaseServlet {
             .getLanguage());
         String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", vars
             .getLanguage());
-        log4j.info("Concurrent Users Reached - Session: " + sessionId);
+        log4j.warn("Concurrent Users Reached - Session: " + sessionId);
         updateDBSession(sessionId, msgType.equals("Warning"), "CUR");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
@@ -199,14 +199,14 @@ public class LoginHandler extends HttpBaseServlet {
         title = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED_TITLE", vars.getLanguage());
         action = "../security/Menu.html";
         msgType = "Warning";
-        log4j.info("Soft Users Reached - Session: " + sessionId);
+        log4j.warn("Soft Users Reached - Session: " + sessionId);
         updateDBSession(sessionId, true, "SUR");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       case OPS_INSTANCE_NOT_ACTIVE:
         msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
-        log4j.info("Innactive OBPS instance - Session: " + sessionId);
+        log4j.warn("Innactive OBPS instance - Session: " + sessionId);
         updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
@@ -214,10 +214,10 @@ public class LoginHandler extends HttpBaseServlet {
         msg = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED_TITLE", vars.getLanguage());
         StringBuffer expiredMoudules = new StringBuffer();
-        log4j.info("Expired modules - Session: " + sessionId);
+        log4j.warn("Expired modules - Session: " + sessionId);
         for (Module module : ak.getExpiredInstalledModules()) {
           expiredMoudules.append("<br/>").append(module.getName());
-          log4j.info("  module:" + module.getName());
+          log4j.warn("  module:" + module.getName());
         }
         msg += expiredMoudules.toString();
         updateDBSession(sessionId, msgType.equals("Warning"), "ME");
@@ -234,7 +234,7 @@ public class LoginHandler extends HttpBaseServlet {
           || sysInfo.getSystemStatus().equals("RB50")) {
         String msg = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED", vars.getLanguage());
         String title = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED_TITLE", vars.getLanguage());
-        log4j.info("Tomcat not restarted");
+        log4j.warn("Tomcat not restarted");
         updateDBSession(sessionId, true, "RT");
         goToRetry(res, vars, msg, title, "Warning", "../security/Menu.html");
       } else {
@@ -367,7 +367,7 @@ public class LoginHandler extends HttpBaseServlet {
       try {
         lockAfterTrials = Integer.parseInt(propLock);
       } catch (NumberFormatException e) {
-        log4j.error("login.trial.user.lock " + propMax, e);
+        log4j.error("Could not set login.trial.user.lock property" + propMax, e);
         lockAfterTrials = 0;
       }
 
@@ -394,7 +394,7 @@ public class LoginHandler extends HttpBaseServlet {
       }
 
       if (numberOfFails > 0) {
-        log4j.info("Number of log in fails for user " + userName + ": " + numberOfFails);
+        log4j.warn("Number of failed logins for user " + userName + ": " + numberOfFails);
       }
 
       delay = delayInc * numberOfFails;
@@ -409,16 +409,12 @@ public class LoginHandler extends HttpBaseServlet {
       obCriteria.add(Expression.eq(User.PROPERTY_USERNAME, userName));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
-      List<User> users = obCriteria.list();
-      if (users.size() != 0) {
-        user = users.get(0);
-      } else {
-        user = null;
-      }
+
+      user = (User) obCriteria.uniqueResult();
     }
 
     /**
-     * A new failed log in attempt, increments the count of fails and blocks the user if needed
+     * A new failed login attempt, increments the count of fails and blocks the user if needed
      */
     public void addFail() {
       numberOfFails++;
@@ -434,7 +430,7 @@ public class LoginHandler extends HttpBaseServlet {
 
             user.setLocked(true);
             OBDal.getInstance().flush();
-            log4j.info(userName + " is locked");
+            log4j.warn(userName + " is locked after " + numberOfFails + " failed logins.");
             return;
           } finally {
             OBContext.resetAsAdminContext();

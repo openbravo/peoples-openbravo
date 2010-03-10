@@ -347,13 +347,13 @@ public class ActivationKey {
         int activeSessions = 0;
         try {
           activeSessions = getActiveSessions(currentSession);
-          log4j.info("Active sessions: " + activeSessions);
+          log4j.debug("Active sessions: " + activeSessions);
           if (activeSessions >= maxUsers || (softUsers != null && activeSessions >= softUsers)) {
             // Before raising concurrent users error, clean the session with ping timeout and try it
             // again
             if (deactivateTimeOutSessions(currentSession)) {
               activeSessions = getActiveSessions(currentSession);
-              log4j.info("Active sessions after timeout cleanup: " + activeSessions);
+              log4j.debug("Active sessions after timeout cleanup: " + activeSessions);
             }
           }
         } catch (Exception e) {
