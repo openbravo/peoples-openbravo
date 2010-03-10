@@ -75,7 +75,7 @@
     <Parameter name="parDateFrom" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED < TO_DATE(?)]]></Parameter>
     <Parameter name="parBPartner" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_BPARTNER.C_BPARTNER_ID = ?</Parameter>
-    <Parameter name="parDocumentNo" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_ORDER.DOCUMENTNO = ?</Parameter>
+    <Parameter name="parDocumentNo" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_ORDER.DOCUMENTNO LIKE ?</Parameter>
   </SqlMethod>
   <SqlMethod name="insert" connection="true" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
