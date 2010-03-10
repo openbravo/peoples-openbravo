@@ -37,7 +37,7 @@ import org.openbravo.model.ad.access.User;
  * Utility class to manage user locking and time delays
  * 
  */
-class UserLock {
+public class UserLock {
   private static Logger log4j = Logger.getLogger(UserLock.class);
   private int delay;
   private int lockAfterTrials;
@@ -144,7 +144,7 @@ class UserLock {
   /**
    * A new failed login attempt, increments the count of fails and blocks the user if needed
    */
-  void addFail() {
+  public void addFail() {
     numberOfFails++;
     boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
     log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
@@ -179,7 +179,7 @@ class UserLock {
    * (login.trial.delay.increment and login.trial.delay.max), and the current username has login
    * attempts failed.
    */
-  void delayResponse() {
+  public void delayResponse() {
     if (delay > 0) {
       log4j.debug("Delaying response " + delay + " seconds because of the previous login failed.");
       try {

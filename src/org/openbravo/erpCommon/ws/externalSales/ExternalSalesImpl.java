@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2009 Openbravo SL
+ * All portions are Copyright (C) 2001-2010 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,10 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.base.secureApp.LoginUtils;
+import org.openbravo.base.secureApp.UserLock;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class ExternalSalesImpl implements ExternalSales {
@@ -50,13 +53,45 @@ public class ExternalSalesImpl implements ExternalSales {
     initPool();
   }
 
+  /**
+   * Check access and block user if needed
+   */
   private boolean access(String username, String password) {
     try {
-      return !ExternalSalesOrderData.access(pool, username, password).equals("0");
+      UserLock lockSettings = new UserLock(username);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return false;
+      }
+      boolean hasAccess = !ExternalSalesOrderData.access(pool, username, password).equals("0");
+      String strUserAuth = LoginUtils.checkUserPassword(pool, username, password);
+      createDBSession(username, strUserAuth);
+      if (strUserAuth == null) {
+        lockSettings.addFail();
+      }
+
+      return hasAccess;
     } catch (Exception e) {
       return false;
     }
+  }
 
+  private void createDBSession(String strUser, String strUserAuth) {
+    try {
+      String usr = strUserAuth == null ? "0" : strUserAuth;
+
+      final SessionLogin sl = new SessionLogin("0", "0", usr);
+
+      if (strUserAuth == null) {
+        sl.setStatus("F");
+      } else {
+        sl.setStatus("S");
+      }
+      sl.setUserName(strUser);
+      sl.save();
+    } catch (Exception e) {
+      log4j.error("Error creating DB session", e);
+    }
   }
 
   public Product[] getProductsCatalog(String ClientID, String organizationId, String salesChannel,
