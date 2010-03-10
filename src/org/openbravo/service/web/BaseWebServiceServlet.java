@@ -29,11 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -123,12 +125,33 @@ public class BaseWebServiceServlet extends HttpServlet {
     } else { // use basic authentication
       userId = doBasicAuthentication(request);
     }
+
     if (userId != null) {
       OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
       OBContext.setOBContextInSession(request, OBContext.getOBContext());
       return true;
     } else {
       return false;
+    }
+  }
+
+  private void createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {
+    try {
+      String usr = strUserAuth == null ? "0" : strUserAuth;
+
+      final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
+
+      if (strUserAuth == null) {
+        sl.setStatus("F");
+      } else {
+        sl.setStatus("S");
+      }
+
+      sl.setUserName(strUser);
+      sl.setServerUrl(HttpBaseUtils.getLocalAddress(req));
+      sl.save();
+    } catch (Exception e) {
+      log.error("Error creating DB session", e);
     }
   }
 
@@ -153,7 +176,9 @@ public class BaseWebServiceServlet extends HttpServlet {
       }
       final String login = decodedUserPass.substring(0, index);
       final String password = decodedUserPass.substring(index + 1);
-      return LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
+      String userId = LoginUtils.getValidUserId(new DalConnectionProvider(), login, password);
+      createDBSession(request, login, userId);
+      return userId;
     } catch (final Exception e) {
       throw new OBException(e);
     }

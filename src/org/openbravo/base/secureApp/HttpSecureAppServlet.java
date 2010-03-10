@@ -1055,7 +1055,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     if (sessionId == null || sessionId.equals("")) {
       sl.setStatus("S");
-      sl.save(this);
+      sl.save();
       vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
     }
 

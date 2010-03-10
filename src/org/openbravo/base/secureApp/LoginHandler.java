@@ -11,12 +11,8 @@
  */
 package org.openbravo.base.secureApp;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -24,17 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.Query;
-import org.hibernate.criterion.Expression;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
-import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -66,13 +58,9 @@ public class LoginHandler extends HttpBaseServlet {
 
     OBContext.enableAsAdminContext();
     try {
-
-      UserLock lockSettings = new UserLock(strUser);
       Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
       String language = systemClient.getLanguage().getLanguage();
-
-      delayResponse(lockSettings);
 
       if (strUser.equals("")) {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
@@ -81,7 +69,7 @@ public class LoginHandler extends HttpBaseServlet {
         final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
 
         String sessionId = createDBSession(req, strUser, strUserAuth);
-        if (strUserAuth != null && !lockSettings.isLockedUser()) {
+        if (strUserAuth != null) {
           HttpSession session = req.getSession(true);
           session.setAttribute("#Authenticated_user", strUserAuth);
           session.setAttribute("#AD_SESSION_ID", sessionId);
@@ -92,46 +80,26 @@ public class LoginHandler extends HttpBaseServlet {
           log4j.debug("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
           checkLicenseAndGo(res, vars, strUserAuth, sessionId);
         } else {
+          // strUserAuth can be null because a failed user/password or because the user is locked
           String failureTitle;
           String failureMessage;
-          if (strUserAuth == null) {
+          if (LoginUtils.checkUserPassword(myPool, strUser, strPass) == null) {
             log4j
                 .debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
-            lockSettings.addFail(); // Adds fail to lock the user if needed
             failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", language);
             failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", language);
           } else {
-            // lockSettings.isLockedUser()
             failureTitle = Utility.messageBD(this, "LOCKED_USER_TITLE", language);
             failureMessage = strUser + " " + Utility.messageBD(this, "LOCKED_USER_MSG", language);
-            log4j.debug(strUser + " is blocked cannot activate session ID " + sessionId);
+            log4j.debug(strUser + " is locked cannot activate session ID " + sessionId);
             updateDBSession(sessionId, false, "LU");
           }
-
           goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
         }
       }
     } finally {
       OBContext.resetAsAdminContext();
     }
-  }
-
-  /**
-   * Delays the response of checking in case it is configured in Openbravo.properties
-   * (login.trial.delay.increment and login.trial.delay.max), and the current username has login
-   * attempts failed.
-   */
-  private void delayResponse(UserLock lockSettings) {
-    int delay = lockSettings.getDelay();
-    if (delay > 0) {
-      log4j.debug("Delaying response " + delay + " seconds because of the previous login failed.");
-      try {
-        Thread.sleep(delay * 1000);
-      } catch (InterruptedException e) {
-        log4j.error("Error delaying login response", e);
-      }
-    }
-
   }
 
   /**
@@ -152,7 +120,7 @@ public class LoginHandler extends HttpBaseServlet {
 
       sl.setUserName(strUser);
       sl.setServerUrl(strDireccion);
-      sl.save(this);
+      sl.save();
       return sl.getSessionID();
     } catch (Exception e) {
       log4j.error("Error creating DB session", e);
@@ -307,147 +275,4 @@ public class LoginHandler extends HttpBaseServlet {
     return "User-login control Servlet";
   } // end of getServletInfo() method
 
-  /**
-   * Utility class to manage user locking and time delays
-   * 
-   */
-  private class UserLock {
-    private int delay;
-    private int lockAfterTrials;
-
-    private String userName;
-    private int numberOfFails;
-    private User user;
-
-    public UserLock(String userName) {
-      // Read Openbravo.properties for locking configuration. If it's properly configured, it tries
-      // to read from the properties file in the source directory not to force to deploy the file to
-      // change configuration.
-      String sourcePath = globalParameters.getOBProperty("source.path", null);
-      Properties obProp;
-      if (sourcePath != null && new File(sourcePath + "/config/Openbravo.properties").exists()) {
-        try {
-          InputStream obPropFile = new FileInputStream(new File(sourcePath
-              + "/config/Openbravo.properties"));
-          obProp = new Properties();
-          obProp.load(obPropFile);
-        } catch (Exception e) {
-          log4j.error("Error reading properties", e);
-          obProp = globalParameters.getOBProperties();
-        }
-      } else {
-        obProp = globalParameters.getOBProperties();
-      }
-      String propInc = obProp.getProperty("login.trial.delay.increment", "0");
-      String propMax = obProp.getProperty("login.trial.delay.max", "0");
-      String propLock = obProp.getProperty("login.trial.user.lock", "0");
-      if (propInc.equals("")) {
-        propInc = "0";
-      }
-      if (propMax.equals("")) {
-        propMax = "0";
-      }
-      if (propLock.equals("")) {
-        propLock = "0";
-      }
-      int delayInc;
-      int delayMax;
-      try {
-        delayInc = Integer.parseInt(propInc);
-      } catch (NumberFormatException e) {
-        log4j.error("Could not set login.trial.delay.increment property " + propInc, e);
-        delayInc = 0;
-      }
-      try {
-        delayMax = Integer.parseInt(propMax);
-      } catch (NumberFormatException e) {
-        log4j.error("Could not set login.trial.delay.max property " + propMax, e);
-        delayMax = 0;
-      }
-      try {
-        lockAfterTrials = Integer.parseInt(propLock);
-      } catch (NumberFormatException e) {
-        log4j.error("Could not set login.trial.user.lock property" + propMax, e);
-        lockAfterTrials = 0;
-      }
-
-      this.userName = userName;
-      setUser();
-      // Count the how many times this user has failed without success
-      StringBuilder hql = new StringBuilder();
-      hql.append("select count(*)");
-      hql.append("  from ADSession s ");
-      hql.append(" where s.loginStatus='F'");
-      hql.append("   and s.username = :name");
-      hql
-          .append("   and s.creationDate > (select coalesce(max(s1.creationDate), s.creationDate-1)");
-      hql.append("                           from ADSession s1");
-      hql.append("                          where s1.username = s.username");
-      hql.append("                            and s1.loginStatus!='F')");
-      Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
-      q.setParameter("name", userName);
-
-      numberOfFails = ((Long) q.list().get(0)).intValue();
-      if (numberOfFails == 0) {
-        delay = 0;
-        return;
-      }
-
-      if (numberOfFails > 0) {
-        log4j.warn("Number of failed logins for user " + userName + ": " + numberOfFails);
-      }
-
-      delay = delayInc * numberOfFails;
-      if (delayMax > 0 && delay > delayMax) {
-        delay = delayMax;
-      }
-
-    }
-
-    private void setUser() {
-      OBCriteria<User> obCriteria = OBDal.getInstance().createCriteria(User.class);
-      obCriteria.add(Expression.eq(User.PROPERTY_USERNAME, userName));
-      obCriteria.setFilterOnReadableClients(false);
-      obCriteria.setFilterOnReadableOrganization(false);
-
-      user = (User) obCriteria.uniqueResult();
-    }
-
-    /**
-     * A new failed login attempt, increments the count of fails and blocks the user if needed
-     */
-    public void addFail() {
-      numberOfFails++;
-      boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
-      log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
-          + numberOfFails + " - user:" + user);
-      if (lockUser) {
-        // Try to lock the user in database
-        delay = 0;
-        if (user != null) {
-          try {
-            OBContext.setAdminContext();
-
-            user.setLocked(true);
-            OBDal.getInstance().flush();
-            log4j.warn(userName + " is locked after " + numberOfFails + " failed logins.");
-            return;
-          } finally {
-            OBContext.resetAsAdminContext();
-          }
-        }
-      }
-    }
-
-    public int getDelay() {
-      return delay;
-    }
-
-    public boolean isLockedUser() {
-      if (lockAfterTrials == 0) {
-        return false;
-      }
-      return user != null && user.isLocked();
-    }
-  }
 }

@@ -104,7 +104,7 @@ public class SessionLogin {
           + " - Remote Host: " + getRemoteHost());
   }
 
-  public int save(ConnectionProvider conn) throws ServletException {
+  public int save() throws ServletException {
     if (getSessionID().equals("")) {
       String key = SequenceIdData.getUUID();
       SessionListener.addSession(key);
@@ -142,6 +142,13 @@ public class SessionLogin {
     } finally {
       OBContext.resetAsAdminContext();
     }
+  }
+
+  /**
+   * @deprecated use save() instead
+   */
+  public int save(ConnectionProvider conn) throws ServletException {
+    return save();
   }
 
   public void update(ConnectionProvider conn) throws ServletException {
