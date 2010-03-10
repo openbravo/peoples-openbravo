@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -62,12 +63,26 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12497: Active property should have default value ==
  * true if no explicit default is defined
  * 
+ * - https://issues.openbravo.com/view.php?id=12106: record identifier returned from dal uses ' ' as
+ * separator of columns, but normal pl-version uses ' - '
+ * 
  * @author mtaal
  * @author iperdomo
  */
 
 public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12106
+   */
+  public void test12106() {
+    setSystemAdministratorContext();
+    final List<Module> modules = OBDal.getInstance().createCriteria(Module.class).list();
+    for (Module module : modules) {
+      assertTrue(module.getIdentifier().contains(IdentifierProvider.SEPARATOR));
+    }
+  }
 
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12202
