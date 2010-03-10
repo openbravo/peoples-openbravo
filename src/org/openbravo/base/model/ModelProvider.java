@@ -112,7 +112,6 @@ public class ModelProvider implements OBSingleton {
       // initialize it
       localProvider.getModel();
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       throw new OBException(e);
     }
   }

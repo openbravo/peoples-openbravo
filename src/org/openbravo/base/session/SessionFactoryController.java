@@ -163,8 +163,6 @@ public abstract class SessionFactoryController {
 
       log.debug("Session Factory initialized");
     } catch (final Throwable t) {
-      // this is done to get better visibility of the exceptions
-      t.printStackTrace(System.err);
       throw new OBException(t);
     }
   }
