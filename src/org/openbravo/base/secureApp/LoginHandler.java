@@ -155,7 +155,7 @@ public class LoginHandler extends HttpBaseServlet {
       sl.save(this);
       return sl.getSessionID();
     } catch (Exception e) {
-      e.printStackTrace();
+      log4j.error("Error creating DB session", e);
       return null;
     }
   }
