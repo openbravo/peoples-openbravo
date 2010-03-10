@@ -375,6 +375,7 @@ public class LoginHandler extends HttpBaseServlet {
       setUser();
       // Count the how many times this user has failed wihtout success
       StringBuffer hql = new StringBuffer();
+      hql.append("select count(*)");
       hql.append("  from ADSession s ");
       hql.append(" where s.loginStatus='F'");
       hql.append("   and s.username = :name");
@@ -385,7 +386,8 @@ public class LoginHandler extends HttpBaseServlet {
       hql.append("                            and s1.loginStatus!='F')");
       Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
       q.setParameter("name", userName);
-      numberOfFails = q.list().size();
+
+      numberOfFails = ((Long) q.list().get(0)).intValue();
       if (numberOfFails == 0) {
         delay = 0;
         return;
