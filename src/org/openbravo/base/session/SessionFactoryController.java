@@ -43,14 +43,14 @@ public abstract class SessionFactoryController {
   // note the order by is really important otherwise the build of
   // uniqueconstraints (ModelProvider) can fail with strange errors.
   private static final String UNIQUE_CONSTRAINT_QUERY_POSTGRES = "SELECT pg_class.relname, pg_attribute.attname, pg_constraint.conname FROM pg_constraint JOIN pg_class ON pg_class.oid = pg_constraint.conrelid JOIN pg_attribute ON pg_attribute.attrelid=pg_constraint.conrelid WHERE pg_constraint.contype = 'u' AND (pg_attribute.attnum = ANY (pg_constraint.conkey)) order by pg_constraint.conname";
-  private static final String UNIQUE_CONSTRAINT_QUERY_ORACLE = "SELECT UCC.TABLE_NAME,UCC.COLUMN_NAME,UCC.CONSTRAINT_NAME FROM USER_CONS_COLUMNS UCC JOIN USER_CONSTRAINTS UC ON UC.CONSTRAINT_NAME=UCC.CONSTRAINT_NAME WHERE UC.CONSTRAINT_TYPE = 'U'  AND UC.owner like '${bbdd.user}' ORDER BY UCC.CONSTRAINT_NAME";
+  private static final String UNIQUE_CONSTRAINT_QUERY_ORACLE = "SELECT UCC.TABLE_NAME,UCC.COLUMN_NAME,UCC.CONSTRAINT_NAME FROM USER_CONS_COLUMNS UCC JOIN USER_CONSTRAINTS UC ON UC.CONSTRAINT_NAME=UCC.CONSTRAINT_NAME WHERE UC.CONSTRAINT_TYPE = 'U' ORDER BY UCC.CONSTRAINT_NAME";
 
   private static final String COLUMN_QUERY_POSTGRES = "SELECT t.tablename, a.attname, a.attnotnull FROM pg_tables t, pg_class c, pg_attribute a "
       + "WHERE tablename NOT LIKE 'pg%' AND tablename NOT LIKE 'sql%' and "
       + "c.relname = t.tablename AND a.attnum > 0 AND a.attrelid = c.oid";
 
-  private static final String COLUMN_QUERY_ORACLE = "SELECT C.TABLE_NAME, C.COLUMN_NAME, C.NULLABLE"
-      + " FROM ALL_TAB_COLUMNS C WHERE c.owner like '${bbdd.user}' ORDER BY C.TABLE_NAME";
+  private static final String COLUMN_QUERY_ORACLE = "SELECT C.TABLE_NAME, C.COLUMN_NAME, C.NULLABLE "
+      + "FROM USER_TAB_COLUMNS C  ORDER BY C.TABLE_NAME;";
 
   private static SessionFactoryController instance = null;
 
