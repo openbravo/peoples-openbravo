@@ -50,7 +50,7 @@ public abstract class SessionFactoryController {
       + "c.relname = t.tablename AND a.attnum > 0 AND a.attrelid = c.oid";
 
   private static final String COLUMN_QUERY_ORACLE = "SELECT C.TABLE_NAME, C.COLUMN_NAME, C.NULLABLE "
-      + "FROM USER_TAB_COLUMNS C  ORDER BY C.TABLE_NAME;";
+      + "FROM USER_TAB_COLUMNS C  ORDER BY C.TABLE_NAME";
 
   private static SessionFactoryController instance = null;
 
