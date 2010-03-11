@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
@@ -40,30 +39,12 @@ public class Login extends HttpBaseServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    Client systemClient = OBDal.getInstance().get(Client.class, "0");
-
-    // Get theme (skin)
-    OBContext.enableAsAdminContext();
-    String strTheme = "";
-    try {
-      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-          org.openbravo.model.ad.system.System.class, "0");
-      if (sys != null && !sys.getTADTheme().isEmpty()) {
-        strTheme = (systemClient.getLanguage().isRTLLanguage() ? "rtl/" : "ltr/")
-            + sys.getTADTheme();
-      }
-    } finally {
-      OBContext.resetAsAdminContext();
-    }
-    if (strTheme.isEmpty()) {
-      strTheme = "ltr/Default";
-    }
-
     if (vars.commandIn("LOGIN")) {
       log4j.debug("Command: Login");
-
+      String strTheme = vars.getTheme();
       vars.clearSession(false);
 
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
       String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient.getLanguage()
           .getLanguage());
       String browserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED", systemClient
@@ -84,6 +65,7 @@ public class Login extends HttpBaseServlet {
       out.close();
     } else if (vars.commandIn("WELCOME")) {
       log4j.debug("Command: Welcome");
+      String strTheme = vars.getTheme();
       printPageWelcome(response, strTheme);
     } else if (vars.commandIn("LOGO")) {
       printPageLogo(response, vars);

@@ -13,9 +13,13 @@ package org.openbravo.base.secureApp;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.VariablesBase;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.ad.system.Client;
 
 /**
  * This class is used to provide the coder with friendly methods to retrieve certain environment,
@@ -25,6 +29,7 @@ import org.openbravo.erpCommon.utility.OBError;
  * 
  */
 public class VariablesSecureApp extends VariablesBase {
+  private static final Logger log4j = Logger.getLogger(VariablesSecureApp.class);
   private String user;
   private String role;
   private String language;
@@ -194,7 +199,29 @@ public class VariablesSecureApp extends VariablesBase {
     if (!theme.equals("")) {
       return theme;
     } else {
-      return "ltr/Default";
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+
+      // Get theme (skin)
+      OBContext.enableAsAdminContext();
+      String strTheme = "";
+      try {
+        org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+            org.openbravo.model.ad.system.System.class, "0");
+        if (sys != null && !sys.getTADTheme().isEmpty()) {
+          strTheme = (systemClient.getLanguage().isRTLLanguage() ? "rtl/" : "ltr/")
+              + sys.getTADTheme();
+        }
+      } catch (Exception e) {
+        log4j.error("Error getting theme", e);
+        // set default theme and ignore exception
+        strTheme = "";
+      } finally {
+        OBContext.resetAsAdminContext();
+      }
+      if (strTheme.isEmpty()) {
+        strTheme = "ltr/Default";
+      }
+      return strTheme;
     }
   }
 
