@@ -24,7 +24,7 @@
     <SqlMethodComment></SqlMethodComment>
 	    <Sql>
 	      <![CDATA[
-	         SELECT COUNT(*) AS AUTH
+	         SELECT AD_USER_ID AS AUTH
 		       FROM AD_USER  U						      
 			  WHERE U.USERNAME = ? 
 	            AND U.PASSWORD = ?				

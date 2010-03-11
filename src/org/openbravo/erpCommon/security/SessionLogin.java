@@ -129,7 +129,9 @@ public class SessionLogin {
       session.setRemoteHost(getRemoteHost());
       session.setProcessed(getProcessed());
       session.setServerUrl(serverUrl);
-      session.setSessionActive(!status.equals("F"));
+      // save inactive session for failed and webservice logins
+      boolean sessionActive = !status.equals("F") && !status.equals("WS");
+      session.setSessionActive(sessionActive);
       session.setLoginStatus(status);
       session.setUsername(username);
       OBDal.getInstance().save(session);

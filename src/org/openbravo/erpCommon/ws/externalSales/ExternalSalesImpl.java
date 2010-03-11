@@ -30,7 +30,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
-import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.UserLock;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.security.SessionLogin;
@@ -63,8 +62,8 @@ public class ExternalSalesImpl implements ExternalSales {
       if (lockSettings.isLockedUser()) {
         return false;
       }
-      boolean hasAccess = !ExternalSalesOrderData.access(pool, username, password).equals("0");
-      String strUserAuth = LoginUtils.checkUserPassword(pool, username, password);
+      String strUserAuth = ExternalSalesOrderData.access(pool, username, password);
+      boolean hasAccess = strUserAuth != null && !strUserAuth.isEmpty();
       createDBSession(username, strUserAuth);
       if (strUserAuth == null) {
         lockSettings.addFail();
@@ -85,7 +84,7 @@ public class ExternalSalesImpl implements ExternalSales {
       if (strUserAuth == null) {
         sl.setStatus("F");
       } else {
-        sl.setStatus("S");
+        sl.setStatus("WS");
       }
       sl.setUserName(strUser);
       sl.save();
