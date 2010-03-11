@@ -144,11 +144,6 @@ public class EntityAccessChecker implements OBNotSingleton {
     @SuppressWarnings("unchecked")
     final List<TableAccess> tas = SessionHandler.getInstance().createQuery(tafQryStr).list();
     for (final TableAccess ta : tas) {
-      final String accessLevel = ta.getTable().getDataAccessLevel();
-      if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
-        continue;
-      }
-
       final String tableName = ta.getTable().getName();
       final Entity e = mp.getEntity(tableName);
 
