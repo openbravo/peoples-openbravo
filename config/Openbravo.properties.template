@@ -152,6 +152,6 @@ safe.mode=true
 
 # If these properties are set, after log in trail failed the response time 
 # will be delayed, and the user can be blocked.
-login.trial.delay.increment=5
-login.trial.delay.max=60
+login.trial.delay.increment=0
+login.trial.delay.max=0
 login.trial.user.lock=0
