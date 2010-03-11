@@ -441,8 +441,7 @@ export.database: exports database structure and data to xml files.
                   stableDBdir="${stableDBdir}"
                   testDBdir="${base.src.db}/database"
                   verbosity="${bbdd.verbosity}"
-                  userId="0" adminMode="true" 
-                  propertiesFile="${base.config}/Openbravo.properties"/>    
+    />    
   </target>
 
   <target name="export.sample.data" depends="code.rev">
