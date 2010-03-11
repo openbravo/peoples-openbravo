@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -40,11 +41,13 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SL_InOutLine_Product extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+    @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
+    @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -79,136 +82,145 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
       String strQty, String strUOM, String strAttribute, String strQtyOrder, String strPUOM,
       String strMProductID, String strIsSOTrx, String strWharehouse, String strTabId,
       String strmInoutlineId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    StringBuffer resultado = new StringBuffer();
-    // if (strIsSOTrx.equals("Y")) strLocator = "";
-
-    resultado.append("var calloutName='SL_InOutLine_Product';\n\n");
-    resultado.append("var respuesta = new Array(");
-    // if (strIsSOTrx.equals("Y")) {
-    if (strLocator.startsWith("\""))
-      strLocator = strLocator.substring(1, strLocator.length() - 1);
-    if (strLocator == null || strLocator.equals("")) {
-      if (strIsSOTrx.equals("Y")) {
-        resultado.append("new Array(\"inpmLocatorId\", \"\"),");
-        resultado.append("new Array(\"inpmLocatorId_R\", \"\"),");
-      }
-    } else {
-      resultado.append("new Array(\"inpmLocatorId\", \"" + strLocator + "\"),");
-      resultado.append("new Array(\"inpmLocatorId_R\", \""
-          + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars
-              .getLanguage())) + "\"),");
-    }
-    if (strAttribute.startsWith("\""))
-      strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
-    resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),\n");
-    resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-        + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strAttribute))
-        + "\"),\n");
-    String strAttrSet, strAttrSetValueType;
-    strAttrSet = strAttrSetValueType = "";
-    final Product product = OBDal.getInstance().get(Product.class, strMProductID);
-    if (product != null) {
-      AttributeSet attributeset = product.getAttributeSet();
-      if (attributeset != null)
-        strAttrSet = product.getAttributeSet().toString();
-      strAttrSetValueType = product.getUseAttributeSetValueAs();
-    }
-    resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
-        + "\"),\n");
-    resultado.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
-
-    // This 'if' is used when the delivery note is created based in a
-    // sale-order, to make it not ask for the quantity of the delivery-note
-    // and to modify it with the quantity of product in the warehouse.
-    // However, if the delivery-note doesn't come from an order, it modifies
-    // the quantity field with the quantity in the warehouse.
-    String fromOrder = SLInOutLineProductData.fromOrder(this, strmInoutlineId);
-    if (fromOrder.equals("0")) {
-      resultado.append("new Array(\"inpquantityorder\", "
-          + (strQtyOrder.equals("") ? "\"\"" : strQtyOrder) + "),");
-      // Here begins the code for the new callout to sl_inoutline_product
-      resultado.append("new Array(\"inpmovementqty\", " + (strQty.equals("") ? "\"\"" : strQty)
-          + "),");
-    }
-    // }
-    String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
-    resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
-    resultado.append("new Array(\"inpmProductUomId\", ");
-    if (strPUOM.startsWith("\""))
-      strPUOM = strPUOM.substring(1, strPUOM.length() - 1);
-    if (vars.getLanguage().equals("en_US")) {
-      FieldProvider[] tld = null;
+      final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLOrderProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-        tld = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
 
-      if (tld != null && tld.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tld.length; i++) {
-          resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + (tld[i].getField("id").equalsIgnoreCase(strPUOM) ? "true" : "false") + "\")");
-          if (i < tld.length - 1)
-            resultado.append(",\n");
+
+        if (log4j.isDebugEnabled())
+          log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+            "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
+        StringBuffer resultado = new StringBuffer();
+        // if (strIsSOTrx.equals("Y")) strLocator = "";
+
+        resultado.append("var calloutName='SL_InOutLine_Product';\n\n");
+        resultado.append("var respuesta = new Array(");
+        // if (strIsSOTrx.equals("Y")) {
+        if (strLocator.startsWith("\""))
+          strLocator = strLocator.substring(1, strLocator.length() - 1);
+        if (strLocator == null || strLocator.equals("")) {
+          if (strIsSOTrx.equals("Y")) {
+            resultado.append("new Array(\"inpmLocatorId\", \"\"),");
+            resultado.append("new Array(\"inpmLocatorId_R\", \"\"),");
+          }
+        } else {
+          resultado.append("new Array(\"inpmLocatorId\", \"" + strLocator + "\"),");
+          resultado.append("new Array(\"inpmLocatorId_R\", \""
+              + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars
+                  .getLanguage())) + "\"),");
         }
-        resultado.append("\n)");
-      } else
-        resultado.append("null");
-      resultado.append("\n),");
-    } else {
-      FieldProvider[] tld = null;
-      try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLOrderProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-        tld = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-
-      if (tld != null && tld.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tld.length; i++) {
-          resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + (tld[i].getField("id").equalsIgnoreCase(strPUOM) ? "true" : "false") + "\")");
-          if (i < tld.length - 1)
-            resultado.append(",\n");
+        if (strAttribute.startsWith("\""))
+          strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
+        resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),\n");
+        resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
+            + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strAttribute))
+            + "\"),\n");
+        String strAttrSet, strAttrSetValueType;
+        strAttrSet = strAttrSetValueType = "";
+        final Product product = OBDal.getInstance().get(Product.class, strMProductID);
+        if (product != null) {
+          AttributeSet attributeset = product.getAttributeSet();
+          if (attributeset != null)
+            strAttrSet = product.getAttributeSet().toString();
+          strAttrSetValueType = product.getUseAttributeSetValueAs();
         }
-        resultado.append("\n)");
-      } else
-        resultado.append("null");
-      resultado.append("\n),");
-    }
-    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
-    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
+        resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
+            + "\"),\n");
+        resultado.append("new Array(\"inpattrsetvaluetype\", \""
+            + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
 
-    resultado.append(");");
+        // This 'if' is used when the delivery note is created based in a
+        // sale-order, to make it not ask for the quantity of the delivery-note
+        // and to modify it with the quantity of product in the warehouse.
+        // However, if the delivery-note doesn't come from an order, it modifies
+        // the quantity field with the quantity in the warehouse.
+        String fromOrder = SLInOutLineProductData.fromOrder(this, strmInoutlineId);
+        if (fromOrder.equals("0")) {
+          resultado.append("new Array(\"inpquantityorder\", "
+              + (strQtyOrder.equals("") ? "\"\"" : strQtyOrder) + "),");
+          // Here begins the code for the new callout to sl_inoutline_product
+          resultado.append("new Array(\"inpmovementqty\", " + (strQty.equals("") ? "\"\"" : strQty)
+              + "),");
+        }
+        // }
+        String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
+        resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
+        resultado.append("new Array(\"inpmProductUomId\", ");
+        if (strPUOM.startsWith("\""))
+          strPUOM = strPUOM.substring(1, strPUOM.length() - 1);
+        if (vars.getLanguage().equals("en_US")) {
+          FieldProvider[] tld = null;
+          try {
+            ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
+                "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                    "SLOrderProduct"),
+                Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
+            Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
+            tld = comboTableData.select(false);
+            comboTableData = null;
+          } catch (Exception ex) {
+            throw new ServletException(ex);
+          }
 
-    if (log4j.isDebugEnabled())
-      log4j.debug("Array: " + resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    xmlDocument.setParameter("array", resultado.toString());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+          if (tld != null && tld.length > 0) {
+            resultado.append("new Array(");
+            for (int i = 0; i < tld.length; i++) {
+              resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
+                  + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
+                  + (tld[i].getField("id").equalsIgnoreCase(strPUOM) ? "true" : "false") + "\")");
+              if (i < tld.length - 1)
+                resultado.append(",\n");
+            }
+            resultado.append("\n)");
+          } else
+            resultado.append("null");
+          resultado.append("\n),");
+        } else {
+          FieldProvider[] tld = null;
+          try {
+            ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
+                "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                    "SLOrderProduct"),
+                Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
+            Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
+            tld = comboTableData.select(false);
+            comboTableData = null;
+          } catch (Exception ex) {
+            throw new ServletException(ex);
+          }
+
+          if (tld != null && tld.length > 0) {
+            resultado.append("new Array(");
+            for (int i = 0; i < tld.length; i++) {
+              resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
+                  + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
+                  + (tld[i].getField("id").equalsIgnoreCase(strPUOM) ? "true" : "false") + "\")");
+              if (i < tld.length - 1)
+                resultado.append(",\n");
+            }
+            resultado.append("\n)");
+          } else
+            resultado.append("null");
+          resultado.append("\n),");
+        }
+        resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
+        resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
+
+        resultado.append(");");
+
+        if (log4j.isDebugEnabled())
+          log4j.debug("Array: " + resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        xmlDocument.setParameter("array", resultado.toString());
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+
+     } finally {
+       OBContext.getOBContext().setInAdministratorMode(prevMode);
+     }
   }
 }
