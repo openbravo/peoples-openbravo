@@ -283,28 +283,27 @@ BEGIN
       CLOSE cur_order_schdet;
  
 -- Reading Data from FIN_PAYMENT_SCHEDULE
+
 SELECT 
-	sum(PAIDAMT) as PaidAmount,sum(AMOUNT)-sum(PAIDAMT) as OutstandingAmount
+	sum(PAIDAMT) as PaidAmount, SUM(OUTSTANDINGAMT) as OutstandingAmount
   INTO 
-	v_PaidAmount,v_OutstandingAmount
+	v_PaidAmount,V_OutstandingAmount
   FROM 
 	FIN_PAYMENT_SCHEDULE 
   WHERE 
-	C_INVOICE_ID=P_RECORD_ID --P_RECORD_ID;
+	C_INVOICE_ID=P_RECORD_ID 
 group by c_invoice_id;
 
 -- Getting DueAmount from FIN_PAYMENT_SCHEDULE for the Invoice
 SELECT 
-	
-	sum(amount) -sum(paidamt)as DueAmount
+	sum(OUTSTANDINGAMT) as DueAmount
   INTO 
-	
 	V_DueAmount
   FROM 
 	FIN_PAYMENT_SCHEDULE 
   WHERE 
-	C_INVOICE_ID=P_RECORD_ID	--P_RECORD_ID;
-	AND duedate<now()
+	C_INVOICE_ID=P_RECORD_ID
+	AND duedate<=now()
 group by c_invoice_id;
 --Updating Payment Monitor values into C_INVOICE
   UPDATE C_INVOICE SET               
