@@ -8,9 +8,12 @@
 if(!dojo._hasResource["dojox.widget.Standby"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.widget.Standby"] = true;
 dojo.provide("dojox.widget.Standby");
+
+dojo.require("dojo.window");
+dojo.require("dojo.fx");
+
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
-dojo.require("dojo.fx");
 
 dojo.experimental("dojox.widget.Standby");
 
@@ -276,7 +279,7 @@ dojo.declare("dojox.widget.Standby",[dijit._Widget, dijit._Templated],{
 			var box = dojo.position(target, true);
 			if(target === dojo.body() || target === dojo.doc){
 				// Target is the whole doc, so scale to viewport.
-				box = dijit.getViewport();
+				box = dojo.window.getBox();
 				box.x = box.l;
 				box.y = box.t;
 			}

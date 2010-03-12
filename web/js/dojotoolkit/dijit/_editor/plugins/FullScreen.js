@@ -9,9 +9,11 @@ if(!dojo._hasResource["dijit._editor.plugins.FullScreen"]){ //_hasResource check
 dojo._hasResource["dijit._editor.plugins.FullScreen"] = true;
 dojo.provide("dijit._editor.plugins.FullScreen");
 
+dojo.require("dojo.window");
+dojo.require("dojo.i18n");
+
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
-dojo.require("dojo.i18n");
 
 dojo.requireLocalization("dijit._editor", "commands", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
@@ -131,7 +133,7 @@ dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
 		//		resizes (window scaled)
 		// tags:
 		//		private
-		var vp = dijit.getViewport();
+		var vp = dojo.window.getBox();
 		dojo.marginBox(this.editor.domNode, {
 			w: vp.w,
 			h: vp.h
@@ -169,7 +171,7 @@ dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
 		//		regular view.
 		// tags:
 		//		private
-		var vp = dijit.getViewport();
+		var vp = dojo.window.getBox();
 
 		//Alias this for shorter code.
 		var ed = this.editor;
@@ -277,7 +279,7 @@ dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
 				// function to handle resize events.
 				// Will check current VP and only resize if
 				// different.
-				var vp = dijit.getViewport();
+				var vp = dojo.window.getBox();
 				if("_prevW" in this && "_prevH" in this){
 					// No actual size change, ignore.
 					if(vp.w === this._prevW && vp.h === this._prevH){
@@ -315,7 +317,7 @@ dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
 			// Call it once to work around IE glitchiness.  Safe for other browsers too.
 			this._resizeEditor();
 			var dn = this.editor.toolbar.domNode;
-			setTimeout(function(){dijit.scrollIntoView(dn);}, 250);
+			setTimeout(function(){dojo.window.scrollIntoView(dn);}, 250);
 		}else{
 			if(this._resizeHandle){
 				// Cleanup resizing listeners
@@ -387,7 +389,7 @@ dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
 						setTimeout(dojo.hitch(this, function(){ed.resize({h: mb.h});}), 0);		
 					}
 				}
-				dijit.scrollIntoView(self.editor.toolbar.domNode);
+				dojo.window.scrollIntoView(self.editor.toolbar.domNode);
 			}, 100);
 		}
 	},

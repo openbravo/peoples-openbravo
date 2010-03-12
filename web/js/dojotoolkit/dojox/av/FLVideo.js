@@ -42,6 +42,12 @@ dojo.declare("dojox.av.FLVideo", [dijit._Widget, dojox.av._Media], {
 	_swfPath: dojo.moduleUrl("dojox.av", "resources/video.swf"),
 	//
 	//
+	constructor: function(/*Object*/options){
+		// Provide this function for the SWF to ensure that the it is playing
+		// in HTML. 
+		dojo.global.swfIsInHTML = function(){ return true; }
+	},
+	
 	postCreate: function(){
 		// summary:
 		// Initialize the media.
@@ -51,10 +57,6 @@ dojo.declare("dojox.av.FLVideo", [dijit._Widget, dojox.av._Media], {
 		this._cons = [];
 		this.mediaUrl = this._normalizeUrl(this.mediaUrl);
 		this.initialVolume = this._normalizeVolume(this.initialVolume);
-		
-		// Provide this function for the SWF to ensure that the it is playing
-		// in HTML. 
-		dojo.global.swfIsInHTML = function(){ return true; }
 		
 		var args = {
 			path:this._swfPath.uri,

@@ -19,7 +19,7 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 	//		The individual items for a CheckedMultiSelect
 
 	widgetsInTemplate: true,
-	templateString: dojo.cache("dojox.form", "resources/_CheckedMultiSelectItem.html", "<div class=\"dijitReset ${baseClass}\"\n\t><input class=\"${baseClass}Box\" dojoType=\"dijit.form.CheckBox\" dojoAttachPoint=\"checkBox\" \n\t\tdojoAttachEvent=\"_onClick:_changeBox\" type=\"${_type.type}\" baseClass=\"${_type.baseClass}\"\n\t><div class=\"dijitInline ${baseClass}Label\" dojoAttachPoint=\"labelNode\" dojoAttachEvent=\"onmousedown:_onMouse,onmouseover:_onMouse,onmouseout:_onMouse,onclick:_onClick\"></div\n></div>\n"),
+	templateString: dojo.cache("dojox.form", "resources/_CheckedMultiSelectItem.html", "<div class=\"dijitReset ${baseClass}\"\n\t><input class=\"${baseClass}Box\" dojoType=\"dijit.form.CheckBox\" dojoAttachPoint=\"checkBox\" \n\t\tdojoAttachEvent=\"_onClick:_changeBox\" type=\"${_type.type}\" baseClass=\"${_type.baseClass}\"\n\t><div class=\"dijitInline ${baseClass}Label\" dojoAttachPoint=\"labelNode\" dojoAttachEvent=\"onclick:_onClick\"></div\n></div>\n"),
 
 	baseClass: "dojoxMultiSelectItem",
 
@@ -74,17 +74,6 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 		// refocus the parent
 		this.parent.focus();
 	},
-
-	_onMouse: function(e){
-		// summary:
-		//		Sets the hover state depending on mouse state (passes through
-		//		to the check box)
-		if(this.attr("disabled") || this.attr("readOnly")){
-			dojo.stopEvent(e);
-		}else{
-			this.checkBox._onMouse(e);
-		}
-	},
 	
 	_onClick: function(e){
 		// summary:
@@ -122,11 +111,11 @@ dojo.declare("dojox.form.CheckedMultiSelect", dijit.form._FormSelectWidget, {
 	// summary:
 	//		Extends the core dijit MultiSelect to provide a "checkbox" selector
 
-	templateString: dojo.cache("dojox.form", "resources/CheckedMultiSelect.html", "<div class=\"dijit dijitReset dijitInline\" dojoAttachEvent=\"onmousedown:_mouseDown,onclick:focus\"\n\t><select class=\"${baseClass}Select\" multiple=\"true\" dojoAttachPoint=\"containerNode,focusNode\"></select\n\t><div dojoAttachPoint=\"wrapperDiv\"></div\n></div>\n"),
+	templateString: dojo.cache("dojox.form", "resources/CheckedMultiSelect.html", "<div class=\"dijit dijitReset dijitInline\" dojoAttachEvent=\"onmousedown:_onMouseDown,onclick:focus\"\n\t><select class=\"${baseClass}Select\" multiple=\"true\" dojoAttachPoint=\"containerNode,focusNode\"></select\n\t><div dojoAttachPoint=\"wrapperDiv\"></div\n></div>\n"),
 
 	baseClass: "dojoxMultiSelect",
 
-	_mouseDown: function(e){
+	_onMouseDown: function(e){
 		// summary:
 		//		Cancels the mousedown event to prevent others from stealing
 		//		focus

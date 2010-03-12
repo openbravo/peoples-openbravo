@@ -10,13 +10,16 @@ dojo._hasResource["dojox.widget.RollingList"] = true;
 dojo.provide("dojox.widget.RollingList");
 dojo.experimental("dojox.widget.RollingList");
 
+dojo.require("dojo.window");
+
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit._Templated");
 dojo.require("dijit._Contained");
 dojo.require("dijit.layout._LayoutWidget");
 dojo.require("dijit.Menu");
-dojo.require("dojox.html.metrics");
 dojo.require("dijit.form.Button");
+
+dojo.require("dojox.html.metrics");
 
 dojo.require("dojo.i18n"); 
 dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
@@ -409,7 +412,7 @@ dojo.declare("dojox.widget._RollingListGroupPane",
 				}
 				window.setTimeout(function(){
 					try{
-						dijit.scrollIntoView(focusWidget.focusNode);
+						dojo.window.scrollIntoView(focusWidget.focusNode);
 					}catch(e){}
 				}, 1);
 			}else if(focusWidget.focus){
@@ -753,7 +756,7 @@ dojo.declare("dojox.widget.RollingList",
 		delete this._scrollingTimeout;
 		this._scrollingTimeout = window.setTimeout(dojo.hitch(this, function(){
 			if(childWidget.domNode){
-				dijit.scrollIntoView(childWidget.domNode);
+				dojo.window.scrollIntoView(childWidget.domNode);
 			}
 			delete this._scrollingTimeout;
 			return;

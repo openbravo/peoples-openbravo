@@ -37,7 +37,7 @@ dojo.declare(
 		//		protected
 
 		templateString: dojo.cache("dijit.form", "templates/ValidationTextBox.html", "<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\" waiRole=\"presentation\"\n\t><div style=\"overflow:hidden;\"\n\t\t><div class=\"dijitReset dijitValidationIcon\"><br></div\n\t\t><div class=\"dijitReset dijitValidationIconText\">&Chi;</div\n\t\t><div class=\"dijitReset dijitInputField\"\n\t\t\t><input class=\"dijitReset\" dojoAttachPoint='textbox,focusNode' autocomplete=\"off\"\n\t\t\t${nameAttrSetting} type='${type}'\n\t\t/></div\n\t></div\n></div>\n"),
-		baseClass: "dijitTextBox",
+		baseClass: "dijitTextBox dijitValidationTextBox",
 
 		// required: Boolean
 		//		User is required to enter data into this field.
@@ -196,11 +196,15 @@ dojo.declare(
 			this.constraints = {};
 		},
 
-		postMixInProperties: function(){
-			this.inherited(arguments);
-			this.constraints.locale = this.lang;
-			this.messages = dojo.i18n.getLocalization("dijit.form", "validate", this.lang);
-			if(this.invalidMessage == "$_unset_$"){ this.invalidMessage = this.messages.invalidMessage; }
+		_setConstraintsAttr: function(/* Object */ constraints){
+			if(!constraints.locale && this.lang){
+				constraints.locale = this.lang;
+			}
+			this.constraints = constraints;
+			this._computePartialRE();
+		},
+
+		_computePartialRE: function(){
 			var p = this.regExpGen(this.constraints);
 			this.regExp = p;
 			var partialre = "";
@@ -235,6 +239,13 @@ dojo.declare(
 				console.warn('RegExp error in ' + this.declaredClass + ': ' + this.regExp);
 			} // should never be here unless the original RE is bad or the parsing is bad
 			this._partialre = "^(?:" + partialre + ")$";
+		},
+
+		postMixInProperties: function(){
+			this.inherited(arguments);
+			this.messages = dojo.i18n.getLocalization("dijit.form", "validate", this.lang);
+			if(this.invalidMessage == "$_unset_$"){ this.invalidMessage = this.messages.invalidMessage; }
+			this._setConstraintsAttr(this.constraints); // this needs to happen now (and later) due to codependency on _set*Attr calls attachPoints
 		},
 
 		_setDisabledAttr: function(/*Boolean*/ value){
@@ -441,13 +452,19 @@ dojo.declare(
 			}
 		},
 
-		postCreate: function(){
+		_setConstraintsAttr: function(/* Object */ constraints){
 			this.inherited(arguments);
-			if(this.constraints.min !== undefined){
-				dijit.setWaiState(this.focusNode, "valuemin", this.constraints.min);
-			}
-			if(this.constraints.max !== undefined){
-				dijit.setWaiState(this.focusNode, "valuemax", this.constraints.max);
+			if(this.focusNode){ // not set when called from postMixInProperties
+				if(this.constraints.min !== undefined){
+					dijit.setWaiState(this.focusNode, "valuemin", this.constraints.min);
+				}else{
+					dijit.removeWaiState(this.focusNode, "valuemin");
+				}
+				if(this.constraints.max !== undefined){
+					dijit.setWaiState(this.focusNode, "valuemax", this.constraints.max);
+				}else{
+					dijit.removeWaiState(this.focusNode, "valuemax");
+				}
 			}
 		},
 

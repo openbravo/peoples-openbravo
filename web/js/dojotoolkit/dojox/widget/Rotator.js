@@ -152,7 +152,7 @@ dojo.require("dojo.parser");
 				});
 
 				if(q.id){
-					idm[id] = i;
+					idm[q.id] = i;
 				}
 
 				// cache the transition function
@@ -344,6 +344,12 @@ dojo.require("dojo.parser");
 			}else{
 				console.warn(_t.declaredClass, ' - Unsupported action "', action, '".');
 			}
+		},
+
+		resize: function(/*int*/width, /*int*/height){
+			var b = this._domNodeContentBox = { w: width, h: height };
+			d.contentBox(this._domNode, b);
+			d.forEach(this.panes, function(p){ d.contentBox(p.node, b); });
 		},
 
 		onManualChange: function(){

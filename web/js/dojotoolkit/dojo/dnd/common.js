@@ -9,6 +9,8 @@ if(!dojo._hasResource["dojo.dnd.common"]){ //_hasResource checks added by build.
 dojo._hasResource["dojo.dnd.common"] = true;
 dojo.provide("dojo.dnd.common");
 
+dojo.dnd.getCopyKeyState = dojo.isCopyKey;
+
 dojo.dnd._uniqueId = 0;
 dojo.dnd.getUniqueId = function(){
 	// summary:

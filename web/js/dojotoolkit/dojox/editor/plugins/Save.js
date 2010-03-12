@@ -13,7 +13,7 @@ dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dojox.editor.plugins", "Save", null, "ROOT,ko");
+dojo.requireLocalization("dojox.editor.plugins", "Save", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.declare("dojox.editor.plugins.Save",dijit._editor._Plugin,{
 	// summary:
