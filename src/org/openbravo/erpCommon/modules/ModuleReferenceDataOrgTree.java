@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+
 import javax.servlet.ServletException;
 
 import org.openbravo.base.HttpBaseServlet;
@@ -31,14 +32,14 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * Manages the tree of installed modules.
- *
+ * 
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Constructor to generate a root tree
-   *
+   * 
    * @param base
    * @param bSmall
    *          Normal size or small size (true)
@@ -53,7 +54,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Constructor to generate a root tree
-   *
+   * 
    * @param base
    * @param strClient
    *          Client ID
@@ -65,8 +66,8 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
    * @param bSmall
    *          Normal size or small size (true)
    */
-  public ModuleReferenceDataOrgTree(HttpBaseServlet base, String strClient, String strOrg, boolean bAddLinks,
-      boolean bSmall) {
+  public ModuleReferenceDataOrgTree(HttpBaseServlet base, String strClient, String strOrg,
+      boolean bAddLinks, boolean bSmall) {
     super(base, bSmall);
     setRootTree(strClient, strOrg, bAddLinks);
   }
@@ -80,7 +81,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Constructor to generate a root tree
-   *
+   * 
    * @param base
    * @param strClient
    *          Client ID
@@ -131,45 +132,42 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
     }
   }
 
-
   private void cleanData() {
 
-      // this function removes duplicates in data. Fixes issue 0012356: Enterprise module management: Behaviour not correct
+    // this function removes duplicates in data. Fixes issue 0012356: Enterprise module management:
+    // Behaviour not correct
 
-      Map<String, ModuleReferenceDataOrgTreeData> mappeddata = new java.util.HashMap<String, ModuleReferenceDataOrgTreeData>();
+    Map<String, ModuleReferenceDataOrgTreeData> mappeddata = new java.util.HashMap<String, ModuleReferenceDataOrgTreeData>();
 
-      for (FieldProvider f : data) {
-          if (mappeddata.get(f.getField("node_id")) == null
-                || "Y".equals(f.getField("update_available"))) {
-              mappeddata.put(f.getField("node_id"), (ModuleReferenceDataOrgTreeData) f);
-          }
+    for (FieldProvider f : data) {
+      if (mappeddata.get(f.getField("node_id")) == null
+          || "Y".equals(f.getField("update_available"))) {
+        mappeddata.put(f.getField("node_id"), (ModuleReferenceDataOrgTreeData) f);
+      }
+    }
+
+    ArrayList<ModuleReferenceDataOrgTreeData> l = new ArrayList<ModuleReferenceDataOrgTreeData>();
+    l.addAll(mappeddata.values());
+    Collections.sort(l, new Comparator<ModuleReferenceDataOrgTreeData>() {
+
+      @Override
+      public int compare(ModuleReferenceDataOrgTreeData o1, ModuleReferenceDataOrgTreeData o2) {
+        return getSeqNo(o1).compareTo(getSeqNo(o2));
       }
 
-      ArrayList<ModuleReferenceDataOrgTreeData> l = new ArrayList<ModuleReferenceDataOrgTreeData>();
-      l.addAll(mappeddata.values());
-      Collections.sort(l, new Comparator<ModuleReferenceDataOrgTreeData>()  {
+      private Integer getSeqNo(ModuleReferenceDataOrgTreeData o) {
 
-            @Override
-            public int compare(ModuleReferenceDataOrgTreeData o1, ModuleReferenceDataOrgTreeData o2) {
-                return getSeqNo(o1).compareTo(getSeqNo(o2));
-            }
+        try {
+          return Integer.valueOf(o.getField("seqno"));
+        } catch (NumberFormatException e) {
+          return 0;
+        }
+      }
+    });
 
-            private Integer getSeqNo(ModuleReferenceDataOrgTreeData o) {
-
-                try {
-                    return Integer.valueOf(o.getField("seqno"));
-                } catch (NumberFormatException e) {
-                    return 0;
-                }
-            }
-        });
-
-
-      data = l.toArray(new ModuleReferenceDataOrgTreeData[l.size()]);
-
+    data = l.toArray(new ModuleReferenceDataOrgTreeData[l.size()]);
 
   }
-
 
   /**
    * Adds links to the current sets of nodes, these links can be Update or Apply.
@@ -206,7 +204,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Returns a HTML with the description for the given node
-   *
+   * 
    * @param node
    * @return a HTML String with the description for the given node
    */
@@ -239,7 +237,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
 
   /**
    * Generates a subtree with nodeId as root node
-   *
+   * 
    * @param nodeId
    */
   public void setSubTree(String nodeId, String level) {
