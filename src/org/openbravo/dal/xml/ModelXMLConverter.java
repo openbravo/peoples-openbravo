@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -85,7 +85,7 @@ public class ModelXMLConverter implements OBSingleton {
     final Document doc = XMLUtil.getInstance().createDomDocument();
     doc
         .addComment("\n* ***********************************************************************************\n"
-            + "* Copyright (C) 2001-2009 Openbravo S.L. Licensed under the Apache Software\n"
+            + "* Copyright (C) 2001-2009 Openbravo S.L.U. Licensed under the Apache Software\n"
             + "* License version 2.0 You may obtain a copy of the License at\n"
             + "* http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law\n"
             + "* or agreed to in writing, software distributed under the License is\n"
