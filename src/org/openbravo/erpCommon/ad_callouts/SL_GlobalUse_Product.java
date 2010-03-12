@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -90,12 +91,17 @@ public class SL_GlobalUse_Product extends HttpSecureAppServlet {
         + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strPAttr)) + "\"),\n");
     String strAttrSet, strAttrSetValueType;
     strAttrSet = strAttrSetValueType = "";
-    final Product product = OBDal.getInstance().get(Product.class, strMProductID);
-    if (product != null) {
-      AttributeSet attributeset = product.getAttributeSet();
-      if (attributeset != null)
-        strAttrSet = product.getAttributeSet().toString();
-      strAttrSetValueType = product.getUseAttributeSetValueAs();
+    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      final Product product = OBDal.getInstance().get(Product.class, strMProductID);
+      if (product != null) {
+        AttributeSet attributeset = product.getAttributeSet();
+        if (attributeset != null)
+          strAttrSet = product.getAttributeSet().toString();
+        strAttrSetValueType = product.getUseAttributeSetValueAs();
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(prevMode);
     }
     resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
         + "\"),\n");

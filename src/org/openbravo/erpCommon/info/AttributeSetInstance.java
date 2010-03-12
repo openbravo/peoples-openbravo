@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -97,9 +98,14 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("strNameValue: " + strNameValue);
       String strAttrSetValueType = "";
-      final Product product = OBDal.getInstance().get(Product.class, strProduct);
-      if (product != null) {
-        strAttrSetValueType = product.getUseAttributeSetValueAs();
+      final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+      try {
+        final Product product = OBDal.getInstance().get(Product.class, strProduct);
+        if (product != null) {
+          strAttrSetValueType = product.getUseAttributeSetValueAs();
+        }
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(prevMode);
       }
       if (!strAttributeSet.equals("")) {
         if ("F".equals(strAttrSetValueType))
