@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_TAB_TRG2">
-    <trigger name="AD_TAB_TRG2" table="AD_TAB" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="AD_TAB_TRG2" table="AD_TAB" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
 
 
@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2009 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -239,12 +239,6 @@ BEGIN
 
     END IF;
 
- END IF;
-
- IF (DELETING) THEN
-  DELETE FROM AD_MODEL_OBJECT_MAPPING WHERE AD_MODEL_OBJECT_ID IN (
-      SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W');
-  DELETE FROM AD_MODEL_OBJECT WHERE ACTION = 'W' AND AD_MODEL_OBJECT.AD_TAB_ID = :OLD.AD_TAB_ID;
  END IF;
 
  IF (INSERTING) THEN
