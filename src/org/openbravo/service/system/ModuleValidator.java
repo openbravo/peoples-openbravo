@@ -114,20 +114,6 @@ public class ModuleValidator implements SystemValidator {
               + " are not set, before exporting these " + "fields should be set");
     }
 
-    // industry template
-    if (module.getType().equals("T")) {
-      boolean found = false;
-      for (ModuleDependency md : module.getModuleDependencyList()) {
-        if (md.getDependentModule().getId().equals("0") && !md.isIncluded()) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
-            + " is an Industry Template must depend on Core");
-      }
-    }
   }
 
   private void checkJavaPath(Module module, File moduleDir, String javaPackage,
@@ -301,7 +287,7 @@ public class ModuleValidator implements SystemValidator {
       }
     }
     if (!coreModuleFound) {
-      result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
+      result.addWarning(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
           + " or any of its ancestors " + "does not depend on the Core module.");
     }
 
