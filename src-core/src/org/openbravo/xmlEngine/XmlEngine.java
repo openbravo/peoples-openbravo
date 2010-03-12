@@ -256,6 +256,7 @@ public class XmlEngine extends HttpServlet {
     }
     if (log4jReloadXml.isDebugEnabled()) {
       initialize();
+      log4jReloadXml.debug("XmlEngine 29-11-2001 Initialized");
     }
     return readAllXmlTemplates(xmlTemplateName, strXmlTemplateFile, discard);
   }
