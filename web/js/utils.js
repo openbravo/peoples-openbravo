@@ -3143,6 +3143,7 @@ function formElementEvent(form, ElementName, calloutName) {
           if (onchange_combo.indexOf("selectCombo")!=-1) {
             onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
             var onchange_combo2 = onchange_combo;
+            onchange_combo = onchange_combo.replace("return true; tmp_water_mark; ","");
             onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("return"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("return"))+1, onchange_combo.length);
             onchange_combo = onchange_combo.replace("(this)","(obj)");
             onchange_combo = onchange_combo.replace("(this,","(obj,");
