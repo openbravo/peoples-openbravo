@@ -260,8 +260,12 @@ public class DatabaseValidator implements SystemValidator {
     for (DataSet ds : dsList) {
       String dsName = ds.getName();
       if (!dsName.matches("[a-zA-Z0-9 _\\-]+")) {
-        result.addWarning(SystemValidationResult.SystemValidationType.INCORRECT_DATASET_NAME,
-            "Dataset \"" + dsName + "\" contains illegal characters.");
+        result
+            .addWarning(
+                SystemValidationResult.SystemValidationType.INCORRECT_DATASET_NAME,
+                "The name of the dataset \""
+                    + dsName
+                    + "\" contains illegal characters. It is only allowed to contain 'a'..'z', 'A'..'Z', '0'..'9', whitespace, '-' and '_'");
       }
     }
   }
