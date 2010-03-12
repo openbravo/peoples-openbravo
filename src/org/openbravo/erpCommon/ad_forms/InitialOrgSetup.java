@@ -279,15 +279,20 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           .append(SALTO_LINEA);
       m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingOrg", vars.getLanguage()))
           .append(SALTO_LINEA);
-      if (!createOrg(request, vars, strOrganization, strOrgType, strParentOrg, strOrgUser,
-          strcLocationId)) {
-        releaseRollbackConnection(conn);
-        m_info.append(SALTO_LINEA).append(
-            Utility.messageBD(this, "createOrgFailed", vars.getLanguage())).append(SALTO_LINEA);
-        strSummary.append(SALTO_LINEA).append(
-            Utility.messageBD(this, "createOrgFailed", vars.getLanguage())).append(SALTO_LINEA);
-        isOK = false;
-        return m_info.toString();
+      final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+      try {
+        if (!createOrg(request, vars, strOrganization, strOrgType, strParentOrg, strOrgUser,
+            strcLocationId)) {
+          releaseRollbackConnection(conn);
+          m_info.append(SALTO_LINEA).append(
+              Utility.messageBD(this, "createOrgFailed", vars.getLanguage())).append(SALTO_LINEA);
+          strSummary.append(SALTO_LINEA).append(
+              Utility.messageBD(this, "createOrgFailed", vars.getLanguage())).append(SALTO_LINEA);
+          isOK = false;
+          return m_info.toString();
+        }
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(prevMode);
       }
     } catch (final Exception err) {
       m_info.append(SALTO_LINEA).append(
@@ -362,8 +367,14 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         m_info.append(SALTO_LINEA).append(
             Utility.messageBD(this, "StartingReferenceData", vars.getLanguage())).append(
             SALTO_LINEA);
-        final String strReferenceData = createReferenceData(vars, strOrganization, AD_Client_ID,
-            strModules, bProduct, bBPartner, bProject, bCampaign, bSalesRegion, strCreateAccounting);
+        final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+        String strReferenceData = "";
+        try {
+          strReferenceData = createReferenceData(vars, strOrganization, AD_Client_ID, strModules,
+              bProduct, bBPartner, bProject, bCampaign, bSalesRegion, strCreateAccounting);
+        } finally {
+          OBContext.getOBContext().setInAdministratorMode(prevMode);
+        }
         if (!strReferenceData.equals("")) {
           releaseRollbackConnection(conn);
           strError = Utility.messageBD(this, "CreateReferenceDataFailed", vars.getLanguage());
@@ -374,6 +385,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
               Utility.messageBD(this, "CreateReferenceDataFailed", vars.getLanguage())).append(
               SALTO_LINEA);
           isOK = false;
+          strReferenceData = "";
           return m_info.toString();
         }
       } catch (final Exception err) {
