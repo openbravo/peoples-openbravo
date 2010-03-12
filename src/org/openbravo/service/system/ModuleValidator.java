@@ -316,7 +316,7 @@ public class ModuleValidator implements SystemValidator {
     for (org.openbravo.model.ad.module.DataPackage pckg : module.getDataPackageList()) {
       if (pckg.getJavaPackage() != null
           && !pckg.getJavaPackage().startsWith(module.getJavaPackage())) {
-        result.addError(SystemValidationType.MODULE_ERROR, "Data package " + pckg.getName()
+        result.addError(SystemValidationType.DEPENDENCY_PROBLEM, "Data package " + pckg.getName()
             + " has a java package which is not within the java package of its module "
             + module.getName());
       }
