@@ -178,7 +178,7 @@ BEGIN
                                       ol.C_OrderLine_ID, GREATEST(COALESCE(ol.DatePromised, ol.DateOrdered, o.DateOrdered), p_PlanningDate) AS planningDate,
                                       COALESCE(ol.DateOrdered, o.Dateordered) AS dateordered,
                                       o.IsSOTrx
-                                 FROM C_ORDER o, C_ORDERLINE ol LEFT JOIN (SELECT C_ORDERLINE_ID, SUM(QTY) as qty FROM m_matchpo group by c_orderline_id) matchpo on ol.c_orderline_id = matchpo.c_orderline_id
+                                 FROM C_ORDER o, C_ORDERLINE ol LEFT JOIN (SELECT C_ORDERLINE_ID, SUM(QTY) as qty FROM m_matchpo WHERE m_inoutline_id is not null group by c_orderline_id) matchpo on ol.c_orderline_id = matchpo.c_orderline_id
                                  WHERE o.C_ORDER_ID = ol.C_ORDER_ID
                                    --AND C_Order_Status(o.C_ORDER_ID) IN (1, 2, 3)
                                    AND o.PROCESSED = 'Y'
