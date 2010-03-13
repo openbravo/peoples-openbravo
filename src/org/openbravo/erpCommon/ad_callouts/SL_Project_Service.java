@@ -23,14 +23,16 @@ import javax.servlet.ServletException;
 
 public class SL_Project_Service extends SimpleCallout {
 
-    @Override
-    protected void execute(CalloutInfo info) throws ServletException {
-        
-        BigDecimal serviceSerCost = info.getBigDecimalParameter("inpservsercost");
-        BigDecimal serviceOutCost = info.getBigDecimalParameter("inpservoutcost");
-        
-        BigDecimal serviceTotalCost = serviceSerCost.add(serviceOutCost);
-        
-        info.addResult("inpservcost", serviceTotalCost);
-    }
+  private static final long serialVersionUID = 1L;
+
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
+
+    BigDecimal serviceSerCost = info.getBigDecimalParameter("inpservsercost");
+    BigDecimal serviceOutCost = info.getBigDecimalParameter("inpservoutcost");
+
+    BigDecimal serviceTotalCost = serviceSerCost.add(serviceOutCost);
+
+    info.addResult("inpservcost", serviceTotalCost);
+  }
 }
