@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.openbravo.base.provider.OBSingleton;
 
 public class IdentifierProvider implements OBSingleton {
 
+  public static final String SEPARATOR = " - ";
   private static IdentifierProvider instance;
 
   public static synchronized IdentifierProvider getInstance() {
@@ -76,7 +77,7 @@ public class IdentifierProvider implements OBSingleton {
 
     for (final Property identifier : identifiers) {
       if (sb.length() > 0) {
-        sb.append(" ");
+        sb.append(SEPARATOR);
       }
       final Object value = dob.get(identifier.getName());
 
@@ -90,5 +91,9 @@ public class IdentifierProvider implements OBSingleton {
       return entityName + " (" + ((Identifiable) dob).getId() + ")";
     }
     return sb.toString();
+  }
+
+  protected String getSeparator() {
+    return SEPARATOR;
   }
 }

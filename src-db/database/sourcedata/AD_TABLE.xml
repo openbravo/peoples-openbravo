@@ -5868,7 +5868,7 @@ Log of data changes]]></HELP>
 <!--800006-->  <DESCRIPTION><![CDATA[Incoterms definition]]></DESCRIPTION>
 <!--800006-->  <HELP><![CDATA[EXW Ex-works, ex-factory, ex-warehouse, ex-mill. 
 FCA Free carrier (Franco Transportista) 
-FAS (Free alongside ship) 
+FAS (Free alongside ship)
 FOB (Free on Board) 
 CFR (Cost & Freight) 
 CIF (Cost, Insurance & Freight) 
@@ -5878,6 +5878,7 @@ CIP (Carriage and Insurance Paid to)]]></HELP>
 <!--800006-->  <CLASSNAME><![CDATA[Incoterms]]></CLASSNAME>
 <!--800006-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800006-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800006-->  <AD_WINDOW_ID><![CDATA[800002]]></AD_WINDOW_ID>
 <!--800006-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--800006-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--800006-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>

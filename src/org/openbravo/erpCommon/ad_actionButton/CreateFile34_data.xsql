@@ -11,8 +11,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
  * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2006 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,7 @@
     LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0')||LPAD(ba.CODEACCOUNT,10,'0')        AS N_CUENTA,
     LPAD(B.DIGITCONTROL||ba.DIGITCONTROL,2,'0')                                          AS DC,
     REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(
-    RPAD(C.NAME,36)
+    RPAD(O.NAME,36)
     ),'Á','A'),'É','E'),'Í','I'),'Ó','O'),'Ú','U')                                       AS NOMBRE,
     REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(
     RPAD(l.Address1||' '||l.Address2,36)
@@ -58,10 +58,12 @@
            ad_client        c,
            c_Bank           b,
            ad_orgInfo       oi,
+           ad_org           o,
            c_remittance     r,
            c_Location       l
      where c.Ad_Client_ID = r.AD_Client_Id
        and r.AD_ORG_ID = oi.ad_org_id
+       and oi.ad_org_id = o.ad_org_id
        and r.C_BANKACCOUNT_ID = ba.c_bankAccount_id
        and b.c_bank_id = ba.c_bank_Id
        and oi.C_Location_ID = l.C_location_ID

@@ -11,8 +11,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,9 +54,6 @@ export.database.structure: Exports the database structure in the xml's files.
     <classpath refid="runtime-classpath" />
   </taskdef>
   <taskdef name="alterscript" classname="org.openbravo.ddlutils.task.AlterXML2SQL">
-    <classpath refid="runtime-classpath" />
-  </taskdef>
-  <taskdef name="exportdatabase" classname="org.openbravo.ddlutils.task.ExportDatabase">
     <classpath refid="runtime-classpath" />
   </taskdef>
   <taskdef name="exportconfigscript" classname="org.openbravo.ddlutils.task.ExportConfigScript">
@@ -136,10 +133,13 @@ export.database.structure: Exports the database structure in the xml's files.
   </target>
 
   <target name="update.database.script">
-    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}"  basedir="${base.modules}/" dirFilter="*/src-db/database/model/" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
+    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}"  basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
   </target>
 
   <target name="export.database.structure">
+      <taskdef name="exportdatabase" classname="org.openbravo.ddlutils.task.ExportDatabase">
+        <classpath refid="runtime-classpath" />
+      </taskdef>
       <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" />
       <antcall target="update.dbupdate.timestamp" />
   </target>

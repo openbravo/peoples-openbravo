@@ -17,4 +17,4 @@ All rights reserved.
 
 This product includes software developed by Andy Clark, © Andy Clark 2002-2005. All rights reserved.
 
-This product contains software developed by the Eclipse Foundation. You may obtain the source code from Openbravo SL by emailing us at legal@openbravo.com. It is also available at www.eclipse.org. 
+This product contains software developed by the Eclipse Foundation. You may obtain the source code from Openbravo SLU by emailing us at legal@openbravo.com. It is also available at www.eclipse.org. 

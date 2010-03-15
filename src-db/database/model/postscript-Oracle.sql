@@ -12,8 +12,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2009 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2009 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -36,8 +36,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2008 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -60,8 +60,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2008 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -100,8 +100,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2008 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -142,8 +142,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2008 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -181,8 +181,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2008 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -223,8 +223,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2008 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -270,8 +270,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2008 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -334,9 +334,9 @@ AS
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
-  * Contributor(s): Openbravo SL
+  * Contributor(s): Openbravo SLU
 
-  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -481,8 +481,8 @@ AS
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
-  * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributor(s): Openbravo SLU
+  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -538,8 +538,8 @@ CREATE OR REPLACE FUNCTION AD_GET_DOC_LE_BU(p_header_table IN VARCHAR2, p_docume
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2009 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2009 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -622,8 +622,8 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table IN VARCHAR2, p_li
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008-2009 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2008-2009 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -703,8 +703,8 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN VARCHAR2, p
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2008-2009 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2008-2009 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -797,8 +797,8 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2009 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2009 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -879,12 +879,18 @@ AS
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2009-2010 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2009-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   code CLOB;
+  
+  cursor_id integer;
+  number_of_chunks integer;
+  codeSplit dbms_sql.varchar2s;
+  ret_val integer;
+  
   TYPE RECORD IS REF CURSOR;
   cur_triggers RECORD;
   cur_tables RECORD;
@@ -897,6 +903,22 @@ AS
   created number :=0;
   v_message varchar2(500);
   v_isObps number;
+  
+  
+  FUNCTION splitClob(code clob, splitcode out dbms_sql.varchar2s ) RETURN number AS 
+  v_chunks number :=0;
+  cnt number;
+  v_chunk_size number := 250;
+  BEGIN
+       cnt := dbms_lob.getlength(code);
+      v_chunks := floor(cnt / v_chunk_size) + 1;
+      FOR i IN 0 .. v_chunks
+      LOOP
+        splitcode(i) := dbms_lob.substr(code, v_chunk_size, (i * v_chunk_size) + 1);
+      END LOOP;
+      return v_chunks;
+  END;
+  
 BEGIN 
   select count(*) 
     into v_isObps
@@ -1074,7 +1096,12 @@ OR DELETING OR INSERTING THEN
 code := code ||
 'END
 ;';
-execute immediate(code);
+cursor_id :=dbms_sql.open_cursor;
+number_of_chunks := splitClob(code, codeSplit);
+dbms_sql.parse(cursor_id, codeSplit, 0, number_of_chunks, NULL , dbms_sql.native); 
+ret_val := dbms_sql.execute(cursor_id);
+DBMS_SQL.close_cursor(cursor_id);
+
     created := created + 1;
   end loop;
   

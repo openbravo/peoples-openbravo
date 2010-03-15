@@ -10,8 +10,8 @@
  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
- * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -138,7 +138,7 @@ public class DocMatchInv extends AcctServer {
 
     FieldProvider[] data = getObjectFieldProvider();
     BigDecimal bdCost = new BigDecimal(DocMatchInvData.selectProductAverageCost(conn, data[0]
-        .getField("M_Product_Id"), data[0].getField("DateTrx")));
+        .getField("M_Product_Id"), data[0].getField("orderAcctDate")));
     String strScale = DocMatchInvData.selectClientCurrencyPrecission(conn, vars.getClient());
     bdCost = bdCost.multiply(new BigDecimal(data[0].getField("Qty"))).setScale(
         new Integer(strScale), RoundingMode.HALF_UP);

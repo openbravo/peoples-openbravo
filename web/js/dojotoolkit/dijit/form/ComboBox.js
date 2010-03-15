@@ -9,11 +9,13 @@ if(!dojo._hasResource["dijit.form.ComboBox"]){ //_hasResource checks added by bu
 dojo._hasResource["dijit.form.ComboBox"] = true;
 dojo.provide("dijit.form.ComboBox");
 
-dojo.require("dijit.form._FormWidget");
-dojo.require("dijit.form.ValidationTextBox");
+dojo.require("dojo.window");
+dojo.require("dojo.regexp");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
-dojo.require("dojo.regexp");
+
+dojo.require("dijit.form._FormWidget");
+dojo.require("dijit.form.ValidationTextBox");
 
 dojo.requireLocalization("dijit.form", "ComboBox", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
@@ -116,7 +118,7 @@ dojo.declare(
 
 		templateString: dojo.cache("dijit.form", "templates/ComboBox.html", "<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\"\n\tdojoAttachPoint=\"comboNode\" waiRole=\"combobox\" tabIndex=\"-1\"\n\t><div style=\"overflow:hidden;\"\n\t\t><div class='dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton'\n\t\t\tdojoAttachPoint=\"downArrowNode\" waiRole=\"presentation\"\n\t\t\tdojoAttachEvent=\"onmousedown:_onArrowMouseDown\"\n\t\t\t><div class=\"dijitArrowButtonInner\">&thinsp;</div\n\t\t\t><div class=\"dijitArrowButtonChar\">&#9660;</div\n\t\t></div\n\t\t><div class=\"dijitReset dijitValidationIcon\"><br></div\n\t\t><div class=\"dijitReset dijitValidationIconText\">&Chi;</div\n\t\t><div class=\"dijitReset dijitInputField\"\n\t\t\t><input ${nameAttrSetting} type=\"text\" autocomplete=\"off\" class='dijitReset'\n\t\t\tdojoAttachEvent=\"onkeypress:_onKeyPress,compositionend\"\n\t\t\tdojoAttachPoint=\"textbox,focusNode\" waiRole=\"textbox\" waiState=\"haspopup-true,autocomplete-list\"\n\t\t/></div\n\t></div\n></div>\n"),
 
-		baseClass:"dijitComboBox",
+		baseClass:"dijitTextBox dijitComboBox",
 
 		// Set classes like dijitDownArrowButtonHover depending on
 		// mouse action over button node
@@ -201,7 +203,6 @@ dojo.declare(
 				case dk.PAGE_UP:
 				case dk.UP_ARROW:
 					if(!this._isShowingNow){
-						this._arrowPressed();
 						doSearch = true;
 						searchFunction = "_startSearchAll";
 					}else{
@@ -376,7 +377,6 @@ dojo.declare(
 
 		_showResultList: function(){
 			this._hideResultList();
-			this._arrowPressed();
 			// hide the tooltip
 			this.displayMessage("");
 
@@ -430,7 +430,6 @@ dojo.declare(
 			this._abortQuery();
 			if(this._isShowingNow){
 				dijit.popup.close(this._popupWidget);
-				this._arrowIdle();
 				this._isShowingNow=false;
 				dijit.setWaiState(this.comboNode, "expanded", "false");
 				dijit.removeWaiState(this.focusNode,"activedescendant");
@@ -467,7 +466,6 @@ dojo.declare(
 			// summary:
 			//		Called magically when focus has shifted away from this widget and it's drop down
 			this._hideResultList();
-			this._arrowIdle();
 			this.inherited(arguments);
 		},
 
@@ -618,18 +616,6 @@ dojo.declare(
 
 		/////////////// Event handlers /////////////////////
 
-		_arrowPressed: function(){
-			if(!this.disabled && !this.readOnly && this.hasDownArrow){
-				dojo.addClass(this.downArrowNode, "dijitArrowButtonActive");
-			}
-		},
-
-		_arrowIdle: function(){
-			if(!this.disabled && !this.readOnly && this.hasDownArrow){
-				dojo.removeClass(this.downArrowNode, "dojoArrowButtonPushed");
-			}
-		},
-
 		// FIXME: For 2.0, rename to "_compositionEnd"
 		compositionend: function(/*Event*/ evt){
 			// summary:
@@ -653,9 +639,6 @@ dojo.declare(
 		},
 
 		postMixInProperties: function(){
-			if(!this.hasDownArrow){
-				this.baseClass = "dijitTextBox";
-			}
 			if(!this.store){
 				var srcNodeRef = this.srcNodeRef;
 
@@ -670,10 +653,7 @@ dojo.declare(
 				// IE6 and Opera set selectedIndex, which is automatically set
 				// by the selected attribute of an option tag
 				// IE6 does not set value, Opera sets value = selectedIndex
-				if(	!this.value || (
-						(typeof srcNodeRef.selectedIndex == "number") &&
-						srcNodeRef.selectedIndex.toString() === this.value)
-				){
+				if(!("value" in this.params)){
 					var item = this.store.fetchSelectedItem();
 					if(item){
 						var valueField = this._getValueField();
@@ -689,6 +669,10 @@ dojo.declare(
 			//		Subclasses must call this method from their postCreate() methods
 			// tags:
 			//		protected
+
+			if(!this.hasDownArrow){
+				this.downArrowNode.style.display = "none";
+			}
 
 			// find any associated label element and add to ComboBox node.
 			var label=dojo.query('label[for="'+this.id+'"]');
@@ -997,7 +981,7 @@ dojo.declare(
 				}
 			}
 			// scrollIntoView is called outside of _focusOptionNode because in IE putting it inside causes the menu to scroll up on mouseover
-			dijit.scrollIntoView(this._highlighted_option);
+			dojo.window.scrollIntoView(this._highlighted_option);
 		},
 
 		highlightFirstOption: function(){
@@ -1006,14 +990,14 @@ dojo.declare(
 			var first = this.domNode.firstChild;
 			var second = first.nextSibling;
 			this._focusOptionNode(second.style.display == "none" ? first : second); // remotely possible that Previous Choices is the only thing in the list
-			dijit.scrollIntoView(this._highlighted_option);
+			dojo.window.scrollIntoView(this._highlighted_option);
 		},
 
 		highlightLastOption: function(){
 			// summary:
 			// 		Highlight the last real item in the list (not More Choices).
 			this._focusOptionNode(this.domNode.lastChild.previousSibling);
-			dijit.scrollIntoView(this._highlighted_option);
+			dojo.window.scrollIntoView(this._highlighted_option);
 		},
 
 		_highlightPrevOption: function(){
@@ -1032,7 +1016,7 @@ dojo.declare(
 					this.highlightLastOption();
 				}
 			}
-			dijit.scrollIntoView(this._highlighted_option);
+			dojo.window.scrollIntoView(this._highlighted_option);
 		},
 
 		_page: function(/*Boolean*/ up){
@@ -1163,7 +1147,16 @@ dojo.declare("dijit.form._ComboBoxDataStore", null, {
 
 	constructor: function( /*DomNode*/ root){
 		this.root = root;
-
+		if(root.tagName != "SELECT" && root.firstChild){
+			root = dojo.query("select", root);
+			if(root.length > 0){ // SELECT is a child of srcNodeRef
+				root = root[0];
+			}else{ // no select, so create 1 to parent the option tags to define selectedIndex
+				this.root.innerHTML = "<SELECT>"+this.root.innerHTML+"</SELECT>";
+				root = this.root.firstChild;
+			}
+			this.root = root;
+		}
 		dojo.query("> option", root).forEach(function(node){
 			//	TODO: this was added in #3858 but unclear why/if it's needed;  doesn't seem to be.
 			//	If it is needed then can we just hide the select itself instead?
@@ -1229,7 +1222,7 @@ dojo.declare("dijit.form._ComboBoxDataStore", null, {
 		//	|		{identity: "CA", onItem: function(item){...}
 		//
 		//		Call `onItem()` with the DOM node `<option value="CA">California</option>`
-		var item = dojo.query("option[value='" + args.identity + "']", this.root)[0];
+		var item = dojo.query("> option[value='" + args.identity + "']", this.root)[0];
 		args.onItem(item);
 	},
 
@@ -1239,9 +1232,9 @@ dojo.declare("dijit.form._ComboBoxDataStore", null, {
 		//		Not part of dojo.data API.
 		var root = this.root,
 			si = root.selectedIndex;
-		return dojo.query("> option:nth-child(" +
-			(si != -1 ? si+1 : 1) + ")",
-			root)[0];	// dojo.data.Item
+		return typeof si == "number"
+			? dojo.query("> option:nth-child(" + (si != -1 ? si+1 : 1) + ")", root)[0]
+			: null;	// dojo.data.Item
 	}
 });
 //Mix in the simple fetch implementation to this class.

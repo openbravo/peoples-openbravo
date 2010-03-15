@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -3782,7 +3782,15 @@ dojo.declare("openbravo.widget.DataGrid.ViewPort", null, {
 * @type Number.
 */
   visibleHeight: function() {
-    return parseInt(dojo.getComputedStyle(this.div).height) - 15 - this.div.firstChild.offsetHeight;
+    var visibleHeight = parseInt(dojo.getComputedStyle(this.div).height) - 15 - this.div.firstChild.offsetHeight;
+    if (getBrowserInfo('name').toUpperCase().indexOf("CHROME") != -1 || getBrowserInfo('name').toUpperCase().indexOf("SAFARI") != -1) {
+      if (parent.frameMenu) {
+        visibleHeight = visibleHeight + 18;
+      } else {
+        visibleHeight = visibleHeight + 1;
+      }
+    }
+    return visibleHeight;
   },
 
 /**

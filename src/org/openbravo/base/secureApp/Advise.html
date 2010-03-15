@@ -1,6 +1,6 @@
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2009 Openbravo S.L.
+ * Copyright (C) 2001-2010 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -97,7 +97,7 @@ var baseDirectory = "../../../../../web/";
         </div>
 
         <div class="Login_ContentPane_Home" style="overflow: auto; display: none;" id="client">
-          <table>
+          <table class="Login_ContentPane_Container_Table">
             <tr>
               <td>
                 <!-- MessageBox -->
@@ -112,7 +112,7 @@ var baseDirectory = "../../../../../web/";
                     <td class="MessageBox_LeftMargin"></td>
                     <td>
 
-                      <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                      <table cellpadding="0" cellspacing="0" class="MessageBox_Container">
                         <tbody>
                         <tr>
                           <td class="MessageBox_LeftTrans">
@@ -140,12 +140,12 @@ var baseDirectory = "../../../../../web/";
                                       <td class="MessageBox_Icon_ContentCell">
                                         <div class="MessageBox_Icon"></div>
                                       </td>
-                                      <td style="vertical-align: top;">
+                                      <td style="vertical-align: top;" id="messageBoxIDContent">
                                         <span>
                                           <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
                                             <span id="paramTitulo">xxTITLE</span>
                                           </div>
-                                          <div class="MessageBox_TextDescription" id="paramTexto">
+                                          <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
                                              xxmessage text
                                           </div>
                                           <div class="MessageBox_TextSeparator"></div>

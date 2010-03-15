@@ -23,6 +23,7 @@ dojo.js:
 /opt/dojo-svn/deploy/dojo/_base/browser.js
 /opt/dojo-svn/deploy/dojo/date/stamp.js
 /opt/dojo-svn/deploy/dojo/parser.js
+/opt/dojo-svn/deploy/dojo/window.js
 /opt/dojo-svn/deploy/dijit/_base/manager.js
 /opt/dojo-svn/deploy/dijit/_base/focus.js
 /opt/dojo-svn/deploy/dojo/AdapterRegistry.js
@@ -30,6 +31,7 @@ dojo.js:
 /opt/dojo-svn/deploy/dijit/_base/window.js
 /opt/dojo-svn/deploy/dijit/_base/popup.js
 /opt/dojo-svn/deploy/dijit/_base/scroll.js
+/opt/dojo-svn/deploy/dojo/uacss.js
 /opt/dojo-svn/deploy/dijit/_base/sniff.js
 /opt/dojo-svn/deploy/dijit/_base/typematic.js
 /opt/dojo-svn/deploy/dijit/_base/wai.js

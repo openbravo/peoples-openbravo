@@ -11,8 +11,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2008 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,7 +65,7 @@
       C_BPARTNER.NAME, C_ORDERLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE.DESCRIPTION, C_ORDERLINE.QTYORDERED
       ORDER BY PARTNER_NAME, DOCUMENTNO, DATEORDERED) A
       WHERE QTYORDERED <>0
-      ORDER BY C_BPARTNER_ID, ID
+      ORDER BY C_BPARTNER_ID
       ]]></Sql>
 	<Field name="rownum" value="count"/>
     <Parameter name="dateFormat"/>
@@ -75,7 +75,7 @@
     <Parameter name="parDateFrom" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED < TO_DATE(?)]]></Parameter>
     <Parameter name="parBPartner" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_BPARTNER.C_BPARTNER_ID = ?</Parameter>
-    <Parameter name="parDocumentNo" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_ORDER.DOCUMENTNO = ?</Parameter>
+    <Parameter name="parDocumentNo" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_ORDER.DOCUMENTNO LIKE ?</Parameter>
   </SqlMethod>
   <SqlMethod name="insert" connection="true" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

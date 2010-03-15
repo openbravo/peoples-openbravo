@@ -14,7 +14,7 @@ dojo.require("dijit._Templated");
 dojo.require("dijit._PaletteMixin");
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dojox.editor.plugins", "latinEntities", null, "ROOT");
+dojo.requireLocalization("dojox.editor.plugins", "latinEntities", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.experimental("dojox.editor.plugins.EntityPalette");
 

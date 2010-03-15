@@ -11518,7 +11518,7 @@ this.registeredWindows.push(win);
 };
 this.registerAllWindows=function(_a79){
 if(!_a79){
-_a79=dojo.html.getDocumentWindow(window.top&&window.top.document||window.document);
+_a79=dojo.html.getDocumentWindow(window.document);
 }
 this.registerWin(_a79);
 for(var i=0;i<_a79.frames.length;i++){

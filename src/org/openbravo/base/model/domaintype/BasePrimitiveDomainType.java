@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,8 +28,20 @@ import org.openbravo.base.validation.ValidationException;
  * 
  * @author mtaal
  */
-
 public abstract class BasePrimitiveDomainType extends BaseDomainType implements PrimitiveDomainType {
+
+  /**
+   * The type used in the hibernate mapping. Most of the time is the same as the
+   * {@link #getPrimitiveType()}. Can be used to set a hibnernate user type class. See the hibernate
+   * documentation for more information on this.
+   * 
+   * This method will be moved to the PrimitiveDomainType in a later stage.
+   * 
+   * @return the class representing the hibernate type
+   */
+  public Class<?> getHibernateType() {
+    return getPrimitiveType();
+  }
 
   /*
    * (non-Javadoc)

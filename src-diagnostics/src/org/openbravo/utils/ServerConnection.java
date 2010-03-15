@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,10 @@ import java.net.URL;
 public class ServerConnection {
 
   private URL getUrl(String action, String additionalParameters) throws MalformedURLException {
-    return new URL(new PropertiesManager("config/Openbravo.properties").getProperty(
-        "tomcat.manager.url").replace("/manager", "")
-        + "/OpenbravoDiagnostics/Check.html?Command=" + action + additionalParameters);
+    String serverUrl=new PropertiesManager("config/Openbravo.properties").getProperty(
+    "tomcat.manager.url");
+    serverUrl = serverUrl.substring(0,serverUrl.lastIndexOf('/'));
+    return new URL(serverUrl+ "/OpenbravoDiagnostics/Check.html?Command=" + action + additionalParameters);
   }
 
   public String getCheck(String action, String additionalParameters) {

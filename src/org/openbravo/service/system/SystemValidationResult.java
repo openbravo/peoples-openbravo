@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,7 @@ import java.util.Map;
 public class SystemValidationResult {
 
   public enum SystemValidationType {
-    NAME_TOO_LONG, MODULE_ERROR, CUSTOMIZATION_ID, INCORRECT_DEFAULT_VALUE, WRONG_NAME, WRONG_LENGTH, NO_PRIMARY_KEY_COLUMNS, NOT_NULL_IN_DB_NOT_MANDATORY_IN_AD, MANDATORY_IN_AD_NULLABLE_IN_DB, NOT_EXIST_IN_AD, NOT_EXIST_IN_DB, NOT_PART_OF_FOREIGN_KEY, WRONG_TYPE, INCORRECT_CLIENT_ORG_PROPERTY_NAME, UNEQUAL_DEFAULTVALUE, INCORRECT_PK_NAME, INCORRECT_FK_NAME, INCORRECT_CHECK_NAME, INCORRECT_UNIQUE_NAME, INCORRECT_INDEX_NAME;
+    NAME_TOO_LONG, MODULE_ERROR, CUSTOMIZATION_ID, INCORRECT_DEFAULT_VALUE, WRONG_NAME, WRONG_LENGTH, NO_PRIMARY_KEY_COLUMNS, NOT_NULL_IN_DB_NOT_MANDATORY_IN_AD, MANDATORY_IN_AD_NULLABLE_IN_DB, NOT_EXIST_IN_AD, NOT_EXIST_IN_DB, NOT_PART_OF_FOREIGN_KEY, WRONG_TYPE, INCORRECT_CLIENT_ORG_PROPERTY_NAME, UNEQUAL_DEFAULTVALUE, INCORRECT_PK_NAME, INCORRECT_FK_NAME, INCORRECT_CHECK_NAME, INCORRECT_UNIQUE_NAME, INCORRECT_INDEX_NAME, INCORRECT_NAME_LENGTH, INCORRECT_DATASET_NAME, DEPENDENCY_PROBLEM;
 
     public String getName() {
       return this.getClass().getSimpleName();

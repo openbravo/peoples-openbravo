@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,6 +66,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
           "MaterialReceiptPending|AD_Org_ID", vars.getOrg());
       vars.setSessionValue("MaterialReceiptPending|isSOTrx", "Y");
+      if (strDocumentNo.equals(""))
+        strDocumentNo += "%";
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
           strDocumentNo, "DEFAULT");
     } else if (vars.commandIn("FIND")) {

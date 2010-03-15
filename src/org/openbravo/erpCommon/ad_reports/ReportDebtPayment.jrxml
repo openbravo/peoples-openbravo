@@ -190,10 +190,12 @@
 
 	<field name="DESCRIPTION" class="java.lang.String"/>
 	<field name="AMOUNT" class="java.math.BigDecimal"/>
+	<field name="CONVAMOUNT" class="java.math.BigDecimal"/>
 	<field name="INVOICE" class="java.lang.String"/>
 	<field name="BPARTNER" class="java.lang.String"/>
 	<field name="DATEPLANNED" class="java.lang.String"/>
 	<field name="CURRENCY" class="java.lang.String"/>
+	<field name="CONVISOSYM" class="java.lang.String"/>
 	<field name="PAYMENTRULE" class="java.lang.String"/>
 	<field name="DEBTGENERATE" class="java.lang.String"/>
 	<field name="ISPAID" class="java.lang.String"/>
@@ -203,16 +205,16 @@
 	<field name="ACCOUNTSTR" class="java.lang.String"/>
 
 	<variable name="SUM_AMOUNT_1" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+		<variableExpression><![CDATA[$F{CONVAMOUNT}]]></variableExpression>
 	</variable>
 	<variable name="SUM_AMOUNT_2" class="java.math.BigDecimal" resetType="Report" incrementType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+		<variableExpression><![CDATA[$F{CONVAMOUNT}]]></variableExpression>
 	</variable>
 	<variable name="SUM_SUM_AMOUNT_1_1" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$V{SUM_AMOUNT_1}]]></variableExpression>
 	</variable>
 	<variable name="SUM_AMOUNT_3" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+		<variableExpression><![CDATA[$F{CONVAMOUNT}]]></variableExpression>
 	</variable>
 
 		<group  name="bp" >
@@ -557,7 +559,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="4"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMOUNT}!=null)?$P{NUMBERFORMAT}.format($F{AMOUNT}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{CONVAMOUNT}!=null)?$P{NUMBERFORMAT}.format($F{CONVAMOUNT}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -570,7 +572,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="4"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CURRENCY}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVISOSYM}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2009 Openbravo S.L.
+ * Copyright (C) 2001-2010 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -105,19 +105,19 @@ public class LoginHandler extends HttpBaseServlet {
         String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", vars
             .getLanguage());
         goToRetry(res, vars, msg, title, msgType, action);
-        break;
+        return;
       case NUMBER_OF_SOFT_USERS_REACHED:
         msg = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED", vars.getLanguage());
         title = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED_TITLE", vars.getLanguage());
         action = "../security/Menu.html";
         msgType = "Warning";
         goToRetry(res, vars, msg, title, msgType, action);
-        break;
+        return;
       case OPS_INSTANCE_NOT_ACTIVE:
         msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
         goToRetry(res, vars, msg, title, msgType, action);
-        break;
+        return;
       case MODULE_EXPIRED:
         msg = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED_TITLE", vars.getLanguage());
@@ -127,7 +127,7 @@ public class LoginHandler extends HttpBaseServlet {
         }
         msg += expiredMoudules.toString();
         goToRetry(res, vars, msg, title, msgType, action);
-        break;
+        return;
       }
 
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");

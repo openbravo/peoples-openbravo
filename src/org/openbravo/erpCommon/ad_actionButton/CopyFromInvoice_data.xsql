@@ -11,8 +11,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2006 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_InvoiceLine_ID FROM C_InvoiceLine 
+        SELECT C_InvoiceLine_ID, '' AS AD_ORG_ID, '' AS AD_CLIENT_ID, '' AS C_BPartner_Location_ID, 
+        '' AS DateInvoiced, '' AS C_Project_ID, M_PRODUCT_ID AS PRODUCT_ID FROM C_InvoiceLine 
         WHERE C_Invoice_ID = ? 
         AND AD_CLIENT_ID IN ('1') 
         AND AD_ORG_ID IN ('1') 
@@ -49,7 +50,7 @@
         PRICESTD)
         SELECT ?, ?, ?, ?, 'Y', now(), ?, now(), ?,
         (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_InvoiceLine_ID = ?), DESCRIPTION, M_PRODUCT_ID, 
-        QTYINVOICED, PRICELIST, PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID, CHARGEAMT, C_UOM_ID, C_TAX_ID, 
+        QTYINVOICED, PRICELIST, PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID, CHARGEAMT, C_UOM_ID, ?, 
         S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
         PRICESTD
         FROM C_INVOICELINE 
@@ -63,6 +64,18 @@
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
     <Parameter name="cInvoicelineId"/>
+    <Parameter name="cTaxId"/>
     <Parameter name="cInvoicelineId"/>
+  </SqlMethod>
+  <SqlMethod name="selectInvoice" type="preparedStatement" connection="true" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT AD_ORG_ID,AD_CLIENT_ID,C_BPartner_Location_ID,DateInvoiced,C_Project_ID FROM C_Invoice 
+        WHERE C_Invoice_ID = ? 
+        AND ISACTIVE = 'Y'
+      ]]>
+    </Sql>
+    <Parameter name="cInvoiceId"/>
   </SqlMethod>
 </SqlClass>

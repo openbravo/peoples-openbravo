@@ -9,6 +9,8 @@ if(!dojo._hasResource["dijit.form._FormWidget"]){ //_hasResource checks added by
 dojo._hasResource["dijit.form._FormWidget"] = true;
 dojo.provide("dijit.form._FormWidget");
 
+dojo.require("dojo.window");
+
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dijit._CssStateMixin");
@@ -75,6 +77,11 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated, dijit._
 		this.inherited(arguments);
 	},
 
+	postCreate: function(){
+		this.inherited(arguments);
+		this.connect(this.domNode, "onmousedown", "_onMouseDown");
+	},
+
 	_setDisabledAttr: function(/*Boolean*/ value){
 		this.disabled = value;
 		dojo.attr(this.focusNode, 'disabled', value);
@@ -104,7 +111,7 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated, dijit._
 
 	_onFocus: function(e){
 		if(this.scrollOnFocus){
-			dijit.scrollIntoView(this.domNode);
+			dojo.window.scrollIntoView(this.domNode);
 		}
 		this.inherited(arguments);
 	},
@@ -214,6 +221,21 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated, dijit._
 		//		Deprecated.   Use attr('value') instead.
 		dojo.deprecated(this.declaredClass+"::getValue() is deprecated. Use attr('value') instead.", "", "2.0");
 		return this.attr('value');
+	},
+	
+	_onMouseDown: function(e){
+		// Set a global event to handle mouseup, so it fires properly
+		// even if the cursor leaves this.domNode before the mouse up event.
+		var mouseUpConnector = this.connect(dojo.body(), "onmouseup", function(){
+			// If user clicks on the button, even if the mouse is released outside of it,
+			// this button should get focus (to mimics native browser buttons).
+			// This is also needed on chrome because otherwise buttons won't get focus at all,
+			// which leads to bizarre focus restore on Dialog close etc.
+			if(this.isFocusable()){
+				this.focus();
+			}
+			this.disconnect(mouseUpConnector);
+		});
 	}
 });
 

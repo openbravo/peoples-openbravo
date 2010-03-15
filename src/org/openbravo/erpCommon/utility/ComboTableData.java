@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -238,8 +238,8 @@ public class ComboTableData {
         if (!Utility.isUUIDString(_reference)) {
           // Looking reference by name! This shouldn't be used, name is prone to change. It only
           // looks in core names
-          _reference = ComboTableQueryData.getReferenceID(getPool(), _reference,
-              getReferenceType());
+          _reference = ComboTableQueryData
+              .getReferenceID(getPool(), _reference, getReferenceType());
           if (_reference == null || _reference.equals("")) {
             throw new OBException(Utility.messageBD(pool, "ReferenceNotFound", vars.getLanguage())
                 + " " + _reference);
@@ -658,11 +658,27 @@ public class ComboTableData {
    */
   private void setListQuery(String tableName, String fieldName, String referenceValue)
       throws Exception {
+    boolean isValueDisplayed = ComboTableQueryData.isValueDisplayed(getPool(),
+        ((referenceValue != null && !referenceValue.equals("")) ? referenceValue
+            : getObjectReference()));
+
     int myIndex = this.index++;
     addSelectField("td" + myIndex + ".value", "id");
-    addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '" + INACTIVE_DATA
-        + "' ELSE '' END) || (CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex
-        + ".name ELSE td_trl" + myIndex + ".name END))", "NAME");
+
+    StringBuffer identifier = new StringBuffer();
+    // Add inactive data info
+    identifier.append("((CASE td").append(myIndex).append(".isActive WHEN 'N' THEN '").append(
+        INACTIVE_DATA).append("' ELSE '' END) ");
+    // Add value
+    if (isValueDisplayed) {
+      identifier.append(" || td").append(myIndex).append(".value ||' - '");
+    }
+
+    // Add name
+    identifier.append("|| (CASE WHEN td_trl").append(myIndex).append(".name IS NULL THEN td")
+        .append(myIndex).append(".name ELSE td_trl").append(myIndex).append(".name END))");
+
+    addSelectField(identifier.toString(), "NAME");
     addSelectField("(CASE WHEN td_trl" + myIndex + ".description IS NULL THEN td" + myIndex
         + ".description ELSE td_trl" + myIndex + ".description END)", "DESCRIPTION");
     String tables = "ad_ref_list td" + myIndex;
@@ -688,6 +704,7 @@ public class ComboTableData {
           "ISACTIVE");
       addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
     }
+    addOrderByField("td" + myIndex + ".SeqNo");
     addOrderByField("(CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex
         + ".name ELSE td_trl" + myIndex + ".name END)");
   }

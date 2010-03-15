@@ -10,8 +10,8 @@
 * License for the specific  language  governing  rights  and  limitations
 * under the License. 
 * The Original Code is Openbravo ERP. 
-* The Initial Developer of the Original Code is Openbravo SL 
-* All portions are Copyright (C) 2001-2009 Openbravo SL 
+* The Initial Developer of the Original Code is Openbravo SLU 
+* All portions are Copyright (C) 2001-2010 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -73,12 +73,12 @@ function onloadFunctions() {
   document.frmMain.warehouse.value = document.frmInput.inputWarehouse.value;       
 
   if (document.frmInput.saveok.value == "true") {
-	window.opener.top.document.location.href="../security/Menu.html";
+    getFrame('main').document.location.href="../security/Menu.html";
   }
     // Refresh menu
-//    opener.top.document.getElementById("paramFrameMenu").src = "../utility/VerticalMenu.html";
+//    getFrame('main').document.getElementById("paramFrameMenu").src = "../utility/VerticalMenu.html";
     // Refresh main window
-//    opener.top.document.getElementById("paramFrame1").src = "../utility/Home.html";
+//    getFrame('main').document.getElementById("paramFrame1").src = "../utility/Home.html";
 //  }
 
 }
@@ -99,12 +99,12 @@ function refreshEntity() {
 }
 function saveOptions() {
   if (document.frmMain.TextDirection.value=="RTL") {
-    window.opener.top.isRTL=true;
+    getFrame('main').isRTL=true;
   } else {
-    window.opener.top.isRTL=false;
+    getFrame('main').isRTL=false;
   }
   submitCommandForm("SAVE", false);
-  window.opener.setMenuLoading(true);
+  getFrame('frameMenu').setMenuLoading(true);
   return false;
 }
 </script>
@@ -173,7 +173,7 @@ var arrWare=null;
 	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
     if (document.getElementById('messageBoxID').className.indexOf('MessageBoxError') != -1) {
-      window.opener.setMenuLoading(false);
+      getFrame('frameMenu').setMenuLoading(false);
     }
 		this.windowTables = new Array(
 		  new windowTableId('clientIndex'),
@@ -261,6 +261,7 @@ var arrWare=null;
                             <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
                             <td class="FieldGroupTitle">Options</td>
                             <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                            <td class="FieldGroupContent_Empty"></td>
                           </tr>
                           <tr class="FieldGroup_BottomMargin"></tr>
                         </table>
@@ -295,7 +296,7 @@ var arrWare=null;
               <td class="MessageBox_LeftMargin"></td>
               <td>
 
-                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                <table cellpadding="0" cellspacing="0" class="MessageBox_Container">
                   <tbody>
                   <tr>
                     <td class="MessageBox_LeftTrans">

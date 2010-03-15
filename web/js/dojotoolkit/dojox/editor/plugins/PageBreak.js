@@ -12,7 +12,7 @@ dojo.provide("dojox.editor.plugins.PageBreak");
 dojo.require("dijit._editor._Plugin");
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dojox.editor.plugins", "PageBreak", null, "ROOT,ko");
+dojo.requireLocalization("dojox.editor.plugins", "PageBreak", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.declare("dojox.editor.plugins.PageBreak",dijit._editor._Plugin,{
 	//	summary:

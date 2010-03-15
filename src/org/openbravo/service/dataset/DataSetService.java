@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -479,7 +479,7 @@ public class DataSetService implements OBSingleton {
         final BigInteger bd2 = new BigInteger(bob2.getId().toString(), 32);
         return bd1.compareTo(bd2);
       } catch (final NumberFormatException n) {
-        System.out.println("problem: " + n.getMessage());
+        // ignoring exception on purpose, some id's can't be compared numerically
         return 0;
       }
     }

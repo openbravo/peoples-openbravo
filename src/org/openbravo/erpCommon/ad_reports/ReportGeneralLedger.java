@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
  * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2009 Openbravo SL
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -292,7 +292,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         strcelementvaluetodes = "";
         vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       }
-      data = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, strDateFrom,
+      data = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars.getLanguage(),strDateFrom,
           toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
               .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
               .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
@@ -307,7 +307,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       ReportGeneralLedgerData[] dataTotal = null;
       if (data != null && data.length > 1) {
         dataTotal = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy,
-            strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+            vars.getLanguage(),strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
                 .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
             strcAcctSchemaId, strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct,
@@ -504,7 +504,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strcelementvalueto = strcelementvaluefrom;
         strAllaccounts = "N";
       }
-      data = ReportGeneralLedgerData.select(this, "0", strGroupByText, strGroupBy, strDateFrom,
+      data = ReportGeneralLedgerData.select(this, "0", strGroupByText, strGroupBy,vars.getLanguage(), strDateFrom,
           toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
               .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
               .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
@@ -599,7 +599,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strcelementvalueto = strcelementvaluefrom;
         strAllaccounts = "N";
       }
-      data = ReportGeneralLedgerData.selectXLS(this, strDateFrom, toDatePlusOne, strAllaccounts,
+      data = ReportGeneralLedgerData.selectXLS(this, vars
+              .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts,
           strcelementvaluefrom, strcelementvalueto, Utility.getContext(this, vars,
               "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
               "#User_Client", "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom,

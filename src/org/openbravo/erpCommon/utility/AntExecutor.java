@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,7 @@ public class AntExecutor {
   private PrintWriter out;
 
   private FileOutputStream logFile;
+  private PrintStream ps;
 
   /**
    * Initializes a newly created AntExecutor object assigning it the build.xml file to execute tasks
@@ -146,7 +147,7 @@ public class AntExecutor {
     final DefaultLogger logger1 = new DefaultLogger();
     try {
       logFile = new FileOutputStream(file);
-      PrintStream ps = new PrintStream(logFile);
+      ps = new PrintStream(logFile);
       logger1.setOutputPrintStream(ps);
       logger1.setErrorPrintStream(ps);
       logger1.setMessageOutputLevel(Project.MSG_INFO);
@@ -300,6 +301,7 @@ public class AntExecutor {
   public void closeLogFile() {
     try {
       if (logFile != null) {
+        ps.flush();
         logFile.close();
       }
     } catch (IOException e) {

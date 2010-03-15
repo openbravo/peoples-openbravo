@@ -2787,7 +2787,16 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800039-->  <VALUE><![CDATA[ReportTrialBalance]]></VALUE>
 <!--800039-->  <NAME><![CDATA[Trial Balance Report]]></NAME>
 <!--800039-->  <DESCRIPTION><![CDATA[Trial Balance Report]]></DESCRIPTION>
-<!--800039-->  <HELP><![CDATA[Trial Balance Report]]></HELP>
+<!--800039-->  <HELP><![CDATA[Create a report showing the sum of debits against the sum of credits for all general ledger accounts in a specified time period. It is possible to group the results by the Business Partner, Product or Project accounting dimensions. It is also possible to filter the results by organization, range of accounts and a selection of Business Partners, Products and Projects accounting.
+
+There are 3 ways available to get the results, the Search button, the pdf and Excel exports.
+
+The Search button shows the result in the same window. With an expand/collapse button the details of subaccounts are displayed according to the selected grouping type.
+The result is grouped by the account and by the selected accounting dimension (if there is one selected). The displayed entries are ordered by the account code.
+
+The pdf export generates a pdf file that can be printed or stored in the computer for later reviews. It has the same grouping rules as the search button.
+
+The Excel export generates an xls file that can be used to perform more advanced analysis to the data. In this case the entries are not shown in different groups. So the user can reorder and group the entries as desired. For each entry the account code, account name, initial balance amount, debit amount, credit amount, final balance amount, business partner, product and project are shown.]]></HELP>
 <!--800039-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--800039-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800039-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
@@ -3359,7 +3368,8 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800085-->  <VALUE><![CDATA[GenerateAverageCosts]]></VALUE>
 <!--800085-->  <NAME><![CDATA[Generate Average Costs]]></NAME>
 <!--800085-->  <DESCRIPTION><![CDATA[Generates raw materials average costs.]]></DESCRIPTION>
-<!--800085-->  <HELP><![CDATA[Using the previous raw material orders, calculates its medium cost.]]></HELP>
+<!--800085-->  <HELP><![CDATA[Using the previous raw material receipts, calculates its medium cost.<br>
+The product price of each receipt is calculated based on the on the product price in the purchase invoice. If the invoice does not exist the price of the purchase order is used, if the order neither exists the price list of the provider is used. If none of these criterias exist, a warning is generated and the previous cost is used.]]></HELP>
 <!--800085-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800085-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
 <!--800085-->  <PROCEDURENAME><![CDATA[M_Generate_Average_Costs]]></PROCEDURENAME>
@@ -3367,6 +3377,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800085-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800085-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800085-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800085-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800085-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800085-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800085--></AD_PROCESS>

@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -119,7 +119,7 @@ public class FileImport extends HttpSecureAppServlet {
           constant = constant + 1;
         } else
           texto.append(parseField(data2[i].getField(String.valueOf(j - constant)),
-              data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+              data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint, ""));
         if (i == 0 && strFirstLineHeader.equalsIgnoreCase("Y"))
           texto.append("</th>");
         else
@@ -175,7 +175,8 @@ public class FileImport extends HttpSecureAppServlet {
             constant = constant + 1;
           } else
             strValues.append(parseField(data2[i].getField(String.valueOf(j - constant)),
-                data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+                data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint,
+                data[j].referencename));
           strValues.append("'");
           strFields.append(strValues);
           strValues.delete(0, strValues.length());
@@ -228,7 +229,11 @@ public class FileImport extends HttpSecureAppServlet {
   }
 
   private String parseField(String strTexto, String strLength, String strDataType,
-      String strDataFormat, String strDecimalPoint) throws ServletException {
+      String strDataFormat, String strDecimalPoint, String strReferenceName)
+      throws ServletException {
+    if (strReferenceName.equals("TableDir")) {
+      strLength = "32";
+    }
     if (strDataType.equals("D")) {
       strTexto = FileImportData.parseDate(this, strTexto, strDataFormat);
       return strTexto;
@@ -364,8 +369,10 @@ public class FileImport extends HttpSecureAppServlet {
             sb.append(data[j].constantvalue);
             constant = constant + 1;
           } else
-            sb.append(parseField(data2[i].getField(String.valueOf(j - constant)),
-                data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+            sb
+                .append(parseField(data2[i].getField(String.valueOf(j - constant)),
+                    data[j].fieldlength, data[j].datatype, data[j].dataformat,
+                    data[j].decimalpoint, ""));
           if (i == 0 && strFirstLineHeader.equalsIgnoreCase("Y"))
             sb.append("</th>");
           else
@@ -387,8 +394,8 @@ public class FileImport extends HttpSecureAppServlet {
         .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     String strJS = "\n var r = '" + sb.toString() + "'; \n"
-        + "top.frames['appFrame'].setResult(r); \n "
-        + "top.frames['appFrame'].setProcessingMode('window', false); \n";
+        + "parent.frames['appFrame'].setResult(r); \n "
+        + "parent.frames['appFrame'].setProcessingMode('window', false); \n";
     xmlDocument.setParameter("result", strJS);
     xmlDocument.setParameter("messageType", "Success");
     xmlDocument.setParameter("messageTitle", "Success");
@@ -405,8 +412,8 @@ public class FileImport extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_Result")
         .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
-    String strJS = "\n top.frames['appFrame'].setProcessingMode('window', false); \n"
-        + "top.frames['appFrame'].document.getElementById('buttonRefresh').onclick();\n";
+    String strJS = "\n parent.frames['appFrame'].setProcessingMode('window', false); \n"
+        + "parent.frames['appFrame'].document.getElementById('buttonRefresh').onclick();\n";
     xmlDocument.setParameter("result", strJS);
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

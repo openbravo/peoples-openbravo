@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -27,38 +28,43 @@ public class PaymentMonitor {
    * Updates payment monitor information
    */
   public static void updateInvoice(Invoice invoice) {
-    List<DebtPayment> payments = invoice.getFinancialMgmtDebtPaymentList();
-    BigDecimal paidAmount = BigDecimal.ZERO;
-    BigDecimal overDueAmount = BigDecimal.ZERO;
-    for (DebtPayment payment : payments) {
-      if (payment.isPaymentComplete())
-        paidAmount = paidAmount.add(getConvertedAmt(payment.getAmount(), payment.getCurrency()
-            .getId(), invoice.getCurrency().getId(), invoice.getAccountingDate(), invoice
-            .getClient().getId(), invoice.getOrganization().getId()));
-      else {
-        paidAmount = paidAmount.add(calculatePaidAmount(payment, invoice.getCurrency().getId(),
-            invoice.getAccountingDate(), BigDecimal.ONE));
-        overDueAmount = overDueAmount.add(calculateOverdueAmount(payment, invoice.getCurrency()
-            .getId(), invoice.getAccountingDate(), BigDecimal.ONE));
+    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      List<DebtPayment> payments = invoice.getFinancialMgmtDebtPaymentList();
+      BigDecimal paidAmount = BigDecimal.ZERO;
+      BigDecimal overDueAmount = BigDecimal.ZERO;
+      for (DebtPayment payment : payments) {
+        if (payment.isPaymentComplete())
+          paidAmount = paidAmount.add(getConvertedAmt(payment.getAmount(), payment.getCurrency()
+              .getId(), invoice.getCurrency().getId(), invoice.getAccountingDate(), invoice
+              .getClient().getId(), invoice.getOrganization().getId()));
+        else {
+          paidAmount = paidAmount.add(calculatePaidAmount(payment, invoice.getCurrency().getId(),
+              invoice.getAccountingDate(), BigDecimal.ONE));
+          overDueAmount = overDueAmount.add(calculateOverdueAmount(payment, invoice.getCurrency()
+              .getId(), invoice.getAccountingDate(), BigDecimal.ONE));
+        }
       }
+      if (paidAmount.setScale(invoice.getCurrency().getStandardPrecision().intValue(),
+          BigDecimal.ROUND_HALF_UP).compareTo(invoice.getGrandTotalAmount()) == 0) {
+        invoice.setDaysTillDue(0L);
+        invoice.setDueAmount(BigDecimal.ZERO);
+        invoice.setPaymentComplete(true);
+      } else {
+        invoice.setDaysTillDue(getDaysTillDue(invoice));
+        invoice.setPaymentComplete(false);
+      }
+      invoice.setTotalPaid(paidAmount.setScale(invoice.getCurrency().getStandardPrecision()
+          .intValue(), BigDecimal.ROUND_HALF_UP));
+      invoice.setDueAmount(overDueAmount.setScale(invoice.getCurrency().getStandardPrecision()
+          .intValue(), BigDecimal.ROUND_HALF_UP));
+      invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(invoice.getTotalPaid()));
+      invoice.setLastCalculatedOnDate(new Date());
+      OBDal.getInstance().save(invoice);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(prevMode);
     }
-    if (paidAmount.setScale(invoice.getCurrency().getStandardPrecision().intValue(),
-        BigDecimal.ROUND_HALF_UP).compareTo(invoice.getGrandTotalAmount()) == 0) {
-      invoice.setDaysTillDue(0L);
-      invoice.setDueAmount(BigDecimal.ZERO);
-      invoice.setPaymentComplete(true);
-    } else {
-      invoice.setDaysTillDue(getDaysTillDue(invoice));
-      invoice.setPaymentComplete(false);
-    }
-    invoice.setTotalPaid(paidAmount.setScale(invoice.getCurrency().getStandardPrecision()
-        .intValue(), BigDecimal.ROUND_HALF_UP));
-    invoice.setDueAmount(overDueAmount.setScale(invoice.getCurrency().getStandardPrecision()
-        .intValue(), BigDecimal.ROUND_HALF_UP));
-    invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(invoice.getTotalPaid()));
-    invoice.setLastCalculatedOnDate(new Date());
-    OBDal.getInstance().save(invoice);
-    OBDal.getInstance().flush();
     return;
   }
 
@@ -70,7 +76,11 @@ public class PaymentMonitor {
     final OBQuery<DebtPayment> obqParameters = OBDal.getInstance().createQuery(DebtPayment.class,
         whereClause);
     obqParameters.setNamedParameter("invoice", invoice.getId());
-
+    // For Background process execution at system level
+    if (OBContext.getOBContext().isInAdministratorMode()) {
+      obqParameters.setFilterOnReadableClients(false);
+      obqParameters.setFilterOnReadableOrganization(false);
+    }
     final List<DebtPayment> payments = obqParameters.list();
     ArrayList<Long> allDaysToDue = new ArrayList<Long>();
     for (DebtPayment payment : payments) {

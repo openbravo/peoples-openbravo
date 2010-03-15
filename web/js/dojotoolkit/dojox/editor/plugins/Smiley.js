@@ -16,7 +16,7 @@ dojo.require("dijit.form.ToggleButton");
 dojo.require("dijit.form.DropDownButton");
 dojo.require("dojox.editor.plugins._SmileyPalette");
 
-dojo.requireLocalization("dojox.editor.plugins", "Smiley", null, "ROOT,ko");
+dojo.requireLocalization("dojox.editor.plugins", "Smiley", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.declare("dojox.editor.plugins.Smiley", dijit._editor._Plugin, {
 	// summary:

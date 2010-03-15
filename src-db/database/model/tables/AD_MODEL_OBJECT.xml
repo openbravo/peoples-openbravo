@@ -111,10 +111,10 @@
       <foreign-key foreignTable="AD_PROCESS" name="AD_MODEL_OBJECT_AD_PROCESS">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="AD_MODEL_OBJECT_AD_REFERENCE">
+      <foreign-key foreignTable="AD_REFERENCE" name="AD_MODEL_OBJECT_AD_REFERENCE" onDelete="cascade">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TAB" name="AD_MODEL_OBJECT_AD_TAB">
+      <foreign-key foreignTable="AD_TAB" name="AD_MODEL_OBJECT_AD_TAB" onDelete="cascade">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TASK" name="AD_MODEL_OBJECT_AD_TASK">

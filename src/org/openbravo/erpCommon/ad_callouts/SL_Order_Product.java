@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -212,8 +212,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         resultado.append("new Array(");
         for (int i = 0; i < tld.length; i++) {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + (i == 0 ? "true" : "false") + "\")");
+              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"" + ("false") + "\")");
           if (i < tld.length - 1)
             resultado.append(",\n");
         }

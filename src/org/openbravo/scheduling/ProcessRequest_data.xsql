@@ -11,8 +11,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2008 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,8 +49,8 @@
         AD_Process_Request_ID, AD_Process_ID, AD_User_ID, Status, Channel, Ob_Context, 
         Params, Previous_Fire_Time, Next_Fire_Time, Scheduled_Finish)
         VALUES (?, ?, 'Y', NOW(), ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?,
-        TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'), TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'), 
-        TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'))
+        TO_TIMESTAMP(?, ?), TO_TIMESTAMP(?, ?),
+        TO_TIMESTAMP(?, ?))
     ]]></Sql>
     <Parameter name="adOrgId"/>
     <Parameter name="adClientId"/>
@@ -64,8 +64,11 @@
     <Parameter name="obContext"/>
     <Parameter name="params"/>
     <Parameter name="previousFireTime"/>
+    <Parameter name="dateTimeFormat"/>
     <Parameter name="nextFireTime"/>
+    <Parameter name="dateTimeFormat"/>
     <Parameter name="scheduledFinish"/>
+    <Parameter name="dateTimeFormat"/>
    </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowcount">
       <SqlMethodComment></SqlMethodComment>
@@ -82,13 +85,15 @@
       <Sql><![CDATA[
       	UPDATE AD_Process_Request
       	SET Status = ?,
-      	Next_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
-      	Scheduled_Finish = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS')
+      	Next_Fire_Time = TO_TIMESTAMP(?, ?),
+      	Scheduled_Finish = TO_TIMESTAMP(?, ?)
       	WHERE AD_Process_Request_ID = ?
     ]]></Sql>
     <Parameter name="status"/>
     <Parameter name="nextFireTime"/>
-    <Parameter name="scheduledFinish"/> 
+    <Parameter name="dateTimeFormat"/>
+    <Parameter name="scheduledFinish"/>
+    <Parameter name="dateTimeFormat"/>
     <Parameter name="id"/>
    </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowcount">
@@ -96,16 +101,19 @@
       <Sql><![CDATA[
       	UPDATE AD_Process_Request
       	SET Status = ?, Channel = ?,
-      	Previous_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
-      	Next_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
-      	Scheduled_Finish = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS')
+      	Previous_Fire_Time = TO_TIMESTAMP(?, ?),
+      	Next_Fire_Time = TO_TIMESTAMP(?, ?),
+      	Scheduled_Finish = TO_TIMESTAMP(?, ?)
       	WHERE AD_Process_Request_ID = ?
     ]]></Sql>
     <Parameter name="status"/>
     <Parameter name="channel"/>
     <Parameter name="previousFireTime"/>
+    <Parameter name="dateTimeFormat"/>
     <Parameter name="nextFireTime"/>
-    <Parameter name="scheduledFinish"/> 
+    <Parameter name="dateTimeFormat"/>
+    <Parameter name="scheduledFinish"/>
+    <Parameter name="dateTimeFormat"/>
     <Parameter name="id"/>
    </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowcount">
@@ -113,9 +121,9 @@
       <Sql><![CDATA[
       	UPDATE AD_Process_Request
       	SET Updatedby = ?, AD_User_ID = ?, Status = ?, Channel = ?,
-      	Previous_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
-      	Next_Fire_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
-      	Scheduled_Finish = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
+      	Previous_Fire_Time = TO_TIMESTAMP(?, ?),
+      	Next_Fire_Time = TO_TIMESTAMP(?, ?),
+      	Scheduled_Finish = TO_TIMESTAMP(?, ?),
       	Ob_Context = ?
       	WHERE AD_Process_Request_ID = ?
     ]]></Sql>
@@ -124,8 +132,11 @@
     <Parameter name="status"/>
     <Parameter name="channel"/>
     <Parameter name="previousFireTime"/>
+    <Parameter name="dateTimeFormat"/>
     <Parameter name="nextFireTime"/>
-    <Parameter name="scheduledFinish"/> 
+    <Parameter name="dateTimeFormat"/>
+    <Parameter name="scheduledFinish"/>
+    <Parameter name="dateTimeFormat"/>
     <Parameter name="obContext"/>
     <Parameter name="id"/>
    </SqlMethod>

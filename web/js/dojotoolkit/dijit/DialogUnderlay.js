@@ -9,6 +9,8 @@ if(!dojo._hasResource["dijit.DialogUnderlay"]){ //_hasResource checks added by b
 dojo._hasResource["dijit.DialogUnderlay"] = true;
 dojo.provide("dijit.DialogUnderlay");
 
+dojo.require("dojo.window");
+
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 
@@ -80,7 +82,7 @@ dojo.declare(
 			os.display = "none";
 
 			// then resize and show
-			var viewport = dijit.getViewport();
+			var viewport = dojo.window.getBox();
 			os.top = viewport.t + "px";
 			os.left = viewport.l + "px";
 			is.width = viewport.w + "px";

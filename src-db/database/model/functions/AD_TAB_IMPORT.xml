@@ -21,8 +21,8 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
-  * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributor(s): Openbravo SLU
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -42,6 +42,7 @@
   v_module_id varchar2(32);
   v_fieldModule varchar2(32);
   v_Aux NUMBER;
+  
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -58,6 +59,7 @@
     v_isReadOnly CHAR(1):='N';
     v_sameLine CHAR(1):='N';
     v_SeqNo NUMBER(10) ;
+    v_gridSeqno NUMBER;
     v_sortNo NUMBER(10) ;
     v_columnName VARCHAR2(40) ;
     v_LastColumnName VARCHAR2(40) ;
@@ -111,6 +113,21 @@
     INTO v_AD_Table_ID
     FROM AD_Tab
     WHERE AD_Tab_ID=v_Record_ID  AND AD_Table_ID!='291'; -- C_BPartner (multiple tabs)
+    
+    
+    --Set gridSeqno = 0 if there are gridSeqno values in the current grid, other
+    --case leave it null
+    SELECT count(*)
+      into v_Aux
+      FROM AD_Field
+     WHERE ad_tab_id = v_Record_ID
+       AND grid_Seqno is not null;
+       
+    if v_Aux =0 then
+      v_GridSeqNo := null;
+    else
+      v_GridSeqNo := 0;
+    end if;
     
     FOR Cur_Column IN(-- added by Pablo Sarobe
     SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID
@@ -178,14 +195,16 @@
           created, createdby, updated, updatedby,
           name, description, seqno, AD_Tab_ID,
           AD_Column_ID, DisplayLength, IsCentrallyMaintained,
-          isdisplayed, isreadonly, sortno, issameline, showinrelation, ad_module_id
+          isdisplayed, isreadonly, sortno, issameline, showinrelation, ad_module_id,
+          grid_seqNo
         )
         VALUES
         (v_NextNo, '0', '0', 'Y',
         now(), '0', now(), '0',
         Cur_Column.Name, Cur_Column.Description, v_SeqNo, v_Record_ID,
         Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', 
-        v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation, v_fieldModule) ;
+        v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation, v_fieldModule,
+        v_gridSeqno) ;
       --
       v_count:=v_count + 1;
       -- Added by Pablo Sarobe

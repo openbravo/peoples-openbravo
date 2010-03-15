@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,9 +77,6 @@ public class SystemValidationTask extends DalInitializingTask {
           .validateModule(module, null);
 
       // validate DB for module if there's dbprefixes
-      if (module == null) {
-        System.out.println("mod null...");
-      }
       if (module != null && module.getModuleDBPrefixList() != null
           && module.getModuleDBPrefixList().size() != 0) {
         log.info("Validating DB");

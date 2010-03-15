@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,37 @@ function updateData(combo) {
 
 function onloadFunctions() {
 }
+
+function buttonOK_click() {
+  var target;
+  try {
+    if (parent.frameMenu) {
+      target = "_parent";
+    } else {
+      target = "_self";
+    }
+  } catch (e) {
+    target = "_self";
+  }
+  submitCommandForm('OPTIONS', false, null, '../secureApp/LoginHandler.html', target, true)
+  return false;
+}
+
+function buttonBack_click() {
+  var target;
+  try {
+    if (parent.frameMenu) {
+      target = "_parent";
+    } else {
+      target = "_self";
+    }
+  } catch (e) {
+    target = "_self";
+  }
+  submitCommandForm('CLOSE_SESSION', false, null, 'Login_FS.html', target)
+  return false;
+}
+
 </script>
 	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
@@ -61,7 +92,17 @@ function onloadFunctions() {
 		  onloadFunctions();
 		} catch (e) {}
 		clearForm();
-		byDefaultAction('submitCommandForm(\'OPTIONS\',false,null,\'../secureApp/LoginHandler.html\',\'_top\',true)');
+    var target;
+    try {
+      if (parent.frameMenu) {
+        target = "_parent";
+      } else {
+        target = "_self";
+      }
+    } catch (e) {
+      target = "_self";
+    }
+		byDefaultAction('submitCommandForm(\'OPTIONS\',false,null,\'../secureApp/LoginHandler.html\',\'' + target + '\',true)');
 
 		setWindowElementFocus('firstElement');
 	}
@@ -180,7 +221,7 @@ function onloadFunctions() {
                       <button type="button" 
                         id="buttonOK" 
                         class="ButtonLink" 
-                        onclick="submitCommandForm('OPTIONS',false,null,'../secureApp/LoginHandler.html','_top',true);return false;" 
+                        onclick="buttonOK_click(); return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Login'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
@@ -204,7 +245,7 @@ function onloadFunctions() {
                     <div>
                       <button type="button" 
                         class="ButtonLink" 
-                        onclick="submitCommandForm('CLOSE_SESSION',false,null,'Login_FS.html', '_top');return false;" 
+                        onclick="buttonBack_click(); return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Back'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 

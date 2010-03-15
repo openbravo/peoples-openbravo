@@ -140,12 +140,6 @@
       <foreign-key foreignTable="M_PRODUCT" name="C_VALIDCOMBINATION_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_VALIDCOMBINATION_USER1">
-        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_VALIDCOMBINATION_USER2">
-        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
       <index name="C_VALIDCOMBINATION_ALIAS" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="ALIAS"/>

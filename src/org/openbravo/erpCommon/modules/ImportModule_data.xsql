@@ -11,8 +11,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,43 +120,6 @@
       <Parameter name="name"/>
       <Parameter name="log"/>
       <Parameter name="action"/>
-   </SqlMethod>
-   
-   <SqlMethod name="setInDevelopment" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        UPDATE AD_MODULE
-           SET ISINDEVELOPMENT = 'Y'
-         WHERE AD_MODULE_ID = ?
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
-   <SqlMethod name="deleteDependencies" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        DELETE FROM AD_MODULE_DEPENDENCY
-         WHERE AD_MODULE_ID = ?
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
-   <SqlMethod name="deleteDBPrefix" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        DELETE FROM AD_MODULE_DBPREFIX
-         WHERE AD_MODULE_ID = ?
-      </Sql>
-      <Parameter name="moduleId"/>
-   </SqlMethod>
-   
-   <SqlMethod name="deleteModule" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        DELETE FROM AD_MODULE
-         WHERE AD_MODULE_ID = ?
-      </Sql>
-      <Parameter name="moduleId"/>
    </SqlMethod>
    
    <SqlMethod name="getParentNode" type="preparedStatement" return="string">

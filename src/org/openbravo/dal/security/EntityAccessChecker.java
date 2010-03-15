@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -60,6 +61,7 @@ import org.openbravo.model.ad.ui.Window;
  */
 
 public class EntityAccessChecker implements OBNotSingleton {
+  private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
 
   // Table Access Level:
   // "6";"System/Client"
@@ -142,11 +144,6 @@ public class EntityAccessChecker implements OBNotSingleton {
     @SuppressWarnings("unchecked")
     final List<TableAccess> tas = SessionHandler.getInstance().createQuery(tafQryStr).list();
     for (final TableAccess ta : tas) {
-      final String accessLevel = ta.getTable().getDataAccessLevel();
-      if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
-        continue;
-      }
-
       final String tableName = ta.getTable().getName();
       final Entity e = mp.getEntity(tableName);
 
@@ -205,32 +202,32 @@ public class EntityAccessChecker implements OBNotSingleton {
    * debugging purposes.
    */
   public void dump() {
-    System.err.println("");
-    System.err.println(">>> Readable entities: ");
-    System.err.println("");
+    log.info("");
+    log.info(">>> Readable entities: ");
+    log.info("");
     dumpSorted(readableEntities);
 
-    System.err.println("");
-    System.err.println(">>> Derived Readable entities: ");
-    System.err.println("");
+    log.info("");
+    log.info(">>> Derived Readable entities: ");
+    log.info("");
     dumpSorted(derivedReadableEntities);
 
-    System.err.println("");
-    System.err.println(">>> Writable entities: ");
-    System.err.println("");
+    log.info("");
+    log.info(">>> Writable entities: ");
+    log.info("");
     dumpSorted(writableEntities);
-    System.err.println("");
-    System.err.println("");
+    log.info("");
+    log.info("");
 
     final Set<Entity> readableNotWritable = new HashSet<Entity>(readableEntities);
     readableNotWritable.removeAll(writableEntities);
 
-    System.err.println("");
-    System.err.println(">>> Readable Not-Writable entities: ");
-    System.err.println("");
+    log.info("");
+    log.info(">>> Readable Not-Writable entities: ");
+    log.info("");
     dumpSorted(readableNotWritable);
-    System.err.println("");
-    System.err.println("");
+    log.info("");
+    log.info("");
 
   }
 
@@ -241,7 +238,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
     Collections.sort(names);
     for (final String n : names) {
-      System.err.println(n);
+      log.info(n);
     }
   }
 

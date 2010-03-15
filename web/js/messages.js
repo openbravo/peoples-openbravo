@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,13 +37,19 @@ var gDefaultType = 0;
 if (typeof arrMessages == "undefined") {
 	var arrMessages;
 	var arrTypes;
-	if (top.frameMenu) {
-		arrMessages = top.frameMenu.arrMessages;
-		arrTypes = top.frameMenu.arrTypes;
-	} else if (top.opener.top.frameMenu) {
-		arrMessages = top.opener.top.frameMenu.arrMessages;
-		arrTypes = top.opener.top.frameMenu.arrTypes;
-	}
+	if (parent.frameMenu) {
+		arrMessages = parent.frameMenu.arrMessages;
+		arrTypes = parent.frameMenu.arrTypes;
+	} else if (top.opener.parent.frameMenu) {
+		arrMessages = top.opener.parent.frameMenu.arrMessages;
+		arrTypes = top.opener.parent.frameMenu.arrTypes;
+	} else if (top.opener.top.opener.parent.frameMenu) {
+		arrMessages = top.opener.top.opener.parent.frameMenu.arrMessages;
+		arrTypes = top.opener.top.opener.parent.frameMenu.arrTypes;
+	} else {
+    arrMessages = getFrame('frameMenu').arrMessages;
+    arrTypes = getFrame('frameMenu').arrTypes;
+  }
 }
 
 function messageType(_messageID, _messageType) {

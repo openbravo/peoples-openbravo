@@ -11,8 +11,8 @@
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2009 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2009 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -441,8 +441,7 @@ export.database: exports database structure and data to xml files.
                   stableDBdir="${stableDBdir}"
                   testDBdir="${base.src.db}/database"
                   verbosity="${bbdd.verbosity}"
-                  userId="0" adminMode="true" 
-                  propertiesFile="${base.config}/Openbravo.properties"/>    
+    />    
   </target>
 
   <target name="export.sample.data" depends="code.rev">
@@ -540,6 +539,7 @@ export.database: exports database structure and data to xml files.
 
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
+    <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
     <!--
@@ -558,6 +558,8 @@ export.database: exports database structure and data to xml files.
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
+    <updatesystemstatus v="RB51"/>
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="create.database" depends="init, core.lib, database.lib">
@@ -638,7 +640,7 @@ export.database: exports database structure and data to xml files.
 
   <target name="apply.module">
     <updatesystemstatus v="RB31"/>
-    <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}">
+    <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
     </java>

@@ -12,8 +12,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
  * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2009 Openbravo SL
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -139,7 +139,7 @@ function validate() {
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td>
 
-                                  <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                  <table cellpadding="0" cellspacing="0" class="MessageBox_Container">
                                     <tbody>
                                     <tr>
                                       <td class="MessageBox_LeftTrans">
@@ -348,7 +348,7 @@ function validate() {
   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
     <tr class="DataGrid_Body_Row"> 
       <th class="DataGrid_Header_Cell" width="80%"><span>TOTAL</span></th>
-      <th class="DataGrid_Header_Cell" width="20%"><span id="fieldSumCostTotal">XX123456&nbsp;</span></th>      
+      <th class="DataGrid_Header_Cell" width="20%" style="text-align:right;"><span id="fieldSumCostTotal">XX123456&nbsp;</span></th>
     </tr>
   </table>
   <br></br>
@@ -361,24 +361,24 @@ function validate() {
     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
       <tr class="DataGrid_Body_Row">
         <th class="DataGrid_Header_Cell" width="58%">PRODUCT</th>
-        <th class="DataGrid_Header_Cell" width="12%">QUANTITY</th>
+        <th class="DataGrid_Header_Cell" width="12%" style="text-align:right;">QUANTITY</th>
         <th class="DataGrid_Header_Cell" width="10%">UNIT</th>
-        <th class="DataGrid_Header_Cell" width="11%">AVERAGE COST</th>
-        <th class="DataGrid_Header_Cell" width="9%">VALUATION</th>
+        <th class="DataGrid_Header_Cell" width="11%" style="text-align:right;">AVERAGE COST</th>
+        <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;">VALUATION</th>
       </tr>
       <div id="sectionDetail"> 
         <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
           <td class="DataGrid_Body_Cell" width="58%"> <a class="LabelLink" href="#" onclick="submitCommandFormParameter('RELATION', document.frmMain.inpmProductId, 'xx', false, document.frmMain, '../Product/Costing_Relation.html', null, false, true);return false;" onmouseover="window.status='Costs';return true;" onmouseout="window.status='';return true;" class="Link" id="idfieldmProductId"> 
             <span id="fieldProductName">xx24/10/2004</span></a></td>
-          <td class="DataGrid_Body_Cell" width="12%"  id="fieldQty">xx24/10/2004</td>
+          <td class="DataGrid_Body_Cell" width="12%"  id="fieldQty" style="text-align:right;">xx24/10/2004</td>
           <td class="DataGrid_Body_Cell" width="10%" id="fieldUomName" >xx12/07/1923</td>
-          <td class="DataGrid_Body_Cell" width="11%" id="fieldAverageCost" >xx3456&nbsp;</td>
-          <td class="DataGrid_Body_Cell" width="9%" id="fieldTotalCost" >xx12345&nbsp;</td>
+          <td class="DataGrid_Body_Cell" width="11%" id="fieldAverageCost" style="text-align:right;">xx3456&nbsp;</td>
+          <td class="DataGrid_Body_Cell" width="9%" id="fieldTotalCost"  style="text-align:right;">xx12345&nbsp;</td>
         </tr>
       </div>
       <tr class="DataGrid_Body_Row"> 
         <td class="DataGrid_Body_Cell" colspan="4" ><span><B>Total stock value</B></span></td>
-        <td class="DataGrid_Body_Cell"> <span  id="fieldSumCost">xx23455.56</span></td>
+        <td class="DataGrid_Body_Cell" style="text-align:right;"> <span  id="fieldSumCost">xx23455.56</span></td>
       </tr>
     </table>
     <br></br>

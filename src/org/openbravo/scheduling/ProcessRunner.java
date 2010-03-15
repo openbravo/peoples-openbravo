@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,7 +67,7 @@ public class ProcessRunner {
     final ProcessContext ctx = bundle.getContext();
     ProcessRequestData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(), ctx
         .getUser(), requestId, bundle.getProcessId(), ctx.getUser(), status, "Direct", ctx
-        .toString(), "", null, null, null);
+        .toString(), "", null, null, null, null);
 
     final String executionId = SequenceIdData.getUUID();
     final long startTime = System.currentTimeMillis();

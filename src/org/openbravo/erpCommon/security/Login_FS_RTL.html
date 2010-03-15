@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,14 +29,14 @@
 <script language="JavaScript" type="text/javascript">
   function onMenuFocusDo() {
     try {
-      top.frames['frameMenu'].onFocusMenu();
+      parent.frames['frameMenu'].onFocusMenu();
       return true;
     } catch (e) {
     }
   }
   function onMenuBlurDo() {
     try {
-      top.frames['frameMenu'].onBlurMenu();
+      parent.frames['frameMenu'].onBlurMenu();
       return true;
     } catch (e) {
     }

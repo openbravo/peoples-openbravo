@@ -10,8 +10,8 @@
  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
- * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2006 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -25,10 +25,17 @@ public class DocTax {
   static Logger log4jDocTax = Logger.getLogger(DocTax.class);
 
   public DocTax(String C_Tax_ID, String name, String rate, String taxBaseAmt, String amount) {
+    this(C_Tax_ID, name, rate, taxBaseAmt, amount, false, false);
+  } // DocTax
+
+  public DocTax(String C_Tax_ID, String name, String rate, String taxBaseAmt, String amount,
+      boolean isUndeductable, boolean isTaxDeductable) {
     m_C_Tax_ID = C_Tax_ID;
     m_name = name;
     m_rate = rate;
     m_amount = amount;
+    m_isTaxUndeductable = isUndeductable;
+    m_isTaxDeductable = isTaxDeductable;
   } // DocTax
 
   /** Tax ID */
@@ -39,6 +46,11 @@ public class DocTax {
   public String m_rate = "";
   /** Name */
   public String m_name = "";
+
+  // m_isTaxUndeductable will be used for public organization.
+  public boolean m_isTaxUndeductable = false;
+  // m_isTaxDeductable will be used for commercial organization in intracommunity.
+  public boolean m_isTaxDeductable = false;
 
   /** Tax Due Acct */
   public static final int ACCTTYPE_TaxDue = 0;

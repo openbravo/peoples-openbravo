@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -85,8 +85,6 @@ public class DalMappingGenerator implements OBSingleton {
     }
     final String mainTemplate = readFile(MAIN_TEMPLATE_FILE);
     final String result = mainTemplate.replace("content", sb.toString());
-
-    // System.err.println(result);
 
     if (log.isDebugEnabled()) {
       log.debug(result);
@@ -167,17 +165,17 @@ public class DalMappingGenerator implements OBSingleton {
   }
 
   private String generatePrimitiveMapping(Property p) {
-    if (p.getPrimitiveType() == Object.class) {
+    if (p.getHibernateType() == Object.class) {
       return "";
     }
     final StringBuffer sb = new StringBuffer();
     sb.append(TAB2 + "<property name=\"" + p.getName() + "\"");
     sb.append(getAccessorAttribute());
     String type;
-    if (p.getPrimitiveType().isArray()) {
-      type = p.getPrimitiveType().getComponentType().getName() + "[]";
+    if (p.getHibernateType().isArray()) {
+      type = p.getHibernateType().getComponentType().getName() + "[]";
     } else {
-      type = p.getPrimitiveType().getName();
+      type = p.getHibernateType().getName();
     }
     if (p.isBoolean()) {
       type = YesNoType.class.getName(); // "yes_no";
@@ -301,9 +299,9 @@ public class DalMappingGenerator implements OBSingleton {
         .isTrue(compId.isCompositeId(), "Property " + compId + " is expected to be a composite Id");
     for (final Property p : compId.getIdParts()) {
       if (p.isPrimitive()) {
-        String type = p.getPrimitiveType().getName();
-        if (boolean.class.isAssignableFrom(p.getPrimitiveType().getClass())
-            || Boolean.class == p.getPrimitiveType()) {
+        String type = p.getHibernateType().getName();
+        if (boolean.class.isAssignableFrom(p.getHibernateType().getClass())
+            || Boolean.class == p.getHibernateType()) {
           type = "yes_no";
         }
         sb.append(TAB3 + "<key-property name=\"" + p.getName() + "\" column=\"" + p.getColumnName()

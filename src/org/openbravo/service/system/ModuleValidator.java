@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -114,20 +114,6 @@ public class ModuleValidator implements SystemValidator {
               + " are not set, before exporting these " + "fields should be set");
     }
 
-    // industry template
-    if (module.getType().equals("T")) {
-      boolean found = false;
-      for (ModuleDependency md : module.getModuleDependencyList()) {
-        if (md.getDependentModule().getId().equals("0") && !md.isIncluded()) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
-            + " is an Industry Template must depend on Core");
-      }
-    }
   }
 
   private void checkJavaPath(Module module, File moduleDir, String javaPackage,
@@ -301,7 +287,7 @@ public class ModuleValidator implements SystemValidator {
       }
     }
     if (!coreModuleFound) {
-      result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
+      result.addWarning(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
           + " or any of its ancestors " + "does not depend on the Core module.");
     }
 
@@ -330,7 +316,7 @@ public class ModuleValidator implements SystemValidator {
     for (org.openbravo.model.ad.module.DataPackage pckg : module.getDataPackageList()) {
       if (pckg.getJavaPackage() != null
           && !pckg.getJavaPackage().startsWith(module.getJavaPackage())) {
-        result.addError(SystemValidationType.MODULE_ERROR, "Data package " + pckg.getName()
+        result.addError(SystemValidationType.DEPENDENCY_PROBLEM, "Data package " + pckg.getName()
             + " has a java package which is not within the java package of its module "
             + module.getName());
       }

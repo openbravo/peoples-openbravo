@@ -101,6 +101,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISEXPENSE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_SEQUENCE" name="AD_SEQUENCE_DOCTYPEDOC">
         <reference local="DOCNOSEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>

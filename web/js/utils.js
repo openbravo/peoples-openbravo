@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,8 @@ var gWhiteColor = "#F2EEEE";
 var arrGeneralChange=[];
 var dateFormat;
 var defaultDateFormat = "%d-%m-%Y";
+
+var mainFrame_windowObj = "";
 
 //Days of a Month
 var daysOfMonth = [[0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],  //No leap year
@@ -72,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6446';
+  var number = '6687';
   return number;
 }
 
@@ -413,15 +415,7 @@ function setChangedField(field, form) {
  * @return true if autosave is enable, otherwise false
  */
 function isAutosaveEnabled() {
-  var autosave;
-  if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
-    if(top.opener !== null) { // is a pop-up window
-      autosave = top.opener.top.frameMenu.autosave;
-    }
-  }
-  else {
-    autosave = top.frameMenu.autosave;
-  }
+  var autosave = getFrame('frameMenu').autosave;
   return autosave;
 }
 
@@ -503,14 +497,7 @@ function checkForChanges(f) {
 	var form = f;
 	
 	if (form === null) {
-		if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
-			if(top.opener !== null) { // is a pop-up window
-				form = top.opener.top.appFrame.document.forms[0];
-			}
-		}
-		else {
-			form = top.appFrame.document.forms[0];			
-		}
+		form = getFrame('appFrame').document.forms[0];
 	}
 	
 	if(typeof form === 'undefined') {
@@ -530,12 +517,12 @@ function checkForChanges(f) {
 		return true;
 	}
 	else {
-		if(typeof top.appFrame === 'undefined'){
+		if(typeof parent.appFrame === 'undefined'){
 			return true;
 		}
 
 		try {
-		  var promptConfirmation = typeof top.appFrame.confirmOnChanges === 'undefined' ? true : top.appFrame.confirmOnChanges;
+		  var promptConfirmation = typeof parent.appFrame.confirmOnChanges === 'undefined' ? true : parent.appFrame.confirmOnChanges;
 		} catch(e) {
 		  if(isDebugEnabled()) {
             console.error("%o", e);
@@ -543,7 +530,7 @@ function checkForChanges(f) {
 		}
 
 		try {
-		  var hasUserChanges = typeof top.appFrame.isUserChanges === 'undefined' ? false : top.appFrame.isUserChanges;
+		  var hasUserChanges = typeof parent.appFrame.isUserChanges === 'undefined' ? false : parent.appFrame.isUserChanges;
 		} catch(e) {
 		  if(isDebugEnabled()) {
             console.error("%o", e);
@@ -558,8 +545,8 @@ function checkForChanges(f) {
 			var autoSaveFlag = autosave;		
 			if (promptConfirmation && hasUserChanges) {
 				autoSaveFlag = showJSMessage(25);
-				if(typeof top.appFrame.confirmOnChanges !== 'undefined' && autoSaveFlag) {
-					top.appFrame.confirmOnChanges = false;
+				if(typeof parent.appFrame.confirmOnChanges !== 'undefined' && autoSaveFlag) {
+					parent.appFrame.confirmOnChanges = false;
 				}
 			}
 			if (autoSaveFlag) {
@@ -912,6 +899,7 @@ function addUrlParameters(data) {
 * @see #submitCommandForm
 */
 function openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading) {
+  var appUrl = getAppUrl();
   var adds = "";
   var isPopup = null;
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
@@ -963,7 +951,7 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   }
   if (isPopup == true && hasLoading == true) {
     isPopupLoadingWindowLoaded=false;
-    var urlLoading = '../utility/PopupLoading.html';
+    var urlLoading = appUrl + '/utility/PopupLoading.html';
     var winPopUp = window.open((doSubmit?urlLoading:url), _name, adds);
   } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);
@@ -1108,8 +1096,9 @@ function openPopUpDefaultSize(url, _name, height, width, closeControl, showstatu
 * @see #submitCommandForm
 */
 function openPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges) {
+  var appUrl = getAppUrl();
   var direct = (strDirectPrinting!="")?"Y":"N";
-  return submitCommandForm("DEFAULT", false, null, "../businessUtility/PrinterReports.html?inppdfpath=" + escape(strPage) + "&inpdirectprint=" + escape(direct) + "&inphiddenkey=" + escape(strHiddenKey) + ((strHiddenValue!=null)?"&inphiddenvalue=" + escape(strHiddenValue):""), "hiddenFrame", null, bolCheckChanges);
+  return submitCommandForm("DEFAULT", false, null, appUrl + "/businessUtility/PrinterReports.html?inppdfpath=" + escape(strPage) + "&inpdirectprint=" + escape(direct) + "&inphiddenkey=" + escape(strHiddenKey) + ((strHiddenValue!=null)?"&inphiddenvalue=" + escape(strHiddenValue):""), "hiddenFrame", null, bolCheckChanges);
 }
 
 /**
@@ -1447,59 +1436,23 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            //if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
-            if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+            if ((keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey)) {
               if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
+            }
+            if ((keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey)) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
+                  return false;
+                } else {
                   return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
-              if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) { stopKeyPressEvent(); }
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
+                }
               } catch (e) {
                 startKeyPressEvent();
                 return true;
@@ -1534,9 +1487,11 @@ function keyControl(pushedKey) {
                 try {
                   eval(evalfuncTrl);
                   thereIsShortcut = true;
-                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                    return false; else 
+                  if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
+                    return false;
+                  } else {
                     return true;
+                  }
                 } catch (e) {
                   startKeyPressEvent();
                   return true;
@@ -1548,56 +1503,19 @@ function keyControl(pushedKey) {
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
             //if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) stopKeyPressEvent();
-            if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+            if ((keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey)) {
               try {
                 eval(evalfuncTrl);
                 thereIsShortcut = true;
                 startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
+                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
+                  return false;
+                } else {
                   return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                startKeyPressEvent();
-                return true;
-              }
-              startKeyPressEvent();
-              return true;
-            } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-              try {
-                eval(evalfuncTrl);
-                thereIsShortcut = true;
-                startKeyPressEvent();
-                if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) 
-                  return false; else 
-                  return true;
+                }
               } catch (e) {
                 startKeyPressEvent();
                 return true;
@@ -1883,6 +1801,28 @@ function getObjChild(obj) {
     for (;;) {
       if (obj.nodeType != '1') {
         obj = obj.nextSibling;
+      } else {
+        break;
+      }
+    }
+    return obj;
+  } catch(e) {
+    return false;
+  }
+}
+
+/**
+* Returns the object parent of a HTML object
+* @param {obj} object
+* @returns the object if exist. Else it returns false
+* @type Object
+*/
+function getObjParent(obj) {
+  try {
+    obj = obj.parentNode;
+    for (;;) {
+      if (obj.nodeType != '1') {
+        obj = obj.parentNode;
       } else {
         break;
       }
@@ -2282,23 +2222,76 @@ function selectCombo(combo, key) {
 
 /**
 * Function Description
+* Hides the button to show/hide the menu
+* @param {String} id The ID of the element
+*/
+function hideMenuIcon(id) {
+  var imgTag = document.getElementById(id);
+  var aTag = getObjParent(imgTag);
+  if (parent.frameMenu) {
+    getFrame('main').isMenuBlock=true;
+  }
+  if (aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") == -1) {
+    aTag.className = "Main_LeftTabsBar_ButtonLeft_hidden";
+    imgTag.className = "Main_LeftTabsBar_ButtonLeft_Icon";
+    disableAttributeWithFunction(aTag, 'obj', 'onclick');
+  }
+}
+
+/**
+* Function Description
+* Shows the button to show/hide the menu
+* @param {String} id The ID of the element
+*/
+function showMenuIcon(id) {
+  var imgTag = document.getElementById(id);
+  var aTag = getObjParent(imgTag);
+  if (parent.frameMenu) {
+    getFrame('main').isMenuBlock=false;
+  }
+  if (aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") != -1) {
+    aTag.className = "Main_LeftTabsBar_ButtonLeft";
+    imgTag.className = "Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide";
+    enableAttributeWithFunction(aTag, 'obj', 'onclick');
+    updateMenuIcon(id);
+  }
+}
+
+/**
+* Function Description
 * Shows or hides a window in the application
 * @param {String} id The ID of the element
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
 function updateMenuIcon(id) {
-  if (!top.frameMenu) return false;
+  if (!parent.frameMenu) {
+    hideMenuIcon(id);
+    return false;
+  }
   else {
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) return false;
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) return false;
     try {
-      if (top.isMenuHide==true) changeClass(id, "_hide", "_show", true);
-      else changeClass(id, "_show", "_hide", true);
-    } catch (ignored) {}
+      if (frameContainer.isMenuBlock==true) {
+        menuHide(id, false);
+        hideMenuIcon(id);
+      } else {
+        showMenuIcon(id);
+      }
+    } catch (ignored) {
+    }
+    try {
+      if (frameContainer.isMenuHide==true && frameContainer.isMenuBlock==false) {
+        changeClass(id, "_hide", "_show", true);
+      } else {
+        changeClass(id, "_show", "_hide", true);
+      }
+    } catch (ignored) {
+    }
     return true;
-  } 
+  }
 }
 
 /**
@@ -2309,10 +2302,11 @@ function updateMenuIcon(id) {
 * @see #changeClass
 */
 function menuShowHide(id) {
-  if (!top.frameMenu) {
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
-    if (top.isMenuHide == true) {
+    var frameContainer = getFrame('main');
+    if (frameContainer.isMenuHide == true) {
       menuShow(id);
     } else {
       menuHide(id);
@@ -2328,31 +2322,37 @@ function menuShowHide(id) {
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
-function menuShow(id) {
-  if (!top.frameMenu) {
+function menuShow(id, updateIcon) {
+  if (typeof updateIcon === "undefined" || updateIcon === null || updateIcon === "null" || updateIcon === "") {
+    updateIcon = true;
+  }
+
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
     if (id==null) {
       id = 'buttonMenu';
     }
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) {
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) {
       return false;
     }
-    if (top.isRTL == true) {
-      frameset.cols = "*," + top.menuWidth + ",0%";
+    if (frameContainer.isRTL == true) {
+      framesetMenu.cols = "*," + frameContainer.menuWidth + ",0%";
     } else {
-      frameset.cols = "0%," + top.menuWidth + ",*";
+      framesetMenu.cols = "0%," + frameContainer.menuWidth + ",*";
     }
-    top.isMenuHide = false;
+    frameContainer.isMenuHide = false;
     try {
       putFocusOnMenu();
     } catch(e) {
     }
-    try {
-      updateMenuIcon(id);
-    } catch (e) {}
+    if (updateIcon != false) {
+      try {
+        updateMenuIcon(id);
+      } catch (e) {}
+    }
     return true;
   }
 }
@@ -2364,31 +2364,37 @@ function menuShow(id) {
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
-function menuHide(id) {
-  if (!top.frameMenu) {
+function menuHide(id, updateIcon) {
+  if (typeof updateIcon === "undefined" || updateIcon === null || updateIcon === "null" || updateIcon === "") {
+    updateIcon = true;
+  }
+
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
     if (id==null) {
       id = 'buttonMenu';
     }
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) {
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) {
       return false;
     }
-    if (top.isRTL == true) {
-      frameset.cols = "*,0%,0%";
+    if (frameContainer.isRTL == true) {
+      framesetMenu.cols = "*,0%,0%";
     } else {
-      frameset.cols = "0%,0%,*";
+      framesetMenu.cols = "0%,0%,*";
     }
-    top.isMenuHide = true;
+    frameContainer.isMenuHide = true;
     try {
       putFocusOnWindow();
     } catch(e) {
     }
-    try {
-      updateMenuIcon(id);
-    } catch (e) {}
+    if (updateIcon != false) {
+      try {
+        updateMenuIcon(id);
+      } catch (e) {}
+    }
     return true;
   }
 }
@@ -2400,8 +2406,9 @@ function menuHide(id) {
 * @see #changeClass
 */
 function menuExpand() {
+  var appUrl = getAppUrl();
   putFocusOnMenu();
-  submitCommandForm('ALL', false, null, '../utility/VerticalMenu.html', 'frameMenu');
+  submitCommandForm('ALL', false, null, appUrl + '/utility/VerticalMenu.html', 'frameMenu');
   return false;
 }
 
@@ -2412,8 +2419,9 @@ function menuExpand() {
 * @see #changeClass
 */
 function menuCollapse() {
+  var appUrl = getAppUrl();
   putFocusOnMenu();
-  submitCommandForm('DEFAULT', false, null, '../utility/VerticalMenu.html', 'frameMenu');
+  submitCommandForm('DEFAULT', false, null, appUrl + '/utility/VerticalMenu.html', 'frameMenu');
   return false;
 }
 
@@ -2436,31 +2444,44 @@ function menuExpandCollapse() {
 }
 
 function getMenuExpandCollapse_status() {
-//  alert(top.frameMenu.getElementById('paramfieldDesplegar').getAttribute('id'));
+//  alert(getFrame('frameMenu').getElementById('paramfieldDesplegar').getAttribute('id'));
   var menuExpandCollapse_status;
-  if (top.frames['frameMenu'].document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
-  if (top.frames['frameMenu'].document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
+  if (getFrame('frameMenu').document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
+  if (getFrame('frameMenu').document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
   return menuExpandCollapse_status;
 }
 
 function menuUserOptions() {
-  openServletNewWindow('DEFAULT', false, '../ad_forms/Role.html', 'ROLE', null, true, '460', '800');
+  var appUrl = getAppUrl();
+  openServletNewWindow('DEFAULT', false, appUrl + '/ad_forms/Role.html', 'ROLE', null, true, '460', '800');
   return true;
 }
 
 function menuQuit() {
-  submitCommandForm('DEFAULT', false, null, '../security/Logout.html', '_top');
+  var appUrl = getAppUrl();
+  var target;
+  try {
+    if (parent.frameMenu) {
+      target = "_parent";
+    } else {
+      target = "_self";
+    }
+  } catch (e) {
+    target = "_self";
+  }
+  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', target);
   return false;
 }
 
 function menuAlerts() {
-  submitCommandForm('DEFAULT', true, getForm(), '../ad_forms/AlertManagement.html', 'appFrame', false, true);
+  var appUrl = getAppUrl();
+  submitCommandForm('DEFAULT', true, getForm(), appUrl + '/ad_forms/AlertManagement.html', 'appFrame', false, true);
   return true;
 }
 
 function isVisibleElement(obj, appWindow) {
   if (appWindow == null || appWindow == 'null' || appWindow == '') {
-    appWindow = top;
+    appWindow = getFrame('main');
   }
   var parentElement = obj;
   try {
@@ -2480,20 +2501,20 @@ function isVisibleElement(obj, appWindow) {
 
 function executeWindowButton(id,focus) {
   if (focus==null) focus=false;
-  var appWindow = top;
-  if(top.frames['appFrame'] || top.frames['frameMenu']) {
-    appWindow = top.frames['appFrame'];
-  } else if (top.frames['superior']) {
-    appWindow = top.frames['superior'];
-  } else if (top.frames['frameSuperior']) {
-    appWindow = top.frames['frameSuperior'];
-  } else if (top.frames['frameButton']) {
-    appWindow = top.frames['frameButton'];
-  } else if (top.frames['mainframe']) {
-    appWindow = top.frames['mainframe'];
+  var appWindow = parent;
+  if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
+    appWindow = parent.frames['appFrame'];
+  } else if (parent.frames['superior']) {
+    appWindow = parent.frames['superior'];
+  } else if (parent.frames['frameSuperior']) {
+    appWindow = parent.frames['frameSuperior'];
+  } else if (parent.frames['frameButton']) {
+    appWindow = parent.frames['frameButton'];
+  } else if (parent.frames['mainframe']) {
+    appWindow = parent.frames['mainframe'];
   }
   if (window.location.href.indexOf('ad_forms/Role.html') != -1) { //Exception for "Role" window
-    appWindow = top;
+    appWindow = parent;
   }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();
@@ -2503,9 +2524,9 @@ function executeWindowButton(id,focus) {
 }
 
 function executeMenuButton(id) {
-  var appWindow = top;
-  if(top.frames['appFrame'] || top.frames['frameMenu']) {
-    appWindow = top.frames['frameMenu'];
+  var appWindow = parent;
+  if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
+    appWindow = parent.frames['frameMenu'];
   } 
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     appWindow.document.getElementById(id).onclick();
@@ -2513,14 +2534,8 @@ function executeMenuButton(id) {
 }
 
 function getAppUrl() {
-  var url = window.location.href;
-  var http = url.split('//')[0];
-  var nohttp = url.split('//')[1];
-  var urlItem = nohttp.split('/')
-  var appUrl=http + '//';
-  for (var i=0; i<urlItem.length-2; i++) {
-    appUrl = appUrl + urlItem[i] + '/';
-  }
+  var menuFrame = getFrame('frameMenu');
+  var appUrl = menuFrame.getAppUrlFromMenu();
   return appUrl;
 }
 
@@ -2533,7 +2548,7 @@ function getAppUrl() {
 * @param {Boolean} grow If the window should 'grow' or set the new size immediately
 */
 function progressiveHideMenu(id, topSize, newSize, grow) {
-  var frame = top.document;
+  var frame = parent.document;
   var object = frame.getElementById(id);
   if (newSize==null) {
     var sizes = object.cols.split(",");
@@ -2998,11 +3013,66 @@ function formElementValue(form, ElementName, Value) {
  * @returns null if not find it, or a reference to the frame DOM element
  */
 function getFrame(frameName) {
-  var op = top.opener;
-  if(op == null) {
-    return top.frames[frameName];
+  var targetFrame;
+  if (frameName == 'main') {
+    if (mainFrame_windowObj !== "") {  //to avoid make the 'main' frame search logic several times in the same html
+      targetFrame = mainFrame_windowObj;
+    } else {
+      var success = false;
+      try {  //some typical cases to avoid go into the logic loop. try-catch to avoid security issues when executing Openbravo inside a frame or iframe
+        if (parent.frameMenu) {
+          targetFrame = window.parent;
+          success = true;
+        } else if (top.opener.parent.frameMenu) {
+          targetFrame = window.top.opener.parent;
+          success = true;
+        } else if (top.opener.top.opener.parent.frameMenu) {
+          targetFrame = window.top.opener.top.opener.parent;
+          success = true;
+        }
+      } catch (e) {
+        success = false;
+      }
+
+      if (success == false) {
+        targetFrame = 'window';
+        var targetFrame_parent = 'window.parent';
+        var targetFrame_opener = 'window.opener';
+        var securityEscape = 0;
+        var securityEscapeLimit = 50;
+
+        while (eval(targetFrame) !== eval(targetFrame_opener)) {
+          while (eval(targetFrame) !== eval(targetFrame_parent)) {
+            if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+              success = true;
+              break;
+            }
+            targetFrame = targetFrame + '.parent';
+            targetFrame_parent = targetFrame + '.parent';
+            securityEscape = securityEscape + 1;
+          }
+          if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+            success = true;
+            break;
+          }
+          targetFrame = targetFrame + '.opener';
+          targetFrame_opener = targetFrame + '.opener';
+          securityEscape = securityEscape + 1;
+          if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
+            break;
+          }
+        }
+        targetFrame = eval(targetFrame);
+      }
+      if (success == false) {
+        targetFrame = null;
+      }
+      mainFrame_windowObj = targetFrame;
+    }
+  } else {
+    targetFrame = getFrame('main').frames[frameName];
   }
-  return op.top.frames[frameName];	
+  return targetFrame;
 }
 
 /**
@@ -3073,6 +3143,7 @@ function formElementEvent(form, ElementName, calloutName) {
           if (onchange_combo.indexOf("selectCombo")!=-1) {
             onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
             var onchange_combo2 = onchange_combo;
+            onchange_combo = onchange_combo.replace("return true; tmp_water_mark; ","");
             onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("return"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("return"))+1, onchange_combo.length);
             onchange_combo = onchange_combo.replace("(this)","(obj)");
             onchange_combo = onchange_combo.replace("(this,","(obj,");
@@ -3368,9 +3439,10 @@ function readOnlyLogicElement(id, readonly) {
   } else { //not readonly
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
+    setObjAttribute(obj, 'readOnly', "false");
     obj.readOnly = false;
     if (obj.setReadOnly) {
-    	obj.setReadOnly(false);
+      obj.setReadOnly(false);
     }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextB = getObjAttribute(obj, 'onclick');
@@ -3384,6 +3456,7 @@ function readOnlyLogicElement(id, readonly) {
     }
 
     if (obj.className.indexOf("Combo")!=-1) {
+      obj.className = className.replace("NoUpdatable","");
       enableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
         onchange_combo = getObjAttribute(obj, 'onChange');
@@ -3937,6 +4010,7 @@ function isInArray(obj, text) {
 * Opens the Openbravo's about window
 */
 function about() {
+  var appUrl = getAppUrl();
   var complementosNS4 = ""
 
   var strHeight=500;
@@ -3946,12 +4020,7 @@ function about() {
   if (navigator.appName.indexOf("Netscape"))
     complementosNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
   var complementos = complementosNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=yes, scrollbars=yes, status=0, toolbar=0, titlebar=0";
-  if (typeof baseDirectory != "undefined") {
-    var winPopUp = window.open(baseDirectory + "../ad_forms/about.html", "ABOUT", complementos);
-  } else {
-    // Deprecated in 2.50, the following code is only for compatibility
-    var winPopUp = window.open(baseDirection + "../ad_forms/about.html", "ABOUT", complementos);
-  }
+  var winPopUp = window.open(appUrl + "/ad_forms/about.html", "ABOUT", complementos);
   if (winPopUp!=null) {
     winPopUp.focus();
     document.onunload = function(){winPopUp.close();};
@@ -4011,10 +4080,11 @@ function buttonEvent(event, obj) {
 * Returns to previous web
 */
 function goToPreviousPage() {
+  var appUrl = getAppUrl();
   //if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
   //  history.back();
   //} else {
-    openLink('../secureApp/GoBack.html', 'appFrame');
+    openLink(appUrl + '/secureApp/GoBack.html', 'appFrame');
   //}
 }
 
@@ -4210,12 +4280,13 @@ function calculateMsgBoxWidth() {
 * Change the status for show audit in Edition mode, in local javascript variable and in session value (with ajax)
 **/
 function changeAuditStatus() {
+  var appUrl = getAppUrl();
   if (strShowAudit=="Y") strShowAudit="N";
   else strShowAudit="Y";
   displayLogic();
   changeAuditIcon(strShowAudit);
   var paramXMLReq = null;
-  submitXmlHttpRequest(xx, null, 'CHANGE', "../utility/ChangeAudit", false, null, paramXMLReq);
+  submitXmlHttpRequest(xx, null, 'CHANGE', appUrl + "/utility/ChangeAudit", false, null, paramXMLReq);
   return true;
 }
 
@@ -4223,8 +4294,9 @@ function changeAuditStatus() {
 * Change the status for show audit in Relation mode, in local javascript variable and in session value (with ajax)
 **/
 function changeAuditStatusRelation() {
+  var appUrl = getAppUrl();
   var paramXMLReq = null;
-  submitXmlHttpRequest(document.getElementById("buttonRefresh").onclick, null, 'CHANGE', "../utility/ChangeAudit", false, null, paramXMLReq);
+  submitXmlHttpRequest(document.getElementById("buttonRefresh").onclick, null, 'CHANGE', appUrl + "/utility/ChangeAudit", false, null, paramXMLReq);
   return true;
 }
 

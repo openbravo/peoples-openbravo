@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,7 +89,6 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
       try {
         ModelProvider.getInstance().getModel();
       } catch (final Exception e) {
-        e.printStackTrace(System.err);
         throw new OBException(e);
       }
     }

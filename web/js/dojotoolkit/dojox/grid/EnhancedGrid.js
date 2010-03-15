@@ -11,7 +11,7 @@ dojo.provide("dojox.grid.EnhancedGrid");
 
 dojo.require("dojox.grid.DataGrid");
 dojo.require("dojox.grid.enhanced._Plugin");
-dojo.requireLocalization("dojox.grid.enhanced", "EnhancedGrid", null, "ROOT,zh");
+dojo.requireLocalization("dojox.grid.enhanced", "EnhancedGrid", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.experimental("dojox.grid.EnhancedGrid");
 

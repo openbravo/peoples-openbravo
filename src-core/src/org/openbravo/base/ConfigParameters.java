@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2008 Openbravo S.L.
+ * Copyright (C) 2001-2008 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -64,6 +64,10 @@ public class ConfigParameters {
   public final String strLogFileAcctServer;
 
   private final Properties propFileProperties;
+
+  // Default fall-back formats, used when properties are not present
+  private static final String DEFAULT_JAVA_DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
+  private static final String DEFAULT_SQL_DATETIME_FORMAT = "DD-MM-YYYY HH24:MI:SS";
 
   public static ConfigParameters retrieveFrom(ServletContext context) {
     ConfigParameters params = (ConfigParameters) context.getAttribute(CONFIG_ATTRIBUTE);
@@ -312,6 +316,10 @@ public class ConfigParameters {
   }
 
   public String getJavaDateTimeFormat() {
-    return getOBProperty("dateTimeFormat.java", "dd-MM-yyyy HH:mm:ss");
+    return getOBProperty("dateTimeFormat.java", ConfigParameters.DEFAULT_JAVA_DATETIME_FORMAT);
+  }
+
+  public String getSqlDateTimeFormat() {
+    return getOBProperty("dateTimeFormat.sql", ConfigParameters.DEFAULT_SQL_DATETIME_FORMAT);
   }
 }

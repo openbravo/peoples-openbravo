@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessContext ctx = bundle.getContext();
     try {
       ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED, bundle
-          .getChannel().toString(), null, null, null, ctx.toString(), trigger.getName());
+          .getChannel().toString(), null, null, null, null, ctx.toString(), trigger.getName());
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
@@ -82,9 +82,9 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessContext ctx = bundle.getContext();
     try {
       ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED, bundle
-          .getChannel().toString(), format(trigger.getPreviousFireTime()), format(trigger
-          .getNextFireTime()), format(trigger.getFinalFireTime()), ctx.toString(), trigger
-          .getName());
+          .getChannel().toString(), format(trigger.getPreviousFireTime()),
+          OBScheduler.sqlDateTimeFormat, format(trigger.getNextFireTime()), format(trigger
+              .getFinalFireTime()), ctx.toString(), trigger.getName());
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
@@ -144,7 +144,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   public void jobUnscheduled(String triggerName, String triggerGroup) {
     try {
-      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null, triggerName);
+      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null, null, triggerName);
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);

@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -79,12 +80,22 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       CopyFromInvoiceData[] data = CopyFromInvoiceData.select(conn, this, strInvoice, Utility
           .getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars,
           "#User_Org", windowId));
+      CopyFromInvoiceData[] dataInvoice = CopyFromInvoiceData.selectInvoice(conn, this, strKey);
       if (data != null && data.length != 0) {
         for (i = 0; i < data.length; i++) {
           String strSequence = SequenceIdData.getUUID();
           try {
-            CopyFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(), vars
-                .getOrg(), vars.getUser(), data[i].cInvoicelineId);
+            String strWindowId = vars.getStringParameter("inpwindowId");
+            String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
+            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+
+            String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
+                dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
+                dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId, strIsSOTrx
+                    .equals("Y"));
+
+            CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
+                dataInvoice[0].adOrgId, vars.getUser(), data[i].cInvoicelineId, strCTaxID);
           } catch (ServletException ex) {
             myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

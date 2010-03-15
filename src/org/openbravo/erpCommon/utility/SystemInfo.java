@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -230,7 +230,7 @@ public class SystemInfo {
       result = "1";
     } else if (complexityRate > 2 && complexityRate < 7) {
       result = "2";
-    } else if (complexityRate > 7) {
+    } else {
       result = "3";
     }
     return result;

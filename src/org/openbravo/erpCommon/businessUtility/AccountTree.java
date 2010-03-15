@@ -10,8 +10,8 @@
  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
- * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
@@ -601,10 +601,12 @@ public class AccountTree {
           && (!found || resultantAccounts[i].elementlevel.equalsIgnoreCase(strLevel))) {
         AccountTreeData[] dataChilds = levelFilter(resultantAccounts[i].nodeId,
             (found || resultantAccounts[i].elementlevel.equals(strLevel)), strLevel);
-        vec.addElement(resultantAccounts[i]);
+        if (isAccountLevelLower(strLevel, resultantAccounts[i]))
+          vec.addElement(resultantAccounts[i]);
         if (dataChilds != null && dataChilds.length > 0)
           for (int j = 0; j < dataChilds.length; j++)
-            vec.addElement(dataChilds[j]);
+            if (isAccountLevelLower(strLevel, dataChilds[j]))
+              vec.addElement(dataChilds[j]);
       }
     }
     result = new AccountTreeData[vec.size()];
@@ -725,5 +727,13 @@ public class AccountTree {
         levels[1] = Integer.MAX_VALUE;
       }
     }
+  }
+
+  private boolean isAccountLevelLower(String reportAccountLevel, AccountTreeData accountToBeAdded) {
+    if (reportAccountLevel.equalsIgnoreCase("D"))
+      if (accountToBeAdded.elementlevel.equalsIgnoreCase("S"))
+        return false;
+
+    return true;
   }
 }

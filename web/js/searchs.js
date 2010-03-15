@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -506,6 +506,10 @@ function calculateNumRows() {
    document.getElementById("grid_sample").style.display = "block";
    var grid_header_height = document.getElementById("grid_sample_header").clientHeight + 1;
    var grid_row_height = document.getElementById("grid_sample_row").clientHeight + 1;
+   if (getBrowserInfo('name').toUpperCase().indexOf("CHROME") != -1 || getBrowserInfo('name').toUpperCase().indexOf("SAFARI") != -1) {
+     grid_header_height = grid_header_height + 1;
+     grid_row_height = grid_row_height - 1;
+   }
    var messagebox_cont = document.getElementById("messageBoxID");
    var related_info_cont = document.getElementById("related_info_cont");
    var client_height = document.getElementById("client_middle").clientHeight;

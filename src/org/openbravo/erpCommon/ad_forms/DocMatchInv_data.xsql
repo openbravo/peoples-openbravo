@@ -11,8 +11,8 @@
  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
- * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -26,7 +26,7 @@
           '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS M_INOUTLINE_ID,
           '' AS C_INVOICELINE_ID, '' AS M_PRODUCT_ID, '' AS DATETRX, '' AS QTY, '' AS PROCESSING,
           '' AS PROCESSED, '' AS POSTED, '' AS DATEACCT, '' AS DATEDOC, '' AS C_BPARTNER_ID,
-          '' AS LINENETAMT, '' AS C_CURRENCY_ID, '' AS stdprecision
+          '' AS LINENETAMT, '' AS C_CURRENCY_ID, '' AS stdprecision, '' as orderAcctDate
         FROM DUAL
       ]]>
     </Sql>
@@ -37,10 +37,12 @@
     <![CDATA[
       SELECT M.M_MATCHINV_ID, M.AD_CLIENT_ID, M.AD_ORG_ID, M.ISACTIVE, M.CREATED, M.CREATEDBY, M.UPDATED,
         M.UPDATEDBY, M.M_INOUTLINE_ID, M.C_INVOICELINE_ID, M.M_PRODUCT_ID, M.DATETRX, M.QTY, M.PROCESSING,
-        M.PROCESSED, M.POSTED, M.DATETRX AS DATEACCT, M.DATETRX AS DATEDOC, I.C_BPARTNER_ID
-      FROM M_MATCHINV M, C_INVOICELINE IL, C_INVOICE I
+        M.PROCESSED, M.POSTED, M.DATETRX AS DATEACCT, M.DATETRX AS DATEDOC, I.C_BPARTNER_ID, IO.DATEACCT as orderAcctDate
+      FROM M_MATCHINV M, C_INVOICELINE IL, C_INVOICE I, M_INOUTLINE IOL, M_INOUT IO
       WHERE IL.C_INVOICELINE_ID = M.C_INVOICELINE_ID
         AND IL.C_INVOICE_ID = I.C_INVOICE_ID
+        AND IOL.M_INOUTLINE_ID = M.M_INOUTLINE_ID
+        AND IO.M_INOUT_ID = IOL.M_INOUT_ID
         AND M.AD_Client_ID=?
         AND M.M_MATCHINV_ID=?
     ]]>

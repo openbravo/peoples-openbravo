@@ -10,14 +10,15 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.utility;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +60,10 @@ class ErrorTextParserORACLE extends ErrorTextParser {
       for (int i = 0; i < cols.length; i++) {
         res[i] = cols[i].columnname;
       }
+
+      // assure same column order across (oracle,postgresql) by sorting results in java
+      Arrays.sort(res);
+
       return res;
     } catch (ServletException se) {
       log4j.error("Error reading list of columns for constraint: " + constraintName, se);

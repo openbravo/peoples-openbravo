@@ -15,8 +15,8 @@
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2006 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -33,7 +33,6 @@
     v_Client_ID VARCHAR2(32);
     v_Org_ID VARCHAR2(32);
     v_User_ID VARCHAR2(32);
-    v_BudgetLine_ID VARCHAR2(32);
     v_Period_ID VARCHAR2(32);
     Cur_BudgetLine RECORD;
   BEGIN
@@ -73,14 +72,14 @@
         AND p1.PeriodNo=p2.PeriodNo
         AND p2.C_Period_ID=Cur_BudgetLine.C_Period_ID;
       v_ResultStr:='InsertBudgetLines';
-      Ad_Sequence_Next('C_BudgetLine', v_Client_ID, v_BudgetLine_ID) ;
       INSERT
       INTO C_BudgetLine
         (
           C_Budgetline_ID, AD_Client_ID,
-     AD_Org_ID, Isactive,
+          AD_Org_ID, Isactive,
           Created, Createdby,
-     Updated, Updatedby,
+          Updated, Updatedby,
+          C_AcctSchema_ID,
           C_ElementValue_ID, C_Period_ID,
           C_Currency_ID, C_Uom_ID,
           Qty, M_Product_ID,
@@ -95,10 +94,11 @@
         )
         VALUES
         (
-          v_BudgetLine_ID, v_Client_ID,
+          GET_UUID(), v_Client_ID,
           v_Org_ID, 'Y',
           now(), v_User_ID,
           now(), v_User_ID,
+          Cur_BudgetLine.C_AcctSchema_ID,
           Cur_BudgetLine.C_ElementValue_ID, v_Period_ID,
           Cur_BudgetLine.C_Currency_ID, Cur_BudgetLine.C_Uom_ID,
           Cur_BudgetLine.Qty, Cur_BudgetLine.M_Product_ID,

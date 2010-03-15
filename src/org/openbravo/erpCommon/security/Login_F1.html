@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,8 @@
 <script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=true" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=false" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = "xx";</script>
+<script language="JavaScript" type="text/javascript" id="browserMsg">var browserMsg = "xx";</script>
 <script language="JavaScript" type="text/javascript">
 
 function validate(action)
@@ -45,20 +47,30 @@ function validate(action)
 function onloadFunctions() {
 }
 function buttonOK_click() {
-    submitCommandForm('DEFAULT', false, null, '../secureApp/LoginHandler.html', '_top', true);
-    return false;
+  var target;
+  try {
+    if (parent.frameMenu) {
+      target = "_parent";
+    } else {
+      target = "_self";
+    }
+  } catch (e) {
+    target = "_self";
+  }
+  submitCommandForm('DEFAULT', false, null, '../secureApp/LoginHandler.html', target, true);
+  return false;
 }
 
 function redirectWhenPopup() {
   var permission = false;
   try {
-    if (top.opener.top.frames['appFrame']) {
+    if (top.opener.parent.frames['appFrame']) {
       permission = true;
     }
   }
   catch (e) {}
   if (top.opener && permission) {
-    top.opener.top.location.href = top.document.location.href;
+    top.opener.parent.location.href = top.document.location.href;
     top.window.close();
   }
 }
@@ -78,12 +90,12 @@ function redirectWhenPopup() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if ((!revisionControl('6446')) || (isOpsInstance() != isOpsInstanceCached())) {
-      alert("Your browser's cache has outdated files. Please clean it and reload the page.");
+    if ((!revisionControl('6687')) || (isOpsInstance() != isOpsInstanceCached())) {
+      alert(cacheMsg);
     }
 
     if (!checkBrowserCompatibility()) {
-      alert("Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:\n * Mozilla Firefox 3.0 or higher\n * Microsoft Internet Explorer 7.0 or higher");
+      alert(browserMsg);
     }
   }
 
@@ -125,7 +137,7 @@ function redirectWhenPopup() {
 
       <div class="Login_ContentPane" style="overflow: auto;" id="client">
 
-        <table>
+        <table class="Login_ContentPane_Container_Table">
 
           <tr class="Login_Block_Separator_Top"><td></td></tr>
 

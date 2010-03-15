@@ -3,7 +3,7 @@
 This license file applies to the Openbravo ERP software (the "Openbravo
 Software"), except as described below.
 
-This product is Copyright 2001-8 Openbravo S.L.  For other detailed notice,
+This product is Copyright 2001-8 Openbravo S.L.U.  For other detailed notice,
 see the "NOTICE" file with this distribution.
 
 This product is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ the Openbravo Public License here: http://www.openbravo.com/legal/license.html
 B) Apache Software License 
 
 The programs contained in the following folders, which are part
-of the Openbravo Software, are provided by Openbravo SL under the
+of the Openbravo Software, are provided by Openbravo SLU under the
 Apache Software License 2.0. This license is available online at
 http://www.apache.org/licenses/LICENSE-2.0. This notice also appears in
 individual source files.
@@ -35,7 +35,7 @@ src-core/src/org/openbravo/database
 src-core/src/org/openbravo/exception
 src-core/src/org/openbravo/utils
 src-core/src/org/openbravo/XmlEngine
-All these files are copyright © 2001-2008 Openbravo SL.
+All these files are copyright © 2001-2008 Openbravo SLU
 
 
 C) Third party code

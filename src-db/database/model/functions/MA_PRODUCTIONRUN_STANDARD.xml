@@ -15,8 +15,8 @@
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2010 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -201,7 +201,7 @@
               Createdby, Isactive, M_ProductionPlan_ID, M_Product_ID,
               Productiontype, MovementQty, Updated, Updatedby,
               C_UOM_ID, M_Locator_ID, 
-	      Line, M_AttributeSetInstance_ID
+	      Line, M_AttributeSetInstance_ID, M_Product_UOM_ID, QuantityOrder
             )
             VALUES
             (
@@ -214,6 +214,7 @@
                                                     WHERE L.M_WAREHOUSE_ID = W.M_WAREHOUSE_ID
                                                     AND W.AD_ORG_ID = v_PlanOrg_ID)),
               v_Line, (CASE WHEN Cur_WRPProduct.AttrSetValueType='D' THEN Cur_WRPProduct.M_AttributeSetInstance_ID ELSE NULL END)
+              ,Cur_WRPProduct.M_Product_UOM_ID, Cur_WRPProduct.QuantityOrder
             )
             ;
           --v_Line:=v_Line + 10;
@@ -377,14 +378,14 @@
                     M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
                     AD_Org_ID, IsActive, Created, CreatedBy,
                     Updated, UpdatedBy, M_Product_ID, MovementQty,
-                    ProductionType, C_UOM_ID, M_Locator_ID
+                    ProductionType, C_UOM_ID, M_Locator_ID, M_Product_UOM_ID, QuantityOrder
                   )
                   VALUES
                   (
                     v_ProductionLine_ID, v_Record_ID, v_Line, Cur_WRPUsed.Client_ID,
                     Cur_WRPUsed.Org_ID, 'Y', now(), '0',
                     now(), '0', Cur_WRPUsed.M_Product_ID,( CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_DoneQuantity*Cur_WRPUsed.MovementQty END),
-                    '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID
+                    '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID, Cur_WRPUsed.M_Product_UOM_ID, Cur_WRPUsed.QuantityOrder
                   )
                   ;
               END IF;

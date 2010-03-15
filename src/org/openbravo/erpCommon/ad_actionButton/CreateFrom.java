@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
  * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2010 Openbravo SL
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -302,6 +302,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strCost = vars.getNumericParameter("inpcost", "0.00");
     final String strProposed = vars.getNumericParameter("inpproposed", "0.00");
     final String strDocumentNo = vars.getStringParameter("inpDocumentNo");
+    final String strStatus = vars.getStringParameter("inpStatusPayment");
     CreateFromBankData[] data = null;
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Bank").createXmlDocument();
@@ -310,7 +311,7 @@ public class CreateFrom extends HttpSecureAppServlet {
         vars, "#User_Client", strWindowId), Utility
         .getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
         strPlannedDateFrom, strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank,
-        strOrg, strCharge, strDocumentNo));
+        strOrg, strCharge, strDocumentNo, strStatus));
     final int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
 
     if (numRows > maxRows) {
@@ -330,13 +331,13 @@ public class CreateFrom extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
               vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
           strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge,
-          strDocumentNo, String.valueOf(maxRows), null);
+          strDocumentNo, strStatus, String.valueOf(maxRows), null);
     } else {
       data = CreateFromBankData.select(this, vars.getLanguage(), strStatementDate, "1", Utility
           .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
           "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
           strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge,
-          strDocumentNo, null, String.valueOf(maxRows));
+          strDocumentNo, strStatus, null, String.valueOf(maxRows));
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
@@ -356,6 +357,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramcost", strCost);
     xmlDocument.setParameter("paramproposed", strProposed);
     xmlDocument.setParameter("documentNo", strDocumentNo);
+    xmlDocument.setParameter("StatusPayment", strStatus);
 
     xmlDocument.setParameter("paymentRule", strPaymentRule);
 
@@ -417,6 +419,18 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (final Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
+          "C_DP_Management_Status", "Status - Exclude In Remittance", Utility.getContext(this,
+              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars,
+              "#User_Client", strWindowId), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strStatus);
+      xmlDocument.setData("reportStatus_S", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
       throw new ServletException(ex);
     }
 

@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2008 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -126,9 +126,9 @@ if (document.layers) {
 function onFocusMenu() {
   isMenuFocused = true;
   try {
-    top.appFrame.disableDefaultAction();
-    top.appFrame.removeWindowElementFocus(top.appFrame.focusedWindowElement);
-    top.appFrame.removeTabFocus(top.appFrame.focusedTab);
+    parent.appFrame.disableDefaultAction();
+    parent.appFrame.removeWindowElementFocus(parent.appFrame.focusedWindowElement);
+    parent.appFrame.removeTabFocus(parent.appFrame.focusedTab);
   } catch(e) {}
   putMenuElementFocus(focusedMenuElement);
 }

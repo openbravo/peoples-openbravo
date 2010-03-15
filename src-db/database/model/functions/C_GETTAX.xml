@@ -36,8 +36,8 @@
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2010 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -56,6 +56,17 @@
   TYPE RECORD IS REF CURSOR;
     BILLTO RECORD;
   BEGIN
+    -- If Not Tax Deductable(public) organization for sales transaction
+    --then we have to return configured sales tax rate which is exempt true 
+    IF(p_IsSOTrx = 'Y') THEN
+       SELECT MAX(C_TAX_ID) 
+       INTO v_TaxID 
+       FROM AD_ORGINFO 
+       WHERE ISTAXUNDEDUCTABLE='Y' AND AD_ORG_ID = p_org_id;
+       IF(v_TaxID IS NOT NULL) THEN
+         RETURN v_TaxID;
+       END IF;
+    END IF;
     --  For sales, if project line has c_tax_id assigned, return it
     IF(p_IsSOTrx = 'Y' AND p_Project_ID IS NOT NULL) THEN
       SELECT MAX(C_TAX_ID)

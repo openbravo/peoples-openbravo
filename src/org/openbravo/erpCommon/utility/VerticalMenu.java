@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,8 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -58,6 +61,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     } else if (vars.commandIn("ALL")) {
       printPageDataSheet(response, vars, "0", true);
     } else if (vars.commandIn("ALERT")) {
+      updateSessionLastActivity(vars);
       printPageAlert(response, vars);
     } else if (vars.commandIn("LOADING")) {
       printPageLoadingMenu(response, vars);
@@ -65,11 +69,34 @@ public class VerticalMenu extends HttpSecureAppServlet {
       throw new ServletException();
   }
 
+  /**
+   * Updates last time the browser checked for alerts (ping) this info is later used (in
+   * {@link org.openbravo.erpCommon.obps.ActivationKey}) to find no longer used sessions because the
+   * browser was closed without the user explicitly closing the session.
+   */
+  private void updateSessionLastActivity(VariablesSecureApp vars) {
+    String sessionId = vars.getDBSession();
+    Date now = new Date();
+    log4j.debug("ping session:" + sessionId + " - time" + now);
+    if (sessionId != null && !sessionId.isEmpty()) {
+      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      try {
+        Session session = OBDal.getInstance().get(Session.class, sessionId);
+        session.setLastPing(now);
+        // flush to force commit in admin mode
+        OBDal.getInstance().flush();
+      } catch (Exception e) {
+        log4j.error("Error in session ping", e);
+      } finally {
+        OBContext.getOBContext().setInAdministratorMode(adminMode);
+      }
+    }
+  }
+
   private void printPageAlert(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
 
     Integer alertCount = 0;
-
     final VerticalMenuData[] data = VerticalMenuData.selectAlertRules(this, vars.getUser(), vars
         .getRole());
     if (data != null && data.length != 0) {

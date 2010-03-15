@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.openbravo.test.dal.HiddenUpdateTest;
 import org.openbravo.test.dal.IssuesTest;
 import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.OBContextTest;
+import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.model.OneToManyTest;
@@ -50,6 +51,7 @@ import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
+import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.xml.DatasetExportTest;
@@ -95,6 +97,7 @@ public class AntTaskTests {
     suite.addTestSuite(ValidationTest.class);
     suite.addTestSuite(OBContextTest.class);
     suite.addTestSuite(DalStoredProcedureTest.class);
+    suite.addTestSuite(ReadByNameTest.class);
 
     // expression
     suite.addTestSuite(EvaluationTest.class);
@@ -119,6 +122,7 @@ public class AntTaskTests {
     // system
     suite.addTestSuite(SystemServiceTest.class);
     suite.addTestSuite(SystemValidatorTest.class);
+    suite.addTestSuite(ErrorTextParserTest.class);
 
     // xml
     // not executing has side effects

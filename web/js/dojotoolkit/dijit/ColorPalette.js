@@ -66,7 +66,7 @@ dojo.declare("dijit.ColorPalette",
 
 	// templateString: String
 	//		The template of this widget.
-	templateString: dojo.cache("dijit", "templates/ColorPalette.html", "<div class=\"dijitInline dijitColorPalette\">\n\t<img class=\"dijitColorPaletteUnder\" dojoAttachPoint=\"imageNode\" waiRole=\"presentation\" alt=\"\">\n\t<table class=\"dijitPaletteTable\" cellSpacing=0 cellPadding=0>\n\t\t<tbody dojoAttachPoint=\"gridNode\"></tbody>\n\t</table>\n</div>\n"),
+	templateString: dojo.cache("dijit", "templates/ColorPalette.html", "<div class=\"dijitInline dijitColorPalette\">\n\t<img class=\"dijitColorPaletteUnder\" dojoAttachPoint=\"imageNode\" waiRole=\"presentation\" alt=\"\"/>\n\t<table class=\"dijitPaletteTable\" cellSpacing=0 cellPadding=0>\n\t\t<tbody dojoAttachPoint=\"gridNode\"></tbody>\n\t</table>\n</div>\n"),
 	
 	baseClass: "dijitColorPalette",
 
