@@ -39,7 +39,6 @@ public class DalSessionFactoryController extends SessionFactoryController {
   @Override
   protected void mapModel(Configuration configuration) {
     final String mapping = DalMappingGenerator.getInstance().generateMapping();
-    // System.err.println(mapping);
     log.debug("Generated mapping: ");
     log.debug(mapping);
     configuration.addXML(mapping);

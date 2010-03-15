@@ -601,10 +601,12 @@ public class AccountTree {
           && (!found || resultantAccounts[i].elementlevel.equalsIgnoreCase(strLevel))) {
         AccountTreeData[] dataChilds = levelFilter(resultantAccounts[i].nodeId,
             (found || resultantAccounts[i].elementlevel.equals(strLevel)), strLevel);
-        vec.addElement(resultantAccounts[i]);
+        if (isAccountLevelLower(strLevel, resultantAccounts[i]))
+          vec.addElement(resultantAccounts[i]);
         if (dataChilds != null && dataChilds.length > 0)
           for (int j = 0; j < dataChilds.length; j++)
-            vec.addElement(dataChilds[j]);
+            if (isAccountLevelLower(strLevel, dataChilds[j]))
+              vec.addElement(dataChilds[j]);
       }
     }
     result = new AccountTreeData[vec.size()];
@@ -725,5 +727,13 @@ public class AccountTree {
         levels[1] = Integer.MAX_VALUE;
       }
     }
+  }
+
+  private boolean isAccountLevelLower(String reportAccountLevel, AccountTreeData accountToBeAdded) {
+    if (reportAccountLevel.equalsIgnoreCase("D"))
+      if (accountToBeAdded.elementlevel.equalsIgnoreCase("S"))
+        return false;
+
+    return true;
   }
 }

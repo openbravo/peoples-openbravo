@@ -479,7 +479,7 @@ public class DataSetService implements OBSingleton {
         final BigInteger bd2 = new BigInteger(bob2.getId().toString(), 32);
         return bd1.compareTo(bd2);
       } catch (final NumberFormatException n) {
-        System.out.println("problem: " + n.getMessage());
+        // ignoring exception on purpose, some id's can't be compared numerically
         return 0;
       }
     }

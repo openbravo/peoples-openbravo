@@ -18,9 +18,14 @@
  */
 package org.openbravo.erpCommon.modules;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -115,6 +120,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
     try {
       data = ModuleReferenceDataOrgTreeData.selectOrg(conn, (lang.equals("") ? "en_US" : lang),
           strClient, strOrg);
+      cleanData();
       if (bAddLinks)
         addLinks();
       setLevel(0);
@@ -124,6 +130,46 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
       data = null;
     }
   }
+
+
+  private void cleanData() {
+
+      // this function removes duplicates in data. Fixes issue 0012356: Enterprise module management: Behaviour not correct
+
+      Map<String, ModuleReferenceDataOrgTreeData> mappeddata = new java.util.HashMap<String, ModuleReferenceDataOrgTreeData>();
+
+      for (FieldProvider f : data) {
+          if (mappeddata.get(f.getField("node_id")) == null
+                || "Y".equals(f.getField("update_available"))) {
+              mappeddata.put(f.getField("node_id"), (ModuleReferenceDataOrgTreeData) f);
+          }
+      }
+
+      ArrayList<ModuleReferenceDataOrgTreeData> l = new ArrayList<ModuleReferenceDataOrgTreeData>();
+      l.addAll(mappeddata.values());
+      Collections.sort(l, new Comparator<ModuleReferenceDataOrgTreeData>()  {
+
+            @Override
+            public int compare(ModuleReferenceDataOrgTreeData o1, ModuleReferenceDataOrgTreeData o2) {
+                return getSeqNo(o1).compareTo(getSeqNo(o2));
+            }
+
+            private Integer getSeqNo(ModuleReferenceDataOrgTreeData o) {
+
+                try {
+                    return Integer.valueOf(o.getField("seqno"));
+                } catch (NumberFormatException e) {
+                    return 0;
+                }
+            }
+        });
+
+
+      data = l.toArray(new ModuleReferenceDataOrgTreeData[l.size()]);
+
+
+  }
+
 
   /**
    * Adds links to the current sets of nodes, these links can be Update or Apply.

@@ -30,6 +30,8 @@ var arrGeneralChange=[];
 var dateFormat;
 var defaultDateFormat = "%d-%m-%Y";
 
+var mainFrame_windowObj = "";
+
 //Days of a Month
 var daysOfMonth = [[0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],  //No leap year
                    [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]]; //Leap year
@@ -72,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6472';
+  var number = '6657';
   return number;
 }
 
@@ -413,15 +415,7 @@ function setChangedField(field, form) {
  * @return true if autosave is enable, otherwise false
  */
 function isAutosaveEnabled() {
-  var autosave;
-  if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
-    if(top.opener !== null) { // is a pop-up window
-      autosave = top.opener.top.frameMenu.autosave;
-    }
-  }
-  else {
-    autosave = top.frameMenu.autosave;
-  }
+  var autosave = getFrame('frameMenu').autosave;
   return autosave;
 }
 
@@ -503,14 +497,7 @@ function checkForChanges(f) {
 	var form = f;
 	
 	if (form === null) {
-		if(frames.name.indexOf('appFrame') === -1 && frames.name.indexOf('frameMenu') === -1) {
-			if(top.opener !== null) { // is a pop-up window
-				form = top.opener.top.appFrame.document.forms[0];
-			}
-		}
-		else {
-			form = top.appFrame.document.forms[0];			
-		}
+		form = getFrame('appFrame').document.forms[0];
 	}
 	
 	if(typeof form === 'undefined') {
@@ -530,12 +517,12 @@ function checkForChanges(f) {
 		return true;
 	}
 	else {
-		if(typeof top.appFrame === 'undefined'){
+		if(typeof parent.appFrame === 'undefined'){
 			return true;
 		}
 
 		try {
-		  var promptConfirmation = typeof top.appFrame.confirmOnChanges === 'undefined' ? true : top.appFrame.confirmOnChanges;
+		  var promptConfirmation = typeof parent.appFrame.confirmOnChanges === 'undefined' ? true : parent.appFrame.confirmOnChanges;
 		} catch(e) {
 		  if(isDebugEnabled()) {
             console.error("%o", e);
@@ -543,7 +530,7 @@ function checkForChanges(f) {
 		}
 
 		try {
-		  var hasUserChanges = typeof top.appFrame.isUserChanges === 'undefined' ? false : top.appFrame.isUserChanges;
+		  var hasUserChanges = typeof parent.appFrame.isUserChanges === 'undefined' ? false : parent.appFrame.isUserChanges;
 		} catch(e) {
 		  if(isDebugEnabled()) {
             console.error("%o", e);
@@ -558,8 +545,8 @@ function checkForChanges(f) {
 			var autoSaveFlag = autosave;		
 			if (promptConfirmation && hasUserChanges) {
 				autoSaveFlag = showJSMessage(25);
-				if(typeof top.appFrame.confirmOnChanges !== 'undefined' && autoSaveFlag) {
-					top.appFrame.confirmOnChanges = false;
+				if(typeof parent.appFrame.confirmOnChanges !== 'undefined' && autoSaveFlag) {
+					parent.appFrame.confirmOnChanges = false;
 				}
 			}
 			if (autoSaveFlag) {
@@ -1825,6 +1812,28 @@ function getObjChild(obj) {
 }
 
 /**
+* Returns the object parent of a HTML object
+* @param {obj} object
+* @returns the object if exist. Else it returns false
+* @type Object
+*/
+function getObjParent(obj) {
+  try {
+    obj = obj.parentNode;
+    for (;;) {
+      if (obj.nodeType != '1') {
+        obj = obj.parentNode;
+      } else {
+        break;
+      }
+    }
+    return obj;
+  } catch(e) {
+    return false;
+  }
+}
+
+/**
 * Fills a combo with a data from an Array. Allows to set a default selected item, defined as boolean field in the Array.
 * @param {Object} combo A reference to the combo object.
 * @param {Array} dataArray Array containing the data for the combo. The structure of the array must be value, text, selected. Value is value of the item, text the string that will show the combo, an selected a boolean value to set if the item should appear selected.
@@ -2213,23 +2222,76 @@ function selectCombo(combo, key) {
 
 /**
 * Function Description
+* Hides the button to show/hide the menu
+* @param {String} id The ID of the element
+*/
+function hideMenuIcon(id) {
+  var imgTag = document.getElementById(id);
+  var aTag = getObjParent(imgTag);
+  if (parent.frameMenu) {
+    getFrame('main').isMenuBlock=true;
+  }
+  if (aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") == -1) {
+    aTag.className = "Main_LeftTabsBar_ButtonLeft_hidden";
+    imgTag.className = "Main_LeftTabsBar_ButtonLeft_Icon";
+    disableAttributeWithFunction(aTag, 'obj', 'onclick');
+  }
+}
+
+/**
+* Function Description
+* Shows the button to show/hide the menu
+* @param {String} id The ID of the element
+*/
+function showMenuIcon(id) {
+  var imgTag = document.getElementById(id);
+  var aTag = getObjParent(imgTag);
+  if (parent.frameMenu) {
+    getFrame('main').isMenuBlock=false;
+  }
+  if (aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") != -1) {
+    aTag.className = "Main_LeftTabsBar_ButtonLeft";
+    imgTag.className = "Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide";
+    enableAttributeWithFunction(aTag, 'obj', 'onclick');
+    updateMenuIcon(id);
+  }
+}
+
+/**
+* Function Description
 * Shows or hides a window in the application
 * @param {String} id The ID of the element
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
 function updateMenuIcon(id) {
-  if (!top.frameMenu) return false;
+  if (!parent.frameMenu) {
+    hideMenuIcon(id);
+    return false;
+  }
   else {
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) return false;
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) return false;
     try {
-      if (top.isMenuHide==true) changeClass(id, "_hide", "_show", true);
-      else changeClass(id, "_show", "_hide", true);
-    } catch (ignored) {}
+      if (frameContainer.isMenuBlock==true) {
+        menuHide(id, false);
+        hideMenuIcon(id);
+      } else {
+        showMenuIcon(id);
+      }
+    } catch (ignored) {
+    }
+    try {
+      if (frameContainer.isMenuHide==true && frameContainer.isMenuBlock==false) {
+        changeClass(id, "_hide", "_show", true);
+      } else {
+        changeClass(id, "_show", "_hide", true);
+      }
+    } catch (ignored) {
+    }
     return true;
-  } 
+  }
 }
 
 /**
@@ -2240,10 +2302,11 @@ function updateMenuIcon(id) {
 * @see #changeClass
 */
 function menuShowHide(id) {
-  if (!top.frameMenu) {
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
-    if (top.isMenuHide == true) {
+    var frameContainer = getFrame('main');
+    if (frameContainer.isMenuHide == true) {
       menuShow(id);
     } else {
       menuHide(id);
@@ -2259,31 +2322,37 @@ function menuShowHide(id) {
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
-function menuShow(id) {
-  if (!top.frameMenu) {
+function menuShow(id, updateIcon) {
+  if (typeof updateIcon === "undefined" || updateIcon === null || updateIcon === "null" || updateIcon === "") {
+    updateIcon = true;
+  }
+
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
     if (id==null) {
       id = 'buttonMenu';
     }
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) {
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) {
       return false;
     }
-    if (top.isRTL == true) {
-      frameset.cols = "*," + top.menuWidth + ",0%";
+    if (frameContainer.isRTL == true) {
+      framesetMenu.cols = "*," + frameContainer.menuWidth + ",0%";
     } else {
-      frameset.cols = "0%," + top.menuWidth + ",*";
+      framesetMenu.cols = "0%," + frameContainer.menuWidth + ",*";
     }
-    top.isMenuHide = false;
+    frameContainer.isMenuHide = false;
     try {
       putFocusOnMenu();
     } catch(e) {
     }
-    try {
-      updateMenuIcon(id);
-    } catch (e) {}
+    if (updateIcon != false) {
+      try {
+        updateMenuIcon(id);
+      } catch (e) {}
+    }
     return true;
   }
 }
@@ -2295,31 +2364,37 @@ function menuShow(id) {
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
-function menuHide(id) {
-  if (!top.frameMenu) {
+function menuHide(id, updateIcon) {
+  if (typeof updateIcon === "undefined" || updateIcon === null || updateIcon === "null" || updateIcon === "") {
+    updateIcon = true;
+  }
+
+  if (!parent.frameMenu) {
     window.open(baseFrameServlet, "_blank");
   } else {
     if (id==null) {
       id = 'buttonMenu';
     }
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) {
+    var frameContainer = getFrame('main');
+    var framesetMenu = frameContainer.document.getElementById("framesetMenu");
+    if (!framesetMenu) {
       return false;
     }
-    if (top.isRTL == true) {
-      frameset.cols = "*,0%,0%";
+    if (frameContainer.isRTL == true) {
+      framesetMenu.cols = "*,0%,0%";
     } else {
-      frameset.cols = "0%,0%,*";
+      framesetMenu.cols = "0%,0%,*";
     }
-    top.isMenuHide = true;
+    frameContainer.isMenuHide = true;
     try {
       putFocusOnWindow();
     } catch(e) {
     }
-    try {
-      updateMenuIcon(id);
-    } catch (e) {}
+    if (updateIcon != false) {
+      try {
+        updateMenuIcon(id);
+      } catch (e) {}
+    }
     return true;
   }
 }
@@ -2369,10 +2444,10 @@ function menuExpandCollapse() {
 }
 
 function getMenuExpandCollapse_status() {
-//  alert(top.frameMenu.getElementById('paramfieldDesplegar').getAttribute('id'));
+//  alert(getFrame('frameMenu').getElementById('paramfieldDesplegar').getAttribute('id'));
   var menuExpandCollapse_status;
-  if (top.frames['frameMenu'].document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
-  if (top.frames['frameMenu'].document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
+  if (getFrame('frameMenu').document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
+  if (getFrame('frameMenu').document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
   return menuExpandCollapse_status;
 }
 
@@ -2384,7 +2459,17 @@ function menuUserOptions() {
 
 function menuQuit() {
   var appUrl = getAppUrl();
-  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', '_top');
+  var target;
+  try {
+    if (parent.frameMenu) {
+      target = "_parent";
+    } else {
+      target = "_self";
+    }
+  } catch (e) {
+    target = "_self";
+  }
+  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', target);
   return false;
 }
 
@@ -2396,7 +2481,7 @@ function menuAlerts() {
 
 function isVisibleElement(obj, appWindow) {
   if (appWindow == null || appWindow == 'null' || appWindow == '') {
-    appWindow = top;
+    appWindow = getFrame('main');
   }
   var parentElement = obj;
   try {
@@ -2416,20 +2501,20 @@ function isVisibleElement(obj, appWindow) {
 
 function executeWindowButton(id,focus) {
   if (focus==null) focus=false;
-  var appWindow = top;
-  if(top.frames['appFrame'] || top.frames['frameMenu']) {
-    appWindow = top.frames['appFrame'];
-  } else if (top.frames['superior']) {
-    appWindow = top.frames['superior'];
-  } else if (top.frames['frameSuperior']) {
-    appWindow = top.frames['frameSuperior'];
-  } else if (top.frames['frameButton']) {
-    appWindow = top.frames['frameButton'];
-  } else if (top.frames['mainframe']) {
-    appWindow = top.frames['mainframe'];
+  var appWindow = parent;
+  if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
+    appWindow = parent.frames['appFrame'];
+  } else if (parent.frames['superior']) {
+    appWindow = parent.frames['superior'];
+  } else if (parent.frames['frameSuperior']) {
+    appWindow = parent.frames['frameSuperior'];
+  } else if (parent.frames['frameButton']) {
+    appWindow = parent.frames['frameButton'];
+  } else if (parent.frames['mainframe']) {
+    appWindow = parent.frames['mainframe'];
   }
   if (window.location.href.indexOf('ad_forms/Role.html') != -1) { //Exception for "Role" window
-    appWindow = top;
+    appWindow = parent;
   }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();
@@ -2439,9 +2524,9 @@ function executeWindowButton(id,focus) {
 }
 
 function executeMenuButton(id) {
-  var appWindow = top;
-  if(top.frames['appFrame'] || top.frames['frameMenu']) {
-    appWindow = top.frames['frameMenu'];
+  var appWindow = parent;
+  if(parent.frames['appFrame'] || parent.frames['frameMenu']) {
+    appWindow = parent.frames['frameMenu'];
   } 
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     appWindow.document.getElementById(id).onclick();
@@ -2463,7 +2548,7 @@ function getAppUrl() {
 * @param {Boolean} grow If the window should 'grow' or set the new size immediately
 */
 function progressiveHideMenu(id, topSize, newSize, grow) {
-  var frame = top.document;
+  var frame = parent.document;
   var object = frame.getElementById(id);
   if (newSize==null) {
     var sizes = object.cols.split(",");
@@ -2928,11 +3013,66 @@ function formElementValue(form, ElementName, Value) {
  * @returns null if not find it, or a reference to the frame DOM element
  */
 function getFrame(frameName) {
-  var op = top.opener;
-  if(op == null) {
-    return top.frames[frameName];
+  var targetFrame;
+  if (frameName == 'main') {
+    if (mainFrame_windowObj !== "") {  //to avoid make the 'main' frame search logic several times in the same html
+      targetFrame = mainFrame_windowObj;
+    } else {
+      var success = false;
+      try {  //some typical cases to avoid go into the logic loop. try-catch to avoid security issues when executing Openbravo inside a frame or iframe
+        if (parent.frameMenu) {
+          targetFrame = window.parent;
+          success = true;
+        } else if (top.opener.parent.frameMenu) {
+          targetFrame = window.top.opener.parent;
+          success = true;
+        } else if (top.opener.top.opener.parent.frameMenu) {
+          targetFrame = window.top.opener.top.opener.parent;
+          success = true;
+        }
+      } catch (e) {
+        success = false;
+      }
+
+      if (success == false) {
+        targetFrame = 'window';
+        var targetFrame_parent = 'window.parent';
+        var targetFrame_opener = 'window.opener';
+        var securityEscape = 0;
+        var securityEscapeLimit = 50;
+
+        while (eval(targetFrame) !== eval(targetFrame_opener)) {
+          while (eval(targetFrame) !== eval(targetFrame_parent)) {
+            if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+              success = true;
+              break;
+            }
+            targetFrame = targetFrame + '.parent';
+            targetFrame_parent = targetFrame + '.parent';
+            securityEscape = securityEscape + 1;
+          }
+          if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+            success = true;
+            break;
+          }
+          targetFrame = targetFrame + '.opener';
+          targetFrame_opener = targetFrame + '.opener';
+          securityEscape = securityEscape + 1;
+          if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
+            break;
+          }
+        }
+        targetFrame = eval(targetFrame);
+      }
+      if (success == false) {
+        targetFrame = null;
+      }
+      mainFrame_windowObj = targetFrame;
+    }
+  } else {
+    targetFrame = getFrame('main').frames[frameName];
   }
-  return op.top.frames[frameName];	
+  return targetFrame;
 }
 
 /**
@@ -3298,9 +3438,10 @@ function readOnlyLogicElement(id, readonly) {
   } else { //not readonly
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
+    setObjAttribute(obj, 'readOnly', "false");
     obj.readOnly = false;
     if (obj.setReadOnly) {
-    	obj.setReadOnly(false);
+      obj.setReadOnly(false);
     }
     if (obj.getAttribute('type') == "checkbox") {
       var onclickTextB = getObjAttribute(obj, 'onclick');
@@ -3314,6 +3455,7 @@ function readOnlyLogicElement(id, readonly) {
     }
 
     if (obj.className.indexOf("Combo")!=-1) {
+      obj.className = className.replace("NoUpdatable","");
       enableAttributeWithFunction(obj, 'obj', 'onChange');
       if (obj.getAttribute("onChange")) {
         onchange_combo = getObjAttribute(obj, 'onChange');
@@ -3941,7 +4083,7 @@ function goToPreviousPage() {
   //if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
   //  history.back();
   //} else {
-    openLink(appUrl + 'secureApp/GoBack.html', 'appFrame');
+    openLink(appUrl + '/secureApp/GoBack.html', 'appFrame');
   //}
 }
 
@@ -4143,7 +4285,7 @@ function changeAuditStatus() {
   displayLogic();
   changeAuditIcon(strShowAudit);
   var paramXMLReq = null;
-  submitXmlHttpRequest(xx, null, 'CHANGE', appUrl + "utility/ChangeAudit", false, null, paramXMLReq);
+  submitXmlHttpRequest(xx, null, 'CHANGE', appUrl + "/utility/ChangeAudit", false, null, paramXMLReq);
   return true;
 }
 

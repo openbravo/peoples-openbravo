@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2009 Openbravo SL
+* All portions are Copyright (C) 2001-2010 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -73,22 +73,22 @@ BEGIN
       END IF;
       
       UPDATE AD_MODEL_OBJECT
-        SET CLASSNAME=('org.openbravo.erpWindows.' || v_JavaPackage || '.' || CUR_DATA.TABNAME),
+        SET CLASSNAME=('org.openbravo.erpWindows.' || v_JavaPackage || '.' || v_TabName),
         ISACTIVE=:NEW.ISACTIVE
       WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
         and classname not like '%ComboReload%';
       UPDATE AD_MODEL_OBJECT_MAPPING
-        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Relation.html'),
+        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || v_TabName || '_Relation.html'),
         ISACTIVE=:NEW.ISACTIVE
       WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
         AND MAPPINGNAME LIKE '%_Relation.html';
       UPDATE AD_MODEL_OBJECT_MAPPING
-        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Edition.html'),
+        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || v_TabName || '_Edition.html'),
         ISACTIVE=:NEW.ISACTIVE
       WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
         AND MAPPINGNAME LIKE '%_Edition.html';
       UPDATE AD_MODEL_OBJECT_MAPPING
-        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Excel.xls'),
+        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || v_TabName || '_Excel.xls'),
         ISACTIVE=:NEW.ISACTIVE
       WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
         AND MAPPINGNAME LIKE '%_Excel.xls';

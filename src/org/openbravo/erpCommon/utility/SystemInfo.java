@@ -230,7 +230,7 @@ public class SystemInfo {
       result = "1";
     } else if (complexityRate > 2 && complexityRate < 7) {
       result = "2";
-    } else if (complexityRate > 7) {
+    } else {
       result = "3";
     }
     return result;

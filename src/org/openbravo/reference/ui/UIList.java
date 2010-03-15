@@ -26,6 +26,8 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.BuscadorData;
 import org.openbravo.erpCommon.utility.TableSQLData;
 
@@ -48,13 +50,35 @@ public class UIList extends UIReference {
     if (field == null)
       return;
 
+    // Check whether value must
+    boolean showValue = false;
+    boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      org.openbravo.model.ad.domain.Reference ref = OBDal.getInstance().get(
+          org.openbravo.model.ad.domain.Reference.class, subReference);
+      if (ref != null) {
+        showValue = ref.isDisplayedValue();
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(adminMode);
+    }
+
     String fieldName = field.getProperty("ColumnName");
     int myIndex = tableSql.index++;
 
-    tableSql.addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '"
-        + TableSQLData.INACTIVE_DATA + "' ELSE '' END) || (CASE WHEN td_trl" + myIndex
-        + ".name IS NULL THEN td" + myIndex + ".name ELSE td_trl" + myIndex + ".name END))",
-        identifierName);
+    StringBuffer name = new StringBuffer();
+    // add inactive info
+    name.append("((CASE td").append(myIndex).append(".isActive WHEN 'N' THEN '").append(
+        TableSQLData.INACTIVE_DATA).append("' ELSE '' END)");
+    // add value
+    if (showValue) {
+      name.append("|| td").append(myIndex).append(".value ||' - '");
+    }
+    // add name
+    name.append("|| (CASE WHEN td_trl").append(myIndex).append(".name IS NULL THEN td").append(
+        myIndex).append(".name ELSE td_trl").append(myIndex).append(".name END))");
+
+    tableSql.addSelectField(name.toString(), identifierName);
     String tables = "(select IsActive, ad_ref_list_id, ad_reference_id, value, name from ad_ref_list) td"
         + myIndex;
     tables += " on ";
@@ -81,7 +105,8 @@ public class UIList extends UIReference {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
+      Vector<Object> vecKeys) throws IOException, ServletException {
     UITableDir tableDir = new UITableDir(reference, subReference);
     tableDir.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, vecScript, null);
   }

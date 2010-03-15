@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * All portions are Copyright (C) 2001-2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -100,8 +100,9 @@ public class WADList extends WADControl {
 
     StringBuffer text = new StringBuffer();
     if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
-        || getData("IsUpdateable").equals("N"))
-      text.append("selectCombo(this, 'xx');");
+        || getData("IsUpdateable").equals("N")) {
+      text.append("selectCombo(this, 'xx');return true; tmp_water_mark; ");
+    }
     text.append(getOnChangeCode());
     xmlDocument.setParameter("callout", text.toString());
 
@@ -138,8 +139,9 @@ public class WADList extends WADControl {
     // else xmlDocument.setParameter("required", "N");
 
     StringBuffer text = new StringBuffer();
-    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"))
-      text.append("selectCombo(this, 'xx');");
+    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {
+      text.append("selectCombo(this, 'xx');return true; tmp_water_mark; ");
+    }
     text.append(getOnChangeCode());
     xmlDocument.setParameter("callout", text.toString());
 

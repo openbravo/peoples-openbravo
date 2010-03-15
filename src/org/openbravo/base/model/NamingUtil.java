@@ -150,7 +150,6 @@ public class NamingUtil {
       final Field fld = clz.getField(ENTITY_NAME_CONSTANT);
       return (String) fld.get(null);
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       throw new OBException("Exception when getting ENTITY_NAME constant from  " + clz.getName(), e);
     }
   }

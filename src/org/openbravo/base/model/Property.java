@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
+import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
@@ -277,7 +278,24 @@ public class Property {
     this.targetEntity = targetEntity;
   }
 
+  /**
+   * @return the primitive type defined by the domain type of the property.
+   * @see #getDomainType()
+   * @see PrimitiveDomainType#getPrimitiveType()
+   */
   public Class<?> getPrimitiveType() {
+    return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
+  }
+
+  /**
+   * @return the type used in the hibernate mapping for a primitive typed property.
+   * @see #getDomainType()
+   * @see PrimitiveDomainType#getHibernateType()
+   */
+  public Class<?> getHibernateType() {
+    if (getDomainType() instanceof BasePrimitiveDomainType) {
+      return ((BasePrimitiveDomainType) getDomainType()).getHibernateType();
+    }
     return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
   }
 
@@ -313,7 +331,7 @@ public class Property {
     }
 
     if (defaultValue == null && isBoolean()) {
-      if (getName().equalsIgnoreCase("isactive")) {
+      if (getName().equalsIgnoreCase("active")) {
         log
             .debug("Property "
                 + this

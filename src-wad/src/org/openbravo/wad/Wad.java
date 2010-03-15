@@ -875,7 +875,7 @@ public class Wad extends DefaultHandler {
             : parentsFieldsNameData[0].name;
         sinParent = true;
         if (parentsFieldsData == null || parentsFieldsData.length == 0) {
-          log4j.error("No key found in parent tab: " + allTabs[parentTabIndex].tabname);
+          log4j.warn("No key found in parent tab: " + allTabs[parentTabIndex].tabname);
         }
       }
 
@@ -1037,7 +1037,8 @@ public class Wad extends DefaultHandler {
          *************************************************/
         processTabXSQLSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName,
             windowName, keyColumnName, tabsData.adColumnsortorderId, tabsData.adColumnsortyesnoId,
-            vecParameters, vecTableParameters, tabsData.javapackage);
+            vecParameters, vecTableParameters, tabsData.javapackage, strWhere.toString(), strOrder
+                .toString());
         /************************************************
          * JAVA of the SORT TAB
          *************************************************/
@@ -2236,14 +2237,16 @@ public class Wad extends DefaultHandler {
    *          Vector with the where clause parameters.
    * @param vecTableParametersTop
    *          Vector with the from clause parameters.
+   * @param whereClause
+   * @param orderBy
    * @throws ServletException
    * @throws IOException
    */
   private void processTabXSQLSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab,
       String tabName, String tableName, String windowName, String keyColumnName,
       String strColumnSortOrderId, String strColumnSortYNId, Vector<Object> vecParametersTop,
-      Vector<Object> vecTableParametersTop, String javaPackage) throws ServletException,
-      IOException {
+      Vector<Object> vecTableParametersTop, String javaPackage, String whereClause, String orderBy)
+      throws ServletException, IOException {
     log4j.debug("Processing Sort Tab xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     final String[] discard = { "", "", "hasOrgKey" };
@@ -2272,7 +2275,13 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setParameter("paramKeyParent", Sqlc
           .TransformaNombreColumna(parentsFieldsData[0].name));
     }
-    final String strOrder = " ORDER BY " + tableName + "." + strSortField;
+    String strOrder = " ORDER BY " + tableName + "." + strSortField;
+
+    orderBy = orderBy.replace("ORDER BY 1", "").trim();
+    orderBy = orderBy.replace("ORDER BY", "");
+    if (!orderBy.isEmpty()) {
+      strOrder += ", " + orderBy;
+    }
 
     String strFields = "";
     String strTables = "";
@@ -2302,6 +2311,12 @@ public class Wad extends DefaultHandler {
       for (int i = 0; i < vecWhere.size(); i++) {
         strWhere += "\n AND " + vecWhere.elementAt(i).toString();
       }
+
+      if (!strWhere.isEmpty()) {
+        strWhere += "\n AND ";
+      }
+      strWhere += whereClause;
+
     }
 
     xmlDocumentXsql.setParameter("fields", strFields);
@@ -2932,8 +2947,10 @@ public class Wad extends DefaultHandler {
         data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
         data[i].whereclause = WadUtility.getComboReloadText(code, vecFields, parentsFieldsData,
             vecReloads, "inp");
-        if (data[i].whereclause.equals("") && data[i].type.equals("R"))
-          data[i].whereclause = "\"inpadOrgId\"";
+
+        // Always add combo reload for organization
+        data[i].whereclause += (!data[i].whereclause.isEmpty() ? ", " : "") + "\"inpadOrgId\"";
+
         if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
           data[i].whereclause = "\"inp" + data[i].columnname + "\"";
         if (!data[i].whereclause.equals("")
@@ -2973,8 +2990,8 @@ public class Wad extends DefaultHandler {
 
             WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
                 data[i].referencevalue);
-            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1, vecTables,
-                vecWhere, vecParameters, vecTableParameters);
+            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1,
+                vecTables, vecWhere, vecParameters, vecTableParameters);
 
             where.append(tables[0].whereclause);
             data[i].tablename = "TableList";
@@ -3017,8 +3034,8 @@ public class Wad extends DefaultHandler {
 
             WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
                 data[i].referencevalue);
-            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables, vecWhere,
-                vecParameters, vecTableParameters);
+            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables,
+                vecWhere, vecParameters, vecTableParameters);
 
             data[i].xmltext = "";
             if (vecTableParameters.size() > 0) {
@@ -3132,8 +3149,8 @@ public class Wad extends DefaultHandler {
 
             WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
                 data[i].referencevalue);
-            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1, vecTables,
-                vecWhere, vecParameters, vecTableParameters);
+            control.columnIdentifier(tables[0].tablename, tables[0], vecCounters, vecFields1,
+                vecTables, vecWhere, vecParameters, vecTableParameters);
 
             where.append(tables[0].whereclause);
 
@@ -3177,8 +3194,8 @@ public class Wad extends DefaultHandler {
 
             WADControl control = WadUtility.getWadControlClass(pool, data[i].reference,
                 data[i].referencevalue);
-            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables, vecWhere,
-                vecParameters, vecTableParameters);
+            control.columnIdentifier(table_Name, data[i], vecCounters, vecFields1, vecTables,
+                vecWhere, vecParameters, vecTableParameters);
 
             data[i].xmltext = "";
             if (vecTableParameters.size() > 0) {

@@ -78,7 +78,7 @@
       v_InvoiceNo NUMBER(10) ;
       v_DocumentNo C_INVOICE.DocumentNo%TYPE;
       v_IsDiscountPrinted CHAR(1) ;
-      v_PaymentRule CHAR(1) ;
+      v_PaymentRule VARCHAR2(60) ;
       v_C_PaymentTerm_ID VARCHAR2(32) ;
       v_C_Currency_ID VARCHAR2(32) ;
       v_M_PriceList_ID VARCHAR2(32) ;

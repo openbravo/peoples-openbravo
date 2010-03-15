@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2009 Openbravo S.L.
+ * Copyright (C) 2009-2010 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -15,5 +15,6 @@
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default" default="Default"/>
 	<PARAMETER id="paramType" name="ParamType" replace="ERROR" attribute="class" />
 	<PARAMETER id="paramTitle" name="ParamTitle"/>
-	<PARAMETER id="paramText" name="ParamText"/>
+	<PARAMETER id="messageBoxIDTitle" name="ParamTitle"/>
+	<PARAMETER id="messageBoxIDMessage" name="ParamText"/>
 </REPORT>

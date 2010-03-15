@@ -49,8 +49,8 @@ public abstract class SessionFactoryController {
       + "WHERE tablename NOT LIKE 'pg%' AND tablename NOT LIKE 'sql%' and "
       + "c.relname = t.tablename AND a.attnum > 0 AND a.attrelid = c.oid";
 
-  private static final String COLUMN_QUERY_ORACLE = "SELECT C.TABLE_NAME, C.COLUMN_NAME, C.NULLABLE FROM "
-      + " ALL_TAB_COLUMNS C ORDER BY C.TABLE_NAME";
+  private static final String COLUMN_QUERY_ORACLE = "SELECT C.TABLE_NAME, C.COLUMN_NAME, C.NULLABLE "
+      + "FROM USER_TAB_COLUMNS C  ORDER BY C.TABLE_NAME";
 
   private static SessionFactoryController instance = null;
 
@@ -97,6 +97,7 @@ public abstract class SessionFactoryController {
   private SessionFactory sessionFactory = null;
   private Configuration configuration = null;
   private boolean isPostgresDatabase = false;
+  private String bbddUser;
 
   public SessionFactory getSessionFactory() {
     initialize();
@@ -142,7 +143,9 @@ public abstract class SessionFactoryController {
       mapModel(configuration);
       setInterceptor(configuration);
 
-      configuration.addProperties(getOpenbravoProperties());
+      final Properties properties = getOpenbravoProperties();
+      bbddUser = properties.getProperty(Environment.USER);
+      configuration.addProperties(properties);
 
       // second-level caching is disabled for now because not all data
       // access and updates go through hibernate.
@@ -163,8 +166,6 @@ public abstract class SessionFactoryController {
 
       log.debug("Session Factory initialized");
     } catch (final Throwable t) {
-      // this is done to get better visibility of the exceptions
-      t.printStackTrace(System.err);
       throw new OBException(t);
     }
   }
@@ -200,6 +201,7 @@ public abstract class SessionFactoryController {
       props.setProperty(Environment.DRIVER, "org.postgresql.Driver");
       props.setProperty(Environment.URL, obProps.getProperty("bbdd.url") + "/"
           + obProps.getProperty("bbdd.sid"));
+
       props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
       props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
     }
@@ -265,7 +267,7 @@ public abstract class SessionFactoryController {
     if (isPostgresDatabase) {
       return UNIQUE_CONSTRAINT_QUERY_POSTGRES;
     }
-    return UNIQUE_CONSTRAINT_QUERY_ORACLE;
+    return UNIQUE_CONSTRAINT_QUERY_ORACLE.replace("${bbdd.user}", bbddUser);
   }
 
   /**
@@ -278,6 +280,7 @@ public abstract class SessionFactoryController {
     if (isPostgresDatabase) {
       return COLUMN_QUERY_POSTGRES;
     }
-    return COLUMN_QUERY_ORACLE;
+
+    return COLUMN_QUERY_ORACLE.replace("${bbdd.user}", bbddUser);
   }
 }

@@ -51,7 +51,9 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     if (vars.commandIn("UPDATESTATUS")) {
       update(response, vars);
     } else if (vars.commandIn("REQUESTERRORSTATE")) {
-      requesterrorstate(response, vars);
+      requesterrorstate(response, vars, false);
+    } else if (vars.commandIn("REQUESTLASTERRORSTATE")) {
+      requesterrorstate(response, vars, true);
     } else if (vars.commandIn("GETERR")) {
       getError(response, vars);
     }
@@ -62,7 +64,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
    * object and resend to the rebuild window.
    */
   private ApplyModulesResponse fillResponse(VariablesSecureApp vars, String state,
-      String defaultState) {
+      String defaultState, boolean fillWarnsAndErrors) {
     String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
     if (ln == null || ln.equals("")) {
       return null;
@@ -80,42 +82,45 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     PreparedStatement ps3 = null;
     boolean warning = false;
     boolean error = false;
-    int newlinenumber = lastlinenumber;
     try {
-      ps = getPreparedStatement("SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN' AND SYSTEM_STATUS LIKE ?");
-      ps.setString(1, "%" + state);
-      ps.executeQuery();
-      ResultSet rs = ps.getResultSet();
-      ArrayList<String> warnings = new ArrayList<String>();
-      while (rs.next()) {
-        warning = true; // there is at least an warning in this state
-        int linenumber = rs.getInt(2);
-        if (linenumber > newlinenumber) {
-          newlinenumber = linenumber;
+      if (fillWarnsAndErrors) {
+        int newlinenumber = lastlinenumber;
+        ps = getPreparedStatement("SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN' AND SYSTEM_STATUS LIKE ?");
+        ps.setString(1, "%" + state);
+        ps.executeQuery();
+        ResultSet rs = ps.getResultSet();
+        ArrayList<String> warnings = new ArrayList<String>();
+        while (rs.next()) {
+          warning = true; // there is at least an warning in this state
+          int linenumber = rs.getInt(2);
+          if (linenumber > newlinenumber) {
+            newlinenumber = linenumber;
+          }
+          if (linenumber > lastlinenumber) {
+            warnings.add(rs.getString(1));
+          }
         }
-        if (linenumber > lastlinenumber) {
-          warnings.add(rs.getString(1));
-        }
-      }
-      resp.setWarnings(warnings.toArray(new String[0]));
+        resp.setWarnings(warnings.toArray(new String[0]));
 
-      ps2 = getPreparedStatement("SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
-      ps2.setString(1, "%" + state);
-      ps2.executeQuery();
-      ResultSet rs2 = ps2.getResultSet();
-      ArrayList<String> errors = new ArrayList<String>();
-      while (rs2.next()) {
-        error = true; // there is at least an error in this state
-        int linenumber = rs2.getInt(2);
-        if (linenumber > newlinenumber) {
-          newlinenumber = linenumber;
+        ps2 = getPreparedStatement("SELECT MESSAGE, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND SYSTEM_STATUS LIKE ?");
+        ps2.setString(1, "%" + state);
+        ps2.executeQuery();
+        ResultSet rs2 = ps2.getResultSet();
+        ArrayList<String> errors = new ArrayList<String>();
+        while (rs2.next()) {
+          error = true; // there is at least an error in this state
+          int linenumber = rs2.getInt(2);
+          if (linenumber > newlinenumber) {
+            newlinenumber = linenumber;
+          }
+          if (linenumber > lastlinenumber) {
+            errors.add(rs2.getString(1));
+          }
         }
-        if (linenumber > lastlinenumber) {
-          errors.add(rs2.getString(1));
-        }
+        resp.setErrors(errors.toArray(new String[0]));
+        vars.setSessionValue("ApplyModules|Last_Line_Number_Log", new Integer(newlinenumber)
+            .toString());
       }
-      resp.setErrors(errors.toArray(new String[0]));
-
       ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED DESC");
       ps3.executeQuery();
       ResultSet rs3 = ps3.getResultSet();
@@ -125,8 +130,6 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         resp.setLastmessage("");
       }
 
-      vars.setSessionValue("ApplyModules|Last_Line_Number_Log", new Integer(newlinenumber)
-          .toString());
       if (error)
         resp.setStatusofstate("Error");
       else if (warning)
@@ -139,6 +142,53 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         releasePreparedStatement(ps3);
         releasePreparedStatement(ps2);
         releasePreparedStatement(ps);
+      } catch (SQLException e2) {
+      }
+    }
+    return resp;
+  }
+
+  private ApplyModulesResponse fillErrorResponse(VariablesSecureApp vars, String state,
+      String defaultState) {
+
+    ApplyModulesResponse resp = new ApplyModulesResponse();
+    resp.setState(Integer.parseInt(state.replace("RB", "")));
+    PreparedStatement ps2 = null;
+    PreparedStatement ps3 = null;
+    boolean warning = false;
+    boolean error = false;
+    try {
+      ps2 = getPreparedStatement("SELECT MESSAGE, SYSTEM_STATUS LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED DESC");
+      ps2.executeQuery();
+      ResultSet rs2 = ps2.getResultSet();
+      ArrayList<String> errors = new ArrayList<String>();
+      if (rs2.next()) {
+        error = true; // there is at least an error in this state
+        errors.add(rs2.getString(1));
+        resp.setState(Integer.parseInt(rs2.getString(2).replace("RB", "")));
+      }
+      resp.setErrors(errors.toArray(new String[0]));
+
+      ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED DESC");
+      ps3.executeQuery();
+      ResultSet rs3 = ps3.getResultSet();
+      if (rs3.next()) {
+        resp.setLastmessage(rs3.getString(1));
+      } else {
+        resp.setLastmessage("");
+      }
+
+      if (error)
+        resp.setStatusofstate("Error");
+      else if (warning)
+        resp.setStatusofstate("Warning");
+      else
+        resp.setStatusofstate(defaultState);
+    } catch (Exception e) {
+    } finally {
+      try {
+        releasePreparedStatement(ps3);
+        releasePreparedStatement(ps2);
       } catch (SQLException e2) {
       }
     }
@@ -161,7 +211,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       ResultSet rs = ps.getResultSet();
       rs.next();
       String state = rs.getString(1);
-      ApplyModulesResponse resp = fillResponse(vars, state, "Processing");
+      ApplyModulesResponse resp = fillResponse(vars, state, "Processing", false);
       response.setContentType("text/plain; charset=UTF-8");
       final PrintWriter out = response.getWriter();
       String strResult;
@@ -185,13 +235,19 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
    * state. This method will be called when the Rebuild Window notices that one or more steps were
    * not updated and the build process already finished them
    */
-  private void requesterrorstate(HttpServletResponse response, VariablesSecureApp vars) {
+  private void requesterrorstate(HttpServletResponse response, VariablesSecureApp vars,
+      boolean lastError) {
     String ln = vars.getSessionValue("ApplyModules|Last_Line_Number_Log");
     if (ln == null || ln.equals("")) {
       return;
     }
     String state = vars.getStringParameter("reqStatus");
-    ApplyModulesResponse resp = fillResponse(vars, state, "Success");
+    ApplyModulesResponse resp;
+    if (lastError) {
+      resp = fillErrorResponse(vars, state, "Success");
+    } else {
+      resp = fillResponse(vars, state, "Success", true);
+    }
     response.setContentType("text/plain; charset=UTF-8");
     try {
       final PrintWriter out = response.getWriter();
@@ -219,15 +275,16 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     PreparedStatement ps;
     PreparedStatement ps2;
     try {
-      ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
+      ps = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED DESC");
       ps.executeQuery();
       ResultSet rs = ps.getResultSet();
       if (rs.next()) {
         error.setType("Error");
         error.setTitle(Utility.messageBD(myPool, "Error", vars.getLanguage()));
-        error.setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
-            + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\" class=\"MessageBox_TextLink\">"
-            + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>");
+        error
+            .setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
+                + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\" class=\"MessageBox_TextLink\">"
+                + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>");
 
       } else {
         ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN'");

@@ -77,9 +77,6 @@ public class SystemValidationTask extends DalInitializingTask {
           .validateModule(module, null);
 
       // validate DB for module if there's dbprefixes
-      if (module == null) {
-        System.out.println("mod null...");
-      }
       if (module != null && module.getModuleDBPrefixList() != null
           && module.getModuleDBPrefixList().size() != 0) {
         log.info("Validating DB");

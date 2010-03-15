@@ -89,7 +89,6 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
       try {
         ModelProvider.getInstance().getModel();
       } catch (final Exception e) {
-        e.printStackTrace(System.err);
         throw new OBException(e);
       }
     }

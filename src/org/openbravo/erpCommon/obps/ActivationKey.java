@@ -383,6 +383,8 @@ public class ActivationKey {
    * {@link ActivationKey#PING_TIMEOUT_SECS} seconds and deactivates them. Activity is tracked by
    * the requests the browser sends to look for alerts (see
    * {@link org.openbravo.erpCommon.utility.VerticalMenu}).
+   * <p/>
+   * PING_TIMEOUT_SECS is hardcoded to 120s, pings are hardcoded in front-end to 50s.
    */
   private boolean deactivateTimeOutSessions() {
     // Last valid ping time is current time substract timeout seconds

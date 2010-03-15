@@ -50,10 +50,18 @@
         mnu.style.width = w - (mleft.clientWidth + mright.clientWidth) - ((name.indexOf("Microsoft")==-1)?2:0);
         mnu.style.display = "";
       }
-
     </script>
     <script language="JavaScript" type="text/javascript">
       function onLoadDo() {
+        try {
+          if (parent.frameMenu) {
+            document.frmMenu.target = "_parent";
+          } else {
+            document.frmMenu.target = "_self";
+          }
+        } catch (e) {
+          document.frmMenu.target = "_self";
+        }
         resizeMenu();
       }
 
@@ -123,13 +131,13 @@
               <td colspan="2" class="Menu_ToolBar_textlabel_bg_body"><nobr><a class="Menu_ToolBar_text_username" href="#" onclick="menuUserOptions();"><span id="fieldUserName">Loading</span></a><nobr></td>
 
               <td width="1" class="Menu_ToolBar_textlabel_bg_right">
-                <a class="Menu_ToolBar_Button" href="#" onclick="menuQuit();" onmouseover="window.status='Close session';return true;" onmouseout="window.status='';return true;" id="buttonQuit"><img class="Menu_ToolBar_Button_Icon Menu_ToolBar_Button_Icon_logout" src="../../../../../web/images/blank.gif" onclick="submitCommandForm('DEFAULT', false, null, '../security/Logout.html', '_top');return false;" border="0" alt="Close session" title="Close session" /></a>
+                <a class="Menu_ToolBar_Button" href="#" onclick="menuQuit();" onmouseover="window.status='Close session';return true;" onmouseout="window.status='';return true;" id="buttonQuit"><img class="Menu_ToolBar_Button_Icon Menu_ToolBar_Button_Icon_logout" src="../../../../../web/images/blank.gif" border="0" alt="Close session" title="Close session" /></a>
               </td>
 
               <td class="Menu_ToolBar_Space"></td>
 
               <td width="1">
-                <a class="Menu_ToolBar_Button" href="#" onclick="" onmouseover="window.status='Expand the menu';return true;" onmouseout="window.status='';return true;" id="buttonExpand"><img class="Menu_ToolBar_Button_Icon Menu_ToolBar_Button_Icon_expand" src="../../../../../web/images/blank.gif" onclick="menuExpand();" border="0" alt="Expand the menu" title="Expand the menu" /></a>
+                <a class="Menu_ToolBar_Button" href="#" onclick="" onmouseover="window.status='Expand the menu';return true;" onmouseout="window.status='';return true;" id="buttonExpand"><img class="Menu_ToolBar_Button_Icon Menu_ToolBar_Button_Icon_expand" src="../../../../../web/images/blank.gif" border="0" alt="Expand the menu" title="Expand the menu" /></a>
               </td>
             </tr>
 
@@ -208,7 +216,7 @@
       </tr>
     </table>
 
-    <form name="frmMenu" action="../security/Login_FS.html" method="post" target="_top">
+    <form name="frmMenu" action="../security/Login_FS.html" method="post" target="_self">
       <input type="hidden" name="Command" /> <input type="hidden" name="inpSelected" value="" />
     </form>
   </body>

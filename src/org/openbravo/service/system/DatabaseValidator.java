@@ -21,6 +21,7 @@ package org.openbravo.service.system;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +76,80 @@ public class DatabaseValidator implements SystemValidator {
     final SystemValidationResult result = new SystemValidationResult();
 
     // read the tables
+    Database db = getDatabase();
+    for (int i = 0; i < db.getFunctionCount(); i++) {
+      if (db.getFunction(i).getName().length() > 30) {
+        result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+            "Name of Function " + db.getFunction(i).getName()
+                + " is too long. Only 30 characters allowed.");
+      }
+    }
+    for (int i = 0; i < db.getTriggerCount(); i++) {
+      if (db.getTrigger(i).getName().length() > 30) {
+        result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+            "Name of Trigger " + db.getTrigger(i).getName()
+                + " is too long. Only 30 characters allowed.");
+      }
+    }
+    for (int i = 0; i < db.getViewCount(); i++) {
+      if (db.getView(i).getName().length() > 30) {
+        result
+            .addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+                "Name of View " + db.getView(i).getName()
+                    + " is too long. Only 30 characters allowed.");
+      }
+    }
+
+    // We need to check both in the full tables added by the module, and in the objects which are
+    // added by this module to tables which belong to a different module
+    ArrayList<org.apache.ddlutils.model.Table> tables = new ArrayList<org.apache.ddlutils.model.Table>();
+    for (int j = 0; j < db.getTableCount(); j++) {
+      tables.add(db.getTable(j));
+    }
+    for (int j = 0; j < db.getModifiedTableCount(); j++) {
+      tables.add(db.getModifiedTable(j));
+    }
+    for (org.apache.ddlutils.model.Table dbTable : tables) {
+      if (dbTable.getName().length() > 30) {
+        result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+            "Name of table " + dbTable.getName() + " is too long. Only 30 characters allowed.");
+      }
+      for (int i = 0; i < dbTable.getColumnCount(); i++) {
+        if (dbTable.getColumn(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of column " + dbTable.getColumn(i).getName() + "for table " + dbTable.getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+      for (int i = 0; i < dbTable.getCheckCount(); i++) {
+        if (dbTable.getCheck(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of Check " + dbTable.getCheck(i).getName() + "for table " + dbTable.getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+      for (int i = 0; i < dbTable.getForeignKeyCount(); i++) {
+        if (dbTable.getForeignKey(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of ForeignKey " + dbTable.getForeignKey(i).getName() + "for table "
+                  + dbTable.getName() + " is too long. Only 30 characters allowed.");
+        }
+      }
+      for (int i = 0; i < dbTable.getIndexCount(); i++) {
+        if (dbTable.getIndex(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of Index " + dbTable.getIndex(i).getName() + "for table " + dbTable.getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+      for (int i = 0; i < dbTable.getUniqueCount(); i++) {
+        if (dbTable.getUnique(i).getName().length() > 30) {
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+              "Name of Unique " + dbTable.getUnique(i).getName() + "for table " + dbTable.getName()
+                  + " is too long. Only 30 characters allowed.");
+        }
+      }
+    }
 
     final OBCriteria<Table> tcs = OBDal.getInstance().createCriteria(Table.class);
     tcs.add(Expression.eq(Table.PROPERTY_VIEW, false));
@@ -108,6 +183,7 @@ public class DatabaseValidator implements SystemValidator {
       final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getDBTableName()
           .toUpperCase());
       final View view = dbViews.get(adTable.getDBTableName().toUpperCase());
+
       if (view == null && dbTable == null) {
         // in Application Dictionary not in Physical Table
         if (moduleId == null

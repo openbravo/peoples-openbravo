@@ -66,6 +66,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
           "MaterialReceiptPending|AD_Org_ID", vars.getOrg());
       vars.setSessionValue("MaterialReceiptPending|isSOTrx", "Y");
+      if (strDocumentNo.equals(""))
+        strDocumentNo += "%";
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
           strDocumentNo, "DEFAULT");
     } else if (vars.commandIn("FIND")) {

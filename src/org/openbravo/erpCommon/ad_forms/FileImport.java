@@ -394,8 +394,8 @@ public class FileImport extends HttpSecureAppServlet {
         .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     String strJS = "\n var r = '" + sb.toString() + "'; \n"
-        + "top.frames['appFrame'].setResult(r); \n "
-        + "top.frames['appFrame'].setProcessingMode('window', false); \n";
+        + "parent.frames['appFrame'].setResult(r); \n "
+        + "parent.frames['appFrame'].setProcessingMode('window', false); \n";
     xmlDocument.setParameter("result", strJS);
     xmlDocument.setParameter("messageType", "Success");
     xmlDocument.setParameter("messageTitle", "Success");
@@ -412,8 +412,8 @@ public class FileImport extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_Result")
         .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
-    String strJS = "\n top.frames['appFrame'].setProcessingMode('window', false); \n"
-        + "top.frames['appFrame'].document.getElementById('buttonRefresh').onclick();\n";
+    String strJS = "\n parent.frames['appFrame'].setProcessingMode('window', false); \n"
+        + "parent.frames['appFrame'].document.getElementById('buttonRefresh').onclick();\n";
     xmlDocument.setParameter("result", strJS);
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

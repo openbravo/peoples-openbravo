@@ -60,7 +60,7 @@
       END LOOP; -- BOM
     END IF;
     --
-    RETURN c_currency_round(v_price, v_currency,null);
+    RETURN ROUND(v_price,C_GET_CURRENCY_PRECISION(v_currency,'P'));
 END M_BOM_PRICELIST
 ]]></body>
     </function>

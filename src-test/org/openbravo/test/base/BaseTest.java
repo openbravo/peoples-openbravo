@@ -29,6 +29,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalLayerInitializer;
@@ -36,6 +37,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.ConnectionProviderImpl;
+import org.openbravo.exception.PoolNotFoundException;
 
 /**
  * Base test class which can/should be extended by most other test classes which want to make use of
@@ -77,6 +81,16 @@ public class BaseTest extends TestCase {
   protected void initializeDalLayer() throws Exception {
     if (!DalLayerInitializer.getInstance().isInitialized()) {
       DalLayerInitializer.getInstance().initialize(true);
+    }
+  }
+
+  protected ConnectionProvider getConnectionProvider() {
+    try {
+      final String propFile = OBConfigFileProvider.getInstance().getFileLocation();
+      final ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
+      return conn;
+    } catch (PoolNotFoundException e) {
+      throw new IllegalStateException(e);
     }
   }
 

@@ -165,7 +165,7 @@
      <SqlMethodComment></SqlMethodComment>
      <Sql>
      <![CDATA[
-     SELECT AD_GET_DOCTYPE(?,?,'API',NULL) FROM DUAL
+     SELECT AD_GET_DOCTYPE_EXPENSES(?,?,'API',NULL) FROM DUAL
       ]]>
     </Sql>
     <Parameter name="adClientId"/>

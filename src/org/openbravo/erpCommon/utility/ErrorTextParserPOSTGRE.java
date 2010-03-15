@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,6 +114,10 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
         cols[i] = col;
       }
     }
+
+    // assure same column order across (oracle,postgresql) by sorting results in java
+    Arrays.sort(cols);
+
     return cols;
   }
 

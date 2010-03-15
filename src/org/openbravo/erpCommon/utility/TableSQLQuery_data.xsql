@@ -95,7 +95,7 @@
         WHERE t.AD_Tab_ID = ?
         AND c.IsActive = 'Y'
         AND (c.IsKey = 'Y' or c.IsSecondaryKey = 'Y' or c.IsSelectionColumn = 'Y' or (f.IsDisplayed='Y' and f.ShowInRelation='Y' and c.IsEncrypted='N'))
-        ORDER BY f.SeqNo, c.SeqNo
+        ORDER BY f.Grid_SeqNo, f.SeqNo, c.SeqNo
        ]]>
      </Sql>
      <Parameter name="adLanguage"/>

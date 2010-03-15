@@ -19,7 +19,7 @@
 <script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</script>
 <script language="JavaScript" type="text/javascript">
 function closeThis() {
-  var refreshButton = opener.top.appFrame.document.getElementById('buttonRefresh');
+  var refreshButton = opener.parent.appFrame.document.getElementById('buttonRefresh');
   if(refreshButton)
     refreshButton.onclick();	
   top.close();

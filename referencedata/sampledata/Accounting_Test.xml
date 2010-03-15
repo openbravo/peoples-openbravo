@@ -5663,6 +5663,24 @@
     <attribute>C_Country_ID</attribute>
     <searchKey>100</searchKey>
   </ADPreference>
+  <ADProcessAccess id="17CA8BB997344F4E9E2ABFB70FD26DD5">
+    <id>17CA8BB997344F4E9E2ABFB70FD26DD5</id>
+    <process id="F9DFC02162B0473B9676870117DF61FE"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="4970B0F457C2410182F807F4849C238D">
+    <id>4970B0F457C2410182F807F4849C238D</id>
+    <process id="F9DFC02162B0473B9676870117DF61FE"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
   <ADProcessAccess id="5163A7B5FC6B442A96B642B8B4FFF524">
     <id>5163A7B5FC6B442A96B642B8B4FFF524</id>
     <process id="462033447A1548F09BBFB0683FA976CC"/>
@@ -13772,6 +13790,24 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="6FD5721C0ACA4C02B1DB7BD19B6DC4AB">
+    <id>6FD5721C0ACA4C02B1DB7BD19B6DC4AB</id>
+    <window id="FEB8679CAA0D47E5978F10E22566FCEA"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="96FF10426CA841A89FF37ABF546E87FF">
+    <id>96FF10426CA841A89FF37ABF546E87FF</id>
+    <window id="FEB8679CAA0D47E5978F10E22566FCEA"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="98BE033EDE6443748C3FEF5D45F647D0">
     <id>98BE033EDE6443748C3FEF5D45F647D0</id>
     <window id="A9FD6A5AED3546EC83DB567882646D2E"/>
@@ -14035,6 +14071,8 @@
     <serviceRevenue xsi:nil="true"/>
     <setProjectType>false</setProjectType>
     <startingDate xsi:nil="true"/>
+    <servicesProvidedCost xsi:nil="true"/>
+    <outsourcedCost xsi:nil="true"/>
   </Project>
   <ProjectAccounts id="52118BF1B84B4D84E040007F01005FEC">
     <id>52118BF1B84B4D84E040007F01005FEC</id>
@@ -14125,6 +14163,7 @@
     <standardQuantity xsi:nil="true"/>
     <quantityType>false</quantityType>
     <safetyStock xsi:nil="true"/>
+    <useAttributeSetValueAs xsi:nil="true"/>
   </Product>
   <ProductCategory id="1000009">
     <id>1000009</id>
@@ -19083,6 +19122,8 @@
     <standardPrice>50</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </OrderLine>
   <OrderLine id="1000067">
     <id>1000067</id>
@@ -19127,6 +19168,8 @@
     <standardPrice>150</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </OrderLine>
   <OrderLine id="1000068">
     <id>1000068</id>
@@ -19171,6 +19214,8 @@
     <standardPrice>50</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </OrderLine>
   <OrderLine id="1000069">
     <id>1000069</id>
@@ -19215,6 +19260,8 @@
     <standardPrice>50</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </OrderLine>
   <OrderLine id="1000070">
     <id>1000070</id>
@@ -19259,6 +19306,8 @@
     <standardPrice>50</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </OrderLine>
   <FinancialMgmtTaxRate id="1000007">
     <id>1000007</id>
@@ -19289,6 +19338,9 @@
     <originalRate xsi:nil="true"/>
     <notTaxdeductable>false</notTaxdeductable>
     <noVAT>false</noVAT>
+    <baseAmount>LNA</baseAmount>
+    <taxBase xsi:nil="true"/>
+    <docTaxAmount>D</docTaxAmount>
   </FinancialMgmtTaxRate>
   <FinancialMgmtTaxRate id="1000008">
     <id>1000008</id>
@@ -19319,6 +19371,9 @@
     <originalRate xsi:nil="true"/>
     <notTaxdeductable>false</notTaxdeductable>
     <noVAT>false</noVAT>
+    <baseAmount>LNA</baseAmount>
+    <taxBase xsi:nil="true"/>
+    <docTaxAmount>D</docTaxAmount>
   </FinancialMgmtTaxRate>
   <FinancialMgmtAcctSchema id="1000001">
     <id>1000001</id>
@@ -23311,6 +23366,8 @@
     <sOBPTaxCategory xsi:nil="true"/>
     <fiscalcode xsi:nil="true"/>
     <isofiscalcode xsi:nil="true"/>
+    <incotermsPO xsi:nil="true"/>
+    <incotermsSO xsi:nil="true"/>
   </BusinessPartner>
   <BusinessPartner id="1000021">
     <id>1000021</id>
@@ -23384,6 +23441,8 @@
     <sOBPTaxCategory xsi:nil="true"/>
     <fiscalcode xsi:nil="true"/>
     <isofiscalcode xsi:nil="true"/>
+    <incotermsPO xsi:nil="true"/>
+    <incotermsSO xsi:nil="true"/>
   </BusinessPartner>
   <BusinessPartner id="1000022">
     <id>1000022</id>
@@ -23457,6 +23516,8 @@
     <sOBPTaxCategory xsi:nil="true"/>
     <fiscalcode xsi:nil="true"/>
     <isofiscalcode xsi:nil="true"/>
+    <incotermsPO xsi:nil="true"/>
+    <incotermsSO xsi:nil="true"/>
   </BusinessPartner>
   <BusinessPartner id="1000023">
     <id>1000023</id>
@@ -23530,6 +23591,8 @@
     <sOBPTaxCategory xsi:nil="true"/>
     <fiscalcode xsi:nil="true"/>
     <isofiscalcode xsi:nil="true"/>
+    <incotermsPO xsi:nil="true"/>
+    <incotermsSO xsi:nil="true"/>
   </BusinessPartner>
   <BusinessPartnerLocation id="1000035">
     <id>1000035</id>
@@ -25480,7 +25543,7 @@
     <documentNo>10000000</documentNo>
     <documentAction>--</documentAction>
     <documentStatus>CO</documentStatus>
-    <posted>N</posted>
+    <posted>p</posted>
     <processNow>false</processNow>
     <processed>true</processed>
     <documentType id="1000039"/>
@@ -25592,7 +25655,7 @@
     <documentNo>10000001</documentNo>
     <documentAction>--</documentAction>
     <documentStatus>CO</documentStatus>
-    <posted>N</posted>
+    <posted>p</posted>
     <processNow>false</processNow>
     <processed>true</processed>
     <documentType id="1000039"/>
@@ -25982,6 +26045,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>50</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </InvoiceLine>
   <InvoiceLine id="1000087">
     <id>1000087</id>
@@ -26014,6 +26079,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>150</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </InvoiceLine>
   <InvoiceLine id="1000088">
     <id>1000088</id>
@@ -26046,6 +26113,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>50</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </InvoiceLine>
   <InvoiceLine id="1000089">
     <id>1000089</id>
@@ -26078,6 +26147,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>50</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </InvoiceLine>
   <InvoiceLine id="1000090">
     <id>1000090</id>
@@ -26110,6 +26181,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>50</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
+    <taxableAmount xsi:nil="true"/>
+    <editLineAmount>false</editLineAmount>
   </InvoiceLine>
   <InvoiceTax id="1000039">
     <tax id="1000008"/>
@@ -26193,6 +26266,15 @@
     <description xsi:nil="true"/>
     <translation>false</translation>
   </FinancialMgmtTaxCategoryTrl>
+  <ADFormAccess id="2FA74B6D652B4D0F95A580E4E7E286EB">
+    <id>2FA74B6D652B4D0F95A580E4E7E286EB</id>
+    <specialForm id="12D4CE60E8694097829C8FBBDBD503C4"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADFormAccess>
   <ADFormAccess id="5E4DB943A59116CFE040007F01002944">
     <id>5E4DB943A59116CFE040007F01002944</id>
     <specialForm id="800017"/>
@@ -26646,6 +26728,15 @@
   <ADFormAccess id="5E4DB943A5C316CFE040007F01002944">
     <id>5E4DB943A5C316CFE040007F01002944</id>
     <specialForm id="800016"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADFormAccess>
+  <ADFormAccess id="FB8F24DF6ADC4970B594347259FA67D4">
+    <id>FB8F24DF6ADC4970B594347259FA67D4</id>
+    <specialForm id="12D4CE60E8694097829C8FBBDBD503C4"/>
     <role id="1000006"/>
     <client id="1000001"/>
     <organization id="0"/>

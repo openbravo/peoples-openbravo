@@ -159,6 +159,22 @@
      SET C_BANKSTATEMENTLINE_ID = NULL, C_SETTLEMENT_CANCEL_ID = NULL, ISPAID = 'N', CANCEL_PROCESSED = 'N'
      WHERE C_SETTLEMENT_CANCEL_ID = Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID;
 
+      DECLARE
+      TYPE RECORD IS REF CURSOR;
+        Cur_Debts RECORD;
+      BEGIN
+        FOR Cur_Debts IN
+          (SELECT DISTINCT C_BPartner_ID
+          FROM C_DEBT_PAYMENT
+          WHERE C_Settlement_Cancel_ID=Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID
+            OR C_Settlement_Cancel_ID IS NULL
+            OR C_Settlement_Generate_ID=Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID AND ISRECEIPT = 'Y'
+          )
+        LOOP
+          C_BP_SOCREDITUSED_REFRESH(Cur_Debts.C_BPartner_ID) ;
+        END LOOP;
+      END;     
+
      C_SETTLEMENT_POST(null, Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID);
 
      DELETE FROM C_SETTLEMENT WHERE C_SETTLEMENT_ID = Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID;

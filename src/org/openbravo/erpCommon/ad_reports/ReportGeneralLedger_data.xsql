@@ -250,18 +250,19 @@
       FROM
         (
         SELECT MIN(P.STARTDATE) AS INI
-        FROM C_YEAR Y, C_PERIOD P
+        FROM C_YEAR Y, C_PERIOD P, C_PERIODCONTROL PC
         WHERE Y.C_YEAR_ID = P.C_YEAR_ID
+          AND P.C_PERIOD_ID = PC.C_PERIOD_ID
           AND P.STARTDATE <= TO_DATE(?)
-          AND P.AD_CLIENT_ID IN ('1')
-          AND P.AD_ORG_ID IN ('1')
+          AND PC.AD_CLIENT_ID IN ('1')
+          AND PC.AD_ORG_ID IN ('1')
         GROUP BY Y.YEAR
         ) PERIOD
       ]]></Sql>
       <Parameter name="dateTemplate"/>
       <Parameter name="date"/>
-      <Parameter name="client" type="replace" optional="true" after="AND P.AD_CLIENT_ID IN (" text="'1'"/>
-      <Parameter name="orgs" type="replace" optional="true" after="AND P.AD_ORG_ID IN (" text="'1'"/>
+      <Parameter name="client" type="replace" optional="true" after="AND PC.AD_CLIENT_ID IN (" text="'1'"/>
+      <Parameter name="orgs" type="replace" optional="true" after="AND PC.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>
 
   <SqlMethod name="selectSubaccountDescription" type="preparedStatement" return="string">

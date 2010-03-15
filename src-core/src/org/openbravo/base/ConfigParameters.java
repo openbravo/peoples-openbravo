@@ -65,6 +65,10 @@ public class ConfigParameters {
 
   private final Properties propFileProperties;
 
+  // Default fall-back formats, used when properties are not present
+  private static final String DEFAULT_JAVA_DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
+  private static final String DEFAULT_SQL_DATETIME_FORMAT = "DD-MM-YYYY HH24:MI:SS";
+
   public static ConfigParameters retrieveFrom(ServletContext context) {
     ConfigParameters params = (ConfigParameters) context.getAttribute(CONFIG_ATTRIBUTE);
     if (params == null) {
@@ -312,6 +316,10 @@ public class ConfigParameters {
   }
 
   public String getJavaDateTimeFormat() {
-    return getOBProperty("dateTimeFormat.java", "dd-MM-yyyy HH:mm:ss");
+    return getOBProperty("dateTimeFormat.java", ConfigParameters.DEFAULT_JAVA_DATETIME_FORMAT);
+  }
+
+  public String getSqlDateTimeFormat() {
+    return getOBProperty("dateTimeFormat.sql", ConfigParameters.DEFAULT_SQL_DATETIME_FORMAT);
   }
 }

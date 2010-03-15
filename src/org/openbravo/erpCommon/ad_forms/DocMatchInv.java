@@ -138,7 +138,7 @@ public class DocMatchInv extends AcctServer {
 
     FieldProvider[] data = getObjectFieldProvider();
     BigDecimal bdCost = new BigDecimal(DocMatchInvData.selectProductAverageCost(conn, data[0]
-        .getField("M_Product_Id"), data[0].getField("DateAcct")));
+        .getField("M_Product_Id"), data[0].getField("orderAcctDate")));
     String strScale = DocMatchInvData.selectClientCurrencyPrecission(conn, vars.getClient());
     bdCost = bdCost.multiply(new BigDecimal(data[0].getField("Qty"))).setScale(
         new Integer(strScale), RoundingMode.HALF_UP);

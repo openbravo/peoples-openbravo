@@ -29,8 +29,7 @@ tr.Login_Logo_Support_Field {
 td.Login_Logo_SourceForge_Container_Cell {
   border: 0px none;
   vertical-align: middle;
-  text-align: -moz-right;
-  _text-align: right;
+  text-align: right;
   padding-right: 3px;
   padding-left: 3px;
   padding-top:3px;
@@ -49,8 +48,7 @@ td.Login_Logo_SourceForge_Container_Cell {
 .Login_Logo_Company_Container {
   background-color: white;
   vertical-align: middle;
-  text-align: -moz-center;
-  _text-align: center;
+  text-align: center;
   width: 280px;
   height: 61px;
   border: 1px solid;
@@ -78,8 +76,7 @@ td.Login_Logo_Company_Container_Cell {
 .Login_Logo_Support_Container {
   background-color: white;
   vertical-align: middle;
-  text-align: -moz-center;
-  _text-align: center;
+  text-align: center;
   width: 280px;
   height: 61px;
   border: 1px solid;

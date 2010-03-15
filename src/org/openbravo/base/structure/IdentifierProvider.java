@@ -39,6 +39,7 @@ import org.openbravo.base.provider.OBSingleton;
 
 public class IdentifierProvider implements OBSingleton {
 
+  public static final String SEPARATOR = " - ";
   private static IdentifierProvider instance;
 
   public static synchronized IdentifierProvider getInstance() {
@@ -76,7 +77,7 @@ public class IdentifierProvider implements OBSingleton {
 
     for (final Property identifier : identifiers) {
       if (sb.length() > 0) {
-        sb.append(" ");
+        sb.append(SEPARATOR);
       }
       final Object value = dob.get(identifier.getName());
 
@@ -90,5 +91,9 @@ public class IdentifierProvider implements OBSingleton {
       return entityName + " (" + ((Identifiable) dob).getId() + ")";
     }
     return sb.toString();
+  }
+
+  protected String getSeparator() {
+    return SEPARATOR;
   }
 }

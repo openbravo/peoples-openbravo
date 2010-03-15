@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -95,7 +95,8 @@
           IsCentrallyMaintained, AD_Column_ID, AD_FieldGroup_ID, ISDISPLAYED,
           DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY,
           SEQNO, SORTNO, ISSAMELINE,
-          ISFIELDONLY, ISENCRYPTED, AD_MODULE_ID
+          ISFIELDONLY, ISENCRYPTED, AD_MODULE_ID,
+          grid_SeqNo
         )
         VALUES
         (v_NextNo, v_Record_ID, Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID,
@@ -104,7 +105,8 @@
         Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID, Cur_Fields.ISDISPLAYED,
         Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
         Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
-        Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_AD_Module_ID) ;
+        Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_AD_Module_ID,
+        Cur_Fields.grid_SeqNo) ;
       -- update translation
       UPDATE AD_Field_Trl
         SET Name=

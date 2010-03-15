@@ -370,7 +370,7 @@ function eraseWindowElementDefaultAction(obj) {
 function drawWindowElementFocus(obj) {
   drawnWindowElement = obj;
   try {
-    if (top.frames['frameMenu']) top.frames['frameMenu'].onBlurMenu();
+    if (parent.frames['frameMenu']) parent.frames['frameMenu'].onBlurMenu();
   } catch (e) {
   }
   try {

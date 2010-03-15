@@ -22,9 +22,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.rmi.RemoteException;
 import java.sql.Connection;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -33,6 +40,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -41,6 +49,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.axis.AxisFault;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.io.DataReader;
@@ -51,6 +60,8 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.Zip;
@@ -222,7 +233,7 @@ public class ImportModule {
             "Cannot perform installation correctly: " + errors.getMessage()
                 + (force ? ". Forced anyway" : ""), "E");
       } catch (final ServletException ex) {
-        log4j.error(ex);
+        log4j.error("Error inserting log", ex);
       }
     }
     return checked;
@@ -242,7 +253,27 @@ public class ImportModule {
     final ModuleInstallDetail mid = VersionUtility.checkRemote(vars, installableModules,
         updateableModules, errors);
     modulesToInstall = mid.getModulesToInstall();
-    modulesToUpdate = mid.getModulesToUpdate();
+
+    // In case core is in the list of modules to update, put in at the last module to update, so it
+    // will be updated only in case the rest of modules were successfully downloaded and updated.
+    Module[] updateModuleAux = mid.getModulesToUpdate();
+    modulesToUpdate = new Module[updateModuleAux.length];
+    int i = 0;
+    boolean updatingCore = false;
+    Module core = null;
+    for (Module module : updateModuleAux) {
+      if (!module.getModuleID().equals("0")) {
+        modulesToUpdate[i] = module;
+        i++;
+      } else {
+        updatingCore = true;
+        core = module;
+      }
+    }
+    if (updatingCore) {
+      modulesToUpdate[i] = core;
+    }
+
     checked = mid.isValidConfiguration();
 
     return checked;
@@ -284,45 +315,30 @@ public class ImportModule {
     try {
       if (checked || force) {
         if (installLocally) {
-          initInstallation();
+          for (Module module : modulesToUpdate) {
+            if (!prepareUpdate(module)) {
+              return;
+            }
+          }
 
-          final String moduleToInstallID = (modulesToInstall != null && modulesToInstall.length > 0) ? modulesToInstall[0]
-              .getModuleID()
-              : modulesToUpdate[0].getModuleID();
-
-          final Vector<DynaBean> dynMod = new Vector<DynaBean>();
-          final Vector<DynaBean> dynDep = new Vector<DynaBean>();
-          final Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
-
-          installModule(file, moduleToInstallID, dynMod, dynDep, dynDbPrefix);
-
-          if (moduleToInstallID.equals("0"))
-            Utility.mergeOpenbravoProperties(obDir + "/config/Openbravo.properties", obDir
-                + "/config/Openbravo.properties.template");
-
-          final Vector<DynaBean> allModules = new Vector<DynaBean>(); // all
-          // modules
-          // include
-          // install
-          // and
-          // update
-          allModules.addAll(dynModulesToInstall);
-          allModules.addAll(dynModulesToUpdate);
-          insertDynaModulesInDB(allModules, dependencies, dbprefix);
-          insertDBLog();
-          addDynaClasspathEntries(dynModulesToInstall);
+          // Just pick the first module, to install/update as the rest of them are inside the obx
+          // file
+          Module module = (modulesToInstall != null && modulesToInstall.length > 0) ? modulesToInstall[0]
+              : modulesToUpdate[0];
+          installLocalModule(module, file,
+              (modulesToInstall != null && modulesToInstall.length > 0));
         } else { // install remotely
           execute();
         }
       }
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error("Error installing module", e);
       addLog(e.toString(), MSG_ERROR);
       try {
         ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "", e
             .toString(), "E");
       } catch (final ServletException ex) {
-        log4j.error(ex);
+        log4j.error("Error inserting log", ex);
       }
       rollback();
     }
@@ -336,164 +352,288 @@ public class ImportModule {
   public void execute() {
     // just for remote installation, modules to install and update must be
     // initialized
-    WebServiceImplServiceLocator loc;
-    WebServiceImpl ws = null;
-    try {
-      loc = new WebServiceImplServiceLocator();
-      ws = loc.getWebService();
-    } catch (final Exception e) {
-      log4j.error(e);
-      addLog("@CouldntConnectToWS@", MSG_ERROR);
-      try {
-        ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
-            "Couldn't contact with webservice server", "E");
-      } catch (final ServletException ex) {
-        ex.printStackTrace();
-      }
-      return;
-    }
     if (checked || force) {
-      initInstallation();
       if ((modulesToInstall == null || modulesToInstall.length == 0)
           && (modulesToUpdate == null || modulesToUpdate.length == 0)) {
         addLog("@ErrorNoModulesToInstall@", MSG_ERROR);
         return;
       }
-
-      if (modulesToInstall != null) {
-        for (int i = 0; i < modulesToInstall.length; i++) {
-          try {
-            // get remote module obx
-            InputStream obx = ModuleUtiltiy.getRemoteModule(this, modulesToInstall[i]
-                .getModuleVersionID());
-            if (obx == null) {
-              return;
-            }
-
-            final Vector<DynaBean> dynMod = new Vector<DynaBean>();
-            final Vector<DynaBean> dynDep = new Vector<DynaBean>();
-            final Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
-            installModule(obx, modulesToInstall[i].getModuleID(), dynMod, dynDep, dynDbPrefix);
-
-            // Add entries in .classpath for eclipse users
-            insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix);
-            addDynaClasspathEntries(dynMod);
-          } catch (final Exception e) {
-            log4j.error(e.getMessage(), e);
-            if (!(e instanceof PermissionException)) {
-              addLog("@ErrorGettingModule@", MSG_ERROR);
-            }
-            rollback();
-            try {
-              ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
-                  "Error getting module " + modulesToInstall[i].getName() + " - "
-                      + modulesToInstall[i].getVersionNo(), "E");
-            } catch (final ServletException ex) {
-              ex.printStackTrace();
-            }
-            return;
-          }
-        }
+      if (downloadAllModules()) {
+        // if failed downloading, exit installation, no rollback is needed since no actual sources
+        // were changed
+        installAllModules();
       }
-
-      if (modulesToUpdate != null) {
-        for (int i = 0; i < modulesToUpdate.length; i++) {
-          try {
-            // get remote module obx
-            InputStream obx = ModuleUtiltiy.getRemoteModule(this, modulesToUpdate[i]
-                .getModuleVersionID());
-            if (obx == null) {
-              return;
-            }
-
-            final Vector<DynaBean> dynMod = new Vector<DynaBean>();
-            final Vector<DynaBean> dynDep = new Vector<DynaBean>();
-            final Vector<DynaBean> dynDBPrefix = new Vector<DynaBean>();
-            installModule(obx, modulesToUpdate[i].getModuleID(), dynMod, dynDep, dynDBPrefix);
-
-            insertDynaModulesInDB(dynMod, dynDep, dynDBPrefix);
-
-            if (modulesToUpdate[i].getModuleID().equals("0"))
-              Utility.mergeOpenbravoProperties(obDir + "/config/Openbravo.properties", obDir
-                  + "/config/Openbravo.properties.template");
-
-            // Entries for .classpath should be there, do not try to
-            // insert them
-          } catch (final Exception e) {
-            e.printStackTrace();
-            addLog("@ErrorGettingModule@", MSG_ERROR);
-            rollback();
-            try {
-              ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
-                  "Error getting module " + modulesToUpdate[i].getName() + " - "
-                      + modulesToUpdate[i].getVersionNo(), "E");
-            } catch (final ServletException ex) {
-              ex.printStackTrace();
-            }
-            return;
-          }
-        }
-      }
-      insertDBLog();
+      cleanTmp();
     }
   }
 
   /**
-   * Prapares a backup for rollback of updates and removes the files within the directories to
-   * update, making thus the update like an installation from scratch.
-   * 
+   * Removes tmp directory where downloaded obx files are temporary stored
    */
-  private void initInstallation() {
+  private void cleanTmp() {
+    File tmp = new File(obDir + "/tmp");
+    if (tmp.exists()) {
+      log4j.info("Cleaning " + tmp);
+      Utility.deleteDir(tmp);
+    }
+  }
 
-    if (modulesToUpdate == null || modulesToUpdate.length == 0)
-      return;
-    final File dir = new File(obDir + "/backup_install");
+  /**
+   * Downloads all the modules to install/update in the tmp directory. If any error occurs during
+   * this process, the process is aborted.
+   */
+  private boolean downloadAllModules() {
+    final File dir = new File(obDir + "/tmp");
     if (!dir.exists())
       dir.mkdirs();
-    for (int i = 0; i < modulesToUpdate.length; i++) {
-      // Prepare backup for updates
-      if (modulesToUpdate[i].getModuleID().equals("0")) { // Updating core
-        // set directories to zip
-        final File core[] = getCore();
 
-        log4j.info("Zipping core...");
+    for (Module module : modulesToInstall) {
+      if (!downloadRemoteModule(module)) {
+        return false;
+      }
+    }
+    for (Module module : modulesToUpdate) {
+      if (!downloadRemoteModule(module)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Downloads a remote module in the tmp directory.
+   */
+  private boolean downloadRemoteModule(Module module) {
+    log4j.info("Downloading " + module.getPackageName() + " " + module.getVersionNo());
+    RemoteModule remoteModule = getRemoteModule(module.getModuleVersionID());
+
+    if (remoteModule.isError()) {
+      addLog(module.getName(), MSG_ERROR);
+      log4j.error("Error downloading module");
+      return false;
+    }
+
+    InputStream obx = remoteModule.getObx();
+    File file = new File(obDir + "/tmp/" + module.getPackageName() + "-" + module.getVersionNo()
+        + ".obx");
+    log4j.info("File size " + remoteModule.getSize() + " B. Temporary saving in " + file);
+    FileOutputStream fout = null;
+    try {
+      fout = new FileOutputStream(file);
+    } catch (FileNotFoundException e1) {
+      log4j.error("Error downloading obx, couldn't create file", e1);
+      addLog(module.getName() + "(" + module.getPackageName() + ") @CannotDownloadModule@ " + file,
+          MSG_ERROR);
+      return false;
+    }
+    final byte[] buf = new byte[1024];
+    int len;
+    long size = 0;
+    int i = 0;
+    DecimalFormat formatter = new DecimalFormat("###.##");
+    try {
+      // log download, each 10% for big files, each 10K for smaller ones
+      int loopsToLog = 10;
+      if (remoteModule.getSize() != null) {
         try {
-          Zip.zip(core, obDir + "/backup_install/" + modulesToUpdate[i].getPackageName() + "-"
-              + modulesToUpdate[i].getVersionNo() + ".zip", obDir);
-        } catch (final Exception e) {
-          e.printStackTrace();
-        }
-        log4j.info("Removing old core version files...");
-        Utility.deleteDir(core);
-      } else { // updating a module different than core
-
-        // take the info from module in db instead from modulesToUpdate because it can be
-        // different
-        ImportModuleData moduleInDB = null;
-        try {
-          moduleInDB = ImportModuleData.getModule(pool, modulesToUpdate[i].getModuleID());
-        } catch (Exception e) {
-          log4j.error(e);
-        }
-
-        if (moduleInDB != null) {
-          try {
-            Zip.zip(obDir + "/modules/" + moduleInDB.javapackage, obDir + "/backup_install/"
-                + moduleInDB.javapackage + "-" + moduleInDB.version + ".zip");
-            // Delete directory to be updated
-            log4j.info("Removing old module version files...");
-            Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
-          } catch (final Exception e) {
-            log4j.error(e);
+          loopsToLog = (remoteModule.getSize() / 1024) / 10;
+          if (loopsToLog < 10) {
+            loopsToLog = 10;
           }
-        } else {
-          log4j.error("module " + modulesToUpdate[i].getName()
-              + " not found in DB. Backup and old package skipped!");
+        } catch (Exception e) {
+          loopsToLog = 10;
         }
+      }
+      while ((len = obx.read(buf)) > 0) {
 
+        size += len;
+        fout.write(buf, 0, len);
+        if (remoteModule.getSize() != null) {
+          // Print download status log
+          i++;
+          if (i % loopsToLog == 0) {
+            // Do not print for each loop: do it each 30 times (just for big enough modules)
+            Double percentage = new Double(size) / new Double(remoteModule.getSize()) * 100;
+            String per = formatter.format(percentage);
+            log4j.info("  ...downloaded " + size + " " + per + "%");
+          }
+        }
+      }
+      fout.close();
+      obx.close();
+
+      // Check the obx file has been fully downloaded. This is done now by just checking the
+      // dowloaded size is the expected one. In future CRC should be done to guarranty the file is
+      // not corrupt, this would require a new service in CR.
+      if (remoteModule.getSize() == null || remoteModule.getSize() == size) {
+        log4j.info("  Downloaded " + size + " 100% -- OK");
+        return true;
+      } else {
+        addLog(module.getName() + "(" + module.getPackageName() + ") @IncompleteModuleDownload@ "
+            + remoteModule.getSize() + "/" + size, MSG_ERROR);
+        return false;
+      }
+    } catch (IOException e) {
+      addLog("@ErrorGettingModule@ " + module.getName() + "(" + module.getPackageName() + ") :"
+          + e.getMessage(), MSG_ERROR);
+      return false;
+    }
+
+  }
+
+  /**
+   * Installs all the modules to update and install. At this point their obx files have been
+   * downloaded locally, so it looks in the tmp directory for the obx and calls the
+   * {@link ImportModule#installLocalModule(Module, InputStream, boolean)} method.
+   */
+  private void installAllModules() {
+    for (Module module : modulesToInstall) {
+      InputStream obx = getTemporaryOBX(module);
+      if (obx == null || !installLocalModule(module, obx, true)) {
+        return;
       }
     }
 
+    for (Module module : modulesToUpdate) {
+      InputStream obx = getTemporaryOBX(module);
+      if (!prepareUpdate(module)) {
+        return;
+      }
+      if (obx == null || !installLocalModule(module, obx, false)) {
+        return;
+      }
+    }
+    insertDBLog();
+  }
+
+  /**
+   * Reads in the tmp directory the obx file and returns it as an InputStream.
+   */
+  private InputStream getTemporaryOBX(Module module) {
+    File file = new File(obDir + "/tmp/" + module.getPackageName() + "-" + module.getVersionNo()
+        + ".obx");
+    try {
+      return new FileInputStream(file);
+    } catch (FileNotFoundException e) {
+      addLog(module.getName() + "(" + module.getPackageName()
+          + ") @CannotInstalModuleFileNotFound@ " + file, MSG_ERROR);
+      return null;
+    }
+  }
+
+  /**
+   * Installs a module that is passed as InputSteam. It unzips the obx in the proper directory,
+   * updates database info about the installed module, updates Openbravo.properties file if updating
+   * core and adds entries in .classpth file for installation of new modules in environemts with
+   * eclipse.
+   */
+  private boolean installLocalModule(Module module, InputStream obx, boolean newModule) {
+    try {
+
+      final Vector<DynaBean> dynMod = new Vector<DynaBean>();
+      final Vector<DynaBean> dynDep = new Vector<DynaBean>();
+      final Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
+      installModule(obx, module.getModuleID(), dynMod, dynDep, dynDbPrefix);
+
+      insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix);
+      if (newModule) {
+        // Add entries in .classpath for eclipse users
+        addDynaClasspathEntries(dynMod);
+      }
+
+      if (module.getModuleID().equals("0")) {
+        Utility.mergeOpenbravoProperties(obDir + "/config/Openbravo.properties", obDir
+            + "/config/Openbravo.properties.template");
+      }
+      return true;
+    } catch (final Exception e) {
+      log4j.error(e.getMessage(), e);
+      if (!(e instanceof PermissionException)) {
+        addLog("@ErrorGettingModule@ " + module.getName() + "(" + module.getPackageName() + ") :"
+            + e.getMessage(), MSG_ERROR);
+      }
+      rollback();
+      try {
+        ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
+            "Error installing module " + module.getName() + " - " + module.getVersionNo(), "E");
+      } catch (final ServletException ex) {
+        log4j.error("Error saving log", ex);
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Prepares a backup for rollback of updates and removes the files within the directories to
+   * update, making thus the update like an installation from scratch.
+   * 
+   */
+  private boolean prepareUpdate(Module module) {
+    final File dir = new File(obDir + "/backup_install");
+    if (!dir.exists())
+      dir.mkdirs();
+
+    // take the info from module in db instead from modulesToUpdate because it can be
+    // different
+    ImportModuleData moduleInDB = null;
+    try {
+      moduleInDB = ImportModuleData.getModule(pool, module.getModuleID());
+    } catch (Exception e) {
+      log4j.error("Error getting module from db", e);
+    }
+    if (moduleInDB == null) {
+      addLog("@ErrorDoingBackup@ " + module.getName(), MSG_ERROR);
+      return false;
+    }
+
+    // Do not maintain multiple backups for different old module's version, remove old existent
+    // backups
+    for (File existentBackup : dir.listFiles()) {
+      if (existentBackup.getName().startsWith(moduleInDB.javapackage + "-")
+          && existentBackup.getName().endsWith(".zip")) {
+        log4j.info("Deleting old backup file " + existentBackup.getName());
+        Utility.deleteDir(existentBackup);
+      }
+    }
+
+    // Prepare backup for updates
+    if (module.getModuleID().equals("0")) { // Updating core
+      // set directories to zip
+      final File core[] = getCore();
+
+      log4j.info("Zipping core...");
+      try {
+        Zip.zip(core, obDir + "/backup_install/" + moduleInDB.javapackage + "-"
+            + moduleInDB.version + ".zip", obDir);
+      } catch (final Exception e) {
+        log4j.error("Error zipping module " + module.getName());
+        addLog("@ErrorDoingBackup@ " + module.getName(), MSG_ERROR);
+        return false;
+      }
+      log4j.info("Removing old core version files...");
+      Utility.deleteDir(core);
+    } else {
+      // updating a module different than core
+
+      String moduleDir = obDir + "/modules/" + moduleInDB.javapackage;
+      File moduleDirFile = new File(moduleDir);
+      if (!moduleDirFile.exists()) {
+        // nothing to backup, do not create empty zip
+        return true;
+      }
+      try {
+        Zip.zip(moduleDir, obDir + "/backup_install/" + moduleInDB.javapackage + "-"
+            + moduleInDB.version + ".zip");
+        // Delete directory to be updated
+        log4j.info("Removing old module version files...");
+        Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
+      } catch (final Exception e) {
+        log4j.error("Error zipping module " + module.getName());
+        addLog("@ErrorDoingBackup@ " + module.getName(), MSG_ERROR);
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -577,53 +717,82 @@ public class ImportModule {
       ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
           "Rollback installation", "E");
     } catch (final ServletException ex) {
-      log4j.error(ex);
+      log4j.error("Error in rollback adding log", ex);
     }
-    if (modulesToInstall != null && modulesToInstall.length > 0) {
-      for (int i = 0; i < modulesToInstall.length; i++) {
-        try {
-          // remove module from db (in case it is already there)
-          ImportModuleData.setInDevelopment(pool, modulesToInstall[i].getModuleID());
-          ImportModuleData.deleteDependencies(pool, modulesToInstall[i].getModuleID());
-          ImportModuleData.deleteDBPrefix(pool, modulesToInstall[i].getModuleID());
-          ImportModuleData.deleteModule(pool, modulesToInstall[i].getModuleID());
-        } catch (final Exception e) {
-          log4j.error(e);
-          addLog("Error deleting module " + modulesToInstall[i].getName() + " from db. "
-              + e.getMessage(), MSG_ERROR);
-        }
 
-        final File f = new File(obDir + "/modules/" + modulesToInstall[i].getPackageName());
-        if (f.exists()) {
-          if (Utility.deleteDir(f))
-            addLog("@DeletedDirectory@ " + f.getAbsolutePath(), MSG_ERROR);
-          else
-            addLog("@CouldntDeleteDirectory@ " + f.getAbsolutePath(), MSG_ERROR);
+    for (Module module : modulesToInstall) {
+      try {
+        // remove module from db (in case it is already there)
+        ImportModuleData.cleanModuleDependencyInstall(pool, module.getModuleID());
+        ImportModuleData.cleanModuleDBPrefixInstall(pool, module.getModuleID());
+        ImportModuleData.cleanModuleInstall(pool, module.getModuleID());
+      } catch (final Exception e) {
+        log4j.error("Error deleting module " + module.getName(), e);
+        addLog("Error deleting module " + module.getName() + " from db. " + e.getMessage(),
+            MSG_ERROR);
+      }
+
+      final File f = new File(obDir + "/modules/" + module.getPackageName());
+      if (f.exists()) {
+        if (Utility.deleteDir(f)) {
+          addLog("@DeletedDirectory@ " + f.getAbsolutePath(), MSG_ERROR);
+        } else {
+          addLog("@CouldntDeleteDirectory@ " + f.getAbsolutePath(), MSG_ERROR);
         }
       }
     }
 
-    if (modulesToUpdate != null && modulesToUpdate.length > 0) {
-      for (int i = 0; i < modulesToUpdate.length; i++) {
-        if (modulesToUpdate[i].getModuleID().equals("0")) { // restore
-          // core
-          final File core[] = getCore();
+    for (Module module : modulesToUpdate) {
+      // remove module from db (in case it is already there)
+      try {
+        ImportModuleData.cleanModuleDependencyInstall(pool, module.getModuleID());
+        ImportModuleData.cleanModuleDBPrefixInstall(pool, module.getModuleID());
+        ImportModuleData.cleanModuleInstall(pool, module.getModuleID());
+      } catch (final Exception e) {
+        log4j.error("Error deleting module" + module.getName(), e);
+        addLog("Error deleting module " + module.getName() + " from db. " + e.getMessage(),
+            MSG_ERROR);
+      }
+      // take the info from module in db instead from modulesToUpdate because it can be
+      // different
+      ImportModuleData moduleInDB = null;
+      try {
+        moduleInDB = ImportModuleData.getModule(pool, module.getModuleID());
+      } catch (Exception e) {
+        log4j.error("Error reading DB", e);
+      }
+
+      String backupFileName = obDir + "/backup_install/" + moduleInDB.javapackage + "-"
+          + moduleInDB.version + ".zip";
+      File backupFile = new File(backupFileName);
+      if (!backupFile.exists()) {
+        continue;
+      }
+
+      if (module.getModuleID().equals("0")) {
+        // restore core
+        final File core[] = getCore();
+        try {
+          log4j.info("Deletig core to restore backup...");
           Utility.deleteDir(core);
-          try {
-            Zip.unzip(obDir + "/backup_install/" + modulesToUpdate[i].getPackageName() + "-"
-                + modulesToUpdate[i].getVersionNo() + ".zip", obDir);
-          } catch (final Exception e) {
-            log4j.error(e);
+          log4j.info("Restoring core " + backupFileName);
+          Zip.unzip(backupFileName, obDir);
+        } catch (final Exception e) {
+          log4j.error("Error restoring core", e);
+        }
+      } else {
+        // restore regular modules
+        try {
+          File moduleDir = new File(obDir + "/modules/" + module.getPackageName());
+          if (moduleDir.exists()) {
+            log4j.info("Deleting " + module.getPackageName() + " to restore bakcup...");
+            Utility.deleteDir(new File(obDir + "/modules/" + module.getPackageName()));
           }
-        } else { // restore regular modules
-          try {
-            Utility.deleteDir(new File(obDir + "/modules/" + modulesToUpdate[i].getPackageName()));
-            Zip.unzip(obDir + "/backup_install/" + modulesToUpdate[i].getPackageName() + "-"
-                + modulesToUpdate[i].getVersionNo() + ".zip", obDir + "/modules/"
-                + modulesToUpdate[i].getPackageName());
-          } catch (final Exception e) {
-            log4j.error(e);
-          }
+          log4j.info("Restoring " + backupFileName);
+          Zip.unzip(backupFileName, obDir + "/modules/" + module.getPackageName());
+
+        } catch (final Exception e) {
+          log4j.error("Error restoring " + module.getName(), e);
         }
       }
     }
@@ -658,7 +827,11 @@ public class ImportModule {
    * 
    */
   void addLog(String m, int level) {
-    log4j.info(m);
+    if (level == MSG_ERROR) {
+      log4j.error(m);
+    } else {
+      log4j.info(m);
+    }
     if (level > logLevel) {
       logLevel = level;
       log = new StringBuffer(m);
@@ -837,7 +1010,6 @@ public class ImportModule {
 
     for (final DynaBean module : dModulesToInstall) {
       seqNo += 10;
-      module.set("ISINDEVELOPMENT", "Y");
       module.set("ISDEFAULT", "N");
       module.set("STATUS", "I");
       module.set("SEQNO", seqNo);
@@ -889,7 +1061,7 @@ public class ImportModule {
   /**
    * Returns all the modules and dependencies described within the obx file (as InputStream)
    * 
-   * Used to check dependencies in local intallation
+   * Used to check dependencies in local installation
    * 
    * @param dModulesToInstall
    * @param dDependencies
@@ -906,8 +1078,8 @@ public class ImportModule {
     boolean foundPrefix = false;
     while (((entry = obxInputStream.getNextEntry()) != null) && !foundAll) {
 
-      if (entry.getName().endsWith(".obx")) { // If it is a new module
-        // install it
+      if (entry.getName().endsWith(".obx")) {
+        // If it is a new module, install it
         final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
         obxInputStream.closeEntry();
         getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba);
@@ -1083,7 +1255,7 @@ public class ImportModule {
         }
       }
     } catch (final ServletException e) {
-      log4j.error(e);
+      log4j.error("Error inserting log", e);
     }
   }
 
@@ -1111,12 +1283,12 @@ public class ImportModule {
         updates = ws.moduleScanForUpdates(currentlyInstalledModules);
       } catch (final Exception e) {
         // do nothing just log the error
-        log4j.error(e);
+        log4j.error("Scan for updates coulnd't contact WS", e);
         try {
           ImportModuleData.insertLog(conn, user, "", "", "",
               "Scan for updates: Couldn't contact with webservice server", "E");
         } catch (final ServletException ex) {
-          log4j.error(e);
+          log4j.error("Error inserting log", e);
         }
         return updateModules; // return empty hashmap
       }
@@ -1138,16 +1310,16 @@ public class ImportModule {
         ImportModuleData.insertLog(conn, (vars == null ? "0" : vars.getUser()), "", "", "",
             "Total: found " + updateModules.size() + " updates", "S");
       } catch (final ServletException ex) {
-        log4j.error(ex);
+        log4j.error("Error inserting log", ex);
       }
       return updateModules;
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error("Scan for updates failed", e);
       try {
         ImportModuleData.insertLog(conn, (vars == null ? "0" : vars.getUser()), "", "", "",
             "Scan for updates: Error: " + e.toString(), "E");
       } catch (final ServletException ex) {
-        log4j.error(ex);
+        log4j.error("Error inserting log", ex);
       }
       return new HashMap<String, String>();
     }
@@ -1168,7 +1340,7 @@ public class ImportModule {
       parentId = ImportModuleData.getParentNode(conn, node);
     } catch (final ServletException e) {
       // do nothing just stop adding elements
-      log4j.error(e);
+      log4j.error("Error adding parent node", e);
       return;
     }
     if (parentId == null || parentId.equals(""))
@@ -1191,7 +1363,7 @@ public class ImportModule {
     try {
       data = ImportModuleData.selectInstalled(conn);
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting installed modules", e);
     }
     if (data != null) {
       for (int i = 0; i < data.length; i++) {
@@ -1204,23 +1376,22 @@ public class ImportModule {
   /**
    * Returns a File array with the directories that are part of core
    * 
-   * @return
    */
   private File[] getCore() {
-    final File[] file = new File[12];
-    file[0] = new File(obDir + "/legal");
-    file[1] = new File(obDir + "/lib");
-    file[2] = new File(obDir + "/WebContent");
-    file[3] = new File(obDir + "/src-core");
-    file[4] = new File(obDir + "/src-db");
-    file[5] = new File(obDir + "/src-gen");
-    file[6] = new File(obDir + "/src-trl");
-    file[7] = new File(obDir + "/src-wad");
-    file[8] = new File(obDir + "/src");
-    file[9] = new File(obDir + "/web");
-    file[10] = new File(obDir + "/src-test");
-    file[11] = new File(obDir + "/src-diagnostics");
-    return file;
+    ArrayList<File> core = new ArrayList<File>();
+    core.add(new File(obDir + "/legal"));
+    core.add(new File(obDir + "/lib"));
+    core.add(new File(obDir + "/src-core"));
+    core.add(new File(obDir + "/src-db"));
+    core.add(new File(obDir + "/src-gen"));
+    core.add(new File(obDir + "/src-trl"));
+    core.add(new File(obDir + "/src-wad"));
+    core.add(new File(obDir + "/src"));
+    core.add(new File(obDir + "/web"));
+    core.add(new File(obDir + "/src-test"));
+    core.add(new File(obDir + "/src-diagnostics"));
+    File[] module = new File[core.size()];
+    return core.toArray(module);
   }
 
   /**
@@ -1242,13 +1413,100 @@ public class ImportModule {
   }
 
   private class PermissionException extends Exception {
-    public PermissionException() {
-      super();
-    }
+    private static final long serialVersionUID = 1L;
 
     public PermissionException(String msg) {
       super(msg);
     }
+  }
+
+  /**
+   * Obtains remotely an obx for the desired moduleVersionID
+   * 
+   */
+  private RemoteModule getRemoteModule(String moduleVersionID) {
+    RemoteModule remoteModule = new RemoteModule();
+    WebServiceImplServiceLocator loc;
+    WebServiceImpl ws = null;
+    String strUrl = "";
+    boolean isCommercial;
+
+    try {
+      loc = new WebServiceImplServiceLocator();
+      ws = loc.getWebService();
+    } catch (final Exception e) {
+      log4j.error(e);
+      addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);
+      try {
+        ImportModuleData.insertLog(ImportModule.pool, (vars == null ? "0" : vars.getUser()), "",
+            "", "", "Couldn't contact with webservice server", "E");
+      } catch (final ServletException ex) {
+        log4j.error(ex);
+      }
+      remoteModule.setError(true);
+      return remoteModule;
+    }
+
+    try {
+      isCommercial = ws.isCommercial(moduleVersionID);
+      strUrl = ws.getURLforDownload(moduleVersionID);
+    } catch (AxisFault e1) {
+      addLog("@" + e1.getFaultCode() + "@", ImportModule.MSG_ERROR);
+      remoteModule.setError(true);
+      return remoteModule;
+    } catch (RemoteException e) {
+      addLog(e.getMessage(), ImportModule.MSG_ERROR);
+      remoteModule.setError(true);
+      return remoteModule;
+    }
+
+    if (isCommercial && !ActivationKey.isActiveInstance()) {
+      addLog("@NotCommercialModulesAllowed@", ImportModule.MSG_ERROR);
+      remoteModule.setError(true);
+      return remoteModule;
+    }
+
+    try {
+      URL url = new URL(strUrl);
+      HttpURLConnection conn = null;
+
+      if (strUrl.startsWith("https://")) {
+        ActivationKey ak = new ActivationKey();
+        String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
+        conn = HttpsUtils.sendHttpsRequest(url, instanceKey, "localhost-1", "changeit");
+      } else {
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Keep-Alive", "300");
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+        conn.setUseCaches(false);
+        conn.setAllowUserInteraction(false);
+      }
+
+      if (conn.getResponseCode() == HttpServletResponse.SC_OK) {
+        // OBX is ready to be used
+        remoteModule.setObx(conn.getInputStream());
+        String size = conn.getHeaderField("Content-Length");
+        if (size != null) {
+          remoteModule.setSize(new Integer(size));
+        }
+        return remoteModule;
+      }
+
+      // There is an error, let's check for a parseable message
+      String msg = conn.getHeaderField("OB-ErrMessage");
+      if (msg != null) {
+        addLog(msg, ImportModule.MSG_ERROR);
+      } else {
+        addLog("@ErrorDownloadingOBX@ " + conn.getResponseCode(), ImportModule.MSG_ERROR);
+      }
+    } catch (Exception e) {
+      addLog("@ErrorDownloadingOBX@ " + e.getMessage(), ImportModule.MSG_ERROR);
+    }
+    remoteModule.setError(true);
+    return remoteModule;
   }
 
 }
