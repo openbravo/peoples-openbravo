@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -33,19 +34,23 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
- * This class is used to implement Openbravo ERP servlet callouts in a simple
- * manner.
+ * This class is used to implement Openbravo ERP servlet callouts in a simple manner.
  * <p>
- * To develop a new servlet callout based on this class you only have to create
- * a new java class that extends the method:
- * <p><blockquote><pre>
+ * To develop a new servlet callout based on this class you only have to create a new java class
+ * that extends the method:
+ * <p>
+ * <blockquote>
+ * 
+ * <pre>
  * protected void execute(CalloutInfo info) throws ServletException;
- * </pre></blockquote>
+ * </pre>
+ * 
+ * </blockquote>
  * <p>
- * In this method you can develop the logic of the callout and use the
- * infoobject of class <code>CalloutInfo<code/> to access window fields,
+ * In this method you can develop the logic of the callout and use the infoobject of class
+ * <code>CalloutInfo<code/> to access window fields,
  * database and other methods
- *
+ * 
  * @author aro
  */
 public abstract class SimpleCallout extends HttpSecureAppServlet {
@@ -54,12 +59,11 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
   private static Logger log = Logger.getLogger(SimpleCallout.class);
 
   /**
-   * Overwrite this method to implement a new servlet callout based in
-   * <code>SimlpleCallout</code>
-   *
+   * Overwrite this method to implement a new servlet callout based in <code>SimlpleCallout</code>
+   * 
    * @param info
-   * The  {@code CalloutInfo} that contains all helper data to access
-   * callout information and servlet information
+   *          The {@code CalloutInfo} that contains all helper data to access callout information
+   *          and servlet information
    * @throws ServletException
    */
   protected abstract void execute(CalloutInfo info) throws ServletException;
@@ -71,7 +75,8 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -86,12 +91,13 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
     }
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
+      ServletException {
 
     log.debug("Output: dataSheet");
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
     CalloutInfo info = new CalloutInfo(vars, getSimpleClassName());
 
@@ -116,8 +122,7 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
   }
 
   /**
-   * Helper class that contains all data to access
-   * callout information and servlet information
+   * Helper class that contains all data to access callout information and servlet information
    */
   protected static class CalloutInfo {
 
@@ -125,8 +130,8 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
     private int rescounter;
     private int selectcounter;
     /**
-     * Provides the coder friendly methods to retrieve certain environment,
-     * session and servlet call variables.
+     * Provides the coder friendly methods to retrieve certain environment, session and servlet call
+     * variables.
      */
     public VariablesSecureApp vars;
 
@@ -148,62 +153,46 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
     }
 
     /**
-     *
-     * @return
-     * The name of field that triggered the callout.
+     * 
+     * @return The name of field that triggered the callout.
      */
     public String getLastFieldChanged() {
       return vars.getStringParameter("inpLastFieldChanged");
     }
 
     /**
-     *
-     * @return
-     * The Tab Id that triggered the callout.
+     * 
+     * @return The Tab Id that triggered the callout.
      */
     public String getTabId() {
-      return vars.getStringParameter("inpTabId");
+      return vars.getStringParameter("inpTabId", IsIDFilter.instance);
     }
 
     /**
-     *
-     * @return
-     * The Window Id that triggered the callout.
+     * 
+     * @return The Window Id that triggered the callout.
      */
     public String getWindowId() {
-      return vars.getStringParameter("inpwindowId");
+      return vars.getStringParameter("inpwindowId", IsIDFilter.instance);
     }
 
     /**
-     *
+     * 
      * @param param
-     * The name of the field to get the value.
-     * @return
-     * The value of a field named param as an {@code String}.
-     */
-    public String getStringParameter(String param) {
-      return vars.getStringParameter(param);
-    }
-
-    /**
-     *
-     * @param param
-     * The name of the field to get the value.
+     *          The name of the field to get the value.
      * @param filter
-     * Filter used to validate the input against list of allowed inputs.
-     * @return
-     * The value of a field named param as an {@code String}.
+     *          Filter used to validate the input against list of allowed inputs.
+     * @return The value of a field named param as an {@code String}.
      */
     public String getStringParameter(String param, RequestFilter filter) {
       return vars.getStringParameter(param, filter);
     }
 
     /**
-     *
+     * 
      * @param param
-     * The name of the field to get the value.
-     * @return
-     * The value of a field named param as a {@code BigDecimal}.
+     *          The name of the field to get the value.
+     * @return The value of a field named param as a {@code BigDecimal}.
      * @throws ServletException
      */
     public BigDecimal getBigDecimalParameter(String param) throws ServletException {
@@ -212,8 +201,9 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
 
     /**
      * Starts the inclusion of values of a field named param of type select.
+     * 
      * @param param
-     * The name of the select field to set the values.
+     *          The name of the select field to set the values.
      */
     public void addSelect(String param) {
 
@@ -230,10 +220,11 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
 
     /**
      * Adds an entry to the select field and marks it as unselected.
+     * 
      * @param name
-     * The entry name to add.
+     *          The entry name to add.
      * @param value
-     * The entry value to add.
+     *          The entry value to add.
      */
     public void addSelectResult(String name, String value) {
       addSelectResult(name, value, false);
@@ -241,12 +232,13 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
 
     /**
      * Adds an entry value to the select field.
+     * 
      * @param name
-     * The entry name to add.
+     *          The entry name to add.
      * @param value
-     * The entry value to add.
+     *          The entry value to add.
      * @param selected
-     * Whether this entry field is selected or not.
+     *          Whether this entry field is selected or not.
      */
     public void addSelectResult(String name, String value, boolean selected) {
 
@@ -275,10 +267,11 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
 
     /**
      * Sets the value of a field named param with the value indicated.
+     * 
      * @param param
-     * The name of the field to get the value.
+     *          The name of the field to get the value.
      * @param value
-     * The value to assign to the field.
+     *          The value to assign to the field.
      */
     public void addResult(String param, Object value) {
 
@@ -295,15 +288,17 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
     }
 
     /**
-     * Sets the value of a field named param with the value indicated.
-     * This method is useful to set numbers like {@code BigDecimal} objects.
+     * Sets the value of a field named param with the value indicated. This method is useful to set
+     * numbers like {@code BigDecimal} objects.
+     * 
      * @param param
-     * The name of the field to get the value.
+     *          The name of the field to get the value.
      * @param value
-     * The value to assign to the field.
+     *          The value to assign to the field.
      */
     public void addResult(String param, String value) {
-      addResult(param, (Object) value == null ? null : "\"" + FormatUtilities.replaceJS(value) + "\"");
+      addResult(param, (Object) value == null ? null : "\"" + FormatUtilities.replaceJS(value)
+          + "\"");
     }
   }
 }
