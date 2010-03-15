@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,24 +60,26 @@ function imprimir()
 </script>
 <script language="JavaScript" type="text/javascript">
 function displayLogic() {
-  //alert("inpLvl"+inputValue(document.frmMain.inpLevel)+" - inpOnly:"+inputValue(document.frmMain.inpOnly));
-  if (inputValue(document.frmMain.inpLevel) == 'S' && inputValue(document.frmMain.inpOnly) == '-1') {
+  if (inputValue(document.frmMain.inpLevel) == 'S') {
     displayLogicElement('AcctFromTo', true);
-    displayLogicElement('BP', true);
-    displayLogicElement('BP1', true);
-    displayLogicElement('BP2', true);
+    displayLogicElement('Filter1', true);
+    displayLogicElement('Filter2', true);
+    displayLogicElement('Filter3', true);
+    displayLogicElement('Filter4', true);
   }else{
     displayLogicElement('AcctFromTo', false);
-    displayLogicElement('BP', false);
-    displayLogicElement('BP1', false);
-    displayLogicElement('BP2', false);
+    displayLogicElement('Filter1', false);
+    displayLogicElement('Filter2', false);
+    displayLogicElement('Filter3', false);
+    displayLogicElement('Filter4', false);
   }
 }
 
 function onloadFunctions() {
   displayLogic();
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'Command', 'KEY');", "inpElementValueIdFrom_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'Command', 'KEY');", "inpElementValueIdTo_DES", "null");
 }
-
 
 function validate() {
   var frm=document.frmMain;
@@ -103,31 +105,123 @@ function validate() {
       return false;
     }
     markCheckedAllElements(frm.inpcBPartnerId_IN);
-  return true;
-}
-
-
-function refreshAccounts() {
-  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
-  var cmbAccountFrom = document.frmMain.inpAccountFrom;  
-  var cmbAccountTo = document.frmMain.inpAccountTo;  
-  changeComboData(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
-  changeComboData(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
-  if (cmbAccountTo.options.length > 0)
-    cmbAccountTo.options[cmbAccountTo.options.length-1].selected = true;
+    markCheckedAllElements(frm.inpcProjectId_IN);
+    markCheckedAllElements(frm.inpmProductId_IN);
   return true;
 }
 </script>
+<script language="JavaScript" type="text/javascript">
+function callback(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = "";
+  var id = "";
+  var imageId = "";
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
+	} catch (e) {
+    }
+	if (paramXMLParticular!=null && paramXMLParticular.length>0) {
+	  id = paramXMLParticular[0];
+	  imageId = paramXMLParticular[1];
+	}
+	addRows(strText,id);
+	showHideLayer(id, imageId);
+  }
+  return true;
+}
 
-<script language="JavaScript" type="text/javascript" id="paramArrayAccountFrom">
-var arrAccountFrom=null;
+function showHideLayer(id, imageId) {
+  var obj = getReference(imageId);
+  if (obj!=null) {
+    if (obj.className == "datawarehouseopen") {
+	  obj.className = "datawarehouseclose";
+	  showHideRows(id, "none");
+	} else {
+	  obj.className = "datawarehouseopen";
+	  showHideRows(id, "");
+	}
+  }
+}
+
+function addRows(htmlText, id) {
+  var jsonTable = eval(htmlText);
+  if (typeof jsonTable != undefined) {
+  for (i=0; i<jsonTable.rows.length; i++) {
+    var node=document.getElementById('funcEvenOddRow1'+id);
+    var elem=document.createElement('TR');
+    node.parentNode.insertBefore(elem,node.nextSibling);
+    elem.id = "funcEvenOddRow2"+ id +"_"+(i+1);
+    var newTD1 = document.createElement('TD');
+    newTD1.innerHTML = jsonTable.rows[i].td1
+    newTD1.className = jsonTable.config.classDefault;
+    newTD1.colSpan = "2";
+    var newTD2 = document.createElement('TD');
+    newTD2.innerHTML = jsonTable.rows[i].td2;
+    newTD2.className = jsonTable.config.classAmount;
+    var newTD3 = document.createElement('TD');
+    newTD3.innerHTML = jsonTable.rows[i].td3;
+    newTD3.className = jsonTable.config.classAmount;
+    var newTD4 = document.createElement('TD');
+    newTD4.innerHTML = jsonTable.rows[i].td4;
+    newTD4.className = jsonTable.config.classAmount;
+    var newTD5 = document.createElement('TD');
+    newTD5.innerHTML = jsonTable.rows[i].td5;
+    newTD5.className = jsonTable.config.classAmount;
+    var newTD6 = document.createElement('TD');
+    newTD6.innerHTML = "";
+    newTD6.className = jsonTable.config.classDefault;
+    elem.appendChild(newTD1);
+    elem.appendChild(newTD2);
+    elem.appendChild(newTD3);
+    elem.appendChild(newTD4);
+    elem.appendChild(newTD5);
+    elem.appendChild(newTD6);
+  }
+  }
+}
+
+function showHideRows(id, showHide) {
+  var fila = document.getElementById('funcEvenOddRow2'+id+'_1');
+  var i = 1;
+  var txt = '';
+  while (fila != undefined) {
+    i++;
+	fila.style.display = showHide;
+	fila = document.getElementById('funcEvenOddRow2'+id+'_'+i);
+  }
+}
+
+function updateData(CommandValue, identifier) {
+  var frm = document.frmMain;
+  frm.inpcAccountId.value = identifier;
+  var obj = getReference("buttonTree" + identifier);
+  if (obj!=null && obj.className == "datawarehouseclose") {
+    var paramXMLReq = new Array(identifier, 'buttonTree' + identifier);
+    return submitXmlHttpRequest(callback, frm, CommandValue, "ReportTrialBalance.html", false, null, paramXMLReq);
+  } else {
+    showHideLayer(identifier, "buttonTree" + identifier);
+  }
+}
+
+function showHideFilters(identifier) {
+  var obj = getReference(identifier);
+  if (obj!=null) {
+    if (obj.className == "datawarehouseopen") {
+      obj.className = "datawarehouseclose";
+      displayLogicElement('Filter2', false);
+      displayLogicElement('Filter3', false);
+      displayLogicElement('Filter4', false);
+    } else {
+      obj.className = "datawarehouseopen";
+      displayLogicElement('Filter2', true);
+      displayLogicElement('Filter3', true);
+      displayLogicElement('Filter4', true);
+    }
+  }
+}
 </script>
 
-<script language="JavaScript" type="text/javascript" id="paramArrayAccountTo">
-var arrAccountTo=null;
-</script>
-
-	<script language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonHTML')
@@ -139,10 +233,19 @@ var arrAccountTo=null;
 		setTabTableParentElement();
 		enableShortcuts('edition');
 		setBrowserAutoComplete(false);
-		
+
+		var selectedGroupBy = document.getElementById("paramSelectedGroupBy").value;
+	    var groupby = document.getElementById("inpGroupBy");
+	    for (i=0;i<groupby.length;i++){
+	      if (groupby[i].value == selectedGroupBy)
+	        groupby[i].selected = true;
+	    }
+
+	    try {
+	        onloadFunctions();
+	    } catch (e) {}
 		resizeArea();
-		 updateMenuIcon('buttonMenu');
-		  onloadFunctions();
+		updateMenuIcon('buttonMenu');
 
 		setWindowElementFocus('firstElement');
 	}
@@ -150,14 +253,12 @@ var arrAccountTo=null;
 	function onResizeDo(){
 		resizeArea();
 	}
-	</script>
+</script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <form method="post" action="ReportTrialBalance.html" name="frmMain"  target="_self">
   <input type="hidden" name="Command"></input>
-  <input type="hidden" name="inpcElementValueIdFrom"></input>
-  <input type="hidden" name="inpcElementValueId"></input>
-  <input type="hidden" name="inpcElementValueIdTo" id="paramElementvalueIdTo" value=""></input>
+  <input type="hidden" name="inpcAccountId"></input>
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
@@ -325,7 +426,8 @@ var arrAccountTo=null;
                     </td>
                   </tr>
                 </table>
-             </td>                  
+             </td>
+             <td class="TitleCell"></td>            
               <td class="TitleCell"><span class="LabelText">To Date</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -352,7 +454,7 @@ var arrAccountTo=null;
             </tr>
             <tr>
               <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true" onchange="refreshAccounts();">
+              <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true">
                   <option value=""> <div id="reportC_ACCTSCHEMA_ID"></div></option>
                 </select>
               </td>
@@ -363,36 +465,74 @@ var arrAccountTo=null;
                 <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_OneCell_width" required="true">
                   <option value=""> <div id="reportAD_ORGID"></div></option>
                 </select></td>
+                <td class="TitleCell"></td>
                 <td class="TitleCell"><span class="LabelText">Account Level</span></td>
               <td class="Combo_ContentCell"> 
                 <select  name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" required="true" onchange="displayLogic(); return true;">
                   <option value=""> <div id="reportLevel"></div></option>
                 </select></td>
-              <td class="TitleCell" id="txtOnly"> <span class="LabelText">Show selected level only</span></td>
-              <td class="Radio_Check_ContentCell">
-                <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOnly" id="paramOnly" value="-1" checked></input></span>
-              </td>
               <td class="ContentCell"></td>
             </tr>
             <tr id="AcctFromTo">
               <td class="TitleCell"><span class="LabelText">From Account</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpAccountFrom" id="inpAccountFrom" class="Combo Combo_TwoCells_width">
-                  <option value=""> <div id="reportAccountFrom_ID"></div></option>
-                </select></td>
+              <td class="TextBox_btn_ContentCell" colspan="2">
+                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                  <tr>
+                    <td class="TextBox_ContentCell">
+                      <input type="hidden" name="inpcElementValueIdFrom" id="paramElementvalueIdFrom" value=""></input>
+                      <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpElementValueIdFrom_DES" id="inpElementValueIdFrom_DES" maxlength="20" value=""></input>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Account'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value);return false;">
+                      <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                        <tr>
+                          <td class="FieldButton_bg">
+                            <img alt="Account" class="FieldButton_Icon FieldButton_Icon_Account" title="Account" src="../../../../../web/images/blank.gif" border="0"></img>
+                          </td>
+                        </tr>
+                      </table>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
               <td class="TitleCell"><span class="LabelText">To Account</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpAccountTo" id="inpAccountTo" class="Combo Combo_TwoCells_width">
-                  <option value=""> <div id="reportAccountTo_ID"></div></option>
-                </select></td>
+              <td class="TextBox_btn_ContentCell" colspan="2">
+                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                  <tr>
+                    <td class="TextBox_ContentCell">
+                      <input type="hidden" name="inpcElementValueIdTo" id="paramElementvalueIdTo" value=""></input>
+                      <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpElementValueIdTo_DES" id="inpElementValueIdTo_DES" maxlength="20" value=""></input>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Account'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value);return false;">
+                      <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                        <tr>
+                          <td class="FieldButton_bg">
+                            <img alt="Account" class="FieldButton_Icon FieldButton_Icon_Account" title="Account" src="../../../../../web/images/blank.gif" border="0"></img>
+                          </td>
+                        </tr>
+                      </table>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
             </tr>
            
-            <tr id="BP">
+            <tr id="Filter1">
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
                   <tr class="FieldGroup_TopMargin"/>
                   <tr>
+                    <td>
+                      <a id="expandFilters" onmouseout="window.status='';return true;" onmouseover="window.status='Open';return true;" onclick="showHideFilters('buttonTreeFilters'); return false;" href="#">
+                        <span class="datawarehouseopen" id="buttonTreeFilters"/>
+                      </a>
+                    </td>
                     <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                    <td class="FieldGroupTitle">Business Partner</td>
+                    <td class="FieldGroupTitle">Dimensions</td>
                     <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                     <td class="FieldGroupContent"/>
                   </tr>
@@ -402,109 +542,300 @@ var arrAccountTo=null;
               </td>
             </tr>
             
-            <tr id="BP1"> 
-              <td class="TitleCell"><span class="LabelText">All:</span></td>
-              <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramAll" name="inpAll"/></td>
-              <td/>
-              <td/>
-              <td/>
-              <td/>
+            <tr id="Filter2">
+              <td class="TitleCell"><span class="LabelText">Business Partner</span></td>
+                <td class="List_ContentCell" colspan="2">
+
+                  <table border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td>
+                        <select class="List_width List_height" name="inpcBPartnerId_IN" multiple="" id="reportCBPartnerId_IN"></select>
+                      </td>
+                      <td class="List_Button_ContentCell">
+                        <table border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td>
+                              <a class="List_Button_TopLink" href="#"
+                                onclick="openMultiSearch(null, null, '../info/BusinessPartnerMultiple.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId_IN');return false;"
+                                onfocus="setWindowElementFocus(this); window.status='Add'; return true;"
+                                onblur="window.status=''; return true;"
+                                onkeypress="this.className='List_Button_TopLink_active'; return true;"
+                                onkeyup="this.className='List_Button_TopLink_focus'; return true;">
+                              <table class="List_Button_Top"
+                                onmousedown="this.className='List_Button_Top_active'; return true;"
+                                onmouseup="this.className='List_Button_Top'; return true;"
+                                onmouseover="this.className='List_Button_Top_hover'; window.status='Add'; return true;"
+                                onmouseout="this.className='List_Button_Top'; window.status=''; return true;">
+                                <tr>
+                                  <td class="List_Button_Top_bg">
+                                    <img class="List_Button_Icon List_Button_Icon_Add" src="../../../../../web/images/blank.gif" alt="Add" title="Add"/>
+                                  </td>
+                                </tr>
+                              </table>
+                              </a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="List_Button_Separator"></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <a class="List_Button_MiddleLink" href="#"
+                                onclick="clearSelectedElements(document.frmMain.inpcBPartnerId_IN);return false;"
+                                onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
+                                onblur="window.status=''; return true;"
+                                onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
+                                onkeyup="this.className='List_Button_MiddleLink_focus'; return true;">
+                                <table class="List_Button_Middle"
+                                  onmousedown="this.className='List_Button_Middle_active'; return true;"
+                                  onmouseup="this.className='List_Button_Middle'; return true;"
+                                  onmouseover="this.className='List_Button_Middle_hover'; window.status='Delete selected elements'; return true;"
+                                  onmouseout="this.className='List_Button_Middle'; window.status=''; return true;">
+                                  <tr>
+                                    <td class="List_Button_Middle_bg">
+                                      <img class="List_Button_Icon List_Button_Icon_Delete" src="../../../../../web/images/blank.gif" alt="Delete selected elements" title="Delete selected elements"/>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="List_Button_Separator"></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <a class="List_Button_BottomLink" href="#"
+                                onclick="clearList(document.frmMain.inpcBPartnerId_IN);return false;"
+                                onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
+                                onblur="window.status=''; return true;"
+                                onkeypress="this.className='List_Button_BottomLink_active'; return true;"
+                                onkeyup="this.className='List_Button_BottomLink_focus'; return true;">
+                                <table class="List_Button_Bottom"
+                                  onmousedown="this.className='List_Button_Bottom_active'; return true;"
+                                  onmouseup="this.className='List_Button_Bottom'; return true;"
+                                  onmouseover="this.className='List_Button_Bottom_hover'; window.status='Delete all elements'; return true;"
+                                  onmouseout="this.className='List_Button_Bottom'; window.status=''; return true;">
+                                  <tr>
+                                    <td class="List_Button_Bottom_bg">
+                                      <img class="List_Button_Icon List_Button_Icon_DeleteAll" src="../../../../../web/images/blank.gif" alt="Delete all elements" title="Delete all elements"/>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                
+                <!-- Product multiple selector -->
+                <td class="TitleCell"><span class="LabelText">Product</span></td>
+                <td class="List_ContentCell" colspan="2">
+                  <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td>
+                      <select class="List_width List_height" name="inpmProductId_IN" multiple="" id="reportMProductId_IN"></select>
+                    </td>
+                    <td class="List_Button_ContentCell">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td>
+                            <a class="List_Button_TopLink" href="#"
+                            onclick="openMultiSearch(null, null, '../info/ProductMultiple.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId_IN');return false;"
+                            onfocus="setWindowElementFocus(this); window.status='Add'; return true;"
+                            onblur="window.status=''; return true;"
+                            onkeypress="this.className='List_Button_TopLink_active'; return true;"
+                            onkeyup="this.className='List_Button_TopLink_focus'; return true;">
+                            <table class="List_Button_Top"
+                              onmousedown="this.className='List_Button_Top_active'; return true;"
+                              onmouseup="this.className='List_Button_Top'; return true;"
+                              onmouseover="this.className='List_Button_Top_hover'; window.status='Add'; return true;"
+                              onmouseout="this.className='List_Button_Top'; window.status=''; return true;">
+                              <tr>
+                                <td class="List_Button_Top_bg">
+                                  <img class="List_Button_Icon List_Button_Icon_Add" src="../../../../../web/images/blank.gif" alt="Add" title="Add"/>
+                                </td>
+                              </tr>
+                            </table>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="List_Button_Separator">
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <a class="List_Button_MiddleLink" href="#"
+                              onclick="clearSelectedElements(document.frmMain.inpmProductId_IN);return false;"
+                              onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
+                              onblur="window.status=''; return true;"
+                              onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
+                              onkeyup="this.className='List_Button_MiddleLink_focus'; return true;">
+                              <table class="List_Button_Middle"
+                                onmousedown="this.className='List_Button_Middle_active'; return true;"
+                                onmouseup="this.className='List_Button_Middle'; return true;"
+                                onmouseover="this.className='List_Button_Middle_hover'; window.status='Delete selected elements'; return true;"
+                                onmouseout="this.className='List_Button_Middle'; window.status=''; return true;">
+                                <tr>
+                                  <td class="List_Button_Middle_bg">
+                                    <img class="List_Button_Icon List_Button_Icon_Delete" src="../../../../../web/images/blank.gif" alt="Delete selected elements" title="Delete selected elements"/>
+                                  </td>
+                                </tr>
+                              </table>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="List_Button_Separator">
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <a class="List_Button_BottomLink" href="#"
+                              onclick="clearList(document.frmMain.inpmProductId_IN);return false;"
+                              onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
+                              onblur="window.status=''; return true;"
+                              onkeypress="this.className='List_Button_BottomLink_active'; return true;"
+                              onkeyup="this.className='List_Button_BottomLink_focus'; return true;">
+                              <table class="List_Button_Bottom"
+                                onmousedown="this.className='List_Button_Bottom_active'; return true;"
+                                onmouseup="this.className='List_Button_Bottom'; return true;"
+                                onmouseover="this.className='List_Button_Bottom_hover'; window.status='Delete all elements'; return true;"
+                                onmouseout="this.className='List_Button_Bottom'; window.status=''; return true;">
+                                <tr>
+                                  <td class="List_Button_Bottom_bg">
+                                    <img class="List_Button_Icon List_Button_Icon_DeleteAll" src="../../../../../web/images/blank.gif" alt="Delete all elements" title="Delete all elements"/>
+                                  </td>
+                                </tr>
+                              </table>
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
             </tr>
-            <tr id="BP2">
-                  <td class="TitleCell"><span class="LabelText">Business Partner</span></td>
-                  <td class="List_ContentCell" colspan="2">
-
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>
-                          <select class="List_width List_height" name="inpcBPartnerId_IN" multiple="" id="reportCBPartnerId_IN"></select>
-                        </td>
-                        <td class="List_Button_ContentCell">
-                          <table border="0" cellspacing="0" cellpadding="0">
-                            <tr>
-                              <td>
-                                <a class="List_Button_TopLink" href="#"
-                                  onclick="openMultiSearch(null, null, '../info/BusinessPartnerMultiple.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId_IN');return false;"
-                                  onfocus="setWindowElementFocus(this); window.status='Add'; return true;"
-                                  onblur="window.status=''; return true;"
-                                  onkeypress="this.className='List_Button_TopLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_TopLink_focus'; return true;">
-                                  <table class="List_Button_Top"
-                                    onmousedown="this.className='List_Button_Top_active'; return true;"
-                                    onmouseup="this.className='List_Button_Top'; return true;"
-                                    onmouseover="this.className='List_Button_Top_hover'; window.status='Add'; return true;"
-                                    onmouseout="this.className='List_Button_Top'; window.status=''; return true;">
-                                    <tr>
-                                      <td class="List_Button_Top_bg">
-                                        <img class="List_Button_Icon List_Button_Icon_Add" src="../../../../../web/images/blank.gif" alt="Add" title="Add"/>
-                                      </td>
-                                    </tr>
-                                  </table>
-                                </a>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="List_Button_Separator">
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <a class="List_Button_MiddleLink" href="#"
-                                  onclick="clearSelectedElements(document.frmMain.inpcBPartnerId_IN);return false;"
-                                  onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
-                                  onblur="window.status=''; return true;"
-                                  onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_MiddleLink_focus'; return true;">
-                                  <table class="List_Button_Middle"
-                                    onmousedown="this.className='List_Button_Middle_active'; return true;"
-                                    onmouseup="this.className='List_Button_Middle'; return true;"
-                                    onmouseover="this.className='List_Button_Middle_hover'; window.status='Delete selected elements'; return true;"
-                                    onmouseout="this.className='List_Button_Middle'; window.status=''; return true;">
-                                    <tr>
-                                      <td class="List_Button_Middle_bg">
-                                        <img class="List_Button_Icon List_Button_Icon_Delete" src="../../../../../web/images/blank.gif" alt="Delete selected elements" title="Delete selected elements"/>
-                                      </td>
-                                    </tr>
-                                  </table>
-                                </a>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="List_Button_Separator">
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <a class="List_Button_BottomLink" href="#"
-                                  onclick="clearList(document.frmMain.inpcBPartnerId_IN);return false;"
-                                  onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
-                                  onblur="window.status=''; return true;"
-                                  onkeypress="this.className='List_Button_BottomLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_BottomLink_focus'; return true;">
-                                  <table class="List_Button_Bottom"
-                                    onmousedown="this.className='List_Button_Bottom_active'; return true;"
-                                    onmouseup="this.className='List_Button_Bottom'; return true;"
-                                    onmouseover="this.className='List_Button_Bottom_hover'; window.status='Delete all elements'; return true;"
-                                    onmouseout="this.className='List_Button_Bottom'; window.status=''; return true;">
-                                    <tr>
-                                      <td class="List_Button_Bottom_bg">
-                                        <img class="List_Button_Icon List_Button_Icon_DeleteAll" src="../../../../../web/images/blank.gif" alt="Delete all elements" title="Delete all elements"/>
-                                      </td>
-                                    </tr>
-                                  </table>
-                                </a>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-
-                  </td>
             
-            </tr>
-         
+            <!-- Project multiple selector -->
+            <tr id="Filter3">
+              <td class="TitleCell"><span class="LabelText">Project</span></td>
+              <td class="List_ContentCell" colspan="2">
 
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td>
+                      <select class="List_width List_height" name="inpcProjectId_IN" multiple="" id="reportCProjectId_IN"></select>
+                    </td>
+                    <td class="List_Button_ContentCell">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td>
+                            <a class="List_Button_TopLink" href="#"
+                              onclick="openMultiSearch(null, null, '../info/ProjectMultiple.html', 'SELECTOR_PROJECT', false, 'frmMain', 'inpcProjectId_IN');return false;"
+                              onfocus="setWindowElementFocus(this); window.status='Add'; return true;"
+                              onblur="window.status=''; return true;"
+                              onkeypress="this.className='List_Button_TopLink_active'; return true;"
+                              onkeyup="this.className='List_Button_TopLink_focus'; return true;">
+                              <table class="List_Button_Top"
+                                onmousedown="this.className='List_Button_Top_active'; return true;"
+                                onmouseup="this.className='List_Button_Top'; return true;"
+                                onmouseover="this.className='List_Button_Top_hover'; window.status='Add'; return true;"
+                                onmouseout="this.className='List_Button_Top'; window.status=''; return true;">
+                                <tr>
+                                  <td class="List_Button_Top_bg">
+                                    <img class="List_Button_Icon List_Button_Icon_Add" src="../../../../../web/images/blank.gif" alt="Add" title="Add"/>
+                                  </td>
+                                </tr>
+                              </table>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="List_Button_Separator">
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <a class="List_Button_MiddleLink" href="#"
+                              onclick="clearSelectedElements(document.frmMain.inpcProjectId_IN);return false;"
+                              onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
+                              onblur="window.status=''; return true;"
+                              onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
+                              onkeyup="this.className='List_Button_MiddleLink_focus'; return true;">
+                              <table class="List_Button_Middle"
+                                onmousedown="this.className='List_Button_Middle_active'; return true;"
+                                onmouseup="this.className='List_Button_Middle'; return true;"
+                                onmouseover="this.className='List_Button_Middle_hover'; window.status='Delete selected elements'; return true;"
+                                onmouseout="this.className='List_Button_Middle'; window.status=''; return true;">
+                                <tr>
+                                  <td class="List_Button_Middle_bg">
+                                    <img class="List_Button_Icon List_Button_Icon_Delete" src="../../../../../web/images/blank.gif" alt="Delete selected elements" title="Delete selected elements"/>
+                                  </td>
+                                </tr>
+                              </table>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="List_Button_Separator">
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <a class="List_Button_BottomLink" href="#"
+                              onclick="clearList(document.frmMain.inpcProjectId_IN);return false;"
+                              onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
+                              onblur="window.status=''; return true;"
+                              onkeypress="this.className='List_Button_BottomLink_active'; return true;"
+                              onkeyup="this.className='List_Button_BottomLink_focus'; return true;">
+                              <table class="List_Button_Bottom"
+                                onmousedown="this.className='List_Button_Bottom_active'; return true;"
+                                onmouseup="this.className='List_Button_Bottom'; return true;"
+                                onmouseover="this.className='List_Button_Bottom_hover'; window.status='Delete all elements'; return true;"
+                                onmouseout="this.className='List_Button_Bottom'; window.status=''; return true;">
+                                <tr>
+                                  <td class="List_Button_Bottom_bg">
+                                    <img class="List_Button_Icon List_Button_Icon_DeleteAll" src="../../../../../web/images/blank.gif" alt="Delete all elements" title="Delete all elements"/>
+                                  </td>
+                                </tr>
+                              </table>
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+              </td> 
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+            </tr>
+            
+            <!-- Group By -->
+            <tr id="Filter4">
+              <td class="TitleCell"><span class="LabelText">Group By</span></td>
+              <td class="Combo_ContentCell"> <select name="inpGroupBy" id="inpGroupBy" class="Combo Combo_OneCell_width">
+                  <option value=""></option>
+                  <option value="BPartner">Business Partner</option>
+                  <option value="Product">Product</option>
+                  <option value="Project">Project</option>
+                </select>
+                <input type="hidden" value="" id="paramSelectedGroupBy"/>
+              </td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+            </tr>
+            
             <tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
@@ -541,8 +872,8 @@ var arrAccountTo=null;
                     onmouseout="buttonEvent('onmouseout', this);">
                     <table class="Button">
                       <tr>
-                        <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0" /></td>
-                        <td class="Button_text">HTML Format</td>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text">Search</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>
@@ -558,102 +889,59 @@ var arrAccountTo=null;
 
             <tr>
           </table>
+          
+          <!-- Results section -->
           <table class="Main_Client_TableEdition">
             <tr>
               <td colspan="6">
                 <div style="height:25px;" />
-                <div id="sectionNoBP">
+                <!-- Section with grid results -->
+                <div id="sectionGridView">
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-                    <tr class="DataGrid_Body_Row"> 
-                      <th height="17" colspan="8" class="DataGrid_Header_Cell">Balance</th> 
+                  <tr class="DataGrid_Body_Row"> 
+                      <th height="17" colspan="7" class="DataGrid_Header_Cell">Balance</th> 
                     </tr>
                     <tr class="DataGrid_Body_Row">
-                      <th width="9%" class="DataGrid_Header_Cell">ACCOUNT CODE</th>
-                      <th width="33%" class="DataGrid_Header_Cell">DESCRIPTION</th>
-                      <th width="12%" class="DataGrid_Header_Cell">INITIAL BALANCE</th>
-                      <th width="12%" class="DataGrid_Header_Cell">DEBIT PERIOD</th>
-                      <th width="12%" class="DataGrid_Header_Cell">CREDIT PERIOD</th>
-                      <th width="12%" class="DataGrid_Header_Cell">FINAL BALANCE</th>
-                      <th width="10%"  class="DataGrid_Header_Cell">DETAIL</th>
-                    </tr> 
-
-                  <div id="sectionDiscard"> 
-
-                      <div id="sectionDetail"> 
-                        <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
-                          <td width="9%" class="DataGrid_Body_Cell"> 
-                            <a href="#" onclick="submitCommandFormParameter('FIND', document.frmMain.inpcElementValueIdFrom, 'xx', false, document.frmMain, 'ReportGeneralLedger.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
-                            <span id="fieldAccount">xx600</span></a><span id="fieldSpanAccount">xx600</span>
-                          </td>
-                          <td width="33%" id="fieldDescription" class="DataGrid_Body_Cell">xxPérdidas y ganacias</td>
-                          <td width="12%" id="fieldSaldoInicial" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                          <td width="12%" id="fieldAmtacctdr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                          <td width="12%" id="fieldAmtacctcr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                          <td width="12%" id="fieldSaldoFinal" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                          <td width="10%" class="DataGrid_Body_Cell"> 
-                            <a href="#" onclick="submitCommandFormParameter('DEFAULT', document.frmMain.inpcElementValueId, 'xx', false, document.frmMain, 'ReportTrialBalanceDetail.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">Detail</a>
-                          </td>
-                        </tr>
-                      </div>
-                      <tr class="DataGrid_Body_Row"> 
-                        
-                        <th width="42%"  colspan="2" class="DataGrid_Header_Cell">ADD AND KEEP GOING...</th>
-                        <th width="12%"  id="fieldTotalSaldoInicial" class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                        <th width="12%" id="fieldTotalAmtacctdr"  class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                        <th width="12%" id="fieldTotalAmtacctcr"  class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                        <th width="12%"  id="fieldTotalSaldoFinal" class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                        <th width="10%" class="DataGrid_Header_Cell" colspan="2">&nbsp;</th>
-                      
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-
-                <div id="sectionBP"> 
-                  <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-                    <tr class="DataGrid_Body_Row"> 
-                      <th class="DataGrid_Header_Cell" colspan="8"> 
-                      <span>Business Partner</span><span>&nbsp;</span> 
-                        <span id="fieldPartner">xxPartnerName</span>
-                      </th>
+                      <th width="90" class="DataGrid_Header_Cell">ACCOUNT CODE</th>
+                      <th width="280" class="DataGrid_Header_Cell">DESCRIPTION</th>
+                      <th width="105" class="DataGrid_Header_Cell">INITIAL BALANCE</th>
+                      <th width="105" class="DataGrid_Header_Cell">DEBIT PERIOD</th>
+                      <th width="105" class="DataGrid_Header_Cell">CREDIT PERIOD</th>
+                      <th width="105" class="DataGrid_Header_Cell">FINAL BALANCE</th>
+                      <th width="70"  class="DataGrid_Header_Cell">DETAIL</th>
                     </tr>
-                  <tr class="DataGrid_Body_Row"> 
-                    <th height="17" colspan="8" class="DataGrid_Header_Cell">Balance</th>
-                  </tr>
-                  <tr class="DataGrid_Body_Row"> 
-                    <th width="9%" class="DataGrid_Header_Cell">ACCOUNT CODE</th>
-                    <th width="33%" class="DataGrid_Header_Cell">DESCRIPTION</th>
-                    <th width="12%" class="DataGrid_Header_Cell">INITIAL BALANCE</th>
-                    <th width="12%" class="DataGrid_Header_Cell">Debit Period</th>
-                    <th width="12%" class="DataGrid_Header_Cell">Credit Period</th>
-                    <th width="12%" class="DataGrid_Header_Cell">FINAL BALANCE</th>
-                    <th width="10%"  class="DataGrid_Header_Cell">DETAIL</th>
-                  </tr>
-                    <div id="sectionDetail2"> 
-                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow2xx"> 
-                        <td width="9%"  class="DataGrid_Body_Cell"> <a href="#" onclick="submitCommandFormParameter('FIND', document.frmMain.inpcElementValueIdFrom, 'xx', false, document.frmMain, 'ReportGeneralLedger.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2"> 
-                          <span id="fieldAccount2">xx600</span></a></td>
-                        <td width="33%" id="fieldDescription2" class="DataGrid_Body_Cell">xxPérdidas y ganacias</td>
-                        <td width="12%" id="fieldSaldoInicial2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                        <td width="12%" id="fieldAmtacctdr2"  class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                        <td width="12%" id="fieldAmtacctcr2"  class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                        <td width="12%" id="fieldSaldoFinal2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
-                        <td width="10%" class="DataGrid_Body_Cell"> 
-                          <a href="#" onclick="submitCommandFormParameter('DEFAULT', document.frmMain.inpcElementValueId, 'xx', false, document.frmMain, 'ReportTrialBalanceDetail.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId12">Detail</a>
+                    <div id="sectionDiscard">
+                    <div id="sectionDetail">
+                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
+                        <td width="90" class="DataGrid_Body_Cell">
+                            <span id="showExpand" style="display: table-cell; display: -moz-inline-box;"><a href="#" onclick="updateData('OPEN', 'hhqq');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="expandButton">
+                              <span id="buttonTreemmm" class="datawarehouseclose"></span>
+                            </a></span>
+                            <a href="#" onclick="submitCommandFormParameter('FIND', document.frmMain.inpcElementValueIdFrom, 'xx', false, document.frmMain, 'ReportGeneralLedger.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">
+                              <span id="fieldAccount">xx70000</span>
+                            </a>
+                            <span id="fieldDescAccount">xx600</span>
+                        </td>
+                        <td width="280" id="fieldAccountName" class="DataGrid_Body_Cell">xxChecking Unallocated Receipts</td>
+                        <td width="105" id="fieldSaldoInicial" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                        <td width="105" id="fieldAmtacctdr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                        <td width="105" id="fieldAmtacctcr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                        <td width="105" id="fieldSaldoFinal" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
+                        <td width="70" class="DataGrid_Body_Cell">
+                          <a href="#" onclick="validate(); submitCommandFormParameter('DEFAULT', document.frmMain.inpcAccountId, 'xx', false, document.frmMain, 'ReportTrialBalanceDetail.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2">Detail</a>
                         </td>
                       </tr>
                     </div>
                     <tr class="DataGrid_Body_Row"> 
-                      
-                      <th width="42%"  colspan="2" class="DataGrid_Header_Cell">ADD AND KEEP GOING...</th>
-                      <th width="12%"  id="fieldTotalSaldoInicial" class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                      <th width="12%" id="fieldTotalAmtacctdr2"  class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                      <th width="12%" id="fieldTotalAmtacctcr2"  class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                      <th width="12%"  id="fieldTotalSaldoFinal2" class="DataGrid_Header_Cell_Amount">xx14500.34</th>
-                      <th width="10%" colspan="2" class="DataGrid_Header_Cell">&nbsp;</th>
-                    
+                      <th colspan="2" class="DataGrid_Header_Cell">ADD AND KEEP GOING...</th>
+                      <th width="105" id="fieldTotalSaldoInicial" class="DataGrid_Header_Cell_Amount">xx14500.34</th>
+                      <th width="105" id="fieldTotalAmtacctdr"  class="DataGrid_Header_Cell_Amount">xx14500.34</th>
+                      <th width="105" id="fieldTotalAmtacctcr"  class="DataGrid_Header_Cell_Amount">xx14500.34</th>
+                      <th width="105" id="fieldTotalSaldoFinal" class="DataGrid_Header_Cell_Amount">xx14500.34</th>
+                      <th width="70" class="DataGrid_Header_Cell"></th>
                     </tr>
                   </table>
+                  </div>
                   <br/>
                 </div>
               </td>

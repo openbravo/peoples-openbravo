@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -47,35 +48,52 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-          "ReportTrialBalanceDetailDetail|DateFrom", "");
-      String strDateTo = vars.getGlobalVariable("inpDateTo",
-          "ReportTrialBalanceDetailDetail|DateTo", "");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalanceDetailDetail|Org", "");
-      String strLevel = vars.getGlobalVariable("inpLevel", "ReportTrialBalanceDetailDetail|Level",
-          "");
-      String strId = vars.getGlobalVariable("inpcElementValueId",
-          "ReportTrialBalanceDetailDetail|Id", "");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strId);
+          "ReportTrialBalanceDetail|DateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTrialBalanceDetail|DateTo", "");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalanceDetail|Org", "");
+      String strLevel = vars.getGlobalVariable("inpLevel", "ReportTrialBalanceDetail|Level", "");
+      String strId = vars.getGlobalVariable("inpcAccountId", "ReportTrialBalanceDetail|Id", "",
+          IsIDFilter.instance);
+      String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
+          "ReportTrialBalanceDetail|cBpartnerId", "", IsIDFilter.instance);
+      String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
+          "ReportTrialBalanceDetail|mProductId", "", IsIDFilter.instance);
+      String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
+          "ReportTrialBalanceDetail|cProjectId", "", IsIDFilter.instance);
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
+          "ReportTrialBalanceDetail|cAcctSchemaId", IsIDFilter.instance);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strId,
+          strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId);
+
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
-          "ReportTrialBalanceDetailDetail|DateFrom");
+          "ReportTrialBalanceDetail|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
-          "ReportTrialBalanceDetailDetail|DateTo");
-      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalanceDetailDetail|Org");
-      String strLevel = vars.getRequestGlobalVariable("inpLevel",
-          "ReportTrialBalanceDetailDetail|Level");
-      String strId = vars.getRequestGlobalVariable("inpcElementValueId",
-          "ReportTrialBalanceDetailDetail|Id");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strId);
+          "ReportTrialBalanceDetail|DateTo");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalanceDetail|Org");
+      String strLevel = vars.getRequestGlobalVariable("inpLevel", "ReportTrialBalanceDetail|Level");
+      String strId = vars.getRequestGlobalVariable("inpcAccountId", "ReportTrialBalanceDetail|Id",
+          IsIDFilter.instance);
+      String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
+          "ReportTrialBalanceDetail|cBpartnerId", "", IsIDFilter.instance);
+      String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
+          "ReportTrialBalanceDetail|mProductId", "", IsIDFilter.instance);
+      String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
+          "ReportTrialBalanceDetail|cProjectId", "", IsIDFilter.instance);
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
+          "ReportTrialBalanceDetail|cAcctSchemaId", IsIDFilter.instance);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strId,
+          strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId);
+
     } else
       pageError(response);
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strOrg, String strLevel, String strId)
+      String strDateFrom, String strDateTo, String strOrg, String strLevel, String strId,
+      String strcBpartnerId, String strmProductId, String strcProjectId, String strcAcctSchemaId)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
+    log4j.debug("Output: Trial Balance Report Account Details");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "sectionDiscard" };
@@ -92,32 +110,31 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportTrialBalanceDetail").createXmlDocument();
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - getFamily - strTreeAccount = " + strTreeAccount);
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - getFamily - strId = " + strId);
+
       String strIdFamily = getFamily(strTreeAccount, strId);
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - select - strOrgFamily = " + strOrgFamily);
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - select - #User_Client = "
-            + Utility.getContext(this, vars, "#User_Client", "ReportTrialBalanceDetail"));
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - select - #AccessibleOrgTree = "
-            + Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalanceDetail"));
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - select - strDateFrom = " + strDateFrom);
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - select - strDateTo = "
-            + DateTimeData.nDaysAfter(this, strDateTo, "1"));
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - select - strIdFamily = " + strIdFamily);
-      if (log4j.isDebugEnabled())
-        log4j.debug("printPageDataSheet - select - strId = " + strId);
-      data = ReportTrialBalanceDetailData.select(this, strOrgFamily, Utility.getContext(this, vars,
-          "#User_Client", "ReportTrialBalanceDetail"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportTrialBalanceDetail"), strDateFrom, DateTimeData.nDaysAfter(
-          this, strDateTo, "1"), strIdFamily, strId);
+
+      log4j.debug("printPageDataSheet - getFamily - strTreeAccount = " + strTreeAccount);
+      log4j.debug("printPageDataSheet - getFamily - strId = " + strId);
+      log4j.debug("printPageDataSheet - select - strOrgFamily = " + strOrgFamily);
+      log4j.debug("printPageDataSheet - select - #User_Client = "
+          + Utility.getContext(this, vars, "#User_Client", "ReportTrialBalanceDetail"));
+      log4j.debug("printPageDataSheet - select - #AccessibleOrgTree = "
+          + Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalanceDetail"));
+      log4j.debug("printPageDataSheet - select - strDateFrom = " + strDateFrom);
+      log4j.debug("printPageDataSheet - select - strDateTo = "
+          + DateTimeData.nDaysAfter(this, strDateTo, "1"));
+      log4j.debug("printPageDataSheet - select - strIdFamily = " + strIdFamily);
+      log4j.debug("printPageDataSheet - select - strId = " + strId);
+
+      String strAccountName = ReportTrialBalanceDetailData.selectAccountName(this, strId);
+      String strAccountCode = ReportTrialBalanceDetailData.selectAccountCode(this, strId);
+
+      data = ReportTrialBalanceDetailData.select(this, strAccountName, strAccountCode, strOrg,
+          strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalanceDetail"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalanceDetail"),
+          strIdFamily, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+          strcAcctSchemaId, strcBpartnerId, strmProductId, strcProjectId);
+
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTrialBalanceDetail", false, "",
@@ -141,14 +158,12 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    {
-      OBError myMessage = vars.getMessage("ReportTrialBalanceDetail");
-      vars.removeMessage("ReportTrialBalanceDetail");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+    OBError myMessage = vars.getMessage("ReportTrialBalanceDetail");
+    vars.removeMessage("ReportTrialBalanceDetail");
+    if (myMessage != null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -162,15 +177,9 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
 
   private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
-    /*
-     * ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree,
-     * strChild); TreeData [] data = Tree.getMembers(this, strTree, strChild); String strFamily =
-     * ""; if(data!=null && data.length>0) { for (int i = 0;i<data.length;i++){ if (i>0) strFamily =
-     * strFamily + ","; strFamily = strFamily + data[i].id; } return strFamily; }else return "'1'";
-     */
   }
 
   public String getServletInfo() {
-    return "Servlet ReportTrialBalanceDetail. This Servlet was made by Eduardo Argal";
-  } // end of getServletInfo() method
+    return "Servlet ReportTrialBalanceDetail. This Servlet was made by mirurita";
+  }
 }

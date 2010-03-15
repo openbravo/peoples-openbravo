@@ -39,7 +39,10 @@
   <structure name="structure1">
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
-    <FIELD id="fieldMonth">month</FIELD>
+    <FIELD id="headerAccountCode">accountCode</FIELD>
+    <FIELD id="headerAccountName">accountName</FIELD>
+    <FIELD id="fieldYear">year</FIELD>
+    <FIELD id="fieldPeriod">periodname</FIELD>
     <FIELD id="fieldAmtacctdr" format="euroInform">amtacctdr</FIELD>
     <FIELD id="fieldAmtacctcr" format="euroInform">amtacctcr</FIELD>
     <SECTION id="sectionDetail"/>
