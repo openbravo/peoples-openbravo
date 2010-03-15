@@ -214,8 +214,8 @@ public class OBScheduler {
     try {
       sched.unscheduleJob(requestId, OB_GROUP);
       sched.deleteJob(requestId, OB_GROUP);
-      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, format(new Date()),
-          OBScheduler.sqlDateTimeFormat, requestId);
+      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, OBScheduler.sqlDateTimeFormat,
+          format(new Date()), requestId);
     } catch (final Exception e) {
       log.error("An error occurred unscheduling process " + requestId, e);
     }
