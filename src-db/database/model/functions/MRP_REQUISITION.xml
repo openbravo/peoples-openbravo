@@ -63,9 +63,9 @@
       v_Client_ID := Cur_Parameter.AD_Client_ID;
       v_Org_ID := Cur_Parameter.AD_Org_ID;
     END LOOP; -- Get Parameter
-
-    SELECT NAME || ' ' || TO_CHAR(DATEDOC), Description
-      INTO v_Description0, v_Description
+	
+    SELECT NAME || ' ' || TO_CHAR(DATEDOC), Description, AD_ORG_ID
+      INTO v_Description0, v_Description, v_Org_ID
     FROM MRP_RUN_PRODUCTION
     WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID;
 
