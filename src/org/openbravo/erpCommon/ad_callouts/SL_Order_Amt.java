@@ -150,7 +150,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       } else {
         priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
-            dataOrder[0].cBpartnerId, strPriceActual.replace("\"", ""), strProduct,
+            dataOrder[0].cBpartnerId, priceActual.toString().replace("\"", ""), strProduct,
             dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
         // priceList
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
