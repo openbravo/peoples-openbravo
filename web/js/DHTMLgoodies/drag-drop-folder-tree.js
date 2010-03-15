@@ -25,7 +25,7 @@ Owner of DHTMLgoodies.com
 ************************************************************************************************************
 
 This file was modified on 2007-Aug-10 by David Baz Fayos
-All modifications © 2007 Openbravo, S.L.
+All modifications © 2007 Openbravo, S.L.U.
 You may contact the rights holder at www.openbravo.com
 
 New features added:

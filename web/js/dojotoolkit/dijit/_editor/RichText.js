@@ -482,10 +482,12 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 
 		// The contents inside of <body>.  The real contents are set later via a call to setValue().
 		var html = "";
+		var setBodyId = true;
 		if(dojo.isIE || (!this.height && !dojo.isMoz)){
 			// In auto-expand mode, need a wrapper div for AlwaysShowToolbar plugin to correctly
 			// expand/contract the editor as the content changes.
-			html = "<div></div>";
+			html = "<div id='dijitEditorBody'></div>";
+			setBodyId = false;
 		}else if(dojo.isMoz){
 			// workaround bug where can't select then delete text (until user types something
 			// into the editor)... and/or issue where typing doesn't erase selected text
@@ -516,36 +518,48 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 		var label=dojo.query('label[for="'+this.id+'"]');
 
 		return [
-			this.isLeftToRight() ? "<html><head>" : "<html dir='rtl'><head>",
-			(dojo.isMoz && label.length ? "<title>" + label[0].innerHTML + "</title>" : ""),
-			"<meta http-equiv='Content-Type' content='text/html'>",
-			"<style>",
-			"body,html {",
-			"\tbackground:transparent;",
-			"\tpadding: 1px 0 0 0;",
-			"\tmargin: -1px 0 0 0;", // remove extraneous vertical scrollbar on safari and firefox
-			(dojo.isWebKit?"\twidth: 100%;":""),
-			(dojo.isWebKit?"\theight: 100%;":""),
-			"}",
+			this.isLeftToRight() ? "<html>\n<head>\n" : "<html dir='rtl'>\n<head>\n",
+			(dojo.isMoz && label.length ? "<title>" + label[0].innerHTML + "</title>\n" : ""),
+			"<meta http-equiv='Content-Type' content='text/html'>\n",
+			"<style>\n",
+			"\tbody,html {\n",
+			"\t\tbackground:transparent;\n",
+			"\t\tpadding: 1px 0 0 0;\n",
+			"\t\tmargin: -1px 0 0 0;\n", // remove extraneous vertical scrollbar on safari and firefox
+
+			// Set the html/body sizing.  Webkit always needs this, other browsers
+			// only set it when height is defined (not auto-expanding), otherwise 
+			// scrollers do not appear.
+			((dojo.isWebKit)?"\t\twidth: 100%;\n":""),
+			((dojo.isWebKit)?"\t\theight: 100%;\n":""),
+			"\t}\n",
+			
 			// TODO: left positioning will cause contents to disappear out of view
 			//	   if it gets too wide for the visible area
-			"body{",
-			"\ttop:0px; left:0px; right:0px;",
-			"\tfont:", font, ";",
-				((this.height||dojo.isOpera) ? "" : "position: fixed;"),
+			"\tbody{\n",
+			"\t\ttop:0px;\n",
+			"\t\tleft:0px;\n",
+			"\t\tright:0px;\n",
+			"\t\tfont:", font, ";\n",
+				((this.height||dojo.isOpera) ? "" : "\t\tposition: fixed;\n"),
 			// FIXME: IE 6 won't understand min-height?
-			"\tmin-height:", this.minHeight, ";",
-			"\tline-height:", lineHeight,
-			"}",
-			"p{ margin: 1em 0; }",
-			(this.height ? // height:auto undoes the height:100%
-				"" : "body,html{overflow-y:hidden;/*for IE*/} body > div {overflow-x:auto;/*FF:horizontal scrollbar*/ overflow-y:hidden;/*safari*/ min-height:"+this.minHeight+";/*safari*/}"
-			),
-			"li > ul:-moz-first-node, li > ol:-moz-first-node{ padding-top: 1.2em; } ",
-			"li{ min-height:1.2em; }",
-			"</style>",
-			this._applyEditingAreaStyleSheets(),
-			"</head><body onload='frameElement._loadFunc(window,document)' style='"+userStyle+"'>", html, "</body></html>"
+			"\t\tmin-height:", this.minHeight, ";\n",
+			"\t\tline-height:", lineHeight,";\n",
+			"\t}\n",
+			"\tp{ margin: 1em 0; }\n",
+			
+			// Determine how scrollers should be applied.  In autoexpand mode (height = "") no scrollers on y at all.
+			// But in fixed height mode we want both x/y scrollers.  Also, if it's using wrapping div and in auto-expand
+			// (Mainly IE) we need to kill the y scroller on body and html.
+			(!setBodyId && !this.height ? "\tbody,html {overflow-y: hidden;}\n" : ""),
+			"\t#dijitEditorBody{overflow-x: auto; overflow-y:" + (this.height ? "auto;" : "hidden;") + "}\n",
+			"\tli > ul:-moz-first-node, li > ol:-moz-first-node{ padding-top: 1.2em; }\n",
+			"\tli{ min-height:1.2em; }\n",
+			"</style>\n",
+			this._applyEditingAreaStyleSheets(),"\n",
+			"</head>\n<body ",
+			(setBodyId?"id='dijitEditorBody' ":""),
+			"onload='frameElement._loadFunc(window,document)' style='"+userStyle+"'>", html, "</body>\n</html>"
 		].join(""); // String
 	},
 
@@ -707,6 +721,14 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 			// not contentEditable.   Removing it would also probably remove the need for creating
 			// the extra <div> in _getIframeDocTxt()
 			this.editNode.style.zoom = 1.0;
+		}else{
+			this.connect(this.document, "onmousedown", function(){
+				// Clear the moveToStart focus, as mouse 
+				// down will set cursor point.  Required to properly
+				// work with selection/position driven plugins and clicks in
+				// the window. refs: #10678
+				delete this._cursorToStart;
+			}); 
 		}
 
 		if(dojo.isWebKit){
@@ -730,19 +752,28 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 		this.attr('disabled', this.disabled); // initialize content to editable (or not)
 
 		// Note that setValue() call will only work after isLoaded is set to true (above)
-		this.setValue(html);
 
-		if(this.onLoadDeferred){
-			this.onLoadDeferred.callback(true);
+		// Set up a function to allow delaying the setValue until a callback is fired
+		// This ensures extensions like dijit.Editor have a way to hold the value set 
+		// until plugins load (and do things like register filters.
+		var setContent = dojo.hitch(this, function(){
+			this.setValue(html);
+			if(this.onLoadDeferred){
+				this.onLoadDeferred.callback(true);
+			}
+			this.onDisplayChanged();
+			if(this.focusOnLoad){
+				// after the document loads, then set focus after updateInterval expires so that
+				// onNormalizedDisplayChanged has run to avoid input caret issues
+				dojo.addOnLoad(dojo.hitch(this, function(){ setTimeout(dojo.hitch(this, "focus"), this.updateInterval); }));
+			}
+		});
+		if(this.setValueDeferred){
+			this.setValueDeferred.addCallback(setContent);
+		}else{
+			setContent();
 		}
 
-		this.onDisplayChanged();
-
-		if(this.focusOnLoad){
-			// after the document loads, then set focus after updateInterval expires so that
-			// onNormalizedDisplayChanged has run to avoid input caret issues
-			dojo.addOnLoad(dojo.hitch(this, function(){ setTimeout(dojo.hitch(this, "focus"), this.updateInterval); }));
-		}
 	},
 
 	onKeyDown: function(/* Event */ e){
@@ -947,16 +978,19 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 	focus: function(){
 		// summary:
 		//		Move focus to this editor
+		if(!this.isLoaded){
+			this.focusOnLoad = true;
+			return;
+		}
+		if(this._cursorToStart){ 
+			delete this._cursorToStart;
+			if(this.editNode.childNodes){
+				this.placeCursorAtStart(); // this calls focus() so return
+				return;
+			}
+		}
 		if(!dojo.isIE){
 			dijit.focus(this.iframe);
-			if(this._cursorToStart){ 
-				delete this._cursorToStart;
-				if(this.editNode.childNodes && 
-					this.editNode.childNodes.length === 1 && 
-					this.editNode.innerHTML === "&nbsp;"){
-						this.placeCursorAtStart();
-				}
-			}
 		}else if(this.editNode && this.editNode.focus){
 			// editNode may be hidden in display:none div, lets just punt in this case
 			//this.editNode.focus(); -> causes IE to scroll always (strict and quirks mode) to the top the Iframe
@@ -1258,6 +1292,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 		//see comments in placeCursorAtEnd
 		var isvalid=false;
 		if(dojo.isMoz){
+			// TODO:  Is this branch even necessary?
 			var first=this.editNode.firstChild;
 			while(first){
 				if(first.nodeType == 3){
@@ -1268,7 +1303,14 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 					}
 				}else if(first.nodeType == 1){
 					isvalid=true;
-					this._sCall("selectElementChildren", [ first ]);
+					var tg = first.tagName ? first.tagName.toLowerCase() : "";
+					// Collapse before childless tags.
+					if(/br|input|img|base|meta|area|basefont/.test(tg)){
+						this._sCall("selectElement", [ first ]);
+					}else{
+						// Collapse inside tags with children.
+						this._sCall("selectElementChildren", [ first ]);
+					}
 					break;
 				}
 				first = first.nextSibling;
@@ -1365,6 +1407,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 			}));
 			return;
 		}
+		this._cursorToStart = true;
 		if(this.textarea && (this.isClosed || !this.isLoaded)){
 			this.textarea.value=html;
 		}else{
@@ -1373,7 +1416,6 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 
 			// Use &nbsp; to avoid webkit problems where editor is disabled until the user clicks it
 			if(!html && dojo.isWebKit){
-				this._cursorToStart = true;
 				html = "&nbsp;";
 			}
 			node.innerHTML = html;
@@ -1819,7 +1861,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 	getFooterHeight: function(){
 		// summary:
 		//		A function for obtaining the height of the footer node
-        return this._getNodeChildrenHeight(this.footer); // Number
+		return this._getNodeChildrenHeight(this.footer); // Number
 	},
 
 	_getNodeChildrenHeight: function(node){

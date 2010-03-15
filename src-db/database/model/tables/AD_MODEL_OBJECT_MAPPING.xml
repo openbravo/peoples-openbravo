@@ -48,7 +48,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="AD_MODEL_OBJECT_MAPPING_AD_CLI">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODEL_OBJECT" name="AD_MODEL_OBJECT_MAPPING_AD_MOD">
+      <foreign-key foreignTable="AD_MODEL_OBJECT" name="AD_MODEL_OBJECT_MAPPING_AD_MOD" onDelete="cascade">
         <reference local="AD_MODEL_OBJECT_ID" foreign="AD_MODEL_OBJECT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_MODEL_OBJECT_MAPPING_AD_ORG">

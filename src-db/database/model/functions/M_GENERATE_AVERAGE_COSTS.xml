@@ -15,8 +15,8 @@
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2009 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2009 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -32,6 +32,9 @@
   v_User VARCHAR2(32);
   v_Price NUMBER;
   v_DateOld DATE;
+  v_MinDateCosting DATE;
+  v_FirstIteration BOOLEAN;
+  v_CheckResultStr VARCHAR2(2000):='';
   v_CumQty NUMBER;
   v_Processed VARCHAR2(60) ;
   v_count NUMBER;
@@ -48,6 +51,7 @@
     Cur_ProdCost RECORD;
     Cur_PriceList RECORD;
     Cur_ManualCost RECORD;
+    Cur_Docs RECORD;
     Cur_OldCost RECORD;
     v_rowcount NUMBER;
   BEGIN
@@ -86,6 +90,152 @@
       INTO v_BaseCurrency
       FROM AD_CLIENT
       WHERE AD_CLIENT.AD_CLIENT_ID = v_Client;
+
+    -- BEGIN CHECK IF COST USED TO POST A DOCUMENT
+    -- If a document has been posted, and in the entry the costing has been used to calculate any amount,
+    -- process is not allowed to be launched.
+    SELECT MIN(DATEFROM)
+    INTO v_MinDateCosting
+    FROM M_COSTING
+    WHERE ISPERMANENT='N'
+      AND ISMANUAL='N'
+      AND COSTTYPE='AV'
+      AND ISPRODUCTION = 'N'
+      AND AD_CLIENT_ID = v_Client;
+
+    v_CheckResultStr := '';
+    SELECT MAX(MOVEMENTDATE) INTO v_Date FROM M_MOVEMENT WHERE AD_CLIENT_ID=v_Client AND POSTED='Y';
+    IF (v_MinDateCosting <= v_Date) THEN
+      v_FirstIteration:=TRUE;
+      IF (COALESCE(length(v_CheckResultStr),0) > 0) THEN v_CheckResultStr:=v_CheckResultStr || '<br/>'; END IF;
+      v_CheckResultStr:=v_CheckResultStr || '@Oneormore@ @MaterialMovement@ @PostedUsingCost@ @SOS_DOCUMENTNO@ ';
+      FOR Cur_Docs IN
+      (
+      SELECT DISTINCT DOCUMENTNO
+      FROM M_MOVEMENT
+      WHERE AD_CLIENT_ID=v_Client AND POSTED='Y'
+        AND MOVEMENTDATE > TO_DATE(v_MinDateCosting)
+      ORDER BY DOCUMENTNO
+      )
+      LOOP
+        IF (v_FirstIteration) THEN
+          v_FirstIteration:=FALSE;
+        ELSE
+          v_CheckResultStr := v_CheckResultStr || ', ';
+        END IF;
+        v_CheckResultStr := v_CheckResultStr || Cur_Docs.DOCUMENTNO;
+      END LOOP;
+      v_CheckResultStr:=v_CheckResultStr || '.';
+    END IF;
+
+    SELECT MAX(MOVEMENTDATE) INTO v_Date FROM M_INVENTORY WHERE AD_CLIENT_ID=v_Client AND POSTED='Y';
+    IF (v_MinDateCosting <= v_Date) THEN
+      v_FirstIteration:=TRUE;
+      IF (COALESCE(length(v_CheckResultStr),0) > 0) THEN v_CheckResultStr:=v_CheckResultStr || '<br/>'; END IF;
+      v_CheckResultStr:=v_CheckResultStr || '@Oneormore@ @MaterialInventory@ @PostedUsingCost@ @Name@ ';
+      FOR Cur_Docs IN
+      (
+      SELECT DISTINCT I.NAME AS INVENTORY, W.NAME AS WAREHOUSE
+      FROM M_INVENTORY I, M_WAREHOUSE W
+      WHERE I.M_WAREHOUSE_ID = W.M_WAREHOUSE_ID
+        AND I.AD_CLIENT_ID=v_Client AND I.POSTED='Y'
+        AND I.MOVEMENTDATE > TO_DATE(v_MinDateCosting)
+      ORDER BY I.NAME, W.NAME
+      )
+      LOOP
+        IF (v_FirstIteration) THEN
+          v_FirstIteration:=FALSE;
+        ELSE
+          v_CheckResultStr := v_CheckResultStr || ', ';
+        END IF;
+        v_CheckResultStr := v_CheckResultStr || Cur_Docs.INVENTORY || '(@Warehouse@ ' || Cur_Docs.WAREHOUSE || ')';
+      END LOOP;
+      v_CheckResultStr:=v_CheckResultStr || '.';
+    END IF;
+
+    SELECT MAX(MOVEMENTDATE) INTO v_Date FROM M_PRODUCTION WHERE AD_CLIENT_ID=v_Client AND POSTED='Y';
+    IF (v_MinDateCosting <= v_Date) THEN
+      v_FirstIteration:=TRUE;
+      IF (COALESCE(length(v_CheckResultStr),0) > 0) THEN v_CheckResultStr:=v_CheckResultStr || '<br/>'; END IF;
+      v_CheckResultStr:=v_CheckResultStr || '@Oneormore@ @MaterialProduction@ @PostedUsingCost@ @SOS_DOCUMENTNO@ ';
+      FOR Cur_Docs IN
+      (
+      SELECT DISTINCT DOCUMENTNO
+      FROM M_PRODUCTION
+      WHERE AD_CLIENT_ID=v_Client AND POSTED='Y'
+        AND MOVEMENTDATE > TO_DATE(v_MinDateCosting)
+      ORDER BY DOCUMENTNO
+      )
+      LOOP
+        IF (v_FirstIteration) THEN
+          v_FirstIteration:=FALSE;
+        ELSE
+          v_CheckResultStr := v_CheckResultStr || ', ';
+        END IF;
+        v_CheckResultStr := v_CheckResultStr || Cur_Docs.DOCUMENTNO;
+      END LOOP;
+      v_CheckResultStr:=v_CheckResultStr || '.';
+    END IF;
+
+    SELECT MAX(DATEACCT) INTO v_Date FROM M_INOUT WHERE ISSOTRX='N' AND AD_CLIENT_ID=v_Client AND POSTED='Y';
+    IF (v_MinDateCosting <= v_Date) THEN
+      v_FirstIteration:=TRUE;
+      IF (COALESCE(length(v_CheckResultStr),0) > 0) THEN v_CheckResultStr:=v_CheckResultStr || '<br/>'; END IF;
+      v_CheckResultStr:=v_CheckResultStr || '@Oneormore@ @MaterialReceipt@ @PostedUsingCost@ @SOS_DOCUMENTNO@ ';
+      FOR Cur_Docs IN
+      (
+      SELECT DISTINCT DOCUMENTNO
+      FROM M_INOUT
+      WHERE ISSOTRX='N' 
+        AND AD_CLIENT_ID=v_Client AND POSTED='Y'
+        AND DATEACCT > TO_DATE(v_MinDateCosting)
+      ORDER BY DOCUMENTNO
+      )
+      LOOP
+        IF (v_FirstIteration) THEN
+          v_FirstIteration:=FALSE;
+        ELSE
+          v_CheckResultStr := v_CheckResultStr || ', ';
+        END IF;
+        v_CheckResultStr := v_CheckResultStr || Cur_Docs.DOCUMENTNO;
+      END LOOP;
+      v_CheckResultStr:=v_CheckResultStr || '.';
+    END IF;
+
+    SELECT MAX(IO.DATEACCT) INTO v_Date FROM M_MATCHINV M, M_INOUTLINE IOL, M_INOUT IO
+    WHERE M.AD_CLIENT_ID=v_Client AND M.POSTED='Y'
+      AND IOL.M_INOUTLINE_ID = M.M_INOUTLINE_ID AND IO.M_INOUT_ID = IOL.M_INOUT_ID;
+    IF (v_MinDateCosting <= v_Date) THEN
+      v_FirstIteration:=TRUE;
+      IF (COALESCE(length(v_CheckResultStr),0) > 0) THEN v_CheckResultStr:=v_CheckResultStr || '<br/>'; END IF;
+      v_CheckResultStr:=v_CheckResultStr || '@Oneormore@ @MatchedInvoices@ @PostedUsingCost@ @Date@ ';
+      FOR Cur_Docs IN
+      (
+      SELECT DISTINCT IO.DATEORDERED, I.DOCUMENTNO
+      FROM M_MATCHINV M, M_INOUTLINE IOL, M_INOUT IO, C_INVOICE I, C_INVOICELINE IL
+      WHERE M.AD_CLIENT_ID=v_Client AND M.POSTED='Y'
+        AND IL.C_INVOICELINE_ID = M.C_INVOICELINE_ID
+        AND I.C_INVOICE_ID = IL.C_INVOICE_ID
+        AND IOL.M_INOUTLINE_ID = M.M_INOUTLINE_ID AND IO.M_INOUT_ID = IOL.M_INOUT_ID
+        AND IO.DATEACCT > TO_DATE(v_MinDateCosting)
+      ORDER BY IO.DATEORDERED, I.DOCUMENTNO
+      )
+      LOOP
+        IF (v_FirstIteration) THEN
+          v_FirstIteration:=FALSE;
+        ELSE
+          v_CheckResultStr := v_CheckResultStr || ', ';
+        END IF;
+        v_CheckResultStr := v_CheckResultStr || Cur_Docs.DATEORDERED || ' (' || '@Invoice@ @SOS_DOCUMENTNO@' || Cur_Docs.DOCUMENTNO || ')';
+      END LOOP;
+      v_CheckResultStr:=v_CheckResultStr || '.';
+    END IF;
+
+    IF (COALESCE(length(v_CheckResultStr),0) > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, v_CheckResultStr);
+    END IF;
+    -- END CHECK IF COST USED TO POST A DOCUMENT
+
     DELETE
     FROM M_COSTING
     WHERE ISPERMANENT='N'

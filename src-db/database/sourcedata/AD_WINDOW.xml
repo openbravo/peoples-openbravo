@@ -2896,13 +2896,13 @@
     * Openbravo install mode
     * System external IP address
 
-The heartbeat data is stored in a file controlled by Openbravo S.L. It is collected solely to gather and send data about your Openbravo product installation back to a service on Openbravo SL's infrastructure to assist managing your Openbravo product installation. As a benefit to you, with this information, Openbravo SL can offer you system configuration and component update information, sent automatically to you. Available updates may include, for example, Operating System updates, Database updates and Openbravo code. This data will be used on an aggregated and anonymous basis to generate reports identifying where and how the Openbravo product is being utilised.
+The heartbeat data is stored in a file controlled by Openbravo S.L.U. It is collected solely to gather and send data about your Openbravo product installation back to a service on Openbravo SLU's infrastructure to assist managing your Openbravo product installation. As a benefit to you, with this information, Openbravo SLU can offer you system configuration and component update information, sent automatically to you. Available updates may include, for example, Operating System updates, Database updates and Openbravo code. This data will be used on an aggregated and anonymous basis to generate reports identifying where and how the Openbravo product is being utilised.
 
 For further information, please consult http://wiki.openbravo.com/wiki/ERP/2.50/User_Manual/HeartBeat
 
 Openbravo stores this information on servers in the USA and implements security measures in accordance with applicable legislation to maintain the confidentiality of this data. This data is not used for commercial purposes other than as set out above. It is not communicated or transferred to any third party
 
-You may deactivate this feature by disabling the “enable heartbeat” box. In addition, you may exercise your right to access, rectify, oppose and cancel the data by writing to Openbravo, S.L. PO Box 5117, 31010 Pamplona, Navarra, Spain, or by email to privacy@openbravo.com.
+You may deactivate this feature by disabling the “enable heartbeat” box. In addition, you may exercise your right to access, rectify, oppose and cancel the data by writing to Openbravo, S.L.U. PO Box 5117, 31010 Pamplona, Navarra, Spain, or by email to privacy@openbravo.com.
 
 By enabling the heartbeat, you consent to the processing of this data and storing of the same in the USA as set out above.
 ]]></HELP>

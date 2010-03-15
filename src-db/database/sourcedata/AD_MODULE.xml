@@ -15,7 +15,7 @@
 You may obtain a copy of the License at http://www.openbravo.com/legal/license.html or in the legal folder of the Openbravo ERP core distribution.]]></LICENSE>
 <!--0-->  <JAVAPACKAGE><![CDATA[org.openbravo]]></JAVAPACKAGE>
 <!--0-->  <LICENSETYPE><![CDATA[OBPL]]></LICENSETYPE>
-<!--0-->  <AUTHOR><![CDATA[Openbravo SL]]></AUTHOR>
+<!--0-->  <AUTHOR><![CDATA[Openbravo SLU]]></AUTHOR>
 <!--0-->  <ISTRANSLATIONREQUIRED><![CDATA[Y]]></ISTRANSLATIONREQUIRED>
 <!--0-->  <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
 <!--0-->  <HASCHARTOFACCOUNTS><![CDATA[N]]></HASCHARTOFACCOUNTS>

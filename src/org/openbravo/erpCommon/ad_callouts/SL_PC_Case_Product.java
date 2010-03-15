@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
@@ -83,12 +84,17 @@ public class SL_PC_Case_Product extends HttpSecureAppServlet {
         + FormatUtilities.replaceJS(strattrsetvaluesdescr) + "\"),\n");
     String strAttrSet, strAttrSetValueType;
     strAttrSet = strAttrSetValueType = "";
-    final Product product = OBDal.getInstance().get(Product.class, strMProductID);
-    if (product != null) {
-      AttributeSet attributeset = product.getAttributeSet();
-      if (attributeset != null)
-        strAttrSet = product.getAttributeSet().toString();
-      strAttrSetValueType = product.getUseAttributeSetValueAs();
+    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      final Product product = OBDal.getInstance().get(Product.class, strMProductID);
+      if (product != null) {
+        AttributeSet attributeset = product.getAttributeSet();
+        if (attributeset != null)
+          strAttrSet = product.getAttributeSet().toString();
+        strAttrSetValueType = product.getUseAttributeSetValueAs();
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(prevMode);
     }
     result.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
         + "\"),\n");

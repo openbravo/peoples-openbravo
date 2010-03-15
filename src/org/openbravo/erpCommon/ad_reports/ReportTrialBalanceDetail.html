@@ -12,8 +12,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -112,7 +112,7 @@
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td>
 
-                                  <table cellpadding="0" cellspacing="0" class="MessageBox_Container">
+                                  <table cellpadding="0" cellspacing="0" style="width: 100%;">
                                     <tbody>
                                     <tr>
                                       <td class="MessageBox_LeftTrans">
@@ -211,20 +211,27 @@
             </tr>
             <tr>
               <td colspan="6">
-              <table cellspacing="0" cellpadding="0" width="60%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+              <table cellspacing="0" cellpadding="0" width="70%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                 <tr class="DataGrid_Body_Row"> 
-                  <th colspan="5" class="DataGrid_Header_Cell"><span>Account</span>&nbsp;<span id="paramAccount">xxPérdidas y ganancias</span></th> 
+                  <th class="DataGrid_Header_Cell">Account</th>
+                  <th colspan="3" class="DataGrid_Header_Cell">
+                    <span id="headerAccountCode">xx47700</span>
+                    <span>&nbsp;</span>
+                    <span id="headerAccountName">xxPérdidas y ganancias</span>
+                  </th>
                 </tr>
                 <tr class="DataGrid_Body_Row"> 
-                  <th width="15%" class="DataGrid_Header_Cell">Month</th>
-                  <th width="14%" class="DataGrid_Header_Cell">Debit</th>
-                  <th width="6%" class="DataGrid_Header_Cell">Credit</th>
+                  <th width="10%" class="DataGrid_Header_Cell">Year</th>
+                  <th width="30%" class="DataGrid_Header_Cell">Period</th>
+                  <th width="15%" class="DataGrid_Header_Cell">Debit</th>
+                  <th width="15%" class="DataGrid_Header_Cell">Credit</th>
                 </tr>
                 <div id="sectionDetail"> 
                   <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
-                    <td width="15%" class="DataGrid_Body_Cell" id="fieldMonth">xxENERO</td>
-                    <td width="14%" class="DataGrid_Body_Cell" id="fieldAmtacctdr" >xx14500.34</td>
-                    <td width="14%" class="DataGrid_Body_Cell" id="fieldAmtacctcr">xx14500.34</td>
+                    <td width="10%" class="DataGrid_Body_Cell" id="fieldYear">xxYear</td>
+                    <td width="30%" class="DataGrid_Body_Cell" id="fieldPeriod">xxPeriod</td>
+                    <td width="15%" class="DataGrid_Body_Cell" id="fieldAmtacctdr" >xx14500.34</td>
+                    <td width="15%" class="DataGrid_Body_Cell" id="fieldAmtacctcr">xx14500.34</td>
                   </tr>
                 </div>
               </table>

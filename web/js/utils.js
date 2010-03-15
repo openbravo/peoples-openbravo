@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6657';
+  var number = '6687';
   return number;
 }
 
@@ -3143,6 +3143,7 @@ function formElementEvent(form, ElementName, calloutName) {
           if (onchange_combo.indexOf("selectCombo")!=-1) {
             onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
             var onchange_combo2 = onchange_combo;
+            onchange_combo = onchange_combo.replace("return true; tmp_water_mark; ","");
             onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("return"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("return"))+1, onchange_combo.length);
             onchange_combo = onchange_combo.replace("(this)","(obj)");
             onchange_combo = onchange_combo.replace("(this,","(obj,");

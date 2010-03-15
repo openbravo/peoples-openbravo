@@ -12,10 +12,10 @@
  * implied. See the License for the specific language governing rights 
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2005-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2005-2009 Openbravo SLU 
  * All Rights Reserved. 
- * Contributor(s): Openbravo S.L.
+ * Contributor(s): Openbravo S.L.U.
  ************************************************************************
 -->
 <!--
@@ -97,7 +97,7 @@ doc: generates the api for the project.
     <jar destfile="${build.wad.lib}/openbravo-wad.jar">
       <fileset dir="${build.wad}" />
       <manifest>
-        <attribute name="Built-By" value="Openbravo S.L." />
+        <attribute name="Built-By" value="Openbravo S.L.U." />
         <!--section name="common/class1.class">
         <attribute name="Sealed" value="false"/>
       </section-->

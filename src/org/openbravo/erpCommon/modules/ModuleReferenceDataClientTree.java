@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
  * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2008 Openbravo SL
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.modules;
 import javax.servlet.ServletException;
 
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -61,6 +62,15 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
     } catch (ServletException ex) {
       ex.printStackTrace();
       data = null;
+    }
+  }
+
+  protected void setLevel(int level) {
+    super.setLevel(level);
+
+    // set position with the current data, not the one in the Module tree
+    for (int pos = 0; pos < data.length; pos++) {
+      FieldProviderFactory.setField(data[pos], "position", Integer.toString(pos + 1));
     }
   }
 

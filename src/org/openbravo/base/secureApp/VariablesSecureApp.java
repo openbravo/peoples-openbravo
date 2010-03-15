@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2006 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -20,6 +20,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.scheduling.OBScheduler;
 
 /**
  * This class is used to provide the coder with friendly methods to retrieve certain environment,
@@ -199,29 +200,34 @@ public class VariablesSecureApp extends VariablesBase {
     if (!theme.equals("")) {
       return theme;
     } else {
-      Client systemClient = OBDal.getInstance().get(Client.class, "0");
-
-      // Get theme (skin)
-      OBContext.enableAsAdminContext();
       String strTheme = "";
       try {
-        org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-            org.openbravo.model.ad.system.System.class, "0");
-        if (sys != null && !sys.getTADTheme().isEmpty()) {
-          strTheme = (systemClient.getLanguage().isRTLLanguage() ? "rtl/" : "ltr/")
-              + sys.getTADTheme();
+        if (OBScheduler.getInstance().getScheduler().isStarted()) {
+          Client systemClient = OBDal.getInstance().get(Client.class, "0");
+
+          // Get theme (skin)
+          OBContext.enableAsAdminContext();
+          try {
+            org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+                org.openbravo.model.ad.system.System.class, "0");
+            if (sys != null && !sys.getTADTheme().isEmpty()) {
+              strTheme = (systemClient.getLanguage().isRTLLanguage() ? "rtl/" : "ltr/")
+                  + sys.getTADTheme();
+            }
+          } catch (Exception e) {
+            log4j.error("Error getting theme", e);
+            // set default theme and ignore exception
+            strTheme = "";
+          } finally {
+            OBContext.resetAsAdminContext();
+          }
         }
-      } catch (Exception e) {
-        log4j.error("Error getting theme", e);
-        // set default theme and ignore exception
-        strTheme = "";
       } finally {
-        OBContext.resetAsAdminContext();
+        if (strTheme.isEmpty()) {
+          strTheme = "ltr/Default";
+        }
+        return strTheme;
       }
-      if (strTheme.isEmpty()) {
-        strTheme = "ltr/Default";
-      }
-      return strTheme;
     }
   }
 
