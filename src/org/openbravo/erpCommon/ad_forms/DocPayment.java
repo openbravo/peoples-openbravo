@@ -289,8 +289,16 @@ public class DocPayment extends AcctServer {
           DocPaymentData[] data = DocPaymentData.selectManual(conn, as.m_C_AcctSchema_ID,
               line.Line_ID);
           for (int j = 0; data != null && j < data.length; j++) {
-            String amountdebit = data[j].amountdebit;
-            String amountcredit = data[j].amountcredit;
+            String amountdebit = convertAmount(data[j].amountdebit, line.isReceipt.equals("Y"),
+                DateAcct, line.conversionDate, line.C_Currency_ID_From, as.m_C_Currency_ID, line,
+                as, fact, Fact_Acct_Group_ID, conn);
+            String amountcredit = convertAmount(data[j].amountcredit, line.isReceipt.equals("Y"),
+                DateAcct, line.conversionDate, line.C_Currency_ID_From, as.m_C_Currency_ID, line,
+                as, fact, Fact_Acct_Group_ID, conn);
+            amountdebit = getConvertedAmt(amountdebit, as.m_C_Currency_ID, C_Currency_ID, DateAcct,
+                "", AD_Client_ID, AD_Org_ID, conn);
+            amountcredit = getConvertedAmt(amountcredit, as.m_C_Currency_ID, C_Currency_ID,
+                DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
             if (log4j.isDebugEnabled())
               log4j.debug("DocPayment - createFact - Conceptos - AmountDebit: " + amountdebit
                   + " - AmountCredit: " + amountcredit);
@@ -300,9 +308,9 @@ public class DocPayment extends AcctServer {
             lineAux.setM_C_Tax_ID(data[j].cTaxId);
             fact.createLine(lineAux, new Account(conn,
                 (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
-                line.C_Currency_ID_From, (amountdebit.equals("0") ? "" : amountdebit),
-                (amountcredit.equals("0") ? "" : amountcredit), Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
+                C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit), (amountcredit
+                    .equals("0") ? "" : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
           }
         }
       } // END debt-payment conditions
