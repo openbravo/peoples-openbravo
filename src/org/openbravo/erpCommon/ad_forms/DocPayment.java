@@ -306,11 +306,19 @@ public class DocPayment extends AcctServer {
             DocLine_Payment lineAux = DocLine_Payment.clone(line);
             lineAux.setM_C_WithHolding_ID(data[j].cWithholdingId);
             lineAux.setM_C_Tax_ID(data[j].cTaxId);
-            fact.createLine(lineAux, new Account(conn,
-                (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
-                C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit), (amountcredit
-                    .equals("0") ? "" : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+
+            if (data[j].statusInitial.equals(data[j].status)) {
+              fact.createLine(lineAux, new Account(conn,
+                  (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
+                  C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit), (amountcredit
+                      .equals("0") ? "" : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+            } else {
+              fact.createLine(lineAux, getAccountBPartner(lineAux.m_C_BPartner_ID, as,
+                  lineAux.isReceipt.equals("Y"), lineAux.dpStatus, conn), C_Currency_ID,
+                  (amountdebit.equals("0") ? "" : amountdebit), (amountcredit.equals("0") ? ""
+                      : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            }
           }
         }
       } // END debt-payment conditions
