@@ -335,9 +335,9 @@ BEGIN
 
       -- updating Payment Monitor values into C_INVOICE
       UPDATE C_INVOICE
-      SET TOTALPAID = v_PaidAmount,
-          OUTSTANDINGAMT = v_OutstandingAmount,
-          DUEAMT =  V_DueAmount
+      SET TOTALPAID = COALESCE(v_PaidAmount, 0),
+          OUTSTANDINGAMT = COALESCE(V_OutstandingAmount, 0),
+          DUEAMT = COALESCE(V_DueAmount, 0)
       WHERE C_INVOICE_ID = P_RECORD_ID;
 
     END;
