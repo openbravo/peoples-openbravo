@@ -110,6 +110,9 @@ public class IdentifierProvider implements OBSingleton {
   }
 
   private synchronized String formatDate(Property property, Date date) {
+    if (date == null) {
+      return "";
+    }
     if (dateFormat == null) {
       final String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("dateFormat.java");
