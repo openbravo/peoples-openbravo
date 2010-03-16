@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,6 +46,7 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
@@ -239,7 +240,34 @@ public class DatabaseValidator implements SystemValidator {
 
     checkDBObjectsName(result);
 
+    checkDataSetName(result);
+
     return result;
+  }
+
+  /**
+   * Checks dataset name against allowed characters.
+   * 
+   * Background is that dataset name is directly used to derive the exported filename for the
+   * dataset xml-file and this name should not contain any special characters.
+   */
+  private void checkDataSetName(SystemValidationResult result) {
+    OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
+    if (validateModule != null) {
+      obc.add(Expression.eq(DataSet.PROPERTY_MODULE, validateModule));
+    }
+    List<DataSet> dsList = obc.list();
+    for (DataSet ds : dsList) {
+      String dsName = ds.getName();
+      if (!dsName.matches("[a-zA-Z0-9 _\\-]+")) {
+        result
+            .addWarning(
+                SystemValidationResult.SystemValidationType.INCORRECT_DATASET_NAME,
+                "The name of the dataset \""
+                    + dsName
+                    + "\" contains illegal characters. It is only allowed to contain 'a'..'z', 'A'..'Z', '0'..'9', whitespace, '-' and '_'");
+      }
+    }
   }
 
   private void checkMaxObjectNameLength(org.apache.ddlutils.model.Table dbTable,

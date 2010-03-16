@@ -22,7 +22,7 @@ dojo.require("dijit.MenuSeparator");
 
 dojo.experimental("dojox.editor.plugins.Breadcrumb");
 
-dojo.requireLocalization("dojox.editor.plugins", "Breadcrumb", null, "ROOT,ko");
+dojo.requireLocalization("dojox.editor.plugins", "Breadcrumb", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.declare("dojox.editor.plugins._BreadcrumbMenuTitle",[dijit._Widget, dijit._Templated, dijit._Contained],{
 	// summary:

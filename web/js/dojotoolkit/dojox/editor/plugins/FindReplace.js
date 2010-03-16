@@ -21,7 +21,7 @@ dojo.require("dojox.editor.plugins.ToolbarLineBreak");
 dojo.require("dojo.i18n");
 dojo.require("dojo.string");
 
-dojo.requireLocalization("dojox.editor.plugins", "FindReplace", null, "ROOT,ko");
+dojo.requireLocalization("dojox.editor.plugins", "FindReplace", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.experimental("dojox.editor.plugins.FindReplace");
 

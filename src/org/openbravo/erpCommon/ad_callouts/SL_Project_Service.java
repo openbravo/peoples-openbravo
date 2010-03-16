@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
  * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2010 Openbravo SL
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,14 +23,16 @@ import javax.servlet.ServletException;
 
 public class SL_Project_Service extends SimpleCallout {
 
-    @Override
-    protected void execute(CalloutInfo info) throws ServletException {
-        
-        BigDecimal serviceSerCost = info.getBigDecimalParameter("inpservsercost");
-        BigDecimal serviceOutCost = info.getBigDecimalParameter("inpservoutcost");
-        
-        BigDecimal serviceTotalCost = serviceSerCost.add(serviceOutCost);
-        
-        info.addResult("inpservcost", serviceTotalCost);
-    }
+  private static final long serialVersionUID = 1L;
+
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
+
+    BigDecimal serviceSerCost = info.getBigDecimalParameter("inpservsercost");
+    BigDecimal serviceOutCost = info.getBigDecimalParameter("inpservoutcost");
+
+    BigDecimal serviceTotalCost = serviceSerCost.add(serviceOutCost);
+
+    info.addResult("inpservcost", serviceTotalCost);
+  }
 }

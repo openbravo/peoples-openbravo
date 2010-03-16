@@ -23,7 +23,7 @@ dojo.declare("dijit.layout.ScrollingTabController",
 	// tags:
 	//		private
 
-	templateString: dojo.cache("dijit.layout", "templates/ScrollingTabController.html", "<div class=\"dijitTabListContainer-${tabPosition}\" style=\"visibility:hidden\">\n\t<div dojoType=\"dijit.layout._ScrollingTabControllerButton\" buttonType=\"menuBtn\" buttonClass=\"tabStripMenuButton\"\n\t\t\ttabPosition=\"${tabPosition}\" dojoAttachPoint=\"_menuBtn\" showLabel=false>&darr;</div>\n\t<div dojoType=\"dijit.layout._ScrollingTabControllerButton\" buttonType=\"leftBtn\" buttonClass=\"tabStripSlideButtonLeft\"\n\t\t\ttabPosition=\"${tabPosition}\" dojoAttachPoint=\"_leftBtn\" dojoAttachEvent=\"onClick: doSlideLeft\" showLabel=false>&larr;</div>\n\t<div dojoType=\"dijit.layout._ScrollingTabControllerButton\" buttonType=\"rightBtn\" buttonClass=\"tabStripSlideButtonRight\"\n\t\t\ttabPosition=\"${tabPosition}\" dojoAttachPoint=\"_rightBtn\" dojoAttachEvent=\"onClick: doSlideRight\" showLabel=false>&rarr;</div>\n\t<div class='dijitTabListWrapper' dojoAttachPoint='tablistWrapper'>\n\t\t<div wairole='tablist' dojoAttachEvent='onkeypress:onkeypress'\n\t\t\t\tdojoAttachPoint='containerNode' class='nowrapTabStrip'>\n\t\t</div>\n\t</div>\n</div>\n"),
+	templateString: dojo.cache("dijit.layout", "templates/ScrollingTabController.html", "<div class=\"dijitTabListContainer-${tabPosition}\" style=\"visibility:hidden\">\n\t<div dojoType=\"dijit.layout._ScrollingTabControllerButton\"\n\t\t\tclass=\"tabStripButton-${tabPosition}\"\n\t\t\tid=\"${id}_menuBtn\" iconClass=\"dijitTabStripMenuIcon\"\n\t\t\tdojoAttachPoint=\"_menuBtn\" showLabel=false>&darr;</div>\n\t<div dojoType=\"dijit.layout._ScrollingTabControllerButton\"\n\t\t\tclass=\"tabStripButton-${tabPosition}\"\n\t\t\tid=\"${id}_leftBtn\" iconClass=\"dijitTabStripSlideLeftIcon\"\n\t\t\tdojoAttachPoint=\"_leftBtn\" dojoAttachEvent=\"onClick: doSlideLeft\" showLabel=false>&larr;</div>\n\t<div dojoType=\"dijit.layout._ScrollingTabControllerButton\"\n\t\t\tclass=\"tabStripButton-${tabPosition}\"\n\t\t\tid=\"${id}_rightBtn\" iconClass=\"dijitTabStripSlideRightIcon\"\n\t\t\tdojoAttachPoint=\"_rightBtn\" dojoAttachEvent=\"onClick: doSlideRight\" showLabel=false>&rarr;</div>\n\t<div class='dijitTabListWrapper' dojoAttachPoint='tablistWrapper'>\n\t\t<div wairole='tablist' dojoAttachEvent='onkeypress:onkeypress'\n\t\t\t\tdojoAttachPoint='containerNode' class='nowrapTabStrip'>\n\t\t</div>\n\t</div>\n</div>\n"),
 
 	// useMenu:[const] Boolean
 	//		True if a menu should be used to select tabs when they are too
@@ -239,7 +239,7 @@ dojo.declare("dijit.layout.ScrollingTabController",
 		//		Returns the current scroll of the tabs where 0 means
 		//		"scrolled all the way to the left" and some positive number, based on #
 		//		of pixels of possible scroll (ex: 1000) means "scrolled all the way to the right"
-		var sl = (this.isLeftToRight() || dojo.isIE < 8) ? this.scrollNode.scrollLeft :
+		var sl = (this.isLeftToRight() || dojo.isIE < 8 || dojo.isQuirks || dojo.isWebKit) ? this.scrollNode.scrollLeft :
 				dojo.style(this.containerNode, "width") - dojo.style(this.scrollNode, "width")
 					 + (dojo.isIE == 8 ? -1 : 1) * this.scrollNode.scrollLeft;
 		return sl;
@@ -253,7 +253,7 @@ dojo.declare("dijit.layout.ScrollingTabController",
 		//		to achieve that scroll.
 		//
 		//		This method is to adjust for RTL funniness in various browsers and versions.
-		if(this.isLeftToRight() || dojo.isIE < 8){
+		if(this.isLeftToRight() || dojo.isIE < 8 || dojo.isQuirks || dojo.isWebKit){
 			return val;
 		}else{
 			var maxScroll = dojo.style(this.containerNode, "width") - dojo.style(this.scrollNode, "width");
@@ -275,18 +275,9 @@ dojo.declare("dijit.layout.ScrollingTabController",
 			var sl = this._getScroll();
 
 			if(sl > node.offsetLeft ||
-				sl + dojo.style(this.scrollNode, "width") <
-				node.offsetLeft + dojo.style(node, "width")){
-
-				var anim = this.createSmoothScroll();
-				// use dojo.connect() rather than this.connect() because the animation will soon be
-				// garbage collected and there's no reason to leave a reference to the connection in this._connects[]
-				dojo.connect(anim, "onEnd", function(){
-					tab.onClick(null);
-				});
-				anim.play();
-			}else{
-				tab.onClick(null);
+					sl + dojo.style(this.scrollNode, "width") <
+					node.offsetLeft + dojo.style(node, "width")){
+				this.createSmoothScroll().play();
 			}
 		}
 
@@ -453,13 +444,7 @@ dojo.declare("dijit.layout._ScrollingTabControllerButton",
 	{
 		baseClass: "dijitTab tabStripButton",
 
-		buttonType: "",
-
-		buttonClass: "",
-
-		tabPosition: "top",
-
-		templateString: dojo.cache("dijit.layout", "templates/_ScrollingTabControllerButton.html", "<div id=\"${id}-${buttonType}\" class=\"tabStripButton dijitTab ${buttonClass} tabStripButton-${tabPosition}\"\n\t\tdojoAttachEvent=\"onclick:_onButtonClick\">\n\t<div role=\"presentation\" wairole=\"presentation\" class=\"dijitTabInnerDiv\" dojoattachpoint=\"innerDiv,focusNode\">\n\t\t<div role=\"presentation\" wairole=\"presentation\" class=\"dijitTabContent dijitButtonContents\" dojoattachpoint=\"tabContent\">\n\t\t\t<img src=\"${_blankGif}\"/>\n\t\t\t<span dojoAttachPoint=\"containerNode,titleNode\" class=\"dijitButtonText\"></span>\n\t\t</div>\n\t</div>\n</div>\n"),
+		templateString: dojo.cache("dijit.layout", "templates/_ScrollingTabControllerButton.html", "<div dojoAttachEvent=\"onclick:_onButtonClick\">\n\t<div waiRole=\"presentation\" class=\"dijitTabInnerDiv\" dojoattachpoint=\"innerDiv,focusNode\">\n\t\t<div waiRole=\"presentation\" class=\"dijitTabContent dijitButtonContents\" dojoattachpoint=\"tabContent\">\n\t\t\t<img waiRole=\"presentation\" src=\"${_blankGif}\" class=\"dijitTabStripIcon\" dojoAttachPoint=\"iconNode\"/>\n\t\t\t<span dojoAttachPoint=\"containerNode,titleNode\" class=\"dijitButtonText\"></span>\n\t\t</div>\n\t</div>\n</div>\n"),
 
 		// Override inherited tabIndex: 0 from dijit.form.Button, because user shouldn't be
 		// able to tab to the left/right/menu buttons

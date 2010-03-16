@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2010 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
@@ -44,6 +45,8 @@ public class Login extends HttpBaseServlet {
       String strTheme = vars.getTheme();
       vars.clearSession(false);
 
+      OBContext.enableAsAdminContext();
+
       Client systemClient = OBDal.getInstance().get(Client.class, "0");
       String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient.getLanguage()
           .getLanguage());
@@ -51,6 +54,8 @@ public class Login extends HttpBaseServlet {
           .getLanguage().getLanguage());
       String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
           .getLanguage());
+
+      OBContext.resetAsAdminContext();
 
       printPageIdentificacion(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
 

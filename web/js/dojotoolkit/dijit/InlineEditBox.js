@@ -130,7 +130,14 @@ dojo.declare("dijit.InlineEditBox",
 			this.displayNode.setAttribute("tabIndex", 0);
 		}
 
-		this.attr('value', this.value || this.displayNode.innerHTML);
+		if(!this.value && !("value" in this.params)){ // "" is a good value if specified directly so check params){
+		   this.value = dojo.trim(this.renderAsHtml ? this.displayNode.innerHTML :
+		      (this.displayNode.innerText||this.displayNode.textContent||""));
+		}
+		if(!this.value){
+		    this.displayNode.innerHTML = this.noValueIndicator;
+		}
+
 		dojo.addClass(this.displayNode, 'dijitInlineEditBoxDisplayMode');
 	},
 
@@ -530,7 +537,7 @@ dojo.declare(
 
 		this.editWidget.focus();
 		setTimeout(dojo.hitch(this, function(){
-			if(this.editWidget.focusNode.tagName == "INPUT"){
+			if(this.editWidget.focusNode && this.editWidget.focusNode.tagName == "INPUT"){
 				dijit.selectInputText(this.editWidget.focusNode);
 			}
 		}), 0);

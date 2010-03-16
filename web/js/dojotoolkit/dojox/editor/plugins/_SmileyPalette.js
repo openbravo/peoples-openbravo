@@ -15,7 +15,7 @@ dojo.require("dojo.i18n");
 
 dojo.require("dijit._PaletteMixin");
 
-dojo.requireLocalization("dojox.editor.plugins", "Smiley", null, "ROOT,ko");
+dojo.requireLocalization("dojox.editor.plugins", "Smiley", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
 
 dojo.experimental("dojox.editor.plugins._SmileyPalette");
 

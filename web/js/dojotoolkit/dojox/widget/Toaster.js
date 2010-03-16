@@ -10,6 +10,8 @@ dojo._hasResource["dojox.widget.Toaster"] = true;
 dojo.provide("dojox.widget.Toaster");
 
 dojo.require("dojo.fx");
+dojo.require("dojo.window");
+
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 
@@ -219,7 +221,7 @@ dojo.declare("dojox.widget.Toaster", [dijit._Widget, dijit._Templated], {
 		},
 		
 		_placeClip: function(){
-			var view = dijit.getViewport();
+			var view = dojo.window.getBox();
 
 			var nodeSize = dojo.marginBox(this.containerNode);
 

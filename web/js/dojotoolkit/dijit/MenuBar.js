@@ -17,6 +17,8 @@ dojo.declare("dijit.MenuBar", dijit._MenuBase, {
 
 	templateString: dojo.cache("dijit", "templates/MenuBar.html", "<div class=\"dijitMenuBar dijitMenuPassive\" dojoAttachPoint=\"containerNode\"  waiRole=\"menubar\" tabIndex=\"${tabIndex}\" dojoAttachEvent=\"onkeypress: _onKeyPress\"></div>\n"),
 
+	baseClass: "dijitMenuBar",
+
 	// _isMenuBar: [protected] Boolean
 	//		This is a MenuBar widget, not a (vertical) Menu widget.
 	_isMenuBar: true,

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2009 Openbravo SL 
+ * All portions are Copyright (C) 2007-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************

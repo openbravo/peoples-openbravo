@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2009 Openbravo SL 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -150,7 +150,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       } else {
         priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
-            dataOrder[0].cBpartnerId, strPriceActual.replace("\"", ""), strProduct,
+            dataOrder[0].cBpartnerId, priceActual.toString().replace("\"", ""), strProduct,
             dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
         // priceList
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");

@@ -33,6 +33,9 @@ dojo.declare(
 
 		templateString: dojo.cache("dijit.form", "templates/CheckBox.html", "<div class=\"dijitReset dijitInline\" waiRole=\"presentation\"\n\t><input\n\t \t${nameAttrSetting} type=\"${type}\" ${checkedAttrSetting}\n\t\tclass=\"dijitReset dijitCheckBoxInput\"\n\t\tdojoAttachPoint=\"focusNode\"\n\t \tdojoAttachEvent=\"onclick:_onClick\"\n/></div>\n"),
 
+		// the icon mapping in dijit.form.Button has no meaning for a CheckBox
+		attributeMap: dijit.form._FormWidget.prototype.attributeMap,
+	
 		baseClass: "dijitCheckBox",
 
 		// type: [private] String
@@ -98,6 +101,10 @@ dojo.declare(
 			//		Otherwise returns false.
 			return (this.checked ? this.value : false);
 		},
+
+		// Override dijit.form.Button._setLabelAttr() since we don't even have a containerNode.
+		// Normally users won't try to set label, except when CheckBox or RadioButton is the child of a dojox.layout.TabContainer
+		_setLabelAttr: undefined,
 
 		postMixInProperties: function(){
 			if(this.value == ""){

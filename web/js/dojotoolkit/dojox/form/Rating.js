@@ -58,7 +58,6 @@ dojo.declare("dojox.form.Rating",
 	},
 
 	_onMouse: function(evt){
-		this.inherited(arguments);
 		if(this._hovering){
 			var hoverValue = +dojo.attr(evt.target, "value");
 			this.onMouseOver(evt, hoverValue);
