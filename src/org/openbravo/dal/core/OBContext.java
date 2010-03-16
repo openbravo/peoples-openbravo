@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -114,7 +115,8 @@ public class OBContext implements OBNotSingleton {
     } else if (OBContext.getOBContext() == adminContext) {
       return;
     } else {
-      OBContext.getOBContext().setInAdministratorMode(true);
+      OBContext.getOBContext().pushCurrentAdminModeOnStack();
+      OBContext.getOBContext().setAdministratorMode(true);
     }
   }
 
@@ -132,7 +134,7 @@ public class OBContext implements OBNotSingleton {
     if (OBContext.getOBContext() == adminContext) {
       OBContext.setOBContext((OBContext) null);
     } else {
-      OBContext.getOBContext().setInAdministratorMode(false);
+      OBContext.getOBContext().setAdminModeBackToPrevious();
     }
   }
 
@@ -285,6 +287,23 @@ public class OBContext implements OBNotSingleton {
   // support storing the context in a persistent tomcat session
   private String serializedUserId;
   private boolean serialized = false;
+
+  private Stack<Boolean> administratorModeStack = new Stack<Boolean>();
+
+  private void setAdminModeBackToPrevious() {
+    if (administratorModeStack.isEmpty()) {
+      // warning not printed for now as this situation correctly occurs in certain login
+      // situations
+      // log.warn("Unbalanced admin mode calls", new IllegalStateException(
+      // "Unbalanced admin mode calls"));
+    } else {
+      setAdministratorMode(administratorModeStack.pop());
+    }
+  }
+
+  private void pushCurrentAdminModeOnStack() {
+    administratorModeStack.push(isInAdministratorMode());
+  }
 
   public String getUserLevel() {
     return userLevel;
@@ -743,6 +762,19 @@ public class OBContext implements OBNotSingleton {
     return this == adminContext;
   }
 
+  private boolean setAdministratorMode(boolean inAdministratorMode) {
+    final boolean prevMode = isInAdministratorMode();
+    if (inAdministratorMode) {
+      adminModeSet.set(this);
+    } else {
+      adminModeSet.set(null);
+    }
+    return prevMode;
+  }
+
+  /**
+   * @deprecated use OBContext.enableAsAdminContext and OBContext.resetAsAdminContext
+   */
   public boolean setInAdministratorMode(boolean inAdministratorMode) {
     final boolean prevMode = isInAdministratorMode();
     if (inAdministratorMode) {
