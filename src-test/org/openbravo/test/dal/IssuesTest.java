@@ -23,7 +23,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -45,8 +44,6 @@ import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLine;
-import org.openbravo.model.common.order.Order;
-import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -69,9 +66,6 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12106: record identifier returned from dal uses ' ' as
  * separator of columns, but normal pl-version uses ' - '
  * 
- * - https://issues.openbravo.com/view.php?id=12594: Make setting of administrator mode less
- * vulnerable for wrong usage
- * 
  * @author mtaal
  * @author iperdomo
  */
@@ -84,17 +78,6 @@ public class IssuesTest extends BaseTest {
    */
   public void test12106() {
     setSystemAdministratorContext();
-    final List<Object> params = new ArrayList<Object>();
-    final String orderId = "1000001";
-    params.add("C_ORDER");
-    params.add(orderId);
-    params.add("en_US");
-    final String sqlIdentifier = (String) CallStoredProcedure.getInstance().call(
-        "AD_COLUMN_IDENTIFIER", params, null);
-    final Order order = OBDal.getInstance().get(Order.class, orderId);
-    final String dalIdentifier = IdentifierProvider.getInstance().getIdentifier(order);
-    assertEquals(sqlIdentifier, dalIdentifier);
-
     final List<Module> modules = OBDal.getInstance().createCriteria(Module.class).list();
     for (Module module : modules) {
       assertTrue(module.getIdentifier().contains(IdentifierProvider.SEPARATOR));
@@ -240,28 +223,5 @@ public class IssuesTest extends BaseTest {
     assertTrue(invoiceLine.isActive());
     Location bpLoc = OBProvider.getInstance().get(Location.class);
     assertTrue(bpLoc.isActive());
-  }
-
-  /**
-   * Tests https://issues.openbravo.com/view.php?id=12594
-   */
-  public void test12594() {
-    OBContext.enableAsAdminContext();
-    OBContext.enableAsAdminContext();
-    OBContext.enableAsAdminContext();
-    assertTrue(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertTrue(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertTrue(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertFalse(OBContext.getOBContext().isInAdministratorMode());
-
-    OBContext.enableAsAdminContext();
-    assertTrue(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertFalse(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertFalse(OBContext.getOBContext().isInAdministratorMode());
   }
 }

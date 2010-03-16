@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,8 +29,6 @@ import org.openbravo.base.expression.Evaluator;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.order.Order;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -68,37 +66,5 @@ public class EvaluationTest extends BaseTest {
       }
     }
     assertTrue(found);
-  }
-
-  /**
-   * Tests https://issues.openbravo.com/view.php?id=12575 It is neccessary to create a testcase for
-   * Transient Condition
-   */
-  public void testOrderEvaluation() {
-    setBigBazaarUserContext();
-    addReadWriteAccess(Order.class);
-    addReadWriteAccess(OrderLine.class);
-
-    final String script = "var orderLines = orderLineList.toArray();"
-        + "function compute() {for (var i = 0; i < orderLines.length; i++) {return orderLines[i].getLineNo() > 0;}; return false;};"
-        + "compute();";
-
-    final List<Order> orders = OBDal.getInstance().createCriteria(Order.class).list();
-    int cnt = 0;
-    for (final Order o : orders) {
-      if ((cnt % 2) == 0) {
-        o.getOrderLineList().clear();
-      }
-      final Boolean result = Evaluator.getInstance().evaluateBoolean(o, script);
-      Boolean check = false;
-      for (OrderLine ol : o.getOrderLineList()) {
-        check |= ol.getLineNo() > 0;
-      }
-      assertEquals(result, check);
-      cnt++;
-    }
-    assertTrue(cnt > 0);
-    // prevent orders really to be updated
-    OBDal.getInstance().rollbackAndClose();
   }
 }
