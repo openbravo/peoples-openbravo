@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6732';
+  var number = '6734';
   return number;
 }
 
@@ -5039,7 +5039,20 @@ function manageDecPoint(obj, decSeparator, evt) {
   * {obj.value = replaceAt(obj.value, "", caretPosition);
   * setCaretToPos(obj, caretPosition);},5); }
   */
-  if(keyCode==110) {
+  var inpMaxlength = obj.getAttribute("maxlength");
+  var inpLength = obj.value.length;
+  var isInpMaxLength = false;
+  if (inpMaxlength === null) {
+    isInpMaxLength = false;
+  } else if (inpLength >= inpMaxlength) {
+    isInpMaxLength = true;
+  }
+
+  if (getBrowserInfo('name').toUpperCase().indexOf("OPERA") != -1 && keyCode==78) {
+    keyCode = 110;
+  }
+
+  if(keyCode==110 && !isInpMaxLength) {
     setTimeout(function() {obj.value = replaceAt(obj.value, decSeparator, caretPosition); setCaretToPos(obj, caretPosition+1);},5);
   }
   return true;
