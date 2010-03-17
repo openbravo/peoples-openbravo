@@ -8,10 +8,10 @@
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2008 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,7 +78,7 @@ function changeState(evt, element) {
   var child=null;
   var total = "";
   try {
-    if (element.id.indexOf("folder")==-1 && element.id.indexOf("folderCell")==-1 && element.id.indexOf("folderImg")==-1) {
+    if (element.id.indexOf("folder")==-1 && element.id.indexOf("folderCell")==-1 && element.id.indexOf("folderImg")==-1 && element.tagName.toLowerCase() !== "a") {
       if (element.onclick) return element.onclick();
       else return true;
     } else if (element.id.indexOf("folderNoChilds")==0) return true;
