@@ -143,7 +143,7 @@ public class ReportPricelist extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "MProductId_IN",
-          "null", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
               this, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "", strmProductId);
       xmlDocument.setData("reportMProductId_IN", "liststructure", comboTableData.select(false));

@@ -389,7 +389,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               // the hash of the post data
               if (!hash.equals(vars1.getPostDataHash())) {
                 request.setAttribute("autosave", true);
-                if (vars1.getCommand().indexOf("BUTTON") != -1)
+                if (vars1.getCommand().indexOf("BUTTON") != -1
+                    || !vars1.getStringParameter("inpProcessId").equals(""))
+                  // Adding pop-up window attribute to close the window on failed auto-save
                   request.setAttribute("popupWindow", true);
                 // forward request
                 if (!forwardRequest(request, response)) {

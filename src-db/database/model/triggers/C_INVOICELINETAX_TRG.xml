@@ -59,11 +59,13 @@ BEGIN
     SELECT COUNT(C_TAX_ID) INTO v_Count
     FROM C_INVOICETAX
     WHERE C_INVOICE_ID = :NEW.C_Invoice_ID
-    AND C_TAX_ID = :NEW.C_TAX_ID;
+    AND C_TAX_ID = :NEW.C_TAX_ID
+    AND Recalculate = 'Y';
     IF(v_Count>0) THEN
       UPDATE C_INVOICETAX SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT + :NEW.TAXBASEAMT) * v_Rate/100, v_Prec) ELSE (TAXAMT + :NEW.TAXAMT) END), TAXBASEAMT=TAXBASEAMT + :NEW.TAXBASEAMT
       WHERE C_INVOICE_ID = :NEW.C_Invoice_ID
-      AND C_TAX_ID = :NEW.C_TAX_ID;
+      AND C_TAX_ID = :NEW.C_TAX_ID
+      AND Recalculate = 'Y';
     ELSE
       SELECT COALESCE(MAX(LINE),0) + 10
       INTO v_LineNo
@@ -73,17 +75,18 @@ BEGIN
       INTO C_INVOICETAX (
       C_InvoiceTax_ID, C_Invoice_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
       IsActive, Created, CreatedBy, Updated,
-      UpdatedBy, TaxBaseAmt, TaxAmt, Line)
+      UpdatedBy, TaxBaseAmt, TaxAmt, Line, Recalculate)
       VALUES (
       GET_UUID(), :NEW.C_Invoice_ID, :NEW.C_TAX_ID, :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID,
       'Y', now(), :NEW.UPDATEDBY, now(),
-      :NEW.UPDATEDBY, :NEW.TAXBASEAMT, :NEW.TAXAMT, v_LineNo);
+      :NEW.UPDATEDBY, :NEW.TAXBASEAMT, :NEW.TAXAMT, v_LineNo, 'Y');
     END IF;
   ELSE
     
     UPDATE C_INVOICETAX SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT - :OLD.TAXBASEAMT) * v_Rate/100, v_Prec) ELSE (TAXAMT - :OLD.TAXAMT) END), TAXBASEAMT=TAXBASEAMT - :OLD.TAXBASEAMT
     WHERE C_INVOICE_ID = :OLD.C_Invoice_ID
-    AND C_TAX_ID = :OLD.C_TAX_ID;
+    AND C_TAX_ID = :OLD.C_TAX_ID
+    AND Recalculate = 'Y';
     
     DELETE FROM C_INVOICETAX 
     WHERE C_INVOICE_ID = :OLD.C_Invoice_ID
