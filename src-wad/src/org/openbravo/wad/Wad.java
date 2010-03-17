@@ -2964,8 +2964,17 @@ public class Wad extends DefaultHandler {
             else
               data[i].orgcode = "Utility.getReferenceableOrg(this, vars, parentOrg, windowId, "
                   + accesslevel + ")";
-          } else
+          } else {
             data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
+          }
+
+          // Do not add client 0 for client combo, but do it for the rest of combos
+          if (data[i].name.equalsIgnoreCase("AD_Client_ID")) {
+            data[i].clientcode = "Utility.getContext(this, vars, \"#User_Client\", windowId, "
+                + accesslevel + ")";
+          } else {
+            data[i].clientcode = "Utility.getContext(this, vars, \"#User_Client\", windowId)";
+          }
 
           if (data[i].reference.equals("17")) { // List
             data[i].tablename = "List";
