@@ -24,7 +24,7 @@
 
 /* Header part -- contains navigation buttons and day names. */
 
-.calendar .button { /* "<<", "<", ">", ">>" buttons have this class */
+.calendar .dp_button { /* "<<", "<", ">", ">>" buttons have this class */
   text-align: center;
   padding: 1px;
   border: 1px solid;
