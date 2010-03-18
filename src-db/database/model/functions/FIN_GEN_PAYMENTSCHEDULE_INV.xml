@@ -306,10 +306,10 @@ SELECT
 	C_INVOICE_ID=P_RECORD_ID
 	AND duedate<=now()
 group by c_invoice_id;
-
+V_DueAmount :=COALESCE(V_DueAmount,0);
 --Getting Day Still Due
 SELECT 
-	TO_NUMBER(MIN(DUEDATE)-TRUNC(NOW())) as DAYSTILLDUE 
+	COALESCE(TO_NUMBER(MIN(DUEDATE)-TRUNC(NOW())),0) as DAYSTILLDUE
 INTO 
 	V_DayStillDue
 FROM 
