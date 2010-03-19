@@ -108,7 +108,7 @@ public class DalUtil {
       // NOTE disabled for now, there is one special case: AD_Column.IDENTIFIER
       // which is NOT HANDLED
       if (part.equals(IDENTIFIER_PART_PATH)) {
-        return bob.getIdentifier();
+        return currentBob.getIdentifier();
       }
       final Entity currentEntity = currentBob.getEntity();
       if (!currentEntity.hasProperty(part)) {
