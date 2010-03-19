@@ -47,6 +47,7 @@ import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.BaseTest;
 
@@ -121,16 +122,13 @@ public class IssuesTest extends BaseTest {
     {
       final List<Object> params = new ArrayList<Object>();
       final String id = "1000000";
-      params.add("C_INVOICELINE");
+      params.add("M_PRODUCT");
       params.add(id);
       params.add("en_US");
       final String sqlIdentifier = (String) CallStoredProcedure.getInstance().call(
           "AD_COLUMN_IDENTIFIER", params, null);
       final String dalIdentifier = IdentifierProvider.getInstance().getIdentifier(
-          OBDal.getInstance().get(InvoiceLine.class, id));
-
-      // assert equals disabled for now as apparently in oracle the date returned is one day before
-      // postgress and java, at least in the testcase we have
+          OBDal.getInstance().get(Product.class, id));
       assertEquals(sqlIdentifier, dalIdentifier);
     }
 
