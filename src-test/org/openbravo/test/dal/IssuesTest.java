@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Reference;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.dal.core.OBContext;
@@ -72,12 +73,33 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12594: Make setting of administrator mode less
  * vulnerable for wrong usage
  * 
+ * - https://issues.openbravo.com/view.php?id=12702: Cycle in parent reference references then DAL
+ * throws stack over flow error
+ * 
  * @author mtaal
  * @author iperdomo
  */
 
 public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
+
+  /**
+   * Tests https://issues.openbravo.com/view.php?id=12702
+   */
+  public void test12702() {
+    final Reference ref1 = new Reference();
+    final Reference ref2 = new Reference();
+    ref2.setModelImpl("ref2");
+    ref1.setParentReference(ref2);
+    ref2.setParentReference(ref1);
+    ref2.setBaseReference(true);
+    assertEquals("ref2", ref1.getModelImplementationClassName());
+    ref1.setBaseReference(true);
+    assertEquals(null, ref1.getModelImplementationClassName());
+    ref1.setBaseReference(false);
+    ref2.setBaseReference(false);
+    assertEquals(null, ref1.getModelImplementationClassName());
+  }
 
   /**
    * Tests https://issues.openbravo.com/view.php?id=12594
