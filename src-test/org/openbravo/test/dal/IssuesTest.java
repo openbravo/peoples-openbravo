@@ -70,9 +70,6 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12106: record identifier returned from dal uses ' ' as
  * separator of columns, but normal pl-version uses ' - '
  * 
- * - https://issues.openbravo.com/view.php?id=12594: Make setting of administrator mode less
- * vulnerable for wrong usage
- * 
  * - https://issues.openbravo.com/view.php?id=12702: Cycle in parent reference references then DAL
  * throws stack over flow error
  * 
@@ -99,29 +96,6 @@ public class IssuesTest extends BaseTest {
     ref1.setBaseReference(false);
     ref2.setBaseReference(false);
     assertEquals(null, ref1.getModelImplementationClassName());
-  }
-
-  /**
-   * Tests https://issues.openbravo.com/view.php?id=12594
-   */
-  public void test12594() {
-    OBContext.enableAsAdminContext();
-    OBContext.enableAsAdminContext();
-    OBContext.enableAsAdminContext();
-    assertTrue(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertTrue(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertTrue(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertFalse(OBContext.getOBContext().isInAdministratorMode());
-
-    OBContext.enableAsAdminContext();
-    assertTrue(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertFalse(OBContext.getOBContext().isInAdministratorMode());
-    OBContext.resetAsAdminContext();
-    assertFalse(OBContext.getOBContext().isInAdministratorMode());
   }
 
   /**
