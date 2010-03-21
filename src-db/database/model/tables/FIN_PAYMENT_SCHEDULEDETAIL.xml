@@ -53,11 +53,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FIN_PAYMENT_PROP_DETAIL_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_SCHEDULEDETAIL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="FIN_AD_ORG_SCHEDULEDETAIL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENT_PROP_DETAIL" name="FIN_PAYMENT_PROP_DT_KEY">
+        <reference local="FIN_PAYMENT_PROP_DETAIL_ID" foreign="FIN_PAYMENT_PROP_DETAIL_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENT_DETAIL" name="FIN_PAYMENT_SCHEDULEDETAIL">
         <reference local="FIN_PAYMENT_DETAIL_ID" foreign="FIN_PAYMENT_DETAIL_ID"/>
