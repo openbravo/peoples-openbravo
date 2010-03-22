@@ -106,23 +106,29 @@ public class Menu extends HttpSecureAppServlet {
 
     try { // Trying to deep-link
 
-      OBContext.setAdminContext();
+      OBContext.enableAsAdminContext();
 
       final String tabId = vars.getStringParameter("tabId", IsIDFilter.instance);
-      final String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
+      String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
       final String recordId = vars.getStringParameter("recordId", IsIDFilter.instance);
       String viewType = "RELATION";
 
-      if (tabId.equals("") || windowId.equals("")) {
+      if (tabId.equals("")) {
         return "";
       }
 
       final Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      final Window window = OBDal.getInstance().get(Window.class, windowId);
 
-      if (!tab.getWindow().equals(window)) {
-        log4j.error("Invalid deep-link URL: tab doesn't belong to window");
-        return "";
+      if (!windowId.equals("")) {
+        final Window window = OBDal.getInstance().get(Window.class, windowId);
+
+        if (!tab.getWindow().equals(window)) {
+          log4j.error("Invalid deep-link URL: tab " + tabId + " doesn't belong to window "
+              + windowId);
+          return "";
+        }
+      } else {
+        windowId = tab.getWindow().getId();
       }
 
       if (tab.getTabLevel() > 0 && recordId.equals("")) {
