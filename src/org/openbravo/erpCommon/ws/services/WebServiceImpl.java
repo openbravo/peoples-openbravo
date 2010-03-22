@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,9 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.base.secureApp.UserLock;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.security.SessionLogin;
 
 public class WebServiceImpl implements WebService {
   protected static ConnectionProvider pool;
@@ -36,11 +38,44 @@ public class WebServiceImpl implements WebService {
     initPool();
   }
 
+  /**
+   * Check access and block user if needed
+   */
   private boolean access(String username, String password) {
     try {
-      return !WebServicesData.hasAccess(pool, username, password).equals("0");
+      UserLock lockSettings = new UserLock(username);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return false;
+      }
+      String strUserAuth = WebServicesData.hasAccess(pool, username, password);
+      boolean hasAccess = strUserAuth != null && !strUserAuth.isEmpty();
+      createDBSession(username, strUserAuth);
+      if (strUserAuth == null) {
+        lockSettings.addFail();
+      }
+
+      return hasAccess;
     } catch (Exception e) {
       return false;
+    }
+  }
+
+  private void createDBSession(String strUser, String strUserAuth) {
+    try {
+      String usr = strUserAuth == null ? "0" : strUserAuth;
+
+      final SessionLogin sl = new SessionLogin("0", "0", usr);
+
+      if (strUserAuth == null) {
+        sl.setStatus("F");
+      } else {
+        sl.setStatus("WS");
+      }
+      sl.setUserName(strUser);
+      sl.save();
+    } catch (Exception e) {
+      log4j.error("Error creating DB session", e);
     }
   }
 

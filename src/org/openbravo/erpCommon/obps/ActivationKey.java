@@ -347,13 +347,13 @@ public class ActivationKey {
         int activeSessions = 0;
         try {
           activeSessions = getActiveSessions(currentSession);
-          log4j.info("Active sessions: " + activeSessions);
+          log4j.debug("Active sessions: " + activeSessions);
           if (activeSessions >= maxUsers || (softUsers != null && activeSessions >= softUsers)) {
             // Before raising concurrent users error, clean the session with ping timeout and try it
             // again
-            if (deactivateTimeOutSessions()) {
+            if (deactivateTimeOutSessions(currentSession)) {
               activeSessions = getActiveSessions(currentSession);
-              log4j.info("Active sessions after timeout cleanup: " + activeSessions);
+              log4j.debug("Active sessions after timeout cleanup: " + activeSessions);
             }
           }
         } catch (Exception e) {
@@ -386,7 +386,7 @@ public class ActivationKey {
    * <p/>
    * PING_TIMEOUT_SECS is hardcoded to 120s, pings are hardcoded in front-end to 50s.
    */
-  private boolean deactivateTimeOutSessions() {
+  private boolean deactivateTimeOutSessions(String currentSessionId) {
     // Last valid ping time is current time substract timeout seconds
     Calendar cal = Calendar.getInstance();
     cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
@@ -398,6 +398,7 @@ public class ActivationKey {
     obCriteria.add(Expression.and(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true), Expression
         .or(Expression.isNull(Session.PROPERTY_LASTPING), Expression.lt(Session.PROPERTY_LASTPING,
             lastValidPingTime))));
+    obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSessionId));
 
     boolean sessionDeactivated = false;
     for (Session expiredSession : obCriteria.list()) {

@@ -34,6 +34,8 @@ public class LoginUtils {
    * Returns a userId which matches the login and password. If no user is found then null is
    * returned. The combination of login and password is used to find the user.
    * 
+   * Blocking users is taking into account
+   * 
    * Note that only active users are returned.
    * 
    * @param connectionProvider
@@ -43,10 +45,35 @@ public class LoginUtils {
    *          the login
    * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
-   * @return the user id or null if no user could be found.
+   * @return the user id or null if no user could be found or the user is locked.
    * @see FormatUtilities#sha1Base64(String)
    */
   public static String getValidUserId(ConnectionProvider connectionProvider, String login,
+      String unHashedPassword) {
+    try {
+      // Deley response and check for locked user
+      UserLock lockSettings = new UserLock(login);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return null;
+      }
+
+      final String userId = checkUserPassword(connectionProvider, login, unHashedPassword);
+      if (userId == null) {
+        lockSettings.addFail();
+      }
+      return userId;
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  /**
+   * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not
+   * blocking user accounts.
+   * 
+   */
+  public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
       final String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
@@ -54,6 +81,7 @@ public class LoginUtils {
       if (userId.equals("-1")) {
         return null;
       }
+
       return userId;
     } catch (final Exception e) {
       throw new OBException(e);
@@ -224,4 +252,5 @@ public class LoginUtils {
 
     return true;
   }
+
 }
