@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_PRODUCT_TRG">
-    <trigger name="M_PRODUCT_TRG" table="M_PRODUCT" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="M_PRODUCT_TRG" table="M_PRODUCT" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
 /*************************************************************************
   * The contents of this file are subject to the Compiere Public
@@ -190,9 +190,6 @@ BEGIN
          :new.IsActive, :new.Created, :new.CreatedBy, :new.Updated, :new.UpdatedBy,
          v_xTree_ID, :new.M_Product_ID,
          v_xParent_ID, (CASE :new.IsSummary WHEN 'Y' THEN 100 ELSE 999 END));    -- Summary Nodes first
-         
- ELSIF (DELETING) THEN
-    DELETE FROM AD_TreeNodePR WHERE AD_Client_ID = :old.AD_Client_ID AND Node_ID = :old.M_Product_ID;
  END IF;
  IF (INSERTING OR UPDATING) THEN
     -- Checks on the attribute set value
