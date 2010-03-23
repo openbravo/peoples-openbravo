@@ -30,12 +30,10 @@
     
 BEGIN
     
-	IF AD_isTriggerEnabled()='N' THEN 
-		RETURN OLD;
+	IF AD_isTriggerEnabled()='N' THEN RETURN;
 	END IF;
  
 	DELETE FROM AD_TreeNodeBP WHERE AD_Client_ID = :old.AD_Client_ID AND Node_ID = :old.C_BPartner_ID;
-	RETURN OLD;
      
 END C_BPARTNER_TRG2
 ]]></body>

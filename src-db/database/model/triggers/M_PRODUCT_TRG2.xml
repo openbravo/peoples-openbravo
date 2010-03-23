@@ -24,13 +24,10 @@
   *************************************************************************/
  			
 BEGIN
-    IF AD_isTriggerEnabled()='N' THEN 
-        RETURN OLD;
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
     DELETE FROM AD_TreeNodePR WHERE AD_Client_ID = :old.AD_Client_ID AND Node_ID = :old.M_Product_ID;
-
-    RETURN OLD;
 
 END M_PRODUCT_TRG2
 ]]></body>
