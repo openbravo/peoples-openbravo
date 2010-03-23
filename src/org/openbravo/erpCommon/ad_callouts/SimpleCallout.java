@@ -297,8 +297,8 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          The value to assign to the field.
      */
     public void addResult(String param, String value) {
-      addResult(param, (Object) value == null ? null : "\"" + FormatUtilities.replaceJS(value)
-          + "\"");
+      addResult(param, (Object) (value == null ? null : "\"" + FormatUtilities.replaceJS(value)
+          + "\""));
     }
   }
 }
