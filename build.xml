@@ -98,6 +98,7 @@ export.database: exports database structure and data to xml files.
   <property name="calculate.core.revision" value="true"/>
   <property name="stopOnWadError" value="false"/>
   <property name="friendlyWarnings" value="false"/>
+  <property name="checkTranslationConsistency" value="true"/>
 
   <available file=".hg" property="is.hg" />
 
