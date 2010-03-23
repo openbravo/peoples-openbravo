@@ -92,6 +92,7 @@
 <FIELD id="fieldCPaymentId" attribute="value">cDebtPaymentId</FIELD>
 <FIELD id="fieldPrice" attribute="name" replace="xx">cDebtPaymentId</FIELD>
 <FIELD id="fieldPrice" attribute="value">amount2</FIELD>
+<FIELD id="isManual">IsManual</FIELD>
 <FIELD id="inpterplanneddate" attribute="name" replace="xx">cDebtPaymentId</FIELD>
 <FIELD id="parameterCost" attribute="name" replace="xx">cDebtPaymentId</FIELD>
 <FIELD id="parameterProposed" attribute="name" replace="xx">cDebtPaymentId</FIELD>
