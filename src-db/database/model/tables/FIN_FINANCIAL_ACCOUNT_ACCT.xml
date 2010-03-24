@@ -65,11 +65,26 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FIN_BANKFEE_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FIN_BANKREVALUATIONGAIN_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FIN_BANKREVALUATIONLOSS_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_FINACC_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="FIN_FINACC_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_BANKFEE">
+        <reference local="FIN_BANKFEE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="FIN_FINACC_ACCT_C_ACCTSCHEM" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
@@ -91,6 +106,12 @@
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_RECEIVEPAYMENT">
         <reference local="FIN_RECEIVEPAYMENT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_REVALGAIN">
+        <reference local="FIN_BANKREVALUATIONGAIN_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_REVALLOSS">
+        <reference local="FIN_BANKREVALUATIONLOSS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_WITHDRAWAL">
         <reference local="FIN_WITHDRAWAL_ACCT" foreign="C_VALIDCOMBINATION_ID"/>

@@ -97,6 +97,26 @@
         <default/>
         <onCreateDefault><![CDATA[SELECT max(C_DocType_ID) from C_DocType WHERE c_doctype.ad_client_id = fin_payment_.ad_client_id AND AD_ISORGINCLUDED(FIN_Payment_.AD_Org_ID,C_DocType.AD_Org_ID, FIN_Payment_.AD_Client_ID) <> -1 AND C_DocType.DocBaseType IN ('APP', 'ARR') AND C_DocType.IsSOTrx=Fin_Payment_.isreceipt]]></onCreateDefault>
       </column>
+      <column name="C_PROJECT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_ACTIVITY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USER1_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USER2_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_PAYMENTS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -115,8 +135,17 @@
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="FIN_FINANCIAL_ACCT_PAYMENT">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="FIN_PAYMENT_ACTIVITY">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="FIN_PAYMENT_CAMPAIGN">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="FIN_PAYMENT_PAYMENT_METHOD">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="FIN_PAYMENT_PROJECT">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
     </table>
   </database>
