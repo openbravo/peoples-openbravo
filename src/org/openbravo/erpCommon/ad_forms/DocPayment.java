@@ -337,7 +337,7 @@ public class DocPayment extends AcctServer {
 
       // 6* PPA - Bank in transit default, paid DPs, (non manual and
       // manual non direct posting)
-      if ((line.isPaid.equals("Y") || line.Amount.equals(line.WriteOffAmt))
+      if ((line.isPaid.equals("Y") || new BigDecimal(line.Amount).compareTo(new BigDecimal(line.WriteOffAmt))==0)
           && ((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals("")) || (line.C_Settlement_Cancel_ID
               .equals(Record_ID)))) {
         BigDecimal finalLineAmt = new BigDecimal(line.Amount);
