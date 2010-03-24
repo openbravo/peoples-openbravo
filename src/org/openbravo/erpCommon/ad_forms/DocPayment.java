@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2009 Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -337,7 +337,7 @@ public class DocPayment extends AcctServer {
 
       // 6* PPA - Bank in transit default, paid DPs, (non manual and
       // manual non direct posting)
-      if (line.isPaid.equals("Y")
+      if ((line.isPaid.equals("Y") || line.Amount.equals(line.WriteOffAmt))
           && ((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals("")) || (line.C_Settlement_Cancel_ID
               .equals(Record_ID)))) {
         BigDecimal finalLineAmt = new BigDecimal(line.Amount);
@@ -353,38 +353,42 @@ public class DocPayment extends AcctServer {
               .equals("Y") ? sWithHoldAmt : ""), (line.isReceipt.equals("Y") ? "" : sWithHoldAmt),
               Fact_Acct_Group_ID, "999999", DocumentType, conn);
         }
-        if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
-            && !line.WriteOffAmt.equals("0"))
-          finalLineAmt = finalLineAmt.subtract(new BigDecimal(line.WriteOffAmt));
-        String finalAmtTo = "";
-        String strcCurrencyId = "";
-        if (line.isManual.equals("N")) {
-          finalAmtTo = getConvertedAmt(finalLineAmt.toString(), line.C_Currency_ID_From,
-              C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
-          strcCurrencyId = C_Currency_ID;
-        } else { // For manual payment with direct posting = 'N' (no posting occurred at payment
-          // creation so no conversion, for currency gain-loss, is needed)
-          finalAmtTo = finalLineAmt.toString();
-          strcCurrencyId = line.C_Currency_ID_From;
-        }
-        finalLineAmt = new BigDecimal(finalAmtTo);
-        if (finalLineAmt.compareTo(new BigDecimal("0.00")) != 0) {
-          if (line.C_BANKSTATEMENTLINE_ID != null && !line.C_BANKSTATEMENTLINE_ID.equals("")) {
-            fact.createLine(line,
-                getAccountBankStatementLine(line.C_BANKSTATEMENTLINE_ID, as, conn), strcCurrencyId,
-                (line.isReceipt.equals("Y") ? finalAmtTo : ""), (line.isReceipt.equals("Y") ? ""
-                    : finalAmtTo), Fact_Acct_Group_ID, "999999", DocumentType, conn);
-          }// else if(line.C_CASHLINE_ID!=null &&
-          // !line.C_CASHLINE_ID.equals("")) fact.createLine(line,
-          // getAccountCashLine(line.C_CASHLINE_ID,
-          // as,conn),strcCurrencyId,
-          // (line.isReceipt.equals("Y")?finalAmtTo:""),(line.isReceipt.equals("Y")?"":finalAmtTo),
-          // Fact_Acct_Group_ID, "999999", DocumentType,conn);
-          else
-            fact.createLine(line, getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as, conn),
-                strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""), (line.isReceipt
-                    .equals("Y") ? "" : finalAmtTo), Fact_Acct_Group_ID, "999999", DocumentType,
-                conn);
+        if (line.isPaid.equals("Y")
+            && ((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals("")) || (line.C_Settlement_Cancel_ID
+                .equals(Record_ID)))) {
+          if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
+              && !line.WriteOffAmt.equals("0"))
+            finalLineAmt = finalLineAmt.subtract(new BigDecimal(line.WriteOffAmt));
+          String finalAmtTo = "";
+          String strcCurrencyId = "";
+          if (line.isManual.equals("N")) {
+            finalAmtTo = getConvertedAmt(finalLineAmt.toString(), line.C_Currency_ID_From,
+                C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
+            strcCurrencyId = C_Currency_ID;
+          } else { // For manual payment with direct posting = 'N' (no posting occurred at payment
+            // creation so no conversion, for currency gain-loss, is needed)
+            finalAmtTo = finalLineAmt.toString();
+            strcCurrencyId = line.C_Currency_ID_From;
+          }
+          finalLineAmt = new BigDecimal(finalAmtTo);
+          if (finalLineAmt.compareTo(new BigDecimal("0.00")) != 0) {
+            if (line.C_BANKSTATEMENTLINE_ID != null && !line.C_BANKSTATEMENTLINE_ID.equals("")) {
+              fact.createLine(line, getAccountBankStatementLine(line.C_BANKSTATEMENTLINE_ID, as,
+                  conn), strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""),
+                  (line.isReceipt.equals("Y") ? "" : finalAmtTo), Fact_Acct_Group_ID, "999999",
+                  DocumentType, conn);
+            }// else if(line.C_CASHLINE_ID!=null &&
+            // !line.C_CASHLINE_ID.equals("")) fact.createLine(line,
+            // getAccountCashLine(line.C_CASHLINE_ID,
+            // as,conn),strcCurrencyId,
+            // (line.isReceipt.equals("Y")?finalAmtTo:""),(line.isReceipt.equals("Y")?"":finalAmtTo),
+            // Fact_Acct_Group_ID, "999999", DocumentType,conn);
+            else
+              fact.createLine(line, getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as, conn),
+                  strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""), (line.isReceipt
+                      .equals("Y") ? "" : finalAmtTo), Fact_Acct_Group_ID, "999999", DocumentType,
+                  conn);
+          }
         }
       }
     } // END of the C_Debt_Payment loop

@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -378,7 +378,7 @@
       v_ResultStr:='CheckingAmounts';
       --Calculating the non-paid amount to cancel
       SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((Amount-WriteOffAmt), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
-      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((coalesce(WithHoldingAmount,0)), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
+      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((coalesce(case when (Amount-WriteOffAmt=0) then 0 else WithHoldingAmount end,0)), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
       INTO v_CanceledNotChargeAmt,v_CanceledNotChargeAmt_WH
       FROM C_Debt_Payment_V
       WHERE C_Settlement_Cancel_ID=v_Record_ID
