@@ -84,6 +84,7 @@
 		<FIELD id="M_Product_ID_ATR" attribute="name" replace="yyyy">id</FIELD>
 		<FIELD id="M_AttributeSetInstance_ID" attribute="name" replace="xxx">id</FIELD>
 		<FIELD id="M_AttributeSetInstance_ID_R" attribute="name" replace="xxx">id</FIELD>
+        <FIELD id="M_AttributeSetInstance_ID_R" attribute="value">ATTRIBUTESETINSTANCENAME</FIELD>
 		<FIELD id="M_Product_ID" attribute="name" replace="zzzz">id</FIELD>
 		<FIELD id="M_Product_ID" attribute="value" >mProductId</FIELD>
 		<FIELD id="fieldAttributeseinstance" attribute="onclick" replace="uuu">id</FIELD>
