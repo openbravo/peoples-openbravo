@@ -28,7 +28,10 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Menu_ID AS ID, m.Name,m.Description,m.IsSummary,
-        m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID, m.AD_Workflow_ID, m.AD_Task_ID, Mo.ISINDEVELOPMENT, 
+        m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID, m.AD_Workflow_ID, m.AD_Task_ID, 
+        (case when (select count(*) from ad_module where type='T' and isindevelopment='Y')=0 
+               then Mo.ISINDEVELOPMENT 
+               else 'Y' end) as isInDevelopment, 
         '' as IsReady, '' as AD_OrgType_ID
         FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
                                                   AND tn.Node_ID=tb.Node_ID 
@@ -51,7 +54,10 @@
       <Sql>
         SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Menu_ID AS ID, 
                COALESCE (t.Name, m.Name) as name,t.Description,m.IsSummary,
-        m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID, m.AD_Workflow_ID, m.AD_Task_ID, Mo.ISINDEVELOPMENT
+        m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID, m.AD_Workflow_ID, m.AD_Task_ID,
+        (case when (select count(*) from ad_module where type='T' and isindevelopment='Y')=0 
+               then Mo.ISINDEVELOPMENT 
+               else 'Y' end) as isInDevelopment
         FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID  
                                                       AND tn.Node_ID=tb.Node_ID
                                                       AND tb.AD_User_ID  = ? , 
