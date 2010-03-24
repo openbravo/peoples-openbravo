@@ -191,6 +191,9 @@ function getFirstMenuElement() {
   var firstElement;
   firstElement = document.getElementById('paramMenu');   //TABLE
   firstElement = firstElement.firstChild;
+  if(!firstElement) {
+    return null;
+  }
   for (;;) {
     if (firstElement.nodeType != '1') {
       firstElement = firstElement.nextSibling; // TBODY
@@ -737,6 +740,9 @@ function putMenuElementFocus(obj) {
 }
 
 function removeMenuElementFocus(obj) {
+  if(!obj) {
+	return true;
+  }
   var actualclass = obj.className;
   obj.className = obj.className.replace(' Focused', ' NOT_Focused');
   return true;
@@ -761,6 +767,9 @@ function getMenuElementOffsetTop(obj){
 function setMenuElementFocus(obj) {
   if (obj=='firstElement') {
     obj=getFirstMenuElement();
+  }
+  if(!obj) {
+	  return;
   }
   var menuScrollTop = document.getElementById('Menu_Client').scrollTop;
   var menuScrollHeight = document.getElementById('Menu_Client').scrollHeight;

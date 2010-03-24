@@ -61,9 +61,17 @@ public class Menu extends HttpSecureAppServlet {
     String hideMenu = vars.getStringParameter("hideMenu", menuFilter);
 
     String textDirection = vars.getSessionValue("#TextDirection", "LTR");
-    printPageFrameIdentificacion(response, "../utility/VerticalMenu.html",
-        (targetmenu.equals("") ? "../utility/Home.html" : targetmenu),
-        "../utility/VerticalMenu.html?Command=LOADING", textDirection, hideMenu);
+
+    String menuLoadingURL = "../utility/VerticalMenu.html?Command=LOADING";
+    String menuURL = "../utility/VerticalMenu.html";
+
+    if ("true".equals(hideMenu)) {
+      menuLoadingURL = "about:blank";
+      menuURL += "?Command=HIDE";
+    }
+
+    printPageFrameIdentificacion(response, menuURL, (targetmenu.equals("") ? "../utility/Home.html"
+        : targetmenu), menuLoadingURL, textDirection, hideMenu);
   }
 
   private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
