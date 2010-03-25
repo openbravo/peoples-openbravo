@@ -315,11 +315,12 @@
 	AND c.ISMANUAL = 'Y'
 	AND c.ISPAID = 'N'
 	AND NOT EXISTS (SELECT 1 FROM C_DEBT_PAYMENT D
-		WHERE C.C_SETTLEMENT_CANCEL_ID = D.C_SETTLEMENT_CANCEL_ID
-		AND ((C.ISRECEIPT = D.ISRECEIPT
-		AND C.AMOUNT = AMOUNT*-1) OR (C.ISRECEIPT <> D.ISRECEIPT
-		AND C.AMOUNT = AMOUNT))
-		AND d.ISPAID = 'N');
+                        WHERE C.C_SETTLEMENT_CANCEL_ID = D.C_SETTLEMENT_CANCEL_ID
+                          AND ((C.ISRECEIPT = D.ISRECEIPT
+                          AND C_Currency_Round(C_Currency_Convert((C.AMOUNT-C.WRITEOFFAMT), C.C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL) = C_Currency_Round(C_Currency_Convert(((AMOUNT-WRITEOFFAMT)*-1), D.C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL))
+                            OR (C.ISRECEIPT <> D.ISRECEIPT
+                          AND C_Currency_Round(C_Currency_Convert((C.AMOUNT-C.WRITEOFFAMT), C.C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL) = C_Currency_Round(C_Currency_Convert((AMOUNT-WRITEOFFAMT), D.C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)))
+                          AND d.ISPAID = 'N');
 	IF v_Aux>0 THEN
 	   RAISE_APPLICATION_ERROR(-20000, '@ManualDebtpayment@'||' "'||v_column_identifier||'" '||'@CanNotBeSplit@') ;
 	   END IF;
