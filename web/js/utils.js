@@ -2469,8 +2469,8 @@ function menuQuit() {
   } catch (e) {
     target = "_self";
   }
-  submitCommandForm('DEFAULT', false, getForm(), appUrl + '/security/Logout.html', target);
-  return true;
+  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', target);
+  return false;
 }
 
 function menuAlerts() {
