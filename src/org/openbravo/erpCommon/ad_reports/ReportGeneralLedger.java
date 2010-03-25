@@ -292,13 +292,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         strcelementvaluetodes = "";
         vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       }
-      data = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars.getLanguage(),strDateFrom,
-          toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
-              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
-          strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
-          strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, null, pgLimit, oraLimit1,
-          oraLimit2);
+      data = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars
+          .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+          strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+              "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom, toDatePlusOne,
+          strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo, null,
+          null, null, pgLimit, oraLimit1, oraLimit2);
       if (log4j.isDebugEnabled())
         log4j.debug("RecordNo: " + initRecordNumber);
       // In case this is not the first screen to show, initial balance may need to include amounts
@@ -306,13 +306,14 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
       ReportGeneralLedgerData[] dataTotal = null;
       if (data != null && data.length > 1) {
-        dataTotal = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy,
-            vars.getLanguage(),strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
-                .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
-            strcAcctSchemaId, strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct,
-                "1"), strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
-            strAmtTo, data[0].id, data[0].dateacctnumber + data[0].factAcctGroupId,
+        dataTotal = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars
+            .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+            strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+                "ReportGeneralLedger"), strHide, strcAcctSchemaId, strYearInitialDate, DateTimeData
+                .nDaysAfter(this, data[0].dateacct, "1"), strOrgFamily, strcBpartnerId,
+            strmProductId, strcProjectId, strAmtFrom, strAmtTo, data[0].id, data[0].dateacctnumber
+                + data[0].factAcctGroupId + data[0].description + data[0].isdebit,
             data[0].groupbyid, null, null, null);
       }
       // Now dataTotal is covered adding debit and credit amounts
@@ -504,12 +505,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strcelementvalueto = strcelementvaluefrom;
         strAllaccounts = "N";
       }
-      data = ReportGeneralLedgerData.select(this, "0", strGroupByText, strGroupBy,vars.getLanguage(), strDateFrom,
-          toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
-              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
-          strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
-          strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, null, null, null, null);
+      data = ReportGeneralLedgerData.select(this, "0", strGroupByText, strGroupBy, vars
+          .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+          strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+              "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom, toDatePlusOne,
+          strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo, null,
+          null, null, null, null, null);
     }
     if (data == null || data.length == 0) {
       advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
@@ -599,13 +601,12 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strcelementvalueto = strcelementvaluefrom;
         strAllaccounts = "N";
       }
-      data = ReportGeneralLedgerData.selectXLS(this, vars
-              .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts,
-          strcelementvaluefrom, strcelementvalueto, Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
-              "#User_Client", "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom,
-          toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
-          strAmtTo);
+      data = ReportGeneralLedgerData.selectXLS(this, vars.getLanguage(), strDateFrom,
+          toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
+              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
+          strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
+          strmProductId, strcProjectId, strAmtFrom, strAmtTo);
     }
     if (data == null || data.length == 0) {
       advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
