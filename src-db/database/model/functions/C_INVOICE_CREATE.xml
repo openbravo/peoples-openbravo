@@ -566,7 +566,7 @@
                 END LOOP;
               END IF;
               -- Post it
-              C_INVOICE_POST(p_PInstance_ID, p_Invoice_ID) ;
+              C_INVOICE_POST(NULL, p_Invoice_ID) ;
 			  --Added by p.Sarobe
 			  IF(p_Invoice_ID='0') THEN
           	  	  RAISE_APPLICATION_ERROR(-20000, '@InvoiceCreateFailed@');
@@ -878,7 +878,7 @@
                     SET DateInvoiced=v_DateInvoiced,
                     DateAcct=v_DateInvoiced
                   WHERE C_Invoice_ID=p_Invoice_ID;
-                  C_INVOICE_POST(p_PInstance_ID, p_Invoice_ID) ;
+                  C_INVOICE_POST(NULL, p_Invoice_ID) ;
                 END IF;
                 -- Get Document Type for Invoice
                 v_ResultStr:='GetDocumentType';
@@ -1033,7 +1033,7 @@
                   SET DateInvoiced=v_DateInvoiced,
                   DateAcct=v_DateInvoiced
                 WHERE C_Invoice_ID=p_Invoice_ID;
-                C_INVOICE_POST(p_PInstance_ID, p_Invoice_ID) ;
+                C_INVOICE_POST(NULL, p_Invoice_ID) ;
 	            IF(p_Invoice_ID='0') THEN
           	  	  RAISE_APPLICATION_ERROR(-20000, '@InvoiceCreateFailed@');
 			    ELSE
