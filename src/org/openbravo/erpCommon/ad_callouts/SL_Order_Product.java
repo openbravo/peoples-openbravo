@@ -137,14 +137,14 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Order_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
-    resultado.append("new Array(\"inppricelist\", "
-        + (strPriceList.equals("") ? "\"0\"" : strPriceList) + "),");
-    resultado.append("new Array(\"inppricelimit\", "
-        + (strPriceLimit.equals("") ? "\"0\"" : strPriceLimit) + "),");
-    resultado.append("new Array(\"inppricestd\", "
-        + (strPriceStd.equals("") ? "\"0\"" : strPriceStd) + "),");
-    resultado.append("new Array(\"inppriceactual\", "
-        + (strPriceActual.equals("") ? "\"0\"" : strPriceActual) + "),");
+    resultado.append("new Array(\"inppricelist\", \""
+        + (strPriceList.equals("") ? "0" : strPriceList) + "\"),");
+    resultado.append("new Array(\"inppricelimit\", \""
+        + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "\"),");
+    resultado.append("new Array(\"inppricestd\", \""
+        + (strPriceStd.equals("") ? "0" : strPriceStd) + "\"),");
+    resultado.append("new Array(\"inppriceactual\", \""
+        + (strPriceActual.equals("") ? "0" : strPriceActual) + "\"),");
     resultado.append("new Array(\"inpcCurrencyId\", "
         + (strCurrency.equals("") ? "\"\"" : strCurrency) + "),");
     resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
