@@ -304,16 +304,12 @@ function setMenuLoading(value) {
 
 function processingModeCode(target, display) {
   var string = '';
-  string += "<div class=\"" + target + "_Status_Processing_Container\" id=\"Processing_Container\"";
-  if (display==false) string += " style=\"display: none\"";
-  string += ">\n";
   string += "  <div class=\"" + target + "_Status_Processing_Elements_Container\" id=\"Processing_Container_Logo\">\n";
   string += "    <div class=\"" + target + "_Status_Processing_logo\">\n";
-  string += "      <div class=\"" + target + "_Status_Processing_logo_dimension\"></div>";
+  string += "      <div class=\"" + target + "_Status_Processing_logo_dimension\"></div>\n";
   string += "    </div>\n";
   string += "    <div class=\"" + target + "_Status_Processing_text\">Processing...</div>\n";
   string += "  </div>\n";
-  string += "</div>\n";
   return string;
 }
 
@@ -321,31 +317,66 @@ function setProcessingMode(target, value, logo) {
   if (logo != false) {
     logo = true;
   }
+  var divContainer = "";
   if (target=='popup') {
     var popup_code = document.getElementsByTagName('BODY')[0].innerHTML;
     isKeyboardLocked=value;
     if (document.getElementById('Processing_Container')) {
-      document.getElementById('Processing_Container').style.display = (value?"":"none");
+      if (value == true) {
+        document.getElementById('Processing_Container').className = "Popup_Status_Processing_Container";
+      } else {
+        document.getElementById('Processing_Container').className = "Popup_Status_Processing_Container_hidden";
+      }
     } else {
-      document.getElementsByTagName('BODY')[0].innerHTML = processingModeCode('Popup', value) + popup_code;
+      divContainer = document.createElement("div");
+      divContainer.id = "Processing_Container";
+      if (value == true) {
+        divContainer.className = "Popup_Status_Processing_Container";
+      } else {
+        divContainer.className = "Popup_Status_Processing_Container_hidden";
+      }
+      document.getElementsByTagName("body").item(0).insertBefore(divContainer, getObjChild(document.getElementsByTagName("body").item(0)));
+      document.getElementById('Processing_Container').innerHTML = processingModeCode('Popup', value);
     }
     document.getElementById('Processing_Container_Logo').style.display = (logo?"":"none");
   } else {
     var frame_menu = getFrame('frameMenu');
     var frame_window = getFrame('appFrame');
-    var menu_code = frame_menu.document.getElementsByTagName('BODY')[0].innerHTML;
-    var window_code = frame_window.document.getElementsByTagName('BODY')[0].innerHTML;
     isKeyboardLocked=value;
     if (frame_window.document.getElementById('Processing_Container')) {
-      frame_window.document.getElementById('Processing_Container').style.display = (value?"":"none");
+      if (value == true) {
+        frame_window.document.getElementById('Processing_Container').className = "Main_Status_Processing_Container";
+      } else {
+        frame_window.document.getElementById('Processing_Container').className = "Main_Status_Processing_Container_hidden";
+      }
     } else {
-      frame_window.document.getElementsByTagName('BODY')[0].innerHTML = processingModeCode('Main', value) + window_code;
+      divContainer = document.createElement("div");
+      divContainer.id = "Processing_Container";
+      if (value == true) {
+        divContainer.className = "Main_Status_Processing_Container";
+      } else {
+        divContainer.className = "Main_Status_Processing_Container_hidden";
+      }
+      frame_window.document.getElementsByTagName("body").item(0).insertBefore(divContainer, getObjChild(frame_window.document.getElementsByTagName("body").item(0)));
+      frame_window.document.getElementById('Processing_Container').innerHTML = processingModeCode('Main', value);
     }
     frame_window.document.getElementById('Processing_Container_Logo').style.display = (logo?"":"none");
     if (frame_menu.document.getElementById('Processing_Container')) {
-      frame_menu.document.getElementById('Processing_Container').style.display = (value?"":"none");
+      if (value == true) {
+        frame_menu.document.getElementById('Processing_Container').className = "Menu_Status_Processing_Container";
+      } else {
+        frame_menu.document.getElementById('Processing_Container').className = "Menu_Status_Processing_Container_hidden";
+      }
     } else {
-      frame_menu.document.getElementsByTagName('BODY')[0].innerHTML = processingModeCode('Menu', value) + menu_code;
+      divContainer = document.createElement("div");
+      divContainer.id = "Processing_Container";
+      if (value == true) {
+        divContainer.className = "Menu_Status_Processing_Container";
+      } else {
+        divContainer.className = "Menu_Status_Processing_Container_hidden";
+      }
+      frame_menu.document.getElementsByTagName("body").item(0).insertBefore(divContainer, getObjChild(frame_menu.document.getElementsByTagName("body").item(0)));
+      frame_menu.document.getElementById('Processing_Container').innerHTML = processingModeCode('Menu', value);
     }
   }
 }
