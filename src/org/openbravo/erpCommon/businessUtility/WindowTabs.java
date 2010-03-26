@@ -315,7 +315,7 @@ public class WindowTabs {
       if (isFirst)
         text.append("      <span class=\"tabTitle_elements_container\">\n");
       if (isFirst)
-        text.append("        <span class=\"tabTitle_elements_text\">").append(this.Title).append(
+        text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">").append(this.Title).append(
             "</span>\n");
       if (isFirst)
         text
@@ -422,7 +422,7 @@ public class WindowTabs {
     if (!hasParent)
       text.append("      <span class=\"tabTitle_elements_container\">\n");
     if (!hasParent)
-      text.append("        <span class=\"tabTitle_elements_text\">").append(this.Title).append(
+      text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">").append(this.Title).append(
           "</span>\n");
     if (!hasParent)
       text
