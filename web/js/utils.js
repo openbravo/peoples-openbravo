@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6778';
+  var number = '6810';
   return number;
 }
 
@@ -2469,8 +2469,8 @@ function menuQuit() {
   } catch (e) {
     target = "_self";
   }
-  submitCommandForm('DEFAULT', false, getForm(), appUrl + '/security/Logout.html', target);
-  return true;
+  submitCommandForm('DEFAULT', false, null, appUrl + '/security/Logout.html', target);
+  return false;
 }
 
 function menuAlerts() {

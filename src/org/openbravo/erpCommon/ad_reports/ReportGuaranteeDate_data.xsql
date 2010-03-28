@@ -47,7 +47,7 @@
      ]]></Sql>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND S.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND S.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="parDate" optional="true" after="AND 1=1"><![CDATA[ AND COALESCE(M_ATTRIBUTESETINSTANCE.GUARANTEEDATE, TO_DATE('31/12/9999')) <= to_date(?)]]></Parameter>
+    <Parameter name="parDate" optional="true" after="AND 1=1"><![CDATA[ AND COALESCE(M_ATTRIBUTESETINSTANCE.GUARANTEEDATE, TO_DATE('31/12/9999')) < to_date(?)]]></Parameter>
     <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="mWarehouse" optional="true" after="AND 1=1"><![CDATA[ AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
   </SqlMethod>
