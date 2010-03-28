@@ -782,19 +782,29 @@ cWithHoldId varchar2(32);
                 END IF;
               END LOOP;
             ELSE
-              -- When re-activating an invoice, match invoice lines are removed (and accounting, if present, previously deleted)
-              DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHPO')
-                                      AND RECORD_ID IN (SELECT M_MATCHPO_ID
-                                                        FROM M_MATCHPO MP, C_INVOICE I, C_INVOICELINE IL
-                                                        WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
-                                                          AND MP.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
-                                                          AND I.C_INVOICE_ID=v_Record_ID);
-              DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHINV')
-                                      AND RECORD_ID IN (SELECT M_MATCHINV_ID
-                                                        FROM M_MATCHINV MI, C_INVOICE I, C_INVOICELINE IL
-                                                        WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
-                                                          AND MI.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
-                                                          AND I.C_INVOICE_ID=v_Record_ID);
+              -- When re-activating an invoice, match invoice lines are removed (if not posted)
+              SELECT COUNT(1) 
+              INTO v_count
+              FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHPO')
+                               AND RECORD_ID IN (SELECT M_MATCHPO_ID
+                                                 FROM M_MATCHPO MP, C_INVOICE I, C_INVOICELINE IL
+                                                 WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
+                                                   AND MP.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
+                                                   AND I.C_INVOICE_ID=v_Record_ID);
+              IF (v_count>0) THEN
+                RAISE_APPLICATION_ERROR(-20000, '@PostedMatchPO@');
+              END IF;
+              SELECT COUNT(1) 
+              INTO v_count
+              FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHINV')
+                               AND RECORD_ID IN (SELECT M_MATCHINV_ID
+                                                 FROM M_MATCHINV MI, C_INVOICE I, C_INVOICELINE IL
+                                                 WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
+                                                   AND MI.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
+                                                   AND I.C_INVOICE_ID=v_Record_ID);
+              IF (v_count>0) THEN
+                RAISE_APPLICATION_ERROR(-20000, '@PostedMatchInv@');
+              END IF;
               DELETE
               FROM M_MATCHPO
               WHERE C_InvoiceLine_ID IN

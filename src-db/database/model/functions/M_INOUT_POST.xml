@@ -421,11 +421,14 @@
                   sl.M_Product_ID,
                   sl.M_AttributeSetInstance_ID,
                   sl.MovementQty,
-                  il.QTYINVOICED
+                  il.QTYINVOICED,
+                  i.DateAcct
                 FROM M_INOUTLINE sl,
+                  C_INVOICE i,
                   C_INVOICELINE il
                 WHERE sl.M_InOutLine_ID=il.M_InOutLine_ID
                   AND sl.M_InOut_ID=Cur_InOut.M_InOut_ID
+                  AND i.C_INVOICE_ID = il.C_INVOICE_ID
                 )
               LOOP
                 Ad_Sequence_Next('M_MatchInv', Cur_ILines.AD_Org_ID, v_MatchInv_ID) ;
@@ -447,7 +450,7 @@
                   (
                     v_MatchInv_ID, Cur_ILines.AD_Client_ID, Cur_ILines.AD_Org_ID, 'Y',
                     now(), '0', now(), '0',
-                    Cur_ILines.M_InOutLine_ID, Cur_ILines.C_InvoiceLine_ID, Cur_ILines.M_Product_ID, now(),
+                    Cur_ILines.M_InOutLine_ID, Cur_ILines.C_InvoiceLine_ID, Cur_ILines.M_Product_ID, Cur_ILines.DateAcct,
                     v_Qty, 'N', 'Y', 'N'
                   )
                   ;

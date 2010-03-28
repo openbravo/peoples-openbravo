@@ -412,7 +412,7 @@
       SELECT l.QtyInvoiced-SUM(COALESCE(mi.Qty,0)) AS ID, l.C_UOM_ID,uom.UOMSymbol,
       l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, COALESCE(uom1.BREAKDOWN, 'N') AS BREAKDOWN, 
       MAX(mu.C_UOM_ID) AS C_UOM_ID_Conversion, MAX(uom1.STDPRECISION) AS STDPRECISION, l.QUANTITYORDER, l.M_Product_UOM_ID,
-      l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION
+      l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION, l.C_INVOICE_ID
       FROM C_INVOICELINE l left join  M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID 
                            left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID 
                            left join M_MATCHINV mi on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
@@ -421,7 +421,7 @@
       AND l.M_Product_ID=p.M_Product_ID 
       GROUP BY l.QtyInvoiced,
       l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
-      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION
+      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION, l.C_INVOICE_ID
       HAVING l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0
       ORDER BY l.Line
       ]]>
@@ -515,6 +515,38 @@
     <Parameter name="quantityorder"/>
     <Parameter name="mProductUomId"/>
     <Parameter name="mAttributesetinstanceId"/>
+  </SqlMethod>
+  <SqlMethod name="insertMatchInv" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      INSERT INTO M_MATCHINV
+        (
+        M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
+        UPDATED, UPDATEDBY, M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID,
+        DATETRX, QTY, PROCESSING, PROCESSED, POSTED
+        )
+      SELECT
+        GET_UUID(), iol.AD_CLIENT_ID, iol.AD_ORG_ID, 'Y', NOW(), ?,
+        NOW(), ?, iol.M_INOUTLINE_ID, ?, iol.M_PRODUCT_ID,
+        i.DATEACCT, iol.MOVEMENTQTY, 'N', 'Y', 'N'
+      FROM M_INOUTLINE iol, C_INVOICE i
+      WHERE iol.M_INOUTLINE_ID=?
+        AND i.C_INVOICE_ID=?
+    </Sql>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="cInvoiceLineId"/>
+    <Parameter name="mInoutlineId"/>
+    <Parameter name="cInvoiceId"/>
+  </SqlMethod>
+  <SqlMethod name="selectInvoiceInOut" type="preparedStatement" connection="true" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT M_InoutLine_id
+      FROM C_InvoiceLine
+      WHERE C_InvoiceLine_ID= ?
+    </Sql>
+    <Parameter name="cInvoicelineId"/>
   </SqlMethod>
   <SqlMethod name="updateInvoice" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
