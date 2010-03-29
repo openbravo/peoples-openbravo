@@ -109,6 +109,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FIN_RECONCILIATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_TRANSACTION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -126,6 +130,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="FIN_FINACC_TRANS_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_RECONCILIATION" name="FIN_FINACC_TRANS_FIN_RECONCILE">
+        <reference local="FIN_RECONCILIATION_ID" foreign="FIN_RECONCILIATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="FIN_FINACC_TRANS_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>

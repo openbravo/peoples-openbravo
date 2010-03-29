@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_BPARTNER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,11 +61,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="MATCHINGTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="MATCHINGTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_PAYMENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_FINACC_TRANSACTION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -78,11 +78,11 @@
       <foreign-key foreignTable="C_BPARTNER" name="FIN_BANKSTATLINE_CBPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="FIN_BANKSTATLINE_FINACCTRX">
+        <reference local="FIN_FINACC_TRANSACTION_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="FIN_BANKSTATEMENT" name="FIN_BANKSTATLINE_FINNBANKSTAT">
         <reference local="FIN_BANKSTATEMENT_ID" foreign="FIN_BANKSTATEMENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="FIN_PAYMENT" name="FIN_BANKSTATLINE_FINPAYMENT">
-        <reference local="FIN_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
       <check name="FIN_BANKSTATLINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
