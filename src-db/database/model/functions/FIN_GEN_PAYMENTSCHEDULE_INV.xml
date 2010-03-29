@@ -15,8 +15,8 @@
 * License for the specific  language  governing  rights  and  limitations
 * under the License.
 * The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2010 Openbravo SL
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -79,6 +79,7 @@ BEGIN
   FROM c_invoice
   WHERE c_invoice_id=p_record_id;
 
+  -- complete invoice
   IF (p_docaction = 'CO') THEN
     DECLARE
       cur_payments RECORD;
@@ -94,6 +95,11 @@ BEGIN
       v_scheduledetailamount NUMBER;
       v_oldorder VARCHAR2(32) := '-1';
       v_payment_schedule_invoice VARCHAR2(32);
+      cur_order_schdet_ISOPEN BOOLEAN:=false;
+      v_differenceamount NUMBER:= 0;
+      fetch_next_order_item BOOLEAN:=true;
+      v_scheduledetailid VARCHAR2(32);
+      v_new_scheduledetailid VARCHAR2(32);
 
       CURSOR cur_order_schdet (invoice_id VARCHAR) IS
       SELECT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount AS amount,
@@ -125,9 +131,6 @@ BEGIN
       --Insert Payment Schedules for Invoices
       v_pendingAmount:=v_GrandTotal;
 
-      OPEN cur_order_schdet(p_record_id);
-      FETCH cur_order_schdet INTO order_schdet;
-
       FOR cur_payments IN (
           SELECT line, percentage, onremainder, excludetax,
                  COALESCE(paymentrule, v_paymentrule) AS paymentrule, 
@@ -145,7 +148,8 @@ BEGIN
           FROM c_paymentterm
           WHERE c_paymentterm_id=v_paymentterm
           ORDER BY line
-        ) LOOP
+        )
+    LOOP
         v_plannedDate:=C_Paymentduedate(v_bpartner_id, v_issotrx, cur_payments.fixmonthday, cur_payments.fixmonthday2, cur_payments.fixmonthday3, cur_payments.netdays, cur_payments.fixmonthoffset, cur_payments.netday, cur_payments.isnextbusinessday, v_dateinvoiced);
 
         IF(cur_payments.excludetax='Y') THEN
@@ -161,6 +165,7 @@ BEGIN
         v_scheduledamount := C_Currency_Round((v_paymentamount * v_multiplierarc), v_currency_id, NULL);
 
         v_ResultStr:='Inserting in FIN_PAYMENT_SCHEDULE table';
+
         v_payment_schedule_invoice := get_uuid();
         INSERT INTO fin_payment_schedule
         (
@@ -177,22 +182,35 @@ BEGIN
           v_scheduledamount, v_planneddate,
           v_scheduledamount
         );
-        --payment schedule detail
 
+        -- loop for payment schedule details
         LOOP
-          IF(cur_order_schdet%NOTFOUND) THEN
-            EXIT;
+          -- open cursor once
+          IF (NOT cur_order_schdet_ISOPEN) THEN
+            OPEN cur_order_schdet(p_record_id);
+            cur_order_schdet_ISOPEN := true;
           END IF;
-          v_scheduledetailamount := order_schdet.amount;
+
+          -- fetch if we have finished with the current one
+          IF (fetch_next_order_item) THEN
+            FETCH cur_order_schdet INTO order_schdet;
+            EXIT WHEN cur_order_schdet%NOTFOUND;
+            v_scheduledetailid := order_schdet.fin_payment_scheduledetail_id;
+            v_scheduledetailamount := order_schdet.amount;
+          ELSE
+            v_scheduledetailamount := v_differenceamount;
+            v_scheduledetailid := v_new_scheduledetailid;
+          END IF;
+
           IF (order_schdet.order_id <> v_oldorder) THEN
             next_order := FALSE;
-            --get invoiced amount for the order
+            -- get invoiced amount for the order
             SELECT SUM(c_invoiceline.linenetamt+c_getinvoiceline_taxamount(c_invoiceline.c_invoiceline_id)) INTO v_invoicedamount
             FROM c_invoiceline, c_orderline
             WHERE c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
               AND c_invoiceline.c_invoice_id = p_record_id
               AND c_orderline.c_order_id = order_schdet.order_id;
-            --substract previously assigned amount
+            -- substract previously assigned amount
             SELECT SUM(psd.amount) INTO v_assignedamount
             FROM fin_payment_schedule ps_inv, fin_payment_scheduledetail psd,
                  fin_payment_schedule ps_ord
@@ -200,47 +218,66 @@ BEGIN
               AND psd.fin_payment_schedule_order = ps_ord.fin_payment_schedule_id
               AND ps_inv.c_invoice_id = p_record_id
               AND ps_ord.c_order_id = order_schdet.order_id;
+
             v_notassignedamount := COALESCE(v_invoicedamount,0) - COALESCE(v_assignedamount,0);
           END IF;
+
           IF (v_notassignedamount <= 0) THEN
             next_order := TRUE;
           END IF;
-          --create a new payment schedule detail if necessary
+          -- create a new payment schedule detail if necessary
           IF (NOT next_order) THEN
-            IF (order_schdet.amount > v_notassignedamount) THEN
-              INSERT INTO fin_payment_scheduledetail
-              (
-                fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
-                created, createdby, updated, updatedby,
-                fin_payment_schedule_order,
-                fin_payment_schedule_invoice,
-                fin_payment_detail_id,
-                amount
-              )
-              VALUES
-              (
-                get_uuid(), v_Client_ID, v_Org_ID, 'Y',
-                now(), p_user, now(), p_user,
-                order_schdet.fin_payment_schedule_order,
-                null,
-                order_schdet.fin_payment_detail_id,
-                order_schdet.amount - v_notassignedamount
-              );
-              UPDATE fin_payment_scheduledetail
-              SET amount = v_notassignedamount,
-                  updated = now(),
-                  updatedby = p_user
-              WHERE fin_payment_scheduledetail_id = order_schdet.fin_payment_scheduledetail_id;
-              v_scheduledetailamount := v_notassignedamount;
+            v_differenceamount := 0;
+            IF ((v_notassignedamount <= v_scheduledamount) AND (v_notassignedamount < v_scheduledetailamount)) THEN
+              v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_notassignedamount,0);
+            ELSIF ((v_scheduledamount < v_notassignedamount) AND (v_scheduledamount < v_scheduledetailamount)) THEN
+              v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_scheduledamount,0);
             END IF;
 
+            IF (v_differenceamount > 0) THEN
+                -- continue with the same payment schedule detail
+                fetch_next_order_item := false;
+                v_new_scheduledetailid := get_uuid();
+                INSERT INTO fin_payment_scheduledetail
+                (
+                  fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
+                  created, createdby, updated, updatedby,
+                  fin_payment_schedule_order,
+                  fin_payment_schedule_invoice,
+                  fin_payment_detail_id,
+                  amount
+                )
+                VALUES
+                (
+                  v_new_scheduledetailid, v_Client_ID, v_Org_ID, 'Y',
+                  now(), p_user, now(), p_user,
+                  order_schdet.fin_payment_schedule_order,
+                  null,
+                  order_schdet.fin_payment_detail_id,
+                  v_differenceamount
+                );
+                -- update amount of the current payment schedule detail
+                UPDATE fin_payment_scheduledetail
+                SET amount = amount - v_differenceamount,
+                  updated = now(),
+                  updatedby = p_user
+                WHERE fin_payment_scheduledetail_id = v_scheduledetailid;
+
+                v_scheduledetailamount := v_scheduledetailamount - v_differenceamount;
+
+            ELSE
+                fetch_next_order_item := true;
+            END IF;
+
+ 	          -- link current current payment schedule detail to the invoice
             UPDATE fin_payment_scheduledetail
             SET fin_payment_schedule_invoice = v_payment_schedule_invoice,
                 updated = now(),
                 updatedby = p_user
-            WHERE fin_payment_scheduledetail_id = order_schdet.fin_payment_scheduledetail_id;
+            WHERE fin_payment_scheduledetail_id = v_scheduledetailid;
 
-            IF (order_schdet.paid = 'Y')THEN
+            -- if paid, update paid and outstanding amount
+            IF (order_schdet.paid = 'Y') THEN
               UPDATE fin_payment_schedule
               SET outstandingamt = outstandingamt - v_scheduledetailamount,
                   paidamt = paidamt + v_scheduledetailamount
@@ -249,17 +286,19 @@ BEGIN
 
             v_notassignedamount := v_notassignedamount - v_scheduledetailamount;
             v_scheduledamount := v_scheduledamount - v_scheduledetailamount;
+
             IF (v_scheduledamount <= 0) THEN
+              -- actual payment processed.
+              v_oldorder := order_schdet.order_id;
               EXIT;
             END IF;
           END IF;
 
           v_oldorder := order_schdet.order_id;
-          FETCH cur_order_schdet INTO order_schdet;
-          EXIT WHEN cur_order_schdet%NOTFOUND;
         END LOOP;
+
         IF (v_scheduledamount != 0 ) THEN
-          -- no orders, insert payment schdule detail with remaining amount
+          -- no orders, insert payment schedule detail with remaining amount
           INSERT INTO fin_payment_scheduledetail
           (
             fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
@@ -282,64 +321,122 @@ BEGIN
       END LOOP;
 
       CLOSE cur_order_schdet;
- 
--- Reading Data from FIN_PAYMENT_SCHEDULE
 
-SELECT 
-	sum(PAIDAMT) as PaidAmount, SUM(OUTSTANDINGAMT) as OutstandingAmount
-  INTO 
-	v_PaidAmount,V_OutstandingAmount
-  FROM 
-	FIN_PAYMENT_SCHEDULE 
-  WHERE 
-	C_INVOICE_ID=P_RECORD_ID 
-group by c_invoice_id;
+      -- Reading Data from FIN_PAYMENT_SCHEDULE
+      SELECT sum(PAIDAMT) as PaidAmount, SUM(OUTSTANDINGAMT) as OutstandingAmount
+        INTO v_PaidAmount,V_OutstandingAmount
+      FROM FIN_PAYMENT_SCHEDULE 
+      WHERE C_INVOICE_ID=P_RECORD_ID 
+      group by c_invoice_id;
+      -- Getting DueAmount from FIN_PAYMENT_SCHEDULE for the Invoice
+      SELECT sum(OUTSTANDINGAMT) as DueAmount
+        INTO V_DueAmount
+      FROM FIN_PAYMENT_SCHEDULE 
+      WHERE C_INVOICE_ID=P_RECORD_ID
+        AND duedate<=now()
+      group by c_invoice_id;
+      V_DueAmount :=COALESCE(V_DueAmount,0);
+      --Getting Day Still Due
+      SELECT COALESCE(TO_NUMBER(MIN(DUEDATE)-TRUNC(NOW())),0) as DAYSTILLDUE
+      INTO V_DayStillDue
+      FROM FIN_PAYMENT_SCHEDULE
+      WHERE C_INVOICE_ID=P_RECORD_ID
+        AND DUEDATE <= now()
+        AND OUTSTANDINGAMT != 0;
 
--- Getting DueAmount from FIN_PAYMENT_SCHEDULE for the Invoice
-SELECT 
-	sum(OUTSTANDINGAMT) as DueAmount
-  INTO 
-	V_DueAmount
-  FROM 
-	FIN_PAYMENT_SCHEDULE 
-  WHERE 
-	C_INVOICE_ID=P_RECORD_ID
-	AND duedate<=now()
-group by c_invoice_id;
-V_DueAmount :=COALESCE(V_DueAmount,0);
---Getting Day Still Due
-SELECT 
-	COALESCE(TO_NUMBER(MIN(DUEDATE)-TRUNC(NOW())),0) as DAYSTILLDUE
-INTO 
-	V_DayStillDue
-FROM 
-	FIN_PAYMENT_SCHEDULE 
-WHERE 
-	C_INVOICE_ID=P_RECORD_ID AND DUEDATE <= now() AND OUTSTANDINGAMT != 0;
---Updating Payment Monitor values into C_INVOICE
-  UPDATE C_INVOICE SET               
-                TOTALPAID = v_PaidAmount,
-                OUTSTANDINGAMT = v_OutstandingAmount,
-                DUEAMT =  V_DueAmount,
-                DAYSTILLDUE = V_DayStillDue
-	WHERE 
-		C_INVOICE_ID = P_RECORD_ID;
+      --Updating Payment Monitor values into C_INVOICE
+      UPDATE C_INVOICE
+      SET TOTALPAID = v_PaidAmount,
+          OUTSTANDINGAMT = v_OutstandingAmount,
+          DUEAMT =  V_DueAmount,
+          DAYSTILLDUE = V_DayStillDue
+      WHERE C_INVOICE_ID = P_RECORD_ID;
+    END;
 
-END;
-    
   ELSIF (p_docaction = 'RE') THEN
     DECLARE
       v_count NUMBER;
-      v_paymentno VARCHAR2(40);
+      v_documentno VARCHAR2(40);
+      v_payment_detail_old VARCHAR2(32);
+      v_payment_scheduledetail_old VARCHAR2(32);
+      cur_ps RECORD;
+      cur_psd RECORD;
     BEGIN
-      SELECT count(*), max(pd.paymentno)
-        INTO v_count, v_paymentno
-      FROM fin_payment_schedule ps, fin_payment_detail_v pd
-      WHERE ps.fin_payment_schedule_id = pd.fin_payment_sched_inv_v_id
-        AND ps.c_invoice_id = p_record_id;
+      SELECT count(*), max(p.documentno)
+        INTO v_count, v_documentno
+      FROM fin_payment_schedule ps, fin_payment_scheduledetail psd, fin_payment_detail pd, fin_payment p
+      WHERE ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
+        AND ps.c_invoice_id = p_record_id
+        AND psd.fin_payment_detail_id = pd.fin_payment_detail_id
+        AND pd.fin_payment_id = p.fin_payment_id
+        AND pd.isprepayment = 'N';
       IF (v_count <> 0) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@InvoiceWithPayments@' || ' ' || v_paymentno);
+        RAISE_APPLICATION_ERROR(-20000, '@InvoiceWithPayments@' || ' ' || v_documentno);
       END IF;
+      SELECT count(*), max(p.documentno)
+        INTO v_count, v_documentno
+      FROM fin_payment_schedule ps, fin_payment_scheduledetail psd, fin_payment_prop_detail pd, fin_payment_proposal p
+      WHERE ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
+        AND ps.c_invoice_id = p_record_id
+        AND psd.fin_payment_prop_detail_id = pd.fin_payment_prop_detail_id
+        AND pd.fin_payment_proposal_id = p.fin_payment_proposal_id
+        AND psd.fin_payment_detail_id is null;
+      IF (v_count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@InvoiceWithUnprocessedProposal@' || ' ' || v_documentno);
+      END IF;
+      -- Delete schedule detail records that not belong to orders
+      DELETE FROM fin_payment_scheduledetail
+      WHERE fin_payment_schedule_invoice IN 
+          (SELECT fin_payment_schedule_id
+           FROM fin_payment_schedule
+           WHERE c_invoice_id = p_record_id)
+        AND fin_payment_schedule_order is null;
+      SELECT count(*) INTO v_count
+      FROM fin_payment_scheduledetail psd, fin_payment_schedule ps
+      WHERE psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id;
+
+      FOR cur_ps IN (
+        SELECT DISTINCT fin_payment_schedule_order
+        FROM fin_payment_scheduledetail
+        WHERE fin_payment_schedule_invoice IN 
+          (SELECT fin_payment_schedule_id
+           FROM fin_payment_schedule
+           WHERE c_invoice_id = p_record_id))
+        LOOP
+
+        UPDATE fin_payment_scheduledetail
+        SET fin_payment_schedule_invoice = null
+        WHERE fin_payment_schedule_invoice IN 
+          (SELECT fin_payment_schedule_id
+           FROM fin_payment_schedule
+           WHERE c_invoice_id = p_record_id)
+          AND fin_payment_schedule_order = cur_ps.fin_payment_schedule_order;
+        v_payment_detail_old := '-2';
+        v_payment_scheduledetail_old := '-1';
+
+        FOR cur_psd IN (SELECT fin_payment_scheduledetail_id, COALESCE(fin_payment_detail_id,'-1') as fin_payment_detail_id,
+                               amount, writeoffamt
+                        FROM fin_payment_scheduledetail
+                        WHERE fin_payment_schedule_order = cur_ps.fin_payment_schedule_order
+                        ORDER BY fin_payment_detail_id, created)
+          LOOP
+          -- if there are more than one psd with same payment detail merge them.
+          IF (cur_psd.fin_payment_detail_id = v_payment_detail_old) THEN
+            UPDATE fin_payment_scheduledetail
+            SET amount = amount + cur_psd.amount,
+                writeoffamt = COALESCE(writeoffamt,0) + COALESCE(cur_psd.writeoffamt,0),
+                updated = now(),
+                updatedby = p_user
+            WHERE fin_payment_scheduledetail_id = v_payment_scheduledetail_old;
+            DELETE FROM fin_payment_scheduledetail
+            WHERE fin_payment_scheduledetail_id = cur_psd.fin_payment_scheduledetail_id;
+          ELSE
+            v_payment_detail_old := COALESCE(cur_psd.fin_payment_detail_id,'-1');
+            v_payment_scheduledetail_old := cur_psd.fin_payment_scheduledetail_id;
+          END IF;
+        END LOOP;
+      END LOOP;
+
       DELETE FROM fin_payment_schedule WHERE c_invoice_id = p_record_id;
     END;
   END IF;
