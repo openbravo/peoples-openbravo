@@ -70,6 +70,9 @@ public class ValidationHandler extends Task {
   }
 
   private void readClassFiles(List<String> coreClasses, File file) {
+    if (!file.exists()) {
+      return;
+    }
     if (file.isDirectory()) {
       File[] files = file.listFiles();
       for (File f : files) {

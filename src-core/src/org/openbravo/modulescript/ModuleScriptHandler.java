@@ -59,6 +59,9 @@ public class ModuleScriptHandler extends Task {
   }
 
   private void readClassFiles(List<String> coreClasses, File file) {
+    if (!file.exists()) {
+      return;
+    }
     if (file.isDirectory()) {
       File[] files = file.listFiles();
       for (File f : files) {
@@ -66,7 +69,6 @@ public class ModuleScriptHandler extends Task {
       }
     } else {
       String fileName = file.getAbsolutePath();
-      System.out.println(fileName);
       fileName = fileName.split("build" + File.separatorChar + "classes" + File.separatorChar)[1];
       coreClasses.add(fileName.replace(".class", "").replace(File.separatorChar, '.'));
     }
