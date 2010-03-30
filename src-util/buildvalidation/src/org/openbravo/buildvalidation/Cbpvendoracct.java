@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.openbravo.database.ConnectionProvider;
 
-public class Cbpvendoracct extends Validation {
+public class Cbpvendoracct extends BuildValidation {
 
   public ArrayList<String> execute() {
     ConnectionProvider cp = getConnectionProvider();

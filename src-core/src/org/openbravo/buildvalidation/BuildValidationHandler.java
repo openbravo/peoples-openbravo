@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-public class ValidationHandler extends Task {
+public class BuildValidationHandler extends Task {
 
   private File basedir;
   private String module;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 
-public abstract class Validation {
+public abstract class BuildValidation {
 
   private ConnectionProvider cp = null;
   private File basedir;

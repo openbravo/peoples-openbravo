@@ -322,8 +322,8 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="validate" depends="init, core.lib">
-    <ant dir="src-util/buildvalidation" target="validate" inheritAll="true" inheritRefs="true" />
+  <target name="buildvalidation" depends="init, core.lib">
+    <ant dir="src-util/buildvalidation" target="buildvalidation" inheritAll="true" inheritRefs="true" />
   </target>
   
   <target name="compile.buildvalidation" depends="init, core.lib">
@@ -584,14 +584,14 @@ export.database: exports database structure and data to xml files.
     <antcall target="db.apply.modules.sampledata" />
   </target>
 
-  <target name="update.database" depends="init, core.lib, database.lib, validate">
+  <target name="update.database" depends="init, core.lib, database.lib, buildvalidation">
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
     <antcall target="db.apply.modules" />
   </target>
 
-  <target name="update.database.mod" depends="init, core.lib, database.lib, validate">
+  <target name="update.database.mod" depends="init, core.lib, database.lib, buildvalidation">
     <ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />
   </target>
 

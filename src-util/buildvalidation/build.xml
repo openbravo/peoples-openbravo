@@ -100,7 +100,7 @@
   <target name="compile" depends="checkmodule,compileSqlc,javacCore,javacModule">
   </target>
 
-  <target name="validate" >
+  <target name="buildvalidation" >
     <taskdef name="ValidationHandler" classname="org.openbravo.buildvalidation.ValidationHandler" onerror="failall">
       <classpath refid="pre.class.path" />
     </taskdef>
