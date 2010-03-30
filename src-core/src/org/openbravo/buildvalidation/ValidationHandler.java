@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -13,7 +12,6 @@ public class ValidationHandler extends Task {
 
   private File basedir;
   private String module;
-  private static Logger log4j = Logger.getLogger(ValidationHandler.class);
 
   @Override
   public void execute() {

@@ -5,13 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 public class ModuleScriptHandler extends Task {
-
-  private static Logger log4j = Logger.getLogger(ModuleScriptHandler.class);
 
   private File basedir;
   private String moduleJavaPackage;
