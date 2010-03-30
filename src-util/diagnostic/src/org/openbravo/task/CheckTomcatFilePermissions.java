@@ -31,7 +31,7 @@ public class CheckTomcatFilePermissions extends Task {
 
   @Override
   public void execute() throws BuildException {
-    final File f = new File("src-util/diagnostic/build.xml");
+    final File f = new File("src-diagnostics/build.xml");
     final String fileName = f.getAbsolutePath();
     log4j.info("Checking tomcat's user file permissions...");
     final String result = new ServerConnection().getCheck("ant", "&file=" + fileName
