@@ -538,6 +538,15 @@ cWithHoldId varchar2(32);
                 Cur_InvoiceLine.PriceActual, Cur_InvoiceLine.LineNetAmt * -1, Cur_InvoiceLine.C_Charge_ID, Cur_InvoiceLine.ChargeAmt * -1,
                 Cur_InvoiceLine.C_UOM_ID, Cur_InvoiceLine.C_Tax_ID, Cur_InvoiceLine.PriceStd)
               ;
+            INSERT INTO M_MATCHINV
+              (M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+              M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID, DATETRX, QTY, PROCESSING, PROCESSED, POSTED)
+            SELECT
+              GET_UUID(), AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, now(), v_UpdatedBy, now(), v_UpdatedBy,
+              M_INOUTLINE_ID, v_NextNo, M_PRODUCT_ID, DATETRX, QTY, 'N', 'Y', 'N'
+            FROM M_MATCHINV
+            WHERE C_INVOICELINE_ID = Cur_InvoiceLine.C_InvoiceLine_ID
+              AND M_INOUTLINE_ID <> Cur_InvoiceLine.M_InOutLine_ID;
             /* OrderLine.qtyInvoiced is updated in c_invoicePost
             UPDATE C_OrderLine
             SET QtyInvoiced = QtyInvoiced - Cur_InvoiceLine.QtyInvoiced,
@@ -783,7 +792,7 @@ cWithHoldId varchar2(32);
               END LOOP;
             ELSE
               -- When re-activating an invoice, match invoice lines are removed (if not posted)
-              SELECT COUNT(1) 
+              SELECT COUNT(1)
               INTO v_count
               FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHPO')
                                AND RECORD_ID IN (SELECT M_MATCHPO_ID
@@ -794,7 +803,7 @@ cWithHoldId varchar2(32);
               IF (v_count>0) THEN
                 RAISE_APPLICATION_ERROR(-20000, '@PostedMatchPO@');
               END IF;
-              SELECT COUNT(1) 
+              SELECT COUNT(1)
               INTO v_count
               FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHINV')
                                AND RECORD_ID IN (SELECT M_MATCHINV_ID
@@ -814,6 +823,8 @@ cWithHoldId varchar2(32);
               FROM M_MATCHINV
               WHERE C_InvoiceLine_ID IN
                 (SELECT C_InvoiceLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
+                AND M_InOutLine_ID IN
+                (SELECT M_InOutLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
                 ;
             END IF;
             UPDATE C_INVOICE
