@@ -61,27 +61,19 @@
       <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.pre.sqlc}'" />
       <classpath refid="pre.class.path" />
     </java>
-      <javac srcdir="${build.pre.sqlc}/src" includes="**/*.java" destdir="${build.pre}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-        <classpath refid="pre.class.path" />
-      </javac>
+    <javac srcdir="${build.pre.sqlc}/src" includes="**/*.java" destdir="${build.pre}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+      <classpath refid="pre.class.path" />
+    </javac>
   </target>
 
   <target name="sqlcModules" depends="init" unless="checkCore">
-  	
-      <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-        <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/buildvalidation/src */src-util/buildvalidation" />
-        <classpath refid="pre.class.path" />
-      </java>
-      <javac srcdir="${base.modules}/${module}/src-util/buildvalidation/src" includes="**/*.java" destdir="${base.modules}/${module}/build/classes" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-        <classpath refid="pre.class.path" />
-      </javac>
-  </target>
-
-  <target name="sqlc" depends="init, sqlcCore, sqlcModules">
-  	
-  </target>
-
-  <target name="compileSqlc" depends="sqlc">
+    <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
+      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/buildvalidation/src */src-util/buildvalidation" />
+      <classpath refid="pre.class.path" />
+    </java>
+    <javac srcdir="${base.modules}/${module}/src-util/buildvalidation/src" includes="**/*.java" destdir="${base.modules}/${module}/build/classes" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+      <classpath refid="pre.class.path" />
+    </javac>
   </target>
 
   <target name="javacCore" if="checkCore">
@@ -96,11 +88,11 @@
     </javac>
   </target>
   
-  <target name="compile" depends="checkmodule,compileSqlc,javacCore,javacModule">
+  <target name="compile" depends="checkmodule, sqlcCore, sqlcModules, javacCore, javacModule">
   </target>
 
   <target name="buildvalidation" >
-    <taskdef name="ValidationHandler" classname="org.openbravo.buildvalidation.ValidationHandler" onerror="failall">
+    <taskdef name="ValidationHandler" classname="org.openbravo.buildvalidation.BuildValidationHandler" onerror="failall">
       <classpath refid="pre.class.path" />
     </taskdef>
     <ValidationHandler basedir="${base.src}/../" module="${module}" />

@@ -61,27 +61,19 @@
       <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.pre.sqlc}'" />
       <classpath refid="pre.class.path" />
     </java>
-      <javac srcdir="${build.pre.sqlc}/src" includes="**/*.java" destdir="${build.pre}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-        <classpath refid="pre.class.path" />
-      </javac>
+    <javac srcdir="${build.pre.sqlc}/src" includes="**/*.java" destdir="${build.pre}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+      <classpath refid="pre.class.path" />
+    </javac>
   </target>
 
   <target name="sqlcModules" depends="init" unless="checkCore">
-  	
-      <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-        <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/modulescript/src */src-util/modulescript" />
-        <classpath refid="pre.class.path" />
-      </java>
-      <javac srcdir="${base.modules}/${module}/src-util/modulescript/src" includes="**/*.java" destdir="${base.modules}/${module}/build/classes" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-        <classpath refid="pre.class.path" />
-      </javac>
-  </target>
-
-  <target name="sqlc" depends="init, sqlcCore, sqlcModules" >
-  	
-  </target>
-
-  <target name="compileSqlc" depends="sqlc">
+    <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
+      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/modulescript/src */src-util/modulescript" />
+      <classpath refid="pre.class.path" />
+    </java>
+    <javac srcdir="${base.modules}/${module}/src-util/modulescript/src" includes="**/*.java" destdir="${base.modules}/${module}/build/classes" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+      <classpath refid="pre.class.path" />
+    </javac>
   </target>
 
   <target name="javacCore" if="checkCore">
@@ -89,43 +81,16 @@
       <classpath refid="pre.class.path" />
     </javac>
   </target>
+
   <target name="javacModule" unless="checkCore">
     <javac srcdir="${main.dir}" includes="modules/${module}/src-util/modulescript/**/*.java" destdir="${main.dir}/modules/${module}/build/classes" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="pre.class.path" />
     </javac>
   </target>
   
-  <target name="compile" depends="checkmodule,compileSqlc,javacCore,javacModule">
-    <copy todir="${build.pre}" encoding="UTF-8">
-      <fileset dir="${build.pre.src}" includes="**/*xml" />
-      <fileset dir="${build.pre.src}" includes="**/*html" />
-    </copy>
-    <copy todir="${build.pre}" encoding="UTF-8">
-      <fileset dir="${base.modules}">
-          <include name="*/src-modulescript/**/*" />
-          <exclude name="*/src-modulescript/**/*.java" />
-          <exclude name="*/src-modulescript/**/*.xsql" />
-      </fileset>
-      <mapper type="regexp" from="(.*\${file.separator}src-modulescript/)(.*)" to="\2" />
-    </copy>
+  <target name="compile" depends="checkmodule, sqlcCore, sqlcModules, javacCore, javacModule">
   </target>
 
-  <target name="build.jar">
-    <jar destfile="${build.pre.lib}/openbravo-pre.jar">
-      <fileset dir="${build.pre}" />
-      <manifest>
-        <attribute name="Built-By" value="Openbravo S.L." />
-        <!--section name="common/class1.class">
-        <attribute name="Sealed" value="false"/>
-      </section-->
-      </manifest>
-    </jar>
-  </target>
-
-  <target name="build" depends="compile, build.jar">
-  </target>
-
-  
   <target name="checkmodule"  if="module.not.provided">
     <fail>You need to specify a module</fail>
   </target>

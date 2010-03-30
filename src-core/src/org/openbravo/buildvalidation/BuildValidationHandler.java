@@ -5,10 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 public class BuildValidationHandler extends Task {
+  private static final Logger log4j = Logger.getLogger(BuildValidationHandler.class);
 
   private File basedir;
   private String module;
@@ -42,15 +44,17 @@ public class BuildValidationHandler extends Task {
       try {
         Class<?> myClass = Class.forName(s);
         if (myClass.getGenericSuperclass().equals(
-            Class.forName("org.openbravo.buildvalidation.Validation"))) {
+            Class.forName("org.openbravo.buildvalidation.BuildValidation"))) {
           Object instance = myClass.newInstance();
+          log4j.info("Executing build validation: " + s);
           errors = callExecute(myClass, instance);
           for (String error : errors) {
             errorMessage += error + "\n";
           }
         }
       } catch (Exception e) {
-        throw new BuildException("The validation " + s + " couldn't be properly executed");
+        log4j.info("Error executing build-validation: " + s, e);
+        throw new BuildException("The build validation " + s + " couldn't be properly executed");
       }
       if (errors.size() > 0) {
         throw new BuildException(

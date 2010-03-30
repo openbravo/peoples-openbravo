@@ -5,10 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 public class ModuleScriptHandler extends Task {
+  private static final Logger log4j = Logger.getLogger(ModuleScriptHandler.class);
 
   private File basedir;
   private String moduleJavaPackage;
@@ -40,9 +42,11 @@ public class ModuleScriptHandler extends Task {
         if (myClass.getGenericSuperclass().equals(
             Class.forName("org.openbravo.modulescript.ModuleScript"))) {
           Object instance = myClass.newInstance();
+          log4j.info("Executing moduleScript: " + s);
           callExecute(myClass, instance);
         }
       } catch (Exception e) {
+        log4j.info("Error executing moduleScript: " + s, e);
         throw new BuildException("Execution of moduleScript " + s + "failed.");
       }
     }
