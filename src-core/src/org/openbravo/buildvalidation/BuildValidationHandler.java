@@ -55,7 +55,7 @@ public class BuildValidationHandler extends Task {
       if (errors.size() > 0) {
         throw new BuildException(
             errorMessage
-                + "\nThe validation failed. The system hasn't been modified. Fix the problems described in the validation messages, and then start the build again.");
+                + "\nThe build validation failed. The system hasn't been modified. Fix the problems described in the validation messages, and then start the build again.");
       }
     }
   }
