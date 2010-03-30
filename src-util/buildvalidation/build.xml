@@ -13,36 +13,24 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2005-2009 Openbravo SL 
+ * All portions are Copyright (C) 2010 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.
  ************************************************************************
 -->
-<!--
-List of targets:
 
-init: creates the needed folders.
-clean: removes all the created files and folders.
-sqlc: generates java files from xsql's files.
-compileSqlc: compile the java files generated from xsql's files.
-compile: compile the java files of the project.
-build.jar: generates the jar file in the lib folder.
-build: compile the project, including the xsql's files and generates the jar and doc.
-doc: generates the api for the project.
--->
 <project name="openbravo-pre-install" default="compile" basedir=".">
-  <property name="build.pre" value="${basedir}/build/classes" />
-  <property name="build.pre.sqlc" value="${basedir}/build/javasqlc" />
-  <property name="build.pre.src" value="${basedir}/src/" />
+  <property name="build.pre" value="build/classes" />
+  <property name="build.pre.sqlc" value="build/javasqlc" />
+  <property name="build.pre.src" value="src" />
   <property name="main.dir" value="${basedir}/../.." />
 
   <path id="pre.class.path">
-    <pathelement path="../src-core/build/classes" />
     <pathelement path="build/classes" />
     <dirset dir="${base.modules}">
       <include name="*/build/classes/" />
     </dirset>
-    <pathelement path="config"/>
+    <pathelement path="${base.src}"/>
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
     </fileset>
@@ -54,13 +42,14 @@ doc: generates the api for the project.
   <condition property="checkCore">
     <equals arg1="${module}" arg2="org.openbravo" />
   </condition>
+
   <target name="init">
     <mkdir dir="${build.pre}" />
     <mkdir dir="${build.pre.sqlc}" />
     <mkdir dir="${build.pre.sqlc}/src" />
-    <mkdir dir="${main.dir}/modules/${module}/build/" />
-    <mkdir dir="${main.dir}/modules/${module}/build/javasqlc" />
-    <mkdir dir="${main.dir}/modules/${module}/build/classes" />
+    <mkdir dir="${base.modules}/${module}/build/" />
+    <mkdir dir="${base.modules}/${module}/build/javasqlc" />
+    <mkdir dir="${base.modules}/${module}/build/classes" />
   </target>
 
   <target name="clean">
@@ -96,49 +85,21 @@ doc: generates the api for the project.
   <target name="compileSqlc" depends="sqlc">
   </target>
 
-
   <target name="javacCore" if="checkCore">
     <javac srcdir="${main.dir}" includes="src-util/buildvalidation/src/**/*.java" destdir="${build.pre}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="pre.class.path" />
     </javac>
   </target>
+
   <target name="javacModule" unless="checkCore">
-    <javac srcdir="${main.dir}" includes="modules/${module}/src-util/buildvalidation/**/*.java" destdir="${main.dir}/modules/${module}/build/classes" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+    <javac srcdir="${main.dir}" includes="modules/${module}/src-util/buildvalidation/**/*.java" destdir="${base.modules}/${module}/build/classes" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="pre.class.path" />
     </javac>
   </target>
   
   <target name="compile" depends="checkmodule,compileSqlc,javacCore,javacModule">
-    <copy todir="${build.pre}" encoding="UTF-8">
-      <fileset dir="${build.pre.src}" includes="**/*xml" />
-      <fileset dir="${build.pre.src}" includes="**/*html" />
-    </copy>
-    <copy todir="${build.pre}" encoding="UTF-8">
-      <fileset dir="${base.modules}">
-          <include name="*/src-buildvalidation/**/*" />
-          <exclude name="*/src-buildvalidation/**/*.java" />
-          <exclude name="*/src-buildvalidation/**/*.xsql" />
-      </fileset>
-      <mapper type="regexp" from="(.*\${file.separator}src-buildvalidation/)(.*)" to="\2" />
-    </copy>
   </target>
 
-  <target name="build.jar">
-    <jar destfile="${build.pre.lib}/openbravo-pre.jar">
-      <fileset dir="${build.pre}" />
-      <manifest>
-        <attribute name="Built-By" value="Openbravo S.L." />
-        <!--section name="common/class1.class">
-        <attribute name="Sealed" value="false"/>
-      </section-->
-      </manifest>
-    </jar>
-  </target>
-
-  <target name="build" depends="compile, build.jar">
-  </target>
-
-  
   <target name="validate" >
     <taskdef name="ValidationHandler" classname="org.openbravo.buildvalidation.ValidationHandler" onerror="failall">
       <classpath refid="pre.class.path" />
