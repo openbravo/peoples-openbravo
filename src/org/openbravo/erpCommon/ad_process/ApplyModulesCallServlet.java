@@ -150,7 +150,6 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
 
   private ApplyModulesResponse fillErrorResponse(VariablesSecureApp vars, String state,
       String defaultState) {
-
     ApplyModulesResponse resp = new ApplyModulesResponse();
     resp.setState(Integer.parseInt(state.replace("RB", "")));
     PreparedStatement ps2 = null;
@@ -158,18 +157,18 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     boolean warning = false;
     boolean error = false;
     try {
-      ps2 = getPreparedStatement("SELECT MESSAGE, SYSTEM_STATUS LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED DESC");
+      ps2 = getPreparedStatement("SELECT MESSAGE, SYSTEM_STATUS LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED ");
       ps2.executeQuery();
       ResultSet rs2 = ps2.getResultSet();
       ArrayList<String> errors = new ArrayList<String>();
-      if (rs2.next()) {
+      while (rs2.next()) {
         error = true; // there is at least an error in this state
         errors.add(rs2.getString(1));
         resp.setState(Integer.parseInt(rs2.getString(2).replace("RB", "")));
       }
       resp.setErrors(errors.toArray(new String[0]));
 
-      ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED DESC");
+      ps3 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG ORDER BY CREATED ");
       ps3.executeQuery();
       ResultSet rs3 = ps3.getResultSet();
       if (rs3.next()) {

@@ -73,7 +73,7 @@
 
   <target name="check.properties">
     <echo message="Checking for Openbravo.properties file..." />
-    <available file="../config/Openbravo.properties" property="isProperties" />
+    <available file="../../config/Openbravo.properties" property="isProperties" />
     <fail unless="isProperties" message="Openbravo.properties file not available. Tip: move config/Openbravo.properties.template file to config/Openbravo.properties and configure it" />
     <echo message="Openbravo.properties file OK" />
 
@@ -90,7 +90,7 @@
 
   <target name="check.log4j">
     <echo message="Checking for log4j.lcf file..." />
-    <available file="../config/log4j.lcf" property="isLog4j" />
+    <available file="../../config/log4j.lcf" property="isLog4j" />
     <fail unless="isLog4j" message="log4j.lcf file not available. Tip: move config/log4j.lcf.template file to config/log4j.lcf and configure it" />
     <echo message="log4j.lcf file OK" />
   </target>
@@ -195,7 +195,7 @@
       <classpath refid="diagnostic.class.path" />
     </taskdef>
 
-    <deploy.war url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/OpenbravoDiagnostics" war="file:src-diagnostics${file.separator}OpenbravoDiagnostics.war" />
+    <deploy.war url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/OpenbravoDiagnostics" war="file:src-util${file.separator}diagnostic${file.separator}OpenbravoDiagnostics.war" />
 
     <start url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/OpenbravoDiagnostics" />
 

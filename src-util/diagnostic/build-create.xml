@@ -27,7 +27,7 @@
 
   <target name="build" depends="clean">
     <copy todir="WebContent/WEB-INF/lib">
-      <fileset dir="../lib/runtime">
+      <fileset dir="../../lib/runtime">
         <include name="**/*.jar" />
       </fileset>
     </copy>
@@ -43,7 +43,7 @@
     </delete>
     <mkdir dir="WebContent/WEB-INF/lib" />
     <mkdir dir="build/classes" />
-    <copy file="../config/Openbravo.properties" todir="config" failonerror="false" />
+    <copy file="../../config/Openbravo.properties" todir="config" failonerror="false" />
     <copy todir="WebContent/WEB-INF">
       <fileset dir="config" />
     </copy>
