@@ -68,22 +68,32 @@ doc: generates the api for the project.
     <delete dir="${build.pre.sqlc}" failonerror="false" includeemptydirs="true" />
   </target>
 
-  <target name="sqlc" depends="init">
+  <target name="sqlcCore" depends="init" if="checkCore">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.pre.sqlc}'" />
       <classpath refid="pre.class.path" />
     </java>
+      <javac srcdir="${build.pre.sqlc}/src" includes="**/*.java" destdir="${build.pre}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+        <classpath refid="pre.class.path" />
+      </javac>
+  </target>
+
+  <target name="sqlcModules" depends="init" unless="checkCore">
   	
-  	<java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.pre.sqlc}'/src */src-util/buildvalidation" />
-  	  <classpath refid="pre.class.path" />
-  	</java>
+      <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
+        <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/buildvalidation/src */src-util/buildvalidation" />
+        <classpath refid="pre.class.path" />
+      </java>
+      <javac srcdir="${base.modules}/${module}/src-util/buildvalidation/src" includes="**/*.java" destdir="${base.modules}/${module}/build/classes" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+        <classpath refid="pre.class.path" />
+      </javac>
+  </target>
+
+  <target name="sqlc" depends="init, sqlcCore, sqlcModules">
+  	
   </target>
 
   <target name="compileSqlc" depends="sqlc">
-    <javac srcdir="${build.pre.sqlc}/src" includes="**/*.java" destdir="${build.pre}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="pre.class.path" />
-    </javac>
   </target>
 
 
