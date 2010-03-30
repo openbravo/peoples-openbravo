@@ -322,7 +322,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="validate" depends="init">
+  <target name="validate" depends="init, core.lib">
     <ant dir="src-util/buildvalidation" target="validate" inheritAll="true" inheritRefs="true" />
   </target>
   

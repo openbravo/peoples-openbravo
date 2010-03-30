@@ -15,10 +15,8 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
-log4j.rootCategory=INFO, C, O2S
+log4j.rootCategory=INFO, C
 log4j.category.org.openbravo=INFO
 log4j.appender.C=org.apache.log4j.ConsoleAppender
 log4j.appender.C.layout=org.apache.log4j.PatternLayout
 
-# Additional Appender used for Improved Upgrade Process
-log4j.appender.O2=org.openbravo.utils.OBRebuildAppender
