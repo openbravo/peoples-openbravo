@@ -74,6 +74,9 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12702: Cycle in parent reference references then DAL
  * throws stack over flow error
  * 
+ * - https://issues.openbravo.com/view.php?id=12853: OBQuery count not working with a query with
+ * aliases
+ * 
  * @author mtaal
  * @author iperdomo
  */
@@ -277,5 +280,17 @@ public class IssuesTest extends BaseTest {
     assertTrue(invoiceLine.isActive());
     Location bpLoc = OBProvider.getInstance().get(Location.class);
     assertTrue(bpLoc.isActive());
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12853
+   */
+  public void test12853() {
+    setSystemAdministratorContext();
+    final OBQuery<Product> products = OBDal.getInstance().createQuery(Product.class,
+        " as e where e.name is not null");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
   }
 }

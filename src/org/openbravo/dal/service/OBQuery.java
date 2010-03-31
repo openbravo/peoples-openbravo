@@ -52,6 +52,8 @@ import org.openbravo.dal.core.SessionHandler;
 public class OBQuery<E extends BaseOBObject> {
   private static final Logger log = Logger.getLogger(OBQuery.class);
 
+  private static final String FROM = " from ";
+
   private String whereAndOrderBy;
   private Entity entity;
   private List<Object> parameters;
@@ -134,8 +136,13 @@ public class OBQuery<E extends BaseOBObject> {
    * @return the number of objects in the database taking into account the where and orderby clause
    */
   public int count() {
-    final Query qry = getSession().createQuery(
-        "select count(*) " + stripOrderBy(createQueryString()));
+    // add a space because the FROM constant also starts with a space
+    String qryStr = " " + stripOrderBy(createQueryString());
+    if (qryStr.toLowerCase().contains(FROM)) {
+      final int index = qryStr.indexOf(FROM) + FROM.length();
+      qryStr = qryStr.substring(index);
+    }
+    final Query qry = getSession().createQuery("select count(*) " + FROM + qryStr);
     setParameters(qry);
     return ((Number) qry.uniqueResult()).intValue();
   }
@@ -204,7 +211,7 @@ public class OBQuery<E extends BaseOBObject> {
       // strip the as
       final String strippedWhereClause = whereClause.toLowerCase().trim().substring(2).trim();
       // get the next space
-      final int index = strippedWhereClause.indexOf(" ");
+      final int index = strippedWhereClause.trim().indexOf(" ");
       alias = strippedWhereClause.substring(0, index);
       prefix = alias + ".";
     }
