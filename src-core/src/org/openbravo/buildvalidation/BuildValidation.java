@@ -35,7 +35,7 @@ public abstract class BuildValidation {
    * 
    * @return a ConnectionProvider
    */
-  public ConnectionProvider getConnectionProvider() {
+  protected ConnectionProvider getConnectionProvider() {
     if (cp != null) {
       return cp;
     }

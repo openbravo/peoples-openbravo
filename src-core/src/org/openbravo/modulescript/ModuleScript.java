@@ -27,7 +27,7 @@ public abstract class ModuleScript {
    * 
    * @return a ConnectionProvider
    */
-  public ConnectionProvider getConnectionProvider() {
+  protected ConnectionProvider getConnectionProvider() {
     if (cp == null) {
       cp = new CPStandAlone("config/Openbravo.properties");
     }

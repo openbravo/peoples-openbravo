@@ -61,7 +61,7 @@ public class BuildValidationHandler {
         }
       } catch (Exception e) {
         log4j.info("Error executing build-validation: " + s, e);
-        log4j.error("The build validation " + s + " couldn't be properly executed" + e);
+        log4j.error("The build validation " + s + " couldn't be properly executed");
         System.exit(1);
       }
       if (errors.size() > 0) {

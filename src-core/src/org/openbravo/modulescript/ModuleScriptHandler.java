@@ -52,7 +52,7 @@ public class ModuleScriptHandler extends Task {
           callExecute(myClass, instance);
         }
       } catch (Exception e) {
-        log4j.info("Error executing moduleScript: " + s, e);
+        log4j.error("Error executing moduleScript: " + s);
         throw new BuildException("Execution of moduleScript " + s + "failed.");
       }
     }
