@@ -3,6 +3,7 @@ package org.openbravo.buildvalidation;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,16 +21,22 @@ public class BuildValidationHandler {
     PropertyConfigurator.configure("log4j.lcf");
     String errorMessage = "";
     List<String> classes = new ArrayList<String>();
-    File modFolders[];
+    ArrayList<File> modFolders = new ArrayList<File>();
     if (module != null && !module.equals("%")) {
-      File moduleFolder = new File(basedir, "modules/" + module);
-      modFolders = new File[1];
-      modFolders[0] = moduleFolder;
+      String[] javapackages = module.split(",");
+      for (String javapackage : javapackages) {
+        File moduleFolder = new File(basedir, "modules/" + javapackage);
+        modFolders.add(moduleFolder);
+      }
+      Collections.sort(modFolders);
     } else {
       File coreBuildFolder = new File(basedir, "src-util/buildvalidation/build/classes");
       readClassFiles(classes, coreBuildFolder);
       File moduleFolder = new File(basedir, "modules");
-      modFolders = moduleFolder.listFiles();
+      for (File f : moduleFolder.listFiles()) {
+        modFolders.add(f);
+      }
+      Collections.sort(modFolders);
     }
     for (File modFolder : modFolders) {
       if (modFolder.isDirectory()) {
@@ -39,7 +46,6 @@ public class BuildValidationHandler {
         }
       }
     }
-
     for (String s : classes) {
       ArrayList<String> errors = new ArrayList<String>();
       try {
@@ -75,6 +81,13 @@ public class BuildValidationHandler {
   }
 
   private static void readClassFiles(List<String> coreClasses, File file) {
+    ArrayList<String> newClasses = new ArrayList<String>();
+    readClassFilesExt(newClasses, file);
+    Collections.sort(newClasses);
+    coreClasses.addAll(newClasses);
+  }
+
+  private static void readClassFilesExt(List<String> coreClasses, File file) {
     if (!file.exists()) {
       return;
     }

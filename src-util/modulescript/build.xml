@@ -29,7 +29,6 @@
     <dirset dir="${base.modules}">
       <include name="*/build/classes/" />
     </dirset>
-    <pathelement path="${base.src}"/>
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
     </fileset>

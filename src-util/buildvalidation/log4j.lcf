@@ -15,6 +15,9 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
+# this logging config will be used for both
+# - execution of SqlC in ant compile.buildvalidation
+# - at runtime of the validation with ant buildvalidation (or inside update.database.(mod)
 log4j.rootCategory=INFO, C, O2
 log4j.category.org.openbravo=INFO
 log4j.appender.C=org.apache.log4j.ConsoleAppender

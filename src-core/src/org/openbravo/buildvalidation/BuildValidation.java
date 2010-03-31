@@ -6,6 +6,11 @@ import java.util.List;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 
+/**
+ * A class extending the BuildValidation class can be used to implement a validation which will be
+ * executed before applying a module, or even Openbravo Core.
+ * 
+ */
 public abstract class BuildValidation {
 
   private ConnectionProvider cp;
@@ -30,7 +35,7 @@ public abstract class BuildValidation {
    * 
    * @return a ConnectionProvider
    */
-  protected ConnectionProvider getConnectionProvider() {
+  public ConnectionProvider getConnectionProvider() {
     if (cp != null) {
       return cp;
     }

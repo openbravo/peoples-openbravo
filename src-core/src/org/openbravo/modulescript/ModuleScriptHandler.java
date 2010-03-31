@@ -3,6 +3,7 @@ package org.openbravo.modulescript;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -26,7 +27,12 @@ public class ModuleScriptHandler extends Task {
       File coreBuildFolder = new File(basedir, "src-util/modulescript/build/classes");
       readClassFiles(classes, coreBuildFolder);
       File moduleFolder = new File(basedir, "modules");
-      File modFolders[] = moduleFolder.listFiles();
+      File modFoldersA[] = moduleFolder.listFiles();
+      ArrayList<File> modFolders = new ArrayList<File>();
+      for (File f : modFoldersA) {
+        modFolders.add(f);
+      }
+      Collections.sort(modFolders);
       for (File modFolder : modFolders) {
         if (modFolder.isDirectory()) {
           File validationFolder = new File(modFolder, "build/classes");
@@ -59,7 +65,14 @@ public class ModuleScriptHandler extends Task {
         new Object[0]);
   }
 
-  private void readClassFiles(List<String> coreClasses, File file) {
+  private static void readClassFiles(List<String> coreClasses, File file) {
+    ArrayList<String> newClasses = new ArrayList<String>();
+    readClassFilesExt(newClasses, file);
+    Collections.sort(newClasses);
+    coreClasses.addAll(newClasses);
+  }
+
+  private static void readClassFilesExt(List<String> coreClasses, File file) {
     if (!file.exists()) {
       return;
     }
