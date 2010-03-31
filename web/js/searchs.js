@@ -101,8 +101,8 @@ function windowSearch(strPage, strHeight, strWidth, strTop, strLeft, strWindow, 
   var complements = complementsNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=0, scrollbars=1, status=0, toolbar=0, titlebar=0";
   winSelector = window.open(strPage + ((auxField=="")?"":"?" + auxField), strWindow, complements);
   if (winSelector!=null) {
-    if (hidden) window.focus();
-    else winSelector.focus();
+    /*if (hidden) window.focus();  //Useless since window.focus() after window.open it doesn't run in most browsers. Also in case of selectors with a non-existing search value can open the popup in the background in FF3.6
+    else*/ winSelector.focus();
     //winSelector.onunload = function(){top.opener.closeWindowSearch();};
     enableEvents();
   }

@@ -84,8 +84,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   private String servletClass = this.getClass().getName();
 
   private class Variables extends VariablesHistory {
+    private String loggingIn;
+
     public Variables(HttpServletRequest request) {
       super(request);
+      loggingIn = getSessionValue("#loggingIn");
     }
 
     public void updateHistory(HttpServletRequest request) {
@@ -104,6 +107,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     public void setHistoryCommand(String strCommand) {
       final String sufix = getCurrentHistoryIndex();
       setSessionValue("reqHistory.command" + sufix, strCommand);
+    }
+
+    public boolean isLoggingIn() {
+      return loggingIn == null || loggingIn.equals("") || loggingIn.equals("Y");
     }
   }
 
@@ -163,6 +170,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     Variables variables = new Variables(request);
+
     // VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // bdErrorGeneral(response, "Error", "No access");
@@ -202,7 +210,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
-      if (!variables.getDBSession().equals("")) {
+      if (!variables.isLoggingIn()) {
+        // log in process is completed, check whether the session in db is still active
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
         if (!loggedOK) {
           logout(request, response);
@@ -309,8 +318,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             logout(request, response);
             return;
           }
-        } else
+        } else {
           variables.updateHistory(request);
+        }
       }
       if (log4j.isDebugEnabled()) {
         log4j.debug("Call to HttpBaseServlet.service");
@@ -389,7 +399,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               // the hash of the post data
               if (!hash.equals(vars1.getPostDataHash())) {
                 request.setAttribute("autosave", true);
-                if (vars1.getCommand().indexOf("BUTTON") != -1)
+                if (vars1.getCommand().indexOf("BUTTON") != -1
+                    || !vars1.getStringParameter("inpProcessId").equals(""))
+                  // Adding pop-up window attribute to close the window on failed auto-save
                   request.setAttribute("popupWindow", true);
                 // forward request
                 if (!forwardRequest(request, response)) {
@@ -1037,9 +1049,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strOrganizacion) throws ServletException {
     final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion, vars
         .getSessionValue("#AD_User_ID"));
+
+    // session_ID should have been created in LoginHandler
+    String sessionId = vars.getDBSession();
     sl.setServerUrl(strDireccion);
-    sl.save(this);
-    vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
+    sl.setSessionID(sessionId);
+
+    if (sessionId == null || sessionId.equals("")) {
+      sl.setStatus("S");
+      sl.save();
+      vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
+    }
+
+    // Logging process is finish, remove logging flag
+    vars.setSessionValue("#loggingIn", "N");
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,

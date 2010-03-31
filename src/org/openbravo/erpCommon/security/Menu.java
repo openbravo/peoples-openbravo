@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,6 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Menu extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static String[] hideMenuValues = { "", "true", "false" };
+  private static ValueListFilter menuFilter = new ValueListFilter(Menu.hideMenuValues);
+  private static String DEFAULT_MENU_WIDTH = "25"; // Percentage of the page width used by the menu
 
   /** Creates a new instance of Menu */
   public Menu() {
@@ -55,15 +58,25 @@ public class Menu extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String targetmenu = getTargetMenu(vars, queryString);
 
+    String hideMenu = vars.getStringParameter("hideMenu", menuFilter);
+
     String textDirection = vars.getSessionValue("#TextDirection", "LTR");
-    printPageFrameIdentificacion(response, "../utility/VerticalMenu.html",
-        (targetmenu.equals("") ? "../utility/Home.html" : targetmenu),
-        "../utility/VerticalMenu.html?Command=LOADING", textDirection);
+
+    String menuLoadingURL = "../utility/VerticalMenu.html?Command=LOADING";
+    String menuURL = "../utility/VerticalMenu.html";
+
+    if ("true".equals(hideMenu)) {
+      menuLoadingURL = "about:blank";
+      menuURL += "?Command=HIDE";
+    }
+
+    printPageFrameIdentificacion(response, menuURL, (targetmenu.equals("") ? "../utility/Home.html"
+        : targetmenu), menuLoadingURL, textDirection, hideMenu);
   }
 
   private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
-      String strDetalle, String strMenuLoading, String textDirection) throws IOException,
-      ServletException {
+      String strDetalle, String strMenuLoading, String textDirection, String hideMenu)
+      throws IOException, ServletException {
     XmlDocument xmlDocument;
     if (textDirection.equals("RTL")) {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS_RTL")
@@ -72,6 +85,15 @@ public class Menu extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS")
           .createXmlDocument();
     }
+
+    String menuWidth = "true".equals(hideMenu) ? "0" : DEFAULT_MENU_WIDTH;
+
+    String jsConstants = "\nvar isMenuHide = " + "true".equals(hideMenu) + "; \n var isRTL = "
+        + "RTL".equals(textDirection) + "; \n var menuWidth = '" + menuWidth
+        + "%';\n var isMenuBlock = " + "true".equals(hideMenu) + ";\n";
+
+    xmlDocument.setParameter("jsConstants", jsConstants);
+    xmlDocument.setParameter("framesetMenu", menuWidth);
     xmlDocument.setParameter("frameMenuLoading", strMenuLoading);
     xmlDocument.setParameter("frameMenu", strMenu);
     xmlDocument.setParameter("frame1", strDetalle);
@@ -106,23 +128,29 @@ public class Menu extends HttpSecureAppServlet {
 
     try { // Trying to deep-link
 
-      OBContext.setAdminContext();
+      OBContext.enableAsAdminContext();
 
       final String tabId = vars.getStringParameter("tabId", IsIDFilter.instance);
-      final String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
+      String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
       final String recordId = vars.getStringParameter("recordId", IsIDFilter.instance);
       String viewType = "RELATION";
 
-      if (tabId.equals("") || windowId.equals("")) {
+      if (tabId.equals("")) {
         return "";
       }
 
       final Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      final Window window = OBDal.getInstance().get(Window.class, windowId);
 
-      if (!tab.getWindow().equals(window)) {
-        log4j.error("Invalid deep-link URL: tab doesn't belong to window");
-        return "";
+      if (!windowId.equals("")) {
+        final Window window = OBDal.getInstance().get(Window.class, windowId);
+
+        if (!tab.getWindow().equals(window)) {
+          log4j.error("Invalid deep-link URL: tab " + tabId + " doesn't belong to window "
+              + windowId);
+          return "";
+        }
+      } else {
+        windowId = tab.getWindow().getId();
       }
 
       if (tab.getTabLevel() > 0 && recordId.equals("")) {

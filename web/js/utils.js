@@ -8,10 +8,10 @@
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6687';
+  var number = '6815';
   return number;
 }
 
@@ -5039,7 +5039,20 @@ function manageDecPoint(obj, decSeparator, evt) {
   * {obj.value = replaceAt(obj.value, "", caretPosition);
   * setCaretToPos(obj, caretPosition);},5); }
   */
-  if(keyCode==110) {
+  var inpMaxlength = obj.getAttribute("maxlength");
+  var inpLength = obj.value.length;
+  var isInpMaxLength = false;
+  if (inpMaxlength === null) {
+    isInpMaxLength = false;
+  } else if (inpLength >= inpMaxlength) {
+    isInpMaxLength = true;
+  }
+
+  if (getBrowserInfo('name').toUpperCase().indexOf("OPERA") != -1 && keyCode==78) {
+    keyCode = 110;
+  }
+
+  if(keyCode==110 && !isInpMaxLength) {
     setTimeout(function() {obj.value = replaceAt(obj.value, decSeparator, caretPosition); setCaretToPos(obj, caretPosition+1);},5);
   }
   return true;

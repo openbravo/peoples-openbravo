@@ -63,7 +63,7 @@ public class ComboReloads<PARAMETER_TMP id="paramTabId">xx</PARAMETER_TMP> exten
     <FIELDS_TMP id="sectionDetail">
       if (CalloutHelper.commandInCommandList(command, <FIELD_TMP id="fieldColumnsName">"xx"</FIELD_TMP>)) {
         if (!isFirst) resultado.append(", \n");
-        comboTableData = new ComboTableData(vars, this, "<FIELD_TMP id="fieldReference1">17</FIELD_TMP>", "<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>", "<FIELD_TMP id="fieldReferenceValue1">name</FIELD_TMP>", "<FIELD_TMP id="fieldValidation1">name</FIELD_TMP>", <FIELD_TMP id="fieldOrgCode">xxorgcode</FIELD_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), 0);
+        comboTableData = new ComboTableData(vars, this, "<FIELD_TMP id="fieldReference1">17</FIELD_TMP>", "<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>", "<FIELD_TMP id="fieldReferenceValue1">name</FIELD_TMP>", "<FIELD_TMP id="fieldValidation1">name</FIELD_TMP>", <FIELD_TMP id="fieldOrgCode">xxorgcode</FIELD_TMP>, <FIELD_TMP id="fieldClientCode">xxclientcode</FIELD_TMP>, 0);
         if (calledFromSearch) {
           comboTableData.fillParametersFromSearch("", windowId);
           resultField = "inpParam<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>";

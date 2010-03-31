@@ -30,7 +30,7 @@
           SELECT VALUE, NAME, DATEACCT,
               SUM(AMTACCTDR) AS AMTACCTDR, SUM(AMTACCTCR) AS AMTACCTCR, (SUM(AMTACCTDR)-SUM(AMTACCTCR)) AS TOTAL,
               FACT_ACCT_GROUP_ID, ID, groupbyid, groupbyname,
-              DESCRIPTION,
+              DESCRIPTION, ISDEBIT,
               0 AS TOTALACCTDR, 0 AS TOTALACCTCR, 0 AS TOTALACCTSUB,
               0 AS PREVIOUSDEBIT, 0 AS PREVIOUSCREDIT, 0 AS PREVIOUSTOTAL,
               0 AS FINALDEBIT, 0 AS FINALCREDIT, 0 AS FINALTOTAL,
@@ -46,9 +46,9 @@
                   WHEN 'Project' THEN c_project.c_project_id
                   ELSE '' END AS groupbyid,
                 CASE ?
-                  WHEN 'BPartner' THEN to_char(c_bpartner.name)
-                  WHEN 'Product' THEN to_char(m_product.name)
-                  WHEN 'Project' THEN AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?)
+                  WHEN 'BPartner' THEN (case AD_COLUMN_IDENTIFIER('C_Bpartner',c_bpartner.c_bpartner_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('C_Bpartner',c_bpartner.c_bpartner_id, ?) end)
+                  WHEN 'Product' THEN (case  AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) end)
+                  WHEN 'Project' THEN (case  AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) end)
                   ELSE '' END AS groupbyname,
                 CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT
             FROM FACT_ACCT
@@ -81,13 +81,18 @@
             ORDER  BY groupbyname, groupbyid, VALUE, NAME, ID, DATEACCT,  FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
           ) C
         ) B WHERE 1=1
-      ) A ORDER BY  groupbyname, groupbyid, VALUE, DATEACCT, FACT_ACCT_GROUP_ID
+      ) A ORDER BY  groupbyname, groupbyid, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="groupbytext"/>
     <Parameter name="groupby"/>
     <Parameter name="groupby"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
     <Parameter name="parDateFrom" optional="true" after="where 5=5"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="where 5=5"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
@@ -107,7 +112,7 @@
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND (FACT_ACCT.AMTACCTDR + FACT_ACCT.AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="paramAmtTo" optional="true" after="3=3"><![CDATA[ AND (FACT_ACCT.AMTACCTDR + FACT_ACCT.AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="accountId" optional="true" after="WHERE 6=6"><![CDATA[AND ID = ? ]]></Parameter>
-    <Parameter name="factAcctId" optional="true" after="WHERE 6=6"><![CDATA[and to_char(DATEACCT,'J')||FACT_ACCT_GROUP_ID < ? ]]></Parameter>
+    <Parameter name="factAcctId" optional="true" after="WHERE 6=6"><![CDATA[and to_char(DATEACCT,'J')||FACT_ACCT_GROUP_ID||DESCRIPTION||ISDEBIT < ? ]]></Parameter>
     <Parameter name="cBPartner" optional="true" after="WHERE 6=6"><![CDATA[AND groupbyid = ? ]]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT"><![CDATA[ LIMIT ]]></Parameter>
     <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
@@ -127,7 +132,7 @@
             DATEACCT, AMTACCTDR, AMTACCTCR,
             FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.DESCRIPTION,
             c_bpartner.c_bpartner_id as bpid, m_product.m_product_id as pdid, c_project.c_project_id as pjid,
-            c_bpartner.name as bpname, m_product.name as pdname, AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) as pjname,
+            (case AD_COLUMN_IDENTIFIER('C_Bpartner',c_bpartner.c_bpartner_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('C_Bpartner',c_bpartner.c_bpartner_id, ?) end) as bpname, (case AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) end) as pdname, (case AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) end)  as pjname,
             CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT
         FROM FACT_ACCT
           LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
@@ -159,6 +164,11 @@
         ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, description,  bpname, bpid, pdname, pdid, pjname, pjid, ISDEBIT
       ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
     <Parameter name="parDateFrom" optional="true" after="where 5=5"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="where 5=5"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>

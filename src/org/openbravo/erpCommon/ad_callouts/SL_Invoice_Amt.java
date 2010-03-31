@@ -59,10 +59,11 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strPriceList = vars.getNumericParameter("inppricelist");
       String strPriceStd = vars.getNumericParameter("inppricestd");
       String strLineNetAmt = vars.getStringParameter("inplinenetamt");
+      String strTaxId = vars.getStringParameter("inpcTaxId");
 
       try {
         printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId,
-            strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd, strLineNetAmt);
+            strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd, strLineNetAmt, strTaxId);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -73,7 +74,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strQtyInvoice, String strPriceActual, String strInvoiceId, String strProduct,
       String strPriceLimit, String strTabId, String strPriceList, String strPriceStd,
-      String strLineNetAmt) throws IOException, ServletException {
+      String strLineNetAmt, String strTaxId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -89,12 +90,19 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
     int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
+    SLInvoiceTaxAmtData[] dataTax = SLInvoiceTaxAmtData.select(this, strTaxId, strInvoiceId);
+    BigDecimal taxRate = (dataTax[0].rate.equals("") ? new BigDecimal(1) : new BigDecimal(
+        dataTax[0].rate));
+    Integer taxScale = new Integer(dataTax[0].priceprecision);
+
     if (log4j.isDebugEnabled())
       log4j.debug("strPriceActual: " + strPriceActual);
     if (log4j.isDebugEnabled())
       log4j.debug("strPriceLimit: " + strPriceLimit);
     if (log4j.isDebugEnabled())
       log4j.debug("strLineNetAmt: " + strLineNetAmt);
+    if (log4j.isDebugEnabled())
+      log4j.debug("taxRate: " + taxRate);
 
     BigDecimal qtyInvoice, priceActual, LineNetAmt, priceLimit, priceStd;
 
@@ -157,9 +165,13 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
             + FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice", vars
                 .getLanguage())) + "\"), ");
     }
+    BigDecimal taxAmt = ((LineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
+        BigDecimal.ROUND_HALF_EVEN)).setScale(taxScale, BigDecimal.ROUND_HALF_UP);
+
     if (!strChanged.equals("inplinenetamt") || LineNetAmt.compareTo(BigDecimal.ZERO) == 0)
       resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
     resultado.append("new Array(\"inptaxbaseamt\", " + LineNetAmt.toString() + "),");
+    resultado.append("new Array(\"inptaxamt\", " + taxAmt.toPlainString() + "),");
     resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + ")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

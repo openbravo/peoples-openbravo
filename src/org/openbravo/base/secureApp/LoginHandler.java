@@ -18,12 +18,15 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -51,31 +54,82 @@ public class LoginHandler extends HttpBaseServlet {
     // Empty session
     req.getSession(true).setAttribute("#Authenticated_user", null);
 
-    if (vars.getStringParameter("user").equals("")) {
-      res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
-    } else {
-      final String strUser = vars.getRequiredStringParameter("user");
-      final String strPass = vars.getStringParameter("password");
-      final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
+    final String strUser = vars.getStringParameter("user");
 
-      if (strUserAuth != null) {
-        req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
-        checkLicenseAndGo(res, vars, strUserAuth);
+    OBContext.enableAsAdminContext();
+    try {
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+
+      String language = systemClient.getLanguage().getLanguage();
+
+      if (strUser.equals("")) {
+        res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
-        Client systemClient = OBDal.getInstance().get(Client.class, "0");
+        final String strPass = vars.getStringParameter("password");
+        final String strUserAuth = LoginUtils.getValidUserId(myPool, strUser, strPass);
 
-        String failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", systemClient
-            .getLanguage().getLanguage());
-        String failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", systemClient
-            .getLanguage().getLanguage());
-
-        goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
+        String sessionId = createDBSession(req, strUser, strUserAuth);
+        if (strUserAuth != null) {
+          HttpSession session = req.getSession(true);
+          session.setAttribute("#Authenticated_user", strUserAuth);
+          session.setAttribute("#AD_SESSION_ID", sessionId);
+          // #logginigIn attribute is used in HttpSecureAppServlet to determine whether the logging
+          // process is complete or not. At this stage is not complete, we only have a user ID, but
+          // no the rest of session info: client, org, role...
+          session.setAttribute("#LOGGINGIN", "Y");
+          log4j.debug("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
+          checkLicenseAndGo(res, vars, strUserAuth, sessionId);
+        } else {
+          // strUserAuth can be null because a failed user/password or because the user is locked
+          String failureTitle;
+          String failureMessage;
+          if (LoginUtils.checkUserPassword(myPool, strUser, strPass) == null) {
+            log4j
+                .debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
+            failureTitle = Utility.messageBD(this, "IDENTIFICATION_FAILURE_TITLE", language);
+            failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", language);
+          } else {
+            failureTitle = Utility.messageBD(this, "LOCKED_USER_TITLE", language);
+            failureMessage = strUser + " " + Utility.messageBD(this, "LOCKED_USER_MSG", language);
+            log4j.debug(strUser + " is locked cannot activate session ID " + sessionId);
+            updateDBSession(sessionId, false, "LU");
+          }
+          goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
+        }
       }
+    } finally {
+      OBContext.resetAsAdminContext();
+    }
+  }
+
+  /**
+   * Stores session in DB. If the user is valid, it is inserted in the createdBy column, if not user
+   * 0 is used.
+   */
+  private String createDBSession(HttpServletRequest req, String strUser, String strUserAuth) {
+    try {
+      String usr = strUserAuth == null ? "0" : strUserAuth;
+
+      final SessionLogin sl = new SessionLogin(req, "0", "0", usr);
+
+      if (strUserAuth == null) {
+        sl.setStatus("F");
+      } else {
+        sl.setStatus("S");
+      }
+
+      sl.setUserName(strUser);
+      sl.setServerUrl(strDireccion);
+      sl.save();
+      return sl.getSessionID();
+    } catch (Exception e) {
+      log4j.error("Error creating DB session", e);
+      return null;
     }
   }
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
-      String strUserAuth) throws IOException {
+      String strUserAuth, String sessionId) throws IOException {
     OBContext.enableAsAdminContext();
     try {
       ActivationKey ak = new ActivationKey();
@@ -98,12 +152,14 @@ public class LoginHandler extends HttpBaseServlet {
       // We check if there is a Openbravo Professional Subscription restriction in the license,
       // or if the last rebuild didn't go well. If any of these are true, then the user is
       // allowed to login only as system administrator
-      switch (ak.checkOPSLimitations(vars.getDBSession())) {
+      switch (ak.checkOPSLimitations(sessionId)) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
         String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED", vars
             .getLanguage());
         String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", vars
             .getLanguage());
+        log4j.warn("Concurrent Users Reached - Session: " + sessionId);
+        updateDBSession(sessionId, msgType.equals("Warning"), "CUR");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       case NUMBER_OF_SOFT_USERS_REACHED:
@@ -111,21 +167,28 @@ public class LoginHandler extends HttpBaseServlet {
         title = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED_TITLE", vars.getLanguage());
         action = "../security/Menu.html";
         msgType = "Warning";
+        log4j.warn("Soft Users Reached - Session: " + sessionId);
+        updateDBSession(sessionId, true, "SUR");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       case OPS_INSTANCE_NOT_ACTIVE:
         msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
+        log4j.warn("Innactive OBPS instance - Session: " + sessionId);
+        updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       case MODULE_EXPIRED:
         msg = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED_TITLE", vars.getLanguage());
         StringBuffer expiredMoudules = new StringBuffer();
+        log4j.warn("Expired modules - Session: " + sessionId);
         for (Module module : ak.getExpiredInstalledModules()) {
           expiredMoudules.append("<br/>").append(module.getName());
+          log4j.warn("  module:" + module.getName());
         }
         msg += expiredMoudules.toString();
+        updateDBSession(sessionId, msgType.equals("Warning"), "ME");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
       }
@@ -139,13 +202,30 @@ public class LoginHandler extends HttpBaseServlet {
           || sysInfo.getSystemStatus().equals("RB50")) {
         String msg = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED", vars.getLanguage());
         String title = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED_TITLE", vars.getLanguage());
+        log4j.warn("Tomcat not restarted");
+        updateDBSession(sessionId, true, "RT");
         goToRetry(res, vars, msg, title, "Warning", "../security/Menu.html");
       } else {
         String msg = Utility.messageBD(myPool, "LAST_BUILD_FAILED", vars.getLanguage());
         String title = Utility.messageBD(myPool, "LAST_BUILD_FAILED_TITLE", vars.getLanguage());
+        updateDBSession(sessionId, msgType.equals("Warning"), "LBF");
         goToRetry(res, vars, msg, title, msgType, action);
       }
+    } finally {
+      OBContext.resetAsAdminContext();
+    }
 
+  }
+
+  private void updateDBSession(String sessionId, boolean sessionActive, String status) {
+    try {
+      OBContext.enableAsAdminContext();
+      Session session = OBDal.getInstance().get(Session.class, sessionId);
+      session.setSessionActive(sessionActive);
+      session.setLoginStatus(status);
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      log4j.error("Error updating session in DB", e);
     } finally {
       OBContext.resetAsAdminContext();
     }
@@ -194,4 +274,5 @@ public class LoginHandler extends HttpBaseServlet {
   public String getServletInfo() {
     return "User-login control Servlet";
   } // end of getServletInfo() method
+
 }

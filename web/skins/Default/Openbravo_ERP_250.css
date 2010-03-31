@@ -1026,7 +1026,7 @@ div.calendar {
 
 /* Header part -- contains navigation buttons and day names. */
 
-.calendar .button { /* "<<", "<", ">", ">>" buttons have this class */
+.calendar .dp_button { /* "<<", "<", ">", ">>" buttons have this class */
   text-align: center;    /* They are the navigation buttons */
   padding: 2px;          /* Make the buttons seem like they're pressing */
   color: #ccc;
@@ -6133,6 +6133,10 @@ a.Main_NavBar_RightButton:active .Main_NavBar_RightButton_Icon_help {
   z-index: 300000;
 }
 
+.Main_Status_Processing_Container_hidden {
+  display: none;
+}
+
 .Main_Status_Processing_Elements_Container {
   position: relative;
   top: 50%;
@@ -7840,6 +7844,10 @@ td.ToolBar_ExpansibleMenu_bg_active {
   background-image: url(Menu/Status/processingBackground.png);
   text-align: center;
   z-index: 300000;
+}
+
+.Menu_Status_Processing_Container_hidden {
+  display: none;
 }
 
 .Menu_Status_Processing_Elements_Container {
@@ -9577,6 +9585,10 @@ td.Popup_SeparatorBar_bg {
   background-image: url(Popup/Status/processingBackground.png);
   text-align: center;
   z-index: 300000;
+}
+
+.Popup_Status_Processing_Container_hidden {
+  display: none;
 }
 
 .Popup_Status_Processing_Elements_Container {

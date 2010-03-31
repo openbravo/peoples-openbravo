@@ -20,13 +20,21 @@ package org.openbravo.erpCommon.security;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.access.Session;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class SessionLogin {
   static Logger log4j = Logger.getLogger(SessionLogin.class);
@@ -40,6 +48,8 @@ public class SessionLogin {
   protected String remoteHost;
   protected String processed = "N";
   protected String serverUrl;
+  private String username;
+  private String status;
 
   public SessionLogin(String ad_client_id, String ad_org_id, String ad_user_id)
       throws ServletException {
@@ -94,21 +104,75 @@ public class SessionLogin {
           + " - Remote Host: " + getRemoteHost());
   }
 
-  public int save(ConnectionProvider conn) throws ServletException {
+  public int save() throws ServletException {
     if (getSessionID().equals("")) {
       String key = SequenceIdData.getUUID();
       SessionListener.addSession(key);
       if (key == null || key.equals(""))
         throw new ServletException("SessionLogin.save() - key creation failed");
       setSessionID(key);
-      return SessionLoginData.insert(conn, getSessionID(), getClient(), getOrg(), getIsActive(),
-          getUser(), getWebSession(), getRemoteAddr(), getRemoteHost(), getProcessed(), serverUrl);
-    } else
-      return SessionLoginData.update(conn, getIsActive(), getUser(), getWebSession(),
-          getRemoteAddr(), getRemoteHost(), getProcessed(), getSessionID());
+    }
+    try {
+      OBContext.enableAsAdminContext();
+      Session session = OBProvider.getInstance().get(Session.class);
+
+      session.setCreationDate(new Date());
+      session.setUpdated(new Date());
+      session.setClient(OBDal.getInstance().get(Client.class, getClient()));
+      session.setOrganization(OBDal.getInstance().get(Organization.class, getOrg()));
+      session.setActive(getIsActive());
+      User user1 = OBDal.getInstance().get(User.class, getUser());
+      session.setCreatedBy(user1);
+      session.setUpdatedBy(user1);
+      session.setWebSession(getWebSession());
+      session.setRemoteAddress(getRemoteAddr());
+      session.setRemoteHost(getRemoteHost());
+      session.setProcessed(getProcessed());
+      session.setServerUrl(serverUrl);
+      // save inactive session for failed and webservice logins
+      boolean sessionActive = !status.equals("F") && !status.equals("WS");
+      session.setSessionActive(sessionActive);
+      session.setLoginStatus(status);
+      session.setUsername(username);
+      OBDal.getInstance().save(session);
+      OBDal.getInstance().flush();
+      setSessionID(session.getId());
+      return 1;
+    } catch (Exception e) {
+      log4j.error("Error saving session in DB", e);
+      return 0;
+    } finally {
+      OBContext.resetAsAdminContext();
+    }
   }
 
-  private void setSessionID(String newValue) {
+  /**
+   * @deprecated use save() instead
+   */
+  public int save(ConnectionProvider conn) throws ServletException {
+    return save();
+  }
+
+  public void update(ConnectionProvider conn) throws ServletException {
+    try {
+      OBContext.enableAsAdminContext();
+      Session session = OBDal.getInstance().get(Session.class, getSessionID());
+      session.setActive(getIsActive());
+      User user1 = OBDal.getInstance().get(User.class, getUser());
+      session.setUpdatedBy(user1);
+      session.setWebSession(getWebSession());
+      session.setRemoteAddress(getRemoteAddr());
+      session.setRemoteHost(getRemoteHost());
+      session.setProcessed(getProcessed());
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      log4j.error("Error updating session in DB", e);
+    } finally {
+      OBContext.resetAsAdminContext();
+    }
+  }
+
+  public void setSessionID(String newValue) {
     this.sessionID = (newValue == null) ? "" : newValue;
   }
 
@@ -136,8 +200,8 @@ public class SessionLogin {
     this.isactive = (newValue == null) ? "Y" : newValue;
   }
 
-  private String getIsActive() {
-    return (this.isactive);
+  private boolean getIsActive() {
+    return (this.isactive.equals("Y"));
   }
 
   private void setUser(String newValue) {
@@ -176,7 +240,15 @@ public class SessionLogin {
     this.processed = (newValue == null) ? "" : newValue;
   }
 
-  private String getProcessed() {
-    return ((this.processed == null) ? "" : this.processed);
+  private boolean getProcessed() {
+    return ((this.processed == null) ? false : this.processed.equals("Y"));
+  }
+
+  public void setUserName(String strUser) {
+    username = strUser;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 }

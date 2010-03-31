@@ -204,7 +204,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     } else if (strChanged.equals("inpqtyordered")) { // calculate Actual
       if ("Y".equals(cancelPriceAd)) {
         priceActual = priceStd;
-        resultado.append("new Array(\"inppriceactual\", \"" + priceActual.toString() + "\"),");
+        resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
       } else {
         priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
             dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd.toString(),

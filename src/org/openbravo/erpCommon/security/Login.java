@@ -99,6 +99,11 @@ public class Login extends HttpBaseServlet {
       xmlDocument.setParameter("frame1", strDetalle);
     }
 
+    String jsConstants = "\nvar isMenuHide = false; \n var isRTL = " + "RTL".equals(textDirection)
+        + "; \n var menuWidth = '25%';\n var isMenuBlock = false;\n";
+
+    xmlDocument.setParameter("jsConstants", jsConstants);
+    xmlDocument.setParameter("framesetMenu", "25");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

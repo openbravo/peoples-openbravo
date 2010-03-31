@@ -286,14 +286,6 @@
           --DBMS_OUTPUT.PUT_LINE('Qty=' || ProductQty);
           v_QtyOnHand:=v_ProductQty;
         END IF;
-        IF(CUR_PL_Post.PRODUCTIONTYPE='-' AND CUR_PL_Post.IsStocked<>'N' AND v_QtyOnHand-CUR_PL_Post.MovementQty<0) THEN
-          SELECT '@NotEnoughStocked@: ' || NAME
-          INTO v_Message
-          FROM M_PRODUCT
-          WHERE M_Product_ID=CUR_PL_Post.M_Product_ID;
-          RAISE_APPLICATION_ERROR(-20000, v_Message);
-          FINISH_PROCESS:=TRUE;
-        END IF;
         -- Create Transaction Entry
         v_ResultStr:='CreateTransaction';
         Ad_Sequence_Next('M_Transaction', v_Org_ID, v_NextNo) ;
@@ -317,11 +309,10 @@
           ;
         IF(CUR_PL_Post.IsStocked<>'N') THEN
           M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message) ;
-        END IF;
-        IF (v_Result=0) THEN
-          v_Message:=v_Message || ' @Inline@ ' || CUR_PL_Post.line;
-          RAISE_APPLICATION_ERROR(-20000, v_Message);
-          FINISH_PROCESS:=TRUE;
+          IF (v_Result=0) THEN
+            v_Message:=v_Message || ' @Inline@ ' || CUR_PL_Post.line;
+            RAISE_APPLICATION_ERROR(-20000, v_Message);
+          END IF;
         END IF;
       END LOOP;
     END IF; --FINISH_PROCESS

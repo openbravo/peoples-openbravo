@@ -312,31 +312,9 @@ public class DocInvoice extends AcctServer {
         // New docLine created to assign C_Tax_ID value to the entry
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
-        if (m_taxes[i].m_isTaxUndeductable) {
-          DocInvoiceData[] data = null;
-          data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(),
-              m_taxes[i].m_C_Tax_ID, Record_ID);
-          for (int j = 0; j < data.length; j++) {
-            /*
-             * Sales has tax exempt for public/Not Tax Deductable organization, so amount will be
-             * zero. Sales tax will be product revenue account for commercial/Not Tax deductable
-             * configuration
-             */
-            fact.createLine(docLine, Account.getAccount(conn, data[j].pRevenueAcct),
-                this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
-          }
-        } else {
-          if (m_taxes[i].m_isTaxDeductable) {
-            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxLiability, as, conn),
-                this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          } else {// If Tax rate is not configured with any parameter
-            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-                this.C_Currency_ID, "", m_taxes[i].m_amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
-          }
-        }
+        fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
+            C_Currency_ID, "", m_taxes[i].m_amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
       }
       // Revenue CR
       if (p_lines != null && p_lines.length > 0) {
@@ -388,39 +366,10 @@ public class DocInvoice extends AcctServer {
         // New docLine created to assign C_Tax_ID value to the entry
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
-        if (m_taxes[i].m_isTaxUndeductable) {
-          DocInvoiceData[] data = null;
-          data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(),
-              m_taxes[i].m_C_Tax_ID, Record_ID);
-          for (int j = 0; j < data.length; j++) {
-            /*
-             * Sales has tax exempt for public/Not Tax Deductable organization, so amount will be
-             * zero. Sales tax will be product revenue account for commercial/Not Tax deductable
-             * configuration
-             */
-            fact.createLine(docLine, Account.getAccount(conn, data[j].pRevenueAcct),
-                this.C_Currency_ID, data[j].taxamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
-          }
-        } else {
-          if (m_taxes[i].m_isTaxDeductable) {
-            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxLiability, as, conn),
-                this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          } else {// If Tax rate is not configured with any parameter
-            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-                this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          }
-        }
+        fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
+            this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
       }
-      /*
-       * 
-       * 
-       * } else { fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-       * this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-       * DocumentType, conn); } }
-       */
       // Revenue CR
       for (int i = 0; p_lines != null && i < p_lines.length; i++)
         fact.createLine(p_lines[i], ((DocLine_Invoice) p_lines[i]).getAccount(
@@ -487,15 +436,9 @@ public class DocInvoice extends AcctServer {
           }
 
         } else {
-          if (m_taxes[i].m_isTaxDeductable) {
-            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxLiability, as, conn),
-                this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          } else {// If Tax rate is not configured with any parameter
-            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
-                this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          }
+          fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
+              this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         }
       }
       // Expense DR
@@ -558,15 +501,9 @@ public class DocInvoice extends AcctServer {
           }
 
         } else {
-          if (m_taxes[i].m_isTaxDeductable) {
-            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxLiability, as, conn),
-                this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          } else {// If Tax rate is not configured with any parameter
-            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
-                this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID,
-                nextSeqNo(SeqNo), DocumentType, conn);
-          }
+          fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
+              this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         }
       }
       // Expense CR

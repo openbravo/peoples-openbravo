@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,13 +52,15 @@
         <Parameter name="node"/>        
    </SqlMethod>
    
-      <SqlMethod name="isMenuItemInDev" type="preparedStatement" return="boolean">
+    <SqlMethod name="isMenuItemInDev" type="preparedStatement" return="boolean">
       <Sql>
         SELECT COUNT(*)
-          FROM AD_MENU M, AD_MODULE O
-         WHERE AD_MENU_ID = ?
-           AND O.AD_MODULE_ID = M.AD_MODULE_ID
-           AND O.ISINDEVELOPMENT='Y'
+          FROM AD_MENU M, AD_MODULE O, AD_MODULE t
+         WHERE (AD_MENU_ID = ?
+                AND O.AD_MODULE_ID = M.AD_MODULE_ID
+                AND O.ISINDEVELOPMENT='Y')
+            OR (t.type='T'
+                AND t.isindevelopment='Y')
       </Sql>
       <Parameter name="nodeId"/>  
    </SqlMethod>

@@ -109,6 +109,15 @@ public class Reference extends ModelObject {
   private String modelImpl;
   private DomainType domainType;
   private Reference parentReference;
+  private boolean baseReference;
+
+  public boolean isBaseReference() {
+    return baseReference;
+  }
+
+  public void setBaseReference(boolean baseReference) {
+    this.baseReference = baseReference;
+  }
 
   public boolean isPrimitive() {
     return getDomainType() instanceof PrimitiveDomainType;
@@ -143,7 +152,9 @@ public class Reference extends ModelObject {
    * @return the modelImpl or if not set, the value set in the parent.
    */
   public String getModelImplementationClassName() {
-    if (getModelImpl() == null && getParentReference() != null) {
+    // only call the parent if the parent is a base reference and this is not a basereference
+    if (getModelImpl() == null && !isBaseReference() && getParentReference() != null
+        && getParentReference().isBaseReference()) {
       return getParentReference().getModelImplementationClassName();
     }
     return getModelImpl();

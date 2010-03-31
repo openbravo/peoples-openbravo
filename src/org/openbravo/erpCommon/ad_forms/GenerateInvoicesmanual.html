@@ -64,7 +64,7 @@ function validate(action) {
     showJSMessage(1);
     return false;
     }
-    setProcessingMode('window',true);
+    setProcessingMode('window', true);
   } else if (action=="FIND") {
     if (frm.inpadOrgId.value==null || frm.inpadOrgId.value=="") {
     setWindowElementFocus(frm.inpadOrgId);
@@ -78,6 +78,7 @@ function validate(action) {
 	<script language="JavaScript" type="text/javascript">
 	
   function onLoadDo(){
+     setProcessingMode('window', false);
 		 this.windowTables = new Array(
 		  new windowTableId('client', 'buttonSearch'),
 		  new windowTableId('tdbottomButtons', 'buttonProcess')
@@ -432,18 +433,18 @@ function validate(action) {
                   <td></td>
                   <td class="Button_LeftAlign_ContentCell">
                     <div>
-                      <button type="button" 
-                        id="buttonProcess" 
+                      <button type="button"
+                        id="buttonProcess"
                         class="ButtonLink" 
-                        onclick="submitCommandForm('GENERATE', true, null, null, null, true);return false;" 
-                        onfocus="buttonEvent('onfocus', this); window.status='Process'; return true;" 
-                        onblur="buttonEvent('onblur', this);" 
-                        onkeyup="buttonEvent('onkeyup', this);" 
-                        onkeydown="buttonEvent('onkeydown', this);" 
-                        onkeypress="buttonEvent('onkeypress', this);" 
-                        onmouseup="buttonEvent('onmouseup', this);" 
-                        onmousedown="buttonEvent('onmousedown', this);" 
-                        onmouseover="buttonEvent('onmouseover', this); window.status='Process'; return true;" 
+                        onclick="submitCommandForm('GENERATE', true, null, null, null, true);return false;"
+                        onfocus="buttonEvent('onfocus', this); window.status='Process'; return true;"
+                        onblur="buttonEvent('onblur', this);"
+                        onkeyup="buttonEvent('onkeyup', this);"
+                        onkeydown="buttonEvent('onkeydown', this);"
+                        onkeypress="buttonEvent('onkeypress', this);"
+                        onmouseup="buttonEvent('onmouseup', this);"
+                        onmousedown="buttonEvent('onmousedown', this);"
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Process'; return true;"
                         onmouseout="buttonEvent('onmouseout', this);">
                         <table class="Button">
                           <tr>
