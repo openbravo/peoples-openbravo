@@ -6,17 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.apache.log4j.PropertyConfigurator;
 
-public class BuildValidationHandler extends Task {
+public class BuildValidationHandler {
   private static final Logger log4j = Logger.getLogger(BuildValidationHandler.class);
 
-  private File basedir;
-  private String module;
+  private static File basedir;
+  private static String module;
 
-  @Override
-  public void execute() {
+  public static void main(String[] args) {
+    basedir = new File(args[0]);
+    module = args[1];
+    PropertyConfigurator.configure("log4j.lcf");
     String errorMessage = "";
     List<String> classes = new ArrayList<String>();
     File modFolders[];
@@ -54,24 +55,26 @@ public class BuildValidationHandler extends Task {
         }
       } catch (Exception e) {
         log4j.info("Error executing build-validation: " + s, e);
-        throw new BuildException("The build validation " + s + " couldn't be properly executed");
+        log4j.error("The build validation " + s + " couldn't be properly executed" + e);
+        System.exit(1);
       }
       if (errors.size() > 0) {
-        throw new BuildException(
-            errorMessage
-                + "\nThe build validation failed. The system hasn't been modified. Fix the problems described in the validation messages, and then start the build again.");
+        log4j.error(errorMessage);
+        log4j
+            .error("The build validation failed. The system hasn't been modified. Fix the problems described in the validation messages, and then start the build again.");
+        System.exit(1);
       }
     }
   }
 
   @SuppressWarnings("unchecked")
-  private ArrayList<String> callExecute(Class<?> myClass, Object instance)
+  private static ArrayList<String> callExecute(Class<?> myClass, Object instance)
       throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     return (ArrayList<String>) myClass.getMethod("execute", new Class[0]).invoke(instance,
         new Object[0]);
   }
 
-  private void readClassFiles(List<String> coreClasses, File file) {
+  private static void readClassFiles(List<String> coreClasses, File file) {
     if (!file.exists()) {
       return;
     }
@@ -81,9 +84,11 @@ public class BuildValidationHandler extends Task {
         readClassFiles(coreClasses, f);
       }
     } else {
-      String fileName = file.getAbsolutePath();
-      fileName = fileName.split("build" + File.separatorChar + "classes" + File.separatorChar)[1];
-      coreClasses.add(fileName.replace(".class", "").replace(File.separatorChar, '.'));
+      if (file.getAbsolutePath().endsWith(".class")) {
+        String fileName = file.getAbsolutePath();
+        fileName = fileName.split("build" + File.separatorChar + "classes" + File.separatorChar)[1];
+        coreClasses.add(fileName.replace(".class", "").replace(File.separatorChar, '.'));
+      }
     }
   }
 

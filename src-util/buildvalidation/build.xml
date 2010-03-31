@@ -25,11 +25,10 @@
   <property name="main.dir" value="${basedir}/../.." />
 
   <path id="pre.class.path">
-    <pathelement path="build/classes" />
+    <pathelement path="build/classes/" />
     <dirset dir="${base.modules}">
       <include name="*/build/classes/" />
     </dirset>
-    <pathelement path="${base.src}"/>
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
     </fileset>
@@ -92,10 +91,11 @@
   </target>
 
   <target name="buildvalidation" >
-    <taskdef name="ValidationHandler" classname="org.openbravo.buildvalidation.BuildValidationHandler" onerror="failall">
+    <java classname="org.openbravo.buildvalidation.BuildValidationHandler" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="yes">
+      <arg value="${base.src}/../"/>
+      <arg value="${module}"/>
       <classpath refid="pre.class.path" />
-    </taskdef>
-    <ValidationHandler basedir="${base.src}/../" module="${module}" />
+    </java>
   </target>
   
   <target name="checkmodule"  if="module.not.provided">

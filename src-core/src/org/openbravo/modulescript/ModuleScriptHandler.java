@@ -69,9 +69,11 @@ public class ModuleScriptHandler extends Task {
         readClassFiles(coreClasses, f);
       }
     } else {
-      String fileName = file.getAbsolutePath();
-      fileName = fileName.split("build" + File.separatorChar + "classes" + File.separatorChar)[1];
-      coreClasses.add(fileName.replace(".class", "").replace(File.separatorChar, '.'));
+      if (file.getAbsolutePath().endsWith(".class")) {
+        String fileName = file.getAbsolutePath();
+        fileName = fileName.split("build" + File.separatorChar + "classes" + File.separatorChar)[1];
+        coreClasses.add(fileName.replace(".class", "").replace(File.separatorChar, '.'));
+      }
     }
   }
 
