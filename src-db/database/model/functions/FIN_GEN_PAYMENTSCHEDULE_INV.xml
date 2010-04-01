@@ -335,7 +335,7 @@ BEGIN
         AND duedate<=now();
       V_DueAmount :=COALESCE(V_DueAmount,0);
       --Getting Day Still Due
-      SELECT COALESCE(TO_NUMBER(MIN(DUEDATE)-TRUNC(NOW())),0) as DAYSTILLDUE
+      SELECT COALESCE(TO_NUMBER(MIN(DUEDATE)-TRUNC(now())),0) as DAYSTILLDUE
       INTO V_DayStillDue
       FROM FIN_PAYMENT_SCHEDULE
       WHERE C_INVOICE_ID=P_RECORD_ID
