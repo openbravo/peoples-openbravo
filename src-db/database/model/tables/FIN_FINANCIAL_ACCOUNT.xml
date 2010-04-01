@@ -124,6 +124,6 @@
       <foreign-key foreignTable="C_LOCATION" name="FIN_FINACC_LOCATION">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
-      <check name="FIN_FINACC_DEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y','N')]]></check>
+      <check name="FIN_FINACC_DEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
     </table>
   </database>
