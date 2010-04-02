@@ -21,7 +21,7 @@ public class SL_AdvPayment_Document extends SimpleCallout {
     String strTableName = strTableNameId.substring(0, strTableNameId.length() - 3);
     String strDocumentNo = Utility.getDocumentNo(this, vars, strWindowNo, strTableName,
         strDocType_Id, strDocType_Id, false, false);
-    info.addResult("DocumentNo", "<" + strDocumentNo + ">");
+    info.addResult("inpdocumentno", "<" + strDocumentNo + ">");
   }
 
 }
