@@ -37,6 +37,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="LINE" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="BPARTNERNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
