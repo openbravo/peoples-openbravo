@@ -299,6 +299,14 @@ build.war: build a war file in the lib directory.
     </junit>
   </target>
 
+  <target name="run.webservice.tests" depends="compileSqlc,generate.entities.quick">
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath refid="project.class.path" />
+      <formatter type="plain" usefile="no"/>
+      <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="no"/>
+    </junit>
+  </target>
+
   <target name="run.api.test.javascript">
   	<taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="project.class.path" />
 	<property name="export" value="no" />

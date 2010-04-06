@@ -438,6 +438,10 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="run.webservice.tests" depends="init">
+      <ant dir="${base.src}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="run.quick.tests" depends="init">
     <ant dir="${base.src}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
