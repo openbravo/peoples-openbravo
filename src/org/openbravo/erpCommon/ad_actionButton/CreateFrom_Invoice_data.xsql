@@ -119,7 +119,7 @@
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
         AND ic.C_BPartner_ID = ? 
-        AND ((ic.term = 'D' AND ic.qtydelivered >0) OR (ic.term = 'I') OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )
+        AND ((ic.term = 'D' AND ic.qtydelivered <>0) OR (ic.term = 'I') OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
         ORDER BY NAME
       ]]>
