@@ -248,4 +248,15 @@ public class WADInteger extends WADControl {
     }
   }
 
+  public String getHiddenHTML() {
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADHiddenNumber").createXmlDocument();
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("outputFormat", "integerEdition");
+
+    return replaceHTML(xmlDocument.print());
+  }
+
 }

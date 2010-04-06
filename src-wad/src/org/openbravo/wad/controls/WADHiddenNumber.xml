@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -12,12 +12,16 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
+<REPORT>
+  <template file="WADHiddenNumber.html"/>
+  <PARAMETER id="xx" name="columnName" attribute="id" replace="xx"/>
+  <PARAMETER id="xx" name="columnNameInp" attribute="name" replace="xx"/>
+  <PARAMETER id="xx" name="outputformat" attribute="outputformat" replace="xx"/>
 
-<FIELD_TMP>
-<PARAMETER id="xx2" name="xx" attribute="value" default=""/>
-</FIELD_TMP>
+  <DISCARD id="discard"/>
+</REPORT>

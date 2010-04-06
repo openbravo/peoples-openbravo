@@ -42,7 +42,6 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.controls.WADButton;
 import org.openbravo.wad.controls.WADControl;
 import org.openbravo.wad.controls.WADGrid;
-import org.openbravo.wad.controls.WADHidden;
 import org.openbravo.wad.controls.WADLabelControl;
 import org.openbravo.wad.controls.WadControlLabelBuilder;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -3565,13 +3564,16 @@ public class Wad extends DefaultHandler {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/wad/Configuration_Edition").createXmlDocument();
 
+    // auxiliary inputs
     final StringBuffer htmlHidden = new StringBuffer();
     if (efdauxiliar != null) {
-      for (int i = 0; i < efdauxiliar.length; i++) {
-        final WADControl auxControl = new WADHidden(efdauxiliar[i].getField("columnname"), Sqlc
-            .TransformaNombreColumna(efdauxiliar[i].getField("columnname")), "", true);
+      for (FieldProvider auxiliaryInput : efdauxiliar) {
+        final WADControl auxControl = new WADControl();
+        auxControl.setData("ColumnName", auxiliaryInput.getField("columnname"));
+        auxControl.setData("ColumnNameInp", Sqlc.TransformaNombreColumna(auxiliaryInput
+            .getField("columnname")));
         auxControl.setReportEngine(xmlEngine);
-        htmlHidden.append(auxControl.toXml()).append("\n");
+        htmlHidden.append(auxControl.getHiddenXML()).append("\n");
       }
     }
     xmlDocument.setParameter("hiddens", htmlHidden.toString());
@@ -3737,15 +3739,18 @@ public class Wad extends DefaultHandler {
       }
     }
 
+    // auxiliary inputs
     final Vector<Object> vecAuxiliar = new Vector<Object>();
     final StringBuffer htmlHidden = new StringBuffer();
     if (efdauxiliar != null) {
-      for (int i = 0; i < efdauxiliar.length; i++) {
-        final WADControl auxControl = new WADHidden(efdauxiliar[i].getField("columnname"), Sqlc
-            .TransformaNombreColumna(efdauxiliar[i].getField("columnname")), "", true);
+      for (FieldProvider auxiliaryInput : efdauxiliar) {
+        final WADControl auxControl = new WADControl();
+        auxControl.setData("ColumnName", auxiliaryInput.getField("columnname"));
+        auxControl.setData("ColumnNameInp", Sqlc.TransformaNombreColumna(auxiliaryInput
+            .getField("columnname")));
         auxControl.setReportEngine(xmlEngine);
-        htmlHidden.append(auxControl.toString()).append("\n");
-        vecAuxiliar.addElement(FormatUtilities.replace(efdauxiliar[i].getField("columnname")));
+        htmlHidden.append(auxControl.getHiddenHTML()).append("\n");
+        vecAuxiliar.addElement(FormatUtilities.replace(auxiliaryInput.getField("columnname")));
       }
     }
 
