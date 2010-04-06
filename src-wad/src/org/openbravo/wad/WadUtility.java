@@ -493,7 +493,7 @@ public class WadUtility {
   public static String getWadDefaultValue(ConnectionProvider pool, FieldsData fd) {
     if (fd == null)
       return "";
-    WADControl control = getWadControlClass(pool, fd.referencevalue, fd.type);
+    WADControl control = getWadControlClass(pool, fd.reference, fd.referencevalue);
     control.setData("name", fd.name.toUpperCase());
     control.setData("required", fd.required);
     return control.getDefaultValue();

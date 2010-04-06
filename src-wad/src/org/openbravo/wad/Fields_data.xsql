@@ -311,12 +311,12 @@
     <SqlMethodComment>Default values of the columns</SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT ad_column.AD_COLUMN_ID as reference, ad_column.ISMANDATORY as required, 
+      SELECT ad_column.AD_COLUMN_ID as adColumnId, ad_column.ISMANDATORY as required, 
       REPLACE(replace(REPLACE(REPLACE(columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as Name, 
       REPLACE(REPLACE(ad_column.defaultvalue, CHR(13), '\\n'), CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
-      ad_reference_id as referencevalue,
+      ad_reference_id as reference,
       isdisplayed, ad_column.columnname as columnname, ad_table.ACCESSLEVEL, 
-      ad_table.TABLENAME as NameRef, ad_reference_value_id as type, ad_column.name as realname
+      ad_table.TABLENAME as NameRef, ad_reference_value_id as referencevalue, ad_column.name as realname
       FROM ad_field, ad_column, ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
         AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 

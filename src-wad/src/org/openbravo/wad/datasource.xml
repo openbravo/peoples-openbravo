@@ -71,7 +71,7 @@
   <SECTION id="sectionAuxiliar"/>
 </structure>
 <structure name="structure10">
-  <FIELD id="Reference10">reference</FIELD>
+  <FIELD id="Reference10">adcolumnid</FIELD>
   <FIELD id="Select10">defaultvalue</FIELD>
   <FIELD id="paramsAuxiliar10">whereclause</FIELD>
   <SECTION id="sectionDefaultValues"/>

@@ -2109,7 +2109,7 @@ public class Wad extends DefaultHandler {
         if (sfd[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
           sfd[i].defaultvalue = tabName
               + "Data.selectDef"
-              + sfd[i].reference
+              + sfd[i].adcolumnid
               + "(this"
               + WadUtility.getWadContext(sfd[i].defaultvalue, vecFields, vecAuxiliarFields,
                   parentsFieldsData, true, isSOTrx, strWindow) + ")";
@@ -2122,7 +2122,7 @@ public class Wad extends DefaultHandler {
         } else if (sfd[i].accesslevel.equals("6")
             && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
           sfd[i].defaultvalue = "\"0\"";
-        } else if (!sfd[i].referencevalue.equals("13")) { // ID
+        } else if (!sfd[i].reference.equals("13")) { // ID
           sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \""
               + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \""
               + WadUtility.getWadDefaultValue(pool, sfd[i]) + "\", dataField)";
@@ -2135,7 +2135,8 @@ public class Wad extends DefaultHandler {
       } else {
         sfd[i].defaultvalue = "strP" + sfd[i].columnname;
       }
-      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].referencevalue, sfd[i].type);
+      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].reference,
+          sfd[i].referencevalue);
       isSelect = control.addAdditionDefaulJavaFields(strDefaultValues, sfd[i], tabName, isSelect);
     }
 
@@ -2669,8 +2670,8 @@ public class Wad extends DefaultHandler {
         }
 
         // Calculate additional defaults
-        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].referencevalue,
-            fieldsDef[i].type);
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].reference,
+            fieldsDef[i].referencevalue);
         itable = control.addAdditionDefaulSQLFields(v, fieldsDef[i], itable);
       }
       final FieldsData[] fd = new FieldsData[v.size()];
@@ -2846,8 +2847,8 @@ public class Wad extends DefaultHandler {
         }
 
         // add another field for default special cases with more than 1 field
-        WADControl control = WadUtility.getWadControlClass(pool,
-            fieldsDataDefaults[i].referencevalue, fieldsDataDefaults[i].type);
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsDataDefaults[i].reference,
+            fieldsDataDefaults[i].referencevalue);
         if (fieldsDataDefaults[i].isdisplayed.equals("Y")
             && control.addAdditionDefaulJavaFields(new StringBuffer(), fieldsDataDefaults[i],
                 tabName, 0) != 0) {
@@ -2860,9 +2861,9 @@ public class Wad extends DefaultHandler {
               .TransformaNombreColumna(fieldsDataDefaults[i].columnname))
               + "r";
           vecDDef.addElement(f);
-        } else if (fieldsDataDefaults[i].referencevalue.equals("28")
+        } else if (fieldsDataDefaults[i].reference.equals("28")
             && fieldsDataDefaults[i].isdisplayed.equals("Y")
-            && !fieldsDataDefaults[i].type.equals("")) {
+            && !fieldsDataDefaults[i].referencevalue.equals("")) {
           // Button special case
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc

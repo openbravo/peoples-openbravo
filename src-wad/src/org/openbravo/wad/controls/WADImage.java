@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2008 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -151,7 +151,7 @@ public class WADImage extends WADControl {
   public int addAdditionDefaulSQLFields(Vector<Object> v, FieldsData fieldsDef, int itable) {
     if (fieldsDef.isdisplayed.equals("Y")) { // Image
       final FieldsData fd = new FieldsData();
-      fd.reference = fieldsDef.reference + "_" + (itable++);
+      fd.adcolumnid = fieldsDef.adcolumnid + "_" + (itable++);
       fd.name = fieldsDef.columnname + "R";
       final String tableN = "AD_Image";
       fieldsDef.name = fieldsDef.name;
@@ -181,7 +181,7 @@ public class WADImage extends WADControl {
   public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
       String tabName, int itable) {
     if (fieldsDef.isdisplayed.equals("Y")) {
-      strDefaultValues.append(", " + tabName + "Data.selectDef" + fieldsDef.reference + "_"
+      strDefaultValues.append(", " + tabName + "Data.selectDef" + fieldsDef.adcolumnid + "_"
           + (itable++) + "(this, " + fieldsDef.defaultvalue + ")");
     }
     return itable;
