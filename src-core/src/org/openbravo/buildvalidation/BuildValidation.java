@@ -1,6 +1,7 @@
 package org.openbravo.buildvalidation;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.database.CPStandAlone;
@@ -51,5 +52,13 @@ public abstract class BuildValidation {
       fProp = new File("../../config/Openbravo.properties");
     cp = new CPStandAlone(fProp.getAbsolutePath());
     return cp;
+  }
+
+  protected List<String> handleError(Throwable t) {
+    ArrayList<String> errors = new ArrayList<String>();
+    errors.add("Error executing build-validation " + this.getClass().getName() + ": "
+        + t.getMessage());
+    errors.add("The build validation couldn't be properly executed");
+    return errors;
   }
 }

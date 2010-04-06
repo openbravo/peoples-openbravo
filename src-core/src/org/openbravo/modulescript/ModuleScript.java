@@ -1,5 +1,7 @@
 package org.openbravo.modulescript;
 
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 
@@ -11,6 +13,7 @@ import org.openbravo.database.ConnectionProvider;
  */
 public abstract class ModuleScript {
 
+  private static final Logger log4j = Logger.getLogger(ModuleScript.class);
   private ConnectionProvider cp = null;
 
   /**
@@ -32,5 +35,11 @@ public abstract class ModuleScript {
       cp = new CPStandAlone("config/Openbravo.properties");
     }
     return cp;
+  }
+
+  protected void handleError(Throwable t) {
+    log4j
+        .error("Error executing moduleScript " + this.getClass().getName() + ": " + t.getMessage());
+    throw new BuildException("Execution of moduleScript " + this.getClass().getName() + "failed.");
   }
 }

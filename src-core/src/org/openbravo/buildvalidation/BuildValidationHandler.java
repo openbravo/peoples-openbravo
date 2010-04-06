@@ -19,7 +19,6 @@ public class BuildValidationHandler {
     basedir = new File(args[0]);
     module = args[1];
     PropertyConfigurator.configure("log4j.lcf");
-    String errorMessage = "";
     List<String> classes = new ArrayList<String>();
     ArrayList<File> modFolders = new ArrayList<File>();
     if (module != null && !module.equals("%")) {
@@ -55,9 +54,6 @@ public class BuildValidationHandler {
           Object instance = myClass.newInstance();
           log4j.info("Executing build validation: " + s);
           errors = callExecute(myClass, instance);
-          for (String error : errors) {
-            errorMessage += error + "\n";
-          }
         }
       } catch (Exception e) {
         log4j.info("Error executing build-validation: " + s, e);
@@ -67,10 +63,18 @@ public class BuildValidationHandler {
       if (errors.size() > 0) {
         log4j
             .error("The build validation failed. The system hasn't been modified. Fix the problems described in the validation messages (either by uninstalling the affected modules, or by fixing the problems the validation found), and then start the build again.");
-        log4j.error(errorMessage);
+        printMessage(errors);
         System.exit(1);
       }
     }
+  }
+
+  private static void printMessage(List<String> errors) {
+    String errorMessage = "";
+    for (String error : errors) {
+      errorMessage += error + "\n";
+    }
+    log4j.error(errorMessage);
   }
 
   @SuppressWarnings("unchecked")
