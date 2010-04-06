@@ -29,14 +29,13 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Reference;
+import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.dal.xml.EntityXMLException;
-import org.openbravo.dal.xml.XMLTypeConverter;
 import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Language;
@@ -187,11 +186,11 @@ public class IssuesTest extends BaseTest {
    * Tests issue: https://issues.openbravo.com/view.php?id=11812
    */
   public void test11812() {
-    assertTrue(24 == XMLTypeConverter.getInstance().fromXML(Long.class, "24.0"));
+    assertTrue(24 == (Long) new LongDomainType().createFromString("24.0"));
     try {
-      XMLTypeConverter.getInstance().fromXML(Long.class, "24.5");
+      new LongDomainType().createFromString("24.5");
       fail("No exception on 24.5");
-    } catch (EntityXMLException e) {
+    } catch (ArithmeticException e) {
       // expected
     }
   }

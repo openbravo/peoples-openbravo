@@ -26,7 +26,6 @@ import org.openbravo.base.exception.OBException;
  * 
  * @see EntityXMLConverter
  * @see XMLEntityConverter
- * @see XMLTypeConverter
  * @author mtaal
  */
 public class EntityXMLException extends OBException {

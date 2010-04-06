@@ -30,6 +30,48 @@ package org.openbravo.base.model.domaintype;
 
 public interface PrimitiveDomainType extends DomainType {
 
+  public static final String EMPTY_STRING = "";
+
+  /**
+   * Converts an object value of this type to a locale/system neutral String. Is used in XML
+   * conversion. The opposite of this method is the {@link #createFromString(String)} method.
+   * 
+   * @param value
+   *          the value to convert to a string.
+   * @return the String representation, if the value is null then an empty String is returned
+   * @throws IllegalArgumentException
+   *           if the conversion is not possible
+   */
+  String convertToString(Object value);
+
+  /**
+   * Converts a string back to an object value of the primitive type ({@see #getPrimitiveType()})
+   * represented by this DomainType. This method is the opposite of the
+   * {@link #convertToString(Object)} method.
+   * 
+   * @param strValue
+   *          the string value to convert
+   * @return the object value, null is returned if an empty string or null are passed as parameter.
+   * @throws IllegalArgumentException
+   *           if the conversion is not possible
+   */
+  Object createFromString(String strValue);
+
+  /**
+   * @return the xml schema type which matches the primitive type, is used to create the XML Schema
+   *         for the REST web services.
+   */
+  String getXMLSchemaType();
+
+  /**
+   * The type used in the hibernate mapping. Most of the time is the same as the
+   * {@link #getPrimitiveType()}. Can be used to set a hibnernate user type class. See the hibernate
+   * documentation for more information on this.
+   * 
+   * @return the class representing the hibernate type
+   */
+  Class<?> getHibernateType();
+
   /**
    * The primitive type class (for example java.lang.Long) if this is a primitive type.
    * 

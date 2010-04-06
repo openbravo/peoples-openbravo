@@ -19,7 +19,6 @@
 
 package org.openbravo.base.model.domaintype;
 
-
 /**
  * The type for a yes/no or boolean column.
  * 
@@ -35,4 +34,28 @@ public class BooleanDomainType extends BasePrimitiveDomainType {
   public Class<?> getPrimitiveType() {
     return Boolean.class;
   }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
+   */
+  @Override
+  public Object createFromString(String strValue) {
+    if (strValue == null || strValue.trim().length() == 0) {
+      return null;
+    }
+    return new Boolean(strValue);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
+   */
+  @Override
+  public String getXMLSchemaType() {
+    return "ob:boolean";
+  }
+
 }

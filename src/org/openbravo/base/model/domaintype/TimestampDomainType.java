@@ -20,6 +20,8 @@
 package org.openbravo.base.model.domaintype;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * The type for a datetime column.
@@ -29,11 +31,53 @@ import java.sql.Timestamp;
 
 public class TimestampDomainType extends BasePrimitiveDomainType {
 
+  private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+
   /**
    * @return class of the {@link Timestamp}
    * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return Timestamp.class;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#convertToString(java.lang.Object)
+   */
+  @Override
+  public synchronized String convertToString(Object value) {
+    if (value == null) {
+      return EMPTY_STRING;
+    }
+    return xmlDateFormat.format(value);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
+   */
+  @Override
+  public synchronized Object createFromString(String strValue) {
+    try {
+      if (strValue == null || strValue.trim().length() == 0) {
+        return null;
+      }
+      return new Timestamp(xmlDateFormat.parse(strValue).getTime());
+    } catch (ParseException e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
+   */
+  @Override
+  public String getXMLSchemaType() {
+    return "ob:dateTime";
   }
 }
