@@ -127,7 +127,8 @@ public class Menu extends HttpSecureAppServlet {
 
     if (qString != null && qString.contains("url") && url != null && !url.equals("")) {
       if (!url.startsWith("/")) {
-        log4j.error("URL parameter is relative to the application context, must start with slash");
+        log4j
+            .error("Invalid deep-link URL: URL parameter is relative to application context, must start with slash");
         return "";
       }
       // Removing "url=" from query string
@@ -157,6 +158,11 @@ public class Menu extends HttpSecureAppServlet {
       }
 
       final Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+
+      if (tab == null) {
+        log4j.error("Invalid deep-link URL: tab " + tabId + " doesn't exist");
+        return "";
+      }
 
       if (!windowId.equals("")) {
         final Window window = OBDal.getInstance().get(Window.class, windowId);
