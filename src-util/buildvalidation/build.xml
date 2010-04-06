@@ -18,13 +18,13 @@
 ************************************************************************
 -->
 
-<project name="openbravo-pre-install" default="compile" basedir=".">
-  <property name="build.pre" value="build/classes" />
-  <property name="build.pre.sqlc" value="build/javasqlc" />
-  <property name="build.pre.src" value="src" />
+<project name="openbravo-buildvalidation" default="compile" basedir=".">
+  <property name="build.validation" value="build/classes" />
+  <property name="build.validation.sqlc" value="build/javasqlc" />
+  <property name="build.validation.src" value="src" />
   <property name="main.dir" value="${basedir}/../.." />
 
-  <path id="pre.class.path">
+  <path id="buildvalidation.class.path">
     <pathelement path="build/classes/" />
     <dirset dir="${base.modules}">
       <include name="*/build/classes/" />
@@ -42,48 +42,48 @@
   </condition>
 
   <target name="init">
-    <mkdir dir="${build.pre}" />
-    <mkdir dir="${build.pre.sqlc}" />
-    <mkdir dir="${build.pre.sqlc}/src" />
+    <mkdir dir="${build.validation}" />
+    <mkdir dir="${build.validation.sqlc}" />
+    <mkdir dir="${build.validation.sqlc}/src" />
     <mkdir dir="${base.modules}/${module}/build/" />
     <mkdir dir="${base.modules}/${module}/build/javasqlc" />
     <mkdir dir="${base.modules}/${module}/build/classes" />
   </target>
 
   <target name="clean">
-    <delete dir="${build.pre}" failonerror="false" includeemptydirs="true" />
-    <delete dir="${build.pre.sqlc}" failonerror="false" includeemptydirs="true" />
+    <delete dir="${build.validation}" failonerror="false" includeemptydirs="true" />
+    <delete dir="${build.validation.sqlc}" failonerror="false" includeemptydirs="true" />
   </target>
 
   <target name="sqlcCore" depends="init" if="checkCore">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.pre.sqlc}'" />
-      <classpath refid="pre.class.path" />
+      <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.validation.sqlc}'" />
+      <classpath refid="buildvalidation.class.path" />
     </java>
-    <javac srcdir="${build.pre.sqlc}/src" includes="**/*.java" destdir="${build.pre}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="pre.class.path" />
+    <javac srcdir="${build.validation.sqlc}/src" includes="**/*.java" destdir="${build.validation}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+      <classpath refid="buildvalidation.class.path" />
     </javac>
   </target>
 
   <target name="sqlcModules" depends="init" unless="checkCore">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/buildvalidation/src */src-util/buildvalidation" />
-      <classpath refid="pre.class.path" />
+      <classpath refid="buildvalidation.class.path" />
     </java>
     <javac srcdir="${base.modules}/${module}/src-util/buildvalidation/src" includes="**/*.java" destdir="${base.modules}/${module}/build/classes" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="pre.class.path" />
+      <classpath refid="buildvalidation.class.path" />
     </javac>
   </target>
 
   <target name="javacCore" if="checkCore">
-    <javac srcdir="${main.dir}" includes="src-util/buildvalidation/src/**/*.java" destdir="${build.pre}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="pre.class.path" />
+    <javac srcdir="${main.dir}" includes="src-util/buildvalidation/src/**/*.java" destdir="${build.validation}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+      <classpath refid="buildvalidation.class.path" />
     </javac>
   </target>
 
   <target name="javacModule" unless="checkCore">
     <javac srcdir="${main.dir}" includes="modules/${module}/src-util/buildvalidation/**/*.java" destdir="${base.modules}/${module}/build/classes" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="pre.class.path" />
+      <classpath refid="buildvalidation.class.path" />
     </javac>
   </target>
   
@@ -94,7 +94,7 @@
     <java classname="org.openbravo.buildvalidation.BuildValidationHandler" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="yes">
       <arg value="${base.src}/../"/>
       <arg value="${module}"/>
-      <classpath refid="pre.class.path" />
+      <classpath refid="buildvalidation.class.path" />
     </java>
   </target>
   
