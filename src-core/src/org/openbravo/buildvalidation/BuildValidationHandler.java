@@ -65,9 +65,9 @@ public class BuildValidationHandler {
         System.exit(1);
       }
       if (errors.size() > 0) {
-        log4j.error(errorMessage);
         log4j
             .error("The build validation failed. The system hasn't been modified. Fix the problems described in the validation messages (either by uninstalling the affected modules, or by fixing the problems the validation found), and then start the build again.");
+        log4j.error(errorMessage);
         System.exit(1);
       }
     }
