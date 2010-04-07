@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.geography.City;
@@ -47,7 +48,11 @@ public class WSUpdateTest extends BaseWSTest {
    * sets the cityId member in this class.
    */
   public void testACreateCity() {
-    setBigBazaarAdminContext();
+    // do not replace this with a call to setUserContext,
+    // the city must be stored using the client/org of the 100 user
+    // this ensures that webservice calls will be able to find the city
+    // again
+    OBContext.setOBContext("100");
 
     // first delete the current cities, as we should start fresh
     final OBCriteria<City> obc = OBDal.getInstance().createCriteria(City.class);

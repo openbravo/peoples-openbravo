@@ -26,6 +26,9 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 
 /**
@@ -81,16 +84,21 @@ public class WSReadTest extends BaseWSTest {
    * @throws Exception
    */
   public void testPagedWhereClause() throws Exception {
-    requestColumnPage(1, 10, 10);
-    requestColumnPage(1, 5, 5);
-    // note, that there are 32 rows in the query,
-    // the test below may fail if the no. of columns changes
-    requestColumnPage(30, 5, 2);
+    setBigBazaarAdminContext();
+    requestColumnPage(1, 10);
+    requestColumnPage(1, 5);
+    requestColumnPage(30, 5);
   }
 
-  private void requestColumnPage(int firstResult, int maxResult, int expectedCount)
-      throws Exception {
+  private void requestColumnPage(int firstResult, int maxResult) throws Exception {
+
     String whereClause = "(table.id='104' or table.id='105')";
+
+    final OBQuery<Column> columns = OBDal.getInstance().createQuery(Column.class, whereClause);
+    final int columnCnt = columns.count();
+    final int expectedCount = ((firstResult + maxResult) < columnCnt ? maxResult
+        : (columnCnt - firstResult));
+
     whereClause = URLEncoder.encode(whereClause, "UTF-8");
     String content = doTestGetRequest("/ws/dal/ADColumn?where=" + whereClause + "&firstResult="
         + firstResult + "&maxResult=" + maxResult, "<ADColumn", 200);
