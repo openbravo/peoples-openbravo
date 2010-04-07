@@ -174,10 +174,13 @@ public class WADValidator {
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
-          "Error when executing query for validating moel object: " + e.getMessage());
+          "Error when executing query for validating model object: " + e.getMessage());
     }
   }
 
+  /**
+   * Validates base references don't have parent reference
+   */
   private void validateReferences(WADValidationResult result) {
     try {
       WADValidatorData data[] = WADValidatorData.checkBaseReferenceWithParent(conn, modules,
@@ -190,7 +193,7 @@ public class WADValidator {
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
-          "Error when executing query for validating moel object: " + e.getMessage());
+          "Error when executing query for validating references: " + e.getMessage());
     }
 
   }
