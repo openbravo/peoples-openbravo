@@ -1181,24 +1181,39 @@ public class ModuleManagement extends HttpSecureAppServlet {
         log4j.error(ex);
       }
     }
-    if (modules != null && modules.length > 0) {
 
-      for (int i = 0; i < modules.length; i++) {
-        String icon = modules[i].getType();
+    FieldProvider[] modulesBox = new FieldProvider[0];
+    if (modules != null && modules.length > 0) {
+      modulesBox = new FieldProvider[modules.length];
+      int i = 0;
+      for (SimpleModule mod : modules) {
+        HashMap<String, String> moduleBox = new HashMap<String, String>();
+
+        // set different icon depending on module type
+        String icon = mod.getType();
         icon = (icon == null ? "M" : icon).equals("M") ? "Module" : icon.equals("T") ? "Template"
             : "Pack";
-        modules[i].setType(icon);
 
         // If there is no url, we need to hide the 'Visit Site' link and separator.
-        String url = modules[i].getUrl();
-        modules[i].setUrl(url == null || url.equals("") ? "HIDDEN" : url);
+        String url = mod.getUrl();
+        url = (url == null || url.equals("") ? "HIDDEN" : url);
+
+        moduleBox.put("name", mod.getName());
+        moduleBox.put("description", mod.getDescription());
+        moduleBox.put("type", icon);
+        moduleBox.put("help", mod.getHelp());
+        moduleBox.put("url", url);
+        moduleBox.put("moduleVersionID", mod.getModuleVersionID());
+        moduleBox.put("commercialStyle", (mod.getIsCommercial() ? "true" : "none"));
+
+        modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
+        i++;
       }
     }
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/modules/ModuleBox").createXmlDocument();
 
-    FieldProvider[] fieldProviders = FieldProviderFactory.getFieldProviderArray(modules);
-    xmlDocument.setData("structureBox", fieldProviders);
+    xmlDocument.setData("structureBox", modulesBox);
     return xmlDocument.print();
   }
 

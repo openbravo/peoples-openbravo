@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,7 @@
       <div class="AddModule_Title">
         <div class="AddModule_Icon_xx" id="icon"></div>
         <div class="AddModule_Text_Title" id="name">xxModuleName</div>
-     
+        
         <div class="AddModule_Button_Install">
           <div>
             <button type="button" 
@@ -48,8 +48,15 @@
               </table>
             </button>
           </div>
+          <div id="commercial" class="AddModule_Commercial" style="display:xx;">
+            <a class="LabelLink_noicon" target="_blank" href="http://www.openbravo.com/product/erp/module/acquire/">Commercial Module</a>
+          </div>
         </div>
       </div>
+      
+      
+      
+      
       <div class="AddModule_Text_Description" id="description">xxdesc</div>
       <div class="AddModule_Text_Help" id="help">xxhelp</div>
       <div class="AddModule_Options">
