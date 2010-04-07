@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,14 +83,22 @@ public class WADValidator {
   }
 
   /**
-   * Validates tables have a primary key column
+   * Validates tables have one and only one primary key column
    */
   private void validateKey(WADValidationResult result) {
     try {
+      // Check tables without key
       WADValidatorData data[] = WADValidatorData.checkKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
         result.addError(WADValidationType.MISSING_KEY, "Table " + issue.objectname
             + " has not primary key.");
+        result.addModule(issue.modulename);
+      }
+
+      data = WADValidatorData.checkMultipleKey(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.MULTIPLE_KEYS, "Table " + issue.objectname
+            + " has more than one key column.");
         result.addModule(issue.modulename);
       }
     } catch (Exception e) {
@@ -168,4 +176,5 @@ public class WADValidator {
           "Error when executing query for validating moel object: " + e.getMessage());
     }
   }
+
 }

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,27 @@
                              from ad_column c
                             where c.ad_table_id = t.ad_table_id
                               and c.iskey = 'Y')
+           and t.ad_package_id = p.ad_package_id
+           and m.ad_module_id = p.ad_module_id
+           and t.isview='N'
+           and (m.javapackage in ('1') or to_char('Y')=to_char(?))
+      ]]>
+    </Sql>
+    <Parameter name="module" optional="true" type="replace" after="m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
+  </SqlMethod>
+  
+  <SqlMethod name="checkMultipleKey" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+        select t.tablename as objectName, m.name as moduleName
+          from ad_table t, ad_module m, ad_package p
+         where exists (select 1
+                         from ad_column c
+                        where c.ad_table_id = t.ad_table_id
+                          and c.iskey = 'Y'
+                          group by ad_table_id
+                          having count(*)>1)
            and t.ad_package_id = p.ad_package_id
            and m.ad_module_id = p.ad_module_id
            and t.isview='N'

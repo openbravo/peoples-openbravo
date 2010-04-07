@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,7 @@ public class WADValidationResult {
   public enum WADValidationType {
     SQL("SQL"), MISSING_IDENTIFIER("Missing Identifier"), MISSING_KEY("Missing Key Column"), MODEL_OBJECT(
         "Model Object"), MODEL_OBJECT_MAPPING("HTML Mapping"), COLUMN_NAME("Column Naming"), AUXILIARINPUT(
-        "Auxiliary Input Name");
+        "Auxiliary Input Name"), MULTIPLE_KEYS("Multiple Key Columns in Table");
 
     private String description;
 
