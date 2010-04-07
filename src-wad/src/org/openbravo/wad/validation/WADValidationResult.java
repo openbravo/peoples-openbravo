@@ -40,7 +40,8 @@ public class WADValidationResult {
   public enum WADValidationType {
     SQL("SQL"), MISSING_IDENTIFIER("Missing Identifier"), MISSING_KEY("Missing Key Column"), MODEL_OBJECT(
         "Model Object"), MODEL_OBJECT_MAPPING("HTML Mapping"), COLUMN_NAME("Column Naming"), AUXILIARINPUT(
-        "Auxiliary Input Name"), MULTIPLE_KEYS("Multiple Key Columns in Table");
+        "Auxiliary Input Name"), MULTIPLE_KEYS("Multiple Key Columns in Table"), BASEREFERENCE_WITH_PARENT(
+        "Base Reference with Parent Reference");
 
     private String description;
 

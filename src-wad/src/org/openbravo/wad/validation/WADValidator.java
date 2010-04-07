@@ -62,6 +62,7 @@ public class WADValidator {
     validateModelObjectMapping(result);
     validateColumnNaming(result);
     validateAuxiliarInput(result);
+    validateReferences(result);
     return result;
   }
 
@@ -175,6 +176,23 @@ public class WADValidator {
       result.addWarning(WADValidationType.SQL,
           "Error when executing query for validating moel object: " + e.getMessage());
     }
+  }
+
+  private void validateReferences(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkBaseReferenceWithParent(conn, modules,
+          checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.BASEREFERENCE_WITH_PARENT, issue.objectname
+            + " base reference has parent reference " + issue.currentvalue
+            + ". Base references should not have parent reference.");
+        result.addModule(issue.modulename);
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating moel object: " + e.getMessage());
+    }
+
   }
 
 }

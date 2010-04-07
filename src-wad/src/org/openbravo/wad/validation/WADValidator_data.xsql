@@ -269,4 +269,20 @@
     <Parameter name="checkAll"/>
   </SqlMethod>
   
+  <SqlMethod name="checkBaseReferenceWithParent" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+        select r.name as objectName, m.name as moduleName, r2.name as currentvalue
+          from ad_reference r, ad_module m, ad_reference r2
+         where r.isBaseReference = 'Y'
+           and r.parentReference_ID is not null
+           and r2.ad_reference_id = r.parentReference_ID
+           and m.ad_module_id = r.ad_module_id
+           and (m.javapackage in ('1') or to_char('Y')=to_char(?))
+      ]]>
+    </Sql>
+    <Parameter name="module" optional="true" type="replace" after="m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
+  </SqlMethod>
+  
 </SqlClass>
