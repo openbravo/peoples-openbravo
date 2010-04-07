@@ -67,6 +67,7 @@
     v_AMORTIZATIONAMT NUMBER;
     v_NEW_AMORTIZATION VARCHAR2(32);
     v_LINE NUMBER;
+    v_SEQ_ASSET NUMBER;
     v_AMORTIZATIONLINE varchar2(32);
     v_FIRST_DAY_DATE DATE;
     v_LAST_DAY_DATE DATE;
@@ -347,8 +348,8 @@
               INTO v_LINE
               FROM A_AMORTIZATIONLINE
               WHERE A_AMORTIZATION_ID=v_NEW_AMORTIZATION;
-              SELECT COALESCE(COUNT(A_AMORTIZATIONLINE_ID),0), COALESCE(MAX(A_ASSET.USELIFEMONTHS),1)
-              INTO v_Inserted, V_MONTHS
+              SELECT COALESCE(COUNT(A_AMORTIZATIONLINE_ID),0), COALESCE(MAX(A_ASSET.USELIFEMONTHS),1), COALESCE(MAX(SEQ_NO_ASSET), 0) +10
+              INTO v_Inserted, V_MONTHS, v_SEQ_ASSET
               FROM A_AMORTIZATIONLINE, A_ASSET
               WHERE A_AMORTIZATIONLINE.A_ASSET_ID = A_ASSET.A_ASSET_ID
               AND A_ASSET.A_ASSET_ID=v_Record_ID;              
@@ -369,12 +370,12 @@
                   (
                     A_AMORTIZATION_ID, A_AMORTIZATIONLINE_ID, A_ASSET_ID, AD_CLIENT_ID,
                     AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-                    AMORTIZATION_PERCENTAGE, AMORTIZATIONAMT, C_CURRENCY_ID, ISACTIVE, LINE
+                    AMORTIZATION_PERCENTAGE, AMORTIZATIONAMT, C_CURRENCY_ID, ISACTIVE, LINE, SEQ_NO_ASSET
                   )
                   VALUES
                   (v_NEW_AMORTIZATION, v_AMORTIZATIONLINE, v_Record_ID, v_AD_CLIENT_ID, 
                    v_AD_ORG_ID, now(), v_CREATEDBY, now(), v_CREATEDBY, 
-                   ROUND(v_PERCENTAGE,v_Currency_Pre), ROUND(v_AMOUNT,v_Currency_Pre), v_C_CURRENCY_ID, 'Y', v_LINE) ;
+                   ROUND(v_PERCENTAGE,v_Currency_Pre), ROUND(v_AMOUNT,v_Currency_Pre), v_C_CURRENCY_ID, 'Y', v_LINE, v_SEQ_ASSET) ;
                  v_Inserted := v_Inserted +1;
                 v_BEGINING_DATE:=TO_DATE(ADD_MONTHS(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), 1) );
                 v_TotalAmt:=v_TotalAmt + v_Amount;
