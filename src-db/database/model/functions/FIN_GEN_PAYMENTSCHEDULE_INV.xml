@@ -347,7 +347,8 @@ BEGIN
       SET TOTALPAID = v_PaidAmount,
           OUTSTANDINGAMT = v_OutstandingAmount,
           DUEAMT =  V_DueAmount,
-          DAYSTILLDUE = V_DayStillDue
+          DAYSTILLDUE = V_DayStillDue,
+          LASTCALCULATEDONDATE = NOW()
       WHERE C_INVOICE_ID = P_RECORD_ID;
     END;
 
