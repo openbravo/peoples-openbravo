@@ -20,12 +20,9 @@
 package org.openbravo.test.webservice;
 
 import java.net.URLEncoder;
-import java.util.Iterator;
 
-import org.hibernate.cfg.Configuration;
-import org.hibernate.mapping.PersistentClass;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.datamodel.Column;
@@ -114,17 +111,15 @@ public class WSReadTest extends BaseWSTest {
   }
 
   /**
-   * Calls the webservice for every {@link Entity} in the system. The test can take some time to run
-   * (about 5 minutes).
+   * Calls the webservice for every readable {@link Entity} in the system. The test can take some
+   * time to run (about 5 minutes).
    */
   public void testAllToXML() {
-    setBigBazaarAdminContext();
-    final Configuration cfg = SessionFactoryController.getInstance().getConfiguration();
-
-    for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
-      final PersistentClass pc = (PersistentClass) it.next();
-      final String entityName = pc.getEntityName();
-      doTestGetRequest("/ws/dal/" + entityName, "<ob:Openbravo", 200);
+    // do not replace this with a call to setUserContext,
+    OBContext.setOBContext("100");
+    for (Entity entity : OBContext.getOBContext().getEntityAccessChecker().getReadableEntities()) {
+      doTestGetRequest("/ws/dal/" + entity.getName() + "?includeChildren=false", "<ob:Openbravo",
+          200);
     }
   }
 
