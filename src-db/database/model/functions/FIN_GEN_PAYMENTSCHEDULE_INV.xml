@@ -44,6 +44,7 @@ v_Currency_ID VARCHAR2(32);
 v_BPartner_ID VARCHAR2(32);
 v_DateInvoiced DATE;
 v_TotalLines NUMBER;
+v_PaymentMethod C_INVOICE.FIN_PAYMENTMETHOD_ID%TYPE;
 
 TYPE RECORD IS REF CURSOR;
 Cur_Params RECORD;
@@ -72,10 +73,10 @@ BEGIN
   v_ResultStr:='ReadingInvoice';
   SELECT ad_client_id, ad_org_id, c_doctypetarget_id, IsSOTrx,
       grandtotal, C_PaymentTerm_ID, PaymentRule, C_Currency_ID,
-      C_BPartner_ID, DateInvoiced, totallines
+      C_BPartner_ID, DateInvoiced, totallines, fin_paymentmethod_id
   INTO v_Client_ID, v_Org_ID, v_DocTypeTarget_ID, v_IsSOTrx,
       v_GrandTotal, v_PaymentTerm, v_PaymentRule, v_Currency_ID,
-      v_BPartner_ID, v_DateInvoiced, v_totallines
+      v_BPartner_ID, v_DateInvoiced, v_totallines, v_PaymentMethod
   FROM c_invoice
   WHERE c_invoice_id=p_record_id;
 
@@ -178,7 +179,7 @@ BEGIN
           v_payment_schedule_invoice, v_client_id, v_org_id, 'Y',
           now(), p_user, now(), p_user,
           p_record_id, v_currency_id, null,
-          'to-do',
+          v_PaymentMethod,
           v_scheduledamount, v_planneddate,
           v_scheduledamount
         );
