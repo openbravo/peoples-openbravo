@@ -52,7 +52,11 @@ import org.openbravo.dal.core.SessionHandler;
 public class OBQuery<E extends BaseOBObject> {
   private static final Logger log = Logger.getLogger(OBQuery.class);
 
-  private static final String FROM = " from ";
+  private static final String FROM_SPACED = " from ";
+  private static final String FROM = "from";
+  private static final String AS = "as";
+  private static final String WHERE = "where";
+  private static final String ORDERBY = "order by";
 
   private String whereAndOrderBy;
   private Entity entity;
@@ -138,18 +142,18 @@ public class OBQuery<E extends BaseOBObject> {
   public int count() {
     // add a space because the FROM constant also starts with a space
     String qryStr = " " + stripOrderBy(createQueryString());
-    if (qryStr.toLowerCase().contains(FROM)) {
-      final int index = qryStr.indexOf(FROM) + FROM.length();
+    if (qryStr.toLowerCase().contains(FROM_SPACED)) {
+      final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    final Query qry = getSession().createQuery("select count(*) " + FROM + qryStr);
+    final Query qry = getSession().createQuery("select count(*) " + FROM_SPACED + qryStr);
     setParameters(qry);
     return ((Number) qry.uniqueResult()).intValue();
   }
 
   private String stripOrderBy(String qryStr) {
-    if (qryStr.toLowerCase().indexOf("order by") != -1) {
-      return qryStr.substring(0, qryStr.toLowerCase().indexOf("order by"));
+    if (qryStr.toLowerCase().indexOf(ORDERBY) != -1) {
+      return qryStr.substring(0, qryStr.toLowerCase().indexOf(ORDERBY));
     }
     return qryStr;
   }
@@ -178,14 +182,11 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   String createQueryString() {
-    final OBContext obContext = OBContext.getOBContext();
-    final Entity e = getEntity();
-
     // split the orderby and where
     final String qryStr = getWhereAndOrderBy();
     final String orderByClause;
     String whereClause;
-    final int orderByIndex = qryStr.toLowerCase().indexOf("order by");
+    final int orderByIndex = qryStr.toLowerCase().indexOf(ORDERBY);
     if (orderByIndex != -1) {
       whereClause = qryStr.substring(0, orderByIndex);
       orderByClause = qryStr.substring(orderByIndex);
@@ -195,10 +196,10 @@ public class OBQuery<E extends BaseOBObject> {
     }
 
     // strip the where, is added later
-    if (whereClause.trim().toLowerCase().startsWith("where")) {
-      final int whereIndex = whereClause.toLowerCase().indexOf("where");
+    if (whereClause.trim().toLowerCase().startsWith(WHERE)) {
+      final int whereIndex = whereClause.toLowerCase().indexOf(WHERE);
       if (whereIndex != -1) {
-        whereClause = whereClause.substring(1 + whereIndex + "where".length());
+        whereClause = whereClause.substring(1 + whereIndex + WHERE.length());
       }
     }
 
@@ -207,13 +208,24 @@ public class OBQuery<E extends BaseOBObject> {
     String alias = null;
     // this is a space on purpose
     String prefix = " ";
-    if (whereClause.toLowerCase().trim().startsWith("as")) {
+    if (whereClause.toLowerCase().trim().startsWith(AS)) {
       // strip the as
       final String strippedWhereClause = whereClause.toLowerCase().trim().substring(2).trim();
       // get the next space
       final int index = strippedWhereClause.trim().indexOf(" ");
-      alias = strippedWhereClause.substring(0, index);
+      if (index == -1) {
+        alias = strippedWhereClause;
+      } else {
+        alias = strippedWhereClause.substring(0, index);
+      }
       prefix = alias + ".";
+    }
+
+    // detect a special case, no where but an alias or join
+    String aliasJoinClause = "";
+    if (alias != null && !whereClause.contains(WHERE)) {
+      aliasJoinClause = whereClause;
+      whereClause = "";
     }
 
     // The following if is there because the clauses which are added should
@@ -221,15 +233,13 @@ public class OBQuery<E extends BaseOBObject> {
     // left join a left join b where a.id is not null or b.id is not null
     // id='0' and exists (from ADModelObject as mo where mo.id=id)
     // id='0'
-    boolean addWhereClause = true;
     if (whereClause.trim().length() > 0) {
-      if (!whereClause.toLowerCase().contains("where")) {
+      if (!whereClause.toLowerCase().contains(WHERE)) {
         // simple case: id='0's
         whereClause = " where (" + whereClause + ")";
-        addWhereClause = false;
       } else {
         // check if the where is before
-        final int fromIndex = whereClause.toLowerCase().indexOf("from");
+        final int fromIndex = whereClause.toLowerCase().indexOf(FROM);
         int whereIndex = -1;
         if (fromIndex == -1) {
           // already there and no from
@@ -237,7 +247,7 @@ public class OBQuery<E extends BaseOBObject> {
           // case: left join a left join b where a.id is not null or
           // b.id is not null
 
-          whereIndex = whereClause.toLowerCase().indexOf("where");
+          whereIndex = whereClause.toLowerCase().indexOf(WHERE);
           Check.isTrue(whereIndex != -1, "Where not found in string: " + whereClause);
         } else {
           // example: id='0' and exists (from ADModelObject as mo
@@ -246,36 +256,53 @@ public class OBQuery<E extends BaseOBObject> {
           // (from ADModelObject as mo where mo.id=id)
 
           // check if the whereClause is before the first from
-          whereIndex = whereClause.toLowerCase().substring(0, fromIndex).indexOf("where");
+          whereIndex = whereClause.toLowerCase().substring(0, fromIndex).indexOf(WHERE);
         }
 
         if (whereIndex != -1) {
           // example: left join x where id='0' and x.id=id and exists
           // (from ADModelObject as mo where mo.id=id)
-          addWhereClause = false;
           // now put the ( at the correct place
-          final int endOfWhere = whereIndex + "where".length();
+          final int endOfWhere = whereIndex + WHERE.length();
           whereClause = whereClause.substring(0, endOfWhere) + " ("
               + whereClause.substring(endOfWhere) + ")";
         } else { // no whereclause before the from
           // example: id='0' and exists (from ADModelObject as mo
           // where mo.id=id)
           whereClause = " where (" + whereClause + ")";
-          addWhereClause = false;
         }
       }
     }
+
     if (!OBContext.getOBContext().isInAdministratorMode()) {
-      OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
+      OBContext.getOBContext().getEntityAccessChecker().checkReadable(getEntity());
     }
 
-    if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
+    whereClause = addOrgClientActiveFilter(whereClause, prefix);
+
+    final String result;
+    if (alias != null) {
+      result = "select " + alias + " from " + getEntity().getName() + " " + aliasJoinClause + " "
+          + whereClause + orderByClause;
+    } else {
+      result = "from " + getEntity().getName() + " " + aliasJoinClause + " " + whereClause
+          + orderByClause;
+    }
+    log.debug("Created query string " + result);
+    return result;
+  }
+
+  private String addOrgClientActiveFilter(String paramWhereClause, String prefix) {
+    String whereClause = paramWhereClause;
+    final OBContext obContext = OBContext.getOBContext();
+    boolean addWhereClause = !whereClause.toLowerCase().contains(" where ");
+    if (isFilterOnReadableOrganization() && entity.isOrganizationPartOfKey()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
           + "id.organization.id " + createInClause(obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
-    } else if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
+    } else if (isFilterOnReadableOrganization() && entity.isOrganizationEnabled()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
           + "organization.id " + createInClause(obContext.getReadableOrganizations());
       if (addWhereClause) {
@@ -291,47 +318,11 @@ public class OBQuery<E extends BaseOBObject> {
       }
     }
 
-    if (isFilterOnActive() && e.isActiveEnabled()) {
+    if (isFilterOnActive() && entity.isActiveEnabled()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
           + "active='Y' ";
-      if (addWhereClause) {
-        addWhereClause = false;
-      }
     }
-
-    // now determine the join
-    // final StringBuilder join = new StringBuilder();
-    // if (orderByClause.length() > 0) {
-    // // strip the order by
-    // final int orderBy = orderByClause.toLowerCase().indexOf("order by");
-    // final String clauses = orderByClause.substring(1 + orderBy
-    // + "order by".length());
-    // for (String part : clauses.split(",")) {
-    // part = part.trim();
-    // // now just get the dotted part, only support one for now
-    // int firstIndexOf = part.indexOf(".");
-    // if (firstIndexOf != -1) {
-    // // get the second one
-    // int secondIndexOf = part.indexOf(".", firstIndexOf + 1);
-    // if (secondIndexOf != -1) {
-    // join.append(" left join e."
-    // + part.substring(1 + firstIndexOf,
-    // secondIndexOf));
-    // }
-    // }
-    // }
-    // join.append(" ");
-    // }
-
-    final String result;
-    if (alias != null) {
-      result = "select " + alias + " from " + getEntity().getName() + " " + whereClause
-          + orderByClause;
-    } else {
-      result = "from " + getEntity().getName() + " " + whereClause + orderByClause;
-    }
-    log.debug("Created query string " + result);
-    return result;
+    return whereClause;
   }
 
   private String addAnd(String whereClause) {
