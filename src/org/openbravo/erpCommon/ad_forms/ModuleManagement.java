@@ -899,20 +899,21 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       for (Module instMod : im.getModulesToInstall()) {
         if (instMod.getIsCommercial()) {
-          if (!OBPSActiveInstance
-              || ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+          CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(instMod.getModuleID());
+          if (!OBPSActiveInstance || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED
+              || moduleStatus == CommercialModuleStatus.CONVERTED_SUBSCRIPTION) {
             notAllowedMods.add(instMod);
             if (notSubscribed.length() > 0) {
               notSubscribed += ", ";
             }
             notSubscribed += instMod.getName();
-          } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
+          } else if (moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(instMod);
             if (expired.length() > 0) {
               expired += ", ";
             }
             expired += instMod.getName();
-          } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
+          } else if (moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
             notAllowedMods.add(instMod);
             if (notActiveYet.length() > 0) {
               notActiveYet += ", ";
@@ -924,21 +925,22 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       for (Module updMod : im.getModulesToUpdate()) {
         if (updMod.getIsCommercial()) {
-          if (!OBPSActiveInstance
-              || ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+          CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(updMod.getModuleID());
+          if (!OBPSActiveInstance || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED
+              || moduleStatus == CommercialModuleStatus.CONVERTED_SUBSCRIPTION) {
             notAllowedMods.add(updMod);
             if (notSubscribed.length() > 0) {
               notSubscribed += ", ";
             }
             notSubscribed += updMod.getName();
 
-          } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
+          } else if (moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(updMod);
             if (expired.length() > 0) {
               expired += ", ";
             }
             expired += updMod.getName();
-          } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
+          } else if (moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
             notAllowedMods.add(updMod);
             if (notActiveYet.length() > 0) {
               notActiveYet += ", ";

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,6 +68,8 @@ public class ActivationKey {
   private static String opsLogId;
   private Long pendingTime;
   private boolean hasExpired = false;
+  private boolean subscriptionConvertedProperty = false;
+  private boolean subscriptionActuallyConverted = false;
 
   private boolean notActiveYet = false;
 
@@ -78,7 +80,7 @@ public class ActivationKey {
   }
 
   public enum CommercialModuleStatus {
-    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET
+    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION
   }
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -167,6 +169,8 @@ public class ActivationKey {
     Date startDate = null;
     Date endDate = null;
 
+    subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
+
     try {
       startDate = sd.parse(getProperty("startdate"));
 
@@ -195,13 +199,18 @@ public class ActivationKey {
     if (endDate != null) {
       pendingTime = ((endDate.getTime() - now.getTime()) / MILLSECS_PER_DAY) + 1;
       if (now.after(endDate)) {
-        isActive = false;
-        hasExpired = true;
+        if (subscriptionConvertedProperty) {
+          // A bought out instance is actually converted when the license has expired.
+          subscriptionActuallyConverted = true;
+        } else {
+          isActive = false;
+          hasExpired = true;
 
-        errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
+          errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
 
-        setLogger();
-        return;
+          setLogger();
+          return;
+        }
       }
     }
     isActive = true;
@@ -508,6 +517,10 @@ public class ActivationKey {
     return pendingTime;
   }
 
+  public boolean isSubscriptionConverted() {
+    return subscriptionConvertedProperty;
+  }
+
   public boolean hasExpired() {
     return hasExpired;
   }
@@ -517,7 +530,7 @@ public class ActivationKey {
   }
 
   /**
-   * Obtains a List of all the modules that are installed in the instace which licenses has expired.
+   * Obtains a List of all the modules that are installed in the instance which license has expired.
    * 
    * @return List of the expired modules
    */
@@ -562,12 +575,18 @@ public class ActivationKey {
         if (moduleData.length > 2) {
           validTo = sd.parse(moduleData[2]);
         }
-        if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
+        if (subscriptionActuallyConverted) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.CONVERTED_SUBSCRIPTION);
+        } else if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
           moduleList.put(moduleData[0], CommercialModuleStatus.ACTIVE);
         } else if (validFrom.after(now)) {
           moduleList.put(moduleData[0], CommercialModuleStatus.NO_ACTIVE_YET);
         } else if (validTo != null && validTo.before(now)) {
-          moduleList.put(moduleData[0], CommercialModuleStatus.EXPIRED);
+          if (subscriptionConvertedProperty) {
+            moduleList.put(moduleData[0], CommercialModuleStatus.CONVERTED_SUBSCRIPTION);
+          } else {
+            moduleList.put(moduleData[0], CommercialModuleStatus.EXPIRED);
+          }
         }
       } catch (Exception e) {
         log.error("Error reading module's dates module:" + moduleData[0], e);
