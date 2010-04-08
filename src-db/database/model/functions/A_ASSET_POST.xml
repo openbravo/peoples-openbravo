@@ -207,9 +207,8 @@
             LOOP
             SELECT COALESCE(MAX(SEQ_NO_ASSET), 0) +10
               INTO v_SEQ_ASSET
-              FROM A_AMORTIZATIONLINE, A_ASSET
-              WHERE A_AMORTIZATIONLINE.A_ASSET_ID = A_ASSET.A_ASSET_ID
-              AND A_ASSET.A_ASSET_ID=v_Record_ID;
+              FROM A_AMORTIZATIONLINE
+              WHERE A_AMORTIZATIONLINE.A_ASSET_ID = v_Record_ID;
               IF(v_COUNT=1 AND to_number(v_BEGINING_DATE-v_FIRST_DAY_DATE)<>0) THEN
                 v_Percentage:=to_number(to_number(TO_DATE('31-12-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') -v_AMORTIZATIONSTARTDATE) /(TO_DATE('31-12-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') -TO_DATE('01-01-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY'))) * v_PercentageGeneral;
                 v_USELIFEYEARS:=v_USELIFEYEARS+1;
