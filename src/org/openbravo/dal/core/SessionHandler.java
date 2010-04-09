@@ -205,11 +205,21 @@ public class SessionHandler implements OBNotSingleton {
    * work.
    */
   public void commitAndClose() {
+    boolean err = true;
     try {
       checkInvariant();
       tx.commit();
       tx = null;
+      err = false;
     } finally {
+      if (err) {
+        try {
+          tx.rollback();
+          tx = null;
+        } catch (Throwable t) {
+          // ignore these exception not to hide others
+        }
+      }
       deleteSessionHandler();
       closeSession();
     }
