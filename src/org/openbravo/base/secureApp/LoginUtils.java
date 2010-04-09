@@ -250,6 +250,8 @@ public class LoginUtils {
       return false;
     }
 
+    // Login process if finished, set the flag as not logging in
+    vars.setSessionValue("#loggingIn", "N");
     return true;
   }
 

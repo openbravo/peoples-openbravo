@@ -1060,9 +1060,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       sl.save();
       vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
     }
-
-    // Logging process is finish, remove logging flag
-    vars.setSessionValue("#loggingIn", "N");
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
