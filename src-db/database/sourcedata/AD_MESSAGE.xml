@@ -8731,7 +8731,7 @@
 <!--800203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800203-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800203-->  <VALUE><![CDATA[C_BP_VENDOR_ACCT_ACCTSCHEMA_UN]]></VALUE>
-<!--800203-->  <MSGTEXT><![CDATA[The vendor already has a record with the same accounting schema, with the same organization and with the same status. At least change one of the three]]></MSGTEXT>
+<!--800203-->  <MSGTEXT><![CDATA[The vendor already has a record with the same accounting schema and with the same status. At least change one of them]]></MSGTEXT>
 <!--800203-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800203--></AD_MESSAGE>
