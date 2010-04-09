@@ -999,10 +999,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   protected void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
-    final String strNumberFormat = "###,##0.00"; // Default number format
+    String strNumberFormat = "###,##0.00"; // Default number format
     String strGroupingSeparator = ","; // Default grouping separator
     String strDecimalSeparator = "."; // Default decimal separator
-    final String strName = "euroInform"; // Name of the format to use
+    final String formatNameforJrxml = "euroInform"; // Name of the format to use
     final HashMap<String, String> formatMap = new HashMap<String, String>();
 
     try {
@@ -1028,11 +1028,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               .getNamedItem("decimal").getNodeValue());
           vars.setSessionValue("#GroupSeparator|" + strNumberName, NumberElement.getAttributes()
               .getNamedItem("grouping").getNodeValue());
-          if (strNumberName.equals(strName)) {
+          // set the numberFormat to be used in the renderJR function
+          if (strNumberName.equals(formatNameforJrxml)) {
             strDecimalSeparator = NumberElement.getAttributes().getNamedItem("decimal")
                 .getNodeValue();
             strGroupingSeparator = NumberElement.getAttributes().getNamedItem("grouping")
                 .getNodeValue();
+            strNumberFormat = strFormatOutput;
           }
         }
       }
