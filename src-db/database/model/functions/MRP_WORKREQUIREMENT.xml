@@ -67,7 +67,7 @@
     FOR Cur_workproposal IN (
       SELECT MRP_RUN_PRODUCTIONLINE.* , MA_PROCESSPLAN.EXPLODEPHASES, 
       MA_PROCESSPLAN.CONVERSIONRATE, MA_PROCESSPLAN.SECONDARYUNIT,
-      ROUND((MRP_RUN_PRODUCTIONLINE.qty/A.PROQTY)+0.0005,3) AS PROCESSPLANQTY, MRP_RUN_PRODUCTIONLINE.AD_ORG_ID
+      ROUND((MRP_RUN_PRODUCTIONLINE.qty/A.PROQTY)+0.0005,3) AS PROCESSPLANQTY, MRP_RUN_PRODUCTIONLINE.AD_ORG_ID AS ADORG_ID
       FROM MRP_RUN_PRODUCTIONLINE, MA_PROCESSPLAN, 
         (SELECT DISTINCT produced, proqty, ma_processplan_id
          FROM MA_PROCESSPLAN_TOTALIZED) A
@@ -80,7 +80,7 @@
       ORDER BY PLANNEDDATE
       ) LOOP
       v_ResultStr:='Create Work Requirement';
-V_ORG_ID :=Cur_workproposal.AD_ORG_ID;
+V_ORG_ID :=Cur_workproposal.ADORG_ID;
       Ad_Sequence_Next('MA_WorkRequirement', v_Client_ID, v_WR_ID);
       Ad_Sequence_Doc('DocumentNo_MA_WorkRequirement', v_Client_ID, 'Y', v_DocumentNo) ;
       INSERT INTO MA_WORKREQUIREMENT (
