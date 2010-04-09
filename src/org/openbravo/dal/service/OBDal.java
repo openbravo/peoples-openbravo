@@ -20,10 +20,8 @@
 package org.openbravo.dal.service;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -36,7 +34,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.UniqueConstraint;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
@@ -95,16 +92,6 @@ public class OBDal implements OBSingleton {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
       final Connection connection = ((SessionImplementor) SessionHandler.getInstance().getSession())
           .connection();
-
-      // set the date formatting
-      try {
-        final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-        final String dbSessionConfig = props.getProperty("bbdd.sessionConfig");
-        PreparedStatement pstmt = connection.prepareStatement(dbSessionConfig);
-        pstmt.executeQuery();
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
       return connection;
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
@@ -131,14 +118,18 @@ public class OBDal implements OBSingleton {
    * Rolls back the transaction and closes the session.
    */
   public void rollbackAndClose() {
-    SessionHandler.getInstance().rollback();
+    if (SessionHandler.isSessionHandlerPresent()) {
+      SessionHandler.getInstance().rollback();
+    }
   }
 
   /**
    * Flushes the current state to the database.
    */
   public void flush() {
-    SessionHandler.getInstance().getSession().flush();
+    if (SessionHandler.isSessionHandlerPresent()) {
+      SessionHandler.getInstance().getSession().flush();
+    }
   }
 
   /**
