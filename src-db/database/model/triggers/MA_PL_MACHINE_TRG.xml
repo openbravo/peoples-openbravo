@@ -45,7 +45,7 @@ BEGIN
     OR Posted='Y') ;
   IF (v_RO > 0) THEN
     IF (DELETING OR INSERTING) THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
     IF (UPDATING) THEN
       IF (:new.AD_CLIENT_ID <> :old.AD_CLIENT_ID
@@ -55,7 +55,7 @@ BEGIN
          OR :new.MA_MACHINE_ID <> :old.MA_MACHINE_ID
          OR :new.USE <> :old.USE
         ) THEN
-        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
       END IF;
     END IF;
   END IF;
