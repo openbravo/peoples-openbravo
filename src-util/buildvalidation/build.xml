@@ -40,14 +40,17 @@
   <condition property="checkCore">
     <equals arg1="${module}" arg2="org.openbravo" />
   </condition>
-
-  <target name="init">
-    <mkdir dir="${build.validation}" />
-    <mkdir dir="${build.validation.sqlc}" />
-    <mkdir dir="${build.validation.sqlc}/src" />
+  
+  <target name="createModuleFolder" unless="checkCore">
     <mkdir dir="${base.modules}/${module}/build/" />
     <mkdir dir="${base.modules}/${module}/build/javasqlc" />
     <mkdir dir="${base.modules}/${module}/build/classes" />
+  </target>
+    
+  <target name="init" depends="createModuleFolder">
+    <mkdir dir="${build.validation}" />
+    <mkdir dir="${build.validation.sqlc}" />
+    <mkdir dir="${build.validation.sqlc}/src" />
   </target>
 
   <target name="clean">

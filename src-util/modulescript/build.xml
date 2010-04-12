@@ -41,13 +41,16 @@
     <equals arg1="${module}" arg2="org.openbravo" />
   </condition>
 
-  <target name="init">
+  <target name="createModuleFolder" unless="checkCore">
+     <mkdir dir="${base.modules}/${module}/build/" />
+     <mkdir dir="${base.modules}/${module}/build/javasqlc" />
+     <mkdir dir="${base.modules}/${module}/build/classes" />
+  </target>
+  
+  <target name="init" depends="createModuleFolder">
     <mkdir dir="${build.module}" />
     <mkdir dir="${build.module.sqlc}" />
     <mkdir dir="${build.module.sqlc}/src" />
-    <mkdir dir="${base.modules}/${module}/build/" />
-    <mkdir dir="${base.modules}/${module}/build/javasqlc" />
-    <mkdir dir="${base.modules}/${module}/build/classes" />
   </target>
 
   <target name="clean">
