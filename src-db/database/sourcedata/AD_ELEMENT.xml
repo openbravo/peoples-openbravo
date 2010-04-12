@@ -22020,6 +22020,8 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--33D4F4DEADD74C48A55C08A9DCEB41B2-->  <COLUMNNAME><![CDATA[Istaxdeductable]]></COLUMNNAME>
 <!--33D4F4DEADD74C48A55C08A9DCEB41B2-->  <NAME><![CDATA[Tax Deductible]]></NAME>
 <!--33D4F4DEADD74C48A55C08A9DCEB41B2-->  <PRINTNAME><![CDATA[Tax Deductible]]></PRINTNAME>
+<!--33D4F4DEADD74C48A55C08A9DCEB41B2-->  <DESCRIPTION><![CDATA[If active, this rate will behave as a tax deductible rate, no matter if the organization where used is tax deductible or not.]]></DESCRIPTION>
+<!--33D4F4DEADD74C48A55C08A9DCEB41B2-->  <HELP><![CDATA[If active, this rate will behave as a tax deductible rate, no matter if the organization where used is tax deductible or not.]]></HELP>
 <!--33D4F4DEADD74C48A55C08A9DCEB41B2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--33D4F4DEADD74C48A55C08A9DCEB41B2--></AD_ELEMENT>
 

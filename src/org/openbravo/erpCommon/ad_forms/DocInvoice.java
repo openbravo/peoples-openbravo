@@ -129,8 +129,8 @@ public class DocInvoice extends AcctServer {
           || ("Y".equals(data[i].orgtaxundeductable));
       if ("Y".equals(data[i].orgtaxundeductable)) {
         /*
-         * override isTaxUndeductable flag if any tax line level override for intracommunity public
-         * organization
+         * If any tax line level has tax deductable flag then override isTaxUndeductable flag for
+         * intracommunity non tax deductible organization
          */
         if ("Y".equals(data[i].istaxdeductable)) {
           isTaxUndeductable = false;
