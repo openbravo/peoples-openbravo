@@ -404,7 +404,7 @@
                   DateOrdered, IsDiscountPrinted, C_Currency_ID, PaymentRule,
                   C_Charge_ID, ChargeAmt, IsSelfService, TotalLines,
                   GrandTotal, M_PriceList_ID, C_Campaign_ID, C_Project_ID,
-                  C_Activity_ID, AD_OrgTrx_ID, User1_ID, User2_ID
+                  C_Activity_ID, AD_OrgTrx_ID, User1_ID, User2_ID, fin_paymentmethod_id
                 )
                 VALUES
                 (
@@ -420,7 +420,7 @@
                   Cur_Order.PaymentRule, Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt, Cur_Order.IsSelfService,
                   0, 0, Cur_Order.M_PriceList_ID, Cur_Order.C_Campaign_ID,
                   Cur_Order.C_Project_ID, Cur_Order.C_Activity_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID,
-                  Cur_Order.User2_ID
+                  Cur_Order.User2_ID, Cur_Order.fin_paymentmethod_id
                 )
                 ;
               --
@@ -677,7 +677,7 @@
                 sh.movementDate,
                 ol.PriceStd,
                 ol.m_attributesetinstance_id,
-                ol.taxbaseamt
+                ol.taxbaseamt, o.fin_paymentmethod_id
               FROM M_INOUT sh,
                 M_INOUTLINE sl,
                 C_ORDER o,
@@ -924,7 +924,7 @@
                       PaymentRule, C_Charge_ID, ChargeAmt, IsSelfService,
                       TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
                       C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-                      User2_ID
+                      User2_ID, fin_paymentmethod_id
                     )
                     VALUES
                     (
@@ -940,7 +940,7 @@
                       Cur_InvoiceSchedule.PaymentRule, NULL, 0, 'N',
                       0, 0, Cur_InvoiceSchedule.M_PriceList_ID, Cur_InvoiceSchedule.C_Campaign_ID,
                       Cur_InvoiceSchedule.C_Project_ID, Cur_InvoiceSchedule.C_Activity_ID, Cur_InvoiceSchedule.AD_OrgTrx_ID, Cur_InvoiceSchedule.User1_ID,
-                      Cur_InvoiceSchedule.User2_ID
+                      Cur_InvoiceSchedule.User2_ID, Cur_InvoiceSchedule.fin_paymentmethod_id
                     )
                     ;
                   --
