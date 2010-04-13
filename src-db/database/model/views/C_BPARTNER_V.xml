@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
   <database name="VIEW C_BPARTNER_V">
     <view name="C_BPARTNER_V"><![CDATA[SELECT p.ad_client_id, p.ad_org_id, p.c_bpartner_id, p.value, p.name, p.referenceno, p.so_creditlimit - p.so_creditused AS so_creditavailable, p.so_creditlimit, p.so_creditused, p.iscustomer, p.isvendor, p.actuallifetimevalue AS revenue, c.name AS contact, c.phone, a.postal, a.city, c.email
-   FROM c_bpartner p
-   LEFT JOIN ad_user c ON p.c_bpartner_id = c.c_bpartner_id
-   LEFT JOIN c_bpartner_location l ON p.c_bpartner_id = l.c_bpartner_id
-   LEFT JOIN c_location a ON l.c_location_id = a.c_location_id]]></view>
+FROM c_bpartner p
+LEFT JOIN ad_user c ON p.c_bpartner_id = c.c_bpartner_id
+LEFT JOIN c_bpartner_location l ON p.c_bpartner_id = l.c_bpartner_id
+LEFT JOIN c_location a ON l.c_location_id = a.c_location_id
+]]></view>
   </database>

@@ -1,17 +1,18 @@
 <?xml version="1.0"?>
   <database name="VIEW MA_SEQUENCE_INDIRECT_COST_COST">
     <view name="MA_SEQUENCE_INDIRECT_COST_COST"><![CDATA[SELECT ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, 
-        CASE ma_indirect_cost_value.cost_uom
-            WHEN 'H' THEN ma_sequence.costcenteruse * ma_indirect_cost_value.cost
-            WHEN 'U' THEN sum(ma_sequenceproduct.quantity) * ma_indirect_cost_value.cost
-            WHEN 'K' THEN sum(ma_sequenceproduct.quantity * m_product.weight) * ma_indirect_cost_value.cost
-            ELSE NULL
-        END AS cost
-   FROM ma_sequence, ma_process, ma_processplan_version, ma_costcenter_version, ma_costcenter_ic, ma_indirect_cost_value, m_product, ma_sequenceproduct
-  WHERE ma_sequence.ma_process_id = ma_process.ma_process_id AND ma_sequence.ma_processplan_version_id = ma_processplan_version.ma_processplan_version_id AND ma_process.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ma_costcenter_version.ma_costcenter_version_id = ma_costcenter_ic.ma_costcenter_version_id AND ma_costcenter_ic.ma_indirect_cost_id = ma_indirect_cost_value.ma_indirect_cost_id AND ma_sequence.ma_sequence_id = ma_sequenceproduct.ma_sequence_id AND ma_sequenceproduct.m_product_id = m_product.m_product_id AND ma_sequenceproduct.productiontype = '+' AND ma_indirect_cost_value.cost_uom <> 'P' AND ma_costcenter_version.validfrom = (( SELECT max(ccv.validfrom) AS max
-           FROM ma_costcenter_version ccv
-          WHERE ccv.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ccv.validfrom <= ma_processplan_version.datefrom)) AND ma_indirect_cost_value.datefrom = (( SELECT max(sc.datefrom) AS max
-           FROM ma_indirect_cost_value sc
-          WHERE sc.ma_indirect_cost_id = ma_indirect_cost_value.ma_indirect_cost_id AND sc.datefrom <= ma_processplan_version.datefrom))
-  GROUP BY ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, ma_indirect_cost_value.cost, ma_indirect_cost_value.cost_uom, ma_sequence.costcenteruse]]></view>
+CASE ma_indirect_cost_value.cost_uom
+WHEN 'H' THEN ma_sequence.costcenteruse * ma_indirect_cost_value.cost
+WHEN 'U' THEN sum(ma_sequenceproduct.quantity) * ma_indirect_cost_value.cost
+WHEN 'K' THEN sum(ma_sequenceproduct.quantity * m_product.weight) * ma_indirect_cost_value.cost
+ELSE NULL
+END AS cost
+FROM ma_sequence, ma_process, ma_processplan_version, ma_costcenter_version, ma_costcenter_ic, ma_indirect_cost_value, m_product, ma_sequenceproduct
+WHERE ma_sequence.ma_process_id = ma_process.ma_process_id AND ma_sequence.ma_processplan_version_id = ma_processplan_version.ma_processplan_version_id AND ma_process.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ma_costcenter_version.ma_costcenter_version_id = ma_costcenter_ic.ma_costcenter_version_id AND ma_costcenter_ic.ma_indirect_cost_id = ma_indirect_cost_value.ma_indirect_cost_id AND ma_sequence.ma_sequence_id = ma_sequenceproduct.ma_sequence_id AND ma_sequenceproduct.m_product_id = m_product.m_product_id AND ma_sequenceproduct.productiontype = '+' AND ma_indirect_cost_value.cost_uom <> 'P' AND ma_costcenter_version.validfrom = ((SELECT max(ccv.validfrom) AS max
+FROM ma_costcenter_version ccv
+WHERE ccv.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ccv.validfrom <= ma_processplan_version.datefrom)) AND ma_indirect_cost_value.datefrom = ((SELECT max(sc.datefrom) AS max
+FROM ma_indirect_cost_value sc
+WHERE sc.ma_indirect_cost_id = ma_indirect_cost_value.ma_indirect_cost_id AND sc.datefrom <= ma_processplan_version.datefrom))
+GROUP BY ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, ma_indirect_cost_value.cost, ma_indirect_cost_value.cost_uom, ma_sequence.costcenteruse
+]]></view>
   </database>

@@ -1,20 +1,21 @@
 <?xml version="1.0"?>
   <database name="VIEW M_INOUT_LINE_VT">
     <view name="M_INOUT_LINE_VT"><![CDATA[SELECT iol.ad_client_id, iol.ad_org_id, iol.isactive, iol.created, iol.createdby, iol.updated, iol.updatedby, uom.ad_language, iol.m_inout_id, iol.m_inoutline_id, iol.line, iol.movementqty, uom.uomsymbol, COALESCE(COALESCE(pt.name, p.name), iol.description) AS name, 
-        CASE
-            WHEN COALESCE(pt.name, p.name) IS NOT NULL THEN iol.description
-            ELSE NULL
-        END AS description, COALESCE(pt.documentnote, p.documentnote) AS documentnote, p.upc, p.sku, p.value AS productvalue, iol.m_locator_id
-   FROM m_inoutline iol
-   JOIN c_uom_trl uom ON iol.c_uom_id = uom.c_uom_id
-   LEFT JOIN m_product p ON iol.m_product_id = p.m_product_id
-   LEFT JOIN m_product_trl pt ON iol.m_product_id = pt.m_product_id AND uom.ad_language = pt.ad_language
+CASE
+WHEN COALESCE(pt.name, p.name) IS NOT NULL THEN iol.description
+ELSE NULL
+END AS description, COALESCE(pt.documentnote, p.documentnote) AS documentnote, p.upc, p.sku, p.value AS productvalue, iol.m_locator_id
+FROM m_inoutline iol
+JOIN c_uom_trl uom ON iol.c_uom_id = uom.c_uom_id
+LEFT JOIN m_product p ON iol.m_product_id = p.m_product_id
+LEFT JOIN m_product_trl pt ON iol.m_product_id = pt.m_product_id AND uom.ad_language = pt.ad_language
 UNION 
- SELECT iol.ad_client_id, iol.ad_org_id, iol.isactive, iol.created, iol.createdby, iol.updated, iol.updatedby, uom.ad_language, iol.m_inout_id, iol.m_inoutline_id, iol.line + b.line / 100 AS line, iol.movementqty * b.bomqty AS movementqty, uom.uomsymbol, COALESCE(pt.name, p.name) AS name, b.description, COALESCE(pt.documentnote, p.documentnote) AS documentnote, p.upc, p.sku, p.value AS productvalue, iol.m_locator_id
-   FROM m_product_bom b
-   JOIN m_inoutline iol ON b.m_product_id = iol.m_product_id
-   JOIN m_product bp ON bp.m_product_id = iol.m_product_id AND bp.isbom = 'Y' AND bp.isverified = 'Y' AND bp.ispicklistprintdetails = 'Y'
-   JOIN m_product p ON b.m_productbom_id = p.m_product_id
-   JOIN c_uom_trl uom ON p.c_uom_id = uom.c_uom_id
-   JOIN m_product_trl pt ON iol.m_product_id = pt.m_product_id AND uom.ad_language = pt.ad_language]]></view>
+SELECT iol.ad_client_id, iol.ad_org_id, iol.isactive, iol.created, iol.createdby, iol.updated, iol.updatedby, uom.ad_language, iol.m_inout_id, iol.m_inoutline_id, iol.line + b.line / 100 AS line, iol.movementqty * b.bomqty AS movementqty, uom.uomsymbol, COALESCE(pt.name, p.name) AS name, b.description, COALESCE(pt.documentnote, p.documentnote) AS documentnote, p.upc, p.sku, p.value AS productvalue, iol.m_locator_id
+FROM m_product_bom b
+JOIN m_inoutline iol ON b.m_product_id = iol.m_product_id
+JOIN m_product bp ON bp.m_product_id = iol.m_product_id AND bp.isbom = 'Y' AND bp.isverified = 'Y' AND bp.ispicklistprintdetails = 'Y'
+JOIN m_product p ON b.m_productbom_id = p.m_product_id
+JOIN c_uom_trl uom ON p.c_uom_id = uom.c_uom_id
+JOIN m_product_trl pt ON iol.m_product_id = pt.m_product_id AND uom.ad_language = pt.ad_language
+]]></view>
   </database>

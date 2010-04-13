@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
   <database name="VIEW C_ORDER_HEADER_V">
     <view name="C_ORDER_HEADER_V"><![CDATA[SELECT o.ad_client_id, o.ad_org_id, o.isactive, o.created, o.createdby, o.updated, o.updatedby, to_char('en_US') AS ad_language, o.c_order_id, o.issotrx, o.documentno, o.docstatus, o.c_doctype_id, o.c_bpartner_id, bp.value AS bpvalue, oi.c_location_id AS org_location_id, oi.taxid, dt.printname AS documenttype, dt.documentnote AS documenttypenote, o.salesrep_id, COALESCE(ubp.name, u.name) AS salesrep_name, o.dateordered, o.datepromised, bpg.name AS bpgreeting, bp.name, bp.name2, bpcg.name AS bpcontactgreeting, bpc.title, NULLIF(bpc.name, bp.name) AS contactname, bpl.c_location_id, bp.referenceno, o.description, o.poreference, o.c_currency_id, pt.name AS paymentterm, pt.documentnote AS paymenttermnote, o.c_charge_id, o.chargeamt, o.totallines, o.grandtotal, o.m_pricelist_id, o.istaxincluded, o.c_campaign_id, o.c_project_id, o.c_activity_id, o.m_shipper_id, o.deliveryrule, o.deliveryviarule, o.priorityrule, o.invoicerule
-   FROM c_order o
-   JOIN c_doctype dt ON o.c_doctype_id = dt.c_doctype_id
-   JOIN c_paymentterm pt ON o.c_paymentterm_id = pt.c_paymentterm_id
-   JOIN c_bpartner bp ON o.c_bpartner_id = bp.c_bpartner_id
-   LEFT JOIN c_greeting bpg ON bp.c_greeting_id = bpg.c_greeting_id
-   JOIN c_bpartner_location bpl ON o.c_bpartner_location_id = bpl.c_bpartner_location_id
-   LEFT JOIN ad_user bpc ON o.ad_user_id = bpc.ad_user_id
-   LEFT JOIN c_greeting bpcg ON bpc.c_greeting_id = bpcg.c_greeting_id
-   JOIN ad_orginfo oi ON o.ad_org_id = oi.ad_org_id
-   LEFT JOIN ad_user u ON o.salesrep_id = u.ad_user_id
-   LEFT JOIN c_bpartner ubp ON u.c_bpartner_id = ubp.c_bpartner_id]]></view>
+FROM c_order o
+JOIN c_doctype dt ON o.c_doctype_id = dt.c_doctype_id
+JOIN c_paymentterm pt ON o.c_paymentterm_id = pt.c_paymentterm_id
+JOIN c_bpartner bp ON o.c_bpartner_id = bp.c_bpartner_id
+LEFT JOIN c_greeting bpg ON bp.c_greeting_id = bpg.c_greeting_id
+JOIN c_bpartner_location bpl ON o.c_bpartner_location_id = bpl.c_bpartner_location_id
+LEFT JOIN ad_user bpc ON o.ad_user_id = bpc.ad_user_id
+LEFT JOIN c_greeting bpcg ON bpc.c_greeting_id = bpcg.c_greeting_id
+JOIN ad_orginfo oi ON o.ad_org_id = oi.ad_org_id
+LEFT JOIN ad_user u ON o.salesrep_id = u.ad_user_id
+LEFT JOIN c_bpartner ubp ON u.c_bpartner_id = ubp.c_bpartner_id
+]]></view>
   </database>

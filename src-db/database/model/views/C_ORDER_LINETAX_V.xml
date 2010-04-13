@@ -1,35 +1,36 @@
 <?xml version="1.0"?>
   <database name="VIEW C_ORDER_LINETAX_V">
-    <view name="C_ORDER_LINETAX_V"><![CDATA[(( SELECT ol.ad_client_id, ol.ad_org_id, ol.isactive, ol.created, ol.createdby, ol.updated, ol.updatedby, 'en_US' AS ad_language, ol.c_order_id, ol.c_orderline_id, ol.c_tax_id, ol.line, ol.qtyordered, uom.uomsymbol, COALESCE(p.name, ol.description) AS name, 
-        CASE
-            WHEN p.name IS NOT NULL THEN ol.description
-            ELSE NULL
-        END AS description, p.documentnote, p.upc, p.sku, p.value AS productvalue, ra.description AS resourcedescription, 
-        CASE
-            WHEN i.isdiscountprinted = 'Y' THEN ol.pricelist
-            ELSE NULL
-        END AS pricelist, 
-        CASE
-            WHEN i.isdiscountprinted = 'Y' AND ol.pricelist > ol.priceactual THEN (ol.pricelist - ol.priceactual) / ol.pricelist * 100
-            ELSE NULL
-        END AS discount, ol.priceactual, ol.linenetamt
-   FROM c_orderline ol
-   JOIN c_uom uom ON ol.c_uom_id = uom.c_uom_id
-   JOIN c_order i ON ol.c_order_id = i.c_order_id
-   LEFT JOIN m_product p ON ol.m_product_id = p.m_product_id
-   LEFT JOIN s_resourceassignment ra ON ol.s_resourceassignment_id = ra.s_resourceassignment_id
+    <view name="C_ORDER_LINETAX_V"><![CDATA[((SELECT ol.ad_client_id, ol.ad_org_id, ol.isactive, ol.created, ol.createdby, ol.updated, ol.updatedby, 'en_US' AS ad_language, ol.c_order_id, ol.c_orderline_id, ol.c_tax_id, ol.line, ol.qtyordered, uom.uomsymbol, COALESCE(p.name, ol.description) AS name, 
+CASE
+WHEN p.name IS NOT NULL THEN ol.description
+ELSE NULL
+END AS description, p.documentnote, p.upc, p.sku, p.value AS productvalue, ra.description AS resourcedescription, 
+CASE
+WHEN i.isdiscountprinted = 'Y' THEN ol.pricelist
+ELSE NULL
+END AS pricelist, 
+CASE
+WHEN i.isdiscountprinted = 'Y' AND ol.pricelist > ol.priceactual THEN (ol.pricelist - ol.priceactual) / ol.pricelist * 100
+ELSE NULL
+END AS discount, ol.priceactual, ol.linenetamt
+FROM c_orderline ol
+JOIN c_uom uom ON ol.c_uom_id = uom.c_uom_id
+JOIN c_order i ON ol.c_order_id = i.c_order_id
+LEFT JOIN m_product p ON ol.m_product_id = p.m_product_id
+LEFT JOIN s_resourceassignment ra ON ol.s_resourceassignment_id = ra.s_resourceassignment_id
 UNION 
- SELECT ol.ad_client_id, ol.ad_org_id, ol.isactive, ol.created, ol.createdby, ol.updated, ol.updatedby, 'en_US' AS ad_language, ol.c_order_id, ol.c_orderline_id, ol.c_tax_id, ol.line + b.line / 100 AS line, ol.qtyordered * b.bomqty AS qtyordered, uom.uomsymbol, p.name, b.description, p.documentnote, p.upc, p.sku, p.value AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
-   FROM m_product_bom b
-   JOIN c_orderline ol ON b.m_product_id = ol.m_product_id
-   JOIN m_product bp ON bp.m_product_id = ol.m_product_id AND bp.isbom = 'Y' AND bp.isverified = 'Y' AND bp.isinvoiceprintdetails = 'Y'
-   JOIN m_product p ON b.m_productbom_id = p.m_product_id
-   JOIN c_uom uom ON p.c_uom_id = uom.c_uom_id)
+SELECT ol.ad_client_id, ol.ad_org_id, ol.isactive, ol.created, ol.createdby, ol.updated, ol.updatedby, 'en_US' AS ad_language, ol.c_order_id, ol.c_orderline_id, ol.c_tax_id, ol.line + b.line / 100 AS line, ol.qtyordered * b.bomqty AS qtyordered, uom.uomsymbol, p.name, b.description, p.documentnote, p.upc, p.sku, p.value AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
+FROM m_product_bom b
+JOIN c_orderline ol ON b.m_product_id = ol.m_product_id
+JOIN m_product bp ON bp.m_product_id = ol.m_product_id AND bp.isbom = 'Y' AND bp.isverified = 'Y' AND bp.isinvoiceprintdetails = 'Y'
+JOIN m_product p ON b.m_productbom_id = p.m_product_id
+JOIN c_uom uom ON p.c_uom_id = uom.c_uom_id)
 UNION 
- SELECT c_order.ad_client_id, c_order.ad_org_id, c_order.isactive, c_order.created, c_order.createdby, c_order.updated, c_order.updatedby, 'en_US' AS ad_language, c_order.c_order_id, NULL AS c_orderline_id, NULL AS c_tax_id, NULL AS line, NULL AS qtyordered, NULL AS uomsymbol, NULL AS name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
-   FROM c_order)
+SELECT c_order.ad_client_id, c_order.ad_org_id, c_order.isactive, c_order.created, c_order.createdby, c_order.updated, c_order.updatedby, 'en_US' AS ad_language, c_order.c_order_id, NULL AS c_orderline_id, NULL AS c_tax_id, NULL AS line, NULL AS qtyordered, NULL AS uomsymbol, NULL AS name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, NULL AS priceactual, NULL AS linenetamt
+FROM c_order)
 UNION 
- SELECT ot.ad_client_id, ot.ad_org_id, ot.isactive, ot.created, ot.createdby, ot.updated, ot.updatedby, 'en_US' AS ad_language, ot.c_order_id, NULL AS c_orderline_id, ot.c_tax_id, NULL AS line, NULL AS qtyordered, NULL AS uomsymbol, t.name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, ot.taxbaseamt AS priceactual, ot.taxamt AS linenetamt
-   FROM c_ordertax ot
-   JOIN c_tax t ON ot.c_tax_id = t.c_tax_id]]></view>
+SELECT ot.ad_client_id, ot.ad_org_id, ot.isactive, ot.created, ot.createdby, ot.updated, ot.updatedby, 'en_US' AS ad_language, ot.c_order_id, NULL AS c_orderline_id, ot.c_tax_id, NULL AS line, NULL AS qtyordered, NULL AS uomsymbol, t.name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, ot.taxbaseamt AS priceactual, ot.taxamt AS linenetamt
+FROM c_ordertax ot
+JOIN c_tax t ON ot.c_tax_id = t.c_tax_id
+]]></view>
   </database>

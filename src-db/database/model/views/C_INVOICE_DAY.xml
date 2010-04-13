@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
   <database name="VIEW C_INVOICE_DAY">
     <view name="C_INVOICE_DAY"><![CDATA[SELECT c_invoiceline_v2.ad_client_id, c_invoiceline_v2.ad_org_id, c_invoiceline_v2.salesrep_id, TRUNC(c_invoiceline_v2.dateinvoiced, 'DD') AS dateinvoiced, sum(c_invoiceline_v2.linenetamt) AS linenetamt, sum(c_invoiceline_v2.linelistamt) AS linelistamt, sum(c_invoiceline_v2.linelimitamt) AS linelimitamt, sum(c_invoiceline_v2.linediscountamt) AS linediscountamt, 
-        CASE sum(c_invoiceline_v2.linelistamt)
-            WHEN 0 THEN 0
-            ELSE round((sum(c_invoiceline_v2.linelistamt) - sum(c_invoiceline_v2.linenetamt)) / sum(c_invoiceline_v2.linelistamt) * 100, 2)
-        END AS linediscount, sum(c_invoiceline_v2.lineoverlimitamt) AS lineoverlimitamt, 
-        CASE sum(c_invoiceline_v2.linenetamt)
-            WHEN 0 THEN 0
-            ELSE 100 - round((sum(c_invoiceline_v2.linenetamt) - sum(c_invoiceline_v2.lineoverlimitamt)) / sum(c_invoiceline_v2.linenetamt) * 100, 2)
-        END AS lineoverlimit
-   FROM c_invoiceline_v2
-  GROUP BY c_invoiceline_v2.ad_client_id, c_invoiceline_v2.ad_org_id, c_invoiceline_v2.salesrep_id, TRUNC(c_invoiceline_v2.dateinvoiced, 'DD')]]></view>
+CASE sum(c_invoiceline_v2.linelistamt)
+WHEN 0 THEN 0
+ELSE round((sum(c_invoiceline_v2.linelistamt) - sum(c_invoiceline_v2.linenetamt)) / sum(c_invoiceline_v2.linelistamt) * 100, 2)
+END AS linediscount, sum(c_invoiceline_v2.lineoverlimitamt) AS lineoverlimitamt, 
+CASE sum(c_invoiceline_v2.linenetamt)
+WHEN 0 THEN 0
+ELSE 100 - round((sum(c_invoiceline_v2.linenetamt) - sum(c_invoiceline_v2.lineoverlimitamt)) / sum(c_invoiceline_v2.linenetamt) * 100, 2)
+END AS lineoverlimit
+FROM c_invoiceline_v2
+GROUP BY c_invoiceline_v2.ad_client_id, c_invoiceline_v2.ad_org_id, c_invoiceline_v2.salesrep_id, TRUNC(c_invoiceline_v2.dateinvoiced, 'DD')
+]]></view>
   </database>

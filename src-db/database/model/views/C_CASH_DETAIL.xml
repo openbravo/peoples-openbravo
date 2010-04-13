@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
   <database name="VIEW C_CASH_DETAIL">
     <view name="C_CASH_DETAIL"><![CDATA[SELECT cl.c_cash_id, cl.c_cashline_id, c.ad_client_id, c.ad_org_id, cl.isactive, cl.created, cl.createdby, cl.updated, cl.updatedby, c.c_cashbook_id, c.name, c.statementdate, c.dateacct, c.processed, c.posted, cl.line, cl.description, cl.cashtype, cl.c_currency_id, cl.amount, c_currency_convert(cl.amount, cl.c_currency_id, cb.c_currency_id, c.statementdate, NULL, c.ad_client_id, c.ad_org_id) AS convertedamt, cl.c_debt_payment_id, cl.c_charge_id
-   FROM c_cash c, c_cashline cl, c_cashbook cb
-  WHERE c.c_cash_id = cl.c_cash_id AND c.c_cashbook_id = cb.c_cashbook_id]]></view>
+FROM c_cash c, c_cashline cl, c_cashbook cb
+WHERE c.c_cash_id = cl.c_cash_id AND c.c_cashbook_id = cb.c_cashbook_id
+]]></view>
   </database>
