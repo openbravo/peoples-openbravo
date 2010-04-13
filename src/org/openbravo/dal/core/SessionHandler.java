@@ -265,7 +265,7 @@ public class SessionHandler implements OBNotSingleton {
   private void checkInvariant() {
     Check.isNotNull(getSession(), "Session is null");
     Check.isNotNull(tx, "Tx is null");
-    Check.isTrue(tx.isActive(), "Tx is active");
+    Check.isTrue(tx.isActive(), "Tx is not active");
   }
 
   /**
