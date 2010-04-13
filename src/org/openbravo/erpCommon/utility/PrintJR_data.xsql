@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,10 +46,10 @@
     <SqlMethod name="getReportTitle" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        select COALESCE(t.name, m.name) AS paramname
-        FROM AD_Menu M LEFT JOIN AD_Menu_Trl t ON m.AD_Menu_ID  = t.AD_Menu_ID
-                                              AND t.AD_Language = ?   
-        WHERE M.AD_Process_ID = ? 
+        select COALESCE(pt.name, p.name) AS paramname
+              FROM  ad_process p LEFT JOIN AD_process_Trl pt ON p.AD_process_ID  = pt.AD_process_ID
+                                  AND pt.AD_Language = ?
+              where p.ad_process_id = ?
       </Sql>
       <Parameter name="adLanguage"/>
       <Parameter name="adProcessId"/>
