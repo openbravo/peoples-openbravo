@@ -190,7 +190,9 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
         resultado.append("null");
       resultado.append("),\n");
       // To set the cursor focus in the amount field
-      resultado.append("new Array(\"CURSOR_FIELD\", \"inpqty\"),\n");
+      if (!strMProductID.equals("")) {
+        resultado.append("new Array(\"CURSOR_FIELD\", \"inpqty\"),\n");
+      }
     }
 
     if (!strMessage.equals(""))
