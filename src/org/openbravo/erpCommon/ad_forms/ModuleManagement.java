@@ -70,6 +70,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class ModuleManagement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  public static final String UPDATE_ALL_RECORD_ID = "FFF";
 
   /**
    * Main method that controls the sent command
@@ -598,7 +599,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
       String command = "DEFAULT";
 
       if (updateModules != null && updateModules.length > 0 && !updateModules[0].equals("")) {
-        inpcRecordId = "FFF";
+        if (updateModules.length == 1) {
+          // User clicked "Install Now" from the module description
+          inpcRecordId = updateModules[0];
+        } else {
+          inpcRecordId = UPDATE_ALL_RECORD_ID;
+        }
         command = "UPDATE";
       }
 
