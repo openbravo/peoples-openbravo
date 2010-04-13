@@ -471,8 +471,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       }
 
       if (data == null || data.length == 0) {
-        advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-            .getLanguage()));
+        advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
+            .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
 
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTrialBalanceExcel.jrxml";
@@ -494,8 +494,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         renderJR(vars, response, strReportName, "xls", parameters, data, null);
       }
     } else {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-          .getLanguage()));
+      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
+          .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     }
 
   }
@@ -543,8 +543,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       }
 
       if (data == null || data.length == 0) {
-        advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-            .getLanguage()));
+        advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
+            .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
 
         String strLanguage = vars.getLanguage();
@@ -568,8 +568,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       }
 
     } else {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-          .getLanguage()));
+      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
+          .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     }
 
   }

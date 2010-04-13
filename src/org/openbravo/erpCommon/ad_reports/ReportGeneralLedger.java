@@ -453,10 +453,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("data.length: " + data.length);
 
-    if (strGroupBy.equals(""))
-      xmlDocument.setData("structure1", data);
-    else
-      xmlDocument.setData("structure2", data);
+    if (data != null && data.length > 0) {
+      if (strGroupBy.equals(""))
+        xmlDocument.setData("structure1", data);
+      else
+        xmlDocument.setData("structure2", data);
+    } else {
+      if (vars.commandIn("FIND")) {
+        // No data has been found. Show warning message.
+        xmlDocument.setParameter("messageType", "WARNING");
+        xmlDocument.setParameter("messageTitle", Utility.messageBD(this, "ProcessStatus-W", vars
+            .getLanguage()));
+        xmlDocument.setParameter("messageMessage", Utility.messageBD(this, "NoDataFound", vars
+            .getLanguage()));
+      }
+    }
 
     /*
      * if (strcBpartnerId.equals("") && strAll.equals("")) xmlDocument.setDataArray("reportTotals",
@@ -514,8 +525,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           null, null, null, null, null);
     }
     if (data == null || data.length == 0) {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-          .getLanguage()));
+      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
+          .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     } else {
       String strOld = "";
       BigDecimal totalDebit = BigDecimal.ZERO;
@@ -609,8 +620,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strmProductId, strcProjectId, strAmtFrom, strAmtTo);
     }
     if (data == null || data.length == 0) {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-          .getLanguage()));
+      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
+          .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     } else {
 
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerExcel.jrxml";
