@@ -19,18 +19,8 @@
 
 package org.openbravo.test.javascript;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
-
 import org.apache.log4j.Logger;
-import org.openbravo.javascript.ErrorReporter;
-import org.openbravo.javascript.EvaluatorException;
-import org.openbravo.test.base.BaseTest;
-
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import org.openbravo.test.ant.BaseAntTest;
 
 /**
  * Test the compression of a static js file.
@@ -38,64 +28,11 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  * @author mtaal
  */
 
-public class CompressionTest extends BaseTest {
+public class CompressionTest extends BaseAntTest {
   private static final Logger log = Logger.getLogger(JavaScriptAntTest.class);
 
-  public void testCompression() throws Exception {
-    final LocalJSCompressor compressor = new LocalJSCompressor();
-    final InputStream is = this.getClass().getResourceAsStream("test-compression.js");
-    String line;
-    final StringBuilder sb = new StringBuilder();
-    final BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-    while ((line = reader.readLine()) != null) {
-      sb.append(line).append("\n");
-    }
-    final String compressed = compressor.compress(sb.toString());
-    assertNotNull(compressed);
-    is.close();
-  }
-
-  private static class LocalJSCompressor {
-
-    public String compress(String javascript) throws Exception {
-      final StringReader reader = new StringReader(javascript);
-      final JavaScriptCompressor compressor = new JavaScriptCompressor(reader, new ErrorReporter() {
-
-        public void warning(String message, String sourceName, int line, String lineSource,
-            int lineOffset) {
-          if (line < 0) {
-            log.warn(message);
-          } else {
-            log.warn(line + ':' + lineOffset + ':' + message);
-          }
-        }
-
-        public void error(String message, String sourceName, int line, String lineSource,
-            int lineOffset) {
-          if (line < 0) {
-            log.error(message);
-          } else {
-            log.error(line + ':' + lineOffset + ':' + message);
-          }
-        }
-
-        public EvaluatorException runtimeError(String message, String sourceName, int line,
-            String lineSource, int lineOffset) {
-          error(message, sourceName, line, lineSource, lineOffset);
-          return new EvaluatorException(message);
-        }
-      });
-
-      final StringWriter writer = new StringWriter();
-      final boolean munge = false;
-      final boolean verbose = true;
-      boolean preserveAllSemiColons = true;
-      boolean disableOptimizations = true;
-
-      compressor.compress(writer, -1, munge, verbose, preserveAllSemiColons, disableOptimizations);
-      return writer.toString();
-    }
-
+  public void testAntCompression() {
+    doTest("minimizeJSandCSS");
   }
 
 }
