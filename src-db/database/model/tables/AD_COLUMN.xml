@@ -173,6 +173,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISAUTOSAVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CALLOUT" name="AD_COLUMN_AD_CALLOUT">
         <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
       </foreign-key>
@@ -215,6 +219,7 @@
         <unique-column name="NAME"/>
       </unique>
       <check name="AD_COLUMN_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_COLUMN_ISAUTOSAVE_CHK"><![CDATA[ISAUTOSAVE IN ('Y', 'N')]]></check>
       <check name="AD_COLUMN_ISDESENCRYPTABLE_CHK"><![CDATA[ISDESENCRYPTABLE IN ('Y', 'N')]]></check>
       <check name="AD_COLUMN_ISENCRYPTED_CHK"><![CDATA[ISENCRYPTED IN ('Y', 'N')]]></check>
       <check name="AD_COLUMN_ISIDENTIFIER_CHK"><![CDATA[ISIDENTIFIER IN ('Y', 'N')]]></check>

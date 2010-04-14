@@ -67,7 +67,7 @@ public class WADButton extends WADControl {
         text.append("openServletNewWindow('BUTTON").append(
             FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
         text.append("', true, '").append(getData("TabName")).append(
-            "_Edition.html', 'BUTTON', null, true");
+            "_Edition.html', 'BUTTON', null, ").append(getData("IsAutosave").equals("Y"));
         if (getData("ColumnName").equalsIgnoreCase("CreateFrom"))
           text.append(",600, 900");
         else
@@ -78,7 +78,7 @@ public class WADButton extends WADControl {
         if (!getData("MappingName").startsWith("/"))
           text.append('/');
         text.append(getData("MappingName")).append("', 'BUTTON', '").append(
-            getData("AD_Process_ID")).append("', true");
+            getData("AD_Process_ID")).append("', ").append(getData("IsAutosave").equals("Y"));
         text.append(",600, 900);");
       }
     }

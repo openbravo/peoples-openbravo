@@ -765,6 +765,7 @@ public class WadUtility {
     setPropertyValue(prop, field, "IsColumnEncrypted", "iscolumnencrypted", "");
     setPropertyValue(prop, field, "IsDesencryptable", "isdesencryptable", "");
     setPropertyValue(prop, field, "ReadOnlyLogic", "readonlylogic", "");
+    setPropertyValue(prop, field, "IsAutosave", "isautosave", "Y");
     prop.setProperty("TabName", tabName);
     prop.setProperty("IsReadOnlyTab", (isreadonly ? "Y" : "N"));
     prop.setProperty("AD_Language", adLanguage);
