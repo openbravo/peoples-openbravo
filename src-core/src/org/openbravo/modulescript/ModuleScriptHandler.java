@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.openbravo.buildvalidation.BuildValidationHandler;
 
 public class ModuleScriptHandler extends Task {
   private static final Logger log4j = Logger.getLogger(ModuleScriptHandler.class);
@@ -33,10 +34,10 @@ public class ModuleScriptHandler extends Task {
     if (moduleJavaPackage != null) {
       // We will only be executing the ModuleScripts of a specific module
       File moduleDir = new File(basedir, "modules/" + moduleJavaPackage + "/build/classes");
-      readClassFiles(classes, moduleDir);
+      BuildValidationHandler.readClassFiles(classes, moduleDir);
     } else {
       File coreBuildFolder = new File(basedir, "src-util/modulescript/build/classes");
-      readClassFiles(classes, coreBuildFolder);
+      BuildValidationHandler.readClassFiles(classes, coreBuildFolder);
       File moduleFolder = new File(basedir, "modules");
       File modFoldersA[] = moduleFolder.listFiles();
       ArrayList<File> modFolders = new ArrayList<File>();
@@ -48,7 +49,7 @@ public class ModuleScriptHandler extends Task {
         if (modFolder.isDirectory()) {
           File validationFolder = new File(modFolder, "build/classes");
           if (validationFolder.exists()) {
-            readClassFiles(classes, validationFolder);
+            BuildValidationHandler.readClassFiles(classes, validationFolder);
           }
         }
       }
@@ -74,31 +75,6 @@ public class ModuleScriptHandler extends Task {
       throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     return (ArrayList<String>) myClass.getMethod("execute", new Class[0]).invoke(instance,
         new Object[0]);
-  }
-
-  private static void readClassFiles(List<String> coreClasses, File file) {
-    ArrayList<String> newClasses = new ArrayList<String>();
-    readClassFilesExt(newClasses, file);
-    Collections.sort(newClasses);
-    coreClasses.addAll(newClasses);
-  }
-
-  private static void readClassFilesExt(List<String> coreClasses, File file) {
-    if (!file.exists()) {
-      return;
-    }
-    if (file.isDirectory()) {
-      File[] files = file.listFiles();
-      for (File f : files) {
-        readClassFiles(coreClasses, f);
-      }
-    } else {
-      if (file.getAbsolutePath().endsWith(".class")) {
-        String fileName = file.getAbsolutePath();
-        fileName = fileName.split("build" + File.separatorChar + "classes" + File.separatorChar)[1];
-        coreClasses.add(fileName.replace(".class", "").replace(File.separatorChar, '.'));
-      }
-    }
   }
 
   public File getBasedir() {

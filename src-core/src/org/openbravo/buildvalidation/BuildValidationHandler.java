@@ -95,7 +95,7 @@ public class BuildValidationHandler {
         new Object[0]);
   }
 
-  private static void readClassFiles(List<String> coreClasses, File file) {
+  public static void readClassFiles(List<String> coreClasses, File file) {
     ArrayList<String> newClasses = new ArrayList<String>();
     readClassFilesExt(newClasses, file);
     Collections.sort(newClasses);
@@ -114,8 +114,10 @@ public class BuildValidationHandler {
     } else {
       if (file.getAbsolutePath().endsWith(".class")) {
         String fileName = file.getAbsolutePath();
-        fileName = fileName.split("build" + File.separatorChar + "classes" + File.separatorChar)[1];
-        coreClasses.add(fileName.replace(".class", "").replace(File.separatorChar, '.'));
+        // Replace Windows separator characters by / to make replacement simpler
+        fileName = fileName.replace("\\", "/");
+        fileName = fileName.split("build/classes/")[1];
+        coreClasses.add(fileName.replace(".class", "").replace('/', '.'));
       }
     }
   }
