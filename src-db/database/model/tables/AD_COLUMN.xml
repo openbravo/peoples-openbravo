@@ -175,7 +175,7 @@
       </column>
       <column name="ISAUTOSAVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CALLOUT" name="AD_COLUMN_AD_CALLOUT">
         <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
