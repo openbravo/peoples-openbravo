@@ -109,6 +109,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="FIN_MATCHING_ALGORITHM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_ACCOUNT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -123,6 +127,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="FIN_FINACC_LOCATION">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_MATCHING_ALGORITHM" name="FIN_FINACC_MATCH_ALGORITHM">
+        <reference local="FIN_MATCHING_ALGORITHM_ID" foreign="FIN_MATCHING_ALGORITHM_ID"/>
       </foreign-key>
       <check name="FIN_FINACC_DEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
     </table>
