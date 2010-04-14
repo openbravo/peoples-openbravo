@@ -10,6 +10,5 @@ WHEN 0 THEN 0
 ELSE 100 - round((sum(c_invoiceline_v2.linenetamt) - sum(c_invoiceline_v2.lineoverlimitamt)) / sum(c_invoiceline_v2.linenetamt) * 100, 2)
 END AS lineoverlimit
 FROM c_invoiceline_v2
-GROUP BY c_invoiceline_v2.ad_client_id, c_invoiceline_v2.ad_org_id, c_invoiceline_v2.salesrep_id, TRUNC(c_invoiceline_v2.dateinvoiced, 'MM')
-]]></view>
+GROUP BY c_invoiceline_v2.ad_client_id, c_invoiceline_v2.ad_org_id, c_invoiceline_v2.salesrep_id, TRUNC(c_invoiceline_v2.dateinvoiced, 'MM')]]></view>
   </database>

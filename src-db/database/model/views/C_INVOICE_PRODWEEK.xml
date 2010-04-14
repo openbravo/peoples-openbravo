@@ -10,6 +10,5 @@ WHEN 0 THEN 0
 ELSE 100 - round((sum(il.linenetamt) - sum(il.lineoverlimitamt)) / sum(il.linenetamt) * 100, 2)
 END AS lineoverlimit, sum(il.qtyinvoiced) AS qtyinvoiced
 FROM c_invoiceline_v2 il
-GROUP BY il.ad_client_id, il.ad_org_id, il.m_product_category_id, TRUNC(il.dateinvoiced, 'DY')
-]]></view>
+GROUP BY il.ad_client_id, il.ad_org_id, il.m_product_category_id, TRUNC(il.dateinvoiced, 'DY')]]></view>
   </database>

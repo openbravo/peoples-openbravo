@@ -13,6 +13,5 @@ FROM ma_costcenter_version ccv
 WHERE ccv.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ccv.validfrom <= ma_processplan_version.datefrom)) AND c_salary_category_cost.datefrom = ((SELECT max(sc.datefrom) AS max
 FROM c_salary_category_cost sc
 WHERE sc.c_salary_category_id = c_salary_category_cost.c_salary_category_id AND sc.datefrom <= ma_processplan_version.datefrom))
-GROUP BY ma_sequence.ma_sequence_id, c_salary_category_cost.c_salary_category_id, c_salary_category_cost.cost, c_salary_category_cost.costuom, ma_sequence.costcenteruse
-]]></view>
+GROUP BY ma_sequence.ma_sequence_id, c_salary_category_cost.c_salary_category_id, c_salary_category_cost.cost, c_salary_category_cost.costuom, ma_sequence.costcenteruse]]></view>
   </database>

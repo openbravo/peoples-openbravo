@@ -12,6 +12,5 @@ LEFT JOIN c_bpartner ubp ON u.c_bpartner_id = ubp.c_bpartner_id
 LEFT JOIN c_greeting bpg ON bp.c_greeting_id = bpg.c_greeting_id
 LEFT JOIN ad_user bpc ON p.ad_user_id = bpc.ad_user_id
 LEFT JOIN c_greeting bpcg ON bpc.c_greeting_id = bpcg.c_greeting_id
-LEFT JOIN c_bpartner_location bpl ON p.c_bpartner_location_id = bpl.c_bpartner_location_id
-]]></view>
+LEFT JOIN c_bpartner_location bpl ON p.c_bpartner_location_id = bpl.c_bpartner_location_id]]></view>
   </database>

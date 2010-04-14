@@ -55,6 +55,5 @@ UNION
 SELECT it.ad_client_id, it.ad_org_id, it.isactive, it.created, it.createdby, it.updated, it.updatedby, l.ad_language, it.c_invoice_id, NULL AS c_invoiceline_id, it.c_tax_id, 9999 AS line, NULL AS qtyinvoiced, NULL AS uomsymbol, t.name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, it.taxbaseamt AS priceactual, it.taxamt AS linenetamt
 FROM c_invoicetax it
 JOIN c_tax t ON it.c_tax_id = t.c_tax_id, ad_language l
-WHERE l.isbaselanguage = 'N' AND l.issystemlanguage = 'Y'
-]]></view>
+WHERE l.isbaselanguage = 'N' AND l.issystemlanguage = 'Y']]></view>
   </database>

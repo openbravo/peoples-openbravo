@@ -13,6 +13,5 @@ FROM ma_costcenter_version ccv
 WHERE ccv.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ccv.validfrom <= ma_processplan_version.datefrom)) AND ma_machine_cost.validfrom = ((SELECT max(mc.validfrom) AS max
 FROM ma_machine_cost mc
 WHERE mc.ma_machine_id = ma_machine_cost.ma_machine_id AND mc.validfrom <= ma_processplan_version.datefrom))
-GROUP BY ma_sequence.ma_sequence_id, ma_machine_cost.ma_machine_id, ma_machine_cost.cost, ma_machine_cost.costuom, ma_sequence.costcenteruse
-]]></view>
+GROUP BY ma_sequence.ma_sequence_id, ma_machine_cost.ma_machine_id, ma_machine_cost.cost, ma_machine_cost.costuom, ma_sequence.costcenteruse]]></view>
   </database>

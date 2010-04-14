@@ -8,6 +8,5 @@ LEFT JOIN fin_payment_sched_ord_v pso ON psd.fin_payment_schedule_order = pso.fi
 LEFT JOIN c_order o ON pso.c_order_id = o.c_order_id
 LEFT JOIN fin_payment_detail pd ON psd.fin_payment_detail_id = pd.fin_payment_detail_id
 LEFT JOIN fin_payment p ON pd.fin_payment_id = p.fin_payment_id
-WHERE ppd.fin_payment_scheduledetail_id = psd.fin_payment_scheduledetail_id
-]]></view>
+WHERE ppd.fin_payment_scheduledetail_id = psd.fin_payment_scheduledetail_id]]></view>
   </database>

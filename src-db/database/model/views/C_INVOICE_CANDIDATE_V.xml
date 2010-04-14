@@ -15,6 +15,5 @@ WHERE c_doctype.docbasetype = 'SOO' AND (c_doctype.docsubtypeso NOT IN ('ON', 'O
 GROUP BY o.ad_client_id, o.ad_org_id, o.c_bpartner_id, o.c_order_id, o.documentno, o.dateordered, o.c_doctype_id, o.totallines, o.grandtotal, l.c_tax_id, o.invoicerule, o.m_pricelist_id, c.c_currency_id
 HAVING sum((l.qtyordered - l.qtyinvoiced) * l.priceactual) <> 0 OR sum((l.qtydelivered - l.qtyinvoiced) * l.priceactual) <> 0) sq
 JOIN m_pricelist p ON sq.m_pricelist_id = p.m_pricelist_id
-JOIN c_currency c ON sq.c_currency_id = c.c_currency_id
-]]></view>
+JOIN c_currency c ON sq.c_currency_id = c.c_currency_id]]></view>
   </database>

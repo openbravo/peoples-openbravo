@@ -22,6 +22,5 @@ WHEN substr(d.docbasetype, 2, 1) = 'P' THEN (-1)
 ELSE 1
 END AS multiplierap, d.docbasetype
 FROM c_invoice i
-JOIN c_doctype d ON i.c_doctype_id = d.c_doctype_id
-]]></view>
+JOIN c_doctype d ON i.c_doctype_id = d.c_doctype_id]]></view>
   </database>

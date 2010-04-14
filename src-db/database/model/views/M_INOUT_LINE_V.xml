@@ -14,6 +14,5 @@ FROM m_product_bom b
 JOIN m_inoutline iol ON b.m_product_id = iol.m_product_id
 JOIN m_product bp ON bp.m_product_id = iol.m_product_id AND bp.isbom = 'Y' AND bp.isverified = 'Y' AND bp.ispicklistprintdetails = 'Y'
 JOIN m_product p ON b.m_productbom_id = p.m_product_id
-JOIN c_uom uom ON p.c_uom_id = uom.c_uom_id
-]]></view>
+JOIN c_uom uom ON p.c_uom_id = uom.c_uom_id]]></view>
   </database>

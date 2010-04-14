@@ -18,6 +18,5 @@ WHEN 'C' THEN (-1)
 ELSE 1
 END AS multiplier
 FROM c_invoice i, c_doctype d, c_bpartner b
-WHERE i.c_doctype_id = d.c_doctype_id AND i.c_bpartner_id = b.c_bpartner_id
-]]></view>
+WHERE i.c_doctype_id = d.c_doctype_id AND i.c_bpartner_id = b.c_bpartner_id]]></view>
   </database>

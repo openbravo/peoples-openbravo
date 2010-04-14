@@ -9,6 +9,5 @@ FROM ad_ref_list, ad_ref_list_trl
 WHERE ad_ref_list.ad_ref_list_id = ad_ref_list_trl.ad_ref_list_id) v1, (SELECT ad_ref_list.ad_ref_list_id, ad_ref_list.value, to_char(ad_ref_list.name) AS name, ad_language.ad_language, ad_ref_list.ad_reference_id
 FROM ad_ref_list, ad_language
 WHERE ad_language.issystemlanguage = 'Y') v2
-WHERE v1.ad_ref_list_id = v2.ad_ref_list_id AND v1.ad_reference_id = v2.ad_reference_id
-]]></view>
+WHERE v1.ad_ref_list_id = v2.ad_ref_list_id AND v1.ad_reference_id = v2.ad_reference_id]]></view>
   </database>

@@ -4,6 +4,5 @@
 FROM c_bpartner p
 LEFT JOIN ad_user c ON p.c_bpartner_id = c.c_bpartner_id
 LEFT JOIN c_bpartner_location l ON p.c_bpartner_id = l.c_bpartner_id
-LEFT JOIN c_location a ON l.c_location_id = a.c_location_id
-]]></view>
+LEFT JOIN c_location a ON l.c_location_id = a.c_location_id]]></view>
   </database>

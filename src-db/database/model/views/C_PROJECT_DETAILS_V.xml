@@ -8,6 +8,5 @@ END AS description, p.documentnote, p.upc, p.sku, p.value AS productvalue, pl.m_
 FROM c_projectline pl
 JOIN c_project pj ON pl.c_project_id = pj.c_project_id
 LEFT JOIN m_product p ON pl.m_product_id = p.m_product_id
-WHERE pl.isprinted = 'Y'
-]]></view>
+WHERE pl.isprinted = 'Y']]></view>
   </database>

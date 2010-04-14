@@ -10,6 +10,5 @@ WHEN il.pricelimit IS NULL THEN 0
 ELSE round(i.multiplier * il.linenetamt - il.pricelimit * il.qtyinvoiced, 2)
 END AS lineoverlimitamt, il.qtyinvoiced, il.line, il.c_orderline_id, il.c_uom_id
 FROM c_invoice_v i, c_invoiceline il
-WHERE i.c_invoice_id = il.c_invoice_id
-]]></view>
+WHERE i.c_invoice_id = il.c_invoice_id]]></view>
   </database>

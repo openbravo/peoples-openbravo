@@ -13,6 +13,5 @@ FROM ma_costcenter_version ccv
 WHERE ccv.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ccv.validfrom <= ma_processplan_version.datefrom)) AND ma_indirect_cost_value.datefrom = ((SELECT max(sc.datefrom) AS max
 FROM ma_indirect_cost_value sc
 WHERE sc.ma_indirect_cost_id = ma_indirect_cost_value.ma_indirect_cost_id AND sc.datefrom <= ma_processplan_version.datefrom))
-GROUP BY ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, ma_indirect_cost_value.cost, ma_indirect_cost_value.cost_uom, ma_sequence.costcenteruse
-]]></view>
+GROUP BY ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, ma_indirect_cost_value.cost, ma_indirect_cost_value.cost_uom, ma_sequence.costcenteruse]]></view>
   </database>

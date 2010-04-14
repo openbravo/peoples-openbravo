@@ -6,6 +6,5 @@ JOIN c_orderline l ON o.c_order_id = l.c_order_id
 WHERE o.docstatus = 'CO' AND o.isdelivered = 'N' AND (o.c_doctype_id IN (SELECT c_doctype.c_doctype_id
 FROM c_doctype
 WHERE c_doctype.docbasetype = 'SOO' AND (c_doctype.docsubtypeso NOT IN ('ON', 'OB', 'WR')))) AND l.qtyordered <> l.qtydelivered AND l.directship = 'N' AND l.m_product_id IS NOT NULL
-GROUP BY o.ad_client_id, o.ad_org_id, o.c_bpartner_id, o.c_order_id, o.documentno, o.dateordered, o.totallines, o.c_doctype_id
-]]></view>
+GROUP BY o.ad_client_id, o.ad_org_id, o.c_bpartner_id, o.c_order_id, o.documentno, o.dateordered, o.totallines, o.c_doctype_id]]></view>
   </database>

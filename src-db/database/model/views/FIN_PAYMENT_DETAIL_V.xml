@@ -6,6 +6,5 @@ LEFT JOIN fin_payment_sched_inv_v psi ON psd.fin_payment_schedule_invoice = psi.
 LEFT JOIN c_invoice i ON psi.c_invoice_id = i.c_invoice_id
 LEFT JOIN fin_payment_sched_ord_v pso ON psd.fin_payment_schedule_order = pso.fin_payment_sched_ord_v_id
 LEFT JOIN c_order o ON pso.c_order_id = o.c_order_id
-WHERE p.fin_payment_id = pd.fin_payment_id AND pd.fin_payment_detail_id = psd.fin_payment_detail_id
-]]></view>
+WHERE p.fin_payment_id = pd.fin_payment_id AND pd.fin_payment_detail_id = psd.fin_payment_detail_id]]></view>
   </database>

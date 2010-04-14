@@ -13,6 +13,5 @@ FROM ad_form f
 WHERE f.ad_form_id = at.process_id)
 ELSE ''
 END AS process_desc, COALESCE(at.old_char, to_char(at.old_nchar), to_char(at.old_date), to_char(at.old_number)) AS old_value, COALESCE(at.new_char, to_char(at.new_nchar), to_char(at.new_date), to_char(at.new_number)) AS new_value
-FROM ad_audit_trail at
-]]></view>
+FROM ad_audit_trail at]]></view>
   </database>

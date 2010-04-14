@@ -11,6 +11,5 @@ LEFT JOIN ad_user bpc ON i.ad_user_id = bpc.ad_user_id
 LEFT JOIN c_greeting bpcg ON bpc.c_greeting_id = bpcg.c_greeting_id
 JOIN ad_orginfo oi ON i.ad_org_id = oi.ad_org_id
 LEFT JOIN ad_user u ON i.salesrep_id = u.ad_user_id
-LEFT JOIN c_bpartner ubp ON u.c_bpartner_id = ubp.c_bpartner_id
-]]></view>
+LEFT JOIN c_bpartner ubp ON u.c_bpartner_id = ubp.c_bpartner_id]]></view>
   </database>

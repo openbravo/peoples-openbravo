@@ -9,6 +9,5 @@ JOIN c_bpartner_location bpl ON io.c_bpartner_location_id = bpl.c_bpartner_locat
 LEFT JOIN ad_user bpc ON io.ad_user_id = bpc.ad_user_id
 LEFT JOIN c_greeting bpcg ON bpc.c_greeting_id = bpcg.c_greeting_id
 JOIN ad_orginfo oi ON io.ad_org_id = oi.ad_org_id
-JOIN m_warehouse wh ON io.m_warehouse_id = wh.m_warehouse_id
-]]></view>
+JOIN m_warehouse wh ON io.m_warehouse_id = wh.m_warehouse_id]]></view>
   </database>

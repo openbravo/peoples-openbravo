@@ -35,6 +35,5 @@ UNION
 SELECT ot.ad_client_id, ot.ad_org_id, ot.isactive, ot.created, ot.createdby, ot.updated, ot.updatedby, l.ad_language, ot.c_order_id, NULL AS c_orderline_id, ot.c_tax_id, NULL AS line, NULL AS qtyordered, NULL AS uomsymbol, t.name, NULL AS description, NULL AS documentnote, NULL AS upc, NULL AS sku, NULL AS productvalue, NULL AS resourcedescription, NULL AS pricelist, NULL AS discount, ot.taxbaseamt AS priceactual, ot.taxamt AS linenetamt
 FROM c_ordertax ot
 JOIN c_tax t ON ot.c_tax_id = t.c_tax_id, ad_language l
-WHERE l.isbaselanguage = 'N' AND l.issystemlanguage = 'Y'
-]]></view>
+WHERE l.isbaselanguage = 'N' AND l.issystemlanguage = 'Y']]></view>
   </database>

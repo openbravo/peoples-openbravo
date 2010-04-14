@@ -3,6 +3,5 @@
     <view name="AD_USER_ROLES_V"><![CDATA[SELECT u.name, r.name AS rolename
 FROM ad_user_roles ur
 JOIN ad_user u ON ur.ad_user_id = u.ad_user_id
-JOIN ad_role r ON ur.ad_role_id = r.ad_role_id
-]]></view>
+JOIN ad_role r ON ur.ad_role_id = r.ad_role_id]]></view>
   </database>

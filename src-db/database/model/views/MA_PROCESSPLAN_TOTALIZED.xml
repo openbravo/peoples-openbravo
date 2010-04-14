@@ -18,6 +18,5 @@ END) AS qty
 FROM ma_sequence, ma_sequenceproduct
 WHERE ma_sequence.ma_sequence_id = ma_sequenceproduct.ma_sequence_id
 GROUP BY ma_sequence.ma_processplan_version_id, ma_sequenceproduct.m_product_id) sp2
-WHERE m_product.ma_processplan_id = ma_processplan_version.ma_processplan_id AND ma_processplan_version.datefrom <= now() AND ma_processplan_version.dateto > now() AND ma_processplan_version.ma_processplan_version_id = sp1.ma_processplan_version_id AND ma_processplan_version.ma_processplan_version_id = sp2.ma_processplan_version_id AND sp1.m_product_id = m_product.m_product_id AND sp2.m_product_id <> m_product.m_product_id AND sp1.qty > 0 AND sp2.qty <> 0
-]]></view>
+WHERE m_product.ma_processplan_id = ma_processplan_version.ma_processplan_id AND ma_processplan_version.datefrom <= now() AND ma_processplan_version.dateto > now() AND ma_processplan_version.ma_processplan_version_id = sp1.ma_processplan_version_id AND ma_processplan_version.ma_processplan_version_id = sp2.ma_processplan_version_id AND sp1.m_product_id = m_product.m_product_id AND sp2.m_product_id <> m_product.m_product_id AND sp1.qty > 0 AND sp2.qty <> 0]]></view>
   </database>

@@ -7,6 +7,5 @@ LEFT JOIN fin_payment_scheduledetail psd ON pd.fin_payment_detail_id = psd.fin_p
 WHERE ps.c_order_id IS NOT NULL AND psd.fin_payment_schedule_order = ps.fin_payment_schedule_id) AS lastpayment, (SELECT count(*) AS count
 FROM fin_payment_detail pd, fin_payment_scheduledetail psd
 WHERE pd.fin_payment_detail_id = psd.fin_payment_detail_id AND ps.c_order_id IS NOT NULL AND psd.fin_payment_schedule_order = ps.fin_payment_schedule_id) AS numberofpayments
-FROM fin_payment_schedule ps
-]]></view>
+FROM fin_payment_schedule ps]]></view>
   </database>
