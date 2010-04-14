@@ -27,7 +27,8 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   propNumber NUMBER;
-  v_value nvarchar2(60);
+  v_value nvarchar2(255);
+  v_useSelected char(1);
 BEGIN
 
   select count(*)
@@ -35,30 +36,47 @@ BEGIN
     from ad_property_configuration c
    where c.property = p_PROPERTY_NAME
      and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
-     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) = 
-           (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id)) 
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
+           (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
               from ad_property_configuration c1
              where c.property = p_PROPERTY_NAME
                and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
-               
+
   if propNumber = 0 then
     return null;
   elsif propNumber > 1 then
-    RAISE_APPLICATION_ERROR(-20000, p_PROPERTY_NAME||' @PropertyConflict@') ;
+    select count(*)
+    into propNumber
+    from ad_property_configuration c
+   where c.property = p_PROPERTY_NAME
+     and selected='Y'
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
+           (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
+              from ad_property_configuration c1
+             where c.property = p_PROPERTY_NAME
+               and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
+    if propNumber != 1 then
+      RAISE_APPLICATION_ERROR(-20000, p_PROPERTY_NAME||' @PropertyConflict@');
+    end if;
+    v_useSelected :='Y';
   else
-    select c.value
-      into v_value
-      from ad_property_configuration c
-     where c.property = p_PROPERTY_NAME
-       and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
-       and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) = 
-             (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id)) 
-                from ad_property_configuration c1
-               where c.property = p_PROPERTY_NAME
-                 and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
-    return v_value;
+    v_useSelected :='N';
   end if;
 
-END AD_GET_PROPERTY_VALUE]]></body>
+  select COALESCE(to_char(c.value), '-')
+    into v_value
+    from ad_property_configuration c
+   where c.property = p_PROPERTY_NAME
+     and (v_useSelected='N' or (v_useSelected = 'Y' and selected='Y'))
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
+           (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
+              from ad_property_configuration c1
+             where c.property = p_PROPERTY_NAME
+               and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
+  return v_value;
+END AD_GET_PROPERTY_VALUE
+]]></body>
     </function>
   </database>
