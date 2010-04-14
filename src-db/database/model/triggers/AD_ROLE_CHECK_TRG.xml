@@ -29,7 +29,7 @@ BEGIN
     IF (:NEW.USERLEVEL = 'S') THEN
         SELECT COUNT(*) INTO v_count FROM AD_ROLE_ORGACCESS WHERE AD_ROLE_ID = :NEW.AD_ROLE_ID AND AD_ORG_ID <> '0';
         IF (v_count <> 0) THEN
-	    RAISE_APPLICATION_ERROR(-20000, '@CannotAssignOtherOrg@');    
+	    RAISE_APPLICATION_ERROR(-20000, '@CannotAssignOtherOrg@');
 	END IF;   
     END IF;
 

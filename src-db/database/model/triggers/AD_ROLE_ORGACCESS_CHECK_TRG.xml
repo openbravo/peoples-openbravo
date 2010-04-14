@@ -29,7 +29,7 @@ BEGIN
     
     SELECT USERLEVEL INTO v_userlevel FROM AD_ROLE WHERE AD_ROLE_ID = :NEW.AD_ROLE_ID;
     IF (v_userlevel ='S' AND :NEW.AD_ORG_ID <> '0') THEN
-	RAISE_APPLICATION_ERROR(-20000, '@CannotAssignOtherOrg@');       
+	RAISE_APPLICATION_ERROR(-20000, '@CannotAssignOtherOrg@');
     END IF;
 
 END AD_ROLE_ORGACCESS_CHECK_TRG
