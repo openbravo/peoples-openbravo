@@ -17,6 +17,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.DebtPayment;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -28,6 +29,11 @@ public class PaymentMonitor {
    * Updates payment monitor information
    */
   public static void updateInvoice(Invoice invoice) {
+    // Don't update the payment monitor information if there is an installed extension module that
+    // manages it.
+    if (Utility.getPropertyValue("PaymentMonitor", invoice.getClient().getId(), invoice
+        .getOrganization().getId()) != null)
+      return;
     final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
     try {
       List<DebtPayment> payments = invoice.getFinancialMgmtDebtPaymentList();
