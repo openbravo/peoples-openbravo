@@ -18,13 +18,14 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_Processed varchar2(60) ;
   v_Posted varchar2(60) ;
   v_AmortizationID varchar2(32);
+  v_diffAmortizationAmt A_AmortizationLine.AmortizationAmt%TYPE;
     
 BEGIN
     
@@ -66,6 +67,13 @@ BEGIN
   then
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     end if;
+ 
+    IF (:new.A_Asset_ID IS NOT NULL AND :old.AmortizationAmt<>:new.AmortizationAmt) THEN
+      v_diffAmortizationAmt:=:new.AmortizationAmt - :old.AmortizationAmt;
+      UPDATE A_Asset
+      SET DepreciatedPlan=DepreciatedPlan + v_diffAmortizationAmt
+      WHERE A_Asset_ID = :new.A_Asset_ID;
+    END IF; 
   end if;
   if (INSERTING OR DELETING) THEN
     IF(coalesce(v_Processed, 'N')='Y'
@@ -73,6 +81,14 @@ BEGIN
   then
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     end if;
+    
+    IF (DELETING) THEN
+      IF (:old.A_Asset_ID IS NOT NULL) THEN
+        UPDATE A_Asset
+        SET DepreciatedPlan=DepreciatedPlan - :old.AmortizationAmt
+        WHERE A_Asset_ID = :old.A_Asset_ID;
+      END IF;
+    END IF;
   end if;
 END A_AMORTIZATIONLINE_TRG
 ]]></body>
