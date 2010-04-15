@@ -2830,7 +2830,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--257-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--257-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--257-->  <WHERECLAUSE><![CDATA[M_InOut.MovementType IN ('C-', 'C+') and M_InOut.isLogistic = 'N']]></WHERECLAUSE>
-<!--257-->  <AD_PROCESS_ID><![CDATA[117]]></AD_PROCESS_ID>
+<!--257-->  <AD_PROCESS_ID><![CDATA[1000500004]]></AD_PROCESS_ID>
 <!--257-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--257-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -3372,7 +3372,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--296-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--296-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--296-->  <WHERECLAUSE><![CDATA[M_InOut.MovementType IN ('V-', 'V+') and M_InOut.isLogistic = 'N']]></WHERECLAUSE>
-<!--296-->  <AD_PROCESS_ID><![CDATA[117]]></AD_PROCESS_ID>
+<!--296-->  <AD_PROCESS_ID><![CDATA[1000500004]]></AD_PROCESS_ID>
 <!--296-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--296-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--296-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
