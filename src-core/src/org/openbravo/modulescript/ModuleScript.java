@@ -52,7 +52,7 @@ public abstract class ModuleScript {
     return cp;
   }
 
-  public File getPropertiesFile() {
+  protected File getPropertiesFile() {
     File fProp = null;
     if (new File("config/Openbravo.properties").exists())
       fProp = new File("config/Openbravo.properties");
