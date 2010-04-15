@@ -40,7 +40,8 @@ public class WADString extends WADControl {
     generateJSCode();
     this.button = new WADFieldButton("Password", getData("ColumnName"), getData("ColumnNameInp"),
         getData("Name"), "openServletNewWindow('BUTTON" + getData("ColumnName") + "', false, '"
-            + getData("TabName") + "_Edition.html', 'BUTTON', null, true, 300, 600);");
+            + getData("TabName") + "_Edition.html', 'BUTTON', null, "
+            + getData("IsAutosave").equals("Y") + ", 300, 600);");
   }
 
   private void generateJSCode() {
