@@ -41,12 +41,11 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <FIELD_TMP id="importJS"></FIELD_TMP>
+<script type="text/javascript" id="reloadOpener">
+window.onunload = reloadOpener; // Reload opener when closing/canceling
+</script>
 <script language="JavaScript" type="text/javascript">
 var action="";
-
-
-window.onunload = reloadOpener; // Reload opener when closing/canceling
-
 
 function validate(action, form, value) {
   var frm = document.frmMain;

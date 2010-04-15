@@ -36,7 +36,7 @@
         isParent, '' as ACCESSLEVEL, ad_field.isreadonly, '' as issecondarykey, ad_field.showInRelation, ad_field.isEncrypted,
         ad_field.SORTNO, ad_column.istranslated, '' as id, '' as htmltext, '' as htmltexttrl, '' as xmltexttrl, '' as tablenametrl, 
         0 AS NOWRAP, ad_column.isEncrypted AS isColumnEncrypted, ad_column.isDesencryptable, ad_reference_value_id, ad_column.ad_val_rule_id, '' AS isjasper, ad_field.isactive, '' as AD_Tab_ID, '' as parent_tab_name, '' as orgcode,
-        '' as tableModule, '' as columnModule, '' as clientcode
+        '' as tableModule, '' as columnModule, '' as clientcode, '' as isautosave
       FROM ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id,
            ad_field,  ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
@@ -389,7 +389,7 @@
       ad_column.ad_process_id as reference, ad_process.procedurename as name, 
       ad_column.ad_reference_id as type, ad_column.ad_reference_value_id as referencevalue,
       ad_val_rule_id as defaultvalue, ad_column.fieldlength, ad_field.name as realname, 
-      ad_process.description as tablename, ad_process.help as xmltext, ad_column.ad_reference_value_id, ad_process.isjasper 
+      ad_process.description as tablename, ad_process.help as xmltext, ad_column.ad_reference_value_id, ad_process.isjasper, ad_column.isautosave
       FROM ad_column, ad_process, ad_field
       where ad_column.ad_process_id = ad_process.ad_process_id 
       and ad_column.ad_column_id = ad_field.ad_column_id  
@@ -443,7 +443,7 @@
         ad_process_id AS reference, procedurename AS NAME, 
         '' AS TYPE, '' AS referencevalue,
         '' AS defaultvalue, '' AS fieldlength, '' AS realname, 
-        description AS tablename, help AS xmltext, isjasper 
+        description AS tablename, help AS xmltext, isjasper, '' AS isautosave
         FROM AD_PROCESS
         WHERE isactive='Y'
         AND UIPattern='S'
