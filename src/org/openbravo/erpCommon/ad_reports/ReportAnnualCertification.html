@@ -69,6 +69,10 @@ function validate(){
 		setWindowElementFocus(frm.inpDateTo);
 		showJSMessage(7);
 		return false;
+	} else if (inputValue(frm.inpOrg)==null || inputValue(frm.inpOrg)=="") {
+	    setWindowElementFocus(frm.inpOrg);
+	    showJSMessage(7);
+	    return false;
 	}
 	markCheckedAllElements(frm.inpcBPartnerId_IN);
 	return true;
@@ -257,6 +261,16 @@ function validate(){
 				</table>
 				</td>
 			</tr>
+			 <tr>
+              <td class="TitleCell"><span class="LabelText">Organization</span></td>
+              <td class="Combo_ContentCell"> 
+                <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_OneCell_width" required="true">
+                  <option value=""> <div id="reportAD_ORGID"></div></option>
+                </select></td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+            </tr>
 			<tr>
 				<td class="TitleCell"><span class="LabelText">From Date</span></td>
 				<td class="TextBox_btn_ContentCell">
