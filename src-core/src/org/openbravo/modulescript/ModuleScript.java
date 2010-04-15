@@ -47,9 +47,12 @@ public abstract class ModuleScript {
     if (cp != null) {
       return cp;
     }
+    File fProp = getPropertiesFile();
+    cp = new CPStandAlone(fProp.getAbsolutePath());
+    return cp;
+  }
 
-    File f = new File("");
-    f = new File(f.getAbsolutePath());
+  public File getPropertiesFile() {
     File fProp = null;
     if (new File("config/Openbravo.properties").exists())
       fProp = new File("config/Openbravo.properties");
@@ -57,8 +60,7 @@ public abstract class ModuleScript {
       fProp = new File("../config/Openbravo.properties");
     else if (new File("../../config/Openbravo.properties").exists())
       fProp = new File("../../config/Openbravo.properties");
-    cp = new CPStandAlone(fProp.getAbsolutePath());
-    return cp;
+    return fProp;
   }
 
   protected void handleError(Throwable t) {
