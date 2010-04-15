@@ -470,7 +470,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (url == null || url.equals("")) {
       xmlDocument.setParameter("urlDisplay", "none");
     } else {
-      xmlDocument.setParameter("urlLink", url);
+      xmlDocument.setParameter("urlLink", getLink(url));
       xmlDocument.setParameter("url", url);
     }
     xmlDocument.setParameter("license", module.getLicenseType());
@@ -487,6 +487,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String getLink(String url) {
+    if (url == null || url.isEmpty()) {
+      return "";
+    }
+    String link = url;
+    if (!url.matches("^[a-z]+://.+")) {
+      // url without protocol: infer http
+      link = "http://" + url;
+    }
+    return link;
   }
 
   private static FieldProvider[] formatDeps4Display(ModuleDependency[] deps,
@@ -1226,7 +1238,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         moduleBox.put("description", mod.getDescription());
         moduleBox.put("type", icon);
         moduleBox.put("help", mod.getHelp());
-        moduleBox.put("url", url);
+        moduleBox.put("url", getLink(url));
         moduleBox.put("moduleVersionID", mod.getModuleVersionID());
         moduleBox.put("commercialStyle", (mod.getIsCommercial() ? "true" : "none"));
 

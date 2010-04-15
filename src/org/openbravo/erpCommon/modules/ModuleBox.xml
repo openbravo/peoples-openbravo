@@ -24,7 +24,6 @@
     <FIELD id="description">description</FIELD>
     <FIELD id="icon" replace="xx" attribute="class">type</FIELD>
     <FIELD id="help">help</FIELD>
-    <FIELD id="url" attribute="class" replace="xx">url</FIELD>
     <FIELD id="url" attribute="onclick" replace="xx">url</FIELD>
     <FIELD id="details" attribute="onclick" replace="xx">moduleVersionID</FIELD>
     <FIELD id="buttonInstall" attribute="onclick" replace="xx">moduleVersionID</FIELD>

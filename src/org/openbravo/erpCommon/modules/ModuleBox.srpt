@@ -63,7 +63,7 @@
         <div class="AddModule_Text_Option"><a class="LabelLink_noicon" id="details" href="#" onclick="viewDetails('xx');return false;">View Details</a></div>
         <div id="url" class="AddModule_Url_Linkxx">
           <div class="AddModule_Text_Option_Separator">|</div>
-          <div class="AddModule_Text_Option"><a class="LabelLink_noicon" id="url" href="#" onclick="openLink('http://xx', '_blank');return false;">Visit Site</a></div>
+          <div class="AddModule_Text_Option"><a class="LabelLink_noicon" id="url" href="#" onclick="openLink('xx', '_blank');return false;">Visit Site</a></div>
         </div>
       </div>
       <div class="AddModule_Separator" style=""></div>
