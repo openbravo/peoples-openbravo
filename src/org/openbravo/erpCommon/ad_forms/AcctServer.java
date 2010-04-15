@@ -305,6 +305,7 @@ public abstract class AcctServer {
 
       for (int i = 0; data != null && i < data.length; i++) {
         strIDs += data[i].getField("ID") + ", ";
+        this.setMessageResult(null);
         if (!post(data[i].getField("ID"), false, vars, connectionProvider, con)) {
           connectionProvider.releaseRollbackConnection(con);
           return;
@@ -1472,6 +1473,8 @@ public abstract class AcctServer {
 
       final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance().createQuery(
           CustomerAccounts.class, whereClause.toString());
+      obqParameters.setFilterOnReadableClients(false);
+      obqParameters.setFilterOnReadableOrganization(false);
       final List<CustomerAccounts> customerAccounts = obqParameters.list();
       if (customerAccounts != null && customerAccounts.size() > 0
           && customerAccounts.get(0).getCustomerReceivablesNo() != null && !isPrepayment)
@@ -1488,6 +1491,8 @@ public abstract class AcctServer {
 
       final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance().createQuery(
           VendorAccounts.class, whereClause.toString());
+      obqParameters.setFilterOnReadableClients(false);
+      obqParameters.setFilterOnReadableOrganization(false);
       final List<VendorAccounts> vendorAccounts = obqParameters.list();
       if (vendorAccounts != null && vendorAccounts.size() > 0
           && vendorAccounts.get(0).getVendorLiability() != null && !isPrepayment)
