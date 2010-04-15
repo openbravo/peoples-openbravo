@@ -37,7 +37,10 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.UtilSql;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -76,8 +79,11 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12853: OBQuery count not working with a query with
  * aliases
  * 
- * - https://issues.openbravo.com/view.php?id=12903: Eror in OBQuery when using with hql clause
+ * - https://issues.openbravo.com/view.php?id=12903: Error in OBQuery when using with hql clause
  * having order by but not where part
+ * 
+ * - https://issues.openbravo.com/view.php?id=12918 DAL: Exception in commitTransaction leaves
+ * Postgres connection in illegal state
  * 
  * @author mtaal
  * @author iperdomo
@@ -85,6 +91,30 @@ import org.openbravo.test.base.BaseTest;
 
 public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
+
+  /**
+   * https://issues.openbravo.com/view.php?id=12918
+   */
+  public void test12918() {
+    setSystemAdministratorContext();
+
+    // A fail save process is expected
+    try {
+      Client c = OBDal.getInstance().get(Client.class, "0");
+      Role r = OBProvider.getInstance().get(Role.class);
+      r.setClient(c);
+      r.setName("System Administrator"); // Fails unique name constraint
+      r.setUserLevel("S");
+      r.setClientList("0");
+      r.setOrganizationList("0");
+      OBDal.getInstance().save(r);
+      OBDal.getInstance().commitAndClose();
+    } catch (Exception e) {
+      // Expected
+      final User u = OBDal.getInstance().get(User.class, "100");
+      System.out.println(u);
+    }
+  }
 
   /**
    * Tests https://issues.openbravo.com/view.php?id=12702
