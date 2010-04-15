@@ -61,10 +61,12 @@ public class Posted extends HttpSecureAppServlet {
       String strPath = vars.getGlobalVariable("inpPath", "Posted|path", strDireccion
           + request.getServletPath());
       String strWindowId = vars.getGlobalVariable("inpWindowId", "Posted|windowId", "");
+      String strForcedTableId = vars.getGlobalVariable("inpforcedTableId", strWindowId
+          + "|FORCED_TABLE_ID", "");
       String strTabName = vars.getGlobalVariable("inpTabName", "Posted|tabName", "");
 
-      printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId, strPath,
-          strTabName, strPosted);
+      printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId,
+          strForcedTableId, strPath, strTabName, strPosted);
     } else if (vars.commandIn("SAVE")) {
 
       String strKey = vars.getRequiredGlobalVariable("inpKey", "Posted|key");
@@ -207,8 +209,9 @@ public class Posted extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String windowId, String strTab, String strProcessId, String strTableId, String strPath,
-      String strTabName, String strPosted) throws IOException, ServletException {
+      String windowId, String strTab, String strProcessId, String strTableId,
+      String strForcedTableId, String strPath, String strTabName, String strPosted)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Posted");
 
@@ -234,7 +237,10 @@ public class Posted extends HttpSecureAppServlet {
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("process", strProcessId);
-    xmlDocument.setParameter("table", strTableId);
+    if ("".equals(strForcedTableId) || strForcedTableId == null)
+      xmlDocument.setParameter("table", strTableId);
+    else
+      xmlDocument.setParameter("table", strForcedTableId);
     xmlDocument.setParameter("posted", strPosted);
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("tabname", strTabName);
