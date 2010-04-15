@@ -147,7 +147,7 @@ public abstract class AcctServer {
   /** AR Credit Memo */
   public static final String DOCTYPE_ARCredit = "ARC";
   /** AR Receipt */
-  public static final String DOCTYPE_ARReceipt = "STT";// antes ARR
+  public static final String DOCTYPE_ARReceipt = "ARR";
   /** AR ProForma */
   public static final String DOCTYPE_ARProForma = "ARF";
 
@@ -194,6 +194,9 @@ public abstract class AcctServer {
 
   // DPManagement
   public static final String DOCTYPE_DPManagement = "DPM";
+
+  // FinAccTransaction
+  public static final String DOCTYPE_FinAccTransaction = "FAT";
 
   /*************************************************************************/
 
