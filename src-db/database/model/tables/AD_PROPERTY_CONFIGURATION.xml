@@ -59,6 +59,6 @@
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <check name="AD_PROPERTY_CONF_ACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_PROPERTY_CONF_SEL_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PROPERTY_CONF_SEL_CHECK"><![CDATA[SELECTED IN ('Y', 'N')]]></check>
     </table>
   </database>

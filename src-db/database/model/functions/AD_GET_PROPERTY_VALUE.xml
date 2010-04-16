@@ -35,11 +35,13 @@ BEGIN
     into propNumber
     from ad_property_configuration c
    where c.property = p_PROPERTY_NAME
+     and isActive = 'Y'
      and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
      and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
            (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
               from ad_property_configuration c1
-             where c.property = p_PROPERTY_NAME
+             where c1.property = p_PROPERTY_NAME
+               and isActive = 'Y'
                and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
 
   if propNumber = 0 then
@@ -50,11 +52,13 @@ BEGIN
     from ad_property_configuration c
    where c.property = p_PROPERTY_NAME
      and selected='Y'
+     and isActive = 'Y'
      and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
      and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
            (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
               from ad_property_configuration c1
-             where c.property = p_PROPERTY_NAME
+             where c1.property = p_PROPERTY_NAME
+               and isActive = 'Y'
                and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
     if propNumber != 1 then
       RAISE_APPLICATION_ERROR(-20000, p_PROPERTY_NAME||' @PropertyConflict@');
@@ -73,7 +77,8 @@ BEGIN
      and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
            (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
               from ad_property_configuration c1
-             where c.property = p_PROPERTY_NAME
+             where c1.property = p_PROPERTY_NAME
+               and isActive = 'Y'
                and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
   return v_value;
 END AD_GET_PROPERTY_VALUE

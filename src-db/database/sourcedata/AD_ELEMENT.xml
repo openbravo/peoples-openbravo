@@ -26150,8 +26150,10 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--841CB823976F391BE040007F0101218F-->  <COLUMNNAME><![CDATA[Property]]></COLUMNNAME>
 <!--841CB823976F391BE040007F0101218F-->  <NAME><![CDATA[Property]]></NAME>
 <!--841CB823976F391BE040007F0101218F-->  <PRINTNAME><![CDATA[Property]]></PRINTNAME>
-<!--841CB823976F391BE040007F0101218F-->  <DESCRIPTION><![CDATA[Configuration Property]]></DESCRIPTION>
-<!--841CB823976F391BE040007F0101218F-->  <HELP><![CDATA[Configuration Property]]></HELP>
+<!--841CB823976F391BE040007F0101218F-->  <DESCRIPTION><![CDATA[Configuration Property to assign value]]></DESCRIPTION>
+<!--841CB823976F391BE040007F0101218F-->  <HELP><![CDATA[It is the "Configuration Property" this record sets value to. 
+
+Configuration Properties are defined by modules with the purpose other modules are capable to assign them values.]]></HELP>
 <!--841CB823976F391BE040007F0101218F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--841CB823976F391BE040007F0101218F--></AD_ELEMENT>
 
@@ -26174,8 +26176,10 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--841CB8239773391BE040007F0101218F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--841CB8239773391BE040007F0101218F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--841CB8239773391BE040007F0101218F-->  <COLUMNNAME><![CDATA[AD_Property_Configuration_ID]]></COLUMNNAME>
-<!--841CB8239773391BE040007F0101218F-->  <NAME><![CDATA[AD_Property_Configuration_ID]]></NAME>
-<!--841CB8239773391BE040007F0101218F-->  <PRINTNAME><![CDATA[AD_Property_Configuration_ID]]></PRINTNAME>
+<!--841CB8239773391BE040007F0101218F-->  <NAME><![CDATA[Configuration Property]]></NAME>
+<!--841CB8239773391BE040007F0101218F-->  <PRINTNAME><![CDATA[Configuration Property]]></PRINTNAME>
+<!--841CB8239773391BE040007F0101218F-->  <DESCRIPTION><![CDATA[Configuration Property]]></DESCRIPTION>
+<!--841CB8239773391BE040007F0101218F-->  <HELP><![CDATA[Configuration Properties are defined by modules with the purpose other modules are capable to assign them values.]]></HELP>
 <!--841CB8239773391BE040007F0101218F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--841CB8239773391BE040007F0101218F--></AD_ELEMENT>
 

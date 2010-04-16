@@ -10519,8 +10519,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--8BC1C3488EA046E89586458D0DAEDB82-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8BC1C3488EA046E89586458D0DAEDB82-->  <NAME><![CDATA[ADPropertyConfiguration]]></NAME>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <DESCRIPTION><![CDATA[Value assignments for properties]]></DESCRIPTION>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <HELP><![CDATA[Value assignments for properties]]></HELP>
+<!--8BC1C3488EA046E89586458D0DAEDB82-->  <DESCRIPTION><![CDATA[Value assignments for Configuration Properties,]]></DESCRIPTION>
+<!--8BC1C3488EA046E89586458D0DAEDB82-->  <HELP><![CDATA[Value assignments for Configuration Properties,
+Configuration Properties are defined by modules with the purpose other modules are capable to assign them values.]]></HELP>
 <!--8BC1C3488EA046E89586458D0DAEDB82-->  <TABLENAME><![CDATA[AD_Property_Configuration]]></TABLENAME>
 <!--8BC1C3488EA046E89586458D0DAEDB82-->  <CLASSNAME><![CDATA[PropertyConfiguration]]></CLASSNAME>
 <!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISVIEW><![CDATA[N]]></ISVIEW>
