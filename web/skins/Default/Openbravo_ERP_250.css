@@ -1001,7 +1001,7 @@ a.ButtonLink_TwoLines_focus table.Button_TwoLines .Button_TwoLines_right, table.
 div.calendar { 
   position: relative; 
   border: 1px solid #a2a2a2;
-  z-index: 30;
+  z-index: 300001;
 }
 
 .calendar {
