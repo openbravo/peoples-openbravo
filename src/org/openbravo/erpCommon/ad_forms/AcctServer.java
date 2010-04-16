@@ -197,6 +197,8 @@ public abstract class AcctServer {
 
   // FinAccTransaction
   public static final String DOCTYPE_FinAccTransaction = "FAT";
+  // FinReconciliation
+  public static final String DOCTYPE_Reconciliation = "REC";
 
   /*************************************************************************/
 

@@ -183,7 +183,7 @@ public class DocFINFinAccTransaction extends AcctServer {
       return null;
     for (int i = 0; i < data.length; i++) {
       String Line_ID = data[i].getField("FIN_Finacc_Transaction_ID");
-      DocLine_FINFinAccTransaction docLine = new DocLine_FINFinAccTransaction(DocumentType,
+      DocLine_FINReconciliation docLine = new DocLine_FINReconciliation(DocumentType,
           Record_ID, Line_ID);
       String strPaymentId = data[i].getField("FIN_Payment_ID");
       if (strPaymentId != null && !strPaymentId.equals(""))
@@ -199,7 +199,7 @@ public class DocFINFinAccTransaction extends AcctServer {
       list.add(docLine);
     }
     // Return Array
-    DocLine_FINFinAccTransaction[] dl = new DocLine_FINFinAccTransaction[list.size()];
+    DocLine_FINReconciliation[] dl = new DocLine_FINReconciliation[list.size()];
     list.toArray(dl);
     return dl;
   } // loadLines
@@ -253,7 +253,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     }
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-      DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
+      DocLine_FINReconciliation line = (DocLine_FINReconciliation) p_lines[i];
       FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
           Record_ID);
       // 3 Scenarios: 1st Bank fee 2nd glitem transaction 3rd payment related transaction
@@ -270,7 +270,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   /*
    * Creates accounting related to a bank fee transaction
    */
-  public Fact createFactFee(DocLine_FINFinAccTransaction line, FIN_FinaccTransaction transaction,
+  public Fact createFactFee(DocLine_FINReconciliation line, FIN_FinaccTransaction transaction,
       AcctSchema as, ConnectionProvider conn, Fact fact) throws ServletException {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
@@ -283,7 +283,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     return fact;
   }
 
-  public Fact createFactPaymentDetails(DocLine_FINFinAccTransaction line, AcctSchema as,
+  public Fact createFactPaymentDetails(DocLine_FINReconciliation line, AcctSchema as,
       ConnectionProvider conn, Fact fact) throws ServletException {
     boolean isPrepayment = "Y".equals(line.getIsPrepayment());
     BigDecimal paymentAmount = new BigDecimal(line.getPaymentAmount());
@@ -318,7 +318,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   /*
    * Creates the accounting for a transaction related directly with a GLItem
    */
-  public Fact createFactGLItem(DocLine_FINFinAccTransaction line, AcctSchema as,
+  public Fact createFactGLItem(DocLine_FINReconciliation line, AcctSchema as,
       ConnectionProvider conn, Fact fact) throws ServletException {
     BigDecimal paymentAmount = new BigDecimal(line.getPaymentAmount());
     BigDecimal depositAmount = new BigDecimal(line.getDepositAmount());
