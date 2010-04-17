@@ -79,6 +79,7 @@
       </column>
       <column name="POSTED" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[N]]></default>
+        <onCreateDefault/>
       </column>
       <column name="C_PROJECT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
