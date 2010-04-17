@@ -66,4 +66,8 @@ public abstract class DocInvoiceTemplate {
    */
   public abstract Fact createFact(DocInvoice docInvoice, AcctSchema as, ConnectionProvider conn,
       Connection con, VariablesSecureApp vars) throws ServletException;
+
+  public String getServletInfo() {
+    return "Servlet for the accounting";
+  } // end of getServletInfo() method
 }
