@@ -108,21 +108,6 @@ public class DocLine_FINFinAccTransaction extends DocLine {
   }
 
   /**
-   * @return the log4jDocLine_Payment
-   */
-  public static Logger getLog4jDocLine_FINFinAccTransaction() {
-    return log4jDocLine_FINFinAccTransaction;
-  }
-
-  /**
-   * @param log4jDocLine_Payment
-   *          the log4jDocLine_Payment to set
-   */
-  public static void setLog4jDocLine_Payment(Logger log4jDocLine_FINFinAccTransaction) {
-    DocLine_FINFinAccTransaction.log4jDocLine_FINFinAccTransaction = log4jDocLine_FINFinAccTransaction;
-  }
-
-  /**
    * @return the line_ID
    */
   public String getLine_ID() {

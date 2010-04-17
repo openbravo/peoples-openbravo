@@ -21,7 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import org.apache.log4j.Logger;
 
 public class DocLine_FINReconciliation extends DocLine {
-  static Logger log4jDocLine_FINReconciliation = Logger.getLogger(DocLine_FINReconciliation.class);
+  static Logger log4j = Logger.getLogger(DocLine_FINReconciliation.class);
 
   String Line_ID = "";
   String PaymentAmount = "";
@@ -120,21 +120,6 @@ public class DocLine_FINReconciliation extends DocLine {
    */
   public void setFinPaymentId(String finPaymentId) {
     this.finPaymentId = finPaymentId;
-  }
-
-  /**
-   * @return the log4jDocLine_Payment
-   */
-  public static Logger getLog4jDocLine_FINFinAccTransaction() {
-    return log4jDocLine_FINReconciliation;
-  }
-
-  /**
-   * @param log4jDocLine_Payment
-   *          the log4jDocLine_Payment to set
-   */
-  public static void setLog4jDocLine_Payment(Logger log4jDocLine_FINFinAccTransaction) {
-    DocLine_FINFinAccTransaction.log4jDocLine_FINFinAccTransaction = log4jDocLine_FINFinAccTransaction;
   }
 
   /**

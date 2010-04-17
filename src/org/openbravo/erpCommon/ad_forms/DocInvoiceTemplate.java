@@ -15,20 +15,18 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
 import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocInvoiceTemplate {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocInvoice = Logger.getLogger(DocInvoice.class);
 
   /**
    * Constructor
@@ -68,8 +66,4 @@ public abstract class DocInvoiceTemplate {
    */
   public abstract Fact createFact(DocInvoice docInvoice, AcctSchema as, ConnectionProvider conn,
       Connection con, VariablesSecureApp vars) throws ServletException;
-
-  public String getServletInfo() {
-    return "Servlet for the accounting";
-  } // end of getServletInfo() method
 }

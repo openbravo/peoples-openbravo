@@ -1,14 +1,21 @@
 /*
- ************************************************************************************
- * Copyright (C) 2010 Openbravo S.L.U.
-
- * Licensed under the Openbravo Commercial License version 1.0
- * You may obtain a copy of the License at
-  http://www.openbravo.com/legal/obcl.html
-  <http://www.openbravo.com/legal/obcl.html>
- ************************************************************************************
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
  */
-
 package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
@@ -42,7 +49,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 public class DocFINPayment extends AcctServer {
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocFINPayment = Logger.getLogger(DocFINPayment.class);
+  static Logger log4j = Logger.getLogger(DocFINPayment.class);
 
   String SeqNo = "0";
 
@@ -69,29 +76,32 @@ public class DocFINPayment extends AcctServer {
 
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
-    for (int i = 0; i < data.length; i++) {
-      data[i] = new FieldProviderFactory(new HashMap());
-      FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
-          .getId());
-      FieldProviderFactory.setField(data[i], "AD_Org_ID", paymentDetails.get(i).getOrganization()
-          .getId());
-      FieldProviderFactory
-          .setField(data[i], "FIN_Payment_Detail_ID", paymentDetails.get(i).getId());
-      FieldProviderFactory
-          .setField(data[i], "Amount", paymentDetails.get(i).getAmount().toString());
-      FieldProviderFactory.setField(data[i], "isprepayment",
-          paymentDetails.get(i).isPrepayment() ? "Y" : "N");
-      FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
-          .getWriteoffAmount().toString());
-      FieldProviderFactory.setField(data[i], "C_GLItem_ID",
-          paymentDetails.get(i).getGLItem() != null ? paymentDetails.get(i).getGLItem().getId()
-              : "");
-      FieldProviderFactory
-          .setField(data[i], "Refund", paymentDetails.get(i).isRefund() ? "Y" : "N");
-      FieldProviderFactory.setField(data[i], "isprepayment",
-          paymentDetails.get(i).isPrepayment() ? "Y" : "N");
+    try {
+      for (int i = 0; i < data.length; i++) {
+        data[i] = new FieldProviderFactory(new HashMap());
+        FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
+            .getId());
+        FieldProviderFactory.setField(data[i], "AD_Org_ID", paymentDetails.get(i).getOrganization()
+            .getId());
+        FieldProviderFactory.setField(data[i], "FIN_Payment_Detail_ID", paymentDetails.get(i)
+            .getId());
+        FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
+            .toString());
+        FieldProviderFactory.setField(data[i], "isprepayment",
+            paymentDetails.get(i).isPrepayment() ? "Y" : "N");
+        FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
+            .getWriteoffAmount().toString());
+        FieldProviderFactory.setField(data[i], "C_GLItem_ID",
+            paymentDetails.get(i).getGLItem() != null ? paymentDetails.get(i).getGLItem().getId()
+                : "");
+        FieldProviderFactory.setField(data[i], "Refund", paymentDetails.get(i).isRefund() ? "Y"
+            : "N");
+        FieldProviderFactory.setField(data[i], "isprepayment",
+            paymentDetails.get(i).isPrepayment() ? "Y" : "N");
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     }
-    OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     return data;
   }
 
@@ -120,44 +130,47 @@ public class DocFINPayment extends AcctServer {
     String strClassname = "";
     final StringBuilder whereClause = new StringBuilder();
     boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
-    whereClause.append(" as astdt ");
-    whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
-        + as.m_C_AcctSchema_ID + "'");
-    whereClause.append(" and astdt.acctschemaTable.table.id = '" + AD_Table_ID + "'");
-    whereClause.append(" and astdt.documentCategory = '" + DocumentType + "'");
+    try {
+      whereClause.append(" as astdt ");
+      whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
+          + as.m_C_AcctSchema_ID + "'");
+      whereClause.append(" and astdt.acctschemaTable.table.id = '" + AD_Table_ID + "'");
+      whereClause.append(" and astdt.documentCategory = '" + DocumentType + "'");
 
-    final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
-        AcctSchemaTableDocType.class, whereClause.toString());
-    final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
+      final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
+          AcctSchemaTableDocType.class, whereClause.toString());
+      final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-    if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
-      strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+        strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
 
-    if (strClassname.equals("")) {
-      final StringBuilder whereClause2 = new StringBuilder();
+      if (strClassname.equals("")) {
+        final StringBuilder whereClause2 = new StringBuilder();
 
-      whereClause2.append(" as ast ");
-      whereClause2.append(" where ast.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
-      whereClause2.append(" and ast.table.id = '" + AD_Table_ID + "'");
+        whereClause2.append(" as ast ");
+        whereClause2.append(" where ast.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+        whereClause2.append(" and ast.table.id = '" + AD_Table_ID + "'");
 
-      final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
-          AcctSchemaTable.class, whereClause2.toString());
-      final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
-      if (acctSchemaTables != null && acctSchemaTables.size() > 0
-          && acctSchemaTables.get(0).getCreatefactTemplate() != null)
-        strClassname = acctSchemaTables.get(0).getCreatefactTemplate().getClassname();
-    }
-    if (!strClassname.equals("")) {
-      try {
-        DocFINPaymentTemplate newTemplate = (DocFINPaymentTemplate) Class.forName(strClassname)
-            .newInstance();
-        return newTemplate.createFact(this, as, conn, con, vars);
-      } catch (Exception e) {
-        log4jDocFINPayment.error("Error while creating new instance for DocFINPaymentTemplate - "
-            + e);
+        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
+            AcctSchemaTable.class, whereClause2.toString());
+        final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
+        if (acctSchemaTables != null && acctSchemaTables.size() > 0
+            && acctSchemaTables.get(0).getCreatefactTemplate() != null)
+          strClassname = acctSchemaTables.get(0).getCreatefactTemplate().getClassname();
       }
+      if (!strClassname.equals("")) {
+        try {
+          DocFINPaymentTemplate newTemplate = (DocFINPaymentTemplate) Class.forName(strClassname)
+              .newInstance();
+          return newTemplate.createFact(this, as, conn, con, vars);
+        } catch (Exception e) {
+          log4j.error(
+              "Error while creating new instance for DocFINPaymentTemplate - ", e);
+        }
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     }
-    OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
 
@@ -272,21 +285,6 @@ public class DocFINPayment extends AcctServer {
       OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     }
     return account;
-  }
-
-  /**
-   * @return the serialVersionUID
-   */
-  public static long getSerialVersionUID() {
-    return serialVersionUID;
-  }
-
-  public static Logger getLog4jDocAccDefPlan() {
-    return log4jDocFINPayment;
-  }
-
-  public static void setLog4jDocAccDefPlan(Logger log4jDocAccDefPlan) {
-    DocFINPayment.log4jDocFINPayment = log4jDocAccDefPlan;
   }
 
 }

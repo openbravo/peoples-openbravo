@@ -57,7 +57,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   public static final String TRXTYPE_BankFee = "BF";
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocFINFinAccTransaction = Logger.getLogger(DocFINFinAccTransaction.class);
+  private static final Logger log4j = Logger.getLogger(DocFINFinAccTransaction.class);
 
   String SeqNo = "0";
 
@@ -150,29 +150,33 @@ public class DocFINFinAccTransaction extends AcctServer {
   public FieldProviderFactory[] loadLinesGLItemFieldProvider(FIN_FinaccTransaction transaction) {
     FieldProviderFactory[] data = new FieldProviderFactory[1];
     boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
-    data[0] = new FieldProviderFactory(new HashMap());
-    FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
-    FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
-    FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
-    FieldProviderFactory.setField(data[0], "cGlItemId", transaction.getGLItem().getId());
-    FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
-        .toString());
-    FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
-        .toString());
-    FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
-    FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
-    FieldProviderFactory
-        .setField(data[0], "cBpartnerId", (transaction.getFinPayment() == null || transaction
-            .getFinPayment().getBusinessPartner() == null) ? "" : transaction.getFinPayment()
-            .getBusinessPartner().getId());
-    if (transaction.getActivity() != null)
-      FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
-    if (transaction.getProject() != null)
-      FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
-    if (transaction.getSalesCampaign() != null)
-      FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign().getId());
-    FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
-    OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+    try {
+      data[0] = new FieldProviderFactory(new HashMap());
+      FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
+      FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
+      FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
+      FieldProviderFactory.setField(data[0], "cGlItemId", transaction.getGLItem().getId());
+      FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
+          .toString());
+      FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
+          .toString());
+      FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
+      FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
+      FieldProviderFactory
+          .setField(data[0], "cBpartnerId", (transaction.getFinPayment() == null || transaction
+              .getFinPayment().getBusinessPartner() == null) ? "" : transaction.getFinPayment()
+              .getBusinessPartner().getId());
+      if (transaction.getActivity() != null)
+        FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
+      if (transaction.getProject() != null)
+        FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
+      if (transaction.getSalesCampaign() != null)
+        FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign()
+            .getId());
+      FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+    }
     return data;
   }
 
@@ -183,7 +187,7 @@ public class DocFINFinAccTransaction extends AcctServer {
       return null;
     for (int i = 0; i < data.length; i++) {
       String Line_ID = data[i].getField("FIN_Finacc_Transaction_ID");
-      DocLine_FINReconciliation docLine = new DocLine_FINReconciliation(DocumentType,
+      DocLine_FINFinAccTransaction docLine = new DocLine_FINFinAccTransaction(DocumentType,
           Record_ID, Line_ID);
       String strPaymentId = data[i].getField("FIN_Payment_ID");
       if (strPaymentId != null && !strPaymentId.equals(""))
@@ -199,7 +203,7 @@ public class DocFINFinAccTransaction extends AcctServer {
       list.add(docLine);
     }
     // Return Array
-    DocLine_FINReconciliation[] dl = new DocLine_FINReconciliation[list.size()];
+    DocLine_FINFinAccTransaction[] dl = new DocLine_FINFinAccTransaction[list.size()];
     list.toArray(dl);
     return dl;
   } // loadLines
@@ -244,8 +248,8 @@ public class DocFINFinAccTransaction extends AcctServer {
               .forName(strClassname).newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
-          log4jDocFINFinAccTransaction
-              .error("Error while creating new instance for DocFINFinAccTransactionTemplate - " + e);
+          log4j.error("Error while creating new instance for DocFINFinAccTransactionTemplate - "
+              + e);
         }
       }
     } finally {
@@ -253,7 +257,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     }
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-      DocLine_FINReconciliation line = (DocLine_FINReconciliation) p_lines[i];
+      DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
       FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
           Record_ID);
       // 3 Scenarios: 1st Bank fee 2nd glitem transaction 3rd payment related transaction
@@ -270,7 +274,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   /*
    * Creates accounting related to a bank fee transaction
    */
-  public Fact createFactFee(DocLine_FINReconciliation line, FIN_FinaccTransaction transaction,
+  public Fact createFactFee(DocLine_FINFinAccTransaction line, FIN_FinaccTransaction transaction,
       AcctSchema as, ConnectionProvider conn, Fact fact) throws ServletException {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
@@ -283,7 +287,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     return fact;
   }
 
-  public Fact createFactPaymentDetails(DocLine_FINReconciliation line, AcctSchema as,
+  public Fact createFactPaymentDetails(DocLine_FINFinAccTransaction line, AcctSchema as,
       ConnectionProvider conn, Fact fact) throws ServletException {
     boolean isPrepayment = "Y".equals(line.getIsPrepayment());
     BigDecimal paymentAmount = new BigDecimal(line.getPaymentAmount());
@@ -318,7 +322,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   /*
    * Creates the accounting for a transaction related directly with a GLItem
    */
-  public Fact createFactGLItem(DocLine_FINReconciliation line, AcctSchema as,
+  public Fact createFactGLItem(DocLine_FINFinAccTransaction line, AcctSchema as,
       ConnectionProvider conn, Fact fact) throws ServletException {
     BigDecimal paymentAmount = new BigDecimal(line.getPaymentAmount());
     BigDecimal depositAmount = new BigDecimal(line.getDepositAmount());
@@ -553,21 +557,6 @@ public class DocFINFinAccTransaction extends AcctServer {
       OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     }
     return account;
-  }
-
-  /**
-   * @return the serialVersionUID
-   */
-  public static long getSerialVersionUID() {
-    return serialVersionUID;
-  }
-
-  public static Logger getLog4jDocAccDefPlan() {
-    return log4jDocFINFinAccTransaction;
-  }
-
-  public static void setLog4jDocFINFinAccTransaction(Logger log4jDocFINFinAccTransaction) {
-    DocFINFinAccTransaction.log4jDocFINFinAccTransaction = log4jDocFINFinAccTransaction;
   }
 
 }

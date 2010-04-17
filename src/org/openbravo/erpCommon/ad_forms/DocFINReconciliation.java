@@ -58,7 +58,7 @@ public class DocFINReconciliation extends AcctServer {
   public static final String TRXTYPE_BankFee = "BF";
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocFINReconciliation = Logger.getLogger(DocFINReconciliation.class);
+  private static final Logger log4j = Logger.getLogger(DocFINReconciliation.class);
 
   String SeqNo = "0";
 
@@ -192,31 +192,35 @@ public class DocFINReconciliation extends AcctServer {
   public FieldProviderFactory[] loadLinesGLItemFieldProvider(FIN_FinaccTransaction transaction) {
     FieldProviderFactory[] data = new FieldProviderFactory[1];
     boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
-    data[0] = new FieldProviderFactory(new HashMap());
-    FieldProviderFactory.setField(data[0], "FIN_Reconciliation_ID", transaction.getReconciliation()
-        .getId());
-    FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
-    FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
-    FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
-    FieldProviderFactory.setField(data[0], "cGlItemId", transaction.getGLItem().getId());
-    FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
-        .toString());
-    FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
-        .toString());
-    FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
-    FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
-    FieldProviderFactory
-        .setField(data[0], "cBpartnerId", (transaction.getFinPayment() == null || transaction
-            .getFinPayment().getBusinessPartner() == null) ? "" : transaction.getFinPayment()
-            .getBusinessPartner().getId());
-    if (transaction.getActivity() != null)
-      FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
-    if (transaction.getProject() != null)
-      FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
-    if (transaction.getSalesCampaign() != null)
-      FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign().getId());
-    FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
-    OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+    try {
+      data[0] = new FieldProviderFactory(new HashMap());
+      FieldProviderFactory.setField(data[0], "FIN_Reconciliation_ID", transaction
+          .getReconciliation().getId());
+      FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
+      FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
+      FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
+      FieldProviderFactory.setField(data[0], "cGlItemId", transaction.getGLItem().getId());
+      FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
+          .toString());
+      FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
+          .toString());
+      FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
+      FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
+      FieldProviderFactory
+          .setField(data[0], "cBpartnerId", (transaction.getFinPayment() == null || transaction
+              .getFinPayment().getBusinessPartner() == null) ? "" : transaction.getFinPayment()
+              .getBusinessPartner().getId());
+      if (transaction.getActivity() != null)
+        FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
+      if (transaction.getProject() != null)
+        FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
+      if (transaction.getSalesCampaign() != null)
+        FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign()
+            .getId());
+      FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+    }
     return data;
   }
 
@@ -289,8 +293,7 @@ public class DocFINReconciliation extends AcctServer {
               strClassname).newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
-          log4jDocFINReconciliation
-              .error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
+          log4j.error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
         }
       }
     } finally {
@@ -634,21 +637,6 @@ public class DocFINReconciliation extends AcctServer {
       OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     }
     return account;
-  }
-
-  /**
-   * @return the serialVersionUID
-   */
-  public static long getSerialVersionUID() {
-    return serialVersionUID;
-  }
-
-  public static Logger getLog4jDocAccDefPlan() {
-    return log4jDocFINReconciliation;
-  }
-
-  public static void setLog4jDocFINReconciliation(Logger log4jDocFINReconciliation) {
-    DocFINReconciliation.log4jDocFINReconciliation = log4jDocFINReconciliation;
   }
 
 }
