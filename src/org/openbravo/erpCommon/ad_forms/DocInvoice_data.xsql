@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -35,7 +35,7 @@
         '' AS GRANDTOTAL, '' AS M_PRICELIST_ID, '' AS ISTAXINCLUDED, '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID, '' AS C_ACTIVITY_ID,
         '' AS ISPAID, '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE,
         '' AS AD_ORGTRX_ID, '' AS USER1_ID, '' AS USER2_ID, '' as AMOUNT, '' AS STATUS, '' AS ISRECEIPT, '' AS ISMANUAL, '' AS WRITEOFFAMT, 
-        '' AS C_DEBT_PAYMENT_ID, '' AS P_REVENUE_ACCT, '' AS P_EXPENSE_ACCT
+        '' AS C_DEBT_PAYMENT_ID, '' AS P_REVENUE_ACCT, '' AS P_EXPENSE_ACCT, '' as FIN_PAYMENT_SCHEDULE_ID, '' as FIN_PAYMENTMETHOD_ID, '' AS PREPAIDAMT
         FROM C_Tax t, C_InvoiceTax it
         WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Invoice_ID=?
      ]]>
@@ -51,14 +51,13 @@
         I.C_CURRENCY_ID, I.C_DOCTYPE_ID, I.C_CHARGE_ID, I.CHARGEAMT, I.POSTED, I.DATEINVOICED,
         I.ISTAXINCLUDED, I.C_BPARTNER_LOCATION_ID, I.GRANDTOTAL, I.TOTALLINES, I.CHARGEAMT
         FROM C_INVOICE I
-        WHERE AD_Client_ID=? 
+        WHERE AD_Client_ID=?
         AND C_INVOICE_ID=?
      ]]>
      </Sql>
      <Parameter name="client"/>
      <Parameter name="id"/>
    </SqlMethod>
-   
   <SqlMethod name="selectDebtPayments" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -66,6 +65,22 @@
       SELECT (AMOUNT + coalesce(WITHHOLDINGAMOUNT,0)) AS AMOUNT, C_CURRENCY_ID, STATUS_INITIAL AS STATUS, ISRECEIPT, ISPAID, ISMANUAL, WRITEOFFAMT, C_DEBT_PAYMENT_ID
       FROM C_DEBT_PAYMENT
       WHERE C_INVOICE_ID =?
+     ]]>
+     </Sql>
+     <Parameter name="invoice"/>
+   </SqlMethod>
+  <SqlMethod name="selectPayments" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT MAX(FIN_PAYMENT_SCHEDULE.AMOUNT) - SUM(CASE WHEN (FIN_PAYMENT_SCHEDULEDETAIL.FIN_PAYMENT_SCHEDULE_ORDER is not null AND COALESCE(FIN_PAYMENT_DETAIL.ISPREPAYMENT,'N') = 'Y') THEN FIN_PAYMENT_SCHEDULEDETAIL.AMOUNT ELSE 0 END) AS AMOUNT, MAX(FIN_PAYMENT_SCHEDULE.C_CURRENCY_ID) AS C_CURRENCY_ID,
+      FIN_PAYMENT_SCHEDULE.FIN_PAYMENT_SCHEDULE_ID, MAX(FIN_PAYMENT_SCHEDULE.FIN_PAYMENTMETHOD_ID) AS FIN_PAYMENTMETHOD_ID,
+      SUM(CASE WHEN (FIN_PAYMENT_SCHEDULEDETAIL.FIN_PAYMENT_SCHEDULE_ORDER is not null AND COALESCE(FIN_PAYMENT_DETAIL.ISPREPAYMENT,'N') = 'Y') THEN FIN_PAYMENT_SCHEDULEDETAIL.AMOUNT ELSE 0 END) AS PREPAIDAMT
+      FROM FIN_PAYMENT_SCHEDULE LEFT JOIN FIN_PAYMENT_SCHEDULEDETAIL ON FIN_PAYMENT_SCHEDULE.FIN_PAYMENT_SCHEDULE_ID = FIN_PAYMENT_SCHEDULEDETAIL.FIN_PAYMENT_SCHEDULE_INVOICE
+      LEFT JOIN FIN_PAYMENT_DETAIL ON FIN_PAYMENT_SCHEDULEDETAIL.FIN_PAYMENT_DETAIL_ID = FIN_PAYMENT_DETAIL.FIN_PAYMENT_DETAIL_ID
+      WHERE FIN_PAYMENT_SCHEDULE.C_INVOICE_ID =?
+      AND COALESCE(FIN_PAYMENT_DETAIL.ISPREPAYMENT,'Y') = 'Y'
+      GROUP BY FIN_PAYMENT_SCHEDULE.FIN_PAYMENT_SCHEDULE_ID
      ]]>
      </Sql>
      <Parameter name="invoice"/>
@@ -92,17 +107,17 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE M_Product_PO SET PriceLastInv = 
+        UPDATE M_Product_PO SET PriceLastInv =
                 (SELECT AVG(C_Currency_Convert(il.PriceActual,i.C_Currency_ID,M_Product_PO.C_Currency_ID,i.DateInvoiced,null,i.AD_Client_ID,i.AD_Org_ID))
-                FROM C_Invoice i, C_InvoiceLine il 
+                FROM C_Invoice i, C_InvoiceLine il
                 WHERE i.C_Invoice_ID=il.C_Invoice_ID
-                AND M_Product_PO.M_Product_ID=il.M_Product_ID 
+                AND M_Product_PO.M_Product_ID=il.M_Product_ID
                 AND M_Product_PO.C_BPartner_ID=i.C_BPartner_ID
                 AND i.C_Invoice_ID=?)
-        WHERE EXISTS (SELECT * 
-        FROM C_Invoice i, C_InvoiceLine il 
+        WHERE EXISTS (SELECT *
+        FROM C_Invoice i, C_InvoiceLine il
         WHERE i.C_Invoice_ID=il.C_Invoice_ID
-        AND M_Product_PO.M_Product_ID=il.M_Product_ID 
+        AND M_Product_PO.M_Product_ID=il.M_Product_ID
         AND M_Product_PO.C_BPartner_ID=i.C_BPartner_ID
         AND i.C_Invoice_ID=?)
      ]]>

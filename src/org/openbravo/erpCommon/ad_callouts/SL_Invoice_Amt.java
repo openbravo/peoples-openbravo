@@ -91,10 +91,12 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
     SLInvoiceTaxAmtData[] dataTax = SLInvoiceTaxAmtData.select(this, strTaxId, strInvoiceId);
-    BigDecimal taxRate = (dataTax[0].rate.equals("") ? new BigDecimal(1) : new BigDecimal(
-        dataTax[0].rate));
-    Integer taxScale = new Integer(dataTax[0].priceprecision);
-
+    BigDecimal taxRate = BigDecimal.ZERO;
+    Integer taxScale = new Integer(0);
+    if (dataTax.length > 0) {
+      taxRate = (dataTax[0].rate.equals("") ? new BigDecimal(1) : new BigDecimal(dataTax[0].rate));
+      taxScale = new Integer(dataTax[0].priceprecision);
+    }
     if (log4j.isDebugEnabled())
       log4j.debug("strPriceActual: " + strPriceActual);
     if (log4j.isDebugEnabled())

@@ -84,16 +84,4 @@
         <Parameter name="wrid"/>
         <Parameter name="wrppproduct"/>
   </SqlMethod>
-  <SqlMethod name="producedproduct" type="preparedStatement" return="multiple" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        <![CDATA[
-          SELECT p.name
-          FROM M_Product p, MA_WRPhaseProduct w
-          WHERE w.MA_WRPHASE_ID = ?
-          AND p.M_Product_ID = w.M_Product_ID
-          AND w.PRODUCTIONTYPE = '+'
-        ]]></Sql>
-        <Parameter name="wrpid"/>
-  </SqlMethod>
 </SqlClass>

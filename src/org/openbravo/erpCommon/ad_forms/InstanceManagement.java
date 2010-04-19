@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -181,27 +181,38 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActive(HttpServletResponse response, VariablesSecureApp vars,
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
-    String discard[] = { "", "", "", "" };
+    String discard[] = { "", "", "", "", "", "" };
     if (activationKey.isOPSInstance()) {
       discard[0] = "CEInstance";
-      if (activationKey.hasExpired()) {
-        discard[1] = "OPSActive";
+      if (activationKey.isSubscriptionConverted()) {
+        discard[1] = "OPSActiveTitle";
+        discard[2] = "OPSExpired";
+        discard[3] = "OPSNoActiveYet";
+      } else if (activationKey.hasExpired()) {
+        discard[1] = "OPSActiveTitle";
         discard[2] = "OPSNoActiveYet";
+        discard[3] = "OPSConverted";
+        discard[4] = "OPSActive";
       } else if (activationKey.isNotActiveYet()) {
         discard[1] = "OPSExpired";
-        discard[2] = "OPSActive";
+        discard[2] = "OPSActiveTitle";
+        discard[3] = "OPSConverted";
+        discard[4] = "OPSActive";
       } else {
         discard[1] = "OPSExpired";
         if (!activationKey.hasExpirationDate()) {
           discard[2] = "OPSExpirationTime";
         }
-        discard[3] = "OPSNoActiveYet";
+        discard[3] = "OPSConverted";
+        discard[4] = "OPSNoActiveYet";
       }
     } else {
       discard[0] = "OPSInstance";
-      discard[1] = "OPSActive";
+      discard[1] = "OPSActiveTitle";
       discard[2] = "OPSExpired";
-      discard[3] = "OPSNoActiveYet";
+      discard[3] = "OPSConverted";
+      discard[4] = "OPSNoActiveYet";
+      discard[5] = "OPSActive";
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -265,7 +276,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
             vars.getLanguage()).replace("\\n", "\n"));
     }
 
-    String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace("\\n", "\n");
+    String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
+        "\\n", "\n");
     cacheMsg = "var cacheMsg = \"" + cacheMsg + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsg);
 

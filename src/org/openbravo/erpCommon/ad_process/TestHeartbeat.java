@@ -37,6 +37,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_forms.ModuleManagement;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -212,7 +213,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           String recordId = vars.getStringParameter("inpcRecordId", IsIDFilter.instance);
           String command = "INSTALL";
 
-          if (recordId.equals("FFF")) {
+          if (recordId.equals(ModuleManagement.UPDATE_ALL_RECORD_ID)) {
             command = "UPDATE";
             recordId = "&inpcUpdate=all";
           } else {

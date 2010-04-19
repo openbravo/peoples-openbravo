@@ -299,6 +299,14 @@ build.war: build a war file in the lib directory.
     </junit>
   </target>
 
+  <target name="run.webservice.tests" depends="compileSqlc,generate.entities.quick">
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath refid="project.class.path" />
+      <formatter type="plain" usefile="no"/>
+      <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="yes"/>
+    </junit>
+  </target>
+
   <target name="run.api.test.javascript">
   	<taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="project.class.path" />
 	<property name="export" value="no" />
@@ -307,11 +315,11 @@ build.war: build a war file in the lib directory.
   
   <target name="compileSqlc" depends="sqlc">
     <updatesystemstatus v="RB43"/>
-    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" excludes="${base.modules}/src-wad/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" excludes="${base.modules}/*/src-wad/**,${base.modules}/*/src-util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}">
       <classpath refid="project.class.path" />
     </javac>
-    
-    <javac srcdir="${build.AD}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+
+    <javac srcdir="${build.AD}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}">
       <classpath refid="project.class.path" />
     </javac>
   	<antcall target="calculate.version"/>

@@ -70,6 +70,7 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.utils.Replace;
@@ -2500,6 +2501,29 @@ public class Utility {
       numberFormatDecimal = new DecimalFormat(format, dfs);
     }
     return numberFormatDecimal;
+  }
+
+  /**
+   * Gets the configuration property value if there is an extension module implementing the given
+   * property.
+   * 
+   * @param strProperty
+   *          String with the name of the property
+   * @param strClientId
+   *          ID of the client
+   * @param strOrgId
+   *          ID of the organization
+   * @return String containing the value of the property in case that exists a module implementing
+   *         the property. If the value is null returns '-'. Returns null if there isn't any module
+   *         implementing the property.
+   */
+  public static String getPropertyValue(String strProperty, String strClientId, String strOrgId) {
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(strProperty);
+    parameters.add(strClientId);
+    parameters.add(strOrgId);
+    return (String) CallStoredProcedure.getInstance().call("AD_GET_PROPERTY_VALUE", parameters,
+        null);
   }
 
 }

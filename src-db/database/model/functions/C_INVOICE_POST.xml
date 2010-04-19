@@ -454,7 +454,7 @@ cWithHoldId varchar2(32);
               C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt,
               TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
               C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-              User2_ID
+              User2_ID, fin_paymentmethod_id
             )
           SELECT v_RInvoice_ID, C_Order_ID, AD_Client_ID, AD_Org_ID,
             IsActive, now(), UpdatedBy, now(),
@@ -467,7 +467,7 @@ cWithHoldId varchar2(32);
             C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt * -1,
             TotalLines * -1, GrandTotal * -1, M_PriceList_ID, C_Campaign_ID,
             C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-            User2_ID
+            User2_ID, fin_paymentmethod_id
           FROM C_INVOICE
           WHERE C_Invoice_ID=v_Record_ID;
           -- Create Reversed invoice relation

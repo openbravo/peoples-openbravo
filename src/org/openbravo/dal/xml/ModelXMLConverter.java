@@ -28,6 +28,7 @@ import org.dom4j.Element;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
@@ -172,8 +173,7 @@ public class ModelXMLConverter implements OBSingleton {
 
       // set the type
       if (p.isPrimitive()) {
-        element.addAttribute("type", XMLTypeConverter.getInstance().toXMLSchemaType(
-            p.getPrimitiveType()));
+        element.addAttribute("type", ((PrimitiveDomainType) p.getDomainType()).getXMLSchemaType());
       } else if (p.isOneToMany()) {
         final Element complexChildElement = element.addElement("xs:complexType");
         final Element sequenceChildElement = complexChildElement.addElement("xs:sequence");

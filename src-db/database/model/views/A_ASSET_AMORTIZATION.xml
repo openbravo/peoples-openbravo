@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW A_ASSET_AMORTIZATION">
     <view name="A_ASSET_AMORTIZATION"><![CDATA[SELECT a_asset.ad_client_id, a_asset.ad_org_id, a_asset.isactive, a_asset.created, a_asset.createdby, a_asset.updated, a_asset.updatedby, a_asset.a_asset_id, a_amortization.a_amortization_id, a_amortization.startdate, a_amortization.enddate, a_amortizationline.amortization_percentage, a_amortizationline.amortizationamt
-   FROM a_asset, a_amortization, a_amortizationline
-  WHERE a_asset.a_asset_id = a_amortizationline.a_asset_id AND a_amortizationline.a_amortization_id = a_amortization.a_amortization_id]]></view>
+FROM a_asset, a_amortization, a_amortizationline
+WHERE a_asset.a_asset_id = a_amortizationline.a_asset_id AND a_amortizationline.a_amortization_id = a_amortization.a_amortization_id]]></view>
   </database>

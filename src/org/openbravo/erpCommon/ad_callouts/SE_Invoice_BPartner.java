@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -102,6 +102,11 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       else if (strPaymentRule.equals("S") || strPaymentRule.equals("U") && strIsSOTrx.equals("Y"))
         strPaymentRule = "P";
       resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentRule + "\"),");
+      String strFinPaymentMethodId = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
+          : data[0].poPaymentmethodId);
+      if (!"".equals(strFinPaymentMethodId))
+        resultado
+            .append("new Array(\"inpfinPaymentmethodId\", \"" + strFinPaymentMethodId + "\"),");
       String PaymentTerm = (strIsSOTrx.equals("Y") ? data[0].cPaymenttermId
           : data[0].poPaymenttermId);
       resultado.append("new Array(\"inpcPaymenttermId\", \"" + PaymentTerm + "\"),");
@@ -219,7 +224,8 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado
           .append("new Array(\"inpisdiscountprinted\", \"" + data[0].isdiscountprinted + "\")");
       if (data != null && data.length > 0
-          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0 && strIsSOTrx.equals("Y")) {
+          && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
+          && strIsSOTrx.equals("Y")) {
         String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
         resultado.append(", new Array('MESSAGE', \""
             + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed

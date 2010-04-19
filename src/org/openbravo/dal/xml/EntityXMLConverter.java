@@ -41,6 +41,7 @@ import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -408,7 +409,7 @@ public class EntityXMLConverter implements OBNotSingleton {
             }
           }
         }
-        final String txt = XMLTypeConverter.getInstance().toXML(value);
+        final String txt = ((PrimitiveDomainType) p.getDomainType()).convertToString(value);
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
         xmlHandler.characters(txt.toCharArray(), 0, txt.length());
         xmlHandler.endElement("", "", p.getName());

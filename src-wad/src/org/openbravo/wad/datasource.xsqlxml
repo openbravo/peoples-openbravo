@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,14 +66,14 @@ package="org.openbravo.wad.Window">
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql>&#60;&#33;[CDATA[
-        SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
+        SELECT to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, ?) as created, 
+        (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy) as CreatedByR, 
+        to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, ?) as updated, 
+        to_char(<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 'YYYYMMDDHH24MISS') as Updated_Time_Stamp,  
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, 
+        (SELECT NAME FROM AD_USER u WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy) as UpdatedByR, 
+        <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
         '' AS TR_BGCOLOR, '' as total_count,
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy AS CreatedByR,
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy,
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy AS UpdatedByR,
         ? AS LANGUAGE, '' AS AD_USER_CLIENT, '' AS AD_ORG_CLIENT
         FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP><PARAMETER_TMP id="tables">tables</PARAMETER_TMP>
         WHERE 2=2 <PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>
@@ -84,6 +84,9 @@ package="org.openbravo.wad.Window">
         ORDER BY 1, 1
 <!--PARAMETER_TMP id="order">tablesOrder</PARAMETER_TMP-->
     ]]&#62;</Sql>
+    <Parameter name="dateTimeFormat"/>
+    <Parameter name="dateTimeFormat"/>
+    <PARAMETER_TMP id="parameterFields">xx</PARAMETER_TMP>
     <PARAMETER_TMP id="hasOrgKey"><Field name="currentAdOrgId" value=""/></PARAMETER_TMP>
     <Parameter name="paramLanguage"/>
     <PARAMETER_TMP id="parameters">xx</PARAMETER_TMP>

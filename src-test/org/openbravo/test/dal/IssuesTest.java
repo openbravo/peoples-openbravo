@@ -29,16 +29,18 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Reference;
+import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.dal.xml.EntityXMLException;
-import org.openbravo.dal.xml.XMLTypeConverter;
 import org.openbravo.data.UtilSql;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -74,12 +76,45 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12702: Cycle in parent reference references then DAL
  * throws stack over flow error
  * 
+ * - https://issues.openbravo.com/view.php?id=12853: OBQuery count not working with a query with
+ * aliases
+ * 
+ * - https://issues.openbravo.com/view.php?id=12903: Error in OBQuery when using with hql clause
+ * having order by but not where part
+ * 
+ * - https://issues.openbravo.com/view.php?id=12918 DAL: Exception in commitTransaction leaves
+ * Postgres connection in illegal state
+ * 
  * @author mtaal
  * @author iperdomo
  */
 
 public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
+
+  /**
+   * https://issues.openbravo.com/view.php?id=12918
+   */
+  public void test12918() {
+    setSystemAdministratorContext();
+
+    // A fail save process is expected
+    try {
+      Client c = OBDal.getInstance().get(Client.class, "0");
+      Role r = OBProvider.getInstance().get(Role.class);
+      r.setClient(c);
+      r.setName("System Administrator"); // Fails unique name constraint
+      r.setUserLevel("S");
+      r.setClientList("0");
+      r.setOrganizationList("0");
+      OBDal.getInstance().save(r);
+      OBDal.getInstance().commitAndClose();
+    } catch (Exception e) {
+      // Expected
+      final User u = OBDal.getInstance().get(User.class, "100");
+      System.out.println(u);
+    }
+  }
 
   /**
    * Tests https://issues.openbravo.com/view.php?id=12702
@@ -115,9 +150,7 @@ public class IssuesTest extends BaseTest {
       final Order order = OBDal.getInstance().get(Order.class, orderId);
       final String dalIdentifier = IdentifierProvider.getInstance().getIdentifier(order);
 
-      // assert equals disabled for now as apparently in oracle the date returned is one day before
-      // postgress and java, at least in the testcase we have
-      // assertEquals(sqlIdentifier, dalIdentifier);
+      assertEquals(sqlIdentifier, dalIdentifier);
     }
     {
       final List<Object> params = new ArrayList<Object>();
@@ -184,11 +217,11 @@ public class IssuesTest extends BaseTest {
    * Tests issue: https://issues.openbravo.com/view.php?id=11812
    */
   public void test11812() {
-    assertTrue(24 == XMLTypeConverter.getInstance().fromXML(Long.class, "24.0"));
+    assertTrue(24 == (Long) new LongDomainType().createFromString("24.0"));
     try {
-      XMLTypeConverter.getInstance().fromXML(Long.class, "24.5");
+      new LongDomainType().createFromString("24.5");
       fail("No exception on 24.5");
-    } catch (EntityXMLException e) {
+    } catch (ArithmeticException e) {
       // expected
     }
   }
@@ -277,5 +310,51 @@ public class IssuesTest extends BaseTest {
     assertTrue(invoiceLine.isActive());
     Location bpLoc = OBProvider.getInstance().get(Location.class);
     assertTrue(bpLoc.isActive());
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12853
+   */
+  public void test12853() {
+    setSystemAdministratorContext();
+    final OBQuery<Product> products = OBDal.getInstance().createQuery(Product.class,
+        " as e where e.name is not null");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12903
+   */
+  public void test12903() {
+    setSystemAdministratorContext();
+    OBQuery<Product> products;
+
+    products = OBDal.getInstance().createQuery(Product.class,
+        " as e where e.name is not null order by name");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+
+    products = OBDal.getInstance().createQuery(Product.class, " as e order by name");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+
+    products = OBDal.getInstance().createQuery(Product.class, "order by name");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+
+    products = OBDal.getInstance().createQuery(Product.class, " where name is not null");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+
+    products = OBDal.getInstance().createQuery(Product.class, "");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
   }
 }

@@ -30,6 +30,7 @@ import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.Table;
+import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -302,5 +303,26 @@ public class RuntimeModelTest extends BaseTest {
               + " columns set as *isParent* with reference *TABLEDIR* and column name don't finish with _ID: "
               + columns.toString());
     assertEquals(0, columns.size());
+  }
+
+  public void testPrimitiveDomainTypeDefaultMethods() {
+    final CustomDomainType customDomainType = new CustomDomainType();
+    final long testNumber = 121;
+    final String strValue = customDomainType.convertToString(testNumber);
+    final long result = (Long) customDomainType.createFromString(strValue);
+    assertTrue(result == testNumber);
+  }
+
+  private static class CustomDomainType extends BasePrimitiveDomainType {
+
+    @Override
+    public Class<?> getPrimitiveType() {
+      return Long.class;
+    }
+
+    @Override
+    public String getXMLSchemaType() {
+      return "ob:long";
+    }
   }
 }

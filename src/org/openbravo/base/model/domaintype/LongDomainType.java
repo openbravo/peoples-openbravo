@@ -19,6 +19,8 @@
 
 package org.openbravo.base.model.domaintype;
 
+import java.math.BigDecimal;
+
 import org.openbravo.base.model.Property;
 import org.openbravo.base.validation.ValidationException;
 
@@ -57,4 +59,28 @@ public class LongDomainType extends BasePrimitiveDomainType {
   public String getFormatId() {
     return "integer";
   }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
+   */
+  @Override
+  public Object createFromString(String strValue) {
+    if (strValue == null || strValue.trim().length() == 0) {
+      return null;
+    }
+    return new Long(new BigDecimal(strValue).longValueExact());
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
+   */
+  @Override
+  public String getXMLSchemaType() {
+    return "ob:long";
+  }
+
 }

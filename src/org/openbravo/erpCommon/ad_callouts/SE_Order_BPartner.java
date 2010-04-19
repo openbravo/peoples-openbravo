@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -91,8 +91,8 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strDeliveryRule, strPaymentrule, strPaymentterm, strMwarehouse, strInvoiceRule, strPriceList, strUserRep, strDeliveryViaRule;
-    strDeliveryRule = strPaymentrule = strPaymentterm = strMwarehouse = strInvoiceRule = strPriceList = strUserRep = strDeliveryViaRule = "";
+    String strDeliveryRule, strPaymentrule, strPaymentterm, strMwarehouse, strInvoiceRule, strPriceList, strUserRep, strDeliveryViaRule, strFinPaymentMethodId;
+    strDeliveryRule = strPaymentrule = strPaymentterm = strMwarehouse = strInvoiceRule = strPriceList = strUserRep = strDeliveryViaRule = strFinPaymentMethodId = "";
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
       strDeliveryRule = data[0].deliveryrule.equals("") ? strDeliveryRule0 : data[0].deliveryrule;
@@ -103,6 +103,8 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       strPaymentterm = (strIsSOTrx.equals("Y") ? data[0].cPaymenttermId : data[0].poPaymenttermId);
       strPaymentterm = strPaymentterm.equals("") ? strPaymentterm0 : strPaymentterm;
       strInvoiceRule = data[0].invoicerule.equals("") ? strInvoiceRule0 : data[0].invoicerule;
+      strFinPaymentMethodId = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
+          : data[0].poPaymentmethodId);
       strPriceList = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
       strPriceList = strPriceList.equals("") ? strPriceList0 : strPriceList;
       strDeliveryViaRule = data[0].deliveryviarule.equals("") ? strDeliveryViaRule0
@@ -247,7 +249,8 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
+    if (!"".equals(strFinPaymentMethodId))
+      resultado.append("new Array(\"inpfinPaymentmethodId\", \"" + strFinPaymentMethodId + "\"),");
     resultado.append("new Array(\"inpbilltoId\", ");
     if (tlv != null && tlv.length > 0) {
       resultado.append("new Array(");

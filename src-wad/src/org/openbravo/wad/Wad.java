@@ -42,7 +42,6 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.controls.WADButton;
 import org.openbravo.wad.controls.WADControl;
 import org.openbravo.wad.controls.WADGrid;
-import org.openbravo.wad.controls.WADHidden;
 import org.openbravo.wad.controls.WADLabelControl;
 import org.openbravo.wad.controls.WadControlLabelBuilder;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -2109,7 +2108,7 @@ public class Wad extends DefaultHandler {
         if (sfd[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
           sfd[i].defaultvalue = tabName
               + "Data.selectDef"
-              + sfd[i].reference
+              + sfd[i].adcolumnid
               + "(this"
               + WadUtility.getWadContext(sfd[i].defaultvalue, vecFields, vecAuxiliarFields,
                   parentsFieldsData, true, isSOTrx, strWindow) + ")";
@@ -2122,7 +2121,7 @@ public class Wad extends DefaultHandler {
         } else if (sfd[i].accesslevel.equals("6")
             && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
           sfd[i].defaultvalue = "\"0\"";
-        } else if (!sfd[i].referencevalue.equals("13")) { // ID
+        } else if (!sfd[i].reference.equals("13")) { // ID
           sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \""
               + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \""
               + WadUtility.getWadDefaultValue(pool, sfd[i]) + "\", dataField)";
@@ -2135,7 +2134,8 @@ public class Wad extends DefaultHandler {
       } else {
         sfd[i].defaultvalue = "strP" + sfd[i].columnname;
       }
-      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].referencevalue, sfd[i].type);
+      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].reference,
+          sfd[i].referencevalue);
       isSelect = control.addAdditionDefaulJavaFields(strDefaultValues, sfd[i], tabName, isSelect);
     }
 
@@ -2669,8 +2669,8 @@ public class Wad extends DefaultHandler {
         }
 
         // Calculate additional defaults
-        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].referencevalue,
-            fieldsDef[i].type);
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].reference,
+            fieldsDef[i].referencevalue);
         itable = control.addAdditionDefaulSQLFields(v, fieldsDef[i], itable);
       }
       final FieldsData[] fd = new FieldsData[v.size()];
@@ -2846,8 +2846,8 @@ public class Wad extends DefaultHandler {
         }
 
         // add another field for default special cases with more than 1 field
-        WADControl control = WadUtility.getWadControlClass(pool,
-            fieldsDataDefaults[i].referencevalue, fieldsDataDefaults[i].type);
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsDataDefaults[i].reference,
+            fieldsDataDefaults[i].referencevalue);
         if (fieldsDataDefaults[i].isdisplayed.equals("Y")
             && control.addAdditionDefaulJavaFields(new StringBuffer(), fieldsDataDefaults[i],
                 tabName, 0) != 0) {
@@ -2860,9 +2860,9 @@ public class Wad extends DefaultHandler {
               .TransformaNombreColumna(fieldsDataDefaults[i].columnname))
               + "r";
           vecDDef.addElement(f);
-        } else if (fieldsDataDefaults[i].referencevalue.equals("28")
+        } else if (fieldsDataDefaults[i].reference.equals("28")
             && fieldsDataDefaults[i].isdisplayed.equals("Y")
-            && !fieldsDataDefaults[i].type.equals("")) {
+            && !fieldsDataDefaults[i].referencevalue.equals("")) {
           // Button special case
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
@@ -3564,13 +3564,16 @@ public class Wad extends DefaultHandler {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/wad/Configuration_Edition").createXmlDocument();
 
+    // auxiliary inputs
     final StringBuffer htmlHidden = new StringBuffer();
     if (efdauxiliar != null) {
-      for (int i = 0; i < efdauxiliar.length; i++) {
-        final WADControl auxControl = new WADHidden(efdauxiliar[i].getField("columnname"), Sqlc
-            .TransformaNombreColumna(efdauxiliar[i].getField("columnname")), "", true);
+      for (FieldProvider auxiliaryInput : efdauxiliar) {
+        final WADControl auxControl = new WADControl();
+        auxControl.setData("ColumnName", auxiliaryInput.getField("columnname"));
+        auxControl.setData("ColumnNameInp", Sqlc.TransformaNombreColumna(auxiliaryInput
+            .getField("columnname")));
         auxControl.setReportEngine(xmlEngine);
-        htmlHidden.append(auxControl.toXml()).append("\n");
+        htmlHidden.append(auxControl.getHiddenXML()).append("\n");
       }
     }
     xmlDocument.setParameter("hiddens", htmlHidden.toString());
@@ -3736,15 +3739,18 @@ public class Wad extends DefaultHandler {
       }
     }
 
+    // auxiliary inputs
     final Vector<Object> vecAuxiliar = new Vector<Object>();
     final StringBuffer htmlHidden = new StringBuffer();
     if (efdauxiliar != null) {
-      for (int i = 0; i < efdauxiliar.length; i++) {
-        final WADControl auxControl = new WADHidden(efdauxiliar[i].getField("columnname"), Sqlc
-            .TransformaNombreColumna(efdauxiliar[i].getField("columnname")), "", true);
+      for (FieldProvider auxiliaryInput : efdauxiliar) {
+        final WADControl auxControl = new WADControl();
+        auxControl.setData("ColumnName", auxiliaryInput.getField("columnname"));
+        auxControl.setData("ColumnNameInp", Sqlc.TransformaNombreColumna(auxiliaryInput
+            .getField("columnname")));
         auxControl.setReportEngine(xmlEngine);
-        htmlHidden.append(auxControl.toString()).append("\n");
-        vecAuxiliar.addElement(FormatUtilities.replace(efdauxiliar[i].getField("columnname")));
+        htmlHidden.append(auxControl.getHiddenHTML()).append("\n");
+        vecAuxiliar.addElement(FormatUtilities.replace(auxiliaryInput.getField("columnname")));
       }
     }
 

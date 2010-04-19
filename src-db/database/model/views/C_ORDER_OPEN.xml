@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW C_ORDER_OPEN">
     <view name="C_ORDER_OPEN"><![CDATA[SELECT l.ad_client_id, l.ad_org_id, l.isactive, l.created, l.createdby, l.updated, l.updatedby, o.c_order_id, o.docstatus, o.docaction, o.c_doctype_id, o.salesrep_id, o.c_bpartner_id, o.c_bpartner_location_id, o.ad_user_id, o.poreference, o.c_currency_id, o.issotrx, l.c_orderline_id, l.dateordered, l.datepromised, l.m_product_id, l.m_warehouse_id, l.directship, l.c_uom_id, l.qtyordered, l.qtyreserved, l.qtydelivered, l.qtyinvoiced, l.priceactual, l.qtyordered - l.qtydelivered AS qtytodeliver, l.qtyordered - l.qtyinvoiced AS qtytoinvoice, (l.qtyordered - l.qtyinvoiced) * l.priceactual AS netamttoinvoice
-   FROM c_order o, c_orderline l
-  WHERE o.c_order_id = l.c_order_id AND (l.qtyordered <> l.qtydelivered OR l.qtyordered <> l.qtyinvoiced)]]></view>
+FROM c_order o, c_orderline l
+WHERE o.c_order_id = l.c_order_id AND (l.qtyordered <> l.qtydelivered OR l.qtyordered <> l.qtyinvoiced)]]></view>
   </database>

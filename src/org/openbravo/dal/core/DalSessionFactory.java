@@ -21,7 +21,9 @@ package org.openbravo.dal.core;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -167,10 +169,17 @@ public class DalSessionFactory implements SessionFactory {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
+      final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
       Connection conn = ((SessionImplementor) session).connection();
-      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("bbdd.rdbms"));
+      SessionInfo.initDB(conn, props.getProperty("bbdd.rdbms"));
       SessionInfo.setDBSessionInfo(conn);
+      try {
+        final String dbSessionConfig = props.getProperty("bbdd.sessionConfig");
+        PreparedStatement pstmt = conn.prepareStatement(dbSessionConfig);
+        pstmt.executeQuery();
+      } catch (Exception e) {
+        throw new IllegalStateException(e);
+      }
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }

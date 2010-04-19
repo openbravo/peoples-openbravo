@@ -212,6 +212,10 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
     </fileset>
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
   </path>
   
   <macrodef name="updatesystemstatus">
@@ -318,6 +322,18 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="buildvalidation" depends="init, core.lib">
+    <ant dir="src-util/buildvalidation" target="buildvalidation" inheritAll="true" inheritRefs="true" />
+  </target>
+  
+  <target name="compile.buildvalidation" depends="init, core.lib">
+    <ant dir="src-util/buildvalidation" target="compile" inheritAll="true" inheritRefs="true" />
+  </target>
+  
+  <target name="compile.modulescript" depends="init, core.lib">
+    <ant dir="src-util/modulescript" target="compile" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="compile.complete.deploy" depends="compile.complete.development, compile.complete.war">
     
     <!-- Calculate wad checksum to enable smartbuild-->
@@ -420,6 +436,10 @@ export.database: exports database structure and data to xml files.
 
   <target name="run.all.tests" depends="init">
     <ant dir="${base.src}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="run.webservice.tests" depends="init">
+      <ant dir="${base.src}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.quick.tests" depends="init">
@@ -568,14 +588,14 @@ export.database: exports database structure and data to xml files.
     <antcall target="db.apply.modules.sampledata" />
   </target>
 
-  <target name="update.database" depends="init, core.lib, database.lib">
+  <target name="update.database" depends="init, core.lib, database.lib, buildvalidation">
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
     <antcall target="db.apply.modules" />
   </target>
 
-  <target name="update.database.mod" depends="init, core.lib, database.lib">
+  <target name="update.database.mod" depends="init, core.lib, database.lib, buildvalidation">
     <ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />
   </target>
 
@@ -607,8 +627,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
 
-  <target name="apply.modules">
-    <antcall target="update.database.mod" />
+  <target name="apply.modules" depends="update.database.mod">
     <updatesystemstatus v="RB21"/>
 
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
@@ -786,8 +805,8 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="diagnostic">
-    <ant dir="src-diagnostics" antfile="build-create.xml" target="build" />
-    <ant dir="src-diagnostics" target="check.all" />
+    <ant dir="src-util/diagnostic" antfile="build-create.xml" target="build" />
+    <ant dir="src-util/diagnostic" target="check.all" />
   </target>
 
   <target name="setup.check.os">

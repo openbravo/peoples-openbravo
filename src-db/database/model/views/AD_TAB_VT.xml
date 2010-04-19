@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
   <database name="VIEW AD_TAB_VT">
     <view name="AD_TAB_VT"><![CDATA[SELECT trl.ad_language, t.ad_tab_id, t.ad_window_id, t.ad_table_id, trl.name, trl.description, trl.help, t.seqno, t.issinglerow, t.hastree, t.isinfotab, tbl.tablename, tbl.accesslevel, tbl.issecurityenabled, tbl.isdeleteable, tbl.ishighvolume, tbl.isview, to_char('N') AS hasassociation, t.istranslationtab, t.isreadonly, t.ad_image_id, t.tablevel, t.whereclause, t.orderbyclause, t.commitwarning, t.ad_column_id, t.ad_process_id, t.issorttab, t.ad_columnsortorder_id, t.ad_columnsortyesno_id, t.included_tab_id
-   FROM ad_tab t
-   JOIN ad_table tbl ON t.ad_table_id = tbl.ad_table_id
-   JOIN ad_tab_trl trl ON t.ad_tab_id = trl.ad_tab_id
-  WHERE t.isactive = 'Y' AND tbl.isactive = 'Y']]></view>
+FROM ad_tab t
+JOIN ad_table tbl ON t.ad_table_id = tbl.ad_table_id
+JOIN ad_tab_trl trl ON t.ad_tab_id = trl.ad_tab_id
+WHERE t.isactive = 'Y' AND tbl.isactive = 'Y']]></view>
   </database>

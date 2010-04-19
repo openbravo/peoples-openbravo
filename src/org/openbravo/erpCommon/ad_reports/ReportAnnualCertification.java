@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -85,7 +86,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
           "ReportAnnualCertification|C_ElementValue_IDTO");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportAnnualCertification|Org", "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAnnualCertification|Org");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportAnnualCertification|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
@@ -157,14 +158,14 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
           "ReportAnnualCertification|C_ElementValue_IDTO");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportAnnualCertification|Org", "0");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAnnualCertification|Org");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportAnnualCertification|cBpartnerId", IsIDFilter.instance);
       String strAll = vars.getStringParameter("inpAll");
       String strReportType = vars.getRequestGlobalVariable("inpcReportType",
           "ReportAnnualCertification|ReportType");
       String strHide = vars.getStringParameter("inpHideMatched");
-      printPageDataPDF(response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
+      printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
           strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strAll, strReportType,
           strHide, strcAcctSchemaId);
     } else
@@ -239,6 +240,10 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     }
     // PARAMETRI UTENTE
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
+    // Organization * is not shown
+    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
+        vars.getRole()));
+    xmlDocument.setParameter("adOrgId", strOrg);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -272,21 +277,27 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strAmtFrom, String strAmtTo,
-      String strcelementvaluefrom, String strcelementvalueto, String strOrg, String strcBpartnerId,
-      String strAll, String strReportType, String strHide, String strcAcctSchemaId)
-      throws IOException, ServletException {
+  private void printPageDataPDF(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strDateFrom, String strDateTo, String strAmtFrom,
+      String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
+      String strcBpartnerId, String strAll, String strReportType, String strHide,
+      String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PDF");
     ReportAnnualCertificationData[] data = null;
-    data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(
-        this, strDateTo, "1"), strcBpartnerId);
+
+    if (!strDateFrom.equals("") && !strDateTo.equals("") && !strOrg.equals("")) {
+      data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
+          "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(
+          this, strDateTo, "1"), strcBpartnerId);
+    } else {
+      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
+          .getLanguage()));
+    }
 
     String sClientID = vars.getUserClient();
-    String sOrganID = "'" + vars.getOrg() + "'";
+    String sOrganID = "'" + strOrg + "'";
     OrganizationData[] dataOrganization = OrganizationData.select(this, vars.getLanguage(),
         sClientID, sOrganID);
 
@@ -294,9 +305,11 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml";
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("Mittente", dataOrganization[0].adClientIdr);
-    parameters.put("Erogante", dataOrganization[0].adClientIdr);
-    parameters.put("AddressOrganization", dataOrganization[0].cLocationIdr);
+    if (dataOrganization != null && dataOrganization.length > 0) {
+      parameters.put("Mittente", dataOrganization[0].adClientIdr);
+      parameters.put("Erogante", dataOrganization[0].adClientIdr);
+      parameters.put("AddressOrganization", dataOrganization[0].cLocationIdr);
+    }
     parameters.put("DateFrom", strDateFrom);
     parameters.put("DateTo", strDateTo);
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);

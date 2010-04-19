@@ -202,7 +202,7 @@
 	<field name="FIVE" class="java.math.BigDecimal"/>
 	<field name="TOTAL" class="java.math.BigDecimal"/>
 
-	<variable name="SUM_ZERO_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+	<variable name="SUM_ZERO_1" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{ZERO}]]></variableExpression>
 	</variable>
 	<variable name="SUM_ONE_1" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
@@ -570,7 +570,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{SUM_ZERO_1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_ZERO_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_ZERO_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -586,7 +586,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{SUM_ONE_1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_ONE_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_ONE_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -602,7 +602,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{SUM_TWO_1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_TWO_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_TWO_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -618,7 +618,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{SUM_THREE_1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_THREE_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_THREE_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -634,7 +634,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{SUM_FOUR_1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_FOUR_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_FOUR_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -650,7 +650,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{SUM_FIVE_1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_FIVE_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_FIVE_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -666,7 +666,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{SUM_TOTAL_1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_TOTAL_1}!=null)?$P{NUMBERFORMAT}.format($V{SUM_TOTAL_1}):new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>

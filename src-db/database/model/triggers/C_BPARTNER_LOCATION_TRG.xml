@@ -34,7 +34,7 @@
     --v_City    VARCHAR2(60);
     --v_Address1   VARCHAR2(60);
     --v_Address2   VARCHAR2(60);
-    v_name VARCHAR2(60) ;
+    v_name NVARCHAR2(60) ;
     v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
     
 BEGIN

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="VIEW AD_WINDOW_VT">
     <view name="AD_WINDOW_VT"><![CDATA[SELECT trl.ad_language, bt.ad_window_id, trl.name, trl.description, trl.help, bt.windowtype, bt.ad_image_id, bt.isactive
-   FROM ad_window bt
-   JOIN ad_window_trl trl ON bt.ad_window_id = trl.ad_window_id
-  WHERE bt.isactive = 'Y']]></view>
+FROM ad_window bt
+JOIN ad_window_trl trl ON bt.ad_window_id = trl.ad_window_id
+WHERE bt.isactive = 'Y']]></view>
   </database>

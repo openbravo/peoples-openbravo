@@ -27,6 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.User;
 
 /**
  * The main purpose of the user context cache is to support session-less http requests without a
@@ -103,9 +105,19 @@ public class UserContextCache implements OBSingleton {
   class CacheEntry {
     private OBContext obContext;
     private long lastUsed;
+    private long lastUpdated;
     private String userId;
 
     public boolean hasExpired() {
+      try {
+        OBContext.enableAsAdminContext();
+        final User user = OBDal.getInstance().get(User.class, userId);
+        if (user == null || user.getUpdated().getTime() > lastUpdated) {
+          return true;
+        }
+      } finally {
+        OBContext.resetAsAdminContext();
+      }
       return getLastUsed() < (System.currentTimeMillis() - EXPIRES_IN);
     }
 
@@ -115,6 +127,7 @@ public class UserContextCache implements OBSingleton {
 
     public void setObContext(OBContext obContext) {
       this.obContext = obContext;
+      lastUpdated = obContext.getUser().getUpdated().getTime();
     }
 
     public long getLastUsed() {

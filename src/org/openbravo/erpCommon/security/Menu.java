@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.model.Entity;
@@ -46,6 +47,7 @@ public class Menu extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static String[] hideMenuValues = { "", "true", "false" };
   private static ValueListFilter menuFilter = new ValueListFilter(Menu.hideMenuValues);
+
   private static String DEFAULT_MENU_WIDTH = "25"; // Percentage of the page width used by the menu
 
   /** Creates a new instance of Menu */
@@ -119,14 +121,30 @@ public class Menu extends HttpSecureAppServlet {
     final String[] allowedCommands = { "", "DEFAULT", "NEW", "EDIT", "GRID" };
     final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
     final String command = vars.getStringParameter("Command", listFilter);
+    final String url = vars.getStringParameter("url");
     String targetmenu = vars.getSessionValue("targetmenu");
     String qString = queryString;
 
-    if (command == null || command.equals("")) {
+    if (qString != null && qString.contains("url") && url != null && !url.equals("")) {
+      if (!url.startsWith("/")) {
+        log4j
+            .error("Invalid deep-link URL: URL parameter is relative to application context, must start with slash");
+        return "";
+      }
+      // Removing "url=" from query string
+      targetmenu = HttpBaseServlet.strDireccion + qString.substring(4);
+
+      // Replacing first ampersand (&) with a question mark (?) to get a valid URL
+      targetmenu = targetmenu.replaceFirst("&", "?");
+
       return targetmenu;
     }
 
-    try { // Trying to deep-link
+    if (command == null || command.equals("")) {
+      return "";
+    }
+
+    try { // Trying to deep-link using tabId
 
       OBContext.enableAsAdminContext();
 
@@ -140,6 +158,11 @@ public class Menu extends HttpSecureAppServlet {
       }
 
       final Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+
+      if (tab == null) {
+        log4j.error("Invalid deep-link URL: tab " + tabId + " doesn't exist");
+        return "";
+      }
 
       if (!windowId.equals("")) {
         final Window window = OBDal.getInstance().get(Window.class, windowId);

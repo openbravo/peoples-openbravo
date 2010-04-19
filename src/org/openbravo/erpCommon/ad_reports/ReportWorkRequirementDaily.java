@@ -26,6 +26,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -87,9 +90,6 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
         "#AccessibleOrgTree", "ReportWorkRequirementDaily"), strStartDateFrom, strStartDateTo,
         strmaProcessPlan);
     for (int i = 0; i < data.length; i++) {
-      ReportWorkRequirementDailyData[] product = ReportWorkRequirementDailyData.producedproduct(
-          this, data[i].wrpid);
-      data[i].prodproduct = product[0].name;
       String strqty = ReportWorkRequirementDailyData.inprocess(this, data[i].wrid,
           data[i].productid);
       data[i].inprocess = strqty;
@@ -98,9 +98,22 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
       }
     }
 
+    String strLanguage = vars.getLanguage();
+    String strBaseDesign = getBaseDesignPath(strLanguage);
+    JasperReport jasperReportProducts;
+    try {
+      jasperReportProducts = Utility.getTranslatedJasperReport(this, strBaseDesign
+          + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily.jrxml", vars
+          .getLanguage(), strBaseDesign);
+    } catch (JRException e) {
+      log4j.error("Could not load/compile jrxml-file", e);
+      throw new ServletException(e);
+    }
+
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEdit.jrxml";
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("PRODUCTS", jasperReportProducts);
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
 
   }

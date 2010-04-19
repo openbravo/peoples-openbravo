@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,6 +62,7 @@ public class WADValidator {
     validateModelObjectMapping(result);
     validateColumnNaming(result);
     validateAuxiliarInput(result);
+    validateReferences(result);
     return result;
   }
 
@@ -83,14 +84,22 @@ public class WADValidator {
   }
 
   /**
-   * Validates tables have a primary key column
+   * Validates tables have one and only one primary key column
    */
   private void validateKey(WADValidationResult result) {
     try {
+      // Check tables without key
       WADValidatorData data[] = WADValidatorData.checkKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
         result.addError(WADValidationType.MISSING_KEY, "Table " + issue.objectname
             + " has not primary key.");
+        result.addModule(issue.modulename);
+      }
+
+      data = WADValidatorData.checkMultipleKey(conn, modules, checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.MULTIPLE_KEYS, "Table " + issue.objectname
+            + " has more than one key column.");
         result.addModule(issue.modulename);
       }
     } catch (Exception e) {
@@ -165,7 +174,28 @@ public class WADValidator {
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
-          "Error when executing query for validating moel object: " + e.getMessage());
+          "Error when executing query for validating model object: " + e.getMessage());
     }
   }
+
+  /**
+   * Validates base references don't have parent reference
+   */
+  private void validateReferences(WADValidationResult result) {
+    try {
+      WADValidatorData data[] = WADValidatorData.checkBaseReferenceWithParent(conn, modules,
+          checkAll);
+      for (WADValidatorData issue : data) {
+        result.addError(WADValidationType.BASEREFERENCE_WITH_PARENT, issue.objectname
+            + " base reference has parent reference " + issue.currentvalue
+            + ". Base references should not have parent reference.");
+        result.addModule(issue.modulename);
+      }
+    } catch (Exception e) {
+      result.addWarning(WADValidationType.SQL,
+          "Error when executing query for validating references: " + e.getMessage());
+    }
+
+  }
+
 }

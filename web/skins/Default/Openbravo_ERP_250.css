@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1001,7 +1001,7 @@ a.ButtonLink_TwoLines_focus table.Button_TwoLines .Button_TwoLines_right, table.
 div.calendar { 
   position: relative; 
   border: 1px solid #a2a2a2;
-  z-index: 30;
+  z-index: 300001;
 }
 
 .calendar {
@@ -5353,6 +5353,7 @@ table.Login_ToolBar_bg {
 }
 
 .AddModule_Button_Install {
+  position: relative;
   float: right;
   padding: 2 0 0 0;
 }
@@ -5399,6 +5400,21 @@ table.Login_ToolBar_bg {
   font-weight: normal;
   font-family: tahoma,arial,helvetica,sans-serif;
   padding: 2 0 2 43;
+}
+
+.AddModule_Commercial {
+  width: 65px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-image: url(Main/_ParticularItems/AddModule/iconCommercial.gif);
+  color: #404040;
+  font-size: 7pt;
+  font-weight: normal;
+  font-family: tahoma,arial,helvetica,sans-serif;
+  margin-left: 25px;
+  _margin-left: 50px;
+  padding: 10 0 2 25;
 }
 
 .AddModule_Text_Help {

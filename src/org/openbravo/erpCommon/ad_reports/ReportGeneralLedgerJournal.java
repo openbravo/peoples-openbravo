@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -159,10 +160,34 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       // "ReportGeneralLedgerJournal|Table");
       String strTable = vars.getStringParameter("inpTable");
       String strRecord = vars.getStringParameter("inpRecord");
+      /*
+       * Scenario 1: We will have FactAcctGroupId while the request redirect from
+       * ReportGeneralLedger Report. Otherwise we don't need to use FactAcctGroupId for PDF or Excel
+       * report. So we have to check the immediate history command has DIRECT2 (It means previous
+       * request from ReportGeneralLedger Report) Scenario 2: If we print once in PDF, it will reset
+       * the history of COMMAND with DEFAULT, so same record of redirect wont print more than one
+       * time. It will consider as default in second time.Scenario 3: If user change the filter
+       * criteria, however he has come from ReportGeneralLedger Report(DIRECT2) We don't take
+       * strFactAcctGroupId(will take care of criteria from current screen)
+       */
+      String strFactAcctGroupId = "";
+      if (strcAcctSchemaId.equals("") && strDateFrom.equals("") && strDocument.equals("")
+          && strOrg.equals("0") && strShowClosing.equals("") && strShowReg.equals("")
+          && strShowOpening.equals("") && strRecord.equals("")) {
+
+        int currentHistoryIndex = new Integer(new VariablesHistory(request)
+            .getCurrentHistoryIndex()).intValue();
+        String currentCommand = vars.getSessionValue("reqHistory.command" + currentHistoryIndex);
+        if (currentCommand.equals("DIRECT2")) {
+          strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
+              "ReportGeneralLedgerJournal|FactAcctGroupId");
+        }
+      }
       // vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       setHistoryCommand(request, "DEFAULT");
       printPagePDF(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
-          strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
+          strRecord, strFactAcctGroupId, strcAcctSchemaId, strShowClosing, strShowReg,
+          strShowOpening);
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
       String strPreviousRecordRange = vars.getSessionValue(PREVIOUS_RANGE);
@@ -448,8 +473,12 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
+    if (!strFactAcctGroupId.equals("")) {
+      data = ReportGeneralLedgerJournalData.selectDirect2(this, Utility.getContext(this, vars,
+          "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportGeneralLedger"), strFactAcctGroupId);
 
-    if (strRecord.equals("")) {
+    } else if (strRecord.equals("")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
       data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars,
           "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,

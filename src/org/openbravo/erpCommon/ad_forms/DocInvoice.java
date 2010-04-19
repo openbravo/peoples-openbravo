@@ -33,6 +33,7 @@ public class DocInvoice extends AcctServer {
   static Logger log4jDocInvoice = Logger.getLogger(DocInvoice.class);
 
   DocTax[] m_taxes = null;
+  DocLine_FinPaymentSchedule[] m_payments = null;
   String SeqNo = "0";
 
   /**
@@ -45,9 +46,9 @@ public class DocInvoice extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocInvoiceData.selectRegistro(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocInvoiceData.selectRegistro(conn, stradClientId, Id));
   }
 
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -69,6 +70,7 @@ public class DocInvoice extends AcctServer {
     // Contained Objects
     p_lines = loadLines();
     m_taxes = loadTaxes();
+    m_payments = loadPayments();
     m_debt_payments = loadDebtPayments();
     return true;
 
@@ -92,11 +94,11 @@ public class DocInvoice extends AcctServer {
       String Line_ID = data[i].cInvoicelineId;
       DocLine_Invoice docLine = new DocLine_Invoice(DocumentType, Record_ID, Line_ID);
       docLine.loadAttributes(data[i], this);
-      String Qty = data[i].qtyinvoiced;
-      docLine.setQty(Qty);
+      String strQty = data[i].qtyinvoiced;
+      docLine.setQty(strQty);
       String LineNetAmt = data[i].linenetamt;
       String PriceList = data[i].pricelist;
-      docLine.setAmount(LineNetAmt, PriceList, Qty);
+      docLine.setAmount(LineNetAmt, PriceList, strQty);
 
       list.add(docLine);
     }
@@ -105,58 +107,6 @@ public class DocInvoice extends AcctServer {
     list.toArray(dl);
     return dl;
   } // loadLines
-
-  /**
-   * @return the log4jDocInvoice
-   */
-  public static Logger getLog4jDocInvoice() {
-    return log4jDocInvoice;
-  }
-
-  /**
-   * @param log4jDocInvoice
-   *          the log4jDocInvoice to set
-   */
-  public static void setLog4jDocInvoice(Logger log4jDocInvoice) {
-    DocInvoice.log4jDocInvoice = log4jDocInvoice;
-  }
-
-  /**
-   * @return the m_taxes
-   */
-  public DocTax[] getM_taxes() {
-    return m_taxes;
-  }
-
-  /**
-   * @param m_taxes
-   *          the m_taxes to set
-   */
-  public void setM_taxes(DocTax[] m_taxes) {
-    this.m_taxes = m_taxes;
-  }
-
-  /**
-   * @return the seqNo
-   */
-  public String getSeqNo() {
-    return SeqNo;
-  }
-
-  /**
-   * @param seqNo
-   *          the seqNo to set
-   */
-  public void setSeqNo(String seqNo) {
-    SeqNo = seqNo;
-  }
-
-  /**
-   * @return the serialVersionUID
-   */
-  public static long getSerialVersionUID() {
-    return serialVersionUID;
-  }
 
   private DocTax[] loadTaxes() {
     ArrayList<Object> list = new ArrayList<Object>();
@@ -179,8 +129,8 @@ public class DocInvoice extends AcctServer {
           || ("Y".equals(data[i].orgtaxundeductable));
       if ("Y".equals(data[i].orgtaxundeductable)) {
         /*
-         * override isTaxUndeductable flag if any tax line level override for intracommunity public
-         * organization
+         * If any tax line level has tax deductable flag then override isTaxUndeductable flag for
+         * intracommunity non tax deductible organization
          */
         if ("Y".equals(data[i].istaxdeductable)) {
           isTaxUndeductable = false;
@@ -232,7 +182,37 @@ public class DocInvoice extends AcctServer {
     DocLine_Payment[] tl = new DocLine_Payment[list.size()];
     list.toArray(tl);
     return tl;
-  } // loadTaxes
+  } // loadDebtPayments
+
+  private DocLine_FinPaymentSchedule[] loadPayments() {
+    ArrayList<Object> list = new ArrayList<Object>();
+    DocInvoiceData[] data = null;
+    try {
+      data = DocInvoiceData.selectPayments(connectionProvider, Record_ID);
+      log4jDocInvoice.debug("############### DebtPayments.length = " + data.length);
+      for (int i = 0; i < data.length; i++) {
+        //
+        String Line_ID = data[i].finPaymentScheduleId;
+        DocLine_FinPaymentSchedule dpLine = new DocLine_FinPaymentSchedule(DocumentType, Record_ID,
+            Line_ID);
+        log4jDocInvoice.debug(" dpLine.m_Record_Id2 = " + data[i].finPaymentScheduleId);
+        dpLine.m_Record_Id2 = data[i].finPaymentScheduleId;
+        dpLine.C_Currency_ID_From = data[i].cCurrencyId;
+        dpLine.isPaid = data[i].ispaid;
+        dpLine.Amount = data[i].amount;
+        dpLine.PrepaidAmount = data[i].prepaidamt;
+
+        list.add(dpLine);
+      }
+    } catch (ServletException e) {
+      log4jDocInvoice.warn(e);
+    }
+
+    // Return Array
+    DocLine_FinPaymentSchedule[] tl = new DocLine_FinPaymentSchedule[list.size()];
+    list.toArray(tl);
+    return tl;
+  } // loadPayments
 
   /**
    * Create Facts (the accounting logic) for ARI, ARC, ARF, API, APC.
@@ -295,18 +275,32 @@ public class DocInvoice extends AcctServer {
         || DocumentType.equals(AcctServer.DOCTYPE_ARProForma)) {
       log4jDocInvoice.debug("Point 1");
       // Receivables DR
-      for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
-        if (m_debt_payments[i].isReceipt.equals("Y"))
-          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
-              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(
-              m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-              DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-        else
-          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
-              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(
-              m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-              DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      }
+      if (m_payments == null || m_payments.length == 0)
+        for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
+          if (m_debt_payments[i].isReceipt.equals("Y"))
+            fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
+                m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(
+                m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
+                this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+          else
+            fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
+                m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(
+                m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
+                this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+        }
+      else
+        for (int i = 0; m_payments != null && i < m_payments.length; i++) {
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
+              this.C_Currency_ID, getConvertedAmt(m_payments[i].Amount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+              this.C_Currency_ID, getConvertedAmt(m_payments[i].PrepaidAmount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        }
       // Charge CR
       log4jDocInvoice.debug("The first create line");
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), C_Currency_ID, "",
@@ -342,20 +336,27 @@ public class DocInvoice extends AcctServer {
     else if (this.DocumentType.equals(AcctServer.DOCTYPE_ARCredit)) {
       log4jDocInvoice.debug("Point 2");
       // Receivables CR
-      for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
-        BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
-        BigDecimal ZERO = BigDecimal.ZERO;
-        fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
-            m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
-            .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-            DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      }
-
-      // fact.createLine(null,
-      // getAccount(AcctServer.ACCTTYPE_C_Receivable, as,
-      // conn),this.C_Currency_ID, "",
-      // getAmount(AcctServer.AMTTYPE_Gross), Fact_Acct_Group_ID,
-      // nextSeqNo(SeqNo), DocumentType,conn);
+      if (m_payments == null || m_payments.length == 0)
+        for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
+          BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
+          // BigDecimal ZERO = BigDecimal.ZERO;
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        }
+      else
+        for (int i = 0; m_payments != null && i < m_payments.length; i++) {
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
+              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].Amount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].PrepaidAmount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        }
       // Charge DR
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), this.C_Currency_ID,
           getAmount(AcctServer.AMTTYPE_Charge), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -387,23 +388,32 @@ public class DocInvoice extends AcctServer {
     else if (this.DocumentType.equals(AcctServer.DOCTYPE_APInvoice)) {
       log4jDocInvoice.debug("Point 3");
       // Liability CR
-      for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
-        if (m_debt_payments[i].isReceipt.equals("Y"))
-          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
-              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(
-              m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-              DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-        else
-          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
-              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(
-              m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-              DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      }
-
-      // fact.createLine(null, getAccount(AcctServer.ACCTTYPE_V_Liability,
-      // as, conn),this.C_Currency_ID, "",
-      // getAmount(AcctServer.AMTTYPE_Gross), Fact_Acct_Group_ID,
-      // nextSeqNo(SeqNo), DocumentType,conn);
+      if (m_payments == null || m_payments.length == 0)
+        for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
+          if (m_debt_payments[i].isReceipt.equals("Y"))
+            fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
+                m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(
+                m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
+                this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+          else
+            fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
+                m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(
+                m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
+                this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+        }
+      else
+        for (int i = 0; m_payments != null && i < m_payments.length; i++) {
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].Amount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].PrepaidAmount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        }
       // Charge DR
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), this.C_Currency_ID,
           getAmount(AcctServer.AMTTYPE_Charge), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -450,19 +460,27 @@ public class DocInvoice extends AcctServer {
     else if (this.DocumentType.equals(AcctServer.DOCTYPE_APCredit)) {
       log4jDocInvoice.debug("Point 4");
       // Liability DR
-      for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
-        BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
-        BigDecimal ZERO = BigDecimal.ZERO;
-        fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
-            m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
-            .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,
-            DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      }
-
-      // fact.createLine (null,
-      // getAccount(AcctServer.ACCTTYPE_V_Liability, as,
-      // conn),this.C_Currency_ID,"", getAmount(AcctServer.AMTTYPE_Gross),
-      // Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
+      if (m_payments == null || m_payments.length == 0)
+        for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
+          BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
+          // BigDecimal ZERO = BigDecimal.ZERO;
+          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
+              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
+              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
+              this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        }
+      else
+        for (int i = 0; m_payments != null && i < m_payments.length; i++) {
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+              this.C_Currency_ID, getConvertedAmt(m_payments[i].Amount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+              this.C_Currency_ID, getConvertedAmt(m_payments[i].PrepaidAmount,
+                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        }
       // Charge CR
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), this.C_Currency_ID,
           "", getAmount(AcctServer.AMTTYPE_Charge), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -542,7 +560,7 @@ public class DocInvoice extends AcctServer {
    * @return positive amount, if total invoice is bigger than lines
    */
   public BigDecimal getBalance() {
-    BigDecimal ZERO = new BigDecimal("0");
+    // BigDecimal ZERO = new BigDecimal("0");
     BigDecimal retValue = ZERO;
     StringBuffer sb = new StringBuffer(" [");
     // Total
@@ -621,6 +639,58 @@ public class DocInvoice extends AcctServer {
     }
     return acct;
   } // getAccount
+
+  /**
+   * @return the log4jDocInvoice
+   */
+  public static Logger getLog4jDocInvoice() {
+    return log4jDocInvoice;
+  }
+
+  /**
+   * @param log4jDocInvoice
+   *          the log4jDocInvoice to set
+   */
+  public static void setLog4jDocInvoice(Logger log4jDocInvoice) {
+    DocInvoice.log4jDocInvoice = log4jDocInvoice;
+  }
+
+  /**
+   * @return the m_taxes
+   */
+  public DocTax[] getM_taxes() {
+    return m_taxes;
+  }
+
+  /**
+   * @param m_taxes
+   *          the m_taxes to set
+   */
+  public void setM_taxes(DocTax[] m_taxes) {
+    this.m_taxes = m_taxes;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
 
   /**
    * Get Document Confirmation

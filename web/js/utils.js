@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6810';
+  var number = '7012';
   return number;
 }
 

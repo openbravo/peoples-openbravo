@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -205,11 +205,21 @@ public class SessionHandler implements OBNotSingleton {
    * work.
    */
   public void commitAndClose() {
+    boolean err = true;
     try {
       checkInvariant();
       tx.commit();
       tx = null;
+      err = false;
     } finally {
+      if (err) {
+        try {
+          tx.rollback();
+          tx = null;
+        } catch (Throwable t) {
+          // ignore these exception not to hide others
+        }
+      }
       deleteSessionHandler();
       closeSession();
     }
@@ -255,7 +265,7 @@ public class SessionHandler implements OBNotSingleton {
   private void checkInvariant() {
     Check.isNotNull(getSession(), "Session is null");
     Check.isNotNull(tx, "Tx is null");
-    Check.isTrue(tx.isActive(), "Tx is active");
+    Check.isTrue(tx.isActive(), "Tx is not active");
   }
 
   /**

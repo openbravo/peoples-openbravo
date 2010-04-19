@@ -70,6 +70,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class ModuleManagement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  public static final String UPDATE_ALL_RECORD_ID = "FFF";
 
   /**
    * Main method that controls the sent command
@@ -469,7 +470,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (url == null || url.equals("")) {
       xmlDocument.setParameter("urlDisplay", "none");
     } else {
-      xmlDocument.setParameter("urlLink", url);
+      xmlDocument.setParameter("urlLink", getLink(url));
       xmlDocument.setParameter("url", url);
     }
     xmlDocument.setParameter("license", module.getLicenseType());
@@ -486,6 +487,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String getLink(String url) {
+    if (url == null || url.isEmpty()) {
+      return "";
+    }
+    String link = url;
+    if (!url.matches("^[a-z]+://.+")) {
+      // url without protocol: infer http
+      link = "http://" + url;
+    }
+    return link;
   }
 
   private static FieldProvider[] formatDeps4Display(ModuleDependency[] deps,
@@ -598,7 +611,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
       String command = "DEFAULT";
 
       if (updateModules != null && updateModules.length > 0 && !updateModules[0].equals("")) {
-        inpcRecordId = "FFF";
+        if (updateModules.length == 1) {
+          // User clicked "Install Now" from the module description
+          inpcRecordId = updateModules[0];
+        } else {
+          inpcRecordId = UPDATE_ALL_RECORD_ID;
+        }
         command = "UPDATE";
       }
 
@@ -845,6 +863,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     String notSubscribed = "";
     String expired = "";
     String notActiveYet = "";
+    String converted = "";
 
     boolean showNotActivatedError = false;
 
@@ -899,20 +918,26 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       for (Module instMod : im.getModulesToInstall()) {
         if (instMod.getIsCommercial()) {
-          if (!OBPSActiveInstance
-              || ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+          CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(instMod.getModuleID());
+          if (!OBPSActiveInstance || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
             notAllowedMods.add(instMod);
             if (notSubscribed.length() > 0) {
               notSubscribed += ", ";
             }
             notSubscribed += instMod.getName();
-          } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
+          } else if (moduleStatus == CommercialModuleStatus.CONVERTED_SUBSCRIPTION) {
+            notAllowedMods.add(instMod);
+            if (converted.length() > 0) {
+              converted += ", ";
+            }
+            converted += instMod.getName();
+          } else if (moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(instMod);
             if (expired.length() > 0) {
               expired += ", ";
             }
             expired += instMod.getName();
-          } else if (ak.isModuleSubscribed(instMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
+          } else if (moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
             notAllowedMods.add(instMod);
             if (notActiveYet.length() > 0) {
               notActiveYet += ", ";
@@ -924,21 +949,26 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       for (Module updMod : im.getModulesToUpdate()) {
         if (updMod.getIsCommercial()) {
-          if (!OBPSActiveInstance
-              || ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+          CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(updMod.getModuleID());
+          if (!OBPSActiveInstance || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
             notAllowedMods.add(updMod);
             if (notSubscribed.length() > 0) {
               notSubscribed += ", ";
             }
             notSubscribed += updMod.getName();
-
-          } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.EXPIRED) {
+          } else if (moduleStatus == CommercialModuleStatus.CONVERTED_SUBSCRIPTION) {
+            notAllowedMods.add(updMod);
+            if (converted.length() > 0) {
+              converted += ", ";
+            }
+            converted += updMod.getName();
+          } else if (moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(updMod);
             if (expired.length() > 0) {
               expired += ", ";
             }
             expired += updMod.getName();
-          } else if (ak.isModuleSubscribed(updMod.getModuleID()) == CommercialModuleStatus.NO_ACTIVE_YET) {
+          } else if (moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
             notAllowedMods.add(updMod);
             if (notActiveYet.length() > 0) {
               notActiveYet += ", ";
@@ -949,13 +979,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
     }
 
-    if (notSubscribed.length() > 0 || expired.length() > 0 || notActiveYet.length() > 0) {
-      String discard[] = { "", "", "", "" };
+    if (notSubscribed.length() > 0 || expired.length() > 0 || notActiveYet.length() > 0
+        || converted.length() > 0) {
+      String discard[] = { "", "", "", "", "" };
 
       if (!OBPSActiveInstance) {
         discard[0] = "OBPSInstance-NotActive";
         discard[1] = "OBPSInstance-Expired";
         discard[2] = "OBPSInstance-NoActiveYet";
+        discard[3] = "OBPSInstance-Converted";
       } else {
         discard[0] = "CEInstance";
         if (notSubscribed.length() == 0) {
@@ -966,6 +998,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
         if (notActiveYet.length() == 0) {
           discard[3] = "OBPSInstance-NoActiveYet";
+        }
+        if (converted.length() == 0) {
+          discard[4] = "OBPSInstance-Converted";
         }
       }
 
@@ -987,6 +1022,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("modules", notSubscribed);
       xmlDocument.setParameter("expired", expired);
+      xmlDocument.setParameter("converted", converted);
       xmlDocument.setParameter("noActiveYet", notActiveYet);
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
@@ -1181,24 +1217,39 @@ public class ModuleManagement extends HttpSecureAppServlet {
         log4j.error(ex);
       }
     }
-    if (modules != null && modules.length > 0) {
 
-      for (int i = 0; i < modules.length; i++) {
-        String icon = modules[i].getType();
+    FieldProvider[] modulesBox = new FieldProvider[0];
+    if (modules != null && modules.length > 0) {
+      modulesBox = new FieldProvider[modules.length];
+      int i = 0;
+      for (SimpleModule mod : modules) {
+        HashMap<String, String> moduleBox = new HashMap<String, String>();
+
+        // set different icon depending on module type
+        String icon = mod.getType();
         icon = (icon == null ? "M" : icon).equals("M") ? "Module" : icon.equals("T") ? "Template"
             : "Pack";
-        modules[i].setType(icon);
 
         // If there is no url, we need to hide the 'Visit Site' link and separator.
-        String url = modules[i].getUrl();
-        modules[i].setUrl(url == null || url.equals("") ? "HIDDEN" : url);
+        String url = mod.getUrl();
+        url = (url == null || url.equals("") ? "HIDDEN" : url);
+
+        moduleBox.put("name", mod.getName());
+        moduleBox.put("description", mod.getDescription());
+        moduleBox.put("type", icon);
+        moduleBox.put("help", mod.getHelp());
+        moduleBox.put("url", getLink(url));
+        moduleBox.put("moduleVersionID", mod.getModuleVersionID());
+        moduleBox.put("commercialStyle", (mod.getIsCommercial() ? "true" : "none"));
+
+        modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
+        i++;
       }
     }
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/modules/ModuleBox").createXmlDocument();
 
-    FieldProvider[] fieldProviders = FieldProviderFactory.getFieldProviderArray(modules);
-    xmlDocument.setData("structureBox", fieldProviders);
+    xmlDocument.setData("structureBox", modulesBox);
     return xmlDocument.print();
   }
 

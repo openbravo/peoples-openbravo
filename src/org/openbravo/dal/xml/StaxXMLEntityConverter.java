@@ -37,6 +37,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -259,8 +260,7 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
           // element value, note that getElementText means that it is not required anymore
           // to go to element end, that is done by the xmlReader
           final String elementText = xmlReader.getElementText();
-          Object newValue = XMLTypeConverter.getInstance().fromXML(p.getPrimitiveType(),
-              elementText);
+          Object newValue = ((PrimitiveDomainType) p.getDomainType()).createFromString(elementText);
 
           // correct the value
           newValue = replaceValue(bob, p, newValue);

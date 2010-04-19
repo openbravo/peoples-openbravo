@@ -32,6 +32,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
@@ -210,8 +211,9 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
 
         // do the primitive values
         if (p.isPrimitive()) {
-          Object newValue = XMLTypeConverter.getInstance().fromXML(p.getPrimitiveType(),
-              childElement.getText());
+          Object newValue = ((PrimitiveDomainType) p.getDomainType()).createFromString(childElement
+              .getText());
+
           // correct the value
           newValue = replaceValue(bob, p, newValue);
 

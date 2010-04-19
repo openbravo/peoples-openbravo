@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -268,9 +268,7 @@ public class WADControl {
   public String toString() {
     StringBuffer text = new StringBuffer();
     if (getData("IsDisplayed").equals("N")) {
-      WADControl aux = new WADHidden(getData("ColumnName"), getData("ColumnNameInp"), "data", false);
-      aux.setReportEngine(getReportEngine());
-      text.append(aux.toString());
+      text.append(getHiddenHTML());
     } else {
       text.append("<div id=\"editDiscard\">");
       text.append(editMode()).append("");
@@ -380,17 +378,17 @@ public class WADControl {
         && TableRelationData.existsTableColumn(conn, field.tablename + "_TRL", field.name)) {
       FieldsData fdi[] = FieldsData.tableKeyColumnName(conn, field.tablename);
       if (fdi == null || fdi.length == 0) {
-        vecFields.addElement(WadUtility
-            .applyFormat(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-                + field.name, field.reference, sqlDateFormat));
-        texto.append(WadUtility
-            .applyFormat(((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
-                + field.name, field.reference, sqlDateFormat));
+        vecFields.addElement(WadUtility.applyFormat(
+            ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
+            field.reference, sqlDateFormat));
+        texto.append(WadUtility.applyFormat(
+            ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
+            field.reference, sqlDateFormat));
       } else {
         vecTable.addElement("left join (select " + fdi[0].name + ",AD_Language"
             + (!fdi[0].name.equalsIgnoreCase(field.name) ? (", " + field.name) : "") + " from "
-            + field.tablename + "_TRL) tableTRL" + itable + " on (" + tableName + "."
-            + fdi[0].name + " = tableTRL" + itable + "." + fdi[0].name + " and tableTRL" + itable
+            + field.tablename + "_TRL) tableTRL" + itable + " on (" + tableName + "." + fdi[0].name
+            + " = tableTRL" + itable + "." + fdi[0].name + " and tableTRL" + itable
             + ".AD_Language = ?) ");
         vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
         vecFields.addElement(WadUtility.applyFormat("(CASE WHEN tableTRL" + itable + "."
@@ -556,5 +554,29 @@ public class WADControl {
 
   public void setSubreference(String subreference) {
     this.subreference = subreference;
+  }
+
+  /**
+   * Returns HTML needed for hidden fields
+   */
+  public String getHiddenHTML() {
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADHidden").createXmlDocument();
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+
+    return replaceHTML(xmlDocument.print());
+  }
+
+  /**
+   * Returns XML needed for hidden fields
+   */
+  public String getHiddenXML() {
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADHiddenXML").createXmlDocument();
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    return replaceHTML(xmlDocument.print());
   }
 }

@@ -20,15 +20,23 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+  v_client_id c_bpartner.ad_client_id%TYPE;
+  v_org_id c_bpartner.ad_org_id%TYPE;
 BEGIN
-  UPDATE C_BPARTNER
-    SET SO_CreditUsed=
-    (SELECT  COALESCE(SUM(C_Base_Convert((Amount - WriteOffAmt), C_Currency_ID, AD_Client_ID, DocDate, AD_Org_ID)), 0) AS TOTAL
-    FROM C_DEBT_PAYMENT_V
-    WHERE C_BPartner_ID=p_BPartner_ID
-      AND C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, Cancel_Processed, Generate_Processed, IsPaid, IsValid, C_CashLine_ID, C_BankStatementLine_ID)='P'
-    )
-  WHERE C_BPartner_ID=p_BPartner_ID;
+  SELECT ad_client_id, ad_org_id
+    INTO v_client_id, v_org_id
+  FROM c_bpartner
+  WHERE c_bpartner_id = p_bpartner_id;
+  IF (AD_GET_PROPERTY_VALUE('CCU', v_client_id, v_org_id) IS NULL) THEN
+    UPDATE C_BPARTNER
+      SET SO_CreditUsed=
+      (SELECT  COALESCE(SUM(C_Base_Convert((Amount - WriteOffAmt), C_Currency_ID, AD_Client_ID, DocDate, AD_Org_ID)), 0) AS TOTAL
+      FROM C_DEBT_PAYMENT_V
+      WHERE C_BPartner_ID=p_BPartner_ID
+        AND C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, Cancel_Processed, Generate_Processed, IsPaid, IsValid, C_CashLine_ID, C_BankStatementLine_ID)='P'
+      )
+    WHERE C_BPartner_ID=p_BPartner_ID;
+  END IF;
 END C_BP_SOCREDITUSED_REFRESH
 ]]></body>
     </function>
