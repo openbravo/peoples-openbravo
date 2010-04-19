@@ -2516,14 +2516,22 @@ public class Utility {
    * @return String containing the value of the property in case that exists a module implementing
    *         the property. If the value is null returns '-'. Returns null if there isn't any module
    *         implementing the property.
+   * @throws PropertyException
+   *           Throws a PropertyException when the StoredProcedure throws an exception, for example
+   *           on conflicting property values.
    */
-  public static String getPropertyValue(String strProperty, String strClientId, String strOrgId) {
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(strProperty);
-    parameters.add(strClientId);
-    parameters.add(strOrgId);
-    return (String) CallStoredProcedure.getInstance().call("AD_GET_PROPERTY_VALUE", parameters,
-        null);
+  public static String getPropertyValue(String strProperty, String strClientId, String strOrgId)
+      throws PropertyException {
+    try {
+      final List<Object> parameters = new ArrayList<Object>();
+      parameters.add(strProperty);
+      parameters.add(strClientId);
+      parameters.add(strOrgId);
+      return (String) CallStoredProcedure.getInstance().call("AD_GET_PROPERTY_VALUE", parameters,
+          null);
+    } catch (Exception e) {
+      log4j.error(e.getMessage(), e);
+      throw new PropertyException(strProperty + " @PropertyConflict@");
+    }
   }
-
 }
