@@ -1266,18 +1266,20 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     createDocTypeTemplate(vars, arcDoctypeId, "AR Credit Memo Report template",
         "@basedesign@/org/openbravo/erpReports", "Sales Invoice-@our_ref@", "RptC_Invoice.jrxml");
 
-    createDocType(vars, "AR Receipt", "Receipt", "ARR", "", "0", "0", "400000", GL_ARR, "");
+    createDocType(vars, "AR Receipt", "Receipt", "ARR", "", "0", "0", "400000", GL_ARR,
+        "D1A97202E832470285C9B1EB026D54E2");
     String DT_S = createDocType(vars, "MM Shipment", "Delivery Note", "MMS", "", "0", "0",
         "500000", GL_MM, "319");
     createDocTypeTemplate(vars, DT_S, "MM Shipment Report template",
-    		            "@basedesign@/org/openbravo/erpReports", "Goods Shipment-@our_ref@", "RptM_InOut.jrxml");
+        "@basedesign@/org/openbravo/erpReports", "Goods Shipment-@our_ref@", "RptM_InOut.jrxml");
     String DT_SI = createDocType(vars, "MM Shipment Indirect", "Delivery Note", "MMS", "", "0",
         "0", "600000", GL_MM, "319");
     createDocTypeTemplate(vars, DT_SI, "MM Shipment Indirect Report template",
-    		            "@basedesign@/org/openbravo/erpReports", "Goods Shipment-@our_ref@", "RptM_InOut.jrxml");
-    String mmReceipt=createDocType(vars, "MM Receipt", "Vendor Delivery", "MMR", "", "0", "0", "0", GL_MM, "319");
+        "@basedesign@/org/openbravo/erpReports", "Goods Shipment-@our_ref@", "RptM_InOut.jrxml");
+    String mmReceipt = createDocType(vars, "MM Receipt", "Vendor Delivery", "MMR", "", "0", "0",
+        "0", GL_MM, "319");
     createDocTypeTemplate(vars, mmReceipt, "MM Receipt Report template",
-    		            "@basedesign@/org/openbravo/erpReports", "Goods Receipt-@our_ref@", "RptM_InOut.jrxml");
+        "@basedesign@/org/openbravo/erpReports", "Goods Receipt-@our_ref@", "RptM_InOut.jrxml");
     String apiDoctypeId = createDocType(vars, "AP Invoice", "Vendor Invoice", "API", "", "0", "0",
         "0", GL_API, "318");
     createDocTypeTemplate(vars, apiDoctypeId, "AP Invoice Report template",
@@ -1288,7 +1290,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     createDocTypeTemplate(vars, apcDoctypeId, "AP Credit Report template",
         "@basedesign@/org/openbravo/erpReports", "Purchase Invoice-@our_ref@", "RptC_Invoice.jrxml");
 
-    createDocType(vars, "AP Payment", "Vendor Payment", "APP", "", "0", "0", "700000", GL_APP, "");
+    createDocType(vars, "AP Payment", "Vendor Payment", "APP", "", "0", "0", "700000", GL_APP,
+        "D1A97202E832470285C9B1EB026D54E2");
 
     String pooDoctypeId = createDocType(vars, "Purchase Order", "Purchase Order", "POO", "", "0",
         "0", "800000", GL_None, "259");
