@@ -116,6 +116,7 @@ public class DocFINPayment extends AcctServer {
       docLine.loadAttributes(data[i], this);
       docLine.setAmount(data[i].getField("Amount"));
       docLine.setIsPrepayment(data[i].getField("isprepayment"));
+      docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
       list.add(docLine);
     }
     // Return Array
@@ -164,8 +165,7 @@ public class DocFINPayment extends AcctServer {
               .newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
-          log4j.error(
-              "Error while creating new instance for DocFINPaymentTemplate - ", e);
+          log4j.error("Error while creating new instance for DocFINPaymentTemplate - ", e);
         }
       }
     } finally {
