@@ -12,7 +12,7 @@ import org.openbravo.database.ConnectionProvider;
 public class CreateDoctypeTemplate extends ModuleScript{
 
 	@Override
-	//Inserting Doctype template for shipment and receipt.
+	//Inserting Doctype template for shipment and receipt.Related to the issue https://issues.openbravo.com/view.php?id=11996
 	public void execute() {
 		try {
 		      ConnectionProvider cp = getConnectionProvider();
