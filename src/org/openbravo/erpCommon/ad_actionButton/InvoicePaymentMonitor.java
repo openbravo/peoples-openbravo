@@ -84,9 +84,11 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
     OBError myError = null;
     try {
       Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
-      if (invoice.isProcessed()) {
+      // Extra check for PaymentMonitor-disabling switch, to build correct message for users
+      if (Utility.getPropertyValue("PaymentMonitor", vars.getClient(), invoice.getOrganization()
+          .getId()) == null
+          && invoice.isProcessed())
         PaymentMonitor.updateInvoice(invoice);
-      }
 
       myError = new OBError();
       myError.setType("Success");

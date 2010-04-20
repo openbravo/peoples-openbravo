@@ -21,8 +21,7 @@ public class PaymentMonitorProcess extends DalBaseProcess {
   public void doExecute(ProcessBundle bundle) throws Exception {
 
     logger = bundle.getLogger();
-    // Don't update the payment monitor information if there is an installed extension module that
-    // manages it.
+    // Extra check for PaymentMonitor-disabling switch, to build correct message for users
     try {
       if (Utility.getPropertyValue("PaymentMonitor", bundle.getContext().getClient(), bundle
           .getContext().getOrganization()) != null) {

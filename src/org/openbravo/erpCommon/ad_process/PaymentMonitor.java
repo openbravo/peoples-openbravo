@@ -28,13 +28,19 @@ public class PaymentMonitor {
 
   /**
    * Updates payment monitor information
+   * 
+   * Users of this method should check for existence of the PaymentMonitor property (disabling it)
+   * to be able to provide the user with a relevant message.
    */
-  public static void updateInvoice(Invoice invoice) throws PropertyException {
-    // Don't update the payment monitor information if there is an installed extension module that
-    // manages it.
-    if (Utility.getPropertyValue("PaymentMonitor", invoice.getClient().getId(), invoice
-        .getOrganization().getId()) != null)
+  public static void updateInvoice(Invoice invoice) {
+    // Check for PaymentMonitor-disabling switch.
+    try {
+      if (Utility.getPropertyValue("PaymentMonitor", invoice.getClient().getId(), invoice
+          .getOrganization().getId()) != null)
+        return;
+    } catch (PropertyException e) {
       return;
+    }
     final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
     try {
       List<DebtPayment> payments = invoice.getFinancialMgmtDebtPaymentList();
