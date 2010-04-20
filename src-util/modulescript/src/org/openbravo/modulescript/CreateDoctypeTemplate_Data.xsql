@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.U.
+ ******************************************************************************
+-->
+<SqlClass name="CreateDoctypeTemplateData" package="org.openbravo.modulescript">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select c_doctype_id, ad_client_id, name,(select count(*) from c_poc_doctype_template ct where ct.c_doctype_id = c_doctype.c_doctype_id) AS v_count, docBaseType 
+      from c_doctype where docbasetype in ('MMR','MMS')
+      ]]>
+    </Sql>
+  </SqlMethod>
+<SqlMethod name="insertDoctypeTemplate" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO c_poc_doctype_template(
+            c_poc_doctype_template_id, ad_client_id, ad_org_id, isactive, 
+            created, createdby, updated, updatedby, c_doctype_id, name, 
+            templatelocation, reportfilename, templatefilename)
+      VALUES (?, ?, '0', 'Y', 
+            now(), '0', now(), '0', ?, ?, 
+            ?, ?, ?)
+      ]]>
+    </Sql>
+    <Parameter name="doctypetemplateId"/>
+    <Parameter name="clientId"/>
+    <Parameter name="doctypeId"/>
+    <Parameter name="name"/>
+    <Parameter name="templatelocation"/>
+    <Parameter name="reportfilename"/>
+    <Parameter name="templatefilename"/>
+  </SqlMethod>
+  <SqlMethod name="insertEmailDefinition" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO c_poc_emaildefinition(
+            c_poc_emaildefinition_id, ad_client_id, ad_org_id, isactive, 
+            created, createdby, updated, updatedby, c_poc_doctype_template_id, 
+            subject, body, isdefault, ad_language)
+      VALUES (GET_UUID(), ?, '0', 'Y', 
+            now(), '0', now(), '0', ?, 
+            '', '', 'Y', 'en_US')
+      ]]>
+    </Sql>
+    <Parameter name="clientId"/>
+    <Parameter name="doctypetemplateId"/>
+  </SqlMethod>
+</SqlClass>
