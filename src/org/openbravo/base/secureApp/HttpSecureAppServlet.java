@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -1131,7 +1132,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-        throw new ServletException(e.getMessage(), e);
+          throw new ServletException(e.getCause() instanceof SQLException 
+              ? e.getCause().getMessage()
+              : e.getMessage()
+              , e);
       } finally {
         releaseRollbackConnection(con);
       }
