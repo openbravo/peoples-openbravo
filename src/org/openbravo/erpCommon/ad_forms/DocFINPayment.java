@@ -62,7 +62,7 @@ public class DocFINPayment extends AcctServer {
 
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DateDoc = data[0].getField("PaymentDate");
-    Amounts[0] = data[0].getField("AMOUNT");
+    Amounts[0] = data[0].getField("Amount");
     loadDocumentType();
     p_lines = loadLines();
     return true;
@@ -130,6 +130,8 @@ public class DocFINPayment extends AcctServer {
     // Select specific definition
     String strClassname = "";
     final StringBuilder whereClause = new StringBuilder();
+    Fact fact = new Fact(this, as, Fact.POST_Actual);
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
     try {
       whereClause.append(" as astdt ");
@@ -168,35 +170,33 @@ public class DocFINPayment extends AcctServer {
           log4j.error("Error while creating new instance for DocFINPaymentTemplate - ", e);
         }
       }
+
+      for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+        DocLine_FINPayment line = (DocLine_FINPayment) p_lines[i];
+
+        boolean isReceipt = DocumentType.equals("ARR");
+        boolean isPrepayment = line.getIsPrepayment().equals("Y");
+
+        String bpAmount = line.getAmount();
+        if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
+            && !line.WriteOffAmt.equals("0")) {
+          fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
+              C_Currency_ID, (isReceipt ? line.WriteOffAmt : ""), (isReceipt ? ""
+                  : line.WriteOffAmt), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          bpAmount = new BigDecimal(bpAmount).add(new BigDecimal(line.WriteOffAmt)).toString();
+        }
+        fact.createLine(line, getAccountBPartner(
+            (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
+            (isReceipt ? "" : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID,
+            nextSeqNo(SeqNo), DocumentType, conn);
+        FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);
+        fact.createLine(line, getAccount(conn, payment.getAccount(), as, isReceipt), C_Currency_ID,
+            (isReceipt ? line.getAmount() : ""), (isReceipt ? "" : line.getAmount()),
+            Fact_Acct_Group_ID, "999999", DocumentType, conn);
+      }
     } finally {
       OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
-    }
-    Fact fact = new Fact(this, as, Fact.POST_Actual);
-    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-
-    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-      DocLine_FINPayment line = (DocLine_FINPayment) p_lines[i];
-
-      boolean isReceipt = DocumentType.equals("ARR");
-      boolean isPrepayment = line.getIsPrepayment().equals("Y");
-
-      fact.createLine(line, getAccountBPartner(
-          (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-              : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
-          (isReceipt ? "" : line.getAmount()), (isReceipt ? line.getAmount() : ""),
-          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);
-      fact.createLine(line, getAccount(conn, payment.getAccount(), as, isReceipt), C_Currency_ID,
-          (isReceipt ? line.getAmount() : ""), (isReceipt ? "" : line.getAmount()),
-          Fact_Acct_Group_ID, "999999", DocumentType, conn);
-
-      if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("") && !line.WriteOffAmt.equals("0")) {
-        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-            C_Currency_ID, (isReceipt ? line.WriteOffAmt : ""),
-            (isReceipt ? "" : line.WriteOffAmt), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
-      }
-
     }
 
     SeqNo = "0";
