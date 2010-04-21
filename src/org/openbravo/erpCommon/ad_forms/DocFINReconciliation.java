@@ -75,26 +75,36 @@ public class DocFINReconciliation extends AcctServer {
     DateDoc = data[0].getField("statementDate");
     C_DocType_ID = data[0].getField("C_Doctype_ID");
     DocumentNo = data[0].getField("DocumentNo");
-    FIN_Reconciliation reconciliation = OBDal.getInstance()
-        .get(FIN_Reconciliation.class, Record_ID);
-    Amounts[0] = reconciliation.getEndingBalance().subtract(reconciliation.getStartingbalance())
-        .toString();
+    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
+          Record_ID);
+      Amounts[0] = reconciliation.getEndingBalance().subtract(reconciliation.getStartingbalance())
+          .toString();
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+    }
     loadDocumentType();
     p_lines = loadLines();
     return true;
   }
 
   public FieldProviderFactory[] loadLinesFieldProvider(String Id) {
-    FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class, Id);
-    List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
     FieldProviderFactory[] linesInfo = null;
-    for (FIN_FinaccTransaction transaction : transactions) {
-      FIN_Payment payment = transaction.getFinPayment();
-      // If payment exists the payment details are loaded, if not the GLItem info is loaded
-      if (payment != null)
-        linesInfo = add(linesInfo, loadLinesPaymentDetailsFieldProvider(transaction));
-      else if (transaction.getGLItem() != null)
-        linesInfo = add(linesInfo, loadLinesGLItemFieldProvider(transaction));
+    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class, Id);
+      List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
+      for (FIN_FinaccTransaction transaction : transactions) {
+        FIN_Payment payment = transaction.getFinPayment();
+        // If payment exists the payment details are loaded, if not the GLItem info is loaded
+        if (payment != null)
+          linesInfo = add(linesInfo, loadLinesPaymentDetailsFieldProvider(transaction));
+        else if (transaction.getGLItem() != null)
+          linesInfo = add(linesInfo, loadLinesGLItemFieldProvider(transaction));
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     }
     return linesInfo;
   }
@@ -229,23 +239,28 @@ public class DocFINReconciliation extends AcctServer {
     FieldProviderFactory[] data = loadLinesFieldProvider(Record_ID);
     if (data == null || data.length == 0)
       return null;
-    for (int i = 0; i < data.length; i++) {
-      String Line_ID = data[i].getField("FIN_Finacc_Transaction_ID");
-      DocLine_FINReconciliation docLine = new DocLine_FINReconciliation(DocumentType, Record_ID,
-          Line_ID);
-      String strPaymentId = data[i].getField("FIN_Payment_ID");
-      if (strPaymentId != null && !strPaymentId.equals(""))
-        docLine.setFinPaymentId(strPaymentId);
-      docLine.m_Record_Id2 = strPaymentId;
-      docLine.setIsPrepayment(data[i].getField("isprepayment"));
-      docLine.setCGlItemId(data[i].getField("cGlItemId"));
-      docLine.setPaymentAmount(data[i].getField("PaymentAmount"));
-      docLine.setDepositAmount(data[i].getField("DepositAmount"));
-      docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
-      docLine.setAmount(data[i].getField("Amount"));
-      docLine.setFinFinAccTransactionId(data[i].getField("FIN_Finacc_Transaction_ID"));
-      docLine.loadAttributes(data[i], this);
-      list.add(docLine);
+    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      for (int i = 0; i < data.length; i++) {
+        String Line_ID = data[i].getField("FIN_Finacc_Transaction_ID");
+        DocLine_FINReconciliation docLine = new DocLine_FINReconciliation(DocumentType, Record_ID,
+            Line_ID);
+        String strPaymentId = data[i].getField("FIN_Payment_ID");
+        if (strPaymentId != null && !strPaymentId.equals(""))
+          docLine.setFinPaymentId(strPaymentId);
+        docLine.m_Record_Id2 = strPaymentId;
+        docLine.setIsPrepayment(data[i].getField("isprepayment"));
+        docLine.setCGlItemId(data[i].getField("cGlItemId"));
+        docLine.setPaymentAmount(data[i].getField("PaymentAmount"));
+        docLine.setDepositAmount(data[i].getField("DepositAmount"));
+        docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
+        docLine.setAmount(data[i].getField("Amount"));
+        docLine.setFinFinAccTransactionId(data[i].getField("FIN_Finacc_Transaction_ID"));
+        docLine.loadAttributes(data[i], this);
+        list.add(docLine);
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     }
     // Return Array
     DocLine_FINReconciliation[] dl = new DocLine_FINReconciliation[list.size()];
@@ -258,6 +273,7 @@ public class DocFINReconciliation extends AcctServer {
     // Select specific definition
     String strClassname = "";
     final StringBuilder whereClause = new StringBuilder();
+    Fact fact = new Fact(this, as, Fact.POST_Actual);
     boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
     try {
       whereClause.append(" as astdt ");
@@ -296,22 +312,21 @@ public class DocFINReconciliation extends AcctServer {
           log4j.error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
         }
       }
+      for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+        DocLine_FINReconciliation line = (DocLine_FINReconciliation) p_lines[i];
+        FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+            line.getFinFinAccTransactionId());
+        // 3 Scenarios: 1st Bank fee 2nd glitem transaction 3rd payment related transaction
+        String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+        if (transaction.getTransactionType().equals(TRXTYPE_BankFee))
+          continue;
+        else if (!"".equals(line.getFinPaymentId()))
+          fact = createFactPaymentDetails(line, as, conn, fact, Fact_Acct_Group_ID);
+        else
+          fact = createFactGLItem(line, as, conn, fact, Fact_Acct_Group_ID);
+      }
     } finally {
       OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
-    }
-    Fact fact = new Fact(this, as, Fact.POST_Actual);
-    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-      DocLine_FINReconciliation line = (DocLine_FINReconciliation) p_lines[i];
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          line.getFinFinAccTransactionId());
-      // 3 Scenarios: 1st Bank fee 2nd glitem transaction 3rd payment related transaction
-      String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-      if (transaction.getTransactionType().equals(TRXTYPE_BankFee))
-        continue;
-      else if (!"".equals(line.getFinPaymentId()))
-        fact = createFactPaymentDetails(line, as, conn, fact, Fact_Acct_Group_ID);
-      else
-        fact = createFactGLItem(line, as, conn, fact, Fact_Acct_Group_ID);
     }
     return fact;
   }
