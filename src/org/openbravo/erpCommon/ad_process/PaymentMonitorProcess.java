@@ -6,6 +6,7 @@ import org.hibernate.LockMode;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.scheduling.ProcessBundle;
@@ -20,16 +21,20 @@ public class PaymentMonitorProcess extends DalBaseProcess {
   public void doExecute(ProcessBundle bundle) throws Exception {
 
     logger = bundle.getLogger();
-    // Don't update the payment monitor information if there is an installed extension module that
-    // manages it.
-    if (Utility.getPropertyValue("PaymentMonitor", bundle.getContext().getClient(), bundle
-        .getContext().getOrganization()) != null) {
-      logger
-          .log("There is an extension module installed managing the Payment Monitor information.\n");
-      logger.log("Core's background process is not executed.\n");
+    // Extra check for PaymentMonitor-disabling switch, to build correct message for users
+    try {
+      if (Utility.getPropertyValue("PaymentMonitor", bundle.getContext().getClient(), bundle
+          .getContext().getOrganization()) != null) {
+        logger
+            .log("There is an extension module installed managing the Payment Monitor information.\n");
+        logger.log("Core's background process is not executed.\n");
+        return;
+      } else
+        logger.log("Starting Update Paid Amount for Invoices Background Process.\n");
+    } catch (PropertyException e) {
+      logger.log("PropertyException, there is a conflict for PaymentMonitor property\n");
       return;
-    } else
-      logger.log("Starting Update Paid Amount for Invoices Background Process.\n");
+    }
     try {
       int counter = 0;
       String whereClause = " as inv where inv.totalPaid <> inv.grandTotalAmount and inv.processed=true";
@@ -61,5 +66,4 @@ public class PaymentMonitorProcess extends DalBaseProcess {
     }
 
   }
-
 }

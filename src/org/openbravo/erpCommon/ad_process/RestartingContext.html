@@ -33,8 +33,8 @@ var baseDirectory = "../../../../../web/";
   var checkUrl="../security/Login_FS.html"
   var isResponse=null;
   var isSuccess=null;
-  var successNumber = 1;
-  var maxSuccessNumber = 3;
+  var successNumber = 0;
+  var maxSuccessNumber = 5;
 
   function onLoadDo(){
     menuHide();
@@ -88,21 +88,20 @@ var baseDirectory = "../../../../../web/";
   }
 
   function checkResponse(value) {
-    var retryTime = 100;
-    if (successNumber != maxSuccessNumber) {
-      successNumber += 1;
+    var retryTime = 1500;
+    if (successNumber < maxSuccessNumber) {
+      if (value == true) {
+        successNumber += 1;
+      }
       isResponse = null;
       isSuccess = null;
       value = null;
-      retryTime = 1500;
-    } else {
-      retryTime = 750;
     }
 
     if (value == true) {
       parent.location.href=checkUrl;
     } else {
-      setTimeout('pingUrl(checkUrl);',retryTime);
+      setTimeout('pingUrl(checkUrl);', retryTime);
     }
     return true;
   }
