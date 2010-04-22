@@ -49,7 +49,7 @@ public class ComboReloadsProcessHelper extends CalloutHelper {
   }
   
   <FIELDS_TMP id="sectionDetailProcess">
-    void process<FIELD_TMP id="fieldProcessMethodId">xx</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String strTabId, String windowId) throws IOException, ServletException {
+    private void process<FIELD_TMP id="fieldProcessMethodId">xx</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String strTabId, String windowId) throws IOException, ServletException {
         String resultField;
         String command = vars.getStringParameter("Command", "DEFAULT");
         XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
