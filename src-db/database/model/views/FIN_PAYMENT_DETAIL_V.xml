@@ -2,7 +2,7 @@
   <database name="VIEW FIN_PAYMENT_DETAIL_V">
     <view name="FIN_PAYMENT_DETAIL_V"><![CDATA[SELECT psd.fin_payment_scheduledetail_id AS fin_payment_detail_v_id, psd.ad_client_id, psd.ad_org_id, psd.isactive, psd.created, psd.createdby, psd.updated, psd.updatedby, psi.fin_payment_sched_inv_v_id, pso.fin_payment_sched_ord_v_id, i.documentno AS invoiceno, o.documentno AS orderno, p.documentno AS paymentno, pd.fin_payment_id, COALESCE(psi.duedate, pso.duedate) AS duedate, COALESCE(i.grandtotal, o.grandtotal) AS invoicedamt, COALESCE(psi.expected, pso.expected) AS expected, psd.amount AS paidamt, p.c_bpartner_id, p.fin_paymentmethod_id, p.fin_financial_account_id, p.c_currency_id, p.paymentdate, gli.name AS glitemname
 FROM fin_payment p, fin_payment_detail pd
-INNER JOIN fin_payment_scheduledetail psd ON pd.fin_payment_detail_id = psd.fin_payment_detail_id
+JOIN fin_payment_scheduledetail psd ON pd.fin_payment_detail_id = psd.fin_payment_detail_id
 LEFT JOIN fin_payment_sched_inv_v psi ON psd.fin_payment_schedule_invoice = psi.fin_payment_sched_inv_v_id
 LEFT JOIN c_invoice i ON psi.c_invoice_id = i.c_invoice_id
 LEFT JOIN fin_payment_sched_ord_v pso ON psd.fin_payment_schedule_order = pso.fin_payment_sched_ord_v_id
