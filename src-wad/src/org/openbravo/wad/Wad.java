@@ -2737,8 +2737,10 @@ public class Wad extends DefaultHandler {
         fieldsDataUpdate[i].name = ((i > 0) ? ", " : "") + fieldsDataUpdate[i].name;
         if (fieldsDataUpdate[i].reference.equals("24"))
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?,'HH24:MI:SS')";
-        else if (fieldsDataUpdate[i].reference.equals("16")) { // datetime
-          fieldsDataUpdate[i].xmlFormat = "TO_DATE(?, ?)";
+        else if (fieldsDataUpdate[i].reference.equals("16")) {
+          // datetime, use time stamp: it works for ORA date and for PG. In pg, to_date(text, text)
+          // does not save time
+          fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?, ?)";
         } else
           fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool,
               fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue)
@@ -2792,8 +2794,9 @@ public class Wad extends DefaultHandler {
           if (fieldsDataValue[i].reference.equals("24")) {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, 'HH24:MI:SS')";
           } else if (fieldsDataValue[i].reference.equals("16")) {
-            // datetime
-            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_DATE(?, ?)";
+            // datetime, use time stamp: it works for ORA date and for PG. In pg, to_date(text,
+            // text) does not save time
+            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, ?)";
           } else {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "")
                 + WadUtility.sqlCasting(pool, fieldsDataValue[i].reference,
