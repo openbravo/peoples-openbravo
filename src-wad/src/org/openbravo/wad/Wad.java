@@ -3251,6 +3251,7 @@ public class Wad extends DefaultHandler {
       }
 
       xmlDocumentHelper.setData("structure1", processesGenerated);
+      xmlDocumentHelper.setData("structure2", processesGenerated);
       xmlDocumentHelper.setDataArray("reportComboReloadsProcess", "structure1", processData);
       WadUtility.writeFile(fileDir, "ComboReloadsProcessHelper.java", xmlDocumentHelper.print());
       log4j.debug("created :" + fileDir + "/ComboReloadsProcessHelper.java");
