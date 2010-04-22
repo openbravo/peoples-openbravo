@@ -810,6 +810,7 @@ cWithHoldId varchar2(32);
                                                  FROM M_MATCHINV MI, C_INVOICE I, C_INVOICELINE IL
                                                  WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
                                                    AND MI.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
+                                                   AND MI.M_INOUTLINE_ID = IL.M_INOUTLINE_ID
                                                    AND I.C_INVOICE_ID=v_Record_ID);
               IF (v_count>0) THEN
                 RAISE_APPLICATION_ERROR(-20000, '@PostedMatchInv@');
