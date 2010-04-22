@@ -560,6 +560,18 @@
     <Parameter name="processId"/>
   </SqlMethod>
   
+    <SqlMethod name="processHasOrgParam" type="preparedStatement" return="boolean">
+    <Sql>
+      <![CDATA[
+         select count(*)
+           from ad_process_para 
+          where lower(columnname) = 'ad_org_id'
+            and ad_process_id = ?
+      ]]>
+    </Sql>
+    <Parameter name="processId"/>
+  </SqlMethod>
+  
   <SqlMethod name="selectColumnTable" type="preparedStatement" return="multiple">
     <SqlMethodComment>Fields of reference table in a tab</SqlMethodComment>
     <Sql>
