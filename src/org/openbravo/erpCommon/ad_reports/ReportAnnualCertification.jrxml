@@ -23,14 +23,6 @@
 	<import value="net.sf.jasperreports.engine.*" />
 	<import value="net.sf.jasperreports.engine.data.*" />
 
-	<parameter name="Mittente" isForPrompting="false" class="java.lang.String">
-		<parameterDescription><![CDATA[Mittente]]></parameterDescription>
-		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
-	</parameter>
-	<parameter name="Erogante" isForPrompting="false" class="java.lang.String">
-		<parameterDescription><![CDATA[Erogante]]></parameterDescription>
-		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
-	</parameter>
 	<parameter name="DateFrom" isForPrompting="false" class="java.lang.String">
 		<parameterDescription><![CDATA[Date From]]></parameterDescription>
 		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
@@ -39,15 +31,11 @@
 		<parameterDescription><![CDATA[Date To]]></parameterDescription>
 		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AddressOrganization" isForPrompting="false" class="java.lang.String">
-		<parameterDescription><![CDATA[Address Organization]]></parameterDescription>
-		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
-	</parameter>
 	<parameter name="DATEFORMATTER" isForPrompting="false" class="java.text.DateFormat">
 		<defaultValueExpression ><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("", $P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
-	<queryString><![CDATA[SELECT buspar.name as BusinessPartner,buspar.taxid,buspar.fiscalcode,Loc.ADDRESS1,Loc.POSTAL,City.NAME as City,City.LOCODE,
+	<queryString><![CDATA[SELECT '' as Mittente, '' as Erogante,'' as AddressOrganization, buspar.name as BusinessPartner,buspar.taxid,buspar.fiscalcode,Loc.ADDRESS1,Loc.POSTAL,City.NAME as City,City.LOCODE,
  debpaycancel.DATEPLANNED,bank.Name,bank.Codebank,bank.Codebranch,bank.Digitcontrol as DigitcontrolBank,bankaccount.Digitcontrol as DigitcontrolBankAccount,bankaccount.Codeaccount,
  coalesce ( sum(invoic.TOTALLINES),0) as SummedLineAmount,
  coalesce ( sum(invoic.GRANDTOTAL),0) as GrandTotalAmount,
@@ -76,7 +64,9 @@
  left join (select C_Bank_ID, Name, Codebank, Codebranch, Digitcontrol from C_Bank) bank on (bank.C_Bank_ID = bankaccount.C_Bank_ID) 
  group by buspar.name,buspar.taxid,buspar.fiscalcode,Loc.ADDRESS1,Loc.POSTAL,City.NAME,City.LOCODE ,debpaycancel.DATEPLANNED,bank.Name,bank.Codebank,bank.Codebranch,bank.Digitcontrol,bankaccount.Digitcontrol,bankaccount.Codeaccount
  order by buspar.name asc]]></queryString>
-
+    <field name="MITTENTE" class="java.lang.String"/>
+    <field name="EROGANTE" class="java.lang.String"/>
+    <field name="ADDRESSORGANIZATION" class="java.lang.String"/>
 	<field name="BUSINESSPARTNER" class="java.lang.String"/>
 	<field name="TAXID" class="java.lang.String"/>
 	<field name="FISCALCODE" class="java.lang.String"/>
@@ -157,7 +147,7 @@
 					<textElement>
 						<font fontName="Courier New" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{AddressOrganization}+ " " + $P{DATEFORMATTER}.format(new Date())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{ADDRESSORGANIZATION}!=null)?$F{ADDRESSORGANIZATION}:new String(" ")+ " " + $P{DATEFORMATTER}.format(new Date())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -442,7 +432,7 @@
 					<textElement>
 						<font fontName="Courier New"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Mittente}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{MITTENTE}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -459,7 +449,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Erogante}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{EROGANTE}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
