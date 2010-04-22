@@ -3110,6 +3110,8 @@ public class Wad extends DefaultHandler {
       if (data == null || data.length == 0)
         return;
 
+      final boolean hasOrg = FieldsData.processHasOrgParam(pool, processId);
+
       final Vector<Object> vecReloads = new Vector<Object>();
       final Vector<Object> vecTotal = new Vector<Object>();
       final Vector<Object> vecCounters = new Vector<Object>();
@@ -3125,8 +3127,14 @@ public class Wad extends DefaultHandler {
                 : "") + data[i].referencevalue;
         data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
         data[i].whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
-        if (data[i].whereclause.equals("") && data[i].type.equals("R"))
+        if (data[i].whereclause.equals("") && data[i].type.equals("R")) {
+          // Add combo reloads for all combo references in case there is a ad_org parameter, if not
+          // only for the params with validation rule
+          if (!hasOrg) {
+            continue;
+          }
           data[i].whereclause = "\"inpadOrgId\"";
+        }
         if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
           data[i].whereclause = "\"inp" + data[i].columnname + "\"";
         if (!data[i].whereclause.equals("")
