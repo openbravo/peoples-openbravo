@@ -857,7 +857,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private boolean checkCommercialModules(ImportModule im, Map<String, String> minVersions,
       HttpServletResponse response, VariablesSecureApp vars) throws IOException {
     ActivationKey ak = new ActivationKey();
-    boolean OBPSActiveInstance = ActivationKey.isActiveInstance();
     ArrayList<Module> notAllowedMods = new ArrayList<Module>();
 
     String notSubscribed = "";
@@ -869,14 +868,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     if (im.getModulesToInstall().length > 1) {
       for (Module mod : im.getModulesToInstall()) {
-        if (mod.getIsCommercial() && !OBPSActiveInstance) {
+        if (mod.getIsCommercial() && !ak.isOPSInstance()) {
           showNotActivatedError = true;
           break;
         }
       }
 
       for (Module mod : im.getModulesToUpdate()) {
-        if (mod.getIsCommercial() && !OBPSActiveInstance) {
+        if (mod.getIsCommercial() && !ak.isOPSInstance()) {
           showNotActivatedError = true;
           break;
         }
@@ -919,7 +918,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
       for (Module instMod : im.getModulesToInstall()) {
         if (instMod.getIsCommercial()) {
           CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(instMod.getModuleID());
-          if (!OBPSActiveInstance || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
+          if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
+            notAllowedMods.add(instMod);
+            if (expired.length() > 0) {
+              expired += ", ";
+            }
+            expired += instMod.getName();
+          } else if (ak.isNotActiveYet() || moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
+            notAllowedMods.add(instMod);
+            if (notActiveYet.length() > 0) {
+              notActiveYet += ", ";
+            }
+            notActiveYet += instMod.getName();
+          } else if (!ak.isOPSInstance() || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
             notAllowedMods.add(instMod);
             if (notSubscribed.length() > 0) {
               notSubscribed += ", ";
@@ -931,18 +942,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
               converted += ", ";
             }
             converted += instMod.getName();
-          } else if (moduleStatus == CommercialModuleStatus.EXPIRED) {
-            notAllowedMods.add(instMod);
-            if (expired.length() > 0) {
-              expired += ", ";
-            }
-            expired += instMod.getName();
-          } else if (moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
-            notAllowedMods.add(instMod);
-            if (notActiveYet.length() > 0) {
-              notActiveYet += ", ";
-            }
-            notActiveYet += instMod.getName();
           }
         }
       }
@@ -950,7 +949,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
       for (Module updMod : im.getModulesToUpdate()) {
         if (updMod.getIsCommercial()) {
           CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(updMod.getModuleID());
-          if (!OBPSActiveInstance || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
+          if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
+            notAllowedMods.add(updMod);
+            if (expired.length() > 0) {
+              expired += ", ";
+            }
+            expired += updMod.getName();
+          } else if (ak.isNotActiveYet() || moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
+            notAllowedMods.add(updMod);
+            if (notActiveYet.length() > 0) {
+              notActiveYet += ", ";
+            }
+            notActiveYet += updMod.getName();
+          } else if (!ak.isOPSInstance() || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
             notAllowedMods.add(updMod);
             if (notSubscribed.length() > 0) {
               notSubscribed += ", ";
@@ -962,18 +973,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
               converted += ", ";
             }
             converted += updMod.getName();
-          } else if (moduleStatus == CommercialModuleStatus.EXPIRED) {
-            notAllowedMods.add(updMod);
-            if (expired.length() > 0) {
-              expired += ", ";
-            }
-            expired += updMod.getName();
-          } else if (moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
-            notAllowedMods.add(updMod);
-            if (notActiveYet.length() > 0) {
-              notActiveYet += ", ";
-            }
-            notActiveYet += updMod.getName();
           }
         }
       }
@@ -983,7 +982,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         || converted.length() > 0) {
       String discard[] = { "", "", "", "", "" };
 
-      if (!OBPSActiveInstance) {
+      if (!ak.isOPSInstance()) {
         discard[0] = "OBPSInstance-NotActive";
         discard[1] = "OBPSInstance-Expired";
         discard[2] = "OBPSInstance-NoActiveYet";
