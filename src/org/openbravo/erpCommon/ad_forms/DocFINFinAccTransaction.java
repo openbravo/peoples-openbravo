@@ -453,7 +453,7 @@ public class DocFINFinAccTransaction extends AcctServer {
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
           "dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      FieldProviderFactory.setField(data[0], "dateacct", outputFormat.format(transaction
+      FieldProviderFactory.setField(data[0], "DateAcct", outputFormat.format(transaction
           .getDateAcct()));
       FieldProviderFactory.setField(data[0], "trxdate", outputFormat.format(transaction
           .getTransactionDate()));
