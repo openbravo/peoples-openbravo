@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008 Openbravo SLU
+* All portions are Copyright (C) 2008-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -38,10 +38,10 @@ BEGIN
      
   IF (UPDATING OR INSERTING) THEN
     cuerrentID := :new.AD_WF_NodeNext_ID;
-    cuerrentModuleID := :old.AD_WF_NODE_ID;
+    cuerrentModuleID := :new.AD_WF_NODE_ID;
   ELSE
     cuerrentID := :old.AD_WF_NodeNext_ID;
-    cuerrentModuleID := :NEW.AD_WF_NODE_ID;
+    cuerrentModuleID := :old.AD_WF_NODE_ID;
   END IF;
   
       SELECT M.IsInDevelopment
