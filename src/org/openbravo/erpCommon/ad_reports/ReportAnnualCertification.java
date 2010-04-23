@@ -301,36 +301,37 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
           .getLanguage()));
     }
-
-    String sClientID = vars.getUserClient();
-    String sOrganID = "";
-    if (strOrg.equals("")) {
-      for (int i = 0; i < data.length; i++) {
-        sOrganID = sOrganID + "'" + data[i].orgid;
-        if (!(i == data.length - 1)) {
-          sOrganID = sOrganID + "',";
-        } else {
-          sOrganID = sOrganID + "'";
-        }
-      }
-
-    } else {
-      sOrganID = "'" + strOrg + "'";
-    }
-    OrganizationData[] dataOrganization = OrganizationData.select(this, vars.getLanguage(),
-        sClientID, sOrganID);
-
     String strOutput = vars.commandIn("PDF") ? "pdf" : "xls";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml";
-    // put address of organization and employer into same data
-    for (int i = 0; i < data.length; i++) {
-      if (dataOrganization != null && dataOrganization.length > 0) {
-        for (int j = 0; j < dataOrganization.length; j++) {
-          if (data[i].orgid.equals(dataOrganization[j].adOrgId)) {
-            data[i].mittente = dataOrganization[j].adClientIdr;
-            data[i].erogante = dataOrganization[j].adClientIdr;
-            data[i].addressorganization = dataOrganization[j].cLocationIdr;
-            break;
+    OrganizationData[] dataOrganization = null;
+    // populate organization data if report data is available.
+    if (data != null && data.length > 0) {
+      String sClientID = vars.getUserClient();
+      String sOrganID = "";
+      if (strOrg.equals("")) {
+        for (int i = 0; i < data.length; i++) {
+          sOrganID = sOrganID + "'" + data[i].orgid;
+          if (!(i == data.length - 1)) {
+            sOrganID = sOrganID + "',";
+          } else {
+            sOrganID = sOrganID + "'";
+          }
+        }
+
+      } else {
+        sOrganID = "'" + strOrg + "'";
+      }
+      dataOrganization = OrganizationData.select(this, vars.getLanguage(), sClientID, sOrganID);
+      // put address of organization and employer into same data
+      for (int i = 0; i < data.length; i++) {
+        if (dataOrganization != null && dataOrganization.length > 0) {
+          for (int j = 0; j < dataOrganization.length; j++) {
+            if (data[i].orgid.equals(dataOrganization[j].adOrgId)) {
+              data[i].mittente = dataOrganization[j].adClientIdr;
+              data[i].erogante = dataOrganization[j].adClientIdr;
+              data[i].addressorganization = dataOrganization[j].cLocationIdr;
+              break;
+            }
           }
         }
       }
