@@ -17,8 +17,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.servlet.ServletException;
+import org.openbravo.base.filter.RequestFilter;
 
 public class UtilSql {
+
+    public static void filterSQLParameter (String value, String filter) throws ServletException {
+        if (value != null && !value.equals("")) {
+            RequestFilter reqfilter = null;
+            if (!reqfilter.accept(value)) {
+              // log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+              throw new ServletException("@CODE=@Query parameter error" );
+            }
+        }
+    }
 
   // setValue and getValue method to be used in sqlc
 
