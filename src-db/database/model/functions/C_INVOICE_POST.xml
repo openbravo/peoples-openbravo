@@ -543,7 +543,7 @@ cWithHoldId varchar2(32);
               M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID, DATETRX, QTY, PROCESSING, PROCESSED, POSTED)
             SELECT
               GET_UUID(), AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, now(), v_UpdatedBy, now(), v_UpdatedBy,
-              M_INOUTLINE_ID, v_NextNo, M_PRODUCT_ID, DATETRX, QTY, 'N', 'Y', 'N'
+              M_INOUTLINE_ID, v_NextNo, M_PRODUCT_ID, DATETRX, -QTY, 'N', 'Y', 'N'
             FROM M_MATCHINV
             WHERE C_INVOICELINE_ID = Cur_InvoiceLine.C_InvoiceLine_ID
               AND M_INOUTLINE_ID <> Cur_InvoiceLine.M_InOutLine_ID;
