@@ -1202,7 +1202,7 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1004400000-->  <NAME><![CDATA[C_Currency of PriceList]]></NAME>
 <!--1004400000-->  <DESCRIPTION><![CDATA[Sets the currency of the pricelist]]></DESCRIPTION>
 <!--1004400000-->  <TYPE><![CDATA[S]]></TYPE>
-<!--1004400000-->  <CODE><![CDATA[C_Currency.C_Currency_ID IN (SELECT C_Currency_ID FROM M_Pricelist WHERE M_Pricelist_ID = @M_Pricelist_ID@)]]></CODE>
+<!--1004400000-->  <CODE><![CDATA[C_Currency.C_Currency_ID IN (SELECT C_Currency_ID FROM M_Pricelist WHERE ISACTIVE='Y')]]></CODE>
 <!--1004400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400000--></AD_VAL_RULE>
 

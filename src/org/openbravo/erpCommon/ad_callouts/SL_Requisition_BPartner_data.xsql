@@ -18,13 +18,14 @@
  ************************************************************************
 -->
 <SqlClass name="SLRequisitionBPartnerData" package="org.openbravo.erpCommon.ad_callouts">
-  <SqlMethod name="select" type="preparedStatement" return="string" default="">
+  <SqlMethod name="select" type="preparedStatement" return="multiple" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT p.PO_PriceList_ID
-      FROM C_BPartner p
+      SELECT p.PO_PriceList_ID, m.c_currency_id
+      FROM C_BPartner p,M_Pricelist m
       WHERE p.C_BPartner_ID = ?
+      AND m.M_Pricelist_ID = p.PO_PriceList_ID
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
