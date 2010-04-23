@@ -92,35 +92,7 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       OBError myMessage = new OBError();
       String message = "";
       myMessage.setTitle("");
-      if (pinstanceData != null && pinstanceData.length > 0) {
-        if (!pinstanceData[0].errormsg.equals("")) {
-          message = pinstanceData[0].errormsg;
-          myMessage.setType("Success");
-          myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-          if (message.startsWith("@") && message.endsWith("@")) {
-            myMessage.setMessage(message.substring(1, message.length() - 1));
-            if (message.indexOf("@") == -1)
-              myMessage.setMessage(Utility.messageBD(this, message, vars.getLanguage()));
-            else
-              myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "@"
-                  + message + "@"));
-          } else
-            myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));
-        } else if (!pinstanceData[0].pMsg.equals("")) {
-          myMessage.setType("Success");
-          myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-          message = pinstanceData[0].pMsg;
-          myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));
-        } else if (pinstanceData[0].result.equals("1")) {
-          myMessage.setType("Success");
-          myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-          myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-        } else {
-          myMessage.setType("Error");
-          myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          myMessage.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));
-        }
-      }
+      myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
       vars.setMessage("GenerateInvoicesmanual", myMessage);
       GenerateInvoicesmanualData.resetSelection(this, strCOrderId);
       if (log4j.isDebugEnabled())
