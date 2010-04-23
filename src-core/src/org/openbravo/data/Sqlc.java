@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2009 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -456,7 +456,6 @@ public class Sqlc extends DefaultHandler {
       String strAfter = null;
       String strText = null;
       String strIgnoreValue = null;
-      String filter = null;
       final int size = amap.getLength();
       for (int i = 0; i < size; i++) {
         if (amap.getQName(i).equals("name")) {
@@ -473,14 +472,12 @@ public class Sqlc extends DefaultHandler {
           strText = amap.getValue(i);
         } else if (amap.getQName(i).equals("ignoreValue")) {
           strIgnoreValue = amap.getValue(i);
-        } else if (amap.getQName(i).equals("filter")) {
-          filter = amap.getValue(i);
         }
       }
       if (log4j.isDebugEnabled())
         log4j.debug("Configuration: call to addParameter ");
       parameterSql = sql.addParameter(false, strName, strDefault, strInOut, strOptional, strAfter,
-          strText, strIgnoreValue, filter);
+          strText, strIgnoreValue);
     } else if (name.equals("Field")) {
       FieldAdded field = null;
       final int size = amap.getLength();
@@ -500,7 +497,7 @@ public class Sqlc extends DefaultHandler {
         }
       }
       parameterSql = sql
-          .addParameter(true, sql.strSequenceName, null, null, null, null, null, null, null);
+          .addParameter(true, sql.strSequenceName, null, null, null, null, null, null);
     }
   }
 
@@ -898,16 +895,6 @@ public class Sqlc extends DefaultHandler {
     out2.append("  }\n");
   }
 
-  private void appendFilterSQLParameter(Parameter parameter) {
-      if (parameter.filter != null && !parameter.filter.equals("")) {
-        out2.append("  UtilSql.filterSQLParameter(SqlcFilters.get");
-        out2.append(parameter.filter);
-        out2.append(", ");
-        out2.append(parameter.strName);
-        out2.append(");\n");
-      }
-  }
-
   private void printSQLBody() throws IOException {
     // codigo para imprimir trozos de Sql opcionales
     int posSQL = 0;
@@ -932,7 +919,6 @@ public class Sqlc extends DefaultHandler {
               out2.append("    strSql = strSql + ((" + parameter.strName + ".equals(\""
                   + parameter.strName + "\"))?\" " + parameter.strText + " \":\"\");\n");
             } else if (parameter.strInOut.equals("argument")) {
-              appendFilterSQLParameter(parameter);
               out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
                   + parameter.strName + ".equals(\"\")");
               if (parameter.strIgnoreValue != null) {
@@ -941,7 +927,6 @@ public class Sqlc extends DefaultHandler {
               }
               out2.append(")?\"\":\" " + parameter.strText + "\" + " + parameter.strName + ");\n");
             } else if (parameter.strInOut.equals("replace")) {
-              appendFilterSQLParameter(parameter);
               out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
                   + parameter.strName + ".equals(\"\")");
               if (parameter.strIgnoreValue != null) {
