@@ -132,6 +132,7 @@ build.war: build a war file in the lib directory.
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="clean '${base.config}/Openbravo.properties'" />
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
   </target>
   
@@ -139,6 +140,7 @@ build.war: build a war file in the lib directory.
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="remove '${base.config}/Openbravo.properties'" />
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
   </target>
 
@@ -163,11 +165,13 @@ build.war: build a war file in the lib directory.
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql . '${build.sqlc}'/src" />
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.sqlc}'/src */src" />
       <jvmarg value="-Dsqlc.queryExecutionStrategy=traditional"/>
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
     <copy file="${base.src}/buildAD.xml" tofile="${build.AD}/build.xml" />
     <copy file="${base.src}/log4j.lcf" tofile="${build.AD}/log4j.lcf" />
@@ -252,6 +256,7 @@ build.war: build a war file in the lib directory.
     <workflow debug="false" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" file="${base.src}/org/openbravo/base/gen/gen_entity.oaw" fork="true" maxmemory="${build.maxmemory}">
       <param name="ob.properties.location" value="${base.config}/Openbravo.properties" />
       <param name="base.src.gen" value="${base.src.gen}" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
       <classpath>
         <path refid="project.class.path" />
       </classpath>
@@ -401,6 +406,7 @@ build.war: build a war file in the lib directory.
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick'" />
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
   </target>
@@ -410,6 +416,7 @@ build.war: build a war file in the lib directory.
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true" />
   </target>
@@ -476,6 +483,7 @@ build.war: build a war file in the lib directory.
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.sqlc}'/src */src" />
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
   </target>
 
@@ -744,6 +752,7 @@ build.war: build a war file in the lib directory.
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' ${extension} '${base.modules}' '*/src'" />
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
   </target>
 
@@ -769,6 +778,7 @@ build.war: build a war file in the lib directory.
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' ${extension} '${basedir}'" />
       <classpath refid="project.class.path" />
+      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
   </target>
 
