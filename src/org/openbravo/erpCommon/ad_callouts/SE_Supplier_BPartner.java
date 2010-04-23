@@ -66,7 +66,7 @@ public class SE_Supplier_BPartner extends HttpSecureAppServlet {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strPriceList = SLRequisitionBPartnerData.select(this, strBPartner);
+    String strPriceList = SLRequisitionBPartnerData.select(this, strBPartner)[0].poPricelistId;
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Supplier_BPartner';\n\n");
