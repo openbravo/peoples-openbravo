@@ -613,7 +613,7 @@
               M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID, DATETRX, QTY, PROCESSING, PROCESSED, POSTED)
             SELECT
               GET_UUID(), MI.AD_CLIENT_ID, MI.AD_ORG_ID, MI.ISACTIVE, now(), '0', now(), '0',
-              v_NextNo, MI.C_INVOICELINE_ID, MI.M_PRODUCT_ID, MI.DATETRX, MI.QTY, 'N', 'Y', 'N'
+              v_NextNo, MI.C_INVOICELINE_ID, MI.M_PRODUCT_ID, MI.DATETRX, -MI.QTY, 'N', 'Y', 'N'
             FROM M_MATCHINV MI
             WHERE MI.M_INOUTLINE_ID = Cur_InOutLine.M_InOutLine_ID;
           END LOOP;
