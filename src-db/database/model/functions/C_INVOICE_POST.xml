@@ -120,6 +120,7 @@ cWithHoldId varchar2(32);
     v_OldCumDiscount NUMBER;
     v_InvoiceLineSeqNo NUMBER;
     v_InvoiceLine VARCHAR2(32);
+    v_InOutLine VARCHAR2(32);
     v_Discount NUMBER;
     v_Line NUMBER;
     v_InvoiceDiscount NUMBER;
@@ -545,8 +546,7 @@ cWithHoldId varchar2(32);
               GET_UUID(), AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, now(), v_UpdatedBy, now(), v_UpdatedBy,
               M_INOUTLINE_ID, v_NextNo, M_PRODUCT_ID, DATETRX, -QTY, 'N', 'Y', 'N'
             FROM M_MATCHINV
-            WHERE C_INVOICELINE_ID = Cur_InvoiceLine.C_InvoiceLine_ID
-              AND M_INOUTLINE_ID <> Cur_InvoiceLine.M_InOutLine_ID;
+            WHERE C_INVOICELINE_ID = Cur_InvoiceLine.C_InvoiceLine_ID;
             /* OrderLine.qtyInvoiced is updated in c_invoicePost
             UPDATE C_OrderLine
             SET QtyInvoiced = QtyInvoiced - Cur_InvoiceLine.QtyInvoiced,
@@ -803,7 +803,7 @@ cWithHoldId varchar2(32);
               IF (v_count>0) THEN
                 RAISE_APPLICATION_ERROR(-20000, '@PostedMatchPO@');
               END IF;
-              SELECT COUNT(1)
+/*              SELECT COUNT(1)
               INTO v_count
               FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHINV')
                                AND RECORD_ID IN (SELECT M_MATCHINV_ID
@@ -814,19 +814,19 @@ cWithHoldId varchar2(32);
                                                    AND I.C_INVOICE_ID=v_Record_ID);
               IF (v_count>0) THEN
                 RAISE_APPLICATION_ERROR(-20000, '@PostedMatchInv@');
-              END IF;
+              END IF;*/
               DELETE
               FROM M_MATCHPO
               WHERE C_InvoiceLine_ID IN
                 (SELECT C_InvoiceLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
                 ;
-              DELETE
+/*              DELETE
               FROM M_MATCHINV
               WHERE C_InvoiceLine_ID IN
                 (SELECT C_InvoiceLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
                 AND M_InOutLine_ID IN
                 (SELECT M_InOutLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
-                ;
+                ;*/
             END IF;
             UPDATE C_INVOICE
               SET Processed='N',
@@ -1353,11 +1353,15 @@ cWithHoldId varchar2(32);
                 AND il.C_Invoice_ID=v_Record_ID
               )
             LOOP
+             SELECT MIN(M_INOUTLINE_ID) INTO v_InOutLine
+             FROM C_INVOICELINE WHERE C_INVOICELINE_ID=Cur_ILines_Receipt.C_InvoiceLine_ID;
+             SELECT COUNT(1) INTO v_Count
+             FROM M_MATCHINV WHERE C_INVOICELINE_ID=Cur_ILines_Receipt.C_InvoiceLine_ID;
+             IF (v_InOutLine IS NULL AND v_Count=0) THEN
               -- The min qty. Modified by Ismael Ciordia
               --v_Qty := Cur_ILines_Receipt.MovementQty;
               --IF (ABS(Cur_ILines_Receipt.MovementQty) > ABS(Cur_ILines_Receipt.QtyInvoiced)) THEN
               v_Qty:=Cur_ILines_Receipt.QtyInvoiced;
-              --END IF;
               Ad_Sequence_Next('M_MatchInv', Cur_ILines_Receipt.AD_Org_ID, v_MatchInv_ID) ;
               v_ResultStr:='InsertMatchInv ' || v_MatchInv_ID;
               DBMS_OUTPUT.PUT_LINE('  M_MatchInv_ID=' || v_MatchInv_ID || ' - ' || v_Qty) ;
@@ -1377,6 +1381,7 @@ cWithHoldId varchar2(32);
                   v_Qty, 'N', 'Y', 'N'
                 )
                 ;
+             END IF;
             END LOOP;
             v_ResultStr:='MatchInv-PO';
             FOR Cur_ILines_PO IN
