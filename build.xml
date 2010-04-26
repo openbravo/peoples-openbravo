@@ -592,6 +592,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
+    <updatesystemstatus v="RB31"/>
     <antcall target="db.apply.modules" />
   </target>
 
@@ -659,7 +660,6 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="apply.module">
-    <updatesystemstatus v="RB31"/>
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
@@ -935,5 +935,24 @@ export.database: exports database structure and data to xml files.
   
   <target name="validate.wad">
     <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
+  </target>
+  
+  <target name="UIrebuild" depends="core.lib">
+    <java classname="org.openbravo.base.BuildTask" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
+      <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
+      <classpath>
+        <pathelement path="${build.core.lib}/openbravo-core.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-1.2.8.jar" />
+        <pathelement path="${base.lib}/runtime/commons-pool.jar" />
+        <pathelement path="${base.lib}/runtime/commons-dbcp.jar" />
+        <pathelement path="${base.lib}/runtime/postgresql-jdbc3-8.2.jar" />
+        <pathelement path="${base.lib}/runtime/ojdbc6.jar" />
+        <pathelement path="${base.lib}/runtime/commons-collections.jar" />
+        <pathelement path="${base.lib}/runtime/ant-1.7.1.jar" />
+        <pathelement path="${base.lib}/runtime/ant-launcher.jar" />
+        <pathelement path="${base.lib}/runtime/ant-apache-log4j.jar" />
+        <pathelement path="${base.lib}/runtime/ant-nodeps.jar" />
+      </classpath>
+    </java>
   </target>
 </project>

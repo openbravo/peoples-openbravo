@@ -234,34 +234,14 @@ public class ApplyModules extends HttpSecureAppServlet {
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
 
-      ant.setLogFileAndListener(vars.getStringParameter("logfile"));
-
       // do not execute translation process (all entries should be already in the module)
       ant.setProperty("tr", "no");
       // We will show special, friendly warnings when they are available
       ant.setProperty("friendlyWarnings", "true");
+      ant.setProperty("logFileName", vars.getStringParameter("logfile"));
 
       final Vector<String> tasks = new Vector<String>();
-
-      final String unnappliedModules = getUnnapliedModules();
-      if (ApplyModulesData.isUpdatingCoreOrTemplate(this)) {
-        tasks.add("update.database");
-        tasks.add("core.lib");
-        tasks.add("wad.lib");
-        tasks.add("trl.lib");
-        tasks.add("compile.complete.deploy");
-        ant.setProperty("apply.on.create", "true");
-      } else {
-        if (ApplyModulesData.compileCompleteNeeded(this)) {
-          // compile complete is needed for templates because in this case it is not needed which
-          // elements belong to the template and for uninistalling modules in order to remove old
-          // files and references
-          ant.setProperty("apply.modules.complete.compilation", "true");
-        }
-        ant.setProperty("force", "true");
-        tasks.add("apply.modules");
-        ant.setProperty("module", unnappliedModules);
-      }
+      tasks.add("UIrebuild");
 
       // We also cancel sessions opened for users different from the current one
       updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
