@@ -291,6 +291,7 @@ export.database: exports database structure and data to xml files.
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
     <updatesystemstatus v="RB51"/>
@@ -340,8 +341,8 @@ export.database: exports database structure and data to xml files.
     <ant dir="src-util/modulescript" target="compile" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="compile.complete.deploy" depends="compile.complete.development, compile.complete.war">
-    
+  <target name="compile.complete.deploy" depends="compile.complete.development, compile.complete.war, apply.module">
+
     <!-- Calculate wad checksum to enable smartbuild-->
     <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
       <classpath refid="project.class.path" />
@@ -561,9 +562,6 @@ export.database: exports database structure and data to xml files.
 
   <target name="install.source" depends="init, create.database, wad.lib, trl.lib, compile.complete.deploy">
 
-    <echo message="applying modules" />    
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
-
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
     <updatesystemstatus v="RB51"/> 
@@ -598,8 +596,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
-    <updatesystemstatus v="RB31"/>
-    <antcall target="db.apply.modules" />
   </target>
 
   <target name="update.database.mod" depends="init, core.lib, database.lib, buildvalidation">
