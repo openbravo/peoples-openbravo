@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER FIN_PMT_PROP_DTL_RESTRICT_TRG">
+    <trigger name="FIN_PMT_PROP_DTL_RESTRICT_TRG" table="FIN_PAYMENT_PROP_DETAIL" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body><![CDATA[
+
+         v_Processed VARCHAR(60) ;
+          v_FIN_Payment_Proposal_ID VARCHAR2(32) ;
+
+BEGIN
+   
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+
+IF INSERTING THEN
+    v_FIN_Payment_Proposal_ID:=:NEW.FIN_Payment_Proposal_ID;
+  ELSE
+    v_FIN_Payment_Proposal_ID:=:OLD.FIN_Payment_Proposal_ID;
+  END IF;
+
+SELECT PROCESSED 
+        INTO v_Processed
+        FROM FIN_Payment_Proposal
+        WHERE FIN_Payment_Proposal_ID = v_FIN_Payment_Proposal_ID;
+IF UPDATING THEN
+  IF v_Processed='Y' THEN
+    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+  END IF;
+END IF;        
+IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
+    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+END IF;
+END FIN_PMT_PROP_DTL_RESTRICT_TRG]]></body>
+    </trigger>
+  </database>
