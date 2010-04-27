@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -214,17 +214,20 @@ public class ExtractModule {
         return !(s.equals(".svn") || s.equals(".hg"));
       }
     });
+    String fileSeparator = System.getProperty("file.separator");
     for (int i = 0; list != null && i < list.length; i++) {
       if (list[i].isDirectory()) {
         // add entry for directory
-        obx.putNextEntry(new ZipEntry(new ZipEntry(list[i].toString().replace(relativeDir, ""))
+        obx.putNextEntry(new ZipEntry(new ZipEntry(list[i].toString().replace(relativeDir, "")
+            .replace(fileSeparator, "/"))
             + "/"));
         obx.closeEntry();
         createOBX(list[i], obx);
       } else {
         // add entry for file (and compress it)
         final byte[] buf = new byte[1024];
-        obx.putNextEntry(new ZipEntry(list[i].toString().replace(relativeDir, "")));
+        obx.putNextEntry(new ZipEntry(list[i].toString().replace(relativeDir, "").replace(
+            fileSeparator, "/")));
         final FileInputStream in = new FileInputStream(list[i].toString());
         int len;
         while ((len = in.read(buf)) > 0) {
