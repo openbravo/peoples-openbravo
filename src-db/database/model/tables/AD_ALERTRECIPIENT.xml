@@ -46,7 +46,7 @@
         <onCreateDefault/>
       </column>
       <column name="SENDEMAIL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_ALERTRULE" name="AD_ALERTRECIPIENT_AD_ALERTRULE" onDelete="cascade">

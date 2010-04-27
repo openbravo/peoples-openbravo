@@ -608,10 +608,33 @@ public class CreateFrom extends HttpSecureAppServlet {
             data = CreateFromShipmentData.selectFromPOSOTrx(this, vars.getLanguage(), Utility
                 .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
                 vars, "#User_Org", strWindowId), strPO);
-          else
+          else {
             data = CreateFromShipmentData.selectFromPO(this, vars.getLanguage(), Utility
                 .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
                 vars, "#User_Org", strWindowId), strPO);
+            Connection conn = null;
+            try {
+              for (int i = 0; i < data.length; i++) {
+                if (data[i].mAttributesetinstanceId != null
+                    && !"".equals(data[i].mAttributesetinstanceId)) {
+                  conn = this.getTransactionConnection();
+                  String strMAttributesetinstanceID = SequenceIdData.getUUID();
+                  CreateFromShipmentData.copyAttributes(conn, this, strMAttributesetinstanceID,
+                      data[i].mAttributesetinstanceId);
+                  CreateFromShipmentData.copyInstances(conn, this, strMAttributesetinstanceID,
+                      data[i].mAttributesetinstanceId);
+                  data[i].mAttributesetinstanceId = strMAttributesetinstanceID;
+                  releaseCommitConnection(conn);
+                }
+              }
+            } catch (Exception e) {
+              try {
+                releaseRollbackConnection(conn);
+              } catch (Exception ignored) {
+              }
+              log4j.warn("Rollback in transaction");
+            }
+          }
         } else {
           if (isSOTrx.equals("Y"))
             data = CreateFromShipmentData.selectFromPOTrlSOTrx(this, vars.getLanguage(), Utility

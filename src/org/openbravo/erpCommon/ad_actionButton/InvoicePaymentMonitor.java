@@ -31,6 +31,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.PaymentMonitor;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -83,13 +84,17 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
     OBError myError = null;
     try {
       Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
-      if (invoice.isProcessed()) {
+      // Extra check for PaymentMonitor-disabling switch, to build correct message for users
+      if (Utility.getPropertyValue("PaymentMonitor", vars.getClient(), invoice.getOrganization()
+          .getId()) == null
+          && invoice.isProcessed())
         PaymentMonitor.updateInvoice(invoice);
-      }
 
       myError = new OBError();
       myError.setType("Success");
       myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+    } catch (PropertyException e) {
+      myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
     } catch (Exception e) {
       log4j.error("Rollback in transaction", e);
       myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());

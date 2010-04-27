@@ -550,6 +550,7 @@ public abstract class AcctServer {
         log4j.warn("AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID="
             + strClave);
         setStatus(STATUS_DocumentLocked); // Status locked document
+        this.setMessageResult(conn, vars, STATUS_DocumentLocked, "Error");
         return false;
       } else
         AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);

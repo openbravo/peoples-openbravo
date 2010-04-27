@@ -173,7 +173,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISAUTOSAVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISAUTOSAVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>

@@ -372,6 +372,7 @@
               * Create Invoice Header ---------------------------------------
               */
               -- Get Order DocType Info - approved from Invoice DocType
+              BEGIN
               v_ResultStr:='GetDocTypeInfo - ' || Cur_Order.C_DocType_ID;  SELECT od.C_DocTypeInvoice_ID,
                 od.DocSubTypeSO
               INTO v_DocType_ID,
@@ -379,7 +380,12 @@
               FROM C_DOCTYPE od,
                 C_DOCTYPE ID
               WHERE od.C_DocType_ID=Cur_Order.C_DocType_ID
-                AND od.C_DocTypeInvoice_ID=ID.C_DocType_ID;
+                AND od.C_DocTypeInvoice_ID=ID.C_DocType_ID
+                AND ID.IsActive='Y';
+              EXCEPTION
+              WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+              END;
               --
               Ad_Sequence_Next('C_Invoice', Cur_Order.AD_Client_ID, p_Invoice_ID) ;
               Ad_Sequence_Doctype(v_DocType_ID, Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
@@ -890,6 +896,7 @@
                     RAISE_APPLICATION_ERROR(-20000, '@NoDefaultInvoice@') ;
                   END;
                 ELSE
+                  BEGIN
                   SELECT od.C_DocTypeInvoice_ID
                   INTO v_DocType_ID
                   FROM C_DOCTYPE od,
@@ -897,7 +904,12 @@
                     C_ORDER o
                   WHERE od.C_DocType_ID=o.C_DocType_ID
                     AND od.C_DocTypeInvoice_ID=ID.C_DocType_ID
-                    AND o.C_Order_ID=Cur_InvoiceSchedule.C_Order_ID;
+                    AND o.C_Order_ID=Cur_InvoiceSchedule.C_Order_ID
+                    AND ID.IsActive='Y';
+                  EXCEPTION
+                  WHEN OTHERS THEN
+                    RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+                  END;
                 END IF;
                 IF(NOT FINISH_PROCESS) THEN
                   -- Get other defaults

@@ -211,10 +211,10 @@
 		<defaultValueExpression ><![CDATA["102"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="aux_DateFrom" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[($P{DateFrom} == null || $P{DateFrom}.equals("")) ? "" : "AND C_ORDER.DATEORDERED >='" + new java.sql.Date($P{DateFrom}.getTime()).toString() + "'"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[($P{DateFrom} == null || $P{DateFrom}.equals("")) ? "" : "AND C_ORDER.DATEORDERED >= TO_DATE('" + new java.sql.Date($P{DateFrom}.getTime()).toString() + "', 'YYYY-MM-DD')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="aux_DateTo" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[($P{DateTo} == null || $P{DateTo}.equals("")) ? "" : "AND C_ORDER.DATEORDERED <='" + new java.sql.Date($P{DateTo}.getTime()) + "'"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[($P{DateTo} == null || $P{DateTo}.equals("")) ? "" : "AND C_ORDER.DATEORDERED <= TO_DATE('" + new java.sql.Date($P{DateTo}.getTime()) + "', 'YYYY-MM-DD')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_CLIENT" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String"/>

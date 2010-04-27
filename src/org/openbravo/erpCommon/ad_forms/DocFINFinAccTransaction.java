@@ -86,10 +86,8 @@ public class DocFINFinAccTransaction extends AcctServer {
     // If payment exists the payment details are loaded, if not the GLItem info is loaded
     if (payment != null)
       return loadLinesPaymentDetailsFieldProvider(transaction);
-    else if (transaction.getGLItem() != null)
-      return loadLinesGLItemFieldProvider(transaction);
     else
-      return null;
+      return loadLinesGLItemFieldProvider(transaction);
   }
 
   public FieldProviderFactory[] loadLinesPaymentDetailsFieldProvider(
@@ -155,7 +153,8 @@ public class DocFINFinAccTransaction extends AcctServer {
       FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
       FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
       FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
-      FieldProviderFactory.setField(data[0], "cGlItemId", transaction.getGLItem().getId());
+      FieldProviderFactory.setField(data[0], "cGlItemId",
+          transaction.getGLItem() != null ? transaction.getGLItem().getId() : "");
       FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
           .toString());
       FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
@@ -280,9 +279,14 @@ public class DocFINFinAccTransaction extends AcctServer {
     fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
         .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
         DocumentType, conn);
-    fact.createLine(line, getWithdrawalAccount(as, transaction.getAccount(), conn), C_Currency_ID,
-        line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-        DocumentType, conn);
+    if (!getDocumentReconciliationConfirmation(conn, transaction.getAccount()))
+      fact.createLine(line, getWithdrawalAccount(as, transaction.getAccount(), conn),
+          C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
+    else
+      fact.createLine(line, getAccountReconciliation(conn, transaction.getAccount(), as),
+          C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
     SeqNo = "0";
     return fact;
   }
@@ -349,6 +353,25 @@ public class DocFINFinAccTransaction extends AcctServer {
 
   public BigDecimal getBalance() {
     return null;
+  }
+
+  public boolean getDocumentReconciliationConfirmation(ConnectionProvider conn,
+      FIN_FinancialAccount financialAccount) {
+    // Checks if this step (Reconciliation) is configured to generate accounting for the
+    // selected financial account
+    boolean confirmation = false;
+    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      List<FIN_FinancialAccountAccounting> accounts = financialAccount
+          .getFINFinancialAccountAcctList();
+      for (FIN_FinancialAccountAccounting account : accounts) {
+        if (account.getDebitAccount() != null)
+          confirmation = true;
+      }
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+    }
+    return confirmation;
   }
 
   public boolean getDocumentPaymentConfirmation(ConnectionProvider conn, FIN_Payment payment) {
@@ -430,7 +453,7 @@ public class DocFINFinAccTransaction extends AcctServer {
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
           "dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      FieldProviderFactory.setField(data[0], "dateacct", outputFormat.format(transaction
+      FieldProviderFactory.setField(data[0], "DateAcct", outputFormat.format(transaction
           .getDateAcct()));
       FieldProviderFactory.setField(data[0], "trxdate", outputFormat.format(transaction
           .getTransactionDate()));
@@ -553,6 +576,30 @@ public class DocFINFinAccTransaction extends AcctServer {
         account = new Account(conn, accountList.get(0).getReceivePaymentAccount().getId());
       else
         account = new Account(conn, accountList.get(0).getMakePaymentAccount().getId());
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+    }
+    return account;
+  }
+
+  public Account getAccountReconciliation(ConnectionProvider conn, FIN_FinancialAccount finAccount,
+      AcctSchema as) throws ServletException {
+    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    Account account = null;
+    try {
+      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
+          FIN_FinancialAccountAccounting.class);
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+              as.m_C_AcctSchema_ID)));
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.setFilterOnReadableClients(false);
+      accounts.setFilterOnReadableOrganization(false);
+      List<FIN_FinancialAccountAccounting> accountList = accounts.list();
+      if (accountList == null || accountList.size() == 0)
+        return null;
+      account = new Account(conn, accountList.get(0).getDebitAccount().getId());
     } finally {
       OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
     }

@@ -63,16 +63,10 @@ BEGIN
    WHERE M.AD_MODULE_ID = cuerrentModuleID;
      
   IF (UPDATING AND devTemplate=0 AND devModule='N') THEN
-    IF (COALESCE(:NEW.AD_PROPERTY_CONFIGURATION_ID, '.') != COALESCE(:NEW.AD_PROPERTY_CONFIGURATION_ID, '.') OR                                                                                                                                                                          
-        COALESCE(:NEW.AD_CLIENT_ID                , '.') != COALESCE(:NEW.AD_CLIENT_ID                , '.') OR                                                                                                                                                                           
-        COALESCE(:NEW.AD_ORG_ID                   , '.') != COALESCE(:NEW.AD_ORG_ID                   , '.') OR                                                                                                                                                                           
-        COALESCE(:NEW.ISACTIVE                    , '.') != COALESCE(:NEW.ISACTIVE                    , '.') OR                                                                                                                                                                           
-        COALESCE(:NEW.CREATED                     , '.') != COALESCE(:NEW.CREATED                     , '.') OR                                                                                                                                                                           
-        COALESCE(:NEW.CREATEDBY                   , '.') != COALESCE(:NEW.CREATEDBY                   , '.') OR                                                                                                                                                                           
-        COALESCE(:NEW.UPDATED                     , '.') != COALESCE(:NEW.UPDATED                     , '.') OR                                                                                                                                                                           
-        COALESCE(:NEW.UPDATEDBY                   , '.') != COALESCE(:NEW.UPDATEDBY                   , '.') OR                                                                                                                                                                           
-        COALESCE(:NEW.PROPERTY                    , '.') != COALESCE(:NEW.PROPERTY                    , '.') OR                                                                                                                                                                           
-        COALESCE(:NEW.VALUE                       , '.') != COALESCE(:NEW.VALUE                       , '.') OR                                                                                                                                                                           
+    IF (COALESCE(:NEW.AD_CLIENT_ID                , '.') != COALESCE(:NEW.AD_CLIENT_ID                , '.') OR
+        COALESCE(:NEW.AD_ORG_ID                   , '.') != COALESCE(:NEW.AD_ORG_ID                   , '.') OR
+        COALESCE(:NEW.ISACTIVE                    , '.') != COALESCE(:NEW.ISACTIVE                    , '.') OR
+        COALESCE(:NEW.PROPERTY                    , '.') != COALESCE(:NEW.PROPERTY                    , '.') OR
         COALESCE(:NEW.AD_MODULE_ID                , '.') != COALESCE(:NEW.AD_MODULE_ID                , '.')) THEN
       RAISE_APPLICATION_ERROR(-20532, '@20532@');
     END IF;
@@ -85,16 +79,11 @@ BEGIN
   --Check the only updated column is "selected". In this case maitin updated
   --column as it was to prevent changes detection when trying to update database
   IF (UPDATING) THEN
-    IF (COALESCE(:NEW.AD_PROPERTY_CONFIGURATION_ID, '.') = COALESCE(:NEW.AD_PROPERTY_CONFIGURATION_ID, '.') AND                                                                                                                                                                          
-        COALESCE(:NEW.AD_CLIENT_ID                , '.') = COALESCE(:NEW.AD_CLIENT_ID                , '.') AND                                                                                                                                                                           
-        COALESCE(:NEW.AD_ORG_ID                   , '.') = COALESCE(:NEW.AD_ORG_ID                   , '.') AND                                                                                                                                                                           
-        COALESCE(:NEW.ISACTIVE                    , '.') = COALESCE(:NEW.ISACTIVE                    , '.') AND                                                                                                                                                                           
-        COALESCE(:NEW.CREATED                     , '.') = COALESCE(:NEW.CREATED                     , '.') AND                                                                                                                                                                           
-        COALESCE(:NEW.CREATEDBY                   , '.') = COALESCE(:NEW.CREATEDBY                   , '.') AND                                                                                                                                                                           
-        COALESCE(:NEW.UPDATED                     , '.') = COALESCE(:NEW.UPDATED                     , '.') AND                                                                                                                                                                           
-        COALESCE(:NEW.UPDATEDBY                   , '.') = COALESCE(:NEW.UPDATEDBY                   , '.') AND                                                                                                                                                                           
-        COALESCE(:NEW.PROPERTY                    , '.') = COALESCE(:NEW.PROPERTY                    , '.') AND                                                                                                                                                                           
-        COALESCE(:NEW.VALUE                       , '.') = COALESCE(:NEW.VALUE                       , '.') AND                                                                                                                                                                           
+    IF (COALESCE(:NEW.AD_CLIENT_ID                , '.') = COALESCE(:NEW.AD_CLIENT_ID                , '.') AND
+        COALESCE(:NEW.AD_ORG_ID                   , '.') = COALESCE(:NEW.AD_ORG_ID                   , '.') AND
+        COALESCE(:NEW.ISACTIVE                    , '.') = COALESCE(:NEW.ISACTIVE                    , '.') AND
+        COALESCE(:NEW.PROPERTY                    , '.') = COALESCE(:NEW.PROPERTY                    , '.') AND
+        COALESCE(:NEW.VALUE                       , '.') = COALESCE(:NEW.VALUE                       , '.') AND
         COALESCE(:NEW.AD_MODULE_ID                , '.') = COALESCE(:NEW.AD_MODULE_ID                , '.') AND
       :NEW.SELECTED != :OLD.SELECTED) THEN
          :NEW.UPDATED := :OLD.UPDATED;
