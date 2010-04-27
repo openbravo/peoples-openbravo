@@ -214,7 +214,7 @@ public class ExtractModule {
         return !(s.equals(".svn") || s.equals(".hg"));
       }
     });
-    String fileSeparator = System.getProperty("file.separator");
+    String fileSeparator = File.separator;
     for (int i = 0; list != null && i < list.length; i++) {
       if (list[i].isDirectory()) {
         // add entry for directory
