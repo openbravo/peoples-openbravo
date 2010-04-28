@@ -28,8 +28,17 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.common.enterprise.Organization;
 
+/**
+ * Handles preferences, resolving priorities in case there are values for a same property at
+ * different visibility levels
+ * 
+ */
 public class Preferences {
 
+  /**
+   * Obtains a list of all preferences that are applicable at the given visibility level (client,
+   * org, user, role)
+   */
   public static List<Preference> getAllPreferences(String client, String org, String user,
       String role) {
     OBContext.enableAsAdminContext();
@@ -62,7 +71,7 @@ public class Preferences {
         } else {
           // There is a preference for the current property, check whether it is higher priority by
           // and if so replace it
-          if (isHigherPriority(pref, existentPreference, client, parentTree)) {
+          if (isHigherPriority(pref, existentPreference, parentTree)) {
             preferences.remove(existentPreference);
             preferences.add(pref);
           }
@@ -75,7 +84,19 @@ public class Preferences {
     }
   }
 
-  private static boolean isHigherPriority(Preference pref1, Preference pref2, String client,
+  /**
+   * Determines which of the 2 preferences has higher visibility priority.
+   * 
+   * @param pref1
+   *          First preference to compare
+   * @param pref2
+   *          Second preference to compare
+   * @param parentTree
+   *          Parent tree of organizations including the current one, used to assign more priority
+   *          to organizations nearer in the tree.
+   * @return true in case pref1 is more visible than pref2
+   */
+  private static boolean isHigherPriority(Preference pref1, Preference pref2,
       List<String> parentTree) {
     // Check priority by client
     if ((pref2.getVisibleAtClient() == null || pref2.getVisibleAtClient().getId().equals("0"))
@@ -112,6 +133,15 @@ public class Preferences {
     return false;
   }
 
+  /**
+   * Returns the position of a given organization in a tree, being 0 the nearest.
+   * 
+   * @param org
+   *          Organization to check.
+   * @param tree
+   *          Tree of organizations to look in.
+   * @return The position if the organization is in the tree, -1 if it is not.
+   */
   private static int depthInTree(Organization org, List<String> tree) {
     int i = 0;
     for (String orgId : tree) {
@@ -123,6 +153,16 @@ public class Preferences {
     return -1;
   }
 
+  /**
+   * Checks whether a there is a preference for the same property in a List. If so, it is returned,
+   * other case null is returned.
+   * 
+   * @param pref
+   *          Preference to look for.
+   * @param preferences
+   *          List of preferences to look in.
+   * @return The preference if it exists in the list, null if not.
+   */
   private static Preference getPreferenceFromList(Preference pref, List<Preference> preferences) {
     for (Preference listPref : preferences) {
       if (((listPref.isPropertyList() && pref.isPropertyList() && pref.getProperty().equals(
