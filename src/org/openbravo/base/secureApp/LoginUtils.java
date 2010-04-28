@@ -11,6 +11,8 @@
  */
 package org.openbravo.base.secureApp;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -18,7 +20,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 
@@ -182,18 +186,16 @@ public class LoginUtils {
           vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
       }
       attr = null;
-      PreferencesData[] prefs = PreferencesData.select(conn, Utility.getContext(conn, vars,
-          "#User_Client", "LoginHandler"), Utility.getContext(conn, vars, "#AccessibleOrgTree",
-          "LoginHandler"), strUserAuth);
 
-      if (prefs != null && prefs.length > 0) {
-        for (int i = 0; i < prefs.length; i++) {
-          vars.setSessionValue("P|"
-              + (prefs[i].adWindowId.equals("") ? "" : (prefs[i].adWindowId + "|"))
-              + prefs[i].attribute, prefs[i].value);
-        }
+      List<Preference> preferences = Preferences.getAllPreferences(strCliente, strOrg, strUserAuth,
+          strRol);
+      for (Preference preference : preferences) {
+        String prefName = "P|"
+            + (preference.getWindow() == null ? "" : (preference.getWindow().getId() + "|"))
+            + (preference.isPropertyList() ? preference.getProperty() : preference.getAttribute());
+        vars.setSessionValue(prefName, preference.getSearchKey());
+        log4j.debug("Set preference " + prefName + " - " + preference.getSearchKey());
       }
-      prefs = null;
 
       attr = AttributeData.selectIsSOTrx(conn);
       if (attr != null && attr.length > 0) {
