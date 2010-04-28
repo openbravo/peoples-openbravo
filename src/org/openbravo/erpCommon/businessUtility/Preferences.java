@@ -54,27 +54,11 @@ public class Preferences {
       String role) {
     OBContext.enableAsAdminContext();
     try {
-      StringBuilder hql = new StringBuilder();
-      hql.append(" as p ");
-      hql.append(" where (p.visibleAtClient.id = :client ");
-      hql.append("        or coalesce(p.visibleAtClient, '0')='0') ");
-      hql.append("   and (p.visibleAtRole.id = :role ");
-      hql.append("        or p.visibleAtRole is null) ");
-      hql.append("   and (coalesce(p.visibleAtOrganization, '0')='0'");
-      hql.append("        or (ad_isorgincluded(:org, p.visibleAtOrganization, :client) != -1))");
-      hql.append("   and (p.userContact.id = :user ");
-      hql.append("        or p.userContact.id is null) ");
-      OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
-      qPref.setNamedParameter("client", client);
-      qPref.setNamedParameter("org", org);
-      qPref.setNamedParameter("role", role);
-      qPref.setNamedParameter("user", user);
-
       List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider()
           .getParentList(org, true);
 
       ArrayList<Preference> preferences = new ArrayList<Preference>();
-      for (Preference pref : qPref.list()) {
+      for (Preference pref : getPreferences(null, false, client, org, user, role, null, false)) {
         Preference existentPreference = getPreferenceFromList(pref, preferences);
         if (existentPreference == null) {
           // There is not a preference for the current property, add it to the list
@@ -124,59 +108,16 @@ public class Preferences {
       Client client, Organization org, User user, Role role, Window window, VariablesSecureApp vars) {
     boolean adminModule = OBContext.getOBContext().setInAdministratorMode(true);
     try {
-      List<Object> parameters = new ArrayList<Object>();
-      StringBuilder hql = new StringBuilder();
-      hql.append(" as p ");
-      hql.append(" where ");
-
-      hql.append(" p.propertyList = " + (isListProperty ? "Y" : "N"));
-      if (isListProperty) {
-        hql.append(" and p.property = ? ");
-      } else {
-        hql.append(" and p.attribute = ? ");
-      }
-      parameters.add(property);
-
-      if (client != null) {
-        hql.append(" and p.visibleAtClient = ? ");
-        parameters.add(client);
-      } else {
-        hql.append(" p.visibleAtClient is null");
-      }
-
-      if (org != null) {
-        hql.append(" and p.visibleAtOrganization = ? ");
-        parameters.add(org);
-      } else {
-        hql.append(" and p.visibleAtOrganization is null ");
-      }
-
-      if (user != null) {
-        hql.append(" and p.userContact = ? ");
-        parameters.add(user);
-      } else {
-        hql.append(" and p.userContact is null ");
-      }
-
-      if (role != null) {
-        hql.append(" and p.visibleAtRole = ? ");
-        parameters.add(role);
-      } else {
-        hql.append(" and p.visibleAtRole is null");
-      }
-
-      if (window != null) {
-        hql.append(" and p.window = ? ");
-        parameters.add(window);
-      } else {
-        hql.append(" and p.window is null");
-      }
-
-      OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
-      qPref.setParameters(parameters);
-
       Preference preference;
-      if (qPref.list().size() == 0) {
+      String clientId = client == null ? null : client.getId();
+      String orgId = org == null ? null : org.getId();
+      String userId = user == null ? null : user.getId();
+      String roleId = role == null ? null : role.getId();
+      String windowId = window == null ? null : window.getId();
+
+      List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
+          roleId, windowId, true);
+      if (prefs.size() == 0) {
         // New preference
         preference = OBProvider.getInstance().get(Preference.class);
         preference.setPropertyList(isListProperty);
@@ -192,7 +133,7 @@ public class Preferences {
         preference.setWindow(window);
       } else {
         // Rewrite value (assume there's no conflicting properties
-        preference = qPref.list().get(0);
+        preference = prefs.get(0);
       }
       preference.setSearchKey(value);
       OBDal.getInstance().save(preference);
@@ -204,7 +145,11 @@ public class Preferences {
     } finally {
       OBContext.getOBContext().setInAdministratorMode(adminModule);
     }
+  }
 
+  public String getPreferenceValue(String property, boolean isListProperty, Client client,
+      Organization org, User user, Role role, Window window, VariablesSecureApp vars) {
+    return null;
   }
 
   /**
@@ -221,6 +166,95 @@ public class Preferences {
         + (preference.isPropertyList() ? preference.getProperty() : preference.getAttribute());
     vars.setSessionValue(prefName, preference.getSearchKey());
     log4j.info("Set preference " + prefName + " - " + preference.getSearchKey());
+  }
+
+  /**
+   * Obtains a list of preferences. All the parameters can be null; when a parameter is null, it
+   * will not be used in the filtering for the preference.
+   * <p>
+   * exactMatch parameter determines whether the returned list of properties matches exactly the
+   * visibility defined by the parameters, or if it is obtained any preference that is applicable to
+   * the given visibility. For no exact match, visibility prioritization and conflicts are not
+   * resolved in this method.
+   * 
+   */
+  private static List<Preference> getPreferences(String property, boolean isListProperty,
+      String client, String org, String user, String role, String window, boolean exactMatch) {
+
+    List<Object> parameters = new ArrayList<Object>();
+    StringBuilder hql = new StringBuilder();
+    hql.append(" as p ");
+    hql.append(" where ");
+    if (exactMatch) {
+      if (client != null) {
+        hql.append(" and p.visibleAtClient.id = ? ");
+        parameters.add(client);
+      } else {
+        hql.append(" p.visibleAtClient is null");
+      }
+      if (org != null) {
+        hql.append(" and p.visibleAtOrganization = ? ");
+        parameters.add(org);
+      } else {
+        hql.append(" and p.visibleAtOrganization is null ");
+      }
+
+      if (user != null) {
+        hql.append(" and p.userContact.id = ? ");
+        parameters.add(user);
+      } else {
+        hql.append(" and p.userContact is null ");
+      }
+
+      if (role != null) {
+        hql.append(" and p.visibleAtRole.id = ? ");
+        parameters.add(role);
+      } else {
+        hql.append(" and p.visibleAtRole is null");
+      }
+
+      if (window != null) {
+        hql.append(" and p.window.id = ? ");
+        parameters.add(window);
+      } else {
+        hql.append(" and p.window is null");
+      }
+    } else {
+      if (client != null) {
+        hql.append(" (p.visibleAtClient.id = ? ");
+        hql.append("   or coalesce(p.visibleAtClient, '0')='0') ");
+        parameters.add(client);
+      }
+      if (role != null) {
+        hql.append("   and (p.visibleAtRole.id = ? ");
+        hql.append("        or p.visibleAtRole is null) ");
+        parameters.add(role);
+      }
+      if (org != null) {
+        hql.append("   and (coalesce(p.visibleAtOrganization, '0')='0'");
+        hql.append("        or (ad_isorgincluded(?, p.visibleAtOrganization, ?) != -1))");
+        parameters.add(org);
+        parameters.add(client);
+      }
+      if (user != null) {
+        hql.append("   and (p.userContact.id = ? ");
+        hql.append("        or p.userContact.id is null) ");
+        parameters.add(user);
+      }
+    }
+
+    if (property != null) {
+      hql.append(" and p.propertyList = " + (isListProperty ? "Y" : "N"));
+      if (isListProperty) {
+        hql.append(" and p.property = ? ");
+      } else {
+        hql.append(" and p.attribute = ? ");
+      }
+    }
+
+    OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
+    qPref.setParameters(parameters);
+    return qPref.list();
   }
 
   /**
