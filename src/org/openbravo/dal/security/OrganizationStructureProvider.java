@@ -177,8 +177,35 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     String parentOrg = this.getParentOrg(orgId);
     Set<String> result = new HashSet<String>();
 
-    if (includeOrg)
+    if (includeOrg) {
       result.add(orgId);
+    }
+
+    while (parentOrg != null) {
+      result.add(parentOrg);
+      parentOrg = this.getParentOrg(parentOrg);
+    }
+    return result;
+  }
+
+  /**
+   * Returns an ordered list of parents of an organization. The parents are listed from the
+   * organization and up (so parent before grand parent).
+   * 
+   * @param orgId
+   *          the id of the organization for which the parent organization tree is determined.
+   * @param includeOrg
+   *          if true, returns also the given organization as part of the tree
+   * @return the parent organization tree of the organization.
+   */
+  public List<String> getParentList(String orgId, boolean includeOrg) {
+    initialize();
+    String parentOrg = this.getParentOrg(orgId);
+    List<String> result = new ArrayList<String>();
+
+    if (includeOrg) {
+      result.add(orgId);
+    }
 
     while (parentOrg != null) {
       result.add(parentOrg);
