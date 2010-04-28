@@ -190,11 +190,7 @@ public class LoginUtils {
       List<Preference> preferences = Preferences.getAllPreferences(strCliente, strOrg, strUserAuth,
           strRol);
       for (Preference preference : preferences) {
-        String prefName = "P|"
-            + (preference.getWindow() == null ? "" : (preference.getWindow().getId() + "|"))
-            + (preference.isPropertyList() ? preference.getProperty() : preference.getAttribute());
-        vars.setSessionValue(prefName, preference.getSearchKey());
-        log4j.debug("Set preference " + prefName + " - " + preference.getSearchKey());
+        Preferences.savePreferenceInSession(vars, preference);
       }
 
       attr = AttributeData.selectIsSOTrx(conn);
@@ -247,7 +243,7 @@ public class LoginUtils {
 
     // set the obcontext
     try {
-      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage);
+      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg);
     } catch (final OBSecurityException e) {
       return false;
     }

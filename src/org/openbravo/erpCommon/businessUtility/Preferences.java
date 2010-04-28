@@ -22,10 +22,17 @@ package org.openbravo.erpCommon.businessUtility;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
@@ -34,6 +41,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * 
  */
 public class Preferences {
+  private static final Logger log4j = Logger.getLogger(Preferences.class);
 
   /**
    * Obtains a list of all preferences that are applicable at the given visibility level (client,
@@ -82,6 +90,135 @@ public class Preferences {
     } finally {
       OBContext.resetAsAdminContext();
     }
+  }
+
+  /**
+   * Saves the property/value as a preference. If a preference with exactly the same visualization
+   * priority already exists, it is overwritten; if not, a new one is created.
+   * <p>
+   * It also saves the new preference in session, in case the vars parameter is not null. If it is
+   * null, the preference is not stored in session.
+   * 
+   * @param property
+   *          Name of the property or attribute for the preference.
+   * @param value
+   *          New value to set.
+   * @param isListProperty
+   *          Determines whether list of properties or attribute should be used.
+   * @param client
+   *          Client visibility.
+   * @param org
+   *          Organization visibility.
+   * @param user
+   *          User visibility.
+   * @param role
+   *          Role visibility.
+   * @param window
+   *          Window visibility.
+   * @param vars
+   *          VariablesSecureApp to store new property value.
+   */
+  public static void setPreferenceValue(String property, String value, boolean isListProperty,
+      Client client, Organization org, User user, Role role, Window window, VariablesSecureApp vars) {
+    boolean adminModule = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      List<Object> parameters = new ArrayList<Object>();
+      StringBuilder hql = new StringBuilder();
+      hql.append(" as p ");
+      hql.append(" where ");
+
+      hql.append(" p.propertyList = " + (isListProperty ? "Y" : "N"));
+      if (isListProperty) {
+        hql.append(" and p.property = ? ");
+      } else {
+        hql.append(" and p.attribute = ? ");
+      }
+      parameters.add(property);
+
+      if (client != null) {
+        hql.append(" and p.visibleAtClient = ? ");
+        parameters.add(client);
+      } else {
+        hql.append(" p.visibleAtClient is null");
+      }
+
+      if (org != null) {
+        hql.append(" and p.visibleAtOrganization = ? ");
+        parameters.add(org);
+      } else {
+        hql.append(" and p.visibleAtOrganization is null ");
+      }
+
+      if (user != null) {
+        hql.append(" and p.userContact = ? ");
+        parameters.add(user);
+      } else {
+        hql.append(" and p.userContact is null ");
+      }
+
+      if (role != null) {
+        hql.append(" and p.visibleAtRole = ? ");
+        parameters.add(role);
+      } else {
+        hql.append(" and p.visibleAtRole is null");
+      }
+
+      if (window != null) {
+        hql.append(" and p.window = ? ");
+        parameters.add(window);
+      } else {
+        hql.append(" and p.window is null");
+      }
+
+      OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
+      qPref.setParameters(parameters);
+
+      Preference preference;
+      if (qPref.list().size() == 0) {
+        // New preference
+        preference = OBProvider.getInstance().get(Preference.class);
+        preference.setPropertyList(isListProperty);
+        if (isListProperty) {
+          preference.setProperty(property);
+        } else {
+          preference.setAttribute(property);
+        }
+        preference.setVisibleAtClient(client);
+        preference.setVisibleAtOrganization(org);
+        preference.setVisibleAtRole(role);
+        preference.setUserContact(user);
+        preference.setWindow(window);
+      } else {
+        // Rewrite value (assume there's no conflicting properties
+        preference = qPref.list().get(0);
+      }
+      preference.setSearchKey(value);
+      OBDal.getInstance().save(preference);
+
+      if (vars != null) {
+        savePreferenceInSession(vars, preference);
+      }
+
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(adminModule);
+    }
+
+  }
+
+  /**
+   * Stores the preference as a session value
+   * 
+   * @param vars
+   *          VariablesSecureApp of the current session to store preference in
+   * @param preference
+   *          Preference to save in session
+   */
+  public static void savePreferenceInSession(VariablesSecureApp vars, Preference preference) {
+    String prefName = "P|"
+        + (preference.getWindow() == null ? "" : (preference.getWindow().getId() + "|"))
+        + (preference.isPropertyList() ? preference.getProperty() : preference.getAttribute());
+    vars.setSessionValue(prefName, preference.getSearchKey());
+    log4j.info("Set preference " + prefName + " - " + preference.getSearchKey());
   }
 
   /**
