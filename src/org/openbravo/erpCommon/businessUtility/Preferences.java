@@ -22,12 +22,17 @@ package org.openbravo.erpCommon.businessUtility;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.el.PropertyNotFoundException;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.PropertyConflictException;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
@@ -147,9 +152,69 @@ public class Preferences {
     }
   }
 
-  public String getPreferenceValue(String property, boolean isListProperty, Client client,
-      Organization org, User user, Role role, Window window, VariablesSecureApp vars) {
-    return null;
+  /**
+   * Obtains the value for a given property with the visibility defined by the parameters. In case
+   * of conflict or the property is not defined an exception is thrown.
+   * <p>
+   * This method is used to query in database for the property value, note that when properties are
+   * set, they are also saved as session values and it is possible to obtain them using
+   * {@link Utility#getPreference(VariablesSecureApp, String, String) Utility.getPreference}.
+   * 
+   * @throws PropertyException
+   *           if the property cannot be resolved in a single value:
+   *           <ul>
+   *           <li> {@link PropertyNotFoundException} if the property is not defined. <li>
+   *           {@link PropertyConflictException} in case of conflict
+   *           </ul>
+   */
+  public static String getPreferenceValue(String property, boolean isListProperty, Client client,
+      Organization org, User user, Role role, Window window) throws PropertyException {
+    boolean adminModule = OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      String clientId = client == null ? null : client.getId();
+      String orgId = org == null ? null : org.getId();
+      String userId = user == null ? null : user.getId();
+      String roleId = role == null ? null : role.getId();
+      String windowId = window == null ? null : window.getId();
+
+      List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
+          roleId, windowId, false);
+
+      Preference selectedPreference = null;
+      List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider()
+          .getParentList(orgId, true);
+      boolean conflict = false;
+      for (Preference preference : prefs) {
+        // select the highest priority or raise exception in case of conflict
+        if (selectedPreference == null) {
+          selectedPreference = preference;
+          continue;
+        }
+        int higherPriority = isHigherPriority(selectedPreference, preference, parentTree);
+        switch (higherPriority) {
+        case 1:
+          // do nothing, selected one has higher priority
+          break;
+        case 2:
+          selectedPreference = preference;
+          conflict = false;
+          break;
+        default:
+          conflict = true;
+          break;
+        }
+      }
+
+      if (conflict) {
+        throw new PropertyConflictException();
+      }
+      if (selectedPreference == null) {
+        throw new PropertyNotFoundException();
+      }
+      return selectedPreference.getSearchKey();
+    } finally {
+      OBContext.getOBContext().setInAdministratorMode(adminModule);
+    }
   }
 
   /**
@@ -287,13 +352,19 @@ public class Preferences {
       return 1;
     }
 
-    if ((org1 == null && org2 != null) || (org1 == null || org2 == null)) {
+    if ((org1 == null && org2 != null)) {
       return 2;
     }
 
-    if (org1 != null && org2 != null
-        && depthInTree(org1, parentTree) < depthInTree(org2, parentTree)) {
-      return 1;
+    if (org1 != null && org2 != null) {
+      int depth1 = depthInTree(org1, parentTree);
+      int depth2 = depthInTree(org2, parentTree);
+
+      if (depth1 < depth2) {
+        return 1;
+      } else if (depth1 > depth2) {
+        return 2;
+      }
     }
 
     // Check priority by user
@@ -301,8 +372,25 @@ public class Preferences {
       return 1;
     }
 
+    if (pref1.getUserContact() == null && pref2.getUserContact() != null) {
+      return 2;
+    }
+
     // Check priority by role
     if (pref1.getVisibleAtRole() != null && pref2.getVisibleAtRole() == null) {
+      return 1;
+    }
+
+    if (pref1.getVisibleAtRole() == null && pref2.getVisibleAtRole() != null) {
+      return 2;
+    }
+
+    // Check window
+    if (pref1.getWindow() != null && pref2.getWindow() == null) {
+      return 1;
+    }
+
+    if (pref1.getWindow() == null && pref2.getWindow() != null) {
       return 1;
     }
 
