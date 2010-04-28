@@ -59,9 +59,9 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       String strDateTo = vars.getStringParameter("inpDateTo");
       String strDocumentNo = vars.getStringParameter("inpDocumentNo");
       String strDescription = vars.getStringParameter("inpDescription");
+      String strWindow = vars.getGlobalVariable("inpwindowId", "CopyFromSettlement|Window_ID");
       String strSettlement = vars.getGlobalVariable("inpcSettlementId",
-          "CopyFromSettlement|C_Settlement_ID");
-      String strWindow = vars.getStringParameter("inpwindowId");
+    		  strWindow + "|"+ "C_Settlement_ID");
       printPage(response, vars, strDescription, strDocumentNo, strDateFrom, strDateTo,
           strSettlement, strWindow);
     } else if (vars.commandIn("FIND2")) {
