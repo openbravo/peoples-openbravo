@@ -41,12 +41,36 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ATTRIBUTE" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="ATTRIBUTE" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="VALUE" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="VALUE" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
         <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PROPERTY" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISPROPERTYLIST" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="VISIBLEAT_CLIENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VISIBLEAT_ORG_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VISIBLEAT_ROLE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="SELECTED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_PREFERENCE_CLIENT">
