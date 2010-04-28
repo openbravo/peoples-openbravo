@@ -94,13 +94,6 @@
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_PREFERENCE" onDelete="cascade">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
-      <unique name="AD_PREFERENCE_ATTRIBUTE">
-        <unique-column name="AD_CLIENT_ID"/>
-        <unique-column name="AD_ORG_ID"/>
-        <unique-column name="AD_WINDOW_ID"/>
-        <unique-column name="AD_USER_ID"/>
-        <unique-column name="ATTRIBUTE"/>
-      </unique>
       <check name="AD_PREFERENCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
