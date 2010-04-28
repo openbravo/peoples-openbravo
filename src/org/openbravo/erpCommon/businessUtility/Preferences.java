@@ -247,6 +247,7 @@ public class Preferences {
       String client, String org, String user, String role, String window, boolean exactMatch) {
 
     List<Object> parameters = new ArrayList<Object>();
+    boolean hasConstraints = false;
     StringBuilder hql = new StringBuilder();
     hql.append(" as p ");
     hql.append(" where ");
@@ -284,28 +285,47 @@ public class Preferences {
       } else {
         hql.append(" and p.window is null");
       }
+      hasConstraints = true;
     } else {
       if (client != null) {
-        hql.append(" (p.visibleAtClient.id = ? ");
-        hql.append("   or coalesce(p.visibleAtClient, '0')='0') ");
+        hql.append(" (p.visibleAtClient.id = ? or ");
         parameters.add(client);
+      } else {
+        hql.append(" (");
       }
+      hql.append(" coalesce(p.visibleAtClient, '0')='0') ");
+
       if (role != null) {
-        hql.append("   and (p.visibleAtRole.id = ? ");
-        hql.append("        or p.visibleAtRole is null) ");
+        hql.append(" and   (p.visibleAtRole.id = ? or ");
         parameters.add(role);
+      } else {
+        hql.append(" and (");
       }
+      hql.append("        p.visibleAtRole is null) ");
+
       if (org != null) {
-        hql.append("   and (coalesce(p.visibleAtOrganization, '0')='0'");
-        hql.append("        or (ad_isorgincluded(?, p.visibleAtOrganization, ?) != -1))");
+        hql.append("  and  ((ad_isorgincluded(?, p.visibleAtOrganization, ?) != -1) or ");
+
         parameters.add(org);
         parameters.add(client);
+      } else {
+        hql.append(" and (");
       }
+      hql.append("         (coalesce(p.visibleAtOrganization, '0')='0'))");
       if (user != null) {
-        hql.append("   and (p.userContact.id = ? ");
-        hql.append("        or p.userContact.id is null) ");
+        hql.append("  and (p.userContact.id = ? or ");
         parameters.add(user);
+      } else {
+        hql.append(" and (");
       }
+      hql.append("         p.userContact is null) ");
+      if (window != null) {
+        hql.append(" and  (p.window.id = ? or ");
+        parameters.add(window);
+      } else {
+        hql.append(" and (");
+      }
+      hql.append("        p.window is null) ");
     }
 
     if (property != null) {
