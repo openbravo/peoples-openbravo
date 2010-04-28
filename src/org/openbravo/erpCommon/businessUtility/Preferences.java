@@ -45,7 +45,10 @@ public class Preferences {
 
   /**
    * Obtains a list of all preferences that are applicable at the given visibility level (client,
-   * org, user, role)
+   * org, user, role).
+   * <p>
+   * In case of different values for a single property at a same visibility level, one of them is
+   * taken.
    */
   public static List<Preference> getAllPreferences(String client, String org, String user,
       String role) {
@@ -77,14 +80,13 @@ public class Preferences {
           // There is not a preference for the current property, add it to the list
           preferences.add(pref);
         } else {
-          // There is a preference for the current property, check whether it is higher priority by
-          // and if so replace it
-          if (isHigherPriority(pref, existentPreference, parentTree)) {
+          // There is a preference for the current property, check whether it is higher priority and
+          // if so replace it. In case of conflict leave current preference.
+          if (isHigherPriority(pref, existentPreference, parentTree) == 1) {
             preferences.remove(existentPreference);
             preferences.add(pref);
           }
         }
-
       }
       return preferences;
     } finally {
@@ -231,43 +233,61 @@ public class Preferences {
    * @param parentTree
    *          Parent tree of organizations including the current one, used to assign more priority
    *          to organizations nearer in the tree.
-   * @return true in case pref1 is more visible than pref2
+   * @return <ul>
+   *         <li>1 in case pref1 is more visible than pref2
+   *         <li>2 in case pref2 is more visible than pref1
+   *         <li>0 in case of conflict (both have identical visibity and value)
+   *         </ul>
    */
-  private static boolean isHigherPriority(Preference pref1, Preference pref2,
-      List<String> parentTree) {
+  private static int isHigherPriority(Preference pref1, Preference pref2, List<String> parentTree) {
     // Check priority by client
     if ((pref2.getVisibleAtClient() == null || pref2.getVisibleAtClient().getId().equals("0"))
         && pref1.getVisibleAtClient() != null && !pref1.getVisibleAtClient().getId().equals("0")) {
-      return true;
+      return 1;
     }
 
     // Check priority by organization
     Organization org1 = pref1.getVisibleAtOrganization();
     Organization org2 = pref2.getVisibleAtOrganization();
     if (org1 != null && org2 == null) {
-      return true;
+      return 1;
     }
 
     if ((org1 == null && org2 != null) || (org1 == null || org2 == null)) {
-      return false;
+      return 2;
     }
 
     if (org1 != null && org2 != null
         && depthInTree(org1, parentTree) < depthInTree(org2, parentTree)) {
-      return true;
+      return 1;
     }
 
     // Check priority by user
     if (pref1.getUserContact() != null && pref2.getUserContact() == null) {
-      return true;
+      return 1;
     }
 
     // Check priority by role
     if (pref1.getVisibleAtRole() != null && pref2.getVisibleAtRole() == null) {
-      return true;
+      return 1;
     }
 
-    return false;
+    // Same priority, check selected
+    if (pref1.isSelected() && !pref2.isSelected()) {
+      return 1;
+    }
+
+    if (!pref1.isSelected() && pref2.isSelected()) {
+      return 2;
+    }
+
+    if (pref1.getSearchKey().equals(pref2.getSearchKey())) {
+      // Conflict with same value, it does not matter priority
+      return 2;
+    }
+
+    // Actual conflict
+    return 0;
   }
 
   /**
