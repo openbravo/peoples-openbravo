@@ -309,13 +309,14 @@ public class Preferences {
     }
 
     if (property != null) {
-      hql.append(" and p.propertyList = " + (isListProperty ? "Y" : "N"));
+      hql.append(" and p.propertyList = '" + (isListProperty ? "Y" : "N") + "'");
       if (isListProperty) {
         hql.append(" and p.property = ? ");
       } else {
         hql.append(" and p.attribute = ? ");
       }
     }
+    parameters.add(property);
 
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);
@@ -335,7 +336,7 @@ public class Preferences {
    * @return <ul>
    *         <li>1 in case pref1 is more visible than pref2
    *         <li>2 in case pref2 is more visible than pref1
-   *         <li>0 in case of conflict (both have identical visibity and value)
+   *         <li>0 in case of conflict (both have identical visibility and value)
    *         </ul>
    */
   private static int isHigherPriority(Preference pref1, Preference pref2, List<String> parentTree) {
