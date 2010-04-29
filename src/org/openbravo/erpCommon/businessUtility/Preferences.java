@@ -209,7 +209,7 @@ public class Preferences {
         throw new PropertyConflictException();
       }
       if (selectedPreference == null) {
-        throw new PropertyNotFoundException();
+        throw new org.openbravo.erpCommon.utility.PropertyNotFoundException();
       }
       return selectedPreference.getSearchKey();
     } finally {
