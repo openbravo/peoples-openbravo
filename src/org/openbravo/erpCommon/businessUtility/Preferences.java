@@ -247,7 +247,6 @@ public class Preferences {
       String client, String org, String user, String role, String window, boolean exactMatch) {
 
     List<Object> parameters = new ArrayList<Object>();
-    boolean hasConstraints = false;
     StringBuilder hql = new StringBuilder();
     hql.append(" as p ");
     hql.append(" where ");
@@ -285,7 +284,6 @@ public class Preferences {
       } else {
         hql.append(" and p.window is null");
       }
-      hasConstraints = true;
     } else {
       if (client != null) {
         hql.append(" (p.visibleAtClient.id = ? or ");
@@ -412,7 +410,7 @@ public class Preferences {
     }
 
     if (pref1.getWindow() == null && pref2.getWindow() != null) {
-      return 1;
+      return 2;
     }
 
     // Same priority, check selected
