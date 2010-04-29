@@ -263,7 +263,7 @@ public class Preferences {
         hql.append(" p.visibleAtClient is null");
       }
       if (org != null) {
-        hql.append(" and p.visibleAtOrganization = ? ");
+        hql.append(" and p.visibleAtOrganization.id = ? ");
         parameters.add(org);
       } else {
         hql.append(" and p.visibleAtOrganization is null ");
@@ -307,7 +307,7 @@ public class Preferences {
       hql.append("        p.visibleAtRole is null) ");
 
       if (org != null) {
-        hql.append("  and  ((ad_isorgincluded(?, p.visibleAtOrganization, ?) != -1) or ");
+        hql.append("  and  ((ad_isorgincluded(?, p.visibleAtOrganization.id, ?) != -1) or ");
 
         parameters.add(org);
         parameters.add(client);
@@ -338,8 +338,8 @@ public class Preferences {
       } else {
         hql.append(" and p.attribute = ? ");
       }
+      parameters.add(property);
     }
-    parameters.add(property);
 
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);
@@ -457,7 +457,7 @@ public class Preferences {
   }
 
   /**
-   * Checks whether a there is a preference for the same property in a List. If so, it is returned,
+   * Checks whether there is a preference for the same property in a List. If so, it is returned,
    * other case null is returned.
    * 
    * @param pref
@@ -471,7 +471,9 @@ public class Preferences {
       if (((listPref.isPropertyList() && pref.isPropertyList() && pref.getProperty().equals(
           listPref.getProperty())) || (!listPref.isPropertyList() && !pref.isPropertyList() && pref
           .getAttribute().equals(listPref.getAttribute())))
-          && pref.getWindow().equals(listPref.getWindow())) {
+          && ((pref.getWindow() == null && listPref.getWindow() == null)
+              || (pref.getWindow() != null && pref.getWindow().equals(listPref.getWindow())) || (listPref
+              .getWindow() != null && listPref.getWindow().equals(pref.getWindow())))) {
         return listPref;
       }
     }
