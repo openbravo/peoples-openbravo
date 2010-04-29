@@ -26202,6 +26202,10 @@ Configuration Properties are defined by modules with the purpose other modules a
 <!--853A123F5E1D826EE040007F01015616-->  <COLUMNNAME><![CDATA[IsPropertyList]]></COLUMNNAME>
 <!--853A123F5E1D826EE040007F01015616-->  <NAME><![CDATA[Property List]]></NAME>
 <!--853A123F5E1D826EE040007F01015616-->  <PRINTNAME><![CDATA[Property List]]></PRINTNAME>
+<!--853A123F5E1D826EE040007F01015616-->  <DESCRIPTION><![CDATA[Determines how the preference is defined: by Property or by Attribute.]]></DESCRIPTION>
+<!--853A123F5E1D826EE040007F01015616-->  <HELP><![CDATA[When this field is checked, the preference is defined by Property which is a selectable value from a drop down list. Properties are defined by modules.
+
+In case the field is not checked, the preference is defined by Attribute, which is a free text name.]]></HELP>
 <!--853A123F5E1D826EE040007F01015616-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--853A123F5E1D826EE040007F01015616--></AD_ELEMENT>
 
@@ -26213,6 +26217,8 @@ Configuration Properties are defined by modules with the purpose other modules a
 <!--853A123F5E1E826EE040007F01015616-->  <COLUMNNAME><![CDATA[VisibleAt_Org_ID]]></COLUMNNAME>
 <!--853A123F5E1E826EE040007F01015616-->  <NAME><![CDATA[Visible at Organization]]></NAME>
 <!--853A123F5E1E826EE040007F01015616-->  <PRINTNAME><![CDATA[Visible at Organization]]></PRINTNAME>
+<!--853A123F5E1E826EE040007F01015616-->  <DESCRIPTION><![CDATA[Defines Organization visibility.]]></DESCRIPTION>
+<!--853A123F5E1E826EE040007F01015616-->  <HELP><![CDATA[Defines which is the preference's visibility at Organization level. The preference will be visible from all organizations in the tree bellow this one. If this value is empty the preference will be visible from all Organizations.]]></HELP>
 <!--853A123F5E1E826EE040007F01015616-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--853A123F5E1E826EE040007F01015616--></AD_ELEMENT>
 
@@ -26224,6 +26230,8 @@ Configuration Properties are defined by modules with the purpose other modules a
 <!--853A123F5E1F826EE040007F01015616-->  <COLUMNNAME><![CDATA[VisibleAt_Role_ID]]></COLUMNNAME>
 <!--853A123F5E1F826EE040007F01015616-->  <NAME><![CDATA[Visible at Role]]></NAME>
 <!--853A123F5E1F826EE040007F01015616-->  <PRINTNAME><![CDATA[Visible at Role]]></PRINTNAME>
+<!--853A123F5E1F826EE040007F01015616-->  <DESCRIPTION><![CDATA[Defines Role visibility.]]></DESCRIPTION>
+<!--853A123F5E1F826EE040007F01015616-->  <HELP><![CDATA[Defines which is the preference's visibility at Role level. If this value is empty the preference will be visible from all Roles.]]></HELP>
 <!--853A123F5E1F826EE040007F01015616-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--853A123F5E1F826EE040007F01015616--></AD_ELEMENT>
 
@@ -26235,6 +26243,8 @@ Configuration Properties are defined by modules with the purpose other modules a
 <!--853A123F5E20826EE040007F01015616-->  <COLUMNNAME><![CDATA[VisibleAt_Client_ID]]></COLUMNNAME>
 <!--853A123F5E20826EE040007F01015616-->  <NAME><![CDATA[Visible at Client]]></NAME>
 <!--853A123F5E20826EE040007F01015616-->  <PRINTNAME><![CDATA[Visible at Client]]></PRINTNAME>
+<!--853A123F5E20826EE040007F01015616-->  <DESCRIPTION><![CDATA[Defines Client visibility.]]></DESCRIPTION>
+<!--853A123F5E20826EE040007F01015616-->  <HELP><![CDATA[Defines which is the preference's visibility at client level. If this value is empty the preference will be visible from all Clients.]]></HELP>
 <!--853A123F5E20826EE040007F01015616-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--853A123F5E20826EE040007F01015616--></AD_ELEMENT>
 
