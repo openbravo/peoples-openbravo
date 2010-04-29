@@ -187,7 +187,7 @@ public class Preferences {
           roleId, windowId, false, true);
 
       Preference selectedPreference = null;
-      List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider()
+      List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(clientId)
           .getParentList(orgId, true);
       boolean conflict = false;
       for (Preference preference : prefs) {
