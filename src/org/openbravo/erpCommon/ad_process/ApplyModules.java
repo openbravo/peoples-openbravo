@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
@@ -33,12 +34,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_process.buildStructure.Build;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -48,6 +53,7 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.system.ReloadContext;
 import org.openbravo.service.system.RestartTomcat;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.xml.sax.InputSource;
 
 /**
  * Servlet for the Apply Modules method.
@@ -186,11 +192,41 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
+    try {
+      Build build = getBuildFromXMLFile();
+      FieldProvider[] nodeData = build.getFieldProvidersForBuild();
+      xmlDocument.setData("structureStepTree", nodeData);
+    } catch (Exception e) {
+      log4j.error("Error reading build information file", e);
+    }
+
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
 
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private Build getBuildFromXMLFile() throws Exception {
+
+    String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
+        .toString();
+    FileReader xmlReader = new FileReader(source
+        + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
+
+    BeanReader beanReader = new BeanReader();
+
+    beanReader.getBindingConfiguration().setMapIDs(false);
+
+    beanReader.getXMLIntrospector().register(
+        new InputSource(new FileReader(new File(source,
+            "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
+
+    beanReader.registerBeanClass("Build", Build.class);
+
+    Build build = (Build) beanReader.parse(xmlReader);
+
+    return build;
   }
 
   /**

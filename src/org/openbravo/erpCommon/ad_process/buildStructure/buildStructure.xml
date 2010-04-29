@@ -1,0 +1,22 @@
+<?xml version='1.0' ?>
+  <Build>
+    <mainSteps>
+      <mainStep code="RB10">
+        <name>Initial Build Validation</name>
+        <successMessage/>
+        <warningMessage>The validation had warnings</warningMessage>
+        <errorMessage>The validation failed</errorMessage>
+        <stepList/>
+      </mainStep>
+      <mainStep code="RB20">
+        <name>Build</name>
+        <successMessage>The build was succesfull</successMessage>
+        <warningMessage/>
+        <errorMessage>The build failed</errorMessage>
+        <stepList>
+          <step code="RB21" name="Database update"/>
+          <step code="RB22" name="Compilation"/>
+        </stepList>
+      </mainStep>
+    </mainSteps>
+  </Build>
