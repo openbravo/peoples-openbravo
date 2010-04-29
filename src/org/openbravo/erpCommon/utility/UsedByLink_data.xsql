@@ -31,6 +31,7 @@
         SELECT AD_PARENT_MENU_ELEMENT(M.AD_MENU_ID, ?, ?) AS ELEMENT_NAME, 
         ((case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end) || ' - ' || 
         (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end)) AS NAME, 
+        a.referenced_column_id,
         T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, '' AS HASTREE, '' AS ID, '' AS WHERECLAUSE, 0 AS TOTAL, 
         (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end) AS WINDOWNAME, 
         (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end) AS TABNAME,
@@ -41,33 +42,36 @@
                                                ELSE 'Y' 
                                                END) AS ACCESSIBLE
         FROM  (
-          SELECT AD_COLUMN_ID FROM AD_COLUMN 
+          SELECT AD_COLUMN_ID, ? as referenced_column_id 
+            FROM AD_COLUMN
            WHERE UPPER(COLUMNNAME) = UPPER(?) 
              AND (ISPARENT='Y' OR AD_REFERENCE_ID IN ('19', '35'))
         UNION 
-          SELECT AD_COLUMN.AD_COLUMN_ID FROM AD_COLUMN, AD_ELEMENT 
+          SELECT AD_COLUMN.AD_COLUMN_ID, ? as referenced_column_id  
+            FROM AD_COLUMN, AD_ELEMENT 
            WHERE AD_COLUMN.AD_ELEMENT_ID = AD_ELEMENT.AD_ELEMENT_ID 
              AND UPPER(REPLACE(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'),'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID')) = UPPER(?) 
              AND AD_REFERENCE_ID IN ('30', '31')
              AND AD_REFERENCE_VALUE_ID IS NULL
         UNION
-          SELECT C.AD_COLUMN_ID
+          SELECT C.AD_COLUMN_ID, s.ad_column_id as referenced_column_id
             FROM AD_COLUMN C, AD_REF_SEARCH S
            WHERE C.AD_REFERENCE_ID = '30'
              AND S.AD_TABLE_ID = ?
              AND C.AD_REFERENCE_VALUE_ID = S.AD_REFERENCE_ID
         UNION 
-           SELECT C.AD_COLUMN_ID FROM AD_COLUMN C, AD_REF_TABLE R 
+           SELECT C.AD_COLUMN_ID, r.ad_key as referenced_column_id 
+             FROM AD_COLUMN C, AD_REF_TABLE R 
             WHERE C.AD_REFERENCE_ID = '18' 
               AND C.AD_REFERENCE_VALUE_ID = R.AD_REFERENCE_ID
-              AND EXISTS(SELECT 1 FROM AD_COLUMN WHERE UPPER(COLUMNNAME) = UPPER(?) 
-              AND AD_COLUMN_ID = R.AD_KEY) 
+              AND R.AD_TABLE_ID = ?
         UNION 
-          SELECT AD_COLUMN_ID FROM AD_COLUMN 
+          SELECT AD_COLUMN_ID, ? as referenced_column_id 
+            FROM AD_COLUMN 
            WHERE AD_REFERENCE_ID = '21' 
              AND UPPER(?) = 'C_LOCATION_ID'
         UNION
-            SELECT AD_COLUMN_ID
+            SELECT AD_COLUMN_ID, AD_COLUMN_ID as referenced_column_id 
               FROM AD_COLUMN
              WHERE AD_COLUMN_ID IN ('1')
         ) A, AD_TABLE T, AD_COLUMN C, AD_MENU M, 
@@ -87,7 +91,7 @@
         AND W.ISACTIVE = 'Y' 
         AND (TB.WHERECLAUSE IS NULL OR TB.WHERECLAUSE NOT LIKE '%@%') 
         GROUP BY M.AD_MENU_ID, (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end), 
-        (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end), T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, W.AD_WINDOW_ID
+        (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end), a.referenced_column_id, T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID, W.AD_WINDOW_ID
         ORDER BY 1, (case when Wt.NAME IS NULL then W.NAME else  Wt.NAME end), 
         (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end), T.TABLENAME, C.COLUMNNAME, TB.AD_TAB_ID
       ]]>
@@ -95,10 +99,13 @@
     <Parameter name="adClientId"/>
     <Parameter name="adLanguage"/>
     <Parameter name="role"/>
+    <Parameter name="columnnId"/>
+    <Parameter name="columnnId"/>
+    <Parameter name="columnnId"/>
     <Parameter name="columnname"/>
     <Parameter name="columnname"/>
     <Parameter name="adTableId"/>
-    <Parameter name="columnname"/>
+    <Parameter name="adTableId"/>
     <Parameter name="columnname"/>
     <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
@@ -289,5 +296,57 @@
     </Sql>
     <Parameter name="adTableId"/>
     <Parameter name="tableName"/>
+  </SqlMethod>
+  
+  <SqlMethod name="selectTableName" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT TABLENAME as ID
+        FROM AD_TABLE
+        WHERE AD_TABLE_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="key"/>
+  </SqlMethod>
+  
+  <SqlMethod name="selectKeyValue" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT TABLENAME as ID
+        FROM AD_TABLE
+        WHERE AD_TABLE_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="columnnname" optional="true" type="replace" after="SELECT " text="TABLENAME"/>
+    <Parameter name="tablename" optional="true" type="replace" after="FROM " text="AD_TABLE"/>
+    <Parameter name="keyColumn" optional="true" type="replace" after="WHERE " text="AD_TABLE_ID"/>
+    <Parameter name="key"/>
+  </SqlMethod>
+  
+   <SqlMethod name="selectKeyColumnId" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT AD_COLUMN_ID as ID
+        FROM AD_COLUMN
+        WHERE AD_TABLE_ID = ?
+          AND ISKEY='Y'
+      ]]>
+    </Sql>
+    <Parameter name="key"/>
+  </SqlMethod>
+  
+   <SqlMethod name="selectColumnName" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT COLUMNNAME as ID
+        FROM AD_COLUMN
+        WHERE AD_column_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="key"/>
   </SqlMethod>
 </SqlClass>
