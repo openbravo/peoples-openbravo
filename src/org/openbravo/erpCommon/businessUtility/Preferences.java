@@ -108,9 +108,11 @@ public class Preferences {
    *          Window visibility.
    * @param vars
    *          VariablesSecureApp to store new property value.
+   * @return The preference that has been created or modified
    */
-  public static void setPreferenceValue(String property, String value, boolean isListProperty,
-      Client client, Organization org, User user, Role role, Window window, VariablesSecureApp vars) {
+  public static Preference setPreferenceValue(String property, String value,
+      boolean isListProperty, Client client, Organization org, User user, Role role, Window window,
+      VariablesSecureApp vars) {
     boolean adminModule = OBContext.getOBContext().setInAdministratorMode(true);
     try {
       Preference preference;
@@ -125,6 +127,9 @@ public class Preferences {
       if (prefs.size() == 0) {
         // New preference
         preference = OBProvider.getInstance().get(Preference.class);
+        preference.setClient(OBDal.getInstance().get(Client.class, "0"));
+        preference.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
+
         preference.setPropertyList(isListProperty);
         if (isListProperty) {
           preference.setProperty(property);
@@ -146,7 +151,7 @@ public class Preferences {
       if (vars != null) {
         savePreferenceInSession(vars, preference);
       }
-
+      return preference;
     } finally {
       OBContext.getOBContext().setInAdministratorMode(adminModule);
     }

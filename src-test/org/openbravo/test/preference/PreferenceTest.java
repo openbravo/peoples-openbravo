@@ -21,10 +21,12 @@ package org.openbravo.test.preference;
 import java.util.List;
 
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.domain.Preference;
@@ -126,6 +128,79 @@ public class PreferenceTest extends BaseTest {
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
         .getOBContext().getUser(), role, window);
     assertEquals("Not found expected value.", "alertSales", value);
+  }
+
+  public void testExceptionNotFound() {
+    PropertyException exception = null;
+    try {
+      Preferences.getPreferenceValue("testNotExists", false, OBContext.getOBContext()
+          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+          .getOBContext().getUser(), null, null);
+    } catch (PropertyException e) {
+      exception = e;
+    }
+    assertNotNull("Expected exception PropertyNotFoundException", exception);
+    assertTrue("Expected exception PropertyNotFoundException",
+        exception instanceof org.openbravo.erpCommon.utility.PropertyNotFoundException);
+  }
+
+  public void testConflict() {
+    setSystemAdministratorContext();
+    Preference newPref = OBProvider.getInstance().get(Preference.class);
+    newPref.setPropertyList(false);
+    newPref.setAttribute("testProperty");
+    newPref.setSearchKey("anotherValue");
+    OBDal.getInstance().save(newPref);
+    OBDal.getInstance().flush();
+
+    PropertyException exception = null;
+    try {
+      Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
+          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+          .getOBContext().getUser(), null, null);
+    } catch (PropertyException e) {
+      exception = e;
+    }
+    assertNotNull("Expected exception PropertyConflictException", exception);
+    assertTrue("Expected exception PropertyConflictException",
+        exception instanceof PropertyConflictException);
+  }
+
+  public void testSolvedConflict() throws PropertyException {
+    setSystemAdministratorContext();
+
+    // This piece of code doesn't work because of issue #13153
+    // OBCriteria<Preference> qPref = OBDal.getInstance().createCriteria(Preference.class);
+    // qPref.add(Expression.eq(Preference.PROPERTY_ATTRIBUTE, "testProperty"));
+    // qPref.add(Expression.eq(Preference.PROPERTY_SEARCHKEY, "anotherValue"));
+    //
+    // Preference newPref = qPref.list().get(0);
+
+    Preference newPref = null;
+    OBCriteria<Preference> qPref = OBDal.getInstance().createCriteria(Preference.class);
+    qPref.add(Expression.eq(Preference.PROPERTY_ATTRIBUTE, "testProperty"));
+    for (Preference p : qPref.list()) {
+      if (p.getSearchKey().equals("anotherValue")) {
+        newPref = p;
+      }
+    }
+    newPref.setSelected(true);
+    OBDal.getInstance().flush();
+
+    String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
+        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    assertEquals("Not found expected value.", "anotherValue", value);
+
+  }
+
+  public void testPreferenceClientOrgSetting() {
+    setBigBazaarAdminContext();
+    Preference p = Preferences.setPreferenceValue("testProperty2", "testValue", false, null, null,
+        null, null, null, null);
+    assertEquals("Incorrect Client ID", "0", p.getClient().getId());
+    assertEquals("Incorrect Org ID", "0", p.getOrganization().getId());
+
   }
 
   public void testClean() {
