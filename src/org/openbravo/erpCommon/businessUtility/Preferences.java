@@ -63,7 +63,8 @@ public class Preferences {
           .getParentList(org, true);
 
       ArrayList<Preference> preferences = new ArrayList<Preference>();
-      for (Preference pref : getPreferences(null, false, client, org, user, role, null, false)) {
+      for (Preference pref : getPreferences(null, false, client, org, user, role, null, false,
+          false)) {
         Preference existentPreference = getPreferenceFromList(pref, preferences);
         if (existentPreference == null) {
           // There is not a preference for the current property, add it to the list
@@ -123,7 +124,7 @@ public class Preferences {
       String windowId = window == null ? null : window.getId();
 
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
-          roleId, windowId, true);
+          roleId, windowId, true, true);
       if (prefs.size() == 0) {
         // New preference
         preference = OBProvider.getInstance().get(Preference.class);
@@ -183,7 +184,7 @@ public class Preferences {
       String windowId = window == null ? null : window.getId();
 
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
-          roleId, windowId, false);
+          roleId, windowId, false, true);
 
       Preference selectedPreference = null;
       List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider()
@@ -249,7 +250,8 @@ public class Preferences {
    * 
    */
   private static List<Preference> getPreferences(String property, boolean isListProperty,
-      String client, String org, String user, String role, String window, boolean exactMatch) {
+      String client, String org, String user, String role, String window, boolean exactMatch,
+      boolean checkWindow) {
 
     List<Object> parameters = new ArrayList<Object>();
     StringBuilder hql = new StringBuilder();
@@ -322,13 +324,15 @@ public class Preferences {
         hql.append(" and (");
       }
       hql.append("         p.userContact is null) ");
-      if (window != null) {
-        hql.append(" and  (p.window.id = ? or ");
-        parameters.add(window);
-      } else {
-        hql.append(" and (");
+      if (checkWindow) {
+        if (window != null) {
+          hql.append(" and  (p.window.id = ? or ");
+          parameters.add(window);
+        } else {
+          hql.append(" and (");
+        }
+        hql.append("        p.window is null) ");
       }
-      hql.append("        p.window is null) ");
     }
 
     if (property != null) {

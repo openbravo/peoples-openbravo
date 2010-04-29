@@ -30,7 +30,9 @@ import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.BaseTest;
 
 public class PreferenceTest extends BaseTest {
@@ -128,6 +130,53 @@ public class PreferenceTest extends BaseTest {
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
         .getOBContext().getUser(), role, window);
     assertEquals("Not found expected value.", "alertSales", value);
+  }
+
+  public void testOrgVisibility() throws PropertyException {
+    setSystemAdministratorContext();
+    Client client = OBDal.getInstance().get(Client.class, "1000000");
+    Organization orgB = OBDal.getInstance().get(Organization.class, "1000005");
+    Organization orgB1 = OBDal.getInstance().get(Organization.class, "1000006");
+    Organization orgB2 = OBDal.getInstance().get(Organization.class, "1000007");
+    Organization orgB11 = OBDal.getInstance().get(Organization.class, "1000008");
+    Organization orgB12 = OBDal.getInstance().get(Organization.class, "1000009");
+
+    Preference p = Preferences.setPreferenceValue("testProperty", "B", false, null, orgB, null,
+        null, null, null);
+    Preferences
+        .setPreferenceValue("testProperty", "B2", false, null, orgB2, null, null, null, null);
+    Preferences.setPreferenceValue("testProperty", "B12", false, null, orgB12, null, null, null,
+        null);
+    OBDal.getInstance().flush();
+
+    assertEquals("Preference not set in the expected visible org", orgB, p
+        .getVisibleAtOrganization());
+
+    String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
+        .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    assertEquals("Not found expected value.", "newValue", value);
+
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB, OBContext
+        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    assertEquals("Not found expected value.", "B", value);
+
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB1, OBContext
+        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    assertEquals("Not found expected value.", "B", value);
+
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB2, OBContext
+        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    assertEquals("Not found expected value.", "B2", value);
+
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB11, OBContext
+        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    assertEquals("Not found expected value.", "B", value);
+
+    value = Preferences.getPreferenceValue("testProperty", false, client, orgB12, OBContext
+        .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    assertEquals("Not found expected value.", "B12", value);
+
   }
 
   public void testExceptionNotFound() {
