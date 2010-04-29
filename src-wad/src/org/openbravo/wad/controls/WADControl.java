@@ -540,6 +540,10 @@ public class WADControl {
     return false;
   }
 
+  public boolean isTime() {
+    return false;
+  }
+
   public String getReference() {
     return reference;
   }
