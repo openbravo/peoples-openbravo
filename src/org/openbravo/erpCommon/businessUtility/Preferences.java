@@ -22,8 +22,6 @@ package org.openbravo.erpCommon.businessUtility;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.el.PropertyNotFoundException;
-
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -32,6 +30,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
@@ -215,7 +214,7 @@ public class Preferences {
         throw new PropertyConflictException();
       }
       if (selectedPreference == null) {
-        throw new org.openbravo.erpCommon.utility.PropertyNotFoundException();
+        throw new PropertyNotFoundException();
       }
       return selectedPreference.getSearchKey();
     } finally {
