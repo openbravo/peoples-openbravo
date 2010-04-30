@@ -377,6 +377,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="compile.war" if="mode.war">
+    <antcall target="generate.entities" />
     <antcall target="compile" />
     <antcall target="war" />
   </target>
