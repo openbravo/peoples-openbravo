@@ -40,13 +40,14 @@
 ************************************************************************/
   v_ad_client_id varchar2(32);
   v_ad_org_id varchar2(32);
-  depth1 number;
-  depth2 number;
+  depth1 NUMBER;
+  depth2 NUMBER;
+  valueAssigned boolean := false;
   
   TYPE RECORD IS REF CURSOR;
     cur RECORD;
     
-  selPref ad_preference%rowtype := null;
+  selPref ad_preference%ROWTYPE;
 BEGIN
 
   if p_ad_client_id is null then
@@ -78,8 +79,9 @@ BEGIN
            and (ad_window_id = p_ad_window_id
                 or aD_window_id is null)
            ) loop
-     if (selPref.ad_preference_id is null) then
+     if (not valueAssigned) then
        selPref := cur;
+       valueAssigned := true;
        continue;
      end if;
      
@@ -154,7 +156,7 @@ BEGIN
      RAISE_APPLICATION_ERROR(-20000, p_PROPERTY_NAME||' @PropertyConflict@');
    end loop;
    
-   if (selPref.AD_Preference_ID is null) then
+   if (not valueAssigned) then
      RAISE_APPLICATION_ERROR(-20000, p_PROPERTY_NAME||' @PropertyNotFound@');
    end if;
    
