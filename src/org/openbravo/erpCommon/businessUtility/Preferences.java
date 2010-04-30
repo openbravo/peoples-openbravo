@@ -258,7 +258,7 @@ public class Preferences {
     hql.append(" where ");
     if (exactMatch) {
       if (client != null) {
-        hql.append(" and p.visibleAtClient.id = ? ");
+        hql.append(" p.visibleAtClient.id = ? ");
         parameters.add(client);
       } else {
         hql.append(" p.visibleAtClient is null");
