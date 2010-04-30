@@ -583,4 +583,11 @@ public class WADControl {
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());
   }
+
+  /**
+   * Returns the HTML element to set in the read only logic
+   */
+  public String getReadOnlyLogicColumn() {
+    return getData("columnName");
+  }
 }
