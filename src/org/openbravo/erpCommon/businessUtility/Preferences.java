@@ -235,7 +235,7 @@ public class Preferences {
         + (preference.getWindow() == null ? "" : (preference.getWindow().getId() + "|"))
         + (preference.isPropertyList() ? preference.getProperty() : preference.getAttribute());
     vars.setSessionValue(prefName, preference.getSearchKey());
-    log4j.info("Set preference " + prefName + " - " + preference.getSearchKey());
+    log4j.debug("Set preference " + prefName + " - " + preference.getSearchKey());
   }
 
   /**
