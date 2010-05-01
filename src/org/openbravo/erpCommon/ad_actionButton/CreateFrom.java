@@ -1475,9 +1475,11 @@ public class CreateFrom extends HttpSecureAppServlet {
             price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
             if (price != null && price.length > 0) {
               priceList = price[0].pricelist;
-              priceActual = price[0].priceactual;
               priceLimit = price[0].pricelimit;
               priceStd = price[0].pricestd;
+              priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
+            		  strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
+            		  strPriceList, strKey);
             }
             price = null;
           } else {
@@ -1485,9 +1487,11 @@ public class CreateFrom extends HttpSecureAppServlet {
                 data[i].mProductId, strPriceListVersion);
             if (price != null && price.length > 0) {
               priceList = price[0].pricelist;
-              priceActual = price[0].priceactual;
               priceLimit = price[0].pricelimit;
               priceStd = price[0].pricestd;
+              priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
+            		  strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
+            		  strPriceList, strKey);
             }
             price = null;
           }
