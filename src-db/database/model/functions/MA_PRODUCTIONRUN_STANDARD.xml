@@ -55,6 +55,7 @@
     v_PlanLine NUMBER;
     v_CostCenterCost NUMBER;
     v_CostCenterUse NUMBER;
+    v_allownegativestock CHAR(1);
     v_Calculated CHAR(1);
     v_ByDefault CHAR(1);
     --  Toolset Types to process
@@ -117,6 +118,11 @@
         DBMS_OUTPUT.PUT_LINE('--<<MA_ProductionRun_Standard>>') ;
       END IF;
     BEGIN --BODY
+     SELECT ad_clientinfo.allownegativestock into
+      v_allownegativestock
+       FROM ad_clientinfo
+      where ad_clientinfo.ad_client_id = v_Client_ID;
+      
       v_ResultStr:='Getting DoneQuantity and process_ID';
       SELECT M_ProductionPlan.AD_Org_ID, M_ProductionPlan.MA_WRPhase_ID,
              M_ProductionPlan.ProductionQty, M_ProductionPlan.Processed,
@@ -336,8 +342,55 @@
               END LOOP;
             END IF; --NEXT_PRODUCT
             IF (v_QtyAcumulated < v_DoneQuantity*Cur_WRPUsed.MovementQty) THEN
-              v_Message := '@NotEnoughStocked@: ' || Cur_WRPUsed.pname;
-            RAISE_APPLICATION_ERROR(-20000, v_Message);
+            	IF(v_allownegativestock = 'Y') THEN
+            		 IF(v_GlobalUse='Y') THEN
+	            		 SELECT count(*)
+	            		    INTO v_Count
+	                		FROM MA_GlobalUse
+	                		WHERE M_Production_ID=Cur_WRPUsed.M_Production_ID
+	                  		AND M_Product_ID=Cur_WRPUsed.M_Product_ID;
+	            		 IF(v_Count=0) THEN
+                        	INSERT
+			                  INTO MA_GlobalUse
+			                    (
+			                      MA_GlobalUse_ID, M_Production_ID, AD_Client_ID, AD_Org_ID,
+			                      IsActive, Created, CreatedBy, Updated,
+			                      UpdatedBy, M_Product_ID, C_UOM_ID, MovementQty,
+			                      M_Locator_ID
+			                    )
+			                    VALUES
+			                    (
+			                      GET_UUID(), Cur_WRPUsed.M_Production_ID, Cur_WRPUsed.Client_ID, Cur_WRPUsed.Org_ID,
+			                       'Y', now(), v_User_ID, now(),
+			                      v_User_ID, Cur_WRPUsed.M_Product_ID, Cur_WRPUsed.C_UOM_ID, 0,
+			                      Cur_WRPUsed.M_Locator_ID
+			                    )
+			                    ;
+                        END IF;
+	                 ELSE
+                        v_Line := v_Line + 10;
+		                INSERT
+		                INTO M_ProductionLine
+		                  (
+		                    M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
+		                    AD_Org_ID, IsActive, Created, CreatedBy,
+		                    Updated, UpdatedBy, M_Product_ID, MovementQty,
+		                    ProductionType, C_UOM_ID, M_Locator_ID, M_Product_UOM_ID, QuantityOrder
+		                  )
+		                  VALUES
+		                  (
+		                    GET_UUID(), v_Record_ID, v_Line, Cur_WRPUsed.Client_ID,
+		                    Cur_WRPUsed.Org_ID, 'Y', now(), v_User_ID,
+		                    now(), v_User_ID, Cur_WRPUsed.M_Product_ID,( CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_DoneQuantity*Cur_WRPUsed.MovementQty - v_QtyAcumulated END),
+		                    '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID, Cur_WRPUsed.M_Product_UOM_ID, Cur_WRPUsed.QuantityOrder
+		                  )
+		                  ;
+                     END IF;
+            		
+            	ELSE
+		            v_Message := '@NotEnoughStocked@: ' || Cur_WRPUsed.pname;
+		            RAISE_APPLICATION_ERROR(-20000, v_Message);
+            	END IF;
             END IF;
           ELSE
             IF Cur_WRPUsed.M_Locator_ID IS NULL THEN
