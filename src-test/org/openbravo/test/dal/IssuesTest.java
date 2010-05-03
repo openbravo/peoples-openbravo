@@ -85,6 +85,12 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12918 DAL: Exception in commitTransaction leaves
  * Postgres connection in illegal state
  * 
+ * - https://issues.openbravo.com/view.php?id=13135: OBContext.getLanguage() returns 'wrong'
+ * language, if user does not have a default language set
+ * 
+ * - https://issues.openbravo.com/view.php?id=13136: OBContext.getLanguage does only use users'
+ * default language, and does not honor language change in the role change popup
+ * 
  * @author mtaal
  * @author iperdomo
  */
@@ -356,5 +362,38 @@ public class IssuesTest extends BaseTest {
     products.setFilterOnReadableOrganization(false);
     products.setFilterOnReadableClients(false);
     assertTrue(products.count() > 0);
+  }
+
+  /**
+   * Tests: 13135: OBContext.getLanguage() returns 'wrong' language, if user does not have a default
+   * language set
+   */
+  public void test13135() {
+    setSystemAdministratorContext();
+
+    try {
+      final User user = OBDal.getInstance().get(User.class, "100");
+      user.setDefaultLanguage(null);
+      OBDal.getInstance().save(user);
+      final Client client = OBDal.getInstance().get(Client.class, "0");
+      client.setLanguage(OBDal.getInstance().get(Language.class, "120"));
+      OBDal.getInstance().save(client);
+
+      OBContext.setOBContext("100", "0", "0", "0", null);
+      assertEquals("120", OBContext.getOBContext().getLanguage().getId());
+
+    } finally {
+      // prevent the user to be really changed
+      OBDal.getInstance().rollbackAndClose();
+    }
+  }
+
+  /**
+   * Tests: 13136: OBContext.getLanguage does only use users' default language, and does not honor
+   * language change in the role change popup
+   */
+  public void test13136() {
+    OBContext.setOBContext("100", "0", "0", "0", "en_IN");
+    assertEquals("130", OBContext.getOBContext().getLanguage().getId());
   }
 }

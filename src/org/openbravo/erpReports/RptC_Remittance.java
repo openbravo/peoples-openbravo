@@ -27,10 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -77,9 +74,9 @@ public class RptC_Remittance extends HttpSecureAppServlet {
 
     JasperReport jasperReportLines;
     try {
-      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-          + "/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml");
-      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+      jasperReportLines = Utility.getTranslatedJasperReport(this, strBaseDesign
+          + "/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml", vars.getLanguage(),
+          strBaseDesign);
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());

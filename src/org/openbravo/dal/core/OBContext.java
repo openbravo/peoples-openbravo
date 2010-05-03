@@ -222,6 +222,29 @@ public class OBContext implements OBNotSingleton {
   }
 
   /**
+   * Creates the context using the userId, roleId, clientId, orgId and sets it in the thread (as
+   * ThreadLocal).
+   * 
+   * @param userId
+   *          the id of the user
+   * @param roleId
+   *          the id of the role under which the user is currently working
+   * @param clientId
+   *          the id of the user's client
+   * @param orgId
+   *          the ud of the user's organization
+   * @param languageCode
+   *          the selected language, if null then the user language is read.
+   */
+  public static void setOBContext(String userId, String roleId, String clientId, String orgId,
+      String languageCode) {
+    final OBContext context = OBProvider.getInstance().get(OBContext.class);
+    setOBContext((OBContext) null);
+    context.initialize(userId, roleId, clientId, orgId, languageCode);
+    setOBContext(context);
+  }
+
+  /**
    * Creates the context without setting the context in the thread.
    * 
    * @param userId
@@ -505,6 +528,13 @@ public class OBContext implements OBNotSingleton {
 
   // sets the context by reading all user information
   public boolean initialize(String userId, String roleId, String clientId, String orgId) {
+    return initialize(userId, roleId, clientId, orgId, null);
+  }
+
+  // sets the context by reading all user information
+  private boolean initialize(String userId, String roleId, String clientId, String orgId,
+      String languageCode) {
+
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
     if (u == null) {
@@ -614,16 +644,25 @@ public class OBContext implements OBNotSingleton {
       Check.isNotNull(getCurrentClient(), "Client may not be null");
       Check.isTrue(getCurrentClient().isActive(), "Current Client " + getCurrentClient().getName()
           + " is not active!");
-
-      if (getUser().getDefaultLanguage() != null && getUser().getDefaultLanguage().isActive()) {
+      if (languageCode != null) {
+        final Query qry = SessionHandler.getInstance().createQuery(
+            "select l from " + Language.class.getName() + " l where l."
+                + Language.PROPERTY_LANGUAGE + "=:languageCode ");
+        qry.setParameter("languageCode", languageCode);
+        if (qry.list().isEmpty()) {
+          throw new IllegalArgumentException("No language found for code " + languageCode);
+        }
+        setLanguage((Language) qry.list().get(0));
+      } else if (getUser().getDefaultLanguage() != null
+          && getUser().getDefaultLanguage().isActive()) {
         setLanguage(getUser().getDefaultLanguage());
+      } else if (getCurrentClient().getLanguage() != null) {
+        setLanguage(getCurrentClient().getLanguage());
       } else {
-        final Language l = getOne(Language.class, "select l from " + Language.class.getName()
-            + " l where l." + Language.PROPERTY_ACTIVE + "='Y' and systemLanguage=true order by l."
-            + Language.PROPERTY_ID + " asc");
-        Hibernate.initialize(l);
-        setLanguage(l);
+        final Client systemClient = OBDal.getInstance().get(Client.class, "0");
+        setLanguage(systemClient.getLanguage());
       }
+      Hibernate.initialize(getLanguage());
 
       Check.isNotNull(getLanguage(), "Language may not be null");
 
