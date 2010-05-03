@@ -247,7 +247,7 @@ public class WADTime extends WADControl {
     return displayLogic.toString();
   }
 
-  public boolean isDate() {
+  public boolean isTime() {
     return true;
   }
 }

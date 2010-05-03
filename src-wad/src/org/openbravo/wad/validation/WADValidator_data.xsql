@@ -111,12 +111,13 @@
            and o.classname not like m.javapackage||'.%'
            and (4=4 and m.javapackage in ('4') or to_char('Y')=to_char(?))
          union
-        select  to_char(w.name||' >> '||t.name), 'Tab' as objectType, o.classname as currentvalue, (case when w.ad_module_id='0' then 'org.openbravo.erpWindows.%' else 'org.openbravo.erpWindows.'||m.javapackage||'.%' end) as expectedvalue, m.name as moduleName 
-          from ad_model_object o, ad_window w, ad_tab t, ad_module m
+        select  to_char(w.name||' >> '||t.name), 'Tab' as objectType, o.classname as currentvalue, (case when m2.ad_module_id='0' then 'org.openbravo.erpWindows.*' else 'org.openbravo.erpWindows.'||m2.javapackage||'.%' end) as expectedvalue, m.name as moduleName 
+          from ad_model_object o, ad_window w, ad_tab t, ad_module m, ad_module m2
          where o.ad_tab_id = t.ad_tab_id
            and t.ad_window_id = w.ad_window_id
            and t.ad_module_id = m.ad_module_id
-           and o.classname not like (case when w.ad_module_id='0' then 'org.openbravo.erpWindows.%' else 'org.openbravo.erpWindows.'||m.javapackage||'.%' end)
+           and w.ad_module_id = m2.ad_module_id
+           and o.classname not like (case when m2.ad_module_id='0' then 'org.openbravo.erpWindows.%' else 'org.openbravo.erpWindows.'||m2.javapackage||'.%' end)
            and o.classname not like 'org.openbravo.erpCommon.ad_callouts.ComboReloads%'
            and (5=5 and m.javapackage in ('5') or to_char('Y')=to_char(?))
          order by 4, 2, 1

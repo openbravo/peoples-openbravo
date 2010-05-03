@@ -515,35 +515,6 @@
     <Parameter name="mProductUomId"/>
     <Parameter name="mAttributesetinstanceId"/>
   </SqlMethod>
-  <SqlMethod name="copyAttributes" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-     INSERT INTO M_ATTRIBUTESETINSTANCE 
-       (M_ATTRIBUTESETINSTANCE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-       CREATED, CREATEDBY, UPDATED, UPDATEDBY, M_ATTRIBUTESET_ID, SERNO, 
-       LOT, GUARANTEEDATE, DESCRIPTION, M_LOT_ID, ISLOCKED, LOCK_DESCRIPTION) 
-     SELECT ?, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, 
-       UPDATEDBY, M_ATTRIBUTESET_ID, SERNO, LOT, GUARANTEEDATE, DESCRIPTION, 
-       M_LOT_ID, ISLOCKED, LOCK_DESCRIPTION FROM M_ATTRIBUTESETINSTANCE 
-       WHERE M_ATTRIBUTESETINSTANCE_ID = ?
-    </Sql>
-    <Parameter name="mAttributesetinstanceIdNew"/>
-    <Parameter name="mAttributesetinstanceIdOld"/>
-  </SqlMethod>
-  <SqlMethod name="copyInstances" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-     INSERT INTO M_ATTRIBUTEINSTANCE
-       (M_ATTRIBUTEINSTANCE_ID, M_ATTRIBUTESETINSTANCE_ID, M_ATTRIBUTE_ID,
-       AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-       M_ATTRIBUTEVALUE_ID, VALUE)
-     SELECT GET_UUID(), ?, M_ATTRIBUTE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, 
-       CREATED, CREATEDBY, UPDATED, UPDATEDBY, M_ATTRIBUTEVALUE_ID, VALUE FROM 
-       M_ATTRIBUTEINSTANCE WHERE M_ATTRIBUTESETINSTANCE_ID = ?
-   </Sql>
-    <Parameter name="mAttributesetinstanceIdNew"/>
-    <Parameter name="mAttributesetinstanceIdOld"/>
-  </SqlMethod>
   <SqlMethod name="updateInvoice" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
