@@ -428,8 +428,12 @@ public class DocInvoice extends AcctServer {
           DocInvoiceData[] data = null;
           data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(),
               m_taxes[i].m_C_Tax_ID, Record_ID);
+          // check whether gl item is selected instead of product in invoice line
+          if (data.length <= 0) {
+            data = DocInvoiceData.selectGLItemAcctForTaxLine(conn, as.getC_AcctSchema_ID(),
+                m_taxes[i].m_C_Tax_ID, Record_ID);
+          }
           for (int j = 0; j < data.length; j++) {
-
             fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
                 this.C_Currency_ID, data[j].taxamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                 DocumentType, conn);
@@ -494,6 +498,11 @@ public class DocInvoice extends AcctServer {
           DocInvoiceData[] data = null;
           data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(),
               m_taxes[i].m_C_Tax_ID, Record_ID);
+          // check whether gl item is selected instead of product in invoice line
+          if (data.length <= 0) {
+            data = DocInvoiceData.selectGLItemAcctForTaxLine(conn, as.getC_AcctSchema_ID(),
+                m_taxes[i].m_C_Tax_ID, Record_ID);
+          }
           for (int j = 0; j < data.length; j++) {
             fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
                 this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
