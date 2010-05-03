@@ -803,30 +803,11 @@ cWithHoldId varchar2(32);
               IF (v_count>0) THEN
                 RAISE_APPLICATION_ERROR(-20000, '@PostedMatchPO@');
               END IF;
-/*              SELECT COUNT(1)
-              INTO v_count
-              FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHINV')
-                               AND RECORD_ID IN (SELECT M_MATCHINV_ID
-                                                 FROM M_MATCHINV MI, C_INVOICE I, C_INVOICELINE IL
-                                                 WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
-                                                   AND MI.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
-                                                   AND MI.M_INOUTLINE_ID = IL.M_INOUTLINE_ID
-                                                   AND I.C_INVOICE_ID=v_Record_ID);
-              IF (v_count>0) THEN
-                RAISE_APPLICATION_ERROR(-20000, '@PostedMatchInv@');
-              END IF;*/
               DELETE
               FROM M_MATCHPO
               WHERE C_InvoiceLine_ID IN
                 (SELECT C_InvoiceLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
                 ;
-/*              DELETE
-              FROM M_MATCHINV
-              WHERE C_InvoiceLine_ID IN
-                (SELECT C_InvoiceLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
-                AND M_InOutLine_ID IN
-                (SELECT M_InOutLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
-                ;*/
             END IF;
             UPDATE C_INVOICE
               SET Processed='N',
