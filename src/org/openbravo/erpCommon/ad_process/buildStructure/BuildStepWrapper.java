@@ -21,6 +21,18 @@ public class BuildStepWrapper {
     node = generateNode(step.getCode());
   }
 
+  public BuildStepWrapper(BuildMainStepTranslation step) {
+    name = step.getTranslatedName();
+    level = "0";
+    node = generateNode(step.getCode());
+  }
+
+  public BuildStepWrapper(BuildStepTranslation step) {
+    name = step.getTranslatedName();
+    level = "1";
+    node = generateNode(step.getCode());
+  }
+
   public FieldProvider getFieldProvider() {
     return new FieldProviderFactory(this);
   }

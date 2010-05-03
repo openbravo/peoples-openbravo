@@ -16,6 +16,7 @@
         <stepList>
           <step code="RB21" name="Database update"/>
           <step code="RB22" name="Compilation"/>
+          <step code="RB22" name="Deploy!"/>
         </stepList>
       </mainStep>
     </mainSteps>

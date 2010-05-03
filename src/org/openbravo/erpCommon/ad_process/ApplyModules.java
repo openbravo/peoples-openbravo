@@ -44,6 +44,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_process.buildStructure.Build;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -192,19 +193,68 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    try {
-      Build build = getBuildFromXMLFile();
-      FieldProvider[] nodeData = build.getFieldProvidersForBuild();
-      xmlDocument.setData("structureStepTree", nodeData);
-    } catch (Exception e) {
-      log4j.error("Error reading build information file", e);
-    }
+    FieldProvider[] nodeData = getFieldProviderFromBuild(vars);
+    xmlDocument.setData("structureStepTree", nodeData);
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
 
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private FieldProvider[] getFieldProviderFromBuild(VariablesSecureApp vars) {
+    try {
+      if (vars.getLanguage().equals("en_US")) {
+        Build build = getBuildFromXMLFile();
+        FieldProvider[] nodeData = build.getFieldProvidersForBuild();
+        return nodeData;
+      } else {
+        BuildTranslation buildTranslation = getBuildTranslationFromFile(vars.getLanguage());
+        if (buildTranslation == null) {
+          Build build = getBuildFromXMLFile();
+          FieldProvider[] nodeData = build.getFieldProvidersForBuild();
+          return nodeData;
+        }
+        FieldProvider[] nodeData = buildTranslation.getFieldProvidersForBuild();
+        return nodeData;
+      }
+    } catch (Exception e) {
+      log4j.error("Error reading build information file", e);
+    }
+    return null;
+  }
+
+  private BuildTranslation getBuildTranslationFromFile(String language) throws Exception {
+
+    String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
+        .toString();
+    File modulesF = new File(source, "modules");
+    File[] modules = modulesF.listFiles();
+    File translationFile = null;
+    for (int i = 0; i < modules.length && translationFile == null; i++) {
+      File provisionalFile = new File(modules[i], "referencedata/translation/" + language
+          + "/buildStructureTrl.xml");
+      if (provisionalFile.exists())
+        translationFile = provisionalFile;
+    }
+    if (translationFile == null)
+      return null;
+    FileReader xmlReader = new FileReader(translationFile);
+
+    BeanReader beanReader = new BeanReader();
+
+    beanReader.getBindingConfiguration().setMapIDs(false);
+
+    beanReader.getXMLIntrospector().register(
+        new InputSource(new FileReader(new File(source,
+            "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
+
+    beanReader.registerBeanClass("BuildTranslation", BuildTranslation.class);
+
+    BuildTranslation build = (BuildTranslation) beanReader.parse(xmlReader);
+
+    return build;
   }
 
   private Build getBuildFromXMLFile() throws Exception {

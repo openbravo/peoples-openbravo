@@ -230,27 +230,28 @@ public class Translation extends HttpSecureAppServlet {
 
     try {
       FileReader xmlReader = new FileReader(source
-          + "/src/org/openbravo/erpCommon/ad_process/build/buildStructure.xml");
+          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
 
       BeanReader beanReader = new BeanReader();
 
-      beanReader.getXMLIntrospector().getConfiguration().setAttributesForPrimitives(false);
       beanReader.getBindingConfiguration().setMapIDs(false);
+
+      beanReader.getXMLIntrospector().register(
+          new InputSource(new FileReader(new File(source,
+              "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
 
       beanReader.registerBeanClass("Build", Build.class);
 
       Build build = (Build) beanReader.parse(xmlReader);
 
       FileWriter outputWriterT = new FileWriter(directory + "/buildStructureTrl.xml");
-      System.out.println(source + "/buildStructure_" + language);
       outputWriterT.write("<?xml version='1.0' ?>\n");
 
       BeanWriter beanWriterT = new BeanWriter(outputWriterT);
-
       beanWriterT.getXMLIntrospector().getConfiguration().setAttributesForPrimitives(false);
       beanWriterT.getXMLIntrospector().register(
-          new InputSource(new FileReader(new File(source
-              + "/src/org/openbravo/erpCommon/ad_process/build/mapping.xml"))));
+          new InputSource(new FileReader(new File(source,
+              "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
       beanWriterT.getBindingConfiguration().setMapIDs(false);
       beanWriterT.enablePrettyPrint();
 

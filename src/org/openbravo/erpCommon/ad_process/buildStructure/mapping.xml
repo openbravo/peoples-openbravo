@@ -6,6 +6,12 @@
       <addDefaults/>
     </element>
   </class>
+  <class name="org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation">
+    <hide property="fieldProvidersForBuild" />
+    <element name="BuildTranslation" property="BuildTranslation" >
+      <addDefaults/>
+    </element>
+  </class>
   <class name="org.openbravo.erpCommon.ad_process.buildStructure.BuildStep">
     <element name="BuildStep">
       <attribute name="code"          property="code"/>
@@ -46,9 +52,7 @@
       <element name="translatedErrorMessage"      property="originalErrorMessage">
         <attribute name="originalErrorMessage"      property="translatedErrorMessage"/>
       </element>
-      <element name="BuildStepTranslations">
-      <element name="stepTranslations"      property="stepTranslations"/>
-      </element>
+      <addDefaults/>
     </element>
   </class>
 </betwixt-config>

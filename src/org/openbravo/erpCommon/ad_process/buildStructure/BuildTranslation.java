@@ -3,6 +3,8 @@ package org.openbravo.erpCommon.ad_process.buildStructure;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.data.FieldProvider;
+
 public class BuildTranslation {
   private String language;
   private List<BuildMainStepTranslation> mainStepTranslations;
@@ -45,4 +47,19 @@ public class BuildTranslation {
     return "";
   }
 
+  public FieldProvider[] getFieldProvidersForBuild() {
+    ArrayList<FieldProvider> fieldProviderList = new ArrayList<FieldProvider>();
+    for (BuildMainStepTranslation mainStep : mainStepTranslations) {
+      fieldProviderList.add(new BuildStepWrapper(mainStep).getFieldProvider());
+      for (BuildStepTranslation step : mainStep.getStepTranslations()) {
+        fieldProviderList.add(new BuildStepWrapper(step).getFieldProvider());
+      }
+    }
+
+    FieldProvider[] fps = new FieldProvider[fieldProviderList.size()];
+    int i = 0;
+    for (FieldProvider fp : fieldProviderList)
+      fps[i++] = fp;
+    return fps;
+  }
 }

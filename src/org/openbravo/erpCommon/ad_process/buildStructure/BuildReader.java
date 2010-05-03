@@ -36,6 +36,22 @@ public class BuildReader {
         System.out.println("   " + step.getCode() + "- " + step.getName());
       }
     }
+
+    FileReader xmlReaderTrl = new FileReader(
+        "/home/openbravo/workspaces/pi-drw/openbravo/buildStructureTranslation.xml");
+    beanReader.registerBeanClass("BuildTranslation", BuildTranslation.class);
+
+    BuildTranslation buildTranslation = (BuildTranslation) beanReader.parse(xmlReaderTrl);
+    System.out.println(buildTranslation.getLanguage());
+
+    for (BuildMainStep mainStep : build.getMainSteps()) {
+      System.out.println(mainStep.getCode() + "- "
+          + buildTranslation.getTranslatedName(mainStep.getCode()));
+      for (BuildStep step : mainStep.getStepList()) {
+        System.out.println("   " + step.getCode() + "- "
+            + buildTranslation.getTranslatedName(step.getCode()));
+      }
+    }
   }
 
 }
