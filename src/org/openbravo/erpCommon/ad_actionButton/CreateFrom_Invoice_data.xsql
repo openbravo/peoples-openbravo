@@ -448,7 +448,7 @@
       ORDER BY l.Line
       ]]>
     </Sql>
-    <Parameter name="cOrderlineId" optional="true" type="argument" after="AND l.M_Product_ID=p.M_Product_ID" text=" AND l.M_InOutLine_ID IN "/>
+    <Parameter name="cInOutLineId" optional="true" type="argument" after="AND l.M_Product_ID=p.M_Product_ID" text=" AND l.M_InOutLine_ID IN "/>
   </SqlMethod>
   <SqlMethod name="selectFromShipmentUpdateSOTrx" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -601,5 +601,33 @@
       WHERE C_ORDERLINE_ID = ? 
     ]]></Sql>
     <Parameter name="cOrderLineId"/>
+  </SqlMethod>
+  <SqlMethod name="insertMatchInv" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      INSERT INTO M_MATCHINV
+        (
+        M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
+        UPDATED, UPDATEDBY, M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID,
+        DATETRX, 
+        QTY, PROCESSING, PROCESSED, POSTED
+        )
+      VALUES
+        (
+        GET_UUID(), ?, ?, 'Y', NOW(), ?,
+        NOW(), ?, ?, ?, ?,
+        (SELECT I.DateAcct FROM C_INVOICE I, C_INVOICELINE IL WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID AND IL.C_INVOICELINE_ID=?),
+        ?, 'N', 'Y', 'N'
+        )
+    </Sql>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="mInoutlineId"/>
+    <Parameter name="cInvoiceLineId"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="cInvoiceLineId"/>
+    <Parameter name="qty"/>
   </SqlMethod>
 </SqlClass>

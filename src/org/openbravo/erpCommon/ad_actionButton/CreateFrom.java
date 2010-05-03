@@ -1523,6 +1523,13 @@ public class CreateFrom extends HttpSecureAppServlet {
                 priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder,
                 data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd,
                 data[i].taxbaseamt);
+            if ("SHIPMENT".equals(strType)) {
+              // When processing the invoice, if C_INVOICELINE.M_INOUTLINE_ID is not null,
+              // no insert will be done to M_MATCHINV table
+              CreateFromInvoiceData
+                  .insertMatchInv(conn, this, vars.getClient(), vars.getOrg(), vars.getUser(),
+                      data[i].mInoutlineId, strSequence, data[i].mProductId, data[i].id);
+            }
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
