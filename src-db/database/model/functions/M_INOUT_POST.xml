@@ -47,6 +47,7 @@
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
   v_User VARCHAR2(32);
+  v_PUser VARCHAR2(32);
   v_is_included NUMBER:=0;
   v_DocType_ID VARCHAR2(32);
   v_available_period NUMBER:=0;
@@ -117,20 +118,25 @@
     ELSE
       DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Post>>') ;
       v_Record_ID:=p_InOut_ID;
-      SELECT count(*)
-        INTO v_Count
+      SELECT count(*),updatedby
+        INTO v_Count,v_User
         FROM M_InOut
-        WHERE M_InOut_ID=v_Record_ID;
+        WHERE M_InOut_ID=v_Record_ID
+        GROUP BY updatedby;
       IF v_Count=0 THEN
         FINISH_PROCESS:=true;
       END IF;
     END IF;
   BEGIN --BODY
   	IF(NOT FINISH_PROCESS) THEN
+  	  v_PUser:=v_User;
       SELECT AD_Client_ID, AD_Org_ID, CreatedBy, C_DocType_ID, DateAcct
         INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct
         FROM M_InOut
         WHERE M_InOut_ID=v_Record_ID;
+        IF(v_PUser IS NOT NULL) THEN
+        	v_User:=v_PUser;
+        END IF;
       SELECT count(*)
       INTO v_Count
       FROM AD_CLIENTINFO
@@ -207,7 +213,9 @@
   
      -- Set org lines like the header
        UPDATE M_INOUTLINE
-        SET AD_ORG_ID = (SELECT AD_ORG_ID FROM M_INOUT WHERE M_INOUT_ID = v_Record_ID)
+        SET AD_ORG_ID = (SELECT AD_ORG_ID FROM M_INOUT WHERE M_INOUT_ID = v_Record_ID),
+        Updated=now(),
+        UpdatedBy=v_User
       WHERE M_INOUT_ID = v_Record_ID;
       
       -- Check the header belongs to a organization where transactions are posible and ready to use
@@ -323,8 +331,8 @@
                 VALUES
                 (
                   v_NextNo, Cur_InOutLine.M_InOutLine_ID, Cur_InOutLine.AD_Client_ID, Cur_InOutLine.AD_Org_ID,
-                   'Y', now(), Cur_InOutLine.UpdatedBy, now(),
-                  Cur_InOutLine.UpdatedBy, Cur_InOut.MovementType, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.M_Product_ID,
+                   'Y', now(), v_User, now(),
+                  v_User, Cur_InOut.MovementType, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.M_Product_ID,
                   COALESCE(Cur_InOutLine.M_AttributeSetInstance_ID, '0'), Cur_InOut.MovementDate, v_Qty, Cur_InOutLine.M_Product_UOM_ID,
                   v_QuantityOrder, Cur_InOutLine.C_UOM_ID
                 )
@@ -342,14 +350,16 @@
                 UPDATE C_ORDERLINE
                   SET QtyReserved=QtyReserved - v_QtyPO - v_QtySO,
                   QtyDelivered=QtyDelivered + v_QtySO,
-                  Updated=now()
+                  Updated=now(),
+                  UpdatedBy=v_User
                 WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
                 -- Products not stocked
               ELSE
                 -- Update OrderLine (if C-, Qty is negative)
                 UPDATE C_ORDERLINE
                   SET QtyDelivered=QtyDelivered + v_QtySO,
-                  Updated=now()
+                  Updated=now(),
+                  UpdatedBy=v_User
                 WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
               END IF;
             END IF;
@@ -406,7 +416,7 @@
                   VALUES
                   (
                     v_MatchPO_ID, Cur_SLines.AD_Client_ID, Cur_SLines.AD_Org_ID, 'Y',
-                    now(), '0', now(), '0',
+                    now(), v_User, now(), v_User,
                     Cur_SLines.M_InOutLine_ID, Cur_SLines.C_OrderLine_ID, Cur_SLines.M_Product_ID, now(),
                     v_Qty, 'N', 'Y', 'N'
                   )
@@ -446,7 +456,7 @@
                   VALUES
                   (
                     v_MatchInv_ID, Cur_ILines.AD_Client_ID, Cur_ILines.AD_Org_ID, 'Y',
-                    now(), '0', now(), '0',
+                    now(), v_User, now(), v_User,
                     Cur_ILines.M_InOutLine_ID, Cur_ILines.C_InvoiceLine_ID, Cur_ILines.M_Product_ID, now(),
                     v_Qty, 'N', 'Y', 'N'
                   )
@@ -495,7 +505,8 @@
             SET Processed='Y',
             DocStatus='CO',
             DocAction='--',
-            Updated=now()
+            Updated=now(),
+            UpdatedBy=v_User
           WHERE M_INOUT.M_INOUT_ID=Cur_InOut.M_INOUT_ID;
           --
           
@@ -540,7 +551,7 @@
           END IF;
           -- Indicate that it is invoiced (i.e. not printed on invoices)
           v_ResultStr:='SetInvoiced';
-          UPDATE M_INOUTLINE  SET IsInvoiced='Y'  WHERE M_InOut_ID=Cur_InOut.M_InOut_ID;
+          UPDATE M_INOUTLINE  SET IsInvoiced='Y',Updated=now(),UpdatedBy=v_User  WHERE M_InOut_ID=Cur_InOut.M_InOut_ID;
           --
           DBMS_OUTPUT.PUT_LINE('Reverse InOut_ID=' || v_RInOut_ID || ' DocumentNo=' || v_RDocumentNo) ;
           v_ResultStr:='InsertInOut Reverse ' || v_RInOut_ID;
@@ -562,8 +573,8 @@
             VALUES
             (
               v_RInOut_ID, Cur_InOut.C_Order_ID, Cur_InOut.IsSOTrx, Cur_InOut.AD_Client_ID,
-              Cur_InOut.AD_Org_ID, 'Y', now(), '0',
-              now(), '0', v_RDocumentNo, v_DoctypeReversed_ID,
+              Cur_InOut.AD_Org_ID, 'Y', now(), v_User,
+              now(), v_User, v_RDocumentNo, v_DoctypeReversed_ID,
                '(*R*: ' || Cur_InOut.DocumentNo || ') ' || Cur_InOut.Description, 'N', Cur_InOut.MovementType, Cur_InOut.MovementDate,
               Cur_InOut.DateAcct, Cur_InOut.C_BPartner_ID, Cur_InOut.C_BPartner_Location_ID, Cur_InOut.AD_User_ID,
               Cur_InOut.M_Warehouse_ID, Cur_InOut.POReference, Cur_InOut.DateOrdered, Cur_InOut.DeliveryRule,
@@ -599,7 +610,7 @@
               (
                 v_NextNo, Cur_InOutLine.Line, v_RInOut_ID, Cur_InOutLine.C_OrderLine_ID,
                 Cur_InOut.AD_Client_ID, Cur_InOut.AD_Org_ID, 'Y', now(),
-                '0', now(), '0', Cur_InOutLine.M_Product_ID,
+                v_User, now(), v_User, Cur_InOutLine.M_Product_ID,
                 Cur_InOutLine.M_AttributeSetInstance_ID, Cur_InOutLine.C_UOM_ID, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.MovementQty * -1,
                  '*R*: ' || Cur_InOutLine.Description, Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
                 Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID

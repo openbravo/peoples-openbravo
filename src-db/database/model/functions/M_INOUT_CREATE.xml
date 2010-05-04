@@ -78,6 +78,7 @@
     v_Record_ID VARCHAR2(32):=NULL;
     v_Selection VARCHAR2(1):='N';
     v_hasPartial BOOLEAN := false;
+    v_User_ID VARCHAR2(32):='0';
     -- Orders to process  - one per warehouse
     Cur_Order RECORD;
     -- Order Lines per Warehouse
@@ -157,7 +158,7 @@
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
         (SELECT i.Record_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, 
-          p.AD_CLIENT_ID, ci.allownegativestock
+          p.AD_CLIENT_ID, ci.allownegativestock, i.AD_User_ID
         FROM AD_ClientInfo ci, AD_PInstance i LEFT JOIN AD_PInstance_Para p ON i.AD_PInstance_ID=p.AD_PInstance_ID
         WHERE i.AD_PInstance_ID=p_PInstance_ID
           AND p.ad_client_id = ci.ad_client_id
@@ -174,6 +175,7 @@
         v_AD_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
         v_allownegativestock := cur_parameter.allownegativestock;
         v_Record_ID:=Cur_Parameter.Record_ID;
+        v_User_ID:=Cur_Parameter.AD_User_ID;
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
     ELSIF(p_Invoice_ID IS NOT NULL) THEN
@@ -316,8 +318,8 @@
               DELIVERY_LOCATION_ID) -- Added by Rafa Roda to include delivery location
             VALUES
               (p_InOut_ID, Cur_Order.C_Order_ID, Cur_Order.IsSOTrx, Cur_Order.AD_Client_ID,
-              Cur_Order.AD_Org_ID, 'Y', now(), '0',
-              now(), '0', v_DocumentNo, v_DocType_ID,
+              Cur_Order.AD_Org_ID, 'Y', now(), v_User_ID,
+              now(), v_User_ID, v_DocumentNo, v_DocType_ID,
               Cur_Order.Description, 'N', 'C-', Cur_Order.DATEORDERED,
               now(), Cur_Order.C_BPartner_ID, Cur_Order.C_BPartner_Location_ID, Cur_Order.AD_User_ID,
               Cur_Order.M_Warehouse_ID, Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.DeliveryRule,
@@ -441,7 +443,7 @@
                             VALUES
                               (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                               ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
-                              '0', now(), '0', ol.M_Product_ID,
+                              v_User_ID, now(), v_User_ID, ol.M_Product_ID,
                               v_storage.C_UOM_ID, v_storage.M_Locator_ID, v_LocatorQty, ol.Description,
                               'N',
                               --MODIFIED BY F.IRIAZABAL
@@ -489,7 +491,7 @@
                         VALUES
                           (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                           ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
-                          '0', now(), '0', ol.M_Product_ID,
+                          v_User_ID, now(), v_User_ID, ol.M_Product_ID,
                           ol.C_UOM_ID, v_Locator_ID, v_Qty, ol.Description,
                           'N',
                           --MODIFIED BY F.IRIAZABAL
@@ -532,7 +534,7 @@
                       VALUES
                         (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                         ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
-                        '0', now(), '0', ol.M_Product_ID,
+                        v_User_ID, now(), v_User_ID, ol.M_Product_ID,
                         ol.C_UOM_ID, NULL, v_Qty, ol.Description,
                         'N',
                         --MODIFIED BY F.IRIAZABAL
@@ -664,7 +666,7 @@
             VALUES
               (p_InOut_ID, NULL, Cur_Invoice.IsSoTrx, Cur_Invoice.C_Invoice_ID,
               Cur_Invoice.AD_Client_ID, Cur_Invoice.AD_Org_ID, 'Y', now(),
-              '0', now(), '0', v_DocumentNo,
+              v_User_ID, now(), v_User_ID, v_DocumentNo,
               v_DocType_ID, Cur_Invoice.Description, 'N', 'V+',
               Cur_Invoice.DateInvoiced, Cur_Invoice.DateInvoiced, Cur_Invoice.C_BPartner_ID, Cur_Invoice.C_BPartner_Location_ID,
               Cur_Invoice.AD_User_ID, v_Warehouse_ID, Cur_Invoice.POReference, Cur_Invoice.DateInvoiced,
@@ -699,14 +701,16 @@
               VALUES
                 (v_NextNo, Cur_Lines.Line, p_InOut_ID, Cur_Lines.C_OrderLine_ID,
                 Cur_Lines.AD_Client_ID, Cur_Lines.AD_Org_ID, 'Y', now(),
-                '0', now(), '0', Cur_Lines.M_Product_ID,
+                v_User_ID, now(), v_User_ID, Cur_Lines.M_Product_ID,
                 Cur_Lines.C_UOM_ID, p_Locator_ID, Cur_Lines.QtyInvoiced, Cur_Lines.Description,
                 'Y',
                 --MODIFIED BY F.IRIAZABAL
                 Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID, Cur_Lines.M_ATTRIBUTESETINSTANCE_ID
                 );
               UPDATE C_INVOICELINE
-              SET M_INOUTLINE_ID=v_NextNo
+              SET M_INOUTLINE_ID=v_NextNo,
+              Updated=NOW(),
+              UpdatedBy=v_User_ID
               WHERE C_INVOICELINE_ID=Cur_Lines.C_INVOICELINE_ID;
             END LOOP; -- InvoiceLines
           END LOOP; -- Invoices

@@ -29,6 +29,7 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32) ;
   v_AD_User_ID VARCHAR2(32) ;
+  v_PAD_User_ID VARCHAR2(32) ;
   v_AD_Client_ID VARCHAR2(32) ;
   v_AD_Org_ID VARCHAR2(32) ;
   v_Processed VARCHAR(60) ;
@@ -98,6 +99,7 @@
         )
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
+        v_PAD_User_ID:=Cur_Parameter.AD_User_ID;
       END LOOP; --  Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
@@ -111,6 +113,9 @@
       v_Currency, v_Date, v_DateAcct, v_IsGenerated, v_DocType_ID
     FROM C_SETTLEMENT
     WHERE C_Settlement_ID=v_Record_ID;
+    IF(v_PAD_User_ID IS NOT NULL) THEN
+    	v_AD_User_ID:=v_PAD_User_ID;
+    END IF;
     IF(v_Processed='Y') THEN
       --Checking restrictions for unprocessing
       SELECT COUNT(*), MAX(C_DEBT_PAYMENT_ID)
@@ -424,7 +429,9 @@
         ( SELECT COALESCE(SUM(cb.AmountCredit - cb.AmountDebit), 0)
         FROM C_DEBT_PAYMENT_BALANCING cb
         WHERE cb.C_Debt_Payment_ID=C_DEBT_PAYMENT.C_Debt_Payment_ID
-        )
+        ),
+       Updated=now(),
+       UpdatedBy=v_AD_User_ID
       WHERE C_Settlement_Generate_ID=v_Record_ID
         AND isManual='Y';
       v_ResultStr:='CheckingAmounts';
