@@ -202,8 +202,8 @@ BEGIN
             ISTAXINCLUDED, POSTED, PROCESSING, BILLTO_ID,
             AD_USER_ID, COPYFROM, DATEPROMISED
         ) VALUES (
-            v_C_Order_ID, v_CLIENT_ID, p_Org_ID, v_User_ID,NOW(),
-            v_User_ID, NOW(), 'N', v_DocumentNo, 'DR',
+            v_C_Order_ID, v_CLIENT_ID, p_Org_ID, v_User_ID,now(),
+            v_User_ID, now(), 'N', v_DocumentNo, 'DR',
              'CO', '0', v_C_DOCTYPE_ID, p_OrderDate,
             p_OrderDate, Cur_Lines.vendor_Id, v_BPartner_Location_ID, 'N',
             v_Currency_ID, COALESCE(Cur_Lines.PAYMENTRULE, 'P'), COALESCE(Cur_Lines.C_PAYMENTTERM_ID, v_PaymentTerm_ID), 'D',

@@ -709,7 +709,7 @@
                 );
               UPDATE C_INVOICELINE
               SET M_INOUTLINE_ID=v_NextNo,
-              Updated=NOW(),
+              Updated=now(),
               UpdatedBy=v_User_ID
               WHERE C_INVOICELINE_ID=Cur_Lines.C_INVOICELINE_ID;
             END LOOP; -- InvoiceLines

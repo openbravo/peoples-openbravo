@@ -127,7 +127,7 @@
 		END IF;
     UPDATE C_BANKSTATEMENT
     SET PROCESSING='Y',
-    Updated=NOW(),
+    Updated=now(),
     UpdatedBy=v_User
     WHERE C_BANKSTATEMENT_ID = v_Record_ID;
     IF(NOT FINISH_PROCESS) THEN
@@ -154,12 +154,12 @@
             AND S.DOCUMENTNO LIKE '*BSP*%') LOOP
       -- Reset fact acct
      DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = '800019' AND RECORD_ID = Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID;
-     UPDATE C_SETTLEMENT SET POSTED='N',Updated=NOW(),
+     UPDATE C_SETTLEMENT SET POSTED='N',Updated=now(),
      UpdatedBy=v_User WHERE C_SETTLEMENT_ID = Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID;
 
 
      UPDATE C_DEBT_PAYMENT
-     SET C_BANKSTATEMENTLINE_ID = NULL, C_SETTLEMENT_CANCEL_ID = NULL, ISPAID = 'N', CANCEL_PROCESSED = 'N',Updated=NOW(),
+     SET C_BANKSTATEMENTLINE_ID = NULL, C_SETTLEMENT_CANCEL_ID = NULL, ISPAID = 'N', CANCEL_PROCESSED = 'N',Updated=now(),
      UpdatedBy=v_User
      WHERE C_SETTLEMENT_CANCEL_ID = Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID;
 
@@ -201,15 +201,15 @@
                                      WHERE BSL.C_DP_MANAGEMENT_ID=C_DP_MANAGEMENT.C_DP_MANAGEMENT_ID)) LOOP
     begin
       DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = '800176' AND RECORD_ID = CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID;
-      UPDATE C_DP_MANAGEMENT SET POSTED='N',Updated=NOW(),
+      UPDATE C_DP_MANAGEMENT SET POSTED='N',Updated=now(),
       UpdatedBy=v_User WHERE C_DP_MANAGEMENT_ID = CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID;
 
       C_DP_MANAGEMENT_POST(NULL, CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID);
       DELETE FROM C_DP_MANAGEMENTLINE WHERE C_DP_MANAGEMENT_ID = CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID;
-      UPDATE C_BANKSTATEMENTLINE SET C_DP_MANAGEMENT_ID =  NULL,Updated=NOW(),
+      UPDATE C_BANKSTATEMENTLINE SET C_DP_MANAGEMENT_ID =  NULL,Updated=now(),
       UpdatedBy=v_User WHERE C_BANKSTATEMENTLINE_ID = CUR_MANAGEMENTLINES.C_BANKSTATEMENTLINE_ID;
       DELETE FROM C_DP_MANAGEMENT WHERE C_DP_MANAGEMENT_ID = CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID;
-      UPDATE C_REMITTANCELINE SET RETURNED = 'N',Updated=NOW(),
+      UPDATE C_REMITTANCELINE SET RETURNED = 'N',Updated=now(),
       UpdatedBy=v_User WHERE C_REMITTANCELINE_ID = CUR_MANAGEMENTLINES.C_REMITTANCELINE_ID;
     exception when others then
      ROLLBACK;
@@ -221,7 +221,7 @@
    END LOOP;
 
 
-         UPDATE C_DEBT_PAYMENT SET C_BANKSTATEMENTLINE_ID = NULL,Updated=NOW(),
+         UPDATE C_DEBT_PAYMENT SET C_BANKSTATEMENTLINE_ID = NULL,Updated=now(),
           UpdatedBy=v_User
           WHERE C_BANKSTATEMENTLINE_ID IS NOT NULL
             AND C_BANKSTATEMENTLINE_ID IN
@@ -231,7 +231,7 @@
              SET PROCESSED = 'N',
                  StatementDifference=NULL,
                  EndingBalance=0,
-                 PROCESSING = 'N',Updated=NOW(),
+                 PROCESSING = 'N',Updated=now(),
     			 UpdatedBy=v_User
            WHERE C_BANKSTATEMENT_ID = v_Record_ID;
           FINISH_PROCESS := true;
@@ -552,11 +552,11 @@
             )
             ;
           UPDATE C_REMITTANCELINE
-            SET RETURNED='Y',Updated=NOW(),
+            SET RETURNED='Y',Updated=now(),
     		UpdatedBy=v_User
           WHERE C_REMITTANCELINE_ID=Cur_ManagementLines1.C_REMITTANCELINE_ID;
           UPDATE C_BANKSTATEMENTLINE
-            SET C_DP_MANAGEMENT_ID=v_DPMId,Updated=NOW(),
+            SET C_DP_MANAGEMENT_ID=v_DPMId,Updated=now(),
             UpdatedBy=v_User
           WHERE C_BANKSTATEMENTLINE_ID=Cur_ManagementLines1.C_BANKSTATEMENTLINE_ID;
           C_DP_MANAGEMENT_POST(null, v_DPMId) ;
@@ -606,7 +606,7 @@
           WHERE C_BankStatement_ID=v_Record_ID;
           UPDATE C_DEBT_PAYMENT
             SET C_SETTLEMENT_CANCEL_ID=v_settlementID,
-            IsPaid='Y',Updated=NOW(),
+            IsPaid='Y',Updated=now(),
     		UpdatedBy=v_User
           WHERE C_DEBT_PAYMENT.C_Debt_Payment_ID IN
             (SELECT C_Debt_Payment_ID
@@ -658,7 +658,7 @@
           -- Get Debt_Payment Currency and conciliate Debt/Payments
           IF(Cur_Lines.C_Debt_Payment_ID IS NOT NULL) THEN
             UPDATE C_DEBT_PAYMENT
-              SET C_BankStatementLine_ID=Cur_Lines.C_BankStatementLine_ID,Updated=NOW(),
+              SET C_BankStatementLine_ID=Cur_Lines.C_BankStatementLine_ID,Updated=now(),
     		 UpdatedBy=v_User
             WHERE C_Debt_Payment_ID=Cur_Lines.C_Debt_Payment_ID;
             /* Lines are converted to the bankAccount currency, this is not necesary
