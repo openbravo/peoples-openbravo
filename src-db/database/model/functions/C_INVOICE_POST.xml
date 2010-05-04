@@ -1334,35 +1334,33 @@ cWithHoldId varchar2(32);
                 AND il.C_Invoice_ID=v_Record_ID
               )
             LOOP
-             SELECT MIN(M_INOUTLINE_ID) INTO v_InOutLine
-             FROM C_INVOICELINE WHERE C_INVOICELINE_ID=Cur_ILines_Receipt.C_InvoiceLine_ID;
-             SELECT COUNT(1) INTO v_Count
-             FROM M_MATCHINV WHERE C_INVOICELINE_ID=Cur_ILines_Receipt.C_InvoiceLine_ID;
-             IF (v_InOutLine IS NULL AND v_Count=0) THEN
-              -- The min qty. Modified by Ismael Ciordia
-              --v_Qty := Cur_ILines_Receipt.MovementQty;
-              --IF (ABS(Cur_ILines_Receipt.MovementQty) > ABS(Cur_ILines_Receipt.QtyInvoiced)) THEN
-              v_Qty:=Cur_ILines_Receipt.QtyInvoiced;
-              Ad_Sequence_Next('M_MatchInv', Cur_ILines_Receipt.AD_Org_ID, v_MatchInv_ID) ;
-              v_ResultStr:='InsertMatchInv ' || v_MatchInv_ID;
-              DBMS_OUTPUT.PUT_LINE('  M_MatchInv_ID=' || v_MatchInv_ID || ' - ' || v_Qty) ;
-              INSERT
-              INTO M_MATCHINV
-                (
-                  M_MatchInv_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                  Created, CreatedBy, Updated, UpdatedBy,
-                  M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx,
-                  Qty, Processing, Processed, Posted
-                )
-                VALUES
-                (
-                  v_MatchInv_ID, Cur_ILines_Receipt.AD_Client_ID, Cur_ILines_Receipt.AD_Org_ID, 'Y',
-                  now(), '0', now(), '0',
-                  Cur_ILines_Receipt.M_InOutLine_ID, Cur_ILines_Receipt.C_InvoiceLine_ID, Cur_ILines_Receipt.M_Product_ID, Cur_ILines_Receipt.DateAcct,
-                  v_Qty, 'N', 'Y', 'N'
-                )
-                ;
-             END IF;
+              IF (Cur_ILines_Receipt.M_INOUTLINE_ID IS NOT NULL) THEN
+                SELECT COUNT(1) INTO v_Count
+                FROM M_MATCHINV WHERE C_INVOICELINE_ID=Cur_ILines_Receipt.C_InvoiceLine_ID
+                                  AND M_INOUTLINE_ID=Cur_ILines_Receipt.M_INOUTLINE_ID;
+                IF (v_Count=0) THEN
+                 v_Qty:=Cur_ILines_Receipt.QtyInvoiced;
+                 Ad_Sequence_Next('M_MatchInv', Cur_ILines_Receipt.AD_Org_ID, v_MatchInv_ID) ;
+                 v_ResultStr:='InsertMatchInv ' || v_MatchInv_ID;
+                 DBMS_OUTPUT.PUT_LINE('  M_MatchInv_ID=' || v_MatchInv_ID || ' - ' || v_Qty) ;
+                 INSERT
+                 INTO M_MATCHINV
+                   (
+                     M_MatchInv_ID, AD_Client_ID, AD_Org_ID, IsActive,
+                     Created, CreatedBy, Updated, UpdatedBy,
+                     M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx,
+                     Qty, Processing, Processed, Posted
+                    )
+                   VALUES
+                   (
+                     v_MatchInv_ID, Cur_ILines_Receipt.AD_Client_ID, Cur_ILines_Receipt.AD_Org_ID, 'Y',
+                     now(), '0', now(), '0',
+                     Cur_ILines_Receipt.M_InOutLine_ID, Cur_ILines_Receipt.C_InvoiceLine_ID, Cur_ILines_Receipt.M_Product_ID, Cur_ILines_Receipt.DateAcct,
+                     v_Qty, 'N', 'Y', 'N'
+                    )
+                   ;
+                END IF;
+              END IF;
             END LOOP;
             v_ResultStr:='MatchInv-PO';
             FOR Cur_ILines_PO IN
