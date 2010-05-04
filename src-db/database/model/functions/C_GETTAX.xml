@@ -25,6 +25,9 @@
       <parameter name="p_issotrx" type="CHAR" mode="in">
         <default/>
       </parameter>
+      <parameter name="p_glitem_id" type="VARCHAR" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -37,12 +40,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2010 Openbravo SLU
+* All portions are Copyright (C) 2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************************************************************************
-* Title: Get C_Tax_ID from product, bpartner, ...
+* Title: Get C_Tax_ID from product or glitem, bpartner, ...
 ************************************************************************/
   v_billFrom      VARCHAR2(32);
   v_billTo        VARCHAR2(32) ;
@@ -127,10 +130,18 @@
         END LOOP;
       END;
     ELSE
-      SELECT C_TaxCategory_ID
-      INTO v_TaxCategoryID
-      FROM M_Product
-      WHERE M_Product_ID = p_Product_ID;
+      IF(p_glitem_id IS NULL) THEN
+        SELECT C_TaxCategory_ID
+        INTO v_TaxCategoryID
+        FROM M_Product
+        WHERE M_Product_ID = p_Product_ID;
+      ELSE
+        SELECT C_TaxCategory_ID
+        INTO v_TaxCategoryID
+        FROM C_GLITEM
+        WHERE C_GLITEM_ID = p_glitem_id;
+      END IF;
+      
       IF(p_Warehouse_ID IS NULL) THEN
         v_shipFrom := v_billFrom;
       ELSE
