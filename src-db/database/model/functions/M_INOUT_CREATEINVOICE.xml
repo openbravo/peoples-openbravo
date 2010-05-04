@@ -33,6 +33,7 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
+  v_User_ID VARCHAR2(32):='0';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -51,7 +52,8 @@
         p.ParameterName,
         p.P_String,
         p.P_Number,
-        p.P_Date
+        p.P_Date,
+        i.AD_User_ID
       FROM AD_PINSTANCE i
       LEFT JOIN AD_PINSTANCE_PARA p
         ON i.AD_PInstance_ID=p.AD_PInstance_ID
@@ -60,6 +62,7 @@
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
+      v_User_ID:=Cur_Parameter.AD_User_ID;
       IF(Cur_Parameter.ParameterName='M_PriceList_Version_ID') THEN
         v_M_PriceList_Version_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_PriceList_Version_ID=' || v_M_PriceList_Version_ID) ;
@@ -216,8 +219,8 @@
             VALUES
             (
               v_Invoice_ID, CUR_Shipment.C_Order_ID, CUR_Shipment.AD_Client_ID, CUR_Shipment.AD_Org_ID,
-               'Y', now(), '0', now(),
-              '0', 'N', v_DocumentNo, 'DR',
+               'Y', now(), v_User_ID, now(),
+              v_User_ID, 'N', v_DocumentNo, 'DR',
                'CO', 'N', 'N', v_DocType_ID,
               v_DocType_ID, CUR_Shipment.Description, CUR_Shipment.salesrep_id, 
               now(), NULL, 'N', now(),
@@ -288,7 +291,7 @@
               VALUES
               (
                 v_NextNo, CUR_Shipment.AD_Client_ID, CUR_ShipmentLines.AD_Org_ID, 'Y',
-                now(), '100', now(), '0', -- LineTrigger reqirement
+                now(), v_User_ID, now(), v_User_ID, -- LineTrigger reqirement
                 v_Invoice_ID, CUR_ShipmentLines.C_OrderLine_ID, CUR_ShipmentLines.M_InOutLine_ID, CUR_ShipmentLines.Line,
                 CUR_ShipmentLines.Description, CUR_ShipmentLines.M_Product_ID, CUR_ShipmentLines.MovementQty, v_PriceList,
                 v_PriceActual, v_PriceLimit, v_LineNetAmt, NULL,

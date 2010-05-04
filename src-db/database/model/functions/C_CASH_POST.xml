@@ -145,7 +145,9 @@
           UPDATE C_CASH
             SET PROCESSED='N',
             --ENDINGBALANCE=0,
-            STATEMENTDIFFERENCE=NULL
+            STATEMENTDIFFERENCE=NULL,
+            Updated=now(),
+            UpdatedBy=v_User
           WHERE C_CASH_ID=v_Record_ID;
 
           SELECT MAX(S.C_SETTLEMENT_ID)
@@ -159,7 +161,8 @@
 
 
      UPDATE C_DEBT_PAYMENT
-            SET C_CASHLINE_ID=NULL
+            SET C_CASHLINE_ID=NULL,Updated=now(),
+            UpdatedBy=v_User
           WHERE C_CASHLINE_ID IN
             (SELECT C_CASHLINE_ID
             FROM C_CASHLINE
@@ -171,20 +174,25 @@
             WHERE AD_TABLE_ID = '800019'
             AND RECORD_ID = v_Settlement_Cancel;
 
-      UPDATE C_Settlement set posted='N' where c_Settlement_ID= v_Settlement_Cancel;
+      UPDATE C_Settlement set posted='N',Updated=now(),
+              UpdatedBy=v_User where c_Settlement_ID= v_Settlement_Cancel;
 
             C_SETTLEMENT_POST(NULL, v_Settlement_Cancel) ;
             UPDATE C_DEBT_PAYMENT
               SET C_SETTLEMENT_CANCEL_ID=NULL,
               CANCEL_PROCESSED='N',
-              ISPaid='N'
+              ISPaid='N',
+              Updated=now(),
+              UpdatedBy=v_User
             WHERE C_SETTLEMENT_CANCEL_ID=v_Settlement_Cancel;
             DELETE FROM C_SETTLEMENT WHERE C_SETTLEMENT_ID=v_Settlement_Cancel;
           END IF;
 
 	 --To be fixed. We are doing the same 'IsPaid' below. Added by P.Sarobe
      UPDATE C_DEBT_PAYMENT
-            SET ISPaid='N'
+            SET ISPaid='N',
+            Updated=now(),
+            UpdatedBy=v_User
           WHERE c_debt_payment_id IN
             (SELECT C_DEBT_PAYMENT_ID
             FROM C_CASHLINE
@@ -203,7 +211,9 @@
           LOOP
 
             UPDATE C_CashLine
-              SET C_Debt_Payment_ID=NULL
+              SET C_Debt_Payment_ID=NULL,
+              Updated=now(),
+              UpdatedBy=v_User
             WHERE C_CashLine_ID=CurDebtPaymentOrder.C_CashLine_ID;
             DELETE
             FROM C_DEBT_PAYMENT
@@ -499,7 +509,9 @@
       'N',(CASE CurCashLinesOrder.IsSOTrx WHEN 'Y' THEN CurCashLinesOrder.AMT ELSE (-1)*CurCashLinesOrder.AMT END),0,CurCashLinesOrder.STATEMENTDATE,'N','Y',
       NULL,'N','N','N',CurCashLinesOrder.C_PROJECT_ID);
       UPDATE C_CASHLINE
-      SET C_DEBT_PAYMENT_ID = v_debtPaymentID
+      SET C_DEBT_PAYMENT_ID = v_debtPaymentID,
+              Updated=now(),
+              UpdatedBy=v_User
       WHERE C_CASHLINE_ID = CurCashLinesOrder.C_CASHLINE_ID;
       END LOOP;
       END;
@@ -543,7 +555,7 @@
           )
         SELECT v_settlementID,
           AD_Client_ID, AD_Org_ID, 'Y', now(),
-          UpdatedBy, now(), UpdatedBy, '*CP*'||v_DocumentNo,
+          v_User, now(), v_User, '*CP*'||v_DocumentNo,
           v_CB_Date, v_CB_Date, 'B', v_SettlementDocType_ID,
            'N', 'N', 'N', v_CB_Currency_ID,
           C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID, USER1_ID,
@@ -552,7 +564,9 @@
         WHERE C_Cash_ID=v_Record_ID;
         UPDATE C_DEBT_PAYMENT
           SET C_SETTLEMENT_CANCEL_ID=v_settlementID,
-          IsPaid='Y'
+          IsPaid='Y',
+          Updated=now(),
+          UpdatedBy=v_User
         WHERE C_DEBT_PAYMENT.C_Debt_Payment_ID IN
           (SELECT C_Debt_Payment_ID FROM C_CASHLINE WHERE C_Cash_ID=v_Record_ID)
           AND C_Debt_Payment_Status(C_DEBT_PAYMENT.C_SETTLEMENT_CANCEL_ID, C_DEBT_PAYMENT.Cancel_Processed, C_DEBT_PAYMENT.Generate_Processed, C_DEBT_PAYMENT.IsPaid, C_DEBT_PAYMENT.IsValid, C_DEBT_PAYMENT.C_CashLine_ID, C_DEBT_PAYMENT.C_BankStatementLine_ID)='P';
@@ -577,7 +591,9 @@
           -- Get Debt_Payment Currency and conciliate Debt/Payments
           IF(Cur_Lines.CashType IN('O', 'P') AND Cur_Lines.C_Debt_Payment_ID IS NOT NULL) THEN
             UPDATE C_DEBT_PAYMENT
-              SET C_CashLine_ID=Cur_Lines.C_CashLine_ID
+              SET C_CashLine_ID=Cur_Lines.C_CashLine_ID,
+              Updated=now(),
+              UpdatedBy=v_User
             WHERE C_Debt_Payment_ID=Cur_Lines.C_Debt_Payment_ID;
             SELECT C_Currency_ID
             INTO v_Currency_ID
@@ -605,12 +621,15 @@
           SET StatementDifference=v_Total,
           EndingBalance=BeginningBalance + v_Total,
           Processed='Y',
-          Updated=now()
+          Updated=now(),
+          UpdatedBy=v_User
         WHERE C_Cash_ID=v_Record_ID;
         -- Synchronize Client/Org Ownership
         UPDATE C_CASHLINE
           SET AD_Client_ID=v_AD_Client_ID,
-          AD_Org_ID=v_AD_Org_ID
+          AD_Org_ID=v_AD_Org_ID,
+          Updated=now(),
+          UpdatedBy=v_User
         WHERE C_Cash_ID=v_Record_ID
           AND(AD_Client_ID<>v_AD_Client_ID
           OR AD_Org_ID<>v_AD_Org_ID) ;
