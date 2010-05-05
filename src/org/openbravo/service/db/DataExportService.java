@@ -117,7 +117,7 @@ public class DataExportService implements OBSingleton {
    */
   public void exportClientToXML(Map<String, Object> parameters, boolean exportAuditInfo, Writer out) {
     DataSet dataSet = null;
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
       obc.add(Expression.eq("name", CLIENT_DATA_SET_NAME));
@@ -158,7 +158,7 @@ public class DataExportService implements OBSingleton {
       }
 
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
   }
 

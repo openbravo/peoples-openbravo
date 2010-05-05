@@ -33,8 +33,7 @@ public class Reference {
     String implemenationClass;
 
     org.openbravo.model.ad.domain.Reference ref = null;
-    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-    OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       if (subreferenceID != null && !subreferenceID.equals("")) {
         ref = OBDal.getInstance()
@@ -72,7 +71,7 @@ public class Reference {
         return new UIReference(referenceId, subreferenceID);
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.restorePreviousMode();
     }
   }
 }

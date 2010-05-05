@@ -92,6 +92,8 @@ public class DalRequestFilter implements Filter {
         // set to null all the session info
         SessionInfo.init();
 
+        OBContext.clearAdminModeStack();
+
         super.doFinal(errorOccured);
       }
     };

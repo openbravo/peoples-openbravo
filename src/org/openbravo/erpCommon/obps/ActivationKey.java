@@ -352,7 +352,7 @@ public class ActivationKey {
 
       // maxUsers==0 is unlimited concurrent users
       if (maxUsers != 0) {
-        boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+        OBContext.setAdminMode();
         int activeSessions = 0;
         try {
           activeSessions = getActiveSessions(currentSession);
@@ -368,7 +368,7 @@ public class ActivationKey {
         } catch (Exception e) {
           log4j.error("Error checking sessions", e);
         } finally {
-          OBContext.getOBContext().setInAdministratorMode(adminMode);
+          OBContext.restorePreviousMode();
         }
         if (activeSessions >= maxUsers) {
           return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;

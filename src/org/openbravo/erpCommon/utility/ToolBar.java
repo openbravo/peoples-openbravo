@@ -369,7 +369,7 @@ public class ToolBar {
       return;
     }
     if (tabId != null) {
-      boolean oldAdminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      OBContext.setAdminMode();
       try {
         // ActivationKey already initialized in i.e. HSAS, so just take static info
         if (ActivationKey.isActiveInstance()) {
@@ -381,7 +381,7 @@ public class ToolBar {
           }
         }
       } finally {
-        OBContext.getOBContext().setInAdministratorMode(oldAdminMode);
+        OBContext.restorePreviousMode();
       }
     }
   }

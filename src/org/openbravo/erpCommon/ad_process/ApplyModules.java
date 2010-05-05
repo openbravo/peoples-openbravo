@@ -201,7 +201,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       throws IOException, ServletException {
     User currentUser = OBContext.getOBContext().getUser();
     vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
-    boolean admin = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
@@ -301,7 +301,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         releasePreparedStatement(updateSession);
       } catch (SQLException e) {
       }
-      OBContext.getOBContext().setInAdministratorMode(admin);
+      OBContext.restorePreviousMode();
     }
   }
 
