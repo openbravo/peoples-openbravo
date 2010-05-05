@@ -178,7 +178,7 @@ public class SystemService implements OBSingleton {
     // currently this does not work yet because step 1 fails because there are constraints
     // defined in the database which means that certain fields are conditionally mandatory.
 
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       TriggerHandler.getInstance().disable();
       final Client client = OBDal.getInstance().get(Client.class, clientId);
@@ -207,7 +207,7 @@ public class SystemService implements OBSingleton {
       TriggerHandler.getInstance().enable();
       OBDal.getInstance().commitAndClose();
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
   }
 

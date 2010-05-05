@@ -74,7 +74,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
     String parentObjectId = vars.getStringParameter("parentObjectId");
     if (parentObjectId == null || parentObjectId.equals("")) {
-      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      OBContext.setAdminMode();
       try {
         Table table = OBDal.getInstance().get(Table.class, vars.getStringParameter("inpTableId"));
         if (table != null) {
@@ -93,7 +93,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           parentObjectId = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(keyCol));
         }
       } finally {
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
+        OBContext.restorePreviousMode();
       }
 
     }
@@ -101,7 +101,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
     } else if (vars.commandIn("SAVE")) {
-      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      OBContext.setAdminMode();
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
         byte[] bytea = fi.get();
@@ -128,11 +128,11 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         PrintWriter writer = response.getWriter();
         writeRedirect(writer, image.getId(), columnName);
       } finally {
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
+        OBContext.restorePreviousMode();
       }
     } else if (vars.commandIn("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
-        boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+        OBContext.setAdminMode();
         try {
           Image image = OBDal.getInstance().get(Image.class, imageID);
           Table table = OBDal.getInstance().get(Table.class, tableId);
@@ -152,7 +152,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
             log4j.error("Class for table not found", e);
           }
         } finally {
-          OBContext.getOBContext().setInAdministratorMode(adminMode);
+          OBContext.restorePreviousMode();
         }
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();

@@ -180,16 +180,16 @@
       DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
     ELSIF(p_Invoice_ID IS NOT NULL) THEN
       CREATE_FROM_INVOICE:=true;
-      SELECT c_invoice.AD_CLIENT_ID, ad_clientinfo.allownegativestock
-      INTO v_ad_client_id, v_allownegativestock
+      SELECT c_invoice.AD_CLIENT_ID, ad_clientinfo.allownegativestock, c_invoice.updatedby
+      INTO v_ad_client_id, v_allownegativestock, v_user_id
       FROM ad_clientinfo, c_invoice
       where ad_clientinfo.ad_client_id = c_invoice.ad_client_id
       and c_invoice_id = p_invoice_id;
     ELSE
       v_Record_ID:=p_Order_ID;
       DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Create>> Order_ID=' || v_Record_ID);
-      SELECT c_order.AD_CLIENT_ID, ad_clientinfo.allownegativestock
-      INTO v_ad_client_id, v_allownegativestock
+      SELECT c_order.AD_CLIENT_ID, ad_clientinfo.allownegativestock,c_order.updatedby
+      INTO v_ad_client_id, v_allownegativestock, v_user_id
        FROM ad_clientinfo, c_order
       where ad_clientinfo.ad_client_id = c_order.ad_client_id
       and c_order_id = v_Record_ID;

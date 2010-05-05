@@ -113,7 +113,7 @@ public class SessionLogin {
       setSessionID(key);
     }
     try {
-      OBContext.enableAsAdminContext();
+      OBContext.setAdminMode();
       Session session = OBProvider.getInstance().get(Session.class);
 
       session.setCreationDate(new Date());
@@ -142,7 +142,7 @@ public class SessionLogin {
       log4j.error("Error saving session in DB", e);
       return 0;
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -155,7 +155,7 @@ public class SessionLogin {
 
   public void update(ConnectionProvider conn) throws ServletException {
     try {
-      OBContext.enableAsAdminContext();
+      OBContext.setAdminMode();
       Session session = OBDal.getInstance().get(Session.class, getSessionID());
       session.setActive(getIsActive());
       User user1 = OBDal.getInstance().get(User.class, getUser());
@@ -168,7 +168,7 @@ public class SessionLogin {
     } catch (Exception e) {
       log4j.error("Error updating session in DB", e);
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
   }
 

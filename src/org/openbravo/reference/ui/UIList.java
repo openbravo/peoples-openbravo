@@ -52,7 +52,7 @@ public class UIList extends UIReference {
 
     // Check whether value must
     boolean showValue = false;
-    boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       org.openbravo.model.ad.domain.Reference ref = OBDal.getInstance().get(
           org.openbravo.model.ad.domain.Reference.class, subReference);
@@ -60,7 +60,7 @@ public class UIList extends UIReference {
         showValue = ref.isDisplayedValue();
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.restorePreviousMode();
     }
 
     String fieldName = field.getProperty("ColumnName");

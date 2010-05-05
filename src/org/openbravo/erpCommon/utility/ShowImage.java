@@ -47,7 +47,7 @@ public class ShowImage extends HttpSecureAppServlet {
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       VariablesSecureApp vars = new VariablesSecureApp(request);
       String id = vars.getStringParameter("id");
@@ -81,7 +81,7 @@ public class ShowImage extends HttpSecureAppServlet {
         response.getOutputStream().close();
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.restorePreviousMode();
     }
   }
 }

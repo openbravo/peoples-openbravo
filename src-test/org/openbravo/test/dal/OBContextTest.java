@@ -31,8 +31,9 @@ import org.openbravo.test.base.BaseTest;
 public class OBContextTest extends BaseTest {
 
   /**
-   * Tests if the {@link OBContext#setInAdministratorMode(boolean)} works correctly if the same
-   * OBContext is used by multiple threads. This is possible in case of simultaneous ajax requests.
+   * Tests if the {@link OBContext#setAdminMode()} and
+   * {@link OBContext#restorePreviousMode()} work correctly if the same OBContext is used by
+   * multiple threads. This is possible in case of simultaneous ajax requests.
    * 
    * See: https://issues.openbravo.com/view.php?id=8853
    */
@@ -52,7 +53,7 @@ public class OBContextTest extends BaseTest {
 
     // also tests if this thread influences the other two!
     // main thread is true
-    OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
 
     try {
       t1.start();
@@ -130,6 +131,7 @@ public class OBContextTest extends BaseTest {
       t2.setFirstStep(true);
       t1.setNextStep(true);
       t2.setNextStep(true);
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -160,13 +162,13 @@ public class OBContextTest extends BaseTest {
         while (!firstStep) {
           adminMode = OBContext.getOBContext().isInAdministratorMode();
         }
-        prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+        OBContext.setAdminMode();
         adminMode = OBContext.getOBContext().isInAdministratorMode();
         firstStepDone = true;
         while (!nextStep) {
           adminMode = OBContext.getOBContext().isInAdministratorMode();
         }
-        OBContext.getOBContext().setInAdministratorMode(prevMode);
+        OBContext.restorePreviousMode();
         adminMode = OBContext.getOBContext().isInAdministratorMode();
         nextStepDone = true;
       } catch (Exception e) {

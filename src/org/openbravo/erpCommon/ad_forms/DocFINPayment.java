@@ -75,7 +75,7 @@ public class DocFINPayment extends AcctServer {
       return null;
 
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
         data[i] = new FieldProviderFactory(new HashMap());
@@ -100,7 +100,7 @@ public class DocFINPayment extends AcctServer {
             paymentDetails.get(i).isPrepayment() ? "Y" : "N");
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return data;
   }
@@ -132,7 +132,7 @@ public class DocFINPayment extends AcctServer {
     final StringBuilder whereClause = new StringBuilder();
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       whereClause.append(" as astdt ");
       whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
@@ -196,7 +196,7 @@ public class DocFINPayment extends AcctServer {
             Fact_Acct_Group_ID, "999999", DocumentType, conn);
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
 
     SeqNo = "0";
@@ -216,7 +216,7 @@ public class DocFINPayment extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     // Checks if this step is configured to generate accounting for the selected financial account
     boolean confirmation = false;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
@@ -227,7 +227,7 @@ public class DocFINPayment extends AcctServer {
           confirmation = true;
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     if (!confirmation)
       setStatus(STATUS_DocumentDisabled);
@@ -262,7 +262,7 @@ public class DocFINPayment extends AcctServer {
 
   public Account getAccount(ConnectionProvider conn, FIN_FinancialAccount finAccount,
       AcctSchema as, boolean bIsReceipt) throws ServletException {
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     Account account = null;
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
@@ -282,7 +282,7 @@ public class DocFINPayment extends AcctServer {
       else
         account = new Account(conn, accountList.get(0).getMakePaymentAccount().getId());
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return account;
   }

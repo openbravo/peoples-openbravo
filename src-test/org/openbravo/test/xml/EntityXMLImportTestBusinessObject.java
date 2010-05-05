@@ -203,21 +203,25 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     setUserContext("1000019");
     // a payment term line is not deletable, but for this test it should be done anyway
     // force this by being admin
-    OBContext.getOBContext().setInAdministratorMode(true);
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
-    if (ir.getException() != null) {
-      ir.getException().printStackTrace(System.err);
-      fail(ir.getException().getMessage());
-    }
+    OBContext.setAdminMode();
+    try {
+      final ImportResult ir = DataImportService.getInstance().importDataFromXML(
+          OBDal.getInstance().get(Client.class, "1000001"),
+          OBDal.getInstance().get(Organization.class, "1000001"), xml);
+      if (ir.getException() != null) {
+        ir.getException().printStackTrace(System.err);
+        fail(ir.getException().getMessage());
+      }
 
-    assertEquals(0, ir.getInsertedObjects().size());
-    // name of paymentterm has changed
-    // overduepaymentrule of paymenttermline is set back to 1
-    assertEquals(2, ir.getUpdatedObjects().size());
-    for (final Object o : ir.getUpdatedObjects()) {
-      assertTrue(o instanceof PaymentTerm || o instanceof PaymentTermLine);
+      assertEquals(0, ir.getInsertedObjects().size());
+      // name of paymentterm has changed
+      // overduepaymentrule of paymenttermline is set back to 1
+      assertEquals(2, ir.getUpdatedObjects().size());
+      for (final Object o : ir.getUpdatedObjects()) {
+        assertTrue(o instanceof PaymentTerm || o instanceof PaymentTermLine);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -308,21 +312,24 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     final List<PaymentTerm> pts = getPaymentTerms();
     // financialmanagementpaymenttermline is not deletable, but as we are cleaning up
     // force delete by being the admin
-    OBContext.getOBContext().setInAdministratorMode(true);
-    for (final PaymentTerm pt : pts) {
-      OBDal.getInstance().remove(pt);
-    }
-    commitTransaction();
+    OBContext.setAdminMode();
+    try {
+      for (final PaymentTerm pt : pts) {
+        OBDal.getInstance().remove(pt);
+      }
+      commitTransaction();
 
-    setUserContext("1000019");
-    final List<PaymentTerm> pts2 = getPaymentTerms();
-    // financialmanagementpaymenttermline is not deletable, but as we are cleaning up
-    // force delete by being the admin
-    OBContext.getOBContext().setInAdministratorMode(true);
-    for (final PaymentTerm pt : pts2) {
-      OBDal.getInstance().remove(pt);
+      setUserContext("1000019");
+      final List<PaymentTerm> pts2 = getPaymentTerms();
+      // financialmanagementpaymenttermline is not deletable, but as we are cleaning up
+      // force delete by being the admin
+      for (final PaymentTerm pt : pts2) {
+        OBDal.getInstance().remove(pt);
+      }
+      commitTransaction();
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    commitTransaction();
   }
 
   private void createSavePaymentTerm() {
