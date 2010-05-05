@@ -37,6 +37,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
@@ -59,6 +61,22 @@ public class Menu extends HttpSecureAppServlet {
     final String queryString = request.getQueryString();
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String targetmenu = getTargetMenu(vars, queryString);
+
+    // successfull login, redirect to the startpage if any
+    if (!OBContext.getOBContext().isAdminContext() && request.getParameter("noprefs") == null) {
+      try {
+        final String startPage = Preferences.getPreferenceValue("StartPage", true, OBContext
+            .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+            OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+        // redirect if the startpage is there and if it is not the same as the standard
+        if (startPage != null && !startPage.endsWith("/security/Menu.html")) {
+          response.sendRedirect(".." + startPage);
+          return;
+        }
+      } catch (PropertyException e) {
+        // ignore show normal page
+      }
+    }
 
     String hideMenu = vars.getStringParameter("hideMenu", menuFilter);
 
