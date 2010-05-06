@@ -384,8 +384,8 @@ public class Preferences {
     }
 
     if (org1 != null && org2 != null) {
-      int depth1 = depthInTree(org1, parentTree);
-      int depth2 = depthInTree(org2, parentTree);
+      int depth1 = parentTree.indexOf(org1.getId());
+      int depth2 = parentTree.indexOf(org2.getId());
 
       if (depth1 < depth2) {
         return 1;
@@ -437,26 +437,6 @@ public class Preferences {
 
     // Actual conflict
     return 0;
-  }
-
-  /**
-   * Returns the position of a given organization in a tree, being 0 the nearest.
-   * 
-   * @param org
-   *          Organization to check.
-   * @param tree
-   *          Tree of organizations to look in.
-   * @return The position if the organization is in the tree, -1 if it is not.
-   */
-  private static int depthInTree(Organization org, List<String> tree) {
-    int i = 0;
-    for (String orgId : tree) {
-      if (orgId.equals(org.getId())) {
-        return i;
-      }
-      i++;
-    }
-    return -1;
   }
 
   /**
