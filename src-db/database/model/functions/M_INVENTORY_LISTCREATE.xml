@@ -44,6 +44,7 @@
     Cur_Parameter RECORD;
     --    Parameter Variables
     v_Record_ID VARCHAR2(32);
+    v_User_ID VARCHAR2(32);
     v_ProductValue VARCHAR2(40) ;
     v_Locator_ID VARCHAR2(32);
     v_Product_Category_ID VARCHAR2(32);
@@ -73,7 +74,8 @@
         p.ParameterName,
         p.P_String,
         p.P_Number,
-        p.P_Date
+        p.P_Date,
+        i.Ad_User_Id
       FROM AD_PInstance i
       LEFT JOIN AD_PInstance_Para p
         ON i.AD_PInstance_ID=p.AD_PInstance_ID
@@ -82,6 +84,7 @@
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
+      v_User_ID:=Cur_Parameter.Ad_User_Id;
       IF(Cur_Parameter.ParameterName='QtyRange') THEN
         v_QtyRange:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  QtyRange=' || v_QtyRange) ;
@@ -184,8 +187,8 @@
             (
               p_Storage_ID, Cur_Products.M_Product_ID, v_Locator_ID, '0',
               Cur_Products.C_UOM_ID, NULL, v_Client_ID, v_Org_ID,
-               'Y', now(), '0', now(),
-              '0', 0, NULL, 0,
+               'Y', now(), v_User_ID, now(),
+              v_User_ID, 0, NULL, 0,
               NULL, NULL
             )
             ;
@@ -270,8 +273,8 @@
             VALUES
             (
               v_NextNo, v_NextLine, v_Client_ID, v_Org_ID,
-               'Y', now(), '0', now(),
-              '0', v_Record_ID, Cur_Storage.M_Locator_ID, Cur_Storage.M_ATTRIBUTESETINSTANCE_ID,
+               'Y', now(), v_User_ID, now(),
+              v_User_ID, v_Record_ID, Cur_Storage.M_Locator_ID, Cur_Storage.M_ATTRIBUTESETINSTANCE_ID,
               Cur_Storage.M_Product_ID, Cur_Storage.QtyOnHand,( CASE v_Regularization WHEN 'Y' THEN 0 ELSE Cur_Storage.QtyOnHand END), Cur_Storage.C_UOM_ID,(CASE WHEN Cur_Storage.QtyOnHandOrder IS NULL THEN NULL ELSE(CASE v_Regularization WHEN 'Y' THEN 0 ELSE Cur_Storage.QtyOnHandOrder END) END), Cur_Storage.QtyOnHandOrder, Cur_Storage.M_Product_UOM_ID
             )
             ;
@@ -288,7 +291,7 @@
             QUANTITYORDERBOOK=Cur_Storage.QtyOnHandOrder,
             M_Product_UOM_ID=Cur_Storage.M_Product_UOM_ID,
             Updated=now(),
-            UpdatedBy='0'
+            UpdatedBy=v_User_ID
           WHERE M_Inventory_ID=v_Record_ID
             AND M_Product_ID=Cur_Storage.M_Product_ID
             AND C_UOM_ID=Cur_Storage.C_UOM_ID

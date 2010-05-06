@@ -37,6 +37,7 @@
   v_Result NUMBER:=0; -- failure
   v_InProcess CHAR(1) ;
   v_Done CHAR(1) ;
+  v_User_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -56,7 +57,8 @@
         p.ParameterName,
         p.P_String,
         p.P_Number,
-        p.P_Date
+        p.P_Date,
+        i.Ad_User_Id
       FROM AD_PInstance i
       LEFT JOIN AD_PInstance_Para p
         ON i.AD_PInstance_ID=p.AD_PInstance_ID
@@ -65,6 +67,7 @@
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
+      v_User_ID:=Cur_Parameter.Ad_User_Id;
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     v_ResultStr:='ReadingInventory';
@@ -139,7 +142,7 @@
       )
       ,
       Updated=now(),
-      UpdatedBy='0'
+      UpdatedBy=v_User_ID
     WHERE M_Inventory_ID=v_Record_ID
       AND EXISTS
       (SELECT *
@@ -156,7 +159,8 @@
     -- Commented by cromero 19102006 COMMIT;
     -- Check for products in multiple lines
     UPDATE M_InventoryLine
-      SET IsActive='N'
+      SET IsActive='N',Updated=now(),
+      UpdatedBy=v_User_ID
     WHERE M_Inventory_ID=v_Record_ID
       AND(M_Product_ID,
       M_Locator_ID,
