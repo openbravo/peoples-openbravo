@@ -425,20 +425,8 @@ public class DocInvoice extends AcctServer {
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
 
         if (m_taxes[i].m_isTaxUndeductable) {
-          DocInvoiceData[] data = null;
-          data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(),
-              m_taxes[i].m_C_Tax_ID, Record_ID);
-          // check whether gl item is selected instead of product in invoice line
-          if (data.length <= 0) {
-            data = DocInvoiceData.selectGLItemAcctForTaxLine(conn, as.getC_AcctSchema_ID(),
-                m_taxes[i].m_C_Tax_ID, Record_ID);
-          }
-          for (int j = 0; j < data.length; j++) {
-            fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
-                this.C_Currency_ID, data[j].taxamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
-          }
-
+          computeTaxUndeductableLine(conn, as, fact, docLine, Fact_Acct_Group_ID,
+              m_taxes[i].m_C_Tax_ID, m_taxes[i].getAmount());
         } else {
           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
               this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -495,19 +483,8 @@ public class DocInvoice extends AcctServer {
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
         if (m_taxes[i].m_isTaxUndeductable) {
-          DocInvoiceData[] data = null;
-          data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(),
-              m_taxes[i].m_C_Tax_ID, Record_ID);
-          // check whether gl item is selected instead of product in invoice line
-          if (data.length <= 0) {
-            data = DocInvoiceData.selectGLItemAcctForTaxLine(conn, as.getC_AcctSchema_ID(),
-                m_taxes[i].m_C_Tax_ID, Record_ID);
-          }
-          for (int j = 0; j < data.length; j++) {
-            fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
-                this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
-          }
+          computeTaxUndeductableLine(conn, as, fact, docLine, Fact_Acct_Group_ID,
+              m_taxes[i].m_C_Tax_ID, m_taxes[i].getAmount());
 
         } else {
           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
@@ -713,4 +690,71 @@ public class DocInvoice extends AcctServer {
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method
+
+  private void computeTaxUndeductableLine(ConnectionProvider conn, AcctSchema as, Fact fact,
+      DocLine docLine, String Fact_Acct_Group_ID, String taxId, String strTaxAmount) {
+    int invoiceLineTaxCount = 0;
+    int totalInvoiceLineTax = getTaxLineCount(conn, taxId);
+    BigDecimal cumulativeTaxLineAmount = new BigDecimal(0);
+    BigDecimal taxAmount = new BigDecimal(strTaxAmount.equals("") ? "0.00" : strTaxAmount);
+    DocInvoiceData[] data = null;
+    try {
+
+      // We can have some lines from product or some lines from general ledger
+      data = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(), taxId, Record_ID);
+      cumulativeTaxLineAmount = createLineForTaxUndeductable(invoiceLineTaxCount,
+          totalInvoiceLineTax, cumulativeTaxLineAmount, taxAmount, data, conn, fact, docLine,
+          Fact_Acct_Group_ID);
+      invoiceLineTaxCount = data.length;
+      // check whether gl item is selected instead of product in invoice line
+      data = DocInvoiceData.selectGLItemAcctForTaxLine(conn, as.getC_AcctSchema_ID(), taxId,
+          Record_ID);
+      createLineForTaxUndeductable(invoiceLineTaxCount, totalInvoiceLineTax,
+          cumulativeTaxLineAmount, taxAmount, data, conn, fact, docLine, Fact_Acct_Group_ID);
+    } catch (ServletException e) {
+      log4jDocInvoice.warn(e);
+    }
+  }
+
+  private int getTaxLineCount(ConnectionProvider conn, String taxId) {
+    DocInvoiceData[] data = null;
+    try {
+      data = DocInvoiceData.getTaxLineCount(conn, taxId, Record_ID);
+    } catch (ServletException e) {
+      log4jDocInvoice.warn(e);
+    }
+    if (data.length > 0) {
+      return Integer.parseInt(data[0].totallines);
+    }
+    return 0;
+  }
+
+  private BigDecimal createLineForTaxUndeductable(int invoiceLineTaxCount, int totalInvoiceLineTax,
+      BigDecimal cumulativeTaxLineAmount, BigDecimal taxAmount, DocInvoiceData[] data,
+      ConnectionProvider conn, Fact fact, DocLine docLine, String Fact_Acct_Group_ID) {
+    for (int j = 0; j < data.length; j++) {
+      invoiceLineTaxCount++;
+      // We have to adjust the amount in last line of tax
+      if (invoiceLineTaxCount == totalInvoiceLineTax) {
+        data[j].taxamt = taxAmount.subtract(cumulativeTaxLineAmount).toPlainString();
+      }
+      try {
+        // currently applicable for API and APC
+        if (this.DocumentType.equals(AcctServer.DOCTYPE_APInvoice)) {
+          fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
+              this.C_Currency_ID, data[j].taxamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        } else if (this.DocumentType.equals(AcctServer.DOCTYPE_APCredit)) {
+          fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
+              this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        }
+        cumulativeTaxLineAmount = cumulativeTaxLineAmount.add(new BigDecimal(data[j].taxamt));
+      } catch (ServletException e) {
+        log4jDocInvoice.warn(e);
+      }
+    }
+    return cumulativeTaxLineAmount;
+  }
+
 }
