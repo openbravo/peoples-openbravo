@@ -31,6 +31,7 @@ import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
+import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
@@ -111,6 +112,9 @@ public class AllQuickAntTaskTests {
     suite.addTestSuite(EntityXMLImportTestWarning.class);
     suite.addTestSuite(EntityXMLIssues.class);
     suite.addTestSuite(UniqueConstraintImportTest.class);
+
+    // preferences
+    suite.addTestSuite(PreferenceTest.class);
 
     // $JUnit-END$
     return suite;
