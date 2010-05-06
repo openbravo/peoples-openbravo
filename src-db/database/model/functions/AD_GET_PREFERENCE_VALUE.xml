@@ -48,6 +48,8 @@
     cur RECORD;
     
   selPref ad_preference%ROWTYPE;
+  
+  v_continue boolean;
 BEGIN
 
   if p_ad_client_id is null then
@@ -79,81 +81,83 @@ BEGIN
            and (ad_window_id = p_ad_window_id
                 or aD_window_id is null)
            ) loop
+     v_continue := false;
      if (not valueAssigned) then
        selPref := cur;
        valueAssigned := true;
-       continue;
+       v_continue := true;
      end if;
      
      --check org priority
-     if (selPref.AD_Org_ID is not null and cur.AD_Org_ID is null) then
-       continue;
+     if ((not v_continue) and selPref.AD_Org_ID is not null and cur.AD_Org_ID is null) then
+       v_continue :=true;
      end if;
      
-     if (selPref.AD_Org_ID is null and cur.AD_Org_ID is not null) then
+     if ((not v_continue) and selPref.AD_Org_ID is null and cur.AD_Org_ID is not null) then
        selPref := cur;
-       continue;
+        v_continue :=true;
      end if;
      
-     if (selPref.AD_Org_ID is not null and cur.AD_Org_ID is not null) then
+     if ((not v_continue) and selPref.AD_Org_ID is not null and cur.AD_Org_ID is not null) then
        depth1 := ad_isorgincluded(v_ad_org_id, coalesce(selPref.visibleAt_Org_id,'0'), v_ad_client_id);
        depth2 := ad_isorgincluded(v_ad_org_id, coalesce(cur.visibleAt_Org_id,'0'), v_ad_client_id);
        if (depth1<depth2) then
-         continue;
-       end if;
-       if (depth1>depth2) then
+         v_continue := true;
+       elsif (depth1>depth2) then
          selPref := cur;
-         continue;
+         v_continue := true;
        end if;
      end if;
      
      --check user priority
-     if (selPref.AD_User_ID is not null and cur.AD_User_ID is null) then
-       continue;
+     if ((not v_continue) and selPref.AD_User_ID is not null and cur.AD_User_ID is null) then
+       v_continue := true;
      end if;
      
-     if (selPref.AD_User_ID is null and cur.AD_User_ID is not null) then
+     if ((not v_continue) and selPref.AD_User_ID is null and cur.AD_User_ID is not null) then
        selPref := cur;
-       continue;
+       v_continue := true;
      end if;
      
      --check role priority
-     if (selPref.visibleAt_Role_ID is not null and cur.visibleAt_Role_ID is null) then
-       continue;
+     if ((not v_continue) and selPref.visibleAt_Role_ID is not null and cur.visibleAt_Role_ID is null) then
+       v_continue := true;
      end if;
      
-     if (selPref.visibleAt_Role_ID is null and cur.visibleAt_Role_ID is not null) then
+     if ((not v_continue) and selPref.visibleAt_Role_ID is null and cur.visibleAt_Role_ID is not null) then
        selPref := cur;
-       continue;
+       v_continue := true;
      end if;
      
      --check window priority
-      if (selPref.AD_Window_ID is not null and cur.AD_Window_ID is null) then
-       continue;
+      if ((not v_continue) and selPref.AD_Window_ID is not null and cur.AD_Window_ID is null) then
+       v_continue := true;
      end if;
      
-     if (selPref.AD_Window_ID is null and cur.AD_Window_ID is not null) then
+     if ((not v_continue) and selPref.AD_Window_ID is null and cur.AD_Window_ID is not null) then
        selPref := cur;
-       continue;
+       v_continue := true;
      end if;
      
      --Same priority, check selected
-     if (selPref.selected ='Y' and cur.selected ='N') then
-       continue;
+     if ((not v_continue) and selPref.selected ='Y' and cur.selected ='N') then
+       v_continue := true;
      end if;
      
-     if (selPref.selected ='N' and cur.selected ='Y') then
+     if ((not v_continue) and selPref.selected ='N' and cur.selected ='Y') then
        selPref := cur;
-       continue;
+       v_continue := true;
      end if;
      
      --Conflict, check same value
-     if (selPref.value = cur.value) then
-       continue;
+     if ((not v_continue) and selPref.value = cur.value) then
+       v_continue := true;
      end if;
      
-     --Actual conflict, raise error
-     RAISE_APPLICATION_ERROR(-20000, p_PROPERTY_NAME||' @PropertyConflict@');
+     if (not v_continue) then
+       --Actual conflict, raise error
+       RAISE_APPLICATION_ERROR(-20000, p_PROPERTY_NAME||' @PropertyConflict@');
+     end if;
    end loop;
    
    if (not valueAssigned) then
