@@ -451,12 +451,15 @@ public class Preferences {
    */
   private static Preference getPreferenceFromList(Preference pref, List<Preference> preferences) {
     for (Preference listPref : preferences) {
-      if (((listPref.isPropertyList() && pref.isPropertyList() && pref.getProperty().equals(
-          listPref.getProperty())) || (!listPref.isPropertyList() && !pref.isPropertyList() && pref
-          .getAttribute().equals(listPref.getAttribute())))
-          && ((pref.getWindow() == null && listPref.getWindow() == null)
-              || (pref.getWindow() != null && pref.getWindow().equals(listPref.getWindow())) || (listPref
-              .getWindow() != null && listPref.getWindow().equals(pref.getWindow())))) {
+      boolean isCurrentPreference = ((pref.isPropertyList() && pref.getProperty().equals(
+          listPref.getProperty())) || (!listPref.isPropertyList() && pref.getAttribute().equals(
+          listPref.getAttribute())));
+      boolean winVisbilityNotDefined = (pref.getWindow() == null && listPref.getWindow() == null);
+      boolean sameWinVisibility = (pref.getWindow() != null && pref.getWindow().equals(
+          listPref.getWindow()))
+          || (listPref.getWindow() != null && listPref.getWindow().equals(pref.getWindow()));
+
+      if (isCurrentPreference && (winVisbilityNotDefined || sameWinVisibility)) {
         return listPref;
       }
     }
