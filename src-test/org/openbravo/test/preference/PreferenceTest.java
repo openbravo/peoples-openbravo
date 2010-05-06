@@ -35,6 +35,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
@@ -367,6 +368,32 @@ public class PreferenceTest extends BaseTest {
     assertEquals("Incorrect Client ID", "0", p.getClient().getId());
     assertEquals("Incorrect Org ID", "0", p.getOrganization().getId());
 
+  }
+
+  public void testPreferenceListSetAndGet() throws PropertyException {
+    setSystemAdministratorContext();
+
+    // Property configuration list
+    Reference refProperties = OBDal.getInstance().get(Reference.class,
+        "A26BA480E2014707B47257024C3CBFF7");
+    org.openbravo.model.ad.domain.List listValue = OBProvider.getInstance().get(
+        org.openbravo.model.ad.domain.List.class);
+    listValue.setReference(refProperties);
+    listValue.setName("test Property List");
+    listValue.setSearchKey("testPropertyList");
+    OBDal.getInstance().save(listValue);
+    OBDal.getInstance().flush();
+
+    Preference pref = Preferences.setPreferenceValue("testPropertyList", "testPropValue", true,
+        null, null, null, null, null, null);
+    OBDal.getInstance().flush();
+
+    assertTrue("Pref type is not properly set", pref.isPropertyList());
+
+    String value = Preferences.getPreferenceValue("testPropertyList", true, OBContext
+        .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+        OBContext.getOBContext().getUser(), null, null);
+    assertEquals("Not found expected value.", "testPropValue", value);
   }
 
   public void testClean() {
