@@ -315,7 +315,6 @@ cWithHoldId varchar2(32);
           SET Processing='N',
           DocAction='--',
           Updated=now(),
-          Updated=now(),
           UpdatedBy=v_UpdatedBy
         WHERE C_Invoice_ID=v_Record_ID;
         FINISH_PROCESS:=TRUE;

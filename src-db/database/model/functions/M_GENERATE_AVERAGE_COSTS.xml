@@ -257,7 +257,9 @@
         v_Date := TO_DATE('31-12-9999', 'DD-MM-YYYY');
       END IF;
       UPDATE M_COSTING
-      SET DATETO = v_date
+      SET DATETO = v_date,
+      Updated=now(),
+      UpdatedBy=v_User
       WHERE M_COSTING_ID = Cur_ManualCost.M_Costing_ID;
       v_Date := cur_manualcost.DATEFROM;
       v_ProductOld := cur_manualcost.M_PRODUCT_ID;
@@ -307,7 +309,9 @@
           v_Cost:=Cur_ProdCost.COST;
           v_Date:=Cur_ProdCost.DATETO;
           UPDATE M_COSTING
-          SET DATETO = Cur_InOutLine.MOVEMENTDATE
+          SET DATETO = Cur_InOutLine.MOVEMENTDATE,
+          Updated=now(),
+      	  UpdatedBy=v_User
           WHERE M_COSTING_ID = Cur_ProdCost.M_COSTING_ID;
           EXIT;
         END LOOP;
