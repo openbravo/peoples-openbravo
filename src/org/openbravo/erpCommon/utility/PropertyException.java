@@ -19,7 +19,7 @@
 package org.openbravo.erpCommon.utility;
 
 /**
- * Exception class used for exceptions related with the Configuration Properties.
+ * Exception class used for exceptions related with the Configuration Properties and Preferences
  * 
  * @author gorkaion
  * 

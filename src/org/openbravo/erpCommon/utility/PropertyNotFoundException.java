@@ -18,6 +18,17 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import org.openbravo.erpCommon.businessUtility.Preferences;
+
+/**
+ * Exception thrown when a preference is not defined for the current visibility level.
+ * 
+ * @see Preferences#getPreferenceValue(String, boolean, org.openbravo.model.ad.system.Client,
+ *      org.openbravo.model.common.enterprise.Organization, org.openbravo.model.ad.access.User,
+ *      org.openbravo.model.ad.access.Role, org.openbravo.model.ad.ui.Window)
+ *      Preferences.getPreferenceValue
+ * 
+ */
 public class PropertyNotFoundException extends PropertyException {
 
   private static final long serialVersionUID = 1L;
