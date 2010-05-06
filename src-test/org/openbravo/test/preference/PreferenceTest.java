@@ -425,6 +425,8 @@ public class PreferenceTest extends BaseTest {
 
     OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
         org.openbravo.model.ad.domain.List.class);
+    qList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY,
+        "testPropertyList"));
     for (org.openbravo.model.ad.domain.List l : qList.list()) {
       OBDal.getInstance().remove(l);
     }
