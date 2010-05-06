@@ -243,7 +243,7 @@ public class LoginUtils {
 
     // set the obcontext
     try {
-      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg);
+      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage);
     } catch (final OBSecurityException e) {
       return false;
     }
