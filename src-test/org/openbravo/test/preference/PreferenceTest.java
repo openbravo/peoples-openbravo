@@ -22,9 +22,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -36,6 +40,7 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
@@ -376,13 +381,26 @@ public class PreferenceTest extends BaseTest {
     // Property configuration list
     Reference refProperties = OBDal.getInstance().get(Reference.class,
         "A26BA480E2014707B47257024C3CBFF7");
+    Module mod = OBDal.getInstance().get(Module.class, "0");
+    boolean devStatus = mod.isInDevelopment();
+    mod.setInDevelopment(true);
+
     org.openbravo.model.ad.domain.List listValue = OBProvider.getInstance().get(
         org.openbravo.model.ad.domain.List.class);
+    listValue.setCreatedBy(OBContext.getOBContext().getUser());
+    listValue.setCreationDate(new Date());
+    listValue.setUpdatedBy(OBContext.getOBContext().getUser());
     listValue.setReference(refProperties);
+    listValue.setModule(mod);
     listValue.setName("test Property List");
     listValue.setSearchKey("testPropertyList");
     OBDal.getInstance().save(listValue);
     OBDal.getInstance().flush();
+    mod.setInDevelopment(devStatus);
+
+    Entity e = ModelProvider.getInstance().getEntity(Preference.ENTITY_NAME);
+    Property p = e.getProperty(Preference.PROPERTY_PROPERTY);
+    p.getAllowedValues().add(listValue.getSearchKey());
 
     Preference pref = Preferences.setPreferenceValue("testPropertyList", "testPropValue", true,
         null, null, null, null, null, null);
@@ -399,9 +417,16 @@ public class PreferenceTest extends BaseTest {
   public void testClean() {
     setSystemAdministratorContext();
     OBCriteria<Preference> qPref = OBDal.getInstance().createCriteria(Preference.class);
-    qPref.add(Expression.like(Preference.PROPERTY_ATTRIBUTE, "testProperty%"));
+    qPref.add(Expression.or(Expression.like(Preference.PROPERTY_ATTRIBUTE, "testProperty%"),
+        Expression.eq(Preference.PROPERTY_PROPERTY, "testPropertyList")));
     for (Preference pref : qPref.list()) {
       OBDal.getInstance().remove(pref);
+    }
+
+    OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
+        org.openbravo.model.ad.domain.List.class);
+    for (org.openbravo.model.ad.domain.List l : qList.list()) {
+      OBDal.getInstance().remove(l);
     }
   }
 
