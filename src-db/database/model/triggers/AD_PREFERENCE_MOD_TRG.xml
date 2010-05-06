@@ -21,8 +21,8 @@
 ************************************************************************/
   devTemplate NUMBER;
   devModule   CHAR(1);
-  cuerrentID  VARCHAR2(32);
-  cuerrentModuleID  VARCHAR2(32);
+  currentID  VARCHAR2(32);
+  currentModuleID  VARCHAR2(32);
   vAux NUMBER;
 BEGIN
     
@@ -50,25 +50,25 @@ BEGIN
      AND Type = 'T';
      
   IF (UPDATING OR INSERTING) THEN
-    cuerrentID := :new.AD_Preference_ID;
-    cuerrentModuleID := :new.AD_Module_ID;
+    currentID := :new.AD_Preference_ID;
+    currentModuleID := :new.AD_Module_ID;
   ELSE
-    cuerrentID := :old.AD_Preference_ID;
-    cuerrentModuleID := :old.AD_Module_ID;
+    currentID := :old.AD_Preference_ID;
+    currentModuleID := :old.AD_Module_ID;
   END IF;
   
-  if cuerrentModuleID is not null then
+  if currentModuleID is not null then
     SELECT M.IsInDevelopment
       INTO devModule
       FROM AD_MODULE M
-     WHERE M.AD_MODULE_ID = cuerrentModuleID;
+     WHERE M.AD_MODULE_ID = currentModuleID;
   end if;
      
-  IF (UPDATING AND devTemplate=0 AND devModule='N' and cuerrentModuleID is not null) THEN
-    IF (COALESCE(:NEW.AD_CLIENT_ID        , '.') != COALESCE(:NEW.AD_CLIENT_ID        , '.') OR
-        COALESCE(:NEW.AD_ORG_ID           , '.') != COALESCE(:NEW.AD_ORG_ID           , '.') OR
-        COALESCE(:NEW.ISACTIVE            , '.') != COALESCE(:NEW.ISACTIVE            , '.') OR
-        COALESCE(:NEW.AD_MODULE_ID        , '.') != COALESCE(:NEW.AD_MODULE_ID        , '.') OR
+  IF (UPDATING AND devTemplate=0 AND devModule='N' and currentModuleID is not null) THEN
+    IF (COALESCE(:NEW.AD_CLIENT_ID        , '.') != COALESCE(:old.AD_CLIENT_ID        , '.') OR
+        COALESCE(:NEW.AD_ORG_ID           , '.') != COALESCE(:old.AD_ORG_ID           , '.') OR
+        COALESCE(:NEW.ISACTIVE            , '.') != COALESCE(:old.ISACTIVE            , '.') OR
+        COALESCE(:NEW.AD_MODULE_ID        , '.') != COALESCE(:old.AD_MODULE_ID        , '.') OR
         coalesce(:new.AD_WINDOW_ID        , '.') != coalesce(:old.AD_WINDOW_ID        , '.') or   
         coalesce(:new.AD_USER_ID          , '.') != coalesce(:old.AD_USER_ID          , '.') or   
         coalesce(:new.ATTRIBUTE           , '.') != coalesce(:old.ATTRIBUTE           , '.') or   
@@ -78,21 +78,21 @@ BEGIN
         coalesce(:new.VISIBLEAT_CLIENT_ID , '.') != coalesce(:old.VISIBLEAT_CLIENT_ID , '.') or   
         coalesce(:new.VISIBLEAT_ORG_ID    , '.') != coalesce(:old.VISIBLEAT_ORG_ID    , '.') or   
         coalesce(:new.VISIBLEAT_ROLE_ID   , '.') != coalesce(:old.VISIBLEAT_ROLE_ID   , '.')) THEN
-      RAISE_APPLICATION_ERROR(-20532, '@20532@');
+      RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
   END IF;
   
-  IF ((DELETING OR INSERTING) AND devModule='N' and cuerrentModuleID is not null) THEN
-    RAISE_APPLICATION_ERROR(-20533, '@20533@');
+  IF ((DELETING OR INSERTING) AND devModule='N' and currentModuleID is not null) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@20533@');
   END IF;
   
-  --Check the only updated column is "selected". In this case maitin updated
+  --Check the only updated column is "selected". In this case maintain updated
   --column as it was to prevent changes detection when trying to update database
   IF (UPDATING) THEN
-    IF (COALESCE(:NEW.AD_CLIENT_ID        , '.') = COALESCE(:NEW.AD_CLIENT_ID        , '.') and  
-        COALESCE(:NEW.AD_ORG_ID           , '.') = COALESCE(:NEW.AD_ORG_ID           , '.') and
-        COALESCE(:NEW.ISACTIVE            , '.') = COALESCE(:NEW.ISACTIVE            , '.') and
-        COALESCE(:NEW.AD_MODULE_ID        , '.') = COALESCE(:NEW.AD_MODULE_ID        , '.') and
+    IF (COALESCE(:NEW.AD_CLIENT_ID        , '.') = COALESCE(:old.AD_CLIENT_ID        , '.') and  
+        COALESCE(:NEW.AD_ORG_ID           , '.') = COALESCE(:old.AD_ORG_ID           , '.') and
+        COALESCE(:NEW.ISACTIVE            , '.') = COALESCE(:old.ISACTIVE            , '.') and
+        COALESCE(:NEW.AD_MODULE_ID        , '.') = COALESCE(:old.AD_MODULE_ID        , '.') and
         coalesce(:new.AD_WINDOW_ID        , '.') = coalesce(:old.AD_WINDOW_ID        , '.') and  
         coalesce(:new.AD_USER_ID          , '.') = coalesce(:old.AD_USER_ID          , '.') and  
         coalesce(:new.ATTRIBUTE           , '.') = coalesce(:old.ATTRIBUTE           , '.') and  
