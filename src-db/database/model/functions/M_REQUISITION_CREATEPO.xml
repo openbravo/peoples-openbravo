@@ -192,8 +192,8 @@ BEGIN
 
         v_ResultStr := 'Insert C_Order id: ' || v_C_Order_ID || ' No.: ' || v_DocumentNo;
         INSERT INTO C_ORDER (
-            C_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, CREATEDBY,
-            UPDATEDBY, ISSOTRX, DOCUMENTNO, DOCSTATUS,
+            C_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, CREATEDBY,CREATED,
+            UPDATEDBY, UPDATED, ISSOTRX, DOCUMENTNO, DOCSTATUS,
             DOCACTION, C_DOCTYPE_ID, C_DOCTYPETARGET_ID, DATEORDERED,
             DATEACCT, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, ISDISCOUNTPRINTED,
             C_CURRENCY_ID, PAYMENTRULE, C_PAYMENTTERM_ID, INVOICERULE,
@@ -202,8 +202,8 @@ BEGIN
             ISTAXINCLUDED, POSTED, PROCESSING, BILLTO_ID,
             AD_USER_ID, COPYFROM, DATEPROMISED
         ) VALUES (
-            v_C_Order_ID, v_CLIENT_ID, p_Org_ID, v_User_ID,
-            v_User_ID, 'N', v_DocumentNo, 'DR',
+            v_C_Order_ID, v_CLIENT_ID, p_Org_ID, v_User_ID,now(),
+            v_User_ID, now(), 'N', v_DocumentNo, 'DR',
              'CO', '0', v_C_DOCTYPE_ID, p_OrderDate,
             p_OrderDate, Cur_Lines.vendor_Id, v_BPartner_Location_ID, 'N',
             v_Currency_ID, COALESCE(Cur_Lines.PAYMENTRULE, 'P'), COALESCE(Cur_Lines.C_PAYMENTTERM_ID, v_PaymentTerm_ID), 'D',

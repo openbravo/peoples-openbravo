@@ -191,7 +191,12 @@
           v_InvoiceToDate:=NULL;
           v_BPartner_ID:=NULL;
           v_Selection:='N';
-          v_ADUserId := '0';
+          BEGIN
+            SELECT COALESCE(UPDATEDBY,'0') INTO v_ADUserId  FROM C_ORDER  WHERE C_ORDER_ID=p_Order_ID;
+          EXCEPTION
+          WHEN OTHERS THEN
+            v_ADUserId := '0';            
+          END;
         END IF;
       BEGIN --BODY
         /**

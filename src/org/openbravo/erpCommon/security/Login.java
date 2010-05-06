@@ -45,19 +45,20 @@ public class Login extends HttpBaseServlet {
       String strTheme = vars.getTheme();
       vars.clearSession(false);
 
-      OBContext.enableAsAdminContext();
+      OBContext.setAdminMode();
+      try {
+        Client systemClient = OBDal.getInstance().get(Client.class, "0");
+        String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient
+            .getLanguage().getLanguage());
+        String browserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED", systemClient
+            .getLanguage().getLanguage());
+        String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
+            .getLanguage());
 
-      Client systemClient = OBDal.getInstance().get(Client.class, "0");
-      String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient.getLanguage()
-          .getLanguage());
-      String browserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED", systemClient
-          .getLanguage().getLanguage());
-      String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
-          .getLanguage());
-
-      OBContext.resetAsAdminContext();
-
-      printPageIdentificacion(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+        printPageIdentificacion(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
 
     } else if (vars.commandIn("BLANK")) {
       printPageBlank(response, vars);

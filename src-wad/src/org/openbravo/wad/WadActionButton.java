@@ -597,9 +597,9 @@ public class WadActionButton {
                   ");\n");
         } else {
           html.append("PInstanceProcessData.insertPInstanceParam"
-              + (control.isNumericType() ? "Number" : (control.isDate() ? "Date" : ""))
-              + "(this, pinstance, \"" + data[i].seqno + "\", \"" + data[i].columnname + "\", str"
-              + Sqlc.TransformaNombreColumna(data[i].columnname)
+              + (control.isNumericType() ? "Number" : (control.isDate() ? "Date" : (control
+                  .isTime() ? "Time" : ""))) + "(this, pinstance, \"" + data[i].seqno + "\", \""
+              + data[i].columnname + "\", str" + Sqlc.TransformaNombreColumna(data[i].columnname)
               + ", vars.getClient(), vars.getOrg(), vars.getUser());\n");
         }
         vecParams.addElement(Sqlc.TransformaNombreColumna(data[i].columnname));

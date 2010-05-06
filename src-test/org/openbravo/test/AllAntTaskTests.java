@@ -22,6 +22,7 @@ package org.openbravo.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
@@ -94,6 +95,7 @@ public class AllAntTaskTests {
     suite.addTestSuite(OBContextTest.class);
     suite.addTestSuite(DalStoredProcedureTest.class);
     suite.addTestSuite(ReadByNameTest.class);
+    suite.addTestSuite(AdminContextTest.class);
 
     // expression
     suite.addTestSuite(EvaluationTest.class);

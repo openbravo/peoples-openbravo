@@ -577,9 +577,8 @@ public class EntityXMLConverter implements OBNotSingleton {
     if (!isAddSystemAttributes()) {
       return;
     }
-    final boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
     try {
-      OBContext.getOBContext().setInAdministratorMode(true);
+      OBContext.setAdminMode();
       final List<SystemInformation> sis = OBDal.getInstance().createCriteria(
           SystemInformation.class).list();
       Check.isTrue(sis.size() > 0, "There should be at least one SystemInfo record but there are "
@@ -592,7 +591,7 @@ public class EntityXMLConverter implements OBNotSingleton {
           .getCodeRevision()
           + "");
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.restorePreviousMode();
     }
   }
 

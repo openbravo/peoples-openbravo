@@ -59,7 +59,7 @@ public class TriggerHandler {
     log.debug("Disabling triggers");
     Check.isNull(sessionStatus.get(), "There is already a ADSessionStatus present in this thread, "
         + "call enable before calling disable again");
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       final SessionStatus localSessionStatus = OBProvider.getInstance().get(SessionStatus.class);
       localSessionStatus.setImporting(true);
@@ -70,7 +70,7 @@ public class TriggerHandler {
       Check.isNotNull(localSessionStatus.getId(), "The id is not set after insert");
       sessionStatus.set(localSessionStatus);
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -96,13 +96,13 @@ public class TriggerHandler {
     log.debug("Enabling triggers");
     Check.isNotNull(sessionStatus.get(), "SessionStatus not set, call disable "
         + "before calling this method");
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       OBDal.getInstance().remove(sessionStatus.get());
       OBDal.getInstance().flush();
     } finally {
       sessionStatus.set(null);
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
   }
 }

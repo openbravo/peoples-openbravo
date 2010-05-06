@@ -163,7 +163,7 @@
           
       
       v_ResultStr:='LockingMovement';
-      UPDATE M_Movement  SET Processing='Y'  WHERE M_Movement_ID=v_Record_ID;
+      UPDATE M_Movement  SET Processing='Y',Updated=now(),UpdatedBy=v_p_User  WHERE M_Movement_ID=v_Record_ID;
       -- Commented by cromero 19102006 COMMIT;
       /**
       * Accounting first step
@@ -190,7 +190,7 @@
             VALUES
             (
               NextNo, Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
-              now(), '0', now(), '0',
+              now(), v_p_User, now(), v_p_User,
               'M-', Cur_MoveLine.M_Locator_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, (Cur_MoveLine.MovementQty * -1), Cur_MoveLine.M_MovementLine_ID, Cur_MoveLine.M_Product_UOM_ID,
               (Cur_MoveLine.QuantityOrder * -1), Cur_MoveLine.C_UOM_ID
@@ -210,7 +210,7 @@
             VALUES
             (
               NextNo, Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
-              now(), '0', now(), '0',
+              now(), v_p_User, now(), v_p_User,
               'M+', Cur_MoveLine.M_LocatorTo_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, Cur_MoveLine.MovementQty, Cur_MoveLine.M_MovementLine_ID, Cur_MoveLine.M_Product_UOM_ID,
               Cur_MoveLine.QuantityOrder, Cur_MoveLine.C_UOM_ID
@@ -227,7 +227,7 @@
       -- End Processing --------------------------------------------------------
       --<<END_PROCESSING>>
       v_ResultStr:='UnLockingMovement';
-      UPDATE M_Movement  SET Processed='Y'  WHERE M_Movement_ID=v_Record_ID;
+      UPDATE M_Movement  SET Processed='Y',Updated=now(),UpdatedBy=v_p_User  WHERE M_Movement_ID=v_Record_ID;
       -- Commented by cromero 19102006 COMMIT;
     END IF;--END_PROCESS
     --<<END_PROCESS>>
@@ -243,7 +243,7 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
-  UPDATE M_Movement  SET Processing='N'  WHERE M_Movement_ID=v_Record_ID;
+  UPDATE M_Movement  SET Processing='N',Updated=now(),UpdatedBy=v_p_User  WHERE M_Movement_ID=v_Record_ID;
   -- Commented by cromero 19102006 COMMIT;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;

@@ -41,7 +41,7 @@ public class PaymentMonitor {
     } catch (PropertyException e) {
       return;
     }
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       List<DebtPayment> payments = invoice.getFinancialMgmtDebtPaymentList();
       BigDecimal paidAmount = BigDecimal.ZERO;
@@ -76,7 +76,7 @@ public class PaymentMonitor {
       OBDal.getInstance().save(invoice);
       OBDal.getInstance().flush();
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
     return;
   }

@@ -102,7 +102,7 @@ public class CallProcess {
   public ProcessInstance call(org.openbravo.model.ad.ui.Process process, String recordID,
       Map<String, String> parameters) {
 
-    final boolean currentAdminMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       // Create the pInstance
       final ProcessInstance pInstance = OBProvider.getInstance().get(ProcessInstance.class);
@@ -167,7 +167,7 @@ public class CallProcess {
       OBDal.getInstance().getSession().refresh(pInstance);
       return pInstance;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(currentAdminMode);
+      OBContext.restorePreviousMode();
     }
   }
 }

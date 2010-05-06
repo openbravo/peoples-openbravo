@@ -782,7 +782,7 @@ build.war: build a war file in the lib directory.
     </java>
   </target>
 
-  <target name="copy.files">
+  <target name="copy.files" if="mode.class">
     <updatesystemstatus v="RB45"/>
     <mkdir dir="${jakarta.base}/webapps/${context.name}" />
     <copy todir="${jakarta.base}/webapps/${context.name}" encoding="UTF-8">
@@ -792,18 +792,15 @@ build.war: build a war file in the lib directory.
     <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes" encoding="UTF-8">
       <fileset dir="${build}" />
     </copy>
+    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
+      <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8">
+    </copy>
   </target>
 
   <target name="compile.development" depends="generate.entities, compile, copy.files">
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
-    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8">
-    </copy>
   </target>
 
   <target name="compile.complete.development" depends="compile.complete, copy.files">
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
-    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8">
-    </copy>
     <updatesystemstatus v="RB51"/>
   </target>
 

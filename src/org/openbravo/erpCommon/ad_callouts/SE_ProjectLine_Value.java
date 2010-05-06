@@ -118,8 +118,8 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
           String strCTaxID = Tax.get(this, strmProductId, strDate, strADOrgID, strMWarehouseID,
               strCBPartnerLocationID, strCBPartnerLocationID, strProjectId, strIsSOTrx.equals("Y"));
           if (strCTaxID != null && !strCTaxID.equals("")) {
-            resultado.append("new Array(\"inpcTaxId\", "
-                + (strCTaxID.equals("") ? "\"\"" : strCTaxID) + "),\n");
+            resultado.append("new Array(\"inpcTaxId\", \""
+                + (strCTaxID.equals("") ? "\"\"" : strCTaxID) + "\"),\n");
           } else
             strMessage = "TaxNotFound";
         }

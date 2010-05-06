@@ -115,7 +115,7 @@ public class DalInitializingTask extends Task {
       log.debug("Setting user context to user " + getUserId());
       OBContext.setOBContext(getUserId());
       if (isAdminMode()) {
-        OBContext.enableAsAdminContext();
+        OBContext.setAdminMode();
       }
       doExecute();
       errorOccured = false;
@@ -126,7 +126,7 @@ public class DalInitializingTask extends Task {
         OBDal.getInstance().commitAndClose();
       }
       if (isAdminMode()) {
-        OBContext.resetAsAdminContext();
+        OBContext.restorePreviousMode();
       }
     }
   }

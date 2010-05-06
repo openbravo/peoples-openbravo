@@ -74,7 +74,7 @@
       AND 1=1
       AND M_INOUT.ISSOTRX = ?
       GROUP BY C_BPARTNER.NAME, M_PRODUCT.NAME, C_UOM.NAME, M_INOUT.DOCUMENTNO, M_INOUT.MOVEMENTDATE
-      ORDER BY C_BPARTNER.NAME, M_INOUT.MOVEMENTDATE
+      ORDER BY C_BPARTNER.NAME, M_INOUT.MOVEMENTDATE, M_INOUT.DOCUMENTNO
      ]]></Sql>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND M_INOUT.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN (" text="'1'"/>

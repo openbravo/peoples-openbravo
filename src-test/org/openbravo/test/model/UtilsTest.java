@@ -92,7 +92,7 @@ public class UtilsTest extends BaseTest {
 
     // as we read all entities, be an administrator to prevent
     // security exceptions
-    OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
 
     // iterate over all entities
     for (Entity entity : ModelProvider.getInstance().getModel()) {

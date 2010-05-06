@@ -51,7 +51,7 @@ public class About extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
-    boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       ActivationKey ak = new ActivationKey();
       response.setContentType("text/html; charset=UTF-8");
@@ -96,7 +96,7 @@ public class About extends HttpSecureAppServlet {
       out.println(xmlDocument.print());
       out.close();
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.restorePreviousMode();
     }
 
   }

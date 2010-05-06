@@ -167,7 +167,7 @@ public class Menu extends HttpSecureAppServlet {
 
     try { // Trying to deep-link using tabId
 
-      OBContext.enableAsAdminContext();
+      OBContext.setAdminMode();
 
       final String tabId = vars.getStringParameter("tabId", IsIDFilter.instance);
       String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
@@ -249,7 +249,7 @@ public class Menu extends HttpSecureAppServlet {
       log4j.error("Error in deep-linking: " + e.getMessage(), e);
       throw new ServletException(e.getMessage());
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     return targetmenu;
