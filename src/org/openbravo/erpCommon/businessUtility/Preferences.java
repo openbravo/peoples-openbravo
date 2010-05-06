@@ -56,8 +56,8 @@ public class Preferences {
    */
   public static List<Preference> getAllPreferences(String client, String org, String user,
       String role) {
-    OBContext.enableAsAdminContext();
     try {
+      OBContext.setAdminMode();
       List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider()
           .getParentList(org, true);
 
@@ -79,7 +79,7 @@ public class Preferences {
       }
       return preferences;
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -113,8 +113,8 @@ public class Preferences {
   public static Preference setPreferenceValue(String property, String value,
       boolean isListProperty, Client client, Organization org, User user, Role role, Window window,
       VariablesSecureApp vars) {
-    boolean adminModule = OBContext.getOBContext().setInAdministratorMode(true);
     try {
+      OBContext.setAdminMode();
       Preference preference;
       String clientId = client == null ? null : client.getId();
       String orgId = org == null ? null : org.getId();
@@ -153,7 +153,7 @@ public class Preferences {
       }
       return preference;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminModule);
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -174,8 +174,8 @@ public class Preferences {
    */
   public static String getPreferenceValue(String property, boolean isListProperty, Client client,
       Organization org, User user, Role role, Window window) throws PropertyException {
-    boolean adminModule = OBContext.getOBContext().setInAdministratorMode(true);
     try {
+      OBContext.setAdminMode();
       String clientId = client == null ? null : client.getId();
       String orgId = org == null ? null : org.getId();
       String userId = user == null ? null : user.getId();
@@ -218,7 +218,7 @@ public class Preferences {
       }
       return selectedPreference.getSearchKey();
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminModule);
+      OBContext.restorePreviousMode();
     }
   }
 
