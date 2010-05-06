@@ -307,15 +307,10 @@ public class Preferences {
       }
       hql.append("        p.visibleAtRole is null) ");
 
-      if (org != null) {
-        hql.append("  and  ((ad_isorgincluded(?, p.visibleAtOrganization.id, ?) != -1) or ");
-
-        parameters.add(org);
-        parameters.add(client);
-      } else {
-        hql.append(" and (");
+      if (org == null) {
+        hql.append("     and (coalesce(p.visibleAtOrganization, '0')='0'))");
       }
-      hql.append("         (coalesce(p.visibleAtOrganization, '0')='0'))");
+
       if (user != null) {
         hql.append("  and (p.userContact.id = ? or ");
         parameters.add(user);
@@ -346,7 +341,23 @@ public class Preferences {
 
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);
-    return qPref.list();
+    List<Preference> preferences = qPref.list();
+
+    if (org != null) {
+      // Remove from list organization that are not visible
+      List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(client)
+          .getParentList(org, true);
+      List<Preference> auxPreferences = new ArrayList<Preference>();
+      for (Preference pref : preferences) {
+        if (pref.getVisibleAtOrganization() == null
+            || parentTree.contains(pref.getVisibleAtOrganization().getId())) {
+          auxPreferences.add(pref);
+        }
+      }
+      return auxPreferences;
+    } else {
+      return preferences;
+    }
   }
 
   /**
