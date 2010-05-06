@@ -188,7 +188,7 @@ public class Role extends HttpSecureAppServlet {
     xmlDocument.setData("structureLang", LanguageComboData.select(this));
 
     // Role
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     RoleComboData[] datarole = null;
     try {
       // We check if there is a Openbravo Professional Subscription restriction in the license,
@@ -210,7 +210,7 @@ public class Role extends HttpSecureAppServlet {
         datarole = RoleComboData.select(this, vars.getUser());
       }
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     // Client

@@ -110,13 +110,13 @@ public class UserContextCache implements OBSingleton {
 
     public boolean hasExpired() {
       try {
-        OBContext.enableAsAdminContext();
+        OBContext.setAdminMode();
         final User user = OBDal.getInstance().get(User.class, userId);
         if (user == null || user.getUpdated().getTime() > lastUpdated) {
           return true;
         }
       } finally {
-        OBContext.resetAsAdminContext();
+        OBContext.restorePreviousMode();
       }
       return getLastUsed() < (System.currentTimeMillis() - EXPIRES_IN);
     }

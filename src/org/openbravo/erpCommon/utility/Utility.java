@@ -466,7 +466,7 @@ public class Utility {
           return "'0'"; // force to be org *
 
         Window window;
-        final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+        OBContext.setAdminMode();
         try {
           window = org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
           if (window.getWindowType().equals("T")) {
@@ -502,7 +502,7 @@ public class Utility {
             }
           }
         } finally {
-          OBContext.getOBContext().setInAdministratorMode(prevMode);
+          OBContext.restorePreviousMode();
         }
       }
 

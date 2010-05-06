@@ -91,8 +91,7 @@ public class ModuleUtiltiy {
    * @throws Exception
    */
   public static void orderModuleByDependency(FieldProvider[] modules) throws Exception {
-    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-    OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       List<Module> allModules = OBDal.getInstance().createCriteria(Module.class).list();
       ArrayList<String> allMdoulesId = new ArrayList<String>();
@@ -116,7 +115,7 @@ public class ModuleUtiltiy {
         modules[j] = fpModulesOrder[j];
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.restorePreviousMode();
     }
 
   }

@@ -155,6 +155,14 @@ public class EntityAccessChecker implements OBNotSingleton {
         writableEntities.remove(e);
         readableEntities.add(e);
         nonReadableEntities.remove(e);
+      } else {
+        if (!writableEntities.contains(e)) {
+          writableEntities.add(e);
+        }
+        if (!readableEntities.contains(e)) {
+          readableEntities.add(e);
+        }
+        nonReadableEntities.remove(e);
       }
     }
 

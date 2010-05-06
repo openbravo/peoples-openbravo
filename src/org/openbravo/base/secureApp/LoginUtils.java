@@ -145,7 +145,7 @@ public class LoginUtils {
     // Organizations tree
     // enable admin mode, as normal non admin-role
     // has no read-access to i.e. AD_OrgType
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     try {
 
       OrgTree tree = new OrgTree(conn, strCliente);
@@ -156,7 +156,7 @@ public class LoginUtils {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     try {

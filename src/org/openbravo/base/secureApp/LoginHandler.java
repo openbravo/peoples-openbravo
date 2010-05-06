@@ -56,7 +56,7 @@ public class LoginHandler extends HttpBaseServlet {
 
     final String strUser = vars.getStringParameter("user");
 
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     try {
       Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
@@ -98,7 +98,7 @@ public class LoginHandler extends HttpBaseServlet {
         }
       }
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -130,7 +130,7 @@ public class LoginHandler extends HttpBaseServlet {
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
       String strUserAuth, String sessionId) throws IOException {
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     try {
       ActivationKey ak = new ActivationKey();
       boolean hasSystem = false;
@@ -212,14 +212,14 @@ public class LoginHandler extends HttpBaseServlet {
         goToRetry(res, vars, msg, title, msgType, action);
       }
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
   }
 
   private void updateDBSession(String sessionId, boolean sessionActive, String status) {
     try {
-      OBContext.enableAsAdminContext();
+      OBContext.setAdminMode();
       Session session = OBDal.getInstance().get(Session.class, sessionId);
       session.setSessionActive(sessionActive);
       session.setLoginStatus(status);
@@ -227,7 +227,7 @@ public class LoginHandler extends HttpBaseServlet {
     } catch (Exception e) {
       log4j.error("Error updating session in DB", e);
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
   }

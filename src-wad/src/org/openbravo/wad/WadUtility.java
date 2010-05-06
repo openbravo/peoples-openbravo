@@ -835,9 +835,7 @@ public class WadUtility {
       return "";
     }
     StringBuffer _displayLogic = new StringBuffer();
-    String element = auxControl.getData("ColumnName");
-    if (auxControl.getType().equals("Combo"))
-      element = "report" + element + "_S";
+    String element = auxControl.getReadOnlyLogicColumn();
 
     _displayLogic.append("  readOnlyLogicElement('").append(element).append("', (").append(
         displayLogic(code, vecDL, parentsFieldsData, vecAuxiliar, vecFields, windowId, vecContext))

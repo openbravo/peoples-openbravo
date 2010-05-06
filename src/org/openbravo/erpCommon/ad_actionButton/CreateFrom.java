@@ -604,36 +604,14 @@ public class CreateFrom extends HttpSecureAppServlet {
             "org/openbravo/erpCommon/ad_actionButton/CreateFrom_ShipmentPO").createXmlDocument();
       if (strInvoice.equals("")) {
         if (vars.getLanguage().equals("en_US")) {
-          if (isSOTrx.equals("Y"))
+          if (isSOTrx.equals("Y")) {
             data = CreateFromShipmentData.selectFromPOSOTrx(this, vars.getLanguage(), Utility
                 .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
                 vars, "#User_Org", strWindowId), strPO);
-          else {
+          } else {
             data = CreateFromShipmentData.selectFromPO(this, vars.getLanguage(), Utility
                 .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
                 vars, "#User_Org", strWindowId), strPO);
-            Connection conn = null;
-            try {
-              for (int i = 0; i < data.length; i++) {
-                if (data[i].mAttributesetinstanceId != null
-                    && !"".equals(data[i].mAttributesetinstanceId)) {
-                  conn = this.getTransactionConnection();
-                  String strMAttributesetinstanceID = SequenceIdData.getUUID();
-                  CreateFromShipmentData.copyAttributes(conn, this, strMAttributesetinstanceID,
-                      data[i].mAttributesetinstanceId);
-                  CreateFromShipmentData.copyInstances(conn, this, strMAttributesetinstanceID,
-                      data[i].mAttributesetinstanceId);
-                  data[i].mAttributesetinstanceId = strMAttributesetinstanceID;
-                  releaseCommitConnection(conn);
-                }
-              }
-            } catch (Exception e) {
-              try {
-                releaseRollbackConnection(conn);
-              } catch (Exception ignored) {
-              }
-              log4j.warn("Rollback in transaction");
-            }
           }
         } else {
           if (isSOTrx.equals("Y"))
@@ -1497,9 +1475,11 @@ public class CreateFrom extends HttpSecureAppServlet {
             price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
             if (price != null && price.length > 0) {
               priceList = price[0].pricelist;
-              priceActual = price[0].priceactual;
               priceLimit = price[0].pricelimit;
               priceStd = price[0].pricestd;
+              priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
+            		  strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
+            		  strPriceList, strKey);
             }
             price = null;
           } else {
@@ -1507,9 +1487,11 @@ public class CreateFrom extends HttpSecureAppServlet {
                 data[i].mProductId, strPriceListVersion);
             if (price != null && price.length > 0) {
               priceList = price[0].pricelist;
-              priceActual = price[0].priceactual;
               priceLimit = price[0].pricelimit;
               priceStd = price[0].pricestd;
+              priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
+            		  strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
+            		  strPriceList, strKey);
             }
             price = null;
           }
@@ -1728,10 +1710,17 @@ public class CreateFrom extends HttpSecureAppServlet {
                   data[i].cUomId, strMovementqty, data[i].cOrderlineId, strLocator,
                   CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                   strQuantityorder, strProductUomId, strmAttributesetinstanceId);
-              if (!strInvoice.equals(""))
-                CreateFromShipmentData.updateInvoice(conn, this, strSequence,
+              if (!strInvoice.equals("")) {
+                String strInOutLineId = CreateFromShipmentData.selectInvoiceInOut(conn, this,
                     data[i].cInvoicelineId);
-              else
+                if (strInOutLineId.isEmpty())
+                  CreateFromShipmentData.updateInvoice(conn, this, strSequence,
+                      data[i].cInvoicelineId);
+                else {
+                  CreateFromShipmentData.insertMatchInv(conn, this, vars.getUser(),
+                      data[i].cInvoicelineId, strSequence, data[i].cInvoiceId);
+                }
+              } else
                 CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                     data[i].cOrderlineId);
             } catch (final ServletException ex) {

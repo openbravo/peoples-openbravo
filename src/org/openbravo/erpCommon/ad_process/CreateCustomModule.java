@@ -43,7 +43,7 @@ public class CreateCustomModule implements Process {
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
-    boolean admin = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       OBCriteria<Module> modCriteria = OBDal.getInstance().createCriteria(Module.class);
       modCriteria.add(Expression.ilike(Module.PROPERTY_NAME, MODULE_NAME));
@@ -97,7 +97,7 @@ public class CreateCustomModule implements Process {
       msg.setMessage("@Success@");
       bundle.setResult(msg);
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(admin);
+      OBContext.restorePreviousMode();
     }
   }
 }

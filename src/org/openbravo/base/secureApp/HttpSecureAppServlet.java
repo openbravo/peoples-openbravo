@@ -198,7 +198,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     try {
 
-      OBContext.enableAsAdminContext();
+      OBContext.setAdminMode();
 
       strUserAuth = m_AuthManager.authenticate(request, response);
 
@@ -343,7 +343,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       logout(request, response);
       return;
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     try {

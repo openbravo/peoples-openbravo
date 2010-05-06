@@ -105,6 +105,8 @@ public class UsedByLink extends HttpSecureAppServlet {
     xmlDocument.setParameter("recordIdentifier", UsedByLinkData.selectIdentifier(this, keyId, vars
         .getLanguage(), tableId));
 
+    String keyColumnId = UsedByLinkData.selectKeyColumnId(this, tableId);
+
     boolean nonAccessible = false;
 
     UsedByLinkData[] data = null;
@@ -124,11 +126,21 @@ public class UsedByLink extends HttpSecureAppServlet {
     }
 
     data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), vars.getRole(),
-        keyColumn, tableId, linkedTablesQuery.toString());
+        keyColumnId, keyColumn, tableId, linkedTablesQuery.toString());
 
     if (data != null && data.length > 0) {
       final Vector<Object> vecTotal = new Vector<Object>();
       for (int i = 0; i < data.length; i++) {
+        String keyValue = keyId;
+        if (!data[i].referencedColumnId.equals(keyColumnId)) {
+          try {
+            keyValue = UsedByLinkData.selectKeyValue(this, UsedByLinkData.selectColumnName(this,
+                data[i].referencedColumnId), UsedByLinkData.selectTableName(this, tableId),
+                keyColumn, keyId);
+          } catch (Exception e) {
+            // TODO: handle exception
+          }
+        }
         if (log4j.isDebugEnabled())
           log4j.debug("***Referenced tab: " + data[i].adTabId);
         final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
@@ -145,14 +157,14 @@ public class UsedByLink extends HttpSecureAppServlet {
         if (!nonAccessible) {
           final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("
               + vars.getUserOrg() + ")";
-          if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
+          if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
               strNonAccessibleWhere).equals("0"))
             nonAccessible = true;
         }
         strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
             + vars.getUserClient() + ")";
         int total = Integer.valueOf(
-            UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
+            UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
                 strWhereClause)).intValue();
 
         if (log4j.isDebugEnabled())
@@ -368,8 +380,7 @@ public class UsedByLink extends HttpSecureAppServlet {
    * 
    */
   private List<LinkedTable> getLinkedTables(String tableId) {
-    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-    OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       Table table = OBDal.getInstance().get(Table.class, tableId);
       String tableName = table.getDBTableName();
@@ -382,6 +393,7 @@ public class UsedByLink extends HttpSecureAppServlet {
               && property.getTargetEntity() != null
               && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)) {
             final LinkedTable linkedTable = new LinkedTable();
+            System.out.println("p:" + property.getColumnName());
             linkedTable.setColumnId(property.getColumnId());
             linkedTables.add(linkedTable);
           }
@@ -389,7 +401,7 @@ public class UsedByLink extends HttpSecureAppServlet {
       }
       return linkedTables;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.restorePreviousMode();
     }
   }
 

@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -81,18 +82,16 @@ public class OBContext implements OBNotSingleton {
 
   private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
 
+  private static ThreadLocal<Stack<Boolean>> adminModeStack = new ThreadLocal<Stack<Boolean>>();
+
   public static final String CONTEXT_PARAM = "#OBContext";
 
   private static OBContext adminContext = null;
 
   /**
-   * Sets the context to the 0 (SystemAdmin) user.
-   * 
-   * Note overwrites the current OBContext! This method should be used in case there is no real user
-   * context yet because the user still has to login (for example).
-   * 
-   * In all other cases use the method {@link #setInAdministratorMode(boolean)}.
+   * @deprecated use {@link #setAdminMode()}
    */
+  @Deprecated
   public static void setAdminContext() {
     if (adminContext == null) {
       setOBContext("0", "0", "0", "0");
@@ -102,37 +101,94 @@ public class OBContext implements OBNotSingleton {
     }
   }
 
-  /**
-   * Checks if there is a context set. If not then sets the Admin Context. If yes then set the admin
-   * mode of the existing context.
-   * 
-   * @see OBContext#resetAsAdminContext()
-   */
-  public static void enableAsAdminContext() {
-    if (OBContext.getOBContext() == null) {
-      OBContext.setAdminContext();
-    } else if (OBContext.getOBContext() == adminContext) {
-      return;
+  private static void setAdminContextLocally() {
+    if (adminContext == null) {
+      setOBContext("0", "0", "0", "0");
+      adminContext = getOBContext();
     } else {
-      OBContext.getOBContext().setInAdministratorMode(true);
+      setOBContext(adminContext);
     }
   }
 
   /**
-   * Sets the context state back. If the current context is the Admin Context then the current
-   * context is set to null. In the other cases the method {@link #setInAdministratorMode(boolean)}
-   * is called with the parameter false.
-   * 
-   * @see OBContext#enableAsAdminContext()
+   * @deprecated use {@link #setAdminMode()}
    */
+  @Deprecated
+  public static void enableAsAdminContext() {
+    setAdminMode();
+  }
+
+  /**
+   * Let's the current user run with Administrator privileges. If there is no current user then the
+   * special Administrator context is used.
+   * 
+   * To restore the previous privileges call the {@link #restorePreviousMode()}.
+   * 
+   * @see OBContext#restorePreviousMode()
+   * @since 2.50MP16
+   */
+  public static void setAdminMode() {
+    getAdminModeStack().push(Boolean.TRUE);
+    if (OBContext.getOBContext() == null) {
+      OBContext.setAdminContextLocally();
+    } else if (OBContext.getOBContext() == adminContext) {
+      return;
+    }
+  }
+
+  private static Stack<Boolean> getAdminModeStack() {
+    if (adminModeStack.get() == null) {
+      adminModeStack.set(new Stack<Boolean>());
+    }
+    return adminModeStack.get();
+  }
+
+  /**
+   * @deprecated use {@link #restorePreviousMode()}
+   */
+  @Deprecated
   public static void resetAsAdminContext() {
+    restorePreviousMode();
+  }
+
+  /**
+   * Is used to restore the previous privileges after enabling Administrator privileges by calling
+   * {@link #setAdminMode()}.
+   * 
+   * @see OBContext#setAdminMode()
+   * @since 2.50MP16
+   */
+  public static void restorePreviousMode() {
+    // remove the last admin mode from the stack
+    final Stack<Boolean> stack = getAdminModeStack();
+    if (stack.size() > 0) {
+      stack.pop();
+    } else {
+      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext",
+          new IllegalStateException());
+    }
+
     if (OBContext.getOBContext() == null) {
       return;
     }
-    if (OBContext.getOBContext() == adminContext) {
+    if (stack.isEmpty() && OBContext.getOBContext() == adminContext) {
       OBContext.setOBContext((OBContext) null);
-    } else {
-      OBContext.getOBContext().setInAdministratorMode(false);
+    }
+  }
+
+  /**
+   * Clears the admin context stack.
+   */
+  static void clearAdminModeStack() {
+    if (getAdminModeStack().size() > 0) {
+      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext",
+          new IllegalStateException());
+    }
+    getAdminModeStack().clear();
+    if (adminModeSet.get() != null) {
+      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext",
+          new IllegalStateException());
+      adminModeSet.set(null);
     }
   }
 
@@ -541,7 +597,11 @@ public class OBContext implements OBNotSingleton {
       return false;
     }
     setInitialized(false);
-    setInAdministratorMode(true);
+
+    // can't use enableAsAdminContext here otherwise there is a danger of
+    // recursive/infinite calls.
+    // enableAsAdminContext();
+    getAdminModeStack().push(Boolean.TRUE);
     try {
       setUser(u);
       Hibernate.initialize(getUser().getClient());
@@ -678,7 +738,10 @@ public class OBContext implements OBNotSingleton {
 
       // TODO: add logging of all context information
     } finally {
-      setInAdministratorMode(false);
+      // can't use resetAsAdminContext here otherwise there is a danger of
+      // recursive/infinite calls.
+      // resetAsAdminContext();
+      getAdminModeStack().pop();
       setInitialized(true);
     }
     return true;
@@ -775,6 +838,9 @@ public class OBContext implements OBNotSingleton {
   }
 
   public boolean isInAdministratorMode() {
+    if (getAdminModeStack().size() > 0 && getAdminModeStack().peek()) {
+      return true;
+    }
     return adminModeSet.get() != null || isAdministrator;
   }
 
@@ -782,6 +848,10 @@ public class OBContext implements OBNotSingleton {
     return this == adminContext;
   }
 
+  /**
+   * @deprecated use {@link #setAdminMode()} and {@link #restorePreviousMode()}.
+   */
+  @Deprecated
   public boolean setInAdministratorMode(boolean inAdministratorMode) {
     final boolean prevMode = isInAdministratorMode();
     if (inAdministratorMode) {

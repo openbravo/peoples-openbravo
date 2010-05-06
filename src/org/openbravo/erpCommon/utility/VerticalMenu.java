@@ -81,7 +81,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     Date now = new Date();
     log4j.debug("ping session:" + sessionId + " - time" + now);
     if (sessionId != null && !sessionId.isEmpty()) {
-      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      OBContext.setAdminMode();
       try {
         Session session = OBDal.getInstance().get(Session.class, sessionId);
         session.setLastPing(now);
@@ -90,7 +90,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       } catch (Exception e) {
         log4j.error("Error in session ping", e);
       } finally {
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
+        OBContext.restorePreviousMode();
       }
     }
   }

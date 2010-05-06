@@ -140,8 +140,9 @@ public class DocMatchInv extends AcctServer {
     BigDecimal bdCost = new BigDecimal(DocMatchInvData.selectProductAverageCost(conn, data[0]
         .getField("M_Product_Id"), data[0].getField("orderAcctDate")));
     String strScale = DocMatchInvData.selectClientCurrencyPrecission(conn, vars.getClient());
-    bdCost = bdCost.multiply(new BigDecimal(data[0].getField("Qty"))).setScale(
-        new Integer(strScale), RoundingMode.HALF_UP);
+    BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
+    bdCost = bdCost.multiply(bdQty).setScale(new Integer(strScale), RoundingMode.HALF_UP);
+
     DocMatchInvData[] invoiceData = DocMatchInvData.selectInvoiceData(conn, vars.getClient(),
         data[0].getField("C_InvoiceLine_Id"));
 
@@ -151,6 +152,11 @@ public class DocMatchInv extends AcctServer {
     strExpenses = getConvertedAmt(strExpenses, strInvoiceCurrency, as.getC_Currency_ID(), strDate,
         "", vars.getClient(), vars.getOrg(), conn);
     BigDecimal bdExpenses = new BigDecimal(strExpenses);
+    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(data[0]
+        .getField("MOVEMENTQTY"))).signum())
+        && data[0].getField("InOutStatus").equals("VO")) {
+      bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
+    }
 
     BigDecimal bdDifference = bdExpenses.subtract(bdCost);
 
@@ -166,8 +172,8 @@ public class DocMatchInv extends AcctServer {
 
     ProductInfo p = new ProductInfo(data[0].getField("M_Product_Id"), conn);
     cr = fact.createLine(null, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn), as
-        .getC_Currency_ID(), "0", strExpenses, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-        conn);
+        .getC_Currency_ID(), "0", bdExpenses.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        DocumentType, conn);
 
     if (cr == null) {
       log4j.warn("createFact - unable to calculate line with "

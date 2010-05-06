@@ -75,7 +75,9 @@ BEGIN
     WHERE M_RequisitionLine_ID = v_Record_ID;
 
     UPDATE M_Requisition
-    SET DocStatus = 'CL'
+    SET DocStatus = 'CL',
+    Updated = now(),
+    UpdatedBy = v_User_ID
     WHERE M_Requisition_ID = (SELECT M_Requisition_ID FROM M_RequisitionLine WHERE M_RequisitionLine_ID = v_Record_ID)
       AND NOT EXISTS (SELECT 1
                       FROM M_RequisitionLine rl

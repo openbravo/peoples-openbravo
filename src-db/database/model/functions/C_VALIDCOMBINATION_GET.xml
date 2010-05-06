@@ -216,28 +216,28 @@
         AND AD_Org_ID=v_AD_Org_ID
         AND C_AcctSchema_ID=v_C_AcctSchema_ID
         AND Account_ID=v_Account_ID  -- Optional fields
-        AND(v_M_Product_ID IS NULL
-        OR M_Product_ID=v_M_Product_ID)
-        AND(v_C_BPartner_ID IS NULL
-        OR C_BPartner_ID=v_C_BPartner_ID)
-        AND(v_AD_OrgTrx_ID IS NULL
-        OR AD_OrgTrx_ID=v_AD_OrgTrx_ID)
-        AND(v_C_LocFrom_ID IS NULL
-        OR C_LocFrom_ID=v_C_LocFrom_ID)
-        AND(v_C_LocTo_ID IS NULL
-        OR C_LocTo_ID=v_C_LocTo_ID)
-        AND(v_C_SalesRegion_ID IS NULL
-        OR C_SalesRegion_ID=v_C_SalesRegion_ID)
-        AND(v_C_Project_ID IS NULL
-        OR C_Project_ID=v_C_Project_ID)
-        AND(v_C_Campaign_ID IS NULL
-        OR C_Campaign_ID=v_C_Campaign_ID)
-        AND(v_C_Activity_ID IS NULL
-        OR C_Activity_ID=v_C_Activity_ID)
-        AND(v_User1_ID IS NULL
-        OR User1_ID=v_User1_ID)
-        AND(v_User2_ID IS NULL
-        OR User2_ID=v_User2_ID)
+        AND((v_M_Product_ID IS NULL AND M_Product_ID IS NULL)
+        OR (v_M_Product_ID IS NOT NULL AND M_Product_ID=v_M_Product_ID))
+        AND((v_C_BPartner_ID IS NULL AND C_BPartner_ID IS NULL)
+        OR (v_C_BPartner_ID IS NOT NULL AND C_BPartner_ID=v_C_BPartner_ID))
+        AND((v_AD_OrgTrx_ID IS NULL AND AD_OrgTrx_ID IS NULL)
+        OR (v_AD_OrgTrx_ID IS NOT NULL AND AD_OrgTrx_ID=v_AD_OrgTrx_ID))
+        AND((v_C_LocFrom_ID IS NULL AND C_LocFrom_ID IS NULL)
+        OR (v_C_LocFrom_ID IS NOT NULL AND C_LocFrom_ID=v_C_LocFrom_ID))
+        AND((v_C_LocTo_ID IS NULL AND C_LocTo_ID IS NULL)
+        OR (v_C_LocTo_ID IS NOT NULL AND C_LocTo_ID=v_C_LocTo_ID))
+        AND((v_C_SalesRegion_ID IS NULL AND C_SalesRegion_ID IS NULL)
+        OR (v_C_SalesRegion_ID IS NOT NULL AND C_SalesRegion_ID=v_C_SalesRegion_ID))
+        AND((v_C_Project_ID IS NULL AND C_Project_ID IS NULL)
+        OR (v_C_Project_ID IS NOT NULL AND C_Project_ID=v_C_Project_ID))
+        AND((v_C_Campaign_ID IS NULL AND C_Campaign_ID IS NULL)
+        OR (v_C_Campaign_ID IS NOT NULL AND C_Campaign_ID=v_C_Campaign_ID))
+        AND((v_C_Activity_ID IS NULL AND C_Activity_ID IS NULL)
+        OR (v_C_Activity_ID IS NOT NULL AND C_Activity_ID=v_C_Activity_ID))
+        AND((v_User1_ID IS NULL AND User1_ID IS NULL)
+        OR (v_User1_ID IS NOT NULL AND User1_ID=v_User1_ID))
+        AND((v_User2_ID IS NULL AND User2_ID IS NULL)
+        OR (v_User2_ID IS NOT NULL AND User2_ID=v_User2_ID))
         AND IsActive='Y'  -- Y comes after N
       ORDER BY IsFullyQualified DESC
       )

@@ -71,10 +71,10 @@
       <foreign-key foreignTable="AD_ORG" name="M_MATCHINV_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICELINE" name="M_MATCHINV_C_INVOICELINE">
+      <foreign-key foreignTable="C_INVOICELINE" name="M_MATCHINV_C_INVOICELINE" onDelete="cascade">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INOUTLINE" name="M_MATCHINV_M_INOUTLINE">
+      <foreign-key foreignTable="M_INOUTLINE" name="M_MATCHINV_M_INOUTLINE" onDelete="cascade">
         <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_MATCHINV_M_PRODUCT">
