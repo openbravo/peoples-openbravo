@@ -50,7 +50,18 @@
     var stopAddingWarns=false;
     var restarting=false;
     var pending_states=0;
+    var andmore=false;
 
+
+    function contains(a, obj){
+      for(var i = 0; i < a.length; i++) {
+    	if(a[i] === obj){
+    	  return true;
+    	}
+      }
+      return false;
+    }
+    	    
     //Changes the status of one node (corresponding icon, ...)
     function progList_changeNode(node, newStatus, text) {
       try {
@@ -131,7 +142,10 @@
       }
       var charn= document.getElementById('warningsAndErrors').innerHTML.length;
       if(charn>2000){
-          document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + "and more..." + "</p>";
+          if(!andmore){
+             andmore=true;
+             document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + "and more..." + "</p>";
+          }
         }
         else{
           document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + text + "</p>";
@@ -356,24 +370,24 @@
                 var error=false;
                 for(j=0;j<subSteps.length && !error;j++){
                     var ind=getStatusIndex(subSteps[j]);
-                    if(error_status[ind]!=='Error'){
+                    if(error_status[ind]==='Error'){
                     	error=true;
                     }
                 }
                 if(error){
-                    progList_changeNode(correspondingNode(getStatusIndex(mainStep)), 'Error');
-                    progList_changeIcon(correspondingNode(getStatusIndex(mainStep)), 'Error');
+                    progList_changeNode(correspondingNode(mainStep), 'Error');
+                    progList_changeIcon(correspondingNode(mainStep), 'Error');
                 }else{
                     var warning=false;
                     for(j=0;j<subSteps.length && !warning;j++){
                         var ind=getStatusIndex(subSteps[j]);
-                        if(error_status[ind]!=='Warning'){
+                        if(error_status[ind]==='Warning'){
                             warning=true;
                         }
                     }
                     if(warning){
-                        progList_changeNode(correspondingNode(getStatusIndex(mainStep)), 'Warning');
-                        progList_changeIcon(correspondingNode(getStatusIndex(mainStep)), 'Warning');
+                        progList_changeNode(correspondingNode(mainStep), 'Warning');
+                        progList_changeIcon(correspondingNode(mainStep), 'Warning');
                     }
                 }
             }
@@ -393,8 +407,8 @@
         var msg = eval("("+strText+")");
           
         var state=msg.Response.state;
-        if(state=="10" || start===true){
-          if(state=="60" || state=="59"){
+        if(state==first_state || start===true){
+          if(contains(end_states,state)){
             stopLocalTimer();
             processing = false;
             top.opener.setProcessingMode('window', false);
@@ -422,7 +436,7 @@
           }
 
           insertWarnsAndErrors(msg.Response);
-          if(state!="60"){
+          if(!contains(end_states, state)){
               if(pending_states<=0){
                 progList_changeNode(correspondingNode(state), errorStatus, message);
                 progList_changeIcon(correspondingNode(state), "Processing", message);
@@ -431,7 +445,7 @@
           current_state=stateindex;
         }
       }
-      if(state=="60"){
+      if(contains(end_states,state)){
     	processing = false;
     	top.opener.setProcessingMode('window', false);
     	var frm = document.frmMain;

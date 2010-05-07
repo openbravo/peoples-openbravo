@@ -204,9 +204,17 @@ public class ApplyModules extends HttpSecureAppServlet {
     String numofWarns = "var numofwarns=[";
     String numofErrors = "var numoferrs=[";
     String nodeStructure = "var nodestructure=[";
+    String endStates = "var end_states=[";
     int i = 0;
     int k = 0;
+    int l = 0;
     for (BuildMainStep mstep : build.getMainSteps()) {
+      if (mstep.getErrorCode() != null) {
+        if (l > 0)
+          endStates += ",";
+        endStates += mstep.getErrorCode().replace("RB", "");
+        l++;
+      }
       if (mstep.getStepList().size() > 0) {
         if (k > 0)
           nodeStructure += ",";
@@ -240,6 +248,20 @@ public class ApplyModules extends HttpSecureAppServlet {
         nodeStructure += "]]";
       }
     }
+    if (build.getMainSteps().get(build.getMainSteps().size() - 1).getWarningCode() != null) {
+      if (l > 0)
+        endStates += ",";
+      endStates += build.getMainSteps().get(build.getMainSteps().size() - 1).getWarningCode()
+          .replace("RB", "");
+      ;
+    }
+    if (build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode() != null) {
+      if (l > 0)
+        endStates += ",";
+      endStates += build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode()
+          .replace("RB", "");
+      ;
+    }
     // We also add the successful final state of the last main step
     arraySteps += ","
         + build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode().replace("RB",
@@ -252,9 +274,12 @@ public class ApplyModules extends HttpSecureAppServlet {
     numofWarns += "];";
     numofErrors += "];";
     nodeStructure += "];";
+    endStates += "];";
 
-    String generatedJS = arraySteps + "\n" + errorStatus + "\n" + numofWarns + "\n" + numofErrors
-        + "\n" + nodeStructure + "\n" + "\n";
+    String firstState = "var first_state='"
+        + build.getMainSteps().get(0).getCode().replace("RB", "") + "';";
+    String generatedJS = firstState + "\n" + endStates + "\n" + arraySteps + "\n" + errorStatus
+        + "\n" + numofWarns + "\n" + numofErrors + "\n" + nodeStructure + "\n" + "\n";
     xmlDocument.setParameter("jsparam", generatedJS);
 
     response.setContentType("text/html; charset=UTF-8");
