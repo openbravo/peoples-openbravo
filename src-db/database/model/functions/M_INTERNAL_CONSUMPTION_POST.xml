@@ -104,7 +104,8 @@
       -- Start Processing ------------------------------------------------------
       v_ResultStr:='LockingInternal_Consumption';
       UPDATE M_Internal_Consumption
-        SET Processing='Y'
+        SET Processing='Y',Updated=now(),
+        UpdatedBy=v_User
       WHERE M_Internal_Consumption_ID=Record_ID;
       -- Commented by cromero 19102006 COMMIT;
       /**
@@ -136,7 +137,7 @@
             VALUES
             (
               NextNo, Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
-              now(), '0', now(), '0',
+              now(), v_User, now(), v_User,
               'D-', Cur_MoveLine.M_Locator_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, (Cur_MoveLine.MovementQty * -1), Cur_MoveLine.M_Internal_ConsumptionLine_ID, Cur_MoveLine.M_Product_UOM_ID,
               (Cur_MoveLine.QuantityOrder * -1), Cur_MoveLine.C_UOM_ID
@@ -155,14 +156,16 @@
       --<<END_PROCESSING>>
       v_ResultStr:='UnLockingMovement';
       UPDATE M_Internal_Consumption
-        SET Processed='Y'
+        SET Processed='Y',Updated=now(),
+        UpdatedBy=v_User
       WHERE M_Internal_Consumption_ID=Record_ID;
       -- Commented by cromero 19102006 COMMIT;
     END IF;--END_PROCESS
     --<<END_PROCESS>>
     v_ResultStr:='UnLockingMovement';
     UPDATE M_Internal_Consumption
-      SET Processing='N'
+      SET Processing='N',Updated=now(),
+        UpdatedBy=v_User
     WHERE M_Internal_Consumption_ID=Record_ID;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -175,7 +178,8 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
   UPDATE M_Internal_Consumption
-    SET Processing='N'
+    SET Processing='N',Updated=now(),
+        UpdatedBy=v_User
   WHERE M_Internal_Consumption_ID=Record_ID;
   -- Commented by cromero 19102006 COMMIT;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
