@@ -75,14 +75,14 @@ public class DocFINReconciliation extends AcctServer {
     DateDoc = data[0].getField("statementDate");
     C_DocType_ID = data[0].getField("C_Doctype_ID");
     DocumentNo = data[0].getField("DocumentNo");
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
           Record_ID);
       Amounts[0] = reconciliation.getEndingBalance().subtract(reconciliation.getStartingbalance())
           .toString();
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     loadDocumentType();
     p_lines = loadLines();
@@ -91,7 +91,7 @@ public class DocFINReconciliation extends AcctServer {
 
   public FieldProviderFactory[] loadLinesFieldProvider(String Id) {
     FieldProviderFactory[] linesInfo = null;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class, Id);
       List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
@@ -104,7 +104,7 @@ public class DocFINReconciliation extends AcctServer {
           linesInfo = add(linesInfo, loadLinesGLItemFieldProvider(transaction));
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return linesInfo;
   }
@@ -127,7 +127,7 @@ public class DocFINReconciliation extends AcctServer {
   }
 
   public List<FIN_FinaccTransaction> getTransactionList(FIN_Reconciliation reconciliation) {
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     List<FIN_FinaccTransaction> transactions = null;
     try {
       OBCriteria<FIN_FinaccTransaction> trans = OBDal.getInstance().createCriteria(
@@ -137,7 +137,7 @@ public class DocFINReconciliation extends AcctServer {
       trans.setFilterOnReadableOrganization(false);
       transactions = trans.list();
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return transactions;
   }
@@ -148,7 +148,7 @@ public class DocFINReconciliation extends AcctServer {
         transaction.getFinPayment().getId());
     List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
         data[i] = new FieldProviderFactory(new HashMap());
@@ -194,14 +194,14 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return data;
   }
 
   public FieldProviderFactory[] loadLinesGLItemFieldProvider(FIN_FinaccTransaction transaction) {
     FieldProviderFactory[] data = new FieldProviderFactory[1];
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       data[0] = new FieldProviderFactory(new HashMap());
       FieldProviderFactory.setField(data[0], "FIN_Reconciliation_ID", transaction
@@ -229,7 +229,7 @@ public class DocFINReconciliation extends AcctServer {
             .getId());
       FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return data;
   }
@@ -239,7 +239,7 @@ public class DocFINReconciliation extends AcctServer {
     FieldProviderFactory[] data = loadLinesFieldProvider(Record_ID);
     if (data == null || data.length == 0)
       return null;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
         String Line_ID = data[i].getField("FIN_Finacc_Transaction_ID");
@@ -260,7 +260,7 @@ public class DocFINReconciliation extends AcctServer {
         list.add(docLine);
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     // Return Array
     DocLine_FINReconciliation[] dl = new DocLine_FINReconciliation[list.size()];
@@ -274,7 +274,7 @@ public class DocFINReconciliation extends AcctServer {
     String strClassname = "";
     final StringBuilder whereClause = new StringBuilder();
     Fact fact = new Fact(this, as, Fact.POST_Actual);
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       whereClause.append(" as astdt ");
       whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = '"
@@ -326,7 +326,7 @@ public class DocFINReconciliation extends AcctServer {
           fact = createFactGLItem(line, as, conn, fact, Fact_Acct_Group_ID);
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return fact;
   }
@@ -407,7 +407,7 @@ public class DocFINReconciliation extends AcctServer {
     // Checks if this step (Make receive payment) is configured to generate accounting for the
     // selected financial account
     boolean confirmation = false;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
@@ -417,7 +417,7 @@ public class DocFINReconciliation extends AcctServer {
           confirmation = true;
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return confirmation;
   }
@@ -427,7 +427,7 @@ public class DocFINReconciliation extends AcctServer {
     // Checks if this step (deposit or withdrawal) is configured to generate accounting for the
     // selected financial account
     boolean confirmation = false;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       List<FIN_FinancialAccountAccounting> accounts = transaction.getAccount()
           .getFINFinancialAccountAcctList();
@@ -441,7 +441,7 @@ public class DocFINReconciliation extends AcctServer {
           confirmation = true;
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     if (!confirmation)
       setStatus(STATUS_DocumentDisabled);
@@ -452,7 +452,7 @@ public class DocFINReconciliation extends AcctServer {
     // Checks if this step (Reconciliation) is configured to generate accounting for the selected
     // financial account
     boolean confirmation = false;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
           strRecordId);
@@ -463,7 +463,7 @@ public class DocFINReconciliation extends AcctServer {
           confirmation = true;
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     if (!confirmation)
       setStatus(STATUS_DocumentDisabled);
@@ -475,7 +475,7 @@ public class DocFINReconciliation extends AcctServer {
     FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class, Id);
 
     FieldProviderFactory[] data = new FieldProviderFactory[1];
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       data[0] = new FieldProviderFactory(new HashMap());
       FieldProviderFactory.setField(data[0], "AD_Client_ID", reconciliation.getClient().getId());
@@ -496,14 +496,14 @@ public class DocFINReconciliation extends AcctServer {
       FieldProviderFactory.setField(data[0], "Processing", reconciliation.isProcessNow() ? "Y"
           : "N");
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     setObjectFieldProvider(data);
   }
 
   public Account getAccountGLItem(GLItem glItem, AcctSchema as, boolean bIsReceipt,
       ConnectionProvider conn) throws ServletException {
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     Account account = null;
     try {
       OBCriteria<GLItemAccounts> accounts = OBDal.getInstance()
@@ -524,7 +524,7 @@ public class DocFINReconciliation extends AcctServer {
       else
         account = new Account(conn, accountList.get(0).getGlitemDebitAcct().getId());
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return account;
   }
@@ -532,7 +532,7 @@ public class DocFINReconciliation extends AcctServer {
   public Account getAccountFee(AcctSchema as, FIN_FinancialAccount finAccount,
       ConnectionProvider conn) throws ServletException {
     Account account = null;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
@@ -548,7 +548,7 @@ public class DocFINReconciliation extends AcctServer {
         return null;
       account = new Account(conn, accountList.get(0).getFINBankfeeAcct().getId());
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return account;
   }
@@ -566,7 +566,7 @@ public class DocFINReconciliation extends AcctServer {
   public Account getAccountTransaction(ConnectionProvider conn, FIN_FinancialAccount finAccount,
       AcctSchema as, boolean bIsReceipt) throws ServletException {
     Account account = null;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
@@ -585,7 +585,7 @@ public class DocFINReconciliation extends AcctServer {
       else
         account = new Account(conn, accountList.get(0).getWithdrawalAccount().getId());
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return account;
   }
@@ -603,7 +603,7 @@ public class DocFINReconciliation extends AcctServer {
   public Account getAccount(ConnectionProvider conn, FIN_FinancialAccount finAccount,
       AcctSchema as, boolean bIsReceipt) throws ServletException {
     Account account = null;
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
@@ -622,14 +622,14 @@ public class DocFINReconciliation extends AcctServer {
       else
         account = new Account(conn, accountList.get(0).getCreditAccount().getId());
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return account;
   }
 
   public Account getAccountPayment(ConnectionProvider conn, FIN_FinancialAccount finAccount,
       AcctSchema as, boolean bIsReceipt) throws ServletException {
-    boolean wasAdministrator = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     Account account = null;
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
@@ -649,7 +649,7 @@ public class DocFINReconciliation extends AcctServer {
       else
         account = new Account(conn, accountList.get(0).getMakePaymentAccount().getId());
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(wasAdministrator);
+      OBContext.restorePreviousMode();
     }
     return account;
   }

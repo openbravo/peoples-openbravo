@@ -128,7 +128,7 @@ public class UserLock {
   }
 
   private void setUser() {
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     try {
       OBCriteria<User> obCriteria = OBDal.getInstance().createCriteria(User.class);
       obCriteria.add(Expression.eq(User.PROPERTY_USERNAME, userName));
@@ -137,7 +137,7 @@ public class UserLock {
 
       user = (User) obCriteria.uniqueResult();
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -154,14 +154,14 @@ public class UserLock {
       delay = 0;
       if (user != null) {
         try {
-          OBContext.setAdminContext();
+          OBContext.setAdminMode();
 
           user.setLocked(true);
           OBDal.getInstance().flush();
           log4j.warn(userName + " is locked after " + numberOfFails + " failed logins.");
           return;
         } finally {
-          OBContext.resetAsAdminContext();
+          OBContext.restorePreviousMode();
         }
       }
     }

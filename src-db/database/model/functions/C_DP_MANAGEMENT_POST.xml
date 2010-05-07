@@ -31,6 +31,7 @@
   v_AD_User_ID VARCHAR2(32) ;
   v_AD_Client_ID VARCHAR2(32) ;
   v_AD_Org_ID VARCHAR2(32) ;
+  v_PAD_User_ID VARCHAR2(32) ;
   v_Processed VARCHAR2(60) ;
   v_Posted VARCHAR2(60) ;
   v_Currency VARCHAR2(32);
@@ -97,6 +98,7 @@
         )
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
+        v_PAD_User_ID:=Cur_Parameter.AD_User_ID;
       END LOOP; --  Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
@@ -114,7 +116,9 @@
       v_posted, v_AD_Org_ID, v_Date, v_DocType_ID
     FROM c_DP_Management
     WHERE c_DP_Management_ID=v_Record_ID;
-
+	IF(v_PAD_User_ID IS NOT NULL) THEN
+		v_AD_User_ID:=v_PAD_User_ID;
+	END IF;
   --Check DP status, this is used for process and unprocess
   -- Modified by PSarobe 12062007
 

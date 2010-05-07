@@ -83,7 +83,9 @@ BEGIN
         v_ResultStr := 'Complete the requisition: ' || v_Record_ID;
         UPDATE M_REQUISITION
         SET DocStatus = 'CO',
-            DocAction = 'CL'
+            DocAction = 'CL',
+            Updated=now(),
+            UpdatedBy=v_User_ID
         WHERE M_REQUISITION_ID = v_Record_ID;
       ELSE
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotAllowedHere@');
@@ -102,7 +104,9 @@ BEGIN
         v_ResultStr := 'Reactivate the requisition: ' || v_Record_ID;
         UPDATE M_REQUISITION
         SET DocStatus = 'DR',
-            DocAction = 'CO'
+            DocAction = 'CO',
+            Updated=now(),
+            UpdatedBy=v_User_ID
         WHERE M_REQUISITION_ID = v_Record_ID;
       ELSE
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotAllowedHere@');

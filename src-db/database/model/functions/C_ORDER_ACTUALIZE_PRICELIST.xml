@@ -29,6 +29,7 @@
   v_DateTo DATE;
   v_Warehouse_ID VARCHAR2(32) ;
   v_BPartner_ID VARCHAR2(32) ;
+  v_User_ID VARCHAR2(32) ;
   --
   v_pinstance VARCHAR2(32) ;
   v_priceList VARCHAR2(32) ;
@@ -61,6 +62,7 @@
       ORDER BY p.SeqNo
       )
     LOOP
+      v_User_ID:=Cur_Parameter.AD_User_ID;
       IF(Cur_Parameter.ParameterName='DateFrom') THEN
         v_DateFrom:=Cur_Parameter.P_Date;
         DBMS_OUTPUT.PUT_LINE('  DateFrom=' || v_DateFrom) ;
@@ -84,7 +86,7 @@
       )
     LOOP
       BEGIN -- FOR COMMIT
-        UPDATE C_ORDER SET DocAction='RE' WHERE C_Order_ID=Cur_PEDIDOS.C_Order_ID;
+        UPDATE C_ORDER SET DocAction='RE',Updated=now(),UpdatedBy=v_User_ID WHERE C_Order_ID=Cur_PEDIDOS.C_Order_ID;
         Ad_Sequence_Next('AD_PInstance', Cur_PEDIDOS.Ad_Client_ID, v_pinstance) ;
         INSERT
         INTO AD_PINSTANCE
@@ -97,7 +99,7 @@
           VALUES
           (
             v_pinstance, '104', Cur_PEDIDOS.C_Order_ID, 'N',
-            now(), '100', now(), NULL,
+            now(), v_User_ID, now(), NULL,
             NULL, Cur_PEDIDOS.Ad_Client_ID, '0', '100',
             '100', 'Y'
           )
@@ -135,7 +137,7 @@
          END LOOP;
          DBMS_OUTPUT.PUT_LINE('M_pricelist_version_id: ' || v_priceListVersion) ;
          UPDATE C_ORDER
-           SET M_PriceList_ID=v_priceList
+           SET M_PriceList_ID=v_priceList,Updated=now(),UpdatedBy=v_User_ID
          WHERE C_Order_ID=Cur_PEDIDOS.C_Order_ID;
          IF(v_priceListVersion IS NOT NULL) THEN
            UPDATE C_ORDERLINE
@@ -157,11 +159,11 @@
              PriceStd=(SELECT COALESCE(MAX(PriceSTD), 0)
              FROM M_PRODUCTPRICE
              WHERE M_PriceList_Version_ID=v_priceListVersion
-               AND M_Product_ID=C_ORDERLINE.M_Product_ID)
+               AND M_Product_ID=C_ORDERLINE.M_Product_ID),Updated=now(),UpdatedBy=v_User_ID
            WHERE C_Order_ID=Cur_PEDIDOS.C_Order_ID;
          END IF;
          BEGIN -- FOR COMMIT
-           UPDATE C_ORDER SET DocAction='CO' WHERE C_Order_ID=Cur_PEDIDOS.C_Order_ID;
+           UPDATE C_ORDER SET DocAction='CO',Updated=now(),UpdatedBy=v_User_ID WHERE C_Order_ID=Cur_PEDIDOS.C_Order_ID;
            Ad_Sequence_Next('AD_PInstance', Cur_PEDIDOS.AD_Client_ID, v_pinstance) ;
            INSERT
            INTO AD_PINSTANCE
@@ -174,7 +176,7 @@
              VALUES
              (
                v_pinstance, '104', Cur_PEDIDOS.C_Order_ID, 'N',
-               now(), '100', now(), NULL,
+               now(), v_User_ID, now(), NULL,
                NULL, Cur_PEDIDOS.Ad_Client_ID, '0', '100',
                '100', 'Y'
              )

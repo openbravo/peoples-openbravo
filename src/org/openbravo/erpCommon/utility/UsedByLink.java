@@ -380,8 +380,7 @@ public class UsedByLink extends HttpSecureAppServlet {
    * 
    */
   private List<LinkedTable> getLinkedTables(String tableId) {
-    boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-    OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       Table table = OBDal.getInstance().get(Table.class, tableId);
       String tableName = table.getDBTableName();
@@ -402,7 +401,7 @@ public class UsedByLink extends HttpSecureAppServlet {
       }
       return linkedTables;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(adminMode);
+      OBContext.restorePreviousMode();
     }
   }
 

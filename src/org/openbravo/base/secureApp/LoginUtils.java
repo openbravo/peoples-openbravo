@@ -11,6 +11,8 @@
  */
 package org.openbravo.base.secureApp;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -18,7 +20,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 
@@ -141,7 +145,7 @@ public class LoginUtils {
     // Organizations tree
     // enable admin mode, as normal non admin-role
     // has no read-access to i.e. AD_OrgType
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     try {
 
       OrgTree tree = new OrgTree(conn, strCliente);
@@ -152,7 +156,7 @@ public class LoginUtils {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     try {
@@ -182,18 +186,12 @@ public class LoginUtils {
           vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
       }
       attr = null;
-      PreferencesData[] prefs = PreferencesData.select(conn, Utility.getContext(conn, vars,
-          "#User_Client", "LoginHandler"), Utility.getContext(conn, vars, "#AccessibleOrgTree",
-          "LoginHandler"), strUserAuth);
 
-      if (prefs != null && prefs.length > 0) {
-        for (int i = 0; i < prefs.length; i++) {
-          vars.setSessionValue("P|"
-              + (prefs[i].adWindowId.equals("") ? "" : (prefs[i].adWindowId + "|"))
-              + prefs[i].attribute, prefs[i].value);
-        }
+      List<Preference> preferences = Preferences.getAllPreferences(strCliente, strOrg, strUserAuth,
+          strRol);
+      for (Preference preference : preferences) {
+        Preferences.savePreferenceInSession(vars, preference);
       }
-      prefs = null;
 
       attr = AttributeData.selectIsSOTrx(conn);
       if (attr != null && attr.length > 0) {

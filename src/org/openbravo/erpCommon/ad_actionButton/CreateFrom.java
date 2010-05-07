@@ -1710,10 +1710,17 @@ public class CreateFrom extends HttpSecureAppServlet {
                   data[i].cUomId, strMovementqty, data[i].cOrderlineId, strLocator,
                   CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                   strQuantityorder, strProductUomId, strmAttributesetinstanceId);
-              if (!strInvoice.equals(""))
-                CreateFromShipmentData.updateInvoice(conn, this, strSequence,
+              if (!strInvoice.equals("")) {
+                String strInOutLineId = CreateFromShipmentData.selectInvoiceInOut(conn, this,
                     data[i].cInvoicelineId);
-              else
+                if (strInOutLineId.isEmpty())
+                  CreateFromShipmentData.updateInvoice(conn, this, strSequence,
+                      data[i].cInvoicelineId);
+                else {
+                  CreateFromShipmentData.insertMatchInv(conn, this, vars.getUser(),
+                      data[i].cInvoicelineId, strSequence, data[i].cInvoiceId);
+                }
+              } else
                 CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                     data[i].cOrderlineId);
             } catch (final ServletException ex) {

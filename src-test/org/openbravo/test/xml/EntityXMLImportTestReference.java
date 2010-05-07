@@ -86,8 +86,12 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     setUserContext("1000019");
     // a warehouse is not deletable, but as we are cleaning up, they should be
     // deleted, force this by being admin
-    OBContext.getOBContext().setInAdministratorMode(true);
-    removeAll(Warehouse.class, 2, Expression.ne("id", "1000002"));
+    OBContext.setAdminMode();
+    try {
+      removeAll(Warehouse.class, 2, Expression.ne("id", "1000002"));
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
@@ -126,10 +130,14 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     setUserContext("1000019");
     // a warehouse is not deletable, but as we are cleaning up, they should be
     // deleted, force this by being admin
-    OBContext.getOBContext().setInAdministratorMode(true);
-    removeAll(Warehouse.class, 2, Expression.ne("id", "1000002"));
-    removeAll(Location.class, 2, Expression.not(Expression.in("id", new String[] { "1000048",
-        "1000049", "1000050" })));
+    OBContext.setAdminMode();
+    try {
+      removeAll(Warehouse.class, 2, Expression.ne("id", "1000002"));
+      removeAll(Location.class, 2, Expression.not(Expression.in("id", new String[] { "1000048",
+          "1000049", "1000050" })));
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private <T extends BaseOBObject> void removeAll(Class<T> clz, int expectCount, Criterion c) {

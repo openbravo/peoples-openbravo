@@ -55,7 +55,7 @@ public class ShowImageLogo extends HttpBaseServlet {
     if (logo == null || logo.equals(""))
       return;
 
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     try {
       Image img = null;
       if (logo.equals("yourcompanylogin")) {
@@ -114,7 +114,7 @@ public class ShowImageLogo extends HttpBaseServlet {
       }
 
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
   }
 }

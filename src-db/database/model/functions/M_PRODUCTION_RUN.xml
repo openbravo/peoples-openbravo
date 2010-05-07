@@ -248,8 +248,8 @@
               VALUES
               (
                 NextNo, CUR_PP.M_ProductionPlan_ID, v_Line, CUR_PP.AD_Client_ID,
-                CUR_PP.AD_Org_ID, 'Y', now(), '0',
-                now(), '0', CUR_PP.M_Product_ID, CUR_PP.ProductionQty,
+                CUR_PP.AD_Org_ID, 'Y', now(), p_User,
+                now(), p_User, CUR_PP.M_Product_ID, CUR_PP.ProductionQty,
                 CUR_PP.M_Locator_ID, CUR_PP.Description, CUR_PP.C_UOM_ID,
                 CUR_PP.M_AttributeSetInstance_ID
               )
@@ -334,8 +334,8 @@
                       VALUES
                       (
                         NextNo, CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
-                        CUR_BOM.Org_ID, 'Y', now(), '0',
-                        now(), '0', CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
+                        CUR_BOM.Org_ID, 'Y', now(), p_User,
+                        now(), p_User, CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
                         -v_Qty, v_storage.M_Locator_ID, 
                         (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=CUR_BOM.M_ProductBOM_ID)='F' THEN NULL ELSE v_storage.M_AttributeSetInstance_ID END), 
                         v_storage.M_Product_UOM_ID,
@@ -369,8 +369,8 @@
                   VALUES
                   (
                     NextNo, CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
-                    CUR_BOM.Org_ID, 'Y', now(), '0',
-                    now(), '0', CUR_BOM.M_ProductBOM_ID, -CUR_BOM.ProductionQty*CUR_BOM.BOMQty,
+                    CUR_BOM.Org_ID, 'Y', now(), p_User,
+                    now(), p_User, CUR_BOM.M_ProductBOM_ID, -CUR_BOM.ProductionQty*CUR_BOM.BOMQty,
                     CUR_BOM.M_Locator_ID, CUR_BOM.C_UOM_ID
                   )
                   ;
@@ -462,8 +462,8 @@
                   VALUES
                   (
                     NextNo, CUR_PLineBOM.M_ProductionPlan_ID, v_Line, CUR_PLineBOM.Client_ID,
-                    CUR_PLineBOM.Org_ID, 'Y', now(), '0',
-                    now(), '0', CUR_BOM_PRODUCT.M_ProductBOM_ID, CUR_PLineBOM.MovementQty*CUR_BOM_PRODUCT.BOMQty,
+                    CUR_PLineBOM.Org_ID, 'Y', now(), p_User,
+                    now(), p_User, CUR_BOM_PRODUCT.M_ProductBOM_ID, CUR_PLineBOM.MovementQty*CUR_BOM_PRODUCT.BOMQty,
                     CUR_PLineBOM.M_Locator_ID
                   )
                   ;
@@ -476,7 +476,7 @@
           END LOOP; -- While we have BOMs
           -- Modifying locator to have sufficient stock
           -- Indicate that it is Created
-          UPDATE M_PRODUCTION  SET IsCreated='Y'  WHERE M_Production_ID=v_Record_ID;
+          UPDATE M_PRODUCTION  SET IsCreated='Y',Updated=now(),UpdatedBy=p_User  WHERE M_Production_ID=v_Record_ID;
           /**************************************************************************
           * Post Lines
           */
@@ -565,8 +565,8 @@
                   VALUES
                   (
                     NextNo, CUR_PL_Post.M_ProductionLine_ID, CUR_PL_Post.AD_Client_ID, CUR_PL_Post.AD_Org_ID,
-                     'Y', now(), '0', now(),
-                    '0', 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
+                     'Y', now(), p_User, now(),
+                    p_User, 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
                     COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, '0'), -- not distinguishing between assemby/disassembly
                     CUR_PL_Post.MovementDate, CUR_PL_Post.MovementQty, CUR_PL_Post.M_Product_UOM_ID, CUR_PL_Post.QuantityOrder,
                     CUR_PL_Post.C_UOM_ID

@@ -61,4 +61,16 @@
      </Sql>
      <Parameter name="mProductionPlanId"/>
    </SqlMethod>
+
+  <SqlMethod name="getMultiplier" type="preparedStatement" return="String" default="N">
+    <SqlMethodComment></SqlMethodComment>
+     <Sql>
+       <![CDATA[
+       SELECT MULTIPLIER FROM MA_SEQUENCE SEQ, MA_WRPHASE WRP 
+       WHERE SEQ.MA_SEQUENCE_ID = WRP.MA_SEQUENCE_ID
+       AND WRP.MA_WRPHASE_ID = ? 
+       ]]>
+     </Sql>
+     <Parameter name="maWrphaseId"/>
+   </SqlMethod>
 </SqlClass>

@@ -235,7 +235,7 @@
           VALUES
           (
             NextNo, Cur_InvLine.AD_Client_ID, Cur_InvLine.AD_Org_ID, 'Y',
-            now(), '0', now(), '0',
+            now(), v_User, now(), v_User,
             'I+', Cur_InvLine.M_Locator_ID, Cur_InvLine.M_Product_ID, COALESCE(Cur_InvLine.M_AttributeSetInstance_ID, '0'),
             v_InvDate, Cur_InvLine.QtyCount-COALESCE(Cur_InvLine.QtyBook, 0), Cur_InvLine.M_InventoryLine_ID, Cur_InvLine.M_Product_UOM_ID,
             Cur_InvLine.QuantityOrder-COALESCE(Cur_InvLine.QuantityOrderBook, 0), Cur_InvLine.C_UOM_ID
@@ -255,7 +255,7 @@
   --<<END_PROCESSING>>
   IF(NOT PROCESS_ERROR AND NOT END_PROCESS) THEN
     v_ResultStr:='UnLockingInventory';
-    UPDATE M_Inventory  SET Processed='Y'  WHERE M_Inventory_ID=v_Record_ID;
+    UPDATE M_Inventory  SET Processed='Y',Updated=now(),UpdatedBy=v_User  WHERE M_Inventory_ID=v_Record_ID;
     -- Commented by cromero 19102006 COMMIT;
   END IF;--
   --<<END_PROCESS>>

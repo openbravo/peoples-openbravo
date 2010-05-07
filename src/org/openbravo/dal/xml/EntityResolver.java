@@ -316,8 +316,7 @@ public class EntityResolver implements OBNotSingleton {
   // and then re-imported that it occurs multiple times.
   private List<String> getId(String id, Entity entity, String orgId) {
     final String[] searchOrgIds = getOrgIds(orgId);
-    final boolean adminMode = OBContext.getOBContext().isInAdministratorMode();
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       final OBCriteria<ReferenceDataStore> rdlCriteria = OBDal.getInstance().createCriteria(
           ReferenceDataStore.class);
@@ -339,10 +338,7 @@ public class EntityResolver implements OBNotSingleton {
       }
       return result;
     } finally {
-      // only set back if the previous was false
-      if (!adminMode) {
-        OBContext.getOBContext().setInAdministratorMode(prevMode);
-      }
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -367,12 +363,12 @@ public class EntityResolver implements OBNotSingleton {
     if (clientZero != null) {
       return;
     }
-    final boolean oldSetting = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       clientZero = OBDal.getInstance().get(Client.class, "0");
       organizationZero = OBDal.getInstance().get(Organization.class, "0");
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(oldSetting);
+      OBContext.restorePreviousMode();
     }
   }
 

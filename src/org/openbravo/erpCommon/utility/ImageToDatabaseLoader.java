@@ -25,7 +25,7 @@ public class ImageToDatabaseLoader extends BaseDalInitializingTask {
   @Override
   public void doExecute() {
 
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     try {
       String paths[] = imagePaths.split(",");
       String properties[] = propertyNames.split(",");
@@ -60,7 +60,7 @@ public class ImageToDatabaseLoader extends BaseDalInitializingTask {
     } catch (Exception e) {
       getLog().error(e);
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
   }
 

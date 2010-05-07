@@ -2930,9 +2930,7 @@ public class Wad extends DefaultHandler {
     final FieldsData[] data = FieldsData.selectValidationTab(pool, strTab);
     if (data == null || data.length == 0)
       return;
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/ComboReloads")
-        .createXmlDocument();
-    xmlDocument.setParameter("tabId", strTab);
+
     final Vector<Object> vecReloads = new Vector<Object>();
     final Vector<Object> vecTotal = new Vector<Object>();
     final Vector<Object> vecCounters = new Vector<Object>();
@@ -3085,9 +3083,17 @@ public class Wad extends DefaultHandler {
       vecTotal.copyInto(result);
     }
 
+    // Generate always callout, even there's no columns to check
+    String discard[] = { "" };
+    if (vecTotal == null || vecTotal.size() == 0) {
+      discard[0] = "discardTry";
+    }
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/ComboReloads",
+        discard).createXmlDocument();
+    xmlDocument.setParameter("tabId", strTab);
     xmlDocument.setData("structure1", result);
-    if (vecTotal == null || vecTotal.size() == 0)
-      return;
+
     WadUtility.writeFile(fileDir, "ComboReloads" + strTab + ".java", xmlDocument.print());
   }
 

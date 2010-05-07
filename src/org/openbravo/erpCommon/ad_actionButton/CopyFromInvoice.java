@@ -96,6 +96,9 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
             CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
                 dataInvoice[0].adOrgId, vars.getUser(), data[i].cInvoicelineId, strCTaxID);
+
+             // Copy accounting dimensions
+            CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId, dataInvoice[0].adOrgId, vars.getUser(), strSequence, data[i].cInvoicelineId);
           } catch (ServletException ex) {
             myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
