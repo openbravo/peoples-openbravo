@@ -68,6 +68,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.CallStoredProcedure;
@@ -2506,6 +2507,11 @@ public class Utility {
   /**
    * Gets the configuration property value if there is an extension module implementing the given
    * property.
+   * 
+   * @deprecated Use Preferences instead
+   * @see Preferences#getPreferenceValue(String, boolean, org.openbravo.model.ad.system.Client,
+   *      org.openbravo.model.common.enterprise.Organization, org.openbravo.model.ad.access.User,
+   *      org.openbravo.model.ad.access.Role, Window) Preferences.getPreferenceValue
    * 
    * @param strProperty
    *          String with the name of the property

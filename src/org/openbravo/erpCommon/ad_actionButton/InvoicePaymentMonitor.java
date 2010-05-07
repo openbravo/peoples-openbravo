@@ -80,11 +80,13 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
+  @SuppressWarnings("deprecation")
   private OBError process(VariablesSecureApp vars, String strKey) throws ServletException {
     OBError myError = null;
     try {
       Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
       // Extra check for PaymentMonitor-disabling switch, to build correct message for users
+      // Use Utility.getPropertyValue for backward compatibility
       if (Utility.getPropertyValue("PaymentMonitor", vars.getClient(), invoice.getOrganization()
           .getId()) == null
           && invoice.isProcessed())
