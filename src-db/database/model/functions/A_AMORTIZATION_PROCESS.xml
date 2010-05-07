@@ -72,7 +72,7 @@
         (SELECT sum(C_Currency_Convert(AmortizationAmt, C_Currency_ID, A_Amortization.C_Currency_ID, now(), 'S'))
         FROM A_AmortizationLine
         WHERE A_Amortization_ID=A_Amortization.A_Amortization_ID
-        )
+        ),Updated=now(),UpdatedBy=v_AD_User_ID
       WHERE A_Amortization_ID=V_Record_ID;
     ELSIF(v_PROCESSED='N') THEN
       -- Check the header belongs to a organization where transactions are posible and ready to use
@@ -125,7 +125,7 @@
         (SELECT sum(C_Currency_Convert(AmortizationAmt, C_Currency_ID, A_Amortization.C_Currency_ID, now(), 'S'))
         FROM A_AmortizationLine
         WHERE A_Amortization_ID=A_Amortization.A_Amortization_ID
-        )
+        ),Updated=now(),UpdatedBy=v_AD_User_ID
       WHERE A_Amortization_ID=V_Record_ID;
     ELSIF(v_Posted='Y') THEN
       RAISE_APPLICATION_ERROR(-20000, '@AmortizationDocumentPosted@') ;
@@ -140,7 +140,7 @@
         WHERE a_asset.a_asset_id=al.a_asset_id
           AND al.A_Amortization_ID=am.A_Amortization_ID
           AND coalesce(am.processed, 'N')='Y'
-        )
+        ),Updated=now(),UpdatedBy=v_AD_User_ID
       WHERE exists
         (SELECT 1
         FROM a_amortizationline al, a_amortization am
@@ -148,7 +148,7 @@
           AND al.A_Amortization_ID=am.A_Amortization_ID
           AND am.A_Amortization_ID=V_Record_ID);
       UPDATE a_asset
-        SET IsFullyDepreciated='Y'
+        SET IsFullyDepreciated='Y',Updated=now(),UpdatedBy=v_AD_User_ID
       WHERE COALESCE(AmortizationValueAmt, -1)=COALESCE(DepreciatedValue, -2) ;
     END IF;
     --<<FINISH_PROCESS>>
