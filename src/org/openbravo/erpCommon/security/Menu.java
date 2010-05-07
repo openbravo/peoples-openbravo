@@ -38,6 +38,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
@@ -73,6 +74,9 @@ public class Menu extends HttpSecureAppServlet {
           response.sendRedirect(".." + startPage);
           return;
         }
+      } catch (PropertyConflictException e) {
+        // ignore show normal page
+        log4j.warn("Conflict getting StartPage preference. Showing normal page.");
       } catch (PropertyException e) {
         // ignore show normal page
       }
