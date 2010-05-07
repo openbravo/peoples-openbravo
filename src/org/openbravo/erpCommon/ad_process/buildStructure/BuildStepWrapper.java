@@ -39,7 +39,10 @@ public class BuildStepWrapper {
 
   private String generateNode(String code) {
     String numCode = code.replace("RB", "");
-    return numCode.substring(0, 1) + "." + numCode.substring(1);
+    String postfix = "." + numCode.substring(1);
+    if (postfix.equals(".0"))
+      postfix = "";
+    return numCode.substring(0, 1) + postfix;
   }
 
   public String getTitleLabel() {

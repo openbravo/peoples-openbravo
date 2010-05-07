@@ -44,6 +44,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_process.buildStructure.Build;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStep;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildStep;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
@@ -176,6 +178,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       return;
     }
 
+    Build build = getBuildFromXMLFile();
     String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
@@ -193,8 +196,66 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    FieldProvider[] nodeData = getFieldProviderFromBuild(vars);
+    FieldProvider[] nodeData = getFieldProviderFromBuild(vars, build);
     xmlDocument.setData("structureStepTree", nodeData);
+
+    String arraySteps = " var possible_states=[";
+    String errorStatus = "var error_status=[";
+    String numofWarns = "var numofwarns=[";
+    String numofErrors = "var numoferrs=[";
+    String nodeStructure = "var nodestructure=[";
+    int i = 0;
+    int k = 0;
+    for (BuildMainStep mstep : build.getMainSteps()) {
+      if (mstep.getStepList().size() > 0) {
+        if (k > 0)
+          nodeStructure += ",";
+        nodeStructure += "[" + mstep.getCode().replace("RB", "") + ",[";
+        k++;
+      } else {
+        if (i > 0) {
+          arraySteps += ",";
+          errorStatus += ",";
+          numofWarns += ",";
+          numofErrors += ",";
+        }
+        arraySteps += mstep.getCode().replace("RB", "");
+        errorStatus += "''";
+        numofWarns += "0";
+        numofErrors += "0";
+      }
+      i++;
+      int j = 0;
+      for (BuildStep step : mstep.getStepList()) {
+        if (j > 0)
+          nodeStructure += ",";
+        j++;
+        arraySteps += "," + step.getCode().replace("RB", "");
+        nodeStructure += step.getCode().replace("RB", "");
+        errorStatus += ",''";
+        numofWarns += ",0";
+        numofErrors += ",0";
+      }
+      if (mstep.getStepList().size() > 0) {
+        nodeStructure += "]]";
+      }
+    }
+    // We also add the successful final state of the last main step
+    arraySteps += ","
+        + build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode().replace("RB",
+            "");
+    errorStatus += ",''";
+    numofWarns += ",0";
+    numofErrors += ",0";
+    arraySteps += "];";
+    errorStatus += "];";
+    numofWarns += "];";
+    numofErrors += "];";
+    nodeStructure += "];";
+
+    String generatedJS = arraySteps + "\n" + errorStatus + "\n" + numofWarns + "\n" + numofErrors
+        + "\n" + nodeStructure + "\n" + "\n";
+    xmlDocument.setParameter("jsparam", generatedJS);
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -203,16 +264,14 @@ public class ApplyModules extends HttpSecureAppServlet {
     out.close();
   }
 
-  private FieldProvider[] getFieldProviderFromBuild(VariablesSecureApp vars) {
+  private FieldProvider[] getFieldProviderFromBuild(VariablesSecureApp vars, Build build) {
     try {
       if (vars.getLanguage().equals("en_US")) {
-        Build build = getBuildFromXMLFile();
         FieldProvider[] nodeData = build.getFieldProvidersForBuild();
         return nodeData;
       } else {
         BuildTranslation buildTranslation = getBuildTranslationFromFile(vars.getLanguage());
         if (buildTranslation == null) {
-          Build build = getBuildFromXMLFile();
           FieldProvider[] nodeData = build.getFieldProvidersForBuild();
           return nodeData;
         }
@@ -257,26 +316,30 @@ public class ApplyModules extends HttpSecureAppServlet {
     return build;
   }
 
-  private Build getBuildFromXMLFile() throws Exception {
+  private Build getBuildFromXMLFile() {
+    try {
+      String source = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .get("source.path").toString();
+      FileReader xmlReader = new FileReader(source
+          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
 
-    String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
-        .toString();
-    FileReader xmlReader = new FileReader(source
-        + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
+      BeanReader beanReader = new BeanReader();
 
-    BeanReader beanReader = new BeanReader();
+      beanReader.getBindingConfiguration().setMapIDs(false);
 
-    beanReader.getBindingConfiguration().setMapIDs(false);
+      beanReader.getXMLIntrospector().register(
+          new InputSource(new FileReader(new File(source,
+              "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
 
-    beanReader.getXMLIntrospector().register(
-        new InputSource(new FileReader(new File(source,
-            "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
+      beanReader.registerBeanClass("Build", Build.class);
 
-    beanReader.registerBeanClass("Build", Build.class);
+      Build build = (Build) beanReader.parse(xmlReader);
 
-    Build build = (Build) beanReader.parse(xmlReader);
-
-    return build;
+      return build;
+    } catch (Exception e) {
+      log4j.error("Error while reading the build information file");
+      return null;
+    }
   }
 
   /**
@@ -285,6 +348,7 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
+    Build build = getBuildFromXMLFile();
     User currentUser = OBContext.getOBContext().getUser();
     vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
     boolean admin = OBContext.getOBContext().setInAdministratorMode(true);
@@ -305,7 +369,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       }
       ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
       ps.executeUpdate();
-      ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB11'");
+      ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
+          + build.getMainSteps().get(0).getCode() + "'");
       ps2.executeUpdate();
 
       Properties props = new Properties();

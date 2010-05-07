@@ -27,6 +27,7 @@
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="buttonLog" name="buttonLog" attribute="onclick" replace="xx"/>
   <PARAMETER id="logfile" name="logfile" attribute="value" replace="xx"/>
+  <PARAMETER id="jsparam" name="jsparam" default=""/>
     <structure name="structureStepTree">
         <FIELD id="title_xxyy" >titleLabel</FIELD>
         <FIELD id="padding_xxyy" attribute="class" replace="xxyy">paddingLevel</FIELD>

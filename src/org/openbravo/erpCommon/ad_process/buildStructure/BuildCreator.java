@@ -35,6 +35,7 @@ public class BuildCreator {
     bms1.setErrorMessage("The validation failed");
     bms1.setWarningMessage("The validation had warnings");
     build.addMainStep(bms1);
+    bms1.setSuccessCode("RB60");
 
     BuildMainStep bms2 = new BuildMainStep();
     bms2.setName("Build");

@@ -39,13 +39,12 @@
       return true;
     }
   </script>
+  <script language="JavaScript" type="text/javascript" id="jsparam">
+
+  </script>
   <script language="JavaScript" type="text/javascript">
     var lc_isTimerEnabled = true;
     var current_state=0;
-    var possible_states=[59,11,12,13,14,15,21,31,41,42,43,44,45,51,60];
-    var error_status=['','','','','','','','','','','','','','',''];
-    var numofwarns=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    var numoferrs=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     var start=false;
     var processing = false;
     var stopAddingWarns=false;
@@ -264,7 +263,7 @@
 
     //Returns the index of the specified state in the state array
     function getStatusIndex(state){
-      for(i=0;i<possible_states.length;i++){
+      for(var i=0;i<possible_states.length;i++){
         if(possible_states[i]==state){
           return i;
         }
@@ -320,6 +319,8 @@
     //This function is called when status information of intermediate states is required
     function askForErrorStatus(paramXMLParticular, XMLHttpRequestObj) {
       var strText = "";
+      var i;
+      var j;
       if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
         if (XMLHttpRequestObj.responseText) {
           strText = XMLHttpRequestObj.responseText;
@@ -338,27 +339,44 @@
           insertWarnsAndErrors(msg.Response);
         }
 
-        var ind11=getStatusIndex(11);
-        if(error_status[ind11]=='Success' && error_status[ind11+1]=='Success' && error_status[ind11+2]=='Success' && error_status[ind11+3]=='Success' && error_status[ind11+4]=='Success'){
-            progList_changeNode('1', 'Success');
-            progList_changeIcon('1', 'Success');
-        }else if(error_status[ind11]=='Error' || error_status[ind11+1]=='Error'|| error_status[ind11+2]=='Error'|| error_status[ind11+3]=='Error'|| error_status[ind11+4]=='Error'){
-            progList_changeNode('1', 'Error');
-            progList_changeIcon('1', 'Error');
-        }else if(error_status[ind11]=='Warning' || error_status[ind11+1]=='Warning'|| error_status[ind11+2]=='Warning'|| error_status[ind11+3]=='Warning'|| error_status[ind11+4]=='Warning'){
-            progList_changeNode('1', 'Warning');
-            progList_changeIcon('1', 'Warning');
-        }
-        var ind41=getStatusIndex(41);
-        if(error_status[ind41]=='Success' && error_status[ind41+1]=='Success' && error_status[ind41+2]=='Success' && error_status[ind41+3]=='Success' && error_status[ind41+4]=='Success'){
-            progList_changeNode('4', 'Success');
-            progList_changeIcon('4', 'Success');
-        }else if(error_status[ind41]=='Error' || error_status[ind41+1]=='Error'|| error_status[ind41+2]=='Error'|| error_status[ind41+3]=='Error'|| error_status[ind41+4]=='Error'){
-            progList_changeNode('4', 'Error');
-            progList_changeIcon('4', 'Error');
-        }else if(error_status[ind41]=='Warning' || error_status[ind41+1]=='Warning'|| error_status[ind41+2]=='Warning'|| error_status[ind41+3]=='Warning'|| error_status[ind41+4]=='Warning'){
-            progList_changeNode('4', 'Warning');
-            progList_changeIcon('4', 'Warning');
+        for(i=0;i<nodestructure.length;i++){
+            var mainStep=nodestructure[i][0];
+            var subSteps=nodestructure[i][1];
+            var success=true;
+            for(var j=0;j<subSteps.length && success;j++){
+                var ind=getStatusIndex(subSteps[j]);
+                if(error_status[ind]!=='Success'){
+                    success=false;
+                }
+            }
+            if(success){
+                progList_changeNode(correspondingNode(mainStep), 'Success');
+                progList_changeIcon(correspondingNode(mainStep), 'Success');
+            }else{
+                var error=false;
+                for(j=0;j<subSteps.length && !error;j++){
+                    var ind=getStatusIndex(subSteps[j]);
+                    if(error_status[ind]!=='Error'){
+                    	error=true;
+                    }
+                }
+                if(error){
+                    progList_changeNode(correspondingNode(getStatusIndex(mainStep)), 'Error');
+                    progList_changeIcon(correspondingNode(getStatusIndex(mainStep)), 'Error');
+                }else{
+                    var warning=false;
+                    for(j=0;j<subSteps.length && !warning;j++){
+                        var ind=getStatusIndex(subSteps[j]);
+                        if(error_status[ind]!=='Warning'){
+                            warning=true;
+                        }
+                    }
+                    if(warning){
+                        progList_changeNode(correspondingNode(getStatusIndex(mainStep)), 'Warning');
+                        progList_changeIcon(correspondingNode(getStatusIndex(mainStep)), 'Warning');
+                    }
+                }
+            }
         }
       }
     }
@@ -375,7 +393,7 @@
         var msg = eval("("+strText+")");
           
         var state=msg.Response.state;
-        if(state=="11" || start===true){
+        if(state=="10" || start===true){
           if(state=="60" || state=="59"){
             stopLocalTimer();
             processing = false;
@@ -422,37 +440,6 @@
     	        
     }
 
-    //This function resets the status of all the nodes
-    function resetAllStates(){
-      progList_changeNode('1', 'Pending');
-      progList_changeNode('1.1', 'Pending');
-      progList_changeNode('1.2', 'Pending');
-      progList_changeNode('1.3', 'Pending');
-      progList_changeNode('1.4', 'Pending');
-      progList_changeNode('1.5', 'Pending');
-      progList_changeNode('2.1', 'Pending');
-      progList_changeNode('3.1', 'Pending');
-      progList_changeNode('4', 'Pending');
-      progList_changeNode('4.1', 'Pending');
-      progList_changeNode('4.2', 'Pending');
-      progList_changeNode('4.3', 'Pending');
-      progList_changeNode('4.4', 'Pending');
-      progList_changeNode('5', 'Pending');
-      progList_changeIcon('1', 'Pending');
-      progList_changeIcon('1.1', 'Pending');
-      progList_changeIcon('1.2', 'Pending');
-      progList_changeIcon('1.3', 'Pending');
-      progList_changeIcon('1.4', 'Pending');
-      progList_changeIcon('1.5', 'Pending');
-      progList_changeIcon('2.1', 'Pending');
-      progList_changeIcon('3.1', 'Pending');
-      progList_changeIcon('4', 'Pending');
-      progList_changeIcon('4.1', 'Pending');
-      progList_changeIcon('4.2', 'Pending');
-      progList_changeIcon('4.3', 'Pending');
-      progList_changeIcon('4.4', 'Pending');
-      progList_changeIcon('5', 'Pending');
-    }
 
   </script>
   <script language="JavaScript" type="text/javascript">
