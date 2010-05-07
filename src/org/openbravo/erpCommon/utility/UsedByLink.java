@@ -181,15 +181,6 @@ public class UsedByLink extends HttpSecureAppServlet {
       vecTotal.copyInto(data);
     }
 
-    if (nonAccessible) {
-      final OBError myMessage = new OBError();
-      myMessage.setType("Warning");
-      myMessage.setMessage(Utility.messageBD(this, "NonAccessibleRecords", vars.getLanguage()));
-      myMessage.setTitle(Utility.messageBD(this, "Warning", vars.getLanguage()));
-      xmlDocument.setParameter("messageType", myMessage.getType());
-      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-    }
     xmlDocument.setData("structure1", data);
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
