@@ -384,6 +384,7 @@ public class PreferenceTest extends BaseTest {
     Module mod = OBDal.getInstance().get(Module.class, "0");
     boolean devStatus = mod.isInDevelopment();
     mod.setInDevelopment(true);
+    OBDal.getInstance().commitAndClose(); // commit core in dev, to prevent trigger fail
 
     org.openbravo.model.ad.domain.List listValue = OBProvider.getInstance().get(
         org.openbravo.model.ad.domain.List.class);
