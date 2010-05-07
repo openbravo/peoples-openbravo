@@ -47,10 +47,10 @@ public class SL_ProductionPlan_Conversion extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       String strSecQty = vars.getNumericParameter("inpsecondaryqty");
-      String strConvRate = vars.getNumericParameter("inpconversionrate");
       String strTabId = vars.getStringParameter("inpTabId");
+      String strMaWrphaseId = vars.getStringParameter("inpmaWrphaseId");
       try {
-        printPage(response, vars, strSecQty, strConvRate, strTabId);
+        printPage(response, vars, strSecQty, strTabId, strMaWrphaseId);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -59,7 +59,7 @@ public class SL_ProductionPlan_Conversion extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSecQty,
-      String strConvRate, String strTabId) throws IOException, ServletException {
+      String strTabId, String strMaWrphaseId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -70,8 +70,9 @@ public class SL_ProductionPlan_Conversion extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_ProductionPlan_Conversion';\n\n");
     resultado.append("var respuesta = new Array(");
-    if (!strSecQty.equals("") && !strConvRate.equals("")) {
-      convRate = new BigDecimal(strConvRate);
+    if (!strSecQty.equals("")) {
+      String multiplier = SLProductionPlanWRPhaseData.getMultiplier(this, strMaWrphaseId);
+      convRate = new BigDecimal(multiplier);
       secondaryQty = new BigDecimal(strSecQty);
       quantity = secondaryQty.divide(convRate, 0, BigDecimal.ROUND_HALF_UP);
       resultado.append("new Array(\"inpproductionqty\", " + quantity.toString() + ")");
