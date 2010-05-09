@@ -152,7 +152,7 @@ public class DocFINReconciliation extends AcctServer {
     try {
       for (int i = 0; i < data.length; i++) {
         data[i] = new FieldProviderFactory(new HashMap());
-        FieldProviderFactory.setField(data[0], "FIN_Reconciliation_ID", transaction
+        FieldProviderFactory.setField(data[i], "FIN_Reconciliation_ID", transaction
             .getReconciliation().getId());
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
         FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
@@ -162,9 +162,9 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[i], "FIN_Payment_Detail_ID", paymentDetails.get(i)
             .getId());
         FieldProviderFactory.setField(data[i], "FIN_Payment_ID", payment.getId());
-        FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
+        FieldProviderFactory.setField(data[i], "DepositAmount", transaction.getDepositAmount()
             .toString());
-        FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
+        FieldProviderFactory.setField(data[i], "PaymentAmount", transaction.getPaymentAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
             .toString());
@@ -178,20 +178,20 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[i], "cBpartnerId", payment.getBusinessPartner().getId());
         FieldProviderFactory.setField(data[i], "Refund", paymentDetails.get(i).isRefund() ? "Y"
             : "N");
-        FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
-        FieldProviderFactory.setField(data[0], "cGlItemId",
+        FieldProviderFactory.setField(data[i], "adOrgId", transaction.getOrganization().getId());
+        FieldProviderFactory.setField(data[i], "cGlItemId",
             transaction.getGLItem() != null ? transaction.getGLItem().getId() : data[i]
                 .getField("cGlItemId"));
-        FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
-        FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
+        FieldProviderFactory.setField(data[i], "description", transaction.getDescription());
+        FieldProviderFactory.setField(data[i], "cCurrencyId", transaction.getCurrency().getId());
         if (transaction.getActivity() != null)
-          FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
+          FieldProviderFactory.setField(data[i], "cActivityId", transaction.getActivity().getId());
         if (transaction.getProject() != null)
-          FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
+          FieldProviderFactory.setField(data[i], "cProjectId", transaction.getProject().getId());
         if (transaction.getSalesCampaign() != null)
-          FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign()
+          FieldProviderFactory.setField(data[i], "cCampaignId", transaction.getSalesCampaign()
               .getId());
-        FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
+        FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
       }
     } finally {
       OBContext.restorePreviousMode();
