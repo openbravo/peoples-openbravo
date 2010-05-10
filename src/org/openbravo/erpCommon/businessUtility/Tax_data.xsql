@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="TaxData" package="org.openbravo.erpCommon.businessUtility" accessModifier="public">
+<SqlClass name="TaxData" package="org.openbravo.erpCommon.businessUtility">
    <SqlClassComment></SqlClassComment>
    <!--SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

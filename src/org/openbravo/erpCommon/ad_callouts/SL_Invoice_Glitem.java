@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.businessUtility.TaxData;
+import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -45,8 +45,6 @@ public class SL_Invoice_Glitem extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled())
-        log4j.debug("CHANGED: " + strChanged);
       String strAccountID = vars.getStringParameter("inpaccountId");
       String strADOrgID = vars.getStringParameter("inpadOrgId");
       String strCInvoiceID = vars.getStringParameter("inpcInvoiceId");
@@ -66,8 +64,6 @@ public class SL_Invoice_Glitem extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strAccountID, String strADOrgID, String strCInvoiceID, String strIsSOTrx,
       String strWharehouse) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     if (strChanged.equalsIgnoreCase("inpaccountId")) {
@@ -78,9 +74,9 @@ public class SL_Invoice_Glitem extends HttpSecureAppServlet {
 
       SLInvoiceTaxData[] data = SLInvoiceTaxData.select(this, strCInvoiceID);
       if (data != null && data.length > 0) {
-        String strCTaxID = TaxData.taxGet(this, null, data[0].dateinvoiced, strADOrgID,
-            strWharehouse, data[0].cBpartnerLocationId, data[0].cBpartnerLocationId,
-            data[0].cProjectId, strIsSOTrx.equals("Y") ? "Y" : "N", strAccountID);
+        String strCTaxID = Tax.get(this, null, data[0].dateinvoiced, strADOrgID, strWharehouse,
+            data[0].cBpartnerLocationId, data[0].cBpartnerLocationId, data[0].cProjectId,
+            strIsSOTrx, strAccountID);
 
         result.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\")");
       }
