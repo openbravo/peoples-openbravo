@@ -27656,7 +27656,7 @@ For the other necessary values is taken the correspondent default values. Once t
 <!--1005200001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005200001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005200001-->  <VALUE><![CDATA[NonAccessibleRecords]]></VALUE>
-<!--1005200001-->  <MSGTEXT><![CDATA[There are non accessible records]]></MSGTEXT>
+<!--1005200001-->  <MSGTEXT><![CDATA[Some details cannot be shown because you do not have enough privileges]]></MSGTEXT>
 <!--1005200001-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1005200001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005200001--></AD_MESSAGE>
