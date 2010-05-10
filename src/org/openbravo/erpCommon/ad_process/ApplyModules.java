@@ -23,7 +23,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -296,6 +295,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         return nodeData;
       } else {
         BuildTranslation buildTranslation = getBuildTranslationFromFile(vars.getLanguage());
+        buildTranslation.setBuild(build);
         if (buildTranslation == null) {
           FieldProvider[] nodeData = build.getFieldProvidersForBuild();
           return nodeData;
@@ -309,7 +309,7 @@ public class ApplyModules extends HttpSecureAppServlet {
     return null;
   }
 
-  private BuildTranslation getBuildTranslationFromFile(String language) throws Exception {
+  protected static BuildTranslation getBuildTranslationFromFile(String language) throws Exception {
 
     String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
         .toString();
@@ -341,26 +341,15 @@ public class ApplyModules extends HttpSecureAppServlet {
     return build;
   }
 
-  private Build getBuildFromXMLFile() {
+  protected Build getBuildFromXMLFile() {
     try {
       String source = OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .get("source.path").toString();
-      FileReader xmlReader = new FileReader(source
-          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
+      return Build.getBuildFromXMLFile(source
+          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml", new File(
+          source, "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml")
+          .getAbsolutePath());
 
-      BeanReader beanReader = new BeanReader();
-
-      beanReader.getBindingConfiguration().setMapIDs(false);
-
-      beanReader.getXMLIntrospector().register(
-          new InputSource(new FileReader(new File(source,
-              "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
-
-      beanReader.registerBeanClass("Build", Build.class);
-
-      Build build = (Build) beanReader.parse(xmlReader);
-
-      return build;
     } catch (Exception e) {
       log4j.error("Error while reading the build information file");
       return null;
@@ -425,18 +414,6 @@ public class ApplyModules extends HttpSecureAppServlet {
       updateSession.executeUpdate();
       ant.runTask(tasks);
 
-      PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
-      psErr.executeQuery();
-      ResultSet rsErr = psErr.getResultSet();
-      if (!rsErr.next()) {
-        ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'");
-        ps3.executeUpdate();
-        ps4 = getPreparedStatement("UPDATE AD_MODULE SET STATUS='A' WHERE STATUS='P'");
-        ps4.executeUpdate();
-      } else {
-        ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB59'");
-        ps3.executeUpdate();
-      }
       out.close();
     } catch (final Exception e) {
       // rolback the old transaction and start a new one

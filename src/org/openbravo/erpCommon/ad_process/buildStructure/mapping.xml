@@ -43,14 +43,17 @@
       <attribute name="code"          property="code"/>
       <attribute name="originalName"    property="originalName"/>
       <attribute name="translatedName"      property="translatedName"/>
-      <element name="translatedSuccessMessage"      property="originalSuccessMessage">
-        <attribute name="originalSuccessMessage"      property="translatedSuccessMessage"/>
+      <element name="translatedSuccessMessage">
+        <attribute name="originalSuccessMessage"      property="originalSuccessMessage"/>
+        <attribute name="translatedSuccessMessage"      property="translatedSuccessMessage"/>
       </element>
-      <element name="translatedWarningMessage"      property="originalWarningMessage">
-        <attribute name="originalWarningMessage"      property="translatedWarningMessage"/>
+      <element name="translatedWarningMessage">
+        <attribute name="originalWarningMessage"      property="originalWarningMessage"/>
+        <attribute name="translatedWarningMessage"      property="translatedWarningMessage"/>
       </element>
-      <element name="translatedErrorMessage"      property="originalErrorMessage">
-        <attribute name="originalErrorMessage"      property="translatedErrorMessage"/>
+      <element name="translatedErrorMessage">
+        <attribute name="originalErrorMessage"      property="originalErrorMessage"/>
+        <attribute name="translatedErrorMessage"      property="translatedErrorMessage"/>
       </element>
       <addDefaults/>
     </element>

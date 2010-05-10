@@ -76,7 +76,7 @@ public class BuildTask {
         System.out.println(task);
       System.out.println("modules: " + unnappliedModules);
       ant.runTask(tasks);
-      log.info("fin");
+      updateFinalState();
     } catch (Exception e) {
       e.printStackTrace();
       throw new Exception("jarl");
@@ -141,6 +141,20 @@ public class BuildTask {
       strSql = strSql + "         SELECT count(*) as NAME" + "           FROM AD_MODULE"
           + "          WHERE ((STATUS='I' OR STATUS='P')      "
           + "                 AND TYPE = 'T')" + "             OR (STATUS='U')";
+      ConnectionProvider cp = getConnectionProvider();
+      PreparedStatement ps = cp.getPreparedStatement(strSql);
+      ResultSet rs = ps.executeQuery();
+      rs.next();
+      return rs.getInt(1) != 0;
+    } catch (Exception e) {
+      // What should we do here?
+    }
+    return true;
+  }
+
+  private static boolean updateFinalState() {
+    try {
+      String strSql = "UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'";
       ConnectionProvider cp = getConnectionProvider();
       PreparedStatement ps = cp.getPreparedStatement(strSql);
       ResultSet rs = ps.executeQuery();

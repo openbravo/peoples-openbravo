@@ -407,8 +407,9 @@
         var msg = eval("("+strText+")");
           
         var state=msg.Response.state;
+        var errorStatus=msg.Response.statusofstate;
         if(state==first_state || start===true){
-          if(contains(end_states,state)){
+          if(contains(end_states,state) || errorStatus=="Error"){
             stopLocalTimer();
             processing = false;
             top.opener.setProcessingMode('window', false);
@@ -416,7 +417,6 @@
             submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
           }
           start=true;
-          var errorStatus=msg.Response.statusofstate;
           var stateindex=getStatusIndex(state);
           if(stateindex>current_state){
             pending_states=stateindex-current_state;
@@ -445,7 +445,7 @@
           current_state=stateindex;
         }
       }
-      if(contains(end_states,state)){
+      if(contains(end_states,state) || errorStatus=="Error"){
     	processing = false;
     	top.opener.setProcessingMode('window', false);
     	var frm = document.frmMain;

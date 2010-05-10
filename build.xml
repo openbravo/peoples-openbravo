@@ -650,8 +650,6 @@ export.database: exports database structure and data to xml files.
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
-    <updatesystemstatus v="RB31"/> 
-      <updatesystemstatus v="RB32"/> 
   </target>
   
   <target name="apply.module.forked">

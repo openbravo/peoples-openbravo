@@ -19,15 +19,5 @@
           <step code="RB23" name="Reference data"/>
         </stepList>
       </mainStep>
-      <mainStep code="RB30" successCode="RB60">
-        <name>Final validation</name>
-        <successMessage>The build was successful</successMessage>
-        <warningMessage/>
-        <errorMessage>The build failed</errorMessage>
-        <stepList>
-          <step code="RB31" name="Validation start"/>
-          <step code="RB32" name="Validation finish"/>
-        </stepList>
-      </mainStep>
     </mainSteps>
   </Build>
