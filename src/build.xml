@@ -279,6 +279,11 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="run.tests" depends="compileSqlc,generate.entities.quick">
+    
+    <copy todir="${build}">
+      <fileset dir="${base.src.test}" includes="**/*.xml" />
+    </copy>
+    
     <junit printsummary="yes" haltonfailure="yes">
       <classpath refid="project.class.path" />
       <formatter type="plain" usefile="no"/>
@@ -287,6 +292,11 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="run.all.tests" depends="compileSqlc,generate.entities.quick">
+    
+    <copy todir="${build}">
+      <fileset dir="${base.src.test}" includes="**/*.xml" />
+    </copy>
+
     <junit printsummary="yes" haltonfailure="yes">
       <classpath refid="project.class.path" />
       <formatter type="plain" usefile="no"/>
@@ -297,6 +307,11 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="run.quick.tests" depends="compileSqlc,generate.entities.quick">
+    
+    <copy todir="${build}">
+      <fileset dir="${base.src.test}" includes="**/*.xml" />
+    </copy>
+    
     <junit printsummary="yes" haltonfailure="yes">
       <classpath refid="project.class.path" />
       <formatter type="plain" usefile="no"/>
@@ -305,6 +320,11 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="run.webservice.tests" depends="compileSqlc,generate.entities.quick">
+    
+    <copy todir="${build}">
+      <fileset dir="${base.src.test}" includes="**/*.xml" />
+    </copy>
+
     <junit printsummary="yes" haltonfailure="yes">
       <classpath refid="project.class.path" />
       <formatter type="plain" usefile="no"/>
