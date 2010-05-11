@@ -606,7 +606,7 @@ public class ImportModule {
         Zip.zip(core, obDir + "/backup_install/" + moduleInDB.javapackage + "-"
             + moduleInDB.version + ".zip", obDir);
       } catch (final Exception e) {
-        log4j.error("Error zipping module " + module.getName());
+        log4j.error("Error zipping module " + module.getName(), e);
         addLog("@ErrorDoingBackup@ " + module.getName(), MSG_ERROR);
         return false;
       }
@@ -628,7 +628,7 @@ public class ImportModule {
         log4j.info("Removing old module version files...");
         Utility.deleteDir(new File(obDir + "/modules/" + moduleInDB.javapackage));
       } catch (final Exception e) {
-        log4j.error("Error zipping module " + module.getName());
+        log4j.error("Error zipping module " + module.getName(), e);
         addLog("@ErrorDoingBackup@ " + module.getName(), MSG_ERROR);
         return false;
       }
@@ -1389,7 +1389,7 @@ public class ImportModule {
     core.add(new File(obDir + "/src"));
     core.add(new File(obDir + "/web"));
     core.add(new File(obDir + "/src-test"));
-    core.add(new File(obDir + "/src-diagnostics"));
+    core.add(new File(obDir + "/src-util"));
     File[] module = new File[core.size()];
     return core.toArray(module);
   }
