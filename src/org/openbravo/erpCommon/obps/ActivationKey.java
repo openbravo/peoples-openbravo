@@ -557,6 +557,9 @@ public class ActivationKey {
    */
   public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
     HashMap<String, CommercialModuleStatus> moduleList = new HashMap<String, CommercialModuleStatus>();
+    if (instanceProperties == null) {
+      return moduleList;
+    }
 
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
 
