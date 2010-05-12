@@ -50,6 +50,7 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 
 /**
  * Models the context in which Data Access Layer actions are executed. Contains the user, the client
@@ -271,10 +272,7 @@ public class OBContext implements OBNotSingleton {
    *          the ud of the user's organization
    */
   public static void setOBContext(String userId, String roleId, String clientId, String orgId) {
-    final OBContext context = OBProvider.getInstance().get(OBContext.class);
-    setOBContext((OBContext) null);
-    context.initialize(userId, roleId, clientId, orgId);
-    setOBContext(context);
+    setOBContext(userId, roleId, clientId, orgId, null, null);
   }
 
   /**
@@ -294,9 +292,31 @@ public class OBContext implements OBNotSingleton {
    */
   public static void setOBContext(String userId, String roleId, String clientId, String orgId,
       String languageCode) {
+    setOBContext(userId, roleId, clientId, orgId, languageCode, null);
+  }
+
+  /**
+   * Creates the context using the userId, roleId, clientId, orgId and sets it in the thread (as
+   * ThreadLocal).
+   * 
+   * @param userId
+   *          the id of the user
+   * @param roleId
+   *          the id of the role under which the user is currently working
+   * @param clientId
+   *          the id of the user's client
+   * @param orgId
+   *          the ud of the user's organization
+   * @param languageCode
+   *          the selected language, if null then the user language is read.
+   * @param warehouseId
+   *          the id of the current warehouse of the user.
+   */
+  public static void setOBContext(String userId, String roleId, String clientId, String orgId,
+      String languageCode, String warehouseId) {
     final OBContext context = OBProvider.getInstance().get(OBContext.class);
     setOBContext((OBContext) null);
-    context.initialize(userId, roleId, clientId, orgId, languageCode);
+    context.initialize(userId, roleId, clientId, orgId, languageCode, warehouseId);
     setOBContext(context);
   }
 
@@ -347,6 +367,7 @@ public class OBContext implements OBNotSingleton {
   private Role role;
   private User user;
   private Language language;
+  private Warehouse warehouse;
   private List<Organization> organizationList;
   private String[] readableOrganizations;
   private String[] readableClients;
@@ -556,6 +577,7 @@ public class OBContext implements OBNotSingleton {
     role = null;
     user = null;
     language = null;
+    warehouse = null;
     organizationList = null;
     readableOrganizations = null;
     readableClients = null;
@@ -590,6 +612,12 @@ public class OBContext implements OBNotSingleton {
   // sets the context by reading all user information
   private boolean initialize(String userId, String roleId, String clientId, String orgId,
       String languageCode) {
+    return initialize(userId, roleId, clientId, orgId, null, null);
+  }
+
+  // sets the context by reading all user information
+  private boolean initialize(String userId, String roleId, String clientId, String orgId,
+      String languageCode, String warehouseId) {
 
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
@@ -728,6 +756,17 @@ public class OBContext implements OBNotSingleton {
 
       setReadableClients(role);
 
+      // note sometimes the warehouseId is an empty string
+      // this happens when it is set from the session variables
+      if (warehouseId != null && warehouseId.trim().length() > 0) {
+        final Query qry = SessionHandler.getInstance().createQuery(
+            "select w from " + Warehouse.class.getName() + " w where w.id=:id");
+        qry.setParameter("id", warehouseId);
+        setWarehouse((Warehouse) qry.list().get(0));
+      } else if (getUser().getDefaultWarehouse() != null) {
+        setWarehouse(getUser().getDefaultWarehouse());
+      }
+
       // initialize some proxys
       Hibernate.initialize(getCurrentOrganization().getClient());
       Hibernate.initialize(getCurrentClient().getOrganization());
@@ -735,6 +774,11 @@ public class OBContext implements OBNotSingleton {
       Hibernate.initialize(getRole().getOrganization());
       Hibernate.initialize(getLanguage().getClient());
       Hibernate.initialize(getLanguage().getOrganization());
+      if (getWarehouse() != null) {
+        Hibernate.initialize(getWarehouse());
+        Hibernate.initialize(getWarehouse().getClient());
+        Hibernate.initialize(getWarehouse().getOrganization());
+      }
 
       // TODO: add logging of all context information
     } finally {
@@ -907,5 +951,13 @@ public class OBContext implements OBNotSingleton {
 
   public boolean isSerialized() {
     return serialized;
+  }
+
+  public Warehouse getWarehouse() {
+    return warehouse;
+  }
+
+  public void setWarehouse(Warehouse warehouse) {
+    this.warehouse = warehouse;
   }
 }

@@ -31,9 +31,17 @@ import org.openbravo.test.base.BaseTest;
 public class OBContextTest extends BaseTest {
 
   /**
-   * Tests if the {@link OBContext#setAdminMode()} and
-   * {@link OBContext#restorePreviousMode()} work correctly if the same OBContext is used by
-   * multiple threads. This is possible in case of simultaneous ajax requests.
+   * Tests if the warehouse is set correctly in the OBContext.
+   */
+  public void testWarehouseInContext() {
+    OBContext.setOBContext("100", "0", "1000000", "1000000", null, "1000001");
+    assertTrue(OBContext.getOBContext().getWarehouse().getId().equals("1000001"));
+  }
+
+  /**
+   * Tests if the {@link OBContext#setAdminMode()} and {@link OBContext#restorePreviousMode()} work
+   * correctly if the same OBContext is used by multiple threads. This is possible in case of
+   * simultaneous ajax requests.
    * 
    * See: https://issues.openbravo.com/view.php?id=8853
    */
@@ -177,20 +185,12 @@ public class OBContextTest extends BaseTest {
       }
     }
 
-    public boolean isNextStep() {
-      return nextStep;
-    }
-
     public void setNextStep(boolean nextStep) {
       this.nextStep = nextStep;
     }
 
     public boolean isAdminMode() {
       return adminMode;
-    }
-
-    public boolean isFirstStep() {
-      return firstStep;
     }
 
     public void setFirstStep(boolean firstStep) {
