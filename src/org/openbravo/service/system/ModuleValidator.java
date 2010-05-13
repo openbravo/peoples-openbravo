@@ -326,7 +326,7 @@ public class ModuleValidator implements SystemValidator {
               SystemValidationType.HAS_PROPERTY_CONFIGURATION,
               "Module "
                   + module.getName()
-                  + " has entries in Property Configuration, which is depracated. Use preferences instead.");
+                  + " has entries in Property Configuration, which is deprecated. Use preferences instead.");
     }
 
   }
