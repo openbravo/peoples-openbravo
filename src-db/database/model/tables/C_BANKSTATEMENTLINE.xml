@@ -129,6 +129,5 @@
         <index-column name="C_BANKSTATEMENT_ID"/>
       </index>
       <check name="C_BANKSTATLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_BANKSTATLN_PA_GLITEM_ID_CHK"><![CDATA[((C_DEBT_PAYMENT_ID IS NOT NULL) AND (C_GLITEM_ID IS NULL)) OR ((C_GLITEM_ID IS NOT NULL) AND (C_DEBT_PAYMENT_ID IS NULL))]]></check>
     </table>
   </database>
