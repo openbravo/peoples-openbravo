@@ -173,7 +173,6 @@
 		isBold="true"
 	/>
 
-	<parameter name="Title" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="TOTAL" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
@@ -436,7 +435,7 @@
 						width="75"
 						height="12"
 						key="staticText-4"/>
-					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="3" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
@@ -643,20 +642,6 @@
 			<band height="80"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						style="Report_Title"
-						x="0"
-						y="-5"
-						width="535"
-						height="25"
-						key="textField-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" size="18" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Title}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
 						style="Report_Subtitle"
 						x="0"
 						y="20"
@@ -696,9 +681,9 @@
 						width="75"
 						height="15"
 						key="staticText-9"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="3" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="3" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
-						<font size="12"/>
+						<font size="10"/>
 					</textElement>
 				<text><![CDATA[Final Bal.]]></text>
 				</staticText>
@@ -710,9 +695,9 @@
 						width="75"
 						height="15"
 						key="staticText-10"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="3" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="3" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
-						<font size="12"/>
+						<font size="10"/>
 					</textElement>
 				<text><![CDATA[Credit]]></text>
 				</staticText>
@@ -724,9 +709,9 @@
 						width="75"
 						height="15"
 						key="staticText-11"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="3" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="3" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
-						<font size="12"/>
+						<font size="10"/>
 					</textElement>
 				<text><![CDATA[Debit]]></text>
 				</staticText>
@@ -738,9 +723,9 @@
 						width="75"
 						height="15"
 						key="staticText-12"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
-						<font size="12"/>
+						<font size="10"/>
 					</textElement>
 				<text><![CDATA[Initial Bal.]]></text>
 				</staticText>
@@ -754,7 +739,7 @@
 						key="staticText-14"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font size="12"/>
+						<font size="10"/>
 					</textElement>
 				<text><![CDATA[Account]]></text>
 				</staticText>
@@ -782,6 +767,20 @@
 						</reportElement>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="-5"
+						width="535"
+						height="25"
+						key="staticText-15"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="18" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Trial Balance Report]]></text>
+				</staticText>
 			</band>
 		</pageHeader>
 		<columnHeader>
