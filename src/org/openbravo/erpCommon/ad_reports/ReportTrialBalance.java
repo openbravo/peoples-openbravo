@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -481,7 +481,6 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
         String strLanguage = vars.getLanguage();
 
-        parameters.put("Title", classInfo.name);
         StringBuilder strSubTitle = new StringBuilder();
         strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
             + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
@@ -551,7 +550,6 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF.jrxml";
         HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-        parameters.put("Title", classInfo.name);
         parameters.put("TOTAL", Utility.messageBD(this, "Total", strLanguage));
         StringBuilder strSubTitle = new StringBuilder();
         strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
