@@ -26471,7 +26471,8 @@ In case the field is not checked, the preference is defined by Attribute, which 
 <!--BD2D5C4D0AED4962B1EDF25726015579-->  <NAME><![CDATA[Secondary SQL Where Clause]]></NAME>
 <!--BD2D5C4D0AED4962B1EDF25726015579-->  <PRINTNAME><![CDATA[Secondary SQL Where Clause]]></PRINTNAME>
 <!--BD2D5C4D0AED4962B1EDF25726015579-->  <DESCRIPTION><![CDATA[This is a secondary SQL where clause used by dbsourcemanager to filter data inside a table.]]></DESCRIPTION>
-<!--BD2D5C4D0AED4962B1EDF25726015579-->  <HELP><![CDATA[This is a secondary SQL where clause used by dbsourcemanager to filter data inside a table.]]></HELP>
+<!--BD2D5C4D0AED4962B1EDF25726015579-->  <HELP><![CDATA[This is a secondary SQL where clause used by dbsourcemanager to filter data inside a table. This secondary whereclause needs to be written in SQL, and only applies for the dataset AD. When export.database is executed, this whereclause will be applied for the data inside the table, and only the records complying with it will be exported. The rest of the records (the ones which do not comply with the whereclause) will be ignored both in export.database and update.database.
+The main purpose of this whereclause is to select which of the records in a particular table are part of sourcedata, and which ones are part of client data.]]></HELP>
 <!--BD2D5C4D0AED4962B1EDF25726015579-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BD2D5C4D0AED4962B1EDF25726015579--></AD_ELEMENT>
 
