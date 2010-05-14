@@ -46,7 +46,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT", "DIRECT")) {
       String strcbankaccount = vars.getGlobalVariable("inpmProductId",
           "ReportDebtPayment|C_Bankaccount_ID", "");
@@ -84,8 +84,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strPaymentRule = vars.getGlobalVariable("inpCPaymentRuleId",
           "ReportDebtPayment|PaymentRule", "");
       String strSettle = vars.getGlobalVariable("inpSettle", "ReportDebtPayment|Settle", "");
-      String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId",
-          "ReportDebtPayment|currency");
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportDebtPayment|currency",
+          strUserCurrencyId);
       String strConciliate = vars.getGlobalVariable("inpConciliate",
           "ReportDebtPayment|Conciliate", "");
       String strStatus = vars.getGlobalVariable("inpStatus", "ReportDebtPayment|Status", "");
