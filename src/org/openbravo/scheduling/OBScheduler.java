@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
- * All Rights Reserved. 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -350,7 +350,7 @@ public class OBScheduler {
     private static Trigger newInstance(String name, ProcessBundle bundle, ConnectionProvider conn)
         throws ServletException {
 
-      final TriggerData data = TriggerData.select(conn, name);
+      final TriggerData data = TriggerData.select(conn, dateTimeFormat, name);
 
       Trigger trigger = null;
 
@@ -468,7 +468,14 @@ public class OBScheduler {
           } else {
             throw new ServletException("Invalid option: " + data.frequency);
           }
-          trigger.setStartTime(start.getTime());
+
+          if (data.nextFireTime.equals("")) {
+            trigger.setStartTime(start.getTime());
+          } else {
+            Calendar nextTriggerTime = timestamp(data.nextFireTime, data.nextFireTime,
+                dateTimeFormat);
+            trigger.setStartTime(nextTriggerTime.getTime());
+          }
 
           if (data.finishes.equals(FINISHES)) {
             finish = timestamp(data.finishesDate, data.finishesTime, dateTimeFormat);
