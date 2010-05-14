@@ -47,7 +47,7 @@
   v_seq_name		              varchar2(32);
   v_Sequence_No		            varchar2(32);
   v_C_AcctSchema_ID	          VARCHAR2(32);
-     
+  v_count 					  NUMBER;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -77,7 +77,8 @@ BEGIN
 		    Creating new sub account
 		*/
 		--  Customer
-	IF (v_C_AcctSchema_ID is null or v_C_AcctSchema_ID <> Cur_Defaults.C_AcctSchema_ID) THEN
+		 select count(*) into v_count from C_BP_Vendor_Acct where c_acctschema_id = Cur_Defaults.C_AcctSchema_ID AND c_bpartner_id = :new.C_BPartner_ID AND status = Cur_Defaults.status;
+	IF (v_count=0) THEN
          Ad_Sequence_Next('C_BP_Customer_Acct', Cur_Defaults.C_AcctSchema_ID, v_BP_Acct_ID);
          IF (Cur_Defaults.IsBPNewAccount='Y') THEN
 		
@@ -167,12 +168,12 @@ BEGIN
               :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
               Cur_Defaults.V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_Prepayment_Acct, Cur_Defaults.Status);
          END IF;
-		v_C_AcctSchema_ID:=Cur_Defaults.C_AcctSchema_ID;
               
   END IF;
   END LOOP;
 -- Employee
   v_C_AcctSchema_ID:=null;
+  v_count:=0;
               FOR Cur_Defaults2 IN (
               SELECT AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Org_ID),
               oa.ad_sequence_bp_id, oa.isbpnewaccount, oa.acct_length, oa.subacct_length, oa.createdby, oa.updatedby,
@@ -192,7 +193,8 @@ BEGIN
 			 /*
         Creating new sub account
        */
-		 IF (v_C_AcctSchema_ID is null or v_C_AcctSchema_ID <> Cur_Defaults2.C_AcctSchema_ID) THEN
+       select count(*) into v_count from C_BP_Employee_Acct where c_acctschema_id = Cur_Defaults2.C_AcctSchema_ID AND c_bpartner_id = :new.C_BPartner_ID;
+		 IF (v_count=0) THEN
          IF (Cur_Defaults2.IsBPNewAccount='Y') THEN
          
              /*

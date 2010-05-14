@@ -32,7 +32,6 @@ import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
@@ -202,12 +201,12 @@ public class AccountElementValue extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("orgs", vars.getStringParameter("inpAD_Org_ID"));
-    xmlDocument.setParameter("cAcctschemaId", strAcctSchema);
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-            "ReportGeneralLedger"), strAcctSchema));
-
+    xmlDocument.setParameter("inpcAcctSchemaId", strAcctSchema);
+    if ("".equals(strAcctSchema))
+      xmlDocument.setParameter("inpcAcctSchema", "");
+    else
+      xmlDocument.setParameter("inpcAcctSchema", AccountElementValueData.selectschemaname(this,
+          strAcctSchema));
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");
     xmlDocument.setParameter("grid_SortCols", "1");
@@ -293,8 +292,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "ShipmentReceiptLine.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        	// on movePage action force executing countRows again
-        	strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
@@ -304,18 +303,18 @@ public class AccountElementValue extends HttpSecureAppServlet {
           // or
           // first
           // load
-        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        	if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-	        	oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-	        	oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-	        	rownum = "ROWNUM";
-        	} else {
-        		pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        	}
-          strNumRows = AccountElementValueData.countRows(this,rownum, strAcctSchema, strValue, strName,
-              strOrganization, strAccountElementValue, Utility.getContext(this, vars,
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = AccountElementValueData.countRows(this, rownum, strAcctSchema, strValue,
+              strName, strOrganization, strAccountElementValue, Utility.getContext(this, vars,
                   "#User_Client", "AccountElementValue"), Utility.getContext(this, vars,
-                  "#User_Org", "AccountElementValue"),pgLimit, oraLimit1, oraLimit2);
+                  "#User_Org", "AccountElementValue"), pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("AccountElementValueInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("AccountElementValueInfo.numrows");
@@ -376,7 +375,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");

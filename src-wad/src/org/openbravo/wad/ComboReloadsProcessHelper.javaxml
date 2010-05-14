@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,16 @@ public class ComboReloadsProcessHelper extends CalloutHelper {
    String strProcessId = vars.getStringParameter("inpadProcessId");
    <FIELDS_TMP id="sectionDetail">
      if (strProcessId.equals("<FIELD_TMP id="fieldProcessId">xx</FIELD_TMP>")) {
+       process<FIELD_TMP id="fieldProcessId"/>(response, vars, strTabId, windowId);
+       return;
+     }
+    </FIELDS_TMP>
+    
+    pageError(response);
+  }
+  
+  <FIELDS_TMP id="sectionDetailProcess">
+    private void process<FIELD_TMP id="fieldProcessMethodId">xx</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String strTabId, String windowId) throws IOException, ServletException {
         String resultField;
         String command = vars.getStringParameter("Command", "DEFAULT");
         XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -47,7 +57,7 @@ public class ComboReloadsProcessHelper extends CalloutHelper {
         StringBuffer resultado = new StringBuffer();
         boolean isFirst=true;
         ComboTableData comboTableData = null;
-        resultado.append("var calloutName='ComboReloads<FIELD_TMP id="fieldProcessId">xx</FIELD_TMP>';\n\n");
+        resultado.append("var calloutName='ComboReloads<FIELD_TMP id="fieldProcessMethodId">xx</FIELD_TMP>';\n\n");
         resultado.append("var respuesta = new Array(\n");
     
         try {
@@ -75,8 +85,5 @@ public class ComboReloadsProcessHelper extends CalloutHelper {
        return;
      }
     </FIELDS_TMP>
-    
-    pageError(response);
-  }
 }
 </java_TMP>

@@ -86,7 +86,7 @@
         <onCreateDefault/>
       </column>
       <column name="STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[I]]></default>
+        <default><![CDATA[A]]></default>
         <onCreateDefault/>
       </column>
       <column name="UPDATE_AVAILABLE" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">

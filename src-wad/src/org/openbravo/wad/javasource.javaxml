@@ -867,7 +867,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb());
+      String hideBackButton = vars.getGlobalVariable("hideMenu", "#Hide_BackButton", "");
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb(), hideBackButton.equals("true"));
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.relationTemplate());
@@ -1033,7 +1034,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       // if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
 	  // else xmlDocument.setParameter("childTabContainer", tabs.childTabs(true));
 	  xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb(), false, !concurrentSave);
+	  String hideBackButton = vars.getGlobalVariable("hideMenu", "#Hide_BackButton", "");
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb(), hideBackButton.equals("true"), !concurrentSave);
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.editionTemplate(strCommand.equals("NEW")));

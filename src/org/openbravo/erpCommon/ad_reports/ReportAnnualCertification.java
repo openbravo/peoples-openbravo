@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -240,9 +240,17 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     }
     // PARAMETRI UTENTE
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
-    // Organization * is not shown
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
+    try {
+      // AD_OrgType_BU_LE
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
+          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportAnnualCertification"), Utility.getContext(this, vars, "#User_Client",
+              "ReportAnnualCertification"), '*');
+      comboTableData.fillParameters(null, "ReportAnnualCertification", "");
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
     xmlDocument.setParameter("adOrgId", strOrg);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -256,9 +264,8 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       data = ReportAnnualCertificationData.set();
     } else {
       data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(
-          this, strDateTo, "1"), strcBpartnerId, initRecordNumber, intRecordRange);
+          "#User_Client", "ReportAnnualCertification"), strOrg, strDateFrom, DateTimeData
+          .nDaysAfter(this, strDateTo, "1"), strcBpartnerId, initRecordNumber, intRecordRange);
     }
     xmlDocument.setData("structure1", data);
 
@@ -286,30 +293,50 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       log4j.debug("Output: PDF");
     ReportAnnualCertificationData[] data = null;
 
-    if (!strDateFrom.equals("") && !strDateTo.equals("") && !strOrg.equals("")) {
+    if (!strDateFrom.equals("") && !strDateTo.equals("")) {
       data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportAnnualCertification"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportAnnualCertification"), strDateFrom, DateTimeData.nDaysAfter(
-          this, strDateTo, "1"), strcBpartnerId);
+          "#User_Client", "ReportAnnualCertification"), strOrg, strDateFrom, DateTimeData
+          .nDaysAfter(this, strDateTo, "1"), strcBpartnerId);
     } else {
       advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
           .getLanguage()));
     }
-
-    String sClientID = vars.getUserClient();
-    String sOrganID = "'" + strOrg + "'";
-    OrganizationData[] dataOrganization = OrganizationData.select(this, vars.getLanguage(),
-        sClientID, sOrganID);
-
     String strOutput = vars.commandIn("PDF") ? "pdf" : "xls";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml";
+    OrganizationData[] dataOrganization = null;
+    // populate organization data if report data is available.
+    if (data != null && data.length > 0) {
+      String sClientID = vars.getUserClient();
+      String sOrganID = "";
+      if (strOrg.equals("")) {
+        for (int i = 0; i < data.length; i++) {
+          sOrganID = sOrganID + "'" + data[i].orgid;
+          if (!(i == data.length - 1)) {
+            sOrganID = sOrganID + "',";
+          } else {
+            sOrganID = sOrganID + "'";
+          }
+        }
 
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    if (dataOrganization != null && dataOrganization.length > 0) {
-      parameters.put("Mittente", dataOrganization[0].adClientIdr);
-      parameters.put("Erogante", dataOrganization[0].adClientIdr);
-      parameters.put("AddressOrganization", dataOrganization[0].cLocationIdr);
+      } else {
+        sOrganID = "'" + strOrg + "'";
+      }
+      dataOrganization = OrganizationData.select(this, vars.getLanguage(), sClientID, sOrganID);
+      // put address of organization and employer into same data
+      for (int i = 0; i < data.length; i++) {
+        if (dataOrganization != null && dataOrganization.length > 0) {
+          for (int j = 0; j < dataOrganization.length; j++) {
+            if (data[i].orgid.equals(dataOrganization[j].adOrgId)) {
+              data[i].mittente = dataOrganization[j].adClientIdr;
+              data[i].erogante = dataOrganization[j].adClientIdr;
+              data[i].addressorganization = dataOrganization[j].cLocationIdr;
+              break;
+            }
+          }
+        }
+      }
     }
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("DateFrom", strDateFrom);
     parameters.put("DateTo", strDateTo);
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);

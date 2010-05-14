@@ -66,6 +66,10 @@ deploy.mode=class
 # bbdd.password=TAD
 # bbdd.sessionConfig=ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
 
+# Oracle instances in linux, can delay on getting DB connection (issue #12683). 
+# In these cases this property can be set to solve the problem
+# java.security.egd=file:///dev/urandom
+
 bbdd.rdbms=POSTGRE
 bbdd.driver=org.postgresql.Driver
 bbdd.url=jdbc:postgresql://localhost:5432

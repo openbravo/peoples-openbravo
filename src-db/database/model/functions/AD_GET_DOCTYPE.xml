@@ -43,7 +43,7 @@
         AND AD_Client_Id=p_ClientId
         AND AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId) <> -1
       ORDER BY AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId),
-        IsDefault,
+        IsDefault DESC,
         C_DocType_ID
       )
     LOOP

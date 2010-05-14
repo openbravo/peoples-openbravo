@@ -48,10 +48,10 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpProcessId", "CopyFromSettlement|AD_Process_ID");
-      vars.getGlobalVariable("inpwindowId", "CopyFromSettlement|Window_ID");
+      String strWindowId = vars.getGlobalVariable("inpwindowId", "CopyFromSettlement|Window_ID");
       vars.getGlobalVariable("inpTabId", "CopyFromSettlement|Tab_ID");
-      String strSettlement = vars.getRequiredGlobalVariable("inpcSettlementId",
-          "CopyFromSettlement|C_Settlement_ID");
+      String strSettlement = vars.getGlobalVariable("inpcSettlementId", strWindowId + "|"
+          + "C_Settlement_ID");
       log4j.warn("***************  strSettlement - " + strSettlement);
       printPage(response, vars);
     } else if (vars.commandIn("FIND")) {

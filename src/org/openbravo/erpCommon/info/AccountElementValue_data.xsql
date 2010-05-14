@@ -130,4 +130,12 @@
       ]]></Sql>
         <Parameter name="key"/>
    </SqlMethod>
+
+   <SqlMethod name="selectschemaname" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+        select name from c_acctschema where c_acctschema_id=?
+      ]]></Sql>
+        <Parameter name="key"/>
+   </SqlMethod>
 </SqlClass>

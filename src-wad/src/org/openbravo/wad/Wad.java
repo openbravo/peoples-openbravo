@@ -2737,8 +2737,10 @@ public class Wad extends DefaultHandler {
         fieldsDataUpdate[i].name = ((i > 0) ? ", " : "") + fieldsDataUpdate[i].name;
         if (fieldsDataUpdate[i].reference.equals("24"))
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?,'HH24:MI:SS')";
-        else if (fieldsDataUpdate[i].reference.equals("16")) { // datetime
-          fieldsDataUpdate[i].xmlFormat = "TO_DATE(?, ?)";
+        else if (fieldsDataUpdate[i].reference.equals("16")) {
+          // datetime, use time stamp: it works for ORA date and for PG. In pg, to_date(text, text)
+          // does not save time
+          fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?, ?)";
         } else
           fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool,
               fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue)
@@ -2792,8 +2794,9 @@ public class Wad extends DefaultHandler {
           if (fieldsDataValue[i].reference.equals("24")) {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, 'HH24:MI:SS')";
           } else if (fieldsDataValue[i].reference.equals("16")) {
-            // datetime
-            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_DATE(?, ?)";
+            // datetime, use time stamp: it works for ORA date and for PG. In pg, to_date(text,
+            // text) does not save time
+            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, ?)";
           } else {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "")
                 + WadUtility.sqlCasting(pool, fieldsDataValue[i].reference,
@@ -3110,6 +3113,8 @@ public class Wad extends DefaultHandler {
       if (data == null || data.length == 0)
         return;
 
+      final boolean hasOrg = FieldsData.processHasOrgParam(pool, processId);
+
       final Vector<Object> vecReloads = new Vector<Object>();
       final Vector<Object> vecTotal = new Vector<Object>();
       final Vector<Object> vecCounters = new Vector<Object>();
@@ -3125,8 +3130,14 @@ public class Wad extends DefaultHandler {
                 : "") + data[i].referencevalue;
         data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
         data[i].whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
-        if (data[i].whereclause.equals("") && data[i].type.equals("R"))
+        if (data[i].whereclause.equals("") && data[i].type.equals("R")) {
+          // Add combo reloads for all combo references in case there is a ad_org parameter, if not
+          // only for the params with validation rule
+          if (!hasOrg) {
+            continue;
+          }
           data[i].whereclause = "\"inpadOrgId\"";
+        }
         if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
           data[i].whereclause = "\"inp" + data[i].columnname + "\"";
         if (!data[i].whereclause.equals("")
@@ -3251,6 +3262,7 @@ public class Wad extends DefaultHandler {
       }
 
       xmlDocumentHelper.setData("structure1", processesGenerated);
+      xmlDocumentHelper.setData("structure2", processesGenerated);
       xmlDocumentHelper.setDataArray("reportComboReloadsProcess", "structure1", processData);
       WadUtility.writeFile(fileDir, "ComboReloadsProcessHelper.java", xmlDocumentHelper.print());
       log4j.debug("created :" + fileDir + "/ComboReloadsProcessHelper.java");

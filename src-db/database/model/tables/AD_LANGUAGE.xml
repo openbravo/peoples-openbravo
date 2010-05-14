@@ -18,7 +18,7 @@
         <onCreateDefault/>
       </column>
       <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">

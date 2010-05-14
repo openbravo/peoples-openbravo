@@ -68,8 +68,11 @@ public class Menu extends HttpSecureAppServlet {
     String menuURL = "../utility/VerticalMenu.html";
 
     if ("true".equals(hideMenu)) {
+      vars.setSessionValue("#Hide_BackButton", "true");
       menuLoadingURL = "about:blank";
       menuURL += "?Command=HIDE";
+    } else {
+      vars.removeSessionValue("#Hide_BackButton");
     }
 
     printPageFrameIdentificacion(response, menuURL, (targetmenu.equals("") ? "../utility/Home.html"
