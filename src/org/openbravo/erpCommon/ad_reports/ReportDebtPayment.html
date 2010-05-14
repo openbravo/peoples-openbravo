@@ -574,7 +574,7 @@ function validate(){
                   <div id="sectionStatus"> 
                     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto; border-top: 0px none;">
                       <tr class="DataGrid_Body_Row"> 
-                        <th class="DataGrid_Header_Cell" colspan="13"><span id="fieldStatus">XXSALDADOS</span></th>
+                        <th class="DataGrid_Header_Cell" colspan="15"><span id="fieldStatus">XXSALDADOS</span></th>
                       </tr>
                       <tr class="DataGrid_Body_Row"> 
                         <th class="DataGrid_Header_Cell" width="20%">Description</th>
@@ -583,6 +583,8 @@ function validate(){
                         <th class="DataGrid_Header_Cell" width="6%">Amount</th>
                         <th class="DataGrid_Header_Cell" width="6%">Canceled</th>
                         <th class="DataGrid_Header_Cell" width="5%">Currency</th>
+                        <th class="DataGrid_Header_Cell" width="6%">Original Amount</th>
+                        <th class="DataGrid_Header_Cell" width="5%">Original Currency</th>
                         <th class="DataGrid_Header_Cell" width="8%">Payment rule</th>
                         <th class="DataGrid_Header_Cell" width="7%">Bank Acc.</th>
                         <th class="DataGrid_Header_Cell" width="8%">Cancelled Settlement</th>
@@ -600,6 +602,8 @@ function validate(){
                           <td class="DataGrid_Body_Cell" width="6%" id="fieldAmount">xx3456&nbsp;</td>
                           <td class="DataGrid_Body_Cell" width="7%" id="fieldWriteoffamt">xx12345&nbsp;</td>
                           <td class="DataGrid_Body_Cell" width="5%" id="fieldCurrency">xxEUR</td>
+                          <td class="DataGrid_Body_Cell" width="6%" id="fieldOrigAmount">xx3456&nbsp;</td>
+                          <td class="DataGrid_Body_Cell" width="5%" id="fieldOrigCurrency">xxEUR</td>
                           <td class="DataGrid_Body_Cell" width="8%" id="fieldPaymentRule" >xxContado albarán</td>
                           <td class="DataGrid_Body_Cell" width="7%" id="fieldAccountStr">xx12/07/1923</td>
                           <td class="DataGrid_Body_Cell" width="10%"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpcDebtPaymentId, 'yy', false, document.frmMain, '../Settlement/CancelledPayments_Relation.html', null, false, true);return false;" onmouseover="window.status='Cancelled Settlement';return true;" onmouseout="window.status='';return true;" class="LabelLink_noicon" id="fieldCDebtPaymentId"> 
@@ -614,7 +618,7 @@ function validate(){
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_Cell" colspan="2"><span class="Bold">Total amount</span></th>
                         <th class="DataGrid_Header_Cell" colspan="2"><span class="Bold" id="fieldSumAmount">xx23455.56</span></th>
-                        <th class="DataGrid_Header_Cell" colspan="9">&nbsp;</th>
+                        <th class="DataGrid_Header_Cell" colspan="11">&nbsp;</th>
                       </tr>
                     </table>
                     <div style="height:25px;" />
@@ -638,6 +642,8 @@ function validate(){
                         <th class="DataGrid_Header_Cell" width="6%">Amount</th>
                         <th class="DataGrid_Header_Cell" width="6%">Canceled</th>
                         <th class="DataGrid_Header_Cell" width="5%">Currency</th>
+                        <th class="DataGrid_Header_Cell" width="6%">Original Amount</th>
+                        <th class="DataGrid_Header_Cell" width="5%">Original Currency</th>
                         <th class="DataGrid_Header_Cell" width="10%">Payment rule</th>
                         <th class="DataGrid_Header_Cell" width="10%">Cancelled Settlement</th>
                          <th class="DataGrid_Header_Cell" width="10%">Generated Settlement</th>
@@ -655,6 +661,8 @@ function validate(){
                             <td class="DataGrid_Body_Cell" width="6%" id="fieldAmount3">xx3456&nbsp;</td>
                             <td class="DataGrid_Body_Cell" width="7%" id="fieldWriteoffamt3">xx12345&nbsp;</td>
                             <td class="DataGrid_Body_Cell" width="5%" id="fieldCurrency3">xxEUR</td>
+                            <td class="DataGrid_Body_Cell" width="6%" id="fieldOrigAmount3">xx3456&nbsp;</td>
+                            <td class="DataGrid_Body_Cell" width="5%" id="fieldOrigCurrency3">xxEUR</td>
                             <td class="DataGrid_Body_Cell" width="10%" id="fieldPaymentRule3" >xxContado albarán</td>
                             <td class="DataGrid_Body_Cell" width="10%"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpcDebtPaymentId, yy, false, document.frmMain, '../Settlement/CancelledPayments_Relation.html', null, false, true);return false;" onmouseover="window.status='Cancelled Settlement';return true;" onmouseout="window.status='';return true;" class="LabelLink_noicon" id="fieldCDebtPaymentId4"> 
                             <span id="fieldDebtCancel3">xx24/10/2004</span></A><span>&nbsp;&nbsp;&nbsp;</span></td>
@@ -700,6 +708,8 @@ function validate(){
                         <th class="DataGrid_Header_Cell" width="6%">Amount</th>
                         <th class="DataGrid_Header_Cell" width="6%">Canceled</th>
                         <th class="DataGrid_Header_Cell" width="5%">Currency</th>
+                        <th class="DataGrid_Header_Cell" width="6%">Original Amount</th>
+                        <th class="DataGrid_Header_Cell" width="5%">Original Currency</th>
                         <th class="DataGrid_Header_Cell" width="10%">Payment rule</th>
                         <th class="DataGrid_Header_Cell" width="10%">Cancelled Settlement</th>
                          <th class="DataGrid_Header_Cell" width="10%">Generated Settlement</th>
@@ -716,6 +726,8 @@ function validate(){
                             <td class="DataGrid_Body_Cell" width="6%" id="fieldAmount4">xx3456&nbsp;</td>
                             <td class="DataGrid_Body_Cell" width="7%" id="fieldWriteoffamt4">xx12345&nbsp;</td>
                             <td class="DataGrid_Body_Cell" width="5%" id="fieldCurrency4">xxEUR</td>
+                            <td class="DataGrid_Body_Cell" width="6%" id="fieldOrigAmount4">xx3456&nbsp;</td>
+                            <td class="DataGrid_Body_Cell" width="5%" id="fieldOrigCurrency4">xxEUR</td>
                             <td class="DataGrid_Body_Cell" width="10%" id="fieldPaymentRule4" >xxContado albarán</td>
                             <td class="DataGrid_Body_Cell" width="10%"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpcDebtPaymentId, yy, false, document.frmMain, '../Settlement/CancelledPayments_Relation.html', null, false, true);return false;" onmouseover="window.status='Cancelled Settlement';return true;" onmouseout="window.status='';return true;" class="LabelLink_noicon" id="fieldCDebtPaymentId6"> 
                             <span id="fieldDebtCancel3">xx24/10/2004</span></A><span>&nbsp;&nbsp;&nbsp;</span></td>
@@ -750,6 +762,8 @@ function validate(){
                         <th class="DataGrid_Header_Cell" width="6%">Amount</th>
                         <th class="DataGrid_Header_Cell" width="6%">Canceled</th>
                         <th class="DataGrid_Header_Cell" width="5%">Currency</th>
+                        <th class="DataGrid_Header_Cell" width="6%">Original Amount</th>
+                        <th class="DataGrid_Header_Cell" width="5%">Original Currency</th>
                         <th class="DataGrid_Header_Cell" width="10%">Payment rule</th>
                         <th class="DataGrid_Header_Cell" width="7%">Bank Acc.</th>
                         <th class="DataGrid_Header_Cell" width="10%">Cancelled Settlement</th>
@@ -768,6 +782,8 @@ function validate(){
                         <td class="DataGrid_Body_Cell" width="6%" id="fieldAmount2">xx3456&nbsp;</td>
                         <td class="DataGrid_Body_Cell" width="7%" id="fieldWriteoffamt2">xx12345&nbsp;</td>
                         <td class="DataGrid_Body_Cell" width="5%" id="fieldCurrency2">xxEUR</td>
+                        <td class="DataGrid_Body_Cell" width="6%" id="fieldOrigAmount2">xx3456&nbsp;</td>
+                        <td class="DataGrid_Body_Cell" width="5%" id="fieldOrigCurrency2">xxEUR</td>
                         <td class="DataGrid_Body_Cell" width="10%" id="fieldPaymentRule2" >xxContado albarán</td>
                          <td class="DataGrid_Body_Cell" width="7%" id="fieldAccountStr2">xx12/07/1923</td>
                         <td class="DataGrid_Body_Cell" width="10%"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpcDebtPaymentId, 'yy', false, document.frmMain, '../Settlement/CancelledPayments_Relation.html', null, false, true);return false;" onmouseover="window.status='Cancelled Settlement';return true;" onmouseout="window.status='';return true;" class="LabelLink_noicon" id="fieldCDebtPaymentId2"> 
