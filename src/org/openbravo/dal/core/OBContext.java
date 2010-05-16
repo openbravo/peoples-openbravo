@@ -187,8 +187,7 @@ public class OBContext implements OBNotSingleton {
     }
     getAdminModeStack().clear();
     if (adminModeSet.get() != null) {
-      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext",
-          new IllegalStateException());
+      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext");
       adminModeSet.set(null);
     }
   }
@@ -612,7 +611,7 @@ public class OBContext implements OBNotSingleton {
   // sets the context by reading all user information
   private boolean initialize(String userId, String roleId, String clientId, String orgId,
       String languageCode) {
-    return initialize(userId, roleId, clientId, orgId, null, null);
+    return initialize(userId, roleId, clientId, orgId, languageCode, null);
   }
 
   // sets the context by reading all user information
@@ -897,7 +896,7 @@ public class OBContext implements OBNotSingleton {
    */
   @Deprecated
   public boolean setInAdministratorMode(boolean inAdministratorMode) {
-    final boolean prevMode = isInAdministratorMode();
+    final boolean prevMode = isInAdministratorMode() && !isAdministrator;
     if (inAdministratorMode) {
       adminModeSet.set(this);
     } else {

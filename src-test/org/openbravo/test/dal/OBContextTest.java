@@ -39,6 +39,14 @@ public class OBContextTest extends BaseTest {
   }
 
   /**
+   * Tests if the language is set correctly in the OBContext.
+   */
+  public void testLanguageInContext() {
+    OBContext.setOBContext("100", "0", "1000000", "1000000", "en_US");
+    assertTrue(OBContext.getOBContext().getLanguage().getId().equals("192"));
+  }
+
+  /**
    * Tests if the {@link OBContext#setAdminMode()} and {@link OBContext#restorePreviousMode()} work
    * correctly if the same OBContext is used by multiple threads. This is possible in case of
    * simultaneous ajax requests.
