@@ -58,7 +58,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       String strPriceList = vars.getNumericParameter("inppricelist");
       String strPriceStd = vars.getNumericParameter("inppricestd");
-      String strLineNetAmt = vars.getStringParameter("inplinenetamt");
+      String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
       String strTaxId = vars.getStringParameter("inpcTaxId");
 
       try {
