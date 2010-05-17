@@ -661,8 +661,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
         check = im.checkDependenciesFile(obx);
       }
 
-      // Check commercial modules can be installed
-
       if (check) { // dependencies are statisfied, show modules to install
         // installOrig includes also the module to install
         final Module[] installOrig = im.getModulesToInstall();
@@ -913,6 +911,29 @@ public class ModuleManagement extends HttpSecureAppServlet {
         notSubscribed += moduleDetail;
         notSubscribed += "<br><br>";
       }
+
+      for (Module mod : im.getModulesToUpdate()) {
+        if (firstModule) {
+          moduleID = mod.getModuleID();
+          notSubscribed = msgHeader.replace("@MODULE@", mod.getName() + " - " + mod.getVersionNo());
+          notSubscribed += "<br><br>";
+          firstModule = false;
+        }
+
+        if (moduleID.equals(mod.getModuleID()) || !mod.getIsCommercial()) {
+          continue; // skip details
+        }
+
+        String moduleDetail = moduleTemplate.replace("@MODULE@", mod.getName());
+        String minVersion = minVersions.get(mod.getModuleID());
+        if (minVersion == null) {
+          minVersion = mod.getVersionNo();
+        }
+        moduleDetail = moduleDetail.replace("@MIN_VERSION@", minVersion);
+        moduleDetail = moduleDetail.replace("@RECOMMENDED_VERSION@", mod.getVersionNo());
+        notSubscribed += moduleDetail;
+        notSubscribed += "<br><br>";
+      }
     } else {
 
       for (Module instMod : im.getModulesToInstall()) {
@@ -1001,16 +1022,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
         if (converted.length() == 0) {
           discard[4] = "OBPSInstance-Converted";
         }
-      }
-
-      if ((im.getModulesToInstall().length == 1 && im.getModulesToInstall()[0].getModuleID()
-          .equals("0"))
-          || (im.getModulesToUpdate().length == 1 && im.getModulesToUpdate()[0].getModuleID()
-              .equals("0"))) {
-        String msgOBPSRequired = Utility.messageBD(this, "OBPS_SUBSCRIPTION_REQUIRED", vars
-            .getLanguage());
-        msgOBPSRequired = msgOBPSRequired.replace("@MODULE_LIST@", notSubscribed);
-        notSubscribed = msgOBPSRequired;
       }
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
