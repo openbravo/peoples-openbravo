@@ -37,7 +37,8 @@ BEGIN
   END IF;
   IF UPDATING THEN
     IF (:old.PROCESSED = 'Y' AND(
-       (COALESCE(:old.MOVEMENTDATE, v_DateNull) <> COALESCE(:new.MOVEMENTDATE, v_DateNull))
+       (:new.PROCESSED = 'N')
+       OR (COALESCE(:old.MOVEMENTDATE, v_DateNull) <> COALESCE(:new.MOVEMENTDATE, v_DateNull))
        OR (COALESCE(:old.AD_ORGTRX_ID, '0') <> COALESCE(:new.AD_ORGTRX_ID, '0'))
        OR (COALESCE(:old.M_WAREHOUSE_ID, '0') <> COALESCE(:new.M_WAREHOUSE_ID, '0'))
        OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
