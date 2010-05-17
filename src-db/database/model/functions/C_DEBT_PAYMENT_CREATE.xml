@@ -48,6 +48,9 @@
     v_CBankAccount_ID C_BankStatement.C_BankAccount_ID%TYPE;
   v_C_BankCurrency VARCHAR2(32);
   v_BS_Date DATE;
+    v_c_withholding_id C_DEBT_PAYMENT.C_Withholding_ID%TYPE;
+    v_withholdingamount C_DEBT_PAYMENT.withholdingamount%TYPE;
+    v_count NUMBER;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -95,6 +98,12 @@
       ELSIF(Cur_Parameter.ParameterName='Status') THEN
         v_Status:=Cur_Parameter.p_String;
         DBMS_OUTPUT.PUT_LINE('  Status='||v_Status) ;
+      ELSIF(Cur_Parameter.ParameterName='C_Withholding_ID') THEN
+        v_c_withholding_id:=Cur_Parameter.p_String;
+        DBMS_OUTPUT.PUT_LINE('  C_Withholding_ID='||v_c_withholding_id) ;
+      ELSIF(Cur_Parameter.ParameterName='WithholdingAmount') THEN
+        v_withholdingamount:=Cur_Parameter.P_Number;
+        DBMS_OUTPUT.PUT_LINE('  WithholdingAmount='||v_withholdingamount) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
@@ -112,6 +121,15 @@
       C_BankStatement B
     WHERE L.C_BankStatementLine_ID=v_Record_ID
       AND L.C_BankStatement_ID=B.C_BankStatement_ID;
+    --Check Withholding belongs to Business Partner
+    SELECT COUNT(*)
+    INTO v_count
+    FROM C_BP_Withholding 
+    WHERE C_Withholding_ID=v_c_withholding_id
+    AND C_BPartner_ID=v_C_BPartner_ID;
+    IF (v_count=0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@NOT_BP_WITHHOLDING@');
+    END IF;
     --Insert Settlement
     v_ResultStr:='InsertingSettlement';
     v_SettlementDocType_ID:=Ad_Get_DocType(v_Client_ID, v_AD_Org_ID, TO_CHAR('STT')) ;
@@ -154,7 +172,8 @@
         PAYMENTRULE, ISPAID, AMOUNT, WRITEOFFAMT, DATEPLANNED,
         ISMANUAL, ISVALID,
         /*C_BANKSTATEMENTLINE_ID,*/
-        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL
+        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL, 
+        C_Withholding_ID, WithholdingAmount
       )
       VALUES
       (
@@ -164,7 +183,8 @@
         v_C_BPartner_ID, v_C_Currency_ID,
         v_PaymentRule, 'N', v_Amount*(-1), 0, v_DatePlanned,
         'N', 'Y',
-        'N', 'N', 'Y', v_Status
+        'N', 'N', 'Y', v_Status, 
+        v_c_withholding_id, v_withholdingamount*(-1)
       )
       ;
     Ad_Sequence_Next('C_Debt_Payment', v_Record_ID, v_debtPaymentID) ;
@@ -182,7 +202,8 @@
         PAYMENTRULE, ISPAID, AMOUNT, WRITEOFFAMT,
         DATEPLANNED, ISMANUAL, ISVALID,
         /*C_BANKSTATEMENTLINE_ID,*/
-        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL
+        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL, 
+        C_Withholding_ID, WithholdingAmount
       )
       VALUES
       (
@@ -193,7 +214,8 @@
         v_CBankAccount_ID,
         v_PaymentRule, 'N', v_Amount, 0,
         v_DatePlanned, 'N', 'Y',
-        'N', 'N', 'Y', v_Status
+        'N', 'N', 'Y', v_Status, 
+        v_c_withholding_id, v_withholdingamount
       )
       ;
     C_SETTLEMENT_POST(null, v_settlementID);
