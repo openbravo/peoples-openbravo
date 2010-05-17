@@ -710,7 +710,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         minVersions = calcMinVersions(im);
 
         // check commercial modules and show error page if not allowed to install
-        if (!checkCommercialModules(im, minVersions, response, vars)) {
+        if (!checkCommercialModules(im, minVersions, response, vars, recordId)) {
           return;
         }
 
@@ -853,7 +853,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
   }
 
   private boolean checkCommercialModules(ImportModule im, Map<String, String> minVersions,
-      HttpServletResponse response, VariablesSecureApp vars) throws IOException {
+      HttpServletResponse response, VariablesSecureApp vars, String selectedModuleVerId)
+      throws IOException {
     ActivationKey ak = new ActivationKey();
     ArrayList<Module> notAllowedMods = new ArrayList<Module>();
 
@@ -864,18 +865,23 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     boolean showNotActivatedError = false;
 
-    if (im.getModulesToInstall().length > 1) {
+    // checks whether selected version is commercial and it is installed on a community instance
+    boolean selectedCommercial = false;
+
+    if (im.getModulesToInstall().length > 1 && !ak.isOPSInstance()) {
       for (Module mod : im.getModulesToInstall()) {
-        if (mod.getIsCommercial() && !ak.isOPSInstance()) {
+        if (mod.getIsCommercial()) {
           showNotActivatedError = true;
-          break;
+        } else if (mod.getModuleVersionID().equals(selectedModuleVerId)) {
+          selectedCommercial = true;
         }
       }
 
       for (Module mod : im.getModulesToUpdate()) {
-        if (mod.getIsCommercial() && !ak.isOPSInstance()) {
+        if (mod.getIsCommercial()) {
           showNotActivatedError = true;
-          break;
+        } else if (mod.getModuleVersionID().equals(selectedModuleVerId)) {
+          selectedCommercial = true;
         }
       }
     }
@@ -1008,6 +1014,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
         discard[1] = "OBPSInstance-Expired";
         discard[2] = "OBPSInstance-NoActiveYet";
         discard[3] = "OBPSInstance-Converted";
+        if (showNotActivatedError && selectedCommercial) {
+          // Community module depending on commercial
+          discard[4] = "CEInstance-text";
+        }
       } else {
         discard[0] = "CEInstance";
         if (notSubscribed.length() == 0) {
