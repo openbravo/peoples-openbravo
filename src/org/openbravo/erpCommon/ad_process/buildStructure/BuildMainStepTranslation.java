@@ -104,4 +104,13 @@ public class BuildMainStepTranslation {
     stepTranslations.add(stepTranslation);
   }
 
+  public BuildStepTranslation getBuildStepTranslationForCode(String code) {
+    for (BuildStepTranslation stepTranslation : stepTranslations) {
+      if (stepTranslation.getCode().equals(code)) {
+        return stepTranslation;
+      }
+    }
+    return null;
+  }
+
 }
