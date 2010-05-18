@@ -378,6 +378,7 @@
               */
               -- Get Order DocType Info - approved from Invoice DocType
               BEGIN
+              v_DocType_ID:=NULL;
               v_ResultStr:='GetDocTypeInfo - ' || Cur_Order.C_DocType_ID;  SELECT od.C_DocTypeInvoice_ID,
                 od.DocSubTypeSO
               INTO v_DocType_ID,
@@ -389,8 +390,11 @@
                 AND ID.IsActive='Y';
               EXCEPTION
               WHEN OTHERS THEN
-                RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+                v_DocType_ID:=NULL;
               END;
+              IF (v_DocType_ID IS NULL) THEN
+                RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+              END IF;
               --
               Ad_Sequence_Next('C_Invoice', Cur_Order.AD_Client_ID, p_Invoice_ID) ;
               Ad_Sequence_Doctype(v_DocType_ID, Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
@@ -902,6 +906,7 @@
                   END;
                 ELSE
                   BEGIN
+                  v_DocType_ID:=NULL;
                   SELECT od.C_DocTypeInvoice_ID
                   INTO v_DocType_ID
                   FROM C_DOCTYPE od,
@@ -913,8 +918,12 @@
                     AND ID.IsActive='Y';
                   EXCEPTION
                   WHEN OTHERS THEN
-                    RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+                    v_DocType_ID:=NULL;
                   END;
+                  IF (v_DocType_ID IS NULL) THEN
+                    RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+                  END IF;
+
                 END IF;
                 IF(NOT FINISH_PROCESS) THEN
                   -- Get other defaults

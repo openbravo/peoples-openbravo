@@ -46,7 +46,7 @@
         <onCreateDefault/>
       </column>
       <column name="WRITEOFFAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <column name="C_GLITEM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">

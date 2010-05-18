@@ -179,9 +179,6 @@
 		<defaultValueExpression ><![CDATA[new DecimalFormat("###,##0.00", new DecimalFormatSymbols())
 ]]></defaultValueExpression>
 	</parameter>
-	<parameter name="Title" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["General Ledger Report"]]></defaultValueExpression>
-	</parameter>
 	<parameter name="SHOWDIMENSIONS" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="TOTAL" isForPrompting="false" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT ID, ACCOUNT_ID, NAME,
@@ -351,19 +348,6 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="630"
-						height="25"
-						key="textField-23"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font fontName="SansSerif" size="18"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Title}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Subtitle"
@@ -455,6 +439,21 @@
 						<font size="8"/>
 					</textElement>
 				<text><![CDATA[Account Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="630"
+						height="25"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="SansSerif" size="18"/>
+					</textElement>
+				<text><![CDATA[Trial Balance Report]]></text>
 				</staticText>
 			</band>
 		</pageHeader>

@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2009 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -67,6 +67,8 @@ class TranslationHandler extends DefaultHandler {
 
   private int m_updateCount = 0;
 
+  private String m_Translated = null;
+
   static Logger log4j = Logger.getLogger(TranslationHandler.class);
 
   /*************************************************************************/
@@ -98,6 +100,7 @@ class TranslationHandler extends DefaultHandler {
         log4j.debug("AD_Language=" + m_AD_Language + ", TableName=" + m_TableName);
     } else if (qName.equals(Translation.XML_ROW_TAG)) {
       m_curID = attributes.getValue(Translation.XML_ROW_ATTRIBUTE_ID);
+      m_Translated = attributes.getValue(Translation.XML_ROW_ATTRIBUTE_TRANSLATED);
       m_sql = new StringBuffer();
     } else if (qName.equals(Translation.XML_VALUE_TAG)) {
       m_curColumnName = attributes.getValue(Translation.XML_VALUE_ATTRIBUTE_COLUMN);
@@ -146,7 +149,7 @@ class TranslationHandler extends DefaultHandler {
         m_sql.append(",");
       m_sql.append("Updated=now()"); // .append(DB.TO_DATE(m_time,
       // false));
-      m_sql.append(",IsTranslated='Y'");
+      m_sql.append(",IsTranslated='" + m_Translated + "'");
       // Where section
       m_sql.append(" WHERE ").append(m_TableName).append("_ID='").append(m_curID).append("'");
       m_sql.append(" AND AD_Language='").append(m_AD_Language).append("'");

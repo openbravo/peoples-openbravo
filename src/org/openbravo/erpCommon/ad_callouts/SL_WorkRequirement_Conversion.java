@@ -74,7 +74,7 @@ public class SL_WorkRequirement_Conversion extends HttpSecureAppServlet {
     if (!strSecQty.equals("") && !strConvRate.equals("")) {
       convRate = new BigDecimal(strConvRate);
       secondaryQty = new BigDecimal(strSecQty);
-      quantity = secondaryQty.divide(convRate, 0, BigDecimal.ROUND_HALF_UP);
+      quantity = secondaryQty.divide(convRate, 0, BigDecimal.ROUND_CEILING);
       resultado.append("new Array(\"inpquantity\", " + quantity.toString() + ")");
     }
     resultado.append(");");
