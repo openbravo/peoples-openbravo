@@ -750,6 +750,7 @@ public class WadUtility {
     setPropertyValue(prop, field, "ColumnNameSearch", "realname", "");
     setPropertyValue(prop, field, "SearchName", "searchname", "");
     setPropertyValue(prop, field, "AD_CallOut_ID", "adCalloutId", "");
+    setPropertyValue(prop, field, "ValidateOnNew", "validateonnew", "Y");
     setPropertyValue(prop, field, "CallOutName", "calloutname", "");
     setPropertyValue(prop, field, "CallOutMapping", "mappingnameCallout", "");
     setPropertyValue(prop, field, "CallOutClassName", "classnameCallout", "");

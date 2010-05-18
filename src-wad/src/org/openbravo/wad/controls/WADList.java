@@ -57,8 +57,10 @@ public class WADList extends WADControl {
       text.append("  }");
       setValidation(replaceHTML(text.toString()));
     }
-    setOnLoad("if (inputValue(key)==null || inputValue(key)==\"\") updateOnChange(frm.inp"
-        + getData("ColumnNameInp") + ");");
+    if ("Y".equals(getData("ValidateOnNew"))) {
+      setOnLoad("if (inputValue(key)==null || inputValue(key)==\"\") updateOnChange(frm.inp"
+          + getData("ColumnNameInp") + ");");
+    }
     setCalloutJS();
   }
 
