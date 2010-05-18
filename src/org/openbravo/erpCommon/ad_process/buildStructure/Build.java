@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.betwixt.io.BeanReader;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.data.FieldProvider;
 import org.xml.sax.InputSource;
 
@@ -53,8 +52,6 @@ public class Build {
   public static Build getBuildFromXMLFile(String buildFilePath, String mappingFilePath)
       throws Exception {
 
-    String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
-        .toString();
     FileReader xmlReader = new FileReader(buildFilePath);
 
     BeanReader beanReader = new BeanReader();
