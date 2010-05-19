@@ -710,7 +710,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         minVersions = calcMinVersions(im);
 
         // check commercial modules and show error page if not allowed to install
-        if (!checkCommercialModules(im, minVersions, response, vars, recordId)) {
+        if (!checkCommercialModules(im, minVersions, response, vars, module)) {
           return;
         }
 
@@ -853,7 +853,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   }
 
   private boolean checkCommercialModules(ImportModule im, Map<String, String> minVersions,
-      HttpServletResponse response, VariablesSecureApp vars, String selectedModuleVerId)
+      HttpServletResponse response, VariablesSecureApp vars, Module selectedModule)
       throws IOException {
     ActivationKey ak = new ActivationKey();
     ArrayList<Module> notAllowedMods = new ArrayList<Module>();
@@ -868,25 +868,31 @@ public class ModuleManagement extends HttpSecureAppServlet {
     // checks whether selected version is commercial and it is installed on a community instance
     boolean selectedCommercial = false;
 
-    if (im.getModulesToInstall().length > 1 && !ak.isOPSInstance()) {
+    if (!ak.isOPSInstance()) {
       for (Module mod : im.getModulesToInstall()) {
         if (mod.getIsCommercial()) {
-          showNotActivatedError = true;
-        } else if (mod.getModuleVersionID().equals(selectedModuleVerId)) {
+          if (!mod.getModuleID().equals(selectedModule.getModuleID())) {
+            // Show only in case there are commercial dependencies
+            showNotActivatedError = true;
+          }
+        } else if (mod.getModuleID().equals(selectedModule.getModuleID())) {
           selectedCommercial = true;
         }
       }
-
       for (Module mod : im.getModulesToUpdate()) {
         if (mod.getIsCommercial()) {
-          showNotActivatedError = true;
-        } else if (mod.getModuleVersionID().equals(selectedModuleVerId)) {
+          if (!mod.getModuleID().equals(selectedModule.getModuleID())) {
+            // Show only in case there are commercial dependencies
+            showNotActivatedError = true;
+          }
+        } else if (mod.getModuleID().equals(selectedModule.getModuleID())) {
           selectedCommercial = true;
         }
       }
     }
 
     if (showNotActivatedError) {
+      // Showing dependencies on commercial modules
       String msgHeader = Utility
           .messageBD(this, "MODULE_DEPENDS_ON_COMMERCIAL", vars.getLanguage());
       String moduleTemplate = Utility.messageBD(this, "COMMERCIAL_MODULE_DETAIL", vars
@@ -894,7 +900,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       boolean firstModule = true;
       String moduleID = "";
-
       for (Module mod : im.getModulesToInstall()) {
         if (firstModule) {
           moduleID = mod.getModuleID();
@@ -906,7 +911,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
         if (moduleID.equals(mod.getModuleID()) || !mod.getIsCommercial()) {
           continue; // skip details
         }
-
         String moduleDetail = moduleTemplate.replace("@MODULE@", mod.getName());
         String minVersion = minVersions.get(mod.getModuleID());
         if (minVersion == null) {
