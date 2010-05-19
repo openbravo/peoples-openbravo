@@ -709,6 +709,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // calculate minimum required version of each extra module (installs & updates)
         minVersions = calcMinVersions(im);
 
+        if (islocal) {
+          // set the selected module for obx installation
+          if (installOrig != null && installOrig.length > 0) {
+            module = installOrig[0];
+          } else {
+            Module[] modsToUpdate = im.getModulesToUpdate();
+            if (modsToUpdate != null && modsToUpdate.length > 0) {
+              module = modsToUpdate[0];
+            }
+          }
+        }
         // check commercial modules and show error page if not allowed to install
         if (!checkCommercialModules(im, minVersions, response, vars, module)) {
           return;
