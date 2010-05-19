@@ -29,7 +29,7 @@
       <![CDATA[
 		select ad_org.ad_org_id as id, ad_org.name as name,
         '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
-        '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id
+        '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id, '' AS REGCOUNT
 		from ad_org
 		where ad_org.isperiodcontrolallowed = 'Y'
 		and ad_client_id = ?
@@ -384,5 +384,20 @@
         WHERE AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="client"/>
+  </SqlMethod>
+   <SqlMethod name="getRegCount" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+        SELECT COUNT(*) AS REGCOUNT FROM FACT_ACCT 
+        WHERE AD_CLIENT_ID = ? 
+        AND AD_ORG_ID = ? 
+        AND C_ACCTSCHEMA_ID = ? 
+        AND C_PERIOD_ID = ?
+        AND FACTACCTTYPE = 'R'
+     ]]></Sql>
+    <Parameter name="clientId"/>
+    <Parameter name="orgId"/>
+    <Parameter name="c_acctschema_id"/>
+     <Parameter name="c_period_id"/>
   </SqlMethod>
 </SqlClass>
