@@ -43,7 +43,7 @@ public class CreateDoctypeTemplate extends ModuleScript{
 		    			  strReportFileName="Goods Receipt-@our_ref@";
 		    		  }
 		    		  String strDoctypeTemplate_id=UUID.randomUUID().toString().replace("-", "").toUpperCase();
-		    		  CreateDoctypeTemplateData.insertDoctypeTemplate(cp.getConnection(), cp, strDoctypeTemplate_id, data[i].adClientId, data[i].cDoctypeId, data[i].name+" Report Template", "@basedesign@/org/openbravo/erpReports", strReportFileName, "RptM_InOut.jrxml");
+		    		  CreateDoctypeTemplateData.insertDoctypeTemplate(cp.getConnection(), cp, strDoctypeTemplate_id, data[i].adClientId, data[i].cDoctypeId, data[i].name, "@basedesign@/org/openbravo/erpReports", strReportFileName, "RptM_InOut.jrxml");
 		    		  CreateDoctypeTemplateData.insertEmailDefinition(cp.getConnection(), cp, data[i].adClientId, strDoctypeTemplate_id);
 		    	  }
 			}

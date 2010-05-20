@@ -72,7 +72,11 @@ public class SE_Invoice_Project extends HttpSecureAppServlet {
 
     StringBuffer resultado = new StringBuffer();
 
-    if (strIsSOTrx.equals("Y")) {
+// To be consistent with Purchase/Sales Orders and Sales invoices,
+// This behaviour is implemented for Purchase invoices too
+// as requiested in issue 0013323
+
+//    if (strIsSOTrx.equals("Y")) {
       if (data == null || data.length == 0) {
         resultado.append("var calloutName='SE_Invoice_Project';\n\n");
         resultado.append("var respuesta = null;");
@@ -86,10 +90,10 @@ public class SE_Invoice_Project extends HttpSecureAppServlet {
         resultado.append("new Array(\"inpcPaymenttermId\", \"" + PaymentTerm + "\")");
         resultado.append(");");
       }
-    } else {
-      resultado.append("var calloutName='SE_Invoice_Project';\n\n");
-      resultado.append("var respuesta = null;");
-    }
+//    } else {
+//      resultado.append("var calloutName='SE_Invoice_Project';\n\n");
+//      resultado.append("var respuesta = null;");
+//    }
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");

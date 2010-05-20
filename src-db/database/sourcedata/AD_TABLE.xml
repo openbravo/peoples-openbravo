@@ -28,8 +28,7 @@
 <!--101-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--101-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--101-->  <NAME><![CDATA[ADColumn]]></NAME>
-<!--101-->  <DESCRIPTION><![CDATA[Table Column definitions
-Used  in Column]]></DESCRIPTION>
+<!--101-->  <DESCRIPTION><![CDATA[Table Column definitions<BR>Used  in Column]]></DESCRIPTION>
 <!--101-->  <HELP><![CDATA[Defines the columns of a table
 The Used in Column Tab defines the table and column this element resides in.]]></HELP>
 <!--101-->  <TABLENAME><![CDATA[AD_Column]]></TABLENAME>

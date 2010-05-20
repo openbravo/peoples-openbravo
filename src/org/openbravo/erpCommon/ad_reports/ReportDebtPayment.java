@@ -117,8 +117,10 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportDebtPayment|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportDebtPayment|DateTo");
-      String strCal1 = vars.getNumericRequestGlobalVariable("inpCal1", "ReportDebtPayment|Cal1");
-      String strCal2 = vars.getNumericRequestGlobalVariable("inpCal2", "ReportDebtPayment|Cal2");
+      String strCal1 = vars.getNumericParameter("inpCal1");
+      vars.setSessionValue("ReportDebtPayment|Cal1", strCal1);
+      String strCal2 = vars.getNumericParameter("inpCal2");
+      vars.setSessionValue("ReportDebtPayment|Cal2", strCal2);
       String strPaymentRule = vars.getRequestGlobalVariable("inpCPaymentRuleId",
           "ReportDebtPayment|PaymentRule");
       String strSettle = vars.getRequestGlobalVariable("inpSettle", "ReportDebtPayment|Settle");
@@ -151,8 +153,10 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportDebtPayment|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportDebtPayment|DateTo");
-      String strCal1 = vars.getNumericRequestGlobalVariable("inpCal1", "ReportDebtPayment|Cal1");
-      String strCal2 = vars.getNumericRequestGlobalVariable("inpCal2", "ReportDebtPayment|Cal2");
+      String strCal1 = vars.getNumericParameter("inpCal1");
+      vars.setSessionValue("ReportDebtPayment|Cal1", strCal1);
+      String strCal2 = vars.getNumericParameter("inpCal2");
+      vars.setSessionValue("ReportDebtPayment|Cal2", strCal2);
       String strPaymentRule = vars.getRequestGlobalVariable("inpCPaymentRuleId",
           "ReportDebtPayment|PaymentRule");
       String strSettle = vars.getRequestGlobalVariable("inpSettle", "ReportDebtPayment|Settle");

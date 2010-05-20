@@ -28,12 +28,12 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-  v_New_Plan_ID:=:new.M_ProductionPlan_ID;
-  v_Old_Plan_ID:=:old.M_ProductionPlan_ID;
   -- Get ID
   IF(UPDATING OR INSERTING) THEN
+    v_New_Plan_ID:=:new.M_ProductionPlan_ID;
     SELECT mp.M_Production_ID INTO v_ID FROM M_ProductionPlan mp WHERE mp.M_ProductionPlan_ID = v_New_Plan_ID;
   ELSE
+    v_Old_Plan_ID:=:old.M_ProductionPlan_ID;
     SELECT mp.M_Production_ID INTO v_ID FROM M_ProductionPlan mp WHERE mp.M_ProductionPlan_ID = v_Old_Plan_ID;
   END IF;
   -- ReadOnly Check
