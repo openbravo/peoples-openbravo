@@ -97,7 +97,9 @@ BEGIN
                /*
                   Retrieving the prepayment account NUMBER
                */
-               c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Prepayment_Acct);
+               IF(Cur_Defaults.C_Prepayment_Acct IS NOT NULL) THEN
+               	c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Prepayment_Acct);
+               END IF;
 			            
              /*
                   Inserting the new account NUMBER
@@ -138,12 +140,15 @@ BEGIN
                /*
                  Retrieving the liability services account NUMBER
                */ 
-		c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Services_Acct);
+               IF(Cur_Defaults.V_Liability_Services_Acct IS NOT NULL) THEN
+					c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Services_Acct);
+			   END IF;
 		/*
                  Retrieving the prepayment account NUMBER
               */
+              IF(Cur_Defaults.V_Prepayment_Acct IS NOT NULL) THEN
                c_validcombination_clone(Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Prepayment_Acct);
-               
+              END IF;
     		/*
                  Inserting the new account NUMBER
                */
