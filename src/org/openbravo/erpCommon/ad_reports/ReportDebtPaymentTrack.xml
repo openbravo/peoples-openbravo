@@ -74,7 +74,7 @@
     <FIELD id="fieldDateTrx">datetrx</FIELD>
     <FIELD id="fieldDatePlanned">dateplanned</FIELD>
     <FIELD id="fieldObs">obs</FIELD>
-    <FIELD id="fieldAmount">amount</FIELD>
+    <FIELD id="fieldAmount" format="euroInform">amount</FIELD>
     <FIELD id="fieldTotalBPAmount" attribute="value">bpAmt</FIELD>
     <FIELD id="fieldTotalPPAAmount" attribute="value">ppaAmt</FIELD>
     <FIELD id="fieldId" attribute="href" replace="yy">id</FIELD>
