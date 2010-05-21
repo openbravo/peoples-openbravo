@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ob:Openbravo xmlns:ob="http://www.openbravo.com">
+<Order>
+<client id="1000000" entity-name="ADClient" identifier="SmallBazaar"/>
+<organization id="1000000" entity-name="Organization" identifier="Main"/>
+<active>true</active>
+<creationDate transient="true">2010-05-07T20:40:25.129Z</creationDate>
+<createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+<updated transient="true">2010-05-10T20:48:32.936Z</updated>
+<updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+<salesTransaction>true</salesTransaction>
+<documentNo>50042</documentNo>
+<documentStatus>DR</documentStatus>
+<documentAction>CO</documentAction>
+<processNow>false</processNow>
+<processed>false</processed>
+<documentType id="0" entity-name="DocumentType" identifier="** New **"/>
+<transactionDocument id="1000026" entity-name="DocumentType" identifier="Standard Order"/>
+<description>descripcionnnnn</description>
+<delivered>false</delivered>
+<reinvoice>false</reinvoice>
+<print>false</print>
+<selected>false</selected>
+<salesRepresentative id="1000013" entity-name="ADUser" identifier="Our Sales Agent"/>
+<orderDate>2010-05-07T00:00:00.0Z</orderDate>
+<scheduledDeliveryDate>2010-05-07T00:00:00.0Z</scheduledDeliveryDate>
+<datePrinted></datePrinted>
+<accountingDate>2010-05-07T00:00:00.0Z</accountingDate>
+<businessPartner id="1000004" entity-name="BusinessPartner" identifier="The Simpsons Ltd"/>
+<invoiceAddress id="1000001" entity-name="BusinessPartnerLocation" identifier=".Springfield, Avenida Evergreen Terrace 742"/>
+<partnerAddress id="1000001" entity-name="BusinessPartnerLocation" identifier=".Springfield, Avenida Evergreen Terrace 742"/>
+<orderReference></orderReference>
+<printDiscount>false</printDiscount>
+<currency id="102" entity-name="Currency" identifier="EUR"/>
+<formOfPayment>1</formOfPayment>
+<paymentTerms id="1000000" entity-name="FinancialMgmtPaymentTerm" identifier="Immediate"/>
+<invoiceTerms>S</invoiceTerms>
+<deliveryTerms>A</deliveryTerms>
+<freightCostRule>I</freightCostRule>
+<freightAmount>0.00</freightAmount>
+<deliveryMethod>S</deliveryMethod>
+<shippingCompany></shippingCompany>
+<charge></charge>
+<chargeAmount>0.00</chargeAmount>
+<priority>5</priority>
+<summedLineAmount>0.00</summedLineAmount>
+<grandTotalAmount>0.00</grandTotalAmount>
+<warehouse id="1000000" entity-name="Warehouse" identifier="Main Warehouse"/>
+<priceList id="1000005" entity-name="PricingPriceList"/>
+<priceIncludesTax>false</priceIncludesTax>
+<salesCampaign></salesCampaign>
+<project></project>
+<activity></activity>
+<posted>N</posted>
+<userContact id="1000003" entity-name="ADUser" identifier="Homer"/>
+<copyFrom>false</copyFrom>
+<dropShipPartner></dropShipPartner>
+<dropShipLocation></dropShipLocation>
+<dropShipContact></dropShipContact>
+<selfService>false</selfService>
+<trxOrganization></trxOrganization>
+<stDimension></stDimension>
+<ndDimension></ndDimension>
+<deliveryNotes></deliveryNotes>
+<incoterms></incoterms>
+<iNCOTERMSDescription></iNCOTERMSDescription>
+<generateTemplate>false</generateTemplate>
+<deliveryLocation></deliveryLocation>
+<copyFromPO></copyFromPO>
+<orderDiscountList/>
+<orderTaxList/>
+<financialMgmtDebtPaymentList/>
+<orderLineList/>
+</Order>
+</ob:Openbravo>

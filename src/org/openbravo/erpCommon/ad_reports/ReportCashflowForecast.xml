@@ -55,10 +55,10 @@
 
   <structure name="structureSummary">
     <FIELD id="fieldAcctSumary">bankaccount</FIELD>
-    <FIELD id="fieldBalanceSumary">initialbalance</FIELD>
-    <FIELD id="fieldIncomeSummary">income</FIELD>
-    <FIELD id="fieldPaymentSummary">payment</FIELD>
-    <FIELD id="fieldFinalSummary">finalsummary</FIELD>
+    <FIELD id="fieldBalanceSumary" format="euroInform">initialbalance</FIELD>
+    <FIELD id="fieldIncomeSummary" format="euroInform">income</FIELD>
+    <FIELD id="fieldPaymentSummary" format="euroInform">payment</FIELD>
+    <FIELD id="fieldFinalSummary" format="euroInform">finalsummary</FIELD>
 
     <FUNCTION id="fieldBalanceSumary" name="LT" arg1="fieldBalanceSumary" arg2="param0" attribute="class" replace="xx"/>
     <FUNCTION id="fieldFinalSummary" name="LT" arg1="fieldFinalSummary" arg2="param0" attribute="class" replace="xx"/>
@@ -71,9 +71,9 @@
 
   <structure name="structureDetail">
     <FIELD id="fieldAccount">bankaccount</FIELD>
-    <FIELD id="fieldAmountInitial">initialbalance</FIELD>
-    <FIELD id="fieldAmountfinal">finalsummary</FIELD>
-    <FIELD id="fieldSumAmount">incpay</FIELD>
+    <FIELD id="fieldAmountInitial" format="euroInform">initialbalance</FIELD>
+    <FIELD id="fieldAmountfinal" format="euroInform">finalsummary</FIELD>
+    <FIELD id="fieldSumAmount" format="euroInform">incpay</FIELD>
 
 
     <SUBREPORT id="reportAccountDate" name="reportAcctDate" report="org/openbravo/erpCommon/ad_reports/ReportCashflowForecastDateAcct"/>

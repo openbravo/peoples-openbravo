@@ -21,10 +21,12 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RequestFilter;
@@ -214,6 +216,7 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
       result.append("\nnew Array(\"");
       result.append(param);
       result.append("\", ");
+      result.append("new Array(");
 
       selectcounter = 0;
     }
@@ -251,7 +254,7 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
       result.append("\", \"");
       result.append(FormatUtilities.replaceJS(value));
       result.append("\",");
-      result.append(selected ? "true" : "false");
+      result.append(selected ? "\"true\"" : "\"false\"");
       result.append(")");
     }
 
@@ -262,6 +265,7 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
       if (selectcounter == 0) {
         result.append("null");
       }
+      result.append(")");
       result.append(")");
     }
 

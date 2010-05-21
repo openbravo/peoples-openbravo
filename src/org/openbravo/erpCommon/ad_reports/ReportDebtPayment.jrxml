@@ -5,10 +5,10 @@
 		 name="ReportDebtPayment"
 		 columnCount="1"
 		 printOrder="Vertical"
-		 orientation="Portrait"
-		 pageWidth="595"
-		 pageHeight="842"
-		 columnWidth="535"
+		 orientation="Landscape"
+		 pageWidth="842"
+		 pageHeight="595"
+		 columnWidth="782"
 		 columnSpacing="0"
 		 leftMargin="30"
 		 rightMargin="30"
@@ -226,7 +226,7 @@
 						style="Detail_Header"
 						x="1"
 						y="0"
-						width="529"
+						width="599"
 						height="15"
 						key="textField-15"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -240,7 +240,7 @@
 						style="Detail_Header"
 						x="1"
 						y="15"
-						width="73"
+						width="64"
 						height="15"
 						key="staticText-20"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -253,9 +253,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="111"
+						x="102"
 						y="15"
-						width="31"
+						width="30"
 						height="15"
 						key="staticText-18"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -267,7 +267,7 @@
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="74"
+						x="65"
 						y="15"
 						width="37"
 						height="15"
@@ -282,7 +282,7 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="142"
+						x="132"
 						y="15"
 						width="30"
 						height="15"
@@ -297,9 +297,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="172"
+						x="162"
 						y="15"
-						width="34"
+						width="30"
 						height="15"
 						key="staticText-22"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -312,7 +312,7 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="206"
+						x="192"
 						y="15"
 						width="30"
 						height="15"
@@ -324,12 +324,42 @@
 				<text><![CDATA[Currency]]></text>
 				</staticText>
 				<staticText>
+                    <reportElement
+                        style="Detail_Header"
+                        mode="Opaque"
+                        x="222"
+                        y="15"
+                        width="30"
+                        height="15"
+                        key="staticText-31"/>
+                    <box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font pdfFontName="Helvetica-Bold" size="4" isBold="true"/>
+                    </textElement>
+                <text><![CDATA[Original Amount]]></text>
+                </staticText>
+				<staticText>
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="236"
+						x="252"
 						y="15"
-						width="41"
+						width="30"
+						height="15"
+						key="staticText-32"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="4" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Original Currency]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="282"
+						y="15"
+						width="40"
 						height="15"
 						key="staticText-24"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -342,9 +372,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="320"
+						x="362"
 						y="15"
-						width="50"
+						width="30"
 						height="15"
 						key="staticText-25"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -357,9 +387,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="370"
+						x="392"
 						y="15"
-						width="63"
+						width="48"
 						height="15"
 						key="staticText-26"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -372,9 +402,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="433"
+						x="440"
 						y="15"
-						width="27"
+						width="25"
 						height="15"
 						key="staticText-27"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -387,9 +417,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="460"
+						x="465"
 						y="15"
-						width="37"
+						width="32"
 						height="15"
 						key="staticText-28"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -404,7 +434,7 @@
 						mode="Opaque"
 						x="497"
 						y="15"
-						width="33"
+						width="103"
 						height="15"
 						key="staticText-29"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -415,7 +445,7 @@
 				</staticText>
 				<line direction="TopDown">
 					<reportElement
-						x="530"
+						x="600"
 						y="0"
 						width="0"
 						height="30"
@@ -437,9 +467,9 @@
 					<reportElement
 						style="Detail_Header"
 						mode="Opaque"
-						x="277"
+						x="322"
 						y="15"
-						width="43"
+						width="40"
 						height="15"
 						key="staticText-30"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -502,7 +532,7 @@
 					<reportElement
 						x="1"
 						y="0"
-						width="73"
+						width="64"
 						height="16"
 						key="textField-3"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -523,9 +553,9 @@
 				</line>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="111"
+						x="102"
 						y="0"
-						width="31"
+						width="30"
 						height="16"
 						key="textField-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -536,7 +566,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Band" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="74"
+						x="65"
 						y="0"
 						width="37"
 						height="16"
@@ -550,7 +580,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="142"
+						x="132"
 						y="0"
 						width="30"
 						height="16"
@@ -563,7 +593,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="206"
+						x="192"
 						y="0"
 						width="30"
 						height="16"
@@ -575,10 +605,36 @@
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVISOSYM}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+                    <reportElement
+                        x="222"
+                        y="0"
+                        width="30"
+                        height="16"
+                        key="textField-17"/>
+                    <box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font fontName="Bitstream Vera Sans" size="4"/>
+                    </textElement>
+                <textFieldExpression   class="java.lang.String"><![CDATA[($F{AMOUNT}!=null)?$P{NUMBERFORMAT}.format($F{AMOUNT}):new String(" ")]]></textFieldExpression>
+                </textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="236"
+						x="252"
 						y="0"
-						width="41"
+						width="30"
+						height="16"
+						key="textField-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="4"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CURRENCY}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="282"
+						y="0"
+						width="40"
 						height="16"
 						key="textField-8"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -589,9 +645,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="320"
+						x="362"
 						y="0"
-						width="50"
+						width="30"
 						height="16"
 						key="textField-9"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -602,9 +658,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="370"
+						x="392"
 						y="0"
-						width="63"
+						width="48"
 						height="16"
 						key="textField-10"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -615,9 +671,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="433"
+						x="440"
 						y="0"
-						width="27"
+						width="25"
 						height="16"
 						key="textField-11"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -628,9 +684,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="460"
+						x="465"
 						y="0"
-						width="37"
+						width="32"
 						height="16"
 						key="textField-12"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -643,7 +699,7 @@
 					<reportElement
 						x="497"
 						y="0"
-						width="33"
+						width="103"
 						height="16"
 						key="textField-13"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -654,9 +710,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="172"
+						x="162"
 						y="0"
-						width="34"
+						width="30"
 						height="16"
 						key="textField-14"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -667,7 +723,7 @@
 				</textField>
 				<line direction="TopDown">
 					<reportElement
-						x="530"
+						x="600"
 						y="0"
 						width="0"
 						height="16"
@@ -680,16 +736,16 @@
 						style="Report_Footer"
 						x="2"
 						y="16"
-						width="527"
+						width="598"
 						height="0"
 						key="line-21"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Band" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="277"
+						x="322"
 						y="0"
-						width="43"
+						width="40"
 						height="16"
 						key="textField-16"
 						stretchType="RelativeToBandHeight"/>

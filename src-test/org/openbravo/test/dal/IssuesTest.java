@@ -27,15 +27,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.io.SAXReader;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
@@ -90,6 +94,12 @@ import org.openbravo.test.base.BaseTest;
  * 
  * - https://issues.openbravo.com/view.php?id=13136: OBContext.getLanguage does only use users'
  * default language, and does not honor language change in the role change popup
+ * 
+ * - https://issues.openbravo.com/view.php?id=13281: [REST] when inserting an object through REST
+ * allow setting the organization through xml
+ * 
+ * https://issues.openbravo.com/view.php?id=13283: [REST] use organization of the object to
+ * retrieved referenced objects
  * 
  * @author mtaal
  * @author iperdomo
@@ -395,5 +405,32 @@ public class IssuesTest extends BaseTest {
   public void test13136() {
     OBContext.setOBContext("100", "0", "0", "0", "en_IN");
     assertEquals("130", OBContext.getOBContext().getLanguage().getId());
+  }
+
+  /**
+   * https://issues.openbravo.com/view.php?id=13281 [REST] when inserting an object through REST
+   * allow setting the organization through xml
+   * 
+   * https://issues.openbravo.com/view.php?id=13283: [REST] use organization of the object to
+   * retrieved referenced objects
+   */
+  public void test13281And13283() throws Exception {
+    OBContext.setOBContext("1000000", "1000004", "1000000", "0");
+
+    // use the same logic as in the DalWebService
+    final XMLEntityConverter xec = XMLEntityConverter.newInstance();
+    xec.setClient(OBContext.getOBContext().getCurrentClient());
+    xec.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+
+    // for a webservice referenced entities should not be created at all!
+    xec.getEntityResolver().setOptionCreateReferencedIfNotFound(false);
+
+    final SAXReader reader = new SAXReader();
+    final Document document = reader.read(this.getClass().getResourceAsStream("test_13281.xml"));
+    final List<BaseOBObject> result = xec.process(document);
+    assertTrue(result.size() == 1);
+    assertTrue(result.get(0) instanceof Order);
+    final Order order = (Order) result.get(0);
+    assertTrue(order.getOrganization().getId().equals("1000000"));
   }
 }

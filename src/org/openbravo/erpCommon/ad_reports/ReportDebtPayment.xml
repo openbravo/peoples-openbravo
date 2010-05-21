@@ -81,9 +81,11 @@
     <FIELD id="fieldDescription">description</FIELD>
     <FIELD id="fieldDateplanned">dateplanned</FIELD>
     <FIELD id="fieldDocumentno">invoice</FIELD>
+    <FIELD id="fieldOrigCurrency">currency</FIELD>
     <FIELD id="fieldCurrency">convisosym</FIELD>
     <FIELD id="fieldPaymentRule">paymentrule</FIELD>
     <FIELD id="fieldAmount" format="euroInform">convamount</FIELD>
+    <FIELD id="fieldOrigAmount" format="euroInform">amount</FIELD>
     <FIELD id="fieldWriteoffamt" format="euroInform">writeoffamt</FIELD>
     <FIELD id="fieldDebtCancel">debtcancel</FIELD>
     <FIELD id="fieldDebtGenerate">debtgenerate</FIELD>
@@ -119,9 +121,11 @@
     <FIELD id="fieldDescription2">description</FIELD>
     <FIELD id="fieldDateplanned2">dateplanned</FIELD>
     <FIELD id="fieldDocumentno2">invoice</FIELD>
+    <FIELD id="fieldOrigCurrency2">currency</FIELD>
     <FIELD id="fieldCurrency2">convisosym</FIELD>
     <FIELD id="fieldPaymentRule2">paymentrule</FIELD>
     <FIELD id="fieldAmount2" format="euroInform">convamount</FIELD>
+    <FIELD id="fieldOrigAmount2" format="euroInform">amount</FIELD>
     <FIELD id="fieldWriteoffamt2" format="euroInform">writeoffamt</FIELD>
     <FIELD id="fieldDebtCancel2">debtcancel</FIELD>
     <FIELD id="fieldDebtGenerate2">debtgenerate</FIELD>
@@ -150,7 +154,9 @@
     <FIELD id="fieldDescription3">description</FIELD>
     <FIELD id="fieldDateplanned3">dateplanned</FIELD>
     <FIELD id="fieldDocumentno3">invoice</FIELD>
+    <FIELD id="fieldOrigCurrency3">currency</FIELD>
     <FIELD id="fieldAmount3" format="euroInform">convamount</FIELD>
+    <FIELD id="fieldOrigAmount3" format="euroInform">amount</FIELD>
     <FIELD id="fieldWriteoffamt3" format="euroInform">writeoffamt</FIELD>
      <FIELD id="fieldCurrency3">convisosym</FIELD>
      <FIELD id="fieldPaymentRule3">paymentrule</FIELD>
@@ -178,7 +184,9 @@
     <FIELD id="fieldDateplanned4">dateplanned</FIELD>
     <FIELD id="fieldDocumentno4">invoice</FIELD>
     <FIELD id="fieldAmount4" format="euroInform">convamount</FIELD>
+    <FIELD id="fieldOrigAmount4" format="euroInform">amount</FIELD>
     <FIELD id="fieldWriteoffamt4" format="euroInform">writeoffamt</FIELD>
+    <FIELD id="fieldOrigCurrency4">currency</FIELD>
      <FIELD id="fieldCurrency4">convisosym</FIELD>
      <FIELD id="fieldPaymentRule4">paymentrule</FIELD>
      <FIELD id="fieldDebtCancel4">debtcancel</FIELD>

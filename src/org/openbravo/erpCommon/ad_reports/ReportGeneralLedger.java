@@ -96,10 +96,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedger|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo");
-      String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
-          "ReportGeneralLedger|AmtFrom");
-      String strAmtTo = vars.getNumericRequestGlobalVariable("inpAmtTo",
-          "ReportGeneralLedger|AmtTo");
+      String strAmtFrom = vars.getNumericParameter("inpAmtFrom");
+      vars.setSessionValue("ReportGeneralLedger|AmtFrom", strAmtFrom);
+      String strAmtTo = vars.getNumericParameter("inpAmtTo");
+      vars.setSessionValue("ReportGeneralLedger|AmtTo", strAmtTo);
       String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
@@ -116,8 +116,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
-      String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportGeneralLedger|mProductId", "", IsIDFilter.instance);
+      String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
+          "ReportGeneralLedger|mProductId", IsIDFilter.instance);
       String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
           "ReportGeneralLedger|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars
@@ -170,10 +170,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedger|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo");
-      String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
-          "ReportGeneralLedger|AmteFrom");
-      String strAmtTo = vars.getNumericRequestGlobalVariable("inpAmtTo",
-          "ReportGeneralLedger|AmtTo");
+      String strAmtFrom = vars.getNumericParameter("inpAmtFrom");
+      vars.setSessionValue("ReportGeneralLedger|AmtFrom", strAmtFrom);
+      String strAmtTo = vars.getNumericParameter("inpAmtTo");
+      vars.setSessionValue("ReportGeneralLedger|AmtTo", strAmtTo);
       String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",

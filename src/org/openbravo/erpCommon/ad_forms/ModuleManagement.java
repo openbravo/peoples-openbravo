@@ -661,8 +661,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
         check = im.checkDependenciesFile(obx);
       }
 
-      // Check commercial modules can be installed
-
       if (check) { // dependencies are statisfied, show modules to install
         // installOrig includes also the module to install
         final Module[] installOrig = im.getModulesToInstall();
@@ -711,8 +709,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // calculate minimum required version of each extra module (installs & updates)
         minVersions = calcMinVersions(im);
 
+        if (islocal) {
+          // set the selected module for obx installation
+          if (installOrig != null && installOrig.length > 0) {
+            module = installOrig[0];
+          } else {
+            Module[] modsToUpdate = im.getModulesToUpdate();
+            if (modsToUpdate != null && modsToUpdate.length > 0) {
+              module = modsToUpdate[0];
+            }
+          }
+        }
         // check commercial modules and show error page if not allowed to install
-        if (!checkCommercialModules(im, minVersions, response, vars)) {
+        if (!checkCommercialModules(im, minVersions, response, vars, module)) {
           return;
         }
 
@@ -855,7 +864,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
   }
 
   private boolean checkCommercialModules(ImportModule im, Map<String, String> minVersions,
-      HttpServletResponse response, VariablesSecureApp vars) throws IOException {
+      HttpServletResponse response, VariablesSecureApp vars, Module selectedModule)
+      throws IOException {
     ActivationKey ak = new ActivationKey();
     ArrayList<Module> notAllowedMods = new ArrayList<Module>();
 
@@ -866,23 +876,34 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     boolean showNotActivatedError = false;
 
-    if (im.getModulesToInstall().length > 1) {
+    // checks whether selected version is commercial and it is installed on a community instance
+    boolean selectedCommercial = false;
+
+    if (!ak.isOPSInstance()) {
       for (Module mod : im.getModulesToInstall()) {
-        if (mod.getIsCommercial() && !ak.isOPSInstance()) {
-          showNotActivatedError = true;
-          break;
+        if (mod.getIsCommercial()) {
+          if (!mod.getModuleID().equals(selectedModule.getModuleID())) {
+            // Show only in case there are commercial dependencies
+            showNotActivatedError = true;
+          }
+        } else if (mod.getModuleID().equals(selectedModule.getModuleID())) {
+          selectedCommercial = true;
         }
       }
-
       for (Module mod : im.getModulesToUpdate()) {
-        if (mod.getIsCommercial() && !ak.isOPSInstance()) {
-          showNotActivatedError = true;
-          break;
+        if (mod.getIsCommercial()) {
+          if (!mod.getModuleID().equals(selectedModule.getModuleID())) {
+            // Show only in case there are commercial dependencies
+            showNotActivatedError = true;
+          }
+        } else if (mod.getModuleID().equals(selectedModule.getModuleID())) {
+          selectedCommercial = true;
         }
       }
     }
 
     if (showNotActivatedError) {
+      // Showing dependencies on commercial modules
       String msgHeader = Utility
           .messageBD(this, "MODULE_DEPENDS_ON_COMMERCIAL", vars.getLanguage());
       String moduleTemplate = Utility.messageBD(this, "COMMERCIAL_MODULE_DETAIL", vars
@@ -890,8 +911,29 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       boolean firstModule = true;
       String moduleID = "";
-
       for (Module mod : im.getModulesToInstall()) {
+        if (firstModule) {
+          moduleID = mod.getModuleID();
+          notSubscribed = msgHeader.replace("@MODULE@", mod.getName() + " - " + mod.getVersionNo());
+          notSubscribed += "<br><br>";
+          firstModule = false;
+        }
+
+        if (moduleID.equals(mod.getModuleID()) || !mod.getIsCommercial()) {
+          continue; // skip details
+        }
+        String moduleDetail = moduleTemplate.replace("@MODULE@", mod.getName());
+        String minVersion = minVersions.get(mod.getModuleID());
+        if (minVersion == null) {
+          minVersion = mod.getVersionNo();
+        }
+        moduleDetail = moduleDetail.replace("@MIN_VERSION@", minVersion);
+        moduleDetail = moduleDetail.replace("@RECOMMENDED_VERSION@", mod.getVersionNo());
+        notSubscribed += moduleDetail;
+        notSubscribed += "<br><br>";
+      }
+
+      for (Module mod : im.getModulesToUpdate()) {
         if (firstModule) {
           moduleID = mod.getModuleID();
           notSubscribed = msgHeader.replace("@MODULE@", mod.getName() + " - " + mod.getVersionNo());
@@ -987,6 +1029,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
         discard[1] = "OBPSInstance-Expired";
         discard[2] = "OBPSInstance-NoActiveYet";
         discard[3] = "OBPSInstance-Converted";
+        if (showNotActivatedError && selectedCommercial) {
+          // Community module depending on commercial
+          discard[4] = "CEInstance-text";
+        }
       } else {
         discard[0] = "CEInstance";
         if (notSubscribed.length() == 0) {
@@ -1001,16 +1047,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
         if (converted.length() == 0) {
           discard[4] = "OBPSInstance-Converted";
         }
-      }
-
-      if ((im.getModulesToInstall().length == 1 && im.getModulesToInstall()[0].getModuleID()
-          .equals("0"))
-          || (im.getModulesToUpdate().length == 1 && im.getModulesToUpdate()[0].getModuleID()
-              .equals("0"))) {
-        String msgOBPSRequired = Utility.messageBD(this, "OBPS_SUBSCRIPTION_REQUIRED", vars
-            .getLanguage());
-        msgOBPSRequired = msgOBPSRequired.replace("@MODULE_LIST@", notSubscribed);
-        notSubscribed = msgOBPSRequired;
       }
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

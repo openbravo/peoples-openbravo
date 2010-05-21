@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2010 Openbravo SLU
+* All portions are Copyright (C) 2001-2009 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -68,7 +68,6 @@ export.database: exports database structure and data to xml files.
   <property name="base.src.trl" location="src-trl" />
   <property name="base.src.wad" location="src-wad" />
   <property name="base.src.gen" location="src-gen" />
-  <property name="base.src.test" location="src-test" />
   <property name="base.client.src" location="srcClient" />
   <property name="base.db" location="src-db/database" />
   <property name="base.web" location="web" />
@@ -186,12 +185,6 @@ export.database: exports database structure and data to xml files.
     <and>
       <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
     </and>
-  </condition>
-  
-  <condition property="java.security.egd" value="">
-    <not>
-      <isset property="${java.security.egd}" />
-    </not>
   </condition>
 
   <path id="project.class.path">
@@ -669,7 +662,6 @@ export.database: exports database structure and data to xml files.
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
-      <sysproperty key="java.security.egd" value="${java.security.egd}"/>
     </java>
   </target>
   

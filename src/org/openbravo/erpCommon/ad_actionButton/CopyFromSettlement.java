@@ -133,9 +133,9 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
               "The field Amount is mandatory and cannot be left empty");
           return myError;
         }
-        spChars = " `()\\~!@^&*+\"|:=,< >$-%/;'";
+        spChars = " `()\\~!@^&*+\"|:=,< >$%/;'";
         int pos;
-        for (int a = 1; a <= 25; a++) {
+        for (int a = 1; a <= 24; a++) {
           pos = strImporte.indexOf(spChars.charAt(a));
           if (pos != -1) {
             inpEvent = true;

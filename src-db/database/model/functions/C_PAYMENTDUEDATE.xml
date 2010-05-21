@@ -99,7 +99,7 @@ BEGIN
     v_DueDate := C_Datedayinmonth(v_FixMonthDay, TO_DATE(v_docDate)) ;
   ELSE
     v_DueDate := TRUNC(p_DocDate) + COALESCE(p_netDays, 0) ;
-    v_DueDate := ADD_MONTHS(v_DueDate, COALESCE(p_fixMonthOffset, 0)) ;
+    v_DueDate := C_ADD_MONTHS2(v_DueDate, COALESCE(p_fixMonthOffset, 0)) ;
     WHILE(TO_CHAR(v_DueDate, 'D') NOT LIKE p_netDay)
     LOOP
       v_DueDate := v_DueDate + 1;
