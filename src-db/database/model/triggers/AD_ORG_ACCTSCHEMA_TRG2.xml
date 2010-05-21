@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_ORG_ACCTSCHEMA_TRG2">
-    <trigger name="AD_ORG_ACCTSCHEMA_TRG2" table="AD_ORG_ACCTSCHEMA" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="AD_ORG_ACCTSCHEMA_TRG2" table="AD_ORG_ACCTSCHEMA" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
