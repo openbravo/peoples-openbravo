@@ -709,7 +709,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // calculate minimum required version of each extra module (installs & updates)
         minVersions = calcMinVersions(im);
 
-        if (islocal) {
+        if (module == null) {
           // set the selected module for obx installation
           if (installOrig != null && installOrig.length > 0) {
             module = installOrig[0];
@@ -882,21 +882,23 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (!ak.isOPSInstance()) {
       for (Module mod : im.getModulesToInstall()) {
         if (mod.getIsCommercial()) {
-          if (!mod.getModuleID().equals(selectedModule.getModuleID())) {
+          if (selectedModule != null && !mod.getModuleID().equals(selectedModule.getModuleID())) {
             // Show only in case there are commercial dependencies
             showNotActivatedError = true;
           }
-        } else if (mod.getModuleID().equals(selectedModule.getModuleID())) {
+        } else if (selectedModule != null
+            && !mod.getModuleID().equals(selectedModule.getModuleID())) {
           selectedCommercial = true;
         }
       }
       for (Module mod : im.getModulesToUpdate()) {
         if (mod.getIsCommercial()) {
-          if (!mod.getModuleID().equals(selectedModule.getModuleID())) {
+          if (selectedModule != null && !!mod.getModuleID().equals(selectedModule.getModuleID())) {
             // Show only in case there are commercial dependencies
             showNotActivatedError = true;
           }
-        } else if (mod.getModuleID().equals(selectedModule.getModuleID())) {
+        } else if (selectedModule != null
+            && !mod.getModuleID().equals(selectedModule.getModuleID())) {
           selectedCommercial = true;
         }
       }
