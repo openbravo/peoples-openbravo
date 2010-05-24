@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,6 +57,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
    */
   private static final String PREVIOUS_RANGE = "ReportGeneralLedgerJournal.previousRange";
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -492,7 +493,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     String strSubtitle = Utility.messageBD(this, "CompanyName", vars.getLanguage()) + ": "
         + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient());
 
-    if (strDateFrom.equals("") && strDateTo.equals(""))
+    if (!"".equals(strDateFrom) || !"".equals(strDateTo))
       strSubtitle += " - " + Utility.messageBD(this, "Period", vars.getLanguage()) + ": "
           + strDateFrom + " - " + strDateTo;
 
@@ -533,6 +534,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     return strCheck;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportGeneralLedgerJournal. This Servlet was made by Pablo Sarobe modified by everybody";
   } // end of getServletInfo() method
