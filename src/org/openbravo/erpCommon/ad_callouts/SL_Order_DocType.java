@@ -92,7 +92,7 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
       String AD_Sequence_ID = "0";
       SLOrderDocTypeData[] data = null;
 
-      if (!newDocNo && Integer.valueOf(strDocType).intValue() != 0) {
+      if (!newDocNo && !"0".equals(strDocType)) {
         data = SLOrderDocTypeData.select(this, strDocType);
         if (data != null && data.length > 0) {
           AD_Sequence_ID = data[0].adSequenceId;
