@@ -254,8 +254,8 @@ function showHideFilters(identifier) {
 		resizeArea();
 	}
 	function submitCommandWithMarkChecked(elementValue){
-		var frm = document.frmMain;
-		markCheckedAllElements(frm.inpcBPartnerId_IN);
+	    var frm = document.frmMain;
+	    markCheckedAllElements(frm.inpcBPartnerId_IN);
 	    markCheckedAllElements(frm.inpcProjectId_IN);
 	    markCheckedAllElements(frm.inpmProductId_IN);
 	    submitCommandFormParameter('FIND', frm.inpcElementValueIdFrom, elementValue,false, frm, 'ReportGeneralLedger.html', '_self', false, true);
