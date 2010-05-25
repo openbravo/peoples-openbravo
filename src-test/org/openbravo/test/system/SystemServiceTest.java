@@ -44,21 +44,25 @@ public class SystemServiceTest extends BaseTest {
    */
   public void testChangedDataSet() {
     setSystemAdministratorContext();
+    final long oneDay = 1000 * 60 * 60 * 24;
+
     final List<DataSet> dss = OBDal.getInstance().createCriteria(DataSet.class).list();
-    final Date now = new Date(System.currentTimeMillis());
+    // check one day in the future to prevent date/time rounding issues
+    final Date now = new Date(System.currentTimeMillis() + oneDay);
     for (DataSet ds : dss) {
-      assertFalse(DataSetService.getInstance().hasChanged(ds, now));
+      assertFalse("Fails on dataset " + ds.getName() + " checking date " + now, DataSetService
+          .getInstance().hasChanged(ds, now));
     }
 
     // 600 days in the past
-    final long oneDay = 1000 * 60 * 60 * 24;
     final long manyDays = (long) 600 * oneDay;
     final Date past = new Date(System.currentTimeMillis() - manyDays);
     for (DataSet ds : dss) {
       if (!DataSetService.getInstance().hasData(ds)) {
         continue;
       }
-      assertTrue(DataSetService.getInstance().hasChanged(ds, past));
+      assertTrue("Fails on dataset " + ds.getName() + " checking date " + past, DataSetService
+          .getInstance().hasChanged(ds, past));
     }
   }
 
