@@ -402,7 +402,7 @@
                   AND F.AD_ORG_ID IN ('1')
                   AND F.AD_CLIENT_ID IN ('1')
                   AND F.ISACTIVE = 'Y')
-            UNION
+            UNION ALL
             (SELECT F.ACCOUNT_ID AS ACCOUNT_ID, F.AMTACCTDR AS AMTACCTDR, F.AMTACCTCR AS AMTACCTCR,
                     F.DATEACCT, F.FACTACCTTYPE
              FROM FACT_ACCT F
