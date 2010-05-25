@@ -38,24 +38,24 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class SystemServiceTest extends BaseTest {
+  private static final long ONEDAY = 1000 * 60 * 60 * 24;
 
   /**
    * Test the {@link DataSetService#hasChanged(DataSet, Date)} method.
    */
   public void testChangedDataSet() {
     setSystemAdministratorContext();
-    final long oneDay = 1000 * 60 * 60 * 24;
 
     final List<DataSet> dss = OBDal.getInstance().createCriteria(DataSet.class).list();
     // check one day in the future to prevent date/time rounding issues
-    final Date now = new Date(System.currentTimeMillis() + oneDay);
+    final Date tomorrow = new Date(System.currentTimeMillis() + ONEDAY);
     for (DataSet ds : dss) {
-      assertFalse("Fails on dataset " + ds.getName() + " checking date " + now, DataSetService
-          .getInstance().hasChanged(ds, now));
+      assertFalse("Fails on dataset " + ds.getName() + " checking date " + tomorrow, DataSetService
+          .getInstance().hasChanged(ds, tomorrow));
     }
 
     // 600 days in the past
-    final long manyDays = (long) 600 * oneDay;
+    final long manyDays = (long) 600 * ONEDAY;
     final Date past = new Date(System.currentTimeMillis() - manyDays);
     for (DataSet ds : dss) {
       if (!DataSetService.getInstance().hasData(ds)) {
@@ -74,8 +74,8 @@ public class SystemServiceTest extends BaseTest {
     setSystemAdministratorContext();
     final Class<?>[] clzs = new Class<?>[] { Table.class, Column.class, Reference.class };
 
-    final Date now = new Date(System.currentTimeMillis());
-    assertFalse(SystemService.getInstance().hasChanged(clzs, now));
+    final Date tomorrow = new Date(System.currentTimeMillis() + ONEDAY);
+    assertFalse(SystemService.getInstance().hasChanged(clzs, tomorrow));
 
     // 600 days in the past
     final Date past = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 600));
