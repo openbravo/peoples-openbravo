@@ -253,6 +253,14 @@ function showHideFilters(identifier) {
 	function onResizeDo(){
 		resizeArea();
 	}
+	function submitCommandWithMarkChecked(elementValue){
+		var frm = document.frmMain;
+		markCheckedAllElements(frm.inpcBPartnerId_IN);
+	    markCheckedAllElements(frm.inpcProjectId_IN);
+	    markCheckedAllElements(frm.inpmProductId_IN);
+	    submitCommandFormParameter('FIND', frm.inpcElementValueIdFrom, elementValue,false, frm, 'ReportGeneralLedger.html', '_self', false, true);
+	}
+	
 </script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -916,7 +924,7 @@ function showHideFilters(identifier) {
                             <span id="showExpand" style="display: table-cell; display: -moz-inline-box;"><a href="#" onclick="updateData('OPEN', 'hhqq');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="expandButton">
                               <span id="buttonTreemmm" class="datawarehouseclose"></span>
                             </a></span>
-                            <a href="#" onclick="submitCommandFormParameter('FIND', document.frmMain.inpcElementValueIdFrom, 'xx', false, document.frmMain, 'ReportGeneralLedger.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">
+                            <a href="#" onclick="submitCommandWithMarkChecked('xx');return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">
                               <span id="fieldAccount">xx70000</span>
                             </a>
                             <span id="fieldDescAccount">xx600</span>
