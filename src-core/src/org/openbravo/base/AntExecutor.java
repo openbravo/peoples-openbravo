@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -43,11 +42,6 @@ public class AntExecutor {
 
   private Project project;
   private String baseDir;
-  private PrintStream log;
-  private PrintStream err;
-  private String returnMessage;
-  private PrintWriter out;
-
   private FileOutputStream logFile;
   private PrintStream ps;
 
@@ -85,51 +79,6 @@ public class AntExecutor {
    */
   public AntExecutor(String buildDir) throws Exception {
     this(buildDir + "/build.xml", buildDir);
-  }
-
-  @Deprecated
-  public void setPrintWriter(PrintWriter p) {
-    out = p;
-  }
-
-  /**
-   * Sets a file where the execution log will be saved.
-   * 
-   * @param directory
-   *          - Path to the directory for the file
-   * @param logFileName
-   *          - Name of the log file
-   * @return - The complete file name (including directory)
-   * @throws Exception
-   */
-  @Deprecated
-  public String setLogFile(String directory, String logFileName) throws Exception {
-    // DefaultLogger logger = new DefaultLogger();
-    final FileOutputStream logFile = new FileOutputStream(directory + "/" + logFileName);
-    // PrintStream ps = new PrintStream(logFile);
-    // logger.setOutputPrintStream(ps);
-    // logger.setErrorPrintStream(ps);
-    // logger.setMessageOutputLevel(Project.MSG_INFO);
-    // project.addBuildListener(logger);
-    return directory + "/" + logFileName;
-  }
-
-  /**
-   * Sets a file where the execution log will be saved. It only receives the file name, the path is
-   * the log directory inside the base directory
-   * 
-   * @param name
-   *          - File name
-   * @return - The complete file name (including directory)
-   * @throws Exception
-   */
-  @Deprecated
-  public String setLogFile(String name) throws Exception {
-    final File dir = new File(baseDir + "/log");
-    if (!dir.exists())
-      if (!dir.mkdir())
-        return null;
-    return setLogFile(baseDir + "/log", name);
   }
 
   public void setLogFileAndListener(String filename) {

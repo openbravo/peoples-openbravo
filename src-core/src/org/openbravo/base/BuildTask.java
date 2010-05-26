@@ -90,6 +90,7 @@ public class BuildTask {
     log.info("Modules to be applied: " + unnappliedModules);
     ant.runTask(tasks);
     updateFinalState();
+    ant.closeLogFile();
   }
 
   private static String getUnnapliedModules() throws Exception {
