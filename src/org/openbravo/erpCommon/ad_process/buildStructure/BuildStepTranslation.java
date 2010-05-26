@@ -12,6 +12,10 @@
 
 package org.openbravo.erpCommon.ad_process.buildStructure;
 
+/**
+ * This class contains the translation information for a Build Step (in particular, its original and
+ * translated name)
+ */
 public class BuildStepTranslation {
   private String code;
   private String originalName;

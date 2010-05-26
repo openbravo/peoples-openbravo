@@ -15,6 +15,11 @@ package org.openbravo.erpCommon.ad_process.buildStructure;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class contains the translation information for a Build Main Step (in particular, its
+ * translated name, and error/warning/success messages)
+ * 
+ */
 public class BuildMainStepTranslation {
 
   private String code;

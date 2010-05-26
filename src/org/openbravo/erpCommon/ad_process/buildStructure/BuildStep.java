@@ -12,6 +12,10 @@
 
 package org.openbravo.erpCommon.ad_process.buildStructure;
 
+/**
+ * This class contains the information related to a Build Step (basically, its code and name)
+ * 
+ */
 public class BuildStep {
   private String code;
   private String name;

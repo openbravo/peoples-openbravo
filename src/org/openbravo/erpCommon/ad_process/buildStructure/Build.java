@@ -21,6 +21,11 @@ import org.apache.commons.betwixt.io.BeanReader;
 import org.openbravo.data.FieldProvider;
 import org.xml.sax.InputSource;
 
+/**
+ * This class contains the information related to the build structure (steps, error, warning and
+ * success messages, and the final state of the system if the build fails or succeeds)
+ * 
+ */
 public class Build {
   private List<BuildMainStep> mainSteps;
 

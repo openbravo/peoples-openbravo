@@ -20,6 +20,11 @@ import org.apache.commons.betwixt.io.BeanReader;
 import org.openbravo.data.FieldProvider;
 import org.xml.sax.InputSource;
 
+/**
+ * This class contains the full translation information of a Build (specifically, it contains its
+ * corresponding BuildMainStep and BuildStep translations)
+ * 
+ */
 public class BuildTranslation {
   private String language;
   private List<BuildMainStepTranslation> mainStepTranslations;

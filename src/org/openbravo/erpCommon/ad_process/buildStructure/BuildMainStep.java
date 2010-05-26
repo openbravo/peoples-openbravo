@@ -15,6 +15,11 @@ package org.openbravo.erpCommon.ad_process.buildStructure;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class contains the information related to a Build Main Step (which is a step which can
+ * contain substeps, and can produce specific error, warning or success messages, and change the
+ * state of the system depending of failure)
+ */
 public class BuildMainStep {
   private String code;
   private String name;
