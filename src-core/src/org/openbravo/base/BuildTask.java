@@ -89,7 +89,6 @@ public class BuildTask {
       log.info(task);
     log.info("Modules to be applied: " + unnappliedModules);
     ant.runTask(tasks);
-    updateFinalState();
     ant.closeLogFile();
   }
 
@@ -133,13 +132,6 @@ public class BuildTask {
     ResultSet rs = ps.executeQuery();
     rs.next();
     return rs.getInt(1) != 0;
-  }
-
-  private static boolean updateFinalState() throws Exception {
-    String strSql = "UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'";
-    ConnectionProvider cp = getConnectionProvider();
-    PreparedStatement ps = cp.getPreparedStatement(strSql);
-    return (ps.executeUpdate() != 0);
   }
 
   private static ConnectionProvider getConnectionProvider() {

@@ -348,10 +348,12 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="compile.complete.development" depends="init" unless="mode.war">
+    <updatesystemstatus v="RB22"/>
     <ant dir="${base.src}" target="compile.complete.development" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="compile.complete.war" depends="init" if="mode.war">
+    <updatesystemstatus v="RB22"/>
     <antcall target="compile.complete" />
     <antcall target="war" />
   </target>
@@ -639,7 +641,6 @@ export.database: exports database structure and data to xml files.
     <updatesystemstatus v="RB22"/>
     <antcall target="apply.modules.compile"/>
 
-    <updatesystemstatus v="RB23"/>
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
@@ -659,6 +660,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="apply.module">
+    <updatesystemstatus v="RB23"/>
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />

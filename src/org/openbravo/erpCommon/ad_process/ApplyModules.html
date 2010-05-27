@@ -260,8 +260,10 @@
     //calling the getError function to display a success/warning/error final message
     function endProcess(paramXMLParticular, XMLHttpRequestObj) {
       if (getReadyStateHandler(XMLHttpRequestObj)) { 
+          var frm = document.frmMain;
+          submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
+          return true;
       }
-      return true;
     }
 
     //This function starts the ApplyModules task, and is called when the user presses the "Yes" button
@@ -412,9 +414,6 @@
           if(contains(end_states,state) || errorStatus=="Error"){
             stopLocalTimer();
             processing = false;
-            top.opener.setProcessingMode('window', false);
-            var frm = document.frmMain;
-            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
           }
           start=true;
           var stateindex=getStatusIndex(state);
@@ -443,6 +442,12 @@
               }
           }
           current_state=stateindex;
+
+          if(contains(end_states,state) || errorStatus=="Error"){
+            top.opener.setProcessingMode('window', false);
+            var frm = document.frmMain;
+            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
+          }
         }
       }
       if(contains(end_states,state) || errorStatus=="Error"){
