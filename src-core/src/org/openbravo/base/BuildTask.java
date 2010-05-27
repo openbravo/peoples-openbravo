@@ -106,6 +106,7 @@ public class BuildTask {
       if (i > 0)
         rt += ",";
       rt += rs.getString(1);
+      i++;
     }
     return rt;
   }
