@@ -265,16 +265,23 @@
           return true;
       }
     }
+    
+    function buildInit(paramXMLParticular, XMLHttpRequestObj) {
+        if (getReadyStateHandler(XMLHttpRequestObj)) { 
+            var frm = document.frmMain;
+            startLocalTimer('localTimer');
+            processing = true;
+            top.opener.setProcessingMode('window', true, false);
+            displayLogicElement('confirmation',false);
+            displayLogicElement('rebuildTable',true);
+            return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, null);
+        }
+      }
 
     //This function starts the ApplyModules task, and is called when the user presses the "Yes" button
     function startProcessing() {
-      startLocalTimer('localTimer');
-      processing = true;
-      top.opener.setProcessingMode('window', true, false);
       var frm = document.frmMain;
-      displayLogicElement('confirmation',false);
-      displayLogicElement('rebuildTable',true);
-      return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, null);
+      submitXmlHttpRequest(buildInit, frm, "RESETREBUILDSTATE", "ApplyModules.html", false, null, null);
     }
 
     //Returns the index of the specified state in the state array

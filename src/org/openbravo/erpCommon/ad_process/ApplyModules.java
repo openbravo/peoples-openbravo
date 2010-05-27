@@ -76,6 +76,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       printPage(request, response, vars);
     } else if (vars.commandIn("STARTAPPLY")) {
       startApply(response, vars);
+    } else if (vars.commandIn("RESETREBUILDSTATE")) {
+      resetBuild(response, vars);
     } else if (vars.commandIn("TOMCAT")) {
       printPageTomcat(request, response, vars);
     } else if (vars.commandIn("RESTART")) {
@@ -356,6 +358,37 @@ public class ApplyModules extends HttpSecureAppServlet {
     }
   }
 
+  private void resetBuild(HttpServletResponse response, VariablesSecureApp vars) {
+    Build build = getBuildFromXMLFile();
+    vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
+    try {
+      if (OBScheduler.getInstance().getScheduler().isStarted())
+        OBScheduler.getInstance().getScheduler().shutdown(true);
+    } catch (Exception e) {
+      log4j.warn("Could not shutdown scheduler", e);
+      // We will not log an exception if the scheduler complains. The user shouldn't notice this
+    }
+    PreparedStatement ps = null;
+    PreparedStatement ps2 = null;
+    try {
+      ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
+      ps.executeUpdate();
+      ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
+          + build.getMainSteps().get(0).getCode() + "'");
+      ps2.executeUpdate();
+
+    } catch (final Exception e) {
+      createModuleLog(false, e.getMessage());
+    } finally {
+      try {
+        releasePreparedStatement(ps);
+        releasePreparedStatement(ps2);
+      } catch (SQLException e) {
+        // Ignored on purpose
+      }
+    }
+  }
+
   /**
    * Method to be called via AJAX. Creates a new AntExecutor object, saves it in session and
    * executes the apply modules task on it.
@@ -364,10 +397,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       throws IOException, ServletException {
     Build build = getBuildFromXMLFile();
     User currentUser = OBContext.getOBContext().getUser();
-    vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
+
     OBContext.setAdminMode();
-    PreparedStatement ps = null;
-    PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
     PreparedStatement ps4 = null;
     PreparedStatement updateSession = null;
@@ -375,17 +406,6 @@ public class ApplyModules extends HttpSecureAppServlet {
     try {
       // We first shutdown the background process, so that it doesn't interfere
       // with the rebuild process
-      try {
-        if (OBScheduler.getInstance().getScheduler().isStarted())
-          OBScheduler.getInstance().getScheduler().shutdown(true);
-      } catch (Exception e) {
-        // We will not log an exception if the scheduler complains. The user shouldn't notice this
-      }
-      ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
-      ps.executeUpdate();
-      ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
-          + build.getMainSteps().get(0).getCode() + "'");
-      ps2.executeUpdate();
 
       Properties props = new Properties();
       props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
@@ -427,8 +447,6 @@ public class ApplyModules extends HttpSecureAppServlet {
         props.setProperty("log4j.rootCategory", "INFO,R");
         PropertyConfigurator.configure(props);
         ant.closeLogFile();
-        releasePreparedStatement(ps);
-        releasePreparedStatement(ps2);
         releasePreparedStatement(ps3);
         releasePreparedStatement(ps4);
         releasePreparedStatement(updateSession);
