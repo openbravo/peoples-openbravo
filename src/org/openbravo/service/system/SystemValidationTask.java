@@ -33,7 +33,8 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.ddlutils.task.DatabaseUtils;
+import org.openbravo.ddlutils.util.DBSMOBUtil;
+import org.openbravo.ddlutils.util.ModuleRow;
 import org.openbravo.model.ad.module.Module;
 
 /**
@@ -84,8 +85,9 @@ public class SystemValidationTask extends DalInitializingTask {
         String dbPrefix = module.getModuleDBPrefixList().get(0).getName();
 
         String excludeobjects = "com.openbravo.db.OpenbravoExcludeFilter";
-        ExcludeFilter filter = DatabaseUtils.getExcludeFilter(excludeobjects);
-        filter.addPrefix(dbPrefix);
+        DBSMOBUtil.getInstance().getModules(platform, excludeobjects);
+        final ModuleRow row = DBSMOBUtil.getInstance().getRowFromDir(module.getJavaPackage());
+        ExcludeFilter filter = row.filter;
 
         Database database = platform.loadModelFromDatabase(filter, dbPrefix, true, module.getId());
         final DatabaseValidator databaseValidator = new DatabaseValidator();

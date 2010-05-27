@@ -253,6 +253,14 @@ function showHideFilters(identifier) {
 	function onResizeDo(){
 		resizeArea();
 	}
+	function submitCommandWithMarkChecked(elementValue){
+	    var frm = document.frmMain;
+	    markCheckedAllElements(frm.inpcBPartnerId_IN);
+	    markCheckedAllElements(frm.inpcProjectId_IN);
+	    markCheckedAllElements(frm.inpmProductId_IN);
+	    submitCommandFormParameter('FIND', frm.inpcElementValueIdFrom, elementValue,false, frm, 'ReportGeneralLedger.html', '_self', false, true);
+	}
+	
 </script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -453,20 +461,19 @@ function showHideFilters(identifier) {
               <td class="TitleCell"/>
             </tr>
             <tr>
+              <td class="TitleCell"><span class="LabelText">Organization</span></td>
+              <td class="Combo_ContentCell">
+                <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width" required="true">
+                  <option value=""> <div id="reportAD_ORGID"></div></option>
+                </select></td>
+            </tr>
+            <tr>
               <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
               <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true">
                   <option value=""> <div id="reportC_ACCTSCHEMA_ID"></div></option>
                 </select>
               </td>
-            </tr>
-            <tr>
-              <td class="TitleCell"><span class="LabelText">Organization</span></td>
-              <td class="Combo_ContentCell"> 
-                <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_OneCell_width" required="true">
-                  <option value=""> <div id="reportAD_ORGID"></div></option>
-                </select></td>
-                <td class="TitleCell"></td>
-                <td class="TitleCell"><span class="LabelText">Account Level</span></td>
+              <td class="TitleCell"><span class="LabelText">Account Level</span></td>
               <td class="Combo_ContentCell"> 
                 <select  name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" required="true" onchange="displayLogic(); return true;">
                   <option value=""> <div id="reportLevel"></div></option>
@@ -917,7 +924,7 @@ function showHideFilters(identifier) {
                             <span id="showExpand" style="display: table-cell; display: -moz-inline-box;"><a href="#" onclick="updateData('OPEN', 'hhqq');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="expandButton">
                               <span id="buttonTreemmm" class="datawarehouseclose"></span>
                             </a></span>
-                            <a href="#" onclick="submitCommandFormParameter('FIND', document.frmMain.inpcElementValueIdFrom, 'xx', false, document.frmMain, 'ReportGeneralLedger.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">
+                            <a href="#" onclick="submitCommandWithMarkChecked('xx');return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">
                               <span id="fieldAccount">xx70000</span>
                             </a>
                             <span id="fieldDescAccount">xx600</span>

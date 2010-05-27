@@ -25,7 +25,7 @@
  v_ID       varchar2(32);
  v_ID_MAP      VARCHAR2(32);
  v_WindowName     VARCHAR2(60);
- v_ClassName     VARCHAR2(60);
+ v_ClassName     VARCHAR2(500);
  v_IsActive      CHAR(1) := 'Y';
  v_Count       NUMBER(10);
  v_JavaPackage VARCHAR2(315);

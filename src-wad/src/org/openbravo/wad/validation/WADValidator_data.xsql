@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,27 @@
     <Parameter name="checkAll"/>
   </SqlMethod>
   
+  <SqlMethod name="checkMultipleKey" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+        select t.tablename as objectName, m.name as moduleName
+          from ad_table t, ad_module m, ad_package p
+         where exists (select 1
+                         from ad_column c
+                        where c.ad_table_id = t.ad_table_id
+                          and c.iskey = 'Y'
+                          group by ad_table_id
+                          having count(*)>1)
+           and t.ad_package_id = p.ad_package_id
+           and m.ad_module_id = p.ad_module_id
+           and t.isview='N'
+           and (m.javapackage in ('1') or to_char('Y')=to_char(?))
+      ]]>
+    </Sql>
+    <Parameter name="module" optional="true" type="replace" after="m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
+  </SqlMethod>
+  
   <SqlMethod name="checkModelObject" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
@@ -90,12 +111,13 @@
            and o.classname not like m.javapackage||'.%'
            and (4=4 and m.javapackage in ('4') or to_char('Y')=to_char(?))
          union
-        select  to_char(w.name||' >> '||t.name), 'Tab' as objectType, o.classname as currentvalue, (case when w.ad_module_id='0' then 'org.openbravo.erpWindows.%' else 'org.openbravo.erpWindows.'||m.javapackage||'.%' end) as expectedvalue, m.name as moduleName 
-          from ad_model_object o, ad_window w, ad_tab t, ad_module m
+        select  to_char(w.name||' >> '||t.name), 'Tab' as objectType, o.classname as currentvalue, (case when m2.ad_module_id='0' then 'org.openbravo.erpWindows.*' else 'org.openbravo.erpWindows.'||m2.javapackage||'.%' end) as expectedvalue, m.name as moduleName 
+          from ad_model_object o, ad_window w, ad_tab t, ad_module m, ad_module m2
          where o.ad_tab_id = t.ad_tab_id
            and t.ad_window_id = w.ad_window_id
            and t.ad_module_id = m.ad_module_id
-           and o.classname not like (case when w.ad_module_id='0' then 'org.openbravo.erpWindows.%' else 'org.openbravo.erpWindows.'||m.javapackage||'.%' end)
+           and w.ad_module_id = m2.ad_module_id
+           and o.classname not like (case when m2.ad_module_id='0' then 'org.openbravo.erpWindows.%' else 'org.openbravo.erpWindows.'||m2.javapackage||'.%' end)
            and o.classname not like 'org.openbravo.erpCommon.ad_callouts.ComboReloads%'
            and (5=5 and m.javapackage in ('5') or to_char('Y')=to_char(?))
          order by 4, 2, 1
@@ -244,6 +266,22 @@
     <Field name="objecttype" value=""/>
     <Field name="currentvalue" value=""/>
     <Field name="expectedvalue" value=""/>
+    <Parameter name="module" optional="true" type="replace" after="m.javapackage in (" text="'1'"/>
+    <Parameter name="checkAll"/>
+  </SqlMethod>
+  
+  <SqlMethod name="checkBaseReferenceWithParent" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+        select r.name as objectName, m.name as moduleName, r2.name as currentvalue
+          from ad_reference r, ad_module m, ad_reference r2
+         where r.isBaseReference = 'Y'
+           and r.parentReference_ID is not null
+           and r2.ad_reference_id = r.parentReference_ID
+           and m.ad_module_id = r.ad_module_id
+           and (m.javapackage in ('1') or to_char('Y')=to_char(?))
+      ]]>
+    </Sql>
     <Parameter name="module" optional="true" type="replace" after="m.javapackage in (" text="'1'"/>
     <Parameter name="checkAll"/>
   </SqlMethod>

@@ -135,7 +135,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-         SELECT COUNT(*) AS ACC
+         SELECT u.ad_user_id AS ACC
 				   FROM AD_USER       U, 
 					      AD_USER_ROLES R,
 								AD_TASK_ACCESS A,

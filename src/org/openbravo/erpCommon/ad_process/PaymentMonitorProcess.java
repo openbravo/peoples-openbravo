@@ -6,6 +6,8 @@ import org.hibernate.LockMode;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -16,11 +18,25 @@ public class PaymentMonitorProcess extends DalBaseProcess {
 
   private ProcessLogger logger;
 
+  @SuppressWarnings("deprecation")
   public void doExecute(ProcessBundle bundle) throws Exception {
 
     logger = bundle.getLogger();
-
-    logger.log("Starting Update Paid Amount for Invoices Backgrouond Process.\n");
+    // Extra check for PaymentMonitor-disabling switch, to build correct message for users
+    try {
+      // Use Utility.getPropertyValue for backward compatibility
+      if (Utility.getPropertyValue("PaymentMonitor", bundle.getContext().getClient(), bundle
+          .getContext().getOrganization()) != null) {
+        logger
+            .log("There is an extension module installed managing the Payment Monitor information.\n");
+        logger.log("Core's background process is not executed.\n");
+        return;
+      } else
+        logger.log("Starting Update Paid Amount for Invoices Background Process.\n");
+    } catch (PropertyException e) {
+      logger.log("PropertyException, there is a conflict for PaymentMonitor property\n");
+      return;
+    }
     try {
       int counter = 0;
       String whereClause = " as inv where inv.totalPaid <> inv.grandTotalAmount and inv.processed=true";
@@ -52,5 +68,4 @@ public class PaymentMonitorProcess extends DalBaseProcess {
     }
 
   }
-
 }

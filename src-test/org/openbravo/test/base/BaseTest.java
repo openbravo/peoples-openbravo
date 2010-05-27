@@ -173,6 +173,13 @@ public class BaseTest extends TestCase {
    */
   @Override
   protected void tearDown() throws Exception {
+    // if not an administrator but still admin mode set throw an exception
+    if (!OBContext.getOBContext().getUser().getId().equals("0")
+        && !OBContext.getOBContext().getRole().getId().equals("0")
+        && OBContext.getOBContext().isInAdministratorMode()) {
+      throw new IllegalStateException(
+          "Test case should take care of reseting admin mode correctly in a finally block, use OBContext.restorePreviousMode");
+    }
     try {
       if (SessionHandler.isSessionHandlerPresent()) {
         if (SessionHandler.getInstance().getDoRollback()) {

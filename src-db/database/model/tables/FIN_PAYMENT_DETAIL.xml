@@ -33,10 +33,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_PAYMENT_SCHEDULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AMOUNT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
@@ -50,11 +46,15 @@
         <onCreateDefault/>
       </column>
       <column name="WRITEOFFAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <column name="C_GLITEM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISPREPAYMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_DETAIL">
@@ -68,9 +68,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="FIN_PAYMENT_DETAIL_C_GLITEM">
         <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="FIN_PAYMENT_SCHEDULE" name="FIN_PAYMENT_SCHEDULE_DETAIL">
-        <reference local="FIN_PAYMENT_SCHEDULE_ID" foreign="FIN_PAYMENT_SCHEDULE_ID"/>
       </foreign-key>
     </table>
   </database>

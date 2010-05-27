@@ -19,7 +19,9 @@
 
 package org.openbravo.test.webservice;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
@@ -195,19 +197,30 @@ public class BaseWSTest extends BaseTest {
       hc.connect();
       final SAXReader sr = new SAXReader();
       final InputStream is = hc.getInputStream();
-      final Document doc = sr.read(is);
-      final String content = XMLUtil.getInstance().toString(doc);
-      if (testContent != null && content.indexOf(testContent) == -1) {
-        log.debug(content);
-        fail();
+      final StringBuilder sb = new StringBuilder();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        sb.append(line).append("\n");
       }
-      assertEquals(responseCode, hc.getResponseCode());
-      is.close();
-      // do not validate the xml schema itself, this results in infinite loops
-      if (validate) {
-        validateXML(content);
+      try {
+        final Document doc = sr.read(new StringReader(sb.toString()));
+        final String content = XMLUtil.getInstance().toString(doc);
+        if (testContent != null && content.indexOf(testContent) == -1) {
+          log.debug(content);
+          fail();
+        }
+        assertEquals(responseCode, hc.getResponseCode());
+        is.close();
+        // do not validate the xml schema itself, this results in infinite loops
+        if (validate) {
+          validateXML(content);
+        }
+        return content;
+      } catch (Exception e) {
+        log.debug(sb.toString());
+        throw e;
       }
-      return content;
     } catch (final Exception e) {
       throw new OBException("Exception when executing ws: " + wsPart, e);
     }

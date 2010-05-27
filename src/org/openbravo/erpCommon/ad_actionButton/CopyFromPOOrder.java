@@ -75,7 +75,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  private OBError processButton(VariablesSecureApp vars, String strKey, String strOrder, String windowId) {
+  private OBError processButton(VariablesSecureApp vars, String strKey, String strOrder,
+      String windowId) {
     OBError myError = null;
     int i = 0;
     String priceactual = "";
@@ -149,6 +150,16 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
             + ((i + 1) * 10);
         String strCOrderlineID = SequenceIdData.getUUID();
         try {
+          String isInstance = CopyFromPOOrderData.getIsInstanceValue(conn, this,
+              data[i].mAttributesetinstanceId);
+          if (isInstance != null && isInstance.equalsIgnoreCase("Y")) {
+            String strMAttributesetinstanceID = SequenceIdData.getUUID();
+            CopyFromPOOrderData.copyAttributes(conn, this, strMAttributesetinstanceID,vars.getUser(),vars.getUser(),
+                data[i].mAttributesetinstanceId);
+            CopyFromPOOrderData.copyInstances(conn, this, strMAttributesetinstanceID,vars.getUser(),vars.getUser(),
+                data[i].mAttributesetinstanceId);
+            data[i].mAttributesetinstanceId = strMAttributesetinstanceID;
+          }
           CopyFromPOOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId,
               order[0].adOrgId, vars.getUser(), strKey, Integer.toString(line),
               order[0].cBpartnerId, order[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData
@@ -157,7 +168,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               order[0].mWarehouseId.equals("") ? vars.getWarehouse() : order[0].mWarehouseId,
               data[i].cUomId, data[i].qtyordered, data[i].quantityorder, data[i].cCurrencyId,
               pricelist, priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId,
-              data[i].orderline);
+              data[i].orderline, data[i].mAttributesetinstanceId);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);

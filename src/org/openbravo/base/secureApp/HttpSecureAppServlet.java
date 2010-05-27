@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -84,8 +85,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   private String servletClass = this.getClass().getName();
 
   private class Variables extends VariablesHistory {
+    private String loggingIn;
+
     public Variables(HttpServletRequest request) {
       super(request);
+      loggingIn = getSessionValue("#loggingIn");
     }
 
     public void updateHistory(HttpServletRequest request) {
@@ -104,6 +108,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     public void setHistoryCommand(String strCommand) {
       final String sufix = getCurrentHistoryIndex();
       setSessionValue("reqHistory.command" + sufix, strCommand);
+    }
+
+    public boolean isLoggingIn() {
+      return loggingIn == null || loggingIn.equals("") || loggingIn.equals("Y");
     }
   }
 
@@ -163,6 +171,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     Variables variables = new Variables(request);
+
     // VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // bdErrorGeneral(response, "Error", "No access");
@@ -189,7 +198,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     try {
 
-      OBContext.enableAsAdminContext();
+      OBContext.setAdminMode();
 
       strUserAuth = m_AuthManager.authenticate(request, response);
 
@@ -202,7 +211,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
-      if (!variables.getDBSession().equals("")) {
+      if (!variables.isLoggingIn()) {
+        // log in process is completed, check whether the session in db is still active
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
         if (!loggedOK) {
           logout(request, response);
@@ -309,8 +319,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             logout(request, response);
             return;
           }
-        } else
+        } else {
           variables.updateHistory(request);
+        }
       }
       if (log4j.isDebugEnabled()) {
         log4j.debug("Call to HttpBaseServlet.service");
@@ -332,7 +343,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       logout(request, response);
       return;
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     try {
@@ -989,10 +1000,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   protected void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
-    final String strNumberFormat = "###,##0.00"; // Default number format
+    String strNumberFormat = "###,##0.00"; // Default number format
     String strGroupingSeparator = ","; // Default grouping separator
     String strDecimalSeparator = "."; // Default decimal separator
-    final String strName = "euroInform"; // Name of the format to use
+    final String formatNameforJrxml = "euroInform"; // Name of the format to use
     final HashMap<String, String> formatMap = new HashMap<String, String>();
 
     try {
@@ -1018,11 +1029,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               .getNamedItem("decimal").getNodeValue());
           vars.setSessionValue("#GroupSeparator|" + strNumberName, NumberElement.getAttributes()
               .getNamedItem("grouping").getNodeValue());
-          if (strNumberName.equals(strName)) {
+          // set the numberFormat to be used in the renderJR function
+          if (strNumberName.equals(formatNameforJrxml)) {
             strDecimalSeparator = NumberElement.getAttributes().getNamedItem("decimal")
                 .getNodeValue();
             strGroupingSeparator = NumberElement.getAttributes().getNamedItem("grouping")
                 .getNodeValue();
+            strNumberFormat = strFormatOutput;
           }
         }
       }
@@ -1039,9 +1052,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strOrganizacion) throws ServletException {
     final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion, vars
         .getSessionValue("#AD_User_ID"));
+
+    // session_ID should have been created in LoginHandler
+    String sessionId = vars.getDBSession();
     sl.setServerUrl(strDireccion);
-    sl.save(this);
-    vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
+    sl.setSessionID(sessionId);
+
+    if (sessionId == null || sessionId.equals("")) {
+      sl.setStatus("S");
+      sl.save();
+      vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
+    }
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
@@ -1111,7 +1132,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-        throw new ServletException(e.getMessage(), e);
+          throw new ServletException(e.getCause() instanceof SQLException 
+              ? e.getCause().getMessage()
+              : e.getMessage()
+              , e);
       } finally {
         releaseRollbackConnection(con);
       }

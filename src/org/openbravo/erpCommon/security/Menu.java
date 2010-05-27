@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.model.Entity;
@@ -36,6 +37,9 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyConflictException;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
@@ -44,6 +48,10 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Menu extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static String[] hideMenuValues = { "", "true", "false" };
+  private static ValueListFilter menuFilter = new ValueListFilter(Menu.hideMenuValues);
+
+  private static String DEFAULT_MENU_WIDTH = "25"; // Percentage of the page width used by the menu
 
   /** Creates a new instance of Menu */
   public Menu() {
@@ -55,15 +63,47 @@ public class Menu extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String targetmenu = getTargetMenu(vars, queryString);
 
+    // successfull login, redirect to the startpage if any
+    if (!OBContext.getOBContext().isAdminContext() && request.getParameter("noprefs") == null) {
+      try {
+        final String startPage = Preferences.getPreferenceValue("StartPage", true, OBContext
+            .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+            OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+        // redirect if the startpage is there and if it is not the same as the standard
+        if (startPage != null && !startPage.endsWith("/security/Menu.html")) {
+          response.sendRedirect(".." + startPage);
+          return;
+        }
+      } catch (PropertyConflictException e) {
+        // ignore show normal page
+        log4j.warn("Conflict getting StartPage preference. Showing normal page.");
+      } catch (PropertyException e) {
+        // ignore show normal page
+      }
+    }
+
+    String hideMenu = vars.getStringParameter("hideMenu", menuFilter);
+
     String textDirection = vars.getSessionValue("#TextDirection", "LTR");
-    printPageFrameIdentificacion(response, "../utility/VerticalMenu.html",
-        (targetmenu.equals("") ? "../utility/Home.html" : targetmenu),
-        "../utility/VerticalMenu.html?Command=LOADING", textDirection);
+
+    String menuLoadingURL = "../utility/VerticalMenu.html?Command=LOADING";
+    String menuURL = "../utility/VerticalMenu.html";
+
+    if ("true".equals(hideMenu)) {
+      vars.setSessionValue("#Hide_BackButton", "true");
+      menuLoadingURL = "about:blank";
+      menuURL += "?Command=HIDE";
+    } else {
+      vars.removeSessionValue("#Hide_BackButton");
+    }
+
+    printPageFrameIdentificacion(response, menuURL, (targetmenu.equals("") ? "../utility/Home.html"
+        : targetmenu), menuLoadingURL, textDirection, hideMenu);
   }
 
   private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu,
-      String strDetalle, String strMenuLoading, String textDirection) throws IOException,
-      ServletException {
+      String strDetalle, String strMenuLoading, String textDirection, String hideMenu)
+      throws IOException, ServletException {
     XmlDocument xmlDocument;
     if (textDirection.equals("RTL")) {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS_RTL")
@@ -72,6 +112,15 @@ public class Menu extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS")
           .createXmlDocument();
     }
+
+    String menuWidth = "true".equals(hideMenu) ? "0" : DEFAULT_MENU_WIDTH;
+
+    String jsConstants = "\nvar isMenuHide = " + "true".equals(hideMenu) + "; \n var isRTL = "
+        + "RTL".equals(textDirection) + "; \n var menuWidth = '" + menuWidth
+        + "%';\n var isMenuBlock = " + "true".equals(hideMenu) + ";\n";
+
+    xmlDocument.setParameter("jsConstants", jsConstants);
+    xmlDocument.setParameter("framesetMenu", menuWidth);
     xmlDocument.setParameter("frameMenuLoading", strMenuLoading);
     xmlDocument.setParameter("frameMenu", strMenu);
     xmlDocument.setParameter("frame1", strDetalle);
@@ -97,32 +146,59 @@ public class Menu extends HttpSecureAppServlet {
     final String[] allowedCommands = { "", "DEFAULT", "NEW", "EDIT", "GRID" };
     final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
     final String command = vars.getStringParameter("Command", listFilter);
+    final String url = vars.getStringParameter("url");
     String targetmenu = vars.getSessionValue("targetmenu");
     String qString = queryString;
 
-    if (command == null || command.equals("")) {
+    if (qString != null && qString.contains("url") && url != null && !url.equals("")) {
+      if (!url.startsWith("/")) {
+        log4j
+            .error("Invalid deep-link URL: URL parameter is relative to application context, must start with slash");
+        return "";
+      }
+      // Removing "url=" from query string
+      targetmenu = HttpBaseServlet.strDireccion + qString.substring(4);
+
+      // Replacing first ampersand (&) with a question mark (?) to get a valid URL
+      targetmenu = targetmenu.replaceFirst("&", "?");
+
       return targetmenu;
     }
 
-    try { // Trying to deep-link
+    if (command == null || command.equals("")) {
+      return "";
+    }
 
-      OBContext.setAdminContext();
+    try { // Trying to deep-link using tabId
+
+      OBContext.setAdminMode();
 
       final String tabId = vars.getStringParameter("tabId", IsIDFilter.instance);
-      final String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
+      String windowId = vars.getStringParameter("windowId", IsIDFilter.instance);
       final String recordId = vars.getStringParameter("recordId", IsIDFilter.instance);
       String viewType = "RELATION";
 
-      if (tabId.equals("") || windowId.equals("")) {
+      if (tabId.equals("")) {
         return "";
       }
 
       final Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      final Window window = OBDal.getInstance().get(Window.class, windowId);
 
-      if (!tab.getWindow().equals(window)) {
-        log4j.error("Invalid deep-link URL: tab doesn't belong to window");
+      if (tab == null) {
+        log4j.error("Invalid deep-link URL: tab " + tabId + " doesn't exist");
         return "";
+      }
+
+      if (!windowId.equals("")) {
+        final Window window = OBDal.getInstance().get(Window.class, windowId);
+
+        if (!tab.getWindow().equals(window)) {
+          log4j.error("Invalid deep-link URL: tab " + tabId + " doesn't belong to window "
+              + windowId);
+          return "";
+        }
+      } else {
+        windowId = tab.getWindow().getId();
       }
 
       if (tab.getTabLevel() > 0 && recordId.equals("")) {
@@ -177,7 +253,7 @@ public class Menu extends HttpSecureAppServlet {
       log4j.error("Error in deep-linking: " + e.getMessage(), e);
       throw new ServletException(e.getMessage());
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     return targetmenu;

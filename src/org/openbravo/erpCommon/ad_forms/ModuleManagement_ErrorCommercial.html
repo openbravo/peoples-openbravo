@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -225,6 +225,11 @@
                 <br/>
                 </div>
                 
+                <div id="OBPSInstance-Converted">
+                <p class="Label_ReadOnly_Text">The "Subscription Conversion Option" has been exercised for this instance, which means you are no longer covered by an active professional subscription. This option enables perpetual use of the module "as is", but does not entitle you to automatic updates via the Module Management Console. You cannot install/update the following module(s) which are released under a commercial license:&nbsp;<FIELD_TMP id="converted"></FIELD_TMP><br /></p>
+                <br/>
+                </div>
+                
                 <div id="OBPSInstance-NoActiveYet">
                 <p class="Label_ReadOnly_Text">The following module(s) are released under a commercial license that is not active yet:&nbsp;<FIELD_TMP id="noActiveYet"></FIELD_TMP><br /></p>
                 <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/module/acquire" target="_blank">Learn how</a>&nbsp;to renew licenses for commercial modules.</p>
@@ -232,7 +237,7 @@
                 </div>
                 
                 <div id="CEInstance">
-                <div><FIELD_TMP id="name">xxxModuleDetails</FIELD_TMP><br /></div>
+                <div><p class="Label_ReadOnly_Text"><FIELD_TMP id="CEInstance-text">The following module(s) are released under a commercial license that require acquiring an activation key before installation:&nbsp;</FIELD_TMP><FIELD_TMP id="name"></FIELD_TMP><br /></p>
                 <p><br><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/acquire" target="_blank">Learn how</a>&nbsp;to acquire a subscription and activate your instance.</p>
                 <br/>
                 </div>

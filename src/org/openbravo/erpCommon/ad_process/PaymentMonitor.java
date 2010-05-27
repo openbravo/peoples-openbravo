@@ -17,6 +17,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.DebtPayment;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -26,9 +28,22 @@ public class PaymentMonitor {
 
   /**
    * Updates payment monitor information
+   * 
+   * Users of this method should check for existence of the PaymentMonitor property (disabling it)
+   * to be able to provide the user with a relevant message.
    */
+  @SuppressWarnings("deprecation")
   public static void updateInvoice(Invoice invoice) {
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    // Check for PaymentMonitor-disabling switch.
+    try {
+      // Use Utility.getPropertyValue for backward compatibility
+      if (Utility.getPropertyValue("PaymentMonitor", invoice.getClient().getId(), invoice
+          .getOrganization().getId()) != null)
+        return;
+    } catch (PropertyException e) {
+      return;
+    }
+    OBContext.setAdminMode();
     try {
       List<DebtPayment> payments = invoice.getFinancialMgmtDebtPaymentList();
       BigDecimal paidAmount = BigDecimal.ZERO;
@@ -63,7 +78,7 @@ public class PaymentMonitor {
       OBDal.getInstance().save(invoice);
       OBDal.getInstance().flush();
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
     return;
   }

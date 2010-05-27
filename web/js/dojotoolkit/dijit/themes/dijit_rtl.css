@@ -1,42 +1,33 @@
-/* TextBox */
-
-.dj_gecko-rtl .dijitInputField {
-	direction: ltr; /* Firefox needs this - probably a bug */
-}
-.dj_gecko-rtl .dijitInputField * {
-	direction: rtl; /* Firefox needs dijitInputField to be ltr, so fix the contained tags */
-}
-
 /* Menu */
 
 .dijitRtl .dijitMenuItem {
 	text-align: right;
 }
 
-/* ComboBox and Spinner */
+/* Button */
+
+.dj_iequirks-rtl .dijitComboButton BUTTON {
+	/* workaround bug where label invisible (themeTesterQuirk.html?dir=rtl) */
+	float:left;
+}
+
+/* TextBox, ComboBox, Spinner */
 
 .dijitRtl .dijitTextBox .dijitButtonNode {
 	/* combobox and spinner: line between the input area and the drop down button */
 	border-right-width: 1px !important;
+	border-right-style: solid;
 	border-left-width: 0px !important;
-}
-
-.dj_iequirks-rtl .dijitComboButton BUTTON {
-	float:left;
+	border-left-style: none;
 }
 
 .dijitRtl .dijitSpinner .dijitInputLayoutContainer .dijitArrowButton {
-	right: auto;
-	left: 0;
+	right: 0;
+	left: auto;
 }
 
 .dijitRtl .dijitSpinnerButtonContainer {
 	float: left;
-}
-
-.dijitRtl .dijit_a11y .dijitSpinnerButtonContainer {
-	margin-left: 0px;
-	margin-right: 2px;
 }
 
 .dijitRtl DIV.dijitArrowButton, .dijitRtl .dijitValidationIcon, .dijitRtl .dijitValidationIconText {
@@ -51,12 +42,6 @@
 
 .dijitRtl .dijitCalendarPreviousYear {
 	margin:0 0 0 0.55em;
-}
-
-/* ProgressBar */
-
-.dijitRtl .dijitProgressBarFull .dijitProgressBarLabel {
-	right:0; /* FF workaround */
 }
 
 /* Slider */
@@ -113,9 +98,6 @@
 }
 
 /* TabContainer */
-.dijitRtl .dijitTabContainer .tabStripMenuButton {
-	float: left;
-}
 
 .dijitRtl .dijitTab .dijitTabCloseButton {
 	margin-left: 0px;
@@ -138,4 +120,11 @@
 	left: auto;
 	right: 0;
 }
+
+/* Select */
+
+.dijitRtl .dijitSelect .dijitButtonNode {
+	text-align: right;
+}
+
 

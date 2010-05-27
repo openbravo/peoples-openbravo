@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -49,6 +50,7 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 
 /**
  * Models the context in which Data Access Layer actions are executed. Contains the user, the client
@@ -81,17 +83,14 @@ public class OBContext implements OBNotSingleton {
 
   private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
 
+  private static ThreadLocal<Stack<Boolean>> adminModeStack = new ThreadLocal<Stack<Boolean>>();
+
   public static final String CONTEXT_PARAM = "#OBContext";
 
   private static OBContext adminContext = null;
 
   /**
-   * Sets the context to the 0 (SystemAdmin) user.
-   * 
-   * Note overwrites the current OBContext! This method should be used in case there is no real user
-   * context yet because the user still has to login (for example).
-   * 
-   * In all other cases use the method {@link #setInAdministratorMode(boolean)}.
+   * deprecated use {@link #setAdminMode()}
    */
   public static void setAdminContext() {
     if (adminContext == null) {
@@ -102,37 +101,91 @@ public class OBContext implements OBNotSingleton {
     }
   }
 
-  /**
-   * Checks if there is a context set. If not then sets the Admin Context. If yes then set the admin
-   * mode of the existing context.
-   * 
-   * @see OBContext#resetAsAdminContext()
-   */
-  public static void enableAsAdminContext() {
-    if (OBContext.getOBContext() == null) {
-      OBContext.setAdminContext();
-    } else if (OBContext.getOBContext() == adminContext) {
-      return;
+  private static void setAdminContextLocally() {
+    if (adminContext == null) {
+      setOBContext("0", "0", "0", "0");
+      adminContext = getOBContext();
     } else {
-      OBContext.getOBContext().setInAdministratorMode(true);
+      setOBContext(adminContext);
     }
   }
 
   /**
-   * Sets the context state back. If the current context is the Admin Context then the current
-   * context is set to null. In the other cases the method {@link #setInAdministratorMode(boolean)}
-   * is called with the parameter false.
+   * deprecated use {@link #setAdminMode()}
+   */
+  public static void enableAsAdminContext() {
+    setAdminMode();
+  }
+
+  /**
+   * Let's the current user run with Administrator privileges. If there is no current user then the
+   * special Administrator context is used.
    * 
-   * @see OBContext#enableAsAdminContext()
+   * To restore the previous privileges call the {@link #restorePreviousMode()}.
+   * 
+   * @see OBContext#restorePreviousMode()
+   * @since 2.50MP18
+   */
+  public static void setAdminMode() {
+    getAdminModeStack().push(Boolean.TRUE);
+    if (OBContext.getOBContext() == null) {
+      OBContext.setAdminContextLocally();
+    } else if (OBContext.getOBContext() == adminContext) {
+      return;
+    }
+  }
+
+  private static Stack<Boolean> getAdminModeStack() {
+    if (adminModeStack.get() == null) {
+      adminModeStack.set(new Stack<Boolean>());
+    }
+    return adminModeStack.get();
+  }
+
+  /**
+   * deprecated use {@link #restorePreviousMode()}
    */
   public static void resetAsAdminContext() {
+    restorePreviousMode();
+  }
+
+  /**
+   * Is used to restore the previous privileges after enabling Administrator privileges by calling
+   * {@link #setAdminMode()}.
+   * 
+   * @see OBContext#setAdminMode()
+   * @since 2.50MP18
+   */
+  public static void restorePreviousMode() {
+    // remove the last admin mode from the stack
+    final Stack<Boolean> stack = getAdminModeStack();
+    if (stack.size() > 0) {
+      stack.pop();
+    } else {
+      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext",
+          new IllegalStateException());
+    }
+
     if (OBContext.getOBContext() == null) {
       return;
     }
-    if (OBContext.getOBContext() == adminContext) {
+    if (stack.isEmpty() && OBContext.getOBContext() == adminContext) {
       OBContext.setOBContext((OBContext) null);
-    } else {
-      OBContext.getOBContext().setInAdministratorMode(false);
+    }
+  }
+
+  /**
+   * Clears the admin context stack.
+   */
+  static void clearAdminModeStack() {
+    if (getAdminModeStack().size() > 0) {
+      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext",
+          new IllegalStateException());
+    }
+    getAdminModeStack().clear();
+    if (adminModeSet.get() != null) {
+      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext");
+      adminModeSet.set(null);
     }
   }
 
@@ -215,9 +268,51 @@ public class OBContext implements OBNotSingleton {
    *          the ud of the user's organization
    */
   public static void setOBContext(String userId, String roleId, String clientId, String orgId) {
+    setOBContext(userId, roleId, clientId, orgId, null, null);
+  }
+
+  /**
+   * Creates the context using the userId, roleId, clientId, orgId and sets it in the thread (as
+   * ThreadLocal).
+   * 
+   * @param userId
+   *          the id of the user
+   * @param roleId
+   *          the id of the role under which the user is currently working
+   * @param clientId
+   *          the id of the user's client
+   * @param orgId
+   *          the ud of the user's organization
+   * @param languageCode
+   *          the selected language, if null then the user language is read.
+   */
+  public static void setOBContext(String userId, String roleId, String clientId, String orgId,
+      String languageCode) {
+    setOBContext(userId, roleId, clientId, orgId, languageCode, null);
+  }
+
+  /**
+   * Creates the context using the userId, roleId, clientId, orgId and sets it in the thread (as
+   * ThreadLocal).
+   * 
+   * @param userId
+   *          the id of the user
+   * @param roleId
+   *          the id of the role under which the user is currently working
+   * @param clientId
+   *          the id of the user's client
+   * @param orgId
+   *          the ud of the user's organization
+   * @param languageCode
+   *          the selected language, if null then the user language is read.
+   * @param warehouseId
+   *          the id of the current warehouse of the user.
+   */
+  public static void setOBContext(String userId, String roleId, String clientId, String orgId,
+      String languageCode, String warehouseId) {
     final OBContext context = OBProvider.getInstance().get(OBContext.class);
     setOBContext((OBContext) null);
-    context.initialize(userId, roleId, clientId, orgId);
+    context.initialize(userId, roleId, clientId, orgId, languageCode, warehouseId);
     setOBContext(context);
   }
 
@@ -268,6 +363,7 @@ public class OBContext implements OBNotSingleton {
   private Role role;
   private User user;
   private Language language;
+  private Warehouse warehouse;
   private List<Organization> organizationList;
   private String[] readableOrganizations;
   private String[] readableClients;
@@ -477,6 +573,7 @@ public class OBContext implements OBNotSingleton {
     role = null;
     user = null;
     language = null;
+    warehouse = null;
     organizationList = null;
     readableOrganizations = null;
     readableClients = null;
@@ -505,13 +602,30 @@ public class OBContext implements OBNotSingleton {
 
   // sets the context by reading all user information
   public boolean initialize(String userId, String roleId, String clientId, String orgId) {
+    return initialize(userId, roleId, clientId, orgId, null);
+  }
+
+  // sets the context by reading all user information
+  private boolean initialize(String userId, String roleId, String clientId, String orgId,
+      String languageCode) {
+    return initialize(userId, roleId, clientId, orgId, languageCode, null);
+  }
+
+  // sets the context by reading all user information
+  private boolean initialize(String userId, String roleId, String clientId, String orgId,
+      String languageCode, String warehouseId) {
+
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
     if (u == null) {
       return false;
     }
     setInitialized(false);
-    setInAdministratorMode(true);
+
+    // can't use enableAsAdminContext here otherwise there is a danger of
+    // recursive/infinite calls.
+    // enableAsAdminContext();
+    getAdminModeStack().push(Boolean.TRUE);
     try {
       setUser(u);
       Hibernate.initialize(getUser().getClient());
@@ -614,20 +728,40 @@ public class OBContext implements OBNotSingleton {
       Check.isNotNull(getCurrentClient(), "Client may not be null");
       Check.isTrue(getCurrentClient().isActive(), "Current Client " + getCurrentClient().getName()
           + " is not active!");
-
-      if (getUser().getDefaultLanguage() != null && getUser().getDefaultLanguage().isActive()) {
+      if (languageCode != null) {
+        final Query qry = SessionHandler.getInstance().createQuery(
+            "select l from " + Language.class.getName() + " l where l."
+                + Language.PROPERTY_LANGUAGE + "=:languageCode ");
+        qry.setParameter("languageCode", languageCode);
+        if (qry.list().isEmpty()) {
+          throw new IllegalArgumentException("No language found for code " + languageCode);
+        }
+        setLanguage((Language) qry.list().get(0));
+      } else if (getUser().getDefaultLanguage() != null
+          && getUser().getDefaultLanguage().isActive()) {
         setLanguage(getUser().getDefaultLanguage());
+      } else if (getCurrentClient().getLanguage() != null) {
+        setLanguage(getCurrentClient().getLanguage());
       } else {
-        final Language l = getOne(Language.class, "select l from " + Language.class.getName()
-            + " l where l." + Language.PROPERTY_ACTIVE + "='Y' and systemLanguage=true order by l."
-            + Language.PROPERTY_ID + " asc");
-        Hibernate.initialize(l);
-        setLanguage(l);
+        final Client systemClient = OBDal.getInstance().get(Client.class, "0");
+        setLanguage(systemClient.getLanguage());
       }
+      Hibernate.initialize(getLanguage());
 
       Check.isNotNull(getLanguage(), "Language may not be null");
 
       setReadableClients(role);
+
+      // note sometimes the warehouseId is an empty string
+      // this happens when it is set from the session variables
+      if (warehouseId != null && warehouseId.trim().length() > 0) {
+        final Query qry = SessionHandler.getInstance().createQuery(
+            "select w from " + Warehouse.class.getName() + " w where w.id=:id");
+        qry.setParameter("id", warehouseId);
+        setWarehouse((Warehouse) qry.list().get(0));
+      } else if (getUser().getDefaultWarehouse() != null) {
+        setWarehouse(getUser().getDefaultWarehouse());
+      }
 
       // initialize some proxys
       Hibernate.initialize(getCurrentOrganization().getClient());
@@ -636,10 +770,18 @@ public class OBContext implements OBNotSingleton {
       Hibernate.initialize(getRole().getOrganization());
       Hibernate.initialize(getLanguage().getClient());
       Hibernate.initialize(getLanguage().getOrganization());
+      if (getWarehouse() != null) {
+        Hibernate.initialize(getWarehouse());
+        Hibernate.initialize(getWarehouse().getClient());
+        Hibernate.initialize(getWarehouse().getOrganization());
+      }
 
       // TODO: add logging of all context information
     } finally {
-      setInAdministratorMode(false);
+      // can't use resetAsAdminContext here otherwise there is a danger of
+      // recursive/infinite calls.
+      // resetAsAdminContext();
+      getAdminModeStack().pop();
       setInitialized(true);
     }
     return true;
@@ -736,6 +878,9 @@ public class OBContext implements OBNotSingleton {
   }
 
   public boolean isInAdministratorMode() {
+    if (getAdminModeStack().size() > 0 && getAdminModeStack().peek()) {
+      return true;
+    }
     return adminModeSet.get() != null || isAdministrator;
   }
 
@@ -743,8 +888,11 @@ public class OBContext implements OBNotSingleton {
     return this == adminContext;
   }
 
+  /**
+   * deprecated use {@link #setAdminMode()} and {@link #restorePreviousMode()}.
+   */
   public boolean setInAdministratorMode(boolean inAdministratorMode) {
-    final boolean prevMode = isInAdministratorMode();
+    final boolean prevMode = isInAdministratorMode() && !isAdministrator;
     if (inAdministratorMode) {
       adminModeSet.set(this);
     } else {
@@ -798,5 +946,13 @@ public class OBContext implements OBNotSingleton {
 
   public boolean isSerialized() {
     return serialized;
+  }
+
+  public Warehouse getWarehouse() {
+    return warehouse;
+  }
+
+  public void setWarehouse(Warehouse warehouse) {
+    this.warehouse = warehouse;
   }
 }

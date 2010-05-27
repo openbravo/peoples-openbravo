@@ -90,7 +90,9 @@ public class OBDal implements OBSingleton {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      return ((SessionImplementor) SessionHandler.getInstance().getSession()).connection();
+      final Connection connection = ((SessionImplementor) SessionHandler.getInstance().getSession())
+          .connection();
+      return connection;
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -116,14 +118,18 @@ public class OBDal implements OBSingleton {
    * Rolls back the transaction and closes the session.
    */
   public void rollbackAndClose() {
-    SessionHandler.getInstance().rollback();
+    if (SessionHandler.isSessionHandlerPresent()) {
+      SessionHandler.getInstance().rollback();
+    }
   }
 
   /**
    * Flushes the current state to the database.
    */
   public void flush() {
-    SessionHandler.getInstance().getSession().flush();
+    if (SessionHandler.isSessionHandlerPresent()) {
+      SessionHandler.getInstance().getSession().flush();
+    }
   }
 
   /**

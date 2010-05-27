@@ -20,12 +20,14 @@
 package org.openbravo.test.xml;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.Greeting;
 import org.openbravo.model.common.enterprise.Organization;
@@ -133,5 +135,32 @@ public class EntityXMLIssues extends XMLBaseTest {
     // ensure that hibernate did not give us the same object twice
     assertTrue(uom != newUom);
     assertEquals(uom.getSymbol(), newUom.getSymbol());
+  }
+
+  /**
+   * Test mantis issue 12633: XML Conversion from integer numbers should be more robust
+   */
+  public void testMantis12633() {
+    setBigBazaarAdminContext();
+    // read the column
+    final Column column = OBDal.getInstance().get(Column.class, "102");
+    String xml = getXML(Collections.singletonList(column));
+    xml = xml.replace("60</length>", "61.0</length>");
+    assertTrue(xml.contains("<length>61.0</length>"));
+    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
+        OBDal.getInstance().get(Client.class, "0"),
+        OBDal.getInstance().get(Organization.class, "0"), xml);
+    assertTrue(ir.getWarningMessages() == null);
+    assertTrue(ir.getErrorMessages() == null);
+    assertTrue(column.getLength() == 61);
+    OBDal.getInstance().flush();
+    // prevent the database from really being updated
+    OBDal.getInstance().rollbackAndClose();
+
+    // now be sure that we did not update the db
+    final Column column2 = OBDal.getInstance().get(Column.class, "102");
+    assertTrue(column2 != column);
+    assertTrue(column2.getLength() == 60);
+    OBDal.getInstance().rollbackAndClose();
   }
 }

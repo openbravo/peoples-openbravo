@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.project.Project;
 
 public class ReferencedLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -83,13 +86,34 @@ public class ReferencedLink extends HttpSecureAppServlet {
             }
           }
         }
-        ReferencedLinkData[] data = ReferencedLinkData.selectWindows(this, strTableRealReference);
-        if (data == null || data.length == 0)
-          throw new ServletException("Window not found");
+        if (strTableReferenceId.equals("203")) {
+          // Project: select window depending on the project type
+          try {
+            OBContext.setAdminMode();
+            Project referencedProject = OBDal.getInstance().get(Project.class, strKeyReferenceId);
+            if (referencedProject != null && referencedProject.getProjectCategory() != null
+                && referencedProject.getProjectCategory().equals("S")) {
+              // Multiphase project
+              strWindowId = "130";
+            } else {
+              // Service project
+              strWindowId = "800001";
+            }
+          } finally {
+            OBContext.restorePreviousMode();
+          }
 
-        strWindowId = data[0].adWindowId;
-        if (!isSOTrx && !data[0].poWindowId.equals(""))
-          strWindowId = data[0].poWindowId;
+        } else {
+          // Standard case, select window based on table definition and isSOTrx
+          ReferencedLinkData[] data = ReferencedLinkData.selectWindows(this, strTableRealReference);
+          if (data == null || data.length == 0)
+            throw new ServletException("Window not found");
+
+          strWindowId = data[0].adWindowId;
+          if (!isSOTrx && !data[0].poWindowId.equals(""))
+            strWindowId = data[0].poWindowId;
+        }
+
       }
       ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
       if (data == null || data.length == 0)

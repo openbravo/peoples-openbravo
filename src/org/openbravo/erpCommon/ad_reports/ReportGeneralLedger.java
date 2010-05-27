@@ -96,10 +96,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedger|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo");
-      String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
-          "ReportGeneralLedger|AmtFrom");
-      String strAmtTo = vars.getNumericRequestGlobalVariable("inpAmtTo",
-          "ReportGeneralLedger|AmtTo");
+      String strAmtFrom = vars.getNumericParameter("inpAmtFrom");
+      vars.setSessionValue("ReportGeneralLedger|AmtFrom", strAmtFrom);
+      String strAmtTo = vars.getNumericParameter("inpAmtTo");
+      vars.setSessionValue("ReportGeneralLedger|AmtTo", strAmtTo);
       String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
@@ -116,8 +116,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
-      String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
-          "ReportGeneralLedger|mProductId", "", IsIDFilter.instance);
+      String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
+          "ReportGeneralLedger|mProductId", IsIDFilter.instance);
       String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
           "ReportGeneralLedger|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars
@@ -170,10 +170,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedger|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo");
-      String strAmtFrom = vars.getNumericRequestGlobalVariable("inpAmtFrom",
-          "ReportGeneralLedger|AmteFrom");
-      String strAmtTo = vars.getNumericRequestGlobalVariable("inpAmtTo",
-          "ReportGeneralLedger|AmtTo");
+      String strAmtFrom = vars.getNumericParameter("inpAmtFrom");
+      vars.setSessionValue("ReportGeneralLedger|AmtFrom", strAmtFrom);
+      String strAmtTo = vars.getNumericParameter("inpAmtTo");
+      vars.setSessionValue("ReportGeneralLedger|AmtTo", strAmtTo);
       String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
@@ -292,13 +292,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         strcelementvaluetodes = "";
         vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       }
-      data = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars.getLanguage(),strDateFrom,
-          toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
-              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
-          strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
-          strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, null, pgLimit, oraLimit1,
-          oraLimit2);
+      data = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars
+          .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+          strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+              "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom, toDatePlusOne,
+          strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo, null,
+          null, null, pgLimit, oraLimit1, oraLimit2);
       if (log4j.isDebugEnabled())
         log4j.debug("RecordNo: " + initRecordNumber);
       // In case this is not the first screen to show, initial balance may need to include amounts
@@ -306,13 +306,14 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
       ReportGeneralLedgerData[] dataTotal = null;
       if (data != null && data.length > 1) {
-        dataTotal = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy,
-            vars.getLanguage(),strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
-                .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
-            strcAcctSchemaId, strYearInitialDate, DateTimeData.nDaysAfter(this, data[0].dateacct,
-                "1"), strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
-            strAmtTo, data[0].id, data[0].dateacctnumber + data[0].factAcctGroupId,
+        dataTotal = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars
+            .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+            strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+                "ReportGeneralLedger"), strHide, strcAcctSchemaId, strYearInitialDate, DateTimeData
+                .nDaysAfter(this, data[0].dateacct, "1"), strOrgFamily, strcBpartnerId,
+            strmProductId, strcProjectId, strAmtFrom, strAmtTo, data[0].id, data[0].dateacctnumber
+                + data[0].factAcctGroupId + data[0].description + data[0].isdebit,
             data[0].groupbyid, null, null, null);
       }
       // Now dataTotal is covered adding debit and credit amounts
@@ -452,10 +453,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("data.length: " + data.length);
 
-    if (strGroupBy.equals(""))
-      xmlDocument.setData("structure1", data);
-    else
-      xmlDocument.setData("structure2", data);
+    if (data != null && data.length > 0) {
+      if (strGroupBy.equals(""))
+        xmlDocument.setData("structure1", data);
+      else
+        xmlDocument.setData("structure2", data);
+    } else {
+      if (vars.commandIn("FIND")) {
+        // No data has been found. Show warning message.
+        xmlDocument.setParameter("messageType", "WARNING");
+        xmlDocument.setParameter("messageTitle", Utility.messageBD(this, "ProcessStatus-W", vars
+            .getLanguage()));
+        xmlDocument.setParameter("messageMessage", Utility.messageBD(this, "NoDataFound", vars
+            .getLanguage()));
+      }
+    }
 
     /*
      * if (strcBpartnerId.equals("") && strAll.equals("")) xmlDocument.setDataArray("reportTotals",
@@ -504,16 +516,17 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strcelementvalueto = strcelementvaluefrom;
         strAllaccounts = "N";
       }
-      data = ReportGeneralLedgerData.select(this, "0", strGroupByText, strGroupBy,vars.getLanguage(), strDateFrom,
-          toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
-              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
-          strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
-          strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, null, null, null, null);
+      data = ReportGeneralLedgerData.select(this, "0", strGroupByText, strGroupBy, vars
+          .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+          strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
+              "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom, toDatePlusOne,
+          strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo, null,
+          null, null, null, null, null);
     }
     if (data == null || data.length == 0) {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-          .getLanguage()));
+      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
+          .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     } else {
       String strOld = "";
       BigDecimal totalDebit = BigDecimal.ZERO;
@@ -599,17 +612,16 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strcelementvalueto = strcelementvaluefrom;
         strAllaccounts = "N";
       }
-      data = ReportGeneralLedgerData.selectXLS(this, vars
-              .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts,
-          strcelementvaluefrom, strcelementvalueto, Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ReportGeneralLedger"), Utility.getContext(this, vars,
-              "#User_Client", "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom,
-          toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
-          strAmtTo);
+      data = ReportGeneralLedgerData.selectXLS(this, vars.getLanguage(), strDateFrom,
+          toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
+              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
+              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
+          strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
+          strmProductId, strcProjectId, strAmtFrom, strAmtTo);
     }
     if (data == null || data.length == 0) {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-          .getLanguage()));
+      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
+          .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     } else {
 
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerExcel.jrxml";

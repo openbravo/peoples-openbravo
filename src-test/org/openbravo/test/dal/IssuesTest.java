@@ -23,20 +23,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.io.SAXReader;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Reference;
+import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.dal.xml.EntityXMLException;
-import org.openbravo.dal.xml.XMLTypeConverter;
+import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.data.UtilSql;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -44,6 +52,9 @@ import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -66,6 +77,30 @@ import org.openbravo.test.base.BaseTest;
  * - https://issues.openbravo.com/view.php?id=12106: record identifier returned from dal uses ' ' as
  * separator of columns, but normal pl-version uses ' - '
  * 
+ * - https://issues.openbravo.com/view.php?id=12702: Cycle in parent reference references then DAL
+ * throws stack over flow error
+ * 
+ * - https://issues.openbravo.com/view.php?id=12853: OBQuery count not working with a query with
+ * aliases
+ * 
+ * - https://issues.openbravo.com/view.php?id=12903: Error in OBQuery when using with hql clause
+ * having order by but not where part
+ * 
+ * - https://issues.openbravo.com/view.php?id=12918 DAL: Exception in commitTransaction leaves
+ * Postgres connection in illegal state
+ * 
+ * - https://issues.openbravo.com/view.php?id=13135: OBContext.getLanguage() returns 'wrong'
+ * language, if user does not have a default language set
+ * 
+ * - https://issues.openbravo.com/view.php?id=13136: OBContext.getLanguage does only use users'
+ * default language, and does not honor language change in the role change popup
+ * 
+ * - https://issues.openbravo.com/view.php?id=13281: [REST] when inserting an object through REST
+ * allow setting the organization through xml
+ * 
+ * https://issues.openbravo.com/view.php?id=13283: [REST] use organization of the object to
+ * retrieved referenced objects
+ * 
  * @author mtaal
  * @author iperdomo
  */
@@ -74,10 +109,78 @@ public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
 
   /**
+   * https://issues.openbravo.com/view.php?id=12918
+   */
+  public void test12918() {
+    setSystemAdministratorContext();
+
+    // A fail save process is expected
+    try {
+      Client c = OBDal.getInstance().get(Client.class, "0");
+      Role r = OBProvider.getInstance().get(Role.class);
+      r.setClient(c);
+      r.setName("System Administrator"); // Fails unique name constraint
+      r.setUserLevel("S");
+      r.setClientList("0");
+      r.setOrganizationList("0");
+      OBDal.getInstance().save(r);
+      OBDal.getInstance().commitAndClose();
+    } catch (Exception e) {
+      // Expected
+      final User u = OBDal.getInstance().get(User.class, "100");
+      System.out.println(u);
+    }
+  }
+
+  /**
+   * Tests https://issues.openbravo.com/view.php?id=12702
+   */
+  public void test12702() {
+    final Reference ref1 = new Reference();
+    final Reference ref2 = new Reference();
+    ref2.setModelImpl("ref2");
+    ref1.setParentReference(ref2);
+    ref2.setParentReference(ref1);
+    ref2.setBaseReference(true);
+    assertEquals("ref2", ref1.getModelImplementationClassName());
+    ref1.setBaseReference(true);
+    assertEquals(null, ref1.getModelImplementationClassName());
+    ref1.setBaseReference(false);
+    ref2.setBaseReference(false);
+    assertEquals(null, ref1.getModelImplementationClassName());
+  }
+
+  /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12106
    */
   public void test12106() {
     setSystemAdministratorContext();
+    {
+      final List<Object> params = new ArrayList<Object>();
+      final String orderId = "1000001";
+      params.add("C_ORDER");
+      params.add(orderId);
+      params.add("en_US");
+      final String sqlIdentifier = (String) CallStoredProcedure.getInstance().call(
+          "AD_COLUMN_IDENTIFIER", params, null);
+      final Order order = OBDal.getInstance().get(Order.class, orderId);
+      final String dalIdentifier = IdentifierProvider.getInstance().getIdentifier(order);
+
+      assertEquals(sqlIdentifier, dalIdentifier);
+    }
+    {
+      final List<Object> params = new ArrayList<Object>();
+      final String id = "1000000";
+      params.add("M_PRODUCT");
+      params.add(id);
+      params.add("en_US");
+      final String sqlIdentifier = (String) CallStoredProcedure.getInstance().call(
+          "AD_COLUMN_IDENTIFIER", params, null);
+      final String dalIdentifier = IdentifierProvider.getInstance().getIdentifier(
+          OBDal.getInstance().get(Product.class, id));
+      assertEquals(sqlIdentifier, dalIdentifier);
+    }
+
     final List<Module> modules = OBDal.getInstance().createCriteria(Module.class).list();
     for (Module module : modules) {
       assertTrue(module.getIdentifier().contains(IdentifierProvider.SEPARATOR));
@@ -130,11 +233,11 @@ public class IssuesTest extends BaseTest {
    * Tests issue: https://issues.openbravo.com/view.php?id=11812
    */
   public void test11812() {
-    assertTrue(24 == XMLTypeConverter.getInstance().fromXML(Long.class, "24.0"));
+    assertTrue(24 == (Long) new LongDomainType().createFromString("24.0"));
     try {
-      XMLTypeConverter.getInstance().fromXML(Long.class, "24.5");
+      new LongDomainType().createFromString("24.5");
       fail("No exception on 24.5");
-    } catch (EntityXMLException e) {
+    } catch (ArithmeticException e) {
       // expected
     }
   }
@@ -223,5 +326,111 @@ public class IssuesTest extends BaseTest {
     assertTrue(invoiceLine.isActive());
     Location bpLoc = OBProvider.getInstance().get(Location.class);
     assertTrue(bpLoc.isActive());
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12853
+   */
+  public void test12853() {
+    setSystemAdministratorContext();
+    final OBQuery<Product> products = OBDal.getInstance().createQuery(Product.class,
+        " as e where e.name is not null");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+  }
+
+  /**
+   * Tests issue: https://issues.openbravo.com/view.php?id=12903
+   */
+  public void test12903() {
+    setSystemAdministratorContext();
+    OBQuery<Product> products;
+
+    products = OBDal.getInstance().createQuery(Product.class,
+        " as e where e.name is not null order by name");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+
+    products = OBDal.getInstance().createQuery(Product.class, " as e order by name");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+
+    products = OBDal.getInstance().createQuery(Product.class, "order by name");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+
+    products = OBDal.getInstance().createQuery(Product.class, " where name is not null");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+
+    products = OBDal.getInstance().createQuery(Product.class, "");
+    products.setFilterOnReadableOrganization(false);
+    products.setFilterOnReadableClients(false);
+    assertTrue(products.count() > 0);
+  }
+
+  /**
+   * Tests: 13135: OBContext.getLanguage() returns 'wrong' language, if user does not have a default
+   * language set
+   */
+  public void test13135() {
+    setSystemAdministratorContext();
+
+    try {
+      final User user = OBDal.getInstance().get(User.class, "100");
+      user.setDefaultLanguage(null);
+      OBDal.getInstance().save(user);
+      final Client client = OBDal.getInstance().get(Client.class, "0");
+      client.setLanguage(OBDal.getInstance().get(Language.class, "120"));
+      OBDal.getInstance().save(client);
+
+      OBContext.setOBContext("100", "0", "0", "0", null);
+      assertEquals("120", OBContext.getOBContext().getLanguage().getId());
+
+    } finally {
+      // prevent the user to be really changed
+      OBDal.getInstance().rollbackAndClose();
+    }
+  }
+
+  /**
+   * Tests: 13136: OBContext.getLanguage does only use users' default language, and does not honor
+   * language change in the role change popup
+   */
+  public void test13136() {
+    OBContext.setOBContext("100", "0", "0", "0", "en_IN");
+    assertEquals("130", OBContext.getOBContext().getLanguage().getId());
+  }
+
+  /**
+   * https://issues.openbravo.com/view.php?id=13281 [REST] when inserting an object through REST
+   * allow setting the organization through xml
+   * 
+   * https://issues.openbravo.com/view.php?id=13283: [REST] use organization of the object to
+   * retrieved referenced objects
+   */
+  public void test13281And13283() throws Exception {
+    OBContext.setOBContext("1000000", "1000004", "1000000", "0");
+
+    // use the same logic as in the DalWebService
+    final XMLEntityConverter xec = XMLEntityConverter.newInstance();
+    xec.setClient(OBContext.getOBContext().getCurrentClient());
+    xec.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+
+    // for a webservice referenced entities should not be created at all!
+    xec.getEntityResolver().setOptionCreateReferencedIfNotFound(false);
+
+    final SAXReader reader = new SAXReader();
+    final Document document = reader.read(this.getClass().getResourceAsStream("test_13281.xml"));
+    final List<BaseOBObject> result = xec.process(document);
+    assertTrue(result.size() == 1);
+    assertTrue(result.get(0) instanceof Order);
+    final Order order = (Order) result.get(0);
+    assertTrue(order.getOrganization().getId().equals("1000000"));
   }
 }

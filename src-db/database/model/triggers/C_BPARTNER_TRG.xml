@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_BPARTNER_TRG">
-    <trigger name="C_BPARTNER_TRG" table="C_BPARTNER" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="C_BPARTNER_TRG" table="C_BPARTNER" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
   /*************************************************************************
   * The contents of this file are subject to the Compiere Public
@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -47,7 +47,7 @@
   v_seq_name		              varchar2(32);
   v_Sequence_No		            varchar2(32);
   v_C_AcctSchema_ID	          VARCHAR2(32);
-     
+  v_count 					  NUMBER;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -77,7 +77,8 @@ BEGIN
 		    Creating new sub account
 		*/
 		--  Customer
-	IF (v_C_AcctSchema_ID is null or v_C_AcctSchema_ID <> Cur_Defaults.C_AcctSchema_ID) THEN
+		 select count(*) into v_count from C_BP_Vendor_Acct where c_acctschema_id = Cur_Defaults.C_AcctSchema_ID AND c_bpartner_id = :new.C_BPartner_ID AND status = Cur_Defaults.status;
+	IF (v_count=0) THEN
          Ad_Sequence_Next('C_BP_Customer_Acct', Cur_Defaults.C_AcctSchema_ID, v_BP_Acct_ID);
          IF (Cur_Defaults.IsBPNewAccount='Y') THEN
 		
@@ -96,7 +97,9 @@ BEGIN
                /*
                   Retrieving the prepayment account NUMBER
                */
-               c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Prepayment_Acct);
+               IF(Cur_Defaults.C_Prepayment_Acct IS NOT NULL) THEN
+               	c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Prepayment_Acct);
+               END IF;
 			            
              /*
                   Inserting the new account NUMBER
@@ -137,12 +140,15 @@ BEGIN
                /*
                  Retrieving the liability services account NUMBER
                */ 
-		c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Services_Acct);
+               IF(Cur_Defaults.V_Liability_Services_Acct IS NOT NULL) THEN
+					c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Services_Acct);
+			   END IF;
 		/*
                  Retrieving the prepayment account NUMBER
               */
+              IF(Cur_Defaults.V_Prepayment_Acct IS NOT NULL) THEN
                c_validcombination_clone(Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Prepayment_Acct);
-               
+              END IF;
     		/*
                  Inserting the new account NUMBER
                */
@@ -167,12 +173,12 @@ BEGIN
               :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
               Cur_Defaults.V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_Prepayment_Acct, Cur_Defaults.Status);
          END IF;
-		v_C_AcctSchema_ID:=Cur_Defaults.C_AcctSchema_ID;
               
   END IF;
   END LOOP;
 -- Employee
   v_C_AcctSchema_ID:=null;
+  v_count:=0;
               FOR Cur_Defaults2 IN (
               SELECT AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Org_ID),
               oa.ad_sequence_bp_id, oa.isbpnewaccount, oa.acct_length, oa.subacct_length, oa.createdby, oa.updatedby,
@@ -192,7 +198,8 @@ BEGIN
 			 /*
         Creating new sub account
        */
-		 IF (v_C_AcctSchema_ID is null or v_C_AcctSchema_ID <> Cur_Defaults2.C_AcctSchema_ID) THEN
+       select count(*) into v_count from C_BP_Employee_Acct where c_acctschema_id = Cur_Defaults2.C_AcctSchema_ID AND c_bpartner_id = :new.C_BPartner_ID;
+		 IF (v_count=0) THEN
          IF (Cur_Defaults2.IsBPNewAccount='Y') THEN
          
              /*
@@ -267,8 +274,6 @@ BEGIN
      WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
      UPDATE C_BP_EMPLOYEE_ACCT SET AD_ORG_ID = :new.AD_Org_ID
      WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
-  ELSIF (DELETING) THEN
-     DELETE FROM AD_TreeNodeBP WHERE AD_Client_ID = :old.AD_Client_ID AND Node_ID = :old.C_BPartner_ID;
   END IF;
 EXCEPTION
  WHEN NO_DATA_FOUND THEN

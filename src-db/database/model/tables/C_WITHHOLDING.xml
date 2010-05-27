@@ -89,7 +89,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="RATE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="RATE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>

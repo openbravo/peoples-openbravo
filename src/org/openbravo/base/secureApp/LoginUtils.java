@@ -11,6 +11,8 @@
  */
 package org.openbravo.base.secureApp;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -18,7 +20,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 
@@ -34,6 +38,8 @@ public class LoginUtils {
    * Returns a userId which matches the login and password. If no user is found then null is
    * returned. The combination of login and password is used to find the user.
    * 
+   * Blocking users is taking into account
+   * 
    * Note that only active users are returned.
    * 
    * @param connectionProvider
@@ -43,10 +49,35 @@ public class LoginUtils {
    *          the login
    * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
-   * @return the user id or null if no user could be found.
+   * @return the user id or null if no user could be found or the user is locked.
    * @see FormatUtilities#sha1Base64(String)
    */
   public static String getValidUserId(ConnectionProvider connectionProvider, String login,
+      String unHashedPassword) {
+    try {
+      // Deley response and check for locked user
+      UserLock lockSettings = new UserLock(login);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return null;
+      }
+
+      final String userId = checkUserPassword(connectionProvider, login, unHashedPassword);
+      if (userId == null) {
+        lockSettings.addFail();
+      }
+      return userId;
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  /**
+   * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not
+   * blocking user accounts.
+   * 
+   */
+  public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
       final String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
@@ -54,6 +85,7 @@ public class LoginUtils {
       if (userId.equals("-1")) {
         return null;
       }
+
       return userId;
     } catch (final Exception e) {
       throw new OBException(e);
@@ -113,7 +145,7 @@ public class LoginUtils {
     // Organizations tree
     // enable admin mode, as normal non admin-role
     // has no read-access to i.e. AD_OrgType
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     try {
 
       OrgTree tree = new OrgTree(conn, strCliente);
@@ -124,7 +156,7 @@ public class LoginUtils {
       log4j.warn("Error while setting Organzation tree to session " + e);
       return false;
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     try {
@@ -154,18 +186,12 @@ public class LoginUtils {
           vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
       }
       attr = null;
-      PreferencesData[] prefs = PreferencesData.select(conn, Utility.getContext(conn, vars,
-          "#User_Client", "LoginHandler"), Utility.getContext(conn, vars, "#AccessibleOrgTree",
-          "LoginHandler"), strUserAuth);
 
-      if (prefs != null && prefs.length > 0) {
-        for (int i = 0; i < prefs.length; i++) {
-          vars.setSessionValue("P|"
-              + (prefs[i].adWindowId.equals("") ? "" : (prefs[i].adWindowId + "|"))
-              + prefs[i].attribute, prefs[i].value);
-        }
+      List<Preference> preferences = Preferences.getAllPreferences(strCliente, strOrg, strUserAuth,
+          strRol);
+      for (Preference preference : preferences) {
+        Preferences.savePreferenceInSession(vars, preference);
       }
-      prefs = null;
 
       attr = AttributeData.selectIsSOTrx(conn);
       if (attr != null && attr.length > 0) {
@@ -217,11 +243,14 @@ public class LoginUtils {
 
     // set the obcontext
     try {
-      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg);
+      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
     } catch (final OBSecurityException e) {
       return false;
     }
 
+    // Login process if finished, set the flag as not logging in
+    vars.setSessionValue("#loggingIn", "N");
     return true;
   }
+
 }

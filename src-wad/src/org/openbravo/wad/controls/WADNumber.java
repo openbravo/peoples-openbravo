@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2009 Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -184,24 +184,24 @@ public class WADNumber extends WADControl {
 
   private void setFormat(XmlDocument xmlDocument) {
     xmlDocument.setParameter("columnName", getData("ColumnName"));
+
+    xmlDocument.setParameter("columnFormat", getFormat());
+    xmlDocument.setParameter("outputFormat", getFormat());
+  }
+
+  private String getFormat() {
     if (isDecimalNumber(getData("AD_Reference_ID"))) {
-      xmlDocument.setParameter("columnFormat", "euroEdition");
-      xmlDocument.setParameter("outputFormat", "euroEdition");
+      return "euroEdition";
     } else if (isQtyNumber(getData("AD_Reference_ID"))) {
-      xmlDocument.setParameter("columnFormat", "qtyEdition");
-      xmlDocument.setParameter("outputFormat", "qtyEdition");
+      return "qtyEdition";
     } else if (isPriceNumber(getData("AD_Reference_ID"))) {
-      xmlDocument.setParameter("columnFormat", "priceEdition");
-      xmlDocument.setParameter("outputFormat", "priceEdition");
+      return "priceEdition";
     } else if (isIntegerNumber(getData("AD_Reference_ID"))) {
-      xmlDocument.setParameter("columnFormat", "integerEdition");
-      xmlDocument.setParameter("outputFormat", "integerEdition");
+      return "integerEdition";
     } else if (isGeneralNumber(getData("AD_Reference_ID"))) {
-      xmlDocument.setParameter("columnFormat", "generalQtyEdition");
-      xmlDocument.setParameter("outputFormat", "generalQtyEdition");
+      return "generalQtyEdition";
     } else {
-      xmlDocument.setParameter("columnFormat", "qtyEdition");
-      xmlDocument.setParameter("outputFormat", "generalQtyEdition");
+      return "qtyEdition";
     }
   }
 
@@ -307,4 +307,16 @@ public class WADNumber extends WADControl {
       return "";
     }
   }
+
+  public String getHiddenHTML() {
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+        "org/openbravo/wad/controls/WADHiddenNumber").createXmlDocument();
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("outputformat", getFormat());
+
+    return replaceHTML(xmlDocument.print());
+  }
+
 }

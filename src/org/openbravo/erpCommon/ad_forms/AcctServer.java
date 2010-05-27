@@ -21,18 +21,24 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.common.businesspartner.CustomerAccounts;
+import org.openbravo.model.common.businesspartner.VendorAccounts;
 
 public abstract class AcctServer {
   static Logger log4j = Logger.getLogger(AcctServer.class);
@@ -131,13 +137,17 @@ public abstract class AcctServer {
   public static final String STATUS_InvalidCost = "C";
   /** Document Status */
   public static final String STATUS_DocumentLocked = "L";
+  /** Document Status */
+  public static final String STATUS_DocumentDisabled = "D";
+
+  OBError messageResult = null;
 
   /** AR Invoices */
   public static final String DOCTYPE_ARInvoice = "ARI";
   /** AR Credit Memo */
   public static final String DOCTYPE_ARCredit = "ARC";
   /** AR Receipt */
-  public static final String DOCTYPE_ARReceipt = "STT";// antes ARR
+  public static final String DOCTYPE_ARReceipt = "ARR";
   /** AR ProForma */
   public static final String DOCTYPE_ARProForma = "ARF";
 
@@ -184,6 +194,11 @@ public abstract class AcctServer {
 
   // DPManagement
   public static final String DOCTYPE_DPManagement = "DPM";
+
+  // FinAccTransaction
+  public static final String DOCTYPE_FinAccTransaction = "FAT";
+  // FinReconciliation
+  public static final String DOCTYPE_Reconciliation = "REC";
 
   /*************************************************************************/
 
@@ -292,6 +307,7 @@ public abstract class AcctServer {
 
       for (int i = 0; data != null && i < data.length; i++) {
         strIDs += data[i].getField("ID") + ", ";
+        this.setMessageResult(null);
         if (!post(data[i].getField("ID"), false, vars, connectionProvider, con)) {
           connectionProvider.releaseRollbackConnection(con);
           return;
@@ -534,6 +550,7 @@ public abstract class AcctServer {
         log4j.warn("AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID="
             + strClave);
         setStatus(STATUS_DocumentLocked); // Status locked document
+        this.setMessageResult(conn, vars, STATUS_DocumentLocked, "Error");
         return false;
       } else
         AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
@@ -546,12 +563,20 @@ public abstract class AcctServer {
         log4j.warn(e);
       }
       FieldProvider data[] = getObjectFieldProvider();
-      if (getDocumentConfirmation(conn, Record_ID) && post(data, force, vars, conn, con)) {
-        success++;
-      } else {
+      try {
+        if (getDocumentConfirmation(conn, Record_ID) && post(data, force, vars, conn, con)) {
+          success++;
+        } else {
+          errors++;
+          if (messageResult == null)
+            setMessageResult(conn, vars, getStatus(), "");
+          save(conn);
+        }
+      } catch (Exception e) {
         errors++;
-        // Status = AcctServer.STATUS_Error;
+        Status = AcctServer.STATUS_Error;
         save(conn);
+        log4j.warn(e);
       }
     } catch (ServletException e) {
       log4j.error(e);
@@ -958,8 +983,7 @@ public abstract class AcctServer {
           AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
               .newInstance();
           if (!newTemplate.execute(this, as, conn, con, vars)) {
-            setStatus(AcctServer.STATUS_Error);
-            break;
+            return getStatus();
           }
         } catch (Exception e) {
           log4j.error("Error while creating new instance for AcctProcessTemplate - " + e);
@@ -967,7 +991,8 @@ public abstract class AcctServer {
         }
       }
     }
-
+    if (messageResult != null)
+      return getStatus();
     return STATUS_Posted;
   } // postLogic
 
@@ -1429,6 +1454,59 @@ public abstract class AcctServer {
     return acct;
   } // getAccount
 
+  /**
+   * Get the account for Accounting Schema
+   * 
+   * @param cBPartnerId
+   *          business partner id
+   * @param as
+   *          accounting schema
+   * @return Account
+   */
+  public final Account getAccountBPartner(String cBPartnerId, AcctSchema as, boolean isReceipt,
+      boolean isPrepayment, ConnectionProvider conn) throws ServletException {
+
+    String strValidCombination = "";
+    if (isReceipt) {
+      final StringBuilder whereClause = new StringBuilder();
+
+      whereClause.append(" as cusa ");
+      whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
+      whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+
+      final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance().createQuery(
+          CustomerAccounts.class, whereClause.toString());
+      obqParameters.setFilterOnReadableClients(false);
+      obqParameters.setFilterOnReadableOrganization(false);
+      final List<CustomerAccounts> customerAccounts = obqParameters.list();
+      if (customerAccounts != null && customerAccounts.size() > 0
+          && customerAccounts.get(0).getCustomerReceivablesNo() != null && !isPrepayment)
+        strValidCombination = customerAccounts.get(0).getCustomerReceivablesNo().getId();
+      if (customerAccounts != null && customerAccounts.size() > 0
+          && customerAccounts.get(0).getCustomerPrepayment() != null && isPrepayment)
+        strValidCombination = customerAccounts.get(0).getCustomerPrepayment().getId();
+    } else {
+      final StringBuilder whereClause = new StringBuilder();
+
+      whereClause.append(" as cusa ");
+      whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
+      whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+
+      final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance().createQuery(
+          VendorAccounts.class, whereClause.toString());
+      obqParameters.setFilterOnReadableClients(false);
+      obqParameters.setFilterOnReadableOrganization(false);
+      final List<VendorAccounts> vendorAccounts = obqParameters.list();
+      if (vendorAccounts != null && vendorAccounts.size() > 0
+          && vendorAccounts.get(0).getVendorLiability() != null && !isPrepayment)
+        strValidCombination = vendorAccounts.get(0).getVendorLiability().getId();
+      if (vendorAccounts != null && vendorAccounts.size() > 0
+          && vendorAccounts.get(0).getVendorPrepayment() != null && isPrepayment)
+        strValidCombination = vendorAccounts.get(0).getVendorPrepayment().getId();
+    }
+    return new Account(conn, strValidCombination);
+  } // getAccount
+
   public FieldProvider[] getObjectFieldProvider() {
     return objectFieldProvider;
   }
@@ -1498,6 +1576,55 @@ public abstract class AcctServer {
     }
     return false;
   } // end of checkDocuments() method
+
+  void setMessageResult(OBError error) {
+    messageResult = error;
+  }
+
+  /*
+   * Sets OBError message for the given status
+   */
+  void setMessageResult(ConnectionProvider conn, VariablesSecureApp vars, String strStatus,
+      String strMessageType) {
+    if (strStatus == null || strStatus.equals(""))
+      strStatus = getStatus();
+    String strMessage = "";
+    if (messageResult == null)
+      messageResult = new OBError();
+    if (strMessageType == null || strMessageType.equals(""))
+      messageResult.setType("Error");
+    else
+      messageResult.setType(strMessageType);
+    if (strStatus.equals(STATUS_Error))
+      strMessage = "@ProcessRunError@";
+    else if (strStatus.equals(STATUS_DocumentLocked)) {
+      strMessage = "@OtherPostingProcessActive@";
+      messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_InvalidCost))
+      strMessage = "@InvalidCost@";
+    else if (strStatus.equals(STATUS_DocumentDisabled)) {
+      strMessage = "@DocumentDisabled@";
+      messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_InvalidAccount))
+      strMessage = "@InvalidAccount@";
+    else if (strStatus.equals(STATUS_PeriodClosed))
+      strMessage = "@PeriodClosed@";
+    else if (strStatus.equals(STATUS_NotConvertible))
+      strMessage = "@NotConvertible@";
+    else if (strStatus.equals(STATUS_NotBalanced))
+      strMessage = "@NotBalanced@";
+    else if (strStatus.equals(STATUS_NotPosted))
+      strMessage = "@NotPosted@";
+    else if (strStatus.equals(STATUS_PostPrepared))
+      strMessage = "@PostPrepared@";
+    else if (strStatus.equals(STATUS_Posted))
+      strMessage = "@Posted@";
+    messageResult.setMessage(Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage));
+  }
+
+  public OBError getMessageResult() {
+    return messageResult;
+  }
 
   public String getServletInfo() {
     return "Servlet for the accounting";

@@ -19,6 +19,8 @@
 
 package org.openbravo.base.model.domaintype;
 
+import java.lang.reflect.Constructor;
+
 import org.openbravo.base.model.Property;
 import org.openbravo.base.validation.ValidationException;
 
@@ -30,14 +32,12 @@ import org.openbravo.base.validation.ValidationException;
  */
 public abstract class BasePrimitiveDomainType extends BaseDomainType implements PrimitiveDomainType {
 
-  /**
-   * The type used in the hibernate mapping. Most of the time is the same as the
-   * {@link #getPrimitiveType()}. Can be used to set a hibnernate user type class. See the hibernate
-   * documentation for more information on this.
+  private Constructor<Object> constructor;
+
+  /*
+   * (non-Javadoc)
    * 
-   * This method will be moved to the PrimitiveDomainType in a later stage.
-   * 
-   * @return the class representing the hibernate type
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getHibernateType()
    */
   public Class<?> getHibernateType() {
     return getPrimitiveType();
@@ -72,4 +72,39 @@ public abstract class BasePrimitiveDomainType extends BaseDomainType implements 
     return null;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#convertToString(java.lang.Object)
+   */
+  @Override
+  public String convertToString(Object value) {
+    if (value == null) {
+      return EMPTY_STRING;
+    }
+    return value.toString();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public Object createFromString(String strValue) {
+    if (strValue == null || strValue.length() == 0) {
+      return null;
+    }
+
+    try {
+      if (constructor == null) {
+        final Class<Object> clz = (Class<Object>) getPrimitiveType();
+        constructor = clz.getConstructor(String.class);
+      }
+      return constructor.newInstance(strValue);
+    } catch (Exception e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
 }

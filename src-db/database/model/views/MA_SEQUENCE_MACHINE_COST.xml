@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
   <database name="VIEW MA_SEQUENCE_MACHINE_COST">
     <view name="MA_SEQUENCE_MACHINE_COST"><![CDATA[SELECT ma_sequence.ma_sequence_id, ma_machine_cost.ma_machine_id, 
-        CASE ma_machine_cost.costuom
-            WHEN 'H' THEN ma_sequence.costcenteruse * ma_machine_cost.cost
-            WHEN 'U' THEN sum(ma_sequenceproduct.quantity) * ma_machine_cost.cost
-            WHEN 'K' THEN sum(ma_sequenceproduct.quantity * m_product.weight) * ma_machine_cost.cost
-            ELSE NULL
-        END AS cost
-   FROM ma_sequence, ma_process, ma_processplan_version, ma_costcenter_version, ma_costcenter_machine, ma_machine_cost, m_product, ma_sequenceproduct
-  WHERE ma_sequence.ma_process_id = ma_process.ma_process_id AND ma_sequence.ma_processplan_version_id = ma_processplan_version.ma_processplan_version_id AND ma_process.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ma_costcenter_version.ma_costcenter_version_id = ma_costcenter_machine.ma_costcenter_version_id AND ma_costcenter_machine.ma_machine_id = ma_machine_cost.ma_machine_id AND ma_sequence.ma_sequence_id = ma_sequenceproduct.ma_sequence_id AND ma_sequenceproduct.m_product_id = m_product.m_product_id AND ma_sequenceproduct.productiontype = '+' AND ma_costcenter_version.validfrom = (( SELECT max(ccv.validfrom) AS max
-           FROM ma_costcenter_version ccv
-          WHERE ccv.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ccv.validfrom <= ma_processplan_version.datefrom)) AND ma_machine_cost.validfrom = (( SELECT max(mc.validfrom) AS max
-           FROM ma_machine_cost mc
-          WHERE mc.ma_machine_id = ma_machine_cost.ma_machine_id AND mc.validfrom <= ma_processplan_version.datefrom))
-  GROUP BY ma_sequence.ma_sequence_id, ma_machine_cost.ma_machine_id, ma_machine_cost.cost, ma_machine_cost.costuom, ma_sequence.costcenteruse]]></view>
+CASE ma_machine_cost.costuom
+WHEN 'H' THEN ma_sequence.costcenteruse * ma_machine_cost.cost
+WHEN 'U' THEN sum(ma_sequenceproduct.quantity) * ma_machine_cost.cost
+WHEN 'K' THEN sum(ma_sequenceproduct.quantity * m_product.weight) * ma_machine_cost.cost
+ELSE NULL
+END AS cost
+FROM ma_sequence, ma_process, ma_processplan_version, ma_costcenter_version, ma_costcenter_machine, ma_machine_cost, m_product, ma_sequenceproduct
+WHERE ma_sequence.ma_process_id = ma_process.ma_process_id AND ma_sequence.ma_processplan_version_id = ma_processplan_version.ma_processplan_version_id AND ma_process.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ma_costcenter_version.ma_costcenter_version_id = ma_costcenter_machine.ma_costcenter_version_id AND ma_costcenter_machine.ma_machine_id = ma_machine_cost.ma_machine_id AND ma_sequence.ma_sequence_id = ma_sequenceproduct.ma_sequence_id AND ma_sequenceproduct.m_product_id = m_product.m_product_id AND ma_sequenceproduct.productiontype = '+' AND ma_costcenter_version.validfrom = ((SELECT max(ccv.validfrom) AS max
+FROM ma_costcenter_version ccv
+WHERE ccv.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ccv.validfrom <= ma_processplan_version.datefrom)) AND ma_machine_cost.validfrom = ((SELECT max(mc.validfrom) AS max
+FROM ma_machine_cost mc
+WHERE mc.ma_machine_id = ma_machine_cost.ma_machine_id AND mc.validfrom <= ma_processplan_version.datefrom))
+GROUP BY ma_sequence.ma_sequence_id, ma_machine_cost.ma_machine_id, ma_machine_cost.cost, ma_machine_cost.costuom, ma_sequence.costcenteruse]]></view>
   </database>

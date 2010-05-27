@@ -65,6 +65,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
       printPageAlert(response, vars);
     } else if (vars.commandIn("LOADING")) {
       printPageLoadingMenu(response, vars);
+    } else if (vars.commandIn("HIDE")) {
+      printPageHideMenu(response, vars);
     } else
       throw new ServletException();
   }
@@ -79,7 +81,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     Date now = new Date();
     log4j.debug("ping session:" + sessionId + " - time" + now);
     if (sessionId != null && !sessionId.isEmpty()) {
-      boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+      OBContext.setAdminMode();
       try {
         Session session = OBDal.getInstance().get(Session.class, sessionId);
         session.setLastPing(now);
@@ -88,7 +90,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       } catch (Exception e) {
         log4j.error("Error in session ping", e);
       } finally {
-        OBContext.getOBContext().setInAdministratorMode(adminMode);
+        OBContext.restorePreviousMode();
       }
     }
   }
@@ -149,6 +151,30 @@ public class VerticalMenu extends HttpSecureAppServlet {
     xmlDocument.setParameter("userName", MenuData.getUserName(this, vars.getUser()));
 
     decidePopups(xmlDocument, vars);
+
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private void printPageHideMenu(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: Vertical Menu's screen");
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/utility/VerticalMenu").createXmlDocument();
+
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";");
+    xmlDocument.setParameter("autosave", "var autosave = "
+        + (vars.getSessionValue("#Autosave").equals("")
+            || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true") + ";");
+
+    xmlDocument.setParameter("menu", "");
+    xmlDocument.setParameter("userName", MenuData.getUserName(this, vars.getUser()));
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();

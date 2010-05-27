@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
   <database name="VIEW C_INVOICE_CUSTOMERPRODQTR">
     <view name="C_INVOICE_CUSTOMERPRODQTR"><![CDATA[SELECT il.ad_client_id, il.ad_org_id, il.c_bpartner_id, il.m_product_category_id, TRUNC(il.dateinvoiced, 'Q') AS dateinvoiced, sum(il.linenetamt) AS linenetamt, sum(il.linelistamt) AS linelistamt, sum(il.linelimitamt) AS linelimitamt, sum(il.linediscountamt) AS linediscountamt, 
-        CASE sum(il.linelistamt)
-            WHEN 0 THEN 0
-            ELSE round((sum(il.linelistamt) - sum(il.linenetamt)) / sum(il.linelistamt) * 100, 2)
-        END AS linediscount, sum(il.lineoverlimitamt) AS lineoverlimitamt, 
-        CASE sum(il.linenetamt)
-            WHEN 0 THEN 0
-            ELSE 100 - round((sum(il.linenetamt) - sum(il.lineoverlimitamt)) / sum(il.linenetamt) * 100, 2)
-        END AS lineoverlimit, sum(il.qtyinvoiced) AS qtyinvoiced
-   FROM c_invoiceline_v2 il
-  GROUP BY il.ad_client_id, il.ad_org_id, il.c_bpartner_id, il.m_product_category_id, TRUNC(il.dateinvoiced, 'Q')]]></view>
+CASE sum(il.linelistamt)
+WHEN 0 THEN 0
+ELSE round((sum(il.linelistamt) - sum(il.linenetamt)) / sum(il.linelistamt) * 100, 2)
+END AS linediscount, sum(il.lineoverlimitamt) AS lineoverlimitamt, 
+CASE sum(il.linenetamt)
+WHEN 0 THEN 0
+ELSE 100 - round((sum(il.linenetamt) - sum(il.lineoverlimitamt)) / sum(il.linenetamt) * 100, 2)
+END AS lineoverlimit, sum(il.qtyinvoiced) AS qtyinvoiced
+FROM c_invoiceline_v2 il
+GROUP BY il.ad_client_id, il.ad_org_id, il.c_bpartner_id, il.m_product_category_id, TRUNC(il.dateinvoiced, 'Q')]]></view>
   </database>

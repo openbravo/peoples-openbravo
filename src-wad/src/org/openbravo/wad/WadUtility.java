@@ -493,7 +493,7 @@ public class WadUtility {
   public static String getWadDefaultValue(ConnectionProvider pool, FieldsData fd) {
     if (fd == null)
       return "";
-    WADControl control = getWadControlClass(pool, fd.referencevalue, fd.type);
+    WADControl control = getWadControlClass(pool, fd.reference, fd.referencevalue);
     control.setData("name", fd.name.toUpperCase());
     control.setData("required", fd.required);
     return control.getDefaultValue();
@@ -750,6 +750,7 @@ public class WadUtility {
     setPropertyValue(prop, field, "ColumnNameSearch", "realname", "");
     setPropertyValue(prop, field, "SearchName", "searchname", "");
     setPropertyValue(prop, field, "AD_CallOut_ID", "adCalloutId", "");
+    setPropertyValue(prop, field, "ValidateOnNew", "validateonnew", "Y");
     setPropertyValue(prop, field, "CallOutName", "calloutname", "");
     setPropertyValue(prop, field, "CallOutMapping", "mappingnameCallout", "");
     setPropertyValue(prop, field, "CallOutClassName", "classnameCallout", "");
@@ -765,6 +766,7 @@ public class WadUtility {
     setPropertyValue(prop, field, "IsColumnEncrypted", "iscolumnencrypted", "");
     setPropertyValue(prop, field, "IsDesencryptable", "isdesencryptable", "");
     setPropertyValue(prop, field, "ReadOnlyLogic", "readonlylogic", "");
+    setPropertyValue(prop, field, "IsAutosave", "isautosave", "Y");
     prop.setProperty("TabName", tabName);
     prop.setProperty("IsReadOnlyTab", (isreadonly ? "Y" : "N"));
     prop.setProperty("AD_Language", adLanguage);
@@ -834,9 +836,7 @@ public class WadUtility {
       return "";
     }
     StringBuffer _displayLogic = new StringBuffer();
-    String element = auxControl.getData("ColumnName");
-    if (auxControl.getType().equals("Combo"))
-      element = "report" + element + "_S";
+    String element = auxControl.getReadOnlyLogicColumn();
 
     _displayLogic.append("  readOnlyLogicElement('").append(element).append("', (").append(
         displayLogic(code, vecDL, parentsFieldsData, vecAuxiliar, vecFields, windowId, vecContext))

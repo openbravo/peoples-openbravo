@@ -59,16 +59,6 @@ public class DalConnectionProvider implements ConnectionProvider {
   public Connection getConnection() throws NoConnectionAvailableException {
     if (connection == null) {
       connection = OBDal.getInstance().getConnection();
-
-      // set the date formatting
-      try {
-        final String dbSessionConfig = getProperties().getProperty("bbdd.sessionConfig");
-        PreparedStatement pstmt = connection.prepareStatement(dbSessionConfig);
-        pstmt.executeQuery();
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
-
     }
 
     // always flush all remaining actions
@@ -87,8 +77,9 @@ public class DalConnectionProvider implements ConnectionProvider {
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
     Connection conn = getConnection();
-    if (conn == null)
+    if (conn == null) {
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
+    }
     conn.setAutoCommit(false);
     return conn;
   }

@@ -195,7 +195,7 @@ END IF;
  v_newLineNetAmt:=0;
  IF(v_Processed='N') THEN
   -- Calculate taxes
-  IF(UPDATING) THEN
+  IF(UPDATING OR DELETING) THEN
   v_oldLine:= COALESCE(:old.LineNetAmt,0);
   END IF;  
   IF (INSERTING OR UPDATING) THEN

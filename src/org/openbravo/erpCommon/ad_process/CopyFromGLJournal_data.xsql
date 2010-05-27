@@ -36,12 +36,14 @@
         '' AS C_UOM_ID, '' AS QTY, '' AS C_VALIDCOMBINATION_ID, '' AS GL_JOURNALBATCH_ID, '' AS DOCUMENTNO, '' AS ISACTIVE,
         (SELECT GL2.DATEDOC FROM GL_JOURNALBATCH GL2 WHERE GL2.GL_JOURNALBATCH_ID = ?) AS DATEDOC,
         (SELECT GL2.DATEACCT FROM GL_JOURNALBATCH GL2 WHERE GL2.GL_JOURNALBATCH_ID = ?) AS DATEACCT,
-        '' AS TOTALDR, '' AS TOTALCR, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED
+        '' AS TOTALDR, '' AS TOTALCR, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED,
+        (SELECT GL2.AD_ORG_ID FROM GL_JOURNALBATCH GL2 WHERE GL2.GL_JOURNALBATCH_ID = ?) AS AD_ORG_ID
         FROM GL_JOURNAL GL
         WHERE GL.GL_JOURNALBATCH_ID = ?
       ]]>
     </Sql>
     <Field name="position" value="count"/>
+    <Parameter name="glJournalbatchParentId"/>
     <Parameter name="glJournalbatchParentId"/>
     <Parameter name="glJournalbatchParentId"/>
     <Parameter name="glJournalbatchParentId"/>

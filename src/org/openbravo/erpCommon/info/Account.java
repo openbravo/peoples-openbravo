@@ -110,10 +110,10 @@ public class Account extends HttpSecureAppServlet {
           strPageSize, strNewFilter, strAcctSchema);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Account.alias");
-      String strAcctSchema = vars
-          .getRequestGlobalVariable("inpAcctSchema", "Account.cAcctschemaId");
+      String strAcctSchema = vars.getSessionValue(vars.getStringParameter("WindowID")
+          + "|C_AcctSchema_ID");
       if (strAcctSchema.equals("")) {
-        strAcctSchema = Utility.getContext(this, vars, "$C_AcctSchema_ID", "Account");
+        strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema", "Account.cAcctschemaId");
         vars.setSessionValue("Account.cAcctschemaId", strAcctSchema);
       }
       vars.removeSessionValue("Account.combination");

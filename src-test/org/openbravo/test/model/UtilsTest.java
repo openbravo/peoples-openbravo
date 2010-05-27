@@ -26,12 +26,12 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.xml.XMLTypeConverter;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.test.base.BaseTest;
 
@@ -84,7 +84,7 @@ public class UtilsTest extends BaseTest {
     }
   }
 
-  public void _testWriteAll() throws Exception {
+  public void testWriteAll() throws Exception {
     // final StringWriter sw = new StringWriter();
     final FileWriter writer = new FileWriter("/home/mtaal/mytmp/test.csv");
 
@@ -92,7 +92,7 @@ public class UtilsTest extends BaseTest {
 
     // as we read all entities, be an administrator to prevent
     // security exceptions
-    OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
 
     // iterate over all entities
     for (Entity entity : ModelProvider.getInstance().getModel()) {
@@ -124,7 +124,7 @@ public class UtilsTest extends BaseTest {
           }
           // export primitives in the same way as xml primitives
           if (property.isPrimitive()) {
-            line.append(XMLTypeConverter.getInstance().toXML(value));
+            line.append(((PrimitiveDomainType) property.getDomainType()).convertToString(value));
           } else {
             // export the id of a referenced business object
             line.append(((BaseOBObject) value).getId());

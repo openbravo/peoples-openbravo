@@ -23,6 +23,7 @@ public class VariablesHistory {
   private String role;
   private String language;
   private String dbSessionID;
+
   private static Logger log4j = Logger.getLogger(VariablesHistory.class);
 
   public VariablesHistory(HttpServletRequest request) {
@@ -107,4 +108,5 @@ public class VariablesHistory {
   String getDBSession() {
     return dbSessionID;
   }
+
 }

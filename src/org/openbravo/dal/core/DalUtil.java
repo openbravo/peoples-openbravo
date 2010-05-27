@@ -22,6 +22,8 @@ package org.openbravo.dal.core;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,24 @@ import org.openbravo.base.util.Check;
 public class DalUtil {
 
   private static final String IDENTIFIER_PART_PATH = "_identifier";
+
+  /**
+   * Sorts the passed list according to the identifier of the objects.
+   * 
+   * @param objects
+   *          the objects (must be BaseOBObjects) to sort.
+   */
+  public static void sortByIdentifier(List<? extends BaseOBObject> objects) {
+    Collections.sort(objects, new OBObjectComparator());
+  }
+
+  private static class OBObjectComparator implements Comparator<BaseOBObject> {
+
+    @Override
+    public int compare(BaseOBObject arg0, BaseOBObject arg1) {
+      return arg0.getIdentifier().compareTo(arg1.getIdentifier());
+    }
+  }
 
   /**
    * Translates a so-called property path to a property. The passed entity is the starting entity.
@@ -108,7 +128,7 @@ public class DalUtil {
       // NOTE disabled for now, there is one special case: AD_Column.IDENTIFIER
       // which is NOT HANDLED
       if (part.equals(IDENTIFIER_PART_PATH)) {
-        return bob.getIdentifier();
+        return currentBob.getIdentifier();
       }
       final Entity currentEntity = currentBob.getEntity();
       if (!currentEntity.hasProperty(part)) {

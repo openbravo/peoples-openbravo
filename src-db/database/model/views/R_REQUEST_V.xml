@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW R_REQUEST_V">
     <view name="R_REQUEST_V"><![CDATA[SELECT r_request.r_request_id, r_request.ad_client_id, r_request.ad_org_id, r_request.isactive, r_request.created, r_request.createdby, r_request.updated, r_request.updatedby, r_request.documentno, r_request.requestamt, r_request.priority, r_request.duetype, r_request.summary, r_request.isescalated, r_request.datelastaction, r_request.lastresult, r_request.ad_user_id, r_request.c_bpartner_id, r_request.c_campaign_id, r_request.c_order_id, r_request.c_invoice_id, r_request.c_debt_payment_id, r_request.m_product_id, r_request.c_project_id, r_request.actiontype, r_request.r_mailtext_id, r_request.mailsubject, r_request.mailtext, r_request.result, r_request.nextaction, r_request.datenextaction, r_request.processing, r_request.processed, r_request.r_requesttype_id, r_request.salesrep_id, r_request.isselfservice
-   FROM r_request
-  WHERE r_request.isactive = 'Y' AND r_request.processed = 'N' AND now() > r_request.datenextaction]]></view>
+FROM r_request
+WHERE r_request.isactive = 'Y' AND r_request.processed = 'N' AND now() > r_request.datenextaction]]></view>
   </database>

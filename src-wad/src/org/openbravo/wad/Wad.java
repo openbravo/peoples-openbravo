@@ -42,7 +42,6 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.wad.controls.WADButton;
 import org.openbravo.wad.controls.WADControl;
 import org.openbravo.wad.controls.WADGrid;
-import org.openbravo.wad.controls.WADHidden;
 import org.openbravo.wad.controls.WADLabelControl;
 import org.openbravo.wad.controls.WadControlLabelBuilder;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -2109,7 +2108,7 @@ public class Wad extends DefaultHandler {
         if (sfd[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
           sfd[i].defaultvalue = tabName
               + "Data.selectDef"
-              + sfd[i].reference
+              + sfd[i].adcolumnid
               + "(this"
               + WadUtility.getWadContext(sfd[i].defaultvalue, vecFields, vecAuxiliarFields,
                   parentsFieldsData, true, isSOTrx, strWindow) + ")";
@@ -2122,7 +2121,7 @@ public class Wad extends DefaultHandler {
         } else if (sfd[i].accesslevel.equals("6")
             && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
           sfd[i].defaultvalue = "\"0\"";
-        } else if (!sfd[i].referencevalue.equals("13")) { // ID
+        } else if (!sfd[i].reference.equals("13")) { // ID
           sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \""
               + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \""
               + WadUtility.getWadDefaultValue(pool, sfd[i]) + "\", dataField)";
@@ -2135,7 +2134,8 @@ public class Wad extends DefaultHandler {
       } else {
         sfd[i].defaultvalue = "strP" + sfd[i].columnname;
       }
-      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].referencevalue, sfd[i].type);
+      WADControl control = WadUtility.getWadControlClass(pool, sfd[i].reference,
+          sfd[i].referencevalue);
       isSelect = control.addAdditionDefaulJavaFields(strDefaultValues, sfd[i], tabName, isSelect);
     }
 
@@ -2669,8 +2669,8 @@ public class Wad extends DefaultHandler {
         }
 
         // Calculate additional defaults
-        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].referencevalue,
-            fieldsDef[i].type);
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsDef[i].reference,
+            fieldsDef[i].referencevalue);
         itable = control.addAdditionDefaulSQLFields(v, fieldsDef[i], itable);
       }
       final FieldsData[] fd = new FieldsData[v.size()];
@@ -2737,8 +2737,10 @@ public class Wad extends DefaultHandler {
         fieldsDataUpdate[i].name = ((i > 0) ? ", " : "") + fieldsDataUpdate[i].name;
         if (fieldsDataUpdate[i].reference.equals("24"))
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?,'HH24:MI:SS')";
-        else if (fieldsDataUpdate[i].reference.equals("16")) { // datetime
-          fieldsDataUpdate[i].xmlFormat = "TO_DATE(?, ?)";
+        else if (fieldsDataUpdate[i].reference.equals("16")) {
+          // datetime, use time stamp: it works for ORA date and for PG. In pg, to_date(text, text)
+          // does not save time
+          fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?, ?)";
         } else
           fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool,
               fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue)
@@ -2792,8 +2794,9 @@ public class Wad extends DefaultHandler {
           if (fieldsDataValue[i].reference.equals("24")) {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, 'HH24:MI:SS')";
           } else if (fieldsDataValue[i].reference.equals("16")) {
-            // datetime
-            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_DATE(?, ?)";
+            // datetime, use time stamp: it works for ORA date and for PG. In pg, to_date(text,
+            // text) does not save time
+            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, ?)";
           } else {
             fieldsDataValue[i].name = ((i > 0) ? ", " : "")
                 + WadUtility.sqlCasting(pool, fieldsDataValue[i].reference,
@@ -2846,8 +2849,8 @@ public class Wad extends DefaultHandler {
         }
 
         // add another field for default special cases with more than 1 field
-        WADControl control = WadUtility.getWadControlClass(pool,
-            fieldsDataDefaults[i].referencevalue, fieldsDataDefaults[i].type);
+        WADControl control = WadUtility.getWadControlClass(pool, fieldsDataDefaults[i].reference,
+            fieldsDataDefaults[i].referencevalue);
         if (fieldsDataDefaults[i].isdisplayed.equals("Y")
             && control.addAdditionDefaulJavaFields(new StringBuffer(), fieldsDataDefaults[i],
                 tabName, 0) != 0) {
@@ -2860,9 +2863,9 @@ public class Wad extends DefaultHandler {
               .TransformaNombreColumna(fieldsDataDefaults[i].columnname))
               + "r";
           vecDDef.addElement(f);
-        } else if (fieldsDataDefaults[i].referencevalue.equals("28")
+        } else if (fieldsDataDefaults[i].reference.equals("28")
             && fieldsDataDefaults[i].isdisplayed.equals("Y")
-            && !fieldsDataDefaults[i].type.equals("")) {
+            && !fieldsDataDefaults[i].referencevalue.equals("")) {
           // Button special case
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
@@ -2927,9 +2930,7 @@ public class Wad extends DefaultHandler {
     final FieldsData[] data = FieldsData.selectValidationTab(pool, strTab);
     if (data == null || data.length == 0)
       return;
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/ComboReloads")
-        .createXmlDocument();
-    xmlDocument.setParameter("tabId", strTab);
+
     final Vector<Object> vecReloads = new Vector<Object>();
     final Vector<Object> vecTotal = new Vector<Object>();
     final Vector<Object> vecCounters = new Vector<Object>();
@@ -2964,8 +2965,17 @@ public class Wad extends DefaultHandler {
             else
               data[i].orgcode = "Utility.getReferenceableOrg(this, vars, parentOrg, windowId, "
                   + accesslevel + ")";
-          } else
+          } else {
             data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
+          }
+
+          // Do not add client 0 for client combo, but do it for the rest of combos
+          if (data[i].name.equalsIgnoreCase("AD_Client_ID")) {
+            data[i].clientcode = "Utility.getContext(this, vars, \"#User_Client\", windowId, "
+                + accesslevel + ")";
+          } else {
+            data[i].clientcode = "Utility.getContext(this, vars, \"#User_Client\", windowId)";
+          }
 
           if (data[i].reference.equals("17")) { // List
             data[i].tablename = "List";
@@ -3073,9 +3083,17 @@ public class Wad extends DefaultHandler {
       vecTotal.copyInto(result);
     }
 
+    // Generate always callout, even there's no columns to check
+    String discard[] = { "" };
+    if (vecTotal == null || vecTotal.size() == 0) {
+      discard[0] = "discardTry";
+    }
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/ComboReloads",
+        discard).createXmlDocument();
+    xmlDocument.setParameter("tabId", strTab);
     xmlDocument.setData("structure1", result);
-    if (vecTotal == null || vecTotal.size() == 0)
-      return;
+
     WadUtility.writeFile(fileDir, "ComboReloads" + strTab + ".java", xmlDocument.print());
   }
 
@@ -3101,6 +3119,8 @@ public class Wad extends DefaultHandler {
       if (data == null || data.length == 0)
         return;
 
+      final boolean hasOrg = FieldsData.processHasOrgParam(pool, processId);
+
       final Vector<Object> vecReloads = new Vector<Object>();
       final Vector<Object> vecTotal = new Vector<Object>();
       final Vector<Object> vecCounters = new Vector<Object>();
@@ -3116,8 +3136,14 @@ public class Wad extends DefaultHandler {
                 : "") + data[i].referencevalue;
         data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
         data[i].whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
-        if (data[i].whereclause.equals("") && data[i].type.equals("R"))
+        if (data[i].whereclause.equals("") && data[i].type.equals("R")) {
+          // Add combo reloads for all combo references in case there is a ad_org parameter, if not
+          // only for the params with validation rule
+          if (!hasOrg) {
+            continue;
+          }
           data[i].whereclause = "\"inpadOrgId\"";
+        }
         if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
           data[i].whereclause = "\"inp" + data[i].columnname + "\"";
         if (!data[i].whereclause.equals("")
@@ -3242,6 +3268,7 @@ public class Wad extends DefaultHandler {
       }
 
       xmlDocumentHelper.setData("structure1", processesGenerated);
+      xmlDocumentHelper.setData("structure2", processesGenerated);
       xmlDocumentHelper.setDataArray("reportComboReloadsProcess", "structure1", processData);
       WadUtility.writeFile(fileDir, "ComboReloadsProcessHelper.java", xmlDocumentHelper.print());
       log4j.debug("created :" + fileDir + "/ComboReloadsProcessHelper.java");
@@ -3555,13 +3582,16 @@ public class Wad extends DefaultHandler {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/wad/Configuration_Edition").createXmlDocument();
 
+    // auxiliary inputs
     final StringBuffer htmlHidden = new StringBuffer();
     if (efdauxiliar != null) {
-      for (int i = 0; i < efdauxiliar.length; i++) {
-        final WADControl auxControl = new WADHidden(efdauxiliar[i].getField("columnname"), Sqlc
-            .TransformaNombreColumna(efdauxiliar[i].getField("columnname")), "", true);
+      for (FieldProvider auxiliaryInput : efdauxiliar) {
+        final WADControl auxControl = new WADControl();
+        auxControl.setData("ColumnName", auxiliaryInput.getField("columnname"));
+        auxControl.setData("ColumnNameInp", Sqlc.TransformaNombreColumna(auxiliaryInput
+            .getField("columnname")));
         auxControl.setReportEngine(xmlEngine);
-        htmlHidden.append(auxControl.toXml()).append("\n");
+        htmlHidden.append(auxControl.getHiddenXML()).append("\n");
       }
     }
     xmlDocument.setParameter("hiddens", htmlHidden.toString());
@@ -3727,15 +3757,18 @@ public class Wad extends DefaultHandler {
       }
     }
 
+    // auxiliary inputs
     final Vector<Object> vecAuxiliar = new Vector<Object>();
     final StringBuffer htmlHidden = new StringBuffer();
     if (efdauxiliar != null) {
-      for (int i = 0; i < efdauxiliar.length; i++) {
-        final WADControl auxControl = new WADHidden(efdauxiliar[i].getField("columnname"), Sqlc
-            .TransformaNombreColumna(efdauxiliar[i].getField("columnname")), "", true);
+      for (FieldProvider auxiliaryInput : efdauxiliar) {
+        final WADControl auxControl = new WADControl();
+        auxControl.setData("ColumnName", auxiliaryInput.getField("columnname"));
+        auxControl.setData("ColumnNameInp", Sqlc.TransformaNombreColumna(auxiliaryInput
+            .getField("columnname")));
         auxControl.setReportEngine(xmlEngine);
-        htmlHidden.append(auxControl.toString()).append("\n");
-        vecAuxiliar.addElement(FormatUtilities.replace(efdauxiliar[i].getField("columnname")));
+        htmlHidden.append(auxControl.getHiddenHTML()).append("\n");
+        vecAuxiliar.addElement(FormatUtilities.replace(auxiliaryInput.getField("columnname")));
       }
     }
 

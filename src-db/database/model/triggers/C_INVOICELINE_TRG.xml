@@ -38,6 +38,7 @@
  v_LineNetAmt  NUMBER;
  v_CinvoiceTaxID varchar2(32);
  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
+ v_count NUMBER;
     
 BEGIN
     
@@ -55,6 +56,11 @@ IF (UPDATING) THEN
  THEN
   RETURN;
  END IF;
+  SELECT COUNT(1) INTO v_Count
+  FROM M_MATCHINV WHERE C_INVOICELINE_ID=:OLD.C_InvoiceLine_ID;
+  IF (:OLD.M_INOUTLINE_ID IS NOT NULL AND v_Count<>0 AND :OLD.QTYINVOICED <> :NEW.QTYINVOICED) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@QtyChangedForInvoiceLineLinked@');
+  END IF;
  END IF;
  -- Difference, ID
  IF (UPDATING OR INSERTING) THEN

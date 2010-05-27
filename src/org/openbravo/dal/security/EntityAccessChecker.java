@@ -100,75 +100,88 @@ public class EntityAccessChecker implements OBNotSingleton {
    */
   public void initialize() {
 
-    final ModelProvider mp = ModelProvider.getInstance();
-    final String userLevel = obContext.getUserLevel();
+    OBContext.setAdminMode();
+    try {
+      final ModelProvider mp = ModelProvider.getInstance();
+      final String userLevel = obContext.getUserLevel();
 
-    // Don't use dal because otherwise we can end up in infinite loops
-    final String qryStr = "select wa from " + WindowAccess.class.getName() + " wa where role.id='"
-        + getRoleId() + "'";
-    final Query qry = SessionHandler.getInstance().createQuery(qryStr);
-    @SuppressWarnings("unchecked")
-    final List<WindowAccess> was = qry.list();
-    for (final WindowAccess wa : was) {
-      final Window w = wa.getWindow();
-      final boolean writeAccess = wa.isEditableField();
-      // get the ttabs
-      final String tfQryStr = "select t from " + Tab.class.getName() + " t where window.id='"
-          + w.getId() + "'";
+      // Don't use dal because otherwise we can end up in infinite loops
+      final String qryStr = "select wa from " + WindowAccess.class.getName()
+          + " wa where role.id='" + getRoleId() + "'";
+      final Query qry = SessionHandler.getInstance().createQuery(qryStr);
       @SuppressWarnings("unchecked")
-      final List<Tab> ts = SessionHandler.getInstance().createQuery(tfQryStr).list();
-      for (final Tab t : ts) {
-        final String tableName = t.getTable().getDBTableName();
-        final Entity e = mp.getEntityByTableName(tableName);
-        if (e == null) { // happens for AD_Client_Info and views
-          continue;
-        }
+      final List<WindowAccess> was = qry.list();
+      for (final WindowAccess wa : was) {
+        final Window w = wa.getWindow();
+        final boolean writeAccess = wa.isEditableField();
+        // get the ttabs
+        final String tfQryStr = "select t from " + Tab.class.getName() + " t where window.id='"
+            + w.getId() + "'";
+        @SuppressWarnings("unchecked")
+        final List<Tab> ts = SessionHandler.getInstance().createQuery(tfQryStr).list();
+        for (final Tab t : ts) {
+          final String tableName = t.getTable().getDBTableName();
+          final Entity e = mp.getEntityByTableName(tableName);
+          if (e == null) { // happens for AD_Client_Info and views
+            continue;
+          }
 
-        final String accessLevel = t.getTable().getDataAccessLevel();
-        if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
-          continue;
-        }
+          final String accessLevel = t.getTable().getDataAccessLevel();
+          if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
+            continue;
+          }
 
-        if (writeAccess) {
-          writableEntities.add(e);
+          if (writeAccess) {
+            writableEntities.add(e);
+            readableEntities.add(e);
+          } else {
+            readableEntities.add(e);
+          }
+        }
+      }
+
+      // and take into account table access
+      final String tafQryStr = "select ta from " + TableAccess.class.getName()
+          + " ta where role.id='" + getRoleId() + "'";
+      @SuppressWarnings("unchecked")
+      final List<TableAccess> tas = SessionHandler.getInstance().createQuery(tafQryStr).list();
+      for (final TableAccess ta : tas) {
+        final String tableName = ta.getTable().getName();
+        final Entity e = mp.getEntity(tableName);
+
+        if (ta.isExclude()) {
+          readableEntities.remove(e);
+          writableEntities.remove(e);
+          nonReadableEntities.add(e);
+        } else if (ta.isReadOnly()) {
+          writableEntities.remove(e);
           readableEntities.add(e);
+          nonReadableEntities.remove(e);
         } else {
-          readableEntities.add(e);
+          if (!writableEntities.contains(e)) {
+            writableEntities.add(e);
+          }
+          if (!readableEntities.contains(e)) {
+            readableEntities.add(e);
+          }
+          nonReadableEntities.remove(e);
         }
       }
-    }
 
-    // and take into account table access
-    final String tafQryStr = "select ta from " + TableAccess.class.getName()
-        + " ta where role.id='" + getRoleId() + "'";
-    @SuppressWarnings("unchecked")
-    final List<TableAccess> tas = SessionHandler.getInstance().createQuery(tafQryStr).list();
-    for (final TableAccess ta : tas) {
-      final String tableName = ta.getTable().getName();
-      final Entity e = mp.getEntity(tableName);
-
-      if (ta.isExclude()) {
-        readableEntities.remove(e);
-        writableEntities.remove(e);
-        nonReadableEntities.add(e);
-      } else if (ta.isReadOnly()) {
-        writableEntities.remove(e);
-        readableEntities.add(e);
-        nonReadableEntities.remove(e);
-      }
-    }
-
-    // and compute the derived readable
-    for (final Entity e : readableEntities) {
-      for (final Property p : e.getProperties()) {
-        if (p.getTargetEntity() != null && !readableEntities.contains(p.getTargetEntity())) {
-          derivedReadableEntities.add(p.getTargetEntity());
-          addDerivedReadableIdentifierProperties(p.getTargetEntity());
+      // and compute the derived readable
+      for (final Entity e : readableEntities) {
+        for (final Property p : e.getProperties()) {
+          if (p.getTargetEntity() != null && !readableEntities.contains(p.getTargetEntity())) {
+            derivedReadableEntities.add(p.getTargetEntity());
+            addDerivedReadableIdentifierProperties(p.getTargetEntity());
+          }
         }
       }
-    }
 
-    isInitialized = true;
+      isInitialized = true;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

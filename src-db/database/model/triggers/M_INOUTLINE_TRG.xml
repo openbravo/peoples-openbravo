@@ -13,6 +13,7 @@
   v_qtyorder   NUMBER;
   v_qtyold   NUMBER;
   v_qtyorderold  NUMBER;
+  v_MatchInvCount  NUMBER;
   v_STOCKED   NUMBER;
   v_UOM_ID    varchar2(32);
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
@@ -105,6 +106,16 @@ BEGIN
         ELSE
            v_qty := :NEW.MOVEMENTQTY;
            v_qtyorder := :NEW.QUANTITYORDER;
+     END IF;
+
+     SELECT COUNT(*) INTO v_MatchInvCount
+     FROM M_MATCHINV MI
+     WHERE MI.QTY = :OLD.MOVEMENTQTY
+       AND MI.M_INOUTLINE_ID = :NEW.M_INOUTLINE_ID;
+     IF (:OLD.MOVEMENTQTY <> :NEW.MOVEMENTQTY AND v_MatchInvCount=1) THEN
+       UPDATE M_MATCHINV SET QTY=:NEW.MOVEMENTQTY
+       WHERE QTY = :OLD.MOVEMENTQTY
+         AND M_INOUTLINE_ID = :NEW.M_INOUTLINE_ID;
      END IF;
 
  END IF;

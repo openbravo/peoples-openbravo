@@ -597,9 +597,9 @@ public class WadActionButton {
                   ");\n");
         } else {
           html.append("PInstanceProcessData.insertPInstanceParam"
-              + (control.isNumericType() ? "Number" : (control.isDate() ? "Date" : ""))
-              + "(this, pinstance, \"" + data[i].seqno + "\", \"" + data[i].columnname + "\", str"
-              + Sqlc.TransformaNombreColumna(data[i].columnname)
+              + (control.isNumericType() ? "Number" : (control.isDate() ? "Date" : (control
+                  .isTime() ? "Time" : ""))) + "(this, pinstance, \"" + data[i].seqno + "\", \""
+              + data[i].columnname + "\", str" + Sqlc.TransformaNombreColumna(data[i].columnname)
               + ", vars.getClient(), vars.getOrg(), vars.getUser());\n");
         }
         vecParams.addElement(Sqlc.TransformaNombreColumna(data[i].columnname));
@@ -761,13 +761,18 @@ public class WadActionButton {
       int max_size_edition_1_columns, String strLanguage, boolean isGeneric,
       String calendarDescription, String clockDescription, String calculatorDescription,
       String jsDateFormat, Vector<Object> vecReloads) throws ServletException, IOException {
-    final String[] discard = { "", "isGeneric", "fieldDiscardProcess" };
+    final String[] discard = { "", "isGeneric", "fieldDiscardProcess", "" };
     if (fd.xmltext.equals(""))
       discard[0] = "helpDiscard";
     if (isGeneric)
       discard[1] = "isNotGeneric";
     if (fd.isjasper.equals("Y"))
       discard[2] = "fieldDiscardJasper";
+
+    if (fd.isautosave.equals("N")) {
+      discard[3] = "reloadOpener";
+    }
+
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/wad/Template_ActionButton", discard).createXmlDocument();
     final ProcessRelationData[] efd = ProcessRelationData.selectParameters(conn, strLanguage,

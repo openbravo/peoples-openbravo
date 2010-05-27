@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION AD_GET_PROPERTY_VALUE">
+    <function name="AD_GET_PROPERTY_VALUE" type="NVARCHAR">
+      <parameter name="p_property_name" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_client_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_org_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2010 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  propNumber NUMBER;
+  v_value nvarchar2(255);
+  v_useSelected char(1);
+BEGIN
+
+  select count(*)
+    into propNumber
+    from ad_property_configuration c
+   where c.property = p_PROPERTY_NAME
+     and isActive = 'Y'
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
+           (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
+              from ad_property_configuration c1
+             where c1.property = p_PROPERTY_NAME
+               and isActive = 'Y'
+               and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
+
+  if propNumber = 0 then
+    return null;
+  elsif propNumber > 1 then
+    select count(*)
+    into propNumber
+    from ad_property_configuration c
+   where c.property = p_PROPERTY_NAME
+     and selected='Y'
+     and isActive = 'Y'
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
+           (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
+              from ad_property_configuration c1
+             where c1.property = p_PROPERTY_NAME
+               and isActive = 'Y'
+               and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
+    if propNumber != 1 then
+      RAISE_APPLICATION_ERROR(-20000, p_PROPERTY_NAME||' @PropertyConflict@');
+    end if;
+    v_useSelected :='Y';
+  else
+    v_useSelected :='N';
+  end if;
+
+  select COALESCE(to_char(c.value), '-')
+    into v_value
+    from ad_property_configuration c
+   where c.property = p_PROPERTY_NAME
+     and (v_useSelected='N' or (v_useSelected = 'Y' and selected='Y'))
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) != -1
+     and ad_isorgincluded(p_ad_org_id, c.ad_org_id, p_ad_client_id) =
+           (select min(ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id))
+              from ad_property_configuration c1
+             where c1.property = p_PROPERTY_NAME
+               and isActive = 'Y'
+               and ad_isorgincluded(p_ad_org_id, c1.ad_org_id, p_ad_client_id) != -1);
+  return v_value;
+END AD_GET_PROPERTY_VALUE
+]]></body>
+    </function>
+  </database>

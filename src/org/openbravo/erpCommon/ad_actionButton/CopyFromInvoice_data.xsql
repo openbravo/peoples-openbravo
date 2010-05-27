@@ -67,6 +67,24 @@
     <Parameter name="cTaxId"/>
     <Parameter name="cInvoicelineId"/>
   </SqlMethod>
+  <SqlMethod name="insertAcctDimension" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO C_INVOICELINE_ACCTDIMENSION(C_INVOICELINE_ACCTDIMENSION_ID, AD_CLIENT_ID, AD_ORG_ID,
+        ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, C_INVOICELINE_ID, AMT, C_PROJECT_ID, C_CAMPAIGN_ID,
+        USER1_ID, USER2_ID)
+        SELECT GET_UUID(), ?, ?, 'Y', NOW(), ?, NOW(), ?, ?, AMT, C_PROJECT_ID, C_CAMPAIGN_ID, USER1_ID, USER2_ID
+        FROM C_INVOICELINE_ACCTDIMENSION WHERE C_INVOICELINE_ID = ? AND ISACTIVE='Y'
+      ]]>
+    </Sql>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="cNewInvoicelineId"/>
+    <Parameter name="cOldInvoicelineId"/>
+  </SqlMethod>
   <SqlMethod name="selectInvoice" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

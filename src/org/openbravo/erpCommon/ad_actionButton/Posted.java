@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2009 Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,10 +61,12 @@ public class Posted extends HttpSecureAppServlet {
       String strPath = vars.getGlobalVariable("inpPath", "Posted|path", strDireccion
           + request.getServletPath());
       String strWindowId = vars.getGlobalVariable("inpWindowId", "Posted|windowId", "");
+      String strForcedTableId = vars.getGlobalVariable("inpforcedTableId", strWindowId
+          + "|FORCED_TABLE_ID", "");
       String strTabName = vars.getGlobalVariable("inpTabName", "Posted|tabName", "");
 
-      printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId, strPath,
-          strTabName, strPosted);
+      printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId,
+          strForcedTableId, strPath, strTabName, strPosted);
     } else if (vars.commandIn("SAVE")) {
 
       String strKey = vars.getRequiredGlobalVariable("inpKey", "Posted|key");
@@ -149,13 +151,7 @@ public class Posted extends HttpSecureAppServlet {
         return myMessage;
       } else if (!acct.post(strKey, false, vars, this, con) || acct.errors != 0) {
         releaseRollbackConnection(con);
-        String strStatus = acct.getStatus();
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), strStatus
-            .equals(AcctServer.STATUS_DocumentLocked) ? "@OtherPostingProcessActive@" : strStatus
-            .equals(AcctServer.STATUS_InvalidCost) ? "@InvalidCost@" : "@ProcessRunError@");
-        if (strStatus.equals(AcctServer.STATUS_DocumentLocked))
-          myMessage.setType("Warning");
-        myMessage.setMessage(myMessage.getMessage());
+        myMessage = acct.getMessageResult();
         return myMessage;
       }
       releaseCommitConnection(con);
@@ -213,8 +209,9 @@ public class Posted extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String windowId, String strTab, String strProcessId, String strTableId, String strPath,
-      String strTabName, String strPosted) throws IOException, ServletException {
+      String windowId, String strTab, String strProcessId, String strTableId,
+      String strForcedTableId, String strPath, String strTabName, String strPosted)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Button process Posted");
 
@@ -240,7 +237,10 @@ public class Posted extends HttpSecureAppServlet {
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("process", strProcessId);
-    xmlDocument.setParameter("table", strTableId);
+    if ("".equals(strForcedTableId) || strForcedTableId == null)
+      xmlDocument.setParameter("table", strTableId);
+    else
+      xmlDocument.setParameter("table", strForcedTableId);
     xmlDocument.setParameter("posted", strPosted);
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("tabname", strTabName);

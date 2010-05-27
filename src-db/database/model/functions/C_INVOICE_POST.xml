@@ -56,6 +56,7 @@ cWithHoldId varchar2(32);
     Cur_line RECORD;
     -- Record Info
     v_Client_ID VARCHAR2(32);
+    v_User_ID VARCHAR2(32);
     v_Org_ID VARCHAR2(32);
     v_UpdatedBy C_INVOICE.UpdatedBy%TYPE;
     v_Processing C_INVOICE.Processing%TYPE;
@@ -120,6 +121,7 @@ cWithHoldId varchar2(32);
     v_OldCumDiscount NUMBER;
     v_InvoiceLineSeqNo NUMBER;
     v_InvoiceLine VARCHAR2(32);
+    v_InOutLine VARCHAR2(32);
     v_Discount NUMBER;
     v_Line NUMBER;
     v_InvoiceDiscount NUMBER;
@@ -172,6 +174,7 @@ cWithHoldId varchar2(32);
         )
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
+        v_User_ID:=Cur_Parameter.AD_User_ID;
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
     ELSE
@@ -225,6 +228,9 @@ cWithHoldId varchar2(32);
     /**
     * Invoice Voided, Closed, or Reversed - No Action
     */
+    IF(v_User_ID IS NOT NULL) THEN
+    	v_UpdatedBy:=v_User_ID;
+    END IF;
     IF(v_DocStatus IN('VO', 'CL', 'RE')) THEN
       RAISE_APPLICATION_ERROR(-20000, '@AlreadyPosted@');
     END IF;
@@ -308,7 +314,8 @@ cWithHoldId varchar2(32);
         UPDATE C_INVOICE
           SET Processing='N',
           DocAction='--',
-          Updated=now()
+          Updated=now(),
+          UpdatedBy=v_UpdatedBy
         WHERE C_Invoice_ID=v_Record_ID;
         FINISH_PROCESS:=TRUE;
       END IF;
@@ -370,14 +377,17 @@ cWithHoldId varchar2(32);
           -- Reset Lines to 0
           UPDATE C_INVOICELINE
             SET QtyInvoiced=0,
-            LineNetAmt=0
+            LineNetAmt=0,
+            Updated=now(),
+          	UpdatedBy=v_UpdatedBy
           WHERE C_Invoice_ID=v_Record_ID;
           --
           UPDATE C_INVOICE
             SET DocStatus='VO',
             DocAction='--',
             Processed='Y',
-            Updated=now()
+            Updated=now(),
+            UpdatedBy=v_UpdatedBy
           WHERE C_Invoice_ID=v_Record_ID;
           --
         END IF;
@@ -390,7 +400,8 @@ cWithHoldId varchar2(32);
       *************************************************************************/
       v_ResultStr:='LockingInvoice';
       BEGIN -- FOR COMMIT
-        UPDATE C_INVOICE  SET Processing='Y'  WHERE C_Invoice_ID=v_Record_ID;
+        UPDATE C_INVOICE  SET Processing='Y',Updated=now(),
+          UpdatedBy=v_UpdatedBy  WHERE C_Invoice_ID=v_Record_ID;
         -- Now, needs to go to END_PROCESSING to unlock
         -- This Commit must remanin due differences between PL execution in Oracle and Postgres
         IF(p_PInstance_ID IS NOT NULL) THEN
@@ -402,7 +413,8 @@ cWithHoldId varchar2(32);
 
    -- Set org lines like the headear
      UPDATE C_INVOICELINE
-      SET AD_ORG_ID = (SELECT AD_ORG_ID FROM C_INVOICE WHERE C_INVOICE_ID = v_Record_ID)
+      SET AD_ORG_ID = (SELECT AD_ORG_ID FROM C_INVOICE WHERE C_INVOICE_ID = v_Record_ID),Updated=now(),
+          UpdatedBy=v_UpdatedBy
     WHERE C_INVOICE_ID = v_Record_ID;
 
     SELECT COUNT(*)
@@ -454,11 +466,11 @@ cWithHoldId varchar2(32);
               C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt,
               TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
               C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-              User2_ID
+              User2_ID, fin_paymentmethod_id
             )
           SELECT v_RInvoice_ID, C_Order_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, now(), UpdatedBy, now(),
-            UpdatedBy, IsSOTrx, v_RDocumentNo, 'DR',
+            IsActive, now(), v_UpdatedBy, now(),
+            v_UpdatedBy, IsSOTrx, v_RDocumentNo, 'DR',
              'CO', 'N', 'N', v_DoctypeReversed_ID,
             v_DoctypeReversed_ID, '(*R*: ' || DocumentNo || ') ' || Description, SalesRep_ID,
             now(), NULL, 'N', now(),
@@ -467,7 +479,7 @@ cWithHoldId varchar2(32);
             C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt * -1,
             TotalLines * -1, GrandTotal * -1, M_PriceList_ID, C_Campaign_ID,
             C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-            User2_ID
+            User2_ID, fin_paymentmethod_id
           FROM C_INVOICE
           WHERE C_Invoice_ID=v_Record_ID;
           -- Create Reversed invoice relation
@@ -479,8 +491,8 @@ cWithHoldId varchar2(32);
               UpdatedBy, C_Invoice_ID, Reversed_C_Invoice_ID
             )
           SELECT get_uuid(), AD_Client_ID, AD_Org_ID,
-              'Y', now(), CreatedBy, now(),
-              UpdatedBy, v_RInvoice_ID, C_Invoice_ID
+              'Y', now(), v_UpdatedBy, now(),
+              v_UpdatedBy, v_RInvoice_ID, C_Invoice_ID
           FROM C_INVOICE
           WHERE C_Invoice_ID=v_Record_ID;
           
@@ -538,10 +550,19 @@ cWithHoldId varchar2(32);
                 Cur_InvoiceLine.PriceActual, Cur_InvoiceLine.LineNetAmt * -1, Cur_InvoiceLine.C_Charge_ID, Cur_InvoiceLine.ChargeAmt * -1,
                 Cur_InvoiceLine.C_UOM_ID, Cur_InvoiceLine.C_Tax_ID, Cur_InvoiceLine.PriceStd)
               ;
+            INSERT INTO M_MATCHINV
+              (M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+              M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID, DATETRX, QTY, PROCESSING, PROCESSED, POSTED)
+            SELECT
+              GET_UUID(), AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, now(), v_UpdatedBy, now(), v_UpdatedBy,
+              M_INOUTLINE_ID, v_NextNo, M_PRODUCT_ID, DATETRX, -QTY, 'N', 'Y', 'N'
+            FROM M_MATCHINV
+            WHERE C_INVOICELINE_ID = Cur_InvoiceLine.C_InvoiceLine_ID;
             /* OrderLine.qtyInvoiced is updated in c_invoicePost
             UPDATE C_OrderLine
             SET QtyInvoiced = QtyInvoiced - Cur_InvoiceLine.QtyInvoiced,
-            Updated = now()
+            Updated = now(),
+          UpdatedBy=v_UpdatedBy
             WHERE C_OrderLine_ID=Cur_InvoiceLine.C_OrderLine_ID; */
           END LOOP; -- Create Reversal Invoice Lines
           -- Close Invoice
@@ -592,7 +613,7 @@ cWithHoldId varchar2(32);
                   USER1_ID, USER2_ID, CREATEFROM, ISGENERATED
                 )
               SELECT v_settlementID, AD_Client_ID, AD_Org_ID, 'Y',
-                now(), UpdatedBy, now(), UpdatedBy,
+                now(), v_UpdatedBy, now(), v_UpdatedBy,
                 '*RE*'||v_SDocumentNo, TRUNC(now()), TRUNC(now()), 'C',
                 v_SettlementDocType_ID, 'N', 'N', 'N',
                 C_Currency_ID, C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID,
@@ -746,7 +767,8 @@ cWithHoldId varchar2(32);
                     AND C_INVOICELINE.C_InvoiceLine_ID<>Cur_ReactivateInvoiceLine.C_InvoiceLine_ID;
                   UPDATE C_ORDERLINE
                     SET QtyInvoiced=QtyInvoiced - Cur_ReactivateInvoiceLine.QtyInvoiced,
-                    DateInvoiced=v_REDateInvoiced
+                    DateInvoiced=v_REDateInvoiced,Updated=now(),
+         			 UpdatedBy=v_UpdatedBy
                   WHERE C_ORDERLINE.C_OrderLine_ID=Cur_ReactivateInvoiceLine.C_OrderLine_ID;
                 END IF;
                 IF(Cur_ReactivateInvoiceLine.M_InOutLine_ID IS NOT NULL) THEN
@@ -782,26 +804,20 @@ cWithHoldId varchar2(32);
                 END IF;
               END LOOP;
             ELSE
-              -- When re-activating an invoice, match invoice lines are removed (and accounting, if present, previously deleted)
-              DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHPO')
-                                      AND RECORD_ID IN (SELECT M_MATCHPO_ID
-                                                        FROM M_MATCHPO MP, C_INVOICE I, C_INVOICELINE IL
-                                                        WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
-                                                          AND MP.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
-                                                          AND I.C_INVOICE_ID=v_Record_ID);
-              DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHINV')
-                                      AND RECORD_ID IN (SELECT M_MATCHINV_ID
-                                                        FROM M_MATCHINV MI, C_INVOICE I, C_INVOICELINE IL
-                                                        WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
-                                                          AND MI.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
-                                                          AND I.C_INVOICE_ID=v_Record_ID);
+              -- When re-activating an invoice, match invoice lines are removed (if not posted)
+              SELECT COUNT(1)
+              INTO v_count
+              FROM FACT_ACCT WHERE AD_TABLE_ID = (SELECT AD_TABLE_ID FROM AD_TABLE WHERE UPPER(TABLENAME) LIKE 'M_MATCHPO')
+                               AND RECORD_ID IN (SELECT M_MATCHPO_ID
+                                                 FROM M_MATCHPO MP, C_INVOICE I, C_INVOICELINE IL
+                                                 WHERE I.C_INVOICE_ID=IL.C_INVOICE_ID
+                                                   AND MP.C_INVOICELINE_ID=IL.C_INVOICELINE_ID
+                                                   AND I.C_INVOICE_ID=v_Record_ID);
+              IF (v_count>0) THEN
+                RAISE_APPLICATION_ERROR(-20000, '@PostedMatchPO@');
+              END IF;
               DELETE
               FROM M_MATCHPO
-              WHERE C_InvoiceLine_ID IN
-                (SELECT C_InvoiceLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
-                ;
-              DELETE
-              FROM M_MATCHINV
               WHERE C_InvoiceLine_ID IN
                 (SELECT C_InvoiceLine_ID FROM C_INVOICELINE WHERE C_Invoice_ID=v_Record_ID)
                 ;
@@ -809,7 +825,8 @@ cWithHoldId varchar2(32);
             UPDATE C_INVOICE
               SET Processed='N',
               DocStatus='DR',
-              DocAction='CO'
+              DocAction='CO',Updated=now(),
+          	  UpdatedBy=v_UpdatedBy
             WHERE C_Invoice_Id=v_Record_ID;
             --Delete automatically created records ...
             DELETE
@@ -831,7 +848,8 @@ cWithHoldId varchar2(32);
               AND COALESCE(IsAutomaticGenerated, 'Y')='Y'
               AND C_ORDER_ID IS NULL;
             UPDATE C_DEBT_PAYMENT
-              SET IsValid='N'
+              SET IsValid='N',Updated=now(),
+          		UpdatedBy=v_UpdatedBy
             WHERE C_Invoice_ID=v_Record_ID
               AND COALESCE(IsAutomaticGenerated, 'Y')='N'
               AND C_ORDER_ID IS NULL;
@@ -908,7 +926,9 @@ cWithHoldId varchar2(32);
             BEGIN
               v_ResultStr:='UpdateDocType';
               UPDATE C_INVOICE
-                SET C_DocType_ID=C_DocTypeTarget_ID
+                SET C_DocType_ID=C_DocTypeTarget_ID,
+                Updated=now(),
+          		UpdatedBy=v_UpdatedBy
               WHERE C_Invoice_ID=v_Record_ID;
               v_DocType_ID:=v_DocTypeTarget_ID;
             EXCEPTION
@@ -1331,30 +1351,33 @@ cWithHoldId varchar2(32);
                 AND il.C_Invoice_ID=v_Record_ID
               )
             LOOP
-              -- The min qty. Modified by Ismael Ciordia
-              --v_Qty := Cur_ILines_Receipt.MovementQty;
-              --IF (ABS(Cur_ILines_Receipt.MovementQty) > ABS(Cur_ILines_Receipt.QtyInvoiced)) THEN
-              v_Qty:=Cur_ILines_Receipt.QtyInvoiced;
-              --END IF;
-              Ad_Sequence_Next('M_MatchInv', Cur_ILines_Receipt.AD_Org_ID, v_MatchInv_ID) ;
-              v_ResultStr:='InsertMatchInv ' || v_MatchInv_ID;
-              DBMS_OUTPUT.PUT_LINE('  M_MatchInv_ID=' || v_MatchInv_ID || ' - ' || v_Qty) ;
-              INSERT
-              INTO M_MATCHINV
-                (
-                  M_MatchInv_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                  Created, CreatedBy, Updated, UpdatedBy,
-                  M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx,
-                  Qty, Processing, Processed, Posted
-                )
-                VALUES
-                (
-                  v_MatchInv_ID, Cur_ILines_Receipt.AD_Client_ID, Cur_ILines_Receipt.AD_Org_ID, 'Y',
-                  now(), '0', now(), '0',
-                  Cur_ILines_Receipt.M_InOutLine_ID, Cur_ILines_Receipt.C_InvoiceLine_ID, Cur_ILines_Receipt.M_Product_ID, Cur_ILines_Receipt.DateAcct,
-                  v_Qty, 'N', 'Y', 'N'
-                )
-                ;
+              IF (Cur_ILines_Receipt.M_INOUTLINE_ID IS NOT NULL) THEN
+                SELECT COUNT(1) INTO v_Count
+                FROM M_MATCHINV WHERE C_INVOICELINE_ID=Cur_ILines_Receipt.C_InvoiceLine_ID
+                                  AND M_INOUTLINE_ID=Cur_ILines_Receipt.M_INOUTLINE_ID;
+                IF (v_Count=0) THEN
+                 v_Qty:=Cur_ILines_Receipt.QtyInvoiced;
+                 Ad_Sequence_Next('M_MatchInv', Cur_ILines_Receipt.AD_Org_ID, v_MatchInv_ID) ;
+                 v_ResultStr:='InsertMatchInv ' || v_MatchInv_ID;
+                 DBMS_OUTPUT.PUT_LINE('  M_MatchInv_ID=' || v_MatchInv_ID || ' - ' || v_Qty) ;
+                 INSERT
+                 INTO M_MATCHINV
+                   (
+                     M_MatchInv_ID, AD_Client_ID, AD_Org_ID, IsActive,
+                     Created, CreatedBy, Updated, UpdatedBy,
+                     M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx,
+                     Qty, Processing, Processed, Posted
+                    )
+                   VALUES
+                   (
+                     v_MatchInv_ID, Cur_ILines_Receipt.AD_Client_ID, Cur_ILines_Receipt.AD_Org_ID, 'Y',
+                     now(), v_UpdatedBy, now(), v_UpdatedBy,
+                     Cur_ILines_Receipt.M_InOutLine_ID, Cur_ILines_Receipt.C_InvoiceLine_ID, Cur_ILines_Receipt.M_Product_ID, Cur_ILines_Receipt.DateAcct,
+                     v_Qty, 'N', 'Y', 'N'
+                    )
+                   ;
+                END IF;
+              END IF;
             END LOOP;
             v_ResultStr:='MatchInv-PO';
             FOR Cur_ILines_PO IN
@@ -1397,7 +1420,7 @@ cWithHoldId varchar2(32);
                 VALUES
                 (
                   v_MatchPO_ID, Cur_ILines_PO.AD_Client_ID, Cur_ILines_PO.AD_Org_ID, 'Y',
-                  now(), '0', now(), '0',
+                  now(), v_UpdatedBy, now(), v_UpdatedBy,
                   Cur_ILines_PO.C_OrderLine_ID, NULL, Cur_ILines_PO.C_InvoiceLine_ID, Cur_ILines_PO.M_Product_ID,
                   Cur_ILines_PO.DateAcct, v_Qty, 'N', 'Y',
                    'N'
@@ -1439,7 +1462,8 @@ cWithHoldId varchar2(32);
                 UPDATE C_ORDERLINE
                   SET QtyInvoiced=QtyInvoiced + CurLines.QtyInvoiced,
                   DateInvoiced=p_DateInvoiced,
-                  Updated=now()
+                  Updated=now(),
+		          UpdatedBy=v_UpdatedBy
                 WHERE C_OrderLine_ID=CurLines.C_OrderLine_ID;
               END IF;
               IF(CurLines.M_InOutLine_ID IS NOT NULL) THEN
@@ -1789,7 +1813,8 @@ cWithHoldId varchar2(32);
           SET DocStatus='CO',
           Processed='Y',
           DocAction='RE',
-          Updated=now()
+          Updated=now(),
+          UpdatedBy=v_UpdatedBy
         WHERE C_Invoice_ID=v_Record_ID;
       END IF;--FINISH_PROCESS
       IF(NOT FINISH_PROCESS) THEN

@@ -35,12 +35,16 @@
 	<PARAMETER id="messageBoxIDTitle" name="messageTitle" default="" />
 	<PARAMETER id="messageBoxIDMessage" name="messageMessage" default="" />
 	<!-- PARAMETRI UTENTE -->
+    <PARAMETER id="paramAD_ORGID" name="adOrgId"/>
 	<PARAMETER id="paramDateFrom" name="dateFrom" attribute="value" />
 	<PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx" />
 	<PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy" />
 	<PARAMETER id="paramDateTo" name="dateTo" attribute="value" />
 	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx" />
 	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy" />
+    <SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>
+    </SUBREPORT>
     <SUBREPORT id="reportCBPartnerId_IN" name="reportCBPartnerId_IN" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramVacio"/>
     </SUBREPORT>

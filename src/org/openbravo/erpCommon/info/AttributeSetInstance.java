@@ -98,14 +98,14 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("strNameValue: " + strNameValue);
       String strAttrSetValueType = "";
-      final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+      OBContext.setAdminMode();
       try {
         final Product product = OBDal.getInstance().get(Product.class, strProduct);
         if (product != null) {
           strAttrSetValueType = product.getUseAttributeSetValueAs();
         }
       } finally {
-        OBContext.getOBContext().setInAdministratorMode(prevMode);
+        OBContext.restorePreviousMode();
       }
       if (!strAttributeSet.equals("")) {
         if ("F".equals(strAttrSetValueType))

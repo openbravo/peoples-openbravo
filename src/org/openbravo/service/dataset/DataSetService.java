@@ -248,50 +248,55 @@ public class DataSetService implements OBSingleton {
     // do the part which can be done as super user separately from the
     // actual read of the db
 
-    OBContext.getOBContext().setInAdministratorMode(true);
-    final String entityName = dataSetTable.getTable().getName();
-    final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+    OBContext.setAdminMode();
+    try {
+      final String entityName = dataSetTable.getTable().getName();
+      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
 
-    if (entity == null) {
-      log.error("Entity not found using table name " + entityName);
-      return new ArrayList<BaseOBObject>();
-    }
+      if (entity == null) {
+        log.error("Entity not found using table name " + entityName);
+        return new ArrayList<BaseOBObject>();
+      }
 
-    String whereClause = dataSetTable.getSQLWhereClause();
+      String whereClause = dataSetTable.getSQLWhereClause();
 
-    final Map<String, Object> existingParams = new HashMap<String, Object>();
-    if (whereClause != null) {
-      if (parameters != null) {
-        for (final String name : parameters.keySet()) {
-          if (whereClause.indexOf(":" + name) != -1) {
-            existingParams.put(name, parameters.get(name));
+      final Map<String, Object> existingParams = new HashMap<String, Object>();
+      if (whereClause != null) {
+        if (parameters != null) {
+          for (final String name : parameters.keySet()) {
+            if (whereClause.indexOf(":" + name) != -1) {
+              existingParams.put(name, parameters.get(name));
+            }
           }
         }
       }
-    }
 
-    if (moduleId != null && whereClause != null) {
-      while (whereClause.indexOf("@moduleid@") != -1) {
-        whereClause = whereClause.replace("@moduleid@", "'" + moduleId + "'");
+      if (moduleId != null && whereClause != null) {
+        while (whereClause.indexOf("@moduleid@") != -1) {
+          whereClause = whereClause.replace("@moduleid@", "'" + moduleId + "'");
+        }
+        if (whereClause.indexOf(":moduleid") != -1 && parameters.get("moduleid") == null) {
+          existingParams.put("moduleid", moduleId);
+        }
       }
-      if (whereClause.indexOf(":moduleid") != -1 && parameters.get("moduleid") == null) {
-        existingParams.put("moduleid", moduleId);
+
+      final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(entity.getName(),
+          whereClause);
+      oq.setFilterOnActive(false);
+      oq.setNamedParameters(existingParams);
+
+      if (OBContext.getOBContext().getRole().getId().equals("0")
+          && OBContext.getOBContext().getCurrentClient().getId().equals("0")) {
+        oq.setFilterOnReadableOrganization(false);
+        oq.setFilterOnReadableClients(false);
       }
+
+      final List<?> list = oq.list();
+      Collections.sort(list, new BaseOBIDHexComparator());
+      return (List<BaseOBObject>) list;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
-    final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(entity.getName(), whereClause);
-    oq.setFilterOnActive(false);
-    oq.setNamedParameters(existingParams);
-
-    if (OBContext.getOBContext().getRole().getId().equals("0")
-        && OBContext.getOBContext().getCurrentClient().getId().equals("0")) {
-      oq.setFilterOnReadableOrganization(false);
-      oq.setFilterOnReadableClients(false);
-    }
-
-    final List<?> list = oq.list();
-    Collections.sort(list, new BaseOBIDHexComparator());
-    return (List<BaseOBObject>) list;
   }
 
   /**

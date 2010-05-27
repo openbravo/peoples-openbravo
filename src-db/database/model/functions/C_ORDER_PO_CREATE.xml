@@ -290,7 +290,7 @@
             VALUES
             (
               Cur_SO.AD_Client_ID, Cur_SO.AD_Org_ID, 'Y', now(),
-              Cur_SO.UpdatedBy, now(), Cur_SO.UpdatedBy, v_PO_Order_ID,
+              v_AD_User_ID, now(), v_AD_User_ID, v_PO_Order_ID,
                'N', v_DocumentNo, 'DR', 'CO',
                'N', 'N', '0', v_C_DocType_ID,
               Cur_SO.DocumentNo || ': ' || Cur_SO.Description,
@@ -377,7 +377,7 @@
               VALUES
               (
                 Cur_SOL.AD_Client_ID, Cur_SOL.AD_Org_ID, 'Y', now(),
-                Cur_SO.UpdatedBy, now(), Cur_SO.UpdatedBy, v_PO_Order_ID,
+                v_AD_User_ID, now(), v_AD_User_ID, v_PO_Order_ID,
                 v_NextID, Cur_SOL.Line, Cur_SO.C_BPartner_ID, v_C_BPartner_Location_ID,
                 Cur_SOL.DateOrdered, Cur_SOL.DatePromised, NULL, NULL,
                 Cur_SOL.Description, Cur_SOL.M_Product_ID, Cur_SOL.M_AttributeSetInstance_ID, Cur_SOL.M_WareHouse_ID,

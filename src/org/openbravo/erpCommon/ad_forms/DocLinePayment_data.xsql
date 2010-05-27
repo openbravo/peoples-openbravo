@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2008 Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@
       SELECT  DP.ISMANUAL, DP.ISRECEIPT,DP.AD_ORG_ID, DP.C_BPARTNER_ID, DP.DESCRIPTION, DP.C_DEBT_PAYMENT_ID,
       DP.AMOUNT, DP.WRITEOFFAMT, DP.ISPAID, DP.C_SETTLEMENT_CANCEL_ID, DP.C_SETTLEMENT_GENERATE_ID, DP.C_PROJECT_ID,
       '' AS DEBIT_ACCT, '' AS CREDIT_ACCT, '' AS C_GLITEM_ID, ISDIRECTPOSTING, DP.WithHoldingAmount,DP.C_INVOICE_ID,
-      CASE WHEN DP.C_SETTLEMENT_CANCEL_ID = ST.C_SETTLEMENT_ID AND DP.ISPAID = 'Y' THEN C_WITHHOLDING_ID ELSE NULL END AS C_WITHHOLDING_ID,
+      CASE WHEN (DP.C_SETTLEMENT_CANCEL_ID = ST.C_SETTLEMENT_ID AND (DP.ISPAID = 'Y' or amount = writeoffamt)) THEN C_WITHHOLDING_ID ELSE NULL END AS C_WITHHOLDING_ID,
 			TRUNC(COALESCE((SELECT O.DATEACCT
 				          FROM C_ORDER O
 								WHERE DP.C_ORDER_ID = O.C_ORDER_ID),

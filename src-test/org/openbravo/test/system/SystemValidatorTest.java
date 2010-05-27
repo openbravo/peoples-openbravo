@@ -70,6 +70,10 @@ public class SystemValidatorTest extends BaseTest {
     setSystemAdministratorContext();
     for (Module module : OBDal.getInstance().createQuery(Module.class, "").list()) {
       final DatabaseValidator databaseValidator = new DatabaseValidator();
+      if (module.getModuleDBPrefixList().isEmpty()) {
+        // ignore these ones
+        continue;
+      }
       databaseValidator.setDatabase(createDatabaseObject(module));
       databaseValidator.setValidateModule(module);
       final SystemValidationResult result = databaseValidator.validate();

@@ -32,6 +32,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
@@ -162,15 +163,10 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       // warn/error is logged below if the entity is updated
       // update is prevented below
       final boolean writable = OBContext.getOBContext().isInAdministratorMode()
-          || SecurityChecker.getInstance().isWritable(bob);
+          || bob.isNewOBObject() || SecurityChecker.getInstance().isWritable(bob);
 
       // referenced and not new, so already there, don't update
       if (hasReferenceAttribute && !bob.isNewOBObject()) {
-        return bob;
-      }
-
-      if (!writable && bob.isNewOBObject()) {
-        error("Object " + entityName + "(" + id + ") is new but not writable");
         return bob;
       }
 
@@ -178,130 +174,189 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       // a referenced instance should not be updated if it is not new
       // note that embedded children are updated but non-embedded children
       // are not updated!
-      final boolean preventRealUpdate = !writable
+      // note the !bob.isNewOBObject() is here because at the end
+      // after setting the properties (and organization) there is again a writable check
+      // which catches this one
+      final boolean preventRealUpdate = (!writable && !bob.isNewOBObject())
           || (hasReferenceAttribute && !bob.isNewOBObject());
 
       final Entity entity = ModelProvider.getInstance().getEntity(obElement.getName());
       boolean updated = false;
 
-      // the onetomany properties are done in a second pass
-      final List<Element> oneToManyElements = new ArrayList<Element>();
-
-      // now parse the property elements
-      for (final Element childElement : (List<Element>) obElement.elements()) {
-        final Property p = entity.getProperty(childElement.getName());
-        log.debug(">>> Exporting property " + p.getName());
-
-        // TODO: make this option controlled
-        final boolean isNotImportableProperty = p.isTransient(bob)
-            || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive();
-        if (isNotImportableProperty) {
-          log.debug("Property " + p + " is inactive, transient or auditinfo, " + "ignoring it");
-          continue;
-        }
-
-        // ignore the id properties as they are already set, or should
-        // not be set
-        if (p.isId()) {
-          continue;
-        }
-
-        final Object currentValue = bob.get(p.getName());
-
-        // do the primitive values
-        if (p.isPrimitive()) {
-          Object newValue = XMLTypeConverter.getInstance().fromXML(p.getPrimitiveType(),
-              childElement.getText());
-          // correct the value
-          newValue = replaceValue(bob, p, newValue);
-
-          log.debug("Primitive property with value " + newValue);
-
-          // only update if changed
-          if ((currentValue == null && newValue != null)
-              || (currentValue != null && newValue == null)
-              || (currentValue != null && newValue != null && !currentValue.equals(newValue))) {
-            log.debug("Value changed setting it");
-            if (!preventRealUpdate) {
-              bob.set(p.getName(), newValue);
-              updated = true;
-            }
-          }
-        } else if (p.isOneToMany()) {
-          // resolve the content of the list
-          final List<BaseOBObject> newValues = new ArrayList<BaseOBObject>();
-          for (final Object o : childElement.elements()) {
-            final Element listElement = (Element) o;
-            newValues.add(processEntityElement(listElement.getName(), listElement, true));
-          }
-          // get the currentvalue and compare
-          final List<BaseOBObject> currentValues = (List<BaseOBObject>) currentValue;
-
-          if (!newValues.equals(currentValues)) {
-            if (!preventRealUpdate) {
-              // TODO: is this efficient? Or will it even work
-              // with hibernate first removing all?
-              currentValues.clear();
-              currentValues.addAll(newValues);
-              updated = true;
+      // check if there is an organization set
+      final Organization originalResolvingOrganization = getEntityResolver().getOrganization();
+      if (bob instanceof OrganizationEnabled) {
+        Organization objectOrganization = null;
+        if (bob.isNewOBObject()) {
+          for (final Element childElement : (List<Element>) obElement.elements()) {
+            if (childElement.getName().equals(Client.PROPERTY_ORGANIZATION)) {
+              // found
+              final String refId = childElement.attributeValue(XMLConstants.ID_ATTRIBUTE);
+              objectOrganization = (Organization) resolve(Organization.ENTITY_NAME, refId, true);
             }
           }
         } else {
-          Check.isTrue(!p.isOneToMany(), "One to many property not allowed here");
-          // never update the org or client through xml!
-          final boolean clientUpdate = bob instanceof ClientEnabled
-              && p.getName().equals(Organization.PROPERTY_CLIENT);
-          final boolean orgUpdate = bob instanceof OrganizationEnabled
-              && p.getName().equals(Client.PROPERTY_ORGANIZATION);
-          if (!isOptionClientImport() && currentValue != null && (clientUpdate || orgUpdate)) {
-            continue;
-          }
-
-          // determine the referenced entity
-          Object newValue;
-
-          // handle null value
-          if (childElement.attribute(XMLConstants.ID_ATTRIBUTE) == null) {
-            newValue = null;
-          } else {
-            // get the info and resolve the reference
-            final String refId = childElement.attributeValue(XMLConstants.ID_ATTRIBUTE);
-            final String refEntityName = p.getTargetEntity().getName();
-            newValue = resolve(refEntityName, refId, true);
-          }
-          newValue = replaceValue(bob, p, newValue);
-
-          final boolean hasChanged = (currentValue == null && newValue != null)
-              || (currentValue != null && newValue != null && !currentValue.equals(newValue));
-          if (hasChanged) {
-            log.debug("Setting value " + newValue);
-            if (!preventRealUpdate) {
-              bob.set(p.getName(), newValue);
-              updated = true;
-            }
-          }
-
+          objectOrganization = ((OrganizationEnabled) bob).getOrganization();
+        }
+        // ok use the organization of the object itself to
+        // search for referenced objects
+        if (objectOrganization != null) {
+          getEntityResolver().setOrganization(objectOrganization);
         }
       }
 
-      // do the unique constraint matching here
-      // this check can not be done earlier because
-      // earlier no properties are set for a new object
-      bob = replaceByUniqueObject(bob);
+      try {
+        // now parse the property elements
+        for (final Element childElement : (List<Element>) obElement.elements()) {
+          final Property p = entity.getProperty(childElement.getName());
+          log.debug(">>> Exporting property " + p.getName());
 
-      // add to the correct list on the basis of different characteristics
-      addToInsertOrUpdateLists(id, bob, writable, updated, hasReferenceAttribute, preventRealUpdate);
+          // TODO: make this option controlled
+          final boolean isNotImportableProperty = p.isTransient(bob)
+              || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive();
+          if (isNotImportableProperty) {
+            log.debug("Property " + p + " is inactive, transient or auditinfo, " + "ignoring it");
+            continue;
+          }
 
-      // do a check that in case of a client/organization import that the
-      // client and organization are indeed set
-      if (isOptionClientImport()) {
-        checkClientOrganizationSet(bob);
+          // ignore the id properties as they are already set, or should
+          // not be set
+          if (p.isId()) {
+            continue;
+          }
+
+          final Object currentValue = bob.get(p.getName());
+
+          // do the primitive values
+          if (p.isPrimitive()) {
+            Object newValue = ((PrimitiveDomainType) p.getDomainType())
+                .createFromString(childElement.getText());
+
+            // correct the value
+            newValue = replaceValue(bob, p, newValue);
+
+            log.debug("Primitive property with value " + newValue);
+
+            // only update if changed
+            if ((currentValue == null && newValue != null)
+                || (currentValue != null && newValue == null)
+                || (currentValue != null && newValue != null && !currentValue.equals(newValue))) {
+              log.debug("Value changed setting it");
+              if (!preventRealUpdate) {
+                bob.set(p.getName(), newValue);
+                updated = true;
+              }
+            }
+          } else if (p.isOneToMany()) {
+            // resolve the content of the list
+            final List<BaseOBObject> newValues = new ArrayList<BaseOBObject>();
+            for (final Object o : childElement.elements()) {
+              final Element listElement = (Element) o;
+              newValues.add(processEntityElement(listElement.getName(), listElement, true));
+            }
+            // get the currentvalue and compare
+            final List<BaseOBObject> currentValues = (List<BaseOBObject>) currentValue;
+
+            if (!newValues.equals(currentValues)) {
+              if (!preventRealUpdate) {
+                // TODO: is this efficient? Or will it even work
+                // with hibernate first removing all?
+                currentValues.clear();
+                currentValues.addAll(newValues);
+                updated = true;
+              }
+            }
+          } else {
+            Check.isTrue(!p.isOneToMany(), "One to many property not allowed here");
+
+            // determine the referenced entity
+            Object newValue;
+
+            // handle null value
+            if (childElement.attribute(XMLConstants.ID_ATTRIBUTE) == null) {
+              newValue = null;
+            } else {
+              // get the info and resolve the reference
+              final String refId = childElement.attributeValue(XMLConstants.ID_ATTRIBUTE);
+              final String refEntityName = p.getTargetEntity().getName();
+              newValue = resolve(refEntityName, refId, true);
+            }
+            newValue = replaceValue(bob, p, newValue);
+
+            // never update the org or client through xml!
+            final boolean clientUpdate = bob instanceof ClientEnabled
+                && p.getName().equals(Organization.PROPERTY_CLIENT);
+            final boolean orgUpdate = bob instanceof OrganizationEnabled
+                && p.getName().equals(Client.PROPERTY_ORGANIZATION);
+
+            boolean isAllowedUpdate = false;
+            if (orgUpdate) {
+              isAllowedUpdate = bob.isNewOBObject()
+                  && isWritableOrganization((BaseOBObject) newValue);
+            }
+
+            if (!isAllowedUpdate && !isOptionClientImport() && currentValue != null
+                && (clientUpdate || orgUpdate)) {
+              continue;
+            }
+
+            final boolean hasChanged = (currentValue == null && newValue != null)
+                || (currentValue != null && newValue != null && !currentValue.equals(newValue));
+            if (hasChanged) {
+              log.debug("Setting value " + newValue);
+              if (!preventRealUpdate) {
+                bob.set(p.getName(), newValue);
+                updated = true;
+              }
+            }
+          }
+        }
+
+        // now do this check as the object now has a correct organization
+        if (bob.isNewOBObject()) {
+          final boolean recheckedWritable = OBContext.getOBContext().isInAdministratorMode()
+              || SecurityChecker.getInstance().isWritable(bob);
+          if (!recheckedWritable) {
+            error("Object " + entityName + "(" + id + ") is new but not writable");
+            return bob;
+          }
+        }
+
+        // do the unique constraint matching here
+        // this check can not be done earlier because
+        // earlier no properties are set for a new object
+        bob = replaceByUniqueObject(bob);
+
+        // add to the correct list on the basis of different characteristics
+        addToInsertOrUpdateLists(id, bob, writable, updated, hasReferenceAttribute,
+            preventRealUpdate);
+
+        // do a check that in case of a client/organization import that the
+        // client and organization are indeed set
+        if (isOptionClientImport()) {
+          checkClientOrganizationSet(bob);
+        }
+
+        return bob;
+      } finally {
+        getEntityResolver().setOrganization(originalResolvingOrganization);
       }
-
-      return bob;
     } catch (final Exception e) {
       error("Exception when parsing entity " + entityName + " (" + id + "):" + e.getMessage());
       return null;
     }
+  }
+
+  private boolean isWritableOrganization(BaseOBObject bob) {
+    final String bobId = (String) bob.getId();
+    if (bobId == null) {
+      return false;
+    }
+    for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
+      if (orgId.equals(bobId)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

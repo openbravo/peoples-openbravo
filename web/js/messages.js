@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -181,14 +181,21 @@ function getUrl() {
 }
 
 function getDataBaseMessage(value, responseFunction) {
-  //var paramXMLReq = new Array('field', 'fieldName');
+  var appUrl = getAppUrl();
   var paramXMLReq = null;
-  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (getUrl() + "/businessUtility/MessageJS.html?inpvalue=JS" + escape(value)), false, paramXMLReq)
+  var msgCode;
+  if (new RegExp("^[0-9]+$").test(value)) {
+    msgCode = "JS" + value;
+  } else {
+    msgCode = value;
+  }
+  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (appUrl + "/businessUtility/MessageJS.html?inpvalue=" + escape(msgCode)), false, paramXMLReq)
 }
 
 function getDataBaseStandardMessage(value, responseFunction) {
+  var appUrl = getAppUrl();
   var paramXMLReq = null;
-  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (getUrl() + "/businessUtility/MessageJS.html?inpvalue=" + escape(value)), false, paramXMLReq)
+  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (appUrl + "/businessUtility/MessageJS.html?inpvalue=" + escape(value)), false, paramXMLReq)
 }
 
 function messageResponse(paramArray, XMLHttpRequestObj) {

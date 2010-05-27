@@ -70,6 +70,7 @@
     <defaultOrganization xsi:nil="true"/>
     <defaultRole xsi:nil="true"/>
     <defaultWarehouse xsi:nil="true"/>
+    <locked>false</locked>
   </ADUser>
   <ADUser id="1000020">
     <id>1000020</id>
@@ -104,6 +105,7 @@
     <defaultOrganization xsi:nil="true"/>
     <defaultRole xsi:nil="true"/>
     <defaultWarehouse xsi:nil="true"/>
+    <locked>false</locked>
   </ADUser>
   <ADSequence id="1000099">
     <id>1000099</id>
@@ -5642,6 +5644,13 @@
     <userContact xsi:nil="true"/>
     <attribute>C_DocTypeTarget_ID</attribute>
     <searchKey>1000063</searchKey>
+    <property xsi:nil="true"/>
+    <propertyList>false</propertyList>
+    <visibleAtClient id="1000001"/>
+    <visibleAtOrganization id="0"/>
+    <visibleAtRole xsi:nil="true"/>
+    <selected>false</selected>
+    <module xsi:nil="true"/>
   </ADPreference>
   <ADPreference id="1000009">
     <id>1000009</id>
@@ -5652,6 +5661,13 @@
     <userContact xsi:nil="true"/>
     <attribute>C_DocTypeTarget_ID</attribute>
     <searchKey>1000062</searchKey>
+    <property xsi:nil="true"/>
+    <propertyList>false</propertyList>
+    <visibleAtClient id="1000001"/>
+    <visibleAtOrganization id="0"/>
+    <visibleAtRole xsi:nil="true"/>
+    <selected>false</selected>
+    <module xsi:nil="true"/>
   </ADPreference>
   <ADPreference id="1000010">
     <id>1000010</id>
@@ -5662,6 +5678,13 @@
     <userContact xsi:nil="true"/>
     <attribute>C_Country_ID</attribute>
     <searchKey>100</searchKey>
+    <property xsi:nil="true"/>
+    <propertyList>false</propertyList>
+    <visibleAtClient id="1000001"/>
+    <visibleAtOrganization id="0"/>
+    <visibleAtRole xsi:nil="true"/>
+    <selected>false</selected>
+    <module xsi:nil="true"/>
   </ADPreference>
   <ADProcessAccess id="17CA8BB997344F4E9E2ABFB70FD26DD5">
     <id>17CA8BB997344F4E9E2ABFB70FD26DD5</id>

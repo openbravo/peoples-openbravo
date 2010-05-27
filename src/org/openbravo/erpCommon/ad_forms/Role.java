@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -168,8 +168,6 @@ public class Role extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("TextDirection", ((strIsRTL.equals("Y") ? "RTL" : "LTR")));
-    xmlDocument.setParameter("roleInfo", Utility.messageBD(this, "RoleInfo", vars.getLanguage()));
-    xmlDocument.setParameter("role", Utility.messageBD(this, "AD_Role_ID", vars.getLanguage()));
     xmlDocument.setParameter("client", Utility.messageBD(this, "AD_Client_ID", vars.getLanguage()));
     xmlDocument.setParameter("org", Utility.messageBD(this, "AD_Org_ID", vars.getLanguage()));
     xmlDocument.setParameter("user", RoleData.nombreUsuario(this, vars.getUser()));
@@ -188,7 +186,7 @@ public class Role extends HttpSecureAppServlet {
     xmlDocument.setData("structureLang", LanguageComboData.select(this));
 
     // Role
-    OBContext.enableAsAdminContext();
+    OBContext.setAdminMode();
     RoleComboData[] datarole = null;
     try {
       // We check if there is a Openbravo Professional Subscription restriction in the license,
@@ -210,7 +208,7 @@ public class Role extends HttpSecureAppServlet {
         datarole = RoleComboData.select(this, vars.getUser());
       }
     } finally {
-      OBContext.resetAsAdminContext();
+      OBContext.restorePreviousMode();
     }
 
     // Client
@@ -250,7 +248,6 @@ public class Role extends HttpSecureAppServlet {
       }
     }
 
-    xmlDocument.setData("structure", RoleData.select(this, vars.getRole()));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

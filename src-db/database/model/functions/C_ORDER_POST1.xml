@@ -200,7 +200,8 @@
         UPDATE C_ORDER
           SET Processing='N',
           DocAction='--',
-          Updated=now()
+          Updated=now(),
+          UpdatedBy=v_User
         WHERE C_Order_ID=v_Record_ID;
         FINISH_PROCESS:=TRUE;
       END IF;
@@ -270,7 +271,8 @@
             DocAction='CO',
             Processing='N',
             Processed='N',
-            Updated=now()
+            Updated=now(),
+            UpdatedBy=v_User
           WHERE C_Order_ID=v_Record_ID;
 	  DELETE
           FROM C_ORDERLINE
@@ -279,7 +281,9 @@
           --ADDED BY E.ARGAL
           --Invalidate debt payments added by ALO
           UPDATE C_DEBT_PAYMENT
-            SET IsValid='N'
+            SET IsValid='N',
+            Updated=now(),
+            UpdatedBy=v_User
           WHERE C_Order_ID=v_Record_ID
             AND IsAutomaticGenerated='N';
 
@@ -350,7 +354,9 @@
             END LOOP;
           -- Set reserved quantity to 0
           UPDATE C_ORDERLINE
-          SET QtyReserved = 0
+          SET QtyReserved = 0,
+          Updated=now(),
+            UpdatedBy=v_User
           WHERE c_orderline_id IN (select c_orderline_id
                                    from c_orderline
                                    where c_order_id = v_Record_id);
@@ -435,7 +441,8 @@
             SET DocStatus='DR', -- Draft
             DocAction='CO',
             Processing='N',
-            Updated=now()
+            Updated=now(),
+            UpdatedBy=v_User
           WHERE C_Order_ID=v_Record_ID;
         FINISH_PROCESS:=TRUE;
 
@@ -619,6 +626,7 @@
             AND C_DISCOUNT.M_PRODUCT_ID=M_PRODUCT.M_PRODUCT_ID
             AND C_ORDER_DISCOUNT.C_ORDER_ID=v_Record_ID
             AND C_ORDER_DISCOUNT.ISACTIVE='Y'
+            AND C_DISCOUNT.ISACTIVE='Y'
           ORDER BY C_ORDER_DISCOUNT.LINE
           )
         LOOP
@@ -694,7 +702,9 @@
             BEGIN
               v_ResultStr:='UpdateDocType';
               UPDATE C_ORDER
-                SET C_DocType_ID=v_DocTypeTarget_ID
+                SET C_DocType_ID=v_DocTypeTarget_ID,
+                Updated=now(),
+            	UpdatedBy=v_User
               WHERE C_Order_ID=v_Record_ID;
               v_DocType_ID:=v_DocTypeTarget_ID;
             EXCEPTION
@@ -718,7 +728,9 @@
             BEGIN
               v_ResultStr:='UpdateDocType';
               UPDATE C_ORDER
-                SET C_DocType_ID=v_DocTypeTarget_ID
+                SET C_DocType_ID=v_DocTypeTarget_ID,
+                Updated=now(),
+            	UpdatedBy=v_User
               WHERE C_Order_ID=v_Record_ID;
               v_DocType_ID:=v_DocTypeTarget_ID;
             EXCEPTION
@@ -973,7 +985,9 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
  ROLLBACK;
      v_ResultStr := 'LockingOrder';
      UPDATE C_ORDER
-       SET Processing = 'N'
+       SET Processing = 'N',
+       Updated=now(),
+       UpdatedBy=v_User
      WHERE C_Order_ID = v_Record_ID;
           RAISE NO_DATA_FOUND;
  COMMIT;
@@ -1077,7 +1091,8 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
           SET DocStatus='VO',
           DocAction='--',
           Processed='Y',
-          Updated=now()
+          Updated=now(),
+          UpdatedBy=v_User
         WHERE C_Order_ID=v_Record_ID;
 		END_PROCESSING:=TRUE;
       ELSE
@@ -1085,7 +1100,8 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
           SET DocStatus='CO',
           DocAction='--',
           Processed='Y',
-          Updated=now()
+          Updated=now(),
+          UpdatedBy=v_User
         WHERE C_Order_ID=v_Record_ID;
 		END_PROCESSING:=TRUE;
       END IF;
@@ -1102,7 +1118,8 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
   UPDATE C_ORDER
     SET DocStatus='IP',
     DateAcct=DateOrdered,
-    Updated=now()
+    Updated=now(),
+    UpdatedBy=v_User
   WHERE C_Order_ID=v_Record_ID;
   IF(p_PInstance_ID IS NOT NULL) THEN
     COMMIT;
@@ -1118,7 +1135,8 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       SET DocStatus='IP',
       DocAction='CO',
       Processed='N',
-      Updated=now()
+      Updated=now(),
+      UpdatedBy=v_User
     WHERE C_Order_ID=v_Record_ID;
     -- C_Order_PickList(NULL, v_Record_ID);  -- Print PickList
     END_PROCESSING:=TRUE;
@@ -1143,7 +1161,8 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
         SET DocStatus='WP',
         DocAction='--',
         Processed='Y',
-        Updated=now()
+        Updated=now(),
+        UpdatedBy=v_User
       WHERE C_Order_ID=v_Record_ID;
       --
     END IF;--END_PROCESSING
@@ -1229,7 +1248,8 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       IsDelivered='Y',
       IsInvoiced='Y',
       Processed='Y',
-      Updated=now()
+      Updated=now(),
+      UpdatedBy=v_User
     WHERE C_Order_ID=v_Record_ID;
     DBMS_OUTPUT.PUT_LINE('DocAction - ' || v_DocAction) ;
     IF(v_DocAction='VO') THEN
@@ -1243,7 +1263,8 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       DocAction='--',
       IsDelivered='Y',
       Processed='Y',
-      Updated=now()
+      Updated=now(),
+      UpdatedBy=v_User
     WHERE C_Order_ID=v_Record_ID;
     IF(v_DocAction='VO') THEN
       UPDATE C_ORDER  SET DocStatus='VO'  WHERE C_Order_ID=v_Record_ID;
@@ -1266,7 +1287,8 @@ IF (v_DocSubTypeSO = 'RM') THEN
       SET DocStatus='CO',
       DocAction='--',
       Processed='Y',
-      Updated=now()
+      Updated=now(),
+       UpdatedBy=v_User
     WHERE C_Order_ID=v_Record_ID;
   END IF;
   -- Purchase Orders
@@ -1275,7 +1297,8 @@ IF (v_DocSubTypeSO = 'RM') THEN
       SET DocStatus='CO',
       DocAction='--',
       Processed='Y',
-      Updated=now()
+      Updated=now(),
+      UpdatedBy=v_User
     WHERE C_Order_ID=v_Record_ID;
   END IF;
   -- Only create cash entry if docAction is Complete

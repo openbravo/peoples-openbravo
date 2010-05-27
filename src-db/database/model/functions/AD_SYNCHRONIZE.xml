@@ -219,7 +219,9 @@
                            FROM AD_ELEMENT e 
                           WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
                             AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y'),
-                   Name=(SELECT (CASE WHEN MT.AD_MODULE_ID = C.AD_MODULE_ID OR AD_ELEMENT.NAME LIKE P.NAME||'_%' THEN AD_ELEMENT.NAME ELSE 'EM_'||P.NAME||'_'||AD_ELEMENT.NAME END)
+                   Name=(SELECT (CASE WHEN MT.AD_MODULE_ID = C.AD_MODULE_ID OR UPPER(AD_ELEMENT.NAME) LIKE 'EM_%'||P.NAME||'_%' 
+                                           THEN AD_ELEMENT.NAME 
+                                      ELSE 'EM_'||P.NAME||'_'||AD_ELEMENT.NAME END)
                            FROM AD_ELEMENT, AD_MODULE_DBPREFIX P, AD_MODULE MT, AD_TABLE T, AD_PACKAGE PA
                             WHERE AD_ELEMENT_ID = (SELECT MAX(AD_Element_ID)
                                                    FROM AD_ELEMENT e 

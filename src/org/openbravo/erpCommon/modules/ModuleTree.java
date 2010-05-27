@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.modules;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
@@ -33,6 +34,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleTree extends GenericTree {
+  private final static Logger log4j = Logger.getLogger(ModuleTree.class);
 
   /**
    * Constructor to generate a root tree
@@ -103,24 +105,35 @@ public class ModuleTree extends GenericTree {
    */
   public String getHTMLDescription(String node) {
     try {
-
-      ModuleTreeData[] data = ModuleTreeData.selectDescription(conn, lang, node);
-      addLinks(data, true);
+      ModuleTreeData[] moduleDescription = ModuleTreeData.selectDescription(conn, lang, node);
+      addLinks(moduleDescription, true);
       String discard[] = { "" };
-      if (data != null && data.length > 0 && data[0].linkname != null
-          && !data[0].linkname.equals(""))
-        data[0].statusName = "";
-      if (data != null && data.length > 0
-          && (data[0].updateAvailable == null || data[0].updateAvailable.equals("")))
-        discard[0] = "update";
+      if (moduleDescription != null && moduleDescription.length > 0) {
+        if (moduleDescription[0].linkname != null && !moduleDescription[0].linkname.equals("")) {
+          moduleDescription[0].statusName = "";
+        }
+        if (moduleDescription[0].updateAvailable == null
+            || moduleDescription[0].updateAvailable.equals("")) {
+          discard[0] = "update";
+        }
+
+        String url = moduleDescription[0].url;
+        if (url != null && !url.isEmpty()) {
+          if (!url.matches("^[a-z]+://.+")) {
+            // url without protocol: infer http
+            url = "http://" + url;
+          }
+          moduleDescription[0].url = url;
+        }
+      }
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/modules/ModuleTreeDescription", discard).createXmlDocument();
-      xmlDocument.setData("structureDesc", data);
+      xmlDocument.setData("structureDesc", moduleDescription);
       return xmlDocument.print();
 
     } catch (Exception e) {
-      e.printStackTrace();
+      log4j.error("Error obtaining module description. Module ID:" + node, e);
       return "";
     }
   }

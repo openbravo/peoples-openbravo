@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,6 +68,8 @@ public class ActivationKey {
   private static String opsLogId;
   private Long pendingTime;
   private boolean hasExpired = false;
+  private boolean subscriptionConvertedProperty = false;
+  private boolean subscriptionActuallyConverted = false;
 
   private boolean notActiveYet = false;
 
@@ -78,7 +80,7 @@ public class ActivationKey {
   }
 
   public enum CommercialModuleStatus {
-    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET
+    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION
   }
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -167,6 +169,8 @@ public class ActivationKey {
     Date startDate = null;
     Date endDate = null;
 
+    subscriptionConvertedProperty = "true".equals(getProperty("subscriptionConverted"));
+
     try {
       startDate = sd.parse(getProperty("startdate"));
 
@@ -195,13 +199,18 @@ public class ActivationKey {
     if (endDate != null) {
       pendingTime = ((endDate.getTime() - now.getTime()) / MILLSECS_PER_DAY) + 1;
       if (now.after(endDate)) {
-        isActive = false;
-        hasExpired = true;
+        if (subscriptionConvertedProperty) {
+          // A bought out instance is actually converted when the license has expired.
+          subscriptionActuallyConverted = true;
+        } else {
+          isActive = false;
+          hasExpired = true;
 
-        errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
+          errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
 
-        setLogger();
-        return;
+          setLogger();
+          return;
+        }
       }
     }
     isActive = true;
@@ -343,23 +352,23 @@ public class ActivationKey {
 
       // maxUsers==0 is unlimited concurrent users
       if (maxUsers != 0) {
-        boolean adminMode = OBContext.getOBContext().setInAdministratorMode(true);
+        OBContext.setAdminMode();
         int activeSessions = 0;
         try {
           activeSessions = getActiveSessions(currentSession);
-          log4j.info("Active sessions: " + activeSessions);
+          log4j.debug("Active sessions: " + activeSessions);
           if (activeSessions >= maxUsers || (softUsers != null && activeSessions >= softUsers)) {
             // Before raising concurrent users error, clean the session with ping timeout and try it
             // again
-            if (deactivateTimeOutSessions()) {
+            if (deactivateTimeOutSessions(currentSession)) {
               activeSessions = getActiveSessions(currentSession);
-              log4j.info("Active sessions after timeout cleanup: " + activeSessions);
+              log4j.debug("Active sessions after timeout cleanup: " + activeSessions);
             }
           }
         } catch (Exception e) {
           log4j.error("Error checking sessions", e);
         } finally {
-          OBContext.getOBContext().setInAdministratorMode(adminMode);
+          OBContext.restorePreviousMode();
         }
         if (activeSessions >= maxUsers) {
           return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
@@ -386,7 +395,7 @@ public class ActivationKey {
    * <p/>
    * PING_TIMEOUT_SECS is hardcoded to 120s, pings are hardcoded in front-end to 50s.
    */
-  private boolean deactivateTimeOutSessions() {
+  private boolean deactivateTimeOutSessions(String currentSessionId) {
     // Last valid ping time is current time substract timeout seconds
     Calendar cal = Calendar.getInstance();
     cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
@@ -398,6 +407,7 @@ public class ActivationKey {
     obCriteria.add(Expression.and(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true), Expression
         .or(Expression.isNull(Session.PROPERTY_LASTPING), Expression.lt(Session.PROPERTY_LASTPING,
             lastValidPingTime))));
+    obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSessionId));
 
     boolean sessionDeactivated = false;
     for (Session expiredSession : obCriteria.list()) {
@@ -507,6 +517,10 @@ public class ActivationKey {
     return pendingTime;
   }
 
+  public boolean isSubscriptionConverted() {
+    return subscriptionConvertedProperty;
+  }
+
   public boolean hasExpired() {
     return hasExpired;
   }
@@ -516,7 +530,7 @@ public class ActivationKey {
   }
 
   /**
-   * Obtains a List of all the modules that are installed in the instace which licenses has expired.
+   * Obtains a List of all the modules that are installed in the instance which license has expired.
    * 
    * @return List of the expired modules
    */
@@ -543,6 +557,9 @@ public class ActivationKey {
    */
   public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
     HashMap<String, CommercialModuleStatus> moduleList = new HashMap<String, CommercialModuleStatus>();
+    if (instanceProperties == null) {
+      return moduleList;
+    }
 
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -561,12 +578,18 @@ public class ActivationKey {
         if (moduleData.length > 2) {
           validTo = sd.parse(moduleData[2]);
         }
-        if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
+        if (subscriptionActuallyConverted) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.CONVERTED_SUBSCRIPTION);
+        } else if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
           moduleList.put(moduleData[0], CommercialModuleStatus.ACTIVE);
         } else if (validFrom.after(now)) {
           moduleList.put(moduleData[0], CommercialModuleStatus.NO_ACTIVE_YET);
         } else if (validTo != null && validTo.before(now)) {
-          moduleList.put(moduleData[0], CommercialModuleStatus.EXPIRED);
+          if (subscriptionConvertedProperty) {
+            moduleList.put(moduleData[0], CommercialModuleStatus.CONVERTED_SUBSCRIPTION);
+          } else {
+            moduleList.put(moduleData[0], CommercialModuleStatus.EXPIRED);
+          }
         }
       } catch (Exception e) {
         log.error("Error reading module's dates module:" + moduleData[0], e);

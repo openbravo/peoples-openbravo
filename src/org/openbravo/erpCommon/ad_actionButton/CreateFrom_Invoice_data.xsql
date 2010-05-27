@@ -119,7 +119,7 @@
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
         AND ic.C_BPartner_ID = ? 
-        AND ((ic.term = 'D' AND ic.qtydelivered >0) OR (ic.term = 'I') OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )
+        AND ((ic.term = 'D' AND ic.qtydelivered <>0) OR (ic.term = 'I') OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
         ORDER BY NAME
       ]]>
@@ -448,7 +448,7 @@
       ORDER BY l.Line
       ]]>
     </Sql>
-    <Parameter name="cOrderlineId" optional="true" type="argument" after="AND l.M_Product_ID=p.M_Product_ID" text=" AND l.M_InOutLine_ID IN "/>
+    <Parameter name="cInOutLineId" optional="true" type="argument" after="AND l.M_Product_ID=p.M_Product_ID" text=" AND l.M_InOutLine_ID IN "/>
   </SqlMethod>
   <SqlMethod name="selectFromShipmentUpdateSOTrx" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -601,5 +601,23 @@
       WHERE C_ORDERLINE_ID = ? 
     ]]></Sql>
     <Parameter name="cOrderLineId"/>
+  </SqlMethod>
+  <SqlMethod name="getOffersPriceInvoice" type="preparedStatement" return="String" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT ROUND(M_GET_OFFERS_PRICE(TO_DATE(?),?,?,TO_NUMBER(?), TO_NUMBER(?), ?),
+                    (SELECT PRICEPRECISION 
+                       FROM C_CURRENCY C,
+                            C_INVOICE  I 
+                      WHERE C.C_CURRENCY_ID = I.C_CURRENCY_ID
+                        AND I.C_INVOICE_ID  = ?)) AS TOTAL FROM DUAL
+    </Sql>
+    <Parameter name="dateordered"/>
+    <Parameter name="cBpartnerId"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="pricestd"/>
+    <Parameter name="qty"/>
+    <Parameter name="pricelist"/>
+    <Parameter name="invoiceid"/>
   </SqlMethod>
 </SqlClass>

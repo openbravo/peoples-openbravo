@@ -19,6 +19,8 @@
 
 package org.openbravo.base.model.domaintype;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -29,11 +31,53 @@ import java.util.Date;
 
 public class DatetimeDomainType extends BasePrimitiveDomainType {
 
+  private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+
   /**
    * @return class of the {@link Date}
    * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return Date.class;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#convertToString(java.lang.Object)
+   */
+  @Override
+  public synchronized String convertToString(Object value) {
+    if (value == null) {
+      return EMPTY_STRING;
+    }
+    return xmlDateFormat.format(value);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
+   */
+  @Override
+  public synchronized Object createFromString(String strValue) {
+    try {
+      if (strValue == null || strValue.trim().length() == 0) {
+        return null;
+      }
+      return xmlDateFormat.parse(strValue).getTime();
+    } catch (ParseException e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
+   */
+  @Override
+  public String getXMLSchemaType() {
+    return "ob:dateTime";
   }
 }

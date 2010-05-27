@@ -191,7 +191,12 @@
           v_InvoiceToDate:=NULL;
           v_BPartner_ID:=NULL;
           v_Selection:='N';
-          v_ADUserId := '0';
+          BEGIN
+            SELECT COALESCE(UPDATEDBY,'0') INTO v_ADUserId  FROM C_ORDER  WHERE C_ORDER_ID=p_Order_ID;
+          EXCEPTION
+          WHEN OTHERS THEN
+            v_ADUserId := '0';            
+          END;
         END IF;
       BEGIN --BODY
         /**
@@ -372,6 +377,8 @@
               * Create Invoice Header ---------------------------------------
               */
               -- Get Order DocType Info - approved from Invoice DocType
+              BEGIN
+              v_DocType_ID:=NULL;
               v_ResultStr:='GetDocTypeInfo - ' || Cur_Order.C_DocType_ID;  SELECT od.C_DocTypeInvoice_ID,
                 od.DocSubTypeSO
               INTO v_DocType_ID,
@@ -379,7 +386,15 @@
               FROM C_DOCTYPE od,
                 C_DOCTYPE ID
               WHERE od.C_DocType_ID=Cur_Order.C_DocType_ID
-                AND od.C_DocTypeInvoice_ID=ID.C_DocType_ID;
+                AND od.C_DocTypeInvoice_ID=ID.C_DocType_ID
+                AND ID.IsActive='Y';
+              EXCEPTION
+              WHEN OTHERS THEN
+                v_DocType_ID:=NULL;
+              END;
+              IF (v_DocType_ID IS NULL) THEN
+                RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+              END IF;
               --
               Ad_Sequence_Next('C_Invoice', Cur_Order.AD_Client_ID, p_Invoice_ID) ;
               Ad_Sequence_Doctype(v_DocType_ID, Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
@@ -404,7 +419,7 @@
                   DateOrdered, IsDiscountPrinted, C_Currency_ID, PaymentRule,
                   C_Charge_ID, ChargeAmt, IsSelfService, TotalLines,
                   GrandTotal, M_PriceList_ID, C_Campaign_ID, C_Project_ID,
-                  C_Activity_ID, AD_OrgTrx_ID, User1_ID, User2_ID
+                  C_Activity_ID, AD_OrgTrx_ID, User1_ID, User2_ID, fin_paymentmethod_id
                 )
                 VALUES
                 (
@@ -420,7 +435,7 @@
                   Cur_Order.PaymentRule, Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt, Cur_Order.IsSelfService,
                   0, 0, Cur_Order.M_PriceList_ID, Cur_Order.C_Campaign_ID,
                   Cur_Order.C_Project_ID, Cur_Order.C_Activity_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID,
-                  Cur_Order.User2_ID
+                  Cur_Order.User2_ID, Cur_Order.fin_paymentmethod_id
                 )
                 ;
               --
@@ -677,7 +692,7 @@
                 sh.movementDate,
                 ol.PriceStd,
                 ol.m_attributesetinstance_id,
-                ol.taxbaseamt
+                ol.taxbaseamt, o.fin_paymentmethod_id
               FROM M_INOUT sh,
                 M_INOUTLINE sl,
                 C_ORDER o,
@@ -890,6 +905,8 @@
                     RAISE_APPLICATION_ERROR(-20000, '@NoDefaultInvoice@') ;
                   END;
                 ELSE
+                  BEGIN
+                  v_DocType_ID:=NULL;
                   SELECT od.C_DocTypeInvoice_ID
                   INTO v_DocType_ID
                   FROM C_DOCTYPE od,
@@ -897,7 +914,16 @@
                     C_ORDER o
                   WHERE od.C_DocType_ID=o.C_DocType_ID
                     AND od.C_DocTypeInvoice_ID=ID.C_DocType_ID
-                    AND o.C_Order_ID=Cur_InvoiceSchedule.C_Order_ID;
+                    AND o.C_Order_ID=Cur_InvoiceSchedule.C_Order_ID
+                    AND ID.IsActive='Y';
+                  EXCEPTION
+                  WHEN OTHERS THEN
+                    v_DocType_ID:=NULL;
+                  END;
+                  IF (v_DocType_ID IS NULL) THEN
+                    RAISE_APPLICATION_ERROR(-20000, '@NoDocumentTypeFound@') ;
+                  END IF;
+
                 END IF;
                 IF(NOT FINISH_PROCESS) THEN
                   -- Get other defaults
@@ -924,7 +950,7 @@
                       PaymentRule, C_Charge_ID, ChargeAmt, IsSelfService,
                       TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
                       C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-                      User2_ID
+                      User2_ID, fin_paymentmethod_id
                     )
                     VALUES
                     (
@@ -940,7 +966,7 @@
                       Cur_InvoiceSchedule.PaymentRule, NULL, 0, 'N',
                       0, 0, Cur_InvoiceSchedule.M_PriceList_ID, Cur_InvoiceSchedule.C_Campaign_ID,
                       Cur_InvoiceSchedule.C_Project_ID, Cur_InvoiceSchedule.C_Activity_ID, Cur_InvoiceSchedule.AD_OrgTrx_ID, Cur_InvoiceSchedule.User1_ID,
-                      Cur_InvoiceSchedule.User2_ID
+                      Cur_InvoiceSchedule.User2_ID, Cur_InvoiceSchedule.fin_paymentmethod_id
                     )
                     ;
                   --

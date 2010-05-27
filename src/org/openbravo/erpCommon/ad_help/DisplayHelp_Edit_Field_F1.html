@@ -37,7 +37,7 @@
   <script language="JavaScript" type="text/javascript" id="paramDirectory">
     var baseDirectory = "../../../../../web/";
   </script>
-  <script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</script>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">  defaultLang = "en_US";</script>
   <script type="text/javascript">
     _editor_url  = baseDirectory + "js/xinha/";
     _editor_lang = defaultLang.substring(0,2);
@@ -86,7 +86,7 @@
   </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();">
-<form name="frmMain" action="DisplayHelp_Edit_Field_FS.html" method="post" id="sectionDetail">
+<form name="frmMain" action="DisplayHelp_Edit_Field_FS.html" method="post" target="frameOculto" id="sectionDetail">
   <input type="hidden" name="Command">
 <input type="hidden" name="IsPopUpCall" value="1"></input>
   <input type="hidden" name="inpClave" value="" id="paramField"></input>
@@ -269,7 +269,7 @@
                 <button type="button" 
                   id="buttonOK" 
                   class="ButtonLink" 
-                  onclick="submitCommandForm('SAVE_' + document.frmMain.inpType.value, true, frmMain, 'DisplayHelp.html', 'frameOculto');return false;" 
+                  onclick="submitCommandForm('SAVE_' + document.frmMain.inpType.value, true);return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 

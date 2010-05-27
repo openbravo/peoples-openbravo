@@ -25,6 +25,7 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32);
+  v_fin_paymentmethod_id C_BPARTNER.FIN_PAYMENTMETHOD_ID%TYPE;
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     v_C_Order_ID VARCHAR2(32);
@@ -77,7 +78,8 @@
         SELECT P.C_BPARTNER_ID, P.C_BPARTNER_LOCATION_ID, P.M_PRICELIST_ID, PL.NAME AS PRICE_LIST_NAME,
           P.C_CURRENCY_ID, P.PAYMENTRULE, P.C_PAYMENTTERM_ID, P.M_WAREHOUSE_ID, P.SALESREP_ID,
           P.BILLTO_ID, P.C_CAMPAIGN_ID, P.C_PROJECT_ID, P.AD_USER_ID, P.DESCRIPTION, P.PROJECTSTATUS,
-          PP.NAME AS PHASE_NAME, PP.AD_CLIENT_ID, PP.AD_ORG_ID, OI.C_LOCATION_ID AS ORGLOCATIONID
+          PP.NAME AS PHASE_NAME, PP.AD_CLIENT_ID, PP.AD_ORG_ID, OI.C_LOCATION_ID AS ORGLOCATIONID,
+          P.FIN_PAYMENTMETHOD_ID
         FROM C_PROJECT P,
           C_PROJECTPHASE PP,
           M_PRICELIST PL,
@@ -117,7 +119,7 @@
           v_Billto_ID := C_GetBPLocationID(Cur_SO.C_BPartner_ID, 'B') ;
         END IF;
 
-        SELECT InvoiceRule INTO v_InvoiceRule
+        SELECT InvoiceRule, FIN_PAYMENTMETHOD_ID INTO v_InvoiceRule, v_fin_paymentmethod_id
         FROM C_BPARTNER
         WHERE C_BPartner_ID = Cur_SO.C_BPARTNER_ID;
         IF (v_InvoiceRule IS NULL) THEN
@@ -148,7 +150,7 @@
             TOTALLINES, GRANDTOTAL, M_WAREHOUSE_ID, M_PRICELIST_ID,
             ISTAXINCLUDED, POSTED, PROCESSING, SALESREP_ID,
             BILLTO_ID, C_CAMPAIGN_ID, C_PROJECT_ID, AD_USER_ID,
-            COPYFROM, DATEPROMISED, DESCRIPTION
+            COPYFROM, DATEPROMISED, DESCRIPTION, FIN_PAYMENTMETHOD_ID
           )
           VALUES
           (
@@ -161,7 +163,9 @@
             0, 0, Cur_SO.M_WAREHOUSE_ID, Cur_SO.M_PRICELIST_ID,
              'N', 'N', 'N', Cur_SO.SALESREP_ID,
             v_Billto_ID, Cur_SO.C_CAMPAIGN_ID, Cur_SO.C_PROJECT_ID, Cur_SO.AD_User_ID,
-             'N', TRUNC(now(), 'DD'), Cur_SO.PHASE_NAME || ' - ' || COALESCE(TO_CHAR(Cur_SO.DESCRIPTION),'')
+             'N', TRUNC(now(), 'DD'), Cur_SO.PHASE_NAME || ' - ' || COALESCE(TO_CHAR(Cur_SO.DESCRIPTION),''), 
+             COALESCE(Cur_SO.FIN_PAYMENTMETHOD_ID, v_fin_paymentmethod_id)
+             
           );
 
         UPDATE C_PROJECTPHASE

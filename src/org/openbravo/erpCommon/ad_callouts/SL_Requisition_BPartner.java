@@ -66,12 +66,13 @@ public class SL_Requisition_BPartner extends HttpSecureAppServlet {
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strPriceList = SLRequisitionBPartnerData.select(this, strBPartner);
+    SLRequisitionBPartnerData[] data = SLRequisitionBPartnerData.select(this, strBPartner);
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Requisition_BPartner';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpmPricelistId\", \"" + strPriceList + "\")");
+    resultado.append("new Array(\"inpmPricelistId\", \"" + data[0].poPricelistId + "\"),");
+    resultado.append("new Array(\"inpcCurrencyId\", \"" + data[0].cCurrencyId + "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");

@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -32,7 +32,7 @@
   v_AD_Client_ID VARCHAR2(32) ;
   v_AD_Org_ID VARCHAR2(32) ;
   v_Processed VARCHAR(60) ;
-  v_Posted VARCHAR(60) ;
+  v_Posted CHAR(1) ;
   v_Processing CHAR(1);
   v_Currency VARCHAR2(32);
   v_Date DATE;
@@ -60,6 +60,7 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     Cur_RemittanceLines RECORD;
+    Cur_Settlements RECORD;
     --  Parameter
     --  Parameter Variables
     v_Aux NUMBER;
@@ -68,8 +69,11 @@
     v_DueDate DATE;
     v_Status_to VARCHAR(60) ;
     v_Consolidate VARCHAR(60) ;
+    v_SettlementID_W varchar2(32) :='' ;
+    v_Withholding BOOLEAN := FALSE;
     v_SettlementID varchar2(32) ;
     v_DocumentNo VARCHAR(40);
+    v_DocumentNo_W VARCHAR(40);
     v_DPMId varchar2(32);
     v_DPId varchar2(32);
     v_DPMLineId varchar2(32);
@@ -179,6 +183,26 @@
         WHERE r.C_Remittance_ID=v_Record_ID
           AND C_SETTLEMENT_ID IS NOT NULL;
         IF v_Aux=1 THEN
+          -- If any payment with no amount, but withholding amount is present in the settlement, means a new settlement was
+          --created when processing the remittance, and needs to be unprocessed.
+          FOR Cur_Settlements IN
+            (
+              SELECT DISTINCT C_SETTLEMENT_CANCEL_ID
+              FROM C_DEBT_PAYMENT DP
+              WHERE DP.C_SETTLEMENT_GENERATE_ID = v_vSettlementId
+                AND DP.AMOUNT='0'
+                AND DP.WITHHOLDINGAMOUNT IS NOT NULL
+                AND DP.WITHHOLDINGAMOUNT <> '0'
+            )
+          LOOP
+            SELECT POSTED, DOCUMENTNO INTO v_Posted, v_documentno_Settlement FROM C_SETTLEMENT WHERE C_SETTLEMENT_ID=Cur_Settlements.C_SETTLEMENT_CANCEL_ID;
+            IF (v_Posted='Y') THEN
+              RAISE_APPLICATION_ERROR(-20000, '@WITHHOLDING_SETTLEMENT_POSTED@' || v_documentno_Settlement || '.');
+            END IF;
+            C_SETTLEMENT_POST(NULL, Cur_Settlements.C_SETTLEMENT_CANCEL_ID) ;
+            UPDATE C_DEBT_PAYMENT SET C_SETTLEMENT_CANCEL_ID=NULL WHERE C_SETTLEMENT_CANCEL_ID = Cur_Settlements.C_SETTLEMENT_CANCEL_ID;
+            DELETE FROM C_SETTLEMENT WHERE C_Settlement_ID=Cur_Settlements.C_SETTLEMENT_CANCEL_ID;
+          END LOOP;
           C_SETTLEMENT_POST(NULL, v_vSettlementId) ;
           UPDATE C_REMITTANCELINE
             SET C_DEBT_PAYMENT_CANCELLED=NULL
@@ -359,6 +383,8 @@
             dp.STATUS,
             dp.C_BPartner_id,
             dp.description,
+            dp.withholdingamount,
+            dp.c_withholding_id,
             rl.C_REMITTANCELINE_ID
           FROM C_REMITTANCELINE rl,
             C_DEBT_PAYMENT dp
@@ -375,7 +401,8 @@
               ISRECEIPT, C_CURRENCY_ID, PAYMENTRULE, ISPAID,
               AMOUNT, DATEPLANNED, ISMANUAL, STATUS,
               C_SETTLEMENT_GENERATE_ID, isValid, c_BPartner_ID, Generate_Processed,
-              Description, C_BANKACCOUNT_ID, status_initial
+              Description, C_BANKACCOUNT_ID, status_initial,
+              withholdingamount, c_withholding_id
             )
             VALUES
             (
@@ -384,9 +411,37 @@
               Cur_RemittanceLines.ISRECEIPT, Cur_RemittanceLines.C_CURRENCY_ID, Cur_RemittanceLines.PAYMENTRULE, Cur_RemittanceLines.ISPAID,
               -Cur_RemittanceLines.AMOUNT, Cur_RemittanceLines.DATEPLANNED, 'N', Cur_RemittanceLines.STATUS,
               v_SettlementID, 'Y', v_BankPartner, 'Y',
-               '*RT* '||Cur_RemittanceLines.description, v_BankAccountID, Cur_RemittanceLines.STATUS
+              '*RT* '||Cur_RemittanceLines.description, v_BankAccountID, Cur_RemittanceLines.STATUS,
+              -Cur_RemittanceLines.withholdingamount, Cur_RemittanceLines.c_withholding_id
             )
             ;
+          -- If the payment has a withholding associated, then a new payment is created with no amount, but withholding amount. The BP of these
+          --payments will be the one in the original payment, and not the bank.
+          IF (Cur_RemittanceLines.withholdingamount IS NOT NULL AND NOT Cur_RemittanceLines.withholdingamount = '0') THEN
+            v_Withholding := TRUE;
+            INSERT
+            INTO C_DEBT_PAYMENT
+              (
+                C_DEBT_PAYMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+                CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+                ISRECEIPT, C_CURRENCY_ID, PAYMENTRULE, ISPAID,
+                AMOUNT, DATEPLANNED, ISMANUAL, STATUS,
+                C_SETTLEMENT_GENERATE_ID, isValid, c_BPartner_ID, Generate_Processed,
+                Description, C_BANKACCOUNT_ID, status_initial,
+                withholdingamount, c_withholding_id
+              )
+              VALUES
+              (
+                get_uuid(), Cur_RemittanceLines.ad_Client_Id, Cur_RemittanceLines.AD_Org_Id, 'Y',
+                now(), v_AD_User_ID, now(), v_AD_User_ID,
+                Cur_RemittanceLines.ISRECEIPT, Cur_RemittanceLines.C_CURRENCY_ID, Cur_RemittanceLines.PAYMENTRULE, 'N',
+                '0', Cur_RemittanceLines.DATEPLANNED, 'N', Cur_RemittanceLines.STATUS,
+                v_SettlementID, 'Y', Cur_RemittanceLines.C_BPartner_id, 'Y',
+                '*RT*W* '||Cur_RemittanceLines.description, v_BankAccountID, Cur_RemittanceLines.STATUS,
+                Cur_RemittanceLines.withholdingamount, Cur_RemittanceLines.c_withholding_id
+              )
+              ;
+          END IF;
           UPDATE C_REMITTANCELINE
             SET C_DEBT_PAYMENT_CANCELLED=v_DPID
           WHERE C_RemittanceLine_ID=Cur_RemittanceLines.c_RemittanceLine_id;
@@ -429,6 +484,7 @@
           --Calculate the total amount
           --v_GeneratedAmt := v_GeneratedAmt + i.Amount;
         END LOOP;
+
         SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(Amount, C_Currency_ID, v_Currency, v_dateTrx, NULL, v_aD_Client_Id, v_AD_Org_Id), v_Currency, NULL)), 0)
         INTO v_GeneratedAmt
         FROM C_Debt_Payment_V
@@ -466,6 +522,32 @@
           ;
         --Post Settlement
         C_SETTLEMENT_POST(NULL, v_SettlementID) ;
+        -- If any of the payments in the remittance has got withholding, then some new payments will have been created. Now those payments are included in a
+        --cancelation settlement, that is afterwards processed.
+        IF (v_Withholding) THEN
+          Ad_Sequence_Next('C_Settlement', v_AD_Org_Id, v_SettlementID_W) ;
+          Ad_Sequence_Doctype(v_SettlementDocType_ID, v_SettlementID_W, 'Y', v_DocumentNo_W) ;
+          INSERT
+          INTO C_SETTLEMENT
+            (
+              C_SETTLEMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+              CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+              DOCUMENTNO, DATETRX, DATEACCT, SETTLEMENTTYPE,
+              C_DOCTYPE_ID, C_Currency_ID, ISGENERATED
+            )
+            VALUES
+            (
+              v_SettlementID_W, v_AD_Client_Id, v_AD_Org_Id, 'Y',
+              now(), v_AD_User_ID, now(), v_AD_User_ID,
+              '*RT*W*'||v_DocumentNo_W, v_dateTrx, v_dateTrx, 'C',
+              v_SettlementDocType_ID, v_Currency, 'Y'
+            )
+            ;
+          UPDATE C_DEBT_PAYMENT
+          SET C_SETTLEMENT_CANCEL_ID = v_SettlementID_W, ISPAID='Y'
+          WHERE AMOUNT='0' AND WITHHOLDINGAMOUNT <> '0' AND C_SETTLEMENT_GENERATE_ID = v_SettlementID;
+          C_SETTLEMENT_POST(NULL, v_SettlementID_W);
+        END IF;
         UPDATE C_REMITTANCE
           SET C_Settlement_ID=v_SettlementID,
           C_DP_Management_ID=v_DPMId,

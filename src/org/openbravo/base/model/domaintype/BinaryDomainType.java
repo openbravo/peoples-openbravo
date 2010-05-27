@@ -19,6 +19,10 @@
 
 package org.openbravo.base.model.domaintype;
 
+import java.io.UnsupportedEncodingException;
+
+import org.apache.commons.codec.binary.Base64;
+
 /**
  * The type for a binary (image for example) column.
  * 
@@ -34,4 +38,49 @@ public class BinaryDomainType extends BasePrimitiveDomainType {
   public Class<?> getPrimitiveType() {
     return byte[].class;
   }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#convertToString(java.lang.Object)
+   */
+  @Override
+  public String convertToString(Object value) {
+    try {
+      if (value == null) {
+        return EMPTY_STRING;
+      }
+      return new String(Base64.encodeBase64((byte[]) value), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
+   */
+  @Override
+  public Object createFromString(String strValue) {
+    try {
+      if (strValue == null || strValue.trim().length() == 0) {
+        return null;
+      }
+      return Base64.decodeBase64(strValue.getBytes("UTF-8"));
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
+   */
+  @Override
+  public String getXMLSchemaType() {
+    return "ob:base64Binary";
+  }
+
 }

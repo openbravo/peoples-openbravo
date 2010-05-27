@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,12 +58,13 @@ public class ComboReloads<PARAMETER_TMP id="paramTabId">xx</PARAMETER_TMP> exten
       xmlDocument.setParameter("frameName1", "mainframe");
     }
 
+    <FIELDS_TMP id="discardTry">
     try {
 
     <FIELDS_TMP id="sectionDetail">
       if (CalloutHelper.commandInCommandList(command, <FIELD_TMP id="fieldColumnsName">"xx"</FIELD_TMP>)) {
         if (!isFirst) resultado.append(", \n");
-        comboTableData = new ComboTableData(vars, this, "<FIELD_TMP id="fieldReference1">17</FIELD_TMP>", "<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>", "<FIELD_TMP id="fieldReferenceValue1">name</FIELD_TMP>", "<FIELD_TMP id="fieldValidation1">name</FIELD_TMP>", <FIELD_TMP id="fieldOrgCode">xxorgcode</FIELD_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), 0);
+        comboTableData = new ComboTableData(vars, this, "<FIELD_TMP id="fieldReference1">17</FIELD_TMP>", "<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>", "<FIELD_TMP id="fieldReferenceValue1">name</FIELD_TMP>", "<FIELD_TMP id="fieldValidation1">name</FIELD_TMP>", <FIELD_TMP id="fieldOrgCode">xxorgcode</FIELD_TMP>, <FIELD_TMP id="fieldClientCode">xxclientcode</FIELD_TMP>, 0);
         if (calledFromSearch) {
           comboTableData.fillParametersFromSearch("", windowId);
           resultField = "inpParam<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>";
@@ -88,6 +89,7 @@ public class ComboReloads<PARAMETER_TMP id="paramTabId">xx</PARAMETER_TMP> exten
       bdErrorHidden(response, myError.getType(), myError.getTitle(), myError.getMessage());
       return;
     }
+    </FIELDS_TMP>
 
     resultado.append("\n);");
 

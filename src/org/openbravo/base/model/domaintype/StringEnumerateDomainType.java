@@ -36,4 +36,27 @@ public class StringEnumerateDomainType extends BaseEnumerateDomainType<String> {
   public Class<?> getPrimitiveType() {
     return String.class;
   }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
+   */
+  @Override
+  public Object createFromString(String strValue) {
+    if (strValue == null || strValue.length() == 0) {
+      return null;
+    }
+    return strValue;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
+   */
+  @Override
+  public String getXMLSchemaType() {
+    return "ob:string";
+  }
 }

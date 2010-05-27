@@ -27,11 +27,17 @@ import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
 /**
  * Converts primitive types to a XML representation and back.
+ * 
+ * NOTE: class is deprecated, use the {@link PrimitiveDomainType} interface which can be obtained
+ * from the {@link Property#getDomainType()}.
+ * 
  * 
  * @author mtaal
  */

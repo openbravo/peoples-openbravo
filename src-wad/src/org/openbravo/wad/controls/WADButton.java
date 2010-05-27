@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,7 +67,7 @@ public class WADButton extends WADControl {
         text.append("openServletNewWindow('BUTTON").append(
             FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
         text.append("', true, '").append(getData("TabName")).append(
-            "_Edition.html', 'BUTTON', null, true");
+            "_Edition.html', 'BUTTON', null, ").append(getData("IsAutosave").equals("Y"));
         if (getData("ColumnName").equalsIgnoreCase("CreateFrom"))
           text.append(",600, 900");
         else
@@ -78,7 +78,7 @@ public class WADButton extends WADControl {
         if (!getData("MappingName").startsWith("/"))
           text.append('/');
         text.append(getData("MappingName")).append("', 'BUTTON', '").append(
-            getData("AD_Process_ID")).append("', true");
+            getData("AD_Process_ID")).append("', ").append(getData("IsAutosave").equals("Y"));
         text.append(",600, 900);");
       }
     }
@@ -182,12 +182,12 @@ public class WADButton extends WADControl {
   public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,
       String tabName, int itable) {
     // not need to implement sql method as itable is not modified
-    if (fieldsDef.isdisplayed.equals("Y") && !fieldsDef.type.equals("")) {
+    if (fieldsDef.isdisplayed.equals("Y") && !fieldsDef.referencevalue.equals("")) {
       strDefaultValues.append(
           ", (vars.getLanguage().equals(\"en_US\")?ListData.selectName(this, \"").append(
-          fieldsDef.type).append("\", ").append(fieldsDef.defaultvalue).append(
-          "):ListData.selectNameTrl(this, vars.getLanguage(), \"").append(fieldsDef.type).append(
-          "\", ").append(fieldsDef.defaultvalue).append("))");
+          fieldsDef.referencevalue).append("\", ").append(fieldsDef.defaultvalue).append(
+          "):ListData.selectNameTrl(this, vars.getLanguage(), \"").append(fieldsDef.referencevalue)
+          .append("\", ").append(fieldsDef.defaultvalue).append("))");
     }
     return itable;
   }

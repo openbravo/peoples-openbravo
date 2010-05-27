@@ -112,7 +112,7 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
         + "\"),\n");
     String strAttrSet, strAttrSetValueType;
     strAttrSet = strAttrSetValueType = "";
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
       final Product product = OBDal.getInstance().get(Product.class, strMProductID);
       if (product != null) {
@@ -122,7 +122,7 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
         strAttrSetValueType = product.getUseAttributeSetValueAs();
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
     resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
         + "\"),\n");

@@ -206,7 +206,7 @@ public class VariablesSecureApp extends VariablesBase {
           Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
           // Get theme (skin)
-          OBContext.enableAsAdminContext();
+          OBContext.setAdminMode();
           try {
             org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
                 org.openbravo.model.ad.system.System.class, "0");
@@ -219,7 +219,7 @@ public class VariablesSecureApp extends VariablesBase {
             // set default theme and ignore exception
             strTheme = "";
           } finally {
-            OBContext.resetAsAdminContext();
+            OBContext.restorePreviousMode();
           }
         }
       } finally {

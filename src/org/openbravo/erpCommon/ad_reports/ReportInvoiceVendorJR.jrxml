@@ -209,7 +209,7 @@
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["(0)"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="Title" isForPrompting="false" class="java.lang.String">
+	<parameter name="REPORT_TITLE" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
@@ -789,7 +789,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Title}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement

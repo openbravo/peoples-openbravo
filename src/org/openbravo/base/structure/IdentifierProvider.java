@@ -19,6 +19,8 @@
 
 package org.openbravo.base.structure;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.openbravo.base.model.Entity;
@@ -26,6 +28,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.OBPropertiesProvider;
 
 /**
  * Provides the identifier/title of an object using the {@link Entity#getIdentifierProperties()
@@ -53,6 +56,9 @@ public class IdentifierProvider implements OBSingleton {
     IdentifierProvider.instance = instance;
   }
 
+  private SimpleDateFormat dateFormat = null;
+  private SimpleDateFormat dateTimeFormat = null;
+
   /**
    * Returns the identifier of the object. The identifier is computed using the identifier
    * properties of the Entity of the object.
@@ -79,7 +85,13 @@ public class IdentifierProvider implements OBSingleton {
       if (sb.length() > 0) {
         sb.append(SEPARATOR);
       }
-      final Object value = dob.get(identifier.getName());
+      final Property property = ((BaseOBObject) dob).getEntity().getProperty(identifier.getName());
+      Object value = dob.get(identifier.getName());
+
+      // TODO: add number formatting...
+      if (property.isDate() || property.isDatetime()) {
+        value = formatDate(property, (Date) value);
+      }
 
       if (value instanceof Identifiable && identifyDeep) {
         sb.append(getIdentifier(value, false));
@@ -95,5 +107,24 @@ public class IdentifierProvider implements OBSingleton {
 
   protected String getSeparator() {
     return SEPARATOR;
+  }
+
+  private synchronized String formatDate(Property property, Date date) {
+    if (date == null) {
+      return "";
+    }
+    if (dateFormat == null) {
+      final String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
+      final String dateTimeFormatString = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties().getProperty("dateTimeFormat.java");
+      dateFormat = new SimpleDateFormat(dateFormatString);
+      dateTimeFormat = new SimpleDateFormat(dateTimeFormatString);
+    }
+    if (property.isDatetime()) {
+      return dateTimeFormat.format(date);
+    } else {
+      return dateFormat.format(date);
+    }
   }
 }

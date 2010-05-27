@@ -42,6 +42,10 @@ export.database.structure: Exports the database structure in the xml's files.
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
     </fileset>
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
   </path>
 
   <taskdef name="createscript" classname="org.openbravo.ddlutils.task.CreateXML2SQL">
@@ -140,7 +144,7 @@ export.database.structure: Exports the database structure in the xml's files.
       <taskdef name="exportdatabase" classname="org.openbravo.ddlutils.task.ExportDatabase">
         <classpath refid="runtime-classpath" />
       </taskdef>
-      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" />
+      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" checkTranslationConsistency="${checkTranslationConsistency}"/>
       <antcall target="update.dbupdate.timestamp" />
   </target>
 

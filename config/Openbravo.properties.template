@@ -10,7 +10,7 @@
 # * under the License. 
 # * The Original Code is Openbravo ERP. 
 # * The Initial Developer of the Original Code is Openbravo SLU 
-# * All portions are Copyright (C) 2007-2009 Openbravo SLU 
+# * All portions are Copyright (C) 2007-2010 Openbravo SLU 
 # * All Rights Reserved. 
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
@@ -144,3 +144,14 @@ safe.mode=true
 # defined by this property, note the value should be the complete path 
 # including the file name and extension.
 # hibernate.hbm.file=/tmp/hibernate.hbm.xml
+
+
+###################
+# Log in security #
+###################
+
+# If these properties are set, after log in trail failed the response time 
+# will be delayed, and the user can be blocked.
+login.trial.delay.increment=0
+login.trial.delay.max=0
+login.trial.user.lock=0

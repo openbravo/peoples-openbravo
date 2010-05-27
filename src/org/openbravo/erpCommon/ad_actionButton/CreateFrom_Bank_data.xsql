@@ -47,7 +47,8 @@
         p.Amount as p_amount, p.WriteOffAmt as p_woamount,
         p.C_Currency_ID,c.ISO_Code AS CURRENCY,
         o.Name AS Org,
-        p.IsReceipt AS IsReceipt
+        p.IsReceipt AS IsReceipt,
+        p.IsManual AS IsManual
         FROM C_DEBT_Payment_v p,
          C_Currency c,  AD_Org o
         where p.C_Currency_ID=c.C_Currency_ID

@@ -168,7 +168,7 @@
       setWindowTableParentElement();
       enableShortcuts('popup');
       setBrowserAutoComplete(false);
-
+      disableProposedAmount();
       try {
         onloadFunctions();
       } catch (e) {}
@@ -180,6 +180,25 @@
     function onResizeDo(){
      resizeAreaCreateFrom();
     }
+
+    function disableProposedAmount(){
+		var settlementTableRow = document.getElementById("tableId");
+		for(var j=3;j<settlementTableRow.rows.length;j++){
+			var settlementRows = settlementTableRow.rows[j];
+			if(settlementRows.cells[9]!=null && settlementRows.cells[9]!='undefined'){
+				var manualSettlement=settlementRows.cells[9];
+				var proposedAmount=settlementRows.cells[7]; 
+				if(manualSettlement!="undefined" && manualSettlement.firstChild!=null){
+					var value=manualSettlement.firstChild.nodeValue;
+					if(value=='Y'){
+					     proposedAmount.firstChild.setAttribute('disabled','disabled');
+				    }
+				}
+			}
+		
+		}
+
+	    }
   </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -485,7 +504,7 @@
                   <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                     <tr>
                       <td class="Textbox_ContentCell">
-                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountFrom" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountFrom" onkeyup="" onchange="logChanges(this);return true;" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
+                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountFrom" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="22" name="inpamountFrom" onkeyup="" onchange="logChanges(this);return true;" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
                       </td>
                       <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpamountFrom', document.frmMain.inpamountFrom.value, false);return false;">
@@ -508,7 +527,7 @@
                 <table border="0" cellspacing="0" cellpadding="0" summary="" class="">
                   <tr>
                     <td class="Textbox_ContentCell">
-                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountTo" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountTo" onkeyup="" onchange="logChanges(this);return true;" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
+                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountTo" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="22" name="inpamountTo" onkeyup="" onchange="logChanges(this);return true;" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
                     </td>
 
                     <td class="FieldButton_ContentCell">
@@ -615,7 +634,7 @@
     <tr>
       <td>
         <div class="Popup_ContentPane_Client" style="overflow: auto; display: none;" id="client_middle">
-          <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+          <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="tableId">
 
             <tr class="DataGrid_Body_Row">
               <th width="3%" class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTodos" onclick="markAllPersonal(document.frmMain.inpcPaymentId, this.checked);return true;"></input></span></th>
@@ -653,8 +672,9 @@
                 <td class="DataGrid_Body_Cell" id="fieldAmount" style="border-bottom-width:3px">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldConverted" style="border-bottom-width:3px">xx</td>
                 <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpplanneddatexx" type="text" id="inpterplanneddate" maxlength="10" size="9" value="" onkeyup="autoCompleteDate(this);return true;"></td>
-                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpproposedxx" type="text" id="parameterProposed" maxlength="8" value="" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);"></td>
-                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpcostxx" type="text" id="parameterCost" maxlength="8" value="" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);"></td>
+                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpproposedxx" type="text" id="parameterProposed" maxlength="22" value="" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);"></td>
+                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpcostxx" type="text" id="parameterCost" maxlength="22" value="" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);"></td>
+                <td id="isManual" style="visibility: hidden;" >xx</td>
               </tr>
 
             </div>

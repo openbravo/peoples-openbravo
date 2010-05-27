@@ -100,12 +100,12 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
         String strDocumentNo = Utility.getDocumentNo(this, vars, windowId, "GL_Journal", Utility
             .getContext(this, vars, "C_DocTypeTarget_ID", "132"), data[i].cDoctypeId, false, true);
         try {
-          if (CopyFromGLJournalData.insertGLJournal(conn, this, strSequence, vars.getClient(), vars
-              .getOrg(), vars.getUser(), data[i].cAcctschemaId, data[i].cDoctypeId, "DR", "CO",
-              data[i].isapproved, data[i].isprinted, data[i].description, data[i].postingtype,
-              data[i].glCategoryId, data[i].datedoc, data[i].dateacct, data[i].cPeriodId,
-              data[i].cCurrencyId, data[i].currencyratetype, data[i].currencyrate, strKey,
-              data[i].controlamt, strDocumentNo, "N", "N", "N") == 0)
+          if (CopyFromGLJournalData.insertGLJournal(conn, this, strSequence, vars.getClient(),
+              data[i].adOrgId, vars.getUser(), data[i].cAcctschemaId, data[i].cDoctypeId, "DR",
+              "CO", data[i].isapproved, data[i].isprinted, data[i].description,
+              data[i].postingtype, data[i].glCategoryId, data[i].datedoc, data[i].dateacct,
+              data[i].cPeriodId, data[i].cCurrencyId, data[i].currencyratetype,
+              data[i].currencyrate, strKey, data[i].controlamt, strDocumentNo, "N", "N", "N") == 0)
             log4j.warn("Save: GLJournal record " + i + " not inserted. Sequence = " + strSequence);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -118,7 +118,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
           String strLineSequence = SequenceIdData.getUUID();
           try {
             if (CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence, vars
-                .getClient(), vars.getOrg(), vars.getUser(), strSequence, dataLines[j].line,
+                .getClient(), data[i].adOrgId, vars.getUser(), strSequence, dataLines[j].line,
                 dataLines[j].isgenerated, dataLines[j].description, dataLines[j].amtsourcedr,
                 dataLines[j].amtsourcecr, dataLines[j].cCurrencyId, dataLines[j].currencyratetype,
                 dataLines[j].currencyrate, dataLines[j].amtacctdr, dataLines[j].amtacctcr,

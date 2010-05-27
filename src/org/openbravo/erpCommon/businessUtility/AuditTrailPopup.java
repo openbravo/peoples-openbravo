@@ -116,7 +116,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
 
     // all code runs in adminMode to get read access to i.e. Tab,TabTrl,AD_Audit_Trail entities
-    boolean oldAdminMode = OBContext.getOBContext().setInAdministratorMode(true);
+    OBContext.setAdminMode();
     try {
 
       if (vars.commandIn("POPUP_HISTORY")) {
@@ -223,7 +223,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         pageError(response);
       }
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(oldAdminMode);
+      OBContext.restorePreviousMode();
     }
   }
 

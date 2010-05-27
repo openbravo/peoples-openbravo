@@ -109,8 +109,13 @@ public class UIReference {
           .getProperty("ColumnName"), prop.getProperty("ColumnName"), reference, true, aux);
     }
     if (addSecondaryFilter) {
-      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName") + "_f",
-          tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName") + "_f");
+      if (isNewFilter) {
+        aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName") + "_f",
+            tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName") + "_f");
+      } else {
+        aux = vars.getSessionValue(tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName")
+            + "_f");
+      }
       if (!aux.equals("")) {
         UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
             .getProperty("ColumnName"), prop.getProperty("ColumnName") + "_f", reference, false,

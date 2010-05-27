@@ -188,19 +188,36 @@ function onloadFunctions() {
 				</tr>
 				<tr></tr>
 				<tr>
-					<td class="TitleCell"><span class="LabelText">Organization</span></td>
-					<td class="Combo_ContentCell" colspan="2">
-						<select class="Combo Combo_TwoCells_width required" required="true" name="inpOrganization" id="inpOrganization">
-							<option value=""></option>
-							<div id="reportAD_Org_ID"></div>
-						</select>
-					</td>
-					<td class="TitleCell"><span class="Label_ReadOnly_Text">Accounting schema</span></td>                    
-                    <td class="Combo_ContentCell"> 
-                       <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width readonly">
-                        <option value=""> <div id="reportC_ACCTSCHEMA_ID"></div></option>       
-                       </select>
-                    </td>     
+				  <td class="TitleCell"><span class="LabelText">Organization</span></td>
+				  <td class="Combo_ContentCell" colspan="2">
+				    <select class="Combo Combo_TwoCells_width required" required="true" name="inpOrganization" id="inpOrganization">
+					  <option value=""></option>
+					  <div id="reportAD_Org_ID"></div>
+					</select>
+				  </td>
+				  <td class="TitleCell"><span class="Label_ReadOnly_Text">Accounting schema</span></td>                    
+                  <td class="Combo_ContentCell"> 
+                  <input type="hidden" name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width readonly" value="xx"></input>
+				  <TABLE border="0" cellspacing="0" cellpadding="0" summary="" class="TextButton_ContentCell">
+				    <TR>
+				      <TD class="TextBox_ReadOnly_ContentCell">
+				      <TABLE style="border:0px;border-collapse:collapse;">
+				        <TR>
+				          <TD style="padding-top: 0px;">
+				            <INPUT type="text" class="dojoValidateValid readonly TextBox_TwoCells_width" tabindex="" maxlength="60"
+				              name="inpcAcctSchema" id="inpcAcctSchema" value="xx" required="true"
+				              onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');"
+				              oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');"
+				              oncontextmenu="changeToEditingMode('oncontextmenu');" onchange="validateTextBox(this.id);" readonly="true">
+				            </INPUT>
+				          </TD>
+				        </TR>
+				      </TABLE>
+				      </TD>
+				      <TD class="_ContentCell"></TD>
+    			    </TR>
+    			  </TABLE>
+                  </td>     
 				</tr>
 				<tr>
 					<td class="TitleCell"><span class="LabelText">Value</span></td>

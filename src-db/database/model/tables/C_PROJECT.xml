@@ -281,6 +281,10 @@
         <default/>
         <onCreateDefault><![CDATA[0]]></onCreateDefault>
       </column>
+      <column name="FIN_PAYMENTMETHOD_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_PROJECT">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
@@ -319,6 +323,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECTTYPE" name="C_PROJECT_C_PROJECTTYPE">
         <reference local="C_PROJECTTYPE_ID" foreign="C_PROJECTTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="C_PROJECT_FIN_PAYMENTMETHOD">
+        <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="C_PROJECT_M_PRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
