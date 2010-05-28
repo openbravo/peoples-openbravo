@@ -1,133 +1,160 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <EmailTemplate id="FF80818128D8C9730128D8D035EE08FC" identifier="Quotation Report template - ">
-    <id>FF80818128D8C9730128D8D035EE08FC</id>
+  <EmailTemplate id="878ECF0D5A238C7BE040007F010129BA" identifier="AR Invoice Report template - ">
+    <id>878ECF0D5A238C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DF08C4" entity-name="DocumentTemplate" identifier="Quotation Report template"/>
+    <pocDocumentType id="A16BD46A069F4502BDDFD9A555AEAA48" entity-name="DocumentTemplate" identifier="AR Invoice Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EE08FD" identifier="Proposal Report template - ">
-    <id>FF80818128D8C9730128D8D035EE08FD</id>
+  <EmailTemplate id="878ECF0D5A268C7BE040007F010129BA" identifier="AR Invoice Indirect Report template - ">
+    <id>878ECF0D5A268C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035E008C7" entity-name="DocumentTemplate" identifier="Proposal Report template"/>
+    <pocDocumentType id="29F7240568EC43E583E157911773C3A5" entity-name="DocumentTemplate" identifier="AR Invoice Indirect Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EE08FE" identifier="Standard Order Report template - ">
-    <id>FF80818128D8C9730128D8D035EE08FE</id>
+  <EmailTemplate id="878ECF0D5A298C7BE040007F010129BA" identifier="AR Credit Memo Report template - ">
+    <id>878ECF0D5A298C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DE08BF" entity-name="DocumentTemplate" identifier="Standard Order Report template"/>
+    <pocDocumentType id="9FB97CCA66EA49F29A0EF5080E2AFF29" entity-name="DocumentTemplate" identifier="AR Credit Memo Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EE08FF" identifier="AR Invoice Report template - ">
-    <id>FF80818128D8C9730128D8D035EE08FF</id>
+  <EmailTemplate id="878ECF0D5A2E8C7BE040007F010129BA" identifier="MM Shipment Report template - ">
+    <id>878ECF0D5A2E8C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DC08B4" entity-name="DocumentTemplate" identifier="AR Invoice Report template"/>
+    <pocDocumentType id="C6A6AF1CA3C94B3899CAEC27EE427402" entity-name="DocumentTemplate" identifier="MM Shipment Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EE0900" identifier="AP Invoice Report template - ">
-    <id>FF80818128D8C9730128D8D035EE0900</id>
+  <EmailTemplate id="878ECF0D5A318C7BE040007F010129BA" identifier="MM Shipment Indirect Report template - ">
+    <id>878ECF0D5A318C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DF08C1" entity-name="DocumentTemplate" identifier="AP Invoice Report template"/>
+    <pocDocumentType id="E87E9B580A024383B2E79BD768288899" entity-name="DocumentTemplate" identifier="MM Shipment Indirect Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EF0901" identifier="Return Material Report template - ">
-    <id>FF80818128D8C9730128D8D035EF0901</id>
+  <EmailTemplate id="878ECF0D5A348C7BE040007F010129BA" identifier="MM Receipt Report template - ">
+    <id>878ECF0D5A348C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DD08B7" entity-name="DocumentTemplate" identifier="Return Material Report template"/>
+    <pocDocumentType id="BC7220FEA2F44F9C9FB6619FC58B6944" entity-name="DocumentTemplate" identifier="MM Receipt Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EF0902" identifier="AR Credit Memo Report template - ">
-    <id>FF80818128D8C9730128D8D035EF0902</id>
+  <EmailTemplate id="878ECF0D5A378C7BE040007F010129BA" identifier="AP Invoice Report template - ">
+    <id>878ECF0D5A378C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035E108D0" entity-name="DocumentTemplate" identifier="AR Credit Memo Report template"/>
+    <pocDocumentType id="E5901A1122F641089417A08A7317764C" entity-name="DocumentTemplate" identifier="AP Invoice Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EF0903" identifier="POS Order Report template - ">
-    <id>FF80818128D8C9730128D8D035EF0903</id>
+  <EmailTemplate id="878ECF0D5A3A8C7BE040007F010129BA" identifier="AP Credit Report template - ">
+    <id>878ECF0D5A3A8C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035E008CA" entity-name="DocumentTemplate" identifier="POS Order Report template"/>
+    <pocDocumentType id="B1DF02E45C4946C7BB1D45C065C49577" entity-name="DocumentTemplate" identifier="AP Credit Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EF0904" identifier="AP Credit Report template - ">
-    <id>FF80818128D8C9730128D8D035EF0904</id>
+  <EmailTemplate id="878ECF0D5A3F8C7BE040007F010129BA" identifier="Purchase Order Report template - ">
+    <id>878ECF0D5A3F8C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DB08B0" entity-name="DocumentTemplate" identifier="AP Credit Report template"/>
+    <pocDocumentType id="02376C41DA824413A9BE649443924C03" entity-name="DocumentTemplate" identifier="Purchase Order Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EF0905" identifier="Warehouse Order Memo Report template - ">
-    <id>FF80818128D8C9730128D8D035EF0905</id>
+  <EmailTemplate id="878ECF0D5A5A8C7BE040007F010129BA" identifier="Quotation Report template - ">
+    <id>878ECF0D5A5A8C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035E108CD" entity-name="DocumentTemplate" identifier="Warehouse Order Memo Report template"/>
+    <pocDocumentType id="11DD7B13EAC94215B6F8F735BBED4D55" entity-name="DocumentTemplate" identifier="Quotation Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EF0906" identifier="Prepay Order Report template - ">
-    <id>FF80818128D8C9730128D8D035EF0906</id>
+  <EmailTemplate id="878ECF0D5A5D8C7BE040007F010129BA" identifier="Proposal Report template - ">
+    <id>878ECF0D5A5D8C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DB08AD" entity-name="DocumentTemplate" identifier="Prepay Order Report template"/>
+    <pocDocumentType id="A76CE6794C2E467394C21675524DBA9C" entity-name="DocumentTemplate" identifier="Proposal Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035EF0907" identifier="Purchase Order Report template - ">
-    <id>FF80818128D8C9730128D8D035EF0907</id>
+  <EmailTemplate id="878ECF0D5A608C7BE040007F010129BA" identifier="Prepay Order Report template - ">
+    <id>878ECF0D5A608C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DC08B3" entity-name="DocumentTemplate" identifier="Purchase Order Report template"/>
+    <pocDocumentType id="B94A012B25FB4C319804BED013BD584B" entity-name="DocumentTemplate" identifier="Prepay Order Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="FF80818128D8C9730128D8D035F20908" identifier="On Credit Order Report template - ">
-    <id>FF80818128D8C9730128D8D035F20908</id>
+  <EmailTemplate id="878ECF0D5A638C7BE040007F010129BA" identifier="Return Material Report template - ">
+    <id>878ECF0D5A638C7BE040007F010129BA</id>
     <active>true</active>
-    <pocDocumentType id="FF80818128D8C9730128D8D035DE08BC" entity-name="DocumentTemplate" identifier="On Credit Order Report template"/>
+    <pocDocumentType id="4F23CD7CD64D468EA4753C0C7B09FD53" entity-name="DocumentTemplate" identifier="Return Material Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035D908A5" identifier="Material Management">
-    <id>FF80818128D8C9730128D8D035D908A5</id>
+  <EmailTemplate id="878ECF0D5A668C7BE040007F010129BA" identifier="Standard order report template - ">
+    <id>878ECF0D5A668C7BE040007F010129BA</id>
     <active>true</active>
-    <name>Material Management</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035DA08A8" identifier="AR Invoice">
-    <id>FF80818128D8C9730128D8D035DA08A8</id>
+    <pocDocumentType id="70AEA0C77DB743A4A89058BFE091FEEA" entity-name="DocumentTemplate" identifier="Standard order report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <EmailTemplate id="878ECF0D5A698C7BE040007F010129BA" identifier="On Credit Order Report template - ">
+    <id>878ECF0D5A698C7BE040007F010129BA</id>
+    <active>true</active>
+    <pocDocumentType id="D9BB431F120746C8A84266CA42D02029" entity-name="DocumentTemplate" identifier="On Credit Order Report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <EmailTemplate id="878ECF0D5A6C8C7BE040007F010129BA" identifier="Warehouse Order Memo Report template - ">
+    <id>878ECF0D5A6C8C7BE040007F010129BA</id>
+    <active>true</active>
+    <pocDocumentType id="C76E1DE89DA04BF6B6FAEDDA0216EE7A" entity-name="DocumentTemplate" identifier="Warehouse Order Memo Report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <EmailTemplate id="878ECF0D5A6F8C7BE040007F010129BA" identifier="POS Order Report template - ">
+    <id>878ECF0D5A6F8C7BE040007F010129BA</id>
+    <active>true</active>
+    <pocDocumentType id="AF10A903167240F883C7EE7A3325981D" entity-name="DocumentTemplate" identifier="POS Order Report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <FinancialMgmtGLCategory id="102C08DF5D4341D5B7FDF758632503D2" identifier="AR Invoice">
+    <id>102C08DF5D4341D5B7FDF758632503D2</id>
     <active>true</active>
     <name>AR Invoice</name>
     <description xsi:nil="true"/>
@@ -135,62 +162,17 @@
     <default>false</default>
     <documentCategory inactive="true" xsi:nil="true"/>
   </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035DA08AB" identifier="None">
-    <id>FF80818128D8C9730128D8D035DA08AB</id>
+  <FinancialMgmtGLCategory id="160C37CC0D36480E8B91B015FAC747DC" identifier="Material Management">
+    <id>160C37CC0D36480E8B91B015FAC747DC</id>
     <active>true</active>
-    <name>None</name>
+    <name>Material Management</name>
     <description xsi:nil="true"/>
     <categoryType>D</categoryType>
     <default>false</default>
     <documentCategory inactive="true" xsi:nil="true"/>
   </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035DB08AE" identifier="AP Invoice">
-    <id>FF80818128D8C9730128D8D035DB08AE</id>
-    <active>true</active>
-    <name>AP Invoice</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E408DE" identifier="Standard">
-    <id>FF80818128D8C9730128D8D035E408DE</id>
-    <active>true</active>
-    <name>Standard</name>
-    <description xsi:nil="true"/>
-    <categoryType>M</categoryType>
-    <default>true</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E408E1" identifier="MatchPO">
-    <id>FF80818128D8C9730128D8D035E408E1</id>
-    <active>true</active>
-    <name>MatchPO</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E508E3" identifier="MatchInv">
-    <id>FF80818128D8C9730128D8D035E508E3</id>
-    <active>true</active>
-    <name>MatchInv</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E508E5" identifier="Production">
-    <id>FF80818128D8C9730128D8D035E508E5</id>
-    <active>true</active>
-    <name>Production</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E608E7" identifier="Movement">
-    <id>FF80818128D8C9730128D8D035E608E7</id>
+  <FinancialMgmtGLCategory id="3005499D637B41AF86222E4BDA29D415" identifier="Movement">
+    <id>3005499D637B41AF86222E4BDA29D415</id>
     <active>true</active>
     <name>Movement</name>
     <description xsi:nil="true"/>
@@ -198,62 +180,17 @@
     <default>false</default>
     <documentCategory inactive="true" xsi:nil="true"/>
   </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E608E9" identifier="Inventory">
-    <id>FF80818128D8C9730128D8D035E608E9</id>
+  <FinancialMgmtGLCategory id="37501231BC434F2DB0BF5F706CEBCC1F" identifier="Production">
+    <id>37501231BC434F2DB0BF5F706CEBCC1F</id>
     <active>true</active>
-    <name>Inventory</name>
+    <name>Production</name>
     <description xsi:nil="true"/>
     <categoryType>D</categoryType>
     <default>false</default>
     <documentCategory inactive="true" xsi:nil="true"/>
   </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E608EB" identifier="Cash">
-    <id>FF80818128D8C9730128D8D035E608EB</id>
-    <active>true</active>
-    <name>Cash</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E708ED" identifier="Bank Statement">
-    <id>FF80818128D8C9730128D8D035E708ED</id>
-    <active>true</active>
-    <name>Bank Statement</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E708EF" identifier="Settlement">
-    <id>FF80818128D8C9730128D8D035E708EF</id>
-    <active>true</active>
-    <name>Settlement</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E808F3" identifier="AP Payment">
-    <id>FF80818128D8C9730128D8D035E808F3</id>
-    <active>true</active>
-    <name>AP Payment</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035E908F6" identifier="AR Receipt">
-    <id>FF80818128D8C9730128D8D035E908F6</id>
-    <active>true</active>
-    <name>AR Receipt</name>
-    <description xsi:nil="true"/>
-    <categoryType>D</categoryType>
-    <default>false</default>
-    <documentCategory inactive="true" xsi:nil="true"/>
-  </FinancialMgmtGLCategory>
-  <FinancialMgmtGLCategory id="FF80818128D8C9730128D8D035EC08F8" identifier="Manual">
-    <id>FF80818128D8C9730128D8D035EC08F8</id>
+  <FinancialMgmtGLCategory id="47D760C2B9C942EA86D47E6422C3BF9C" identifier="Manual">
+    <id>47D760C2B9C942EA86D47E6422C3BF9C</id>
     <active>true</active>
     <name>Manual</name>
     <description xsi:nil="true"/>
@@ -261,24 +198,159 @@
     <default>false</default>
     <documentCategory inactive="true" xsi:nil="true"/>
   </FinancialMgmtGLCategory>
-  <ADPreference id="FF80818128D8C9730128D8D035ED08FA" identifier="C_DocTypeTarget_ID">
-    <id>FF80818128D8C9730128D8D035ED08FA</id>
+  <FinancialMgmtGLCategory id="5106A21601924DA9996DC40C34954F8A" identifier="Inventory">
+    <id>5106A21601924DA9996DC40C34954F8A</id>
+    <active>true</active>
+    <name>Inventory</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="745A2B441A2644DF934D1B1E462292E9" identifier="None">
+    <id>745A2B441A2644DF934D1B1E462292E9</id>
+    <active>true</active>
+    <name>None</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="82B88F71CF71401584FC1DFEFD9EB33D" identifier="MatchInv">
+    <id>82B88F71CF71401584FC1DFEFD9EB33D</id>
+    <active>true</active>
+    <name>MatchInv</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="844F34E0FA4045C6A3D00B6D4D53107B" identifier="Settlement">
+    <id>844F34E0FA4045C6A3D00B6D4D53107B</id>
+    <active>true</active>
+    <name>Settlement</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="A431AFE1356141728139523053B672C4" identifier="AP Invoice">
+    <id>A431AFE1356141728139523053B672C4</id>
+    <active>true</active>
+    <name>AP Invoice</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="AAB8DB8C913E4AA0A651A5C0DC061C1A" identifier="Bank Statement">
+    <id>AAB8DB8C913E4AA0A651A5C0DC061C1A</id>
+    <active>true</active>
+    <name>Bank Statement</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="C79381E3F81140DBAAD73E6B0CD74901" identifier="AP Payment">
+    <id>C79381E3F81140DBAAD73E6B0CD74901</id>
+    <active>true</active>
+    <name>AP Payment</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="D6A6F219061F4C34B87E1CC4DD6797F3" identifier="Cash">
+    <id>D6A6F219061F4C34B87E1CC4DD6797F3</id>
+    <active>true</active>
+    <name>Cash</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="E8752D97421B434F8355331B680DC652" identifier="AR Receipt">
+    <id>E8752D97421B434F8355331B680DC652</id>
+    <active>true</active>
+    <name>AR Receipt</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="FA9102F37B904275A3CCD9935D69ED51" identifier="MatchPO">
+    <id>FA9102F37B904275A3CCD9935D69ED51</id>
+    <active>true</active>
+    <name>MatchPO</name>
+    <description xsi:nil="true"/>
+    <categoryType>D</categoryType>
+    <default>false</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <FinancialMgmtGLCategory id="FC670B83E59C4E7CBD6B999D3F28B251" identifier="Standard">
+    <id>FC670B83E59C4E7CBD6B999D3F28B251</id>
+    <active>true</active>
+    <name>Standard</name>
+    <description xsi:nil="true"/>
+    <categoryType>M</categoryType>
+    <default>true</default>
+    <documentCategory inactive="true" xsi:nil="true"/>
+  </FinancialMgmtGLCategory>
+  <ADPreference id="752C5DCD21EC45CEA13195D8DD49AFDF" identifier="C_DocTypeTarget_ID - ">
+    <id>752C5DCD21EC45CEA13195D8DD49AFDF</id>
     <active>true</active>
     <window id="800004" entity-name="ADWindow" identifier="Simple Sales Order"/>
     <userContact xsi:nil="true"/>
     <attribute>C_DocTypeTarget_ID</attribute>
-    <searchKey>1000028</searchKey>
+    <searchKey>76E7C671FCE34556908E563F825C2937</searchKey>
+    <property xsi:nil="true"/>
+    <propertyList>false</propertyList>
+    <visibleAtClient xsi:nil="true"/>
+    <visibleAtOrganization xsi:nil="true"/>
+    <visibleAtRole xsi:nil="true"/>
+    <selected>false</selected>
+    <module xsi:nil="true"/>
   </ADPreference>
-  <ADPreference id="FF80818128D8C9730128D8D035ED08FB" identifier="C_DocTypeTarget_ID">
-    <id>FF80818128D8C9730128D8D035ED08FB</id>
+  <ADPreference id="AAEF5567618F49FE8BA729E550614AA0" identifier="C_DocTypeTarget_ID - ">
+    <id>AAEF5567618F49FE8BA729E550614AA0</id>
     <active>true</active>
     <window id="143" entity-name="ADWindow" identifier="Sales Order"/>
     <userContact xsi:nil="true"/>
     <attribute>C_DocTypeTarget_ID</attribute>
-    <searchKey>1000029</searchKey>
+    <searchKey>511A9371A0F74195AA3F6D66C722729D</searchKey>
+    <property xsi:nil="true"/>
+    <propertyList>false</propertyList>
+    <visibleAtClient xsi:nil="true"/>
+    <visibleAtOrganization xsi:nil="true"/>
+    <visibleAtRole xsi:nil="true"/>
+    <selected>false</selected>
+    <module xsi:nil="true"/>
   </ADPreference>
-  <DocumentType id="FF80818128D8C9730128D8D035D908A6" identifier="MM Shipment">
-    <id>FF80818128D8C9730128D8D035D908A6</id>
+  <DocumentType id="0A1D4A2DB7144D81A821E31A9B332ACB" identifier="Quotation">
+    <id>0A1D4A2DB7144D81A821E31A9B332ACB</id>
+    <active>true</active>
+    <name>Quotation</name>
+    <printText>Binding offer</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>SOO</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType>OB</sOSubType>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="81F0991C4D884F82AF34E6CD72C0BFEC" entity-name="ADSequence" identifier="Quotation"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="0CD50184705A42CCBECA4EC967646440" identifier="MM Shipment">
+    <id>0CD50184705A42CCBECA4EC967646440</id>
     <active>true</active>
     <name>MM Shipment</name>
     <printText>Delivery Note</printText>
@@ -286,21 +358,131 @@
     <documentCategory>MMS</documentCategory>
     <salesTransaction>true</salesTransaction>
     <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment xsi:nil="true"/>
-    <documentTypeForInvoice xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035D908A4" entity-name="ADSequence" identifier="MM Shipment"/>
-    <gLCategory id="FF80818128D8C9730128D8D035D908A5" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
+    <documentSequence id="2D47C580583242259DF1FFEA4D914A94" entity-name="ADSequence" identifier="MM Shipment"/>
+    <gLCategory id="160C37CC0D36480E8B91B015FAC747DC" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
     <comments xsi:nil="true"/>
     <default>false</default>
-    <numberOfCopies>1</numberOfCopies>
+    <numberOfCopies>0</numberOfCopies>
     <table id="319" entity-name="ADTable" identifier="M_InOut"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DA08A9" identifier="AR Invoice">
-    <id>FF80818128D8C9730128D8D035DA08A9</id>
+  <DocumentType id="15C8DCE82DA841968ABCD614FED68576" identifier="Proposal">
+    <id>15C8DCE82DA841968ABCD614FED68576</id>
+    <active>true</active>
+    <name>Proposal</name>
+    <printText>Non binding offer</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>SOO</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType>ON</sOSubType>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="8547DE01C56D4C67A28F37AA5E72046D" entity-name="ADSequence" identifier="Proposal"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="15F495A6290040F194A9AA4622FE0C01" identifier="Prepay Order">
+    <id>15F495A6290040F194A9AA4622FE0C01</id>
+    <active>true</active>
+    <name>Prepay Order</name>
+    <printText>Prepay Order</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>SOO</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType>PR</sOSubType>
+    <documentTypeForShipment id="0CD50184705A42CCBECA4EC967646440" entity-name="DocumentType" identifier="MM Shipment"/>
+    <documentTypeForInvoice id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="6D3C7477332F47CD8A0F6A5C4805EBD4" entity-name="ADSequence" identifier="Prepay Order"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="2030AD7DD4284E2B936E261662EF735A" identifier="MM Receipt">
+    <id>2030AD7DD4284E2B936E261662EF735A</id>
+    <active>true</active>
+    <name>MM Receipt</name>
+    <printText>Vendor Delivery</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>MMR</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>false</sequencedDocument>
+    <documentSequence xsi:nil="true"/>
+    <gLCategory id="160C37CC0D36480E8B91B015FAC747DC" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="319" entity-name="ADTable" identifier="M_InOut"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="2D7C15F0F44E4F289A729415EFD700C1" identifier="Return Material">
+    <id>2D7C15F0F44E4F289A729415EFD700C1</id>
+    <active>true</active>
+    <name>Return Material</name>
+    <printText>Return Material Authorization</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>SOO</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType>RM</sOSubType>
+    <documentTypeForShipment id="0CD50184705A42CCBECA4EC967646440" entity-name="DocumentType" identifier="MM Shipment"/>
+    <documentTypeForInvoice id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="A6A631F13B004AB8AD39573E95EE992E" entity-name="ADSequence" identifier="Return Material"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="3DDDC41E36534A79B7CC1B725472882D" identifier="Inventory Move">
+    <id>3DDDC41E36534A79B7CC1B725472882D</id>
+    <active>true</active>
+    <name>Inventory Move</name>
+    <printText>Inventory Move</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>MMM</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="A7C5B67A2BB244A19F475160A5AFCE5E" entity-name="ADSequence" identifier="Inventory Move"/>
+    <gLCategory id="3005499D637B41AF86222E4BDA29D415" entity-name="FinancialMgmtGLCategory" identifier="Movement"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="323" entity-name="ADTable" identifier="M_Movement"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="40EE9B1CD3B345FABEFDA62B407B407F" identifier="AR Invoice">
+    <id>40EE9B1CD3B345FABEFDA62B407B407F</id>
     <active>true</active>
     <name>AR Invoice</name>
     <printText>Invoice</printText>
@@ -311,8 +493,8 @@
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DA08A7" entity-name="ADSequence" identifier="AR Invoice"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08A8" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
+    <documentSequence id="EC5B218F09F44618B98FA0D233E3DC70" entity-name="ADSequence" identifier="AR Invoice"/>
+    <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
@@ -321,30 +503,8 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DA08AC" identifier="Prepay Order">
-    <id>FF80818128D8C9730128D8D035DA08AC</id>
-    <active>true</active>
-    <name>Prepay Order</name>
-    <printText>Prepay Order</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>SOO</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType>PR</sOSubType>
-    <documentTypeForShipment id="FF80818128D8C9730128D8D035D908A6" entity-name="DocumentType" identifier="MM Shipment"/>
-    <documentTypeForInvoice id="FF80818128D8C9730128D8D035DA08A9" entity-name="DocumentType" identifier="AR Invoice"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DA08AA" entity-name="ADSequence" identifier="Prepay Order"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="259" entity-name="ADTable" identifier="C_Order"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DB08AF" identifier="AP CreditMemo">
-    <id>FF80818128D8C9730128D8D035DB08AF</id>
+  <DocumentType id="42B7DE94BC324C3F9CC0934375E90FFF" identifier="AP CreditMemo">
+    <id>42B7DE94BC324C3F9CC0934375E90FFF</id>
     <active>true</active>
     <name>AP CreditMemo</name>
     <printText>Vendor Credit Memo</printText>
@@ -356,7 +516,7 @@
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>false</sequencedDocument>
     <documentSequence xsi:nil="true"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DB08AE" entity-name="FinancialMgmtGLCategory" identifier="AP Invoice"/>
+    <gLCategory id="A431AFE1356141728139523053B672C4" entity-name="FinancialMgmtGLCategory" identifier="AP Invoice"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
@@ -365,86 +525,42 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DC08B2" identifier="Purchase Order">
-    <id>FF80818128D8C9730128D8D035DC08B2</id>
+  <DocumentType id="51005B2C07EB41C5A2E7C25A4640ACD7" identifier="GL Journal">
+    <id>51005B2C07EB41C5A2E7C25A4640ACD7</id>
     <active>true</active>
-    <name>Purchase Order</name>
-    <printText>Purchase Order</printText>
+    <name>GL Journal</name>
+    <printText>Journal</printText>
     <description xsi:nil="true"/>
-    <documentCategory>POO</documentCategory>
+    <documentCategory>GLJ</documentCategory>
     <salesTransaction>false</salesTransaction>
     <sOSubType xsi:nil="true"/>
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DC08B1" entity-name="ADSequence" identifier="Purchase Order"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <documentSequence id="B380E35582BD4D1A930146F1BA72C03F" entity-name="ADSequence" identifier="GL Journal"/>
+    <gLCategory id="47D760C2B9C942EA86D47E6422C3BF9C" entity-name="FinancialMgmtGLCategory" identifier="Manual"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
-    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <table id="224" entity-name="ADTable" identifier="GL_Journal"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DC08B6" identifier="Return Material">
-    <id>FF80818128D8C9730128D8D035DC08B6</id>
+  <DocumentType id="511A9371A0F74195AA3F6D66C722729D" identifier="POS Order">
+    <id>511A9371A0F74195AA3F6D66C722729D</id>
     <active>true</active>
-    <name>Return Material</name>
-    <printText>Return Material Authorization</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>SOO</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType>RM</sOSubType>
-    <documentTypeForShipment id="FF80818128D8C9730128D8D035D908A6" entity-name="DocumentType" identifier="MM Shipment"/>
-    <documentTypeForInvoice id="FF80818128D8C9730128D8D035DA08A9" entity-name="DocumentType" identifier="AR Invoice"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DC08B5" entity-name="ADSequence" identifier="Return Material"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="259" entity-name="ADTable" identifier="C_Order"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DD08B9" identifier="MM Shipment Indirect">
-    <id>FF80818128D8C9730128D8D035DD08B9</id>
-    <active>true</active>
-    <name>MM Shipment Indirect</name>
-    <printText>Delivery Note</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>MMS</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DD08B8" entity-name="ADSequence" identifier="MM Shipment Indirect"/>
-    <gLCategory id="FF80818128D8C9730128D8D035D908A5" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="319" entity-name="ADTable" identifier="M_InOut"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DE08BB" identifier="On Credit Order">
-    <id>FF80818128D8C9730128D8D035DE08BB</id>
-    <active>true</active>
-    <name>On Credit Order</name>
+    <name>POS Order</name>
     <printText>Order Confirmation</printText>
     <description xsi:nil="true"/>
     <documentCategory>SOO</documentCategory>
     <salesTransaction>true</salesTransaction>
-    <sOSubType>WI</sOSubType>
-    <documentTypeForShipment id="FF80818128D8C9730128D8D035DD08B9" entity-name="DocumentType" identifier="MM Shipment Indirect"/>
-    <documentTypeForInvoice id="FF80818128D8C9730128D8D035DA08A9" entity-name="DocumentType" identifier="AR Invoice"/>
+    <sOSubType>WR</sOSubType>
+    <documentTypeForShipment id="F8CC92C7234644DEAD9F63174F45B2BF" entity-name="DocumentType" identifier="MM Shipment Indirect"/>
+    <documentTypeForInvoice id="B896128A9164438A9B85CC8821FC7162" entity-name="DocumentType" identifier="AR Invoice Indirect"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DD08BA" entity-name="ADSequence" identifier="Credit Order"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <documentSequence id="FFB42B38D6A34634B534AB499B13644C" entity-name="ADSequence" identifier="POS Order"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
@@ -453,30 +569,8 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DE08BE" identifier="Standard Order">
-    <id>FF80818128D8C9730128D8D035DE08BE</id>
-    <active>true</active>
-    <name>Standard Order</name>
-    <printText>Order Confirmation</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>SOO</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType>SO</sOSubType>
-    <documentTypeForShipment id="FF80818128D8C9730128D8D035D908A6" entity-name="DocumentType" identifier="MM Shipment"/>
-    <documentTypeForInvoice id="FF80818128D8C9730128D8D035DA08A9" entity-name="DocumentType" identifier="AR Invoice"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DE08BD" entity-name="ADSequence" identifier="Standard Order"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="259" entity-name="ADTable" identifier="C_Order"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DE08C0" identifier="AP Invoice">
-    <id>FF80818128D8C9730128D8D035DE08C0</id>
+  <DocumentType id="5C6E02993E9B4FCA81C07955EF676C62" identifier="AP Invoice">
+    <id>5C6E02993E9B4FCA81C07955EF676C62</id>
     <active>true</active>
     <name>AP Invoice</name>
     <printText>Vendor Invoice</printText>
@@ -488,7 +582,7 @@
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>false</sequencedDocument>
     <documentSequence xsi:nil="true"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DB08AE" entity-name="FinancialMgmtGLCategory" identifier="AP Invoice"/>
+    <gLCategory id="A431AFE1356141728139523053B672C4" entity-name="FinancialMgmtGLCategory" identifier="AP Invoice"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
@@ -497,187 +591,11 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035DF08C3" identifier="Quotation">
-    <id>FF80818128D8C9730128D8D035DF08C3</id>
+  <DocumentType id="5EA6556D24034412B5F26F6BA7245318" identifier="Matched Invoices">
+    <id>5EA6556D24034412B5F26F6BA7245318</id>
     <active>true</active>
-    <name>Quotation</name>
-    <printText>Quotation</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>SOO</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType>OB</sOSubType>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DF08C2" entity-name="ADSequence" identifier="Quotation"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="259" entity-name="ADTable" identifier="C_Order"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E008C6" identifier="Proposal">
-    <id>FF80818128D8C9730128D8D035E008C6</id>
-    <active>true</active>
-    <name>Proposal</name>
-    <printText>Proposal</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>SOO</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType>ON</sOSubType>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035DF08C5" entity-name="ADSequence" identifier="Proposal"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="259" entity-name="ADTable" identifier="C_Order"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E008C9" identifier="POS Order">
-    <id>FF80818128D8C9730128D8D035E008C9</id>
-    <active>true</active>
-    <name>POS Order</name>
-    <printText>Order Confirmation</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>SOO</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType>WR</sOSubType>
-    <documentTypeForShipment id="FF80818128D8C9730128D8D035DD08B9" entity-name="DocumentType" identifier="MM Shipment Indirect"/>
-    <documentTypeForInvoice id="FF80818128D8C9730128D8D035DA08A9" entity-name="DocumentType" identifier="AR Invoice"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E008C8" entity-name="ADSequence" identifier="POS Order"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="259" entity-name="ADTable" identifier="C_Order"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E108CC" identifier="Warehouse Order">
-    <id>FF80818128D8C9730128D8D035E108CC</id>
-    <active>true</active>
-    <name>Warehouse Order</name>
-    <printText>Order Confirmation</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>SOO</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType>WP</sOSubType>
-    <documentTypeForShipment id="FF80818128D8C9730128D8D035D908A6" entity-name="DocumentType" identifier="MM Shipment"/>
-    <documentTypeForInvoice id="FF80818128D8C9730128D8D035DA08A9" entity-name="DocumentType" identifier="AR Invoice"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E008CB" entity-name="ADSequence" identifier="Warehouse Order"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="259" entity-name="ADTable" identifier="C_Order"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E108CF" identifier="AR Credit Memo">
-    <id>FF80818128D8C9730128D8D035E108CF</id>
-    <active>true</active>
-    <name>AR Credit Memo</name>
-    <printText>Credit Memo</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>ARC</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E108CE" entity-name="ADSequence" identifier="AR Credit Memo"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08A8" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E408DF" identifier="Amortization">
-    <id>FF80818128D8C9730128D8D035E408DF</id>
-    <active>true</active>
-    <name>Amortization</name>
-    <printText>Depreciation</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>AMZ</documentCategory>
-    <salesTransaction>false</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment xsi:nil="true"/>
-    <documentTypeForInvoice xsi:nil="true"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="10BFEDFF26854F86A7E712F48894E790" entity-name="ADSequence" identifier="Depreciation"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E408DE" entity-name="FinancialMgmtGLCategory" identifier="Standard"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>1</numberOfCopies>
-    <table id="800060" entity-name="ADTable" identifier="A_Amortization"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E408E0" identifier="Debt Payment Management">
-    <id>FF80818128D8C9730128D8D035E408E0</id>
-    <active>true</active>
-    <name>Debt Payment Management</name>
-    <printText>Debt Payment Management</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>DPM</documentCategory>
-    <salesTransaction>false</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment xsi:nil="true"/>
-    <documentTypeForInvoice xsi:nil="true"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="3CEF2E80A4F54152AA38A931D9883699" entity-name="ADSequence" identifier="Debt Payment Management"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E408DE" entity-name="FinancialMgmtGLCategory" identifier="Standard"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>1</numberOfCopies>
-    <table id="800176" entity-name="ADTable" identifier="C_DP_Management"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E508E2" identifier="Match PO">
-    <id>FF80818128D8C9730128D8D035E508E2</id>
-    <active>true</active>
-    <name>Match PO</name>
-    <printText>Match PO</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>MXP</documentCategory>
-    <salesTransaction>false</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E208D1" entity-name="ADSequence" identifier="Matched Purchase Orders"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E408E1" entity-name="FinancialMgmtGLCategory" identifier="MatchPO"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="473" entity-name="ADTable" identifier="M_MatchPO"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E508E4" identifier="Match Invoice">
-    <id>FF80818128D8C9730128D8D035E508E4</id>
-    <active>true</active>
-    <name>Match Invoice</name>
-    <printText>Match Invoice</printText>
+    <name>Matched Invoices</name>
+    <printText>Matched Invoices</printText>
     <description xsi:nil="true"/>
     <documentCategory>MXI</documentCategory>
     <salesTransaction>false</salesTransaction>
@@ -685,8 +603,8 @@
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E208D2" entity-name="ADSequence" identifier="Matched Invoices"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E508E3" entity-name="FinancialMgmtGLCategory" identifier="MatchInv"/>
+    <documentSequence id="A55E308B07EF453B87ED12516E3C9F7D" entity-name="ADSequence" identifier="Matched Invoices"/>
+    <gLCategory id="82B88F71CF71401584FC1DFEFD9EB33D" entity-name="FinancialMgmtGLCategory" identifier="MatchInv"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
@@ -695,96 +613,8 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E508E6" identifier="Material Production">
-    <id>FF80818128D8C9730128D8D035E508E6</id>
-    <active>true</active>
-    <name>Material Production</name>
-    <printText>Material Production</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>MMP</documentCategory>
-    <salesTransaction>false</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E208D3" entity-name="ADSequence" identifier="Production"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E508E5" entity-name="FinancialMgmtGLCategory" identifier="Production"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="325" entity-name="ADTable" identifier="M_Production"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E608E8" identifier="Material Movement">
-    <id>FF80818128D8C9730128D8D035E608E8</id>
-    <active>true</active>
-    <name>Material Movement</name>
-    <printText>Material Movement</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>MMM</documentCategory>
-    <salesTransaction>false</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E208D4" entity-name="ADSequence" identifier="Inventory Move"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E608E7" entity-name="FinancialMgmtGLCategory" identifier="Movement"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="323" entity-name="ADTable" identifier="M_Movement"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E608EA" identifier="Material Physical Inventory">
-    <id>FF80818128D8C9730128D8D035E608EA</id>
-    <active>true</active>
-    <name>Material Physical Inventory</name>
-    <printText>Material Physical Inventory</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>MMI</documentCategory>
-    <salesTransaction>false</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E208D5" entity-name="ADSequence" identifier="Physical Inventory"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E608E9" entity-name="FinancialMgmtGLCategory" identifier="Inventory"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="321" entity-name="ADTable" identifier="M_Inventory"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E708EC" identifier="Cash Journal">
-    <id>FF80818128D8C9730128D8D035E708EC</id>
-    <active>true</active>
-    <name>Cash Journal</name>
-    <printText>Cash Journal</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>CMC</documentCategory>
-    <salesTransaction>false</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E208D6" entity-name="ADSequence" identifier="Cash Journal"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E608EB" entity-name="FinancialMgmtGLCategory" identifier="Cash"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="407" entity-name="ADTable" identifier="C_Cash"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E708EE" identifier="Bank Statement">
-    <id>FF80818128D8C9730128D8D035E708EE</id>
+  <DocumentType id="6543EB94DC664371BAF61B8E8AC121F3" identifier="Bank Statement">
+    <id>6543EB94DC664371BAF61B8E8AC121F3</id>
     <active>true</active>
     <name>Bank Statement</name>
     <printText>Bank Statement</printText>
@@ -795,8 +625,8 @@
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E308D7" entity-name="ADSequence" identifier="Bank Statement"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E708ED" entity-name="FinancialMgmtGLCategory" identifier="Bank Statement"/>
+    <documentSequence id="949C664EE54A4AA5B23CE288E1677916" entity-name="ADSequence" identifier="Bank Statement"/>
+    <gLCategory id="AAB8DB8C913E4AA0A651A5C0DC061C1A" entity-name="FinancialMgmtGLCategory" identifier="Bank Statement"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
@@ -805,52 +635,30 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E708F0" identifier="Manual Settlement">
-    <id>FF80818128D8C9730128D8D035E708F0</id>
+  <DocumentType id="6B13D02AD3C44C4CB0CFBD1288E0CB10" identifier="Physical Inventory">
+    <id>6B13D02AD3C44C4CB0CFBD1288E0CB10</id>
     <active>true</active>
-    <name>Manual Settlement</name>
-    <printText>Manual Settlement</printText>
+    <name>Physical Inventory</name>
+    <printText>Physical Inventory</printText>
     <description xsi:nil="true"/>
-    <documentCategory>STM</documentCategory>
+    <documentCategory>MMI</documentCategory>
     <salesTransaction>false</salesTransaction>
     <sOSubType xsi:nil="true"/>
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E308D8" entity-name="ADSequence" identifier="Manual Settlement"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E708EF" entity-name="FinancialMgmtGLCategory" identifier="Settlement"/>
+    <documentSequence id="81EEB6FAFE5D4E6B9389CAAC6297495B" entity-name="ADSequence" identifier="Physical Inventory"/>
+    <gLCategory id="5106A21601924DA9996DC40C34954F8A" entity-name="FinancialMgmtGLCategory" identifier="Inventory"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
-    <table id="800019" entity-name="ADTable" identifier="C_Settlement"/>
+    <table id="321" entity-name="ADTable" identifier="M_Inventory"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E808F1" identifier="Debt/Payment Settlement">
-    <id>FF80818128D8C9730128D8D035E808F1</id>
-    <active>true</active>
-    <name>Debt/Payment Settlement</name>
-    <printText>Settlement</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>STT</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E308D9" entity-name="ADSequence" identifier="Settlement"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E708EF" entity-name="FinancialMgmtGLCategory" identifier="Settlement"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="800019" entity-name="ADTable" identifier="C_Settlement"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E808F2" identifier="Purchase Requisition">
-    <id>FF80818128D8C9730128D8D035E808F2</id>
+  <DocumentType id="6F3BBCA488F6474A806C59FD1137CBF5" identifier="Purchase Requisition">
+    <id>6F3BBCA488F6474A806C59FD1137CBF5</id>
     <active>true</active>
     <name>Purchase Requisition</name>
     <printText>Purchase Requisition</printText>
@@ -861,8 +669,8 @@
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E308DA" entity-name="ADSequence" identifier="Purchase Requisition"/>
-    <gLCategory id="FF80818128D8C9730128D8D035DA08AB" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <documentSequence id="74C3CC2BCDDA45F5BBFE8DF603728749" entity-name="ADSequence" identifier="Purchase Requisition"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
@@ -871,52 +679,250 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E908F4" identifier="AP Payment">
-    <id>FF80818128D8C9730128D8D035E908F4</id>
+  <DocumentType id="76E7C671FCE34556908E563F825C2937" identifier="Warehouse Order">
+    <id>76E7C671FCE34556908E563F825C2937</id>
     <active>true</active>
-    <name>AP Payment</name>
-    <printText>Vendor Payment</printText>
+    <name>Warehouse Order</name>
+    <printText>Order Confirmation</printText>
     <description xsi:nil="true"/>
-    <documentCategory>APP</documentCategory>
+    <documentCategory>SOO</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType>WP</sOSubType>
+    <documentTypeForShipment id="0CD50184705A42CCBECA4EC967646440" entity-name="DocumentType" identifier="MM Shipment"/>
+    <documentTypeForInvoice id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="F6907986413D46C4BE3E27174895CC48" entity-name="ADSequence" identifier="Warehouse Order"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="808F8818F724497D94282AC83493F394" identifier="Purchase Order">
+    <id>808F8818F724497D94282AC83493F394</id>
+    <active>true</active>
+    <name>Purchase Order</name>
+    <printText>Purchase Order</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>POO</documentCategory>
     <salesTransaction>false</salesTransaction>
     <sOSubType xsi:nil="true"/>
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E308DB" entity-name="ADSequence" identifier="AP Payment"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E808F3" entity-name="FinancialMgmtGLCategory" identifier="AP Payment"/>
+    <documentSequence id="AE79ADF07A5E4E6E9C5367505C1C3463" entity-name="ADSequence" identifier="Purchase Order"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
-    <table xsi:nil="true"/>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035E908F5" identifier="MM Receipt with Confirmation">
-    <id>FF80818128D8C9730128D8D035E908F5</id>
+  <DocumentType id="857F464FDEE34F6DB5AEC50981419FBF" identifier="Settlement">
+    <id>857F464FDEE34F6DB5AEC50981419FBF</id>
     <active>true</active>
-    <name>MM Receipt with Confirmation</name>
-    <printText>MM Receipt with Confirmation</printText>
+    <name>Settlement</name>
+    <printText>Settlement</printText>
     <description xsi:nil="true"/>
-    <documentCategory>MMR</documentCategory>
+    <documentCategory>STT</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="7C2F74C43970423E890C8892C43673E9" entity-name="ADSequence" identifier="Settlement"/>
+    <gLCategory id="844F34E0FA4045C6A3D00B6D4D53107B" entity-name="FinancialMgmtGLCategory" identifier="Settlement"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="800019" entity-name="ADTable" identifier="C_Settlement"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="8F343D831EA6434D9720FECAF5FB957E" identifier="Debt Payment Management">
+    <id>8F343D831EA6434D9720FECAF5FB957E</id>
+    <active>true</active>
+    <name>Debt Payment Management</name>
+    <printText>Debt Payment Management</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>DPM</documentCategory>
     <salesTransaction>false</salesTransaction>
     <sOSubType xsi:nil="true"/>
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>false</sequencedDocument>
-    <documentSequence xsi:nil="true"/>
-    <gLCategory id="FF80818128D8C9730128D8D035D908A5" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="FE1DFB9999224BE7B1B84B9E5D4CDA0B" entity-name="ADSequence" identifier="Debt Payment Management"/>
+    <gLCategory id="FC670B83E59C4E7CBD6B999D3F28B251" entity-name="FinancialMgmtGLCategory" identifier="Standard"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
-    <table id="319" entity-name="ADTable" identifier="M_InOut"/>
+    <table id="800176" entity-name="ADTable" identifier="C_DP_Management"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035EC08F7" identifier="AR Receipt">
-    <id>FF80818128D8C9730128D8D035EC08F7</id>
+  <DocumentType id="9883CB89E41E496D987D8838C3CE0DC7" identifier="Matched Purchase Orders">
+    <id>9883CB89E41E496D987D8838C3CE0DC7</id>
+    <active>true</active>
+    <name>Matched Purchase Orders</name>
+    <printText>Matched Purchase Orders</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>MXP</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="BCF68C60AFAE45358B7D78FCAB3EB783" entity-name="ADSequence" identifier="Matched Purchase Orders"/>
+    <gLCategory id="FA9102F37B904275A3CCD9935D69ED51" entity-name="FinancialMgmtGLCategory" identifier="MatchPO"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="473" entity-name="ADTable" identifier="M_MatchPO"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="A0C72093D5614867906A6E878F96FBBD" identifier="Depreciation">
+    <id>A0C72093D5614867906A6E878F96FBBD</id>
+    <active>true</active>
+    <name>Depreciation</name>
+    <printText>Depreciation</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>AMZ</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="C114BA11CB23468B86887B3619AA52CC" entity-name="ADSequence" identifier="Depreciation"/>
+    <gLCategory id="FC670B83E59C4E7CBD6B999D3F28B251" entity-name="FinancialMgmtGLCategory" identifier="Standard"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="800060" entity-name="ADTable" identifier="A_Amortization"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="A58B8296E0ED42E386468D4527DE8F30" identifier="Cash Journal">
+    <id>A58B8296E0ED42E386468D4527DE8F30</id>
+    <active>true</active>
+    <name>Cash Journal</name>
+    <printText>Cash Journal</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>CMC</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="8CA21B8285CC4C4E8DCAD896DB03213E" entity-name="ADSequence" identifier="Cash Journal"/>
+    <gLCategory id="D6A6F219061F4C34B87E1CC4DD6797F3" entity-name="FinancialMgmtGLCategory" identifier="Cash"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="407" entity-name="ADTable" identifier="C_Cash"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="B476CFAE109047DEB5BC9AC80A03297A" identifier="AR Credit Memo">
+    <id>B476CFAE109047DEB5BC9AC80A03297A</id>
+    <active>true</active>
+    <name>AR Credit Memo</name>
+    <printText>Credit Memo</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>ARC</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="B74E4F916A4B4A67BA572CAE835B4049" entity-name="ADSequence" identifier="AR Credit Memo"/>
+    <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="B896128A9164438A9B85CC8821FC7162" identifier="AR Invoice Indirect">
+    <id>B896128A9164438A9B85CC8821FC7162</id>
+    <active>true</active>
+    <name>AR Invoice Indirect</name>
+    <printText>Invoice Indirect.</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>ARI</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="4ED4DE47C4F44E578747E0FA81E29885" entity-name="ADSequence" identifier="AR Invoice Indirect"/>
+    <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="B968C737ED3E4C808E425A72CC445DFE" identifier="Manual Settlement">
+    <id>B968C737ED3E4C808E425A72CC445DFE</id>
+    <active>true</active>
+    <name>Manual Settlement</name>
+    <printText>Manual Settlement</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>STM</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="CF53CE0FBB6B4FBB89C4939E191AFFD4" entity-name="ADSequence" identifier="Manual Settlement"/>
+    <gLCategory id="844F34E0FA4045C6A3D00B6D4D53107B" entity-name="FinancialMgmtGLCategory" identifier="Settlement"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="800019" entity-name="ADTable" identifier="C_Settlement"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="CB6EEA256BBC41109911215C5A14D39B" identifier="Standard Order">
+    <id>CB6EEA256BBC41109911215C5A14D39B</id>
+    <active>true</active>
+    <name>Standard Order</name>
+    <printText>Order Confirmation</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>SOO</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType>SO</sOSubType>
+    <documentTypeForShipment id="0CD50184705A42CCBECA4EC967646440" entity-name="DocumentType" identifier="MM Shipment"/>
+    <documentTypeForInvoice id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="0FBF9530BC584A6E9415F7AD01A23201" entity-name="ADSequence" identifier="Standard Order"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="D132517AE775435B8EB2832CC61FCAB1" identifier="AR Receipt">
+    <id>D132517AE775435B8EB2832CC61FCAB1</id>
     <active>true</active>
     <name>AR Receipt</name>
     <printText>Receipt</printText>
@@ -927,152 +933,106 @@
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E308DC" entity-name="ADSequence" identifier="AR Receipt"/>
-    <gLCategory id="FF80818128D8C9730128D8D035E908F6" entity-name="FinancialMgmtGLCategory" identifier="AR Receipt"/>
+    <documentSequence id="F3659AAEFC2741F788BB474159616023" entity-name="ADSequence" identifier="AR Receipt"/>
+    <gLCategory id="E8752D97421B434F8355331B680DC652" entity-name="FinancialMgmtGLCategory" identifier="AR Receipt"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
-    <table xsi:nil="true"/>
+    <table id="D1A97202E832470285C9B1EB026D54E2" entity-name="ADTable" identifier="FIN_Payment"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="FF80818128D8C9730128D8D035ED08F9" identifier="GL Journal">
-    <id>FF80818128D8C9730128D8D035ED08F9</id>
+  <DocumentType id="E7F4802D902A42A59143DCCBEDE4DE85" identifier="Credit Order">
+    <id>E7F4802D902A42A59143DCCBEDE4DE85</id>
     <active>true</active>
-    <name>GL Journal</name>
-    <printText>GL Journal</printText>
+    <name>Credit Order</name>
+    <printText>Order Confirmation</printText>
     <description xsi:nil="true"/>
-    <documentCategory>GLJ</documentCategory>
+    <documentCategory>SOO</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType>WI</sOSubType>
+    <documentTypeForShipment id="F8CC92C7234644DEAD9F63174F45B2BF" entity-name="DocumentType" identifier="MM Shipment Indirect"/>
+    <documentTypeForInvoice id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="F4F629F131124F198601A47F5FEDF53A" entity-name="ADSequence" identifier="Credit Order"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="259" entity-name="ADTable" identifier="C_Order"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="EC0B46C525A0417DA286823864620991" identifier="Production">
+    <id>EC0B46C525A0417DA286823864620991</id>
+    <active>true</active>
+    <name>Production</name>
+    <printText>Production</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>MMP</documentCategory>
     <salesTransaction>false</salesTransaction>
     <sOSubType xsi:nil="true"/>
     <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="FF80818128D8C9730128D8D035E408DD" entity-name="ADSequence" identifier="GL Journal"/>
-    <gLCategory id="FF80818128D8C9730128D8D035EC08F8" entity-name="FinancialMgmtGLCategory" identifier="Manual"/>
+    <documentSequence id="267B166C6F4B49E893CF6276EE396E7D" entity-name="ADSequence" identifier="Production"/>
+    <gLCategory id="37501231BC434F2DB0BF5F706CEBCC1F" entity-name="FinancialMgmtGLCategory" identifier="Production"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>0</numberOfCopies>
-    <table id="224" entity-name="ADTable" identifier="GL_Journal"/>
+    <table id="325" entity-name="ADTable" identifier="M_Production"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <ADSequence id="10BFEDFF26854F86A7E712F48894E790" identifier="Depreciation">
-    <id>10BFEDFF26854F86A7E712F48894E790</id>
+  <DocumentType id="ED1E059C9CF54062BA43B79F3EB89C77" identifier="AP Payment">
+    <id>ED1E059C9CF54062BA43B79F3EB89C77</id>
     <active>true</active>
-    <name>Depreciation</name>
+    <name>AP Payment</name>
+    <printText>Vendor Payment</printText>
     <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <nextAssignedNumber>10000</nextAssignedNumber>
-    <currentNextSystem>100</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="3CEF2E80A4F54152AA38A931D9883699" identifier="Debt Payment Management">
-    <id>3CEF2E80A4F54152AA38A931D9883699</id>
+    <documentCategory>APP</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="4D72691638A24A0194882A302FCF9494" entity-name="ADSequence" identifier="AP Payment"/>
+    <gLCategory id="C79381E3F81140DBAAD73E6B0CD74901" entity-name="FinancialMgmtGLCategory" identifier="AP Payment"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="D1A97202E832470285C9B1EB026D54E2" entity-name="ADTable" identifier="FIN_Payment"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <DocumentType id="F8CC92C7234644DEAD9F63174F45B2BF" identifier="MM Shipment Indirect">
+    <id>F8CC92C7234644DEAD9F63174F45B2BF</id>
     <active>true</active>
-    <name>Debt Payment Management</name>
+    <name>MM Shipment Indirect</name>
+    <printText>Delivery Note</printText>
     <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <nextAssignedNumber>10000</nextAssignedNumber>
-    <currentNextSystem>100</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035D908A4" identifier="MM Shipment">
-    <id>FF80818128D8C9730128D8D035D908A4</id>
-    <active>true</active>
-    <name>MM Shipment</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>500000</startingNo>
-    <nextAssignedNumber>500023</nextAssignedNumber>
-    <currentNextSystem>50000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DA08A7" identifier="AR Invoice">
-    <id>FF80818128D8C9730128D8D035DA08A7</id>
-    <active>true</active>
-    <name>AR Invoice</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>100000</startingNo>
-    <nextAssignedNumber>100025</nextAssignedNumber>
-    <currentNextSystem>10000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DA08AA" identifier="Prepay Order">
-    <id>FF80818128D8C9730128D8D035DA08AA</id>
-    <active>true</active>
-    <name>Prepay Order</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>30000</startingNo>
-    <nextAssignedNumber>30000</nextAssignedNumber>
-    <currentNextSystem>3000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DC08B1" identifier="Purchase Order">
-    <id>FF80818128D8C9730128D8D035DC08B1</id>
-    <active>true</active>
-    <name>Purchase Order</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>800000</startingNo>
-    <nextAssignedNumber>800010</nextAssignedNumber>
-    <currentNextSystem>80000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DC08B5" identifier="Return Material">
-    <id>FF80818128D8C9730128D8D035DC08B5</id>
-    <active>true</active>
-    <name>Return Material</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>40000</startingNo>
-    <nextAssignedNumber>40000</nextAssignedNumber>
-    <currentNextSystem>4000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DD08B8" identifier="MM Shipment Indirect">
-    <id>FF80818128D8C9730128D8D035DD08B8</id>
+    <documentCategory>MMS</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
+    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="01A4350CC9044517BA7B1B05EEF065FF" entity-name="ADSequence" identifier="MM Shipment Indirect"/>
+    <gLCategory id="160C37CC0D36480E8B91B015FAC747DC" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="319" entity-name="ADTable" identifier="M_InOut"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+  </DocumentType>
+  <ADSequence id="01A4350CC9044517BA7B1B05EEF065FF" identifier="MM Shipment Indirect">
+    <id>01A4350CC9044517BA7B1B05EEF065FF</id>
     <active>true</active>
     <name>MM Shipment Indirect</name>
     <description xsi:nil="true"/>
@@ -1080,31 +1040,15 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>600000</startingNo>
-    <nextAssignedNumber>600002</nextAssignedNumber>
+    <nextAssignedNumber>600000</nextAssignedNumber>
     <currentNextSystem>60000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DD08BA" identifier="Credit Order">
-    <id>FF80818128D8C9730128D8D035DD08BA</id>
-    <active>true</active>
-    <name>Credit Order</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>60000</startingNo>
-    <nextAssignedNumber>60001</nextAssignedNumber>
-    <currentNextSystem>6000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DE08BD" identifier="Standard Order">
-    <id>FF80818128D8C9730128D8D035DE08BD</id>
+  <ADSequence id="0FBF9530BC584A6E9415F7AD01A23201" identifier="Standard Order">
+    <id>0FBF9530BC584A6E9415F7AD01A23201</id>
     <active>true</active>
     <name>Standard Order</name>
     <description xsi:nil="true"/>
@@ -1112,127 +1056,15 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>50000</startingNo>
-    <nextAssignedNumber>50032</nextAssignedNumber>
+    <nextAssignedNumber>50000</nextAssignedNumber>
     <currentNextSystem>5000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DF08C2" identifier="Quotation">
-    <id>FF80818128D8C9730128D8D035DF08C2</id>
-    <active>true</active>
-    <name>Quotation</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>10000</startingNo>
-    <nextAssignedNumber>10000</nextAssignedNumber>
-    <currentNextSystem>1000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035DF08C5" identifier="Proposal">
-    <id>FF80818128D8C9730128D8D035DF08C5</id>
-    <active>true</active>
-    <name>Proposal</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>20000</startingNo>
-    <nextAssignedNumber>20000</nextAssignedNumber>
-    <currentNextSystem>2000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E008C8" identifier="POS Order">
-    <id>FF80818128D8C9730128D8D035E008C8</id>
-    <active>true</active>
-    <name>POS Order</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>80000</startingNo>
-    <nextAssignedNumber>80006</nextAssignedNumber>
-    <currentNextSystem>8000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E008CB" identifier="Warehouse Order">
-    <id>FF80818128D8C9730128D8D035E008CB</id>
-    <active>true</active>
-    <name>Warehouse Order</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>70000</startingNo>
-    <nextAssignedNumber>70005</nextAssignedNumber>
-    <currentNextSystem>7000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E108CE" identifier="AR Credit Memo">
-    <id>FF80818128D8C9730128D8D035E108CE</id>
-    <active>true</active>
-    <name>AR Credit Memo</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>300000</startingNo>
-    <nextAssignedNumber>300005</nextAssignedNumber>
-    <currentNextSystem>30000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E208D1" identifier="Matched Purchase Orders">
-    <id>FF80818128D8C9730128D8D035E208D1</id>
-    <active>true</active>
-    <name>Matched Purchase Orders</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E208D2" identifier="Matched Invoices">
-    <id>FF80818128D8C9730128D8D035E208D2</id>
-    <active>true</active>
-    <name>Matched Invoices</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E208D3" identifier="Production">
-    <id>FF80818128D8C9730128D8D035E208D3</id>
+  <ADSequence id="267B166C6F4B49E893CF6276EE396E7D" identifier="Production">
+    <id>267B166C6F4B49E893CF6276EE396E7D</id>
     <active>true</active>
     <name>Production</name>
     <description xsi:nil="true"/>
@@ -1247,120 +1079,24 @@
     <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E208D4" identifier="Inventory Move">
-    <id>FF80818128D8C9730128D8D035E208D4</id>
+  <ADSequence id="2D47C580583242259DF1FFEA4D914A94" identifier="MM Shipment">
+    <id>2D47C580583242259DF1FFEA4D914A94</id>
     <active>true</active>
-    <name>Inventory Move</name>
+    <name>MM Shipment</name>
     <description xsi:nil="true"/>
     <valueFormat xsi:nil="true"/>
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
+    <startingNo>500000</startingNo>
+    <nextAssignedNumber>500000</nextAssignedNumber>
+    <currentNextSystem>50000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E208D5" identifier="Physical Inventory">
-    <id>FF80818128D8C9730128D8D035E208D5</id>
-    <active>true</active>
-    <name>Physical Inventory</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E208D6" identifier="Cash Journal">
-    <id>FF80818128D8C9730128D8D035E208D6</id>
-    <active>true</active>
-    <name>Cash Journal</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E308D7" identifier="Bank Statement">
-    <id>FF80818128D8C9730128D8D035E308D7</id>
-    <active>true</active>
-    <name>Bank Statement</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E308D8" identifier="Manual Settlement">
-    <id>FF80818128D8C9730128D8D035E308D8</id>
-    <active>true</active>
-    <name>Manual Settlement</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>10000</startingNo>
-    <nextAssignedNumber>10003</nextAssignedNumber>
-    <currentNextSystem>1000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E308D9" identifier="Settlement">
-    <id>FF80818128D8C9730128D8D035E308D9</id>
-    <active>true</active>
-    <name>Settlement</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>10000</startingNo>
-    <nextAssignedNumber>10023</nextAssignedNumber>
-    <currentNextSystem>1000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E308DA" identifier="Purchase Requisition">
-    <id>FF80818128D8C9730128D8D035E308DA</id>
-    <active>true</active>
-    <name>Purchase Requisition</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>900000</startingNo>
-    <nextAssignedNumber>900000</nextAssignedNumber>
-    <currentNextSystem>90000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E308DB" identifier="AP Payment">
-    <id>FF80818128D8C9730128D8D035E308DB</id>
+  <ADSequence id="4D72691638A24A0194882A302FCF9494" identifier="AP Payment">
+    <id>4D72691638A24A0194882A302FCF9494</id>
     <active>true</active>
     <name>AP Payment</name>
     <description xsi:nil="true"/>
@@ -1375,8 +1111,312 @@
     <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E308DC" identifier="AR Receipt">
-    <id>FF80818128D8C9730128D8D035E308DC</id>
+  <ADSequence id="4ED4DE47C4F44E578747E0FA81E29885" identifier="AR Invoice Indirect">
+    <id>4ED4DE47C4F44E578747E0FA81E29885</id>
+    <active>true</active>
+    <name>AR Invoice Indirect</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>200000</startingNo>
+    <nextAssignedNumber>200000</nextAssignedNumber>
+    <currentNextSystem>20000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="6D3C7477332F47CD8A0F6A5C4805EBD4" identifier="Prepay Order">
+    <id>6D3C7477332F47CD8A0F6A5C4805EBD4</id>
+    <active>true</active>
+    <name>Prepay Order</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>30000</startingNo>
+    <nextAssignedNumber>30000</nextAssignedNumber>
+    <currentNextSystem>3000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="74C3CC2BCDDA45F5BBFE8DF603728749" identifier="Purchase Requisition">
+    <id>74C3CC2BCDDA45F5BBFE8DF603728749</id>
+    <active>true</active>
+    <name>Purchase Requisition</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>900000</startingNo>
+    <nextAssignedNumber>900000</nextAssignedNumber>
+    <currentNextSystem>90000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="7C2F74C43970423E890C8892C43673E9" identifier="Settlement">
+    <id>7C2F74C43970423E890C8892C43673E9</id>
+    <active>true</active>
+    <name>Settlement</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>10000</startingNo>
+    <nextAssignedNumber>10000</nextAssignedNumber>
+    <currentNextSystem>1000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="81EEB6FAFE5D4E6B9389CAAC6297495B" identifier="Physical Inventory">
+    <id>81EEB6FAFE5D4E6B9389CAAC6297495B</id>
+    <active>true</active>
+    <name>Physical Inventory</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <nextAssignedNumber>1000000</nextAssignedNumber>
+    <currentNextSystem>100000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="81F0991C4D884F82AF34E6CD72C0BFEC" identifier="Quotation">
+    <id>81F0991C4D884F82AF34E6CD72C0BFEC</id>
+    <active>true</active>
+    <name>Quotation</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>10000</startingNo>
+    <nextAssignedNumber>10000</nextAssignedNumber>
+    <currentNextSystem>1000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="8547DE01C56D4C67A28F37AA5E72046D" identifier="Proposal">
+    <id>8547DE01C56D4C67A28F37AA5E72046D</id>
+    <active>true</active>
+    <name>Proposal</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>20000</startingNo>
+    <nextAssignedNumber>20000</nextAssignedNumber>
+    <currentNextSystem>2000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="8CA21B8285CC4C4E8DCAD896DB03213E" identifier="Cash Journal">
+    <id>8CA21B8285CC4C4E8DCAD896DB03213E</id>
+    <active>true</active>
+    <name>Cash Journal</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <nextAssignedNumber>1000000</nextAssignedNumber>
+    <currentNextSystem>100000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="949C664EE54A4AA5B23CE288E1677916" identifier="Bank Statement">
+    <id>949C664EE54A4AA5B23CE288E1677916</id>
+    <active>true</active>
+    <name>Bank Statement</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <nextAssignedNumber>1000000</nextAssignedNumber>
+    <currentNextSystem>100000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="A55E308B07EF453B87ED12516E3C9F7D" identifier="Matched Invoices">
+    <id>A55E308B07EF453B87ED12516E3C9F7D</id>
+    <active>true</active>
+    <name>Matched Invoices</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <nextAssignedNumber>1000000</nextAssignedNumber>
+    <currentNextSystem>100000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="A6A631F13B004AB8AD39573E95EE992E" identifier="Return Material">
+    <id>A6A631F13B004AB8AD39573E95EE992E</id>
+    <active>true</active>
+    <name>Return Material</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>40000</startingNo>
+    <nextAssignedNumber>40000</nextAssignedNumber>
+    <currentNextSystem>4000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="A7C5B67A2BB244A19F475160A5AFCE5E" identifier="Inventory Move">
+    <id>A7C5B67A2BB244A19F475160A5AFCE5E</id>
+    <active>true</active>
+    <name>Inventory Move</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <nextAssignedNumber>1000000</nextAssignedNumber>
+    <currentNextSystem>100000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="AE79ADF07A5E4E6E9C5367505C1C3463" identifier="Purchase Order">
+    <id>AE79ADF07A5E4E6E9C5367505C1C3463</id>
+    <active>true</active>
+    <name>Purchase Order</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>800000</startingNo>
+    <nextAssignedNumber>800000</nextAssignedNumber>
+    <currentNextSystem>80000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="B380E35582BD4D1A930146F1BA72C03F" identifier="GL Journal">
+    <id>B380E35582BD4D1A930146F1BA72C03F</id>
+    <active>true</active>
+    <name>GL Journal</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000</startingNo>
+    <nextAssignedNumber>1000</nextAssignedNumber>
+    <currentNextSystem>100</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="B74E4F916A4B4A67BA572CAE835B4049" identifier="AR Credit Memo">
+    <id>B74E4F916A4B4A67BA572CAE835B4049</id>
+    <active>true</active>
+    <name>AR Credit Memo</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>300000</startingNo>
+    <nextAssignedNumber>300000</nextAssignedNumber>
+    <currentNextSystem>30000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="BCF68C60AFAE45358B7D78FCAB3EB783" identifier="Matched Purchase Orders">
+    <id>BCF68C60AFAE45358B7D78FCAB3EB783</id>
+    <active>true</active>
+    <name>Matched Purchase Orders</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <nextAssignedNumber>1000000</nextAssignedNumber>
+    <currentNextSystem>100000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="C114BA11CB23468B86887B3619AA52CC" identifier="Depreciation">
+    <id>C114BA11CB23468B86887B3619AA52CC</id>
+    <active>true</active>
+    <name>Depreciation</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>10000</startingNo>
+    <nextAssignedNumber>10000</nextAssignedNumber>
+    <currentNextSystem>1000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="CF53CE0FBB6B4FBB89C4939E191AFFD4" identifier="Manual Settlement">
+    <id>CF53CE0FBB6B4FBB89C4939E191AFFD4</id>
+    <active>true</active>
+    <name>Manual Settlement</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>10000</startingNo>
+    <nextAssignedNumber>10000</nextAssignedNumber>
+    <currentNextSystem>1000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="EC5B218F09F44618B98FA0D233E3DC70" identifier="AR Invoice">
+    <id>EC5B218F09F44618B98FA0D233E3DC70</id>
+    <active>true</active>
+    <name>AR Invoice</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>100000</startingNo>
+    <nextAssignedNumber>100000</nextAssignedNumber>
+    <currentNextSystem>10000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="F3659AAEFC2741F788BB474159616023" identifier="AR Receipt">
+    <id>F3659AAEFC2741F788BB474159616023</id>
     <active>true</active>
     <name>AR Receipt</name>
     <description xsi:nil="true"/>
@@ -1391,146 +1431,221 @@
     <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
-  <ADSequence id="FF80818128D8C9730128D8D035E408DD" identifier="GL Journal">
-    <id>FF80818128D8C9730128D8D035E408DD</id>
+  <ADSequence id="F4F629F131124F198601A47F5FEDF53A" identifier="Credit Order">
+    <id>F4F629F131124F198601A47F5FEDF53A</id>
     <active>true</active>
-    <name>GL Journal</name>
+    <name>Credit Order</name>
     <description xsi:nil="true"/>
     <valueFormat xsi:nil="true"/>
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
-    <startingNo>1000</startingNo>
-    <nextAssignedNumber>1001</nextAssignedNumber>
-    <currentNextSystem>100</currentNextSystem>
+    <startingNo>60000</startingNo>
+    <nextAssignedNumber>60000</nextAssignedNumber>
+    <currentNextSystem>6000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
-  <DocumentTemplate id="35795820607E46E0800AA4B8E38ECB42" identifier="MM Shipment Report template">
-    <name>MM Shipment Report template</name>
-    <id>35795820607E46E0800AA4B8E38ECB42</id>
+  <ADSequence id="F6907986413D46C4BE3E27174895CC48" identifier="Warehouse Order">
+    <id>F6907986413D46C4BE3E27174895CC48</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035D908A6" entity-name="DocumentType" identifier="MM Shipment"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Goods Shipment-@our_ref@</reportFilename>
-    <templateFilename>RptM_InOut.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DB08AD" identifier="Prepay Order Report template">
-    <name>Prepay Order Report template</name>
-    <id>FF80818128D8C9730128D8D035DB08AD</id>
+    <name>Warehouse Order</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>70000</startingNo>
+    <nextAssignedNumber>70000</nextAssignedNumber>
+    <currentNextSystem>7000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="FE1DFB9999224BE7B1B84B9E5D4CDA0B" identifier="Debt Payment Management">
+    <id>FE1DFB9999224BE7B1B84B9E5D4CDA0B</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DA08AC" entity-name="DocumentType" identifier="Prepay Order"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DB08B0" identifier="AP Credit Report template">
-    <name>AP Credit Report template</name>
-    <id>FF80818128D8C9730128D8D035DB08B0</id>
+    <name>Debt Payment Management</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>10000</startingNo>
+    <nextAssignedNumber>10000</nextAssignedNumber>
+    <currentNextSystem>1000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="FFB42B38D6A34634B534AB499B13644C" identifier="POS Order">
+    <id>FFB42B38D6A34634B534AB499B13644C</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DB08AF" entity-name="DocumentType" identifier="AP CreditMemo"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Purchase Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DC08B3" identifier="Purchase Order Report template">
+    <name>POS Order</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>80000</startingNo>
+    <nextAssignedNumber>80000</nextAssignedNumber>
+    <currentNextSystem>8000</currentNextSystem>
+    <usedForRecordID>false</usedForRecordID>
+    <prefix xsi:nil="true"/>
+    <suffix xsi:nil="true"/>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <DocumentTemplate id="02376C41DA824413A9BE649443924C03" identifier="Purchase Order Report template">
     <name>Purchase Order Report template</name>
-    <id>FF80818128D8C9730128D8D035DC08B3</id>
+    <id>02376C41DA824413A9BE649443924C03</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DC08B2" entity-name="DocumentType" identifier="Purchase Order"/>
+    <documentType id="808F8818F724497D94282AC83493F394" entity-name="DocumentType" identifier="Purchase Order"/>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Purchase Order-@our_ref@</reportFilename>
     <templateFilename>RptC_OrderPO.jrxml</templateFilename>
   </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DC08B4" identifier="AR Invoice Report template">
-    <name>AR Invoice Report template</name>
-    <id>FF80818128D8C9730128D8D035DC08B4</id>
+  <DocumentTemplate id="11DD7B13EAC94215B6F8F735BBED4D55" identifier="Quotation Report template">
+    <name>Quotation Report template</name>
+    <id>11DD7B13EAC94215B6F8F735BBED4D55</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DA08A9" entity-name="DocumentType" identifier="AR Invoice"/>
+    <documentType id="0A1D4A2DB7144D81A821E31A9B332ACB" entity-name="DocumentType" identifier="Quotation"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Sales Order-@our_ref@</reportFilename>
+    <templateFilename>C_OrderJR.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="29F7240568EC43E583E157911773C3A5" identifier="AR Invoice Indirect Report template">
+    <name>AR Invoice Indirect Report template</name>
+    <id>29F7240568EC43E583E157911773C3A5</id>
+    <active>true</active>
+    <documentType id="B896128A9164438A9B85CC8821FC7162" entity-name="DocumentType" identifier="AR Invoice Indirect"/>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Invoice-@our_ref@</reportFilename>
     <templateFilename>RptC_Invoice.jrxml</templateFilename>
   </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DD08B7" identifier="Return Material Report template">
+  <DocumentTemplate id="4F23CD7CD64D468EA4753C0C7B09FD53" identifier="Return Material Report template">
     <name>Return Material Report template</name>
-    <id>FF80818128D8C9730128D8D035DD08B7</id>
+    <id>4F23CD7CD64D468EA4753C0C7B09FD53</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DC08B6" entity-name="DocumentType" identifier="Return Material"/>
+    <documentType id="2D7C15F0F44E4F289A729415EFD700C1" entity-name="DocumentType" identifier="Return Material"/>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
   </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DE08BC" identifier="On Credit Order Report template">
-    <name>On Credit Order Report template</name>
-    <id>FF80818128D8C9730128D8D035DE08BC</id>
+  <DocumentTemplate id="70AEA0C77DB743A4A89058BFE091FEEA" identifier="Standard order report template">
+    <name>Standard order report template</name>
+    <id>70AEA0C77DB743A4A89058BFE091FEEA</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DE08BB" entity-name="DocumentType" identifier="On Credit Order"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DE08BF" identifier="Standard Order Report template">
-    <name>Standard Order Report template</name>
-    <id>FF80818128D8C9730128D8D035DE08BF</id>
-    <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DE08BE" entity-name="DocumentType" identifier="Standard Order"/>
+    <documentType id="CB6EEA256BBC41109911215C5A14D39B" entity-name="DocumentType" identifier="Standard Order"/>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>StandardOrder-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
   </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DF08C1" identifier="AP Invoice Report template">
-    <name>AP Invoice Report template</name>
-    <id>FF80818128D8C9730128D8D035DF08C1</id>
+  <DocumentTemplate id="9FB97CCA66EA49F29A0EF5080E2AFF29" identifier="AR Credit Memo Report template">
+    <name>AR Credit Memo Report template</name>
+    <id>9FB97CCA66EA49F29A0EF5080E2AFF29</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DE08C0" entity-name="DocumentType" identifier="AP Invoice"/>
+    <documentType id="B476CFAE109047DEB5BC9AC80A03297A" entity-name="DocumentType" identifier="AR Credit Memo"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Sales Invoice-@our_ref@</reportFilename>
+    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="A16BD46A069F4502BDDFD9A555AEAA48" identifier="AR Invoice Report template">
+    <name>AR Invoice Report template</name>
+    <id>A16BD46A069F4502BDDFD9A555AEAA48</id>
+    <active>true</active>
+    <documentType id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Sales Invoice-@our_ref@</reportFilename>
+    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="A76CE6794C2E467394C21675524DBA9C" identifier="Proposal Report template">
+    <name>Proposal Report template</name>
+    <id>A76CE6794C2E467394C21675524DBA9C</id>
+    <active>true</active>
+    <documentType id="15C8DCE82DA841968ABCD614FED68576" entity-name="DocumentType" identifier="Proposal"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Sales Order-@our_ref@</reportFilename>
+    <templateFilename>C_OrderJR.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="AF10A903167240F883C7EE7A3325981D" identifier="POS Order Report template">
+    <name>POS Order Report template</name>
+    <id>AF10A903167240F883C7EE7A3325981D</id>
+    <active>true</active>
+    <documentType id="511A9371A0F74195AA3F6D66C722729D" entity-name="DocumentType" identifier="POS Order"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Sales Order-@our_ref@</reportFilename>
+    <templateFilename>C_OrderJR.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="B1DF02E45C4946C7BB1D45C065C49577" identifier="AP Credit Report template">
+    <name>AP Credit Report template</name>
+    <id>B1DF02E45C4946C7BB1D45C065C49577</id>
+    <active>true</active>
+    <documentType id="42B7DE94BC324C3F9CC0934375E90FFF" entity-name="DocumentType" identifier="AP CreditMemo"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Purchase Invoice-@our_ref@</reportFilename>
+    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="B94A012B25FB4C319804BED013BD584B" identifier="Prepay Order Report template">
+    <name>Prepay Order Report template</name>
+    <id>B94A012B25FB4C319804BED013BD584B</id>
+    <active>true</active>
+    <documentType id="15F495A6290040F194A9AA4622FE0C01" entity-name="DocumentType" identifier="Prepay Order"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Sales Order-@our_ref@</reportFilename>
+    <templateFilename>C_OrderJR.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="BC7220FEA2F44F9C9FB6619FC58B6944" identifier="MM Receipt Report template">
+    <name>MM Receipt Report template</name>
+    <id>BC7220FEA2F44F9C9FB6619FC58B6944</id>
+    <active>true</active>
+    <documentType id="2030AD7DD4284E2B936E261662EF735A" entity-name="DocumentType" identifier="MM Receipt"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Goods Receipt-@our_ref@</reportFilename>
+    <templateFilename>RptM_InOut.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="C6A6AF1CA3C94B3899CAEC27EE427402" identifier="MM Shipment Report template">
+    <name>MM Shipment Report template</name>
+    <id>C6A6AF1CA3C94B3899CAEC27EE427402</id>
+    <active>true</active>
+    <documentType id="0CD50184705A42CCBECA4EC967646440" entity-name="DocumentType" identifier="MM Shipment"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Goods Shipment-@our_ref@</reportFilename>
+    <templateFilename>RptM_InOut.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="C76E1DE89DA04BF6B6FAEDDA0216EE7A" identifier="Warehouse Order Memo Report template">
+    <name>Warehouse Order Memo Report template</name>
+    <id>C76E1DE89DA04BF6B6FAEDDA0216EE7A</id>
+    <active>true</active>
+    <documentType id="76E7C671FCE34556908E563F825C2937" entity-name="DocumentType" identifier="Warehouse Order"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Sales Order-@our_ref@</reportFilename>
+    <templateFilename>C_OrderJR.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="D9BB431F120746C8A84266CA42D02029" identifier="On Credit Order Report template">
+    <name>On Credit Order Report template</name>
+    <id>D9BB431F120746C8A84266CA42D02029</id>
+    <active>true</active>
+    <documentType id="E7F4802D902A42A59143DCCBEDE4DE85" entity-name="DocumentType" identifier="Credit Order"/>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Sales Order-@our_ref@</reportFilename>
+    <templateFilename>C_OrderJR.jrxml</templateFilename>
+  </DocumentTemplate>
+  <DocumentTemplate id="E5901A1122F641089417A08A7317764C" identifier="AP Invoice Report template">
+    <name>AP Invoice Report template</name>
+    <id>E5901A1122F641089417A08A7317764C</id>
+    <active>true</active>
+    <documentType id="5C6E02993E9B4FCA81C07955EF676C62" entity-name="DocumentType" identifier="AP Invoice"/>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Invoice-@our_ref@</reportFilename>
     <templateFilename>RptC_Invoice.jrxml</templateFilename>
   </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035DF08C4" identifier="Quotation Report template">
-    <name>Quotation Report template</name>
-    <id>FF80818128D8C9730128D8D035DF08C4</id>
+  <DocumentTemplate id="E87E9B580A024383B2E79BD768288899" identifier="MM Shipment Indirect Report template">
+    <name>MM Shipment Indirect Report template</name>
+    <id>E87E9B580A024383B2E79BD768288899</id>
     <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035DF08C3" entity-name="DocumentType" identifier="Quotation"/>
+    <documentType id="F8CC92C7234644DEAD9F63174F45B2BF" entity-name="DocumentType" identifier="MM Shipment Indirect"/>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035E008C7" identifier="Proposal Report template">
-    <name>Proposal Report template</name>
-    <id>FF80818128D8C9730128D8D035E008C7</id>
-    <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035E008C6" entity-name="DocumentType" identifier="Proposal"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035E008CA" identifier="POS Order Report template">
-    <name>POS Order Report template</name>
-    <id>FF80818128D8C9730128D8D035E008CA</id>
-    <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035E008C9" entity-name="DocumentType" identifier="POS Order"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035E108CD" identifier="Warehouse Order Memo Report template">
-    <name>Warehouse Order Memo Report template</name>
-    <id>FF80818128D8C9730128D8D035E108CD</id>
-    <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035E108CC" entity-name="DocumentType" identifier="Warehouse Order"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Sales Order-@our_ref@</reportFilename>
-    <templateFilename>C_OrderJR.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="FF80818128D8C9730128D8D035E108D0" identifier="AR Credit Memo Report template">
-    <name>AR Credit Memo Report template</name>
-    <id>FF80818128D8C9730128D8D035E108D0</id>
-    <active>true</active>
-    <documentType id="FF80818128D8C9730128D8D035E108CF" entity-name="DocumentType" identifier="AR Credit Memo"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Sales Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <reportFilename>Goods Shipment-@our_ref@</reportFilename>
+    <templateFilename>RptM_InOut.jrxml</templateFilename>
   </DocumentTemplate>
 </ob:Openbravo>
