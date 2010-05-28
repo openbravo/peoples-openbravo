@@ -43,18 +43,12 @@
       <attribute name="code"          property="code"/>
       <attribute name="originalName"    property="originalName"/>
       <attribute name="translatedName"      property="translatedName"/>
-      <element name="translatedSuccessMessage">
-        <attribute name="originalSuccessMessage"      property="originalSuccessMessage"/>
-        <attribute name="translatedSuccessMessage"      property="translatedSuccessMessage"/>
-      </element>
-      <element name="translatedWarningMessage">
-        <attribute name="originalWarningMessage"      property="originalWarningMessage"/>
-        <attribute name="translatedWarningMessage"      property="translatedWarningMessage"/>
-      </element>
-      <element name="translatedErrorMessage">
-        <attribute name="originalErrorMessage"      property="originalErrorMessage"/>
-        <attribute name="translatedErrorMessage"      property="translatedErrorMessage"/>
-      </element>
+      <hide property="originalSuccessMessage" />
+      <hide property="originalWarningMessage" />
+      <hide property="originalErrorMessage" />
+      <attribute name="translatedSuccessMessage"      property="translatedSuccessMessage"/>
+      <attribute name="translatedWarningMessage"      property="translatedWarningMessage"/>
+      <attribute name="translatedErrorMessage"      property="translatedErrorMessage"/>
       <addDefaults/>
     </element>
   </class>
