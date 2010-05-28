@@ -686,12 +686,10 @@ public class COAUtility {
               data[i].accountValue, data[i].accountDescription, accountType, accountSign,
               IsDocControlled, IsSummary, data[i].elementLevel, false);
         } catch (Exception e) {
-          // TODO: Maybe here just a logEvent and try with the rest of accounts!!
           return logError("@CreateAccountingFailed@",
               "insertElementValues() - Not inserted account with value: " + data[i].accountValue, e);
         }
         if (elementValue == null) {
-          // TODO: Maybe here just a logEvent and try with the rest of accounts!!
           return logError("@CreateAccountingFailed@",
               "insertElementValues() - Not inserted account with value: " + data[i].accountValue);
         }

@@ -614,7 +614,7 @@ public class InitialClientSetup {
 
       List<DataSet> lDataSets;
       try {
-        lDataSets = InitialSetupUtility.getDataSets(module);
+        lDataSets = InitialSetupUtility.getDataSets(module, "3");
         if (lDataSets == null)
           return logError("@CreateReferenceDataFailed@",
               "insertReferenceDataModules() - ERROR ocurred while obtaining datasets for module "

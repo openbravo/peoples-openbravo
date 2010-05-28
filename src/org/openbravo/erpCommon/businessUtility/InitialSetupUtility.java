@@ -80,9 +80,6 @@ import org.openbravo.service.db.ImportResult;
 public class InitialSetupUtility {
   static Logger log4j = Logger.getLogger(InitialSetupUtility.class);
 
-  // TODO: add log and security check of provided parameters to all functions.
-  // TODO: change throw Exception for more specific one (HibernateException)??
-  // TODO: Add flush parameter to every public function
   public static boolean existsClientName(String strClient) throws Exception {
     final OBCriteria<Client> obcClient = OBDal.getInstance().createCriteria(Client.class);
     obcClient.add(Expression.eq(Client.PROPERTY_NAME, strClient));
@@ -340,10 +337,8 @@ public class InitialSetupUtility {
 
   public static UserRoles insertUserRole(Client client, User user, Organization orgProvided,
       Role role) throws Exception {
-    // TODO: update to MP16 the repository and change this try/catch by new stuff:
-    // wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/Data_Access_Layer#Administrator_Mode
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
     try {
+      OBContext.setAdminMode();
       Organization organization = null;
 
       if (orgProvided == null) {
@@ -361,7 +356,7 @@ public class InitialSetupUtility {
       OBDal.getInstance().flush();
       return newUserRole;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
 
   }
@@ -444,7 +439,6 @@ public class InitialSetupUtility {
   public static ElementValue insertElementValue(Element element, Organization orgProvided,
       String name, String value, String description, String accountType, String accountSign,
       boolean isDocControlled, boolean isSummary, String elementLevel, boolean doFlush)
-  // TODO: replace boolean doFlush by an int with the amount of iterations between each flush
       throws Exception {
 
     Organization organization = null;
@@ -482,11 +476,9 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static List<TreeNode> getTreeNode(Tree accountTree, Client client) throws Exception {
-    // TODO: update to MP16 the repository and change this try/catch by new stuff:
-    // wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/Data_Access_Layer#Administrator_Mode
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
     List<TreeNode> lTreeNodes;
     try {
+      OBContext.setAdminMode();
       final OBCriteria<TreeNode> obcTreeNode = OBDal.getInstance().createCriteria(TreeNode.class);
       obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_TREE, accountTree));
       obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_CLIENT, client));
@@ -496,10 +488,9 @@ public class InitialSetupUtility {
       }
       lTreeNodes = obcTreeNode.list();
     } catch (Exception e) {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
       return null;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
     return lTreeNodes;
   }
@@ -527,7 +518,6 @@ public class InitialSetupUtility {
   public static void updateAccountTree(List<TreeNode> treeNodes, HashMap<String, Long> mapSequence,
       HashMap<String, String> mapElementValueValue, HashMap<String, String> mapElementValueId,
       HashMap<String, String> mapParent, boolean doFlush) throws Exception {
-    // TODO: replace boolean doFlush by an int with the amount of iterations between each flush
     Iterator<TreeNode> iTreeNodes = treeNodes.listIterator();
     while (iTreeNodes.hasNext()) {
       try {
@@ -553,65 +543,6 @@ public class InitialSetupUtility {
     }
   }
 
-  //
-  // /**
-  // *
-  // * @param accountTree
-  // * @param parent
-  // * if null, then sequence number of node 0 for that tree + 10 is retrieved
-  // * @return
-  // */
-  // @SuppressWarnings("unchecked")
-  // private static Long getNextSeqNo(Tree accountTree, ElementValue parent) {
-  // final StringBuilder sql = new StringBuilder();
-  //
-  // sql.append(" select max(tn.sequenceNumber)");
-  // sql.append(" from ADTreeNode tn");
-  // sql.append(" where tn.tree='" + accountTree.getId() + "'");
-  // if (parent == null)
-  // sql.append(" and tn.reportSet='0'");
-  // else
-  // sql.append(" and tn.reportSet='" + parent.getId() + "'");
-  //
-  // final Session session = OBDal.getInstance().getSession();
-  // final Query query = session.createQuery(sql.toString());
-  // List lOut = query.list();
-  //
-  // return new Long(lOut.get(0).toString());
-  // }
-  //
-  // public static void updateTreeNode(TreeNode treenode, ElementValue parent, Long sequence) {
-  // if (parent != null)
-  // treenode.setReportSet(parent.getId());
-  // treenode.setSequenceNumber(sequence);
-  // }
-  //
-  // public static ElementValue getElementValue(Element element, String strAccountParentKey) {
-  // final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
-  //
-  // List<ElementValue> lAccount = null;
-  // try {
-  // final OBCriteria<ElementValue> obcAccount = OBDal.getInstance().createCriteria(
-  // ElementValue.class);
-  // // TODO: update to MP16 the repository and change this try/catch by new stuff:
-  // //
-  // http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/Data_Access_Layer#Administrator_Mode
-  // if (OBContext.getOBContext().isInAdministratorMode()) {
-  // obcAccount.setFilterOnReadableClients(false);
-  // obcAccount.setFilterOnReadableOrganization(false);
-  // }
-  // obcAccount.add(Expression.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, element));
-  // obcAccount.add(Expression.eq(ElementValue.PROPERTY_SEARCHKEY, strAccountParentKey));
-  // lAccount = obcAccount.list();
-  // } finally {
-  // OBContext.getOBContext().setInAdministratorMode(prevMode);
-  // }
-  // if (lAccount.size() == 1)
-  // return lAccount.get(0);
-  // else
-  // return null;
-  // }
-
   public static ElementValueOperand insertOperand(ElementValue elementValue, ElementValue operand,
       Long sign, Long sequence) throws Exception {
     final ElementValueOperand newElementValueOperand = OBProvider.getInstance().get(
@@ -628,10 +559,8 @@ public class InitialSetupUtility {
   }
 
   public static ElementValue getElementValue(Element element, String value) throws Exception {
-    // TODO: update to MP16 the repository and change this try/catch by new stuff:
-    // wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/Data_Access_Layer#Administrator_Mode
-    final boolean prevMode = OBContext.getOBContext().setInAdministratorMode(true);
     try {
+      OBContext.setAdminMode();
       final OBCriteria<ElementValue> obcEV = OBDal.getInstance().createCriteria(ElementValue.class);
       if (OBContext.getOBContext().isInAdministratorMode()) {
         obcEV.setFilterOnReadableClients(false);
@@ -646,10 +575,9 @@ public class InitialSetupUtility {
         return null;
       return l.get(0);
     } catch (Exception e) {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
       return null;
     } finally {
-      OBContext.getOBContext().setInAdministratorMode(prevMode);
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -1141,7 +1069,6 @@ public class InitialSetupUtility {
     }
     File datasetFile = new File(strPath + "/" + Utility.wikifiedName(dataset.getName()) + ".xml");
     if (!datasetFile.exists()) {
-      // TODO: Throw exception file not exist
       return myResult;
     }
     DataImportService myData = DataImportService.getInstance();
@@ -1152,29 +1079,6 @@ public class InitialSetupUtility {
 
     return myResult;
   }
-
-  // public static boolean existsADClientModule(Client client, DataSet dataset) {
-  // String whereClause = " as cm where cm." + ADClientModule.PROPERTY_CLIENT + "=:client and cm."
-  // + ADClientModule.PROPERTY_MODULE + "=:module and cm." + ADClientModule.PROPERTY_VERSION
-  // + "=:version";
-  //
-  // final OBQuery<ADClientModule> obqParameters = OBDal.getInstance().createQuery(
-  // ADClientModule.class, whereClause);
-  // obqParameters.setNamedParameter("client", client);
-  // obqParameters.setNamedParameter("module", dataset.getModule());
-  // obqParameters.setNamedParameter("version", dataset.getModule().getVersion());
-  // return (0 < obqParameters.list().size());
-  // }
-  //
-  // public static ADClientModule insertADClientModule(Client client, DataSet dataset) {
-  // final ADClientModule newADClientModule = OBProvider.getInstance().get(ADClientModule.class);
-  // newADClientModule.setClient(client);
-  // newADClientModule.setModule(dataset.getModule());
-  // newADClientModule.setVersion(dataset.getModule().getVersion());
-  // OBDal.getInstance().save(newADClientModule);
-  // OBDal.getInstance().flush();
-  // return newADClientModule;
-  // }
 
   public static DocumentTemplate insertDoctypeTemplate(DocumentType document, String name,
       String templateLocation, String templateFileName, String reportFileName) {
@@ -1220,14 +1124,20 @@ public class InitialSetupUtility {
     return obqModule.list();
   }
 
-  public static List<DataSet> getDataSets(Module module) throws Exception {
+  /**
+   * 
+   * @param module
+   * @param accessLevel
+   *          3-> client/org; 1-> organization only
+   * @return
+   * @throws Exception
+   */
+  public static List<DataSet> getDataSets(Module module, String accessLevel) throws Exception {
 
     final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
     obcDataSets.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
     ArrayList<String> coAccessLevel = new ArrayList<String>();
-    // coAccessLevel.add("1"); // Organization
-    // TODO: through parameter, add organization only as well.
-    coAccessLevel.add("3"); // Client/Organization
+    coAccessLevel.add(accessLevel);
     obcDataSets.add(Expression.in(DataSet.PROPERTY_DATAACCESSLEVEL, coAccessLevel));
     if (obcDataSets.list().size() > 0)
       return obcDataSets.list();
