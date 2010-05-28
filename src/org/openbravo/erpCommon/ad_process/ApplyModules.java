@@ -361,21 +361,30 @@ public class ApplyModules extends HttpSecureAppServlet {
   private void resetBuild(HttpServletResponse response, VariablesSecureApp vars) {
     Build build = getBuildFromXMLFile();
     vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
-    try {
-      if (OBScheduler.getInstance().getScheduler().isStarted())
-        OBScheduler.getInstance().getScheduler().shutdown(true);
-    } catch (Exception e) {
-      log4j.warn("Could not shutdown scheduler", e);
-      // We will not log an exception if the scheduler complains. The user shouldn't notice this
-    }
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
+    PreparedStatement updateSession = null;
+    User currentUser = OBContext.getOBContext().getUser();
     try {
+      try {
+        if (OBScheduler.getInstance().getScheduler().isStarted())
+          OBScheduler.getInstance().getScheduler().shutdown(true);
+      } catch (Exception e) {
+        log4j.warn("Could not shutdown scheduler", e);
+        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+      }
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getConnection().commit();
+
       ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
       ps.executeUpdate();
       ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
           + build.getMainSteps().get(0).getCode() + "'");
       ps2.executeUpdate();
+      // We also cancel sessions opened for users different from the current one
+      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
+      updateSession.setString(1, currentUser.getId());
+      updateSession.executeUpdate();
 
     } catch (final Exception e) {
       createModuleLog(false, e.getMessage());
@@ -383,6 +392,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       try {
         releasePreparedStatement(ps);
         releasePreparedStatement(ps2);
+        releasePreparedStatement(updateSession);
       } catch (SQLException e) {
         // Ignored on purpose
       }
@@ -395,13 +405,10 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    Build build = getBuildFromXMLFile();
-    User currentUser = OBContext.getOBContext().getUser();
 
     OBContext.setAdminMode();
     PreparedStatement ps3 = null;
     PreparedStatement ps4 = null;
-    PreparedStatement updateSession = null;
     AntExecutor ant = null;
     try {
       // We first shutdown the background process, so that it doesn't interfere
@@ -428,10 +435,6 @@ public class ApplyModules extends HttpSecureAppServlet {
       final Vector<String> tasks = new Vector<String>();
       tasks.add("UIrebuild");
 
-      // We also cancel sessions opened for users different from the current one
-      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
-      updateSession.setString(1, currentUser.getId());
-      updateSession.executeUpdate();
       ant.runTask(tasks);
 
       out.close();
@@ -449,7 +452,6 @@ public class ApplyModules extends HttpSecureAppServlet {
         ant.closeLogFile();
         releasePreparedStatement(ps3);
         releasePreparedStatement(ps4);
-        releasePreparedStatement(updateSession);
       } catch (SQLException e) {
       }
       OBContext.restorePreviousMode();
