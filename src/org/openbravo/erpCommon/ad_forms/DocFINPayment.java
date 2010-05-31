@@ -45,6 +45,8 @@ import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class DocFINPayment extends AcctServer {
 
@@ -191,9 +193,9 @@ public class DocFINPayment extends AcctServer {
             (isReceipt ? "" : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID,
             nextSeqNo(SeqNo), DocumentType, conn);
         FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);
-        fact.createLine(line, getAccount(conn, payment.getAccount(), as, isReceipt), C_Currency_ID,
-            (isReceipt ? line.getAmount() : ""), (isReceipt ? "" : line.getAmount()),
-            Fact_Acct_Group_ID, "999999", DocumentType, conn);
+        fact.createLine(line, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(),
+            as, isReceipt), C_Currency_ID, (isReceipt ? line.getAmount() : ""), (isReceipt ? ""
+            : line.getAmount()), Fact_Acct_Group_ID, "999999", DocumentType, conn);
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -219,12 +221,36 @@ public class DocFINPayment extends AcctServer {
     OBContext.setAdminMode();
     try {
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+          .getPaymentMethod()));
+      List<FinAccPaymentMethod> lines = obCriteria.list();
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
       for (FIN_FinancialAccountAccounting account : accounts) {
-        if ((payment.isReceipt() && account.getReceivePaymentAccount() != null)
-            || (!payment.isReceipt() && account.getMakePaymentAccount() != null))
-          confirmation = true;
+        if (payment.isReceipt()) {
+          if (lines.get(0).getUponReceiptUse().equals("INT")
+              && account.getInTransitPaymentAccountIN() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponReceiptUse().equals("DEP")
+              && account.getDepositAccount() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponReceiptUse().equals("CLE")
+              && account.getClearedPaymentAccount() != null)
+            confirmation = true;
+        } else {
+          if (lines.get(0).getUponPaymentUse().equals("INT")
+              && account.getFINOutIntransitAcct() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponPaymentUse().equals("WIT")
+              && account.getWithdrawalAccount() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponPaymentUse().equals("CLE")
+              && account.getClearedPaymentAccountOUT() != null)
+            confirmation = true;
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -260,8 +286,11 @@ public class DocFINPayment extends AcctServer {
     setObjectFieldProvider(data);
   }
 
-  public Account getAccount(ConnectionProvider conn, FIN_FinancialAccount finAccount,
-      AcctSchema as, boolean bIsReceipt) throws ServletException {
+  /*
+   * Retrieves Account for receipt / Payment for the given payment method + Financial Account
+   */
+  public Account getAccount(ConnectionProvider conn, FIN_PaymentMethod paymentMethod,
+      FIN_FinancialAccount finAccount, AcctSchema as, boolean bIsReceipt) throws ServletException {
     OBContext.setAdminMode();
     Account account = null;
     try {
@@ -277,14 +306,19 @@ public class DocFINPayment extends AcctServer {
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
       if (accountList == null || accountList.size() == 0)
         return null;
-      if (bIsReceipt)
-        account = new Account(conn, accountList.get(0).getReceivePaymentAccount().getId());
-      else
-        account = new Account(conn, accountList.get(0).getMakePaymentAccount().getId());
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAccount));
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+      List<FinAccPaymentMethod> lines = obCriteria.list();
+      if (bIsReceipt) {
+        account = getAccount(conn, lines.get(0).getUponReceiptUse(), accountList.get(0), bIsReceipt);
+      } else {
+        account = getAccount(conn, lines.get(0).getUponPaymentUse(), accountList.get(0), bIsReceipt);
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
     return account;
   }
-
 }

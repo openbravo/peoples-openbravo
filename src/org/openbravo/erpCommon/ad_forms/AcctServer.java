@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
@@ -39,6 +40,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.common.businesspartner.CustomerAccounts;
 import org.openbravo.model.common.businesspartner.VendorAccounts;
+import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 
 public abstract class AcctServer {
   static Logger log4j = Logger.getLogger(AcctServer.class);
@@ -1506,6 +1508,37 @@ public abstract class AcctServer {
     }
     return new Account(conn, strValidCombination);
   } // getAccount
+
+  /**
+   * Get the account for Financial Account (Uses: INT - In Transit DEP - Deposit CLE - Clearing WIT
+   * - Withdraw)
+   */
+  public Account getAccount(ConnectionProvider conn, String use,
+      FIN_FinancialAccountAccounting financialAccountAccounting, boolean bIsReceipt)
+      throws ServletException {
+    OBContext.setAdminMode();
+    Account account = null;
+    String strvalidCombination = "";
+    try {
+      if (use.equals("INT"))
+        strvalidCombination = bIsReceipt ? financialAccountAccounting
+            .getInTransitPaymentAccountIN().getId() : financialAccountAccounting
+            .getFINOutIntransitAcct().getId();
+      else if (use.equals("DEP"))
+        strvalidCombination = financialAccountAccounting.getDepositAccount().getId();
+      else if (use.equals("CLE"))
+        strvalidCombination = bIsReceipt ? financialAccountAccounting.getClearedPaymentAccount()
+            .getId() : financialAccountAccounting.getClearedPaymentAccountOUT().getId();
+      else if (use.equals("WIT"))
+        strvalidCombination = financialAccountAccounting.getWithdrawalAccount().getId();
+      else
+        return null;
+      account = new Account(conn, strvalidCombination);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return account;
+  }
 
   public FieldProvider[] getObjectFieldProvider() {
     return objectFieldProvider;
