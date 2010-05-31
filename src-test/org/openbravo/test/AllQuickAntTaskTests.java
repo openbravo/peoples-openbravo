@@ -29,6 +29,7 @@ import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.DalUtilTest;
 import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ValidationTest;
+import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.preference.PreferenceTest;
@@ -88,6 +89,7 @@ public class AllQuickAntTaskTests {
     // suite.addTestSuite(RuntimeModelTest.class);
     // suite.addTestSuite(OneToManyTest.class);
     suite.addTestSuite(UniqueConstraintTest.class);
+    suite.addTestSuite(ClassLoaderTest.class);
 
     // modularity
     // suite.addTestSuite(DatasetServiceTest.class);
