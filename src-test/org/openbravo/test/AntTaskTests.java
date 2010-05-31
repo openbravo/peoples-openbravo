@@ -40,6 +40,7 @@ import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.expression.EvaluationTest;
+import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.OneToManyTest;
 import org.openbravo.test.model.RuntimeModelTest;
 import org.openbravo.test.model.UniqueConstraintTest;
@@ -106,6 +107,7 @@ public class AntTaskTests {
     suite.addTestSuite(RuntimeModelTest.class);
     suite.addTestSuite(OneToManyTest.class);
     suite.addTestSuite(UniqueConstraintTest.class);
+    suite.addTestSuite(ClassLoaderTest.class);
 
     // modularity
     suite.addTestSuite(DatasetServiceTest.class);
