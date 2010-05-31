@@ -983,6 +983,7 @@ public abstract class AcctServer {
           AcctProcessTemplate newTemplate = (AcctProcessTemplate) Class.forName(strClassname)
               .newInstance();
           if (!newTemplate.execute(this, as, conn, con, vars)) {
+            OBDal.getInstance().rollbackAndClose();
             return getStatus();
           }
         } catch (Exception e) {
