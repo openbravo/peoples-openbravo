@@ -27,7 +27,7 @@ BEGIN
     INTO v_client_id, v_org_id
   FROM c_bpartner
   WHERE c_bpartner_id = p_bpartner_id;
-  IF (AD_GET_PROPERTY_VALUE('CCU', v_client_id, v_org_id) IS NULL) THEN
+  IF (AD_GET_PREFERENCE_VALUE('CCU', 'Y', v_client_id, v_org_id, NULL, NULL, NULL) IS NULL AND AD_GET_PROPERTY_VALUE('CCU', v_client_id, v_org_id) IS NULL) THEN
     UPDATE C_BPARTNER
       SET SO_CreditUsed=
       (SELECT  COALESCE(SUM(C_Base_Convert((Amount - WriteOffAmt), C_Currency_ID, AD_Client_ID, DocDate, AD_Org_ID)), 0) AS TOTAL
