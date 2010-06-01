@@ -158,7 +158,11 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
   private ApplyModulesResponse fillErrorResponse(VariablesSecureApp vars, String state,
       String defaultState) {
     ApplyModulesResponse resp = new ApplyModulesResponse();
-    resp.setState(Integer.parseInt(state.replace("RB", "")));
+    String fState = state;
+    if (fState.equals("")) {
+      fState = "0";
+    }
+    resp.setState(Integer.parseInt(fState.replace("RB", "")));
     PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
     boolean warning = false;
