@@ -32,29 +32,114 @@ import org.openbravo.data.FieldProvider;
  *         Chart Of Accounts (COA) Data class
  */
 public class COAData extends MultipartRequest implements FieldProvider {
-  static Logger log4j = Logger.getLogger(COAData.class);
-  public String accountValue = "";
-  public String accountName = "";
-  public String accountDescription = "";
-  public String accountType = "";
-  public String accountSign = "";
-  public String accountDocument = "";
-  public String accountSummary = "";
-  public String defaultAccount = "";
-  public String accountParent = "";
-  public String elementLevel = "";
-  public String operands = "";
-  public String balanceSheet = "";
-  public String balanceSheetName = "";
-  public String uS1120BalanceSheet = "";
-  public String uS1120BalanceSheetName = "";
-  public String profitAndLoss = "";
-  public String profitAndLossName = "";
-  public String uS1120IncomeStatement = "";
-  public String uS1120IncomeStatementName = "";
-  public String cashFlow = "";
-  public String cashFlowName = "";
-  public String cElementValueId = "";
+  private static final Logger log4j = Logger.getLogger(COAData.class);
+  String accountValue = "";
+  String accountName = "";
+  String accountDescription = "";
+  String accountType = "";
+  String accountSign = "";
+  String accountDocument = "";
+  String accountSummary = "";
+  String defaultAccount = "";
+  String accountParent = "";
+  String elementLevel = "";
+  String operands = "";
+  String balanceSheet = "";
+  String balanceSheetName = "";
+  String uS1120BalanceSheet = "";
+  String uS1120BalanceSheetName = "";
+
+  public void setAccountValue(String accountValue) {
+    this.accountValue = accountValue;
+  }
+
+  public void setAccountName(String accountName) {
+    this.accountName = accountName;
+  }
+
+  public void setAccountDescription(String accountDescription) {
+    this.accountDescription = accountDescription;
+  }
+
+  public void setAccountType(String accountType) {
+    this.accountType = accountType;
+  }
+
+  public void setAccountSign(String accountSign) {
+    this.accountSign = accountSign;
+  }
+
+  public void setAccountDocument(String accountDocument) {
+    this.accountDocument = accountDocument;
+  }
+
+  public void setAccountSummary(String accountSummary) {
+    this.accountSummary = accountSummary;
+  }
+
+  public void setDefaultAccount(String defaultAccount) {
+    this.defaultAccount = defaultAccount;
+  }
+
+  public void setAccountParent(String accountParent) {
+    this.accountParent = accountParent;
+  }
+
+  public void setElementLevel(String elementLevel) {
+    this.elementLevel = elementLevel;
+  }
+
+  public void setOperands(String operands) {
+    this.operands = operands;
+  }
+
+  public void setBalanceSheet(String balanceSheet) {
+    this.balanceSheet = balanceSheet;
+  }
+
+  public void setBalanceSheetName(String balanceSheetName) {
+    this.balanceSheetName = balanceSheetName;
+  }
+
+  public void setUS1120BalanceSheet(String balanceSheet) {
+    uS1120BalanceSheet = balanceSheet;
+  }
+
+  public void setUS1120BalanceSheetName(String balanceSheetName) {
+    uS1120BalanceSheetName = balanceSheetName;
+  }
+
+  public void setProfitAndLoss(String profitAndLoss) {
+    this.profitAndLoss = profitAndLoss;
+  }
+
+  public void setProfitAndLossName(String profitAndLossName) {
+    this.profitAndLossName = profitAndLossName;
+  }
+
+  public void setUS1120IncomeStatement(String incomeStatement) {
+    uS1120IncomeStatement = incomeStatement;
+  }
+
+  public void setUS1120IncomeStatementName(String incomeStatementName) {
+    uS1120IncomeStatementName = incomeStatementName;
+  }
+
+  public void setCashFlow(String cashFlow) {
+    this.cashFlow = cashFlow;
+  }
+
+  public void setCashFlowName(String cashFlowName) {
+    this.cashFlowName = cashFlowName;
+  }
+
+  String profitAndLoss = "";
+  String profitAndLossName = "";
+  String uS1120IncomeStatement = "";
+  String uS1120IncomeStatementName = "";
+  String cashFlow = "";
+  String cashFlowName = "";
+  String cElementValueId = "";
 
   public COAData() {
   }
@@ -69,7 +154,103 @@ public class COAData extends MultipartRequest implements FieldProvider {
     super(_vars, _in, _firstLineHeads, _format, null);
   }
 
+  public String getAccountValue() {
+    return accountValue;
+  }
+
+  public String getAccountName() {
+    return accountName;
+  }
+
+  public String getAccountDescription() {
+    return accountDescription;
+  }
+
+  public String getAccountType() {
+    return accountType;
+  }
+
+  public String getAccountSign() {
+    return accountSign;
+  }
+
+  public String getAccountDocument() {
+    return accountDocument;
+  }
+
+  public String getAccountSummary() {
+    return accountSummary;
+  }
+
+  public String getDefaultAccount() {
+    return defaultAccount;
+  }
+
+  public String getAccountParent() {
+    return accountParent;
+  }
+
+  public String getElementLevel() {
+    return elementLevel;
+  }
+
+  public String getOperands() {
+    return operands;
+  }
+
+  public String getBalanceSheet() {
+    return balanceSheet;
+  }
+
+  public String getBalanceSheetName() {
+    return balanceSheetName;
+  }
+
+  public String getUS1120BalanceSheet() {
+    return uS1120BalanceSheet;
+  }
+
+  public String getUS1120BalanceSheetName() {
+    return uS1120BalanceSheetName;
+  }
+
+  public String getProfitAndLoss() {
+    return profitAndLoss;
+  }
+
+  public String getProfitAndLossName() {
+    return profitAndLossName;
+  }
+
+  public String getUS1120IncomeStatement() {
+    return uS1120IncomeStatement;
+  }
+
+  public String getUS1120IncomeStatementName() {
+    return uS1120IncomeStatementName;
+  }
+
+  public String getCashFlow() {
+    return cashFlow;
+  }
+
+  public String getCashFlowName() {
+    return cashFlowName;
+  }
+
+  public String getCElementValueId() {
+    return cElementValueId;
+  }
+
+  public void setCElementValueId(String elementValueId) {
+    cElementValueId = elementValueId;
+  }
+
   public String getField(String fieldName) {
+    if (fieldName == null) {
+      log4j.debug("COAData - getField - Field is null");
+      return null;
+    }
     if (fieldName.equalsIgnoreCase("ACCOUNT_VALUE") || fieldName.equals("accountValue"))
       return accountValue;
     else if (fieldName.equalsIgnoreCase("ACCOUNT_NAME") || fieldName.equals("accountName"))
@@ -123,8 +304,7 @@ public class COAData extends MultipartRequest implements FieldProvider {
         || fieldName.equalsIgnoreCase("CELEMENTVALUEID"))
       return cElementValueId;
     else {
-      if (log4j.isDebugEnabled())
-        log4j.debug("COAData - getField - Field does not exist: " + fieldName);
+      log4j.debug("COAData - getField - Field does not exist: " + fieldName);
       return null;
     }
   }
@@ -134,6 +314,8 @@ public class COAData extends MultipartRequest implements FieldProvider {
   }
 
   public FieldProvider lineSeparatorFormated(String line) {
+    if (line == null)
+      return null;
     if (line.length() < 1)
       return null;
     COAData coaData = new COAData();
@@ -158,77 +340,76 @@ public class COAData extends MultipartRequest implements FieldProvider {
         if (text.charAt(text.length() - 1) == '"')
           text = text.substring(0, text.length() - 1);
       }
-      if (log4j.isDebugEnabled())
         log4j.debug("COAData - lineSeparatorFormated - i: " + i);
-      if (log4j.isDebugEnabled())
         log4j.debug("COAData - lineSeparatorFormated - text: " + text);
       switch (i) {
       case 0:
-        coaData.accountValue = text;
+        coaData.setAccountValue(text);
         break;
       case 1:
-        coaData.accountName = text;
+        coaData.setAccountName(text);
         break;
       case 2:
-        coaData.accountDescription = text;
+        coaData.setAccountDescription(text);
         break;
       case 3:
-        coaData.accountType = text;
+        coaData.setAccountType(text);
         break;
       case 4:
-        coaData.accountSign = text;
+        coaData.setAccountSign(text);
         break;
       case 5:
-        coaData.accountDocument = text;
+        coaData.setAccountDocument(text);
         break;
       case 6:
-        coaData.accountSummary = text;
+        coaData.setAccountSummary(text);
         break;
       case 7:
-        coaData.defaultAccount = text;
+        coaData.setDefaultAccount(text);
         break;
       case 8:
-        coaData.accountParent = text;
+        coaData.setAccountParent(text);
         break;
       case 9:
-        coaData.elementLevel = text;
+        coaData.setElementLevel(text);
         break;
       case 10:
-        coaData.operands = text;
+        coaData.setOperands(text);
         break;
       case 11:
-        coaData.balanceSheet = text;
+        coaData.setBalanceSheet(text);
         break;
       case 12:
-        coaData.balanceSheetName = text;
+        coaData.setBalanceSheetName(text);
         break;
       case 13:
-        coaData.uS1120BalanceSheet = text;
+        coaData.setUS1120BalanceSheet(text);
         break;
       case 14:
-        coaData.uS1120BalanceSheetName = text;
+        coaData.setUS1120BalanceSheetName(text);
         break;
       case 15:
-        coaData.profitAndLoss = text;
+        coaData.setProfitAndLoss(text);
         break;
       case 16:
-        coaData.profitAndLossName = text;
+        coaData.setProfitAndLossName(text);
         break;
       case 17:
-        coaData.uS1120IncomeStatement = text;
+        coaData.setUS1120IncomeStatement(text);
         break;
       case 18:
-        coaData.uS1120IncomeStatementName = text;
+        coaData.setUS1120IncomeStatementName(text);
         break;
       case 19:
-        coaData.cashFlow = text;
+        coaData.setCashFlow(text);
         break;
       case 20:
-        coaData.cashFlowName = text;
+        coaData.setCashFlowName(text);
         break;
       }
       previous = next + 1;
     }
     return coaData;
   }
+
 }

@@ -52,30 +52,32 @@ import org.openbravo.utils.FormatUtilities;
  */
 
 public class InitialClientSetup {
-  static Logger log4j = Logger.getLogger(InitialSetupUtility.class);
+  private static final Logger log4j = Logger.getLogger(InitialClientSetup.class);
   private static final long serialVersionUID = 1L;
-  private static final String NEW_LINE = "<br>\n";
-  private static final String strMessageOk = "Success";
-  private static final String strMessageError = "Error";
-  private String strTreeTypeMenu = "MM";
-  private String strTreeTypeOrg = "OO";
-  private String strTreeTypeBP = "BP";
-  private String strTreeTypeProject = "PJ";
-  private String strTreeTypeSalesRegion = "SR";
-  private String strTreeTypeProduct = "PR";
-  private String strTreeTypeAccount = "EV";
+  private static final String NEW_LINE = "<br />\n";
+  private static final String STRMESSAGEOK = "Success";
+  private static final String STRMESSAGEERROR = "Error";
+  private static final String STRTREETYPEMENU = "MM";
+  private static final String STRTREETYPEORG = "OO";
+  private static final String STRTREETYPEBP = "BP";
+  private static final String STRTREETYPEPROJECT = "PJ";
+  private static final String STRTREETYPESALESREGION = "SR";
+  private static final String STRTREETYPEPRODUCT = "PR";
+  private static final String STRTREETYPEACCOUNT = "EV";
+  private static final String STRSEPARATOR = "*****************************************************";
+  private static final String STRCLIENTNAMESUFFIX = " Admin";
   private boolean bAccountingCreated = false;
   private Tree treeOrg, treeBPartner, treeProject, treeSalesRegion, treeProduct, treeAccount,
       treeMenu;
-  private Client client = null;
-  private Role role = null;
-  private Currency currency = null;
-  private StringBuffer strHeaderLog = new StringBuffer();
-  private StringBuffer strLog = new StringBuffer();
+  private Client client;
+  private Role role;
+  private Currency currency;
+  private StringBuffer strHeaderLog;
+  private StringBuffer strLog;
 
   public InitialClientSetup() {
-    strHeaderLog.delete(0, strHeaderLog.length());
-    strLog.delete(0, strLog.length());
+    strHeaderLog = new StringBuffer();
+    strLog = new StringBuffer();
   }
 
   public String getLog() {
@@ -87,55 +89,55 @@ public class InitialClientSetup {
       String strCalendarText, boolean bCreateAccounting, FileItem fileCoAFilePath,
       Boolean bBPartner, Boolean bProduct, Boolean bProject, Boolean bCampaign, Boolean bSalesRegion) {
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
 
     String strLanguage = vars.getLanguage();
     strHeaderLog.append("@ReportSummary@").append(NEW_LINE);
     try {
       currency = InitialSetupUtility.getCurrency(strCurrencyID);
     } catch (Exception e) {
-      return logError("@CreateClientFailed@", "process() - Cannot determine currency.", e);
+      return logErrorAndRollback("@CreateClientFailed@", "process() - Cannot determine currency.", e);
     }
 
     log4j.debug("process() - Creating client.");
     obeResult = insertClient(vars, strClientName, strClientUser, strCurrencyID);
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(STRMESSAGEOK))
       return obeResult;
     log4j.debug("process() - Client correctly created.");
 
     log4j.debug("process() - Creating trees.");
     obeResult = insertTrees(vars);
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(STRMESSAGEOK))
       return obeResult;
     log4j.debug("process() - Trees correcly created.");
 
     log4j.debug("process() - Creating client information.");
     obeResult = insertClientInfo();
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(STRMESSAGEOK))
       return obeResult;
     log4j.debug("process() - Client information correcly created.");
 
     log4j.debug("process() - Inserting images.");
     obeResult = insertImages(vars);
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(STRMESSAGEOK))
       return obeResult;
     log4j.debug("process() - Images correctly inserted.");
 
     log4j.debug("process() - Inserting roles.");
     obeResult = insertRoles();
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(STRMESSAGEOK))
       return obeResult;
     log4j.debug("process() - Roles correctly inserted.");
 
     log4j.debug("process() - Inserting client user.");
     obeResult = insertUser(strClientUser, strClientName, strPassword, strLanguage);
-    if (!obeResult.getType().equals(strMessageOk))
+    if (!obeResult.getType().equals(STRMESSAGEOK))
       return obeResult;
     log4j.debug("process() - Client user correctly inserted. CLIENT CREATION COMPLETED CORRECTLY!");
 
     strHeaderLog.append(NEW_LINE).append("@CreateClientSuccess@").append(NEW_LINE);
     logEvent(NEW_LINE + "@CreateClientSuccess@");
-    logEvent(NEW_LINE + "*****************************************************");
+    logEvent(NEW_LINE + STRSEPARATOR);
 
     if (bCreateAccounting == false) {
       log4j.debug("process() - No accounting will be created.");
@@ -144,7 +146,7 @@ public class InitialClientSetup {
       log4j.debug("process() - Accounting creation for the new client.");
       obeResult = createAccounting(vars, fileCoAFilePath, bBPartner, bProduct, bProject, bCampaign,
           bSalesRegion, strAccountText, strCalendarText);
-      if (!obeResult.getType().equals(strMessageOk))
+      if (!obeResult.getType().equals(STRMESSAGEOK))
         return obeResult;
       bAccountingCreated = true;
       log4j.debug("process() - Accounting creation finished correctly.");
@@ -165,7 +167,7 @@ public class InitialClientSetup {
       obeResult = createReferenceData(vars, strModules, strAccountText, bProduct, bBPartner,
           bProject, bCampaign, bSalesRegion, (bAccountingCreated) ? false : bCreateAccounting,
           strCalendarText);
-      if (!obeResult.getType().equals(strMessageOk))
+      if (!obeResult.getType().equals(STRMESSAGEOK))
         return obeResult;
       logEvent(NEW_LINE + "@CreateReferenceDataSuccess@");
       strHeaderLog.append(NEW_LINE + "@CreateReferenceDataSuccess@" + NEW_LINE);
@@ -174,31 +176,31 @@ public class InitialClientSetup {
     try {
       OBDal.getInstance().commitAndClose();
     } catch (Exception e) {
-      logError(
+      logErrorAndRollback(
           "@ExceptionInCommit@",
           "createClient() - Exception occured while performing commit in database. Your data may have NOT been saved in database.",
           e);
     }
-    obeResult.setType(strMessageOk);
-    obeResult.setMessage("@" + strMessageOk + "@");
+    obeResult.setType(STRMESSAGEOK);
+    obeResult.setMessage("@" + STRMESSAGEOK + "@");
 
     return obeResult;
   }
 
-  private OBError insertClient(VariablesSecureApp vars, String strClientName, String strClientUser,
+  OBError insertClient(VariablesSecureApp vars, String strClientName, String strClientUser,
       String strCurrency) {
     log4j.debug("insertClient() - Starting client creation.");
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
 
     log4j.debug("insertClient() - Checking if name chosen for the client is already in use.");
     try {
       if (InitialSetupUtility.existsClientName(strClientName)) {
-        return logError("@DuplicateClient@",
+        return logErrorAndRollback("@DuplicateClient@",
             "insertClient() - ERROR - Client Name already existed in database: " + strClientName);
       }
     } catch (Exception e) {
-      return logError("@DuplicateClient@",
+      return logErrorAndRollback("@DuplicateClient@",
           "insertClient() - ERROR - Exception checking existency in database of client "
               + strClientName, e);
     }
@@ -207,11 +209,11 @@ public class InitialClientSetup {
     log4j.debug("insertClient() - Checking if user name chosen for the client is already in use.");
     try {
       if (InitialSetupUtility.existsUserName(strClientUser)) {
-        return logError("@DuplicateClientUser@",
+        return logErrorAndRollback("@DuplicateClientUser@",
             "insertClient() - ERROR - User Name already existed in database: " + strClientUser);
       }
     } catch (Exception e) {
-      return logError("@DuplicateClientUser@",
+      return logErrorAndRollback("@DuplicateClientUser@",
           "insertClient() - ERROR - Exception checking existency in database of user "
               + strClientUser, e);
     }
@@ -224,11 +226,11 @@ public class InitialClientSetup {
     try {
       client = InitialSetupUtility.insertClient(strClientName, strCurrency);
       if (client == null) {
-        return logError("@CreateClientFailed@", "insertClient() - ERROR - Failed creating user "
+        return logErrorAndRollback("@CreateClientFailed@", "insertClient() - ERROR - Failed creating user "
             + strClientUser);
       }
     } catch (Exception e) {
-      return logError("@CreateClientFailed@", "insertClient() - ERROR - Exception creating user "
+      return logErrorAndRollback("@CreateClientFailed@", "insertClient() - ERROR - Exception creating user "
           + strClientUser, e);
     }
     vars.setSessionValue("AD_Client_ID", client.getId());
@@ -237,14 +239,14 @@ public class InitialClientSetup {
     return obeResult;
   }
 
-  private OBError insertTrees(VariablesSecureApp vars) {
+  OBError insertTrees(VariablesSecureApp vars) {
     if (client == null)
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertTrees() - ERROR - No client in class attribute client! Cannot create trees.");
 
     log4j.debug("insertTrees() - Inserting trees for client " + client.getName());
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
 
     logEvent(NEW_LINE + "@Client@=" + client.getName());
 
@@ -253,11 +255,11 @@ public class InitialClientSetup {
     try {
       treeList = InitialSetupUtility.treeRelation();
     } catch (Exception e) {
-      return logError("@CreateClientFailed@", "insertTrees() - ERROR - Not able to retrieve trees",
+      return logErrorAndRollback("@CreateClientFailed@", "insertTrees() - ERROR - Not able to retrieve trees",
           e);
     }
     if (treeList == null) {
-      return logError("@CreateClientFailed@", "insertTrees() - ERROR - Not able to retrieve trees");
+      return logErrorAndRollback("@CreateClientFailed@", "insertTrees() - ERROR - Not able to retrieve trees");
     } else {
       log4j.debug("insertTrees() - Retrieved " + treeList.size() + " trees.");
     }
@@ -270,14 +272,14 @@ public class InitialClientSetup {
         log4j.debug("insertTrees() - Processing tree " + listElement.getName() + "("
             + listElement.getDescription() + ")");
 
-        if (listElement.getSearchKey().equals(strTreeTypeMenu)) {
+        if (listElement.getSearchKey().equals(STRTREETYPEMENU)) {
           log4j.debug("insertTrees() - It is a menu tree");
-          Tree t = InitialSetupUtility.getSystemMenuTree(strTreeTypeMenu);
+          Tree t = InitialSetupUtility.getSystemMenuTree(STRTREETYPEMENU);
           if (t == null)
-            return logError("@CreateClientFailed@",
+            return logErrorAndRollback("@CreateClientFailed@",
                 "insertTrees() - ERROR - Unable to obtain system menu tree");
           else {
-            saveTree(t, strTreeTypeMenu);
+            saveTree(t, STRTREETYPEMENU);
             log4j.debug("insertTrees() - Saved menu tree.");
           }
         } else {
@@ -288,7 +290,7 @@ public class InitialClientSetup {
 
           Tree t = InitialSetupUtility.insertTree(client, strName, strTreeType, true);
           if (t == null)
-            return logError("@CreateClientFailed@",
+            return logErrorAndRollback("@CreateClientFailed@",
                 "insertTrees() - ERROR - Unable to create trees for the client");
           logEvent("@Client@=" + strName);
           log4j.debug("insertTrees() - Tree correctly inserted in database");
@@ -296,7 +298,7 @@ public class InitialClientSetup {
         }
       }
     } catch (Exception e) {
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertTrees() - ERROR - Unable to create trees; an exception occured.", e);
     }
 
@@ -304,52 +306,54 @@ public class InitialClientSetup {
     return obeResult;
   }
 
-  private void saveTree(Tree tree, String strTreeType) {
+  void saveTree(Tree tree, String strTreeType) {
 
+    if (strTreeType == null)
+      log4j.debug("saveTree() - strTreeType is null!!");
     log4j.debug("saveTree() - Saving tree " + tree.getName());
-    if (strTreeType.equals(strTreeTypeOrg)) {
+    if (strTreeType.equals(STRTREETYPEORG)) {
       treeOrg = tree;
       return;
-    } else if (strTreeType.equals(strTreeTypeBP)) {
+    } else if (strTreeType.equals(STRTREETYPEBP)) {
       treeBPartner = tree;
       return;
-    } else if (strTreeType.equals(strTreeTypeProject)) {
+    } else if (strTreeType.equals(STRTREETYPEPROJECT)) {
       treeProject = tree;
       return;
-    } else if (strTreeType.equals(strTreeTypeSalesRegion)) {
+    } else if (strTreeType.equals(STRTREETYPESALESREGION)) {
       treeSalesRegion = tree;
       return;
-    } else if (strTreeType.equals(strTreeTypeProduct)) {
+    } else if (strTreeType.equals(STRTREETYPEPRODUCT)) {
       treeProduct = tree;
       return;
-    } else if (strTreeType.endsWith(strTreeTypeAccount)) {
+    } else if (strTreeType.endsWith(STRTREETYPEACCOUNT)) {
       treeAccount = tree;
       return;
-    } else if (strTreeType.endsWith(strTreeTypeMenu)) {
+    } else if (strTreeType.endsWith(STRTREETYPEMENU)) {
       treeMenu = tree;
       return;
     }
   }
 
-  private OBError insertClientInfo() {
+  OBError insertClientInfo() {
     log4j.debug("insertClientInfo() - Starting the creation of client information.");
     if (client == null || treeMenu == null || treeOrg == null || treeBPartner == null
         || treeProject == null || treeSalesRegion == null || treeProduct == null) {
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Required information is not present. "
               + "Please check that client and trees where correctly created.");
     }
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
     ClientInformation clientInfo;
     try {
       clientInfo = InitialSetupUtility.insertClientinfo(client, treeMenu, treeOrg, treeBPartner,
           treeProject, treeSalesRegion, treeProduct, true);
       if (clientInfo == null)
-        return logError("@CreateClientFailed@",
+        return logErrorAndRollback("@CreateClientFailed@",
             "insertClientInfo() - ERROR - Unable to create client information");
     } catch (Exception e) {
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Unable to create client information", e);
     }
     log4j.debug("insertClientInfo() - Client Information correctly saved in database."
@@ -357,27 +361,27 @@ public class InitialClientSetup {
 
     try {
       if (!InitialSetupUtility.setClientInformation(client, clientInfo))
-        return logError("@CreateClientFailed@",
+        return logErrorAndRollback("@CreateClientFailed@",
             "insertClientInfo() - ERROR - Unable to create client information");
     } catch (Exception e) {
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Unable to create client information", e);
     }
     log4j.debug("insertClientInfo() - Client Information correctly associated to the client.");
     return obeResult;
   }
 
-  private OBError insertImages(VariablesSecureApp vars) {
+  OBError insertImages(VariablesSecureApp vars) {
     if (client == null)
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertImages() - ERROR - No client in class attribute client! Cannot create trees.");
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
     log4j.debug("insertImages() - Setting client images");
     try {
       InitialSetupUtility.setClientImages(client);
     } catch (Exception e) {
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertImages() - ERROR - Unable to set client images", e);
     }
     log4j.debug("insertImages() - Client images correctly set");
@@ -385,23 +389,23 @@ public class InitialClientSetup {
     return obeResult;
   }
 
-  private OBError insertRoles() {
+  OBError insertRoles() {
     if (client == null)
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertRoles() - ERROR - No client in class attribute client! Cannot create trees.");
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
 
-    String strRoleName = client.getName() + " Admin";
+    String strRoleName = client.getName() + STRCLIENTNAMESUFFIX;
     log4j.debug("insertRoles() - Inserting role with name= " + strRoleName);
 
     try {
       role = InitialSetupUtility.insertRole(client, null, strRoleName, null);
       if (role == null)
-        return logError("@CreateClientFailed@",
+        return logErrorAndRollback("@CreateClientFailed@",
             "insertRoles() - ERROR - Not able to insert the role" + strRoleName);
     } catch (Exception e) {
-      return logError("@CreateClientFailed@", "insertRoles() - ERROR - Not able to insert the role"
+      return logErrorAndRollback("@CreateClientFailed@", "insertRoles() - ERROR - Not able to insert the role"
           + strRoleName, e);
     }
     log4j.debug("insertRoles() - Role inserted correctly");
@@ -411,10 +415,10 @@ public class InitialClientSetup {
     try {
       RoleOrganization roleOrg = InitialSetupUtility.insertRoleOrganization(role, null);
       if (roleOrg == null)
-        return logError("@CreateClientFailed@",
+        return logErrorAndRollback("@CreateClientFailed@",
             "insertRoles() - Not able to insert the role organizations access" + strRoleName);
     } catch (Exception e) {
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertRoles() - Not able to insert the role organizations access" + strRoleName, e);
     }
     log4j.debug("insertRoles() - Role organizations access inserted correctly");
@@ -424,13 +428,13 @@ public class InitialClientSetup {
     return obeResult;
   }
 
-  private OBError insertUser(String strUserNameProvided, String strClientName, String strPassword,
+  OBError insertUser(String strUserNameProvided, String strClientName, String strPassword,
       String strLanguage) {
     if (client == null)
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertUser() - ERROR - No client in class attribute client! Cannot create trees.");
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
 
     String strUserName = strUserNameProvided;
     if (strUserName == null || strUserName.length() == 0)
@@ -441,7 +445,7 @@ public class InitialClientSetup {
       user = InitialSetupUtility.insertUser(client, null, strUserName, FormatUtilities
           .sha1Base64(strPassword), role, InitialSetupUtility.getLanguage(strLanguage));
     } catch (Exception e) {
-      return logError("@CreateClientFailed@", "insertUser() - ERROR - Not able to insert the user "
+      return logErrorAndRollback("@CreateClientFailed@", "insertUser() - ERROR - Not able to insert the user "
           + strUserName, e);
     }
     log4j.debug("insertUser() - User correctly inserted. Inserting user roles.");
@@ -450,7 +454,7 @@ public class InitialClientSetup {
     try {
       InitialSetupUtility.insertUserRoles(client, user, null, role);
     } catch (Exception e) {
-      return logError("@CreateClientFailed@", "insertUser() - Not able to insert the user "
+      return logErrorAndRollback("@CreateClientFailed@", "insertUser() - Not able to insert the user "
           + strUserName, e);
     }
     log4j.debug("insertUser() - User roles correctly inserted.");
@@ -458,16 +462,16 @@ public class InitialClientSetup {
     return obeResult;
   }
 
-  private OBError createAccounting(VariablesSecureApp vars,
+  OBError createAccounting(VariablesSecureApp vars,
       org.apache.commons.fileupload.FileItem fileCoAFilePath, Boolean bBPartner, Boolean bProduct,
       Boolean bProject, Boolean bCampaign, Boolean bSalesRegion, String strAccountText,
       String strCalendarText) {
     if (client == null || treeAccount == null)
-      return logError(
+      return logErrorAndRollback(
           "@CreateAccountingFailed@",
           "createAccounting() - ERROR - No client or account tree in the class attributes! Cannot create accounting.");
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
 
     log4j.debug("createAccounting() - Starting the creation of the accounting.");
     logEvent(NEW_LINE + "@StartingAccounting@" + NEW_LINE);
@@ -476,7 +480,7 @@ public class InitialClientSetup {
     try {
       istrFileCoA = fileCoAFilePath.getInputStream();
     } catch (IOException e) {
-      return logError("@CreateAccountingFailed@",
+      return logErrorAndRollback("@CreateAccountingFailed@",
           "createAccounting() - Exception occured while reading the file "
               + fileCoAFilePath.getName(), e);
     }
@@ -487,15 +491,15 @@ public class InitialClientSetup {
     return obeResult;
   }
 
-  private OBError insertAccountingModule(VariablesSecureApp vars, String strModules,
-      boolean bBPartner, boolean bProduct, boolean bProject, boolean bCampaign,
-      boolean bSalesRegion, String strAccountText, String strCalendarText) {
+  OBError insertAccountingModule(VariablesSecureApp vars, String strModules, boolean bBPartner,
+      boolean bProduct, boolean bProject, boolean bCampaign, boolean bSalesRegion,
+      String strAccountText, String strCalendarText) {
     log4j.debug("insertAccountingModule() - Starting client creation.");
     if (client == null)
-      return logError("@CreateClientFailed@",
+      return logErrorAndRollback("@CreateClientFailed@",
           "insertAccountingModule() - ERROR - No client in class attribute client! Cannot create accounting.");
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
     List<Module> lCoaModules = null;
     Module modCoA = null;
     try {
@@ -503,7 +507,7 @@ public class InitialClientSetup {
       // Modules with CoA are retrieved.
       if (lCoaModules.size() > 1) {
         // If more than one accounting module was provided, throws error
-        return logError("@CreateReferenceDataFailed@. @OneCoAModule@", "createReferenceData() - "
+        return logErrorAndRollback("@CreateReferenceDataFailed@. @OneCoAModule@", "createReferenceData() - "
             + "Error. More than one chart of accounts module was selected");
       } else if (lCoaModules.size() == 1) {
         // If just one CoA module was selected, accounting is created
@@ -519,35 +523,35 @@ public class InitialClientSetup {
             bCampaign, bSalesRegion, strAccountText, "US", "A", strCalendarText, currency);
         strLog.append(coaUtility.getLog());
       } else
-        return logError(
+        return logErrorAndRollback(
             "@CreateReferenceDataFailed@. @CreateAccountingButNoCoAProvided@",
             "createReferenceData() - Create accounting option was active, but no file was provided, and no accoutning module was chosen");
     } catch (Exception e) {
-      return logError("@CreateReferenceDataFailed@",
+      return logErrorAndRollback("@CreateReferenceDataFailed@",
           "createReferenceData() - Exception while processing accounting modules", e);
     }
     ADClientModule clientModule = null;
     try {
       clientModule = InitialSetupUtility.insertClientModule(client, modCoA);
     } catch (Exception e) {
-      return logError("@CreateReferenceDataFailed@",
+      return logErrorAndRollback("@CreateReferenceDataFailed@",
           "createReferenceData() - Exception while updating version installed of the accounting module "
               + modCoA.getName(), e);
     }
     if (clientModule == null)
-      return logError("@CreateReferenceDataFailed@",
+      return logErrorAndRollback("@CreateReferenceDataFailed@",
           "createReferenceData() - Exception while updating version installed of the accounting module "
               + modCoA.getName());
     return obeResult;
   }
 
-  private OBError createReferenceData(VariablesSecureApp vars, String strModulesProvided,
+  OBError createReferenceData(VariablesSecureApp vars, String strModulesProvided,
       String strAccountText, boolean bProduct, boolean bBPartner, boolean bProject,
       boolean bCampaign, boolean bSalesRegion, boolean bCreateAccounting, String strCalendarText) {
     log4j.debug("createReferenceData() - Starting the process to create"
         + " reference data for modules: " + strModulesProvided);
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
 
     String strModules = cleanUpStrModules(strModulesProvided);
     log4j.debug("createReferenceData() - Modules to be processed: " + strModules);
@@ -557,7 +561,7 @@ public class InitialClientSetup {
         log4j.debug("createReferenceData() - There exists accounting modules to process");
         obeResult = insertAccountingModule(vars, strModules, bBPartner, bProduct, bProject,
             bCampaign, bSalesRegion, strAccountText, strCalendarText);
-        if (!obeResult.getType().equals(strMessageOk))
+        if (!obeResult.getType().equals(STRMESSAGEOK))
           return obeResult;
         log4j.debug("createReferenceData() - Accounting module processed. ");
       }
@@ -567,24 +571,24 @@ public class InitialClientSetup {
           log4j.debug("createReferenceData() - " + lRefDataModules.size()
               + " reference data modules to install");
           obeResult = insertReferenceDataModules(lRefDataModules);
-          if (!obeResult.getType().equals(strMessageOk))
+          if (!obeResult.getType().equals(STRMESSAGEOK))
             return obeResult;
           log4j.debug("createReferenceData() - Reference data correctly created");
         } else
           log4j.debug("InitialClientSetup - createReferenceData "
               + "- No Reference Data modules to be installed.");
       } catch (Exception e) {
-        return logError("@CreateReferenceDataFailed@",
+        return logErrorAndRollback("@CreateReferenceDataFailed@",
             "createReferenceData() - Exception ocurred while inserting reference data", e);
       }
     }
     return obeResult;
   }
 
-  private OBError insertReferenceDataModules(List<Module> refDataModules) {
+  OBError insertReferenceDataModules(List<Module> refDataModules) {
     log4j.debug("insertReferenceDataModules() - Starting client creation.");
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
     ArrayList<String> strModules = new ArrayList<String>();
 
     for (Module module : refDataModules)
@@ -593,7 +597,7 @@ public class InitialClientSetup {
     try {
       strModules = new ArrayList<String>(ModuleUtiltiy.orderByDependency(strModules));
     } catch (Exception e) {
-      return logError("@CreateReferenceDataFailed@",
+      return logErrorAndRollback("@CreateReferenceDataFailed@",
           "insertReferenceDataModules() - Exception ocurred while "
               + "sorting reference data modules by dependencies", e);
     }
@@ -605,7 +609,7 @@ public class InitialClientSetup {
         if (refDataModules.get(j).getId().equals(strModuleId))
           module = refDataModules.get(j);
       if (module == null)
-        return logError("@CreateReferenceDataFailed@",
+        return logErrorAndRollback("@CreateReferenceDataFailed@",
             "insertReferenceDataModules() - ERROR - Cannot retrieve the module of id "
                 + strModuleId);
 
@@ -616,11 +620,11 @@ public class InitialClientSetup {
       try {
         lDataSets = InitialSetupUtility.getDataSets(module, "3");
         if (lDataSets == null)
-          return logError("@CreateReferenceDataFailed@",
+          return logErrorAndRollback("@CreateReferenceDataFailed@",
               "insertReferenceDataModules() - ERROR ocurred while obtaining datasets for module "
                   + module.getName());
       } catch (Exception e) {
-        return logError("@CreateReferenceDataFailed@",
+        return logErrorAndRollback("@CreateReferenceDataFailed@",
             "insertReferenceDataModules() - Exception ocurred while obtaining datasets for module "
                 + module.getName(), e);
       }
@@ -636,14 +640,14 @@ public class InitialClientSetup {
         try {
           iResult = InitialSetupUtility.insertReferenceData(dataSet, client, null);
         } catch (Exception e) {
-          return logError("@CreateReferenceDataFailed@",
+          return logErrorAndRollback("@CreateReferenceDataFailed@",
               "insertReferenceDataModules() - Exception ocurred while obtaining datasets for module "
                   + module.getName(), e);
         }
         if (iResult.getErrorMessages() != null && !iResult.getErrorMessages().equals("")
             && !iResult.getErrorMessages().equals("null")) {
           logEvent(iResult.getErrorMessages());
-          return logError("@CreateReferenceDataFailed@",
+          return logErrorAndRollback("@CreateReferenceDataFailed@",
               "insertReferenceDataModules() - Exception ocurred while obtaining datasets for module "
                   + module.getName() + NEW_LINE + iResult.getErrorMessages());
         }
@@ -664,13 +668,13 @@ public class InitialClientSetup {
       try {
         clientModule = InitialSetupUtility.insertClientModule(client, module);
       } catch (Exception e) {
-        return logError(
+        return logErrorAndRollback(
             "@CreateReferenceDataFailed@",
             "insertReferenceDataModules() - Exception while updating version installed of the accounting module "
                 + module.getName(), e);
       }
       if (clientModule == null)
-        return logError(
+        return logErrorAndRollback(
             "@CreateReferenceDataFailed@",
             "insertReferenceDataModules() - Exception while updating version installed of the accounting module "
                 + module.getName());
@@ -714,10 +718,10 @@ public class InitialClientSetup {
    *          Exception: optional parameter, just in case the error was caused by an exception
    *          raised
    */
-  private OBError logError(String strMessage, String strLogError, Exception e) {
+  private OBError logErrorAndRollback(String strMessage, String strLogError, Exception e) {
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageError);
-    obeResult.setTitle(strMessageError);
+    obeResult.setType(STRMESSAGEERROR);
+    obeResult.setTitle(STRMESSAGEERROR);
     obeResult.setMessage(strMessage);
     logEvent(strMessage);
     strHeaderLog.append(NEW_LINE + strMessage + NEW_LINE);
@@ -738,8 +742,8 @@ public class InitialClientSetup {
     return obeResult;
   }
 
-  private OBError logError(String strMessage, String strLogError) {
-    return logError(strMessage, strLogError, null);
+  private OBError logErrorAndRollback(String strMessage, String strLogError) {
+    return logErrorAndRollback(strMessage, strLogError, null);
   }
 
 }

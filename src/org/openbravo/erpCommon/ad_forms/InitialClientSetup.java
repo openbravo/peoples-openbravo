@@ -38,10 +38,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InitialClientSetup extends HttpSecureAppServlet {
 
-  static Logger log4j = Logger.getLogger(InitialClientSetup.class);
+  private static final Logger log4j = Logger.getLogger(InitialClientSetup.class);
   private static final long serialVersionUID = 1L;
-  private static final String strMessageOk = "Success";
-  private StringBuffer strLog = new StringBuffer();
+  private static final String STRMESSAGEOK = "Success";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -51,10 +50,10 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       printPage(response, vars);
     } else if (vars.commandIn("OK")) {
       String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
-      strLog.delete(0, strLog.length());
-      OBError obeResultado = process(request, response, vars, strModules);
+      StringBuffer strLog = new StringBuffer();
+      OBError obeResultado = process(request, response, vars, strModules, strLog);
       log4j.debug("InitialClientSetup - after processFile");
-      printPageResult(response, vars, obeResultado);
+      printPageResult(response, vars, obeResultado, strLog);
     } else
       pageError(response);
   }
@@ -114,7 +113,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   }
 
   private void printPageResult(HttpServletResponse response, VariablesSecureApp vars,
-      OBError obeResult) throws IOException, ServletException {
+      OBError obeResult, StringBuffer strLog) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/Resultado").createXmlDocument();
     String strLanguage = vars.getLanguage();
@@ -156,11 +155,11 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   }
 
   private OBError process(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, String strModules) throws IOException {
+      VariablesSecureApp vars, String strModules, StringBuffer strLog) throws IOException {
 
     log4j.debug("process() - Initial Client Setup Process Start - strModules - " + strModules);
     OBError obeResult = new OBError();
-    obeResult.setType(strMessageOk);
+    obeResult.setType(STRMESSAGEOK);
 
     String strClientName = vars.getStringParameter("inpClient");
     String strClientUser = vars.getStringParameter("inpClientUser");

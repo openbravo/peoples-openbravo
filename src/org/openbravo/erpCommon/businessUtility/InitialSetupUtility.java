@@ -78,22 +78,44 @@ import org.openbravo.service.db.ImportResult;
  *         Initial Client Setup Utility class
  */
 public class InitialSetupUtility {
-  static Logger log4j = Logger.getLogger(InitialSetupUtility.class);
+  private static final Logger log4j = Logger.getLogger(InitialSetupUtility.class);
 
+  /**
+   * 
+   * @param strClient
+   *          name of the client
+   * @return true if exists client in database with provided name
+   * @throws Exception
+   */
   public static boolean existsClientName(String strClient) throws Exception {
     final OBCriteria<Client> obcClient = OBDal.getInstance().createCriteria(Client.class);
     obcClient.add(Expression.eq(Client.PROPERTY_NAME, strClient));
-    return (obcClient.list().size() > 0);
+    return obcClient.count() > 0;
   }
 
+  /**
+   * 
+   * @param strUser
+   *          user name
+   * @return true if exists a user with the name provided in database
+   * @throws Exception
+   */
   public static boolean existsUserName(String strUser) throws Exception {
     final OBCriteria<User> obcClient = OBDal.getInstance().createCriteria(User.class);
     obcClient.add(Expression.eq(Client.PROPERTY_NAME, strUser));
-    return (obcClient.list().size() > 0);
+    return obcClient.count() > 0;
   }
 
+  /**
+   * 
+   * @param strClientName
+   *          client name
+   * @param strCurrency
+   *          currency id
+   * @return Client object for the created client
+   * @throws Exception
+   */
   public static Client insertClient(String strClientName, String strCurrency) throws Exception {
-
     log4j.debug("InitialSetupUtility - insertClient() - clientName = " + strClientName);
     Currency currency = getCurrency(strCurrency);
     final Client newClient = OBProvider.getInstance().get(Client.class);
@@ -107,15 +129,24 @@ public class InitialSetupUtility {
     return newClient;
   }
 
+  /**
+   * 
+   * @param strCurrencyID
+   *          c_currency_id
+   * @return Currency object that belongs to provided id
+   * @throws Exception
+   */
   public static Currency getCurrency(String strCurrencyID) throws Exception {
-    final OBCriteria<Currency> obcCurrency = OBDal.getInstance().createCriteria(Currency.class);
-    obcCurrency.add(Expression.eq(Currency.PROPERTY_ID, strCurrencyID));
-    if (obcCurrency.list().size() > 0)
-      return obcCurrency.list().get(0);
-    else
-      return null;
+    return OBDal.getInstance().get(Currency.class, strCurrencyID);
   }
 
+  /**
+   * 
+   * @param strLanguage
+   *          language key (for example en_US)
+   * @return Language object corresponding to provided key
+   * @throws Exception
+   */
   public static Language getLanguage(String strLanguage) throws Exception {
     final OBCriteria<Language> obcLanguage = OBDal.getInstance().createCriteria(Language.class);
     obcLanguage.add(Expression.eq(Language.PROPERTY_LANGUAGE, strLanguage));
@@ -130,6 +161,7 @@ public class InitialSetupUtility {
    * called AD_TreeType Type
    * 
    * @return java.util.List<org.openbravo.model.ad.domain.List>: the relation of AD list elements
+   * @throws Exception
    */
   public static List<org.openbravo.model.ad.domain.List> treeRelation() throws Exception {
 
@@ -150,6 +182,14 @@ public class InitialSetupUtility {
     return obcRefTreeList.list();
   }
 
+  /**
+   * Returns the tree of the provided type
+   * 
+   * @param strTreeTypeMenu
+   *          two letters corresponding to the tree type for the menu
+   * @return Tree menu element (defined at system level)
+   * @throws Exception
+   */
   public static Tree getSystemMenuTree(String strTreeTypeMenu) throws Exception {
     final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
     obcTree.add(Expression.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
@@ -159,6 +199,15 @@ public class InitialSetupUtility {
     return lTrees.get(0);
   }
 
+  /**
+   * 
+   * @param client
+   * @param name
+   * @param treeType
+   * @param boIsAllNodes
+   * @return object Tree for the new tree
+   * @throws Exception
+   */
   public static Tree insertTree(Client client, String name, String treeType, Boolean boIsAllNodes)
       throws Exception {
     final Tree newTree = OBProvider.getInstance().get(Tree.class);
@@ -172,6 +221,19 @@ public class InitialSetupUtility {
     return newTree;
   }
 
+  /**
+   * 
+   * @param client
+   * @param menuTree
+   * @param orgTree
+   * @param bpartnerTree
+   * @param projectTree
+   * @param salesRegionTree
+   * @param productTree
+   * @param boDiscountCalculatedFromLineAmounts
+   * @return ClientInformation object for the new element
+   * @throws Exception
+   */
   public static ClientInformation insertClientinfo(Client client, Tree menuTree, Tree orgTree,
       Tree bpartnerTree, Tree projectTree, Tree salesRegionTree, Tree productTree,
       Boolean boDiscountCalculatedFromLineAmounts) throws Exception {
@@ -189,6 +251,14 @@ public class InitialSetupUtility {
     return newClientInfo;
   }
 
+  /**
+   * Associates a client info record to a client
+   * 
+   * @param client
+   * @param clientInfo
+   * @return true if update was correct
+   * @throws Exception
+   */
   public static boolean setClientInformation(Client client, ClientInformation clientInfo)
       throws Exception {
     boolean boResult = client.getClientInformationList().add(clientInfo);
@@ -197,14 +267,23 @@ public class InitialSetupUtility {
     return boResult;
   }
 
+  /**
+   * 
+   * @param client
+   * @throws Exception
+   */
   public static void setClientImages(Client client) throws Exception {
     SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
     setYourCompanyBigImage(sys, client);
     setYourCompanyDocumentImage(sys, client);
     setYourCompanyMenuImage(sys, client);
-    return;
   }
 
+  /**
+   * 
+   * @param sys
+   * @param client
+   */
   public static void setYourCompanyBigImage(SystemInformation sys, Client client) {
     Image yourCompanyBigImage = OBProvider.getInstance().get(Image.class);
     Image systemCompanyBigImage = sys.getYourCompanyBigImage();
@@ -216,9 +295,13 @@ public class InitialSetupUtility {
       OBDal.getInstance().save(yourCompanyBigImage);
       OBDal.getInstance().flush();
     }
-    return;
   }
 
+  /**
+   * 
+   * @param sys
+   * @param client
+   */
   public static void setYourCompanyDocumentImage(SystemInformation sys, Client client) {
     Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
     if (sys.getYourCompanyDocumentImage() != null) {
@@ -230,9 +313,13 @@ public class InitialSetupUtility {
       OBDal.getInstance().save(yourCompanyDocumentImage);
       OBDal.getInstance().flush();
     }
-    return;
   }
 
+  /**
+   * 
+   * @param sys
+   * @param client
+   */
   public static void setYourCompanyMenuImage(SystemInformation sys, Client client) {
     Image yourCompanyMenuImage = OBProvider.getInstance().get(Image.class);
     if (sys.getYourCompanyMenuImage() != null) {
@@ -243,7 +330,6 @@ public class InitialSetupUtility {
       OBDal.getInstance().save(yourCompanyMenuImage);
       OBDal.getInstance().flush();
     }
-    return;
   }
 
   /**
@@ -256,7 +342,7 @@ public class InitialSetupUtility {
    *          name of the role
    * @param strUserLevel
    *          if null, user level " CO" will be set to the new role
-   * @return
+   * @return Role object for new element
    */
   public static Role insertRole(Client client, Organization orgProvided, String name,
       String strUserLevelProvided) throws Exception {
@@ -267,7 +353,7 @@ public class InitialSetupUtility {
     } else
       organization = orgProvided;
     String strUserLevel;
-    if (strUserLevelProvided == null || strUserLevelProvided == "")
+    if (strUserLevelProvided == null || strUserLevelProvided.equals(""))
       strUserLevel = " CO";
     else
       strUserLevel = strUserLevelProvided;
@@ -291,7 +377,7 @@ public class InitialSetupUtility {
    *          role for which the organization access information will be created
    * @param orgProvided
    *          if null, organization with id "0" will be used
-   * @return
+   * @return RoleOrganization object for new element
    */
   public static RoleOrganization insertRoleOrganization(Role role, Organization orgProvided)
       throws Exception {
@@ -312,6 +398,17 @@ public class InitialSetupUtility {
     return newRoleOrganization;
   }
 
+  /**
+   * 
+   * @param client
+   * @param orgProvided
+   * @param name
+   * @param password
+   * @param role
+   * @param defaultLanguage
+   * @return User object
+   * @throws Exception
+   */
   public static User insertUser(Client client, Organization orgProvided, String name,
       String password, Role role, Language defaultLanguage) throws Exception {
     Organization organization = null;
@@ -335,6 +432,15 @@ public class InitialSetupUtility {
     return newUser;
   }
 
+  /**
+   * 
+   * @param client
+   * @param user
+   * @param orgProvided
+   * @param role
+   * @return UserRoles object for new element
+   * @throws Exception
+   */
   public static UserRoles insertUserRole(Client client, User user, Organization orgProvided,
       Role role) throws Exception {
     try {
@@ -361,15 +467,30 @@ public class InitialSetupUtility {
 
   }
 
+  /**
+   * Inserts a new role for the created client and user. Also user Openbravo will have rights to
+   * access new client
+   * 
+   * @param client
+   * @param user
+   * @param organization
+   * @param role
+   * @throws Exception
+   */
   public static void insertUserRoles(Client client, User user, Organization organization, Role role)
       throws Exception {
-    // ClientUser - Admin & User
     insertUserRole(client, user, organization, role);
-    // SuperUser(100) - Admin & User
     insertUserRole(client, OBDal.getInstance().get(User.class, "100"), organization, role);
-    return;
   }
 
+  /**
+   * 
+   * @param client
+   * @param orgProvided
+   * @param name
+   * @return Calendar object for new element
+   * @throws Exception
+   */
   public static Calendar insertCalendar(Client client, Organization orgProvided, String name)
       throws Exception {
     Organization organization = null;
@@ -388,16 +509,23 @@ public class InitialSetupUtility {
     return newCalendar;
   }
 
+  /**
+   * 
+   * @return Organization object for * organization (with id 0)
+   */
   private static Organization getZeroOrg() {
-    final OBCriteria<Organization> obcOrg = OBDal.getInstance().createCriteria(Organization.class);
-    obcOrg.add(Expression.eq(Organization.PROPERTY_ID, "0"));
-    List<Organization> lOrgs = obcOrg.list();
-    if (lOrgs.size() == 1)
-      return lOrgs.get(0);
-    else
-      return null;
+    return OBDal.getInstance().get(Organization.class, "0");
   }
 
+  /**
+   * 
+   * @param client
+   * @param orgProvided
+   * @param calendar
+   * @param strYearName
+   * @return Year object for new element
+   * @throws Exception
+   */
   public static Year insertYear(Client client, Organization orgProvided, Calendar calendar,
       String strYearName) throws Exception {
     Organization organization = null;
@@ -416,6 +544,16 @@ public class InitialSetupUtility {
     return newYear;
   }
 
+  /**
+   * 
+   * @param client
+   * @param orgProvided
+   * @param name
+   * @param accountTree
+   * @param bNaturalAccount
+   * @return Element object for new element
+   * @throws Exception
+   */
   public static Element insertElement(Client client, Organization orgProvided, String name,
       Tree accountTree, Boolean bNaturalAccount) throws Exception {
     Organization organization = null;
@@ -436,6 +574,22 @@ public class InitialSetupUtility {
     return newElement;
   }
 
+  /**
+   * 
+   * @param element
+   * @param orgProvided
+   * @param name
+   * @param value
+   * @param description
+   * @param accountType
+   * @param accountSign
+   * @param isDocControlled
+   * @param isSummary
+   * @param elementLevel
+   * @param doFlush
+   * @return ElementValue object for new element
+   * @throws Exception
+   */
   public static ElementValue insertElementValue(Element element, Organization orgProvided,
       String name, String value, String description, String accountType, String accountSign,
       boolean isDocControlled, boolean isSummary, String elementLevel, boolean doFlush)
@@ -467,12 +621,11 @@ public class InitialSetupUtility {
   }
 
   /**
+   * Returns the nodes of a given tree
    * 
-   * @param treeAccount
-   * @param mapSequence
-   *          HasMap<String,Long> where 1st argument (String) belongs to the value of one element
-   *          value, and 2nd argument (Long) belongs to its sequenceNumber value in ADTreeNode
-   * @return
+   * @param accountTree
+   * @param client
+   * @return List<TreeNode> with relation of tree node elements of the provided tree
    * @throws Exception
    */
   public static List<TreeNode> getTreeNode(Tree accountTree, Client client) throws Exception {
@@ -543,6 +696,15 @@ public class InitialSetupUtility {
     }
   }
 
+  /**
+   * 
+   * @param elementValue
+   * @param operand
+   * @param sign
+   * @param sequence
+   * @return ElementValueOperand object for the inserted element
+   * @throws Exception
+   */
   public static ElementValueOperand insertOperand(ElementValue elementValue, ElementValue operand,
       Long sign, Long sequence) throws Exception {
     final ElementValueOperand newElementValueOperand = OBProvider.getInstance().get(
@@ -558,18 +720,23 @@ public class InitialSetupUtility {
     return newElementValueOperand;
   }
 
+  /**
+   * 
+   * @param element
+   * @param value
+   * @return ElementValue object for the given value in the provided element
+   * @throws Exception
+   */
   public static ElementValue getElementValue(Element element, String value) throws Exception {
     try {
       OBContext.setAdminMode();
       final OBCriteria<ElementValue> obcEV = OBDal.getInstance().createCriteria(ElementValue.class);
-      if (OBContext.getOBContext().isInAdministratorMode()) {
-        obcEV.setFilterOnReadableClients(false);
-        obcEV.setFilterOnReadableOrganization(false);
-      }
-      obcEV.add(Expression.eq(ElementValue.PROPERTY_SEARCHKEY, value));
-      obcEV.add(Expression.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, element));
       if (obcEV == null)
         return null;
+      obcEV.setFilterOnReadableClients(false);
+      obcEV.setFilterOnReadableOrganization(false);
+      obcEV.add(Expression.eq(ElementValue.PROPERTY_SEARCHKEY, value));
+      obcEV.add(Expression.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, element));
       List<ElementValue> l = obcEV.list();
       if (l.size() != 1)
         return null;
@@ -581,6 +748,18 @@ public class InitialSetupUtility {
     }
   }
 
+  /**
+   * 
+   * @param client
+   * @param orgProvided
+   * @param currency
+   * @param name
+   * @param gAAP
+   * @param costingMethod
+   * @param hasAlias
+   * @return AcctSchema element that matches provided data
+   * @throws Exception
+   */
   public static AcctSchema insertAcctSchema(Client client, Organization orgProvided,
       Currency currency, String name, String gAAP, String costingMethod, boolean hasAlias)
       throws Exception {
@@ -616,7 +795,7 @@ public class InitialSetupUtility {
    * @param isBalanced
    * @param defaultAccount
    * @param accountingElement
-   * @return
+   * @return AcctSchemaElement object for the inserted element
    * @throws Exception
    */
   public static AcctSchemaElement insertAcctSchemaElement(AcctSchema acctSchema,
@@ -652,6 +831,14 @@ public class InitialSetupUtility {
     return newAcctSchemaElement;
   }
 
+  /**
+   * 
+   * @param defaultElementValues
+   *          map with DefaultAccount and ElementValue object that will be set
+   * @param acctSchema
+   * @return AcctSchemaDefault object for the created element
+   * @throws Exception
+   */
   public static AcctSchemaDefault insertAcctSchemaDefault(
       HashMap<String, ElementValue> defaultElementValues, AcctSchema acctSchema) throws Exception {
     final AcctSchemaDefault newAcctSchemaDefault = OBProvider.getInstance().get(
@@ -660,8 +847,7 @@ public class InitialSetupUtility {
     newAcctSchemaDefault.setOrganization(acctSchema.getOrganization());
     newAcctSchemaDefault.setAccountingSchema(acctSchema);
     Set<String> defaultAccts = defaultElementValues.keySet();
-    for (Iterator<String> itDefaultAccts = defaultAccts.iterator(); itDefaultAccts.hasNext();) {
-      String strDefault = itDefaultAccts.next();
+    for (String strDefault : defaultAccts) {
       Client client = defaultElementValues.get(strDefault).getClient();
       Organization org = defaultElementValues.get(strDefault).getOrganization();
       if (strDefault.equals("W_INVENTORY_ACCT"))
@@ -912,6 +1098,14 @@ public class InitialSetupUtility {
     return newAcctSchemaDefault;
   }
 
+  /**
+   * 
+   * @param defaultElementValues
+   *          map with DefaultAccount and ElementValue object that will be set
+   * @param acctSchema
+   * @return AcctSchemaGL object for the created element
+   * @throws Exception
+   */
   public static AcctSchemaGL insertAcctSchemaGL(HashMap<String, ElementValue> defaultElementValues,
       AcctSchema acctSchema) throws Exception {
     final AcctSchemaGL newAcctSchemaGL = OBProvider.getInstance().get(AcctSchemaGL.class);
@@ -920,8 +1114,7 @@ public class InitialSetupUtility {
     newAcctSchemaGL.setAccountingSchema(acctSchema);
 
     Set<String> defaultAccts = defaultElementValues.keySet();
-    for (Iterator<String> itDefaultAccts = defaultAccts.iterator(); itDefaultAccts.hasNext();) {
-      String strDefault = itDefaultAccts.next();
+    for (String strDefault : defaultAccts) {
       Client client = defaultElementValues.get(strDefault).getClient();
       Organization org = defaultElementValues.get(strDefault).getOrganization();
       if (strDefault.equals("CURRENCYBALANCING_ACCT")) {
@@ -959,9 +1152,20 @@ public class InitialSetupUtility {
     return newAcctSchemaGL;
   }
 
+  /**
+   * Returns an account combination for the provided ElementValue element. If it doesn't exists,
+   * creates a new one.
+   * 
+   * @param client
+   * @param orgProvided
+   * @param elementValue
+   * @param acctSchema
+   * @param isFullyQualified
+   * @return AccountingCombination object for the created element
+   */
   private static AccountingCombination getAcctComb(Client client, Organization orgProvided,
       ElementValue elementValue, AcctSchema acctSchema, Boolean isFullyQualified) {
-    Organization organization = null;
+    Organization organization;
     if (orgProvided == null) {
       if ((organization = getZeroOrg()) == null)
         return null;
@@ -983,6 +1187,13 @@ public class InitialSetupUtility {
     return newAcctComb;
   }
 
+  /**
+   * 
+   * @param client
+   * @param acctSchema
+   * @param orgProvided
+   * @return OrganizationAcctSchema object for the new element
+   */
   public static OrganizationAcctSchema insertOrgAcctSchema(Client client, AcctSchema acctSchema,
       Organization orgProvided) {
     Organization organization = null;
@@ -1001,6 +1212,15 @@ public class InitialSetupUtility {
     return newOrganizationAcctSchema;
   }
 
+  /**
+   * 
+   * @param client
+   * @param organization
+   * @param name
+   * @param categoryType
+   * @param isDefault
+   * @return GLCategory object for the new element
+   */
   public static GLCategory insertCategory(Client client, Organization organization, String name,
       String categoryType, boolean isDefault) {
     final GLCategory newGLCategory = OBProvider.getInstance().get(GLCategory.class);
@@ -1014,6 +1234,14 @@ public class InitialSetupUtility {
     return newGLCategory;
   }
 
+  /**
+   * 
+   * @param client
+   * @param organization
+   * @param name
+   * @param startNo
+   * @return Sequence object for the new created element
+   */
   public static Sequence insertSequence(Client client, Organization organization, String name,
       Long startNo) {
     final Sequence newSequence = OBProvider.getInstance().get(Sequence.class);
@@ -1026,6 +1254,23 @@ public class InitialSetupUtility {
     return newSequence;
   }
 
+  /**
+   * 
+   * @param client
+   * @param organization
+   * @param name
+   * @param printName
+   * @param docBaseType
+   * @param docSubTypeSO
+   * @param shipment
+   * @param invoice
+   * @param isDocNoControlled
+   * @param sequence
+   * @param category
+   * @param isSOTrx
+   * @param table
+   * @return DocumentType object for the new element
+   */
   public static DocumentType insertDocType(Client client, Organization organization, String name,
       String printName, String docBaseType, String docSubTypeSO, DocumentType shipment,
       DocumentType invoice, boolean isDocNoControlled, Sequence sequence, GLCategory category,
@@ -1049,6 +1294,16 @@ public class InitialSetupUtility {
     return newDocumentType;
   }
 
+  /**
+   * Given a dataset, inserts the elements in the xml file into database.
+   * 
+   * @param dataset
+   * @param client
+   * @param orgProvided
+   * @return ImportResult object for the created element. Errors, warnings and log is provided in
+   *         this object.
+   * @throws Exception
+   */
   public static ImportResult insertReferenceData(DataSet dataset, Client client,
       Organization orgProvided) throws Exception {
     Organization organization = null;
@@ -1080,6 +1335,15 @@ public class InitialSetupUtility {
     return myResult;
   }
 
+  /**
+   * 
+   * @param document
+   * @param name
+   * @param templateLocation
+   * @param templateFileName
+   * @param reportFileName
+   * @return DocumentTemplate object with the new element
+   */
   public static DocumentTemplate insertDoctypeTemplate(DocumentType document, String name,
       String templateLocation, String templateFileName, String reportFileName) {
     final DocumentTemplate newDocumentTemplate = OBProvider.getInstance().get(
@@ -1096,6 +1360,11 @@ public class InitialSetupUtility {
     return newDocumentTemplate;
   }
 
+  /**
+   * 
+   * @param documentTemplate
+   * @return EmailTemplate object for the new element
+   */
   public static EmailTemplate insertEmailTemplate(DocumentTemplate documentTemplate) {
     final EmailTemplate newEmailTemplate = OBProvider.getInstance().get(EmailTemplate.class);
     newEmailTemplate.setClient(documentTemplate.getClient());
@@ -1105,6 +1374,15 @@ public class InitialSetupUtility {
     return newEmailTemplate;
   }
 
+  /**
+   * Returns the set of Module objects for the given ids
+   * 
+   * @param strModules
+   *          relation of ids (in a format so that can be included in a "in" statement of a "where"
+   *          clause
+   * @return List<Module> with the relation of modules
+   * @throws Exception
+   */
   public static List<Module> getCOAModules(String strModules) throws Exception {
     StringBuilder strWhereClause = new StringBuilder();
     strWhereClause.append(" as module where module.id in (" + strModules + ")");
@@ -1114,6 +1392,15 @@ public class InitialSetupUtility {
     return obqModule.list();
   }
 
+  /**
+   * Returns the set of Module objects for the given ids
+   * 
+   * @param strModules
+   *          relation of ids (in a format so that can be included in a "in" statement of a "where"
+   *          clause
+   * @return
+   * @throws Exception
+   */
   public static List<Module> getRDModules(String strModules) throws Exception {
     StringBuilder strWhereClause = new StringBuilder();
     strWhereClause.append(" as module where module.id in (" + strModules + ")");
@@ -1125,11 +1412,12 @@ public class InitialSetupUtility {
   }
 
   /**
+   * Gifen a module, and an acess level, returns all the datasets contained in that module
    * 
    * @param module
    * @param accessLevel
    *          3-> client/org; 1-> organization only
-   * @return
+   * @return List<DataSet> with the relation of DataSet objects
    * @throws Exception
    */
   public static List<DataSet> getDataSets(Module module, String accessLevel) throws Exception {
@@ -1146,6 +1434,13 @@ public class InitialSetupUtility {
 
   }
 
+  /**
+   * Returns the relation of ad_ref_list elements for the reference with AD_Reference_id='181'
+   * (Acct.schema elements)
+   * 
+   * @return List<org.openbravo.model.ad.domain.List> with the relation of ad_ref_list elements
+   * @throws Exception
+   */
   public static List<org.openbravo.model.ad.domain.List> getAcctSchemaElements() throws Exception {
 
     final OBCriteria<org.openbravo.model.ad.domain.List> obcRefList = OBDal.getInstance()
@@ -1159,6 +1454,13 @@ public class InitialSetupUtility {
 
   }
 
+  /**
+   * 
+   * @param client
+   * @param module
+   * @return ADClientModule object with the created element
+   * @throws Exception
+   */
   public static ADClientModule insertClientModule(Client client, Module module) throws Exception {
     final ADClientModule newADClientModule = OBProvider.getInstance().get(ADClientModule.class);
     newADClientModule.setClient(client);

@@ -55,7 +55,7 @@ function validate(action) {
 	var frm = document.frmMain;
   if (frm.inpClient.value==null || frm.inpClient.value=="") {setWindowElementFocus(frm.inpClient);  showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpCurrency.value==null || frm.inpCurrency.value=="") {setWindowElementFocus(frm.inpCurrency);  showJSMessage(7); setProcessingMode('window',false); return false; }
-  if (frm.inpClientUser.value==null || frm.inpClientUser.value=="") {setWindowElementFocus(frm.inpClientUser); showJSMessage(7); rsetProcessingMode('window',false); return false; }
+  if (frm.inpClientUser.value==null || frm.inpClientUser.value=="") {setWindowElementFocus(frm.inpClientUser); showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpPassword.value==null || frm.inpPassword.value=="") {setWindowElementFocus(frm.inpPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
 	return true;
 }
