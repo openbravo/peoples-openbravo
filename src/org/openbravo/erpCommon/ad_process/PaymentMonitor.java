@@ -17,7 +17,9 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.DebtPayment;
@@ -37,9 +39,15 @@ public class PaymentMonitor {
     // Check for PaymentMonitor-disabling switch.
     try {
       // Use Utility.getPropertyValue for backward compatibility
-      if (Utility.getPropertyValue("PaymentMonitor", invoice.getClient().getId(), invoice
-          .getOrganization().getId()) != null)
+      try {
+        Preferences.getPreferenceValue("PaymentMonitor", true, invoice.getClient(), invoice
+            .getOrganization(), null, null, null);
         return;
+      } catch (PropertyNotFoundException e) {
+        if (Utility.getPropertyValue("PaymentMonitor", invoice.getClient().getId(), invoice
+            .getOrganization().getId()) != null)
+          return;
+      }
     } catch (PropertyException e) {
       return;
     }
