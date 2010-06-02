@@ -349,18 +349,16 @@
           strText = XMLHttpRequestObj.responseText;
         }
         pending_states=pending_states-1;
-        if(start===true){
-          strText = strText.toString();
-          var msg = eval("("+strText+")");
+        strText = strText.toString();
+        var msg = eval("("+strText+")");
  
-          var state=msg.Response.state;
-          var errorStatus=msg.Response.statusofstate;
-          var stateindex=getStatusIndex(state);
-          progList_changeNode(correspondingNode(state), errorStatus);
-          progList_changeIcon(correspondingNode(state), errorStatus);
-          error_status[stateindex]=errorStatus;
-          insertWarnsAndErrors(msg.Response);
-        }
+        var state=msg.Response.state;
+        var errorStatus=msg.Response.statusofstate;
+        var stateindex=getStatusIndex(state);
+        progList_changeNode(correspondingNode(state), errorStatus);
+        progList_changeIcon(correspondingNode(state), errorStatus);
+        error_status[stateindex]=errorStatus;
+        insertWarnsAndErrors(msg.Response);
 
         for(i=0;i<nodestructure.length;i++){
             var mainStep=nodestructure[i][0];
