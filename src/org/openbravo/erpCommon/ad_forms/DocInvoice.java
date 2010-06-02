@@ -712,7 +712,7 @@ public class DocInvoice extends AcctServer {
       createLineForTaxUndeductable(invoiceLineTaxCount, totalInvoiceLineTax,
           cumulativeTaxLineAmount, taxAmount, data, conn, fact, docLine, Fact_Acct_Group_ID);
     } catch (ServletException e) {
-      log4jDocInvoice.warn(e);
+      log4jDocInvoice.error("Exception in computeTaxUndeductableLine method: " + e);
     }
   }
 
@@ -721,7 +721,7 @@ public class DocInvoice extends AcctServer {
     try {
       data = DocInvoiceData.getTaxLineCount(conn, taxId, Record_ID);
     } catch (ServletException e) {
-      log4jDocInvoice.warn(e);
+      log4jDocInvoice.error("Exception in getTaxLineCount method: " + e);
     }
     if (data.length > 0) {
       return Integer.parseInt(data[0].totallines);
@@ -751,7 +751,7 @@ public class DocInvoice extends AcctServer {
         }
         cumulativeTaxLineAmount = cumulativeTaxLineAmount.add(new BigDecimal(data[j].taxamt));
       } catch (ServletException e) {
-        log4jDocInvoice.warn(e);
+        log4jDocInvoice.error("Exception in createLineForTaxUndeductable method: " + e);
       }
     }
     return cumulativeTaxLineAmount;
