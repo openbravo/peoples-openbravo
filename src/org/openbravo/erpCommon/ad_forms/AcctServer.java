@@ -27,8 +27,10 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
@@ -41,6 +43,8 @@ import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.common.businesspartner.CustomerAccounts;
 import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
+import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 
 public abstract class AcctServer {
   static Logger log4j = Logger.getLogger(AcctServer.class);
@@ -1508,6 +1512,37 @@ public abstract class AcctServer {
     }
     return new Account(conn, strValidCombination);
   } // getAccount
+
+  /**
+   * Get the account for GL Item
+   */
+  public Account getAccountGLItem(GLItem glItem, AcctSchema as, boolean bIsReceipt,
+      ConnectionProvider conn) throws ServletException {
+    OBContext.setAdminMode();
+    Account account = null;
+    try {
+      OBCriteria<GLItemAccounts> accounts = OBDal.getInstance()
+          .createCriteria(GLItemAccounts.class);
+      accounts.add(Expression.eq(GLItemAccounts.PROPERTY_GLITEM, glItem));
+      accounts
+          .add(Expression.eq(GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA, OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+              as.m_C_AcctSchema_ID)));
+      accounts.add(Expression.eq(GLItemAccounts.PROPERTY_ACTIVE, true));
+      accounts.setFilterOnReadableClients(false);
+      accounts.setFilterOnReadableOrganization(false);
+      List<GLItemAccounts> accountList = accounts.list();
+      if (accountList == null || accountList.size() == 0)
+        return null;
+      if (bIsReceipt)
+        account = new Account(conn, accountList.get(0).getGlitemCreditAcct().getId());
+      else
+        account = new Account(conn, accountList.get(0).getGlitemDebitAcct().getId());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return account;
+  }
 
   /**
    * Get the account for Financial Account (Uses: INT - In Transit DEP - Deposit CLE - Clearing WIT
