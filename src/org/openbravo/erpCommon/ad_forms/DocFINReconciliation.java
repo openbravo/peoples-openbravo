@@ -44,7 +44,6 @@ import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.gl.GLItem;
-import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -316,7 +315,7 @@ public class DocFINReconciliation extends AcctServer {
         DocLine_FINReconciliation line = (DocLine_FINReconciliation) p_lines[i];
         FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
             line.getFinFinAccTransactionId());
-        // 3 Scenarios: 1st Bank fee 2nd glitem transaction 3rd payment related transaction
+        // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd GL item transaction
         String Fact_Acct_Group_ID = SequenceIdData.getUUID();
         if (transaction.getTransactionType().equals(TRXTYPE_BankFee))
           continue;
@@ -448,9 +447,11 @@ public class DocFINReconciliation extends AcctServer {
     return confirmation;
   }
 
+  /*
+   * Checks if this step (Reconciliation) is configured to generate accounting for the selected
+   * financial account
+   */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
-    // Checks if this step (Reconciliation) is configured to generate accounting for the selected
-    // financial account
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
@@ -459,7 +460,8 @@ public class DocFINReconciliation extends AcctServer {
       List<FIN_FinancialAccountAccounting> accounts = reconciliation.getAccount()
           .getFINFinancialAccountAcctList();
       for (FIN_FinancialAccountAccounting account : accounts) {
-        if (account.getDebitAccount() != null || account.getCreditAccount() != null)
+        if (account.getClearedPaymentAccount() != null
+            || account.getClearedPaymentAccountOUT() != null)
           confirmation = true;
       }
     } finally {
@@ -499,58 +501,6 @@ public class DocFINReconciliation extends AcctServer {
       OBContext.restorePreviousMode();
     }
     setObjectFieldProvider(data);
-  }
-
-  public Account getAccountGLItem(GLItem glItem, AcctSchema as, boolean bIsReceipt,
-      ConnectionProvider conn) throws ServletException {
-    OBContext.setAdminMode();
-    Account account = null;
-    try {
-      OBCriteria<GLItemAccounts> accounts = OBDal.getInstance()
-          .createCriteria(GLItemAccounts.class);
-      accounts.add(Expression.eq(GLItemAccounts.PROPERTY_GLITEM, glItem));
-      accounts
-          .add(Expression.eq(GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA, OBDal.getInstance().get(
-              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-              as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(GLItemAccounts.PROPERTY_ACTIVE, true));
-      accounts.setFilterOnReadableClients(false);
-      accounts.setFilterOnReadableOrganization(false);
-      List<GLItemAccounts> accountList = accounts.list();
-      if (accountList == null || accountList.size() == 0)
-        return null;
-      if (bIsReceipt)
-        account = new Account(conn, accountList.get(0).getGlitemCreditAcct().getId());
-      else
-        account = new Account(conn, accountList.get(0).getGlitemDebitAcct().getId());
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return account;
-  }
-
-  public Account getAccountFee(AcctSchema as, FIN_FinancialAccount finAccount,
-      ConnectionProvider conn) throws ServletException {
-    Account account = null;
-    OBContext.setAdminMode();
-    try {
-      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
-          FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-              as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
-      accounts.setFilterOnReadableClients(false);
-      accounts.setFilterOnReadableOrganization(false);
-      List<FIN_FinancialAccountAccounting> accountList = accounts.list();
-      if (accountList == null || accountList.size() == 0)
-        return null;
-      account = new Account(conn, accountList.get(0).getFINBankfeeAcct().getId());
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return account;
   }
 
   public Account getWithdrawalAccount(AcctSchema as, FIN_FinancialAccount finAccount,
