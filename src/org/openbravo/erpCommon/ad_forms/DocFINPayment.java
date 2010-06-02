@@ -42,6 +42,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
+import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -119,6 +120,7 @@ public class DocFINPayment extends AcctServer {
       docLine.setAmount(data[i].getField("Amount"));
       docLine.setIsPrepayment(data[i].getField("isprepayment"));
       docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
+      docLine.setC_GLItem_ID(data[i].getField("C_GLItem_ID"));
       list.add(docLine);
     }
     // Return Array
@@ -187,11 +189,20 @@ public class DocFINPayment extends AcctServer {
                   : line.WriteOffAmt), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           bpAmount = new BigDecimal(bpAmount).add(new BigDecimal(line.WriteOffAmt)).toString();
         }
-        fact.createLine(line, getAccountBPartner(
-            (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-                : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
-            (isReceipt ? "" : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, conn);
+        if ("".equals(line.getC_GLItem_ID())) {
+          fact
+              .createLine(line,
+                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
+                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
+                      isPrepayment, conn), C_Currency_ID, (isReceipt ? "" : bpAmount),
+                  (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+                  conn);
+        } else {
+          fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
+              line.getC_GLItem_ID()), as, isReceipt, conn), C_Currency_ID, (isReceipt ? ""
+              : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+        }
         FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);
         fact.createLine(line, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(),
             as, isReceipt), C_Currency_ID, (isReceipt ? line.getAmount() : ""), (isReceipt ? ""
@@ -218,38 +229,41 @@ public class DocFINPayment extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     // Checks if this step is configured to generate accounting for the selected financial account
     boolean confirmation = false;
+    final String AWAITING_EXECUTION = "RPAE";
     OBContext.setAdminMode();
     try {
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
-      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
-          FinAccPaymentMethod.class);
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-          .getPaymentMethod()));
-      List<FinAccPaymentMethod> lines = obCriteria.list();
-      List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
-          .getFINFinancialAccountAcctList();
-      for (FIN_FinancialAccountAccounting account : accounts) {
-        if (payment.isReceipt()) {
-          if (lines.get(0).getUponReceiptUse().equals("INT")
-              && account.getInTransitPaymentAccountIN() != null)
-            confirmation = true;
-          else if (lines.get(0).getUponReceiptUse().equals("DEP")
-              && account.getDepositAccount() != null)
-            confirmation = true;
-          else if (lines.get(0).getUponReceiptUse().equals("CLE")
-              && account.getClearedPaymentAccount() != null)
-            confirmation = true;
-        } else {
-          if (lines.get(0).getUponPaymentUse().equals("INT")
-              && account.getFINOutIntransitAcct() != null)
-            confirmation = true;
-          else if (lines.get(0).getUponPaymentUse().equals("WIT")
-              && account.getWithdrawalAccount() != null)
-            confirmation = true;
-          else if (lines.get(0).getUponPaymentUse().equals("CLE")
-              && account.getClearedPaymentAccountOUT() != null)
-            confirmation = true;
+      if (!payment.getStatus().equals(AWAITING_EXECUTION)) {
+        OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+            FinAccPaymentMethod.class);
+        obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+        obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+            .getPaymentMethod()));
+        List<FinAccPaymentMethod> lines = obCriteria.list();
+        List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
+            .getFINFinancialAccountAcctList();
+        for (FIN_FinancialAccountAccounting account : accounts) {
+          if (payment.isReceipt()) {
+            if (lines.get(0).getUponReceiptUse().equals("INT")
+                && account.getInTransitPaymentAccountIN() != null)
+              confirmation = true;
+            else if (lines.get(0).getUponReceiptUse().equals("DEP")
+                && account.getDepositAccount() != null)
+              confirmation = true;
+            else if (lines.get(0).getUponReceiptUse().equals("CLE")
+                && account.getClearedPaymentAccount() != null)
+              confirmation = true;
+          } else {
+            if (lines.get(0).getUponPaymentUse().equals("INT")
+                && account.getFINOutIntransitAcct() != null)
+              confirmation = true;
+            else if (lines.get(0).getUponPaymentUse().equals("WIT")
+                && account.getWithdrawalAccount() != null)
+              confirmation = true;
+            else if (lines.get(0).getUponPaymentUse().equals("CLE")
+                && account.getClearedPaymentAccountOUT() != null)
+              confirmation = true;
+          }
         }
       }
     } finally {
@@ -306,11 +320,14 @@ public class DocFINPayment extends AcctServer {
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
       if (accountList == null || accountList.size() == 0)
         return null;
-      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+      OBCriteria<FinAccPaymentMethod> accPaymentMethod = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAccount));
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
-      List<FinAccPaymentMethod> lines = obCriteria.list();
+      accPaymentMethod.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAccount));
+      accPaymentMethod
+          .add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+      accPaymentMethod.setFilterOnReadableClients(false);
+      accPaymentMethod.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = accPaymentMethod.list();
       if (bIsReceipt) {
         account = getAccount(conn, lines.get(0).getUponReceiptUse(), accountList.get(0), bIsReceipt);
       } else {
