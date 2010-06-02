@@ -45,6 +45,7 @@ import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 
 public abstract class AcctServer {
   static Logger log4j = Logger.getLogger(AcctServer.class);
@@ -1538,6 +1539,30 @@ public abstract class AcctServer {
         account = new Account(conn, accountList.get(0).getGlitemCreditAcct().getId());
       else
         account = new Account(conn, accountList.get(0).getGlitemDebitAcct().getId());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return account;
+  }
+
+  public Account getAccountFee(AcctSchema as, FIN_FinancialAccount finAccount,
+      ConnectionProvider conn) throws ServletException {
+    Account account = null;
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
+          FIN_FinancialAccountAccounting.class);
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+              as.m_C_AcctSchema_ID)));
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.setFilterOnReadableClients(false);
+      accounts.setFilterOnReadableOrganization(false);
+      List<FIN_FinancialAccountAccounting> accountList = accounts.list();
+      if (accountList == null || accountList.size() == 0)
+        return null;
+      account = new Account(conn, accountList.get(0).getFINBankfeeAcct().getId());
     } finally {
       OBContext.restorePreviousMode();
     }
