@@ -272,6 +272,7 @@
     function endProcess(paramXMLParticular, XMLHttpRequestObj) {
       if (getReadyStateHandler(XMLHttpRequestObj)) { 
           var frm = document.frmMain;
+          submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
           submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
           return true;
       }
