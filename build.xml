@@ -664,11 +664,11 @@ export.database: exports database structure and data to xml files.
   </target>
   
   <target name="compile.apply.module" depends="init">
+    <updatesystemstatus v="RB31"/>
     <ant dir="${base.src}" target="compile.apply.module" inheritAll="true" inheritRefs="true" />
   </target>
   
   <target name="apply.module" depends="compile.apply.module">
-    <updatesystemstatus v="RB31"/>
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
       <classpath refid="project.class.path" />
