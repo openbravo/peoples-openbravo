@@ -90,9 +90,8 @@ public class OBContext implements OBNotSingleton {
   private static OBContext adminContext = null;
 
   /**
-   * @deprecated use {@link #setAdminMode()}
+   * deprecated use {@link #setAdminMode()}
    */
-  @Deprecated
   public static void setAdminContext() {
     if (adminContext == null) {
       setOBContext("0", "0", "0", "0");
@@ -112,9 +111,8 @@ public class OBContext implements OBNotSingleton {
   }
 
   /**
-   * @deprecated use {@link #setAdminMode()}
+   * deprecated use {@link #setAdminMode()}
    */
-  @Deprecated
   public static void enableAsAdminContext() {
     setAdminMode();
   }
@@ -126,7 +124,7 @@ public class OBContext implements OBNotSingleton {
    * To restore the previous privileges call the {@link #restorePreviousMode()}.
    * 
    * @see OBContext#restorePreviousMode()
-   * @since 2.50MP16
+   * @since 2.50MP18
    */
   public static void setAdminMode() {
     getAdminModeStack().push(Boolean.TRUE);
@@ -145,9 +143,8 @@ public class OBContext implements OBNotSingleton {
   }
 
   /**
-   * @deprecated use {@link #restorePreviousMode()}
+   * deprecated use {@link #restorePreviousMode()}
    */
-  @Deprecated
   public static void resetAsAdminContext() {
     restorePreviousMode();
   }
@@ -157,7 +154,7 @@ public class OBContext implements OBNotSingleton {
    * {@link #setAdminMode()}.
    * 
    * @see OBContext#setAdminMode()
-   * @since 2.50MP16
+   * @since 2.50MP18
    */
   public static void restorePreviousMode() {
     // remove the last admin mode from the stack
@@ -892,9 +889,8 @@ public class OBContext implements OBNotSingleton {
   }
 
   /**
-   * @deprecated use {@link #setAdminMode()} and {@link #restorePreviousMode()}.
+   * deprecated use {@link #setAdminMode()} and {@link #restorePreviousMode()}.
    */
-  @Deprecated
   public boolean setInAdministratorMode(boolean inAdministratorMode) {
     final boolean prevMode = isInAdministratorMode() && !isAdministrator;
     if (inAdministratorMode) {
