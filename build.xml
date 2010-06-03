@@ -76,6 +76,7 @@ export.database: exports database structure and data to xml files.
   <property name="base.lib" location="lib" />
   <property name="base.modules" location="modules" />
   <property name="build" location="build/classes" />
+  <property name="build.apply.module" location="build.apply/classes" />
   <property name="build.AD" location="srcAD" />
   <property name="build.sqlc" location="build/javasqlc" />
   <property name="build.core.lib" location="src-core/lib" />
@@ -189,6 +190,37 @@ export.database: exports database structure and data to xml files.
 
   <path id="project.class.path">
     <pathelement path="${build}" />
+    <pathelement path="${base.src}" />
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${build.core.lib}">
+      <include name="openbravo-core.jar" />
+    </fileset>
+    <fileset dir="${build.trl.lib}">
+      <include name="openbravo-trl.jar" />
+    </fileset>
+    <fileset dir="${build.wad.lib}">
+      <include name="openbravo-wad.jar" />
+    </fileset>
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.db}/lib/">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.modules}">
+      <include name="*/lib/**" />
+    </fileset>
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
+  </path>
+
+  <!-- This classpath is needed only for the apply.module task-->
+  <path id="apply.module.classpath">
+    <pathelement path="${build.apply.module}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
@@ -600,7 +632,7 @@ export.database: exports database structure and data to xml files.
 
   <target name="update.database.mod" depends="init, core.lib, database.lib, buildvalidation">
     <updatesystemstatus v="RB12"/>
-    <ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />
+    <!--<ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />-->
     <antcall target="generate.entities.quick" />
     <antcall target="apply.module" />
   </target>
@@ -668,11 +700,19 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile.apply.module" inheritAll="true" inheritRefs="true" />
   </target>
   
+  <!--
+  This task uses a special classpath.
+  This classpath is equivalent to the normal project.class.path, except for the fact that that the normal build folder
+  is replaced by the apply.module.build folder, in which the ApplyModule task related classes will be compiled.
+  This is done to workaround the fact that the javac task needs to compile all the related classes when upgrading openbravo
+  and if the normal build folder is included, none of them are recompiled by default unless the whole build directory is specified.
+  -->
   <target name="apply.module" depends="compile.apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
-      <classpath refid="project.class.path" />
+      <classpath refid="apply.module.classpath" />
     </java>
+   <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
   </target>
   
   <target name="apply.modules.compile" depends="wad.lib">
