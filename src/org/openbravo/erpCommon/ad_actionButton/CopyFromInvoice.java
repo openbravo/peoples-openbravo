@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_actionButton;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.Connection;
 
 import javax.servlet.ServletConfig;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.Tax;
+import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -58,12 +60,12 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       String strInvoice = vars.getStringParameter("inpNewcInvoiceId");
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
-
+      String strPriceListCheck = vars.getStringParameter("inpPriceList");
       String strWindowPath = Utility.getTabURL(this, strTab, "R");
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 
-      OBError myError = processButton(vars, strKey, strInvoice, strWindow);
+      OBError myError = processButton(vars, strKey, strInvoice, strWindow,strPriceListCheck);
       vars.setMessage(strTab, myError);
       printPageClosePopUp(response, vars, strWindowPath);
     } else
@@ -71,7 +73,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
   }
 
   private OBError processButton(VariablesSecureApp vars, String strKey, String strInvoice,
-      String windowId) {
+      String windowId, String strPriceListCheck) {
     int i = 0;
     OBError myError = null;
     Connection conn = null;
@@ -85,6 +87,22 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
         for (i = 0; i < data.length; i++) {
           String strSequence = SequenceIdData.getUUID();
           try {
+        	String strDateInvoiced = "";
+        	String strInvPriceList = "";
+        	String strBPartnerId = "";
+        	String strPricePrecision = "0";
+        	String strmProductId = "";
+        	String strQty = "";
+        	String priceactual = "";
+        	String pricestd = "";
+        	String pricelist = "";
+        	String pricelimit = "";
+        	String linenetamt = "";
+        	strDateInvoiced = dataInvoice[0].dateinvoiced;
+        	strInvPriceList = dataInvoice[0].mPricelistId;
+        	strBPartnerId = dataInvoice[0].mPricelistId;
+        	strmProductId = data[i].productId;
+        	strQty = data[i].qtyinvoiced;
             String strWindowId = vars.getStringParameter("inpwindowId");
             String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
             String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
@@ -94,8 +112,63 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId, strIsSOTrx
                     .equals("Y"));
 
+            if("Y".equals(strPriceListCheck)){
+
+		        CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(this,
+		        		            strmProductId, strInvPriceList);
+		        for (int j = 0; invoicelineprice != null && j < invoicelineprice.length; j++) {
+			        if (invoicelineprice[j].validfrom == null
+			        || invoicelineprice[j].validfrom.equals("")
+			        || !DateTimeData.compare(this, DateTimeData.today(this),
+			        invoicelineprice[j].validfrom).equals("-1")) 
+			        {
+				        pricestd = invoicelineprice[j].pricestd;
+				        pricelist = invoicelineprice[j].pricelist;
+				        pricelimit = invoicelineprice[j].pricelimit;
+				        CopyFromInvoiceData[] invoicePriceList = CopyFromInvoiceData.selectInvoicePricelist(
+				        this, strKey);
+				        if (invoicePriceList != null && invoicePriceList.length > 0) {
+					        strPricePrecision = invoicePriceList[0].priceprecision.equals("") ? "0"
+					        : invoicePriceList[0].priceprecision;
+				        }
+				        int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
+				        
+				        BigDecimal priceStd, priceActual, qtyInvoiced, lineNetAmt;
+				        
+				        priceStd = (pricestd.equals("") ? BigDecimal.ZERO : (new BigDecimal(pricestd))).setScale(
+				        PricePrecision, BigDecimal.ROUND_HALF_UP);
+				        qtyInvoiced = (data[i].qtyinvoiced.equals("") ? BigDecimal.ZERO : new BigDecimal(
+				        data[i].qtyinvoiced));
+				        // Calculate price adjustments (offers)
+				        priceActual = new BigDecimal(CopyFromInvoiceData.getOffersStdPrice(this, strBPartnerId,
+				        pricestd, strmProductId, strDateInvoiced, strQty, strInvPriceList, strKey));
+				        if (priceActual.scale() > PricePrecision)
+				        	priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+				        // Calculate line net amount
+				        lineNetAmt = qtyInvoiced.multiply(priceActual);
+				        if (lineNetAmt.scale() > PricePrecision)
+				        	lineNetAmt = lineNetAmt.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+				        pricestd = priceStd.toString();
+				        priceactual = priceActual.toString();
+				        linenetamt = lineNetAmt.toString();
+			        }
+		        }
+		        if (pricestd.equals(""))
+		            pricestd = "0";
+		        if (pricelist.equals(""))
+		            pricelist = "0";
+		        if (pricelimit.equals(""))
+		            pricelimit = "0";
+		        if (priceactual.equals(""))
+		            priceactual = "0";
+	        } else {
+            	pricelist = data[i].pricelist;
+            	pricelimit = data[i].pricelimit;
+            	priceactual = data[i].priceactual;
+            	linenetamt = data[i].linenetamt;
+            }
             CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-                dataInvoice[0].adOrgId, vars.getUser(), data[i].cInvoicelineId, strCTaxID);
+                dataInvoice[0].adOrgId, vars.getUser(), data[i].cInvoicelineId,pricelist ,priceactual ,pricelimit ,linenetamt,strCTaxID);
 
              // Copy accounting dimensions
             CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId, dataInvoice[0].adOrgId, vars.getUser(), strSequence, data[i].cInvoicelineId);

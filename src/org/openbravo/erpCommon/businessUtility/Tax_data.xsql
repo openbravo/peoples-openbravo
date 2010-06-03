@@ -149,4 +149,19 @@
       <Parameter name="cProjectId"/>
       <Parameter name="issotrx"/>
    </SqlMethod>
+    <SqlMethod name="taxGet" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT C_GetTax(?, TO_DATE(?), ?, ?, ?, ?, ?, ?, ?) AS TAX FROM DUAL
+      ]]></Sql>
+      <Parameter name="mProductId"/>
+      <Parameter name="shipdate"/>
+      <Parameter name="adOrgId"/>
+      <Parameter name="mWarehouseId"/>
+      <Parameter name="billPartnerLoc"/>
+      <Parameter name="shipPartnerLoc"/>
+      <Parameter name="cProjectId"/>
+      <Parameter name="issotrx"/>
+      <Parameter name="cGlitemId"/>
+   </SqlMethod>
 </SqlClass>

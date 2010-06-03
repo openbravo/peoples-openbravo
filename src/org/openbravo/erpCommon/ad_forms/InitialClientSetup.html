@@ -53,9 +53,10 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" type="text/javascript">
 function validate(action) {
 	var frm = document.frmMain;
-  if (frm.inpClient.value==null || frm.inpClient.value=="") {setWindowElementFocus(frm.inpClient);  showJSMessage(7); return false; }
-  if (frm.inpCurrency.value==null || frm.inpCurrency.value=="") {setWindowElementFocus(frm.inpCurrency);  showJSMessage(7); return false; }
-  if (frm.inpClientUser.value==null || frm.inpClientUser.value=="") {setWindowElementFocus(frm.inpClientUser); showJSMessage(7); return false; }
+  if (frm.inpClient.value==null || frm.inpClient.value=="") {setWindowElementFocus(frm.inpClient);  showJSMessage(7); setProcessingMode('window',false); return false; }
+  if (frm.inpCurrency.value==null || frm.inpCurrency.value=="") {setWindowElementFocus(frm.inpCurrency);  showJSMessage(7); setProcessingMode('window',false); return false; }
+  if (frm.inpClientUser.value==null || frm.inpClientUser.value=="") {setWindowElementFocus(frm.inpClientUser); showJSMessage(7); setProcessingMode('window',false); return false; }
+  if (frm.inpPassword.value==null || frm.inpPassword.value=="") {setWindowElementFocus(frm.inpPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
 	return true;
 }
 
@@ -82,6 +83,7 @@ function onloadFunctions() {
 		updateMenuIcon('buttonMenu');
 
 		setWindowElementFocus('firstElement');
+		setProcessingMode('window',false);
 	}
 
 	function onResizeDo(){
@@ -288,18 +290,22 @@ function onloadFunctions() {
                   <td class="TextBox_ContentCell" colspan="2">
                     <input dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" type="text" name="inpClient" id="paramClient" maxlength="30" value="Cliente"></input><script>djConfig.searchIds.push("paramClient");</script>
                   </td>
+                  <td class="TitleCell"><span class="LabelText">Currency</span></td>
+                  <td class="Combo_ContentCell" colspan="2">
+                      <select name="inpCurrency" id="inpCurrency" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
+                        <option value=""></option><div id="reportCurrency_M"></div>
+                      </select>
+                  </td>
+                </tr>
+                <tr>
                   <td class="TitleCell"><span class="LabelText">Client Username</span></td>
                   <td class="TextBox_ContentCell" colspan="2">
                     <input dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" type="text" name="inpClientUser" id="paramClientUser" maxlength="30" value="ClienteAdmin"></input><script>djConfig.searchIds.push("paramClientUser");</script>
                   </td>
-                </tr>
-                <tr>
-	                <td class="TitleCell"><span class="LabelText">Currency</span></td>
-	                <td class="Combo_ContentCell" colspan="2">
-	                    <select name="inpCurrency" id="inpCurrency" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
-	                      <option value=""></option><div id="reportCurrency_M"></div>
-	                    </select>
-	                </td>
+                  <td class="TitleCell"><span class="LabelText">Password</span></td>
+                  <td class="TextBox_ContentCell" colspan="2">
+                   <input type="password" name="inpPassword" id="inpPassword" class="dojoValidateValid Text_TwoCells_width required" size="40" maxlength="40"></input><script>djConfig.searchIds.push("inpPassword");</script>
+                  </td>
                 </tr>
                 <tr>
                   <td colspan="6">
@@ -319,7 +325,7 @@ function onloadFunctions() {
                 </tr>
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Include accounting</span></td>
-                  <td class="Radio_Check_ContentCell" colspan="5"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" checked name="inpCreateAccounting" id="fieldCreateAccounting" value="-1" onclick="myReadOnlyLogic();return true;"></input></span></td>
+                  <td class="Radio_Check_ContentCell" colspan="2"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" checked name="inpCreateAccounting" id="fieldCreateAccounting" value="-1" onclick="myReadOnlyLogic();return true;"></input></span></td>
                 </tr>
 
                 <tr id="Accounting_tr">
@@ -435,7 +441,7 @@ function onloadFunctions() {
                       <button type="button" 
                         id="buttonOK" 
                         class="ButtonLink" 
-                        onclick="submitCommandForm('OK',true);return false;" 
+                        onclick="setProcessingMode('window',true);submitCommandForm('OK',true);return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
@@ -460,7 +466,7 @@ function onloadFunctions() {
                       <button type="button" 
                         id="buttonCancel" 
                         class="ButtonLink" 
-                        onclick="submitCommandForm('CANCEL');return false;" 
+                        onclick="goToPreviousPage();return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 

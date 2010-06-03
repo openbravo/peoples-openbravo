@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2008 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,8 +32,8 @@
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value" default=""/>  
   <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
   <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
-  <PARAMETER id="paramfieldDate" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
-  <PARAMETER id="paramfieldDate" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramfieldDatexx" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramfieldDatexx" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
@@ -68,8 +68,10 @@
     <FIELD id="fieldRefButtonBPartner" attribute="onclick" replace="zz">cDebtPaymentId</FIELD>
     <FIELD id="fieldBpartnerdescription" attribute="name" replace="xx">cDebtPaymentId</FIELD>
     <FIELD id="fieldBpartnerdescription" attribute="value">tercero</FIELD>
-    <FIELD id="paramfieldDate" attribute="name" replace="xx">cDebtPaymentId</FIELD>
-    <FIELD id="paramfieldDate" attribute="value">dateplanned</FIELD>
+    <FIELD id="paramfieldDatexx" attribute="name" replace="xx">cDebtPaymentId</FIELD>
+    <FIELD id="paramfieldDatexx" attribute="value">dateplanned</FIELD>
+    <FIELD id="paramfieldDatexx" attribute="id" replace="xx">cDebtPaymentId</FIELD>
+    <FIELD id="dateScript">scriptDate</FIELD>
     <FIELD id="dynamicDate" attribute="onclick" replace="xx">cDebtPaymentId</FIELD>
 	<FIELD id="dynamicDate" attribute="onclick" replace="yy">cDebtPaymentId</FIELD>
     <FIELD id="fieldRefButtonDate" attribute="onclick" replace="xx">cDebtPaymentId</FIELD>

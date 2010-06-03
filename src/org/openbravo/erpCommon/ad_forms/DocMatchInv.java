@@ -160,7 +160,10 @@ public class DocMatchInv extends AcctServer {
 
     BigDecimal bdDifference = bdExpenses.subtract(bdCost);
 
-    dr = fact.createLine(null, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn), as
+    DocLine docLine = new DocLine(DocumentType, Record_ID, "");
+    docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
+
+    dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn), as
         .getC_Currency_ID(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
         conn);
 
@@ -170,8 +173,10 @@ public class DocMatchInv extends AcctServer {
       return null;
     }
 
+    docLine.m_C_Project_ID = data[0].getField("INVOICEPROJECT");
+
     ProductInfo p = new ProductInfo(data[0].getField("M_Product_Id"), conn);
-    cr = fact.createLine(null, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn), as
+    cr = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn), as
         .getC_Currency_ID(), "0", bdExpenses.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
         DocumentType, conn);
 
@@ -181,7 +186,7 @@ public class DocMatchInv extends AcctServer {
       return null;
     }
     if (!bdCost.equals(bdExpenses)) {
-      diff = fact.createLine(null, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn), as
+      diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn), as
           .getC_Currency_ID(), (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
           .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
           .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
