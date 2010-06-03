@@ -250,6 +250,17 @@
           }
           //Make a final call to requesterrorstate, to get the last errors/warnings, if they were any
           submitXmlHttpRequest(askForErrorStatus, null, "REQUESTLASTERRORSTATE", "ApplyModulesCallServlet.html", false, null, null);
+          //Also, make calls to update all possible substeps, and states
+          var endState=possible_states[i].length;
+          if(msg.OBError.type=="Error"){
+              endState=current_state;
+          }
+          for(i=0;i<endState;i++){
+            //We need to ask for warning/error state for the intermediate status
+            document.getElementById("reqStatus").value=possible_states[i];
+            submitXmlHttpRequest(askForErrorStatus, null, "REQUESTERRORSTATE", "ApplyModulesCallServlet.html", false, null, null);
+          }
+          updateMainSteps();
         }
       }
       return true;
@@ -359,7 +370,11 @@
         progList_changeIcon(correspondingNode(state), errorStatus);
         error_status[stateindex]=errorStatus;
         insertWarnsAndErrors(msg.Response);
+        updateMainSteps();
+      }
+    }
 
+    function updateMainSteps(){
         for(i=0;i<nodestructure.length;i++){
             var mainStep=nodestructure[i][0];
             var subSteps=nodestructure[i][1];
@@ -378,7 +393,7 @@
                 for(j=0;j<subSteps.length && !error;j++){
                     var ind=getStatusIndex(subSteps[j]);
                     if(error_status[ind]==='Error'){
-                    	error=true;
+                       error=true;
                     }
                 }
                 if(error){
@@ -399,7 +414,6 @@
                 }
             }
         }
-      }
     }
 
     //This function is called by the servlet after a request from the timer, and updates the status of the build
