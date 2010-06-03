@@ -218,9 +218,41 @@ export.database: exports database structure and data to xml files.
     <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
   </path>
 
-  <!-- This classpath is needed only for the apply.module task-->
-  <path id="apply.module.classpath">
+  <!-- This classpath is needed only for the compile.apply.module task-->
+  <path id="apply.module.compile.classpath">
     <pathelement path="${build.apply.module}" />
+    <pathelement path="${base.src}" />
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${build.core.lib}">
+      <include name="openbravo-core.jar" />
+    </fileset>
+    <fileset dir="${build.trl.lib}">
+      <include name="openbravo-trl.jar" />
+    </fileset>
+    <fileset dir="${build.wad.lib}">
+      <include name="openbravo-wad.jar" />
+    </fileset>
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.db}/lib/">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.modules}">
+      <include name="*/lib/**" />
+    </fileset>
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
+  </path>
+  
+  <!-- This classpath is needed only for the apply.module task-->
+  <path id="apply.module.runtime.classpath">
+    <pathelement path="${build.apply.module}" />
+    <pathelement path="${build}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
@@ -710,7 +742,7 @@ export.database: exports database structure and data to xml files.
   <target name="apply.module" depends="compile.apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
-      <classpath refid="apply.module.classpath" />
+      <classpath refid="apply.module.runtime.classpath" />
     </java>
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
   </target>

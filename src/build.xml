@@ -169,7 +169,7 @@ build.war: build a war file in the lib directory.
       <src path="${base.src}"/>
       <src path="../build/javasqlc/src"/>
       <src path="../src-gen"/>
-      <classpath refid="apply.module.classpath" />
+      <classpath refid="apply.module.compile.classpath" />
     </javac>
   </target>
   
