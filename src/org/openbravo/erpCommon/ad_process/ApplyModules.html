@@ -251,7 +251,7 @@
           //Make a final call to requesterrorstate, to get the last errors/warnings, if they were any
           submitXmlHttpRequest(askForErrorStatus, null, "REQUESTLASTERRORSTATE", "ApplyModulesCallServlet.html", false, null, null);
           //Also, make calls to update all possible substeps, and states
-          var endState=possible_states[i].length;
+          var endState=possible_states.length;
           if(msg.OBError.type=="Error"){
               endState=current_state;
           }
