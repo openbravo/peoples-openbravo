@@ -176,7 +176,7 @@
       var output = minutes_string + ":" + seconds_string;
       document.getElementById(targetvar).innerHTML=output;
 
-      submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
+      submitXmlHttpRequest(update, document.frmMain, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
 
       if (lc_isTimerEnabled) {
         setTimeout(function() {LocalTimer(targetvar, referenceDate);},1000);
@@ -452,7 +452,7 @@
     function endProcess(paramXMLParticular, XMLHttpRequestObj) {
       if (getReadyStateHandler(XMLHttpRequestObj)) { 
           var frm = document.frmMain;
-          submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
+          submitXmlHttpRequest(update, frm, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
           submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
           return true;
       }
