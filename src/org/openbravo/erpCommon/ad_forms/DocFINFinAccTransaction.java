@@ -70,6 +70,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_FinAccTransaction;
     DateDoc = data[0].getField("trxdate");
@@ -208,6 +209,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     return dl;
   } // loadLines
 
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
@@ -280,14 +282,9 @@ public class DocFINFinAccTransaction extends AcctServer {
     fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
         .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
         DocumentType, conn);
-    if (!getDocumentReconciliationConfirmation(conn, transaction.getAccount()))
-      fact.createLine(line, getWithdrawalAccount(as, null, transaction.getAccount(), conn),
-          C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
-    else
-      fact.createLine(line, getAccountReconciliation(conn, transaction.getAccount(), as),
-          C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+    fact.createLine(line, getWithdrawalAccount(as, null, transaction.getAccount(), conn),
+        C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
+        nextSeqNo(SeqNo), DocumentType, conn);
     SeqNo = "0";
     return fact;
   }
@@ -300,7 +297,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
-    if (!getDocumentPaymentConfirmation(conn, payment))
+    if (!getDocumentPaymentConfirmation(payment))
       fact.createLine(line, getAccountBPartner(
           (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
               : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
@@ -355,34 +352,15 @@ public class DocFINFinAccTransaction extends AcctServer {
     return SeqNo;
   }
 
+  @Override
   public BigDecimal getBalance() {
     return null;
   }
 
   /*
-   * Checks if Accounting for Reconciliation is enabled for the given financial account
-   */
-  public boolean getDocumentReconciliationConfirmation(ConnectionProvider conn,
-      FIN_FinancialAccount financialAccount) {
-    boolean confirmation = false;
-    OBContext.setAdminMode();
-    try {
-      List<FIN_FinancialAccountAccounting> accounts = financialAccount
-          .getFINFinancialAccountAcctList();
-      for (FIN_FinancialAccountAccounting account : accounts) {
-        if (account.getClearedPaymentAccountOUT() != null)
-          confirmation = true;
-      }
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return confirmation;
-  }
-
-  /*
    * Checks if Accounting for payments is enabled for the given payment
    */
-  public boolean getDocumentPaymentConfirmation(ConnectionProvider conn, FIN_Payment payment) {
+  public boolean getDocumentPaymentConfirmation(FIN_Payment payment) {
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
@@ -426,6 +404,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   /*
    * Checks if this step is configured to generate accounting for the selected financial account
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     boolean confirmation = false;
     OBContext.setAdminMode();
@@ -530,6 +509,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     return account;
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String strAD_Client_ID, String Id)
       throws ServletException {
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class, Id);
