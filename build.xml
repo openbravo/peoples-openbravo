@@ -664,7 +664,7 @@ export.database: exports database structure and data to xml files.
 
   <target name="update.database.mod" depends="init, core.lib, database.lib, buildvalidation">
     <updatesystemstatus v="RB12"/>
-    <!--<ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />-->
+    <ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />
     <antcall target="generate.entities.quick" />
     <antcall target="apply.module" />
   </target>
