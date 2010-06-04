@@ -449,7 +449,8 @@ public class ApplyModules extends HttpSecureAppServlet {
         Properties props = new Properties();
         props.setProperty("log4j.rootCategory", "INFO,R");
         PropertyConfigurator.configure(props);
-        ant.closeLogFile();
+        if (ant != null)
+          ant.closeLogFile();
         releasePreparedStatement(ps3);
         releasePreparedStatement(ps4);
       } catch (SQLException e) {
