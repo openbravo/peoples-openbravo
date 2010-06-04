@@ -180,6 +180,10 @@ public class ApplyModules extends HttpSecureAppServlet {
     }
 
     Build build = getBuildFromXMLFile();
+    if (build == null) {
+      throw new ServletException(
+          "Build information couldn't be read (possibly because the file couldn't be found)");
+    }
     String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
@@ -254,14 +258,12 @@ public class ApplyModules extends HttpSecureAppServlet {
         endStates += ",";
       endStates += build.getMainSteps().get(build.getMainSteps().size() - 1).getWarningCode()
           .replace("RB", "");
-      ;
     }
     if (build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode() != null) {
       if (l > 0)
         endStates += ",";
       endStates += build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode()
           .replace("RB", "");
-      ;
     }
     // We also add the successful final state of the last main step
     arraySteps += ","
