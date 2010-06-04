@@ -83,7 +83,7 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
         PInstanceProcessData.insertPInstance(this, pinstance, "<FIELD_TMP id="ProcessID3">button</FIELD_TMP>", "0", strProcessing, vars.getUser(), vars.getClient(), vars.getOrg());
         <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
         <FIELD_TMP id="AdditionalCode3">code</FIELD_TMP>
-        ProcessBundle bundle = ProcessBundle.pinstance(pinstance, vars, this);
+        ProcessBundle bundle = ProcessBundle.pinstance(pinstance, vars, this).init(this);
         new ProcessRunner(bundle).execute(this);
 
         processButtonHelper(request, response, vars, pinstance);        
