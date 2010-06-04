@@ -195,11 +195,4 @@ public class ModuleUtiltiy {
     }
     return rt;
   }
-
-  /**
-   * @deprecated use ImportModule.getRemoteModule instead
-   */
-  public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
-    return null;
-  }
 }
