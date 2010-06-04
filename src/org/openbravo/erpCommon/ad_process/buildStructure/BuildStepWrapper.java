@@ -15,6 +15,10 @@ package org.openbravo.erpCommon.ad_process.buildStructure;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 
+/**
+ * This class is used to generate FieldProviders from the Build objects. These Field Providers can
+ * then be used in the ApplyModules servlet to generate the Build Structure tree in the Window
+ */
 public class BuildStepWrapper {
 
   private String node;
