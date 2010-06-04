@@ -489,24 +489,4 @@ public class ApplyModules extends HttpSecureAppServlet {
     OBDal.getInstance().save(ml);
   }
 
-  /**
-   * Returns a String of comma separated values for all the modules that are installed but not
-   * applied
-   * 
-   * @return
-   * @throws IOException
-   * @throws ServletException
-   */
-  private String getUnnapliedModules() throws IOException, ServletException {
-    String rt = "";
-    final ApplyModulesData[] data = ApplyModulesData.selectUnappliedModules(this);
-    if (data != null) {
-      for (int i = 0; i < data.length; i++) {
-        if (!rt.equals(""))
-          rt += ", ";
-        rt += data[i].name;
-      }
-    }
-    return rt;
-  }
 }
