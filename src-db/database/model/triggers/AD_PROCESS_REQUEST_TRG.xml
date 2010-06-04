@@ -54,7 +54,7 @@ IF (INSERTING OR UPDATING) THEN
 END IF;
 
 IF (DELETING) THEN
-  IF (:OLD.STATUS = 'Scheduled') THEN
+  IF (:OLD.STATUS = 'SCH' OR :OLD.STATUS = 'MIS') THEN -- Fail on Scheduled or Misfired process request
     RAISE_APPLICATION_ERROR(-20000,'@20630@');
   END IF;
 END IF;
