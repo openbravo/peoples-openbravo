@@ -204,11 +204,22 @@ public class ApplyModules extends HttpSecureAppServlet {
     FieldProvider[] nodeData = getFieldProviderFromBuild(vars, build);
     xmlDocument.setData("structureStepTree", nodeData);
 
+    /*
+     * There is an initial Javascript part which is generated here, and injected into the html page
+     * Basically, this Javascript part consists in a number of Javascript global variables whose
+     * value depends on the Build Structure which is read from the buildStructure.xml file
+     */
+    // This variable contains all possible state codes
     String arraySteps = " var possible_states=[";
+    // This variable contains the error status (error, warning, success, nothing yet) for every
+    // possible state
     String errorStatus = "var error_status=[";
     String numofWarns = "var numofwarns=[";
     String numofErrors = "var numoferrs=[";
+    // This variable contains information about the structure of the build (mainsteps and substeps
+    // codes, in a kind of hierarchical structure, defined as multidimensional arrays)
     String nodeStructure = "var nodestructure=[";
+    // This variable contains all possible states in which the process could end
     String endStates = "var end_states=[";
     int i = 0;
     int k = 0;
