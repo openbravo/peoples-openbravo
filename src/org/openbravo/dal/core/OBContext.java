@@ -21,6 +21,9 @@ package org.openbravo.dal.core;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,11 +82,15 @@ public class OBContext implements OBNotSingleton {
   private static final String CLIENT = "#AD_Client_ID";
   private static final String ORG = "#AD_Org_ID";
 
+  // set this to a higher value to enable admin mode tracing
+  private static final int ADMIN_TRACE_SIZE = 0;
+
   private static ThreadLocal<OBContext> instance = new ThreadLocal<OBContext>();
 
   private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
 
   private static ThreadLocal<Stack<Boolean>> adminModeStack = new ThreadLocal<Stack<Boolean>>();
+  private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<List<String>>();
 
   public static final String CONTEXT_PARAM = "#OBContext";
 
@@ -133,6 +140,9 @@ public class OBContext implements OBNotSingleton {
     } else if (OBContext.getOBContext() == adminContext) {
       return;
     }
+    if (OBContext.getOBContext() != null) {
+      addStackTrace("setAdminMode");
+    }
   }
 
   private static Stack<Boolean> getAdminModeStack() {
@@ -162,15 +172,48 @@ public class OBContext implements OBNotSingleton {
     if (stack.size() > 0) {
       stack.pop();
     } else {
-      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode",
-          new IllegalStateException());
+      final List<String> adminModeTraceList = adminModeTrace.get();
+      final StringBuilder sb = new StringBuilder();
+      if (adminModeTrace != null) {
+        for (String adminModeTraceValue : adminModeTraceList) {
+          sb.append("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+          sb.append(adminModeTraceValue);
+        }
+      }
+      if (ADMIN_TRACE_SIZE == 0) {
+        log.warn(
+            "Unbalanced calls to setAdminMode and restorePreviousMode. "
+                + "Consider setting the constant OBContext.ADMIN_TRACE_SIZE to a value higher than 0 to debug this situation",
+            new IllegalStateException());
+      } else {
+        log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString(),
+            new IllegalStateException());
+      }
     }
 
     if (OBContext.getOBContext() == null) {
       return;
     }
+    addStackTrace("restorePreviousMode");
     if (stack.isEmpty() && OBContext.getOBContext() == adminContext) {
       OBContext.setOBContext((OBContext) null);
+    }
+  }
+
+  private static void addStackTrace(String prefix) {
+    final StringWriter sw = new StringWriter();
+    final PrintWriter pw = new PrintWriter(sw);
+    sw.write(prefix + "\n");
+    new Exception().printStackTrace(pw);
+    if (adminModeTrace.get() == null) {
+      adminModeTrace.set(new ArrayList<String>());
+    }
+    final List<String> list = adminModeTrace.get();
+    if (list.size() > 0 && list.size() >= ADMIN_TRACE_SIZE) {
+      list.remove(0);
+    }
+    if (ADMIN_TRACE_SIZE > 0) {
+      list.add(sw.toString());
     }
   }
 
@@ -187,6 +230,7 @@ public class OBContext implements OBNotSingleton {
       log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext");
       adminModeSet.set(null);
     }
+    adminModeTrace.set(null);
   }
 
   /**
