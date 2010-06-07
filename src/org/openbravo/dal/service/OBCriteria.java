@@ -99,7 +99,9 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
     initialize();
     setProjection(Projections.rowCount());
     log.debug("Counting using criteria " + toString());
-    return ((Number) uniqueResult()).intValue();
+    final int result = ((Number) uniqueResult()).intValue();
+    setProjection(null);
+    return result;
   }
 
   /**
