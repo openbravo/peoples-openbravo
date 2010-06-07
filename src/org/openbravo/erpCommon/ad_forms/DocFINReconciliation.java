@@ -99,11 +99,14 @@ public class DocFINReconciliation extends AcctServer {
       List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
       for (FIN_FinaccTransaction transaction : transactions) {
         FIN_Payment payment = transaction.getFinPayment();
-        // If payment exists the payment details are loaded, if not the GLItem info is loaded
+        // If payment exists the payment details are loaded, if not the GLItem info is loaded,
+        // finally fee is loaded
         if (payment != null)
           linesInfo = add(linesInfo, loadLinesPaymentDetailsFieldProvider(transaction));
         else if (transaction.getGLItem() != null)
           linesInfo = add(linesInfo, loadLinesGLItemFieldProvider(transaction));
+        else
+          linesInfo = add(linesInfo, loadLinesFeeFieldProvider(transaction));
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -236,6 +239,36 @@ public class DocFINReconciliation extends AcctServer {
     return data;
   }
 
+  public FieldProviderFactory[] loadLinesFeeFieldProvider(FIN_FinaccTransaction transaction) {
+    FieldProviderFactory[] data = new FieldProviderFactory[1];
+    OBContext.setAdminMode();
+    try {
+      data[0] = new FieldProviderFactory(new HashMap());
+      FieldProviderFactory.setField(data[0], "FIN_Reconciliation_ID", transaction
+          .getReconciliation().getId());
+      FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
+      FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
+      FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
+      FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
+          .toString());
+      FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
+          .toString());
+      FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
+      FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
+      if (transaction.getActivity() != null)
+        FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
+      if (transaction.getProject() != null)
+        FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
+      if (transaction.getSalesCampaign() != null)
+        FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign()
+            .getId());
+      FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return data;
+  }
+
   private DocLine[] loadLines() {
     ArrayList<Object> list = new ArrayList<Object>();
     FieldProviderFactory[] data = loadLinesFieldProvider(Record_ID);
@@ -322,7 +355,7 @@ public class DocFINReconciliation extends AcctServer {
         // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd GL item transaction
         String Fact_Acct_Group_ID = SequenceIdData.getUUID();
         if (transaction.getTransactionType().equals(TRXTYPE_BankFee))
-          continue;
+          fact = createFactFee(line, as, conn, fact, Fact_Acct_Group_ID);
         else if (!"".equals(line.getFinPaymentId()))
           fact = createFactPaymentDetails(line, as, conn, fact, Fact_Acct_Group_ID);
         else
@@ -331,6 +364,27 @@ public class DocFINReconciliation extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
     }
+    return fact;
+  }
+
+  /*
+   * Creates the accounting for a bank Fee
+   */
+  public Fact createFactFee(DocLine_FINReconciliation line, AcctSchema as, ConnectionProvider conn,
+      Fact fact, String Fact_Acct_Group_ID) throws ServletException {
+    FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+        line.getFinFinAccTransactionId());
+    if (getDocumentTransactionConfirmation(conn, transaction))
+      fact.createLine(line, getWithdrawalAccount(as, transaction.getAccount(), conn),
+          C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
+    fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
+        .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        DocumentType, conn);
+    fact.createLine(line, getClearOutAccount(as, transaction.getAccount(), conn), C_Currency_ID,
+        line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        DocumentType, conn);
+    SeqNo = "0";
     return fact;
   }
 
@@ -698,12 +752,12 @@ public class DocFINReconciliation extends AcctServer {
     return account;
   }
 
-  public Account getDebitAccount(AcctSchema as, FIN_FinancialAccount finAccount,
+  public Account getClearOutAccount(AcctSchema as, FIN_FinancialAccount finAccount,
       ConnectionProvider conn) throws ServletException {
     return getAccount(conn, finAccount, as, false);
   }
 
-  public Account getCreditAccount(AcctSchema as, FIN_FinancialAccount finAccount,
+  public Account getClearInAccount(AcctSchema as, FIN_FinancialAccount finAccount,
       ConnectionProvider conn) throws ServletException {
     return getAccount(conn, finAccount, as, true);
   }
