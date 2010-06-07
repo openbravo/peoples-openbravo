@@ -22,9 +22,9 @@ package org.openbravo.service.system;
 import java.io.File;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.erpCommon.utility.AntExecutor;
 
 /**
  * Reloads the tomcat using the tomcat reload ant task.
@@ -42,6 +42,7 @@ public class ReloadContext {
    *          arg[0] contains the source path
    * @throws Exception
    */
+  @SuppressWarnings("deprecation")
   public static void main(String[] args) throws Exception {
     final String srcPath = args[0];
     final File srcDir = new File(srcPath);
@@ -59,6 +60,7 @@ public class ReloadContext {
    * Restarts the tomcat server. Assumes the the Openbravo.properties are available through the
    * {@link OBPropertiesProvider}.
    */
+  @SuppressWarnings("deprecation")
   public static void reload() {
     final String baseDirPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
