@@ -101,6 +101,8 @@ public class DocFINFinAccTransaction extends AcctServer {
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
+        if (!getPaymentConfirmation(payment))
+          continue;
         data[i] = new FieldProviderFactory(new HashMap());
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
         FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
@@ -358,7 +360,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   }
 
   /*
-   * Checks if Accounting for payments is enabled for the given payment
+   * Checks if Accounting for payments are enabled for the given payment
    */
   public boolean getDocumentPaymentConfirmation(FIN_Payment payment) {
     boolean confirmation = false;
@@ -391,6 +393,50 @@ public class DocFINFinAccTransaction extends AcctServer {
               && account.getWithdrawalAccount() != null)
             confirmation = true;
           else if (lines.get(0).getUponPaymentUse().equals("CLE")
+              && account.getClearedPaymentAccountOUT() != null)
+            confirmation = true;
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return confirmation;
+  }
+
+  /*
+   * Checks if Accounting for payments in transactions are enabled for the given paymentis
+   */
+  public boolean getPaymentConfirmation(FIN_Payment payment) {
+    boolean confirmation = false;
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+          .getPaymentMethod()));
+      List<FinAccPaymentMethod> lines = obCriteria.list();
+      List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
+          .getFINFinancialAccountAcctList();
+      for (FIN_FinancialAccountAccounting account : accounts) {
+        if (payment.isReceipt()) {
+          if (lines.get(0).getUponDepositUse().equals("INT")
+              && account.getInTransitPaymentAccountIN() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponDepositUse().equals("DEP")
+              && account.getDepositAccount() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponDepositUse().equals("CLE")
+              && account.getClearedPaymentAccount() != null)
+            confirmation = true;
+        } else {
+          if (lines.get(0).getUponWithdrawalUse().equals("INT")
+              && account.getFINOutIntransitAcct() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponWithdrawalUse().equals("WIT")
+              && account.getWithdrawalAccount() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponWithdrawalUse().equals("CLE")
               && account.getClearedPaymentAccountOUT() != null)
             confirmation = true;
         }
