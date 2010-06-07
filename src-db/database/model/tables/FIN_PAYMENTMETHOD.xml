@@ -119,10 +119,10 @@
       <foreign-key foreignTable="AD_ORG" name="FIN_AD_ORG_PAYMENTMETHOD">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FIN_PAY_EXEC_PROCESS" name="FIN_FINACCMETH_PAYINEXECPROC">
+      <foreign-key foreignTable="FIN_PAY_EXEC_PROCESS" name="FIN_PAYMETH_PAYINEXECPROC">
         <reference local="PAYIN_EXECUTION_PROCESS_ID" foreign="FIN_PAY_EXEC_PROCESS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FIN_PAY_EXEC_PROCESS" name="FIN_FINACCMETH_PAYOUTEXECPROC">
+      <foreign-key foreignTable="FIN_PAY_EXEC_PROCESS" name="FIN_PAYMETH_PAYOUTEXECPROC">
         <reference local="PAYOUT_EXECUTION_PROCESS_ID" foreign="FIN_PAY_EXEC_PROCESS_ID"/>
       </foreign-key>
       <check name="FIN_PAYMENTMETH_AYOUTALLOW_CHK"><![CDATA[PAYOUT_ALLOW IN ('Y', 'N')]]></check>
