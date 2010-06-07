@@ -162,7 +162,7 @@ public class OBContext implements OBNotSingleton {
     if (stack.size() > 0) {
       stack.pop();
     } else {
-      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext",
+      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode",
           new IllegalStateException());
     }
 
@@ -234,10 +234,9 @@ public class OBContext implements OBNotSingleton {
       return;
     }
     if (context != null && context == adminContext) {
-      log
-          .warn("Trying to set the admin context in the session, "
-              + "this means that the context has not been reset correctly in a finally block."
-              + " When using the admin context it should always be removed in a finally block by the application");
+      log.warn("Trying to set the admin context in the session, "
+          + "this means that the context has not been reset correctly in a finally block."
+          + " When using the admin context it should always be removed in a finally block by the application");
       return;
     }
     session.setAttribute(CONTEXT_PARAM, context);
@@ -666,9 +665,9 @@ public class OBContext implements OBNotSingleton {
       Check.isNotNull(getRole(), "Role may not be null");
 
       if (orgId != null) {
-        final Organization o = getOne(Organization.class, "select r from "
-            + Organization.class.getName() + " r where " + " r." + Organization.PROPERTY_ID + "='"
-            + orgId + "'");
+        final Organization o = getOne(Organization.class,
+            "select r from " + Organization.class.getName() + " r where " + " r."
+                + Organization.PROPERTY_ID + "='" + orgId + "'");
         setCurrentOrganization(o);
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
