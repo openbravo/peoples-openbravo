@@ -462,7 +462,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           PInstanceProcessData.insertPInstance(this, pinstance, "<FIELD_TMP id="ProcessID3">button</FIELD_TMP>", (("<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>".equalsIgnoreCase("AD_Language"))?"0":str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>), strProcessing, vars.getUser(), vars.getClient(), vars.getOrg());
           <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
           <FIELD_TMP id="AdditionalCode3">code</FIELD_TMP>
-          ProcessBundle bundle = ProcessBundle.pinstance(pinstance, vars, this).init(this);
+          ProcessBundle bundle = ProcessBundle.pinstance(pinstance, vars, this);
           new ProcessRunner(bundle).execute(this);
           
           PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
