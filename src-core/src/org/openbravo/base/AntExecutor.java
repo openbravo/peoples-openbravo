@@ -16,14 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.erpCommon.utility;
+package org.openbravo.base;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -36,20 +35,13 @@ import org.apache.tools.ant.listener.Log4jListener;
 /**
  * The AntExecutor class allows to execute ant tasks in a given build.xml file.
  * 
- * @deprecated Please use the AntExecutor in org.openbravo.base package (contained in src-core.jar)
  * 
  */
-@Deprecated
 public class AntExecutor {
   private static final Logger logger = Logger.getLogger(AntExecutor.class);
 
   private Project project;
   private String baseDir;
-  private PrintStream log;
-  private PrintStream err;
-  private String returnMessage;
-  private PrintWriter out;
-
   private FileOutputStream logFile;
   private PrintStream ps;
 
@@ -89,57 +81,6 @@ public class AntExecutor {
     this(buildDir + "/build.xml", buildDir);
   }
 
-  @Deprecated
-  public void setPrintWriter(PrintWriter p) {
-    out = p;
-  }
-
-  /**
-   * Sets a file where the execution log will be saved.
-   * 
-   * @param directory
-   *          - Path to the directory for the file
-   * @param logFileName
-   *          - Name of the log file
-   * @return - The complete file name (including directory)
-   * @throws Exception
-   */
-  @Deprecated
-  public String setLogFile(String directory, String logFileName) throws Exception {
-    // DefaultLogger logger = new DefaultLogger();
-    final FileOutputStream logFile = new FileOutputStream(directory + "/" + logFileName);
-    // PrintStream ps = new PrintStream(logFile);
-    // logger.setOutputPrintStream(ps);
-    // logger.setErrorPrintStream(ps);
-    // logger.setMessageOutputLevel(Project.MSG_INFO);
-    // project.addBuildListener(logger);
-    return directory + "/" + logFileName;
-  }
-
-  /**
-   * Sets a file where the execution log will be saved. It only receives the file name, the path is
-   * the log directory inside the base directory
-   * 
-   * @param name
-   *          - File name
-   * @return - The complete file name (including directory)
-   * @throws Exception
-   */
-  @Deprecated
-  public String setLogFile(String name) throws Exception {
-    final File dir = new File(baseDir + "/log");
-    if (!dir.exists())
-      if (!dir.mkdir())
-        return null;
-    return setLogFile(baseDir + "/log", name);
-  }
-
-  @Deprecated
-  public void setLogFileInOBPrintStream(File f) {
-    ((OBPrintStream) log).setLogFile(f);
-    ((OBPrintStream) err).setLogFile(f);
-  }
-
   public void setLogFileAndListener(String filename) {
     File logFolder = new File(baseDir, "log");
     if (!logFolder.exists()) {
@@ -160,43 +101,6 @@ public class AntExecutor {
     } catch (FileNotFoundException e) {
       logger.error("Error assigning rebuild log file.", e);
     }
-  }
-
-  /**
-   * Sets two OBPrintStream objects to maintain the execution log. One is for standard log and the
-   * other one for the errors.
-   * 
-   * @see OBPrintStream
-   */
-  @Deprecated
-  public void setOBPrintStreamLog(PrintWriter p) {
-    setPrintWriter(p);
-    final DefaultLogger logger1 = new DefaultLogger();
-    final OBPrintStream ps1 = new OBPrintStream(out);
-    final OBPrintStream ps2 = new OBPrintStream(out);
-    logger1.setOutputPrintStream(ps1);
-    logger1.setErrorPrintStream(ps2);
-    logger1.setMessageOutputLevel(Project.MSG_INFO);
-    project.addBuildListener(logger1);
-    err = ps2;
-    log = ps1;
-  }
-
-  @Deprecated
-  public void setOBPrintStreamLog(PrintStream p) {
-    final DefaultLogger logger1 = new DefaultLogger();
-    final OBPrintStream ps1 = new OBPrintStream(p);
-    final OBPrintStream ps2 = new OBPrintStream(p);
-    logger1.setOutputPrintStream(ps1);
-    logger1.setErrorPrintStream(ps2);
-    logger1.setMessageOutputLevel(Project.MSG_INFO);
-    project.addBuildListener(logger1);
-    err = ps2;
-    log = ps1;
-
-    // force log4j to also print to this response
-    // OBLogAppender.setOutputStream(ps1);
-    org.openbravo.utils.OBLogAppender.setProject(project);
   }
 
   /**
@@ -247,57 +151,6 @@ public class AntExecutor {
     } catch (final BuildException e) {
       logger.error(e.getMessage(), e);
     }
-  }
-
-  /**
-   * Sets the finished attribute to the log. It used for loggin purposes.
-   * 
-   * @see OBPrintStream
-   * 
-   * @param v
-   *          - boolean value to set
-   */
-  @Deprecated
-  public void setFinished(boolean v) {
-    ((OBPrintStream) log).setFinished(v);
-    if (out != null)
-      out.close();
-  }
-
-  /**
-   * Returns an String with the log generated after the las getLog() call.
-   * 
-   * @return - log String
-   */
-  /*
-   * public String getLog() { return log.getLog(OBPrintStream.TEXT_HTML); }
-   */
-
-  /**
-   * Returns an String with error messages, in case no error is logged a "Success" String is
-   * returned.
-   * 
-   * @return - error String
-   */
-  @Deprecated
-  public String getErr() {
-    // note returnMessage has to be stored in a member because calling
-    // err.getLog(...) twice will always result in an empty string
-    // in the second call
-    if (returnMessage != null) {
-      return returnMessage;
-    }
-    returnMessage = ((OBPrintStream) err).getLog(OBPrintStream.TEXT_PLAIN);
-    if (returnMessage == null || returnMessage.equals("")) {
-      final String mode = project.getProperty("deploy.mode");
-      returnMessage = "SuccessRebuild." + mode;
-    }
-    return returnMessage;
-  }
-
-  @Deprecated
-  public boolean hasErrorOccured() {
-    return !getErr().startsWith("SuccessRebuild");
   }
 
   public void closeLogFile() {

@@ -26,7 +26,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -151,7 +153,14 @@ public class Sqlc extends DefaultHandler {
       strFilter = ".xml";
     else
       strFilter = argv[1];
-    dirFilter = new DirFilter(strFilter);
+    String listOfFiles = System.getProperty("sqlc.listOfFiles", null);
+    if (listOfFiles == null) {
+      dirFilter = new DirFilter(strFilter);
+    } else {
+      List<String> files = new ArrayList<String>();
+      files.addAll(Arrays.asList(listOfFiles.split(",")));
+      dirFilter = new DirFilter(files);
+    }
     log4j.info("directory source: " + dirIni);
     log4j.info("directory destiny: " + dirFin);
     log4j.info("file termination: " + strFilter);

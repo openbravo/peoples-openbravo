@@ -35,7 +35,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.Translation;
-import org.openbravo.erpCommon.reference.ActionButtonData;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -105,7 +104,7 @@ public class ApplyModule {
 
           final VariablesSecureApp vars = new VariablesSecureApp("0", "0", "0");
 
-          ActionButtonData.process179(pool, pinstance);
+          ApplyModuleData.process179(pool, pinstance);
 
           final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(pool, pinstance);
           final OBError myMessage = Utility.getProcessInstanceMessage(pool, vars, pinstanceData);

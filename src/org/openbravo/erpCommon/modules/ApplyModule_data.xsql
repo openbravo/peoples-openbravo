@@ -54,7 +54,13 @@
       ]]></Sql>
     <Parameter name="lang"/>
   </SqlMethod>
-  
-  
-  
+
+  <SqlMethod name="process179" type="callableStatement" return="object" object="ApplyModuleData">
+      <SqlMethodComment>procedure AD_Language_Create</SqlMethodComment>
+      <Sql><![CDATA[
+        CALL AD_Language_Create(?)
+      ]]></Sql>
+      <Parameter name="adPinstanceId"></Parameter>
+   </SqlMethod>
+
 </SqlClass>

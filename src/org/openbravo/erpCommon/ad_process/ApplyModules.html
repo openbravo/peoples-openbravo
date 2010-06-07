@@ -39,19 +39,29 @@
       return true;
     }
   </script>
+  <script language="JavaScript" type="text/javascript" id="jsparam">
+
+  </script>
   <script language="JavaScript" type="text/javascript">
     var lc_isTimerEnabled = true;
     var current_state=0;
-    var possible_states=[59,11,12,13,14,15,21,31,41,42,43,44,45,51,60];
-    var error_status=['','','','','','','','','','','','','','',''];
-    var numofwarns=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    var numoferrs=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     var start=false;
     var processing = false;
     var stopAddingWarns=false;
     var restarting=false;
     var pending_states=0;
+    var andmore=false;
 
+
+    function contains(a, obj){
+      for(var i = 0; i < a.length; i++) {
+        if(a[i] === obj){
+          return true;
+        }
+      }
+      return false;
+    }
+   
     //Changes the status of one node (corresponding icon, ...)
     function progList_changeNode(node, newStatus, text) {
       try {
@@ -132,7 +142,10 @@
       }
       var charn= document.getElementById('warningsAndErrors').innerHTML.length;
       if(charn>2000){
-          document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + "and more..." + "</p>";
+          if(!andmore){
+             andmore=true;
+             document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + "and more..." + "</p>";
+          }
         }
         else{
           document.getElementById('warningsAndErrors').innerHTML += "<p class='CL_RSW_ta_line'>" + text + "</p>";
@@ -163,7 +176,7 @@
       var output = minutes_string + ":" + seconds_string;
       document.getElementById(targetvar).innerHTML=output;
 
-      submitXmlHttpRequest(update, frmMain, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
+      submitXmlHttpRequest(update, document.frmMain, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
 
       if (lc_isTimerEnabled) {
         setTimeout(function() {LocalTimer(targetvar, referenceDate);},1000);
@@ -188,6 +201,15 @@
       return state_index.toString();
     }
 
+    //Returns the index of the specified state in the state array
+    function getStatusIndex(state){
+      for(var i=0;i<possible_states.length;i++){
+        if(possible_states[i]==state){
+          return i;
+        }
+      }
+    }
+
     //Restarts tomcat/Reloads tomcat/Just closes the window
     function restart() {
       if (document.frmMain.option[0].checked) {
@@ -205,6 +227,120 @@
         return;
       }
     } 
+
+    //Inserts warnings and errors in the textarea
+    function insertWarnsAndErrors(response){
+      if(start===true && !stopAddingWarns){
+        if(response.statusofstate=="Warning"){
+          var warns=response.warnings.string;
+          if(warns!==null){
+            if(!(warns instanceof Array)){
+              warns=[warns];
+            }
+            for(i=0;i<warns.length;i++){
+              var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
+              var l=old.length;
+              if(l>300){
+                //add nothing else to the tooltip, already too long
+              }else{
+                if(old===""){
+                  old="Warnings: ";
+                }else{
+                  old+=",";
+                }
+                document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
+              }
+              if(warns[i]!==undefined){
+                progList_addTextToTextArea('<b><i>Warning: </b></i>'+warns[i]);
+              }
+            }
+            numofwarns[getStatusIndex(response.state)]=warns.length;
+          }
+        }
+        if(response.statusofstate=="Error"){
+          var errs=response.errors.string;
+          if(errs!==null){
+            if(!(errs instanceof Array)){
+              errs=[errs];
+            }
+            if(numoferrs[getStatusIndex(response.state)]<errs.length){
+              for(i=0;i<errs.length;i++){
+                progList_addTextToTextArea('<b><i>Error: </b></i>'+errs[i]);
+              }
+              numoferrs[getStatusIndex(response.state)]=errs.length;
+            }
+          }
+        }
+      }
+    }
+
+
+    function updateMainSteps(){
+        for(i=0;i<nodestructure.length;i++){
+            var mainStep=nodestructure[i][0];
+            var subSteps=nodestructure[i][1];
+            var success=true;
+            for(var j=0;j<subSteps.length && success;j++){
+                var ind=getStatusIndex(subSteps[j]);
+                if(error_status[ind]!=='Success'){
+                    success=false;
+                }
+            }
+            if(success){
+                progList_changeNode(correspondingNode(mainStep), 'Success');
+                progList_changeIcon(correspondingNode(mainStep), 'Success');
+            }else{
+                var error=false;
+                for(j=0;j<subSteps.length && !error;j++){
+                    var ind=getStatusIndex(subSteps[j]);
+                    if(error_status[ind]==='Error'){
+                       error=true;
+                    }
+                }
+                if(error){
+                    progList_changeNode(correspondingNode(mainStep), 'Error');
+                    progList_changeIcon(correspondingNode(mainStep), 'Error');
+                }else{
+                    var warning=false;
+                    for(j=0;j<subSteps.length && !warning;j++){
+                        var ind=getStatusIndex(subSteps[j]);
+                        if(error_status[ind]==='Warning'){
+                            warning=true;
+                        }
+                    }
+                    if(warning){
+                        progList_changeNode(correspondingNode(mainStep), 'Warning');
+                        progList_changeIcon(correspondingNode(mainStep), 'Warning');
+                    }
+                }
+            }
+        }
+    }
+    
+    //This function is called when status information of intermediate states is required
+    function askForErrorStatus(paramXMLParticular, XMLHttpRequestObj) {
+      var strText = "";
+      var i;
+      var j;
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+        if (XMLHttpRequestObj.responseText) {
+          strText = XMLHttpRequestObj.responseText;
+        }
+        pending_states=pending_states-1;
+        strText = strText.toString();
+        var msg = eval("("+strText+")");
+ 
+        var state=msg.Response.state;
+        var errorStatus=msg.Response.statusofstate;
+        var stateindex=getStatusIndex(state);
+        progList_changeNode(correspondingNode(state), errorStatus);
+        progList_changeIcon(correspondingNode(state), errorStatus);
+        error_status[stateindex]=errorStatus;
+        insertWarnsAndErrors(msg.Response);
+        updateMainSteps();
+      }
+    }
+
 
     //This function sets the succes/warning/error message after the information returned by the server
     function getError(paramXMLParticular, XMLHttpRequestObj) {
@@ -237,131 +373,24 @@
           }
           //Make a final call to requesterrorstate, to get the last errors/warnings, if they were any
           submitXmlHttpRequest(askForErrorStatus, null, "REQUESTLASTERRORSTATE", "ApplyModulesCallServlet.html", false, null, null);
+          //Also, make calls to update all possible substeps, and states
+          var endState=possible_states.length;
+          if(msg.OBError.type=="Error"){
+              endState=current_state;
+          }
+          for(i=0;i<endState;i++){
+            //We need to ask for warning/error state for the intermediate status
+            document.getElementById("reqStatus").value=possible_states[i];
+            submitXmlHttpRequest(askForErrorStatus, null, "REQUESTERRORSTATE", "ApplyModulesCallServlet.html", false, null, null);
+          }
+          updateMainSteps();
         }
       }
       return true;
     }
  
 
-    //This function is called by the server when the last ant task is executed. It's responsible of
-    //calling the getError function to display a success/warning/error final message
-    function endProcess(paramXMLParticular, XMLHttpRequestObj) {
-      if (getReadyStateHandler(XMLHttpRequestObj)) { 
-      }
-      return true;
-    }
 
-    //This function starts the ApplyModules task, and is called when the user presses the "Yes" button
-    function startProcessing() {
-      startLocalTimer('localTimer');
-      processing = true;
-      top.opener.setProcessingMode('window', true, false);
-      var frm = document.frmMain;
-      displayLogicElement('confirmation',false);
-      displayLogicElement('rebuildTable',true);
-      return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, null);
-    }
-
-    //Returns the index of the specified state in the state array
-    function getStatusIndex(state){
-      for(i=0;i<possible_states.length;i++){
-        if(possible_states[i]==state){
-          return i;
-        }
-      }
-    }
-
-    //Inserts warnings and errors in the textarea
-    function insertWarnsAndErrors(response){
-      if(start===true && !stopAddingWarns){
-        if(response.statusofstate=="Warning"){
-          var warns=response.warnings.string;
-          if(warns!==null){
-            if(!(warns instanceof Array)){
-              warns=[warns];
-            }
-            for(i=0;i<warns.length;i++){
-              var old=document.getElementById("warning_"+correspondingNode(response.state)).title;
-              var l=old.length;
-              if(l>300){
-                //add nothing else to the tooltip, already too long
-              }else{
-                if(old===""){
-                  old="Warnings: ";
-                }else{
-                  old+=",";
-                }
-                document.getElementById("warning_"+correspondingNode(response.state)).title=old+warns[i];
-              }
-              if(warns[i]!=undefined){
-                progList_addTextToTextArea('<b><i>Warning: </b></i>'+warns[i]);
-              }
-            }
-            numofwarns[getStatusIndex(response.state)]=warns.length;
-          }
-        }
-        if(response.statusofstate=="Error"){
-          var errs=response.errors.string;
-          if(errs!==null){
-            if(!(errs instanceof Array)){
-              errs=[errs];
-            }
-            if(numoferrs[getStatusIndex(response.state)]<errs.length){
-              for(i=0;i<errs.length;i++){
-                progList_addTextToTextArea('<b><i>Error: </b></i>'+errs[i]);
-              }
-              numoferrs[getStatusIndex(response.state)]=errs.length;
-            }
-          }
-        }
-      }
-    }
-
-    //This function is called when status information of intermediate states is required
-    function askForErrorStatus(paramXMLParticular, XMLHttpRequestObj) {
-      var strText = "";
-      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
-        if (XMLHttpRequestObj.responseText) {
-          strText = XMLHttpRequestObj.responseText;
-        }
-        pending_states=pending_states-1;
-        if(start===true){
-          strText = strText.toString();
-          var msg = eval("("+strText+")");
- 
-          var state=msg.Response.state;
-          var errorStatus=msg.Response.statusofstate;
-          var stateindex=getStatusIndex(state);
-          progList_changeNode(correspondingNode(state), errorStatus);
-          progList_changeIcon(correspondingNode(state), errorStatus);
-          error_status[stateindex]=errorStatus;
-          insertWarnsAndErrors(msg.Response);
-        }
-
-        var ind11=getStatusIndex(11);
-        if(error_status[ind11]=='Success' && error_status[ind11+1]=='Success' && error_status[ind11+2]=='Success' && error_status[ind11+3]=='Success' && error_status[ind11+4]=='Success'){
-            progList_changeNode('1', 'Success');
-            progList_changeIcon('1', 'Success');
-        }else if(error_status[ind11]=='Error' || error_status[ind11+1]=='Error'|| error_status[ind11+2]=='Error'|| error_status[ind11+3]=='Error'|| error_status[ind11+4]=='Error'){
-            progList_changeNode('1', 'Error');
-            progList_changeIcon('1', 'Error');
-        }else if(error_status[ind11]=='Warning' || error_status[ind11+1]=='Warning'|| error_status[ind11+2]=='Warning'|| error_status[ind11+3]=='Warning'|| error_status[ind11+4]=='Warning'){
-            progList_changeNode('1', 'Warning');
-            progList_changeIcon('1', 'Warning');
-        }
-        var ind41=getStatusIndex(41);
-        if(error_status[ind41]=='Success' && error_status[ind41+1]=='Success' && error_status[ind41+2]=='Success' && error_status[ind41+3]=='Success' && error_status[ind41+4]=='Success'){
-            progList_changeNode('4', 'Success');
-            progList_changeIcon('4', 'Success');
-        }else if(error_status[ind41]=='Error' || error_status[ind41+1]=='Error'|| error_status[ind41+2]=='Error'|| error_status[ind41+3]=='Error'|| error_status[ind41+4]=='Error'){
-            progList_changeNode('4', 'Error');
-            progList_changeIcon('4', 'Error');
-        }else if(error_status[ind41]=='Warning' || error_status[ind41+1]=='Warning'|| error_status[ind41+2]=='Warning'|| error_status[ind41+3]=='Warning'|| error_status[ind41+4]=='Warning'){
-            progList_changeNode('4', 'Warning');
-            progList_changeIcon('4', 'Warning');
-        }
-      }
-    }
 
     //This function is called by the servlet after a request from the timer, and updates the status of the build
     //in the window according to the data sent by the servlet
@@ -375,16 +404,13 @@
         var msg = eval("("+strText+")");
           
         var state=msg.Response.state;
-        if(state=="11" || start===true){
-          if(state=="60" || state=="59"){
+        var errorStatus=msg.Response.statusofstate;
+        if(state==first_state || start===true){
+          if(contains(end_states,state) || errorStatus=="Error"){
             stopLocalTimer();
             processing = false;
-            top.opener.setProcessingMode('window', false);
-            var frm = document.frmMain;
-            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
           }
           start=true;
-          var errorStatus=msg.Response.statusofstate;
           var stateindex=getStatusIndex(state);
           if(stateindex>current_state){
             pending_states=stateindex-current_state;
@@ -404,56 +430,52 @@
           }
 
           insertWarnsAndErrors(msg.Response);
-          if(state!="60"){
+          if(!contains(end_states, state)){
               if(pending_states<=0){
                 progList_changeNode(correspondingNode(state), errorStatus, message);
                 progList_changeIcon(correspondingNode(state), "Processing", message);
               }
           }
           current_state=stateindex;
+
+          if(contains(end_states,state) || errorStatus=="Error"){
+            top.opener.setProcessingMode('window', false);
+            var frm = document.frmMain;
+            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
+          }
         }
       }
-      if(state=="60"){
-    	processing = false;
-    	top.opener.setProcessingMode('window', false);
-    	var frm = document.frmMain;
-    	return submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
+    }
+
+    //This function is called by the server when the last ant task is executed. It's responsible of
+    //calling the getError function to display a success/warning/error final message
+    function endProcess(paramXMLParticular, XMLHttpRequestObj) {
+      if (getReadyStateHandler(XMLHttpRequestObj)) { 
+          var frm = document.frmMain;
+          submitXmlHttpRequest(update, frm, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
+          submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
+          return true;
       }
-    	        
     }
+    
+    function buildInit(paramXMLParticular, XMLHttpRequestObj) {
+        if (getReadyStateHandler(XMLHttpRequestObj)) { 
+            var frm = document.frmMain;
+            startLocalTimer('localTimer');
+            processing = true;
+            top.opener.setProcessingMode('window', true, false);
+            displayLogicElement('confirmation',false);
+            displayLogicElement('rebuildTable',true);
+            return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, null);
+        }
+      }
 
-    //This function resets the status of all the nodes
-    function resetAllStates(){
-      progList_changeNode('1', 'Pending');
-      progList_changeNode('1.1', 'Pending');
-      progList_changeNode('1.2', 'Pending');
-      progList_changeNode('1.3', 'Pending');
-      progList_changeNode('1.4', 'Pending');
-      progList_changeNode('1.5', 'Pending');
-      progList_changeNode('2.1', 'Pending');
-      progList_changeNode('3.1', 'Pending');
-      progList_changeNode('4', 'Pending');
-      progList_changeNode('4.1', 'Pending');
-      progList_changeNode('4.2', 'Pending');
-      progList_changeNode('4.3', 'Pending');
-      progList_changeNode('4.4', 'Pending');
-      progList_changeNode('5', 'Pending');
-      progList_changeIcon('1', 'Pending');
-      progList_changeIcon('1.1', 'Pending');
-      progList_changeIcon('1.2', 'Pending');
-      progList_changeIcon('1.3', 'Pending');
-      progList_changeIcon('1.4', 'Pending');
-      progList_changeIcon('1.5', 'Pending');
-      progList_changeIcon('2.1', 'Pending');
-      progList_changeIcon('3.1', 'Pending');
-      progList_changeIcon('4', 'Pending');
-      progList_changeIcon('4.1', 'Pending');
-      progList_changeIcon('4.2', 'Pending');
-      progList_changeIcon('4.3', 'Pending');
-      progList_changeIcon('4.4', 'Pending');
-      progList_changeIcon('5', 'Pending');
+    //This function starts the ApplyModules task, and is called when the user presses the "Yes" button
+    function startProcessing() {
+      var frm = document.frmMain;
+      submitXmlHttpRequest(buildInit, frm, "RESETREBUILDSTATE", "ApplyModules.html", false, null, null);
     }
-
+      
   </script>
   <script language="JavaScript" type="text/javascript">
 
@@ -772,202 +794,22 @@
 
                 <div class="TextArea_FourCells_width" id="CheckList">
                   <div style="padding: 15 5 15 5;" id="CheckListContainer">
-
-                    <div class="CheckList_Row" id="node_1">
-                      <div id="padding_1" class="CheckList_Padding_0"></div>
-                      <div id="icon_1" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                       <div class="CheckList_Text_Title" id="title_1">Database update</div>
+                    <div id=sectionStepTree>
+                      <div class="CheckList_Row" id="node_xxyy">
+                        <div id="padding_xxyy" class="CheckList_Padding_xxyy"></div>
+                        <div id="icon_xxyy" class="CheckList_Icon_Pending"></div>
+                        <div class="CheckList_Text_Container">
+                         <div class="CheckList_Text_Title" id="title_xxyy">Database update</div>
+                        </div>
+                        <div class="CheckList_Text_Separator"></div>
+                        <div class="CheckList_Text_Message_Processing" id="processing_xxyy" style="display: none;"> </div>
+                        <div class="CheckList_Text_Message_Error" id="error_xxyy" style="display: none;">ERROR</div>
+                        <div class="CheckList_Text_Message_Exception" id="exception_xxyy" style="display: none;">EXCEPTION</div>
+                        <div class="CheckList_Text_Message_Warning" id="warning_xxyy" style="display: none;">WARNING</div>
                       </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_1" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_1" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_1" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_1" style="display: none;">WARNING</div>
                     </div>
-                    
-                    <div class="CheckList_Row" id="node_1.1">
-                      <div id="padding_1.1" class="CheckList_Padding_1"></div>
-                      <div id="icon_1.1" class="CheckList_Icon_Processing"></div>
-                      <div class="CheckList_Text_Container">
-                       <div class="CheckList_Text_Title" id="title_1.1">DAL initialization</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_1.1" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_1.1" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_1.1" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_1.1" style="display: none;">WARNING</div>
-                    </div>
-                    
-                    <div class="CheckList_Row" id="node_1.2">
-                      <div id="padding_1.2" class="CheckList_Padding_1"></div>
-                      <div id="icon_1.2" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                       <div class="CheckList_Text_Title" id="title_1.2">Database model load</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_1.2" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_1.2" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_1.2" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_1.2" style="display: none;">WARNING</div>
-                    </div>
-                    
-                    <div class="CheckList_Row" id="node_1.3">
-                      <div id="padding_1.3" class="CheckList_Padding_1"></div>
-                      <div id="icon_1.3" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                       <div class="CheckList_Text_Title" id="title_1.3">Generation of change list</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_1.3" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_1.3" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_1.3" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_1.3" style="display: none;">WARNING</div>
-                    </div>
-                    
-                    <div class="CheckList_Row" id="node_1.4">
-                      <div id="padding_1.4" class="CheckList_Padding_1"></div>
-                      <div id="icon_1.4" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                       <div class="CheckList_Text_Title" id="title_1.4">Database structure update</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_1.4" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_1.4" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_1.4" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_1.4" style="display: none;">WARNING</div>
-                    </div>
-                    
-                    <div class="CheckList_Row" id="node_1.5">
-                      <div id="padding_1.5" class="CheckList_Padding_1"></div>
-                      <div id="icon_1.5" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                       <div class="CheckList_Text_Title" id="title_1.5">Database data update</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_1.5" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_1.5" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_1.5" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_1.5" style="display: none;">WARNING</div>
-                    </div>
-                    
-                    <div class="CheckList_Row" id="node_2.1">
-                      <div id="padding_2.1" class="CheckList_Padding_0"></div>
-                      <div id="icon_2.1" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_2.1">Entity generation</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_2.1" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_2.1" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_2.1" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_2.1" style="display: none;">WARNING</div>
-                    </div>
-
-                    <div class="CheckList_Row" id="node_3.1">
-                      <div id="padding_3.1" class="CheckList_Padding_0"></div>
-                      <div id="icon_3.1" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_3.1">Reference data and translation info loading</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_3.1" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_3.1" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_3.1" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_3.1" style="display: none;">WARNING</div>
-                    </div>
-
-                    <div class="CheckList_Row" id="node_4">
-                      <div id="padding_4" class="CheckList_Padding_0"></div>
-                      <div id="icon_4" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_4">Source compilation</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_4" style="display: none;"></div>
-                      <div class="CheckList_Text_Message_Error" id="error_4" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_4" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_4" style="display: none;">WARNING</div>
-                    </div>
-
-                    <div class="CheckList_Row" id="node_4.1">
-                      <div id="padding_4.1" class="CheckList_Padding_1"></div>
-                      <div id="icon_4.1" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_4.1">WAD generation</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_4.1" style="display: none;"></div>
-                      <div class="CheckList_Text_Message_Error" id="error_4.1" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_4.1" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_4.1" style="display: none;">WARNING</div>
-                    </div>
-
-                    <div class="CheckList_Row" id="node_4.2">
-                      <div id="padding_4.2" class="CheckList_Padding_1"></div>
-                      <div id="icon_4.2" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_4.2">xsql class generation</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_4.2" style="display: none;"></div>
-                      <div class="CheckList_Text_Message_Error" id="error_4.2" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_4.2" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_4.2" style="display: none;">WARNING</div>
-                    </div>
-
-                    <div class="CheckList_Row" id="node_4.3">
-                      <div id="padding_4.3" class="CheckList_Padding_1"></div>
-                      <div id="icon_4.3" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_4.3">Java compilation</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_4.3" style="display: none;"></div>
-                      <div class="CheckList_Text_Message_Error" id="error_4.3" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_4.3" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_4.3" style="display: none;">WARNING</div>
-                    </div>
-
-                    <div class="CheckList_Row" id="node_4.4">
-                      <div id="padding_4.4" class="CheckList_Padding_1"></div>
-                      <div id="icon_4.4" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_4.4">WebContent folder generation</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_4.4" style="display: none;"></div>
-                      <div class="CheckList_Text_Message_Error" id="error_4.4" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_4.4" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_4.4" style="display: none;">WARNING</div>
-                    </div>
-
-                    <div class="CheckList_Row" id="node_4.5">
-                      <div id="padding_4.5" class="CheckList_Padding_1"></div>
-                      <div id="icon_4.5" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_4.5">Deploying files to server</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_4.5" style="display: none;"></div>
-                      <div class="CheckList_Text_Message_Error" id="error_4.5" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_4.5" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_4.5" style="display: none;">WARNING</div>
-                    </div>
-
-                    <div class="CheckList_Row" id="node_5.1">
-                      <div id="padding_5.1" class="CheckList_Padding_0"></div>
-                      <div id="icon_5.1" class="CheckList_Icon_Pending"></div>
-                      <div class="CheckList_Text_Container">
-                        <div class="CheckList_Text_Title" id="title_5.1">Rebuild successful, context needs to be restarted</div>
-                      </div>
-                      <div class="CheckList_Text_Separator"></div>
-                      <div class="CheckList_Text_Message_Processing" id="processing_5.1" style="display: none;"> </div>
-                      <div class="CheckList_Text_Message_Error" id="error_5.1" style="display: none;">ERROR</div>
-                      <div class="CheckList_Text_Message_Exception" id="exception_5.1" style="display: none;">EXCEPTION</div>
-                      <div class="CheckList_Text_Message_Warning" id="warning_5.1" style="display: none;">WARNING</div>
-                    </div>
-
+                  </div>
+                </div>
 
               </td></tr>
 
@@ -1004,7 +846,6 @@
                 <td></td>
               </tr>
               
-          </div>
         </td>
 
       </tr>
