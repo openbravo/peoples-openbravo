@@ -13,22 +13,32 @@ package org.openbravo.utils;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.List;
 
 public class DirFilter implements FilenameFilter {
   String afn;
+  List<String> files;
 
   public DirFilter(String afn) {
     this.afn = afn;
   }
 
+  public DirFilter(List<String> files) {
+    this.files = files;
+  }
+
   public boolean accept(File dir, String name) {
-    boolean boolReturn;
-    // the name is obtained only to compare it with the filename and not
-    // with all the names in all the path
-    String f = new File(name).getName();
-    // returns true if the filter agrees or if it is a directory
-    boolReturn = f.indexOf(afn, f.length() - afn.length()) != -1
-        || new File(dir, name).isDirectory();
-    return boolReturn;
+    if (files != null) {
+      return (files.contains(name)) || new File(dir, name).isDirectory();
+    } else {
+      boolean boolReturn;
+      // the name is obtained only to compare it with the filename and not
+      // with all the names in all the path
+      String f = new File(name).getName();
+      // returns true if the filter agrees or if it is a directory
+      boolReturn = f.indexOf(afn, f.length() - afn.length()) != -1
+          || new File(dir, name).isDirectory();
+      return boolReturn;
+    }
   }
 }

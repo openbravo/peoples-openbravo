@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/ant-1.7.1.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/ant-apache-log4j.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

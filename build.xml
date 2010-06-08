@@ -76,6 +76,7 @@ export.database: exports database structure and data to xml files.
   <property name="base.lib" location="lib" />
   <property name="base.modules" location="modules" />
   <property name="build" location="build/classes" />
+  <property name="build.apply.module" location="build.apply/classes" />
   <property name="build.AD" location="srcAD" />
   <property name="build.sqlc" location="build/javasqlc" />
   <property name="build.core.lib" location="src-core/lib" />
@@ -216,6 +217,69 @@ export.database: exports database structure and data to xml files.
     </dirset>
     <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
   </path>
+
+  <!-- This classpath is needed only for the compile.apply.module task-->
+  <path id="apply.module.compile.classpath">
+    <pathelement path="${build.apply.module}" />
+    <pathelement path="${base.src}" />
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${build.core.lib}">
+      <include name="openbravo-core.jar" />
+    </fileset>
+    <fileset dir="${build.trl.lib}">
+      <include name="openbravo-trl.jar" />
+    </fileset>
+    <fileset dir="${build.wad.lib}">
+      <include name="openbravo-wad.jar" />
+    </fileset>
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.db}/lib/">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.modules}">
+      <include name="*/lib/**" />
+    </fileset>
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
+  </path>
+  
+  <!-- This classpath is needed only for the apply.module task-->
+  <path id="apply.module.runtime.classpath">
+    <pathelement path="${build.apply.module}" />
+    <pathelement path="${build}" />
+    <pathelement path="${base.src}" />
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${build.core.lib}">
+      <include name="openbravo-core.jar" />
+    </fileset>
+    <fileset dir="${build.trl.lib}">
+      <include name="openbravo-trl.jar" />
+    </fileset>
+    <fileset dir="${build.wad.lib}">
+      <include name="openbravo-wad.jar" />
+    </fileset>
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.db}/lib/">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.modules}">
+      <include name="*/lib/**" />
+    </fileset>
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
+  </path>
   
   <macrodef name="updatesystemstatus">
      <attribute name="v" default="NOT SET"/>
@@ -284,6 +348,7 @@ export.database: exports database structure and data to xml files.
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
+    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
     <updatesystemstatus v="RB51"/>
@@ -322,6 +387,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="buildvalidation" depends="init, core.lib">
+    <updatesystemstatus v="RB11"/> 
     <ant dir="src-util/buildvalidation" target="buildvalidation" inheritAll="true" inheritRefs="true" />
   </target>
   
@@ -334,7 +400,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="compile.complete.deploy" depends="compile.complete.development, compile.complete.war">
-    
+
     <!-- Calculate wad checksum to enable smartbuild-->
     <taskdef name="CheckSumCondition" classname="org.openbravo.utils.CheckSumCondition">
       <classpath refid="project.class.path" />
@@ -346,10 +412,12 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="compile.complete.development" depends="init" unless="mode.war">
+    <updatesystemstatus v="RB43"/>
     <ant dir="${base.src}" target="compile.complete.development" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="compile.complete.war" depends="init" if="mode.war">
+    <updatesystemstatus v="RB43"/>
     <antcall target="compile.complete" />
     <antcall target="war" />
   </target>
@@ -554,7 +622,6 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="install.source" depends="init, create.database, wad.lib, trl.lib, compile.complete.deploy">
-
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
@@ -589,14 +656,17 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="update.database" depends="init, core.lib, database.lib, buildvalidation">
+    <updatesystemstatus v="RB12"/>
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
-    <updatesystemstatus v="RB21"/>
     <antcall target="generate.entities.quick" />
-    <antcall target="db.apply.modules" />
+    <antcall target="apply.module" />
   </target>
 
   <target name="update.database.mod" depends="init, core.lib, database.lib, buildvalidation">
+    <updatesystemstatus v="RB12"/>
     <ant dir="${base.db}" target="update.database.mod.java" inheritAll="true" inheritRefs="true" />
+    <antcall target="generate.entities.quick" />
+    <antcall target="apply.module" />
   </target>
 
   <target name="create.database.script" depends="init, core.lib">
@@ -628,9 +698,6 @@ export.database: exports database structure and data to xml files.
 
 
   <target name="apply.modules" depends="update.database.mod">
-    <updatesystemstatus v="RB21"/>
-
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <condition property="apply.modules.complete.compilation.var">
       <istrue value="${apply.modules.complete.compilation}"  />
@@ -639,10 +706,12 @@ export.database: exports database structure and data to xml files.
     <condition property="apply.modules.simple.compilation.var">
       <isfalse value="${apply.modules.complete.compilation.var}" />
     </condition>
-    
+
+    <updatesystemstatus v="RB43"/>
     <antcall target="apply.modules.compile"/>
+
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
-     
+
   </target>
   
   <target name="apply.module.forked">
@@ -657,13 +726,25 @@ export.database: exports database structure and data to xml files.
     </taskdef>
     <applyModule userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
-
-  <target name="apply.module">
+  
+  <target name="compile.apply.module" depends="init">
     <updatesystemstatus v="RB31"/>
+    <ant dir="${base.src}" target="compile.apply.module" inheritAll="true" inheritRefs="true" />
+  </target>
+  
+  <!--
+  This task uses a special classpath.
+  This classpath is equivalent to the normal project.class.path, except for the fact that that the normal build folder
+  is replaced by the apply.module.build folder, in which the ApplyModule task related classes will be compiled.
+  This is done to workaround the fact that the javac task needs to compile all the related classes when upgrading openbravo
+  and if the normal build folder is included, none of them are recompiled by default unless the whole build directory is specified.
+  -->
+  <target name="apply.module" depends="compile.apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}'" />
-      <classpath refid="project.class.path" />
+      <classpath refid="apply.module.runtime.classpath" />
     </java>
+   <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
   </target>
   
   <target name="apply.modules.compile" depends="wad.lib">
@@ -935,5 +1016,24 @@ export.database: exports database structure and data to xml files.
   
   <target name="validate.wad">
     <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
+  </target>
+  
+  <target name="UIrebuild" depends="core.lib">
+    <java classname="org.openbravo.base.BuildTask" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
+      <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
+      <classpath>
+        <pathelement path="${build.core.lib}/openbravo-core.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-1.2.8.jar" />
+        <pathelement path="${base.lib}/runtime/commons-pool.jar" />
+        <pathelement path="${base.lib}/runtime/commons-dbcp.jar" />
+        <pathelement path="${base.lib}/runtime/postgresql-jdbc3-8.2.jar" />
+        <pathelement path="${base.lib}/runtime/ojdbc6.jar" />
+        <pathelement path="${base.lib}/runtime/commons-collections.jar" />
+        <pathelement path="${base.lib}/runtime/ant-1.7.1.jar" />
+        <pathelement path="${base.lib}/runtime/ant-launcher.jar" />
+        <pathelement path="${base.lib}/runtime/ant-apache-log4j.jar" />
+        <pathelement path="${base.lib}/runtime/ant-nodeps.jar" />
+      </classpath>
+    </java>
   </target>
 </project>

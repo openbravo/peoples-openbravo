@@ -158,8 +158,22 @@ build.war: build a war file in the lib directory.
     </delete>
   </target>
 
+  <target name="compile.apply.module" depends="init">
+    <mkdir dir="${build.apply.module}" />
+    <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
+      <arg line="'${base.config}'/Openbravo.properties .xsql . '${build.sqlc}'/src" />
+      <jvmarg value="-Dsqlc.listOfFiles=ComboTableQuery_data.xsql,ActionButton_data.xsql,PInstanceProcess_data.xsql,SessionLogin_data.xsql,ApplyModule_data.xsql,TableSQLQuery_data.xsql,DateTime_data.xsql,ComboTableQuery_data.xsql,PrintJR_data.xsql,DocumentNo_data.xsql,WindowAccess_data.xsql,ComboTable_data.xsql,Tab_data.xsql,WindowTree_data.xsql,ErrorTextParser_data.xsql,Utility_data.xsql,MessageBD_data.xsql,LanguageCombo_data.xsql,Translation_data.xsql,Buscador_data.xsql,WindowTabs_data.xsql,Pinstance_data.xsql,ProcessRequest_data.xsql,Trigger_data.xsql,ProcessRun_data.xsql,Process_data.xsql,OrgTree_data.xsql,Seguridad_data.xsql,DefaultOptions_data.xsql,SystemPreferences_data.xsql,DefaultSessionValues_data.xsql,DefaultValues_data.xsql,Attribute_data.xsql,ClassInfo_data.xsql,"/>
+      <classpath refid="project.class.path" />
+    </java>
+    <javac includes="org/openbravo/erpCommon/modules/ApplyModuleTask.java" destdir="${build.apply.module}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" verbose="false" nowarn="${friendlyWarnings}">
+      <src path="${base.src}"/>
+      <src path="../build/javasqlc/src"/>
+      <src path="../src-gen"/>
+      <classpath refid="apply.module.compile.classpath" />
+    </javac>
+  </target>
+  
   <target name="sqlc" depends="copy.srcClient">
-    <updatesystemstatus v="RB42" />
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql . '${build.sqlc}'/src" />
       <classpath refid="project.class.path" />
@@ -334,7 +348,6 @@ build.war: build a war file in the lib directory.
   </target>
   
   <target name="compileSqlc" depends="sqlc">
-    <updatesystemstatus v="RB43"/>
     <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" excludes="${base.modules}/*/src-wad/**,${base.modules}/*/src-util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}">
       <classpath refid="project.class.path" />
     </javac>
@@ -390,7 +403,7 @@ build.war: build a war file in the lib directory.
     </copy>
     
     <!-- also compile the domaintypes in modules -->
-    <javac srcdir="${basedir}/../" includes="modules/*/src/**/model/domaintype/**/*.java" destdir="${build}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
+    <javac srcdir="${basedir}/../" includes="modules/*/src/**/model/domaintype/**/*.java" destdir="${build}"  fork="true" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="project.class.path" />
     </javac>
     
@@ -417,7 +430,6 @@ build.war: build a war file in the lib directory.
   </target>
   
   <target name="wad" depends="init, wadvalidation">
-    <updatesystemstatus v="RB41"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick'" />
       <classpath refid="project.class.path" />
@@ -426,7 +438,6 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="wad.quick" depends="init, wadvalidation">
-    <updatesystemstatus v="RB41"/>
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
       <classpath refid="project.class.path" />
@@ -436,7 +447,6 @@ build.war: build a war file in the lib directory.
 
   <target name="postsrc" depends="postsrc.modules">
 
-    <updatesystemstatus v="RB44"/>
     <copy todir="${build}">
       <fileset dir="${basedir}" includes="**/*.properties" />
     </copy>
@@ -793,7 +803,6 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="copy.files" if="mode.class">
-    <updatesystemstatus v="RB45"/>
     <mkdir dir="${jakarta.base}/webapps/${context.name}" />
     <copy todir="${jakarta.base}/webapps/${context.name}" encoding="UTF-8">
       <fileset dir="${base.context}" />

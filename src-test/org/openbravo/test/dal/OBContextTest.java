@@ -151,6 +151,22 @@ public class OBContextTest extends BaseTest {
     }
   }
 
+  /**
+   * See issue: https://issues.openbravo.com/view.php?id=13572 Maintain and print stacktraces when
+   * calls to setAdminMode and restoreAdminMode are unbalanced
+   * 
+   * To test this issue set the OBContext.ADMIN_TRACE_SIZE to a higher value than 0
+   */
+  public void testUnbalancedCallsToAdminMode() {
+    OBContext.setAdminMode();
+    OBContext.setAdminMode();
+    OBContext.setAdminMode();
+    OBContext.restorePreviousMode();
+    OBContext.restorePreviousMode();
+    OBContext.restorePreviousMode();
+    OBContext.restorePreviousMode();
+  }
+
   // the scenario:
   // thread1 T1
   // thread2 T2

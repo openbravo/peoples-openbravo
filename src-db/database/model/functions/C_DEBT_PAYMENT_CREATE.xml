@@ -122,13 +122,15 @@
     WHERE L.C_BankStatementLine_ID=v_Record_ID
       AND L.C_BankStatement_ID=B.C_BankStatement_ID;
     --Check Withholding belongs to Business Partner
-    SELECT COUNT(*)
-    INTO v_count
-    FROM C_BP_Withholding 
-    WHERE C_Withholding_ID=v_c_withholding_id
-    AND C_BPartner_ID=v_C_BPartner_ID;
-    IF (v_count=0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@NOT_BP_WITHHOLDING@');
+    IF (v_c_withholding_id IS NOT NULL) THEN
+      SELECT COUNT(*)
+      INTO v_count
+      FROM C_BP_Withholding 
+      WHERE C_Withholding_ID=v_c_withholding_id
+      AND C_BPartner_ID=v_C_BPartner_ID;
+      IF (v_count=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@NOT_BP_WITHHOLDING@');
+      END IF;
     END IF;
     --Insert Settlement
     v_ResultStr:='InsertingSettlement';

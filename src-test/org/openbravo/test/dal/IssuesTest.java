@@ -101,6 +101,9 @@ import org.openbravo.test.base.BaseTest;
  * https://issues.openbravo.com/view.php?id=13283: [REST] use organization of the object to
  * retrieved referenced objects
  * 
+ * https://issues.openbravo.com/view.php?id=13509: In a OBCriteria you can't use list() after a
+ * count() call
+ * 
  * @author mtaal
  * @author iperdomo
  */
@@ -432,5 +435,19 @@ public class IssuesTest extends BaseTest {
     assertTrue(result.get(0) instanceof Order);
     final Order order = (Order) result.get(0);
     assertTrue(order.getOrganization().getId().equals("1000000"));
+  }
+
+  /**
+   * https://issues.openbravo.com/view.php?id=13509: In a OBCriteria you can't use list() after a
+   * count() call
+   */
+  public void test13509() throws Exception {
+    setBigBazaarAdminContext();
+    final OBCriteria<Organization> orgs = OBDal.getInstance().createCriteria(Organization.class);
+    final int cnt = orgs.count();
+    assertTrue(cnt > 0);
+    final Organization org = orgs.list().get(0);
+    assertTrue(null != org);
+    assertTrue(cnt == orgs.list().size());
   }
 }
