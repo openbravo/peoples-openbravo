@@ -39,12 +39,14 @@
   v_PriceList_ID VARCHAR2(32);
   v_Processed C_ORDER.PROCESSED%TYPE;
   v_ID VARCHAR2(32);
+  v_Issotrx CHAR(1);
+  v_pricecancelAD CHAR(1);
   v_oldLine NUMBER;
   v_newLineNetAmt NUMBER;
   v_newLineAlternate NUMBER;
   v_taxAmt NUMBER;
   v_Prec C_CURRENCY.STDPRECISION%TYPE;
-  v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
+  v_BaseAmount C_TAX.BASEAMOUNT%TYPE;  
     
 BEGIN
     
@@ -170,7 +172,11 @@ END IF;
    v_lineno := v_lineno + 10;
    v_PriceNew := M_Get_Offer_Price(Cur_Offer.M_Offer_ID, v_Price);
    v_Amt := v_Price - v_PriceNew;
-
+   v_pricecancelAD := 'N';
+	IF(:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
+  	SELECT o.issotrx,ol.CancelPriceAD into v_Issotrx,v_pricecancelAD FROM C_ORDER o,C_ORDERLINE ol WHERE ol.C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID AND o.C_ORDER_ID = ol.C_ORDER_ID;
+	END IF;
+	IF((v_Issotrx = 'Y' AND v_pricecancelAD <> 'Y') OR v_Issotrx = 'N') THEN
    INSERT INTO C_INVOICELINE_OFFER
        (C_INVOICELINE_OFFER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
       CREATED, CREATEDBY, UPDATED, UPDATEDBY,
@@ -179,6 +185,7 @@ END IF;
        (v_InvoiceLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
       now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
      :NEW.C_InvoiceLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt, v_Precision));
+     END IF;
     v_Price := v_PriceNew;
   END LOOP;
  END IF;
