@@ -41,7 +41,8 @@ public class SE_PaymentMethod extends SimpleCallout {
         info.addResult("inpautomaticReceipt", paymentMethod.isAutomaticReceipt() ? "Y" : "N");
         info.addResult("inpautomaticDeposit", paymentMethod.isAutomaticDeposit() ? "Y" : "N");
         info.addResult("inppayinExecutionType", paymentMethod.getPayinExecutionType());
-        info.addResult("inppayinExecutionProcessId", paymentMethod.getPayinExecutionProcess());
+        info.addResult("inppayinExecutionProcessId", paymentMethod.getPayinExecutionProcess()
+            .getId());
         info.addResult("inppayinDeferred", paymentMethod.isPayinDeferred() ? "Y" : "N");
         info.addResult("inpuponreceiptuse", paymentMethod.getUponReceiptUse());
         info.addResult("inpupondeposituse", paymentMethod.getUponDepositUse());
@@ -50,7 +51,8 @@ public class SE_PaymentMethod extends SimpleCallout {
         info.addResult("inpautomaticPayment", paymentMethod.isAutomaticPayment() ? "Y" : "N");
         info.addResult("inpautomaticWithdrawn", paymentMethod.isAutomaticWithdrawn() ? "Y" : "N");
         info.addResult("inppayoutExecutionType", paymentMethod.getPayoutExecutionType());
-        info.addResult("inppayoutExecutionProcessId", paymentMethod.getPayoutExecutionProcess());
+        info.addResult("inppayoutExecutionProcessId", paymentMethod.getPayoutExecutionProcess()
+            .getId());
         info.addResult("inppayoutDeferred", paymentMethod.isPayoutDeferred() ? "Y" : "N");
         info.addResult("inpuponpaymentuse", paymentMethod.getUponPaymentUse());
         info.addResult("inpuponwithdrawaluse", paymentMethod.getUponWithdrawalUse());
