@@ -371,6 +371,8 @@ public class DocFINFinAccTransaction extends AcctServer {
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
@@ -415,6 +417,8 @@ public class DocFINFinAccTransaction extends AcctServer {
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
@@ -466,6 +470,8 @@ public class DocFINFinAccTransaction extends AcctServer {
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
             .getPaymentMethod()));
+        obCriteria.setFilterOnReadableClients(false);
+        obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
         for (FIN_FinancialAccountAccounting account : accounts) {
           if (payment.isReceipt()) {
@@ -534,6 +540,8 @@ public class DocFINFinAccTransaction extends AcctServer {
             FinAccPaymentMethod.class);
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAccount));
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+        obCriteria.setFilterOnReadableClients(false);
+        obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
         if (bIsReceipt) {
           account = getAccount(conn, lines.get(0).getUponDepositUse(), accountList.get(0),
