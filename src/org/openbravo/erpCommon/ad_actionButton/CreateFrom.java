@@ -1481,6 +1481,9 @@ public class CreateFrom extends HttpSecureAppServlet {
             		  strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
             		  strPriceList, strKey);
             }
+            if(isSOTrx.equals("Y") && price[0].cancelpricead.equals("Y")){
+            	priceActual = priceStd;
+            }
             price = null;
           } else {
             price = CreateFromInvoiceData.selectBOM(conn, this, strDateInvoiced, strBPartner,
