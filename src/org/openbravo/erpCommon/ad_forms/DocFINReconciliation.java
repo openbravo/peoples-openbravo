@@ -348,12 +348,12 @@ public class DocFINReconciliation extends AcctServer {
           log4j.error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
         }
       }
+      String Fact_Acct_Group_ID = SequenceIdData.getUUID();
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_FINReconciliation line = (DocLine_FINReconciliation) p_lines[i];
         FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
             line.getFinFinAccTransactionId());
         // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd GL item transaction
-        String Fact_Acct_Group_ID = SequenceIdData.getUUID();
         if (transaction.getTransactionType().equals(TRXTYPE_BankFee))
           fact = createFactFee(line, as, conn, fact, Fact_Acct_Group_ID);
         else if (!"".equals(line.getFinPaymentId()))
@@ -378,9 +378,10 @@ public class DocFINReconciliation extends AcctServer {
       fact.createLine(line, getWithdrawalAccount(as, transaction.getAccount(), conn),
           C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
-    fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
-        .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-        DocumentType, conn);
+    else
+      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
+          .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
     fact.createLine(line, getClearOutAccount(as, transaction.getAccount(), conn), C_Currency_ID,
         line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
         DocumentType, conn);
@@ -470,6 +471,8 @@ public class DocFINReconciliation extends AcctServer {
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
@@ -516,6 +519,8 @@ public class DocFINReconciliation extends AcctServer {
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
             .getPaymentMethod()));
+        obCriteria.setFilterOnReadableClients(false);
+        obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
         for (FIN_FinancialAccountAccounting account : accounts) {
           if (payment.isReceipt()) {
@@ -584,6 +589,8 @@ public class DocFINReconciliation extends AcctServer {
           obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
           obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
               .getPaymentMethod()));
+          obCriteria.setFilterOnReadableClients(false);
+          obCriteria.setFilterOnReadableOrganization(false);
           List<FinAccPaymentMethod> lines = obCriteria.list();
           for (FIN_FinancialAccountAccounting account : accounts) {
             if (confirmation)
@@ -725,6 +732,8 @@ public class DocFINReconciliation extends AcctServer {
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       if (accountList == null || accountList.size() == 0)
         return null;
@@ -827,6 +836,8 @@ public class DocFINReconciliation extends AcctServer {
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
       obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
