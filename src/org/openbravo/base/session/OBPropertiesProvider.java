@@ -87,7 +87,9 @@ public class OBPropertiesProvider {
   }
 
   public void setProperties(InputStream is) {
-    Check.isNull(obProperties, "Openbravo properties have already been set");
+    if (obProperties != null) {
+      log.warn("Openbravo properties have already been set, setting them again");
+    }
     log.debug("Setting openbravo.properties through input stream");
     obProperties = new Properties();
     try {

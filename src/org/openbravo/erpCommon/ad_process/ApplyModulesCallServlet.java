@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.ad_process;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
@@ -31,6 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.erpCommon.ad_process.buildStructure.Build;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStep;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStepTranslation;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildStep;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 
@@ -151,7 +158,11 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
   private ApplyModulesResponse fillErrorResponse(VariablesSecureApp vars, String state,
       String defaultState) {
     ApplyModulesResponse resp = new ApplyModulesResponse();
-    resp.setState(Integer.parseInt(state.replace("RB", "")));
+    String fState = state;
+    if (fState.equals("")) {
+      fState = "0";
+    }
+    resp.setState(Integer.parseInt(fState.replace("RB", "")));
     PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
     boolean warning = false;
@@ -210,7 +221,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       ResultSet rs = ps.getResultSet();
       rs.next();
       String state = rs.getString(1);
-      ApplyModulesResponse resp = fillResponse(vars, state, "Processing", false);
+      ApplyModulesResponse resp = fillResponse(vars, state, "Processing", true);
       response.setContentType("text/plain; charset=UTF-8");
       final PrintWriter out = response.getWriter();
       String strResult;
@@ -270,6 +281,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     if (ln == null || ln.equals("")) {
       return;
     }
+    String finalMessageType = "";
     OBError error = new OBError();
     PreparedStatement ps;
     PreparedStatement ps2;
@@ -278,41 +290,120 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       ps.executeQuery();
       ResultSet rs = ps.getResultSet();
       if (rs.next()) {
-        error.setType("Error");
-        error.setTitle(Utility.messageBD(myPool, "Error", vars.getLanguage()));
-        error
-            .setMessage(Utility.messageBD(myPool, "BuildError", vars.getLanguage())
-                + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\" class=\"MessageBox_TextLink\">"
-                + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>");
-
+        finalMessageType = "Error";
       } else {
         ps2 = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='WARN'");
         ps2.executeQuery();
         ResultSet rs2 = ps2.getResultSet();
         if (rs2.next()) {
-          error.setType("Warning");
-          error.setTitle(Utility.messageBD(myPool, "Warning", vars.getLanguage()));
-          error
-              .setMessage(Utility.messageBD(myPool, "BuildWarning", vars.getLanguage())
-                  + "<a href=\"http://wiki.openbravo.com/wiki/ERP/2.50/Update_Tips\" target=\"_blank\" class=\"MessageBox_TextLink\">"
-                  + Utility.messageBD(myPool, "ThisLink", vars.getLanguage()) + "</a>"
-                  + Utility.messageBD(myPool, "BuildWarning2", vars.getLanguage()));
-
+          finalMessageType = "Warning";
         } else {
-          error.setType("Success");
-          error.setTitle(Utility.messageBD(myPool, "Success", vars.getLanguage()));
-          error.setMessage(Utility.messageBD(myPool, "BuildSuccessful", vars.getLanguage()));
+          finalMessageType = "Success";
         }
+      }
+
+      error.setType(finalMessageType);
+      error.setTitle(Utility.messageBD(myPool, finalMessageType, vars.getLanguage()));
+      error.setMessage("");
+
+      String source = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .get("source.path").toString();
+      Build build = Build.getBuildFromXMLFile(source
+          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml", new File(
+          source, "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml")
+          .getAbsolutePath());
+
+      BuildMainStep finalStep;
+      if (finalMessageType.equals("Error")) {
+        PreparedStatement ps3 = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
+        ps3.executeQuery();
+        ResultSet rs3 = ps3.getResultSet();
+        rs3.next();
+        String state = rs3.getString(1);
+        finalStep = build.mainStepOfCode(state);
+      } else {
+        finalStep = build.getMainSteps().get(build.getMainSteps().size() - 1);
+      }
+      if (vars.getLanguage().equals("en_US")) {
+        if (finalMessageType.equals("Error")) {
+          error.setMessage(finalStep.getErrorMessage());
+        } else if (finalMessageType.equals("Warning")) {
+          error.setMessage(finalStep.getWarningMessage());
+        } else if (finalMessageType.equals("Success")) {
+          error.setMessage(finalStep.getSuccessMessage());
+        }
+      } else {
+        BuildTranslation buildTranslation = ApplyModules.getBuildTranslationFromFile(vars
+            .getLanguage());
+        buildTranslation.setBuild(build);
+        BuildMainStepTranslation stepTranslation = buildTranslation
+            .getBuildMainStepTranslationForCode(finalStep.getCode());
+        String message = null;
+        if (finalMessageType.equals("Error")) {
+          message = stepTranslation.getTranslatedErrorMessage();
+        } else if (finalMessageType.equals("Warning")) {
+          message = stepTranslation.getTranslatedWarningMessage();
+        } else if (finalMessageType.equals("Success")) {
+          message = stepTranslation.getTranslatedSuccessMessage();
+        }
+        if (message == null || message.equals("")) {
+          if (finalMessageType.equals("Error")) {
+            message = finalStep.getErrorMessage();
+          } else if (finalMessageType.equals("Warning")) {
+            message = finalStep.getWarningMessage();
+          } else if (finalMessageType.equals("Success")) {
+            message = finalStep.getSuccessMessage();
+          }
+        }
+        error.setMessage(message);
+      }
+
+      XStream xs = new XStream(new JettisonMappedXmlDriver());
+      xs.alias("OBError", OBError.class);
+      String strResult = xs.toXML(error);
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.print(strResult);
+      out.close();
+
+      PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
+      psErr.executeQuery();
+      ResultSet rsErr = psErr.getResultSet();
+      if (!rsErr.next()) {
+        String successCode = build.getMainSteps().get(build.getMainSteps().size() - 1)
+            .getSuccessCode();
+        PreparedStatement ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
+            + successCode + "'");
+        ps3.executeUpdate();
+        PreparedStatement ps4 = getPreparedStatement("UPDATE AD_MODULE SET STATUS='A' WHERE STATUS='P'");
+        ps4.executeUpdate();
+      } else {
+        ps = getPreparedStatement("SELECT SYSTEM_STATUS FROM AD_SYSTEM_INFO");
+        ps.executeQuery();
+        ResultSet rs1 = ps.getResultSet();
+        rs1.next();
+        String state = rs1.getString(1);
+        BuildMainStep finalMainStep = build.mainStepOfCode(state);
+        String errorCode = finalMainStep.getErrorCode();
+        PreparedStatement ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
+            + errorCode + "'");
+        ps3.executeUpdate();
       }
     } catch (Exception e) {
     }
+  }
 
-    XStream xs = new XStream(new JettisonMappedXmlDriver());
-    xs.alias("OBError", OBError.class);
-    String strResult = xs.toXML(error);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.print(strResult);
-    out.close();
+  private BuildMainStep getMainStep(Build build, String stepCode) {
+    for (BuildMainStep mstep : build.getMainSteps()) {
+      if (mstep.getCode().equals(stepCode)) {
+        return mstep;
+      }
+      for (BuildStep step : mstep.getStepList()) {
+        if (step.getCode().equals(stepCode)) {
+          return mstep;
+        }
+      }
+    }
+    return null;
   }
 }

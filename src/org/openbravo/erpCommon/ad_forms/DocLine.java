@@ -75,6 +75,7 @@ public class DocLine {
   public String m_A_Asset_ID = "";
   public String m_C_BPartner_ID = "";
   public String m_M_Product_ID = "";
+  public String m_C_Glitem_ID = "";
   public String m_AD_OrgTrx_ID = "";
   public String m_C_SalesRegion_ID = "";
   public String m_C_Project_ID = "";
@@ -111,6 +112,7 @@ public class DocLine {
     m_AD_Org_ID = data.getField("adOrgId");
     m_C_BPartner_ID = data.getField("cBpartnerId");
     m_M_Product_ID = data.getField("mProductId");
+    m_C_Glitem_ID = data.getField("mCGlitemId");
     m_AD_OrgTrx_ID = data.getField("adOrgtrxId");
     m_C_SalesRegion_ID = data.getField("cSalesregionId");
     m_C_Project_ID = data.getField("cProjectId");

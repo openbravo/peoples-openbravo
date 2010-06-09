@@ -19,10 +19,10 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,13 +33,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.log4j.PropertyConfigurator;
+import org.openbravo.base.AntExecutor;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.AntExecutor;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_process.buildStructure.Build;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStep;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildStep;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
@@ -48,6 +55,7 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.system.ReloadContext;
 import org.openbravo.service.system.RestartTomcat;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.xml.sax.InputSource;
 
 /**
  * Servlet for the Apply Modules method.
@@ -68,6 +76,8 @@ public class ApplyModules extends HttpSecureAppServlet {
       printPage(request, response, vars);
     } else if (vars.commandIn("STARTAPPLY")) {
       startApply(response, vars);
+    } else if (vars.commandIn("RESETREBUILDSTATE")) {
+      resetBuild(response, vars);
     } else if (vars.commandIn("TOMCAT")) {
       printPageTomcat(request, response, vars);
     } else if (vars.commandIn("RESTART")) {
@@ -169,6 +179,11 @@ public class ApplyModules extends HttpSecureAppServlet {
       return;
     }
 
+    Build build = getBuildFromXMLFile();
+    if (build == null) {
+      throw new ServletException(
+          "Build information couldn't be read (possibly because the file couldn't be found)");
+    }
     String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
@@ -186,11 +201,215 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
+    FieldProvider[] nodeData = getFieldProviderFromBuild(vars, build);
+    xmlDocument.setData("structureStepTree", nodeData);
+
+    /*
+     * There is an initial Javascript part which is generated here, and injected into the html page
+     * Basically, this Javascript part consists in a number of Javascript global variables whose
+     * value depends on the Build Structure which is read from the buildStructure.xml file
+     */
+    // This variable contains all possible state codes
+    String arraySteps = " var possible_states=[";
+    // This variable contains the error status (error, warning, success, nothing yet) for every
+    // possible state
+    String errorStatus = "var error_status=[";
+    String numofWarns = "var numofwarns=[";
+    String numofErrors = "var numoferrs=[";
+    // This variable contains information about the structure of the build (mainsteps and substeps
+    // codes, in a kind of hierarchical structure, defined as multidimensional arrays)
+    String nodeStructure = "var nodestructure=[";
+    // This variable contains all possible states in which the process could end
+    String endStates = "var end_states=[";
+    int i = 0;
+    int k = 0;
+    int l = 0;
+    for (BuildMainStep mstep : build.getMainSteps()) {
+      if (mstep.getErrorCode() != null) {
+        if (l > 0)
+          endStates += ",";
+        endStates += mstep.getErrorCode().replace("RB", "");
+        l++;
+      }
+      if (mstep.getStepList().size() > 0) {
+        if (k > 0)
+          nodeStructure += ",";
+        nodeStructure += "[" + mstep.getCode().replace("RB", "") + ",[";
+        k++;
+      } else {
+        if (i > 0) {
+          arraySteps += ",";
+          errorStatus += ",";
+          numofWarns += ",";
+          numofErrors += ",";
+        }
+        arraySteps += mstep.getCode().replace("RB", "");
+        errorStatus += "''";
+        numofWarns += "0";
+        numofErrors += "0";
+      }
+      i++;
+      int j = 0;
+      for (BuildStep step : mstep.getStepList()) {
+        if (j > 0)
+          nodeStructure += ",";
+        j++;
+        arraySteps += "," + step.getCode().replace("RB", "");
+        nodeStructure += step.getCode().replace("RB", "");
+        errorStatus += ",''";
+        numofWarns += ",0";
+        numofErrors += ",0";
+      }
+      if (mstep.getStepList().size() > 0) {
+        nodeStructure += "]]";
+      }
+    }
+    if (build.getMainSteps().get(build.getMainSteps().size() - 1).getWarningCode() != null) {
+      if (l > 0)
+        endStates += ",";
+      endStates += build.getMainSteps().get(build.getMainSteps().size() - 1).getWarningCode()
+          .replace("RB", "");
+    }
+    if (build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode() != null) {
+      if (l > 0)
+        endStates += ",";
+      endStates += build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode()
+          .replace("RB", "");
+    }
+    // We also add the successful final state of the last main step
+    arraySteps += ","
+        + build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode().replace("RB",
+            "");
+    errorStatus += ",''";
+    numofWarns += ",0";
+    numofErrors += ",0";
+    arraySteps += "];";
+    errorStatus += "];";
+    numofWarns += "];";
+    numofErrors += "];";
+    nodeStructure += "];";
+    endStates += "];";
+
+    String firstState = "var first_state='"
+        + build.getMainSteps().get(0).getCode().replace("RB", "") + "';";
+    String generatedJS = firstState + "\n" + endStates + "\n" + arraySteps + "\n" + errorStatus
+        + "\n" + numofWarns + "\n" + numofErrors + "\n" + nodeStructure + "\n" + "\n";
+    xmlDocument.setParameter("jsparam", generatedJS);
+
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
 
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private FieldProvider[] getFieldProviderFromBuild(VariablesSecureApp vars, Build build) {
+    try {
+      if (vars.getLanguage().equals("en_US")) {
+        FieldProvider[] nodeData = build.getFieldProvidersForBuild();
+        return nodeData;
+      } else {
+        BuildTranslation buildTranslation = getBuildTranslationFromFile(vars.getLanguage());
+        buildTranslation.setBuild(build);
+        if (buildTranslation == null) {
+          FieldProvider[] nodeData = build.getFieldProvidersForBuild();
+          return nodeData;
+        }
+        FieldProvider[] nodeData = buildTranslation.getFieldProvidersForBuild();
+        return nodeData;
+      }
+    } catch (Exception e) {
+      log4j.error("Error reading build information file", e);
+    }
+    return null;
+  }
+
+  protected static BuildTranslation getBuildTranslationFromFile(String language) throws Exception {
+
+    String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
+        .toString();
+    File modulesF = new File(source, "modules");
+    File[] modules = modulesF.listFiles();
+    File translationFile = null;
+    for (int i = 0; i < modules.length && translationFile == null; i++) {
+      File provisionalFile = new File(modules[i], "referencedata/translation/" + language
+          + "/buildStructureTrl.xml");
+      if (provisionalFile.exists())
+        translationFile = provisionalFile;
+    }
+    if (translationFile == null)
+      return null;
+    FileReader xmlReader = new FileReader(translationFile);
+
+    BeanReader beanReader = new BeanReader();
+
+    beanReader.getBindingConfiguration().setMapIDs(false);
+
+    beanReader.getXMLIntrospector().register(
+        new InputSource(new FileReader(new File(source,
+            "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
+
+    beanReader.registerBeanClass("BuildTranslation", BuildTranslation.class);
+
+    BuildTranslation build = (BuildTranslation) beanReader.parse(xmlReader);
+
+    return build;
+  }
+
+  protected Build getBuildFromXMLFile() {
+    try {
+      String source = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .get("source.path").toString();
+      return Build.getBuildFromXMLFile(source
+          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml", new File(
+          source, "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml")
+          .getAbsolutePath());
+
+    } catch (Exception e) {
+      log4j.error("Error while reading the build information file");
+      return null;
+    }
+  }
+
+  private void resetBuild(HttpServletResponse response, VariablesSecureApp vars) {
+    Build build = getBuildFromXMLFile();
+    vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
+    PreparedStatement ps = null;
+    PreparedStatement ps2 = null;
+    PreparedStatement updateSession = null;
+    User currentUser = OBContext.getOBContext().getUser();
+    try {
+      try {
+        if (OBScheduler.getInstance().getScheduler().isStarted())
+          OBScheduler.getInstance().getScheduler().shutdown(true);
+      } catch (Exception e) {
+        log4j.warn("Could not shutdown scheduler", e);
+        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+      }
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getConnection().commit();
+
+      ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
+      ps.executeUpdate();
+      ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='"
+          + build.getMainSteps().get(0).getCode() + "'");
+      ps2.executeUpdate();
+      // We also cancel sessions opened for users different from the current one
+      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
+      updateSession.setString(1, currentUser.getId());
+      updateSession.executeUpdate();
+
+    } catch (final Exception e) {
+      createModuleLog(false, e.getMessage());
+    } finally {
+      try {
+        releasePreparedStatement(ps);
+        releasePreparedStatement(ps2);
+        releasePreparedStatement(updateSession);
+      } catch (SQLException e) {
+        // Ignored on purpose
+      }
+    }
   }
 
   /**
@@ -199,28 +418,14 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    User currentUser = OBContext.getOBContext().getUser();
-    vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
+
     OBContext.setAdminMode();
-    PreparedStatement ps = null;
-    PreparedStatement ps2 = null;
     PreparedStatement ps3 = null;
     PreparedStatement ps4 = null;
-    PreparedStatement updateSession = null;
     AntExecutor ant = null;
     try {
       // We first shutdown the background process, so that it doesn't interfere
       // with the rebuild process
-      try {
-        if (OBScheduler.getInstance().getScheduler().isStarted())
-          OBScheduler.getInstance().getScheduler().shutdown(true);
-      } catch (Exception e) {
-        // We will not log an exception if the scheduler complains. The user shouldn't notice this
-      }
-      ps = getPreparedStatement("DELETE FROM AD_ERROR_LOG");
-      ps.executeUpdate();
-      ps2 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB11'");
-      ps2.executeUpdate();
 
       Properties props = new Properties();
       props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
@@ -234,53 +439,17 @@ public class ApplyModules extends HttpSecureAppServlet {
       response.setContentType("text/html; charset=UTF-8");
       final PrintWriter out = response.getWriter();
 
-      ant.setLogFileAndListener(vars.getStringParameter("logfile"));
-
       // do not execute translation process (all entries should be already in the module)
       ant.setProperty("tr", "no");
       // We will show special, friendly warnings when they are available
       ant.setProperty("friendlyWarnings", "true");
+      ant.setProperty("logFileName", vars.getStringParameter("logfile"));
 
       final Vector<String> tasks = new Vector<String>();
+      tasks.add("UIrebuild");
 
-      final String unnappliedModules = getUnnapliedModules();
-      if (ApplyModulesData.isUpdatingCoreOrTemplate(this)) {
-        tasks.add("update.database");
-        tasks.add("core.lib");
-        tasks.add("wad.lib");
-        tasks.add("trl.lib");
-        tasks.add("compile.complete.deploy");
-        ant.setProperty("apply.on.create", "true");
-      } else {
-        if (ApplyModulesData.compileCompleteNeeded(this)) {
-          // compile complete is needed for templates because in this case it is not needed which
-          // elements belong to the template and for uninistalling modules in order to remove old
-          // files and references
-          ant.setProperty("apply.modules.complete.compilation", "true");
-        }
-        ant.setProperty("force", "true");
-        tasks.add("apply.modules");
-        ant.setProperty("module", unnappliedModules);
-      }
-
-      // We also cancel sessions opened for users different from the current one
-      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
-      updateSession.setString(1, currentUser.getId());
-      updateSession.executeUpdate();
       ant.runTask(tasks);
 
-      PreparedStatement psErr = getPreparedStatement("SELECT MESSAGE FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR'");
-      psErr.executeQuery();
-      ResultSet rsErr = psErr.getResultSet();
-      if (!rsErr.next()) {
-        ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB60'");
-        ps3.executeUpdate();
-        ps4 = getPreparedStatement("UPDATE AD_MODULE SET STATUS='A' WHERE STATUS='P'");
-        ps4.executeUpdate();
-      } else {
-        ps3 = getPreparedStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB59'");
-        ps3.executeUpdate();
-      }
       out.close();
     } catch (final Exception e) {
       // rolback the old transaction and start a new one
@@ -293,12 +462,10 @@ public class ApplyModules extends HttpSecureAppServlet {
         Properties props = new Properties();
         props.setProperty("log4j.rootCategory", "INFO,R");
         PropertyConfigurator.configure(props);
-        ant.closeLogFile();
-        releasePreparedStatement(ps);
-        releasePreparedStatement(ps2);
+        if (ant != null)
+          ant.closeLogFile();
         releasePreparedStatement(ps3);
         releasePreparedStatement(ps4);
-        releasePreparedStatement(updateSession);
       } catch (SQLException e) {
       }
       OBContext.restorePreviousMode();
@@ -333,24 +500,4 @@ public class ApplyModules extends HttpSecureAppServlet {
     OBDal.getInstance().save(ml);
   }
 
-  /**
-   * Returns a String of comma separated values for all the modules that are installed but not
-   * applied
-   * 
-   * @return
-   * @throws IOException
-   * @throws ServletException
-   */
-  private String getUnnapliedModules() throws IOException, ServletException {
-    String rt = "";
-    final ApplyModulesData[] data = ApplyModulesData.selectUnappliedModules(this);
-    if (data != null) {
-      for (int i = 0; i < data.length; i++) {
-        if (!rt.equals(""))
-          rt += ", ";
-        rt += data[i].name;
-      }
-    }
-    return rt;
-  }
 }

@@ -18,6 +18,8 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
@@ -69,6 +71,38 @@ public class DocLine_Invoice extends DocLine {
       Account acct = getChargeAccount(as, amt, conn);
       if (acct != null)
         return acct;
+    }
+    // GL Item directly from Invoice Line
+    else if (m_M_Product_ID.equals("") && !m_C_Glitem_ID.equals("")) {
+      try {
+        DocLineInvoiceData[] data = null;
+        data = DocLineInvoiceData.selectGlitem(conn, m_C_Glitem_ID, as.getC_AcctSchema_ID());
+        String Account_ID = "";
+        if (data == null || data.length == 0)
+          return null;
+        if (data.length > 0) {
+          switch (Integer.parseInt(AcctType)) {
+          case 1:
+            // It is similar to ProductInfo.ACCTTYPE_P_Revenue
+            Account_ID = data[0].glitemCreditAcct;
+            break;
+          case 2:
+            // It is similar to ProductInfo.ACCTTYPE_P_Expense
+            Account_ID = data[0].glitemDebitAcct;
+            break;
+          }
+        }
+        // No account
+        if (Account_ID.equals("")) {
+          log4jDocLine_Invoice.warn("getAccount - NO account for m_C_Glitem_ID=" + m_C_Glitem_ID);
+          return null;
+        }
+        // Return Account
+        return Account.getAccount(conn, Account_ID);
+
+      } catch (ServletException e) {
+        log4jDocLine_Invoice.warn(e);
+      }
     }
     // Product Account
     return p_productInfo.getAccount(AcctType, as, conn);

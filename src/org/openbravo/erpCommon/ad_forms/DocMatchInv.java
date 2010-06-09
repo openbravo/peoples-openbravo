@@ -19,6 +19,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
@@ -65,7 +66,7 @@ public class DocMatchInv extends AcctServer {
 
     loadDocumentType(); // lines require doc type
     // Contained Objects
-    p_lines = null;
+    p_lines = loadLines(conn, data[0].getField("C_InvoiceLine_Id"));
     return true;
   } // loadDocumentDetails
 
@@ -74,8 +75,35 @@ public class DocMatchInv extends AcctServer {
    * 
    * @return DocLine Array
    */
-  public DocLine[] loadLines(ConnectionProvider conn) {
-    return null;
+  public DocLine[] loadLines(ConnectionProvider conn, String strCInvoiceLineId) {
+    ArrayList<Object> list = new ArrayList<Object>();
+    DocMatchInvData[] data = null;
+    try {
+      log4jDocMatchInv.debug("############### groupLines = " + groupLines);
+      if (groupLines.equals("Y"))
+        data = DocMatchInvData.selectInvoiceLineTotal(connectionProvider, strCInvoiceLineId);
+      else
+        data = DocMatchInvData.selectInvoiceLine(connectionProvider, strCInvoiceLineId);
+    } catch (ServletException e) {
+      log4jDocMatchInv.warn(e);
+    }
+    if (data == null || data.length == 0)
+      return null;
+    for (int i = 0; i < data.length; i++) {
+      DocLine_Invoice docLine = new DocLine_Invoice(DocumentType, Record_ID, strCInvoiceLineId);
+      docLine.loadAttributes(data[i], this);
+      String strQty = data[i].qtyinvoiced;
+      docLine.setQty(strQty);
+      String LineNetAmt = data[i].linenetamt;
+      String PriceList = data[i].pricelist;
+      docLine.setAmount(LineNetAmt, PriceList, strQty);
+
+      list.add(docLine);
+    }
+    // Return Array
+    DocLine[] dl = new DocLine[list.size()];
+    list.toArray(dl);
+    return dl;
   } // loadLines
 
   /**
@@ -136,6 +164,7 @@ public class DocMatchInv extends AcctServer {
     // Expenses......................................................... Expenses in the Invoice
     // Invoice Price Variance........ Difference of cost and expenses
 
+    boolean changeSign = false;
     FieldProvider[] data = getObjectFieldProvider();
     BigDecimal bdCost = new BigDecimal(DocMatchInvData.selectProductAverageCost(conn, data[0]
         .getField("M_Product_Id"), data[0].getField("orderAcctDate")));
@@ -155,12 +184,16 @@ public class DocMatchInv extends AcctServer {
     if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(data[0]
         .getField("MOVEMENTQTY"))).signum())
         && data[0].getField("InOutStatus").equals("VO")) {
+      changeSign = true;
       bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
     }
 
     BigDecimal bdDifference = bdExpenses.subtract(bdCost);
 
-    dr = fact.createLine(null, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn), as
+    DocLine docLine = new DocLine(DocumentType, Record_ID, "");
+    docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
+
+    dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn), as
         .getC_Currency_ID(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
         conn);
 
@@ -169,19 +202,32 @@ public class DocMatchInv extends AcctServer {
           + " cost of the product to not invoiced receipt account.");
       return null;
     }
-
     ProductInfo p = new ProductInfo(data[0].getField("M_Product_Id"), conn);
-    cr = fact.createLine(null, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn), as
-        .getC_Currency_ID(), "0", bdExpenses.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-        DocumentType, conn);
-
-    if (cr == null) {
-      log4j.warn("createFact - unable to calculate line with "
-          + " expenses to product expenses account.");
-      return null;
+    for (DocLine docLineInvoice : p_lines) {
+      bdExpenses.toString();
+      String strAmount = (changeSign) ? new BigDecimal(docLineInvoice.getAmount()).multiply(
+          new BigDecimal(-1)).toString() : docLineInvoice.getAmount();
+      cr = fact.createLine(docLineInvoice, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+          as.getC_Currency_ID(), "0", strAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+      if (cr == null) {
+        log4j.warn("createFact - unable to calculate line with "
+            + " expenses to product expenses account.");
+        return null;
+      }
+      // Set Locations
+      FactLine[] fLines = fact.getLines();
+      for (int i = 0; fLines != null && i < fLines.length; i++) {
+        if (fLines[i] != null) {
+          fLines[i].setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from Loc
+          fLines[i].setLocationFromOrg(fLines[i].getAD_Org_ID(conn), false, conn); // to Loc
+        }
+      }
+      updateProductInfo(as.getC_AcctSchema_ID(), conn, con); // only API
     }
+
     if (!bdCost.equals(bdExpenses)) {
-      diff = fact.createLine(null, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn), as
+      diff = fact.createLine(docLine, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn), as
           .getC_Currency_ID(), (bdDifference.compareTo(BigDecimal.ZERO) == 1) ? bdDifference.abs()
           .toString() : "0", (bdDifference.compareTo(BigDecimal.ZERO) < 1) ? bdDifference.abs()
           .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
@@ -248,6 +294,33 @@ public class DocMatchInv extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
   }
+
+  /**
+   * Update Product Info. - Costing (PriceLastInv) - PO (PriceLastInv)
+   *
+   * @param C_AcctSchema_ID
+   *          accounting schema
+   */
+  public void updateProductInfo(String C_AcctSchema_ID, ConnectionProvider conn, Connection con) {
+    log4jDocMatchInv.debug("updateProductInfo - C_Invoice_ID=" + this.Record_ID);
+
+    /**
+     * @todo Last.. would need to compare document/last updated date would need to maintain
+     *       LastPriceUpdateDate on _PO and _Costing
+     */
+
+    // update Product PO info
+    // should only be once, but here for every AcctSchema
+    // ignores multiple lines with same product - just uses first
+    int no = 0;
+    try {
+      no = DocInvoiceData.updateProductPO(con, conn, Record_ID);
+      log4jDocMatchInv.debug("M_Product_PO - Updated=" + no);
+
+    } catch (ServletException e) {
+      log4jDocMatchInv.warn(e);
+    }
+  } // updateProductInfo
 
   public String getServletInfo() {
     return "Servlet for the accounting";

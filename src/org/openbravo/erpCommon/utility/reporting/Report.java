@@ -134,6 +134,8 @@ public class Report {
     reportFilename = reportFilename.replaceAll("@our_ref@", _OurReference);
     reportFilename = reportFilename.replaceAll("@cus_ref@", _CusReference);
     reportFilename = reportFilename.replaceAll(" ", "_");
+    reportFilename = reportFilename.replaceAll("/", "_");
+    reportFilename = reportFilename.replaceAll("\\\\", "_");
     reportFilename = reportFilename + "." + dateStamp + ".pdf";
     if (log4j.isDebugEnabled())
       log4j.debug("target report filename: " + reportFilename);

@@ -23,10 +23,10 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.database.CPStandAlone;
-import org.openbravo.erpCommon.utility.AntExecutor;
 
 /**
  * Ant task for ApplyModule class

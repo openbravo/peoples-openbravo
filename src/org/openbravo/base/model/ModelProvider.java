@@ -385,10 +385,9 @@ public class ModelProvider implements OBSingleton {
           log.debug("Setting targetEntity and reference Property for " + thisProp);
           final Column thatColumn = c.getReferenceType();
           if (thatColumn == null) {
-            log
-                .error("Property "
-                    + thisProp
-                    + " is mapped incorrectly, there is no reference column for it, removing from the mapping");
+            log.error("Property "
+                + thisProp
+                + " is mapped incorrectly, there is no reference column for it, removing from the mapping");
             thisProp.getEntity().getProperties().remove(thisProp);
             if (thisProp.getEntity().getIdProperties().remove(thisProp)) {
               Check.fail("Incorrect mapping for property " + thisProp
@@ -430,7 +429,10 @@ public class ModelProvider implements OBSingleton {
       // }
 
       if (t.getPrimaryKeyColumns().size() == 0) {
-        log.debug("Ignoring table " + t.getName() + " because it has no primary key columns");
+        if (!t.isView()) {
+          // don't log the views, these are ignored anyway
+          log.warn("Ignoring table " + t.getName() + " because it has no primary key columns");
+        }
         toRemove.add(t);
         continue;
       }

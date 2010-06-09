@@ -459,7 +459,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       final String strTree = InitialOrgSetupData.selectOrgTree(this, vars.getClient());
       InitialOrgSetupData.updateTreeNode(conn, this, strParentOrg, strTree, AD_Org_ID);
       // Info
-      if (InitialClientSetupData.updateOrgInfo(conn, this, strcLocationId, AD_Org_ID) != 1) {
+      if (InitialOrgSetupData.updateOrgInfo(conn, this, strcLocationId, AD_Org_ID) != 1) {
         final String err = "InitialOrgSetup - createOrg - Location NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
@@ -649,12 +649,12 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       String strSeqNo = "10";
       for (int j = 0; strOperand != null && j < strOperand.length; j++) {
         final String C_ElementValue_Operand_ID = SequenceIdData.getUUID();
-        final String strAccount = InitialClientSetupData.selectAccount(conn, this,
+        final String strAccount = InitialOrgSetupData.selectAccount(conn, this,
             strOperand[j][0], C_Element_ID);
-        final String strElementValue = InitialClientSetupData.selectAccount(conn, this,
+        final String strElementValue = InitialOrgSetupData.selectAccount(conn, this,
             data[i].accountValue, C_Element_ID);
         if (strAccount != null && !strAccount.equals("")) {
-          InitialClientSetupData.insertOperands(conn, this, C_ElementValue_Operand_ID,
+          InitialOrgSetupData.insertOperands(conn, this, C_ElementValue_Operand_ID,
               (strOperand[j][1].equals("+") ? "1" : "-1"), strElementValue, strAccount, strSeqNo,
               AD_Client_ID, vars.getUser());
           strSeqNo = nextSeqNo(strSeqNo);

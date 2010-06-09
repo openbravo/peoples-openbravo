@@ -25,9 +25,9 @@ import java.net.URL;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.erpCommon.utility.AntExecutor;
 
 /**
  * Base test class for ant test cases. It uses the {@link AntExecutor} to execute the ant tasks,

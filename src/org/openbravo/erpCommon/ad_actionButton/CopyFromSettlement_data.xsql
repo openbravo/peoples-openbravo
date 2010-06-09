@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2008 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,7 @@
         amount, writeoffamt, glitemamt, c_glitem_id, isdirectposting, 0 as amountdebit, status_initial as status, 
         0 as amountcredit, c_currency_id, c_bankaccount_id, ismanual, '' as client, '' as org, '' as datetrx,
         '' as c_settlement_id, '' as documentno,  '' AS C_DEBT_PAYMENT_BALANCING_ID, '' AS TERCERO, '' AS EFECTO,
-        '' AS CONCEPTO, '' AS DATEPLANNED, '' AS DATEFORMAT
+        '' AS CONCEPTO, '' AS DATEPLANNED, '' AS DATEFORMAT, '' AS SCRIPTDATE
         FROM C_DEBT_PAYMENT
         WHERE c_settlement_generate_id = ?
         AND isactive='Y' 
@@ -163,7 +163,8 @@
         C_BPARTNER.NAME AS TERCERO, C_BPARTNER.NAME || ' - ' ||AD_REF_LIST_V.NAME ||' - ' || TO_CHAR(C_DEBT_PAYMENT.DATEPLANNED, ?) AS EFECTO,
         C_GLITEM.NAME AS CONCEPTO, C_DEBT_PAYMENT.DATEPLANNED AS DATEPLANNED, 
         C_DEBT_PAYMENT_BALANCING.AMOUNTCREDIT, C_DEBT_PAYMENT_BALANCING.AMOUNTDEBIT,
-        C_BPARTNER.C_BPARTNER_ID, C_DEBT_PAYMENT.AMOUNT, to_char(?) AS dateformat 
+        C_BPARTNER.C_BPARTNER_ID, C_DEBT_PAYMENT.AMOUNT, to_char(?) AS dateformat, 
+        'djConfig.searchIds.push(\"paramfieldDate' || C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID || '\");' AS SCRIPTDATE
         FROM (C_SETTLEMENT LEFT JOIN C_DEBT_PAYMENT ON C_DEBT_PAYMENT.C_SETTLEMENT_GENERATE_ID = C_SETTLEMENT.C_SETTLEMENT_ID) 
         LEFT JOIN C_DEBT_PAYMENT_BALANCING ON C_DEBT_PAYMENT_BALANCING.C_DEBT_PAYMENT_ID = C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID
         LEFT JOIN C_GLITEM ON C_DEBT_PAYMENT_BALANCING.C_GLITEM_ID = C_GLITEM.C_GLITEM_ID

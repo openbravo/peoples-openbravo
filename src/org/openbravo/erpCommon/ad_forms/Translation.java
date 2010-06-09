@@ -16,6 +16,8 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -35,10 +37,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.betwixt.io.BeanReader;
+import org.apache.commons.betwixt.io.BeanWriter;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_process.buildStructure.Build;
+import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -48,6 +55,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 /**
  * Class for import/export languages.
@@ -202,6 +210,8 @@ public class Translation extends HttpSecureAppServlet {
       exportReferenceData(rootDirectory, AD_Language);
 
       exportContibutors(directory, AD_Language);
+
+      exportBuildFile(directory, AD_Language);
     } catch (final Exception e) {
       log4j.error(e);
       myMessage.setType("Error");
@@ -211,6 +221,47 @@ public class Translation extends HttpSecureAppServlet {
     myMessage.setType("Success");
     myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     return myMessage;
+  }
+
+  private void exportBuildFile(String directory, String language) {
+
+    String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
+        .toString();
+
+    try {
+      FileReader xmlReader = new FileReader(source
+          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
+
+      BeanReader beanReader = new BeanReader();
+
+      beanReader.getBindingConfiguration().setMapIDs(false);
+
+      beanReader.getXMLIntrospector().register(
+          new InputSource(new FileReader(new File(source,
+              "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
+
+      beanReader.registerBeanClass("Build", Build.class);
+
+      Build build = (Build) beanReader.parse(xmlReader);
+
+      FileWriter outputWriterT = new FileWriter(directory + "/buildStructureTrl.xml");
+      outputWriterT.write("<?xml version='1.0' ?>\n");
+
+      BeanWriter beanWriterT = new BeanWriter(outputWriterT);
+      beanWriterT.getXMLIntrospector().getConfiguration().setAttributesForPrimitives(false);
+      beanWriterT.getXMLIntrospector().register(
+          new InputSource(new FileReader(new File(source,
+              "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
+      beanWriterT.getBindingConfiguration().setMapIDs(false);
+      beanWriterT.enablePrettyPrint();
+
+      BuildTranslation trl = build.generateBuildTranslation(language);
+      beanWriterT.write("BuildTranslation", trl);
+      outputWriterT.flush();
+      outputWriterT.close();
+    } catch (Exception e) {
+      log4j.error("Error while generating build structure file", e);
+    }
   }
 
   /**

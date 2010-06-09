@@ -19,7 +19,6 @@
 
 package org.openbravo.erpCommon.modules;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,12 +193,5 @@ public class ModuleUtiltiy {
       rt.put(moduleId, deps);
     }
     return rt;
-  }
-
-  /**
-   * @deprecated use ImportModule.getRemoteModule instead
-   */
-  public static InputStream getRemoteModule(ImportModule im, String moduleVersionID) {
-    return null;
   }
 }

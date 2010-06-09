@@ -72,7 +72,7 @@ public class ClassLoaderTest extends BaseTest {
         }
 
         // Testing if the defined class can be loaded
-        ClassLoader.getSystemClassLoader().loadClass(mi.getJavaClassName());
+        Class.forName(mi.getJavaClassName());
 
       } catch (ClassNotFoundException e) {
         notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());

@@ -45,6 +45,14 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ENABLEINFININVOICES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="C_TAXCATEGORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="C_TAX_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -62,10 +70,16 @@
       <foreign-key foreignTable="C_TAX" name="C_GLITEM_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_TAXCATEGORY" name="C_GLITEM_C_TAXCATEGORY">
+        <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_WITHHOLDING" name="C_GLITEM_C_WITHHOLDING">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
+      <check name="C_GLITEM_FINCAT_CHECK"><![CDATA[((ENABLEINFININVOICES = 'Y') AND (C_TAXCATEGORY_ID IS NOT NULL)) OR ((ENABLEINFININVOICES = 'N') AND (C_TAXCATEGORY_ID IS NULL))]]></check>
+      <check name="C_GLITEM_FININVOICES_CHECK"><![CDATA[ENABLEINFININVOICES IN ('Y', 'N')]]></check>
       <check name="C_GLITEM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_GLITEM_TAXANDCAT_CHECK"><![CDATA[(((C_TAXCATEGORY_ID IS NOT NULL) AND (C_TAX_ID IS NULL)) AND (C_WITHHOLDING_ID IS NULL)) OR (C_TAXCATEGORY_ID IS NULL)]]></check>
       <check name="C_GLITEM_TAXANDWH_CHECK"><![CDATA[(C_TAX_ID IS NULL) OR (C_WITHHOLDING_ID IS NULL)]]></check>
     </table>
   </database>
