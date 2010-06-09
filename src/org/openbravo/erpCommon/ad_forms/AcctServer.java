@@ -905,7 +905,6 @@ public abstract class AcctServer {
     int no = 0;
     try {
       String AD_Note_ID = SequenceIdData.getUUID();
-
       // Create Entry
       no = AcctServerData.insertNote(con, conn, AD_Note_ID, AD_Client_ID, AD_Org_ID, AD_User_ID,
           Text, Reference, AD_Table_ID, Record_ID, AD_MessageValue);
@@ -1027,7 +1026,7 @@ public abstract class AcctServer {
    * 
    * @param acctSchema
    *          accounting schema
-   * @return true, if vonvertable to accounting currency
+   * @return true, if convertable to accounting currency
    */
   public boolean isConvertible(AcctSchema acctSchema, ConnectionProvider conn)
       throws ServletException {
