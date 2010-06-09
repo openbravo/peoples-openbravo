@@ -63,6 +63,7 @@ public class DocFINPayment extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DateDoc = data[0].getField("PaymentDate");
     Amounts[0] = data[0].getField("Amount");
@@ -129,6 +130,7 @@ public class DocFINPayment extends AcctServer {
     return dl;
   } // loadLines
 
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
@@ -226,6 +228,7 @@ public class DocFINPayment extends AcctServer {
     return null;
   }
 
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     // Checks if this step is configured to generate accounting for the selected financial account
     boolean confirmation = false;
@@ -239,6 +242,8 @@ public class DocFINPayment extends AcctServer {
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
             .getPaymentMethod()));
+        obCriteria.setFilterOnReadableClients(false);
+        obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
         List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
             .getFINFinancialAccountAcctList();
@@ -274,6 +279,7 @@ public class DocFINPayment extends AcctServer {
     return confirmation;
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String strAD_Client_ID, String Id)
       throws ServletException {
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Id);
