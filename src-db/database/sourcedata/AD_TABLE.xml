@@ -9967,7 +9967,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <NAME><![CDATA[FinancialMgmtPaymentRunParameter]]></NAME>
-<!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <HELP><![CDATA[Table with the used values of the Execution Process' parameters.]]></HELP>
+<!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <DESCRIPTION><![CDATA[Table with the used values of the Execution Process parameters.]]></DESCRIPTION>
+<!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <HELP><![CDATA[Table with the used values of the Execution Process parameters.]]></HELP>
 <!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <TABLENAME><![CDATA[FIN_Payment_Run_Para]]></TABLENAME>
 <!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <CLASSNAME><![CDATA[PaymentRunParameter]]></CLASSNAME>
 <!--2858AEA8CF5D4D05ABAFFA7745E416FE-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -10142,6 +10143,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--470C83DA538B43CAB6C18590AED9CFA7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--470C83DA538B43CAB6C18590AED9CFA7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--470C83DA538B43CAB6C18590AED9CFA7-->  <NAME><![CDATA[FinancialMgmtPaymentRun]]></NAME>
+<!--470C83DA538B43CAB6C18590AED9CFA7-->  <DESCRIPTION><![CDATA[Table where are stored of the executions of the Execution Process.]]></DESCRIPTION>
 <!--470C83DA538B43CAB6C18590AED9CFA7-->  <HELP><![CDATA[Table where are stored of the executions of the Execution Process.]]></HELP>
 <!--470C83DA538B43CAB6C18590AED9CFA7-->  <TABLENAME><![CDATA[FIN_Payment_Run]]></TABLENAME>
 <!--470C83DA538B43CAB6C18590AED9CFA7-->  <CLASSNAME><![CDATA[PaymentRun]]></CLASSNAME>
@@ -10275,7 +10277,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--572E3DF0309B4990A436EC697E6D63E8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--572E3DF0309B4990A436EC697E6D63E8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--572E3DF0309B4990A436EC697E6D63E8-->  <NAME><![CDATA[FinancialMgmtPaymentRunPayment]]></NAME>
-<!--572E3DF0309B4990A436EC697E6D63E8-->  <HELP><![CDATA[Table to store the Payments included on each Payment Run]]></HELP>
+<!--572E3DF0309B4990A436EC697E6D63E8-->  <DESCRIPTION><![CDATA[Table to store the Payments included on each Payment Run.]]></DESCRIPTION>
+<!--572E3DF0309B4990A436EC697E6D63E8-->  <HELP><![CDATA[Table to store the Payments included on each Payment Run.]]></HELP>
 <!--572E3DF0309B4990A436EC697E6D63E8-->  <TABLENAME><![CDATA[FIN_Payment_Run_Payment]]></TABLENAME>
 <!--572E3DF0309B4990A436EC697E6D63E8-->  <CLASSNAME><![CDATA[PaymentRunPayment]]></CLASSNAME>
 <!--572E3DF0309B4990A436EC697E6D63E8-->  <ISVIEW><![CDATA[N]]></ISVIEW>
