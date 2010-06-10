@@ -27,4 +27,19 @@
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="buttonLog" name="buttonLog" attribute="onclick" replace="xx"/>
   <PARAMETER id="logfile" name="logfile" attribute="value" replace="xx"/>
+  <PARAMETER id="jsparam" name="jsparam" default=""/>
+    <structure name="structureStepTree">
+        <FIELD id="title_xxyy" >titleLabel</FIELD>
+        <FIELD id="padding_xxyy" attribute="class" replace="xxyy">paddingLevel</FIELD>
+        <FIELD id="node_xxyy" attribute="id" replace="xxyy">node</FIELD>
+        <FIELD id="padding_xxyy" attribute="id" replace="xxyy">padding</FIELD>
+        <FIELD id="icon_xxyy" attribute="id" replace="xxyy">icon</FIELD>
+        <FIELD id="title_xxyy" attribute="id" replace="xxyy">title</FIELD>
+        <FIELD id="processing_xxyy" attribute="id" replace="xxyy">processing</FIELD>
+        <FIELD id="error_xxyy" attribute="id" replace="xxyy">error</FIELD>
+        <FIELD id="exception_xxyy" attribute="id" replace="xxyy">exception</FIELD>
+        <FIELD id="warning_xxyy" attribute="id" replace="xxyy">warning</FIELD>
+        <SECTION id="sectionStepTree"/>
+    </structure>
 </REPORT>
+

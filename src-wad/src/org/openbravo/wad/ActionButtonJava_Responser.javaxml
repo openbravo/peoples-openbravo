@@ -80,7 +80,7 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
 <FIELDS_TMP id="sectionActionButtons3">    } else if (vars.commandIn("SAVE_BUTTONActionButton<FIELD_TMP id="ProcessID3">button</FIELD_TMP>")) {
         <FIELD_TMP id="FieldsLoad3">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
         
-        ProcessBundle pb = new ProcessBundle(strProcessId, vars);
+        ProcessBundle pb = new ProcessBundle(strProcessId, vars).init(this);
         HashMap&lt;String, Object&gt; params= new HashMap&lt;String, Object&gt;();
        
         <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>

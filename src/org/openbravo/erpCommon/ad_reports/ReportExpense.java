@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -71,7 +72,7 @@ public class ReportExpense extends HttpSecureAppServlet {
           strUserCurrencyId);
       printPageDataHtml(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
           strPartner, strProject, strExpense, strCurrencyId);
-    } else if (vars.commandIn("FIND")) {
+    } else if (vars.commandIn("FIND") || vars.commandIn("PDF")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportExpense|dateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportExpense|dateTo");
       String strcBpartnerId = vars.getRequestGlobalVariable("inpcBPartnerId",
@@ -82,7 +83,13 @@ public class ReportExpense extends HttpSecureAppServlet {
       setHistoryCommand(request, "DIRECT");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportExpense|currency",
           strUserCurrencyId);
-      printPageDataHtml(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
+      String strOutput = "html";
+       if (vars.commandIn("PDF")){
+        strOutput = "pdf";
+      printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
+          strPartner, strProject, strExpense, strCurrencyId, strOutput);
+        
+      } else printPageDataHtml(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
           strPartner, strProject, strExpense, strCurrencyId);
     } else
       pageError(response);
@@ -138,6 +145,63 @@ public class ReportExpense extends HttpSecureAppServlet {
 
       out.println(xmlDocument.print());
       out.close();
+    }
+  }
+
+private void printPageDataPDF(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId,
+      String strPartner, String strProject, String strExpense, String strCurrencyId, String strOutput) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: PDF");
+    String discard[] = { "sectionPartner" };
+
+    ReportExpenseData[] data1 = null;
+
+    // Checks if there is a conversion rate for each of the transactions of
+    // the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    if (vars.commandIn("DEFAULT") && strDateFrom.equals("") && strDateTo.equals("")
+        && strcBpartnerId.equals("") && strPartner.equals("")) {
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner,
+          strProject, strExpense, strCurrencyId);
+    } else {
+      String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+      try {
+        data1 = ReportExpenseData.select(this, strCurrencyId, strBaseCurrencyId,
+            vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportExpense"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), strDateFrom,
+            DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId, strPartner, strProject,
+            (strExpense.equals("time") ? "Y" : ""), (strExpense.equals("expense") ? "N" : ""));
+      } catch (ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      }
+    }
+    strConvRateErrorMsg = myMessage.getMessage();
+    // If a conversion rate is missing for a certain transaction, an error
+    // message window pops-up.
+    if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
+          vars.getLanguage()), strConvRateErrorMsg);
+    } else { // Launch the report as usual, calling the JRXML file
+      if (data1 == null || data1.length == 0) {
+        discard[0] = "selEliminar";
+        data1 = ReportExpenseData.set();
+      }
+      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportExpense.jrxml";
+
+      if (strOutput.equals("pdf"))
+        response.setHeader("Content-disposition",
+            "inline; filename=ReportProjectBuildingSiteJR.pdf");
+
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom
+          + " " + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
+      parameters.put("REPORT_SUBTITLE", strSubTitle);
+
+      renderJR(vars, response, strReportName, strOutput, parameters, data1, null);
     }
   }
 

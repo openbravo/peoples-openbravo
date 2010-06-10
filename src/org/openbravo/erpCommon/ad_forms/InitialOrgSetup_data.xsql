@@ -924,4 +924,39 @@
     </Sql>
     <Parameter name="AD_Org_ID"/>
   </SqlMethod>
+
+  <SqlMethod name="selectAccount" type="preparedStatement" connection="true" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT c_elementvalue_id
+        FROM c_ElementValue
+        WHERE value = ?
+        and c_element_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="value"/>
+    <Parameter name="element"/>
+  </SqlMethod>
+  <SqlMethod name="insertOperands" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO C_ELEMENTVALUE_OPERAND (
+         C_ELEMENTVALUE_OPERAND_ID, SIGN, C_ELEMENTVALUE_ID,
+         ACCOUNT_ID, SEQNO, AD_CLIENT_ID,
+         AD_ORG_ID, ISACTIVE, CREATED,
+         CREATEDBY, UPDATED, UPDATEDBY)
+      VALUES ( ?, TO_NUMBER(?), ?, ?, TO_NUMBER(?), ?, '0', 'Y', NOW(), ?, NOW(), ?)
+      ]]>
+    </Sql>
+    <Parameter name="cElementValueOperandId"/>
+    <Parameter name="sign"/>
+    <Parameter name="cElementValueId"/>
+    <Parameter name="account"/>
+    <Parameter name="seqno"/>
+    <Parameter name="client"/>
+    <Parameter name="user"/>
+    <Parameter name="user"/>
+  </SqlMethod>
 </SqlClass>

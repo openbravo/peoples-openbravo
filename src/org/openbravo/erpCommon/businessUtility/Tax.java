@@ -66,6 +66,15 @@ public class Tax {
      */
   }
 
+  public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
+      String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID,
+      String shipC_BPartner_Location_ID, String C_Project_ID, String IsSOTrx, String glItemId)
+      throws IOException, ServletException {
+    log4jTax.debug("Tax.get");
+    return TaxData.taxGet(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
+        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, IsSOTrx, glItemId);
+  }
+
   public static String checkNumeric(String data) {
     if (data == null || data.length() == 0)
       return "";

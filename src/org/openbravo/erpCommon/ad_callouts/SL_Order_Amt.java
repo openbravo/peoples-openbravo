@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-200 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,11 +38,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
   private static final BigDecimal ZERO = new BigDecimal(0.0);
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -63,7 +65,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       String strQty = vars.getNumericParameter("inpqtyordered");
       String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
-      String strLineNetAmt = vars.getStringParameter("inplinenetamt");
+      String strLineNetAmt = vars.getNumericParameter("inplinenetamt");
 
       try {
         printPage(response, vars, strChanged, strQtyOrdered, strPriceActual, strDiscount,

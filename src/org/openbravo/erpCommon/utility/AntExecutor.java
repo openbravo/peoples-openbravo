@@ -36,8 +36,10 @@ import org.apache.tools.ant.listener.Log4jListener;
 /**
  * The AntExecutor class allows to execute ant tasks in a given build.xml file.
  * 
+ * @deprecated Please use the AntExecutor in org.openbravo.base package (contained in src-core.jar)
  * 
  */
+@Deprecated
 public class AntExecutor {
   private static final Logger logger = Logger.getLogger(AntExecutor.class);
 

@@ -36,12 +36,14 @@ public class ReloadContext {
 
   /**
    * Method is called from the tomcat.reload tasks, this method again starts the tomcat.reload.do
-   * task.
+   * task.Note: this method should always use the AntExecutor in org.openbravo.erpCommon.utility, to
+   * prevent problems when upgrading Core to a newer version
    * 
    * @param args
    *          arg[0] contains the source path
    * @throws Exception
    */
+  @SuppressWarnings("deprecation")
   public static void main(String[] args) throws Exception {
     final String srcPath = args[0];
     final File srcDir = new File(srcPath);
@@ -57,8 +59,10 @@ public class ReloadContext {
 
   /**
    * Restarts the tomcat server. Assumes the the Openbravo.properties are available through the
-   * {@link OBPropertiesProvider}.
+   * {@link OBPropertiesProvider}.Note: this method should always use the AntExecutor in
+   * org.openbravo.erpCommon.utility, to prevent problems when upgrading Core to a newer version
    */
+  @SuppressWarnings("deprecation")
   public static void reload() {
     final String baseDirPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
