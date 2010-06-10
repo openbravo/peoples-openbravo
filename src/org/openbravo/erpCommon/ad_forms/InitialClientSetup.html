@@ -57,6 +57,8 @@ function validate(action) {
   if (frm.inpCurrency.value==null || frm.inpCurrency.value=="") {setWindowElementFocus(frm.inpCurrency);  showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpClientUser.value==null || frm.inpClientUser.value=="") {setWindowElementFocus(frm.inpClientUser); showJSMessage(7); setProcessingMode('window',false); return false; }
   if (frm.inpPassword.value==null || frm.inpPassword.value=="") {setWindowElementFocus(frm.inpPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
+  if (frm.inpConfirmPassword.value==null || frm.inpConfirmPassword.value=="") {setWindowElementFocus(frm.inpConfirmPassword); showJSMessage(7); setProcessingMode('window',false); return false; }
+  if (frm.inpConfirmPassword.value!=frm.inpPassword.value) {setWindowElementFocus(frm.inpConfirmPassword);  showJSMessage(20); setProcessingMode('window',false); return false; }
 	return true;
 }
 
@@ -290,11 +292,9 @@ function onloadFunctions() {
                   <td class="TextBox_ContentCell" colspan="2">
                     <input dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" type="text" name="inpClient" id="paramClient" maxlength="30" value="Cliente"></input><script>djConfig.searchIds.push("paramClient");</script>
                   </td>
-                  <td class="TitleCell"><span class="LabelText">Currency</span></td>
-                  <td class="Combo_ContentCell" colspan="2">
-                      <select name="inpCurrency" id="inpCurrency" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
-                        <option value=""></option><div id="reportCurrency_M"></div>
-                      </select>
+                  <td class="TitleCell"><span class="LabelText">Password</span></td>
+                  <td class="TextBox_ContentCell" colspan="2">
+                   <input type="password" name="inpPassword" id="inpPassword" class="dojoValidateValid Text_TwoCells_width required" size="40" maxlength="40"></input><script>djConfig.searchIds.push("inpPassword");</script>
                   </td>
                 </tr>
                 <tr>
@@ -302,10 +302,19 @@ function onloadFunctions() {
                   <td class="TextBox_ContentCell" colspan="2">
                     <input dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" type="text" name="inpClientUser" id="paramClientUser" maxlength="30" value="ClienteAdmin"></input><script>djConfig.searchIds.push("paramClientUser");</script>
                   </td>
-                  <td class="TitleCell"><span class="LabelText">Password</span></td>
+                  <td class="TitleCell"><span class="LabelText">Confirm Password</span></td>
                   <td class="TextBox_ContentCell" colspan="2">
-                   <input type="password" name="inpPassword" id="inpPassword" class="dojoValidateValid Text_TwoCells_width required" size="40" maxlength="40"></input><script>djConfig.searchIds.push("inpPassword");</script>
+                   <input type="password" name="inpConfirmPassword" id="inpConfirmPassword" class="dojoValidateValid Text_TwoCells_width required" size="40" maxlength="40"></input><script>djConfig.searchIds.push("inpPassword");</script>
                   </td>
+                </tr>
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Currency</span></td>
+                  <td class="Combo_ContentCell" colspan="2">
+                      <select name="inpCurrency" id="inpCurrency" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
+                        <option value=""></option><div id="reportCurrency_M"></div>
+                      </select>
+                  </td>
+                  <td colspan="3" />
                 </tr>
                 <tr>
                   <td colspan="6">
