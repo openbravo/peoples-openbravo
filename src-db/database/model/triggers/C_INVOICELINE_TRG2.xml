@@ -174,18 +174,27 @@ END IF;
    v_Amt := v_Price - v_PriceNew;
    v_pricecancelAD := 'N';
 	IF(:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
-  	SELECT o.issotrx,ol.CancelPriceAD into v_Issotrx,v_pricecancelAD FROM C_ORDER o,C_ORDERLINE ol WHERE ol.C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID AND o.C_ORDER_ID = ol.C_ORDER_ID;
-	END IF;
-	IF((v_Issotrx = 'Y' AND v_pricecancelAD <> 'Y') OR v_Issotrx = 'N') THEN
-   INSERT INTO C_INVOICELINE_OFFER
+	  	SELECT o.issotrx,ol.CancelPriceAD into v_Issotrx,v_pricecancelAD FROM C_ORDER o,C_ORDERLINE ol WHERE ol.C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID AND o.C_ORDER_ID = ol.C_ORDER_ID;
+		IF((v_Issotrx = 'Y' AND v_pricecancelAD <> 'Y') OR v_Issotrx = 'N') THEN
+		   INSERT INTO C_INVOICELINE_OFFER
+		       (C_INVOICELINE_OFFER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+		      CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+		      C_INVOICELINE_ID, LINE, M_OFFER_ID, PRICEOFFER, AMTOFFER)
+		   VALUES
+		       (v_InvoiceLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
+		      now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
+		     :NEW.C_InvoiceLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt, v_Precision));
+	     END IF;
+    ELSE
+    	INSERT INTO C_INVOICELINE_OFFER
        (C_INVOICELINE_OFFER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
       CREATED, CREATEDBY, UPDATED, UPDATEDBY,
       C_INVOICELINE_ID, LINE, M_OFFER_ID, PRICEOFFER, AMTOFFER)
-   VALUES
+   	VALUES
        (v_InvoiceLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
       now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
      :NEW.C_InvoiceLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt, v_Precision));
-     END IF;
+    END IF;
     v_Price := v_PriceNew;
   END LOOP;
  END IF;
