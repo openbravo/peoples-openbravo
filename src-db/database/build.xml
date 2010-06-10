@@ -95,6 +95,9 @@ export.database.structure: Exports the database structure in the xml's files.
       <arg value="*/src-db/database/sourcedata"/>
       <arg value="${force}"/>
       <classpath refid="runtime-classpath" />
+      <syspropertyset>
+         <propertyref name="java.security.egd" />
+      </syspropertyset>
     </java>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
@@ -121,6 +124,9 @@ export.database.structure: Exports the database structure in the xml's files.
       <arg value="${module}"/>
       <arg value="${force}"/>
       <classpath refid="runtime-classpath" />
+      <syspropertyset>
+         <propertyref name="java.security.egd" />
+      </syspropertyset>
     </java>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
