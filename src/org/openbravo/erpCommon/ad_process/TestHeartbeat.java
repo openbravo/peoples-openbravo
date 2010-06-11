@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -58,6 +59,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
   private static final String SystemInfomation_ID = "0";
   private static final String EVERY_N_DAYS = "N";
   private static final String SCHEDULE = "S";
+  private static final ValueListFilter activeFilter = new ValueListFilter("Y", "N");
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -73,9 +75,10 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         SystemInfomation_ID);
 
     final String clickedButton = vars.getStringParameter("inpLastFieldChanged");
+    final String isHBActive = vars.getStringParameter("inptestproxy", activeFilter);
 
     if (HeartbeatProcess.isHeartbeatEnabled()
-        || clickedButton.equalsIgnoreCase("inpisheartbeatactive")) {
+        || clickedButton.equalsIgnoreCase("inpisheartbeatactive") || "Y".equals(isHBActive)) {
       // Disable Heartbeat
       try {
 
@@ -95,7 +98,10 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
         prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-            Expression.eq(ProcessRequest.PROPERTY_STATUS, HeartbeatProcess.STATUS_SCHEDULED)));
+            Expression.or(Expression.eq(ProcessRequest.PROPERTY_STATUS,
+                org.openbravo.scheduling.Process.SCHEDULED), Expression.eq(
+                ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
+
         final List<ProcessRequest> requestList = prCriteria.list();
 
         if (requestList.size() != 0) {
@@ -163,7 +169,9 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
         prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-            Expression.eq(ProcessRequest.PROPERTY_STATUS, HeartbeatProcess.STATUS_UNSCHEDULED)));
+            Expression.or(Expression.eq(ProcessRequest.PROPERTY_STATUS,
+                org.openbravo.scheduling.Process.UNSCHEDULED), Expression.eq(
+                ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         ProcessRequest pr = null;
