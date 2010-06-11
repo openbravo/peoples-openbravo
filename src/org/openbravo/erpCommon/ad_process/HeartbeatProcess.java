@@ -44,6 +44,8 @@ public class HeartbeatProcess implements Process {
   private static final String DISABLING_BEAT = "D";
   private static final String UNKNOWN_BEAT = "U";
   public static final String HB_PROCESS_ID = "1005800000";
+  public static final String STATUS_SCHEDULED = "SCH";
+  public static final String STATUS_UNSCHEDULED = "UNS";
 
   private ProcessContext ctx;
 
