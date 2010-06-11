@@ -840,13 +840,17 @@ build.war: build a war file in the lib directory.
 
   <target name="copy.files" if="mode.class">
     <mkdir dir="${jakarta.base}/webapps/${context.name}" />
-    <copy todir="${jakarta.base}/webapps/${context.name}" encoding="UTF-8">
+    <sync todir="${jakarta.base}/webapps/${context.name}">
+      <preserveintarget>
+        <include name="**/WEB-INF/classes/**"/>
+        <include name="**/WEB-INF/lib/**"/>
+      </preserveintarget>
       <fileset dir="${base.context}" />
-    </copy>
+    </sync>
     <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes" />
-    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes" encoding="UTF-8">
+    <sync todir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes">
       <fileset dir="${build}" />
-    </copy>
+    </sync>
     <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
       <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8">
     </copy>
