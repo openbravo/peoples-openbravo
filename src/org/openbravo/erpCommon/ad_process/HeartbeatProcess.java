@@ -292,7 +292,9 @@ public class HeartbeatProcess implements Process {
     final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
         ProcessRequest.class);
     prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-        Expression.eq(ProcessRequest.PROPERTY_STATUS, STATUS_SCHEDULED)));
+        Expression.or(Expression.eq(ProcessRequest.PROPERTY_STATUS,
+            org.openbravo.scheduling.Process.SCHEDULED), Expression.eq(
+            ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
     final List<ProcessRequest> prRequestList = prCriteria.list();
 
     if (prRequestList.size() == 0) { // Resetting state to disabled

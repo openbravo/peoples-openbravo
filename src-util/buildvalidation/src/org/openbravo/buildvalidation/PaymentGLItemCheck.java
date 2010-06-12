@@ -39,7 +39,7 @@ public class PaymentGLItemCheck extends BuildValidation {
       int b = Integer.parseInt(PaymentGLItemCheckData.countWithoutConstraint(cp));
       if (a != b) {
         errors
-            .add("Due to a database constraint modification, is no longer allowed you select a debt payment and g/l item at same time in bank statement line. There exists data in your database that do not fit this new constraint. Please fix it before updating the database.");
+            .add("Due to a database constraint modification, is no longer allowed you select a debt payment and g/l item at same time in bank statement line. There exists data in your database that do not fit this new constraint. Please fix it in C_BANKSTATEMENTLINE table as DEBT_PAYMENT_ID AND C_GLITEM_ID columns both don't have values at same time before updating the database.");
       }
     } catch (Exception e) {
       return handleError(e);
