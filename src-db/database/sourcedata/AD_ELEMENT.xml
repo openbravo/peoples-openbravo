@@ -673,7 +673,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--161-->  <COLUMNNAME><![CDATA[AmtAcctCr]]></COLUMNNAME>
-<!--161-->  <NAME><![CDATA[Accounting Schema Currency Credit]]></NAME>
+<!--161-->  <NAME><![CDATA[Credit]]></NAME>
 <!--161-->  <PRINTNAME><![CDATA[Acct Credit]]></PRINTNAME>
 <!--161-->  <DESCRIPTION><![CDATA[The amount credited to an account, converted to the organization default currency.]]></DESCRIPTION>
 <!--161-->  <HELP><![CDATA[The Account Credit Amount indicates the transaction amount converted to this organization's accounting currency]]></HELP>
@@ -686,7 +686,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--162-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--162-->  <COLUMNNAME><![CDATA[AmtAcctDr]]></COLUMNNAME>
-<!--162-->  <NAME><![CDATA[Accounting Schema Currency Debit]]></NAME>
+<!--162-->  <NAME><![CDATA[Debit]]></NAME>
 <!--162-->  <PRINTNAME><![CDATA[Acct Debit]]></PRINTNAME>
 <!--162-->  <DESCRIPTION><![CDATA[The amount debited to an account, converted to the organization default currency.]]></DESCRIPTION>
 <!--162-->  <HELP><![CDATA[The Account Debit Amount indicates the transaction amount converted to this organization's accounting currency]]></HELP>
@@ -21916,6 +21916,19 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--1011100001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1011100001--></AD_ELEMENT>
 
+<!--0131585AC1F246DBAF6B84E53534F5FA--><AD_ELEMENT>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <AD_ELEMENT_ID><![CDATA[0131585AC1F246DBAF6B84E53534F5FA]]></AD_ELEMENT_ID>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <COLUMNNAME><![CDATA[AmtAcctCr]]></COLUMNNAME>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <NAME><![CDATA[Accounting Schema Currency Credit]]></NAME>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <PRINTNAME><![CDATA[Accounting Schema Currency Credit]]></PRINTNAME>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <DESCRIPTION><![CDATA[The amount credited to an account, converted to the organization default currency.]]></DESCRIPTION>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <HELP><![CDATA[The Account Credit Amount indicates the transaction amount converted to this organization's accounting currency]]></HELP>
+<!--0131585AC1F246DBAF6B84E53534F5FA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--0131585AC1F246DBAF6B84E53534F5FA--></AD_ELEMENT>
+
 <!--01A2AC68F3C411DD8A04001D09C4A2FE--><AD_ELEMENT>
 <!--01A2AC68F3C411DD8A04001D09C4A2FE-->  <AD_ELEMENT_ID><![CDATA[01A2AC68F3C411DD8A04001D09C4A2FE]]></AD_ELEMENT_ID>
 <!--01A2AC68F3C411DD8A04001D09C4A2FE-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -22000,6 +22013,19 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--2E25DF9EA05D415B851BDB301BA12D0A-->  <PRINTNAME><![CDATA[AD_Error_Log_ID]]></PRINTNAME>
 <!--2E25DF9EA05D415B851BDB301BA12D0A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2E25DF9EA05D415B851BDB301BA12D0A--></AD_ELEMENT>
+
+<!--2EB6010EAA174169880C588220EFE7B8--><AD_ELEMENT>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <AD_ELEMENT_ID><![CDATA[2EB6010EAA174169880C588220EFE7B8]]></AD_ELEMENT_ID>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <COLUMNNAME><![CDATA[AmtAcctDr]]></COLUMNNAME>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <NAME><![CDATA[Accounting Schema Currency Debit]]></NAME>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <PRINTNAME><![CDATA[Accounting Schema Currency Debit]]></PRINTNAME>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <DESCRIPTION><![CDATA[The amount debited to an account, converted to the organization default currency.]]></DESCRIPTION>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <HELP><![CDATA[The Account Debit Amount indicates the transaction amount converted to this organization's accounting currency]]></HELP>
+<!--2EB6010EAA174169880C588220EFE7B8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2EB6010EAA174169880C588220EFE7B8--></AD_ELEMENT>
 
 <!--2FA505E33C9345DDA6CD104C19F0F8BF--><AD_ELEMENT>
 <!--2FA505E33C9345DDA6CD104C19F0F8BF-->  <AD_ELEMENT_ID><![CDATA[2FA505E33C9345DDA6CD104C19F0F8BF]]></AD_ELEMENT_ID>
