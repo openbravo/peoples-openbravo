@@ -582,7 +582,8 @@ public class ToolBar {
       removeAllTests();
     if (isReadOnly)
       removeReadOnly();
-    if (!email) {
+
+    if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")) {
       removeElement("EMAIL");
     }
 
