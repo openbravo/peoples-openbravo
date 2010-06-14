@@ -384,7 +384,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
       res = new FieldProvider[data.length];
       for (int i = 0; i < data.length; i++) {
         SQLReturnObject sqlReturnObject = new SQLReturnObject();
-        sqlReturnObject.setData("id", data[i].getField("rowkey"));
+        String resValue = "<![CDATA[" + data[i].getField("rowkey") + "]]>";
+        sqlReturnObject.setData("id", resValue);
         res[i] = sqlReturnObject;
       }
     } catch (Exception e) {
