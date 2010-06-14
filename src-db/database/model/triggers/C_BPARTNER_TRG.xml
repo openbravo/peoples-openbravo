@@ -77,7 +77,7 @@ BEGIN
 		    Creating new sub account
 		*/
 		--  Customer
-		 select count(*) into v_count from C_BP_Vendor_Acct where c_acctschema_id = Cur_Defaults.C_AcctSchema_ID AND c_bpartner_id = :new.C_BPartner_ID AND status = Cur_Defaults.status;
+		 select count(*) into v_count from C_BP_Vendor_Acct where c_acctschema_id = Cur_Defaults.C_AcctSchema_ID AND c_bpartner_id = :new.C_BPartner_ID AND ((status IS NULL AND Cur_Defaults.status IS NULL) OR status = Cur_Defaults.status);
 	IF (v_count=0) THEN
          Ad_Sequence_Next('C_BP_Customer_Acct', Cur_Defaults.C_AcctSchema_ID, v_BP_Acct_ID);
          IF (Cur_Defaults.IsBPNewAccount='Y') THEN
