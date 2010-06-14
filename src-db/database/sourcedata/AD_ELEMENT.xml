@@ -673,7 +673,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--161-->  <COLUMNNAME><![CDATA[AmtAcctCr]]></COLUMNNAME>
-<!--161-->  <NAME><![CDATA[Credit]]></NAME>
+<!--161-->  <NAME><![CDATA[Accounting Schema Currency Credit]]></NAME>
 <!--161-->  <PRINTNAME><![CDATA[Acct Credit]]></PRINTNAME>
 <!--161-->  <DESCRIPTION><![CDATA[The amount credited to an account, converted to the organization default currency.]]></DESCRIPTION>
 <!--161-->  <HELP><![CDATA[The Account Credit Amount indicates the transaction amount converted to this organization's accounting currency]]></HELP>
@@ -686,7 +686,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--162-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--162-->  <COLUMNNAME><![CDATA[AmtAcctDr]]></COLUMNNAME>
-<!--162-->  <NAME><![CDATA[Debit]]></NAME>
+<!--162-->  <NAME><![CDATA[Accounting Schema Currency Debit]]></NAME>
 <!--162-->  <PRINTNAME><![CDATA[Acct Debit]]></PRINTNAME>
 <!--162-->  <DESCRIPTION><![CDATA[The amount debited to an account, converted to the organization default currency.]]></DESCRIPTION>
 <!--162-->  <HELP><![CDATA[The Account Debit Amount indicates the transaction amount converted to this organization's accounting currency]]></HELP>
