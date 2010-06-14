@@ -649,7 +649,7 @@ public class WindowTabs {
         }
       }
       text.append(", null, '");
-      text.append(Utility.getTabURL(conn, _tabId, _tabName)).append("', '_self', null, true);");
+      text.append(Utility.getTabURL(conn, _tabId, _tabName)).append("', '_self', true, true);");
     }
     text.append("return false;");
     return text.toString();
