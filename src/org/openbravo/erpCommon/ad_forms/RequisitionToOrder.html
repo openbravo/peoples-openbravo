@@ -417,7 +417,10 @@
                                       <th class="DataGrid_Header_Cell" width="80">Need by date</th>
                                       <th class="DataGrid_Header_Cell" width="195">Product</th>
                                       <th class="DataGrid_Header_Cell" width="70">Quantity</th>
-                                      <th class="DataGrid_Header_Cell" width="170">Requester</th>
+                                      <th class="DataGrid_Header_Cell" width="70">Unit</th>
+                                      <th class="DataGrid_Header_Cell" width="71">Secondary Quantity</th>
+                                      <th class="DataGrid_Header_Cell" width="71">Secondary Unit</th>
+                                      <th class="DataGrid_Header_Cell" width="120">Requester</th>
                                       <th class="DataGrid_Header_Cell" width="230">Vendor - PriceList</th>
                                       <th class="DataGrid_Header_Cell" >Price</th>
                                     </tr>
@@ -427,6 +430,9 @@
                                         <td class="DataGrid_Body_Cell" id="fieldNeedByDate">xx29-02-2008</td>
                                         <td class="DataGrid_Body_Cell"><span id="fieldProduct">xxBeer</span> - <span id="fieldAttribute">xxAttribute</span></td>
                                         <td class="DataGrid_Body_Cell" id="fieldQuantity">xx1000000</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldUnit">xxUnit</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldSecQuantity">xx1000001</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldSecUnit">xxSecUnit</td>
                                         <td class="DataGrid_Body_Cell" id="fieldRequester">xxOpenbravo</td>
                                         <td class="DataGrid_Body_Cell"><span id="fieldVendor">xxGuiness</span> - <span id="fieldPriceList">xxPricelist</span></td>
                                         <td class="DataGrid_Body_Cell" id="fieldPrice">xx3</td>
@@ -441,6 +447,9 @@
                         <div id="addtable" style="overflow: none;">
                         <table class="Main_Client_TableEdition" cellspacing="0" cellpadding="0">
                           <tr>
+                            <td class="TableEdition_OneCell_width"></td>
+                            <td class="TableEdition_OneCell_width"></td>
+                            <td class="TableEdition_OneCell_width"></td>
                             <td class="TableEdition_OneCell_width"></td>
                             <td class="TableEdition_OneCell_width"></td>
                             <td class="TableEdition_OneCell_width"></td>
@@ -513,7 +522,7 @@
                                 <div id="sectionPriceList">
                                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                                     <tr class="DataGrid_Body_Row">
-                                      <th class="DataGrid_Header_Cell" colspan="8"><span id="fieldVendor">xxVendor</span> - <span id="fieldPricelist">xxPricelistId</span></th>
+                                      <th class="DataGrid_Header_Cell" colspan="11"><span id="fieldVendor">xxVendor</span> - <span id="fieldPricelist">xxPricelistId</span></th>
                                     </tr>
                                     <tr class="DataGrid_Body_Row">
                                       <th class="DataGrid_Header_Cell" colspan="2">Product</th>
@@ -521,6 +530,9 @@
                                       <th class="DataGrid_Header_Cell" width="70">Req. Qty</th>
                                       <th class="DataGrid_Header_Cell" width="70">Matched</th>
                                       <th class="DataGrid_Header_Cell" width="100">Qty</th>
+                                      <th class="DataGrid_Header_Cell" width="70">Unit</th>
+                                      <th class="DataGrid_Header_Cell" width="71">Secondary Quantity</th>
+                                      <th class="DataGrid_Header_Cell" width="71">Secondary Unit</th>
                                       <th class="DataGrid_Header_Cell" width="100">Price</th>
                                       <th class="DataGrid_Header_Cell" width="70">Price list</th>
                                     </tr>
@@ -533,6 +545,9 @@
                                         <td class="DataGrid_Body_Cell" id="fieldReqQty">xx30.00</td>
                                         <td class="DataGrid_Body_Cell" id="fieldMatchedQty">xx30.00</td>
                                         <td class="TextBox_ContentCell"> <input name="inpQtyxx" id="fieldSelQty" type="text" size="5" value="" outputformat="qtyEdition" class="dojoValidateValid readonly" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input></td>
+                                        <td class="DataGrid_Body_Cell" id="fieldSelUnit">xxSelUnit</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldSelSecQuantity">xxSelSecQuantity</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldSelSecUnit">xxSelSecUnit</td>
                                         <td class="TextBox_ContentCell"> <input name="inpPricexx" id="fieldSelPrice" type="text" size="5" value="" outputformat="priceEdition" class="dojoValidateValid readonly" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input></td>
                                         <td class="DataGrid_Body_Cell" id="fieldPriceList">xx300</td>
                                       </tr>

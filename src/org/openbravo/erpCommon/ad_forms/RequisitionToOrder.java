@@ -522,9 +522,10 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
                 strOrg, vars.getUser(), strCOrderId, Integer.toString(line), strVendor,
                 RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strOrderDate,
                 strOrderDate, lines[i].description, lines[i].mProductId,
-                lines[i].mAttributesetinstanceId, strWarehouse, lines[i].cUomId, qtyOrder
-                    .toPlainString(), cCurrencyId, lines[i].pricelist, lines[i].priceactual,
-                strPriceListId, lines[i].pricelimit, lines[i].tax, "", lines[i].discount);
+                lines[i].mAttributesetinstanceId, strWarehouse, lines[i].mProductUomId,
+                lines[i].cUomId, lines[i].quantityorder, qtyOrder.toPlainString(), cCurrencyId,
+                lines[i].pricelist, lines[i].priceactual, strPriceListId, lines[i].pricelimit,
+                lines[i].tax, "", lines[i].discount);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

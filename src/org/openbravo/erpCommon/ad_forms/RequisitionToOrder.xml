@@ -63,6 +63,9 @@
     <FIELD id="fieldProduct">product</FIELD>
     <FIELD id="fieldAttribute">attribute</FIELD>
     <FIELD id="fieldQuantity" format="euroEdition">qtytoorder</FIELD>
+    <FIELD id="fieldUnit">uomname</FIELD>
+    <FIELD id="fieldSecQuantity" format="euroEdition">quantityorder</FIELD>
+    <FIELD id="fieldSecUnit">secuomname</FIELD>
     <FIELD id="fieldRequester">requester</FIELD>
     <FIELD id="fieldVendor">vendor</FIELD>
     <FIELD id="fieldPriceList">pricelistid</FIELD>
@@ -84,6 +87,9 @@
     <FIELD id="fieldSelQty" format="euroEdition" attribute="value">lockqty</FIELD>
     <FIELD id="fieldSelQty" attribute="name" replace="xx">mRequisitionlineId</FIELD>
     <FIELD id="fieldSelPrice" format="euroEdition" attribute="value">lockprice</FIELD>
+    <FIELD id="fieldSelUnit">uomname</FIELD>
+    <FIELD id="fieldSelSecQuantity" format="euroEdition">quantityorder</FIELD>
+    <FIELD id="fieldSelSecUnit">secuomname</FIELD>
     <FIELD id="fieldSelPrice" attribute="name" replace="xx">mRequisitionlineId</FIELD>
     <FIELD id="fieldPriceList" format="euroEdition">pricelist</FIELD>
 
