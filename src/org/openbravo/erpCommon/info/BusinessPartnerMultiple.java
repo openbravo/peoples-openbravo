@@ -215,27 +215,27 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "BusinessPartnerData.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-	        // on movePage action force executing countRows again
-	        strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
-        	 String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        	 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-	        	 oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-	        	 oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-	        	 rownum = "ROWNUM";
-        	 } else {
-        		 pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        	 }
-          strNumRows = BusinessPartnerMultipleData.countRows(this,rownum, Utility.getContext(this, vars,
-              "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = BusinessPartnerMultipleData.countRows(this, rownum, Utility.getContext(this,
+              vars, "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
               "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
               strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                  .equals("vendor") ? "vendors" : ""), strCity,pgLimit, oraLimit1, oraLimit2);
+                  .equals("vendor") ? "vendors" : ""), strCity, pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("BusinessPartnerMultipleInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerMultipleInfo.numrows");
@@ -302,7 +302,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -369,13 +370,13 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
       String strPage = vars.getSessionValue("ProductMultiple|currentPage", "0");
       int page = Integer.valueOf(strPage);
-      
+
       int oldMinOffset = minOffset;
       int oldMaxOffset = maxOffset;
       minOffset = (page * TableSQLData.maxRowsPerGridPage) + minOffset;
       maxOffset = (page * TableSQLData.maxRowsPerGridPage) + maxOffset;
       log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
-      log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset); 
+      log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset);
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit1 = String.valueOf(maxOffset);

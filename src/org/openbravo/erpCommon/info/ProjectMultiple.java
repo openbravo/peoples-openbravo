@@ -32,7 +32,6 @@ import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
@@ -86,10 +85,11 @@ public class ProjectMultiple extends HttpSecureAppServlet {
       String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
 
       if (action.equalsIgnoreCase("getRows")) { // Asking for data rows
-        printGridData(response, vars, strKey, strName, strOrg, strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
+        printGridData(response, vars, strKey, strName, strOrg, strSortCols, strSortDirs, strOffset,
+            strPageSize, strNewFilter);
       } else if (action.equalsIgnoreCase("getIdsInRange")) {
         // asking for selected rows
-        printGridDataSelectedRows(response, vars, strKey, strName,  strOrg, strSortCols, strSortDirs);
+        printGridDataSelectedRows(response, vars, strKey, strName, strOrg, strSortCols, strSortDirs);
       } else {
         throw new ServletException("Unimplemented action in DATA request: " + action);
       }
@@ -170,8 +170,8 @@ public class ProjectMultiple extends HttpSecureAppServlet {
   }
 
   private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey,
-      String strName, String strOrg, String strOrderCols, String strOrderDirs, String strOffset, String strPageSize, String strNewFilter)
-      throws IOException, ServletException {
+      String strName, String strOrg, String strOrderCols, String strOrderDirs, String strOffset,
+      String strPageSize, String strNewFilter) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
     int page = 0;
@@ -190,8 +190,8 @@ public class ProjectMultiple extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "BusinessPartnerData.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-	        // on movePage action force executing countRows again
-	        strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
@@ -201,16 +201,17 @@ public class ProjectMultiple extends HttpSecureAppServlet {
           // or
           // first
           // load
-        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        	if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-	        	oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-	        	oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-	        	rownum = "ROWNUM";
-        	} else {
-        		pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        	}
-          strNumRows = ProjectMultipleData.countRows(this,rownum, strKey, strName, Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"), Utility
-                  .getSelectorOrgs(this, vars, strOrg),pgLimit, oraLimit1, oraLimit2);
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = ProjectMultipleData.countRows(this, rownum, strKey, strName, Utility
+              .getContext(this, vars, "#User_Client", "ProjectMultiple"), Utility.getSelectorOrgs(
+              this, vars, strOrg), pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("ProjectInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("ProjectInfo.numrows");
@@ -220,12 +221,14 @@ public class ProjectMultiple extends HttpSecureAppServlet {
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit1 = String.valueOf(offset + pageSize);
           String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-          data = ProjectMultipleData.select(this, "ROWNUM", strKey, strName, Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"), Utility
-                  .getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
+          data = ProjectMultipleData.select(this, "ROWNUM", strKey, strName, Utility.getContext(
+              this, vars, "#User_Client", "ProjectMultiple"), Utility.getSelectorOrgs(this, vars,
+              strOrg), strOrderBy, "", oraLimit1, oraLimit2);
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = ProjectMultipleData.select(this, "1", strKey, strName, Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"), Utility.getSelectorOrgs(
-              this, vars, strOrg), strOrderBy, pgLimit, "", "");
+          data = ProjectMultipleData.select(this, "1", strKey, strName, Utility.getContext(this,
+              vars, "#User_Client", "ProjectMultiple"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit, "", "");
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -268,7 +271,8 @@ public class ProjectMultiple extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -313,7 +317,8 @@ public class ProjectMultiple extends HttpSecureAppServlet {
    * 
    */
   private void printGridDataSelectedRows(HttpServletResponse response, VariablesSecureApp vars,
-      String strKey, String strName, String strOrg, String strOrderCols, String strOrderDirs) throws IOException, ServletException {
+      String strKey, String strName, String strOrg, String strOrderCols, String strOrderDirs)
+      throws IOException, ServletException {
     int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
     int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
     log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
@@ -327,25 +332,27 @@ public class ProjectMultiple extends HttpSecureAppServlet {
       String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
       String strPage = vars.getSessionValue("ProductMultiple|currentPage", "0");
       int page = Integer.valueOf(strPage);
-      
+
       int oldMinOffset = minOffset;
       int oldMaxOffset = maxOffset;
       minOffset = (page * TableSQLData.maxRowsPerGridPage) + minOffset;
       maxOffset = (page * TableSQLData.maxRowsPerGridPage) + maxOffset;
       log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
-      log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset); 
+      log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset);
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit1 = String.valueOf(maxOffset);
         String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
-        data = ProjectMultipleData.select(this, "ROWNUM", strKey, strName, Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"), Utility
-                .getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
+        data = ProjectMultipleData.select(this, "ROWNUM", strKey, strName, Utility.getContext(this,
+            vars, "#User_Client", "ProjectMultiple"), Utility.getSelectorOrgs(this, vars, strOrg),
+            strOrderBy, "", oraLimit1, oraLimit2);
       } else {
         // minOffset and maxOffset are zero based so pageSize is difference +1
         int pageSize = maxOffset - minOffset + 1;
         String pgLimit = pageSize + " OFFSET " + minOffset;
-        data = ProjectMultipleData.select(this, "1", strKey, strName, Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"), Utility.getSelectorOrgs(
-            this, vars, strOrg), strOrderBy, pgLimit, "", "");
+        data = ProjectMultipleData.select(this, "1", strKey, strName, Utility.getContext(this,
+            vars, "#User_Client", "ProjectMultiple"), Utility.getSelectorOrgs(this, vars, strOrg),
+            strOrderBy, pgLimit, "", "");
 
       }
 
