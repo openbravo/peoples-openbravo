@@ -33,28 +33,23 @@
       AD_COLUMN_IDENTIFIER('MA_WRPHASE', to_char(wrp.MA_WRPhase_ID),?) AS WRPNAME,
       AD_COLUMN_IDENTIFIER('MA_PROCESSPLAN', to_char(ppv.MA_PROCESSPLAN_ID),?) AS PROCESSPLAN,
       AD_COLUMN_IDENTIFIER('MA_PROCESS', to_char(wrp.MA_PROCESS_ID), ?) AS PROCESS,
-      AD_COLUMN_IDENTIFIER('M_PRODUCT', to_char(wrpp.M_PRODUCT_ID), ?) AS PRODUCT,
       COALESCE(wr.CONVERSIONRATE,1)*(wrp.QUANTITY-wrp.DONEQUANTITY) AS needqty, 
-      wrpp.M_PRODUCT_ID AS productid, 
-      wrpp.MOVEMENTQTY AS needed, wrp.SeqNO, 'Bordes' AS negative,
+      wrp.SeqNO, 'Bordes' AS negative,
         '123' AS inprocess, s.description AS description,'product' AS prodproduct,'' AS name, wr.DocumentNo as docno,
         AD_COLUMN_IDENTIFIER('MA_WORKREQUIREMENT', to_char(wr.MA_WORKREQUIREMENT_ID), ?) AS WRNAME
-      FROM MA_WorkRequirement wr, MA_WRPhase wrp, MA_WRPhaseProduct wrpp,
+      FROM MA_WorkRequirement wr, MA_WRPhase wrp,
         MA_Sequence s, MA_ProcessPlan_Version ppv
       WHERE wr.MA_WORKREQUIREMENT_ID = wrp.MA_WORKREQUIREMENT_ID
-        AND wrp.MA_WRPHASE_ID = wrpp.MA_WRPHASE_ID
         AND s.MA_ProcessPlan_Version_ID = ppv.MA_ProcessPlan_Version_ID
         AND s.MA_Sequence_ID = wrp.MA_Sequence_ID
         AND ppv.datefrom <= wr.startdate
         AND ppv.dateto > wr.startdate
         AND wrp.CLOSED = 'N'
-        AND wrpp.PRODUCTIONTYPE = '-'
         AND wr.AD_CLIENT_ID IN ('1')
         AND wr.AD_ORG_ID IN ('1')
         AND 1=1
       ORDER BY enddate, wr.DocumentNo, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPhase_ID
      ]]></Sql>
-    <Parameter name="language"/>
     <Parameter name="language"/>
     <Parameter name="language"/>
     <Parameter name="language"/>
