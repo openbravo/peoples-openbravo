@@ -374,7 +374,7 @@ public class DocFINReconciliation extends AcctServer {
       Fact fact, String Fact_Acct_Group_ID) throws ServletException {
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
-    if (getDocumentTransactionConfirmation(conn, transaction))
+    if (getDocumentTransactionConfirmation(transaction))
       fact.createLine(line, getWithdrawalAccount(as, transaction.getAccount(), conn),
           C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
@@ -398,7 +398,7 @@ public class DocFINReconciliation extends AcctServer {
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
-    if (getDocumentTransactionConfirmation(conn, transaction))
+    if (getDocumentTransactionConfirmation(transaction))
       fact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
           !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
@@ -436,7 +436,7 @@ public class DocFINReconciliation extends AcctServer {
     boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
-    if (getDocumentTransactionConfirmation(conn, transaction))
+    if (getDocumentTransactionConfirmation(transaction))
       fact.createLine(line, getAccountTransaction(conn, transaction.getAccount(), as, isReceipt),
           C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
@@ -505,8 +505,7 @@ public class DocFINReconciliation extends AcctServer {
     return confirmation;
   }
 
-  public boolean getDocumentTransactionConfirmation(ConnectionProvider conn,
-      FIN_FinaccTransaction transaction) {
+  public boolean getDocumentTransactionConfirmation(FIN_FinaccTransaction transaction) {
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
@@ -739,18 +738,18 @@ public class DocFINReconciliation extends AcctServer {
         return null;
       AccountingCombination result = null;
       if (payment.isReceipt()) {
-        if (lines.get(0).getINUponClearingUse().equals("INT"))
+        if (lines.get(0).getUponDepositUse().equals("INT"))
           result = accountList.get(0).getInTransitPaymentAccountIN();
-        else if (lines.get(0).getINUponClearingUse().equals("DEP"))
+        else if (lines.get(0).getUponDepositUse().equals("DEP"))
           result = accountList.get(0).getDepositAccount();
-        else if (lines.get(0).getINUponClearingUse().equals("CLE"))
+        else if (lines.get(0).getUponDepositUse().equals("CLE"))
           result = accountList.get(0).getClearedPaymentAccount();
       } else {
-        if (lines.get(0).getOUTUponClearingUse().equals("INT"))
+        if (lines.get(0).getUponWithdrawalUse().equals("INT"))
           result = accountList.get(0).getFINOutIntransitAcct();
-        else if (lines.get(0).getOUTUponClearingUse().equals("WIT"))
+        else if (lines.get(0).getUponWithdrawalUse().equals("WIT"))
           result = accountList.get(0).getWithdrawalAccount();
-        else if (lines.get(0).getOUTUponClearingUse().equals("CLE"))
+        else if (lines.get(0).getUponWithdrawalUse().equals("CLE"))
           result = accountList.get(0).getClearedPaymentAccountOUT();
       }
       if (result != null)
