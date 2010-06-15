@@ -131,6 +131,14 @@ public class LoginUtils {
       return false;
     }
 
+    // set the obcontext
+    try {
+      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
+    } catch (final OBSecurityException e) {
+      log4j.error("Error trying to initialize OBContext: " + e.getMessage(), e);
+      return false;
+    }
+
     // Set session vars
     vars.setSessionValue("#AD_User_ID", strUserAuth);
     vars.setSessionValue("#SalesRep_ID", strUserAuth);
@@ -238,13 +246,6 @@ public class LoginUtils {
 
     } catch (ServletException e) {
       log4j.warn("Error while loading session arguments: " + e);
-      return false;
-    }
-
-    // set the obcontext
-    try {
-      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
-    } catch (final OBSecurityException e) {
       return false;
     }
 
