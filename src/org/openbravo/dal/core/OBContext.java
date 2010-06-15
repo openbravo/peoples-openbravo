@@ -133,7 +133,7 @@ public class OBContext implements OBNotSingleton {
    * To restore the previous privileges call the {@link #restorePreviousMode()}.
    * 
    * @see OBContext#restorePreviousMode()
-   * @since 2.50MP16
+   * @since 2.50MP18
    */
   public static void setAdminMode() {
     getAdminModeStack().push(Boolean.TRUE);
@@ -167,7 +167,7 @@ public class OBContext implements OBNotSingleton {
    * {@link #setAdminMode()}.
    * 
    * @see OBContext#setAdminMode()
-   * @since 2.50MP16
+   * @since 2.50MP18
    */
   public static void restorePreviousMode() {
     // remove the last admin mode from the stack
