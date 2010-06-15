@@ -319,6 +319,7 @@ function submitFormGetParams(Command, action) {
   }
   if (params!="") frm.action += params;
   frm.target="_self";
+
   removeOnUnloadHandler(frm); // Prevents opener reload
   frm.submit();
   return true;
@@ -613,7 +614,16 @@ function sendDirectLink(form, columnName, parentKey, url, keyId, tableId, newTar
     form.inpSecondKey.value = parentKey;
     form.inpKeyReferenceId.value = keyId;
     form.inpTableReferenceId.value = tableId;
-    submitForm(form.Command, action, form, false, false);
+    if (isWindowInMDIContext) {
+      var LayoutMDI = getFrame('LayoutMDI');
+      if (typeof LayoutMDI.OB.Layout.ClassicOBCompatibility.sendDirectLink === "function") {
+        action = "JSON";
+        LayoutMDI.OB.Layout.ClassicOBCompatibility.sendDirectLink(action, form);
+      }
+    } else {
+      submitForm(form.Command, action, form, false, false);
+    }
+
   }
   return true;
 }
@@ -3069,6 +3079,45 @@ function getFrame(frameName) {
       }
       mainFrame_windowObj = targetFrame;
     }
+  } else if (frameName === 'mainParent') {
+    var main = getFrame('main');
+    var check = true;
+    try {
+      var dummy = main.parent.document;
+    } catch (e) {
+      check = false;
+    }
+
+    if (check) {
+      if (main.document === main.parent.document) {
+        check = false;
+      }
+    }
+
+    if (check) {
+      targetFrame = main.parent;
+    } else {
+      targetFrame = null;
+    }
+  } else if (frameName === 'LayoutMDI') {
+    var mainParent = getFrame('mainParent');
+    targetFrame = null;
+    if (mainParent !== null) {
+      if (LayoutMDICheck(mainParent)) {
+        targetFrame = mainParent;
+      } else {
+        targetFrame = null;
+      }
+    } else {
+      try {
+        targetFrame = top.opener;
+        while (targetFrame !== null && !LayoutMDICheck(targetFrame)) {
+          targetFrame = targetFrame.top.opener;
+        }
+      } catch (e) {
+        targetFrame = null;
+      }
+    }
   } else {
     targetFrame = getFrame('main').frames[frameName];
   }
@@ -5081,6 +5130,150 @@ function replaceAt(string, what, ini, end) {
   return newString;
 }
 
+/**
+* Start of functions to communicate with 3.0 tabbed interface
+*/
+
+var isWindowInMDITab = false;
+var isWindowInMDIContext = false;
+
+function LayoutMDICheck(target) {
+  if (target !== null) {
+    if (typeof target.OB !== "undefined") {
+      if (typeof target.OB.Layout !== "undefined") {
+        if (typeof target.OB.Layout.ViewManager === "object") {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function setMDIEnvironment() {
+  isWindowInMDITab = checkWindowInMDITab();
+  isWindowInMDIContext = checkWindowInMDIContext();
+
+  if (isWindowInMDITab && typeof sendWindowInfoToMDI === "function") {
+    sendWindowInfoToMDI();
+  }
+}
+
+/*
+ * Function that checks if the rendered html is contained inside a OB 3.0 tab or not.
+ */
+function checkWindowInMDITab(target) {
+  var result = true;
+
+  if (!target || target === "null" || target === "") {
+    target = window;
+  }
+
+  try {
+    while ((target.document !== target.parent.document) && (!LayoutMDICheck(target))) {
+      target = target.parent;
+    }
+  } catch (e) {
+    result = false;
+  }
+
+  if (!LayoutMDICheck(target)) {
+    result = false;
+  }
+  return result;
+}
+
+/*
+ * Function that checks if the rendered html is contained inside a OB 3.0 context or not.
+ */
+function checkWindowInMDIContext(target) {
+  var result = true;
+
+  if (!target || target === "null" || target === "") {
+    target = window;
+  }
+
+  if (isWindowInMDITab) {
+    result = true;
+  } else {
+    var LayoutMDI = getFrame('LayoutMDI');
+    if (LayoutMDI !== null) {
+      result = true;
+    } else {
+      result = false;
+    }
+  }
+  return result;
+}
+
+function sendWindowInfoToMDI() {
+  if (!isWindowInMDITab) {
+    return false;
+  }
+  var LayoutMDI = getFrame('LayoutMDI');
+
+  var windowId = null;
+  var tabId = null;
+  var keyName = null;
+  var recordId = null;
+  var title = null;
+  var mode = null;
+  if (typeof getElementsByName('inpwindowId','input')[0] !== "undefined") {
+    windowId = getElementsByName('inpwindowId','input')[0].value;
+  }
+  if (typeof getElementsByName('inpTabId','input')[0] !== "undefined") {
+    tabId = getElementsByName('inpTabId','input')[0].value;
+  }
+  if (typeof getElementsByName('inpKeyName','input')[0] !== "undefined") {
+    keyName = getElementsByName('inpKeyName','input')[0].value;
+  }
+  if (typeof getElementsByName(keyName,'input')[0] !== "undefined") {
+    recordId = getElementsByName(keyName,'input')[0].value;
+  }
+  if (document.getElementById('tabTitle_text') !== null) {
+    title = document.getElementById('tabTitle_text').innerHTML;
+  }
+
+  if (tabId === null && !document.getElementById('buttonAbout')) {
+    mode = "error";
+    title = "Error";
+  } else if (tabId === null) {
+    mode = "manual";
+  } else if (document.getElementById("grid_table_dummy_input")) {
+    mode = "grid";
+  } else if (recordId === "") {
+    mode = "new";
+  } else {
+    mode = "edit";
+  }
+
+  var obManualURL = document.location.href;
+  var appUrl = getAppUrl();
+
+  obManualURL = obManualURL.replace(appUrl, "");
+//obManualURL = obManualURL.replace("?hideMenu=true&noprefs=true", "");
+  obManualURL = obManualURL.substring(0, obManualURL.indexOf("?"));
+  if (mode !== "manual") {
+    obManualURL = null;
+  } else {
+    windowId = null;
+    tabId = null;
+    recordId = null;
+  }
+
+  try {
+    if (document.getElementById('buttonBack') || document.getElementById('buttonAbout')) {
+      if (typeof LayoutMDI.OB.Layout.ClassicOBCompatibility.setTabInformation === "function") {
+        LayoutMDI.OB.Layout.ClassicOBCompatibility.setTabInformation(windowId, tabId, recordId, mode, obManualURL, title);
+      }
+    }
+  } catch (e) { }
+}
+
+
+/**
+* End of functions to communicate with 3.0 tabbed interface
+*/
 
 /**
 * Start of deprecated functions in 2.40

@@ -143,7 +143,7 @@ public class Menu extends HttpSecureAppServlet {
    */
   private String getTargetMenu(VariablesSecureApp vars, String queryString) throws ServletException {
 
-    final String[] allowedCommands = { "", "DEFAULT", "NEW", "EDIT", "GRID" };
+    final String[] allowedCommands = { "", "DEFAULT", "NEW", "EDIT", "GRID", "DIRECT" };
     final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
     final String command = vars.getStringParameter("Command", listFilter);
     final String url = vars.getStringParameter("url");
