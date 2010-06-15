@@ -45,6 +45,7 @@
     Cur_Tabs RECORD;
     Cur_Fields RECORD;
     v_AD_Module_ID VARCHAR2(32);
+    ad_language_target VARCHAR(6);
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -82,6 +83,9 @@
       INTO v_AD_Module_ID
       FROM AD_Window
      WHERE AD_Window_ID = v_Record_ID;
+
+     select AD_language into ad_language_target
+     from ad_module where ad_module_id=v_AD_Module_ID;
     
     -- Record_ID is the Window_ID to copy to
     FOR Cur_Tabs IN
@@ -100,38 +104,45 @@
           AD_COLUMN_ID, HASTREE, WHERECLAUSE, ORDERBYCLAUSE, COMMITWARNING,
           AD_PROCESS_ID, PROCESSING, AD_Module_ID
         )
-        VALUES
-        (
+        select
           v_NextNo_T, v_Record_ID,
           Cur_Tabs.AD_CLIENT_ID, Cur_Tabs.AD_ORG_ID, Cur_Tabs.ISACTIVE, now(), Cur_Tabs.CREATEDBY, now(), Cur_Tabs.UPDATEDBY,
-          Cur_Tabs.NAME, Cur_Tabs.DESCRIPTION, Cur_Tabs.HELP, Cur_Tabs.AD_TABLE_ID, Cur_Tabs.TabLevel,
+          coalesce(sub.name, Cur_Tabs.NAME), coalesce(sub.description, Cur_Tabs.DESCRIPTION), coalesce(sub.help, Cur_Tabs.HELP), Cur_Tabs.AD_TABLE_ID, Cur_Tabs.TabLevel,
           Cur_Tabs.SEQNO, Cur_Tabs.ISSINGLEROW, Cur_Tabs.ISINFOTAB, Cur_Tabs.ISTRANSLATIONTAB, Cur_Tabs.ISREADONLY,
           Cur_Tabs.AD_COLUMN_ID, Cur_Tabs.HASTREE, Cur_Tabs.WHERECLAUSE, Cur_Tabs.ORDERBYCLAUSE, Cur_Tabs.COMMITWARNING,
           Cur_Tabs.AD_PROCESS_ID, Cur_Tabs.PROCESSING, v_AD_Module_ID
-        )
-        ;
+         FROM ad_tab s left join 
+        (select * from AD_tab_trl where ad_language=ad_language_target and ad_tab_id=Cur_Tabs.ad_tab_id ) sub
+         on sub.ad_tab_id=s.ad_tab_id where s.ad_tab_id=Cur_Tabs.ad_tab_id;
+        
       --  Translate
       UPDATE AD_Tab_Trl
         SET Name=
-        (SELECT Name
-        FROM AD_Tab_Trl s
-        WHERE s.AD_Tab_ID=Cur_Tabs.AD_Tab_ID
-          AND s.AD_Language=AD_Tab_Trl.AD_Language
-        )
+        (SELECT coalesce(sub.Name, Cur_Tabs.name)
+        FROM ad_tab t left join 
+        (select * from AD_Tab_Trl s
+        WHERE s.AD_Language=AD_Tab_Trl.AD_Language
+        ) sub
+         on sub.ad_tab_id=t.ad_tab_id 
+         WHERE t.AD_Tab_ID=Cur_Tabs.AD_Tab_ID)
         ,
         Description=
-        (SELECT Description
-        FROM AD_Tab_Trl s
-        WHERE s.AD_Tab_ID=Cur_Tabs.AD_Tab_ID
-          AND s.AD_Language=AD_Tab_Trl.AD_Language
-        )
+        (SELECT coalesce(sub.Description, Cur_Tabs.description)
+        FROM ad_tab t left join 
+        (select * from AD_Tab_Trl s
+        WHERE s.AD_Language=AD_Tab_Trl.AD_Language
+        ) sub
+         on sub.ad_tab_id=t.ad_tab_id 
+         WHERE t.AD_Tab_ID=Cur_Tabs.AD_Tab_ID)
         ,
         Help=
-        (SELECT Help
-        FROM AD_Tab_Trl s
-        WHERE s.AD_Tab_ID=Cur_Tabs.AD_Tab_ID
-          AND s.AD_Language=AD_Tab_Trl.AD_Language
-        )
+        (SELECT coalesce(sub.Help, Cur_Tabs.help)
+        FROM ad_tab t left join 
+        (select * from AD_Tab_Trl s
+        WHERE s.AD_Language=AD_Tab_Trl.AD_Language
+        ) sub
+         on sub.ad_tab_id=t.ad_tab_id 
+         WHERE t.AD_Tab_ID=Cur_Tabs.AD_Tab_ID)
       WHERE AD_Tab_Trl.AD_Tab_ID=v_NextNo_T;
       -- Copy Fields
       FOR Cur_Fields IN
@@ -149,37 +160,44 @@
             ISDISPLAYED, DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY, SEQNO, SORTNO,
             ISSAMELINE, ISFIELDONLY, ISENCRYPTED, AD_Module_ID
           )
-          VALUES
-          (
+          SELECT
             v_NextNo_F, v_NextNo_T,
             Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID, Cur_Fields.IsActive, now(), '0', now(), '0',
-            Cur_Fields.Name, Cur_Fields.Description, Cur_Fields.Help, Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID,
+            coalesce(sub.name, Cur_Fields.Name), coalesce(sub.description, Cur_Fields.Description), coalesce(sub.help, Cur_Fields.Help), Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID,
             Cur_Fields.ISDISPLAYED, Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY, Cur_Fields.SEQNO, Cur_Fields.SORTNO,
             Cur_Fields.ISSAMELINE, Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_AD_Module_ID
-          )
-          ;
+          FROM ad_field s left join 
+        (select * from AD_field_trl where ad_language=ad_language_target and ad_field_id=Cur_Fields.ad_field_id ) sub
+         on sub.ad_field_id=s.ad_field_id where s.ad_field_id=Cur_Fields.ad_field_id;
+          
         -- update translation
         UPDATE AD_Field_Trl
           SET Name=
-          (SELECT Name
-          FROM AD_Field_Trl s
-          WHERE s.AD_Field_ID=Cur_Fields.AD_Field_ID
-            AND s.AD_Language=AD_Field_Trl.AD_Language
-          )
+          (SELECT coalesce(sub.Name, Cur_Fields.name)
+          FROM ad_field t left join 
+          (select * from AD_field_Trl s
+          WHERE s.AD_Language=AD_field_Trl.AD_Language
+          ) sub
+          on sub.ad_field_id=t.ad_field_id 
+         WHERE t.AD_field_ID=Cur_Fields.AD_field_ID)
           ,
           Description=
-          (SELECT Description
-          FROM AD_Field_Trl s
-          WHERE s.AD_Field_ID=Cur_Fields.AD_Field_ID
-            AND s.AD_Language=AD_Field_Trl.AD_Language
-          )
+          (SELECT coalesce(sub.Description, Cur_Fields.Description)
+          FROM ad_field t left join 
+          (select * from AD_field_Trl s
+          WHERE s.AD_Language=AD_field_Trl.AD_Language
+          ) sub
+          on sub.ad_field_id=t.ad_field_id 
+         WHERE t.AD_field_ID=Cur_Fields.AD_field_ID)
           ,
           Help=
-          (SELECT Help
-          FROM AD_Field_Trl s
-          WHERE s.AD_Field_ID=Cur_Fields.AD_Field_ID
-            AND s.AD_Language=AD_Field_Trl.AD_Language
-          )
+          (SELECT coalesce(sub.Help, Cur_Fields.Help)
+          FROM ad_field t left join 
+          (select * from AD_field_Trl s
+          WHERE s.AD_Language=AD_field_Trl.AD_Language
+          ) sub
+          on sub.ad_field_id=t.ad_field_id 
+         WHERE t.AD_field_ID=Cur_Fields.AD_field_ID)
         WHERE AD_Field_Trl.AD_Field_ID=v_NextNo_F;
         --
         v_NoOfFields:=v_NoOfFields + 1;

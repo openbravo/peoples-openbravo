@@ -213,8 +213,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "ProjectData.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        	// on movePage action force executing countRows again
-        	strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
@@ -224,17 +224,18 @@ public class ProductMultiple extends HttpSecureAppServlet {
           // or
           // first
           // load
-        	 String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        	 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-	        	 oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-	        	 oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-	        	 rownum = "ROWNUM";
-        	 } else {
-        		 pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        	 }
-          strNumRows = ProductMultipleData.countRows(this,rownum, strKey, strName, strProductCategory,
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = ProductMultipleData.countRows(this, rownum, strKey, strName,
+              strProductCategory,
               Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
-                  .getSelectorOrgs(this, vars, strOrg),pgLimit, oraLimit1, oraLimit2);
+                  .getSelectorOrgs(this, vars, strOrg), pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
@@ -294,7 +295,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -354,13 +356,13 @@ public class ProductMultiple extends HttpSecureAppServlet {
       String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
       String strPage = vars.getSessionValue("ProductMultiple|currentPage", "0");
       int page = Integer.valueOf(strPage);
-      
+
       int oldMinOffset = minOffset;
       int oldMaxOffset = maxOffset;
       minOffset = (page * TableSQLData.maxRowsPerGridPage) + minOffset;
       maxOffset = (page * TableSQLData.maxRowsPerGridPage) + maxOffset;
       log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
-      log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset); 
+      log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset);
       // Filtering result
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit1 = String.valueOf(maxOffset);
@@ -382,7 +384,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
       res = new FieldProvider[data.length];
       for (int i = 0; i < data.length; i++) {
         SQLReturnObject sqlReturnObject = new SQLReturnObject();
-        sqlReturnObject.setData("id", data[i].getField("rowkey"));
+        String resValue = "<![CDATA[" + data[i].getField("rowkey") + "]]>";
+        sqlReturnObject.setData("id", resValue);
         res[i] = sqlReturnObject;
       }
     } catch (Exception e) {

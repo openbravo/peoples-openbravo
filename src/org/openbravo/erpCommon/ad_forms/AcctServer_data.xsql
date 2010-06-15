@@ -183,12 +183,13 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE DUAL SET Posted= ? ,Processing='N'
+        UPDATE DUAL SET Posted= ? ,Processing='N', updated=now(), updatedby=?
         WHERE CLAVE_ID = ?
      ]]>
      </Sql>
      <Parameter name="tableName" type="replace" optional="true" after="UPDATE " text="DUAL"/>
      <Parameter name="status"/>
+     <Parameter name="adUserID"/>
      <Parameter name="tableName"  type="replace" optional="true" after="WHERE " text="CLAVE"/>
      <Parameter name="Record_ID"/>
    </SqlMethod>
