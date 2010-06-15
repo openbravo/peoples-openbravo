@@ -577,12 +577,12 @@ public abstract class AcctServer {
           errors++;
           if (messageResult == null)
             setMessageResult(conn, vars, getStatus(), "");
-          save(conn);
+          save(conn, vars.getUser());
         }
       } catch (Exception e) {
         errors++;
         Status = AcctServer.STATUS_Error;
-        save(conn);
+        save(conn, vars.getUser());
         log4j.warn(e);
       }
     } catch (ServletException e) {
@@ -689,7 +689,7 @@ public abstract class AcctServer {
         }
       }
       // Commit Doc
-      if (!save(conn)) { // contains unlock
+      if (!save(conn, vars.getUser())) { // contains unlock
         // conn.releaseRollbackConnection(con);
         unlock(conn);
         // Status = AcctServer.STATUS_Error;
@@ -710,14 +710,14 @@ public abstract class AcctServer {
    * 
    * @param con
    *          connection
+   * @param strUser
+   *          AD_User_ID
    * @return true if saved
    */
-  private final boolean save(ConnectionProvider conn) {
-    // if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - save - ->" +
-    // Status);
+  private final boolean save(ConnectionProvider conn, String strUser) {
     int no = 0;
     try {
-      no = AcctServerData.updateSave(conn, tableName, Status, Record_ID);
+      no = AcctServerData.updateSave(conn, tableName, Status, strUser, Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
     }

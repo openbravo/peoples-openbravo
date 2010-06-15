@@ -21,7 +21,6 @@ package org.openbravo.scheduling;
 import static org.openbravo.scheduling.Process.COMPLETE;
 import static org.openbravo.scheduling.Process.ERROR;
 import static org.openbravo.scheduling.Process.EXECUTION_ID;
-import static org.openbravo.scheduling.Process.MISFIRED;
 import static org.openbravo.scheduling.Process.PROCESSING;
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.SUCCESS;
@@ -152,13 +151,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
   }
 
   public void triggerMisfired(Trigger trigger) {
-    try {
-      ProcessRequestData.update(getConnection(), MISFIRED, trigger.getName());
-
-    } catch (final ServletException e) {
-      log.error(e.getMessage(), e);
-    }
-
+    // Not implemented
   }
 
   public void jobsPaused(String jobName, String jobGroup) {

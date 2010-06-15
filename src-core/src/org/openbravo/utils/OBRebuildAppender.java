@@ -80,11 +80,6 @@ public class OBRebuildAppender extends AppenderSkeleton {
             .prepareStatement("INSERT INTO ad_error_log (ad_error_log_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, system_status, error_level, message, line_number) SELECT get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', system_status, ?,?, to_number(?) FROM ad_system_info");
         String level = arg0.getLevel().toString();
 
-        // Warnings show when compiling are changed to level Info, so that they don't appear in the
-        // rebuild window, because they are not relevant for common users
-        if (message.startsWith("Note: ")) {
-          level = Level.INFO.toString();
-        }
         ps.setString(1, level);
         ps.setString(2, message);
         ps.setString(3, line_number);

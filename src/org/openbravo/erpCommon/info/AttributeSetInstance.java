@@ -220,8 +220,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
           lot = AttributeSetInstanceData.selectNextLot(this, data[0].mLotctlId);
           AttributeSetInstanceData.updateLotSequence(conn, this, vars.getUser(), data[0].mLotctlId);
           description_first += (description_first.equals("") ? "" : "_") + lot;// esto
-        } else
+        } else {
           description_first += (description_first.equals("") ? "" : "_") + "L" + lot;
+        }
       }
       if (data[0].isserno.equals("Y")) {
         serno = vars.getStringParameter("inpserno");
@@ -229,8 +230,10 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
           serno = AttributeSetInstanceData.selectNextSerNo(conn, this, data[0].mSernoctlId);
           AttributeSetInstanceData.updateSerNoSequence(conn, this, vars.getUser(),
               data[0].mSernoctlId);
+          description_first += (description_first.equals("") ? "" : "_") + serno;
+        } else {
+          description_first += (description_first.equals("") ? "" : "_") + "#" + serno;
         }
-        description_first += (description_first.equals("") ? "" : "_") + "#" + serno;
       }
       if (data[0].isguaranteedate.equals("Y")) {
         guaranteedate = vars.getStringParameter("inpDateFrom");

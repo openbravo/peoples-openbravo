@@ -55,6 +55,7 @@
     --
     v_DateInvoiced DATE;
     v_NoRecords NUMBER:=0;
+    v_Message_Check NUMBER:=0;
     v_NoRecNotComplDelivered NUMBER:=0;
     -- Orders to process
     Cur_Order RECORD;
@@ -590,7 +591,14 @@
 	    	  	  INTO v_DocumentNo
 	    	  	  FROM C_INVOICE
 	    	  	  WHERE C_INVOICE_ID = p_Invoice_ID;
-	    	  	  v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+	    	  	  IF(v_Message_Check <= 10) THEN
+	    	  	  	v_Message:=v_Message||', '||'@InvoiceDocumentno@ ' || v_DocumentNo;
+	    	  	  ELSE
+	    	  	  	IF(v_Message_Check = 11) THEN
+	    	  	  		v_Message :=v_Message ||' @InvoiceNumberCheck@';
+	    	  	  	END IF;
+	    	  	  END IF;
+	    	  	  v_Message_Check := v_Message_Check+1;
         	  END IF;
 			  --Finished added by P.Sarobe
             END IF;--Next_Order
