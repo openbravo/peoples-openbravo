@@ -24,7 +24,6 @@ import java.io.File;
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.erpCommon.utility.AntExecutor;
 
 /**
  * Reloads the tomcat using the tomcat reload ant task.
@@ -50,7 +49,8 @@ public class ReloadContext {
     final File baseDir = srcDir.getParentFile();
     try {
       log.debug("Reloading context with basedir " + baseDir);
-      final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
+      final org.openbravo.erpCommon.utility.AntExecutor antExecutor = new org.openbravo.erpCommon.utility.AntExecutor(
+          baseDir.getAbsolutePath());
       antExecutor.runTask("tomcat.reload.do");
     } catch (final Exception e) {
       throw new OBException(e);
@@ -68,7 +68,8 @@ public class ReloadContext {
         .getProperty("source.path");
     try {
       log.debug("Reloading context with basedir " + baseDirPath);
-      final AntExecutor antExecutor = new AntExecutor(baseDirPath);
+      final org.openbravo.erpCommon.utility.AntExecutor antExecutor = new org.openbravo.erpCommon.utility.AntExecutor(
+          baseDirPath);
       antExecutor.runTask("tomcat.reload");
     } catch (final Exception e) {
       throw new OBException(e);

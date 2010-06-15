@@ -24,7 +24,6 @@ import java.io.File;
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.erpCommon.utility.AntExecutor;
 
 /**
  * Restarts the tomcat using the direct java bootstrap class/jar. The restart is an ant task which
@@ -54,7 +53,8 @@ public class RestartTomcat {
     final File baseDir = srcDir.getParentFile();
     try {
       log.debug("Restarting tomcat with basedir " + baseDir);
-      final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
+      final org.openbravo.erpCommon.utility.AntExecutor antExecutor = new org.openbravo.erpCommon.utility.AntExecutor(
+          baseDir.getAbsolutePath());
       antExecutor.runTask("tomcat.restart.do");
     } catch (final Exception e) {
       throw new OBException(e);
@@ -72,7 +72,8 @@ public class RestartTomcat {
         .getProperty("source.path");
     try {
       log.debug("Restarting tomcat with basedir " + baseDirPath);
-      final AntExecutor antExecutor = new AntExecutor(baseDirPath);
+      final org.openbravo.erpCommon.utility.AntExecutor antExecutor = new org.openbravo.erpCommon.utility.AntExecutor(
+          baseDirPath);
       antExecutor.runTask("tomcat.restart");
     } catch (final Exception e) {
       throw new OBException(e);

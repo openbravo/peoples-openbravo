@@ -89,14 +89,6 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
         vars, "#User_Client", "ReportWorkRequirementDaily"), Utility.getContext(this, vars,
         "#AccessibleOrgTree", "ReportWorkRequirementDaily"), strStartDateFrom, strStartDateTo,
         strmaProcessPlan);
-//    for (int i = 0; i < data.length; i++) {
-//      String strqty = ReportWorkRequirementDailyData.inprocess(this, data[i].wrid,
-//          data[i].productid);
-//      data[i].inprocess = strqty;
-//      if (strqty != null && strqty.equals("")) {
-//        strqty = "0";
-//      }
-//    }
 
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
