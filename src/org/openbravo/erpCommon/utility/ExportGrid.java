@@ -39,6 +39,9 @@ import org.openbravo.utils.FileUtility;
 
 public class ExportGrid extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  // Since we don't use any style in the JRXML template, the column's width is based on the header
+  // text length multiplied by a factor (character width)
+  private static final int CHAR_WIDTH = 10;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -152,8 +155,8 @@ public class ExportGrid extends HttpSecureAppServlet {
           log4j.debug("Add column: " + columnname + " width: " + headers[i].getField("width")
               + " reference: " + headers[i].getField("adReferenceId"));
         int intColumnWidth = Integer.valueOf(headers[i].getField("width"));
-        if (headers[i].getField("name").length() * 5 > intColumnWidth) {
-          intColumnWidth = headers[i].getField("name").length() * 5;
+        if (headers[i].getField("name").length() * CHAR_WIDTH > intColumnWidth) {
+          intColumnWidth = headers[i].getField("name").length() * CHAR_WIDTH;
           if (log4j.isDebugEnabled())
             log4j.debug("New width: " + intColumnWidth);
         }
