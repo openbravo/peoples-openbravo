@@ -775,9 +775,6 @@ export.database: exports database structure and data to xml files.
     <java classname="org.openbravo.service.system.RestartTomcat" spawn="true" fork="true" maxmemory="${build.maxmemory}">
       <arg line="${base.src}" />
       <classpath refid="project.class.path" />
-      <syspropertyset>
-         <propertyref name="java.security.egd" />
-      </syspropertyset>
     </java>
   </target>
 

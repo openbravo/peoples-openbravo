@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2007-2009 Openbravo SLU
+ * All portions are Copyright (C) 2007-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,9 @@ import org.openbravo.utils.FileUtility;
 
 public class ExportGrid extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  // Since we don't use any style in the JRXML template, the column's width is based on the header
+  // text length multiplied by a factor (character width)
+  private static final int CHAR_WIDTH = 10;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -100,13 +103,13 @@ public class ExportGrid extends HttpSecureAppServlet {
     }
   }
 
-  private GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId,
-      String strAccessLevel) throws ServletException {
+  private GridReportVO createGridReport(VariablesSecureApp vars, String strTabId,
+      String strWindowId, String strAccessLevel) throws ServletException {
     return createGridReport(vars, strTabId, strWindowId, strAccessLevel, false);
   }
 
-  private GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId,
-      String strAccessLevel, boolean useFieldLength) throws ServletException {
+  private GridReportVO createGridReport(VariablesSecureApp vars, String strTabId,
+      String strWindowId, String strAccessLevel, boolean useFieldLength) throws ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Create Grid Report, tabID: " + strTabId);
     LinkedList<GridColumnVO> columns = new LinkedList<GridColumnVO>();
@@ -152,10 +155,10 @@ public class ExportGrid extends HttpSecureAppServlet {
           log4j.debug("Add column: " + columnname + " width: " + headers[i].getField("width")
               + " reference: " + headers[i].getField("adReferenceId"));
         int intColumnWidth = Integer.valueOf(headers[i].getField("width"));
-        if (headers[i].getField("name").length() * 5 > intColumnWidth) {
-          intColumnWidth = headers[i].getField("name").length() * 5;
+        if (headers[i].getField("name").length() * CHAR_WIDTH > intColumnWidth) {
+          intColumnWidth = headers[i].getField("name").length() * CHAR_WIDTH;
           if (log4j.isDebugEnabled())
-            log4j.debug("            New width: " + intColumnWidth);
+            log4j.debug("New width: " + intColumnWidth);
         }
         totalWidth += intColumnWidth;
         Class<?> fieldClass = String.class;

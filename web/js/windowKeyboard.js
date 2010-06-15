@@ -167,8 +167,12 @@ function windowTableId(tableId, defaultActionButtonId) {
   this.defaultActionButtonId = defaultActionButtonId;
 }
 
-
+var isMDIEnvironmentSet = false;
 function setWindowTableParentElement() {
+  if (!isMDIEnvironmentSet) {
+    isMDIEnvironmentSet = true;
+    setMDIEnvironment();
+  }
   windowTableParentElement = windowTables[focusedWindowTable].tableId;
 }
 
