@@ -184,10 +184,11 @@ public class OBContext implements OBNotSingleton {
         }
       }
       if (ADMIN_TRACE_SIZE == 0) {
-        log.warn(
-            "Unbalanced calls to setAdminMode and restorePreviousMode. "
-                + "Consider setting the constant OBContext.ADMIN_TRACE_SIZE to a value higher than 0 to debug this situation",
-            new IllegalStateException());
+        log
+            .warn(
+                "Unbalanced calls to setAdminMode and restorePreviousMode. "
+                    + "Consider setting the constant OBContext.ADMIN_TRACE_SIZE to a value higher than 0 to debug this situation",
+                new IllegalStateException());
       } else {
         log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString(),
             new IllegalStateException());
@@ -281,9 +282,10 @@ public class OBContext implements OBNotSingleton {
       return;
     }
     if (context != null && context == adminContext) {
-      log.warn("Trying to set the admin context in the session, "
-          + "this means that the context has not been reset correctly in a finally block."
-          + " When using the admin context it should always be removed in a finally block by the application");
+      log
+          .warn("Trying to set the admin context in the session, "
+              + "this means that the context has not been reset correctly in a finally block."
+              + " When using the admin context it should always be removed in a finally block by the application");
       return;
     }
     session.setAttribute(CONTEXT_PARAM, context);
@@ -712,9 +714,9 @@ public class OBContext implements OBNotSingleton {
       Check.isNotNull(getRole(), "Role may not be null");
 
       if (orgId != null) {
-        final Organization o = getOne(Organization.class,
-            "select r from " + Organization.class.getName() + " r where " + " r."
-                + Organization.PROPERTY_ID + "='" + orgId + "'");
+        final Organization o = getOne(Organization.class, "select r from "
+            + Organization.class.getName() + " r where " + " r." + Organization.PROPERTY_ID + "='"
+            + orgId + "'");
         setCurrentOrganization(o);
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
