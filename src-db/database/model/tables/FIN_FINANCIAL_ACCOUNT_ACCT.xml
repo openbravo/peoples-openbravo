@@ -77,6 +77,22 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FIN_OUT_INTRANSIT_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FIN_OUT_CLEAR_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FIN_IN_INTRANSIT_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FIN_IN_CLEAR_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_FINACC_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -101,8 +117,20 @@
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="FIN_FINACC_ACCT_FINACC">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_INCLEAR">
+        <reference local="FIN_IN_CLEAR_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_ININTRANSIT">
+        <reference local="FIN_IN_INTRANSIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_MAKEPAYMENT">
         <reference local="FIN_MAKEPAYMENT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_OUTCLEAR">
+        <reference local="FIN_OUT_CLEAR_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_OUTINTRANSIT">
+        <reference local="FIN_OUT_INTRANSIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_RECEIVEPAYMENT">
         <reference local="FIN_RECEIVEPAYMENT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>

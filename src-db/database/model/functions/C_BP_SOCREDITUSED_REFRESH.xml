@@ -22,12 +22,21 @@
 ************************************************************************/
   v_client_id c_bpartner.ad_client_id%TYPE;
   v_org_id c_bpartner.ad_org_id%TYPE;
+  v_count NUMBER;
+  v_dummy VARCHAR2(2000);
 BEGIN
   SELECT ad_client_id, ad_org_id
     INTO v_client_id, v_org_id
   FROM c_bpartner
   WHERE c_bpartner_id = p_bpartner_id;
-  IF (AD_GET_PROPERTY_VALUE('CCU', v_client_id, v_org_id) IS NULL) THEN
+  SELECT count(1) INTO v_count
+  FROM ad_preference
+  WHERE property = 'CCU'
+    AND ad_module_id <> '0';
+  IF (v_count > 1) THEN
+    v_dummy := AD_GET_PREFERENCE_VALUE('CCU', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+  -- Use AD_GET_PROPERTY_VALUE remain for backward compatibilty
+  ELSIF (v_count = 0 AND AD_GET_PROPERTY_VALUE('CCU', v_client_id, v_org_id) IS NULL) THEN
     UPDATE C_BPARTNER
       SET SO_CreditUsed=
       (SELECT  COALESCE(SUM(C_Base_Convert((Amount - WriteOffAmt), C_Currency_ID, AD_Client_ID, DocDate, AD_Org_ID)), 0) AS TOTAL

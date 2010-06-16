@@ -28,10 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.PaymentMonitor;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -87,10 +90,16 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
       Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
       // Extra check for PaymentMonitor-disabling switch, to build correct message for users
       // Use Utility.getPropertyValue for backward compatibility
-      if (Utility.getPropertyValue("PaymentMonitor", vars.getClient(), invoice.getOrganization()
-          .getId()) == null
-          && invoice.isProcessed())
-        PaymentMonitor.updateInvoice(invoice);
+      try {
+        Preferences.getPreferenceValue("PaymentMonitor", true, invoice.getClient(), invoice
+            .getOrganization(), OBContext.getOBContext().getUser(), OBContext.getOBContext()
+            .getRole(), null);
+      } catch (PropertyNotFoundException e) {
+        if (Utility.getPropertyValue("PaymentMonitor", vars.getClient(), invoice.getOrganization()
+            .getId()) == null
+            && invoice.isProcessed())
+          PaymentMonitor.updateInvoice(invoice);
+      }
 
       myError = new OBError();
       myError.setType("Success");

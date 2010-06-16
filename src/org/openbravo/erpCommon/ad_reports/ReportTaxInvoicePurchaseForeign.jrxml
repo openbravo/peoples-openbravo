@@ -479,7 +479,7 @@
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$V{sumImport}.toString()+$F{CURRENCY}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{sumImport}!=null)?$P{NUMBERFORMAT}.format($V{sumImport})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -498,7 +498,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$V{sumTaxBaseAmt}.toString()+$F{CURRENCY}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{sumTaxBaseAmt}!=null)?$P{NUMBERFORMAT}.format($V{sumTaxBaseAmt})+$F{CURRENCY}:new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupFooter>

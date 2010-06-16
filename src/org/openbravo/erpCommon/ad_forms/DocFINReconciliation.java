@@ -42,14 +42,15 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
+import org.openbravo.model.financialmgmt.accounting.coa.AccountingCombination;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.gl.GLItem;
-import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class DocFINReconciliation extends AcctServer {
   /** Transaction type - Financial Account */
@@ -70,6 +71,7 @@ public class DocFINReconciliation extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_Reconciliation;
     DateDoc = data[0].getField("statementDate");
@@ -97,11 +99,14 @@ public class DocFINReconciliation extends AcctServer {
       List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
       for (FIN_FinaccTransaction transaction : transactions) {
         FIN_Payment payment = transaction.getFinPayment();
-        // If payment exists the payment details are loaded, if not the GLItem info is loaded
+        // If payment exists the payment details are loaded, if not the GLItem info is loaded,
+        // finally fee is loaded
         if (payment != null)
           linesInfo = add(linesInfo, loadLinesPaymentDetailsFieldProvider(transaction));
         else if (transaction.getGLItem() != null)
           linesInfo = add(linesInfo, loadLinesGLItemFieldProvider(transaction));
+        else
+          linesInfo = add(linesInfo, loadLinesFeeFieldProvider(transaction));
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -234,6 +239,36 @@ public class DocFINReconciliation extends AcctServer {
     return data;
   }
 
+  public FieldProviderFactory[] loadLinesFeeFieldProvider(FIN_FinaccTransaction transaction) {
+    FieldProviderFactory[] data = new FieldProviderFactory[1];
+    OBContext.setAdminMode();
+    try {
+      data[0] = new FieldProviderFactory(new HashMap());
+      FieldProviderFactory.setField(data[0], "FIN_Reconciliation_ID", transaction
+          .getReconciliation().getId());
+      FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
+      FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
+      FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
+      FieldProviderFactory.setField(data[0], "DepositAmount", transaction.getDepositAmount()
+          .toString());
+      FieldProviderFactory.setField(data[0], "PaymentAmount", transaction.getPaymentAmount()
+          .toString());
+      FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
+      FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
+      if (transaction.getActivity() != null)
+        FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
+      if (transaction.getProject() != null)
+        FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
+      if (transaction.getSalesCampaign() != null)
+        FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign()
+            .getId());
+      FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return data;
+  }
+
   private DocLine[] loadLines() {
     ArrayList<Object> list = new ArrayList<Object>();
     FieldProviderFactory[] data = loadLinesFieldProvider(Record_ID);
@@ -268,6 +303,7 @@ public class DocFINReconciliation extends AcctServer {
     return dl;
   } // loadLines
 
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
@@ -312,14 +348,14 @@ public class DocFINReconciliation extends AcctServer {
           log4j.error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
         }
       }
+      String Fact_Acct_Group_ID = SequenceIdData.getUUID();
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_FINReconciliation line = (DocLine_FINReconciliation) p_lines[i];
         FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
             line.getFinFinAccTransactionId());
-        // 3 Scenarios: 1st Bank fee 2nd glitem transaction 3rd payment related transaction
-        String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+        // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd GL item transaction
         if (transaction.getTransactionType().equals(TRXTYPE_BankFee))
-          continue;
+          fact = createFactFee(line, as, conn, fact, Fact_Acct_Group_ID);
         else if (!"".equals(line.getFinPaymentId()))
           fact = createFactPaymentDetails(line, as, conn, fact, Fact_Acct_Group_ID);
         else
@@ -328,6 +364,28 @@ public class DocFINReconciliation extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
     }
+    return fact;
+  }
+
+  /*
+   * Creates the accounting for a bank Fee
+   */
+  public Fact createFactFee(DocLine_FINReconciliation line, AcctSchema as, ConnectionProvider conn,
+      Fact fact, String Fact_Acct_Group_ID) throws ServletException {
+    FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+        line.getFinFinAccTransactionId());
+    if (getDocumentTransactionConfirmation(transaction))
+      fact.createLine(line, getWithdrawalAccount(as, transaction.getAccount(), conn),
+          C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
+    else
+      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
+          .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+    fact.createLine(line, getClearOutAccount(as, transaction.getAccount(), conn), C_Currency_ID,
+        line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        DocumentType, conn);
+    SeqNo = "0";
     return fact;
   }
 
@@ -340,20 +398,20 @@ public class DocFINReconciliation extends AcctServer {
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
-    if (getDocumentTransactionConfirmation(conn, transaction))
-      fact.createLine(line, getAccountTransaction(conn, payment.getAccount(), as, isReceipt),
-          C_Currency_ID, !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
+    if (getDocumentTransactionConfirmation(transaction))
+      fact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
+          !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-    else if (!getDocumentPaymentConfirmation(conn, payment))
+    else if (!getDocumentPaymentConfirmation(payment))
       fact.createLine(line, getAccountBPartner(
           (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
               : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
           !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
     else
-      fact.createLine(line, getAccountPayment(conn, payment.getAccount(), as, isReceipt),
-          C_Currency_ID, !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
-          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID, !isReceipt ? line
+          .getAmount() : "", isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
     fact.createLine(line, getAccount(conn, payment.getAccount(), as, isReceipt), C_Currency_ID,
         isReceipt ? line.getAmount() : "", !isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID,
         "999999", DocumentType, conn);
@@ -378,7 +436,7 @@ public class DocFINReconciliation extends AcctServer {
     boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
-    if (getDocumentTransactionConfirmation(conn, transaction))
+    if (getDocumentTransactionConfirmation(transaction))
       fact.createLine(line, getAccountTransaction(conn, transaction.getAccount(), as, isReceipt),
           C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
@@ -399,22 +457,47 @@ public class DocFINReconciliation extends AcctServer {
     return SeqNo;
   }
 
+  @Override
   public BigDecimal getBalance() {
     return null;
   }
 
-  public boolean getDocumentPaymentConfirmation(ConnectionProvider conn, FIN_Payment payment) {
-    // Checks if this step (Make receive payment) is configured to generate accounting for the
-    // selected financial account
+  public boolean getDocumentPaymentConfirmation(FIN_Payment payment) {
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+          .getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = obCriteria.list();
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
       for (FIN_FinancialAccountAccounting account : accounts) {
-        if ((payment.isReceipt() && account.getReceivePaymentAccount() != null)
-            || (!payment.isReceipt() && account.getMakePaymentAccount() != null))
-          confirmation = true;
+        if (payment.isReceipt()) {
+          if (lines.get(0).getUponReceiptUse().equals("INT")
+              && account.getInTransitPaymentAccountIN() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponReceiptUse().equals("DEP")
+              && account.getDepositAccount() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponReceiptUse().equals("CLE")
+              && account.getClearedPaymentAccount() != null)
+            confirmation = true;
+        } else {
+          if (lines.get(0).getUponPaymentUse().equals("INT")
+              && account.getFINOutIntransitAcct() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponPaymentUse().equals("WIT")
+              && account.getWithdrawalAccount() != null)
+            confirmation = true;
+          else if (lines.get(0).getUponPaymentUse().equals("CLE")
+              && account.getClearedPaymentAccountOUT() != null)
+            confirmation = true;
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -422,23 +505,55 @@ public class DocFINReconciliation extends AcctServer {
     return confirmation;
   }
 
-  public boolean getDocumentTransactionConfirmation(ConnectionProvider conn,
-      FIN_FinaccTransaction transaction) {
-    // Checks if this step (deposit or withdrawal) is configured to generate accounting for the
-    // selected financial account
+  public boolean getDocumentTransactionConfirmation(FIN_FinaccTransaction transaction) {
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
       List<FIN_FinancialAccountAccounting> accounts = transaction.getAccount()
           .getFINFinancialAccountAcctList();
-      for (FIN_FinancialAccountAccounting account : accounts) {
-        if ((transaction.getTransactionType().equals(TRXTYPE_BPDeposit) && account
-            .getDepositAccount() != null)
-            || (transaction.getTransactionType().equals(TRXTYPE_BPWithdrawal) && account
-                .getWithdrawalAccount() != null)
-            || (transaction.getTransactionType().equals(TRXTYPE_BankFee) && account
-                .getFINBankfeeAcct() != null))
-          confirmation = true;
+      FIN_Payment payment = transaction.getFinPayment();
+      if (payment != null) {
+        OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+            FinAccPaymentMethod.class);
+        obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+        obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+            .getPaymentMethod()));
+        obCriteria.setFilterOnReadableClients(false);
+        obCriteria.setFilterOnReadableOrganization(false);
+        List<FinAccPaymentMethod> lines = obCriteria.list();
+        for (FIN_FinancialAccountAccounting account : accounts) {
+          if (payment.isReceipt()) {
+            if (lines.get(0).getUponDepositUse().equals("INT")
+                && account.getInTransitPaymentAccountIN() != null)
+              confirmation = true;
+            else if (lines.get(0).getUponDepositUse().equals("DEP")
+                && account.getDepositAccount() != null)
+              confirmation = true;
+            else if (lines.get(0).getUponDepositUse().equals("CLE")
+                && account.getClearedPaymentAccount() != null)
+              confirmation = true;
+          } else {
+            if (lines.get(0).getUponWithdrawalUse().equals("INT")
+                && account.getFINOutIntransitAcct() != null)
+              confirmation = true;
+            else if (lines.get(0).getUponWithdrawalUse().equals("WIT")
+                && account.getWithdrawalAccount() != null)
+              confirmation = true;
+            else if (lines.get(0).getUponWithdrawalUse().equals("CLE")
+                && account.getClearedPaymentAccountOUT() != null)
+              confirmation = true;
+          }
+        }
+      } else {
+        for (FIN_FinancialAccountAccounting account : accounts) {
+          if ((transaction.getTransactionType().equals(TRXTYPE_BPDeposit) && account
+              .getDepositAccount() != null)
+              || (transaction.getTransactionType().equals(TRXTYPE_BPWithdrawal) && account
+                  .getWithdrawalAccount() != null)
+              || (transaction.getTransactionType().equals(TRXTYPE_BankFee) && account
+                  .getWithdrawalAccount() != null))
+            confirmation = true;
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -448,19 +563,75 @@ public class DocFINReconciliation extends AcctServer {
     return confirmation;
   }
 
+  /*
+   * Checks if this step (Reconciliation) is configured to generate accounting for the selected
+   * financial account
+   */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
-    // Checks if this step (Reconciliation) is configured to generate accounting for the selected
-    // financial account
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
       FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
           strRecordId);
+      List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
       List<FIN_FinancialAccountAccounting> accounts = reconciliation.getAccount()
           .getFINFinancialAccountAcctList();
-      for (FIN_FinancialAccountAccounting account : accounts) {
-        if (account.getDebitAccount() != null || account.getCreditAccount() != null)
-          confirmation = true;
+      for (FIN_FinaccTransaction transaction : transactions) {
+        if (confirmation)
+          break;
+        FIN_Payment payment = transaction.getFinPayment();
+        // If payment exists, check Payment Method + financial Account Configuration
+        if (payment != null) {
+          OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+              FinAccPaymentMethod.class);
+          obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+          obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+              .getPaymentMethod()));
+          obCriteria.setFilterOnReadableClients(false);
+          obCriteria.setFilterOnReadableOrganization(false);
+          List<FinAccPaymentMethod> lines = obCriteria.list();
+          for (FIN_FinancialAccountAccounting account : accounts) {
+            if (confirmation)
+              break;
+            if (payment.isReceipt()) {
+              if (lines.get(0).getINUponClearingUse().equals("INT")
+                  && account.getInTransitPaymentAccountIN() != null)
+                confirmation = true;
+              else if (lines.get(0).getINUponClearingUse().equals("DEP")
+                  && account.getDepositAccount() != null)
+                confirmation = true;
+              else if (lines.get(0).getINUponClearingUse().equals("CLE")
+                  && account.getClearedPaymentAccount() != null)
+                confirmation = true;
+            } else {
+              if (lines.get(0).getOUTUponClearingUse().equals("INT")
+                  && account.getFINOutIntransitAcct() != null)
+                confirmation = true;
+              else if (lines.get(0).getOUTUponClearingUse().equals("WIT")
+                  && account.getWithdrawalAccount() != null)
+                confirmation = true;
+              else if (lines.get(0).getOUTUponClearingUse().equals("CLE")
+                  && account.getClearedPaymentAccountOUT() != null)
+                confirmation = true;
+            }
+          }
+        } else if (transaction.getGLItem() != null) {
+          for (FIN_FinancialAccountAccounting account : accounts) {
+            if (confirmation)
+              break;
+            if ("BPD".equals(transaction.getTransactionType())
+                && account.getClearedPaymentAccount() != null) {
+              confirmation = true;
+            } else if ("BPW".equals(transaction.getTransactionType())
+                && account.getClearedPaymentAccountOUT() != null) {
+              confirmation = true;
+            } else if ("BF".equals(transaction.getTransactionType())
+                && account.getClearedPaymentAccountOUT() != null) {
+              confirmation = true;
+            }
+          }
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -470,6 +641,7 @@ public class DocFINReconciliation extends AcctServer {
     return confirmation;
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String strAD_Client_ID, String Id)
       throws ServletException {
     FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class, Id);
@@ -499,58 +671,6 @@ public class DocFINReconciliation extends AcctServer {
       OBContext.restorePreviousMode();
     }
     setObjectFieldProvider(data);
-  }
-
-  public Account getAccountGLItem(GLItem glItem, AcctSchema as, boolean bIsReceipt,
-      ConnectionProvider conn) throws ServletException {
-    OBContext.setAdminMode();
-    Account account = null;
-    try {
-      OBCriteria<GLItemAccounts> accounts = OBDal.getInstance()
-          .createCriteria(GLItemAccounts.class);
-      accounts.add(Expression.eq(GLItemAccounts.PROPERTY_GLITEM, glItem));
-      accounts
-          .add(Expression.eq(GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA, OBDal.getInstance().get(
-              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-              as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(GLItemAccounts.PROPERTY_ACTIVE, true));
-      accounts.setFilterOnReadableClients(false);
-      accounts.setFilterOnReadableOrganization(false);
-      List<GLItemAccounts> accountList = accounts.list();
-      if (accountList == null || accountList.size() == 0)
-        return null;
-      if (bIsReceipt)
-        account = new Account(conn, accountList.get(0).getGlitemCreditAcct().getId());
-      else
-        account = new Account(conn, accountList.get(0).getGlitemDebitAcct().getId());
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return account;
-  }
-
-  public Account getAccountFee(AcctSchema as, FIN_FinancialAccount finAccount,
-      ConnectionProvider conn) throws ServletException {
-    Account account = null;
-    OBContext.setAdminMode();
-    try {
-      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
-          FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-              as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
-      accounts.setFilterOnReadableClients(false);
-      accounts.setFilterOnReadableOrganization(false);
-      List<FIN_FinancialAccountAccounting> accountList = accounts.list();
-      if (accountList == null || accountList.size() == 0)
-        return null;
-      account = new Account(conn, accountList.get(0).getFINBankfeeAcct().getId());
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return account;
   }
 
   public Account getWithdrawalAccount(AcctSchema as, FIN_FinancialAccount finAccount,
@@ -590,12 +710,62 @@ public class DocFINReconciliation extends AcctServer {
     return account;
   }
 
-  public Account getDebitAccount(AcctSchema as, FIN_FinancialAccount finAccount,
+  public Account getAccountTransactionPayment(ConnectionProvider conn, FIN_Payment payment,
+      AcctSchema as) throws ServletException {
+    Account account = null;
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
+          FIN_FinancialAccountAccounting.class);
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
+          .getAccount()));
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+              as.m_C_AcctSchema_ID)));
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.setFilterOnReadableClients(false);
+      accounts.setFilterOnReadableOrganization(false);
+      List<FIN_FinancialAccountAccounting> accountList = accounts.list();
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+          .getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = obCriteria.list();
+      if (accountList == null || accountList.size() == 0)
+        return null;
+      AccountingCombination result = null;
+      if (payment.isReceipt()) {
+        if (lines.get(0).getUponDepositUse().equals("INT"))
+          result = accountList.get(0).getInTransitPaymentAccountIN();
+        else if (lines.get(0).getUponDepositUse().equals("DEP"))
+          result = accountList.get(0).getDepositAccount();
+        else if (lines.get(0).getUponDepositUse().equals("CLE"))
+          result = accountList.get(0).getClearedPaymentAccount();
+      } else {
+        if (lines.get(0).getUponWithdrawalUse().equals("INT"))
+          result = accountList.get(0).getFINOutIntransitAcct();
+        else if (lines.get(0).getUponWithdrawalUse().equals("WIT"))
+          result = accountList.get(0).getWithdrawalAccount();
+        else if (lines.get(0).getUponWithdrawalUse().equals("CLE"))
+          result = accountList.get(0).getClearedPaymentAccountOUT();
+      }
+      if (result != null)
+        account = new Account(conn, result.getId());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return account;
+  }
+
+  public Account getClearOutAccount(AcctSchema as, FIN_FinancialAccount finAccount,
       ConnectionProvider conn) throws ServletException {
     return getAccount(conn, finAccount, as, false);
   }
 
-  public Account getCreditAccount(AcctSchema as, FIN_FinancialAccount finAccount,
+  public Account getClearInAccount(AcctSchema as, FIN_FinancialAccount finAccount,
       ConnectionProvider conn) throws ServletException {
     return getAccount(conn, finAccount, as, true);
   }
@@ -618,9 +788,9 @@ public class DocFINReconciliation extends AcctServer {
       if (accountList == null || accountList.size() == 0)
         return null;
       if (bIsReceipt)
-        account = new Account(conn, accountList.get(0).getDebitAccount().getId());
+        account = new Account(conn, accountList.get(0).getClearedPaymentAccount().getId());
       else
-        account = new Account(conn, accountList.get(0).getCreditAccount().getId());
+        account = new Account(conn, accountList.get(0).getClearedPaymentAccountOUT().getId());
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -648,6 +818,54 @@ public class DocFINReconciliation extends AcctServer {
         account = new Account(conn, accountList.get(0).getReceivePaymentAccount().getId());
       else
         account = new Account(conn, accountList.get(0).getMakePaymentAccount().getId());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return account;
+  }
+
+  public Account getAccountPayment(ConnectionProvider conn, FIN_Payment payment, AcctSchema as)
+      throws ServletException {
+    OBContext.setAdminMode();
+    Account account = null;
+    AccountingCombination result = null;
+    try {
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+          .getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = obCriteria.list();
+      OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
+          FIN_FinancialAccountAccounting.class);
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
+          .getAccount()));
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+              as.m_C_AcctSchema_ID)));
+      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.setFilterOnReadableClients(false);
+      accounts.setFilterOnReadableOrganization(false);
+      List<FIN_FinancialAccountAccounting> accountList = accounts.list();
+      if (payment.isReceipt()) {
+        if (lines.get(0).getUponReceiptUse().equals("INT"))
+          result = accountList.get(0).getInTransitPaymentAccountIN();
+        else if (lines.get(0).getUponReceiptUse().equals("DEP"))
+          result = accountList.get(0).getDepositAccount();
+        else if (lines.get(0).getUponReceiptUse().equals("CLE"))
+          result = accountList.get(0).getClearedPaymentAccount();
+      } else {
+        if (lines.get(0).getUponPaymentUse().equals("INT"))
+          result = accountList.get(0).getFINOutIntransitAcct();
+        else if (lines.get(0).getUponPaymentUse().equals("WIT"))
+          result = accountList.get(0).getWithdrawalAccount();
+        else if (lines.get(0).getUponPaymentUse().equals("CLE"))
+          result = accountList.get(0).getClearedPaymentAccountOUT();
+      }
+      if (result != null)
+        account = new Account(conn, result.getId());
     } finally {
       OBContext.restorePreviousMode();
     }

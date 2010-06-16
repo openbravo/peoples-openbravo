@@ -46,6 +46,7 @@ public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
       String strTableId = vars.getRequiredStringParameter("inpadTableId");
       String strRecordId = vars.getRequiredStringParameter("inprecordId");
       String strDocBaseType = vars.getRequiredStringParameter("inpdocbasetype");
+      strTableId = convertTableException(strTableId);
       ReportAcctRedirectUtilityData[] data = ReportAcctRedirectUtilityData.select(this, strTableId,
           strDocBaseType, vars.getClient());
       if (data == null || data.length == 0)
@@ -62,6 +63,17 @@ public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
       }
     } else
       pageError(response);
+  }
+
+  /*
+   * Converts table id when this case is an Exception (Ex. Reconciliation as tab is built through a
+   * view and not directly with a table)
+   */
+  String convertTableException(String strTableId) {
+    if ("B1B7075C46934F0A9FD4C4D0F1457B42".equals(strTableId))
+      return "0DFF5BACFB964FDABAA5042C8809C813";
+    else
+      return strTableId;
   }
 
   public String getServletInfo() {
