@@ -263,6 +263,7 @@
           AND pp.M_ProductionPlan_ID=pl.M_ProductionPlan_ID
           AND pp.M_Production_ID=v_Record_ID
           AND pl.M_PRODUCT_ID=pr.M_PRODUCT_ID
+          AND pr.ISSTOCKED='Y'
         ORDER BY pp.Line, pl.Line)
       LOOP
         -- M_ProductionLine_ID, AD_Client_ID, AD_Org_ID, MovementDate, M_Product_ID, MovementQty, M_Locator_ID
