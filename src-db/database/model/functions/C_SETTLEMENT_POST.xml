@@ -54,6 +54,7 @@
   v_Cashline_ID VARCHAR2(32);
   v_Bankstatement_ID VARCHAR2(32);
   v_DocType_ID VARCHAR2(32);
+  v_settlementtype VARCHAR2(60);
   v_is_included NUMBER:=0;
   v_available_period NUMBER:=0;
   v_is_ready AD_Org.IsReady%TYPE;
@@ -108,9 +109,9 @@
     END IF;
   BEGIN --BODY
     SELECT UpdatedBy, AD_Client_ID, AD_Org_ID, Processed,
-      C_Currency_ID, DATETRX, DateAcct, IsGenerated, C_DocType_ID
+      C_Currency_ID, DATETRX, DateAcct, IsGenerated, C_DocType_ID, settlementtype
     INTO v_AD_User_ID, v_AD_Client_ID, v_AD_Org_ID, v_Processed,
-      v_Currency, v_Date, v_DateAcct, v_IsGenerated, v_DocType_ID
+      v_Currency, v_Date, v_DateAcct, v_IsGenerated, v_DocType_ID, v_settlementtype
     FROM C_SETTLEMENT
     WHERE C_Settlement_ID=v_Record_ID;
     IF(v_PAD_User_ID IS NOT NULL) THEN
@@ -391,13 +392,14 @@
         AND isActive='Y'
         AND isPaid='N';
       --Calculating the generated amount
-      SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(Amount, C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
-      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(coalesce(WithHoldingAmount,0), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
-      INTO v_GeneratedAmt,v_GeneratedAmt_WH
-      FROM C_Debt_Payment_V
-      WHERE C_Settlement_Generate_ID=v_Record_ID
-        AND isActive='Y'
-        AND isManual='N';
+      IF(v_settlementtype <> 'I') THEN
+        SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(Amount, C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
+        COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(coalesce(WithHoldingAmount,0), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
+        INTO v_GeneratedAmt,v_GeneratedAmt_WH
+        FROM C_Debt_Payment_V
+        WHERE C_Settlement_Generate_ID=v_Record_ID
+          AND isActive='Y'
+          AND isManual='N';
       --Calculating the applied amount
       SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((Amount - WriteOffAmt), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
       COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((coalesce(WithHoldingAmount,0) ), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
@@ -421,6 +423,7 @@
       IF(v_CanceledNotChargeAmt_WH<>v_GeneratedAmt_WH) THEN
         RAISE_APPLICATION_ERROR(-20000, '@SettlementWH_NotMatch@') ;
       END IF;
+     END IF;
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
       v_ResultStr:='UpdatingAmounts';
