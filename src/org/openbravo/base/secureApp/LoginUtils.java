@@ -131,6 +131,7 @@ public class LoginUtils {
       return false;
     }
 
+    OBContext currentContext = OBContext.getOBContext();
     // set the obcontext
     try {
       OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
@@ -169,8 +170,10 @@ public class LoginUtils {
 
     try {
       SeguridadData[] data = SeguridadData.select(conn, strRol, strUserAuth);
-      if (data == null || data.length == 0)
+      if (data == null || data.length == 0) {
+        OBContext.setOBContext(currentContext);
         return false;
+      }
       vars.setSessionValue("#User_Level", data[0].userlevel);
       vars.setSessionValue("#User_Client", data[0].clientlist);
       vars.setSessionValue("#User_Org", data[0].orglist);
@@ -238,6 +241,7 @@ public class LoginUtils {
           vars.setSessionValue("#Theme", "ltr/" + dataSystem[0].tadTheme);
           vars.setSessionValue("#TextDirection", "LTR");
         } else {
+          OBContext.setOBContext(currentContext);
           log4j
               .error("Can't detect direction of language: ltr? rtl? parameter isRTL missing in call to LoginUtils.getStringParameter");
           return false;
@@ -245,6 +249,7 @@ public class LoginUtils {
       }
 
     } catch (ServletException e) {
+      OBContext.setOBContext(currentContext);
       log4j.warn("Error while loading session arguments: " + e);
       return false;
     }

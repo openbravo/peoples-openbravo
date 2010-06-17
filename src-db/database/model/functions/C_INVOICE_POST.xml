@@ -45,6 +45,7 @@
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1; -- Success
+  v_totalqty NUMBER:=0; 
   -- Parameter
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
@@ -55,6 +56,7 @@
   Cur_TaxDiscount RECORD;
   Cur_ReactivateInvoiceLine RECORD;
   Cur_LastContact RECORD;
+  Cur_lineqty RECORD;
 
   -- Record Info
   v_Client_ID VARCHAR2(32);
@@ -1703,10 +1705,24 @@ BEGIN --BODY
     END;
   END IF;
 
+	FOR Cur_lineqty IN
+      (SELECT C_INVOICELINE.qtyInvoiced
+       FROM C_INVOICELINE
+       WHERE C_Invoice_ID = v_Record_ID
+      )
+    LOOP
+    IF(Cur_lineqty.qtyInvoiced <> 0) THEN
+      v_totalqty := v_totalqty + 1;
+     END IF;
+    END LOOP;
   --<<FINISH_PROCESS>>
   IF (p_PInstance_ID IS NOT NULL) THEN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
+   
+    IF(v_totalqty = 0 AND v_DocAction <> 'RE') THEN
+	v_Message := v_Message || '@NoAccountingEntryInvoice@';
+    END IF;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_UpdatedBy, 'N', v_Result, v_Message) ;
   ELSE
     DBMS_OUTPUT.PUT_LINE('--<<C_Invoive_Post finished>> ' || v_Message) ;

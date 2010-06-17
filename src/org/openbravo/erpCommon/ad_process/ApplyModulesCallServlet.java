@@ -83,6 +83,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       lastlinenumber = Integer.parseInt(ln);
     }
     ApplyModulesResponse resp = new ApplyModulesResponse();
+    String pf = vars.getSessionValue("ApplyModules|ProcessFinished");
+    resp.setProcessFinished(pf);
     resp.setState(Integer.parseInt(state.replace("RB", "")));
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
@@ -158,6 +160,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
   private ApplyModulesResponse fillErrorResponse(VariablesSecureApp vars, String state,
       String defaultState) {
     ApplyModulesResponse resp = new ApplyModulesResponse();
+    String pf = vars.getSessionValue("ApplyModules|ProcessFinished");
+    resp.setProcessFinished(pf);
     String fState = state;
     if (fState.equals("")) {
       fState = "0";
@@ -168,7 +172,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     boolean warning = false;
     boolean error = false;
     try {
-      ps2 = getPreparedStatement("SELECT MESSAGE, SYSTEM_STATUS LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED ");
+      ps2 = getPreparedStatement("SELECT MESSAGE, SYSTEM_STATUS, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED ");
       ps2.executeQuery();
       ResultSet rs2 = ps2.getResultSet();
       ArrayList<String> errors = new ArrayList<String>();
