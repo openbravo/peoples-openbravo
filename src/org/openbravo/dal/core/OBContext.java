@@ -175,24 +175,7 @@ public class OBContext implements OBNotSingleton {
     if (stack.size() > 0) {
       stack.pop();
     } else {
-      final List<String> adminModeTraceList = adminModeTrace.get();
-      final StringBuilder sb = new StringBuilder();
-      if (adminModeTrace != null) {
-        for (String adminModeTraceValue : adminModeTraceList) {
-          sb.append("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
-          sb.append(adminModeTraceValue);
-        }
-      }
-      if (ADMIN_TRACE_SIZE == 0) {
-        log
-            .warn(
-                "Unbalanced calls to setAdminMode and restorePreviousMode. "
-                    + "Consider setting the constant OBContext.ADMIN_TRACE_SIZE to a value higher than 0 to debug this situation",
-                new IllegalStateException());
-      } else {
-        log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString(),
-            new IllegalStateException());
-      }
+      printUnbalancedWarning(true);
     }
 
     if (OBContext.getOBContext() == null) {
@@ -204,7 +187,40 @@ public class OBContext implements OBNotSingleton {
     }
   }
 
+  private static void printUnbalancedWarning(boolean printLocationOfCaller) {
+    if (ADMIN_TRACE_SIZE == 0) {
+      String errMsg = "Unbalanced calls to setAdminMode and restorePreviousMode. "
+          + "Consider setting the constant OBContext.ADMIN_TRACE_SIZE to a value higher than 0 to debug this situation";
+      if (printLocationOfCaller) {
+        log.warn(errMsg, new IllegalStateException());
+      } else {
+        log.warn(errMsg);
+      }
+      return;
+    }
+
+    // will only be executed with adminModeTrace debugging enabled
+    final List<String> adminModeTraceList = adminModeTrace.get();
+    final StringBuilder sb = new StringBuilder();
+    if (adminModeTrace != null) {
+      for (String adminModeTraceValue : adminModeTraceList) {
+        sb.append("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+        sb.append(adminModeTraceValue);
+      }
+    }
+    if (printLocationOfCaller) {
+      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString(),
+          new IllegalStateException());
+    } else {
+      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString());
+    }
+  }
+
   private static void addStackTrace(String prefix) {
+    if (ADMIN_TRACE_SIZE == 0) {
+      return;
+    }
+
     final StringWriter sw = new StringWriter();
     final PrintWriter pw = new PrintWriter(sw);
     sw.write(prefix + "\n");
@@ -216,9 +232,7 @@ public class OBContext implements OBNotSingleton {
     if (list.size() > 0 && list.size() >= ADMIN_TRACE_SIZE) {
       list.remove(0);
     }
-    if (ADMIN_TRACE_SIZE > 0) {
-      list.add(sw.toString());
-    }
+    list.add(sw.toString());
   }
 
   /**
@@ -226,8 +240,7 @@ public class OBContext implements OBNotSingleton {
    */
   static void clearAdminModeStack() {
     if (getAdminModeStack().size() > 0) {
-      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext",
-          new IllegalStateException());
+      printUnbalancedWarning(false);
     }
     getAdminModeStack().clear();
     if (adminModeSet.get() != null) {
