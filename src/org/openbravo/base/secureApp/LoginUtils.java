@@ -170,8 +170,10 @@ public class LoginUtils {
 
     try {
       SeguridadData[] data = SeguridadData.select(conn, strRol, strUserAuth);
-      if (data == null || data.length == 0)
+      if (data == null || data.length == 0) {
+        OBContext.setOBContext(currentContext);
         return false;
+      }
       vars.setSessionValue("#User_Level", data[0].userlevel);
       vars.setSessionValue("#User_Client", data[0].clientlist);
       vars.setSessionValue("#User_Org", data[0].orglist);
@@ -239,6 +241,7 @@ public class LoginUtils {
           vars.setSessionValue("#Theme", "ltr/" + dataSystem[0].tadTheme);
           vars.setSessionValue("#TextDirection", "LTR");
         } else {
+          OBContext.setOBContext(currentContext);
           log4j
               .error("Can't detect direction of language: ltr? rtl? parameter isRTL missing in call to LoginUtils.getStringParameter");
           return false;
