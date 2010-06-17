@@ -57,6 +57,7 @@
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
         (SELECT i.Record_ID,
+          i.AD_User_ID,
           p.ParameterName,
           p.P_String,
           p.P_Number,
