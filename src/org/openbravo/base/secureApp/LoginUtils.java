@@ -131,6 +131,7 @@ public class LoginUtils {
       return false;
     }
 
+    OBContext currentContext = OBContext.getOBContext();
     // set the obcontext
     try {
       OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
@@ -245,6 +246,7 @@ public class LoginUtils {
       }
 
     } catch (ServletException e) {
+      OBContext.setOBContext(currentContext);
       log4j.warn("Error while loading session arguments: " + e);
       return false;
     }
