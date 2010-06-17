@@ -29906,7 +29906,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--173455990A494A799F86C2737D8F9617-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--173455990A494A799F86C2737D8F9617-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--173455990A494A799F86C2737D8F9617-->  <VALUE><![CDATA[QtyChangedForInvoiceLineLinked]]></VALUE>
-<!--173455990A494A799F86C2737D8F9617-->  <MSGTEXT><![CDATA[The invoice line of a re-activated invoice that is linked to a Goods Receipt line cannot modify it's quantity. Please create a new invoice line.]]></MSGTEXT>
+<!--173455990A494A799F86C2737D8F9617-->  <MSGTEXT><![CDATA[The invoice line of a re-activated invoice that is linked to a Goods Receipt line cannot modify its quantity. Please create a new invoice line.]]></MSGTEXT>
 <!--173455990A494A799F86C2737D8F9617-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--173455990A494A799F86C2737D8F9617-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--173455990A494A799F86C2737D8F9617--></AD_MESSAGE>
