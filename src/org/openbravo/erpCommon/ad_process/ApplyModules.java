@@ -374,6 +374,7 @@ public class ApplyModules extends HttpSecureAppServlet {
   private void resetBuild(HttpServletResponse response, VariablesSecureApp vars) {
     Build build = getBuildFromXMLFile();
     vars.setSessionValue("ApplyModules|Last_Line_Number_Log", "-1");
+    vars.setSessionValue("ApplyModules|ProcessFinished", "N");
     PreparedStatement ps = null;
     PreparedStatement ps2 = null;
     PreparedStatement updateSession = null;
@@ -450,6 +451,7 @@ public class ApplyModules extends HttpSecureAppServlet {
 
       ant.runTask(tasks);
 
+      vars.setSessionValue("ApplyModules|ProcessFinished", "Y");
       out.close();
     } catch (final Exception e) {
       // rolback the old transaction and start a new one

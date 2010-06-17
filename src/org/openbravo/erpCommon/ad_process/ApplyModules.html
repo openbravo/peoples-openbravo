@@ -51,6 +51,7 @@
     var restarting=false;
     var pending_states=0;
     var andmore=false;
+    var process_finished=false;
 
 
     function contains(a, obj){
@@ -233,7 +234,7 @@
       if(start===true && !stopAddingWarns){
         if(response.statusofstate=="Warning"){
           var warns=response.warnings.string;
-          if(warns!==null){
+          if(warns){
             if(!(warns instanceof Array)){
               warns=[warns];
             }
@@ -259,7 +260,7 @@
         }
         if(response.statusofstate=="Error"){
           var errs=response.errors.string;
-          if(errs!==null){
+          if(errs){
             if(!(errs instanceof Array)){
               errs=[errs];
             }
@@ -405,6 +406,13 @@
           
         var state=msg.Response.state;
         var errorStatus=msg.Response.statusofstate;
+        if(msg.Response.processFinished==='Y' && !process_finished){
+            process_finished=true;
+            var frm = document.frmMain;
+            submitXmlHttpRequest(update, frm, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
+            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
+            return;
+        }
         if(state==first_state || start===true){
           if(contains(end_states,state) || errorStatus=="Error"){
             stopLocalTimer();
@@ -438,25 +446,15 @@
           }
           current_state=stateindex;
 
-          if(contains(end_states,state) || errorStatus=="Error"){
-            top.opener.setProcessingMode('window', false);
-            var frm = document.frmMain;
-            submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
-          }
         }
       }
     }
-
-    //This function is called by the server when the last ant task is executed. It's responsible of
-    //calling the getError function to display a success/warning/error final message
+    
     function endProcess(paramXMLParticular, XMLHttpRequestObj) {
-      if (getReadyStateHandler(XMLHttpRequestObj)) { 
-          var frm = document.frmMain;
-          submitXmlHttpRequest(update, frm, "UPDATESTATUS", "ApplyModulesCallServlet.html", false, null, null);
-          submitXmlHttpRequest(getError, frm, "GETERR", "ApplyModulesCallServlet.html", false, null, null);
-          return true;
-      }
+        //This function was the responsible for making a final call to get the success/warning/error message
+        //Now it's not needed as the session variable FinishedProcessing has been added
     }
+
     
     function buildInit(paramXMLParticular, XMLHttpRequestObj) {
         if (getReadyStateHandler(XMLHttpRequestObj)) { 

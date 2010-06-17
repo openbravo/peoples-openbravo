@@ -22,6 +22,7 @@ public class ApplyModulesResponse {
   private String[] warnings;
   private String[] errors;
   private String lastmessage;
+  private String processFinished;
 
   public int getState() {
     return state;
@@ -61,5 +62,13 @@ public class ApplyModulesResponse {
 
   public void setLastmessage(String lastmessage) {
     this.lastmessage = lastmessage;
+  }
+
+  public String getProcessFinished() {
+    return processFinished;
+  }
+
+  public void setProcessFinished(String processFinished) {
+    this.processFinished = processFinished;
   }
 }
