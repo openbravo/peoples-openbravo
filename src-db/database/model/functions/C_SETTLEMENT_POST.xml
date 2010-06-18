@@ -33,6 +33,7 @@
   v_AD_Client_ID VARCHAR2(32) ;
   v_AD_Org_ID VARCHAR2(32) ;
   v_Processed VARCHAR(60) ;
+  v_Type VARCHAR(60);
   v_Currency VARCHAR2(32);
   v_Date DATE;
   v_DateAcct DATE;
@@ -54,9 +55,9 @@
   v_Cashline_ID VARCHAR2(32);
   v_Bankstatement_ID VARCHAR2(32);
   v_DocType_ID VARCHAR2(32);
-  v_settlementtype VARCHAR2(60);
   v_is_included NUMBER:=0;
   v_available_period NUMBER:=0;
+  v_Amount NUMBER:=0;
   v_is_ready AD_Org.IsReady%TYPE;
   v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
@@ -109,9 +110,11 @@
     END IF;
   BEGIN --BODY
     SELECT UpdatedBy, AD_Client_ID, AD_Org_ID, Processed,
-      C_Currency_ID, DATETRX, DateAcct, IsGenerated, C_DocType_ID, settlementtype
+      C_Currency_ID, DATETRX, DateAcct, IsGenerated, C_DocType_ID,
+      settlementtype
     INTO v_AD_User_ID, v_AD_Client_ID, v_AD_Org_ID, v_Processed,
-      v_Currency, v_Date, v_DateAcct, v_IsGenerated, v_DocType_ID, v_settlementtype
+      v_Currency, v_Date, v_DateAcct, v_IsGenerated, v_DocType_ID,
+      v_Type
     FROM C_SETTLEMENT
     WHERE C_Settlement_ID=v_Record_ID;
     IF(v_PAD_User_ID IS NOT NULL) THEN
@@ -392,14 +395,13 @@
         AND isActive='Y'
         AND isPaid='N';
       --Calculating the generated amount
-      IF(v_settlementtype <> 'I') THEN
-        SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(Amount, C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
-        COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(coalesce(WithHoldingAmount,0), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
-        INTO v_GeneratedAmt,v_GeneratedAmt_WH
-        FROM C_Debt_Payment_V
-        WHERE C_Settlement_Generate_ID=v_Record_ID
-          AND isActive='Y'
-          AND isManual='N';
+      SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(Amount, C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
+      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(coalesce(WithHoldingAmount,0), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
+      INTO v_GeneratedAmt,v_GeneratedAmt_WH
+      FROM C_Debt_Payment_V
+      WHERE C_Settlement_Generate_ID=v_Record_ID
+        AND isActive='Y'
+        AND isManual='N';
       --Calculating the applied amount
       SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((Amount - WriteOffAmt), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
       COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((coalesce(WithHoldingAmount,0) ), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
@@ -423,7 +425,6 @@
       IF(v_CanceledNotChargeAmt_WH<>v_GeneratedAmt_WH) THEN
         RAISE_APPLICATION_ERROR(-20000, '@SettlementWH_NotMatch@') ;
       END IF;
-     END IF;
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
       v_ResultStr:='UpdatingAmounts';
@@ -593,11 +594,33 @@
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
       v_ResultStr:='UpdatingSettlement';
-      UPDATE C_SETTLEMENT
-        SET Updated=now(),
-        UpdatedBy=v_AD_User_ID,
-        Processed='Y'
-      WHERE C_Settlement_ID=v_Record_ID;
+      SELECT sum(amount)
+      INTO v_Amount
+      FROM
+        (select
+          case
+            when dp.isreceipt='Y'
+            then C_Currency_Convert(dp.amount, dp.c_currency_id, S.c_currency_id, S.datetrx, null, S.ad_client_id, S.ad_org_id)
+            else (-1)*C_Currency_Convert(dp.amount, dp.c_currency_id, S.c_currency_id, S.datetrx, null, S.ad_client_id, S.ad_org_id)
+          end as amount
+        from c_debt_payment dp, C_SETTLEMENT S
+        where dp.c_settlement_generate_id=v_Record_ID
+          AND S.C_SETTLEMENT_ID = dp.c_settlement_generate_id
+        ) foo;
+      IF (v_Amount IS NULL) THEN
+        UPDATE C_SETTLEMENT
+          SET Updated=now(),
+          UpdatedBy=v_AD_User_ID,
+          Processed='Y'
+        WHERE C_Settlement_ID=v_Record_ID;
+      ELSE
+        UPDATE C_SETTLEMENT
+          SET Updated=now(),
+          UpdatedBy=v_AD_User_ID,
+          Processed='Y',
+          GeneratedAmt=v_Amount
+        WHERE C_Settlement_ID=v_Record_ID;
+      END IF;
     END IF;--FINISH_PROCESS
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
