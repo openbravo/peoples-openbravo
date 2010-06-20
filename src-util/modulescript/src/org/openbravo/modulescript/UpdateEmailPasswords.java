@@ -43,12 +43,15 @@ public class UpdateEmailPasswords extends ModuleScript {
     try {
       ConnectionProvider cp = getConnectionProvider();
 
-      log4j.info(new OpenbravoVersion(CheckCoreVersionData.select(cp)).toString());
-      log4j.info(new OpenbravoVersion(2, 50, 17410).toString()); // 2.50 MP18
+      OpenbravoVersion versionCurrent = new OpenbravoVersion(CheckCoreVersionData.select(cp));
+      OpenbravoVersion version250MP18 = new OpenbravoVersion(2, 50, 17410);
 
-      if (new OpenbravoVersion(CheckCoreVersionData.select(cp)).compareTo(new OpenbravoVersion(2,
-          50, 17410)) <= 0) {
+      log4j.info("Starting Update SMPT server passwords module script.");
+      log4j.info("Current version: " + versionCurrent.toString());
+      log4j.info("2.50 MP18 version:" + version250MP18.toString());
 
+      if (versionCurrent.compareTo(version250MP18) <= 0) {
+        log4j.info("Encripting SMPT server password fields.");
         UpdateEmailPasswordsData[] emails = UpdateEmailPasswordsData.select(cp);
         for (UpdateEmailPasswordsData email : emails) {
           if (email.smtpserverpassword != null) {
@@ -56,6 +59,8 @@ public class UpdateEmailPasswords extends ModuleScript {
                 email.smtpserverpassword, true), email.cPocConfigurationId);
           }
         }
+      } else {
+        log4j.info("No need to encript SMPT server password fields.");
       }
 
     } catch (Exception e) {
