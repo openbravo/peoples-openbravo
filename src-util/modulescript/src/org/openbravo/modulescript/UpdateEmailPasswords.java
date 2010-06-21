@@ -46,7 +46,7 @@ public class UpdateEmailPasswords extends ModuleScript {
       OpenbravoVersion versionCurrent = new OpenbravoVersion(CheckCoreVersionData.select(cp));
       OpenbravoVersion version250MP18 = new OpenbravoVersion(2, 50, 17410);
 
-      log4j.debug("Starting Update SMPT server passwords module script.");
+      log4j.debug("Starting Update SMTP server passwords module script.");
       log4j.debug("Current version: " + versionCurrent.toString());
       log4j.debug("2.50 MP18 version:" + version250MP18.toString());
 
@@ -60,7 +60,7 @@ public class UpdateEmailPasswords extends ModuleScript {
           }
         }
       } else {
-        log4j.debug("No need to encrypt SMPT server password fields.");
+        log4j.debug("No need to encrypt SMTP server password fields.");
       }
 
     } catch (Exception e) {
