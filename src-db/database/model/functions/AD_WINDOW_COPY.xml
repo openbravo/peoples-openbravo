@@ -118,30 +118,21 @@
       --  Translate
       UPDATE AD_Tab_Trl
         SET Name=
-        (SELECT coalesce(sub.Name, Cur_Tabs.name)
-        FROM ad_tab t left join 
-        (select * from AD_Tab_Trl s
-        WHERE s.AD_Language=AD_Tab_Trl.AD_Language
-        ) sub
-         on sub.ad_tab_id=t.ad_tab_id 
+        (SELECT coalesce((select name from AD_Tab_Trl s
+        WHERE s.AD_Language=AD_Tab_Trl.AD_Language and s.AD_Tab_ID=Cur_Tabs.AD_Tab_ID), Cur_Tabs.name)
+        FROM ad_tab t
          WHERE t.AD_Tab_ID=Cur_Tabs.AD_Tab_ID)
         ,
         Description=
-        (SELECT coalesce(sub.Description, Cur_Tabs.description)
-        FROM ad_tab t left join 
-        (select * from AD_Tab_Trl s
-        WHERE s.AD_Language=AD_Tab_Trl.AD_Language
-        ) sub
-         on sub.ad_tab_id=t.ad_tab_id 
+        (SELECT coalesce((select description from AD_Tab_Trl s
+        WHERE s.AD_Language=AD_Tab_Trl.AD_Language and s.AD_Tab_ID=Cur_Tabs.AD_Tab_ID), Cur_Tabs.description)
+        FROM ad_tab t
          WHERE t.AD_Tab_ID=Cur_Tabs.AD_Tab_ID)
         ,
         Help=
-        (SELECT coalesce(sub.Help, Cur_Tabs.help)
-        FROM ad_tab t left join 
-        (select * from AD_Tab_Trl s
-        WHERE s.AD_Language=AD_Tab_Trl.AD_Language
-        ) sub
-         on sub.ad_tab_id=t.ad_tab_id 
+        (SELECT coalesce((select help from AD_Tab_Trl s
+        WHERE s.AD_Language=AD_Tab_Trl.AD_Language and s.AD_Tab_ID=Cur_Tabs.AD_Tab_ID), Cur_Tabs.help)
+        FROM ad_tab t
          WHERE t.AD_Tab_ID=Cur_Tabs.AD_Tab_ID)
       WHERE AD_Tab_Trl.AD_Tab_ID=v_NextNo_T;
       -- Copy Fields
@@ -173,30 +164,21 @@
         -- update translation
         UPDATE AD_Field_Trl
           SET Name=
-          (SELECT coalesce(sub.Name, Cur_Fields.name)
-          FROM ad_field t left join 
-          (select * from AD_field_Trl s
-          WHERE s.AD_Language=AD_field_Trl.AD_Language
-          ) sub
-          on sub.ad_field_id=t.ad_field_id 
+          (SELECT coalesce((select name from AD_field_Trl s
+          WHERE s.AD_Language=AD_field_Trl.AD_Language and s.AD_field_ID=Cur_Fields.AD_field_ID), Cur_Fields.name)
+          FROM ad_field t
          WHERE t.AD_field_ID=Cur_Fields.AD_field_ID)
           ,
           Description=
-          (SELECT coalesce(sub.Description, Cur_Fields.Description)
-          FROM ad_field t left join 
-          (select * from AD_field_Trl s
-          WHERE s.AD_Language=AD_field_Trl.AD_Language
-          ) sub
-          on sub.ad_field_id=t.ad_field_id 
+          (SELECT coalesce((select description from AD_field_Trl s
+          WHERE s.AD_Language=AD_field_Trl.AD_Language and s.AD_field_ID=Cur_Fields.AD_field_ID), Cur_Fields.Description)
+          FROM ad_field t
          WHERE t.AD_field_ID=Cur_Fields.AD_field_ID)
           ,
           Help=
-          (SELECT coalesce(sub.Help, Cur_Fields.Help)
-          FROM ad_field t left join 
-          (select * from AD_field_Trl s
-          WHERE s.AD_Language=AD_field_Trl.AD_Language
-          ) sub
-          on sub.ad_field_id=t.ad_field_id 
+          (SELECT coalesce((select help from AD_field_Trl s
+          WHERE s.AD_Language=AD_field_Trl.AD_Language and s.AD_field_ID=Cur_Fields.AD_field_ID), Cur_Fields.Help)
+          FROM ad_field t
          WHERE t.AD_field_ID=Cur_Fields.AD_field_ID)
         WHERE AD_Field_Trl.AD_Field_ID=v_NextNo_F;
         --

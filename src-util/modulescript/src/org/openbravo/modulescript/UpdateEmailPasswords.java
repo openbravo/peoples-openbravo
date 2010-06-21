@@ -37,7 +37,7 @@ public class UpdateEmailPasswords extends ModuleScript {
     // Updating email passwords required to fix issue 13688
     // This script will be executed only if we are upgrading from a version
     // 2.50MP18 or smaller
-    // This script just encripts ALL smtpserverpassword values of the table
+    // This script just encrypts ALL smtpserverpassword values of the table
     // C_POC_CONFIGURATION
 
     try {
@@ -46,12 +46,12 @@ public class UpdateEmailPasswords extends ModuleScript {
       OpenbravoVersion versionCurrent = new OpenbravoVersion(CheckCoreVersionData.select(cp));
       OpenbravoVersion version250MP18 = new OpenbravoVersion(2, 50, 17410);
 
-      log4j.info("Starting Update SMPT server passwords module script.");
-      log4j.info("Current version: " + versionCurrent.toString());
-      log4j.info("2.50 MP18 version:" + version250MP18.toString());
+      log4j.debug("Starting Update SMTP server passwords module script.");
+      log4j.debug("Current version: " + versionCurrent.toString());
+      log4j.debug("2.50 MP18 version:" + version250MP18.toString());
 
       if (versionCurrent.compareTo(version250MP18) <= 0) {
-        log4j.info("Encripting SMPT server password fields.");
+        log4j.debug("Encrypting SMPT server password fields.");
         UpdateEmailPasswordsData[] emails = UpdateEmailPasswordsData.select(cp);
         for (UpdateEmailPasswordsData email : emails) {
           if (email.smtpserverpassword != null) {
@@ -60,7 +60,7 @@ public class UpdateEmailPasswords extends ModuleScript {
           }
         }
       } else {
-        log4j.info("No need to encript SMPT server password fields.");
+        log4j.debug("No need to encrypt SMTP server password fields.");
       }
 
     } catch (Exception e) {
