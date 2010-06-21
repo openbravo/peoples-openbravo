@@ -37,7 +37,7 @@ public class UpdateEmailPasswords extends ModuleScript {
     // Updating email passwords required to fix issue 13688
     // This script will be executed only if we are upgrading from a version
     // 2.50MP18 or smaller
-    // This script just encripts ALL smtpserverpassword values of the table
+    // This script just encrypts ALL smtpserverpassword values of the table
     // C_POC_CONFIGURATION
 
     try {
