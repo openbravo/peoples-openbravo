@@ -143,43 +143,31 @@ class ReferencedTables {
       columnName = "C_Settlement_ID";
     }
     Vector<Object> vec = new Vector<Object>();
-    switch (Integer.valueOf(adReferenceId).intValue()) {
-    case 13:
-    case 19:
-    case 35:
-    case 30:
-      vec.addElement(tableDirName);
-      vec.addElement(columnName);
-      break;
-    case 21:
-      vec.addElement("C_Location");
-      vec.addElement("C_Location_ID");
-      break;
-    case 25:
-      vec.addElement("C_ValidCombination");
-      vec.addElement("C_ValidCombination_ID");
-      break;
-    case 31:
-      vec.addElement("M_Locator");
-      vec.addElement("M_Locator_ID");
-      break;
-    case 800011:
-      vec.addElement("M_Product");
-      vec.addElement("M_Product_ID");
-      break;
-    case 800013:
-      vec.addElement("M_Locator");
-      vec.addElement("M_Locator_ID");
-      break;
-    case 18:
-      ReferencedTablesData[] data = ReferencedTablesData.selectRefTable(conn, adReferenceValueId);
-      if (data != null && data.length > 0) {
-        vec.addElement(data[0].tablename);
-        vec.addElement(data[0].columnname);
-      }
-      break;
+    if("13".equals(adReferenceId) || "19".equals(adReferenceId) || "35".equals(adReferenceId) || "30".equals(adReferenceId)){
+    	vec.addElement(tableDirName);
+        vec.addElement(columnName);
+    }else if("21".equals(adReferenceId)){
+    	vec.addElement("C_Location");
+        vec.addElement("C_Location_ID");
+    }else if("25".equals(adReferenceId)){
+    	vec.addElement("C_ValidCombination");
+        vec.addElement("C_ValidCombination_ID");
+    }else if("31".equals(adReferenceId)){
+    	vec.addElement("M_Locator");
+        vec.addElement("M_Locator_ID");
+    }else if("800011".equals(adReferenceId)){
+    	vec.addElement("M_Product");
+        vec.addElement("M_Product_ID");
+    }else if("800013".equals(adReferenceId)){
+    	vec.addElement("M_Locator");
+        vec.addElement("M_Locator_ID");
+    }else if("18".equals(adReferenceId)){
+    	 ReferencedTablesData[] data = ReferencedTablesData.selectRefTable(conn, adReferenceValueId);
+         if (data != null && data.length > 0) {
+           vec.addElement(data[0].tablename);
+           vec.addElement(data[0].columnname);
+         }
     }
-    ;
     return vec;
   }
 

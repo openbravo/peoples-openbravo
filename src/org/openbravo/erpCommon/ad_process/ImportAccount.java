@@ -663,11 +663,9 @@ public class ImportAccount extends ImportProcess {
               account[0].cLocfromId, account[0].cLoctoId, account[0].cSalesregionId,
               account[0].cProjectId, account[0].cCampaignId, account[0].cActivityId,
               account[0].user1Id, account[0].user2Id);
-          int newC_ValidCombination_ID = Integer.valueOf(respuestaCS.CValidCombinationId)
-              .intValue();
-          if (!data[0].cValidcombinationId.equals(String.valueOf(newC_ValidCombination_ID))) {
-            no = ImportAccountData.updateAbstract(con, conn, TableName, ColumnName, String
-                .valueOf(newC_ValidCombination_ID), C_AcctSchema_ID);
+          String newC_ValidCombination_ID = respuestaCS.CValidCombinationId;
+          if (!data[0].cValidcombinationId.equals(newC_ValidCombination_ID)) {
+            no = ImportAccountData.updateAbstract(con, conn, TableName, ColumnName, newC_ValidCombination_ID, C_AcctSchema_ID);
             if (log4j.isDebugEnabled())
               log4j.debug("ImportAccount.updateDefaultAccount - #" + no + " - " + TableName + "."
                   + ColumnName + " - " + C_ElementValue_ID + " -- " + data[0].cValidcombinationId
