@@ -185,9 +185,9 @@ public class WebServiceImpl implements WebService {
     return (updated == 0 ? false : true);
   }
 
-  public String[] getCustomerAddresses(String clientId, String customerId, String username,
+  public int[] getCustomerAddresses(String clientId, String customerId, String username,
       String password) {
-    String[] locationList = null;
+    int[] locationList = null;
     if (!access(username, password)) {
       if (log4j.isDebugEnabled())
         log4j.debug("Access denied for user: " + username);
@@ -196,9 +196,9 @@ public class WebServiceImpl implements WebService {
     try {
       WebServicesAddressData[] data = WebServicesAddressData.selectLocationList(pool, clientId,
           customerId);
-      locationList = new String[data.length];
+      locationList = new int[data.length];
       for (int i = 0; i < data.length; i++) {
-        locationList[i] = String.valueOf(data[i].cLocationId);
+        locationList[i] = Integer.valueOf(data[i].cLocationId).intValue();
       }
     } catch (Exception e) {
       log4j.error(e.getMessage());

@@ -29,7 +29,7 @@ public interface WebService {
 
   public Boolean updateCustomer(BusinessPartner customer, String username, String password);
 
-  public String[] getCustomerAddresses(String clientId, String customerId, String username,
+  public int[] getCustomerAddresses(String clientId, String customerId, String username,
       String password);
 
   public Location getCustomerLocation(String clientId, String customerId, String locationId,
