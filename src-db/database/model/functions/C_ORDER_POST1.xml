@@ -102,6 +102,7 @@
     Cur_TaxDiscount RECORD;
     v_OrderLine VARCHAR2(32);
     v_Discount NUMBER;
+    v_precision NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -607,10 +608,12 @@
         v_CumDiscount:=0;
         v_OldCumDiscount:=0;
         v_Line:=10;
+        v_precision:=0;
         SELECT MAX(LINE) +10
         INTO v_OrderLineSeqNo
         FROM C_ORDERLINE
-        WHERE C_ORDER_ID=v_Record_ID;            
+        WHERE C_ORDER_ID=v_Record_ID;
+        SELECT PricePrecision INTO v_precision FROM C_ORDER o,C_CURRENCY c WHERE o.C_ORDER_ID = v_Record_ID AND  o.C_CURRENCY_ID = c.C_CURRENCY_ID;            
         FOR Cur_COrderDiscount IN
           (SELECT C_ORDER_DISCOUNT.C_ORDER_DISCOUNT_ID,
             C_DISCOUNT.DISCOUNT,
@@ -669,10 +672,10 @@
                 now(), now(), now(), now(), Cur_COrderDiscount.NAME, 
                 Cur_COrderDiscount.M_PRODUCT_ID, v_M_Warehouse_ID, 'N', Cur_COrderDiscount.C_UOM_ID, 1, 
                 0, 0, 0, NULL, v_c_currency_id, 
-                v_Discount, v_Discount, v_Discount, v_Discount, 0, 0, 
+                ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), 0, 0, 
                 NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL, 
                 NULL, 'N', NULL, NULL, 
-                NULL, v_Discount, NULL
+                NULL, ROUND(v_Discount,v_precision), NULL
               );
            
             UPDATE C_ORDERLINE
