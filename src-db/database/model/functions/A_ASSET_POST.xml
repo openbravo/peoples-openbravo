@@ -404,7 +404,7 @@
     INTO v_AMOUNT, v_PERCENTAGE
     FROM A_AmortizationLine
     WHERE A_asset_ID=v_Record_ID;
-    IF (v_AMOUNT <> v_amortizationvalueamt or v_PERCENTAGE <> 100) THEN
+    IF (v_AMOUNT <> v_amortizationvalueamt) THEN
       RAISE_APPLICATION_ERROR(-20000, '@ErrorCalculatingAmortizationPlan@');
     END IF;
     IF (TO_CHAR(v_AMORTIZATIONSTARTDATE, 'DD') <> '01') THEN
