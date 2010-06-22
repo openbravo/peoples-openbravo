@@ -1412,7 +1412,7 @@ public class InitialSetupUtility {
   }
 
   /**
-   * Gifen a module, and an acess level, returns all the datasets contained in that module
+   * @deprecated use {@link #getDataSets(Module module, List<String> accessLevel)}
    * 
    * @param module
    * @param accessLevel
@@ -1420,18 +1420,30 @@ public class InitialSetupUtility {
    * @return List<DataSet> with the relation of DataSet objects
    * @throws Exception
    */
+  @Deprecated
   public static List<DataSet> getDataSets(Module module, String accessLevel) throws Exception {
-
-    final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
-    obcDataSets.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
     ArrayList<String> coAccessLevel = new ArrayList<String>();
     coAccessLevel.add(accessLevel);
-    obcDataSets.add(Expression.in(DataSet.PROPERTY_DATAACCESSLEVEL, coAccessLevel));
+    return getDataSets(module, coAccessLevel);
+  }
+
+  /**
+   * Given a module, and an access level, returns all the datasets contained in that module
+   * 
+   * @param module
+   * @param accessLevel
+   *          3-> client/org; 6-> System/client
+   * @return List<DataSet> with the relation of DataSet objects
+   * @throws Exception
+   */
+  public static List<DataSet> getDataSets(Module module, List<String> accessLevel) throws Exception {
+    final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
+    obcDataSets.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
+    obcDataSets.add(Expression.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
     if (obcDataSets.list().size() > 0)
       return obcDataSets.list();
     else
       return null;
-
   }
 
   /**
