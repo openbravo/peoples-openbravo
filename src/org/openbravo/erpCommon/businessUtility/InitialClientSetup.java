@@ -96,7 +96,8 @@ public class InitialClientSetup {
     try {
       currency = InitialSetupUtility.getCurrency(strCurrencyID);
     } catch (Exception e) {
-      return logErrorAndRollback("@CreateClientFailed@", "process() - Cannot determine currency.", e);
+      return logErrorAndRollback("@CreateClientFailed@", "process() - Cannot determine currency.",
+          e);
     }
 
     log4j.debug("process() - Creating client.");
@@ -226,12 +227,12 @@ public class InitialClientSetup {
     try {
       client = InitialSetupUtility.insertClient(strClientName, strCurrency);
       if (client == null) {
-        return logErrorAndRollback("@CreateClientFailed@", "insertClient() - ERROR - Failed creating user "
-            + strClientUser);
+        return logErrorAndRollback("@CreateClientFailed@",
+            "insertClient() - ERROR - Failed creating user " + strClientUser);
       }
     } catch (Exception e) {
-      return logErrorAndRollback("@CreateClientFailed@", "insertClient() - ERROR - Exception creating user "
-          + strClientUser, e);
+      return logErrorAndRollback("@CreateClientFailed@",
+          "insertClient() - ERROR - Exception creating user " + strClientUser, e);
     }
     vars.setSessionValue("AD_Client_ID", client.getId());
     log4j.debug("insertClient() - Correctly created client " + strClientName);
@@ -255,11 +256,12 @@ public class InitialClientSetup {
     try {
       treeList = InitialSetupUtility.treeRelation();
     } catch (Exception e) {
-      return logErrorAndRollback("@CreateClientFailed@", "insertTrees() - ERROR - Not able to retrieve trees",
-          e);
+      return logErrorAndRollback("@CreateClientFailed@",
+          "insertTrees() - ERROR - Not able to retrieve trees", e);
     }
     if (treeList == null) {
-      return logErrorAndRollback("@CreateClientFailed@", "insertTrees() - ERROR - Not able to retrieve trees");
+      return logErrorAndRollback("@CreateClientFailed@",
+          "insertTrees() - ERROR - Not able to retrieve trees");
     } else {
       log4j.debug("insertTrees() - Retrieved " + treeList.size() + " trees.");
     }
@@ -405,8 +407,8 @@ public class InitialClientSetup {
         return logErrorAndRollback("@CreateClientFailed@",
             "insertRoles() - ERROR - Not able to insert the role" + strRoleName);
     } catch (Exception e) {
-      return logErrorAndRollback("@CreateClientFailed@", "insertRoles() - ERROR - Not able to insert the role"
-          + strRoleName, e);
+      return logErrorAndRollback("@CreateClientFailed@",
+          "insertRoles() - ERROR - Not able to insert the role" + strRoleName, e);
     }
     log4j.debug("insertRoles() - Role inserted correctly");
     logEvent("@AD_Role_ID@=" + strRoleName);
@@ -445,8 +447,8 @@ public class InitialClientSetup {
       user = InitialSetupUtility.insertUser(client, null, strUserName, FormatUtilities
           .sha1Base64(strPassword), role, InitialSetupUtility.getLanguage(strLanguage));
     } catch (Exception e) {
-      return logErrorAndRollback("@CreateClientFailed@", "insertUser() - ERROR - Not able to insert the user "
-          + strUserName, e);
+      return logErrorAndRollback("@CreateClientFailed@",
+          "insertUser() - ERROR - Not able to insert the user " + strUserName, e);
     }
     log4j.debug("insertUser() - User correctly inserted. Inserting user roles.");
 
@@ -454,8 +456,8 @@ public class InitialClientSetup {
     try {
       InitialSetupUtility.insertUserRoles(client, user, null, role);
     } catch (Exception e) {
-      return logErrorAndRollback("@CreateClientFailed@", "insertUser() - Not able to insert the user "
-          + strUserName, e);
+      return logErrorAndRollback("@CreateClientFailed@",
+          "insertUser() - Not able to insert the user " + strUserName, e);
     }
     log4j.debug("insertUser() - User roles correctly inserted.");
 
@@ -507,8 +509,9 @@ public class InitialClientSetup {
       // Modules with CoA are retrieved.
       if (lCoaModules.size() > 1) {
         // If more than one accounting module was provided, throws error
-        return logErrorAndRollback("@CreateReferenceDataFailed@. @OneCoAModule@", "createReferenceData() - "
-            + "Error. More than one chart of accounts module was selected");
+        return logErrorAndRollback("@CreateReferenceDataFailed@. @OneCoAModule@",
+            "createReferenceData() - "
+                + "Error. More than one chart of accounts module was selected");
       } else if (lCoaModules.size() == 1) {
         // If just one CoA module was selected, accounting is created
         modCoA = lCoaModules.get(0);
@@ -618,7 +621,10 @@ public class InitialClientSetup {
 
       List<DataSet> lDataSets;
       try {
-        lDataSets = InitialSetupUtility.getDataSets(module, "3");
+        ArrayList<String> accessLevel = new ArrayList<String>();
+        accessLevel.add("3");
+        accessLevel.add("6");
+        lDataSets = InitialSetupUtility.getDataSets(module, accessLevel);
         if (lDataSets == null)
           return logErrorAndRollback("@CreateReferenceDataFailed@",
               "insertReferenceDataModules() - ERROR ocurred while obtaining datasets for module "
