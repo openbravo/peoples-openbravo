@@ -233,7 +233,7 @@ public class Menu extends HttpSecureAppServlet {
         viewType = "EDIT";
 
       } else if (vars.commandIn("DEFAULT")) {
-        viewType = tab.isDefaultEditMode() ? "EDIT" : "RELATION";
+        viewType = "";
       }
 
       if (vars.commandIn("GRID")) {
