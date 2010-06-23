@@ -390,7 +390,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
           .append(vars.getSessionValue("$C_CURRENCY_ID")).append("') CUR");
     }
 
-    response.setContentType("application/xls");
+    response.setContentType("application/xls; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
     XmlDocument xmlDocument = null;
