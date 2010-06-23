@@ -118,8 +118,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
           "ReportGeneralLedger|mProductId", IsIDFilter.instance);
-      String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
-          "ReportGeneralLedger|cProjectId", "", IsIDFilter.instance);
+      String strcProjectId = vars.getRequestInGlobalVariable("inpcProjectId_IN",
+          "ReportGeneralLedger|cProjectId", IsIDFilter.instance);
       String strGroupBy = vars
           .getRequestGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy");
       String strHide = vars.getStringParameter("inpHideMatched");
