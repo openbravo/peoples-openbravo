@@ -403,7 +403,6 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
 
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
