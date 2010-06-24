@@ -913,4 +913,24 @@ public class FactLine {
     return description;
   }
 
+  /**
+   * @return the m_docLine
+   */
+  public DocLine getM_docLine() {
+    return m_docLine;
+  }
+
+  /**
+   * @return the m_acct
+   */
+  public Account getM_acct() {
+    return m_acct;
+  }
+
+  /**
+   * @return the m_AmtAcctCr
+   */
+  public String getM_AmtAcctCr() {
+    return m_AmtAcctCr;
+  }
 }
