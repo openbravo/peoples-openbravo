@@ -26,6 +26,7 @@ config/instance.revision
 src/result.xml
 
 src-db/database/lib/dbmanager.jar
+src-db/database/formalChangesScript.xml
 src-core/lib/openbravo-core.jar
 src-wad/lib/openbravo-wad.jar
 src-trl/lib/openbravo-trl.jar
