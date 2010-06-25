@@ -28,7 +28,7 @@
         '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED, '' AS C_PROJECT_ID, '' AS C_CAMPAIGN_ID, '' AS C_ACTIVITY_ID,
         '' AS USER1_ID, '' AS USER2_ID, '' AS CREATEFROM, '' AS C_CURRENCY_ID, '' AS CANCELEDNOTCHARGEAMT, '' AS GENERATEDAMT,
         '' AS CHARGEDAMT, '' AS DESCRIPTION, '' AS CREATEFILE, '' AS DATEACCT, '' AS SETTLEMENTTYPE, '' AS CREDIT_ACCT, '' AS DEBIT_ACCT,
-        '' AS AMOUNTDEBIT, '' AS AMOUNTCREDIT, '' AS AMOUNT, '' AS C_TAX_ID, '' AS C_WITHHOLDING_ID, '' AS STATUS, '' AS STATUS_INITIAL
+        '' AS AMOUNTDEBIT, '' AS AMOUNTCREDIT, '' AS AMOUNT, '' AS C_TAX_ID, '' AS C_WITHHOLDING_ID, '' AS ISDIRECTPOSTING, '' AS ISMANUAL
         FROM DUAL
      ]]>
      </Sql>
@@ -148,7 +148,7 @@
     <Sql>
       <![CDATA[
         SELECT B.AMOUNTCREDIT AS AMOUNTCREDIT, B.AMOUNTDEBIT AS AMOUNTDEBIT, GA.Glitem_Credit_Acct AS CREDIT_ACCT, GA.Glitem_Debit_Acct AS DEBIT_ACCT,
-        G.C_TAX_ID, G.C_WITHHOLDING_ID, D.STATUS, D.STATUS_INITIAL
+        G.C_TAX_ID, G.C_WITHHOLDING_ID
         FROM C_DEBT_PAYMENT D, C_DEBT_PAYMENT_BALANCING B, C_GLITEM G, C_Glitem_Acct GA
         WHERE D.C_DEBT_PAYMENT_ID = B.C_DEBT_PAYMENT_ID
         AND B.C_GLITEM_ID = G.C_GLITEM_ID
@@ -176,5 +176,18 @@
      </Sql>
      <Parameter name="C_ACCTSCHEMA_ID"/>
      <Parameter name="C_DEBT_PAYMENT_ID"/>
+   </SqlMethod>
+   
+   <SqlMethod name="paymentsInformation" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT DP.ISMANUAL, DP.ISDIRECTPOSTING
+        FROM C_SETTLEMENT S LEFT JOIN C_DEBT_PAYMENT DP
+          ON DP.C_SETTLEMENT_GENERATE_ID = S.C_SETTLEMENT_ID
+        WHERE S.C_SETTLEMENT_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="settlementID"/>
    </SqlMethod>
 </SqlClass>

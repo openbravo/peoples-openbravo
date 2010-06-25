@@ -25,7 +25,7 @@
       <![CDATA[
       SELECT AD_CLIENT_ID, AD_ORG_ID, C_CURRENCY_ID, DESCRIPTION, POSTED, DATEACCT,
       C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID, USER1_ID, USER2_ID, '' AS ACCT, 
-      DOCUMENTNO
+      DOCUMENTNO, '' AS ISMANUAL, '' AS ISDIRECTPOSTING
       FROM c_DP_Management
       WHERE c_DP_management_ID = ?
      ]]>
@@ -93,5 +93,18 @@
      <Parameter name="Status"/>
      <Parameter name="partnerID"/>
      <Parameter name="AcctSchema"/>
+   </SqlMethod>
+   
+   <SqlMethod name="paymentInformation" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+       SELECT DP.ISMANUAL, DP.ISDIRECTPOSTING
+       FROM C_DP_MANAGEMENTLINE L, C_DEBT_PAYMENT DP
+       WHERE DP.C_DEBT_PAYMENT_ID=L.C_DEBT_PAYMENT_ID
+         AND L.C_DP_MANAGEMENT_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="paymentID"/>
    </SqlMethod>
  </SqlClass>
