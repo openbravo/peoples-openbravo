@@ -2462,12 +2462,26 @@ function getMenuExpandCollapse_status() {
 }
 
 function menuUserOptions() {
+  setMDIEnvironment();
+  if(isWindowInMDITab || isWindowInMDIContext) {
+    var LayoutMDI = getFrame('LayoutMDI');
+    LayoutMDI.OB.Layout.userProfileWidget.doShow();
+    return;
+  }
+
   var appUrl = getAppUrl();
   openServletNewWindow('DEFAULT', false, appUrl + '/ad_forms/Role.html', 'ROLE', null, true, '460', '800');
   return true;
 }
 
 function menuQuit() {
+  setMDIEnvironment();
+  if(isWindowInMDITab || isWindowInMDIContext) {
+    var LayoutMDI = getFrame('LayoutMDI');
+    LayoutMDI.OB.Utilities.logout();
+    return;
+  }
+  
   var appUrl = getAppUrl();
   var target;
   try {
