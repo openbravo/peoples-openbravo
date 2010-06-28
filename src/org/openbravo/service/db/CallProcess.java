@@ -19,8 +19,10 @@
 
 package org.openbravo.service.db;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
@@ -85,6 +87,26 @@ public class CallProcess {
     return call(processCriteria.list().get(0), recordID, parameters);
   }
 
+/**
+   * Calls a process. The recordID and parameters can be null. Parameters are translated into
+   * {@link Parameter} instances.
+   * 
+   * @param process
+   *          the process to execute
+   * @param recordID
+   *          the recordID will be set in the {@link ProcessInstance}, see
+   *          {@link ProcessInstance#getRecordID()}
+   * @param parameters
+   *          are translated into process parameters, supports only string parameters, for support
+   *          of other parameters see the next method: {@link #callProcess(org.openbravo.model.ad.ui.Process, String, Map)
+   * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
+   *         {@link ProcessInstance#getErrorMsg()})
+   */
+  public ProcessInstance call(org.openbravo.model.ad.ui.Process process, String recordID,
+      Map<String, String> parameters) {
+    return callProcess(process, recordID, (Map<String, ?>) parameters);
+  }
+
   /**
    * Calls a process. The recordID and parameters can be null. Parameters are translated into
    * {@link Parameter} instances.
@@ -99,9 +121,8 @@ public class CallProcess {
    * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
    *         {@link ProcessInstance#getErrorMsg()})
    */
-  public ProcessInstance call(org.openbravo.model.ad.ui.Process process, String recordID,
-      Map<String, String> parameters) {
-
+  public ProcessInstance callProcess(org.openbravo.model.ad.ui.Process process, String recordID,
+      Map<String, ?> parameters) {
     OBContext.setAdminMode();
     try {
       // Create the pInstance
@@ -124,11 +145,17 @@ public class CallProcess {
         int index = 0;
         for (String key : parameters.keySet()) {
           index++;
-          final String value = parameters.get(key);
+          final Object value = parameters.get(key);
           final Parameter parameter = OBProvider.getInstance().get(Parameter.class);
           parameter.setSequenceNumber(index + "");
           parameter.setParameterName(key);
-          parameter.setString(value);
+          if (value instanceof String) {
+            parameter.setString((String) value);
+          } else if (value instanceof Date) {
+            parameter.setProcessDate((Date) value);
+          } else if (value instanceof BigDecimal) {
+            parameter.setProcessNumber((BigDecimal) value);
+          }
 
           // set both sides of the bidirectional association
           pInstance.getADParameterList().add(parameter);
