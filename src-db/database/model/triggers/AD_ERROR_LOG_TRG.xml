@@ -24,7 +24,7 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
     
-    IF :NEW.MESSAGE LIKE 'Note: %' THEN
+    IF :NEW.MESSAGE LIKE 'Note: %' OR :NEW.MESSAGE LIKE '%Trying to override old definition%' THEN
 	:NEW.error_level:='INFO';
     END IF;
     
