@@ -152,8 +152,8 @@ public class VersionUtility {
        * new modules or new updates are needed, they are added to they correspondent list and added
        * to errors vector. and the checked is run again with the new configuration
        */
-      if (!checkDependency(strModVersion, modulesMap, modsToInstall, modsToUpdate, depMap
-          .get(depKey), errors, newModules)) {
+      if (!checkDependency(strModVersion, modulesMap, modsToInstall, modsToUpdate,
+          depMap.get(depKey), errors, newModules)) {
         // If any dependency or include need a new module, it is added
         // to modsToInstall or if needed an update is added to
         // modsToUpdate
