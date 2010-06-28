@@ -34,6 +34,7 @@ import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -58,6 +59,8 @@ import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -1284,8 +1287,7 @@ public class ImportModule {
       try {
         loc = new WebServiceImplServiceLocator();
         ws = loc.getWebService();
-        final HashMap<String, String> currentlyInstalledModules = getInstalledModules(conn);
-        updates = ws.moduleScanForUpdates(currentlyInstalledModules);
+        updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps(conn));
       } catch (final Exception e) {
         // do nothing just log the error
         log4j.error("Scan for updates coulnd't contact WS", e);
@@ -1358,6 +1360,7 @@ public class ImportModule {
   /**
    * Returns the current installed modules with its version
    * 
+   * @deprecated use {@link ImportModule#getInstalledModulesAndDeps(ConnectionProvider)} instead
    * @param conn
    *          ConnectionProvider needed as it is a static method
    * @return HashMap<String,String> -> <ModuleId, VersionNo>
@@ -1376,6 +1379,58 @@ public class ImportModule {
       }
     }
     return rt;
+  }
+
+  /**
+   * Returns the current installed modules with its version
+   * 
+   * @return HashMap<String, String[][]> --> <ModuleId, VersionInfo[]>
+   *         <ul>
+   *         <li>VersionInfo [x][0] -> Type "M" Module, "D" Dependency</li>
+   *         <li>VersionInfo [x][1] -> If type=="M", version number. If type =="D" dep module Id</li>
+   *         <li>VersionInfo [x][2] -> If type=="D", from version</li>
+   *         <li>VersionInfo [x][3] -> If type=="D", to version</li>
+   *         <li>VersionInfo [x][4] -> If type=="D", "Y"/"N" is included</li>
+   *         <li>VersionInfo [x][5] -> If type=="D", Dependent module name</li>
+   *         </ul>
+   */
+  public static HashMap<String, String[][]> getInstalledModulesAndDeps(ConnectionProvider conn) {
+    HashMap<String, String[][]> rt = new HashMap<String, String[][]>();
+    try {
+      OBContext.setAdminMode();
+
+      List<org.openbravo.model.ad.module.Module> modules = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.Module.class).list();
+
+      for (org.openbravo.model.ad.module.Module mod : modules) {
+
+        List<org.openbravo.model.ad.module.ModuleDependency> dependencies = mod
+            .getModuleDependencyList();
+
+        String[][] versionInfo = new String[dependencies.size() + 1][0];
+        versionInfo[0] = new String[2];
+        versionInfo[0][0] = "M";
+        versionInfo[0][1] = mod.getVersion();
+
+        int i = 1;
+        for (org.openbravo.model.ad.module.ModuleDependency dep : dependencies) {
+          versionInfo[i] = new String[6];
+          versionInfo[i][0] = "D";
+          versionInfo[i][1] = dep.getDependentModule().getId();
+          versionInfo[i][2] = dep.getFirstVersion();
+          versionInfo[i][3] = dep.getLastVersion();
+          versionInfo[i][4] = dep.isIncluded() ? "Y" : "N";
+          versionInfo[i][5] = dep.getDependantModuleName();
+          i++;
+        }
+
+        rt.put(mod.getId(), versionInfo);
+      }
+
+      return rt;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
