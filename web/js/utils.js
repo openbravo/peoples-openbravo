@@ -5150,7 +5150,12 @@ function LayoutMDICheck(target) {
   return false;
 }
 
+var isMDIEnvironmentSet = false;
 function setMDIEnvironment() {
+  if (isMDIEnvironmentSet) {
+    return;
+  }
+  isMDIEnvironmentSet = true;
   isWindowInMDITab = checkWindowInMDITab();
   isWindowInMDIContext = checkWindowInMDIContext();
 
