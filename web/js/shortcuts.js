@@ -45,19 +45,26 @@ function keyArrayItem(key, evalfunc, field, auxKey, propagateKey, event) {
 * Defines the keys array for all the application.
 */
 function getShortcuts(type) {
+  // note these methods/variables are defined in utils.js
+  setMDIEnvironment();
+  var inMDIEnvironment = (isWindowInMDITab || isWindowInMDIContext); 
+  
   if (type==null || type=="" || type=="null") {
   } else if (type=='applicationCommonKeys') {
+    // don't override browser shortcuts in case of MDI environment
+    if (!inMDIEnvironment) {
       this.keyArray.splice(keyArray.length-1, 0,
-        new keyArrayItem("M", "executeMenuButton('buttonExpand');executeMenuButton('buttonCollapse');", null, "ctrlKey+shiftKey", false, 'onkeydown'),
-        new keyArrayItem("U", "executeMenuButton('buttonUserOptions');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("Q", "executeMenuButton('buttonQuit');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("F8", "executeMenuButton('buttonAlerts');", null, null, false, 'onkeydown'),
-        new keyArrayItem("F9", "menuShowHide();", null, null, false, 'onkeydown'),
-        new keyArrayItem("I", "executeWindowButton('buttonAbout');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("H", "executeWindowButton('buttonHelp');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("R", "executeWindowButton('buttonRefresh');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("BACKSPACE", "executeWindowButton('buttonBack');", null, "ctrlKey+shiftKey", false, 'onkeydown')
-      );
+          new keyArrayItem("M", "executeMenuButton('buttonExpand');executeMenuButton('buttonCollapse');", null, "ctrlKey+shiftKey", false, 'onkeydown'),
+          new keyArrayItem("U", "executeMenuButton('buttonUserOptions');", null, "ctrlKey", false, 'onkeydown'),
+          new keyArrayItem("Q", "executeMenuButton('buttonQuit');", null, "ctrlKey", false, 'onkeydown'),
+          new keyArrayItem("F8", "executeMenuButton('buttonAlerts');", null, null, false, 'onkeydown'),
+          new keyArrayItem("F9", "menuShowHide();", null, null, false, 'onkeydown'),
+          new keyArrayItem("I", "executeWindowButton('buttonAbout');", null, "ctrlKey", false, 'onkeydown'),
+          new keyArrayItem("H", "executeWindowButton('buttonHelp');", null, "ctrlKey", false, 'onkeydown'),
+          new keyArrayItem("R", "executeWindowButton('buttonRefresh');", null, "ctrlKey", false, 'onkeydown'),
+          new keyArrayItem("BACKSPACE", "executeWindowButton('buttonBack');", null, "ctrlKey+shiftKey", false, 'onkeydown')
+        );
+    }
   } else if (type=='menuSpecificKeys') {
       this.keyArray.splice(keyArray.length-1, 0,
         new keyArrayItem("M", "putFocusOnWindow();", null, "ctrlKey", false, 'onkeydown'),

@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '7728';
+  var number = '7012';
   return number;
 }
 
@@ -2462,26 +2462,12 @@ function getMenuExpandCollapse_status() {
 }
 
 function menuUserOptions() {
-  setMDIEnvironment();
-  if(isWindowInMDITab || isWindowInMDIContext) {
-    var LayoutMDI = getFrame('LayoutMDI');
-    LayoutMDI.OB.Layout.userProfileWidget.doShow();
-    return;
-  }
-
   var appUrl = getAppUrl();
   openServletNewWindow('DEFAULT', false, appUrl + '/ad_forms/Role.html', 'ROLE', null, true, '460', '800');
   return true;
 }
 
-function menuQuit() {
-  setMDIEnvironment();
-  if(isWindowInMDITab || isWindowInMDIContext) {
-    var LayoutMDI = getFrame('LayoutMDI');
-    LayoutMDI.OB.Utilities.logout();
-    return;
-  }
-  
+function menuQuit() {  
   var appUrl = getAppUrl();
   var target;
   try {
