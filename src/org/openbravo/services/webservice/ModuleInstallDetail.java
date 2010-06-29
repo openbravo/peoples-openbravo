@@ -186,7 +186,7 @@ public class ModuleInstallDetail  implements java.io.Serializable {
         new org.apache.axis.description.TypeDesc(ModuleInstallDetail.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "ModuleInstallDetail"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService3", "ModuleInstallDetail"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("dependencyErrors");
         elemField.setXmlName(new javax.xml.namespace.QName("", "dependencyErrors"));
@@ -196,13 +196,13 @@ public class ModuleInstallDetail  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("modulesToInstall");
         elemField.setXmlName(new javax.xml.namespace.QName("", "modulesToInstall"));
-        elemField.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "Module"));
+        elemField.setXmlType(new javax.xml.namespace.QName("/services/WebService3", "Module"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("modulesToUpdate");
         elemField.setXmlName(new javax.xml.namespace.QName("", "modulesToUpdate"));
-        elemField.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "Module"));
+        elemField.setXmlType(new javax.xml.namespace.QName("/services/WebService3", "Module"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();

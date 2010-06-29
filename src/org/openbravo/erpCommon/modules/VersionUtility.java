@@ -38,8 +38,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
-import org.openbravo.services.webservice.WebServiceImpl;
-import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.openbravo.services.webservice.WebService3Impl;
+import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 
 public class VersionUtility {
   protected static ConnectionProvider pool;
@@ -518,8 +518,8 @@ public class VersionUtility {
    */
   static public ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
       String[] moduleVersionToUpdateId, OBError obErrors) throws Exception {
-    WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-    WebServiceImpl ws = (WebServiceImpl) loc.getWebService();
+    WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+    WebService3Impl ws = (WebService3Impl) loc.getWebService3();
     String[] errors = new String[0];
 
     ModuleInstallDetail mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(pool),

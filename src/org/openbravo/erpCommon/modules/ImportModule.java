@@ -72,8 +72,8 @@ import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
 import org.openbravo.services.webservice.SimpleModule;
-import org.openbravo.services.webservice.WebServiceImpl;
-import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.openbravo.services.webservice.WebService3Impl;
+import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -1276,12 +1276,12 @@ public class ImportModule {
       final HashMap<String, String> updateModules = new HashMap<String, String>();
       final String user = vars == null ? "0" : vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
-      WebServiceImplServiceLocator loc;
-      WebServiceImpl ws = null;
+      WebService3ImplServiceLocator loc;
+      WebService3Impl ws = null;
       SimpleModule[] updates;
       try {
-        loc = new WebServiceImplServiceLocator();
-        ws = loc.getWebService();
+        loc = new WebService3ImplServiceLocator();
+        ws = loc.getWebService3();
         updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps(conn));
       } catch (final Exception e) {
         // do nothing just log the error
@@ -1481,14 +1481,14 @@ public class ImportModule {
    */
   private RemoteModule getRemoteModule(String moduleVersionID) {
     RemoteModule remoteModule = new RemoteModule();
-    WebServiceImplServiceLocator loc;
-    WebServiceImpl ws = null;
+    WebService3ImplServiceLocator loc;
+    WebService3Impl ws = null;
     String strUrl = "";
     boolean isCommercial;
 
     try {
-      loc = new WebServiceImplServiceLocator();
-      ws = loc.getWebService();
+      loc = new WebService3ImplServiceLocator();
+      ws = loc.getWebService3();
     } catch (final Exception e) {
       log4j.error(e);
       addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);

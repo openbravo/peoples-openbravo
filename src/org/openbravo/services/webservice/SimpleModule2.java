@@ -1,5 +1,5 @@
 /**
- * SimpleModule.java
+ * SimpleModule2.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
@@ -7,13 +7,13 @@
 
 package org.openbravo.services.webservice;
 
-public class SimpleModule  extends org.openbravo.services.webservice.SimpleModule2  implements java.io.Serializable {
-    private java.util.HashMap additionalInfo;
+public class SimpleModule2  extends org.openbravo.services.webservice.SimpleModule1  implements java.io.Serializable {
+    private boolean isCommercial;
 
-    public SimpleModule() {
+    public SimpleModule2() {
     }
 
-    public SimpleModule(
+    public SimpleModule2(
            java.lang.String author,
            java.lang.String description,
            java.lang.String help,
@@ -26,8 +26,7 @@ public class SimpleModule  extends org.openbravo.services.webservice.SimpleModul
            java.lang.String updateDescription,
            java.lang.String url,
            java.lang.String versionNo,
-           boolean isCommercial,
-           java.util.HashMap additionalInfo) {
+           boolean isCommercial) {
         super(
             author,
             description,
@@ -40,35 +39,34 @@ public class SimpleModule  extends org.openbravo.services.webservice.SimpleModul
             type,
             updateDescription,
             url,
-            versionNo,
-            isCommercial);
-        this.additionalInfo = additionalInfo;
+            versionNo);
+        this.isCommercial = isCommercial;
     }
 
 
     /**
-     * Gets the additionalInfo value for this SimpleModule.
+     * Gets the isCommercial value for this SimpleModule2.
      * 
-     * @return additionalInfo
+     * @return isCommercial
      */
-    public java.util.HashMap getAdditionalInfo() {
-        return additionalInfo;
+    public boolean isIsCommercial() {
+        return isCommercial;
     }
 
 
     /**
-     * Sets the additionalInfo value for this SimpleModule.
+     * Sets the isCommercial value for this SimpleModule2.
      * 
-     * @param additionalInfo
+     * @param isCommercial
      */
-    public void setAdditionalInfo(java.util.HashMap additionalInfo) {
-        this.additionalInfo = additionalInfo;
+    public void setIsCommercial(boolean isCommercial) {
+        this.isCommercial = isCommercial;
     }
 
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof SimpleModule)) return false;
-        SimpleModule other = (SimpleModule) obj;
+        if (!(obj instanceof SimpleModule2)) return false;
+        SimpleModule2 other = (SimpleModule2) obj;
         if (obj == null) return false;
         if (this == obj) return true;
         if (__equalsCalc != null) {
@@ -77,9 +75,7 @@ public class SimpleModule  extends org.openbravo.services.webservice.SimpleModul
         __equalsCalc = obj;
         boolean _equals;
         _equals = super.equals(obj) && 
-            ((this.additionalInfo==null && other.getAdditionalInfo()==null) || 
-             (this.additionalInfo!=null &&
-              this.additionalInfo.equals(other.getAdditionalInfo())));
+            this.isCommercial == other.isIsCommercial();
         __equalsCalc = null;
         return _equals;
     }
@@ -91,24 +87,22 @@ public class SimpleModule  extends org.openbravo.services.webservice.SimpleModul
         }
         __hashCodeCalc = true;
         int _hashCode = super.hashCode();
-        if (getAdditionalInfo() != null) {
-            _hashCode += getAdditionalInfo().hashCode();
-        }
+        _hashCode += (isIsCommercial() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         __hashCodeCalc = false;
         return _hashCode;
     }
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(SimpleModule.class, true);
+        new org.apache.axis.description.TypeDesc(SimpleModule2.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService3", "SimpleModule"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService3", "SimpleModule2"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("additionalInfo");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "additionalInfo"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"));
-        elemField.setNillable(true);
+        elemField.setFieldName("isCommercial");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "isCommercial"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
     }
 

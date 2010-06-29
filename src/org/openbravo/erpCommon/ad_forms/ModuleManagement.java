@@ -34,6 +34,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -884,7 +885,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     if (!ak.isOPSInstance()) {
       for (Module mod : im.getModulesToInstall()) {
-        if (mod.getIsCommercial()) {
+        if (mod.isIsCommercial()) {
           if (selectedModule != null && !mod.getModuleID().equals(selectedModule.getModuleID())) {
             // Show only in case there are commercial dependencies
             showNotActivatedError = true;
@@ -895,7 +896,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
       }
       for (Module mod : im.getModulesToUpdate()) {
-        if (mod.getIsCommercial()) {
+        if (mod.isIsCommercial()) {
           if (selectedModule != null && !!mod.getModuleID().equals(selectedModule.getModuleID())) {
             // Show only in case there are commercial dependencies
             showNotActivatedError = true;
@@ -924,7 +925,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
           firstModule = false;
         }
 
-        if (moduleID.equals(mod.getModuleID()) || !mod.getIsCommercial()) {
+        if (moduleID.equals(mod.getModuleID()) || !mod.isIsCommercial()) {
           continue; // skip details
         }
         String moduleDetail = moduleTemplate.replace("@MODULE@", mod.getName());
@@ -946,7 +947,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
           firstModule = false;
         }
 
-        if (moduleID.equals(mod.getModuleID()) || !mod.getIsCommercial()) {
+        if (moduleID.equals(mod.getModuleID()) || !mod.isIsCommercial()) {
           continue; // skip details
         }
 
@@ -963,7 +964,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } else {
 
       for (Module instMod : im.getModulesToInstall()) {
-        if (instMod.getIsCommercial()) {
+        if (instMod.isIsCommercial()) {
           CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(instMod.getModuleID());
           if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(instMod);
@@ -994,7 +995,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
 
       for (Module updMod : im.getModulesToUpdate()) {
-        if (updMod.getIsCommercial()) {
+        if (updMod.isIsCommercial()) {
           CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(updMod.getModuleID());
           if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(updMod);
