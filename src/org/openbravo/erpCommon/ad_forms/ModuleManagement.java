@@ -149,8 +149,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate[0] = updateModule;
       }
       printPageInstall1(response, request, vars, null, false, null, modulesToUpdate);
-    } else
+    } else if (vars.commandIn("SETTINGS")) {
+      printPageSettings(response, request);
+    } else {
       pageError(response);
+    }
   }
 
   /**
@@ -1416,6 +1419,38 @@ public class ModuleManagement extends HttpSecureAppServlet {
     response.setHeader("Cache-Control", "no-cache");
     final PrintWriter out = response.getWriter();
     out.println(up);
+    out.close();
+  }
+
+  private void printPageSettings(HttpServletResponse response, HttpServletRequest request)
+      throws ServletException, IOException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_forms/ModuleManagementSettings").createXmlDocument();
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    // Interface parameters
+    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "",
+        "", "", false, "ad_forms", strReplaceWith, false, true);
+    toolbar.prepareSimpleToolBarTemplate();
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+
+    try {
+      final WindowTabs tabs = new WindowTabs(this, vars,
+          "org.openbravo.erpCommon.ad_forms.ModuleManagement");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+          "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html",
+          strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (final Exception ex) {
+      throw new ServletException(ex);
+    }
+    out.println(xmlDocument.print());
     out.close();
   }
 
