@@ -292,8 +292,12 @@ var baseDirectory = "../../../../../web/";
                       When doing a scan for updates, accept versions of the following status or higher
                     </span>
                   </td>
-                  <td colspan="2">
-                    <select class="Combo Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select name="inpScanLevel" id="inpScanLevelx" class="Combo Combo_TwoCells_width">
+                        <div id="reportScanLevel">
+                          <div id="sectionDetailScanLevel"></div>
+                        </div>
+                      </option>
                     </select>
                   </td>
                 </tr>
@@ -363,8 +367,12 @@ var baseDirectory = "../../../../../web/";
                   <td colspan="4">
                     <span class="Label_ReadOnly_Text">When searching for new modules, accept version of the following status or higher</span>
                   </td>
-                  <td colspan="2">
-                    <select class="Combo Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select name="inpSearchLevel" id="inpSearchLevel" class="Combo Combo_TwoCells_width">
+                        <div id="reportSearchLevel">
+                          <div id="sectionDetailSearchLevel"></div>
+                        </div>
+                      </option>
                     </select>
                   </td>
                 </tr>

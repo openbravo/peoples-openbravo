@@ -29,27 +29,16 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
-  
-  <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
-  <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
-  <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
-  <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
-  <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
-  <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
-
-  <PARAMETER id="inpUser" name="inpUser" default=""/>
-  <SUBREPORT id="reportUser" name="reportUser" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="inpUser"/>
+ 
+  <PARAMETER id="selectedScanLevel" name="selectedScanLevel" default=""/>
+  <SUBREPORT id="reportScanLevel" name="reportScanLevel" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="selectedScanLevel"/>
   </SUBREPORT>
   
-  <structure name="detail">
-    <FIELD id="date">created</FIELD>
-    <FIELD id="hour">createdhour</FIELD>
-    <FIELD id="action">action</FIELD>
-    <FIELD id="user">createdby</FIELD>
-    <FIELD id="module">modulename</FIELD>
-    <FIELD id="log">log</FIELD>
-    <SECTION id="detail"/>
-  </structure>
+  <PARAMETER id="selectedSearchLevel" name="selectedSearchLevel" default=""/>
+  <SUBREPORT id="reportSearchLevel" name="reportSearchLevel" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="selectedSearchLevel"/>
+  </SUBREPORT>
+  
   
 </REPORT>

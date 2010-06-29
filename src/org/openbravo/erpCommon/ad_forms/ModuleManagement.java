@@ -59,8 +59,8 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
-import org.openbravo.services.webservice.WebServiceImpl;
-import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.openbravo.services.webservice.WebService3Impl;
+import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -437,8 +437,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (!local) {
       try {
         // retrieve the module details from the webservice
-        final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-        final WebServiceImpl ws = loc.getWebService();
+        final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+        final WebService3Impl ws = loc.getWebService3();
         module = ws.moduleDetail(recordId);
       } catch (final Exception e) {
         log4j.error(e);
@@ -632,8 +632,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // if it is a remote installation get the module from webservice,
       // other case the obx file is passed as an InputStream
       try {
-        final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-        final WebServiceImpl ws = loc.getWebService();
+        final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+        final WebService3Impl ws = loc.getWebService3();
         module = ws.moduleDetail(recordId);
       } catch (final Exception e) {
         log4j.error(e);
@@ -1241,8 +1241,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
           }
         }
       }
-      final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-      final WebServiceImpl ws = loc.getWebService();
+      final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+      final WebService3Impl ws = loc.getWebService3();
       modules = ws.moduleSearch(text, getInstalledModules());
 
     } catch (final Exception e) {
@@ -1281,7 +1281,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         moduleBox.put("help", mod.getHelp());
         moduleBox.put("url", getLink(url));
         moduleBox.put("moduleVersionID", mod.getModuleVersionID());
-        moduleBox.put("commercialStyle", (mod.getIsCommercial() ? "true" : "none"));
+        moduleBox.put("commercialStyle", (mod.isIsCommercial() ? "true" : "none"));
 
         modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
         i++;
@@ -1450,6 +1450,28 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (final Exception ex) {
       throw new ServletException(ex);
+    }
+
+    try {
+      OBContext.setAdminMode();
+
+      // Possible maturity levels are obtained from CR, obtain them once per session and store
+      MaturityLevel levels = (MaturityLevel) vars.getSessionObject("SettingsModule|MaturityLevels");
+      if (levels == null) {
+        levels = new MaturityLevel();
+        vars.setSessionObject("SettingsModule|MaturityLevels", levels);
+      }
+
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+
+      xmlDocument.setParameter("selectedScanLevel", sysInfo.getMaturityUpdate() == null ? "500"
+          : sysInfo.getMaturityUpdate());
+      xmlDocument.setParameter("selectedSearchLevel", sysInfo.getMaturitySearch() == null ? "500"
+          : sysInfo.getMaturitySearch());
+      xmlDocument.setData("reportScanLevel", "liststructure", levels.getCombo());
+      xmlDocument.setData("reportSearchLevel", "liststructure", levels.getCombo());
+    } finally {
+      OBContext.restorePreviousMode();
     }
     out.println(xmlDocument.print());
     out.close();
