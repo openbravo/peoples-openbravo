@@ -3788,9 +3788,16 @@ public class Wad extends DefaultHandler {
       }
     }
 
-    final Properties importsCSS = new Properties();
-    final Properties importsJS = new Properties();
-    final Properties javaScriptFunctions = new Properties();
+    final ArrayList<String> importsCSS = new ArrayList<String>();
+    ArrayList<String> usedCSSImports = new ArrayList<String>();
+    final ArrayList<String> importsJS = new ArrayList<String>();
+    ArrayList<String> usedJSImports = new ArrayList<String>();
+    final ArrayList<String> javaScriptFunctions = new ArrayList<String>();
+    ArrayList<String> usedScripts = new ArrayList<String>();
+    final ArrayList<String> calendarScripts = new ArrayList<String>();
+
+    boolean hasCalendar = false;
+
     final StringBuffer displayLogicFunction = new StringBuffer();
     final StringBuffer readOnlyLogicFunction = new StringBuffer();
     final StringBuffer validations = new StringBuffer();
@@ -3959,9 +3966,12 @@ public class Wad extends DefaultHandler {
         {
           final Vector<String[]> auxJavaScript = auxControl.getJSCode();
           if (auxJavaScript != null) {
-            for (int j = 0; j < auxJavaScript.size(); j++) {
-              final String[] auxObj = auxJavaScript.elementAt(j);
-              javaScriptFunctions.setProperty(auxObj[0], auxObj[1]);
+            for (String[] auxObj : auxJavaScript) {
+              // Use only one import per key
+              if (!usedJSImports.contains(auxObj[0])) {
+                usedJSImports.add(auxObj[0]);
+                javaScriptFunctions.add(auxObj[1]);
+              }
             }
           }
         } // End getting JavaScript
@@ -3969,9 +3979,12 @@ public class Wad extends DefaultHandler {
         {
           final Vector<String[]> auxCss = auxControl.getCSSImport();
           if (auxCss != null) {
-            for (int j = 0; j < auxCss.size(); j++) {
-              final String[] auxObj = auxCss.elementAt(j);
-              importsCSS.setProperty(auxObj[0], auxObj[1]);
+            for (String[] auxObj : auxCss) {
+              // Use only one import per key
+              if (!usedCSSImports.contains(auxObj[0])) {
+                usedCSSImports.add(auxObj[0]);
+                importsCSS.add(auxObj[1]);
+              }
             }
           }
         } // End getting css imports
@@ -3979,9 +3992,18 @@ public class Wad extends DefaultHandler {
         {
           final Vector<String[]> auxJs = auxControl.getImport();
           if (auxJs != null) {
-            for (int j = 0; j < auxJs.size(); j++) {
-              final String[] auxObj = auxJs.elementAt(j);
-              importsJS.setProperty(auxObj[0], auxObj[1]);
+            for (String[] auxObj : auxJs) {
+              if (!usedScripts.contains(auxObj[0])) {
+                if (auxObj[0].startsWith("calendar")) {
+                  // calendar scripts must be appended after all scripts, keep them in
+                  // calendarScripts Array
+                  hasCalendar = true;
+                  calendarScripts.add(auxObj[1]);
+                } else {
+                  importsJS.add(auxObj[1]);
+                }
+                usedScripts.add(auxObj[0]);
+              }
             }
           }
         } // End getting js imports
@@ -4007,38 +4029,28 @@ public class Wad extends DefaultHandler {
 
     xmlDocument.setParameter("hiddenControlDesign", htmlHidden.toString());
     xmlDocument.setParameter("controlDesign", html.toString());
+
     final StringBuffer sbImportCSS = new StringBuffer();
-    for (final Enumeration<?> e = importsCSS.propertyNames(); e.hasMoreElements();) {
-      final String _name = (String) e.nextElement();
-      sbImportCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"").append(
-          importsCSS.getProperty(_name)).append("\"/>\n");
+    for (String imp : importsCSS) {
+      sbImportCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"").append(imp).append(
+          "\"/>\n");
     }
     xmlDocument.setParameter("importCSS", sbImportCSS.toString());
+
     final StringBuffer sbImportJS = new StringBuffer();
-    boolean hasCalendar = false;
-    boolean calendarInserted = false;
-    boolean calendarLangInserted = false;
-    for (final Enumeration<?> e = importsJS.propertyNames(); e.hasMoreElements();) {
-      final String _name = (String) e.nextElement();
-      if (_name.startsWith("calendar"))
-        hasCalendar = true;
-      if (!_name.equals("calendarLang") || calendarInserted) {
-        sbImportJS.append("<script language=\"JavaScript\" src=\"").append(
-            importsJS.getProperty(_name)).append("\" type=\"text/javascript\"></script>\n");
-        if (_name.equals("calendarLang"))
-          calendarLangInserted = true;
-      }
-      if (_name.equals("calendar"))
-        calendarInserted = true;
+    if (hasCalendar) {
+      // Add calendar scripts at the end
+      importsJS.addAll(calendarScripts);
     }
-    if (hasCalendar && !calendarLangInserted)
-      sbImportJS.append("<script language=\"JavaScript\" src=\"").append(
-          importsJS.getProperty("calendarLang")).append("\" type=\"text/javascript\"></script>\n");
+    for (String imp : importsJS) {
+      sbImportJS.append("<script language=\"JavaScript\" src=\"").append(imp).append(
+          "\" type=\"text/javascript\"></script>\n");
+    }
     xmlDocument.setParameter("importJS", sbImportJS.toString());
+
     final StringBuffer script = new StringBuffer();
-    for (final Enumeration<?> e = javaScriptFunctions.propertyNames(); e.hasMoreElements();) {
-      final String _name = (String) e.nextElement();
-      script.append(javaScriptFunctions.getProperty(_name)).append("\n");
+    for (String imp : javaScriptFunctions) {
+      script.append(imp).append("\n");
     }
 
     // First focused element

@@ -92,6 +92,7 @@ export.database: exports database structure and data to xml files.
   <property name="obx.export.CS" value="false" />
   <property name="chekPerms" value="false" />
   <property name="force" value="false" />
+  <property name="strict.template.application" value="false" />
   <property name="rd" value="false" />
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />

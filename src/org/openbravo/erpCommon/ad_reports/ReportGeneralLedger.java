@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2009 Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportGeneralLedger extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -118,8 +119,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
       String strmProductId = vars.getRequestInGlobalVariable("inpmProductId_IN",
           "ReportGeneralLedger|mProductId", IsIDFilter.instance);
-      String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
-          "ReportGeneralLedger|cProjectId", "", IsIDFilter.instance);
+      String strcProjectId = vars.getRequestInGlobalVariable("inpcProjectId_IN",
+          "ReportGeneralLedger|cProjectId", IsIDFilter.instance);
       String strGroupBy = vars
           .getRequestGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy");
       String strHide = vars.getStringParameter("inpHideMatched");
@@ -566,7 +567,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strLanguage = vars.getLanguage();
 
       parameters.put("ShowGrouping", new Boolean(!strGroupBy.equals("")));
-      parameters.put("Title", classInfo.name);
       StringBuilder strSubTitle = new StringBuilder();
       strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
           + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
@@ -649,6 +649,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     return Tree.getMembers(this, strTree, strChild);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportGeneralLedger. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

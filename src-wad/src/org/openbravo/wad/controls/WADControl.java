@@ -374,7 +374,7 @@ public class WADControl {
     StringBuffer texto = new StringBuffer();
     int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
     int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-    if (field.istranslated.equals("Y")
+    if ("Y".equals(field.istranslated)
         && TableRelationData.existsTableColumn(conn, field.tablename + "_TRL", field.name)) {
       FieldsData fdi[] = FieldsData.tableKeyColumnName(conn, field.tablename);
       if (fdi == null || fdi.length == 0) {

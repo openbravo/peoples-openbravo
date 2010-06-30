@@ -302,6 +302,13 @@ public class DocLine {
     m_AmtSourceCr = ZERO.toString();
   } // setAmounts
 
+  /**
+   * @return the m_description
+   */
+  public String getM_description() {
+    return m_description;
+  }
+
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

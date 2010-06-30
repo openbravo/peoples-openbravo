@@ -135,22 +135,10 @@ public class TabFilter extends HttpSecureAppServlet {
   }
 
   private boolean isHasDescriptionReference(String reference) {
-    switch (Integer.valueOf(reference).intValue()) {
-    case 17:
-    case 18:
-    case 19:
-    case 21:
-    case 25:
-    case 28:
-    case 30:
-    case 31:
-    case 32:
-    case 35:
-    case 800011:
-      return true;
-    }
-    ;
-    return false;
+	  if("17".equals(reference) || "18".equals(reference) || "19".equals(reference) || "21".equals(reference) || "25".equals(reference) || "28".equals(reference) || "30".equals(reference) || "31".equals(reference) || "32".equals(reference) || "35".equals(reference) || "800011".equals(reference)){
+		  return true;
+	  }
+      return false;
   }
 
   private TabFilterData[] getShownFieldsData(TabFilterData[] data) {

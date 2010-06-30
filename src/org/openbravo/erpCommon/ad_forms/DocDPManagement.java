@@ -237,6 +237,23 @@ public class DocDPManagement extends AcctServer {
  *
  */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    DocDPManagementData[] data;
+    try {
+      data = DocDPManagementData.paymentInformation(conn, strRecordId);
+    } catch (ServletException e) {
+      log4j.error(e.getMessage(), e);
+      setStatus(STATUS_Error);
+      return false;
+    }
+
+    if (data.length > 0) {
+      for (DocDPManagementData row : data) {
+        if (row.ismanual.equals("N") || row.isdirectposting.equals("Y"))
+          return true;
+      }
+      setStatus(STATUS_DocumentDisabled);
+      return false;
+    }
     return true;
   }
 

@@ -140,6 +140,22 @@ isMinorVersion=false
 
 safe.mode=true
 
+################################
+# Strict Template Application  #
+################################
+
+# This property is used to set the configuration script application mode.
+# If the template application mode is strict, then inconsistencies in the template
+# (such as the value to be changed being different from the value in a column
+# data change of a configuration script) will make the process fail.
+# If it's not strict the process will show a warning, but otherwise continue
+
+# For production environments, this property should be false.
+# For development environments, specially those working with
+# Industry templates and configuration scripts, it is advisable to set this property to true
+
+strict.template.application=false
+
 ##############
 # Hibernate #
 ##############

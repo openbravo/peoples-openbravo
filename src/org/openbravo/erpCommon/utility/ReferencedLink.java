@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -36,9 +36,11 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.domain.ModelImplementationMapping;
+import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.model.project.Project;
@@ -83,7 +85,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
   private String getJSON(VariablesSecureApp vars) throws ServletException {
     String tabId = getTabId(vars);
-    String recordId = vars.getStringParameter("inpKeyReferenceId", IsIDFilter.instance);
+    String recordId = vars.getStringParameter("inpKeyReferenceId");
     JSONObject json = null;
 
     try {
@@ -95,7 +97,18 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
       json.put("tabId", tabId);
       json.put("windowId", tab.getWindow().getId());
-      json.put("recordId", recordId);
+
+      final Entity entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
+
+      // special case, find the real recordId for the language case
+      if (entity.getName().equals(Language.ENTITY_NAME)) {
+        final OBQuery<Language> languages = OBDal.getInstance().createQuery(Language.class,
+            Language.PROPERTY_LANGUAGE + "=?");
+        languages.setParameters(Collections.singletonList((Object) recordId));
+        json.put("recordId", languages.list().get(0).getId());
+      } else {
+        json.put("recordId", recordId);
+      }
 
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
       String tabTitle = null;
@@ -109,7 +122,6 @@ public class ReferencedLink extends HttpSecureAppServlet {
         tabTitle = tab.getWindow().getName();
       }
 
-      final Entity entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
       json.put("keyParameter", "inp"
           + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
       json.put("tabTitle", tabTitle);

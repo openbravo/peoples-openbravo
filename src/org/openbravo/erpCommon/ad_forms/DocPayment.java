@@ -306,19 +306,11 @@ public class DocPayment extends AcctServer {
             DocLine_Payment lineAux = DocLine_Payment.clone(line);
             lineAux.setM_C_WithHolding_ID(data[j].cWithholdingId);
             lineAux.setM_C_Tax_ID(data[j].cTaxId);
-
-            if (data[j].statusInitial.equals(data[j].status)) {
-              fact.createLine(lineAux, new Account(conn,
-                  (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
-                  C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit), (amountcredit
-                      .equals("0") ? "" : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                  DocumentType, conn);
-            } else {
-              fact.createLine(lineAux, getAccountBPartner(lineAux.m_C_BPartner_ID, as,
-                  lineAux.isReceipt.equals("Y"), lineAux.dpStatus, conn), C_Currency_ID,
-                  (amountdebit.equals("0") ? "" : amountdebit), (amountcredit.equals("0") ? ""
-                      : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-            }
+            fact.createLine(lineAux, new Account(conn,
+                (lineAux.isReceipt.equals("Y") ? data[j].creditAcct : data[j].debitAcct)),
+                C_Currency_ID, (amountdebit.equals("0") ? "" : amountdebit), (amountcredit
+                    .equals("0") ? "" : amountcredit), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
           }
         }
       } // END debt-payment conditions
@@ -337,7 +329,8 @@ public class DocPayment extends AcctServer {
 
       // 6* PPA - Bank in transit default, paid DPs, (non manual and
       // manual non direct posting)
-      if ((line.isPaid.equals("Y") || new BigDecimal(line.Amount).compareTo(new BigDecimal(line.WriteOffAmt))==0)
+      if ((line.isPaid.equals("Y") || new BigDecimal(line.Amount).compareTo(new BigDecimal(
+          line.WriteOffAmt)) == 0)
           && ((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals("")) || (line.C_Settlement_Cancel_ID
               .equals(Record_ID)))) {
         BigDecimal finalLineAmt = new BigDecimal(line.Amount);
@@ -646,6 +639,22 @@ public class DocPayment extends AcctServer {
    * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    DocPaymentData[] data;
+    try {
+      data = DocPaymentData.paymentsInformation(conn, strRecordId);
+    } catch (ServletException e) {
+      log4j.error(e.getMessage(), e);
+      setStatus(STATUS_Error);
+      return false;
+    }
+    if (data.length > 0) {
+      for (DocPaymentData row : data) {
+        if (row.ismanual.equals("N") || row.isdirectposting.equals("Y"))
+          return true;
+      }
+      setStatus(STATUS_DocumentDisabled);
+      return false;
+    }
     return true;
   }
 

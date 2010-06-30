@@ -390,7 +390,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
           .append(vars.getSessionValue("$C_CURRENCY_ID")).append("') CUR");
     }
 
-    response.setContentType("application/xls");
+    response.setContentType("application/xls; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
     XmlDocument xmlDocument = null;
@@ -403,7 +403,6 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
 
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());

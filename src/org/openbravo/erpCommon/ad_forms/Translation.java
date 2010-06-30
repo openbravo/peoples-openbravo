@@ -176,7 +176,7 @@ public class Translation extends HttpSecureAppServlet {
 
     myMessage = new OBError();
     myMessage.setTitle("");
-    final int AD_Client_ID = Integer.valueOf(strClient);
+    final String AD_Client_ID = strClient;
 
     final String strFTPDirectory = globalParameters.strFTPDirectory;
 
@@ -370,7 +370,7 @@ public class Translation extends HttpSecureAppServlet {
     }
   }
 
-  private String exportModulesTrl(String rootDirectory, int AD_Client_ID, String AD_Language,
+  private String exportModulesTrl(String rootDirectory, String AD_Client_ID, String AD_Language,
       String Trl_Table) {
     try {
       final TranslationData[] modules = TranslationData.modules(this);
