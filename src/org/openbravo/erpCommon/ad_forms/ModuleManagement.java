@@ -153,7 +153,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate[0] = updateModule;
       }
       printPageInstall1(response, request, vars, null, false, null, modulesToUpdate);
-    } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD")) {
+    } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD", "SETTINGS_REMOVE")) {
       printPageSettings(response, request);
     } else {
       pageError(response);
@@ -1458,12 +1458,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode();
 
-      if (vars.commandIn("SETTINGS_ADD")) {
+      if (vars.commandIn("SETTINGS_ADD", "SETTINGS_REMOVE")) {
         String moduleId = vars.getStringParameter("inpModule", IsIDFilter.instance);
+        if (moduleId == null || moduleId.isEmpty()) {
+          moduleId = vars.getStringParameter("inpModuleId", IsIDFilter.instance);
+        }
         org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
             org.openbravo.model.ad.module.Module.class, moduleId);
         if (mod != null) {
-          mod.setMaturityUpdate(vars.getStringParameter("inpModuleLevel"));
+          if (vars.commandIn("SETTINGS_ADD")) {
+            mod.setMaturityUpdate(vars.getStringParameter("inpModuleLevel"));
+          } else {
+            mod.setMaturityUpdate(null);
+          }
           OBDal.getInstance().flush();
         } else {
           log4j.error("Module does not exists ID:" + moduleId);
@@ -1486,6 +1493,23 @@ public class ModuleManagement extends HttpSecureAppServlet {
           : sysInfo.getMaturitySearch());
       xmlDocument.setData("reportSearchLevel", "liststructure", levels.getCombo());
       xmlDocument.setData("reportModuleLevel", "liststructure", levels.getCombo());
+
+      // Populate module specific grid
+      OBCriteria<org.openbravo.model.ad.module.Module> qModuleSpecific = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.Module.class);
+      qModuleSpecific.add(Expression
+          .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
+      qModuleSpecific.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
+      ArrayList<HashMap<String, String>> moduleSpecifics = new ArrayList<HashMap<String, String>>();
+      for (org.openbravo.model.ad.module.Module module : qModuleSpecific.list()) {
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put("id", module.getId());
+        m.put("name", module.getName());
+        m.put("level", levels.getLevelName(module.getMaturityUpdate()));
+        moduleSpecifics.add(m);
+      }
+      xmlDocument.setData("moduleDetail", FieldProviderFactory
+          .getFieldProviderArray(moduleSpecifics));
 
       // Populate combo of modules without specific setting
       OBCriteria<org.openbravo.model.ad.module.Module> qModule = OBDal.getInstance()

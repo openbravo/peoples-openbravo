@@ -48,6 +48,12 @@ var baseDirectory = "../../../../../web/";
 
 
 <script language="JavaScript" type="text/javascript">
+  function removeModule(moduleId){
+    var frm = document.frmMain;
+    frm.inpModuleId.value = moduleId;
+    submitCommandForm('SETTINGS_REMOVE', false, null, 'ModuleManagement.html', '_self', null, false);
+  }
+
   function validate()
   {
     var frm = document.frmMain;
@@ -99,8 +105,8 @@ var baseDirectory = "../../../../../web/";
 </head>
 <body onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
 <form method="post" action="ModuleManagement.html" name="frmMain">
-  <input type="hidden" name="Command">
-  <input type="hidden" name="IsPopUpCall" value="1"></input>
+  <input type="hidden" name="Command"/>
+  <input type="hidden" name="inpModuleId" value=""/>
   
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
@@ -313,11 +319,15 @@ var baseDirectory = "../../../../../web/";
 				            <th class="DataGrid_Header_Cell" width="30%">Maturity level for upgrades</th>
 				            <th class="DataGrid_Header_Cell" width="10%"></th>
 				          </tr>
-				          <div id="sectionDetail"> 
+				          <div id="sectionModuleDetail"> 
 				            <tr class="DataGrid_Body_Row DataGrid_Body_Row_xx" id="funcEvenOddRow"> 
-				              <td class="DataGrid_Body_Cell" id="fieldAdorgname">xxModule</td>
-				              <td class="DataGrid_Body_Cell" id="fieldCdoctypename">xxTesting</td>
-				              <td class="DataGrid_Body_Cell" id="fieldTotallines"><a href="#"><img width="20" class="Button_Icon Button_Icon_cancel" alt="Add" title="Add" src="../../../../../web/images/blank.gif" border="0"></a></td>
+				              <td class="DataGrid_Body_Cell" id="fieldModuleName">xxModule</td>
+				              <td class="DataGrid_Body_Cell" id="fieldModuleLevel">xxTesting</td>
+				              <td class="DataGrid_Body_Cell"">
+				                <a href="#">
+				                  <img id="fieldModuleRemove" onclick="removeModule('xx'); return false;" class="Button_Icon Button_Icon_cancel" alt="Remove" title="Remove" src="../../../../../web/images/blank.gif" border="0"/>
+				                </a>
+				              </td>
 				            </tr>
 				          </div>
 				        </table>

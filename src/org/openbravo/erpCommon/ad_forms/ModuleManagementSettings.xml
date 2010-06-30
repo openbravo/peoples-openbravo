@@ -47,4 +47,11 @@
     <FIELD id="moduleComboOption">name</FIELD>
     <SECTION id="sectionModuleComboDetail"/>
   </structure>
+  
+  <structure name="moduleDetail">
+    <FIELD id="fieldModuleName">name</FIELD>
+    <FIELD id="fieldModuleLevel">level</FIELD>
+    <FIELD id="fieldModuleRemove" attribute="onclick" replace="xx">id</FIELD>
+    <SECTION id="sectionModuleDetail"/>
+  </structure>
 </REPORT>

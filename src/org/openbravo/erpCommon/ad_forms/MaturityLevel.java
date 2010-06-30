@@ -68,4 +68,17 @@ public class MaturityLevel {
     }
     return rt;
   }
+
+  /**
+   * Returns the name associated to a level
+   */
+  public String getLevelName(String maturityLevel) {
+    for (String[] level : levels) {
+      if (level[0].equals(maturityLevel)) {
+        return level[1];
+      }
+    }
+    log4j.warn("Could not find maturity level " + maturityLevel);
+    return "--";
+  }
 }
