@@ -340,8 +340,11 @@ var baseDirectory = "../../../../../web/";
                 </tr>
                 <tr>
                   <td><span class="Label_ReadOnly_Text">Module</span></td>
-                  <td colspan="2">
-                    <select class="Combo Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select class="Combo Combo_TwoCells_width" name="inpModule">
+                      <div id="sectionModuleComboDetail">
+                        <option id="moduleComboOption" value="">xxModule</option>
+                      </div>
                     </select>
                   </td>
                   <td class="Combo_ContentCell" colspan="2">
@@ -354,7 +357,8 @@ var baseDirectory = "../../../../../web/";
                   </td>
                    <td class="Button_LeftAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink_default" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('HISTORY_SEARCH', false, null, 'ModuleManagement.html', '_self', null, false);return false;" id="buttonAdd">
+                        <a class="ButtonLink_default" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" 
+                           onclick="submitCommandForm('SETTINGS_ADD', false, null, 'ModuleManagement.html', '_self', null, false);return false;" id="buttonAdd">
                           <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                             <tr>
                               <td class="Button_left"><img class="Button_Icon" alt="Add" title="Add" src="../../../../../web/images/blank.gif" border="0"></td>

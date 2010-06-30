@@ -31,10 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -150,7 +153,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate[0] = updateModule;
       }
       printPageInstall1(response, request, vars, null, false, null, modulesToUpdate);
-    } else if (vars.commandIn("SETTINGS")) {
+    } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD")) {
       printPageSettings(response, request);
     } else {
       pageError(response);
@@ -1455,6 +1458,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode();
 
+      if (vars.commandIn("SETTINGS_ADD")) {
+        String moduleId = vars.getStringParameter("inpModule", IsIDFilter.instance);
+        org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+            org.openbravo.model.ad.module.Module.class, moduleId);
+        if (mod != null) {
+          mod.setMaturityUpdate(vars.getStringParameter("inpModuleLevel"));
+          OBDal.getInstance().flush();
+        } else {
+          log4j.error("Module does not exists ID:" + moduleId);
+        }
+      }
+
       // Possible maturity levels are obtained from CR, obtain them once per session and store
       MaturityLevel levels = (MaturityLevel) vars.getSessionObject("SettingsModule|MaturityLevels");
       if (levels == null) {
@@ -1462,17 +1477,31 @@ public class ModuleManagement extends HttpSecureAppServlet {
         vars.setSessionObject("SettingsModule|MaturityLevels", levels);
       }
 
+      // Populate maturity levels combos
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-
       xmlDocument.setParameter("selectedScanLevel", sysInfo.getMaturityUpdate() == null ? "500"
           : sysInfo.getMaturityUpdate());
       xmlDocument.setData("reportScanLevel", "liststructure", levels.getCombo());
-
       xmlDocument.setParameter("selectedSearchLevel", sysInfo.getMaturitySearch() == null ? "500"
           : sysInfo.getMaturitySearch());
       xmlDocument.setData("reportSearchLevel", "liststructure", levels.getCombo());
-
       xmlDocument.setData("reportModuleLevel", "liststructure", levels.getCombo());
+
+      // Populate combo of modules without specific setting
+      OBCriteria<org.openbravo.model.ad.module.Module> qModule = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.Module.class);
+      qModule.add(Expression.isNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
+      qModule.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
+
+      ArrayList<HashMap<String, String>> modules = new ArrayList<HashMap<String, String>>();
+      for (org.openbravo.model.ad.module.Module module : qModule.list()) {
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put("id", module.getId());
+        m.put("name", module.getName());
+        modules.add(m);
+      }
+      xmlDocument.setData("moduleCombo", FieldProviderFactory.getFieldProviderArray(modules));
+
     } finally {
       OBContext.restorePreviousMode();
     }

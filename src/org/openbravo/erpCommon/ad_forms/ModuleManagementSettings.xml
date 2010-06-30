@@ -13,7 +13,7 @@
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
  * All portions are Copyright (C) 2010 Openbravo SLU 
- * All Rights Reserved. 
+ * All Rights Reserved.  
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -41,4 +41,10 @@
   </SUBREPORT>
   
   <SUBREPORT id="reportModuleLevel" name="reportModuleLevel" report="org/openbravo/erpCommon/reference/List"/>
+  
+  <structure name="moduleCombo">
+    <FIELD id="moduleComboOption" attribute="value">id</FIELD>
+    <FIELD id="moduleComboOption">name</FIELD>
+    <SECTION id="sectionModuleComboDetail"/>
+  </structure>
 </REPORT>
