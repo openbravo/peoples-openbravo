@@ -153,7 +153,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate[0] = updateModule;
       }
       printPageInstall1(response, request, vars, null, false, null, modulesToUpdate);
-    } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD", "SETTINGS_REMOVE")) {
+    } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD", "SETTINGS_REMOVE", "SETTINGS_SAVE")) {
       printPageSettings(response, request);
     } else {
       pageError(response);
@@ -1457,6 +1457,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     try {
       OBContext.setAdminMode();
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
 
       if (vars.commandIn("SETTINGS_ADD", "SETTINGS_REMOVE")) {
         String moduleId = vars.getStringParameter("inpModule", IsIDFilter.instance);
@@ -1475,6 +1476,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
         } else {
           log4j.error("Module does not exists ID:" + moduleId);
         }
+      } else if (vars.commandIn("SETTINGS_SAVE")) {
+        sysInfo.setMaturitySearch(vars.getStringParameter("inpSearchLevel"));
+        sysInfo.setMaturityUpdate(vars.getStringParameter("inpScanLevel"));
       }
 
       // Possible maturity levels are obtained from CR, obtain them once per session and store
@@ -1485,7 +1489,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
 
       // Populate maturity levels combos
-      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
       xmlDocument.setParameter("selectedScanLevel", sysInfo.getMaturityUpdate() == null ? "500"
           : sysInfo.getMaturityUpdate());
       xmlDocument.setData("reportScanLevel", "liststructure", levels.getCombo());
