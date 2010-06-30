@@ -1264,11 +1264,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
       message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
       vars.setMessage("ModuleManagement", message);
-      log4j.error(e);
+      log4j.error("Error searching modules", e);
       try {
         response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
       } catch (final Exception ex) {
-        log4j.error(ex);
+        log4j.error("error searching modules", ex);
       }
     }
 
@@ -1295,6 +1295,16 @@ public class ModuleManagement extends HttpSecureAppServlet {
         moduleBox.put("url", getLink(url));
         moduleBox.put("moduleVersionID", mod.getModuleVersionID());
         moduleBox.put("commercialStyle", (mod.isIsCommercial() ? "true" : "none"));
+
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> additioanlInfo = mod.getAdditionalInfo();
+        if (additioanlInfo != null && !"500".equals(additioanlInfo.get("maturity.level"))) {
+          // Display module's maturity in case it is not Production (500)
+          moduleBox.put("maturityStyle", "true");
+          moduleBox.put("maturityLevel", additioanlInfo.get("maturity.name"));
+        } else {
+          moduleBox.put("maturityStyle", "none");
+        }
 
         modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
         i++;
