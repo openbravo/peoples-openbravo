@@ -29,6 +29,9 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  
+  <PARAMETER id="lessMature" name="lessMature" default=""/>
+  <PARAMETER id="mostMature" name="mostMature" default=""/>
  
   <PARAMETER id="selectedScanLevel" name="selectedScanLevel" default=""/>
   <SUBREPORT id="reportScanLevel" name="reportScanLevel" report="org/openbravo/erpCommon/reference/List">

@@ -1533,6 +1533,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
       xmlDocument.setData("moduleCombo", FieldProviderFactory.getFieldProviderArray(modules));
 
+      // less and most mature values
+      xmlDocument.setParameter("lessMature", levels.getLessMature());
+      xmlDocument.setParameter("mostMature", levels.getMostMature());
+
     } finally {
       OBContext.restorePreviousMode();
     }

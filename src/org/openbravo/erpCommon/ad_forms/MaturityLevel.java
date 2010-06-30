@@ -81,4 +81,18 @@ public class MaturityLevel {
     log4j.warn("Could not find maturity level " + maturityLevel);
     return "--";
   }
+
+  /**
+   * Returns the less mature level name. Assumes the list is ordered
+   */
+  public String getLessMature() {
+    return levels[0][1];
+  }
+
+  /**
+   * Returns the most mature level name. Assumes the list is ordered
+   */
+  public String getMostMature() {
+    return levels[levels.length - 1][1];
+  }
 }
