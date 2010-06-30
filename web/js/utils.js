@@ -4129,6 +4129,14 @@ function buttonEvent(event, obj) {
 * Returns to previous web
 */
 function goToPreviousPage() {
+  setMDIEnvironment();
+  var inMDIEnvironment = (isWindowInMDITab || isWindowInMDIContext); 
+  if (inMDIEnvironment) {
+    var appFrame = getFrame("appFrame");
+    appFrame.history.back();
+    return;
+  }
+  
   var appUrl = getAppUrl();
   //if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
   //  history.back();
