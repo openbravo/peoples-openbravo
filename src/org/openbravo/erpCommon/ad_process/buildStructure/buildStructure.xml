@@ -5,7 +5,8 @@
         <name>Initial Build Validation</name>
         <successMessage/>
         <warningMessage/>
-        <errorMessage>The build validation failed. The system hasn't been modified, and is still stable, but you should fix the problems described in the validation messages below (either by uninstalling the affected modules, or by fixing the problems the validation found), and then start the build again.</errorMessage>
+        <errorMessage>Your system contains some data inconsistencies that must be resolved before applying this maintenance pack.
+The version you are installing introduces stronger consistency checking and that validation failed. The system hasn't been modified and it is still stable. You may continue using it in its current configuration. However, you must address the problems described in the validation messages below (either by uninstalling the affected modules, or by resolving the problems the validation found), before you can restart the installation process.</errorMessage>
         <stepList/>
       </mainStep>
       <mainStep code="RB20" successCode="RB60" warningCode="RB60" errorCode="RB59">
