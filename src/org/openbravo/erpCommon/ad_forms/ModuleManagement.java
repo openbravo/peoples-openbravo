@@ -1466,10 +1466,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("selectedScanLevel", sysInfo.getMaturityUpdate() == null ? "500"
           : sysInfo.getMaturityUpdate());
+      xmlDocument.setData("reportScanLevel", "liststructure", levels.getCombo());
+
       xmlDocument.setParameter("selectedSearchLevel", sysInfo.getMaturitySearch() == null ? "500"
           : sysInfo.getMaturitySearch());
-      xmlDocument.setData("reportScanLevel", "liststructure", levels.getCombo());
       xmlDocument.setData("reportSearchLevel", "liststructure", levels.getCombo());
+
+      xmlDocument.setData("reportModuleLevel", "liststructure", levels.getCombo());
     } finally {
       OBContext.restorePreviousMode();
     }

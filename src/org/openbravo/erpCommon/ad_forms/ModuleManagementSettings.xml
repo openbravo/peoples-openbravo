@@ -40,5 +40,5 @@
     <ARGUMENT name="parameterListSelected" withId="selectedSearchLevel"/>
   </SUBREPORT>
   
-  
+  <SUBREPORT id="reportModuleLevel" name="reportModuleLevel" report="org/openbravo/erpCommon/reference/List"/>
 </REPORT>

@@ -293,7 +293,7 @@ var baseDirectory = "../../../../../web/";
                     </span>
                   </td>
                   <td class="Combo_ContentCell" colspan="2">
-                    <select name="inpScanLevel" id="inpScanLevelx" class="Combo Combo_TwoCells_width">
+                    <select name="inpScanLevel" id="inpScanLevel" class="Combo Combo_TwoCells_width">
                         <div id="reportScanLevel">
                           <div id="sectionDetailScanLevel"></div>
                         </div>
@@ -344,10 +344,14 @@ var baseDirectory = "../../../../../web/";
                     <select class="Combo Combo_TwoCells_width">
                     </select>
                   </td>
-                  <td colspan="2">
-                    <select class="Combo Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select name="inpModuleLevel" id="inpModuleLevel" class="Combo Combo_TwoCells_width">
+                        <div id="reportModuleLevel">
+                          <div id="sectionModuleLevel"></div>
+                        </div>
+                      </option>
                     </select>
-                   </td>
+                  </td>
                    <td class="Button_LeftAlign_ContentCell">
                       <div>
                         <a class="ButtonLink_default" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('HISTORY_SEARCH', false, null, 'ModuleManagement.html', '_self', null, false);return false;" id="buttonAdd">
