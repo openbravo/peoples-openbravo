@@ -20,7 +20,7 @@ public class WebService3SoapBindingImpl implements org.openbravo.services.webser
         return null;
     }
 
-    public org.openbravo.services.webservice.SimpleModule[] moduleSearch(java.lang.String word, java.lang.String[] exclude) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.SimpleModule[] moduleSearch(java.lang.String word, java.lang.String[] exclude, java.util.HashMap additionalInfo) throws java.rmi.RemoteException {
         return null;
     }
 

@@ -1247,7 +1247,16 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
       final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
       final WebService3Impl ws = loc.getWebService3();
-      modules = ws.moduleSearch(text, getInstalledModules());
+
+      HashMap<String, String> maturitySearch = new HashMap<String, String>();
+      try {
+        OBContext.setAdminMode();
+        SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+        maturitySearch.put("search.level", sys.getMaturitySearch());
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+      modules = ws.moduleSearch(text, getInstalledModules(), maturitySearch);
 
     } catch (final Exception e) {
       final OBError message = new OBError();

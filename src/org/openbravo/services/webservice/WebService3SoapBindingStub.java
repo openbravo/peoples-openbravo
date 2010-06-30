@@ -62,6 +62,8 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
         oper.addParameter(param);
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "exclude"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService3", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
         oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "additionalInfo"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
+        oper.addParameter(param);
         oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService3", "ArrayOf_tns1_SimpleModule"));
         oper.setReturnClass(org.openbravo.services.webservice.SimpleModule[].class);
         oper.setReturnQName(new javax.xml.namespace.QName("", "moduleSearchReturn"));
@@ -422,7 +424,7 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
 }
     }
 
-    public org.openbravo.services.webservice.SimpleModule[] moduleSearch(java.lang.String word, java.lang.String[] exclude) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.SimpleModule[] moduleSearch(java.lang.String word, java.lang.String[] exclude, java.util.HashMap additionalInfo) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -435,7 +437,7 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {word, exclude});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {word, exclude, additionalInfo});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;

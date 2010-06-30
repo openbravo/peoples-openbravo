@@ -32,6 +32,7 @@
       <operation name="moduleSearch" qname="operNS:moduleSearch" xmlns:operNS="http://erp.ws.centralrepository.utility.openbravo.org" returnQName="moduleSearchReturn" returnType="rtns:ArrayOf_tns1_SimpleModule" xmlns:rtns="http://centralrepository.openbravo.com/openbravo/services/WebService3" returnItemType="tns2:SimpleModule" xmlns:tns2="/services/WebService3" soapAction="" >
         <parameter qname="word" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
         <parameter qname="exclude" type="tns:ArrayOf_xsd_string" xmlns:tns="http://centralrepository.openbravo.com/openbravo/services/WebService3"/>
+        <parameter qname="additionalInfo" type="tns:Map" xmlns:tns="http://xml.apache.org/xml-soap"/>
       </operation>
       <operation name="moduleRegister" qname="operNS:moduleRegister" xmlns:operNS="http://erp.ws.centralrepository.utility.openbravo.org" returnQName="moduleRegisterReturn" returnType="rtns:Module" xmlns:rtns="/services/WebService3" soapAction="" >
         <parameter qname="module" type="tns:Module" xmlns:tns="/services/WebService3"/>
