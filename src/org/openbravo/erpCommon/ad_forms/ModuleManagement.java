@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -1429,32 +1430,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private void printPageSettings(HttpServletResponse response, HttpServletRequest request)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/ModuleManagementSettings").createXmlDocument();
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    // Interface parameters
-    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "",
-        "", "", false, "ad_forms", strReplaceWith, false, true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-
-    try {
-      final WindowTabs tabs = new WindowTabs(this, vars,
-          "org.openbravo.erpCommon.ad_forms.ModuleManagement");
-      xmlDocument.setParameter("theme", vars.getTheme());
-      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html",
-          strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (final Exception ex) {
-      throw new ServletException(ex);
-    }
-
+    String discard[] = { "" };
     try {
       OBContext.setAdminMode();
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
@@ -1492,6 +1468,50 @@ public class ModuleManagement extends HttpSecureAppServlet {
         vars.setSessionObject("SettingsModule|MaturityLevels", levels);
       }
 
+      // Populate module specific grid
+      OBCriteria<org.openbravo.model.ad.module.Module> qModuleSpecific = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.Module.class);
+      qModuleSpecific.add(Expression
+          .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
+      qModuleSpecific.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
+      ArrayList<HashMap<String, String>> moduleSpecifics = new ArrayList<HashMap<String, String>>();
+      List<org.openbravo.model.ad.module.Module> moduleSpecificList = qModuleSpecific.list();
+      if (moduleSpecificList.isEmpty()) {
+        discard[0] = "moduleTable";
+      }
+      for (org.openbravo.model.ad.module.Module module : moduleSpecificList) {
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put("id", module.getId());
+        m.put("name", module.getName());
+        m.put("level", levels.getLevelName(module.getMaturityUpdate()));
+        moduleSpecifics.add(m);
+      }
+
+      // Populate combo of modules without specific setting
+      OBCriteria<org.openbravo.model.ad.module.Module> qModule = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.Module.class);
+      qModule.add(Expression.isNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
+      qModule.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
+
+      ArrayList<HashMap<String, String>> modules = new ArrayList<HashMap<String, String>>();
+      List<org.openbravo.model.ad.module.Module> moduleList = qModule.list();
+      if (moduleList.isEmpty()) {
+        discard[0] = "assignModule";
+      }
+      for (org.openbravo.model.ad.module.Module module : moduleList) {
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put("id", module.getId());
+        m.put("name", module.getName());
+        modules.add(m);
+      }
+
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_forms/ModuleManagementSettings", discard).createXmlDocument();
+
+      xmlDocument.setData("moduleDetail", FieldProviderFactory
+          .getFieldProviderArray(moduleSpecifics));
+      xmlDocument.setData("moduleCombo", FieldProviderFactory.getFieldProviderArray(modules));
+
       // Populate maturity levels combos
       xmlDocument.setParameter("selectedScanLevel", sysInfo.getMaturityUpdate() == null ? "500"
           : sysInfo.getMaturityUpdate());
@@ -1501,47 +1521,40 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setData("reportSearchLevel", "liststructure", levels.getCombo());
       xmlDocument.setData("reportModuleLevel", "liststructure", levels.getCombo());
 
-      // Populate module specific grid
-      OBCriteria<org.openbravo.model.ad.module.Module> qModuleSpecific = OBDal.getInstance()
-          .createCriteria(org.openbravo.model.ad.module.Module.class);
-      qModuleSpecific.add(Expression
-          .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
-      qModuleSpecific.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
-      ArrayList<HashMap<String, String>> moduleSpecifics = new ArrayList<HashMap<String, String>>();
-      for (org.openbravo.model.ad.module.Module module : qModuleSpecific.list()) {
-        HashMap<String, String> m = new HashMap<String, String>();
-        m.put("id", module.getId());
-        m.put("name", module.getName());
-        m.put("level", levels.getLevelName(module.getMaturityUpdate()));
-        moduleSpecifics.add(m);
-      }
-      xmlDocument.setData("moduleDetail", FieldProviderFactory
-          .getFieldProviderArray(moduleSpecifics));
-
-      // Populate combo of modules without specific setting
-      OBCriteria<org.openbravo.model.ad.module.Module> qModule = OBDal.getInstance()
-          .createCriteria(org.openbravo.model.ad.module.Module.class);
-      qModule.add(Expression.isNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
-      qModule.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
-
-      ArrayList<HashMap<String, String>> modules = new ArrayList<HashMap<String, String>>();
-      for (org.openbravo.model.ad.module.Module module : qModule.list()) {
-        HashMap<String, String> m = new HashMap<String, String>();
-        m.put("id", module.getId());
-        m.put("name", module.getName());
-        modules.add(m);
-      }
-      xmlDocument.setData("moduleCombo", FieldProviderFactory.getFieldProviderArray(modules));
-
       // less and most mature values
       xmlDocument.setParameter("lessMature", levels.getLessMature());
       xmlDocument.setParameter("mostMature", levels.getMostMature());
 
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+
+      // Interface parameters
+      final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "",
+          "", "", false, "ad_forms", strReplaceWith, false, true);
+      toolbar.prepareSimpleToolBarTemplate();
+      xmlDocument.setParameter("toolbar", toolbar.toString());
+
+      try {
+        final WindowTabs tabs = new WindowTabs(this, vars,
+            "org.openbravo.erpCommon.ad_forms.ModuleManagement");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+            "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs
+                .breadcrumb());
+        xmlDocument.setParameter("navigationBar", nav.toString());
+        final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html",
+            strReplaceWith);
+        xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+      } catch (final Exception ex) {
+        throw new ServletException(ex);
+      }
+      out.println(xmlDocument.print());
+      out.close();
     } finally {
       OBContext.restorePreviousMode();
     }
-    out.println(xmlDocument.print());
-    out.close();
   }
 
 }

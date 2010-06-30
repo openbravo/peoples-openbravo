@@ -312,7 +312,7 @@ var baseDirectory = "../../../../../web/";
                 <table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;">
 				    <tr>
 				      <td>
-				      <div class="Popup_ContentPane_Client" style="overflow: auto;">
+				      <div class="Popup_ContentPane_Client" id="moduleTable" style="overflow: auto;">
 				        <table cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table">
 				          <tr class="Popup_Client_Selector_DataGrid_HeaderRow"> 
 				            <th class="DataGrid_Header_Cell" width="60%">Module</th>
@@ -348,7 +348,7 @@ var baseDirectory = "../../../../../web/";
                 <tr>
                   <td colspan="6"/>
                 </tr>
-                <tr>
+                <tr id="assignModule">
                   <td><span class="Label_ReadOnly_Text">Module</span></td>
                   <td class="Combo_ContentCell" colspan="2">
                     <select class="Combo Combo_TwoCells_width" name="inpModule">
