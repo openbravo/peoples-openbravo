@@ -1460,10 +1460,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
 
       if (vars.commandIn("SETTINGS_ADD", "SETTINGS_REMOVE")) {
-        String moduleId = vars.getStringParameter("inpModule", IsIDFilter.instance);
-        if (moduleId == null || moduleId.isEmpty()) {
+        String moduleId;
+
+        if (vars.commandIn("SETTINGS_ADD")) {
+          moduleId = vars.getStringParameter("inpModule", IsIDFilter.instance);
+        } else {
           moduleId = vars.getStringParameter("inpModuleId", IsIDFilter.instance);
         }
+
         org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
             org.openbravo.model.ad.module.Module.class, moduleId);
         if (mod != null) {
