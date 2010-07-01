@@ -619,7 +619,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
       String[] updateModules, HashMap<String, String> maturityLevels) throws IOException,
       ServletException {
-    final String discard[] = { "", "", "", "", "", "" };
+    final String discard[] = { "", "", "", "", "", "", "warnMaturity" };
     Module module = null;
 
     // Remote installation is only allowed for heartbeat enabled instances
@@ -763,36 +763,37 @@ public class ModuleManagement extends HttpSecureAppServlet {
       message.setMessage(e.toString());
     }
 
+    // Show warning message when isntalling/updating modules not in production level
+    if (!islocal) {
+      if (!"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+        discard[6] = "";
+      } else {
+        for (Module m : inst) {
+          if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+            discard[6] = "";
+          }
+        }
+        for (Module m : upd) {
+          if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+            discard[6] = "";
+          }
+        }
+      }
+    }
+
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP1", discard).createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     if (inst != null && inst.length > 0) {
-      FieldProviderFactory[] insts = (FieldProviderFactory[]) FieldProviderFactory
-          .getFieldProviderArray(inst);
-      for (FieldProvider fp : insts) {
-        String moduleId = fp.getField("moduleID");
-        FieldProviderFactory.setField(fp, "versionNoMin", (minVersions.get(moduleId) == null ? fp
-            .getField("versionNo") : minVersions.get(moduleId)));
-      }
-      xmlDocument.setData("installs", insts);
+      xmlDocument.setData("installs", getModuleFieldProvider(inst, minVersions, false, vars
+          .getLanguage()));
     }
 
     if (upd != null && upd.length > 0) {
-      FieldProviderFactory[] upds = (FieldProviderFactory[]) FieldProviderFactory
-          .getFieldProviderArray(upd);
-      for (FieldProvider fp : upds) {
-        String moduleId = fp.getField("moduleID");
-        if (minVersions != null && minVersions.get(moduleId) != null
-            && !minVersions.get(moduleId).equals("")) {
-          FieldProviderFactory.setField(fp, "versionNoMin", Utility.messageBD(this,
-              "UpdateModuleNeed", vars.getLanguage())
-              + " " + minVersions.get(moduleId));
-        }
-        FieldProviderFactory.setField(fp, "versionNoCurr", currentInstalledVersion(moduleId));
-      }
-      xmlDocument.setData("updates", upds);
+      xmlDocument.setData("updates", getModuleFieldProvider(upd, minVersions, false, vars
+          .getLanguage()));
     }
 
     xmlDocument.setParameter("inpLocalInstall", islocal ? "Y" : "N");
@@ -803,6 +804,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("moduleName", module.getName());
       xmlDocument.setParameter("moduleVersion", module.getVersionNo());
       xmlDocument.setParameter("linkCore", module.getModuleVersionID());
+
+      if ("500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+        xmlDocument.setParameter("maturityStyle", "none");
+      } else {
+        xmlDocument.setParameter("maturityStyle", "yes");
+        xmlDocument.setParameter("maturityLevel", (String) module.getAdditionalInfo().get(
+            "maturity.name"));
+      }
     }
     {
       if (message != null) {
@@ -815,6 +824,39 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private FieldProvider[] getModuleFieldProvider(Module[] inst, Map<String, String> minVersions,
+      boolean installed, String lang) {
+    ArrayList<HashMap<String, String>> rt = new ArrayList<HashMap<String, String>>();
+
+    for (Module module : inst) {
+      HashMap<String, String> mod = new HashMap<String, String>();
+      mod.put("name", module.getName());
+      mod.put("versionNo", module.getVersionNo());
+      mod.put("moduleVersionID", module.getModuleVersionID());
+
+      if (installed) {
+        if (minVersions != null && minVersions.get(module.getModuleID()) != null
+            && !minVersions.get(module.getModuleID()).equals("")) {
+          mod.put("versionNoMin", Utility.messageBD(this, "UpdateModuleNeed", lang) + " "
+              + minVersions.get(module.getModuleID()));
+        }
+        mod.put("versionNoCurr", currentInstalledVersion(module.getModuleID()));
+      } else {
+        mod.put("versionNoMin", (minVersions.get(module.getModuleID()) == null ? module
+            .getVersionNo() : minVersions.get(module.getModuleID())));
+      }
+
+      if ("500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+        mod.put("maturityStyle", "none");
+      } else {
+        mod.put("maturityStyle", "yes");
+        mod.put("maturityLevel", (String) module.getAdditionalInfo().get("maturity.name"));
+      }
+      rt.add(mod);
+    }
+    return FieldProviderFactory.getFieldProviderArray(rt);
   }
 
   private String currentInstalledVersion(String moduleId) {
