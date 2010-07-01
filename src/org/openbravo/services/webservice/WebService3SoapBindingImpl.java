@@ -28,11 +28,11 @@ public class WebService3SoapBindingImpl implements org.openbravo.services.webser
         return null;
     }
 
-    public org.openbravo.services.webservice.SimpleModule[] moduleScanForUpdates(java.util.HashMap moduleIdInstalledModules) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.SimpleModule[] moduleScanForUpdates(java.util.HashMap moduleIdInstalledModules, java.util.HashMap additionalInfo) throws java.rmi.RemoteException {
         return null;
     }
 
-    public org.openbravo.services.webservice.ModuleInstallDetail checkConsistency(java.util.HashMap versionIdInstalled, java.lang.String[] versionIdToInstall, java.lang.String[] versionIdToUpdate) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.ModuleInstallDetail checkConsistency(java.util.HashMap versionIdInstalled, java.lang.String[] versionIdToInstall, java.lang.String[] versionIdToUpdate, java.util.HashMap additionalInfo) throws java.rmi.RemoteException {
         return null;
     }
 

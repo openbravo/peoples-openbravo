@@ -41,11 +41,13 @@
       </operation>
       <operation name="moduleScanForUpdates" qname="operNS:moduleScanForUpdates" xmlns:operNS="http://erp.ws.centralrepository.utility.openbravo.org" returnQName="moduleScanForUpdatesReturn" returnType="rtns:ArrayOf_tns1_SimpleModule" xmlns:rtns="http://centralrepository.openbravo.com/openbravo/services/WebService3" returnItemType="tns2:SimpleModule" xmlns:tns2="/services/WebService3" soapAction="" >
         <parameter qname="moduleIdInstalledModules" type="tns:Map" xmlns:tns="http://xml.apache.org/xml-soap"/>
+        <parameter qname="additionalInfo" type="tns:Map" xmlns:tns="http://xml.apache.org/xml-soap"/>
       </operation>
       <operation name="checkConsistency" qname="operNS:checkConsistency" xmlns:operNS="http://erp.ws.centralrepository.utility.openbravo.org" returnQName="checkConsistencyReturn" returnType="rtns:ModuleInstallDetail" xmlns:rtns="/services/WebService3" soapAction="" >
         <parameter qname="versionIdInstalled" type="tns:Map" xmlns:tns="http://xml.apache.org/xml-soap"/>
         <parameter qname="versionIdToInstall" type="tns:ArrayOf_xsd_string" xmlns:tns="http://centralrepository.openbravo.com/openbravo/services/WebService3"/>
         <parameter qname="versionIdToUpdate" type="tns:ArrayOf_xsd_string" xmlns:tns="http://centralrepository.openbravo.com/openbravo/services/WebService3"/>
+        <parameter qname="additionalInfo" type="tns:Map" xmlns:tns="http://xml.apache.org/xml-soap"/>
       </operation>
       <operation name="getURLforDownload" qname="operNS:getURLforDownload" xmlns:operNS="http://erp.ws.centralrepository.utility.openbravo.org" returnQName="getURLforDownloadReturn" returnType="rtns:string" xmlns:rtns="http://schemas.xmlsoap.org/soap/encoding/" soapAction="" >
         <parameter qname="moduleVersionID" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>

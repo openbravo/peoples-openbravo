@@ -46,6 +46,7 @@ import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
+import org.openbravo.erpCommon.modules.ModuleUtiltiy;
 import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
 import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
@@ -120,7 +121,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
       printPageDetail(response, vars, record, local);
     } else if (vars.commandIn("INSTALL")) {
       final String record = vars.getStringParameter("inpcRecordId");
-      printPageInstall1(response, request, vars, record, false, null, new String[0]);
+
+      printPageInstall1(response, request, vars, record, false, null, new String[0], ModuleUtiltiy
+          .getSystemMaturityLevels(true));
     } else if (vars.commandIn("INSTALL2")) {
       printPageInstall2(response, vars);
     } else if (vars.commandIn("INSTALL3")) {
@@ -153,7 +156,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate = new String[1];
         modulesToUpdate[0] = updateModule;
       }
-      printPageInstall1(response, request, vars, null, false, null, modulesToUpdate);
+
+      // For update obtain just update maturity level
+      printPageInstall1(response, request, vars, null, false, null, modulesToUpdate, ModuleUtiltiy
+          .getSystemMaturityLevels(false));
     } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD", "SETTINGS_REMOVE", "SETTINGS_SAVE")) {
       printPageSettings(response, request);
     } else {
@@ -581,7 +587,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       try {
         if (im.isModuleUpdate(fi.getInputStream())) {
           vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
-          printPageInstall1(response, request, vars, null, true, fi.getInputStream(), new String[0]);
+          printPageInstall1(response, request, vars, null, true, fi.getInputStream(),
+              new String[0], null);
         } else {
           OBError message = im.getOBError(this);
           printSearchFile(response, vars, message);
@@ -604,12 +611,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param recordId
    * @param islocal
    * @param obx
+   * @param maturityLevels
    * @throws IOException
    * @throws ServletException
    */
   private void printPageInstall1(HttpServletResponse response, HttpServletRequest request,
       VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
-      String[] updateModules) throws IOException, ServletException {
+      String[] updateModules, HashMap<String, String> maturityLevels) throws IOException,
+      ServletException {
     final String discard[] = { "", "", "", "", "", "" };
     Module module = null;
 
@@ -664,7 +673,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // check the dependenies and obtain the modules to install/update
       if (!islocal) {
         final String[] installableModules = { module != null ? module.getModuleVersionID() : "" };
-        check = im.checkDependenciesId(installableModules, updateModules);
+        check = im.checkDependenciesId(installableModules, updateModules, maturityLevels);
       } else {
         check = im.checkDependenciesFile(obx);
       }
@@ -1249,13 +1258,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       final WebService3Impl ws = loc.getWebService3();
 
       HashMap<String, String> maturitySearch = new HashMap<String, String>();
-      try {
-        OBContext.setAdminMode();
-        SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-        maturitySearch.put("search.level", sys.getMaturitySearch());
-      } finally {
-        OBContext.restorePreviousMode();
-      }
+      maturitySearch.put("search.level", getSystemMaturity(false));
       modules = ws.moduleSearch(text, getInstalledModules(), maturitySearch);
 
     } catch (final Exception e) {
@@ -1571,6 +1574,20 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
       out.println(xmlDocument.print());
       out.close();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private String getSystemMaturity(boolean updateLevel) {
+    try {
+      OBContext.setAdminMode();
+      SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+      if (updateLevel) {
+        return sys.getMaturityUpdate();
+      } else {
+        return sys.getMaturitySearch();
+      }
     } finally {
       OBContext.restorePreviousMode();
     }

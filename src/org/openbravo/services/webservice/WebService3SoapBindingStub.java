@@ -90,6 +90,8 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
         oper.setName("moduleScanForUpdates");
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "moduleIdInstalledModules"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
         oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "additionalInfo"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
+        oper.addParameter(param);
         oper.setReturnType(new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService3", "ArrayOf_tns1_SimpleModule"));
         oper.setReturnClass(org.openbravo.services.webservice.SimpleModule[].class);
         oper.setReturnQName(new javax.xml.namespace.QName("", "moduleScanForUpdatesReturn"));
@@ -104,6 +106,8 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdToInstall"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService3", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
         oper.addParameter(param);
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "versionIdToUpdate"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService3", "ArrayOf_xsd_string"), java.lang.String[].class, false, false);
+        oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "additionalInfo"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"), java.util.HashMap.class, false, false);
         oper.addParameter(param);
         oper.setReturnType(new javax.xml.namespace.QName("/services/WebService3", "ModuleInstallDetail"));
         oper.setReturnClass(org.openbravo.services.webservice.ModuleInstallDetail.class);
@@ -486,7 +490,7 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
 }
     }
 
-    public org.openbravo.services.webservice.SimpleModule[] moduleScanForUpdates(java.util.HashMap moduleIdInstalledModules) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.SimpleModule[] moduleScanForUpdates(java.util.HashMap moduleIdInstalledModules, java.util.HashMap additionalInfo) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -499,7 +503,7 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {moduleIdInstalledModules});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {moduleIdInstalledModules, additionalInfo});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
@@ -517,7 +521,7 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
 }
     }
 
-    public org.openbravo.services.webservice.ModuleInstallDetail checkConsistency(java.util.HashMap versionIdInstalled, java.lang.String[] versionIdToInstall, java.lang.String[] versionIdToUpdate) throws java.rmi.RemoteException {
+    public org.openbravo.services.webservice.ModuleInstallDetail checkConsistency(java.util.HashMap versionIdInstalled, java.lang.String[] versionIdToInstall, java.lang.String[] versionIdToUpdate, java.util.HashMap additionalInfo) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -530,7 +534,7 @@ public class WebService3SoapBindingStub extends org.apache.axis.client.Stub impl
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {versionIdInstalled, versionIdToInstall, versionIdToUpdate});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {versionIdInstalled, versionIdToInstall, versionIdToUpdate, additionalInfo});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;
