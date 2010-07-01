@@ -378,27 +378,29 @@ public class DocFINFinAccTransaction extends AcctServer {
           .getFINFinancialAccountAcctList();
       for (FIN_FinancialAccountAccounting account : accounts) {
         if (payment.isReceipt()) {
-          if (lines.get(0).getUponReceiptUse().equals("INT")
+          if (("INT").equals(lines.get(0).getUponReceiptUse())
               && account.getInTransitPaymentAccountIN() != null)
             confirmation = true;
-          else if (lines.get(0).getUponReceiptUse().equals("DEP")
+          else if (("DEP").equals(lines.get(0).getUponReceiptUse())
               && account.getDepositAccount() != null)
             confirmation = true;
-          else if (lines.get(0).getUponReceiptUse().equals("CLE")
+          else if (("CLE").equals(lines.get(0).getUponReceiptUse())
               && account.getClearedPaymentAccount() != null)
             confirmation = true;
         } else {
-          if (lines.get(0).getUponPaymentUse().equals("INT")
+          if (("INT").equals(lines.get(0).getUponPaymentUse())
               && account.getFINOutIntransitAcct() != null)
             confirmation = true;
-          else if (lines.get(0).getUponPaymentUse().equals("WIT")
+          else if (("WIT").equals(lines.get(0).getUponPaymentUse())
               && account.getWithdrawalAccount() != null)
             confirmation = true;
-          else if (lines.get(0).getUponPaymentUse().equals("CLE")
+          else if (("CLE").equals(lines.get(0).getUponPaymentUse())
               && account.getClearedPaymentAccountOUT() != null)
             confirmation = true;
         }
       }
+    } catch (Exception e) {
+      return confirmation;
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -423,28 +425,32 @@ public class DocFINFinAccTransaction extends AcctServer {
       List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
           .getFINFinancialAccountAcctList();
       for (FIN_FinancialAccountAccounting account : accounts) {
+        if (confirmation)
+          return confirmation;
         if (payment.isReceipt()) {
-          if (lines.get(0).getUponDepositUse().equals("INT")
+          if (("INT").equals(lines.get(0).getUponDepositUse())
               && account.getInTransitPaymentAccountIN() != null)
             confirmation = true;
-          else if (lines.get(0).getUponDepositUse().equals("DEP")
+          else if (("DEP").equals(lines.get(0).getUponDepositUse())
               && account.getDepositAccount() != null)
             confirmation = true;
-          else if (lines.get(0).getUponDepositUse().equals("CLE")
+          else if (("CLE").equals(lines.get(0).getUponDepositUse())
               && account.getClearedPaymentAccount() != null)
             confirmation = true;
         } else {
-          if (lines.get(0).getUponWithdrawalUse().equals("INT")
+          if (("INT").equals(lines.get(0).getUponWithdrawalUse())
               && account.getFINOutIntransitAcct() != null)
             confirmation = true;
-          else if (lines.get(0).getUponWithdrawalUse().equals("WIT")
+          else if (("WIT").equals(lines.get(0).getUponWithdrawalUse())
               && account.getWithdrawalAccount() != null)
             confirmation = true;
-          else if (lines.get(0).getUponWithdrawalUse().equals("CLE")
+          else if (("CLE").equals(lines.get(0).getUponWithdrawalUse())
               && account.getClearedPaymentAccountOUT() != null)
             confirmation = true;
         }
       }
+    } catch (Exception e) {
+      return confirmation;
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -474,39 +480,46 @@ public class DocFINFinAccTransaction extends AcctServer {
         obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
         for (FIN_FinancialAccountAccounting account : accounts) {
+          if (confirmation)
+            return confirmation;
           if (payment.isReceipt()) {
-            if (lines.get(0).getUponDepositUse().equals("INT")
+            if (("INT").equals(lines.get(0).getUponDepositUse())
                 && account.getInTransitPaymentAccountIN() != null)
               confirmation = true;
-            else if (lines.get(0).getUponDepositUse().equals("DEP")
+            else if (("DEP").equals(lines.get(0).getUponDepositUse())
                 && account.getDepositAccount() != null)
               confirmation = true;
-            else if (lines.get(0).getUponDepositUse().equals("CLE")
+            else if (("CLE").equals(lines.get(0).getUponDepositUse())
                 && account.getClearedPaymentAccount() != null)
               confirmation = true;
           } else {
-            if (lines.get(0).getUponWithdrawalUse().equals("INT")
+            if (("INT").equals(lines.get(0).getUponWithdrawalUse())
                 && account.getFINOutIntransitAcct() != null)
               confirmation = true;
-            else if (lines.get(0).getUponWithdrawalUse().equals("WIT")
+            else if (("WIT").equals(lines.get(0).getUponWithdrawalUse())
                 && account.getWithdrawalAccount() != null)
               confirmation = true;
-            else if (lines.get(0).getUponWithdrawalUse().equals("CLE")
+            else if (("CLE").equals(lines.get(0).getUponWithdrawalUse())
                 && account.getClearedPaymentAccountOUT() != null)
               confirmation = true;
           }
         }
       } else {
         for (FIN_FinancialAccountAccounting account : accounts) {
-          if ((transaction.getTransactionType().equals(TRXTYPE_BPDeposit) && account
+          if (confirmation)
+            return confirmation;
+          if ((TRXTYPE_BPDeposit.equals(transaction.getTransactionType()) && account
               .getDepositAccount() != null)
-              || (transaction.getTransactionType().equals(TRXTYPE_BPWithdrawal) && account
+              || (TRXTYPE_BPWithdrawal.equals(transaction.getTransactionType()) && account
                   .getWithdrawalAccount() != null)
-              || (transaction.getTransactionType().equals(TRXTYPE_BankFee) && account
+              || (TRXTYPE_BankFee.equals(transaction.getTransactionType()) && account
                   .getWithdrawalAccount() != null))
             confirmation = true;
         }
       }
+    } catch (Exception e) {
+      setStatus(STATUS_DocumentDisabled);
+      return confirmation;
     } finally {
       OBContext.restorePreviousMode();
     }
