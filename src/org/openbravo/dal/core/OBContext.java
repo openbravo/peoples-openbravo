@@ -202,7 +202,7 @@ public class OBContext implements OBNotSingleton {
     // will only be executed with adminModeTrace debugging enabled
     final List<String> adminModeTraceList = adminModeTrace.get();
     final StringBuilder sb = new StringBuilder();
-    if (adminModeTrace != null) {
+    if (adminModeTraceList != null) {
       for (String adminModeTraceValue : adminModeTraceList) {
         sb.append("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
         sb.append(adminModeTraceValue);
