@@ -471,6 +471,7 @@
         isValid='Y'
       WHERE isActive='Y'
         AND C_Settlement_Generate_ID=v_Record_ID;
+        END IF;--FINISH_PROCESS
       v_ResultStr:='UpdatingSOCreditUsed';
       DECLARE
       TYPE RECORD IS REF CURSOR;
@@ -487,7 +488,7 @@
         END LOOP;
       END;
       v_ResultStr:='CreatingCashLines';
-    END IF;--FINISH_PROCESS
+    
     IF(NOT FINISH_PROCESS) THEN
       DECLARE
       TYPE RECORD IS REF CURSOR;

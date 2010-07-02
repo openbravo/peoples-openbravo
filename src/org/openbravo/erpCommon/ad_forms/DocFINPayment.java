@@ -248,29 +248,34 @@ public class DocFINPayment extends AcctServer {
         List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
             .getFINFinancialAccountAcctList();
         for (FIN_FinancialAccountAccounting account : accounts) {
+          if (confirmation)
+            return confirmation;
           if (payment.isReceipt()) {
-            if (lines.get(0).getUponReceiptUse().equals("INT")
+            if (("INT").equals(lines.get(0).getUponReceiptUse())
                 && account.getInTransitPaymentAccountIN() != null)
               confirmation = true;
-            else if (lines.get(0).getUponReceiptUse().equals("DEP")
+            else if (("DEP").equals(lines.get(0).getUponReceiptUse())
                 && account.getDepositAccount() != null)
               confirmation = true;
-            else if (lines.get(0).getUponReceiptUse().equals("CLE")
+            else if (("CLE").equals(lines.get(0).getUponReceiptUse())
                 && account.getClearedPaymentAccount() != null)
               confirmation = true;
           } else {
-            if (lines.get(0).getUponPaymentUse().equals("INT")
+            if (("INT").equals(lines.get(0).getUponPaymentUse())
                 && account.getFINOutIntransitAcct() != null)
               confirmation = true;
-            else if (lines.get(0).getUponPaymentUse().equals("WIT")
+            else if (("WIT").equals(lines.get(0).getUponPaymentUse())
                 && account.getWithdrawalAccount() != null)
               confirmation = true;
-            else if (lines.get(0).getUponPaymentUse().equals("CLE")
+            else if (("CLE").equals(lines.get(0).getUponPaymentUse())
                 && account.getClearedPaymentAccountOUT() != null)
               confirmation = true;
           }
         }
       }
+    } catch (Exception e) {
+      setStatus(STATUS_DocumentDisabled);
+      return confirmation;
     } finally {
       OBContext.restorePreviousMode();
     }

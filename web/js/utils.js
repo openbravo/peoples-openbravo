@@ -74,7 +74,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '7012';
+  var number = '7734';
   return number;
 }
 
@@ -2467,7 +2467,7 @@ function menuUserOptions() {
   return true;
 }
 
-function menuQuit() {
+function menuQuit() {  
   var appUrl = getAppUrl();
   var target;
   try {
@@ -4129,6 +4129,14 @@ function buttonEvent(event, obj) {
 * Returns to previous web
 */
 function goToPreviousPage() {
+  setMDIEnvironment();
+  var inMDIEnvironment = (isWindowInMDITab || isWindowInMDIContext); 
+  if (inMDIEnvironment) {
+    var appFrame = getFrame("appFrame");
+    appFrame.history.back();
+    return;
+  }
+  
   var appUrl = getAppUrl();
   //if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
   //  history.back();
@@ -5150,7 +5158,12 @@ function LayoutMDICheck(target) {
   return false;
 }
 
+var isMDIEnvironmentSet = false;
 function setMDIEnvironment() {
+  if (isMDIEnvironmentSet) {
+    return;
+  }
+  isMDIEnvironmentSet = true;
   isWindowInMDITab = checkWindowInMDITab();
   isWindowInMDIContext = checkWindowInMDIContext();
 

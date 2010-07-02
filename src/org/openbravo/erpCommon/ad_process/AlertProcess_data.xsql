@@ -156,6 +156,7 @@
             and c.requestuserpw is not null
             and u.email is not null
             and ar.ad_user_id is null
+            and ar.sendemail = 'Y'
         union
         select c.smtphost, c.requestuser, c.requestuserpw, c.requestemail as mailfrom, 
                u.email as mailto, c.ad_language, c.ad_client_id
@@ -168,6 +169,7 @@
             and c.requestuserpw is not null
             and u.email is not null
             and ar.ad_user_id is not null
+            and ar.sendemail = 'Y'
       ]]></Sql>
       <Parameter name="alertRuleId"/>
       <Parameter name="alertRuleId"/>

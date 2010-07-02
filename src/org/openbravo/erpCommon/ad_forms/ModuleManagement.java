@@ -255,7 +255,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         rt = total
             + "&nbsp;"
             + Utility.messageBD(this, "ApplyModules", lang)
-            + ", <a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900);return false;\">"
+            + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900);return false;\">"
             + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
       }
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);

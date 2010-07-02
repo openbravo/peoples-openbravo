@@ -13662,8 +13662,8 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800062-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800062-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800062-->  <COLUMNNAME><![CDATA[C_Settlement_Generate_ID]]></COLUMNNAME>
-<!--800062-->  <NAME><![CDATA[C_Settlement_Generate_ID]]></NAME>
-<!--800062-->  <PRINTNAME><![CDATA[C_Settlement_Generate_ID]]></PRINTNAME>
+<!--800062-->  <NAME><![CDATA[Settlement generate]]></NAME>
+<!--800062-->  <PRINTNAME><![CDATA[Settlement generate]]></PRINTNAME>
 <!--800062-->  <DESCRIPTION><![CDATA[Settlement generate]]></DESCRIPTION>
 <!--800062-->  <HELP><![CDATA[Refers to the settlement in which this Debt/Payment has been generated.]]></HELP>
 <!--800062-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
