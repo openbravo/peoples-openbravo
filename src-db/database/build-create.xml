@@ -284,7 +284,7 @@ create.database: creates the database from scratch.
           VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, CODE_REVISION, MATURITY_UPDATE, MATURITY_SEARCH)
-          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', SUBSTR('${code.revision}',1,60), '500, '500');
+          VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', SUBSTR('${code.revision}',1,60), '500', '500');
           DELETE FROM AD_REGISTRATION_INFO;
           INSERT INTO AD_REGISTRATION_INFO(AD_REGISTRATION_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0');
