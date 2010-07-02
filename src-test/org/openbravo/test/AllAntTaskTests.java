@@ -22,6 +22,7 @@ package org.openbravo.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
@@ -136,6 +137,8 @@ public class AllAntTaskTests {
 
     // preferences
     suite.addTestSuite(PreferenceTest.class);
+
+    suite.addTestSuite(ClassicSelectorTest.class);
 
     // $JUnit-END$
     return suite;

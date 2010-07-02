@@ -97,6 +97,11 @@
       
       function updateAlert()
       {
+          setMDIEnvironment();
+          if(isWindowInMDITab || isWindowInMDIContext) {
+            return;
+          }
+
           updateData();
           //Frequency of call to update alert is hardcoded to each 50s.
           //This is used to update the number of active alerts as well as to know whether

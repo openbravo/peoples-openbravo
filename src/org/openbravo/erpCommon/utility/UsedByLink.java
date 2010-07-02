@@ -244,6 +244,20 @@ public class UsedByLink extends HttpSecureAppServlet {
     final StringBuffer strHiddens = new StringBuffer();
     final StringBuffer strSQL = new StringBuffer();
     strScript.append("function windowSelect() {\n");
+
+    // code added for new Layout
+    strScript.append("var layoutMDI = top.opener.getFrame('LayoutMDI');\n");
+    strScript.append("if (layoutMDI) {\n");
+    strScript.append("\n");
+    strScript.append("var frmMain = document.frmMain;\n");
+    strScript.append("var tabId = frmMain.inpadTabIdKey.value;\n");
+    strScript.append("var recordId = arguments[0];\n");
+    strScript
+        .append("layoutMDI.OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);\n");
+    strScript.append("top.close();\n");
+    strScript.append("return true;\n");
+    strScript.append("} else {\n");
+
     strScript.append("var frm = document.forms[0];\n");
     for (int i = 0; i < data.length; i++) {
       if (i > 0) {
@@ -265,6 +279,7 @@ public class UsedByLink extends HttpSecureAppServlet {
         "', getParamsScript(document.forms[0]));\n");
     strScript.append("top.close();\n");
     strScript.append("return true;\n");
+    strScript.append("}\n");
     strScript.append("}\n");
 
     xmlDocument.setParameter("hiddens", strHiddens.toString());

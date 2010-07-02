@@ -524,7 +524,7 @@ public class VersionUtility {
     WebService3Impl ws = (WebService3Impl) loc.getWebService3();
     String[] errors = new String[0];
 
-    ModuleInstallDetail mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(pool),
+    ModuleInstallDetail mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(),
         moduleVersionId, moduleVersionToUpdateId, maturityLevels);
 
     errors = mid.getDependencyErrors();

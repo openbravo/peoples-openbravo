@@ -32,9 +32,10 @@
         AD_Client_ID AS Client, AD_Org_Id AS Organization, AD_User_ID AS UserId,
         IsRoleSecurity, Status, Channel, Ob_Context, Params, AD_Process_Set_Id 
         FROM AD_Process_Request
-        WHERE AD_Process_Id = ?
+        WHERE AD_Process_Id = ? AND (AD_CLIENT_ID = '0' OR AD_CLIENT_ID = ?)
     ]]></Sql>
     <Parameter name="processId"/>
+    <Parameter name="clientId"/>
    </SqlMethod>
  
   <SqlMethod name="processID" type="preparedStatement" return="String" default="">

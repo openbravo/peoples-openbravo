@@ -22,6 +22,7 @@ package org.openbravo.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalStoredProcedureTest;
@@ -118,8 +119,9 @@ public class AllQuickAntTaskTests {
     // preferences
     suite.addTestSuite(PreferenceTest.class);
 
+    suite.addTestSuite(ClassicSelectorTest.class);
+
     // $JUnit-END$
     return suite;
   }
-
 }

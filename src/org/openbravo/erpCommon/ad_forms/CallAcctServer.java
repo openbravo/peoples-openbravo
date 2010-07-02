@@ -50,7 +50,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String adProcessId = CallAcctServerData.processID(this);
-    CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId);
+    CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId, vars.getClient());
 
     // PeriodicBackground acctServer = getBackgroundProcess(adProcessId);
     if (vars.commandIn("DEFAULT")) {
@@ -166,7 +166,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
     myMessage.setTitle("");
     boolean scheduled = false;
     try {
-      CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId);
+      CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId, vars.getClient());
       if (data.length > 0) {
         for (int i = 0; i < data.length; i++) {
           if (data[i].status.equals(Process.SCHEDULED)) {

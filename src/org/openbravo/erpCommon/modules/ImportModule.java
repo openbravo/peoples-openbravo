@@ -1299,7 +1299,7 @@ public class ImportModule {
         loc = new WebService3ImplServiceLocator();
         ws = loc.getWebService3();
 
-        updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps(conn), ModuleUtiltiy
+        updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps(), ModuleUtiltiy
             .getSystemMaturityLevels(false));
       } catch (final Exception e) {
         // do nothing just log the error
@@ -1373,7 +1373,7 @@ public class ImportModule {
   /**
    * Returns the current installed modules with its version
    * 
-   * @deprecated use {@link ImportModule#getInstalledModulesAndDeps(ConnectionProvider)} instead
+   * @deprecated use {@link ImportModule#getInstalledModulesAndDeps} instead
    * @param conn
    *          ConnectionProvider needed as it is a static method
    * @return HashMap<String,String> -> <ModuleId, VersionNo>
@@ -1408,7 +1408,7 @@ public class ImportModule {
    *         <li>VersionInfo [x][5] -> If type=="D", Dependent module name</li>
    *         </ul>
    */
-  public static HashMap<String, String[][]> getInstalledModulesAndDeps(ConnectionProvider conn) {
+  public static HashMap<String, String[][]> getInstalledModulesAndDeps() {
     HashMap<String, String[][]> rt = new HashMap<String, String[][]>();
     try {
       OBContext.setAdminMode();
