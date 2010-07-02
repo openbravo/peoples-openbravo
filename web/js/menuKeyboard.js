@@ -202,6 +202,9 @@ function getFirstMenuElement() {
     }
   }
   firstElement = firstElement.firstChild;
+  if (!firstElement) {
+    return null;
+  }
   for (;;) {
     if (firstElement.nodeType != '1') {
       firstElement = firstElement.nextSibling; // TR0
@@ -210,6 +213,9 @@ function getFirstMenuElement() {
     }
   }
   firstElement = firstElement.firstChild;
+  if (!firstElement) {
+    return null;
+  }
   for (;;) {
     if (firstElement.nodeType != '1') {
       firstElement = firstElement.nextSibling; // TD
@@ -218,6 +224,9 @@ function getFirstMenuElement() {
     }
   }
   firstElement = firstElement.firstChild;
+  if (!firstElement) {
+    return null;
+  }
   for (;;) {
     if (firstElement.nodeType != '1') {
       firstElement = firstElement.nextSibling; // TABLE
@@ -226,6 +235,9 @@ function getFirstMenuElement() {
     }
   }
   firstElement = firstElement.firstChild;
+  if (!firstElement) {
+    return null;
+  }
   for (;;) {
     if (firstElement.nodeType != '1') {
       firstElement = firstElement.nextSibling; // TBODY
@@ -234,6 +246,9 @@ function getFirstMenuElement() {
     }
   }
   firstElement = firstElement.firstChild;
+  if (!firstElement) {
+    return null;
+  }
   for (;;) {
     if (firstElement.nodeType != '1') {
       firstElement = firstElement.nextSibling; // TR1

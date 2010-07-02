@@ -52,8 +52,12 @@
         var h = body[0].clientHeight;
         var w = body[0].clientWidth;
         var name = window.navigator.appName;
-        mnu.style.height = h -(mtop.clientHeight + mtop2.clientHeight + mbottom.clientHeight) - ((name.indexOf("Microsoft")==-1)?2:0);
-        mnu.style.width = w - (mleft.clientWidth + mright.clientWidth) - ((name.indexOf("Microsoft")==-1)?2:0);
+        var mnuWidth = w - (mleft.clientWidth + mright.clientWidth) - ((name.indexOf("Microsoft")==-1)?2:0);
+        var mnuHeight = h -(mtop.clientHeight + mtop2.clientHeight + mbottom.clientHeight) - ((name.indexOf("Microsoft")==-1)?2:0);
+        if (mnuWidth < 0) { mnuWidth = 0; }
+        if (mnuHeight < 0) { mnuHeight = 0; }
+        mnu.style.width = mnuWidth;
+        mnu.style.height = mnuHeight;
         mnu.style.display = "";
       }
 
