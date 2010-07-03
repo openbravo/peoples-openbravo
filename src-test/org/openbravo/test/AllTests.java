@@ -22,6 +22,7 @@ package org.openbravo.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalCopyTest;
 import org.openbravo.test.dal.DalQueryTest;
@@ -93,6 +94,8 @@ public class AllTests {
     suite.addTestSuite(EntityXMLImportTestWarning.class);
     suite.addTestSuite(EntityXMLIssues.class);
     suite.addTestSuite(UniqueConstraintImportTest.class);
+
+    suite.addTestSuite(ClassicSelectorTest.class);
 
     // $JUnit-END$
     return suite;

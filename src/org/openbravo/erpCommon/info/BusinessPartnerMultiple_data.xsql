@@ -82,6 +82,7 @@
             AND bp.AD_Org_ID IN ('1')
             AND l.IsActive='Y'
             AND 1=1
+            GROUP BY bp.C_BPartner_ID, bp.VALUE, bp.NAME, bp.SO_CreditLimit, bp.SO_CreditUsed, bp.ActualLifetimeValue, bp.URL
             ) B
             ) A 
       ]]></Sql>
@@ -97,7 +98,7 @@
         <Parameter name="clients" optional="true" type="none" after="AND 1=1"><![CDATA[AND bp.ISCUSTOMER = 'Y' ]]></Parameter>
         <Parameter name="vendors" optional="true" type="none" after="AND 1=1"><![CDATA[AND bp.ISVENDOR ='Y']]></Parameter>
         <Parameter name="ciudad" ignoreValue="%" optional="true" after="AND 1=1"><![CDATA[AND UPPER(a.City) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="bp.URL"><![CDATA[LIMIT ]]></Parameter>
         <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
         <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
