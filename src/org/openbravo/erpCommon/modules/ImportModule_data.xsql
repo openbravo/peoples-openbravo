@@ -51,8 +51,10 @@
         SELECT COUNT(*) AS TOTAL
           FROM AD_MODULE
          WHERE COALESCE(UPDATE_AVAILABLE,'.') = ?
+           AND UPDATE_VER_ID = ?
       </Sql>
       <Parameter name="moduleVersionNo"/>
+      <Parameter name="updateVerID"/>
    </SqlMethod>
    
    <SqlMethod name="moduleInstalled" type="preparedStatement" return="boolean">
