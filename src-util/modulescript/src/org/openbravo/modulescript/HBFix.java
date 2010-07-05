@@ -20,6 +20,12 @@ package org.openbravo.modulescript;
 
 import org.openbravo.database.ConnectionProvider;
 
+/**
+ * ModuleScript that fixes the Process Request for Heartbeat. In some cases the process request is
+ * in status "misfired" (MIS) and the so it won't be schedule by OBScheduler. This scripts fixes the
+ * data for instances that have Hearbeat enabled.
+ * 
+ */
 public class HBFix extends ModuleScript {
 
   private static String HB_PROCESS_ID = "1005800000";
