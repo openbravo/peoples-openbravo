@@ -74,18 +74,6 @@
     <Parameter name="adProcessRequestId" />
     <Parameter name="adProcessId" />
    </SqlMethod>
-   <SqlMethod name="updateNotActive" type="preparedStatement" return="rowCount">
-    <Sql>
-      UPDATE ad_system_info
-         SET isheartbeatactive = 'N'
-    </Sql>
-   </SqlMethod>
-   <SqlMethod name="selectUserId" type="preparedStatement" return="string">
-    <Sql>
-      SELECT updatedby
-        FROM ad_system_info
-    </Sql>
-   </SqlMethod>
    <SqlMethod name="insert" type="preparedStatement" return="rowCount">
     <Sql>
     <![CDATA[

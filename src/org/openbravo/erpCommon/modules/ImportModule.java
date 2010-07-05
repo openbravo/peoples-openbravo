@@ -1297,7 +1297,8 @@ public class ImportModule {
 
       if (updates != null && updates.length > 0) {
         for (int i = 0; i < updates.length; i++) {
-          if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo())) {
+          if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(), updates[i]
+              .getModuleVersionID())) {
             ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i]
                 .getModuleVersionID(), updates[i].getModuleID());
             ImportModuleData.insertLog(conn, user, updates[i].getModuleID(), updates[i]
