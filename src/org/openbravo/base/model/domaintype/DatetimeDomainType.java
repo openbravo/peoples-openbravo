@@ -65,7 +65,7 @@ public class DatetimeDomainType extends BasePrimitiveDomainType {
       if (strValue == null || strValue.trim().length() == 0) {
         return null;
       }
-      return xmlDateFormat.parse(strValue).getTime();
+      return xmlDateFormat.parse(strValue);
     } catch (ParseException e) {
       throw new IllegalArgumentException(e);
     }
