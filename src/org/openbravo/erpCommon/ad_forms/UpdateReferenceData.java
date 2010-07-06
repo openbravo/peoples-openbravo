@@ -201,8 +201,10 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
 
         StringBuffer strError = new StringBuffer("");
         for (int j = 0; j < data.length; j++) {
-          String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/" + data[j].javapackage
-              + "/referencedata/standard";
+          String strPath = vars.getSessionValue("#SOURCEPATH");
+          if (!data[j].javapackage.equals("org.openbravo"))
+            strPath = strPath + "/modules/" + data[j].javapackage;
+          strPath = strPath + "/referencedata/standard";
           File datasetFile = new File(strPath + "/" + Utility.wikifiedName(data[j].datasetname)
               + ".xml");
           if (!datasetFile.exists()) {
