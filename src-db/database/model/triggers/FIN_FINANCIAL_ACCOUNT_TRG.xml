@@ -61,7 +61,7 @@ BEGIN
             :new.AD_Client_ID, :new.AD_ORG_ID, 'Y', now(), :new.CreatedBy, now(), 
             :new.UpdatedBy, v_AssetAccount, 
             v_AssetAccount, null, null, Cur_Defaults.B_Expense_Acct, 
-            Cur_Defaults.B_SettlementGain_Acct, Cur_Defaults.B_SettlementLoss_Acct, Cur_Defaults.B_InTransit_Acct,
+            Cur_Defaults.B_RevaluationGain_Acct, Cur_Defaults.B_RevaluationLoss_Acct, Cur_Defaults.B_InTransit_Acct,
             null, Cur_Defaults.B_InTransit_Acct, null);
 
     END LOOP;
