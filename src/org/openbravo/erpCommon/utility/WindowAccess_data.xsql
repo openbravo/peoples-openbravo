@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2007 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,11 +105,20 @@
            AND w.AD_Role_ID = ?
            AND t.AD_Tab_ID = ?
            AND w.isReadWrite = 'N'
-           AND w.isActive='Y') t
+           AND w.isActive='Y'
+        UNION
+         SELECT 1 
+           FROM AD_Tab tb,
+                AD_Table t
+          WHERE t.AD_Table_ID = tb.AD_Table_ID
+            AND tb.AD_Tab_ID = ?
+            AND t.isDeleteable = 'N'
+           ) t
     </Sql>
     <Parameter name="adRoleId"/>
     <Parameter name="adTabId"/>
     <Parameter name="adRoleId"/>
+    <Parameter name="adTabId"/>
     <Parameter name="adTabId"/>
   </SqlMethod>
   

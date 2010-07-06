@@ -520,7 +520,7 @@ public class DataGrid extends HttpSecureAppServlet {
       type = "Error";
       title = "Error";
       description = Utility.messageBD(this, "AccessCannotDelete", vars.getLanguage());
-    } else if (WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), strTab)) {
+    } else if (WindowAccessData.hasNotDeleteAccess(this, vars.getRole(), strTab)) {
       result = 0;
       type = "Error";
       title = "Error";

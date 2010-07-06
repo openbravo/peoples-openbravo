@@ -49,6 +49,7 @@ public class ToolBar {
   private boolean hasAttachments = false;
   private boolean email = false;
   private String tabId;
+  private boolean deleteable = true;
 
   public void setEmail(boolean email) {
     this.email = email;
@@ -64,6 +65,10 @@ public class ToolBar {
    */
   public void setTabId(String tabId) {
     this.tabId = tabId;
+  }
+
+  public void setDeleteable(boolean deleteable) {
+    this.deleteable = deleteable;
   }
 
   Hashtable<String, HTMLElement> buttons = new Hashtable<String, HTMLElement>();
@@ -470,6 +475,10 @@ public class ToolBar {
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
 
+    if (!deleteable) {
+      removeElement("DELETE");
+    }
+
     // This piece of code used to control the email icon in the manual window. At this point we only
     // use the email functionality
     // only to send order (purchase or sales) and invoices (purchase or sales)
@@ -571,6 +580,10 @@ public class ToolBar {
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
     removeElement("NEXT_RELATION_DISABLED");
+
+    if (!deleteable) {
+      removeElement("DELETE_RELATION");
+    }
 
     if (!hasTree)
       removeElement("TREE");
