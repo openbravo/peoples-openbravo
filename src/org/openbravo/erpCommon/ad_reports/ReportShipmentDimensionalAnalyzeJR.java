@@ -453,6 +453,9 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
           .getLanguage(), "");
     }
 
+    // Checking report limit first
+    StringBuffer levelsconcat = new StringBuffer();
+    levelsconcat.append("''");
     String[] strLevelLabel = { "", "", "", "", "", "", "", "", "" };
     String[] strTextShow = { "", "", "", "", "", "", "", "", "" };
     int intDiscard = 0;
@@ -463,15 +466,21 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
         strTextShow[i] = "C_BP_GROUP.NAME";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[0].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("C_BP_GROUP.C_BP_GROUP_ID");
       } else if (strShownArray[i].equals("2")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char('"
             + vars.getLanguage() + "'))";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[1].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("C_BPARTNER.C_BPARTNER_ID");
       } else if (strShownArray[i].equals("3")) {
         strTextShow[i] = "M_PRODUCT_CATEGORY.NAME";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[2].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID");
       } else if (strShownArray[i].equals("4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"
             + vars.getLanguage() + "'))||' ('||UOMSYMBOL||')'";
@@ -479,26 +488,38 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
         intDiscard++;
         intProductLevel = i + 1;
         strLevelLabel[i] = dimensionLabel[3].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("M_PRODUCT.M_PRODUCT_ID");
       } else if (strShownArray[i].equals("5")) {
         strTextShow[i] = "M_INOUT.DOCUMENTNO";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[4].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("M_INOUT.M_INOUT_ID");
       } else if (strShownArray[i].equals("6")) {
         strTextShow[i] = "AD_USER.FIRSTNAME||' '||' '||AD_USER.LASTNAME";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[5].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("AD_USER.AD_USER_ID");
       } else if (strShownArray[i].equals("7")) {
         strTextShow[i] = "M_WAREHOUSE.NAME";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[6].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("M_WAREHOUSE.M_WAREHOUSE_ID");
       } else if (strShownArray[i].equals("8")) {
         strTextShow[i] = "AD_ORG.NAME";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[7].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("AD_ORG.AD_ORG_ID");
       } else if (strShownArray[i].equals("9")) {
         strTextShow[i] = "AD_USER.NAME";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[8].name;
+        levelsconcat.append(" || ");
+        levelsconcat.append("AD_USER.AD_USER_ID");
       } else {
         strTextShow[i] = "''";
         discard[i] = "display:none;";
@@ -553,69 +574,102 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
     strOrderby = strHaving + strOrderby;
 
-    // Checks if there is a conversion rate for each of the transactions of
-    // the report
-    String strConvRateErrorMsg = "";
-    OBError myMessage = null;
-    myMessage = new OBError();
-    if (strComparative.equals("Y")) {
-      try {
-        data = ReportShipmentDimensionalAnalyzeJRData.select(this, strCurrencyId, strTextShow[0],
-            strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5],
-            strTextShow[6], strTextShow[7], strTextShow[8], Tree.getMembers(this, TreeData
-                .getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars,
-                "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), strDateFrom, DateTimeData
-                .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-            strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
-            strPartnerSalesrepId, strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"),
-            strOrderby);
-      } catch (ServletException ex) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    int limit = 0;
+    int mycount = 0;
+    try {
+      limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+      if (limit > 0) {
+        mycount = Integer
+            .parseInt((strComparative.equals("Y")) ? ReportShipmentDimensionalAnalyzeJRData
+                .selectCount(this, levelsconcat.toString(), Tree.getMembers(this, TreeData
+                    .getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars,
+                    "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), strPartnerGroup,
+                    strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
+                    strsalesrepId, strPartnerSalesrepId, strDateFrom, DateTimeData.nDaysAfter(this,
+                        strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(this,
+                        strDateToRef, "1")) : ReportShipmentDimensionalAnalyzeJRData
+                .selectNoComparativeCount(this, levelsconcat.toString(), Tree.getMembers(this,
+                    TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
+                    vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), strPartnerGroup,
+                    strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
+                    strsalesrepId, strPartnerSalesrepId, strDateFrom, DateTimeData.nDaysAfter(this,
+                        strDateTo, "1")));
       }
-    } else {
-      try {
-        data = ReportShipmentDimensionalAnalyzeJRData.selectNoComparative(this, strCurrencyId,
-            strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-            strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], Tree.getMembers(this,
-                TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), strDateFrom,
-            DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-            strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
-            strPartnerSalesrepId, strOrderby);
-      } catch (ServletException ex) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-      }
+    } catch (NumberFormatException e) {
     }
-    strConvRateErrorMsg = myMessage.getMessage();
-    // If a conversion rate is missing for a certain transaction, an error
-    // message window pops-up.
-    if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
-    } else { // Otherwise, the report is launched
-      String strReportPath = "";
+
+    if (limit > 0 && mycount > limit) {
+      String msgbody = Utility.messageBD(this, "ReportsLimitBody", vars.getLanguage());
+      msgbody = msgbody.replace("@rows@", Integer.toString(mycount));
+      msgbody = msgbody.replace("@limit@", Integer.toString(limit));
+      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "ReportsLimitHeader", vars
+          .getLanguage()), msgbody);
+    } else {
+      // Checks if there is a conversion rate for each of the transactions
+      // of
+      // the report
+      String strConvRateErrorMsg = "";
+      OBError myMessage = null;
+      myMessage = new OBError();
       if (strComparative.equals("Y")) {
-        strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/WeightDimensionalComparative.jrxml";
+        try {
+          data = ReportShipmentDimensionalAnalyzeJRData.select(this, strCurrencyId, strTextShow[0],
+              strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5],
+              strTextShow[6], strTextShow[7], strTextShow[8], Tree.getMembers(this, TreeData
+                  .getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars,
+                  "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), strDateFrom, DateTimeData
+                  .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+              strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
+              strPartnerSalesrepId, strDateFromRef, DateTimeData
+                  .nDaysAfter(this, strDateToRef, "1"), strOrderby);
+        } catch (ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        }
       } else {
-        strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/WeightDimensionalNoComparative.jrxml";
+        try {
+          data = ReportShipmentDimensionalAnalyzeJRData.selectNoComparative(this, strCurrencyId,
+              strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
+              strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], Tree.getMembers(this,
+                  TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
+                  vars, "#User_Client", "ReportShipmentDimensionalAnalyzeJR"), strDateFrom,
+              DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+              strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
+              strPartnerSalesrepId, strOrderby);
+        } catch (ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        }
       }
-      if (data.length == 0 || data == null) {
-        data = ReportShipmentDimensionalAnalyzeJRData.set();
+      strConvRateErrorMsg = myMessage.getMessage();
+      // If a conversion rate is missing for a certain transaction, an error
+      // message window pops-up.
+      if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+        advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
+            vars.getLanguage()), strConvRateErrorMsg);
+      } else { // Otherwise, the report is launched
+        String strReportPath = "";
+        if (strComparative.equals("Y")) {
+          strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/WeightDimensionalComparative.jrxml";
+        } else {
+          strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/WeightDimensionalNoComparative.jrxml";
+        }
+        if (data.length == 0 || data == null) {
+          data = ReportShipmentDimensionalAnalyzeJRData.set();
+        }
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
+        parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
+        parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
+        parameters.put("LEVEL4_LABEL", strLevelLabel[3]);
+        parameters.put("LEVEL5_LABEL", strLevelLabel[4]);
+        parameters.put("LEVEL6_LABEL", strLevelLabel[5]);
+        parameters.put("LEVEL7_LABEL", strLevelLabel[6]);
+        parameters.put("LEVEL8_LABEL", strLevelLabel[7]);
+        parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
+        parameters.put("DIMENSIONS", new Integer(intDiscard));
+        parameters.put("REPORT_SUBTITLE", strTitle);
+        parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
+        renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
       }
-      HashMap<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
-      parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
-      parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
-      parameters.put("LEVEL4_LABEL", strLevelLabel[3]);
-      parameters.put("LEVEL5_LABEL", strLevelLabel[4]);
-      parameters.put("LEVEL6_LABEL", strLevelLabel[5]);
-      parameters.put("LEVEL7_LABEL", strLevelLabel[6]);
-      parameters.put("LEVEL8_LABEL", strLevelLabel[7]);
-      parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
-      parameters.put("DIMENSIONS", new Integer(intDiscard));
-      parameters.put("REPORT_SUBTITLE", strTitle);
-      parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
-      renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
     }
   }
 
