@@ -431,7 +431,7 @@ where coalesce(lastOrder,to_date('01-01-1900','DD-MM-YYYY'))<now()-30]]></SQL>
         now() as updated,
         0 as updatedBy
  from c_debt_payment 
-where trunc(dateplanned) <= trunc(now())
+where trunc(dateplanned) < trunc(now())
 and ispaid='N'
 and c_settlement_cancel_id is null]]></SQL>
 <!--1000019-->  <TYPE><![CDATA[D]]></TYPE>
