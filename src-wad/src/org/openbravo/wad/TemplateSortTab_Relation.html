@@ -27,6 +27,7 @@
 <script language="JavaScript" type="text/javascript" id="paramDirectory">
 var baseDirectory = "../../../../../web/";
 </script>
+<script language="JavaScript" type="text/javascript" id="confirmOnChanges">var confirmOnChanges = false;</script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
@@ -51,6 +52,8 @@ function validate(action, form, value) {
   <input type="hidden" name="inpKey" value="" id="hiddenKey">
   <input type="hidden" name="inpwindowId" value="" id="paramWindowId">
   <input type="hidden" name="inpLastFieldChanged" value="">
+  <input type="hidden" name="mappingName" id="mapping" value="" />
+  <input type="hidden" name="autosave" id="autosave" value="N" />
 <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
@@ -208,7 +211,7 @@ function validate(action, form, value) {
                   <tr>
                     <td>
                       <a class="Dimension_LeftRight_Button_TopLink" href="#"
-                        onclick="addList(document.frmMain.inpNotShown, document.frmMain.inpShown);return false;"
+                        onclick="isUserChanges=true;addList(document.frmMain.inpNotShown, document.frmMain.inpShown);return false;"
                         onfocus="this.className='Dimension_LeftRight_Button_TopLink_hover'; window.status='Include'; return true;"
                         onblur="this.className='Dimension_LeftRight_Button_TopLink'; window.status=''; return true;"
                         onkeypress="this.className='Dimension_LeftRight_Button_TopLink_active'; return true;"
@@ -234,7 +237,7 @@ function validate(action, form, value) {
                   <tr>
                     <td>
                       <a class="Dimension_LeftRight_Button_BottomLink" href="#"
-                        onclick="addList(document.frmMain.inpShown, document.frmMain.inpNotShown);return false;"
+                        onclick="isUserChanges=true;addList(document.frmMain.inpShown, document.frmMain.inpNotShown);return false;"
                         onfocus="this.className='Dimension_LeftRight_Button_BottomLink_hover'; window.status='Exclude'; return true;"
                         onblur="this.className='Dimension_LeftRight_Button_BottomLink'; window.status=''; return true;"
                         onkeypress="this.className='Dimension_LeftRight_Button_BottomLink_active'; return true;"
@@ -268,7 +271,7 @@ function validate(action, form, value) {
                         <tr>
                           <td>
                             <a class="Dimension_UpDown_Button_TopLink" href="#"
-                              onclick="moveElementInList(document.frmMain.inpShown, -1);return false;"
+                              onclick="isUserChanges=true;moveElementInList(document.frmMain.inpShown, -1);return false;"
                               onfocus="this.className='Dimension_UpDown_Button_TopLink_hover'; window.status='Go up'; return true;"
                               onblur="this.className='Dimension_UpDown_Button_TopLink'; window.status=''; return true;"
                               onkeypress="this.className='Dimension_UpDown_Button_TopLink_active'; return true;"
@@ -294,7 +297,7 @@ function validate(action, form, value) {
                         <tr>
                           <td>
                             <a class="Dimension_UpDown_Button_BottomLink" href="#"
-                              onclick="moveElementInList(document.frmMain.inpShown, 1);return false;"
+                              onclick="isUserChanges=true;moveElementInList(document.frmMain.inpShown, 1);return false;"
                               onfocus="this.className='Dimension_UpDown_Button_BottomLink_hover'; window.status='Go down'; return true;"
                               onblur="this.className='Dimension_UpDown_Button_BottomLink'; window.status=''; return true;"
                               onkeypress="this.className='Dimension_UpDown_Button_BottomLink_active'; return true;"
