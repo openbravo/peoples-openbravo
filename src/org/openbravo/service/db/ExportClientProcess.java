@@ -20,7 +20,8 @@
 package org.openbravo.service.db;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,7 +94,8 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
       log.debug("Reading data from database into in-mem xml string");
 
       final File exportFile = new File(getExportDir(), CLIENT_DATA_FILE_NAME);
-      final FileWriter fw = new FileWriter(exportFile);
+      final OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(exportFile),
+          "UTF-8");
       // write the xml to a file in WEB-INF
       log.debug("Writing export file " + exportFile.getAbsolutePath());
       DataExportService.getInstance().exportClientToXML(params, exportAuditInfo, fw);
