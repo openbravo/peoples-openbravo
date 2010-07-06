@@ -103,6 +103,7 @@
     v_OrderLine VARCHAR2(32);
     v_Discount NUMBER;
     v_precision NUMBER;
+    Cur_OrderLine RECORD;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -516,6 +517,17 @@
       END IF;
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
+    /**
+    *Update Product purchasing Plan Table
+    */
+    IF(v_isSoTrx ='N') THEN
+      FOR Cur_OrderLine IN (SELECT * FROM C_ORDERLINE WHERE C_Order_Id =  v_Record_ID)
+      LOOP
+          UPDATE M_PRODUCT_PO SET PriceLastPO=Cur_OrderLine.PriceActual 
+          Where C_BPARTNER_ID = v_CBPartner_ID AND M_PRODUCT_ID = Cur_OrderLine.M_PRODUCT_ID
+          AND Ad_Isorgincluded(Cur_OrderLine.AD_ORG_ID,AD_ORG_ID, Cur_OrderLine.AD_Client_ID) <> -1;
+      END LOOP;
+    END IF;
       /**
       * Void Order - prepare
       */

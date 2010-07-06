@@ -143,6 +143,7 @@
   v_DocNo_Org_ID AD_Sequence.AD_Org_ID%TYPE;
   withholdamount NUMBER(10,2);
   cWithHoldId varchar2(32);
+  Cur_InvoiceNetLine RECORD;
     
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -352,6 +353,17 @@ BEGIN --BODY
 
   --end cbt taxpaymant
   IF (NOT FINISH_PROCESS) THEN
+  /**
+    *Update Invoice Net Unit Price to Product purchasing Plan Table
+    */
+    IF(v_isSoTrx ='N') THEN
+      FOR Cur_InvoiceNetLine IN (SELECT * FROM C_INVOICELINE WHERE C_Invoice_Id =  v_Record_ID)
+      LOOP
+          UPDATE M_PRODUCT_PO SET PriceLastInv=Cur_InvoiceNetLine.PriceActual 
+          Where C_BPARTNER_ID = v_BPartner_ID AND M_PRODUCT_ID = Cur_InvoiceNetLine.M_PRODUCT_ID
+          AND Ad_Isorgincluded(Cur_InvoiceNetLine.AD_ORG_ID,AD_ORG_ID, Cur_InvoiceNetLine.AD_Client_ID) <> -1;
+      END LOOP;
+    END IF;
     /**
      * Void if Document not processed
      */
