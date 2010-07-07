@@ -1178,7 +1178,11 @@ BEGIN --BODY
       FROM C_INVOICETAX
       WHERE C_Invoice_ID = v_Record_ID
         AND Recalculate = 'N';
-      SELECT c_getwithholding(v_record_id) INTO withholdamount FROM dual;
+      IF (v_IsSOTrx = 'N') THEN
+        SELECT c_getwithholding(v_record_id) INTO withholdamount FROM dual;
+      ELSE
+        withholdamount:=0;
+      END IF;
 
       v_GrandTotal:=C_Currency_Round(v_GrandTotal+v_TaxNoRecalculable, v_Currency_ID, NULL) ;
       SELECT COALESCE(SUM(TAXAMT), 0) INTO v_GrandTotal
