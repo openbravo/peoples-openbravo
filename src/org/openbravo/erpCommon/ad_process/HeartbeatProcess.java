@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -15,9 +18,12 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.HeartbeatData;
+import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -281,6 +287,62 @@ public class HeartbeatProcess implements Process {
     for (Alert update : updates) {
       update.save(conn);
     }
+  }
+
+  public enum HeartBeatOrRegistration {
+    HeartBeat, Registration, None;
+  }
+
+  public static HeartBeatOrRegistration showHeartBeatOrRegistration(VariablesSecureApp vars,
+      ConnectionProvider connectionProvider) throws ServletException {
+
+    if (vars.getRole() != null && vars.getRole().equals("0")) {
+      // Check if the heartbeat popup needs to be displayed
+      final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
+      if (hbData.length > 0) {
+        final String isheartbeatactive = hbData[0].isheartbeatactive;
+        final String postponeDate = hbData[0].postponeDate;
+        if (isheartbeatactive == null || isheartbeatactive.equals("")) {
+          if (postponeDate == null || postponeDate.equals("")) {
+            return HeartBeatOrRegistration.HeartBeat;
+          } else {
+            Date date = null;
+            try {
+              date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(postponeDate);
+              if (date.before(new Date())) {
+                return HeartBeatOrRegistration.HeartBeat;
+              }
+            } catch (final ParseException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+
+      // If the heartbeat doesn't need to be displayed, check the
+      // registration popup
+      final RegistrationData[] rData = RegistrationData.select(connectionProvider);
+      if (rData.length > 0) {
+        final String isregistrationactive = rData[0].isregistrationactive;
+        final String rPostponeDate = rData[0].postponeDate;
+        if (isregistrationactive == null || isregistrationactive.equals("")) {
+          if (rPostponeDate == null || rPostponeDate.equals("")) {
+            return HeartBeatOrRegistration.Registration;
+          } else {
+            Date date = null;
+            try {
+              date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(rPostponeDate);
+              if (date.before(new Date())) {
+                return HeartBeatOrRegistration.Registration;
+              }
+            } catch (final ParseException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+    }
+    return HeartBeatOrRegistration.None;
   }
 
   public static boolean isHeartbeatEnabled() {
