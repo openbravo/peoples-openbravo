@@ -301,6 +301,13 @@ public class OBContext implements OBNotSingleton {
               + " When using the admin context it should always be removed in a finally block by the application");
       return;
     }
+
+    // Determine whether using new ui by #Hide_BackButton session attribute set in Menu class
+    if (context != null) {
+      String newUIValue = (String) session.getAttribute("#Hide_BackButton".toUpperCase());
+      context.setNewUI("true".equals(newUIValue));
+    }
+
     session.setAttribute(CONTEXT_PARAM, context);
   }
 
@@ -442,6 +449,9 @@ public class OBContext implements OBNotSingleton {
   // support storing the context in a persistent tomcat session
   private String serializedUserId;
   private boolean serialized = false;
+
+  // check whether using new or old UI
+  private boolean newUI = false;
 
   public String getUserLevel() {
     return userLevel;
@@ -1016,5 +1026,13 @@ public class OBContext implements OBNotSingleton {
 
   public void setWarehouse(Warehouse warehouse) {
     this.warehouse = warehouse;
+  }
+
+  public boolean isNewUI() {
+    return newUI;
+  }
+
+  public void setNewUI(boolean newUI) {
+    this.newUI = newUI;
   }
 }
