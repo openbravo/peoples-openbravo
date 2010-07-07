@@ -380,7 +380,7 @@
 					<textElement>
 						<font fontName="Courier New"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["We certify thet the period from "+$P{DateFrom}.toString()+" to "+$P{DateTo}.toString()+" wages have been paid to the payer for a total amount of "+$F{GRANDTOTALAMOUNT}.toString()+
+				<textFieldExpression   class="java.lang.String"><![CDATA["We certify that for the period from "+$P{DateFrom}.toString()+" to "+$P{DateTo}.toString()+" total payments to the payee were "+$F{GRANDTOTALAMOUNT}.toString()+
 " and that the withholding amount is "+$F{WITHHOLDINGAMOUNT}.toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
