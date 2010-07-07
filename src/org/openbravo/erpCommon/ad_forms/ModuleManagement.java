@@ -768,14 +768,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
       if (!"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
         discard[6] = "";
       } else {
-        for (Module m : inst) {
-          if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
-            discard[6] = "";
+        if (inst != null) {
+          for (Module m : inst) {
+            if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+              discard[6] = "";
+            }
           }
         }
-        for (Module m : upd) {
-          if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
-            discard[6] = "";
+        if (upd != null) {
+          for (Module m : upd) {
+            if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+              discard[6] = "";
+            }
           }
         }
       }
