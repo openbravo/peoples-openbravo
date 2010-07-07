@@ -1068,7 +1068,8 @@ public class Wad extends DefaultHandler {
             tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField,
             tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.uipattern,
             whereClauseParams, parentwhereclause, tabsData.editreference, strProcess,
-            strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage);
+            strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage, "Y"
+                .equals(tabsData.isdeleteable));
 
         /************************************************
          * XSQL
@@ -1535,7 +1536,8 @@ public class Wad extends DefaultHandler {
       String tableId, String windowType, String uiPattern, String whereClauseParams,
       String parentwhereclause, String editReference, String strProcess, String strDirectPrint,
       Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
-      WADControl relationControl, String javaPackage) throws ServletException, IOException {
+      WADControl relationControl, String javaPackage, boolean deleteable) throws ServletException,
+      IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
@@ -1725,6 +1727,9 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("reportPDF", strProcess);
     xmlDocument.setParameter("reportDirectPrint", strDirectPrint);
     xmlDocument.setParameter("relationControl", relationControl.toJava());
+
+    xmlDocument.setParameter("deleteable", deleteable ? "true" : "false");
+
     if (parentsFieldsData.length > 0) {
 
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);

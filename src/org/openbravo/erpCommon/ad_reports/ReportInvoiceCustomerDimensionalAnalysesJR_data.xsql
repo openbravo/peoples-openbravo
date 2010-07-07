@@ -154,6 +154,48 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
   </SqlMethod>
+
+  <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT COUNT( DISTINCT 1 )
+      FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
+                     left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID,
+           C_INVOICELINE left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
+                         left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+                         left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
+                         left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
+                         left join  M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID,
+           C_BPARTNER left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID,
+           C_BP_GROUP, AD_ORG
+      WHERE C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
+      AND C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
+      AND C_INVOICE.AD_ORG_ID = AD_ORG.AD_ORG_ID
+      AND C_INVOICE.ISSOTRX = 'Y'
+      AND C_INVOICE.PROCESSED = 'Y'
+      AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
+      AND C_INVOICE.AD_CLIENT_ID IN ('8')
+      AND 1=1 AND ((2=2)OR (3=3))
+    ]]></Sql>
+    <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'8'"/>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="dateFromRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+  </SqlMethod>
+
   <SqlMethod name="selectNoComparative" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -234,6 +276,46 @@
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
   </SqlMethod>
+
+    <SqlMethod name="selectNoComparativeCount" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT COUNT( DISTINCT 1 )
+      FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
+                     left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID,
+           C_INVOICELINE left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
+                         left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+                         left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
+                         left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
+                         left join  M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID,
+           C_BPARTNER left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID,
+           C_BP_GROUP, AD_ORG
+      WHERE C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
+      AND C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
+      AND C_INVOICE.AD_ORG_ID = AD_ORG.AD_ORG_ID
+      AND C_INVOICE.ISSOTRX = 'Y'
+      AND C_INVOICE.PROCESSED = 'Y'
+      AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
+      AND C_INVOICE.AD_CLIENT_ID IN ('8')
+      AND 1=1 AND 2=2
+     ]]></Sql>
+    <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'8'"/>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+  </SqlMethod>
+
   <SqlMethod name="selectTotal" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

@@ -151,9 +151,20 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         priceStd = priceActual;
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       } else {
-        priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
-            dataOrder[0].cBpartnerId, priceActual.toString().replace("\"", ""), strProduct,
-            dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+        // priceStd needs to be changed?
+        BigDecimal expectedPriceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
+            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd.toString(),
+            strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+        if (expectedPriceActual.scale() > PricePrecision)
+          expectedPriceActual = expectedPriceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+
+        // To avoid rounding issues if the expected priceActual is equals to the current priceActual.
+        // Do not do anything.
+        if (!priceActual.equals(expectedPriceActual)) {
+          priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
+              dataOrder[0].cBpartnerId, priceActual.toString().replace("\"", ""), strProduct,
+              dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+        }
         // priceList
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       }

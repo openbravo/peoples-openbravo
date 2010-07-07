@@ -139,6 +139,46 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
   </SqlMethod>
+
+  <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT COUNT( DISTINCT 1 )
+      FROM M_INOUTLINE left join C_ORDERLINE on M_INOUTLINE.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID ,
+           M_INOUT left join AD_USER on M_INOUT.SALESREP_ID = AD_USER.AD_USER_ID,
+           C_BPARTNER left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID,
+          C_BP_GROUP,  M_PRODUCT, M_PRODUCT_CATEGORY, M_WAREHOUSE, C_UOM,  AD_ORG
+      WHERE M_INOUT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
+      AND M_INOUT.M_INOUT_ID = M_INOUTLINE.M_INOUT_ID
+      AND M_INOUTLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+      AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
+      AND M_INOUT.M_WAREHOUSE_ID = M_WAREHOUSE.M_WAREHOUSE_ID
+      AND M_INOUTLINE.C_UOM_ID = C_UOM.C_UOM_ID
+      AND M_INOUT.AD_ORG_ID = AD_ORG.AD_ORG_ID
+      AND M_INOUT.ISSOTRX = 'Y'
+      AND M_INOUT.PROCESSED = 'Y'
+      AND 0=0 AND M_INOUT.AD_ORG_ID IN ('1')
+      AND M_INOUT.AD_CLIENT_ID IN ('8')
+      AND 1=1 AND ((2=2)OR (3=3))
+    ]]></Sql>
+    <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND M_INOUT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN (" text="'8'"/>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND M_INOUT.MOVEMENTDATE >= TO_DATE(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND M_INOUT.MOVEMENTDATE < TO_DATE(?)]]></Parameter>
+    <Parameter name="dateFromRef" optional="true" after="3=3"><![CDATA[AND M_INOUT.MOVEMENTDATE >= to_date(?)]]></Parameter>
+    <Parameter name="dateToRef" optional="true" after="3=3"><![CDATA[AND M_INOUT.MOVEMENTDATE < to_date(?)]]></Parameter>
+  </SqlMethod>
+
   <SqlMethod name="selectNoComparative" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -207,6 +247,43 @@
     <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9" text=", 1"/>
+  </SqlMethod>
+
+    <SqlMethod name="selectNoComparativeCount" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT COUNT( DISTINCT 1 )
+      FROM M_INOUTLINE left join C_ORDERLINE on M_INOUTLINE.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID ,
+           M_INOUT left join AD_USER on M_INOUT.SALESREP_ID = AD_USER.AD_USER_ID,
+           C_BPARTNER left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID,
+          C_BP_GROUP,  M_PRODUCT, M_PRODUCT_CATEGORY, M_WAREHOUSE, C_UOM,  AD_ORG
+      WHERE M_INOUT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
+      AND M_INOUT.M_INOUT_ID = M_INOUTLINE.M_INOUT_ID
+      AND M_INOUTLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+      AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
+      AND M_INOUT.M_WAREHOUSE_ID = M_WAREHOUSE.M_WAREHOUSE_ID
+      AND M_INOUTLINE.C_UOM_ID = C_UOM.C_UOM_ID
+      AND M_INOUT.AD_ORG_ID = AD_ORG.AD_ORG_ID
+      AND M_INOUT.ISSOTRX = 'Y'
+      AND M_INOUT.PROCESSED = 'Y'
+      AND 0=0 AND M_INOUT.AD_ORG_ID IN ('1')
+      AND M_INOUT.AD_CLIENT_ID IN ('8')
+      AND 1=1 AND 2=2
+     ]]></Sql>
+    <Parameter name="levels" type="replace" optional="true" after="SELECT COUNT( DISTINCT " text="1"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND M_INOUT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN (" text="'8'"/>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND M_INOUT.MOVEMENTDATE >= TO_DATE(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND M_INOUT.MOVEMENTDATE < TO_DATE(?)]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectBpgroup" type="preparedStatement" return="String" default="">

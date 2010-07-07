@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,8 @@
         AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.UIPATTERN, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
-        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule
+        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule,
+        AD_TABLE.ISDELETEABLE
         FROM AD_TAB, AD_WINDOW, AD_TABLE, AD_MODEL_OBJECT, AD_MODULE M1
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
@@ -71,7 +72,8 @@
         AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.UIPATTERN, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
-        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule
+        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule,
+        AD_TABLE.ISDELETEABLE
         FROM AD_TAB, AD_WINDOW, AD_TABLE, AD_MODEL_OBJECT, AD_MODULE M1, AD_MODULE M
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
@@ -148,7 +150,8 @@
         AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.UIPATTERN, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
         '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
         replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
-        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule
+        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE, AD_TAB.AD_MODULE_ID as tabmodule,
+        AD_TABLE.ISDELETEABLE
         FROM AD_TAB, AD_WINDOW, AD_TABLE, AD_MODEL_OBJECT, AD_SYSTEM_INFO SI, AD_MODULE M1
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
         AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 

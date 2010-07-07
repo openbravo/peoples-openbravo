@@ -384,13 +384,13 @@ public class InstanceManagement extends HttpSecureAppServlet {
     params.put("instanceNo", vars.getStringParameter("instanceNo"));
     pb.setParams(params);
 
-    OBError msg = null;
+    OBError msg = new OBError();
     try {
       new ActiveInstanceProcess().execute(pb);
       msg = (OBError) pb.getResult();
       result = msg.getType().equals("Success");
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error Activating instance", e);
       msg.setType("Error");
       msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
       e.printStackTrace();

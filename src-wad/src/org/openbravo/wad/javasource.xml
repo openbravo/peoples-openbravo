@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@
 <PARAMETER id="paramSearchComparations" name="searchComparations" default=""/>
 <PARAMETER id="relationControl" name="relationControl" default=""/>
 <PARAMETER id="fieldControlsJavaCode" name="controlsJavaCode"/>
+
+<PARAMETER id="deleteable" name = "deleteable" default="true"/>
 
 <structure name="structure1">
   <PARAMETER id="class" name = "class" default=" "/>
