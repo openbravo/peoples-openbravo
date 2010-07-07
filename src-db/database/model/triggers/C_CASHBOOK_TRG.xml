@@ -45,17 +45,11 @@ BEGIN
         (
       SELECT 1 
       FROM AD_Org_AcctSchema
-      WHERE AD_IsOrgIncluded(AD_Org_ID, :new.AD_ORG_ID, :new.AD_Client_ID)<>-1
+      WHERE (AD_IsOrgIncluded(AD_Org_ID, :new.AD_ORG_ID, :new.AD_Client_ID)<>-1
+      or AD_IsOrgIncluded(:new.AD_ORG_ID, AD_Org_ID, :new.AD_Client_ID)<>-1)
       AND IsActive = 'Y'
-      AND AD_Org_AcctSchema.C_AcctSchema_ID = d.C_AcctSchema_ID
-      UNION
-      SELECT 1 
-      FROM AD_Org_AcctSchema
-      WHERE AD_Org_ID = '0'
-      AND AD_Client_ID = :new.AD_Client_ID
-      AND IsActive = 'Y'
-      AND AD_Org_AcctSchema.C_AcctSchema_ID = d.C_AcctSchema_ID
-        )
+      AND AD_Org_AcctSchema.C_AcctSchema_ID = d.C_AcctSchema_ID)
+      AND d.AD_Client_ID = :new.AD_Client_ID
       )
     LOOP
       INSERT
