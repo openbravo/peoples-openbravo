@@ -441,7 +441,9 @@ public class Preferences {
       return 2;
     }
 
-    if (pref1.getSearchKey().equals(pref2.getSearchKey())) {
+    if ((pref1.getSearchKey() == null && pref2.getSearchKey() == null)
+        || (pref1.getSearchKey() != null && pref2.getSearchKey() != null && pref1.getSearchKey()
+            .equals(pref2.getSearchKey()))) {
       // Conflict with same value, it does not matter priority
       return 2;
     }
