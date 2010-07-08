@@ -659,7 +659,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     Module[] upd = null;
     OBError message = null;
     boolean found = false;
-    boolean check;
+    boolean check = false;
     // to hold (key,value) = (moduleId, minVersion)
     Map<String, String> minVersions = new HashMap<String, String>();
 
@@ -742,6 +742,28 @@ public class ModuleManagement extends HttpSecureAppServlet {
           return;
         }
 
+        // Show warning message when installing/updating modules not in production level
+        if (!islocal) {
+          if (!"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+            discard[6] = "";
+          } else {
+            if (inst != null) {
+              for (Module m : inst) {
+                if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+                  discard[6] = "";
+                }
+              }
+            }
+            if (upd != null) {
+              for (Module m : upd) {
+                if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+                  discard[6] = "";
+                }
+              }
+            }
+          }
+        }
+
       } else { // Dependencies not satisfied, do not show continue button
         message = im.getCheckError();
         discard[5] = "discardContinue";
@@ -761,28 +783,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
       message.setType("Error");
       message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
       message.setMessage(e.toString());
-    }
-
-    // Show warning message when isntalling/updating modules not in production level
-    if (!islocal) {
-      if (!"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
-        discard[6] = "";
-      } else {
-        if (inst != null) {
-          for (Module m : inst) {
-            if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
-              discard[6] = "";
-            }
-          }
-        }
-        if (upd != null) {
-          for (Module m : upd) {
-            if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
-              discard[6] = "";
-            }
-          }
-        }
-      }
     }
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -809,7 +809,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("moduleVersion", module.getVersionNo());
       xmlDocument.setParameter("linkCore", module.getModuleVersionID());
 
-      if ("500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+      if (!check || "500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
         xmlDocument.setParameter("maturityStyle", "none");
       } else {
         xmlDocument.setParameter("maturityStyle", "yes");
