@@ -1004,7 +1004,7 @@
 <!--800949-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800949-->  <TEXT><![CDATA[Devol. Ref]]></TEXT>
 <!--800949-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportRefundSalesDimensionalAnalysesEdition.html]]></FILENAME>
-<!--800949-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--800949-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--800949-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800949--></AD_TEXTINTERFACES>
 
@@ -1015,7 +1015,7 @@
 <!--800982-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800982-->  <TEXT><![CDATA[Devoluc. Ref]]></TEXT>
 <!--800982-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportRefundInvoiceCustomerDimensionalAnalysesEdition.html]]></FILENAME>
-<!--800982-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--800982-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--800982-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800982--></AD_TEXTINTERFACES>
 
@@ -1254,7 +1254,7 @@
 <!--801580-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--801580-->  <TEXT><![CDATA[Prof. ref.]]></TEXT>
 <!--801580-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesEdition.html]]></FILENAME>
-<!--801580-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--801580-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--801580-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--801580--></AD_TEXTINTERFACES>
 
@@ -3334,7 +3334,7 @@
 <!--803577-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--803577-->  <TEXT><![CDATA[%rat refund]]></TEXT>
 <!--803577-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportRefundInvoiceCustomerDimensionalAnalyses.fo]]></FILENAME>
-<!--803577-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--803577-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--803577-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--803577--></AD_TEXTINTERFACES>
 
@@ -3543,7 +3543,7 @@
 <!--803679-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--803679-->  <TEXT><![CDATA[Pro]]></TEXT>
 <!--803679-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensional.fo]]></FILENAME>
-<!--803679-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--803679-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--803679-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--803679--></AD_TEXTINTERFACES>
 
@@ -4418,7 +4418,7 @@
 <!--804925-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804925-->  <TEXT><![CDATA[Tot inc-paym:]]></TEXT>
 <!--804925-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportCashflowForecastDateAcct.srpt]]></FILENAME>
-<!--804925-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--804925-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--804925-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804925--></AD_TEXTINTERFACES>
 
@@ -7654,7 +7654,7 @@
 <!--807113-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--807113-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--807113-->  <TEXT><![CDATA[Dif ratio]]></TEXT>
-<!--807113-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--807113-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--807113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--807113--></AD_TEXTINTERFACES>
 
@@ -9064,7 +9064,7 @@
 <!--807281-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--807281-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--807281-->  <TEXT><![CDATA[Qty dev]]></TEXT>
-<!--807281-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--807281-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--807281-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--807281--></AD_TEXTINTERFACES>
 
