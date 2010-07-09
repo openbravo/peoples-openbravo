@@ -2540,4 +2540,14 @@ public class Utility {
       throw new PropertyException(strProperty + " @PropertyConflict@");
     }
   }
+
+  /**
+   * Checks whether the current context is using new UI
+   * 
+   * @return true in case new UI is being used false if not
+   */
+  public static boolean isNewUI() {
+    OBContext context = OBContext.getOBContext();
+    return context != null && context.isNewUI();
+  }
 }

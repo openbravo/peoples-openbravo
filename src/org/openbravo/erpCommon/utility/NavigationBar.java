@@ -70,96 +70,99 @@ public class NavigationBar {
     final StringBuffer toolbar = new StringBuffer();
     String auxText;
     toolbar.append("<TABLE class=\"Main_ContentPane_NavBar\" id=\"tdtopNavButtons\">\n");
-    toolbar.append("  <TR class=\"Main_NavBar_bg\"><TD></TD>\n");
-    if (!hideBack) {
+    if (!Utility.isNewUI()) {
+      // show only for old UI
+      toolbar.append("  <TR class=\"Main_NavBar_bg\"><TD></TD>\n");
+      if (!hideBack) {
+        toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
+        toolbar
+            .append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"goToPreviousPage(); return false;\" border=\"0\" onmouseover=\"window.status='");
+        auxText = Utility.messageBD(conn, "GoBack", language);
+        toolbar.append(auxText);
+        toolbar
+            .append(
+                "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonBack\"><IMG src=\"")
+            .append(base_direction)
+            .append(
+                "/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_back\" border=\"0\" alt=\"");
+        toolbar.append(auxText).append("\" title=\"").append(auxText).append("\"");
+        toolbar.append("/></a>\n");
+        toolbar.append("  </TD>\n");
+        toolbar.append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
+      }
       toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
+      toolbar.append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onClick=\"");
+      if (!validateChangesOnRefresh) {
+        toolbar.append("document.frmMain.autosave.value='N'; ");
+      }
+      toolbar.append("submitCommandForm('DEFAULT', ").append(
+          validateChangesOnRefresh ? "true" : "false").append(", null, '").append(servlet_action);
+      toolbar.append("', '_self', null, ").append(validateChangesOnRefresh ? "true" : "false")
+          .append(");return false;\" border=\"0\" onmouseover=\"window.status='");
+      auxText = Utility.messageBD(conn, "Refresh", language);
       toolbar
-          .append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"goToPreviousPage(); return false;\" border=\"0\" onmouseover=\"window.status='");
-      auxText = Utility.messageBD(conn, "GoBack", language);
-      toolbar.append(auxText);
-      toolbar
+          .append(auxText)
           .append(
-              "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonBack\"><IMG src=\"")
+              "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonRefresh\"><IMG src=\"");
+      toolbar
           .append(base_direction)
           .append(
-              "/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_back\" border=\"0\" alt=\"");
+              "/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_refresh\" border=\"0\" alt=\"");
       toolbar.append(auxText).append("\" title=\"").append(auxText).append("\"");
-      toolbar.append("/></a>\n");
+      toolbar.append("></a>\n");
+      toolbar.append("  </TD>\n");
+      toolbar
+          .append(
+              "  <TD class=\"Main_NavBar_Breadcrumb_cell\"><span class=\"Main_NavBar_Breadcrumb\" id=\"paramBreadcrumb\">")
+          .append(breadcrumb).append("</span></TD>\n");
+      toolbar.append("  <TD></TD>\n");
+      toolbar.append("  <TD class=\"Main_NavBar_RightButton_cell\">\n");
+      toolbar
+          .append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"about();return false;\" border=\"0\" onmouseover=\"window.status='");
+      auxText = Utility.messageBD(conn, "About", language);
+      toolbar
+          .append(auxText)
+          .append(
+              "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonAbout\"><IMG src=\"")
+          .append(base_direction)
+          .append(
+              "/images/blank.gif\" class=\"Main_NavBar_RightButton_Icon Main_NavBar_RightButton_Icon_about\" border=\"0\"");
+      toolbar.append(" alt=\"").append(auxText).append("\" title=\"").append(auxText).append("\"");
+      toolbar.append("></a>\n");
+      toolbar.append("  </TD>\n");
+      toolbar.append("  <TD class=\"Main_NavBar_separator_cell_small\"></TD>\n");
+      toolbar.append("  <TD class=\"Main_NavBar_RightButton_cell\">\n");
+      toolbar.append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"openHelp(");
+      if (window_type.equalsIgnoreCase("W"))
+        toolbar.append("document.frmMain.inpwindowId.value");
+      else
+        toolbar.append("null");
+      toolbar.append(", '../ad_help/DisplayHelp.html', 'HELP', false, null, null, '");
+      toolbar.append(window_type).append("', '").append(window_name);
+      toolbar.append("');return false;\" border=\"0\" onmouseover=\"window.status='");
+      auxText = Utility.messageBD(conn, "Help", language);
+      toolbar
+          .append(auxText)
+          .append(
+              "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonHelp\"><IMG src=\"")
+          .append(base_direction)
+          .append(
+              "/images/blank.gif\" class=\"Main_NavBar_RightButton_Icon Main_NavBar_RightButton_Icon_help\" border=\"0\"");
+      toolbar.append(" alt=\"").append(auxText).append("\" title=\"").append(auxText).append("\"");
+      toolbar.append("></a>\n");
       toolbar.append("  </TD>\n");
       toolbar.append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
+      toolbar.append("  <TD class=\"Main_NavBar_bg_logo_left\"></TD>\n");
+      toolbar
+          .append(
+              "  <TD class=\"Main_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"")
+          .append(base_direction)
+          .append(
+              "/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Main_NavBar_logo\"></TD>\n");
+      toolbar.append("  <TD class=\"Main_NavBar_bg_logo_right\"></TD>\n");
+      toolbar.append("  <TD></TD>\n");
+      toolbar.append("  </TR>\n");
     }
-    toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
-    toolbar.append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onClick=\"");
-    if (!validateChangesOnRefresh) {
-      toolbar.append("document.frmMain.autosave.value='N'; ");
-    }
-    toolbar.append("submitCommandForm('DEFAULT', ").append(
-        validateChangesOnRefresh ? "true" : "false").append(", null, '").append(servlet_action);
-    toolbar.append("', '_self', null, ").append(validateChangesOnRefresh ? "true" : "false")
-        .append(");return false;\" border=\"0\" onmouseover=\"window.status='");
-    auxText = Utility.messageBD(conn, "Refresh", language);
-    toolbar
-        .append(auxText)
-        .append(
-            "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonRefresh\"><IMG src=\"");
-    toolbar
-        .append(base_direction)
-        .append(
-            "/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_refresh\" border=\"0\" alt=\"");
-    toolbar.append(auxText).append("\" title=\"").append(auxText).append("\"");
-    toolbar.append("></a>\n");
-    toolbar.append("  </TD>\n");
-    toolbar
-        .append(
-            "  <TD class=\"Main_NavBar_Breadcrumb_cell\"><span class=\"Main_NavBar_Breadcrumb\" id=\"paramBreadcrumb\">")
-        .append(breadcrumb).append("</span></TD>\n");
-    toolbar.append("  <TD></TD>\n");
-    toolbar.append("  <TD class=\"Main_NavBar_RightButton_cell\">\n");
-    toolbar
-        .append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"about();return false;\" border=\"0\" onmouseover=\"window.status='");
-    auxText = Utility.messageBD(conn, "About", language);
-    toolbar
-        .append(auxText)
-        .append(
-            "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonAbout\"><IMG src=\"")
-        .append(base_direction)
-        .append(
-            "/images/blank.gif\" class=\"Main_NavBar_RightButton_Icon Main_NavBar_RightButton_Icon_about\" border=\"0\"");
-    toolbar.append(" alt=\"").append(auxText).append("\" title=\"").append(auxText).append("\"");
-    toolbar.append("></a>\n");
-    toolbar.append("  </TD>\n");
-    toolbar.append("  <TD class=\"Main_NavBar_separator_cell_small\"></TD>\n");
-    toolbar.append("  <TD class=\"Main_NavBar_RightButton_cell\">\n");
-    toolbar.append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"openHelp(");
-    if (window_type.equalsIgnoreCase("W"))
-      toolbar.append("document.frmMain.inpwindowId.value");
-    else
-      toolbar.append("null");
-    toolbar.append(", '../ad_help/DisplayHelp.html', 'HELP', false, null, null, '");
-    toolbar.append(window_type).append("', '").append(window_name);
-    toolbar.append("');return false;\" border=\"0\" onmouseover=\"window.status='");
-    auxText = Utility.messageBD(conn, "Help", language);
-    toolbar
-        .append(auxText)
-        .append(
-            "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonHelp\"><IMG src=\"")
-        .append(base_direction)
-        .append(
-            "/images/blank.gif\" class=\"Main_NavBar_RightButton_Icon Main_NavBar_RightButton_Icon_help\" border=\"0\"");
-    toolbar.append(" alt=\"").append(auxText).append("\" title=\"").append(auxText).append("\"");
-    toolbar.append("></a>\n");
-    toolbar.append("  </TD>\n");
-    toolbar.append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
-    toolbar.append("  <TD class=\"Main_NavBar_bg_logo_left\"></TD>\n");
-    toolbar
-        .append(
-            "  <TD class=\"Main_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"")
-        .append(base_direction)
-        .append(
-            "/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Main_NavBar_logo\"></TD>\n");
-    toolbar.append("  <TD class=\"Main_NavBar_bg_logo_right\"></TD>\n");
-    toolbar.append("  <TD></TD>\n");
-    toolbar.append("  </TR>\n");
     toolbar.append("</TABLE>");
     return toolbar.toString();
   }
