@@ -546,13 +546,19 @@ public class VerticalMenu extends HttpSecureAppServlet {
     final HeartBeatOrRegistration showHeartBeatOrRegistration = HeartbeatProcess
         .showHeartBeatOrRegistration(vars, myPool);
 
-    if (showHeartBeatOrRegistration == HeartbeatProcess.HeartBeatOrRegistration.HeartBeat) {
+    switch (showHeartBeatOrRegistration) {
+    case HeartBeat:
       xmlDocument.setParameter("popup", "openHeartbeat();");
-    } else if (showHeartBeatOrRegistration == HeartbeatProcess.HeartBeatOrRegistration.Registration) {
+      return;
+    case Registration:
       xmlDocument.setParameter("popup", "openRegistration();");
-    } else {
-      // neither of the popups need to be popped-up
+      return;
+    case None:
       xmlDocument.setParameter("popup", "");
+      return;
+    default:
+      throw new IllegalStateException("HeartbeatOrRegistration " + showHeartBeatOrRegistration
+          + " not supported");
     }
   }
 
