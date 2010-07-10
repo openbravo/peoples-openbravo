@@ -6925,7 +6925,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1175-->  <NAME><![CDATA[Print Details on Invoice]]></NAME>
 <!--1175-->  <PRINTNAME><![CDATA[Print detail on invoice]]></PRINTNAME>
 <!--1175-->  <DESCRIPTION><![CDATA[Print detail BOM elements on the invoice]]></DESCRIPTION>
-<!--1175-->  <HELP><![CDATA[The Print Details on Invoice indicates that the BOM element products will print on the Invoice as opposed to this product.]]></HELP>
+<!--1175-->  <HELP><![CDATA[If “Print Details on Invoice” is checked then the details of the individual elements of the BOM will be printed on the Invoice.]]></HELP>
 <!--1175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1175--></AD_ELEMENT>
 
@@ -6938,7 +6938,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1176-->  <NAME><![CDATA[Print Details on Pick List]]></NAME>
 <!--1176-->  <PRINTNAME><![CDATA[Print detail records on pick list]]></PRINTNAME>
 <!--1176-->  <DESCRIPTION><![CDATA[Print detail BOM elements on the pick list]]></DESCRIPTION>
-<!--1176-->  <HELP><![CDATA[The Print Details on Pick List indicates that the BOM element products will print on the Pick List as opposed to this product.]]></HELP>
+<!--1176-->  <HELP><![CDATA[If “Print Details on Pick List” is checked then the details of the individual elements of the BOM will be printed on the Pick List.]]></HELP>
 <!--1176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1176--></AD_ELEMENT>
 
@@ -13410,7 +13410,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800038-->  <COLUMNNAME><![CDATA[Invoice_ToProject]]></COLUMNNAME>
 <!--800038-->  <NAME><![CDATA[Invoice to Project]]></NAME>
 <!--800038-->  <PRINTNAME><![CDATA[Invoice_ToProject]]></PRINTNAME>
-<!--800038-->  <HELP><![CDATA[This option indicates if the invoices has been sent to the winner are "Origen invoices"]]></HELP>
+<!--800038-->  <HELP><![CDATA[This option indicates if invoices received are to be posted to the project.]]></HELP>
 <!--800038-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800038--></AD_ELEMENT>
 
@@ -14812,7 +14812,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800185-->  <NAME><![CDATA[De-encryptable]]></NAME>
 <!--800185-->  <PRINTNAME><![CDATA[Is desencryptable]]></PRINTNAME>
 <!--800185-->  <DESCRIPTION><![CDATA[Is desencryptable]]></DESCRIPTION>
-<!--800185-->  <HELP><![CDATA[When Is Desencryptable field is 'Y' the content of this column will be saved in a desencryptable way.]]></HELP>
+<!--800185-->  <HELP><![CDATA[If “De-encryptable” is selected then the content of this column can be decrypted.]]></HELP>
 <!--800185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800185--></AD_ELEMENT>
 
@@ -16558,7 +16558,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800462-->  <COLUMNNAME><![CDATA[Bydefault]]></COLUMNNAME>
 <!--800462-->  <NAME><![CDATA[By Default]]></NAME>
 <!--800462-->  <PRINTNAME><![CDATA[Bydefault]]></PRINTNAME>
-<!--800462-->  <HELP><![CDATA[When calculated is checked determines how is calculated the cost center use. When is by default the data is taken from the work requirement phase, when not from the work effort header.]]></HELP>
+<!--800462-->  <HELP><![CDATA[Controls how the cost center use is calculated. If “By Default” is selected then data is taken from the work requirement phase, not from the work effort header.]]></HELP>
 <!--800462-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800462--></AD_ELEMENT>
 
@@ -16782,7 +16782,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800485-->  <COLUMNNAME><![CDATA[Copyversion]]></COLUMNNAME>
 <!--800485-->  <NAME><![CDATA[Copy Version]]></NAME>
 <!--800485-->  <PRINTNAME><![CDATA[Copy Version]]></PRINTNAME>
-<!--800485-->  <HELP><![CDATA[A process that copies a selected reference version a new one and changing the corresponding time periods at the same time.]]></HELP>
+<!--800485-->  <HELP><![CDATA[A process that copies a selected version to a new version and changes the corresponding time periods.]]></HELP>
 <!--800485-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800485--></AD_ELEMENT>
 
@@ -18455,7 +18455,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800643-->  <NAME><![CDATA[Consolidate]]></NAME>
 <!--800643-->  <PRINTNAME><![CDATA[Consolidate]]></PRINTNAME>
 <!--800643-->  <DESCRIPTION><![CDATA[Consolidate]]></DESCRIPTION>
-<!--800643-->  <HELP><![CDATA[When a remittance type is consolidated it will be created a cancel settlement from the debt/payments in the remittance and another one with the amount being the sum of all debt/payments.]]></HELP>
+<!--800643-->  <HELP><![CDATA[When a Remittance Type is consolidated, a cancel settlement will be created for the remittance and a new remittance will be created with the amount being the sum of all debt/payments.]]></HELP>
 <!--800643-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800643--></AD_ELEMENT>
 
@@ -18888,7 +18888,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800683-->  <NAME><![CDATA[Cost Type]]></NAME>
 <!--800683-->  <PRINTNAME><![CDATA[Cost Type]]></PRINTNAME>
 <!--800683-->  <DESCRIPTION><![CDATA[A distinct cost characteristic used for processes.]]></DESCRIPTION>
-<!--800683-->  <HELP><![CDATA[The cost type defines when the cost is added to the product, production in each product and structure only to final product that is sold.]]></HELP>
+<!--800683-->  <HELP><![CDATA[The cost type defines when the cost is added to the product; select “Production” if the cost is to be added to each product or “Structure” if the cost is to be added to cost of the final product that is sold.]]></HELP>
 <!--800683-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800683--></AD_ELEMENT>
 
@@ -20201,7 +20201,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800799-->  <NAME><![CDATA[Reference Search Key]]></NAME>
 <!--800799-->  <PRINTNAME><![CDATA[Reference Key]]></PRINTNAME>
 <!--800799-->  <DESCRIPTION><![CDATA[The exact reference specification for a list or a table.]]></DESCRIPTION>
-<!--800799-->  <HELP><![CDATA[Reference Key identifies the record that raised the alert, in case that this record belongs to a table with only a key field this should be the value, otherwise it will be necessary to compose a value from the different keys of the table.]]></HELP>
+<!--800799-->  <HELP><![CDATA[Reference Search Key identifies the record that triggers an alert.  In the event that this record belongs to a table with only a key field, then the key field should be the value, otherwise it will be necessary to compose a value from different keys of the table.]]></HELP>
 <!--800799-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800799--></AD_ELEMENT>
 

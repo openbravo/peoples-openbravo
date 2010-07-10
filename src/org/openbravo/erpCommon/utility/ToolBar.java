@@ -251,6 +251,12 @@ public class ToolBar {
       return "dijit.byId('grid').goToFirstRow();";
     } else if (name.equals("LAST_RELATION")) {
       return "dijit.byId('grid').goToLastRow();";
+    } else if (name.equals("GRID_VIEW")) {
+      return !isRelation ? "submitCommandForm('RELATION', isUserChanges, null, '" + servlet_action
+          + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, true);" : "";
+    } else if (name.equals("FORM_VIEW")) {
+      return isRelation ? "submitCommandForm('EDIT', true, null, '" + servlet_action
+          + (isSrcWindow ? "" : "_Relation") + ".html', '_self', null, false);" : "";
     } else {
       return "submitCommandForm('" + (name.equals("REFRESH") ? "DEFAULT" : name) + "', "
           + (name.equals("NEW") && (this.grid_id.equals("")) ? "true" : "false") + ", null, '"
@@ -285,11 +291,14 @@ public class ToolBar {
           .messageBD(conn, "Delete", language), getButtonScript("DELETE_RELATION")));
     }
     buttons.put("SEPARATOR4", new ToolBar_Space(base_direction));
-    // buttons.put("REFRESH", new ToolBar_Button(base_direction, "Refresh",
-    // Utility.messageBD(conn, "Refresh", language),
-    // getButtonScript("REFRESH")));
     buttons.put("UNDO", new ToolBar_Button(base_direction, "Undo", Utility.messageBD(conn, "Undo",
         language), getButtonScript("UNDO")));
+
+    if (isNewUI()) {
+      buttons.put("REFRESH", new ToolBar_Button(base_direction, "Refresh", Utility.messageBD(conn,
+          "Refresh", language), getButtonScript("REFRESH")));
+    }
+
     buttons.put("TREE", new ToolBar_Button(base_direction, "Tree", Utility.messageBD(conn, "Tree",
         language), getButtonScript("TREE")));
     buttons.put("ATTACHMENT", new ToolBar_Button(base_direction, "Attachment", Utility.messageBD(
@@ -1009,6 +1018,20 @@ public class ToolBar {
     toolbar.append("<tr>\n");
     if (buttons != null) {
       final Vector<String> lastType = new Vector<String>(0);
+
+      // In case of using new UI, add in toolbar grid and edition buttons
+      if (isNewUI() && !isSrcWindow) {
+        buttons.put("FORM_VIEW", new ToolBar_Button(base_direction, "Edition", Utility.messageBD(
+            conn, "Form View", language), getButtonScript("FORM_VIEW"), !isRelation, "Edition"
+            + (isNew ? "_new" : "")));
+        buttons.put("GRID_VIEW", new ToolBar_Button(base_direction, "Relation", Utility.messageBD(
+            conn, "Grid View", language), getButtonScript("GRID_VIEW"), isRelation));
+        buttons.put("SEPARATOR_NEWUI", new ToolBar_Space(base_direction));
+        toolbar.append(transformElementsToString(buttons.get("FORM_VIEW"), lastType, false));
+        toolbar.append(transformElementsToString(buttons.get("GRID_VIEW"), lastType, false));
+        toolbar.append(transformElementsToString(buttons.get("SEPARATOR_NEWUI"), lastType, false));
+      }
+
       toolbar.append(transformElementsToString(buttons.get("NEW"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EDIT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("RELATION"), lastType, false));
@@ -1022,9 +1045,8 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("DELETE"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("DELETE_RELATION"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR4"), lastType, false));
-      // toolbar.append(transformElementsToString(buttons.get("REFRESH"),
-      // lastType, false));
       toolbar.append(transformElementsToString(buttons.get("UNDO"), lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("REFRESH"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("TREE"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ATTACHMENT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EXCEL"), lastType, false));
@@ -1083,5 +1105,10 @@ public class ToolBar {
     toolbar.append("</tr>\n");
     toolbar.append("</table>\n");
     return toolbar.toString();
+  }
+
+  private boolean isNewUI() {
+    OBContext context = OBContext.getOBContext();
+    return context != null && context.isNewUI();
   }
 }

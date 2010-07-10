@@ -7212,6 +7212,27 @@ a.Main_ToolBar_Button_Selected:active {
   vertical-align: middle;
 }
 
+.Main_ToolBar_Button_Icon_Edition {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Main/ToolBar/iconEdition.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+
+}
+
+.Main_ToolBar_Button_Icon_Edition_new {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Main/ToolBar/iconEditionNew.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+
+}
+
+.Main_ToolBar_Button_Icon_Relation {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Main/ToolBar/iconRelation.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+
+}
+
 .Main_ToolBar_Button_Icon_New {
   background-repeat: no-repeat;
   background-position: center center;
@@ -7258,6 +7279,13 @@ a.Main_ToolBar_Button_Selected:active {
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Main/ToolBar/iconUndo.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.Main_ToolBar_Button_Icon_Refresh {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Main/ToolBar/iconRefresh.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+
 }
 
 .Main_ToolBar_Button_Icon_Tree {

@@ -23,9 +23,11 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
@@ -89,6 +91,14 @@ public class ActiveInstanceProcess implements Process {
     content += "&purpose=" + purpose;
     if (instanceNo != null && !instanceNo.equals(""))
       content += "&instanceNo=" + instanceNo;
+
+    try {
+      OBContext.setAdminMode();
+      Module core = OBDal.getInstance().get(Module.class, "0");
+      content += "&erpversion=" + core.getVersion();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     URL url = new URL(BUTLER_URL);
     try {

@@ -14918,7 +14918,7 @@
 <!--1002100158-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1002100158-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1002100158-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1002100158-->  <TEXT><![CDATA[We certify thet the period from]]></TEXT>
+<!--1002100158-->  <TEXT><![CDATA[We certify that for the period from]]></TEXT>
 <!--1002100158-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml]]></FILENAME>
 <!--1002100158-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--1002100158-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -14940,7 +14940,7 @@
 <!--1002100160-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1002100160-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1002100160-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1002100160-->  <TEXT><![CDATA[wages have been paid to the payer for a total amount of]]></TEXT>
+<!--1002100160-->  <TEXT><![CDATA[total payments to the payee were]]></TEXT>
 <!--1002100160-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml]]></FILENAME>
 <!--1002100160-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--1002100160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
