@@ -4363,11 +4363,9 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800147-->  <VALUE><![CDATA[AD_Delete_Client]]></VALUE>
 <!--800147-->  <NAME><![CDATA[Delete Client]]></NAME>
 <!--800147-->  <DESCRIPTION><![CDATA[This process deletes a client]]></DESCRIPTION>
-<!--800147-->  <HELP><![CDATA[This process deletes a client and all data depending on this client. So be very careful when running it.
-The execution of this process can take a long time.
-
-In case it fails a message indicating which SQL statements have made it crash will be shown.
-When it has been correctly executed all DB constraints and triggers should be in "ENABLED" status, in case they are not a message will be shown.]]></HELP>
+<!--800147-->  <HELP><![CDATA[This process deletes a client and all of its data. This operation cannot be undone so please exercise caution.
+Under certain circumstances, this process fails to complete successfully, leaving the system in an inconsistent state that prevents it from working correctly. We strongly advise to backup your system before initiating this operation.
+This operation can take a long time to complete.]]></HELP>
 <!--800147-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--800147-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
 <!--800147-->  <ISREPORT><![CDATA[N]]></ISREPORT>
