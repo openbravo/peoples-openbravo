@@ -59,7 +59,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
   private static final String SystemInfomation_ID = "0";
   private static final String EVERY_N_DAYS = "N";
   private static final String SCHEDULE = "S";
-  private static final ValueListFilter activeFilter = new ValueListFilter("Y", "N");
+  private static final ValueListFilter activeFilter = new ValueListFilter("", "Y", "N");
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
