@@ -68,6 +68,7 @@ import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.Zip;
+import org.openbravo.service.web.ResourceNotFoundException;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
@@ -131,16 +132,29 @@ public class ImportModule {
    *          parsed.
    */
   public ImportModule(ConnectionProvider conn, String obdir, VariablesSecureApp _vars) {
-    vars = _vars;
-    obDir = obdir;
-    pool = conn;
-    final File[] f = new File[3];
-    f[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml");
-    f[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
-    f[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
+	    vars = _vars;
+	    obDir = obdir;
+	    pool = conn;
+	    final File[] files = new File[3];
+	    files[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml1");
+	    files[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
+	    files[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
 
-    db = DatabaseUtils.readDatabaseNoInit(f);
-  }
+	    verifyFilesExist(files);
+	    
+	    db = DatabaseUtils.readDatabaseNoInit(files);
+	  }
+
+	  /**
+	   * Verifies that the provided files actually exist. 
+	   */
+	  private void verifyFilesExist(File[] files) {
+		for(File file : files){
+			if(!file.exists()){
+				throw new ResourceNotFoundException(String.format(Utility.messageBD(pool, "SourceFileNotFound", vars.getLanguage()),file.getPath()));
+			}
+		}
+	   }
 
   /**
    * Check the dependencies for a file name. See
