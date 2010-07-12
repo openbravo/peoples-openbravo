@@ -38,8 +38,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
-import org.openbravo.services.webservice.WebServiceImpl;
-import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.openbravo.services.webservice.WebService3Impl;
+import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 
 public class VersionUtility {
   protected static ConnectionProvider pool;
@@ -514,21 +514,36 @@ public class VersionUtility {
    *          Out param. Modules that need an update.
    * @param obErrors
    *          Out param. Errors in dependencies. Null if no errors.
+   * @param maturityLevels
    * @return ModuleInstallDetail with modulesToInstall, modulesToUpdate and isValidConfiguration
    */
   static public ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
-      String[] moduleVersionToUpdateId, OBError obErrors) throws Exception {
-    WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-    WebServiceImpl ws = (WebServiceImpl) loc.getWebService();
+      String[] moduleVersionToUpdateId, OBError obErrors, HashMap<String, String> maturityLevels)
+      throws Exception {
+    WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+    WebService3Impl ws = (WebService3Impl) loc.getWebService3();
     String[] errors = new String[0];
 
     ModuleInstallDetail mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(),
-        moduleVersionId, moduleVersionToUpdateId);
+        moduleVersionId, moduleVersionToUpdateId, maturityLevels);
 
     errors = mid.getDependencyErrors();
 
     getOBError(obErrors, pool, vars, errors);
     return mid;
+  }
+
+  /**
+   * @deprecated use
+   *             {@link VersionUtility#checkRemote(VariablesSecureApp, String[], String[], OBError, HashMap)}
+   *             instead
+   */
+  static public ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
+      String[] moduleVersionToUpdateId, OBError obErrors) throws Exception {
+    HashMap<String, String> maturityLevels = new HashMap<String, String>();
+    maturityLevels.put("update.level", "500");
+    maturityLevels.put("install.level", "500");
+    return checkRemote(vars, moduleVersionId, moduleVersionToUpdateId, obErrors, maturityLevels);
   }
 
   /**

@@ -30,8 +30,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.services.webservice.Module;
-import org.openbravo.services.webservice.WebServiceImpl;
-import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.openbravo.services.webservice.WebService3Impl;
+import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class RegisterModule extends HttpSecureAppServlet {
@@ -73,12 +73,12 @@ public class RegisterModule extends HttpSecureAppServlet {
       module.setDbPrefix(data.dbPrefix);
       module.setDescription(data.description);
 
-      WebServiceImpl ws = null;
+      WebService3Impl ws = null;
       boolean error = false;
       try {
         // retrieve the module details from the webservice
-        WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-        ws = (WebServiceImpl) loc.getWebService();
+        WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+        ws = (WebService3Impl) loc.getWebService3();
       } catch (Exception e) {
         OBError message = new OBError();
         message.setType("Error");
@@ -98,7 +98,8 @@ public class RegisterModule extends HttpSecureAppServlet {
           OBError message = new OBError();
           message.setType("Error");
           message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          message.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+          message.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e
+              .getMessage()));
           vars.setMessage("RegisterModule", message);
           error = true;
           e.printStackTrace();

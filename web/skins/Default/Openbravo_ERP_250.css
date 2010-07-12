@@ -9945,3 +9945,10 @@ td.Popup_SeparatorBar_bg {
   background-image: url(Popup/WindowLogo/iconAuditTrail.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
 }
 
+.Small_cancel {
+  background-repeat: no-repeat;
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconCancelSmall.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  width: 16px;
+  height: 16px;
+}

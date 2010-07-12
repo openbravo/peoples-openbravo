@@ -65,6 +65,12 @@
           <div class="AddModule_Text_Option_Separator">|</div>
           <div class="AddModule_Text_Option"><a class="LabelLink_noicon" id="url" href="#" onclick="openLink('xx', '_blank');return false;">Visit Site</a></div>
         </div>
+        
+         <div id="maturitySection" style="display:xx;">
+          <div class="AddModule_Text_Option_Separator">|</div>
+          <div class="AddModule_Text_Option">Maturity Level: <span style="color: orange; font-weight: bold;" id="maturityLevel">Testing</span> (<a class="LabelLink_noicon" href="#" onclick="openLink('http://wiki.openbravo.com/wiki/Projects/Module_Life_Cycle_Management/Functional_Documentation', '_blank');return false;">Learn more</a>)</div>
+        </div>
+        
       </div>
       <div class="AddModule_Separator" style=""></div>
     </div>

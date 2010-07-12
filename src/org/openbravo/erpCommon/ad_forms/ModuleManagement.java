@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -31,9 +32,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -41,6 +46,7 @@ import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
+import org.openbravo.erpCommon.modules.ModuleUtiltiy;
 import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
 import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
@@ -58,8 +64,8 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
-import org.openbravo.services.webservice.WebServiceImpl;
-import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.openbravo.services.webservice.WebService3Impl;
+import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -115,7 +121,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
       printPageDetail(response, vars, record, local);
     } else if (vars.commandIn("INSTALL")) {
       final String record = vars.getStringParameter("inpcRecordId");
-      printPageInstall1(response, request, vars, record, false, null, new String[0]);
+
+      printPageInstall1(response, request, vars, record, false, null, new String[0], ModuleUtiltiy
+          .getSystemMaturityLevels(true));
     } else if (vars.commandIn("INSTALL2")) {
       printPageInstall2(response, vars);
     } else if (vars.commandIn("INSTALL3")) {
@@ -148,9 +156,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate = new String[1];
         modulesToUpdate[0] = updateModule;
       }
-      printPageInstall1(response, request, vars, null, false, null, modulesToUpdate);
-    } else
+
+      // For update obtain just update maturity level
+      printPageInstall1(response, request, vars, null, false, null, modulesToUpdate, ModuleUtiltiy
+          .getSystemMaturityLevels(false));
+    } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD", "SETTINGS_REMOVE", "SETTINGS_SAVE")) {
+      printPageSettings(response, request);
+    } else {
       pageError(response);
+    }
   }
 
   /**
@@ -433,8 +447,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (!local) {
       try {
         // retrieve the module details from the webservice
-        final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-        final WebServiceImpl ws = loc.getWebService();
+        final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+        final WebService3Impl ws = loc.getWebService3();
         module = ws.moduleDetail(recordId);
       } catch (final Exception e) {
         log4j.error(e);
@@ -573,7 +587,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       try {
         if (im.isModuleUpdate(fi.getInputStream())) {
           vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
-          printPageInstall1(response, request, vars, null, true, fi.getInputStream(), new String[0]);
+          printPageInstall1(response, request, vars, null, true, fi.getInputStream(),
+              new String[0], null);
         } else {
           OBError message = im.getOBError(this);
           printSearchFile(response, vars, message);
@@ -596,13 +611,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param recordId
    * @param islocal
    * @param obx
+   * @param maturityLevels
    * @throws IOException
    * @throws ServletException
    */
   private void printPageInstall1(HttpServletResponse response, HttpServletRequest request,
       VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
-      String[] updateModules) throws IOException, ServletException {
-    final String discard[] = { "", "", "", "", "", "" };
+      String[] updateModules, HashMap<String, String> maturityLevels) throws IOException,
+      ServletException {
+    final String discard[] = { "", "", "", "", "", "", "warnMaturity" };
     Module module = null;
 
     // Remote installation is only allowed for heartbeat enabled instances
@@ -628,8 +645,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // if it is a remote installation get the module from webservice,
       // other case the obx file is passed as an InputStream
       try {
-        final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-        final WebServiceImpl ws = loc.getWebService();
+        final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+        final WebService3Impl ws = loc.getWebService3();
         module = ws.moduleDetail(recordId);
       } catch (final Exception e) {
         log4j.error(e);
@@ -642,7 +659,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     Module[] upd = null;
     OBError message = null;
     boolean found = false;
-    boolean check;
+    boolean check = false;
     // to hold (key,value) = (moduleId, minVersion)
     Map<String, String> minVersions = new HashMap<String, String>();
 
@@ -656,7 +673,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // check the dependenies and obtain the modules to install/update
       if (!islocal) {
         final String[] installableModules = { module != null ? module.getModuleVersionID() : "" };
-        check = im.checkDependenciesId(installableModules, updateModules);
+        check = im.checkDependenciesId(installableModules, updateModules, maturityLevels);
       } else {
         check = im.checkDependenciesFile(obx);
       }
@@ -725,6 +742,28 @@ public class ModuleManagement extends HttpSecureAppServlet {
           return;
         }
 
+        // Show warning message when installing/updating modules not in production level
+        if (!islocal) {
+          if (!"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+            discard[6] = "";
+          } else {
+            if (inst != null) {
+              for (Module m : inst) {
+                if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+                  discard[6] = "";
+                }
+              }
+            }
+            if (upd != null) {
+              for (Module m : upd) {
+                if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+                  discard[6] = "";
+                }
+              }
+            }
+          }
+        }
+
       } else { // Dependencies not satisfied, do not show continue button
         message = im.getCheckError();
         discard[5] = "discardContinue";
@@ -752,30 +791,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     if (inst != null && inst.length > 0) {
-      FieldProviderFactory[] insts = (FieldProviderFactory[]) FieldProviderFactory
-          .getFieldProviderArray(inst);
-      for (FieldProvider fp : insts) {
-        String moduleId = fp.getField("moduleID");
-        FieldProviderFactory.setField(fp, "versionNoMin", (minVersions.get(moduleId) == null ? fp
-            .getField("versionNo") : minVersions.get(moduleId)));
-      }
-      xmlDocument.setData("installs", insts);
+      xmlDocument.setData("installs", getModuleFieldProvider(inst, minVersions, false, vars
+          .getLanguage()));
     }
 
     if (upd != null && upd.length > 0) {
-      FieldProviderFactory[] upds = (FieldProviderFactory[]) FieldProviderFactory
-          .getFieldProviderArray(upd);
-      for (FieldProvider fp : upds) {
-        String moduleId = fp.getField("moduleID");
-        if (minVersions != null && minVersions.get(moduleId) != null
-            && !minVersions.get(moduleId).equals("")) {
-          FieldProviderFactory.setField(fp, "versionNoMin", Utility.messageBD(this,
-              "UpdateModuleNeed", vars.getLanguage())
-              + " " + minVersions.get(moduleId));
-        }
-        FieldProviderFactory.setField(fp, "versionNoCurr", currentInstalledVersion(moduleId));
-      }
-      xmlDocument.setData("updates", upds);
+      xmlDocument.setData("updates", getModuleFieldProvider(upd, minVersions, false, vars
+          .getLanguage()));
     }
 
     xmlDocument.setParameter("inpLocalInstall", islocal ? "Y" : "N");
@@ -786,6 +808,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("moduleName", module.getName());
       xmlDocument.setParameter("moduleVersion", module.getVersionNo());
       xmlDocument.setParameter("linkCore", module.getModuleVersionID());
+
+      if (!check || "500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+        xmlDocument.setParameter("maturityStyle", "none");
+      } else {
+        xmlDocument.setParameter("maturityStyle", "yes");
+        xmlDocument.setParameter("maturityLevel", (String) module.getAdditionalInfo().get(
+            "maturity.name"));
+      }
     }
     {
       if (message != null) {
@@ -798,6 +828,39 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private FieldProvider[] getModuleFieldProvider(Module[] inst, Map<String, String> minVersions,
+      boolean installed, String lang) {
+    ArrayList<HashMap<String, String>> rt = new ArrayList<HashMap<String, String>>();
+
+    for (Module module : inst) {
+      HashMap<String, String> mod = new HashMap<String, String>();
+      mod.put("name", module.getName());
+      mod.put("versionNo", module.getVersionNo());
+      mod.put("moduleVersionID", module.getModuleVersionID());
+
+      if (installed) {
+        if (minVersions != null && minVersions.get(module.getModuleID()) != null
+            && !minVersions.get(module.getModuleID()).equals("")) {
+          mod.put("versionNoMin", Utility.messageBD(this, "UpdateModuleNeed", lang) + " "
+              + minVersions.get(module.getModuleID()));
+        }
+        mod.put("versionNoCurr", currentInstalledVersion(module.getModuleID()));
+      } else {
+        mod.put("versionNoMin", (minVersions.get(module.getModuleID()) == null ? module
+            .getVersionNo() : minVersions.get(module.getModuleID())));
+      }
+
+      if ("500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+        mod.put("maturityStyle", "none");
+      } else {
+        mod.put("maturityStyle", "yes");
+        mod.put("maturityLevel", (String) module.getAdditionalInfo().get("maturity.name"));
+      }
+      rt.add(mod);
+    }
+    return FieldProviderFactory.getFieldProviderArray(rt);
   }
 
   private String currentInstalledVersion(String moduleId) {
@@ -881,7 +944,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     if (!ak.isOPSInstance()) {
       for (Module mod : im.getModulesToInstall()) {
-        if (mod.getIsCommercial()) {
+        if (mod.isIsCommercial()) {
           if (selectedModule != null && !mod.getModuleID().equals(selectedModule.getModuleID())) {
             // Show only in case there are commercial dependencies
             showNotActivatedError = true;
@@ -892,7 +955,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
       }
       for (Module mod : im.getModulesToUpdate()) {
-        if (mod.getIsCommercial()) {
+        if (mod.isIsCommercial()) {
           if (selectedModule != null && !!mod.getModuleID().equals(selectedModule.getModuleID())) {
             // Show only in case there are commercial dependencies
             showNotActivatedError = true;
@@ -921,7 +984,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
           firstModule = false;
         }
 
-        if (moduleID.equals(mod.getModuleID()) || !mod.getIsCommercial()) {
+        if (moduleID.equals(mod.getModuleID()) || !mod.isIsCommercial()) {
           continue; // skip details
         }
         String moduleDetail = moduleTemplate.replace("@MODULE@", mod.getName());
@@ -943,7 +1006,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
           firstModule = false;
         }
 
-        if (moduleID.equals(mod.getModuleID()) || !mod.getIsCommercial()) {
+        if (moduleID.equals(mod.getModuleID()) || !mod.isIsCommercial()) {
           continue; // skip details
         }
 
@@ -960,7 +1023,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } else {
 
       for (Module instMod : im.getModulesToInstall()) {
-        if (instMod.getIsCommercial()) {
+        if (instMod.isIsCommercial()) {
           CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(instMod.getModuleID());
           if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(instMod);
@@ -991,7 +1054,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
 
       for (Module updMod : im.getModulesToUpdate()) {
-        if (updMod.getIsCommercial()) {
+        if (updMod.isIsCommercial()) {
           CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(updMod.getModuleID());
           if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(updMod);
@@ -1237,9 +1300,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
           }
         }
       }
-      final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-      final WebServiceImpl ws = loc.getWebService();
-      modules = ws.moduleSearch(text, getInstalledModules());
+      final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+      final WebService3Impl ws = loc.getWebService3();
+
+      HashMap<String, String> maturitySearch = new HashMap<String, String>();
+      maturitySearch.put("search.level", getSystemMaturity(false));
+      modules = ws.moduleSearch(text, getInstalledModules(), maturitySearch);
 
     } catch (final Exception e) {
       final OBError message = new OBError();
@@ -1247,11 +1313,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
       message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
       vars.setMessage("ModuleManagement", message);
-      log4j.error(e);
+      log4j.error("Error searching modules", e);
       try {
         response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
       } catch (final Exception ex) {
-        log4j.error(ex);
+        log4j.error("error searching modules", ex);
       }
     }
 
@@ -1277,7 +1343,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
         moduleBox.put("help", mod.getHelp());
         moduleBox.put("url", getLink(url));
         moduleBox.put("moduleVersionID", mod.getModuleVersionID());
-        moduleBox.put("commercialStyle", (mod.getIsCommercial() ? "true" : "none"));
+        moduleBox.put("commercialStyle", (mod.isIsCommercial() ? "true" : "none"));
+
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> additioanlInfo = mod.getAdditionalInfo();
+        if (additioanlInfo != null && !"500".equals(additioanlInfo.get("maturity.level"))) {
+          // Display module's maturity in case it is not Production (500)
+          moduleBox.put("maturityStyle", "true");
+          moduleBox.put("maturityLevel", additioanlInfo.get("maturity.name"));
+        } else {
+          moduleBox.put("maturityStyle", "none");
+        }
 
         modulesBox[i] = FieldProviderFactory.getFieldProvider(moduleBox);
         i++;
@@ -1417,6 +1493,150 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(up);
     out.close();
+  }
+
+  private void printPageSettings(HttpServletResponse response, HttpServletRequest request)
+      throws ServletException, IOException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    String discard[] = { "" };
+    try {
+      OBContext.setAdminMode();
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+
+      if (vars.commandIn("SETTINGS_ADD", "SETTINGS_REMOVE")) {
+        String moduleId;
+
+        if (vars.commandIn("SETTINGS_ADD")) {
+          moduleId = vars.getStringParameter("inpModule", IsIDFilter.instance);
+        } else {
+          moduleId = vars.getStringParameter("inpModuleId", IsIDFilter.instance);
+        }
+
+        org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+            org.openbravo.model.ad.module.Module.class, moduleId);
+        if (mod != null) {
+          if (vars.commandIn("SETTINGS_ADD")) {
+            mod.setMaturityUpdate(vars.getStringParameter("inpModuleLevel"));
+          } else {
+            mod.setMaturityUpdate(null);
+          }
+          OBDal.getInstance().flush();
+        } else {
+          log4j.error("Module does not exists ID:" + moduleId);
+        }
+      } else if (vars.commandIn("SETTINGS_SAVE")) {
+        sysInfo.setMaturitySearch(vars.getStringParameter("inpSearchLevel"));
+        sysInfo.setMaturityUpdate(vars.getStringParameter("inpScanLevel"));
+      }
+
+      // Possible maturity levels are obtained from CR, obtain them once per session and store
+      MaturityLevel levels = (MaturityLevel) vars.getSessionObject("SettingsModule|MaturityLevels");
+      if (levels == null) {
+        levels = new MaturityLevel();
+        vars.setSessionObject("SettingsModule|MaturityLevels", levels);
+      }
+
+      // Populate module specific grid
+      OBCriteria<org.openbravo.model.ad.module.Module> qModuleSpecific = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.Module.class);
+      qModuleSpecific.add(Expression
+          .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
+      qModuleSpecific.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
+      ArrayList<HashMap<String, String>> moduleSpecifics = new ArrayList<HashMap<String, String>>();
+      List<org.openbravo.model.ad.module.Module> moduleSpecificList = qModuleSpecific.list();
+      if (moduleSpecificList.isEmpty()) {
+        discard[0] = "moduleTable";
+      }
+      for (org.openbravo.model.ad.module.Module module : moduleSpecificList) {
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put("id", module.getId());
+        m.put("name", module.getName());
+        m.put("level", levels.getLevelName(module.getMaturityUpdate()));
+        moduleSpecifics.add(m);
+      }
+
+      // Populate combo of modules without specific setting
+      OBCriteria<org.openbravo.model.ad.module.Module> qModule = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.Module.class);
+      qModule.add(Expression.isNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
+      qModule.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
+
+      ArrayList<HashMap<String, String>> modules = new ArrayList<HashMap<String, String>>();
+      List<org.openbravo.model.ad.module.Module> moduleList = qModule.list();
+      if (moduleList.isEmpty()) {
+        discard[0] = "assignModule";
+      }
+      for (org.openbravo.model.ad.module.Module module : moduleList) {
+        HashMap<String, String> m = new HashMap<String, String>();
+        m.put("id", module.getId());
+        m.put("name", module.getName());
+        modules.add(m);
+      }
+
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_forms/ModuleManagementSettings", discard).createXmlDocument();
+
+      xmlDocument.setData("moduleDetail", FieldProviderFactory
+          .getFieldProviderArray(moduleSpecifics));
+      xmlDocument.setData("moduleCombo", FieldProviderFactory.getFieldProviderArray(modules));
+
+      // Populate maturity levels combos
+      xmlDocument.setParameter("selectedScanLevel", sysInfo.getMaturityUpdate() == null ? "500"
+          : sysInfo.getMaturityUpdate());
+      xmlDocument.setData("reportScanLevel", "liststructure", levels.getCombo());
+      xmlDocument.setParameter("selectedSearchLevel", sysInfo.getMaturitySearch() == null ? "500"
+          : sysInfo.getMaturitySearch());
+      xmlDocument.setData("reportSearchLevel", "liststructure", levels.getCombo());
+      xmlDocument.setData("reportModuleLevel", "liststructure", levels.getCombo());
+
+      // less and most mature values
+      xmlDocument.setParameter("lessMature", levels.getLessMature());
+      xmlDocument.setParameter("mostMature", levels.getMostMature());
+
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+
+      // Interface parameters
+      final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "",
+          "", "", false, "ad_forms", strReplaceWith, false, true);
+      toolbar.prepareSimpleToolBarTemplate();
+      xmlDocument.setParameter("toolbar", toolbar.toString());
+
+      try {
+        final WindowTabs tabs = new WindowTabs(this, vars,
+            "org.openbravo.erpCommon.ad_forms.ModuleManagement");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+            "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs
+                .breadcrumb());
+        xmlDocument.setParameter("navigationBar", nav.toString());
+        final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html",
+            strReplaceWith);
+        xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+      } catch (final Exception ex) {
+        throw new ServletException(ex);
+      }
+      out.println(xmlDocument.print());
+      out.close();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private String getSystemMaturity(boolean updateLevel) {
+    try {
+      OBContext.setAdminMode();
+      SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+      if (updateLevel) {
+        return sys.getMaturityUpdate();
+      } else {
+        return sys.getMaturitySearch();
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
 }

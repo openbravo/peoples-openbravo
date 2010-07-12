@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,12 +35,16 @@
   <PARAMETER id="moduleName"       name="moduleName"       default=""/>
   <PARAMETER id="moduleVersion"    name="moduleVersion"    default=""/>
   <PARAMETER id="linkCore" name="linkCore" attribute="onclick" replace="xx" default=""/>
+  <PARAMETER id="maturitySection" name="maturityStyle" attribute="style" replace="xx" default="none"/>
+  <PARAMETER id="maturityLevel" name="maturityLevel" default=""/>
   
   <structure name="installs">
     <FIELD id="moduleInstall">name</FIELD>
     <FIELD id="moduleInstallVer">versionNo</FIELD>
     <FIELD id="moduleInstallVerMin">versionNoMin</FIELD>
     <FIELD id="linkAdditional" attribute="onclick" replace="xx">moduleVersionID</FIELD>
+    <FIELD id="maturitySectionInstall" attribute="style" replace="xx" default="none">maturityStyle</FIELD>
+    <FIELD id="maturityLevelInstall" default="">maturityLevel</FIELD>
     <SECTION id="instList"/>
   </structure>
   
@@ -50,6 +54,8 @@
     <FIELD id="moduleUpdateVerMin">versionNoMin</FIELD>
     <FIELD id="moduleUpdateVerCurr">versionNoCurr</FIELD>
     <FIELD id="linkUpdate" attribute="onclick" replace="xx">moduleVersionID</FIELD>
+    <FIELD id="maturitySectionUpdate" attribute="style" replace="xx" default="none">maturityStyle</FIELD>
+    <FIELD id="maturityLevelUpdate" default="">maturityLevel</FIELD>
     <SECTION id="updtList"/>
   </structure>
 </REPORT>
