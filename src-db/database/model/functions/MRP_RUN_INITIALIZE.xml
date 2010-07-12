@@ -91,6 +91,7 @@ BEGIN
                           AND Ad_Isorgincluded(p_Org_ID, p.AD_ORG_ID, p_Client_ID) > -1
                           AND p.AD_Client_ID = p_Client_ID
                           AND ((p_Production = 'Y' AND p.ISPURCHASED = 'N') OR (p_Production = 'N' AND p.ISPURCHASED = 'Y'))
+                          AND P.ISACTIVE = 'Y'
                           AND (p_Production = 'Y' OR
                                (p_Vendor_ID IS NULL
                                OR EXISTS (SELECT 1
