@@ -1455,6 +1455,7 @@ public class ImportModule {
    */
   private File[] getCore() {
     ArrayList<File> core = new ArrayList<File>();
+    core.add(new File(obDir + "/build.xml"));
     core.add(new File(obDir + "/legal"));
     core.add(new File(obDir + "/lib"));
     core.add(new File(obDir + "/src-core"));
