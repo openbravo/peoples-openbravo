@@ -101,9 +101,16 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static boolean existsUserName(String strUser) throws Exception {
-    final OBCriteria<User> obcClient = OBDal.getInstance().createCriteria(User.class);
-    obcClient.add(Expression.eq(Client.PROPERTY_NAME, strUser));
-    return obcClient.count() > 0;
+    try {
+      OBContext.setAdminMode();
+      final OBCriteria<User> obcUser = OBDal.getInstance().createCriteria(User.class);
+      obcUser.setFilterOnReadableClients(false);
+      obcUser.setFilterOnReadableOrganization(false);
+      obcUser.add(Expression.eq(User.PROPERTY_USERNAME, strUser));
+      return obcUser.count() > 0;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
