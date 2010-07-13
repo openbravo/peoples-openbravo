@@ -136,7 +136,7 @@ public class ImportModule {
 	    obDir = obdir;
 	    pool = conn;
 	    final File[] files = new File[3];
-	    files[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml1");
+	    files[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml");
 	    files[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
 	    files[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
 
