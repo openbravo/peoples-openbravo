@@ -792,12 +792,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     if (inst != null && inst.length > 0) {
       xmlDocument.setData("installs", getModuleFieldProvider(inst, minVersions, false, vars
-          .getLanguage()));
+          .getLanguage(), islocal));
     }
 
     if (upd != null && upd.length > 0) {
       xmlDocument.setData("updates", getModuleFieldProvider(upd, minVersions, false, vars
-          .getLanguage()));
+          .getLanguage(), islocal));
     }
 
     xmlDocument.setParameter("inpLocalInstall", islocal ? "Y" : "N");
@@ -831,7 +831,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   }
 
   private FieldProvider[] getModuleFieldProvider(Module[] inst, Map<String, String> minVersions,
-      boolean installed, String lang) {
+      boolean installed, String lang, boolean islocal) {
     ArrayList<HashMap<String, String>> rt = new ArrayList<HashMap<String, String>>();
 
     for (Module module : inst) {
@@ -852,11 +852,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
             .getVersionNo() : minVersions.get(module.getModuleID())));
       }
 
-      if ("500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
-        mod.put("maturityStyle", "none");
-      } else {
-        mod.put("maturityStyle", "yes");
-        mod.put("maturityLevel", (String) module.getAdditionalInfo().get("maturity.name"));
+      if (!islocal) {
+        if ("500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+          mod.put("maturityStyle", "none");
+        } else {
+          mod.put("maturityStyle", "yes");
+          mod.put("maturityLevel", (String) module.getAdditionalInfo().get("maturity.name"));
+        }
       }
       rt.add(mod);
     }
