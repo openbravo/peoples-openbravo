@@ -132,29 +132,30 @@ public class ImportModule {
    *          parsed.
    */
   public ImportModule(ConnectionProvider conn, String obdir, VariablesSecureApp _vars) {
-	    vars = _vars;
-	    obDir = obdir;
-	    pool = conn;
-	    final File[] files = new File[3];
-	    files[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml");
-	    files[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
-	    files[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
+    vars = _vars;
+    obDir = obdir;
+    pool = conn;
+    final File[] files = new File[3];
+    files[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml");
+    files[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
+    files[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
 
-	    verifyFilesExist(files);
-	    
-	    db = DatabaseUtils.readDatabaseNoInit(files);
-	  }
+    verifyFilesExist(files);
 
-	  /**
-	   * Verifies that the provided files actually exist. 
-	   */
-	  private void verifyFilesExist(File[] files) {
-		for(File file : files){
-			if(!file.exists()){
-				throw new ResourceNotFoundException(String.format(Utility.messageBD(pool, "SourceFileNotFound", vars.getLanguage()),file.getPath()));
-			}
-		}
-	   }
+    db = DatabaseUtils.readDatabaseNoInit(files);
+  }
+
+  /**
+   * Verifies that the provided files actually exist.
+   */
+  private void verifyFilesExist(File[] files) {
+    for (File file : files) {
+      if (!file.exists()) {
+        throw new ResourceNotFoundException(String.format(Utility.messageBD(pool,
+            "SourceFileNotFound", vars.getLanguage()), file.getPath()));
+      }
+    }
+  }
 
   /**
    * Check the dependencies for a file name. See
