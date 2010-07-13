@@ -88,7 +88,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '7833';
+  var number = '7876';
   return number;
 }
 
@@ -3139,11 +3139,9 @@ function getFrame(frameName) {
 }
 
 /**
-* Adds a style definition to Openbravo ERP main CSS
-* @param {String} selector
-* @param {declaration} declaration
+* Gets Openbravo_ERP css javascript reference
 */
-function addStyleRule (selector, declaration) {
+function getOpenbravoERPStyleSheet() {
   var stylesheet;
 
   for (var i=0; i < document.styleSheets.length; i++) {
@@ -3155,13 +3153,68 @@ function addStyleRule (selector, declaration) {
     }
   }
 
- if (typeof stylesheet === "object") {
-    if (stylesheet.addRule) {
+  return stylesheet;
+}
+
+/**
+* Adds a style definition to Openbravo ERP main CSS in last position
+* @param {String} selector
+* @param {declaration} declaration
+*/
+function addStyleRule(selector, declaration) {
+  var stylesheet = getOpenbravoERPStyleSheet();
+
+  if (typeof stylesheet === "object") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1) {
       stylesheet.addRule(selector, declaration);
-    } else if (stylesheet.insertRule) {
+    } else {
       stylesheet.insertRule(selector + ' { ' + declaration + ' }', stylesheet.cssRules.length);
     }
   }
+}
+
+/**
+* Removes a style definition at given position in Openbravo ERP main CSS
+* @param {Ingeter} selectorIndex
+*/
+function removeStyleRule(selectorIndex) {
+  var stylesheet = getOpenbravoERPStyleSheet();
+
+  if (typeof stylesheet === "object") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1) {
+      stylesheet.removeRule(selectorIndex);
+    } else {
+      stylesheet.deleteRule(selectorIndex);
+    }
+  }
+}
+
+/**
+* Returns an array with the desired selector positions
+* @param {String} selector
+* @param {declaration} declaration
+*/
+function getStyleRulePosition(selector) {
+  var stylesheet = getOpenbravoERPStyleSheet();
+  var position = new Array();
+  var i;
+
+ if (typeof stylesheet === "object") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1) {
+      for (i=0; i < stylesheet.rules.length; i++) {
+        if (stylesheet.rules[i].selectorText.toLowerCase() === selector.toLowerCase()) {
+          position.push(i);
+        }
+      }
+    } else {
+      for (i=0; i < stylesheet.cssRules.length; i++) {
+        if (typeof stylesheet.cssRules[i].selectorText !== "undefined" && stylesheet.cssRules[i].selectorText.toLowerCase() === selector.toLowerCase()) {
+          position.push(i);
+        }
+      }
+    }
+  }
+  return position;
 }
 
 /**
