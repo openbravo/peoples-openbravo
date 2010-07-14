@@ -31,7 +31,7 @@
              </FIELD_TMP>
            </div>
            <div class="Tree_Checkbox_Spots_Closed" id="folderxx">
-            <div class="Tree_Checkbox_visible"><input id="inpNodes_xx" name="inpNodes" type="checkbox" value="xx" onclick="gt_checkToggleNode('xx', 'node', true);" onfocus="this.blur();"/></div>
+            <div class="Tree_Checkbox_visible"><input id="inpNodes_xx" name="inpNodes" type="checkbox" value="xx" defaultchecked="xx" onclick="gt_checkToggleNode('xx', 'node', true);" onfocus="this.blur();"/></div>
            </div>
            <div id="icon" class="Tree_Icon_Module">
              <div id="icon2_xx" class="Tree_Icon_Update"></div>

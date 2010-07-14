@@ -93,23 +93,23 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    {
-      vars.removeMessage("InitialClientSetup");
-      OBError myMessage = vars.getMessage("InitialClientSetup");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-      xmlDocument.setParameter("moduleTree", tree.toHtml());
-      xmlDocument.setParameter("moduleTreeDescription", tree.descriptionToHtml());
 
-      xmlDocument.setData("reportCurrency", "liststructure", MonedaComboData.select(this));
-      response.setContentType("text/html; charset=UTF-8");
-      PrintWriter out = response.getWriter();
-      out.println(xmlDocument.print());
-      out.close();
+    vars.removeMessage("InitialClientSetup");
+    OBError myMessage = vars.getMessage("InitialClientSetup");
+    if (myMessage != null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
+    xmlDocument.setParameter("moduleTree", tree.toHtml());
+    xmlDocument.setParameter("moduleTreeDescription", tree.descriptionToHtml());
+
+    xmlDocument.setData("reportCurrency", "liststructure", MonedaComboData.select(this));
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+
   }
 
   private void printPageResult(HttpServletResponse response, VariablesSecureApp vars,

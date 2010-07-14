@@ -63,6 +63,80 @@ function validate(action) {
 }
 
 function onloadFunctions() {
+  initialCheckModules();
+  // Override gt_checkToggleNode() function used at onclick event
+  override_gt_checkToggleNode();
+}
+
+var warningModules = new Array();
+
+function initialCheckModules() {
+  var inputs = gt_getElementsByName('inpNodes','input');
+  for (var i=0; i<inputs.length; i++) {
+    if (inputs[i].getAttribute('type') == 'checkbox') {
+      if (inputs[i].getAttribute('defaultchecked') == 'true') {
+        inputs[i].checked = true;
+      } else if (inputs[i].getAttribute('defaultchecked') == 'false') {
+        inputs[i].checked = false;
+      }
+    }
+  }
+}
+
+function runInitialClientSetup(){
+   if (checkWarningModules()) {
+     setProcessingMode('window',true);
+     submitCommandForm('OK',true);
+     return false;
+   }
+}
+
+function override_gt_checkToggleNode() {
+  window['original_gt_checkToggleNode'] = window['gt_checkToggleNode'];
+
+  window['gt_checkToggleNode']= function(element, type, isClick){
+        var allowChange = true;
+        var node = gt_returnNodeObject(element, type);
+        if (typeof node != "undefined") {
+          var nodeId = node.getAttribute('id').replace('node_','');
+          var module = document.getElementById('inpNodes_' + nodeId);
+          if (module && module.getAttribute('type') == 'checkbox') {
+            var defaultChecked = module.getAttribute('defaultchecked');
+            var newChecked = module.checked;
+            if (defaultChecked == 'true') {
+              if (!newChecked) {
+                addWarningModules(module);
+              } else {
+                removeWarningModules(module);
+              }
+            }      
+            if (allowChange) {
+              original_gt_checkToggleNode(element, type, isClick);
+            }   
+          }        
+       }  
+    }
+}
+
+function addWarningModules(module) {
+  warningModules.unshift(module);
+}
+
+function removeWarningModules(module) {
+  for (var i = 0; i < warningModules.length; i++) {
+    if (warningModules[i] == module) {
+      warningModules.splice(i, 1);
+    }
+  }
+}
+
+
+function checkWarningModules() {
+  if (warningModules.length > 0) {
+    return showJSMessage('30', defaultLang, null);
+  } else {
+    return true;
+  }
 }
 </script>
 	<script language="JavaScript" type="text/javascript">
@@ -450,7 +524,7 @@ function onloadFunctions() {
                       <button type="button" 
                         id="buttonOK" 
                         class="ButtonLink" 
-                        onclick="setProcessingMode('window',true);submitCommandForm('OK',true);return false;" 
+                        onclick="runInitialClientSetup();" 
                         onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
