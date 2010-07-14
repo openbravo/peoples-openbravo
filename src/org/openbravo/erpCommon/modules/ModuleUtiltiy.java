@@ -31,6 +31,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
+import org.openbravo.model.ad.system.SystemInformation;
 
 /**
  * This class implements different utilities related to modules
@@ -193,5 +194,37 @@ public class ModuleUtiltiy {
       rt.put(moduleId, deps);
     }
     return rt;
+  }
+
+  /**
+   * Obtains the global minimum maturity levels defined for module installation and update.
+   * 
+   * For installation these 2 values might be different, for update both values are set with the
+   * MaturityUpdate, this makes new modules installed because of needed dependencies in scan for
+   * updates not to be in a lower level than the update one.
+   * 
+   * @param install
+   *          <ul>
+   *          <li><code>true</code>: Module installation
+   *          <li><code>false</code>: Module update
+   *          </ul>
+   * @return HashMap with install.level and update.level keys.
+   */
+  public static HashMap<String, String> getSystemMaturityLevels(boolean install) {
+    try {
+      OBContext.setAdminMode();
+
+      HashMap<String, String> maturityLevels = new HashMap<String, String>();
+      SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+      maturityLevels.put("update.level", sys.getMaturityUpdate());
+      if (install) {
+        maturityLevels.put("install.level", sys.getMaturitySearch());
+      } else {
+        maturityLevels.put("install.level", sys.getMaturityUpdate());
+      }
+      return maturityLevels;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

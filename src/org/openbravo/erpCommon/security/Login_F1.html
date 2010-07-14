@@ -77,6 +77,27 @@ function redirectWhenPopup() {
 
 </script>
 <script language="JavaScript" type="text/javascript">
+  function hideSFBanner() {
+    try {
+      addStyleRule(".Login_Logo_SourceForge", "background: none;");
+    } catch (e) {
+    }
+  }
+
+  function showSFBanner() {
+    try {
+      var classPositionArray = getStyleRulePosition(".Login_Logo_SourceForge");
+      var classPosition = classPositionArray[classPositionArray.length-1];
+      if (classPositionArray.length > 0) {
+        removeStyleRule(classPosition);
+      }
+    } catch (e) {
+    }
+  }
+
+  hideSFBanner();
+</script>
+<script language="JavaScript" type="text/javascript">
   function onLoadDo() {
     redirectWhenPopup();
     this.windowTables = new Array(
@@ -90,13 +111,15 @@ function redirectWhenPopup() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if ((!revisionControl('7801')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('7876')) || (isOpsInstance() != isOpsInstanceCached())) {
       alert(cacheMsg);
     }
 
     if (!checkBrowserCompatibility()) {
       alert(browserMsg);
     }
+
+    showSFBanner();
   }
 
   function onResizeDo() {

@@ -24,7 +24,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -44,6 +47,7 @@ import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
@@ -54,6 +58,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.BaseTest;
 
@@ -110,6 +115,24 @@ import org.openbravo.test.base.BaseTest;
 
 public class IssuesTest extends BaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
+
+  /**
+   * https://issues.openbravo.com/view.php?id=13749
+   */
+  public void test13749() {
+    setBigBazaarAdminContext();
+    try {
+      org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
+          org.openbravo.model.ad.ui.Process.class, "1004400000"); // Has a Date parameter
+      Map<String, Date> params = new HashMap<String, Date>();
+      params.put("DateOrdered", new Date());
+      ProcessInstance pi = CallProcess.getInstance().callProcess(process, null, params);
+      log.info("Result: " + pi.getResult());
+      log.info("Error message: " + pi.getErrorMsg());
+    } catch (Exception e) {
+      log.error("Error testing CallProcess: " + e.getMessage(), e);
+    }
+  }
 
   /**
    * https://issues.openbravo.com/view.php?id=12918

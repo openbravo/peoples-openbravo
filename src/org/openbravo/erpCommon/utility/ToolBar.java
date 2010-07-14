@@ -294,7 +294,7 @@ public class ToolBar {
     buttons.put("UNDO", new ToolBar_Button(base_direction, "Undo", Utility.messageBD(conn, "Undo",
         language), getButtonScript("UNDO")));
 
-    if (isNewUI()) {
+    if (Utility.isNewUI()) {
       buttons.put("REFRESH", new ToolBar_Button(base_direction, "Refresh", Utility.messageBD(conn,
           "Refresh", language), getButtonScript("REFRESH")));
     }
@@ -1020,7 +1020,7 @@ public class ToolBar {
       final Vector<String> lastType = new Vector<String>(0);
 
       // In case of using new UI, add in toolbar grid and edition buttons
-      if (isNewUI() && !isSrcWindow) {
+      if (Utility.isNewUI() && !isSrcWindow) {
         buttons.put("FORM_VIEW", new ToolBar_Button(base_direction, "Edition", Utility.messageBD(
             conn, "Form View", language), getButtonScript("FORM_VIEW"), !isRelation, "Edition"
             + (isNew ? "_new" : "")));
@@ -1105,10 +1105,5 @@ public class ToolBar {
     toolbar.append("</tr>\n");
     toolbar.append("</table>\n");
     return toolbar.toString();
-  }
-
-  private boolean isNewUI() {
-    OBContext context = OBContext.getOBContext();
-    return context != null && context.isNewUI();
   }
 }

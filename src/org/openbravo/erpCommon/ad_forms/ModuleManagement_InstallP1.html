@@ -225,7 +225,7 @@
             
             <tr>
               <td class="PlainText_normal" colspan="4" style="padding: 0 0 10 0; text-align: left;">
-                <span>Do you want to continue installing the following module(s)?</td>
+                <span>Do you want to continue installing the following module(s)?</span></td>
             </tr>
             <tr>
               <td colspan="4" style="padding: 0 0 0 0;">
@@ -233,14 +233,18 @@
                   <FIELD_TMP id="core">
                     <div class="Label_ReadOnly_Text">Selected module(s):</div>
                     <div style="height: 10px;"></div>
-                    <div class="PlainText_normal"><span id="moduleName">xxModuleName</span>&nbsp;<span id="moduleVersion">xxModuleversion</span> - <a class="LabelLink_noicon" href="#" onclick="viewModule('xx');" id="linkCore">view details</a></div>
+                    <div class="PlainText_normal"><span id="moduleName">xxModuleName</span>&nbsp;<span id="moduleVersion">xxModuleversion</span> - <a class="LabelLink_noicon" href="#" onclick="viewModule('xx');" id="linkCore">view details</a>
+                      <span id="maturitySection" style="display:xx;"> - Maturity Level:&nbsp;<span style="color: orange; font-weight: bold;" id="maturityLevel">xxTesting</span>&nbsp;(<a class="LabelLink_noicon" href="#" onclick="openLink('http://wiki.openbravo.com/wiki/ERP/2.50/Configuration_Manual/Modules_Lyfe_Cycle', '_blank');return false;">Learn more</a>)</span>
+                    </div>
                     <div style="height: 15px;"></div>
                   </FIELD_TMP>
                   <FIELD_TMP id="installModules">
                     <div class="Label_ReadOnly_Text">Please note: The following additional modules are also required to be able to install the selected module(s):</div>
                     <div style="height: 10px;"></div>
                      <FIELD_TMP id="instList">
-                      <div class="PlainText_normal"><span id="moduleInstall">xxdep1</span>&nbsp;<span id="moduleInstallVer">xxVer</span> (needed <span id="moduleInstallVerMin">xxxVerMin</span>) - <a class="LabelLink_noicon" href="#" id="linkAdditional" onclick="viewModule('xx');">view details</a></div>
+                      <div class="PlainText_normal"><span id="moduleInstall">xxdep1</span>&nbsp;<span id="moduleInstallVer">xxVer</span> (needed <span id="moduleInstallVerMin">xxxVerMin</span>) - <a class="LabelLink_noicon" href="#" id="linkAdditional" onclick="viewModule('xx');">view details</a>
+                        <span id="maturitySectionInstall" style="display:xx;"> - Maturity Level: <span style="color: orange; font-weight: bold;" id="maturityLevelInstall">xxTesting</span> (<a class="LabelLink_noicon" href="#" onclick="openLink('http://wiki.openbravo.com/wiki/ERP/2.50/Configuration_Manual/Modules_Lyfe_Cycle', '_blank');return false;">Learn more</a>)</span>
+                      </div>
                       <div style="height: 10px;"></div>
                     </FIELD_TMP>
                   </FIELD_TMP>
@@ -248,13 +252,26 @@
                     <div class="Label_ReadOnly_Text">Required additional updates:</div>
                     <div style="height: 10px;"></div>
                     <FIELD_TMP id="updtList">
-                      <div class="PlainText_normal"><span id="moduleUpdate">xxdep1</span>&nbsp;<span id="moduleUpdateVer">xxVer</span> (current <span id="moduleUpdateVerCurr">xxxVerCurr</span><span id="moduleUpdateVerMin">xxxVerMin</span>) - <a class="LabelLink_noicon" href="#" id="linkUpdate" onclick="viewModule('xx');">view details</a></div>
+                      <div class="PlainText_normal"><span id="moduleUpdate">xxdep1</span>&nbsp;<span id="moduleUpdateVer">xxVer</span> (current <span id="moduleUpdateVerCurr">xxxVerCurr</span><span id="moduleUpdateVerMin">xxxVerMin</span>) - <a class="LabelLink_noicon" href="#" id="linkUpdate" onclick="viewModule('xx');">view details</a>
+                        <span id="maturitySectionUpdate" style="display:xx;"> - Maturity Level: <span style="color: orange; font-weight: bold;" id="maturityLevelUpdate">xxTesting</span> (<a class="LabelLink_noicon" href="#" onclick="openLink('http://wiki.openbravo.com/wiki/ERP/2.50/Configuration_Manual/Modules_Lyfe_Cycle', '_blank');return false;">Learn more</a>)</span>
+                      </div>
                       <div style="height: 10px;"></div>
                     </FIELD_TMP>
                   </FIELD_TMP>
                 </div>
               </td>
             </tr>
+            
+            <FIELD_TMP id="warnMaturity">
+            <tr><td height="20px"></td></tr>
+            <tr>
+              <td class="PlainText_normal" colspan="4" style="padding: 0 0 10 0; text-align: left;">
+                <span><b>Warning:</b> You are about to install module(s) with maturity levels lower than production.</span>
+                <br/>
+                <span>Do you want to continue?</span>
+              </td>
+            </tr>
+            </FIELD_TMP>
             
             <tr><td height="20px"></td></tr>
             <tr>

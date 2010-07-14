@@ -68,12 +68,13 @@ import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.Zip;
+import org.openbravo.service.web.ResourceNotFoundException;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
 import org.openbravo.services.webservice.SimpleModule;
-import org.openbravo.services.webservice.WebServiceImpl;
-import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.openbravo.services.webservice.WebService3Impl;
+import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -134,16 +135,31 @@ public class ImportModule {
     vars = _vars;
     obDir = obdir;
     pool = conn;
-    final File[] f = new File[3];
-    f[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml");
-    f[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
-    f[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
+    final File[] files = new File[3];
+    files[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml");
+    files[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
+    files[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
 
-    db = DatabaseUtils.readDatabaseNoInit(f);
+    verifyFilesExist(files);
+
+    db = DatabaseUtils.readDatabaseNoInit(files);
   }
 
   /**
-   * Check the dependencies for a file name. See {@link #checkDependenciesId(String[], String[])}.
+   * Verifies that the provided files actually exist.
+   */
+  private void verifyFilesExist(File[] files) {
+    for (File file : files) {
+      if (!file.exists()) {
+        throw new ResourceNotFoundException(String.format(Utility.messageBD(pool,
+            "SourceFileNotFound", vars.getLanguage()), file.getPath()));
+      }
+    }
+  }
+
+  /**
+   * Check the dependencies for a file name. See
+   * {@link #checkDependenciesId(String[], String[], HashMap)}.
    */
   public boolean checkDependenciesFileName(String fileName) throws Exception {
     final File file = new File(fileName);
@@ -190,7 +206,8 @@ public class ImportModule {
   }
 
   /**
-   * Check the dependencies for a file. See {@link #checkDependenciesId(String[], String[])}.
+   * Check the dependencies for a file. See
+   * {@link #checkDependenciesId(String[], String[], HashMap)}.
    */
   public boolean checkDependenciesFile(InputStream file) throws Exception {
     if (installLocally) {
@@ -225,7 +242,10 @@ public class ImportModule {
       getModulesFromObx(dynModulesToInstall, dependencies, new Vector<DynaBean>(), file);
       final String[] installableModules = new String[1];
       installableModules[0] = (String) dynModulesToInstall.get(0).get("AD_MODULE_ID");
-      checkDependenciesId(installableModules, new String[0]);
+      HashMap<String, String> maturityLevels = new HashMap<String, String>();
+      maturityLevels.put("update.level", "500");
+      maturityLevels.put("install.level", "500");
+      checkDependenciesId(installableModules, new String[0], maturityLevels);
     }
     if (antInstall) {
       printAntDependenciesLog();
@@ -248,13 +268,13 @@ public class ImportModule {
    * modules that are needed to install and/or update in order to complete the installation.
    * 
    */
-  public boolean checkDependenciesId(String[] installableModules, String[] updateableModules)
-      throws Exception {
+  public boolean checkDependenciesId(String[] installableModules, String[] updateableModules,
+      HashMap<String, String> maturityLevels) throws Exception {
     // just for remote usage
     errors = new OBError();
     VersionUtility.setPool(pool);
     final ModuleInstallDetail mid = VersionUtility.checkRemote(vars, installableModules,
-        updateableModules, errors);
+        updateableModules, errors, maturityLevels);
     modulesToInstall = mid.getModulesToInstall();
 
     // In case core is in the list of modules to update, put in at the last module to update, so it
@@ -280,6 +300,17 @@ public class ImportModule {
     checked = mid.isValidConfiguration();
 
     return checked;
+  }
+
+  /**
+   * @deprecated Use {@link ImportModule#checkDependenciesId(String[], String[], HashMap)} instead
+   */
+  public boolean checkDependenciesId(String[] installableModules, String[] updateableModules)
+      throws Exception {
+    HashMap<String, String> maturityLevels = new HashMap<String, String>();
+    maturityLevels.put("update.level", "500");
+    maturityLevels.put("install.level", "500");
+    return checkDependenciesId(installableModules, updateableModules, maturityLevels);
   }
 
   /**
@@ -1276,13 +1307,15 @@ public class ImportModule {
       final HashMap<String, String> updateModules = new HashMap<String, String>();
       final String user = vars == null ? "0" : vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
-      WebServiceImplServiceLocator loc;
-      WebServiceImpl ws = null;
+      WebService3ImplServiceLocator loc;
+      WebService3Impl ws = null;
       SimpleModule[] updates;
       try {
-        loc = new WebServiceImplServiceLocator();
-        ws = loc.getWebService();
-        updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps());
+        loc = new WebService3ImplServiceLocator();
+        ws = loc.getWebService3();
+
+        updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps(), ModuleUtiltiy
+            .getSystemMaturityLevels(false));
       } catch (final Exception e) {
         // do nothing just log the error
         log4j.error("Scan for updates coulnd't contact WS", e);
@@ -1384,7 +1417,8 @@ public class ImportModule {
    *         <ul>
    *         <li>VersionInfo [x][0] -> Type "M" Module, "D" Dependency</li>
    *         <li>VersionInfo [x][1] -> If type=="M", version number. If type =="D" dep module Id</li>
-   *         <li>VersionInfo [x][2] -> If type=="D", from version</li>
+   *         <li>VersionInfo [x][2] -> If type=="M", module visibility level. If type=="D", from
+   *         version</li>
    *         <li>VersionInfo [x][3] -> If type=="D", to version</li>
    *         <li>VersionInfo [x][4] -> If type=="D", "Y"/"N" is included</li>
    *         <li>VersionInfo [x][5] -> If type=="D", Dependent module name</li>
@@ -1404,9 +1438,10 @@ public class ImportModule {
             .getModuleDependencyList();
 
         String[][] versionInfo = new String[dependencies.size() + 1][0];
-        versionInfo[0] = new String[2];
+        versionInfo[0] = new String[3];
         versionInfo[0][0] = "M";
         versionInfo[0][1] = mod.getVersion();
+        versionInfo[0][2] = mod.getMaturityUpdate();
 
         int i = 1;
         for (org.openbravo.model.ad.module.ModuleDependency dep : dependencies) {
@@ -1435,6 +1470,7 @@ public class ImportModule {
    */
   private File[] getCore() {
     ArrayList<File> core = new ArrayList<File>();
+    core.add(new File(obDir + "/build.xml"));
     core.add(new File(obDir + "/legal"));
     core.add(new File(obDir + "/lib"));
     core.add(new File(obDir + "/src-core"));
@@ -1482,14 +1518,14 @@ public class ImportModule {
    */
   private RemoteModule getRemoteModule(String moduleVersionID) {
     RemoteModule remoteModule = new RemoteModule();
-    WebServiceImplServiceLocator loc;
-    WebServiceImpl ws = null;
+    WebService3ImplServiceLocator loc;
+    WebService3Impl ws = null;
     String strUrl = "";
     boolean isCommercial;
 
     try {
-      loc = new WebServiceImplServiceLocator();
-      ws = loc.getWebService();
+      loc = new WebService3ImplServiceLocator();
+      ws = loc.getWebService3();
     } catch (final Exception e) {
       log4j.error(e);
       addLog("@CouldntConnectToWS@", ImportModule.MSG_ERROR);

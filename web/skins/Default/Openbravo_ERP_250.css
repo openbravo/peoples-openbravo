@@ -6201,7 +6201,7 @@ span.tabTitle {
   font-size: 11pt;
   font-weight: bold;
   color: #A0A0A0;
-  margin: 0 39px 0 5px; /*~RTL    margin: 0 5px 0 38px; */
+  margin: 0 39px -1px 5px; /*~RTL    margin: 0 5px -1px 38px; */
   position: relative;
   float: right; /*~RTL   float: left; */
   padding-left: 1px;
@@ -6776,10 +6776,15 @@ span.tabTitle {
 }
 
 .tabBackGroundInit {
+  border-bottom: 1px solid #000000;
   background-repeat: repeat-x;
   background-position: top left;
   background-image: url(Main/Tabs/TabPane_top_bg.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 16px */
   background-color: #505050;
+}
+
+tr#paramParentTabContainer .tabBackGroundInit {
+  border-bottom: 0px solid #000000;
 }
 
 .tabPaneBackground {
@@ -9940,3 +9945,10 @@ td.Popup_SeparatorBar_bg {
   background-image: url(Popup/WindowLogo/iconAuditTrail.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
 }
 
+.Small_cancel {
+  background-repeat: no-repeat;
+  background-position: center left; /*~RTL background-position: center right; */
+  background-image: url(Common/Button/iconCancelSmall.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
+  width: 16px;
+  height: 16px;
+}

@@ -46,7 +46,7 @@ public class FieldProviderFactory implements FieldProvider {
 
   private Object object;
   private HashMap<String, String> properties;
-  private static Logger log4j = Logger.getLogger(Utility.class);
+  private static Logger log4j = Logger.getLogger(FieldProviderFactory.class);
 
   /**
    * Initializes a new FieldProviderFactory for the object
@@ -83,7 +83,7 @@ public class FieldProviderFactory implements FieldProvider {
         return (String) method.invoke(object, new Object[] {});
       }
     } catch (Exception e) {
-      log4j.info("Not found field" + fieldName);
+      log4j.debug("Not found field" + fieldName);
       return null;
     }
   }

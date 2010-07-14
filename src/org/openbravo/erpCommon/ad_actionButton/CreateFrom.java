@@ -1441,6 +1441,7 @@ public class CreateFrom extends HttpSecureAppServlet {
         if (dataAux == null || dataAux.length == 0) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(),
               "PriceListVersionNotFound");
+          releaseRollbackConnection(conn);
           return myMessage;
         }
         strPriceListVersion = dataAux[0].id;

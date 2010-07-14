@@ -196,7 +196,7 @@ public class ModuleDependency  implements java.io.Serializable {
         new org.apache.axis.description.TypeDesc(ModuleDependency.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService2", "ModuleDependency"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService3", "ModuleDependency"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("moduleID");
         elemField.setXmlName(new javax.xml.namespace.QName("", "moduleID"));

@@ -22,6 +22,20 @@
 *  clear forms, pop up confirmation messages, submit the form, etc.
 */
 
+/**
+ * Code that will be executed once the file is parsed
+*/
+function utilsJSDirectExecution() {
+  isWindowInMDITab = checkWindowInMDITab();
+  isWindowInMDIContext = checkWindowInMDIContext();
+  if (isWindowInMDITab) {
+    adaptSkinToMDIEnvironment();
+  }
+}
+
+var isWindowInMDITab = false;
+var isWindowInMDIContext = false;
+var isMDIEnvironmentSet = false;
 
 var baseFrameServlet = "../security/Login_FS.html";
 var gColorSelected = "#c0c0c0";
@@ -74,7 +88,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '7801';
+  var number = '7876';
   return number;
 }
 
@@ -3125,6 +3139,96 @@ function getFrame(frameName) {
 }
 
 /**
+* Gets Openbravo_ERP css javascript reference
+*/
+function getOpenbravoERPStyleSheet() {
+  var stylesheet;
+
+  for (var i=0; i < document.styleSheets.length; i++) {
+    if (document.styleSheets[i].href &&
+        document.styleSheets[i].href.indexOf("print")===-1 &&
+        document.styleSheets[i].href.indexOf("Openbravo_ERP")!==-1
+        ) {
+      stylesheet = document.styleSheets[i];
+    }
+  }
+
+  return stylesheet;
+}
+
+/**
+* Adds a style definition to Openbravo ERP main CSS in last position
+* @param {String} selector
+* @param {declaration} declaration
+*/
+function addStyleRule(selector, declaration) {
+  var stylesheet = getOpenbravoERPStyleSheet();
+
+  if (typeof stylesheet === "object") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1) {
+      stylesheet.addRule(selector, declaration);
+    } else {
+      stylesheet.insertRule(selector + ' { ' + declaration + ' }', stylesheet.cssRules.length);
+    }
+  }
+}
+
+/**
+* Removes a style definition at given position in Openbravo ERP main CSS
+* @param {Ingeter} selectorIndex
+*/
+function removeStyleRule(selectorIndex) {
+  var stylesheet = getOpenbravoERPStyleSheet();
+
+  if (typeof stylesheet === "object") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1) {
+      stylesheet.removeRule(selectorIndex);
+    } else {
+      stylesheet.deleteRule(selectorIndex);
+    }
+  }
+}
+
+/**
+* Returns an array with the desired selector positions
+* @param {String} selector
+* @param {declaration} declaration
+*/
+function getStyleRulePosition(selector) {
+  var stylesheet = getOpenbravoERPStyleSheet();
+  var position = new Array();
+  var i;
+
+ if (typeof stylesheet === "object") {
+    if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1) {
+      for (i=0; i < stylesheet.rules.length; i++) {
+        if (stylesheet.rules[i].selectorText.toLowerCase() === selector.toLowerCase()) {
+          position.push(i);
+        }
+      }
+    } else {
+      for (i=0; i < stylesheet.cssRules.length; i++) {
+        if (typeof stylesheet.cssRules[i].selectorText !== "undefined" && stylesheet.cssRules[i].selectorText.toLowerCase() === selector.toLowerCase()) {
+          position.push(i);
+        }
+      }
+    }
+  }
+  return position;
+}
+
+/**
+* Small changes in a 2.50 skin to proper view in a MDI tab
+*/
+function adaptSkinToMDIEnvironment() {
+  addStyleRule(".Main_NavBar_bg_left", "height: 1px;");
+  addStyleRule(".Main_NavBar_bg_right", "height: 1px;");
+  addStyleRule(".Main_ContentPane_LeftTabsBar", "display: none;");
+  addStyleRule(".Main_ContentPane_NavBar", "height: 0px;");
+  addStyleRule(".Main_ContentPane_NavBar#tdtopNavButtons", "display: none;");
+}
+
+/**
 * Sets the class attribute of an element
 * @param {String} id The ID of the element
 * @param {String} selectClass The class to be setted.
@@ -5142,9 +5246,6 @@ function replaceAt(string, what, ini, end) {
 * Start of functions to communicate with 3.0 tabbed interface
 */
 
-var isWindowInMDITab = false;
-var isWindowInMDIContext = false;
-
 function LayoutMDICheck(target) {
   if (target !== null) {
     if (typeof target.OB !== "undefined") {
@@ -5158,14 +5259,11 @@ function LayoutMDICheck(target) {
   return false;
 }
 
-var isMDIEnvironmentSet = false;
 function setMDIEnvironment() {
   if (isMDIEnvironmentSet) {
     return;
   }
   isMDIEnvironmentSet = true;
-  isWindowInMDITab = checkWindowInMDITab();
-  isWindowInMDIContext = checkWindowInMDIContext();
 
   if (isWindowInMDITab && typeof sendWindowInfoToMDI === "function") {
     sendWindowInfoToMDI();
@@ -5564,3 +5662,5 @@ function menuContextual(evt) {
 /**
 * End of deprecated functions in 2.50
 */
+
+utilsJSDirectExecution();

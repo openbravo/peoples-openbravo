@@ -28,6 +28,8 @@
     <FIELD id="details" attribute="onclick" replace="xx">moduleVersionID</FIELD>
     <FIELD id="buttonInstall" attribute="onclick" replace="xx">moduleVersionID</FIELD>
     <FIELD id="commercial" attribute="style" replace="xx" default="none">commercialStyle</FIELD>
+    <FIELD id="maturitySection" attribute="style" replace="xx" default="none">maturityStyle</FIELD>
+    <FIELD id="maturityLevel" default="none">maturityLevel</FIELD>
     <SECTION id="box"/>
   </structure>
 

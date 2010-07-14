@@ -9,7 +9,7 @@
 <undeployment
     xmlns="http://xml.apache.org/axis/wsdd/">
 
-  <!-- Services from WebServiceImplService WSDL service -->
+  <!-- Services from WebService3ImplService WSDL service -->
 
-  <service name="WebService"/>
+  <service name="WebService3"/>
 </undeployment>
