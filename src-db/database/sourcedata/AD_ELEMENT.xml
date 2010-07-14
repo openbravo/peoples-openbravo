@@ -26713,6 +26713,51 @@ In case the field is not checked, the preference is defined by Attribute, which 
 <!--8A19431CC0E120DBE040007F01013CCA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8A19431CC0E120DBE040007F01013CCA--></AD_ELEMENT>
 
+<!--8B53A1513DB6DD41E040007F01011767--><AD_ELEMENT>
+<!--8B53A1513DB6DD41E040007F01011767-->  <AD_ELEMENT_ID><![CDATA[8B53A1513DB6DD41E040007F01011767]]></AD_ELEMENT_ID>
+<!--8B53A1513DB6DD41E040007F01011767-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--8B53A1513DB6DD41E040007F01011767-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--8B53A1513DB6DD41E040007F01011767-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--8B53A1513DB6DD41E040007F01011767-->  <COLUMNNAME><![CDATA[Dependency_Enforcement]]></COLUMNNAME>
+<!--8B53A1513DB6DD41E040007F01011767-->  <NAME><![CDATA[Dependency Enforcement]]></NAME>
+<!--8B53A1513DB6DD41E040007F01011767-->  <PRINTNAME><![CDATA[Dependency Enforcement]]></PRINTNAME>
+<!--8B53A1513DB6DD41E040007F01011767-->  <DESCRIPTION><![CDATA[Dependency enforcement defines which are the versions of the dependent module that are compatible with the parent one.]]></DESCRIPTION>
+<!--8B53A1513DB6DD41E040007F01011767-->  <HELP><![CDATA[Dependency enforcement defines which are the versions of the dependent module that are compatible with the parent one.
+
+The values it can contain are:
+
+*Major Version (default). The compatible versions are all the minor version within the same major version. If "Last Version" is defined being a different major version than "From Version", "Last Version" defines the highest compatible minor version; if "Last Version" is in the same major version than "From Version" this value is not taken into account. It is the default value.
+*Minor Version. Defines a strict dependency to the exact minor version. In case no "Last Version" is set, "From Version" is the only compatible version. Other case the compatible versions are all between "From" and "Last Version" values.
+*None. "From Version" is the only field taken into account, there is no restriction on different major versions.]]></HELP>
+<!--8B53A1513DB6DD41E040007F01011767-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8B53A1513DB6DD41E040007F01011767--></AD_ELEMENT>
+
+<!--8B53A1513DB7DD41E040007F01011767--><AD_ELEMENT>
+<!--8B53A1513DB7DD41E040007F01011767-->  <AD_ELEMENT_ID><![CDATA[8B53A1513DB7DD41E040007F01011767]]></AD_ELEMENT_ID>
+<!--8B53A1513DB7DD41E040007F01011767-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--8B53A1513DB7DD41E040007F01011767-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--8B53A1513DB7DD41E040007F01011767-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--8B53A1513DB7DD41E040007F01011767-->  <COLUMNNAME><![CDATA[User_Editable_Enforcement]]></COLUMNNAME>
+<!--8B53A1513DB7DD41E040007F01011767-->  <NAME><![CDATA[User Editable Enforcement]]></NAME>
+<!--8B53A1513DB7DD41E040007F01011767-->  <PRINTNAME><![CDATA[User Editable Enforcement]]></PRINTNAME>
+<!--8B53A1513DB7DD41E040007F01011767-->  <DESCRIPTION><![CDATA[Defines whether the enforcement can be overwritten by user]]></DESCRIPTION>
+<!--8B53A1513DB7DD41E040007F01011767-->  <HELP><![CDATA[When a dependency/inclusion is "User Editable Enforcement", the enforcement defined for that dependency can be overwritten at instance level.]]></HELP>
+<!--8B53A1513DB7DD41E040007F01011767-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8B53A1513DB7DD41E040007F01011767--></AD_ELEMENT>
+
+<!--8B53A1513DB8DD41E040007F01011767--><AD_ELEMENT>
+<!--8B53A1513DB8DD41E040007F01011767-->  <AD_ELEMENT_ID><![CDATA[8B53A1513DB8DD41E040007F01011767]]></AD_ELEMENT_ID>
+<!--8B53A1513DB8DD41E040007F01011767-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--8B53A1513DB8DD41E040007F01011767-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--8B53A1513DB8DD41E040007F01011767-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--8B53A1513DB8DD41E040007F01011767-->  <COLUMNNAME><![CDATA[Instance_Enforcement]]></COLUMNNAME>
+<!--8B53A1513DB8DD41E040007F01011767-->  <NAME><![CDATA[Instance Enforcement]]></NAME>
+<!--8B53A1513DB8DD41E040007F01011767-->  <PRINTNAME><![CDATA[Instance Enforcement]]></PRINTNAME>
+<!--8B53A1513DB8DD41E040007F01011767-->  <DESCRIPTION><![CDATA[Instance specific dependency enforcement]]></DESCRIPTION>
+<!--8B53A1513DB8DD41E040007F01011767-->  <HELP><![CDATA[In case the dependency is set as "User Editable", this value overwrites the Instance Enforcement one.]]></HELP>
+<!--8B53A1513DB8DD41E040007F01011767-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8B53A1513DB8DD41E040007F01011767--></AD_ELEMENT>
+
 <!--8CF76E08562A480D96D45C04F42D095E--><AD_ELEMENT>
 <!--8CF76E08562A480D96D45C04F42D095E-->  <AD_ELEMENT_ID><![CDATA[8CF76E08562A480D96D45C04F42D095E]]></AD_ELEMENT_ID>
 <!--8CF76E08562A480D96D45C04F42D095E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
