@@ -68,6 +68,7 @@ public class VersionUtility {
     String maxVer;
     String modId;
     String modName;
+    String enforcement;
   }
 
   public VersionUtility() {
@@ -94,15 +95,48 @@ public class VersionUtility {
   }
 
   static private boolean checkVersion(String depParentMod, Dep dep, Mod mod, Vector<String> errors) {
-    if (versionCompare(dep.minVer, mod.availableMaxVer, true) == 1) {
-      errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName + "\" @CR_InVersion@ \""
-          + dep.minVer + "\", @CR_MaxAvailableVersion@ \"" + mod.availableMaxVer + "\". ");
-      return false;
-    }
-    if (versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
-      errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName + "\" @CR_InVersion@ \""
-          + dep.maxVer + "\", @CR_MaxAvailableVersion@ \"" + mod.availableMinVer + "\". ");
-      return false;
+    if ("MINOR".equals(dep.enforcement)) {
+      if (dep.maxVer == null || dep.maxVer.isEmpty()) {
+        if (versionCompare(dep.minVer, mod.availableMaxVer, false) != 0) {
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+              + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
+              + mod.availableMaxVer + "\". ");
+          return false;
+        }
+      } else {
+        if (versionCompare(dep.minVer, mod.availableMaxVer, false) == 1) {
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+              + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
+              + mod.availableMaxVer + "\". ");
+          return false;
+        }
+        if (versionCompare(mod.availableMinVer, dep.maxVer, false) == 1) {
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+              + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
+              + mod.availableMinVer + "\". ");
+          return false;
+        }
+      }
+    } else if ("NONE".equals(dep.enforcement)) {
+      if (versionCompare(dep.minVer, mod.availableMaxVer, false) == 1) {
+        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+            + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
+            + mod.availableMaxVer + "\". ");
+        return false;
+      }
+    } else if ("MAJOR".equals(dep.enforcement)) {
+      if (versionCompare(dep.minVer, mod.availableMaxVer, true) == 1) {
+        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+            + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
+            + mod.availableMaxVer + "\". ");
+        return false;
+      }
+      if (versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
+        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+            + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
+            + mod.availableMinVer + "\". ");
+        return false;
+      }
     }
     return true;
   }
@@ -291,6 +325,18 @@ public class VersionUtility {
       dep.maxVer = data[i].endversion;
       dep.modId = data[i].adDependentModuleId;
       dep.modName = data[i].dependantModuleName;
+
+      // set enforcement
+      if ("Y".equals(data[i].userEditableEnforcement) && data[i].instanceEnforcement != null
+          && !data[i].instanceEnforcement.isEmpty()) {
+        dep.enforcement = data[i].instanceEnforcement;
+      } else {
+        dep.enforcement = data[i].dependencyEnforcement;
+        if (dep.enforcement == null || dep.enforcement.isEmpty()) {
+          dep.enforcement = "MAJOR";
+        }
+      }
+
       hashDep.put(data[i].adModuleDependencyId, dep);
     }
     return hashDep;
@@ -410,6 +456,7 @@ public class VersionUtility {
       return -1;
   }
 
+  @SuppressWarnings("unchecked")
   static private HashMap<String, Mod> modules2mods(Module[] modules) {
     HashMap<String, Mod> mods = new HashMap<String, Mod>();
     if (modules == null)
@@ -438,6 +485,9 @@ public class VersionUtility {
       ver.dependencies = new HashMap<String, Dep>();
       ver.includes = new HashMap<String, Dep>();
 
+      HashMap<String, String> enforcements = (HashMap<String, String>) modules[i]
+          .getAdditionalInfo().get("enforcements");
+
       ModuleDependency[] dependencies = modules[i].getDependencies();
       if (dependencies != null) {
         for (int j = 0; j < dependencies.length; j++) {
@@ -446,6 +496,7 @@ public class VersionUtility {
           dep.modName = dependencies[j].getModuleName();
           dep.minVer = dependencies[j].getVersionStart();
           dep.maxVer = dependencies[j].getVersionEnd();
+          dep.enforcement = enforcements.get(dependencies[j].getModuleID());
           ver.dependencies.put(String.valueOf(j), dep);
         }
       }
