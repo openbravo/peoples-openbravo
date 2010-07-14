@@ -1422,6 +1422,8 @@ public class ImportModule {
    *         <li>VersionInfo [x][3] -> If type=="D", to version</li>
    *         <li>VersionInfo [x][4] -> If type=="D", "Y"/"N" is included</li>
    *         <li>VersionInfo [x][5] -> If type=="D", Dependent module name</li>
+   *         <li>VersionInfo [x][6] -> If type=="D", Dependency enforcement</li>
+   *         <li>VersionInfo [x][7] -> If type=="D", Instance dependency enforcement</li>
    *         </ul>
    */
   public static HashMap<String, String[][]> getInstalledModulesAndDeps() {
@@ -1445,13 +1447,15 @@ public class ImportModule {
 
         int i = 1;
         for (org.openbravo.model.ad.module.ModuleDependency dep : dependencies) {
-          versionInfo[i] = new String[6];
+          versionInfo[i] = new String[8];
           versionInfo[i][0] = "D";
           versionInfo[i][1] = dep.getDependentModule().getId();
           versionInfo[i][2] = dep.getFirstVersion();
           versionInfo[i][3] = dep.getLastVersion();
           versionInfo[i][4] = dep.isIncluded() ? "Y" : "N";
           versionInfo[i][5] = dep.getDependantModuleName();
+          versionInfo[i][6] = dep.getDependencyEnforcement();
+          versionInfo[i][7] = dep.isUserEditableEnforcement()?dep.getInstanceEnforcement():null;
           i++;
         }
 
