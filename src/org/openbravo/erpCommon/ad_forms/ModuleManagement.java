@@ -1560,8 +1560,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
                               "@version@", dep.getFirstVersion()).replace("@installed@",
                               dep.getDependentModule().getVersion());
                 } else if (dep.getLastVersion() != null
-                    && vc.compare(dep.getFirstVersion(), dep.getDependentModule().getVersion()) <= 0
-                    && vc.compare(dep.getLastVersion(), dep.getDependentModule().getVersion()) >= 0) {
+                    && !(vc.compare(dep.getFirstVersion(), dep.getDependentModule().getVersion()) <= 0 && vc
+                        .compare(dep.getLastVersion(), dep.getDependentModule().getVersion()) >= 0)) {
                   save = false;
                   warn = true;
                   warnMsg += "<br/>"
