@@ -197,10 +197,19 @@ function enableFieldButton(id) {
 function setWindowEditing(value) {
   isContextMenuOpened = false;
   var isNewWindow;
-  if (document.getElementById('linkButtonEdition').className.indexOf('Main_LeftTabsBar_ButtonRight_Icon_edition_selected') != -1) {
-    isNewWindow = false;
+
+  if (isWindowInMDITab) {
+    if (document.getElementById('buttonEdition').className.indexOf('Main_ToolBar_Button_Icon_Edition_new') === -1) {
+      isNewWindow = false;
+    } else {
+      isNewWindow = true;
+    }
   } else {
-    isNewWindow = true;
+    if (document.getElementById('linkButtonEdition').className.indexOf('Main_LeftTabsBar_ButtonRight_Icon_edition_selected') !== -1) {
+      isNewWindow = false;
+    } else {
+      isNewWindow = true;
+    }
   }
 
   if (isNewWindow==false) {
