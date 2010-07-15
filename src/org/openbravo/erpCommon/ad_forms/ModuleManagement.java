@@ -1504,6 +1504,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String discard[] = { "", "" };
+    OBError myMessage = null;
     try {
       OBContext.setAdminMode();
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
@@ -1535,6 +1536,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
         sysInfo.setMaturityUpdate(vars.getStringParameter("inpScanLevel"));
 
         // Save enforcement
+        boolean warn = false;
+        String warnMsg = "";
         for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
           String parameter = (String) e.nextElement();
           if (parameter.startsWith("inpEnforcement")) {
@@ -1543,14 +1546,48 @@ public class ModuleManagement extends HttpSecureAppServlet {
             org.openbravo.model.ad.module.ModuleDependency dep = OBDal.getInstance().get(
                 org.openbravo.model.ad.module.ModuleDependency.class, depId);
             if (dep != null) {
-              if (value.equals(dep.getDependencyEnforcement())) {
-                // setting no instance enforcement in case the selected value is the default
-                dep.setInstanceEnforcement(null);
-              } else {
-                dep.setInstanceEnforcement(value);
+              boolean save = true;
+              if ("MINOR".equals(value)) {
+                // Setting Minor version enforcement, check the configuration is still valid
+                VersionComparator vc = new VersionComparator();
+                if (dep.getLastVersion() == null
+                    && vc.compare(dep.getFirstVersion(), dep.getDependentModule().getVersion()) != 0) {
+                  save = false;
+                  warn = true;
+                  warnMsg += "<br/>"
+                      + Utility.messageBD(this, "ModuleDependsButInstalled", vars.getLanguage())
+                          .replace("@module@", dep.getDependentModule().getName()).replace(
+                              "@version@", dep.getFirstVersion()).replace("@installed@",
+                              dep.getDependentModule().getVersion());
+                } else if (dep.getLastVersion() != null
+                    && vc.compare(dep.getFirstVersion(), dep.getDependentModule().getVersion()) <= 0
+                    && vc.compare(dep.getLastVersion(), dep.getDependentModule().getVersion()) >= 0) {
+                  save = false;
+                  warn = true;
+                  warnMsg += "<br/>"
+                      + Utility.messageBD(this, "ModuleDependsButInstalled", vars.getLanguage())
+                          .replace("@module@", dep.getDependentModule().getName()).replace(
+                              "@version@", dep.getFirstVersion() + " - " + dep.getLastVersion())
+                          .replace("@installed@", dep.getDependentModule().getVersion());
+                }
+              }
+              if (save) {
+                if (value.equals(dep.getDependencyEnforcement())) {
+                  // setting no instance enforcement in case the selected value is the default
+                  dep.setInstanceEnforcement(null);
+                } else {
+                  dep.setInstanceEnforcement(value);
+                }
               }
             }
           }
+        }
+        if (warn) {
+          myMessage = new OBError();
+          myMessage.setType("Warning");
+          myMessage.setMessage(Utility.messageBD(this, "CannotSetMinorEnforcements", vars
+              .getLanguage())
+              + warnMsg);
         }
       }
 
@@ -1717,6 +1754,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } catch (final Exception ex) {
         throw new ServletException(ex);
       }
+
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+
       out.println(xmlDocument.print());
       out.close();
     } finally {
