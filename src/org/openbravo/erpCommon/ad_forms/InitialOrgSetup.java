@@ -494,6 +494,21 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         releaseRollbackConnection(conn);
         return false;
       }
+      String ad_role_id= SequenceIdData.getUUID();
+      if (InitialOrgSetupData.insertRole(conn, this, AD_Client_ID, ad_role_id, name,AD_Org_ID) != 1) {
+            final String err = "InitialOrgSetup - CreateRole - Role NOT inserted";
+            log4j.warn(err);
+            m_info.append(err).append(SALTO_LINEA);
+            releaseRollbackConnection(conn);
+            return false;
+          }
+      if (InitialOrgSetupData.insertRoleOrgAccess(conn, this, AD_Client_ID, AD_Org_ID, ad_role_id) != 1) {
+          final String err = "InitialOrgSetup - CreateRole - Role Organization NOT inserted";
+          log4j.warn(err);
+          m_info.append(err).append(SALTO_LINEA);
+          releaseRollbackConnection(conn);
+          return false;
+        }
       if (log4j.isDebugEnabled())
         log4j.debug("InitialOrgSetup - createOrg - USER INSERTED " + name);
       // Info
@@ -515,7 +530,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       // * Create User-Role
 
       // OrgUser - User
-      if (InitialOrgSetupData.insertUserRoles(conn, this, AD_Client_ID, AD_User_U_ID, stradRoleId) != 1)
+      if (InitialOrgSetupData.insertUserRoles(conn, this, AD_Client_ID, AD_User_U_ID, ad_role_id) != 1)
         log4j.warn("InitialOrgSetup - createOrg - UserRole OrgUser+Org NOT inserted");
       releaseCommitConnection(conn);
     } catch (final Exception e) {
