@@ -57,4 +57,20 @@
     <FIELD id="fieldModuleRemove" attribute="onclick" replace="xx">id</FIELD>
     <SECTION id="sectionModuleDetail"/>
   </structure>
+  
+  <structure name="dependencyDetail">
+    <FIELD id="fieldDepModName">modName</FIELD>
+    <FIELD id="fieldDepType"   >depType</FIELD>
+    <FIELD id="fieldDepBaseMod">baseModule</FIELD>
+    <FIELD id="fieldDepCurrent">currentVersion</FIELD>
+    <FIELD id="fieldDepFirst"  >firstVersion</FIELD>
+    <FIELD id="fieldDepLast"   >lastVersion</FIELD>
+    
+    <FIELD id="selectedEnforcementType">selectedEnforcement</FIELD>
+    <SUBREPORT id="reportEnforcementType" name="reportEnforcementType" report="org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="selectedEnforcementType"/>
+    </SUBREPORT>
+    
+    <SECTION id="sectionDependencyDetail"/>
+  </structure>
 </REPORT>

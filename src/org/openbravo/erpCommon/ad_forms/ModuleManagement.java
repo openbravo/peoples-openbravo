@@ -58,6 +58,7 @@ import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -1500,7 +1501,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private void printPageSettings(HttpServletResponse response, HttpServletRequest request)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    String discard[] = { "" };
+    String discard[] = { "", "" };
     try {
       OBContext.setAdminMode();
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
@@ -1575,6 +1576,76 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modules.add(m);
       }
 
+      // Dependencies table
+      OBCriteria<org.openbravo.model.ad.module.ModuleDependency> qDeps = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.ModuleDependency.class);
+      // qDeps.add(Expression.eq(
+      // org.openbravo.model.ad.module.ModuleDependency.PROPERTY_USEREDITABLEENFORCEMENT, true));
+      qDeps.addOrder(Order.asc(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_MODULE));
+      qDeps.addOrder(Order.asc(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_ISINCLUDED));
+      qDeps.addOrder(Order
+          .asc(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_DEPENDANTMODULENAME));
+      List<org.openbravo.model.ad.module.ModuleDependency> deps = qDeps.list();
+
+      if (deps.isEmpty()) {
+        discard[1] = "enforcementTable";
+      } else {
+        discard[1] = "noEditableEnforcement";
+      }
+
+      FieldProvider fpDeps[] = new FieldProvider[deps.size()];
+      FieldProvider fpEnforcements[][] = new FieldProvider[deps.size()][];
+      int i = 0;
+      String lastName = "";
+      Boolean lastType = null;
+
+      OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
+          org.openbravo.model.ad.domain.List.class);
+      qList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
+          "8BA0A3775CE14CE69989B6C09982FB2E"));
+      qList.addOrder(Order.asc(org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER));
+      SQLReturnObject[] fpEnforcementCombo = new SQLReturnObject[qList.list().size()];
+      for (org.openbravo.model.ad.domain.List value : qList.list()) {
+        SQLReturnObject val = new SQLReturnObject();
+        val.setData("ID", value.getSearchKey());
+        val.setData("NAME", value.getName());
+        fpEnforcementCombo[i] = val;
+        i++;
+      }
+
+      i = 0;
+      for (org.openbravo.model.ad.module.ModuleDependency dep : deps) {
+        HashMap<String, String> d = new HashMap<String, String>();
+
+        d.put("baseModule", dep.getDependentModule().getName());
+        d.put("currentVersion", dep.getDependentModule().getVersion());
+        d.put("firstVersion", dep.getFirstVersion());
+        d.put("lastVersion", dep.getLastVersion());
+
+        // Grouping by module and dependency
+        String currentName = dep.getModule().getName();
+        Boolean currentType = dep.isIncluded();
+        if (lastName.equals(currentName)) {
+          d.put("modName", "");
+          if (!currentType.equals(lastType)) {
+            d.put("depType", dep.isIncluded() ? "Inclusion" : "Dependency"); // TODO: trl
+          } else {
+            d.put("depType", "");
+          }
+        } else {
+          d.put("modName", currentName);
+          d.put("depType", dep.isIncluded() ? "Inclusion" : "Dependency"); // TODO: trl
+          lastName = currentName;
+          lastType = currentType;
+        }
+
+        d.put("selectedEnforcement", dep.getInstanceEnforcement() == null ? dep
+            .getDependencyEnforcement() : dep.getInstanceEnforcement());
+        fpDeps[i] = FieldProviderFactory.getFieldProvider(d);
+        fpEnforcements[i] = getEnforcementCombo(dep, fpEnforcementCombo);
+        i++;
+      }
+
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/ModuleManagementSettings", discard).createXmlDocument();
 
@@ -1599,6 +1670,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
       final PrintWriter out = response.getWriter();
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+
+      xmlDocument.setData("dependencyDetail", fpDeps);
+      xmlDocument.setDataArray("reportEnforcementType", "liststructure", fpEnforcements);
 
       // Interface parameters
       final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "",
@@ -1625,6 +1699,25 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private FieldProvider[] getEnforcementCombo(org.openbravo.model.ad.module.ModuleDependency dep,
+      SQLReturnObject[] fpEnforcementCombo) {
+    SQLReturnObject[] rt = new SQLReturnObject[fpEnforcementCombo.length];
+
+    int i = 0;
+    for (SQLReturnObject val : fpEnforcementCombo) {
+      rt[i] = new SQLReturnObject();
+      rt[i].setData("ID", val.getData("ID"));
+      if (val.getData("ID").equals(dep.getDependencyEnforcement())) {
+        rt[i].setData("NAME", val.getData("NAME") + " (Default)");
+        // TODO: trl
+      } else {
+        rt[i].setData("NAME", val.getData("NAME"));
+      }
+      i++;
+    }
+    return rt;
   }
 
   private String getSystemMaturity(boolean updateLevel) {
