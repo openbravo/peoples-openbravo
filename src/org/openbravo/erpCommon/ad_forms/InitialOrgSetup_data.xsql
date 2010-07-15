@@ -67,7 +67,7 @@
       <![CDATA[
       INSERT INTO AD_Role (AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_Role_ID,Name,
       Description,UserLevel,ClientList,OrgList)
-      VALUES (?,'0','Y',now(),'0',now(),'0',?,?,?,' CO',?,?)
+      VALUES (?,'0','Y',now(),'0',now(),'0',?,?,?,'  O',?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>

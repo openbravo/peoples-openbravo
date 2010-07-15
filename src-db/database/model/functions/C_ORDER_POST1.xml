@@ -352,7 +352,9 @@
                 v_QtyPO:=0;
                 v_QtyOrderPO:=NULL;
               END IF;
-              M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO) ;
+              IF(v_DocStatus<>'IP' OR v_DocAction<>'CO') THEN
+               M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO) ;
+              END IF;
             END LOOP;
           -- Set reserved quantity to 0
           UPDATE C_ORDERLINE
@@ -984,8 +986,10 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
        v_QtyOrderPO := C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
     END IF;
    END IF;
-   M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID,
+   IF(v_DocStatus<>'IP' OR v_DocAction<>'CO') THEN
+   	 M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID,
           Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO);
+    END IF;
    DBMS_OUTPUT.PUT_LINE('Reserved Warehouse=' || Cur_ResLine.M_Warehouse_ID || ', Product=' || Cur_ResLine.M_Product_ID || ', Attrib=' || Cur_ResLine.M_AttributeSetInstance_ID || ', Qty=' || v_QtySO || '/' || v_QtyPO);
 
    -- Update Order Line
