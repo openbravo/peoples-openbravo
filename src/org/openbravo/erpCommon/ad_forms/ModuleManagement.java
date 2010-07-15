@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1498,6 +1499,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     out.close();
   }
 
+  @SuppressWarnings("unchecked")
   private void printPageSettings(HttpServletResponse response, HttpServletRequest request)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -1528,8 +1530,28 @@ public class ModuleManagement extends HttpSecureAppServlet {
           log4j.error("Module does not exists ID:" + moduleId);
         }
       } else if (vars.commandIn("SETTINGS_SAVE")) {
+        // Save global maturity levels
         sysInfo.setMaturitySearch(vars.getStringParameter("inpSearchLevel"));
         sysInfo.setMaturityUpdate(vars.getStringParameter("inpScanLevel"));
+
+        // Save enforcement
+        for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+          String parameter = (String) e.nextElement();
+          if (parameter.startsWith("inpEnforcement")) {
+            String depId = parameter.replace("inpEnforcement", "");
+            String value = vars.getStringParameter(parameter);
+            org.openbravo.model.ad.module.ModuleDependency dep = OBDal.getInstance().get(
+                org.openbravo.model.ad.module.ModuleDependency.class, depId);
+            if (dep != null) {
+              if (value.equals(dep.getDependencyEnforcement())) {
+                // setting no instance enforcement in case the selected value is the default
+                dep.setInstanceEnforcement(null);
+              } else {
+                dep.setInstanceEnforcement(value);
+              }
+            }
+          }
+        }
       }
 
       // Possible maturity levels are obtained from CR, obtain them once per session and store
@@ -1579,8 +1601,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // Dependencies table
       OBCriteria<org.openbravo.model.ad.module.ModuleDependency> qDeps = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.module.ModuleDependency.class);
-      // qDeps.add(Expression.eq(
-      // org.openbravo.model.ad.module.ModuleDependency.PROPERTY_USEREDITABLEENFORCEMENT, true));
+      qDeps.add(Expression.eq(
+          org.openbravo.model.ad.module.ModuleDependency.PROPERTY_USEREDITABLEENFORCEMENT, true));
       qDeps.addOrder(Order.asc(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_MODULE));
       qDeps.addOrder(Order.asc(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_ISINCLUDED));
       qDeps.addOrder(Order
@@ -1621,6 +1643,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         d.put("currentVersion", dep.getDependentModule().getVersion());
         d.put("firstVersion", dep.getFirstVersion());
         d.put("lastVersion", dep.getLastVersion());
+        d.put("depId", dep.getId());
 
         // Grouping by module and dependency
         String currentName = dep.getModule().getName();
