@@ -1658,6 +1658,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       String lastName = "";
       Boolean lastType = null;
 
+      // Get the static text values once, not to query db each time for them
       OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
           org.openbravo.model.ad.domain.List.class);
       qList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
@@ -1667,10 +1668,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
       for (org.openbravo.model.ad.domain.List value : qList.list()) {
         SQLReturnObject val = new SQLReturnObject();
         val.setData("ID", value.getSearchKey());
-        val.setData("NAME", value.getName());
+        val.setData("NAME", Utility.getListValueName("Dependency Enforcement",
+            value.getSearchKey(), vars.getLanguage()));
         fpEnforcementCombo[i] = val;
         i++;
       }
+      String inclusionType = Utility.messageBD(this, "InclusionType", vars.getLanguage());
+      String dependencyType = Utility.messageBD(this, "DependencyType", vars.getLanguage());
+      String defaultStr = Utility.messageBD(this, "Default", vars.getLanguage());
 
       i = 0;
       for (org.openbravo.model.ad.module.ModuleDependency dep : deps) {
@@ -1688,13 +1693,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
         if (lastName.equals(currentName)) {
           d.put("modName", "");
           if (!currentType.equals(lastType)) {
-            d.put("depType", dep.isIncluded() ? "Inclusion" : "Dependency"); // TODO: trl
+            d.put("depType", dep.isIncluded() ? inclusionType : dependencyType);
           } else {
             d.put("depType", "");
           }
         } else {
           d.put("modName", currentName);
-          d.put("depType", dep.isIncluded() ? "Inclusion" : "Dependency"); // TODO: trl
+          d.put("depType", dep.isIncluded() ? inclusionType : dependencyType);
           lastName = currentName;
           lastType = currentType;
         }
@@ -1702,7 +1707,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         d.put("selectedEnforcement", dep.getInstanceEnforcement() == null ? dep
             .getDependencyEnforcement() : dep.getInstanceEnforcement());
         fpDeps[i] = FieldProviderFactory.getFieldProvider(d);
-        fpEnforcements[i] = getEnforcementCombo(dep, fpEnforcementCombo);
+        fpEnforcements[i] = getEnforcementCombo(dep, fpEnforcementCombo, defaultStr);
         i++;
       }
 
@@ -1768,8 +1773,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
     }
   }
 
+  /**
+   * Obtains the combo used for enforcement, showing which is the default setting.
+   */
   private FieldProvider[] getEnforcementCombo(org.openbravo.model.ad.module.ModuleDependency dep,
-      SQLReturnObject[] fpEnforcementCombo) {
+      SQLReturnObject[] fpEnforcementCombo, String defaultStr) {
     SQLReturnObject[] rt = new SQLReturnObject[fpEnforcementCombo.length];
 
     int i = 0;
@@ -1777,8 +1785,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       rt[i] = new SQLReturnObject();
       rt[i].setData("ID", val.getData("ID"));
       if (val.getData("ID").equals(dep.getDependencyEnforcement())) {
-        rt[i].setData("NAME", val.getData("NAME") + " (Default)");
-        // TODO: trl
+        rt[i].setData("NAME", val.getData("NAME") + " " + defaultStr);
       } else {
         rt[i].setData("NAME", val.getData("NAME"));
       }
