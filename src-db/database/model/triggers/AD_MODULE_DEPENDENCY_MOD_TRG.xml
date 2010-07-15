@@ -59,13 +59,31 @@ BEGIN
         COALESCE(:NEW.StartVersion , '.') != COALESCE(:OLD.StartVersion , '.') OR
         COALESCE(:NEW.EndVersion , '.') != COALESCE(:OLD.EndVersion , '.') OR
         COALESCE(:NEW.IsIncluded , '.') != COALESCE(:OLD.IsIncluded , '.') OR
-        1=2) THEN
+        COALESCE(:NEW.Dependency_Enforcement , '.') != COALESCE(:OLD.Dependency_Enforcement , '.') OR
+        COALESCE(:NEW.User_Editable_Enforcement , '.') != COALESCE(:OLD.User_Editable_Enforcement , '.')) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
   END IF;
   
   IF (INSERTING AND devModule='N') THEN
     RAISE_APPLICATION_ERROR(-20000, '@20533@');
+  END IF;
+  
+  --Check the only updated column is instanceEnforcement. In this case maitin updated
+  --column as it was to prevent changes detection when trying to update database
+  IF (UPDATING) THEN
+    IF (COALESCE(:NEW.ISACTIVE                 ,'.') = COALESCE(:OLD.ISACTIVE                 ,'.') AND
+        COALESCE(:NEW.AD_MODULE_ID             ,'.') = COALESCE(:OLD.AD_MODULE_ID             ,'.') AND
+        COALESCE(:NEW.AD_DEPENDENT_MODULE_ID   ,'.') = COALESCE(:OLD.AD_DEPENDENT_MODULE_ID   ,'.') AND
+        COALESCE(:NEW.STARTVERSION             ,'.') = COALESCE(:OLD.STARTVERSION             ,'.') AND
+        COALESCE(:NEW.ENDVERSION               ,'.') = COALESCE(:OLD.ENDVERSION               ,'.') AND
+        COALESCE(:NEW.ISINCLUDED               ,'.') = COALESCE(:OLD.ISINCLUDED               ,'.') AND
+        COALESCE(:NEW.DEPENDANT_MODULE_NAME    ,'.') = COALESCE(:OLD.DEPENDANT_MODULE_NAME    ,'.') AND
+        COALESCE(:NEW.DEPENDENCY_ENFORCEMENT   ,'.') = COALESCE(:OLD.DEPENDENCY_ENFORCEMENT   ,'.') AND
+        COALESCE(:NEW.USER_EDITABLE_ENFORCEMENT,'.') = COALESCE(:OLD.USER_EDITABLE_ENFORCEMENT,'.') AND                        
+        COALESCE(:NEW.INSTANCE_ENFORCEMENT,'.') !=   COALESCE(:OLD.INSTANCE_ENFORCEMENT,'.'))  THEN
+      :NEW.UPDATED := :OLD.UPDATED;
+    END IF;
   END IF;
 END AD_MODULE_DEPENDENCY_MOD_TRG
 ]]></body>
