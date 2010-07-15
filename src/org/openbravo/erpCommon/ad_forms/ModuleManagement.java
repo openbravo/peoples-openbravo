@@ -251,7 +251,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       out.println(xmlDocument.print());
       out.close();
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error(e.getMessage(), e);
     }
   }
 
@@ -297,7 +297,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             + Utility.messageBD(this, "InstallUpdatesNow", lang) + "</a>";
       }
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error(e.getMessage(), e);
     }
     return rt;
   }
@@ -453,7 +453,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         final WebService3Impl ws = loc.getWebService3();
         module = ws.moduleDetail(recordId);
       } catch (final Exception e) {
-        log4j.error(e);
+        log4j.error(e.getMessage(), e);
         throw new ServletException(e);
       }
     } else {
@@ -651,7 +651,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         final WebService3Impl ws = loc.getWebService3();
         module = ws.moduleDetail(recordId);
       } catch (final Exception e) {
-        log4j.error(e);
+        log4j.error(e.getMessage(), e);
       }
     } else {
       discard[4] = "core";
@@ -780,7 +780,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         discard[5] = "discardContinue";
       }
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error(e.getMessage(), e);
       message = new OBError();
       message.setType("Error");
       message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
@@ -1300,7 +1300,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
             response
                 .sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
           } catch (final Exception ex) {
-            log4j.error(ex);
+            log4j.error(ex.getMessage(), ex);
           }
         }
       }
@@ -1387,7 +1387,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } else
         return new String[0];
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error(e.getMessage(), e);
       return (new String[0]);
     }
   }
@@ -1403,7 +1403,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } else
         return new String[0];
     } catch (final Exception e) {
-      log4j.error(e);
+      log4j.error(e.getMessage(), e);
       return (new String[0]);
     }
   }
