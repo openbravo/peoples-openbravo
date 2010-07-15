@@ -880,7 +880,7 @@ public class ImportModule {
       Vector<DynaBean> dynDependencies) {
     final Module[] rt = new Module[dModulesToInstall.size()];
     int i = 0;
-    HashMap<String, String> enforcements = new HashMap<String, String>();
+
     for (final DynaBean dynModule : dModulesToInstall) {
       rt[i] = new Module();
       rt[i].setModuleID((String) dynModule.get("AD_MODULE_ID"));
@@ -892,6 +892,7 @@ public class ImportModule {
       rt[i].setType((String) dynModule.get("TYPE"));
       rt[i].setDescription((String) dynModule.get("DESCRIPTION"));
       rt[i].setHelp((String) dynModule.get("HELP"));
+      HashMap<String, String> enforcements = new HashMap<String, String>();
       rt[i].setDependencies(dyanaBeanToDependencies(dynDependencies, rt[i].getModuleID(),
           enforcements));
       // old modules don't have iscommercial column
@@ -900,11 +901,12 @@ public class ImportModule {
       // To show details in local ad_module_id is used
       rt[i].setModuleVersionID((String) dynModule.get("AD_MODULE_ID"));
 
+      // use this for information that is not contained in standard fields
+      HashMap<String, HashMap<String, String>> additionalInfo = new HashMap<String, HashMap<String, String>>();
+      additionalInfo.put("enforcements", enforcements);
+      rt[i].setAdditionalInfo(additionalInfo);
       i++;
     }
-    // use this for information that is not contained in standard fields
-    HashMap<String, HashMap<String, String>> additionalInfo = new HashMap<String, HashMap<String, String>>();
-    additionalInfo.put("enforcements", enforcements);
 
     return rt;
   }
