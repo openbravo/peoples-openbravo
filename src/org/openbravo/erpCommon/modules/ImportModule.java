@@ -58,8 +58,10 @@ import org.apache.ddlutils.io.DataToArraySink;
 import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
@@ -919,29 +921,51 @@ public class ImportModule {
   private ModuleDependency[] dyanaBeanToDependencies(Vector<DynaBean> dynDependencies,
       String ad_module_id, HashMap<String, String> enforcements) {
     final ArrayList<ModuleDependency> dep = new ArrayList<ModuleDependency>();
-    for (final DynaBean dynModule : dynDependencies) {
-      if (((String) dynModule.get("AD_MODULE_ID")).equals(ad_module_id)) {
-        final ModuleDependency md = new ModuleDependency();
-        String modId = (String) dynModule.get("AD_DEPENDENT_MODULE_ID");
-        md.setModuleID(modId);
-        md.setVersionStart((String) dynModule.get("STARTVERSION"));
-        md.setVersionEnd((String) dynModule.get("ENDVERSION"));
-        md.setModuleName((String) dynModule.get("DEPENDANT_MODULE_NAME"));
+    try {
+      OBContext.setAdminMode();
+      for (final DynaBean dynModule : dynDependencies) {
+        if (((String) dynModule.get("AD_MODULE_ID")).equals(ad_module_id)) {
+          final ModuleDependency md = new ModuleDependency();
+          String modId = (String) dynModule.get("AD_DEPENDENT_MODULE_ID");
+          md.setModuleID(modId);
+          md.setVersionStart((String) dynModule.get("STARTVERSION"));
+          md.setVersionEnd((String) dynModule.get("ENDVERSION"));
+          md.setModuleName((String) dynModule.get("DEPENDANT_MODULE_NAME"));
 
-        String enforcement = (String) dynModule.get("DEPENDENCY_ENFORCEMENT");
-        if (enforcement == null || enforcement.isEmpty()) {
-          enforcement = "MAJOR";
+          // calculate enforcements, set the local one in case is editable and there is one, other
+          // case set the defined in the obx
+          OBCriteria<org.openbravo.model.ad.module.ModuleDependency> qDependentMod = OBDal
+              .getInstance().createCriteria(org.openbravo.model.ad.module.ModuleDependency.class);
+          qDependentMod
+              .add(Expression.eq(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_MODULE
+                  + ".id", ad_module_id));
+          qDependentMod.add(Expression.eq(
+              org.openbravo.model.ad.module.ModuleDependency.PROPERTY_DEPENDENTMODULE + ".id",
+              modId));
+          String enforcement = null;
+          if (!qDependentMod.list().isEmpty()
+              && qDependentMod.list().get(0).isUserEditableEnforcement()
+              && qDependentMod.list().get(0).getInstanceEnforcement() != null) {
+            enforcement = qDependentMod.list().get(0).getInstanceEnforcement();
+          } else {
+            enforcement = (String) dynModule.get("DEPENDENCY_ENFORCEMENT");
+          }
+          if (enforcement == null || enforcement.isEmpty()) {
+            enforcement = "MAJOR";
+          }
+          enforcements.put(modId, enforcement);
+
+          dep.add(md);
         }
-        enforcements.put(modId, enforcement);
-
-        dep.add(md);
       }
+      final ModuleDependency rt[] = new ModuleDependency[dep.size()];
+      for (int i = 0; i < rt.length; i++) {
+        rt[i] = dep.get(i);
+      }
+      return rt;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    final ModuleDependency rt[] = new ModuleDependency[dep.size()];
-    for (int i = 0; i < rt.length; i++) {
-      rt[i] = dep.get(i);
-    }
-    return rt;
   }
 
   /**
