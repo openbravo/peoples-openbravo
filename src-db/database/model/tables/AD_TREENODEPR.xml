@@ -61,6 +61,10 @@
       <index name="AD_TREENODEPR_PARENT" unique="false">
         <index-column name="PARENT_ID"/>
       </index>
+      <index name="AD_TREENODEPR_PARENT2" unique="false">
+        <index-column name="AD_TREE_ID"/>
+        <index-column name="PARENT_ID"/>
+      </index>
       <unique name="AD_TREENODEPR_TREE_NODE_UN">
         <unique-column name="AD_TREE_ID"/>
         <unique-column name="NODE_ID"/>
