@@ -131,12 +131,21 @@ public class VersionUtility {
             + mod.availableMaxVer + "\". ");
         return false;
       }
-      if (dep.maxVer != null && versionCompare(dep.minVer, dep.maxVer, false) == 1
-          && versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
-        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
-            + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
-            + mod.availableMinVer + "\". ");
-        return false;
+      if (dep.maxVer != null && !dep.maxVer.isEmpty()) {
+        if (versionCompare(dep.minVer, dep.maxVer, false) == 1
+            && versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+              + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
+              + mod.availableMinVer + "\". ");
+          return false;
+        }
+      } else {
+        if (versionCompare(dep.minVer, mod.availableMaxVer, false) != 0) {
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+              + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
+              + mod.availableMaxVer + "\". ");
+          return false;
+        }
       }
     }
     return true;
