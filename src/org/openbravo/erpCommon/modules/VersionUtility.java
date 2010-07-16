@@ -131,7 +131,8 @@ public class VersionUtility {
             + mod.availableMaxVer + "\". ");
         return false;
       }
-      if (versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
+      if (dep.maxVer != null && versionCompare(dep.minVer, dep.maxVer, false) == 1
+          && versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
         errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
             + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
             + mod.availableMinVer + "\". ");
