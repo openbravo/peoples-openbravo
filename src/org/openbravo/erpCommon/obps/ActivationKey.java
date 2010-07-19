@@ -69,6 +69,7 @@ public class ActivationKey {
   private boolean hasExpired = false;
   private boolean subscriptionConvertedProperty = false;
   private boolean subscriptionActuallyConverted = false;
+  private LicenseClass licenseClass;
 
   private boolean notActiveYet = false;
 
@@ -80,6 +81,19 @@ public class ActivationKey {
 
   public enum CommercialModuleStatus {
     NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION
+  }
+
+  private enum LicenseClass {
+    BASIC("B"), SMB("SMB"), UNLIMITED("U");
+    private String code;
+
+    private LicenseClass(String code) {
+      this.code = code;
+    }
+
+    String getCode() {
+      return code;
+    }
   }
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -246,6 +260,19 @@ public class ActivationKey {
       }
     }
     isActive = true;
+
+    // Get license class, old Activation Keys do not have this info, so treat them as SMB
+    String pLicenseClass = getProperty("licenseclass");
+    if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("SMB")) {
+      licenseClass = LicenseClass.SMB;
+    } else if (pLicenseClass.equals("B")) {
+      licenseClass = LicenseClass.BASIC;
+    } else if (pLicenseClass.equals("U")) {
+      licenseClass = LicenseClass.UNLIMITED;
+    } else {
+      log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
+      licenseClass = LicenseClass.BASIC;
+    }
     setLogger();
   }
 
@@ -488,13 +515,11 @@ public class ActivationKey {
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
           .append("</td><td>").append(getProperty("customer")).append("</td></tr>");
-      String instanceClass = getProperty("licenseclass");
-      if (instanceClass == null || instanceClass.isEmpty()) {
-        instanceClass = "SMB";
-      }
-      instanceClass = Utility.getListValueName("OBPSLicenseClass", instanceClass, lang);
+
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseClass", lang)).append(
-          "</td><td>").append(instanceClass).append("</td></tr>");
+          "</td><td>").append(
+          Utility.getListValueName("OBPSLicenseClass", licenseClass.getCode(), lang)).append(
+          "</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang)).append(
           "</td><td>").append(
           Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append(
@@ -652,6 +677,24 @@ public class ActivationKey {
     }
 
     return moduleList.get(moduleId);
+  }
+
+  public boolean hasLicenseAccess(String type, String id) {
+    log4j.info("Type:" + type + " id:" + id);
+    if (isActive()) {
+      return true;
+    } else {
+      switch (licenseClass) {
+      case BASIC:
+        break;
+
+      case SMB:
+      case UNLIMITED:
+        // SMB and Unlimited instances do not have limitation
+        return true;
+      }
+    }
+    return true;
   }
 
 }

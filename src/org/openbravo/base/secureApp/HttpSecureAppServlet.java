@@ -354,6 +354,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       SessionInfo.setUserId(strUserAuth);
       SessionInfo.setSessionId(vars1.getSessionValue("#AD_Session_ID"));
 
+      if (!ActivationKey.getInstance().hasLicenseAccess(classInfo.type, classInfo.id)) {
+        if ((strPopUp != null && !strPopUp.equals("")) || (classInfo.type.equals("S")))
+          bdErrorGeneralPopUp(request, response, Utility.messageBD(this, "Error", variables
+              .getLanguage()), Utility
+              .messageBD(this, "AccessTableNoView", variables.getLanguage()));
+        else {
+          bdError(request, response, "AccessTableNoView", vars1.getLanguage());
+        }
+      }
+
       if (vars1.getRole().equals("") || hasAccess(vars1)) {
         if (classInfo.id != null && !classInfo.id.equals("")) {
           SessionInfo.setProcessId(classInfo.id);
