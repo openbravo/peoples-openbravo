@@ -131,6 +131,17 @@ public class ActivationKey {
   }
 
   private void loadInfo() {
+    // Reset
+    isActive = false;
+    hasActivationKey = false;
+    errorMessage = "";
+    messageType = "Error";
+    instanceProperties = null;
+    opsLog = false;
+    hasExpired = false;
+    subscriptionConvertedProperty = false;
+    subscriptionActuallyConverted = false;
+
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
     strPublicKey = sys.getInstanceKey();
