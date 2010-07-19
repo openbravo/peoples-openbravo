@@ -34,6 +34,11 @@ public class DocInvoice extends AcctServer {
 
   DocTax[] m_taxes = null;
   DocLine_FinPaymentSchedule[] m_payments = null;
+
+  public DocLine_FinPaymentSchedule[] getM_payments() {
+    return m_payments;
+  }
+
   String SeqNo = "0";
 
   /**
