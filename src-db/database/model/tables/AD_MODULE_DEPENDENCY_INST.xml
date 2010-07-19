@@ -63,11 +63,11 @@
       </column>
       <column name="DEPENDENCY_ENFORCEMENT" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[MAJOR]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['MAJOR']]></onCreateDefault>
       </column>
       <column name="USER_EDITABLE_ENFORCEMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_DEPENDENCY_INST_AD_C">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
