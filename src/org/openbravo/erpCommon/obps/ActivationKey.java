@@ -452,10 +452,17 @@ public class ActivationKey {
     } catch (ParseException e) {
       log.error("Error parsing date", e);
     }
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
           .append("</td><td>").append(getProperty("customer")).append("</td></tr>");
+      String instanceClass = getProperty("licenseclass");
+      if (instanceClass == null || instanceClass.isEmpty()) {
+        instanceClass = "SMB";
+      }
+      instanceClass = Utility.getListValueName("OBPSLicenseClass", instanceClass, lang);
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseClass", lang)).append(
+          "</td><td>").append(instanceClass).append("</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang)).append(
           "</td><td>").append(
           Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append(
