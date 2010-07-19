@@ -34,6 +34,10 @@ export.database.structure: Exports the database structure in the xml's files.
   </condition>
 
   <path id="runtime-classpath">
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
     <fileset dir="./lib">
       <include name="**/*.jar" />
       <exclude name="**/dbsourcemanagerlight.jar" />
@@ -42,10 +46,6 @@ export.database.structure: Exports the database structure in the xml's files.
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
     </fileset>
-    <dirset dir="${base.modules}">
-      <include name="*/build/classes/" />
-    </dirset>
-    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
   </path>
 
   <taskdef name="createscript" classname="org.openbravo.ddlutils.task.CreateXML2SQL">
