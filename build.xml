@@ -190,6 +190,10 @@ export.database: exports database structure and data to xml files.
   </condition>
  
   <path id="project.class.path">
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
@@ -213,14 +217,14 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
     </fileset>
-    <dirset dir="${base.modules}">
-      <include name="*/build/classes/" />
-    </dirset>
-    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
   </path>
 
   <!-- This classpath is needed only for the compile.apply.module task-->
   <path id="apply.module.compile.classpath">
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
     <pathelement path="${build.apply.module}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
@@ -244,14 +248,14 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
     </fileset>
-    <dirset dir="${base.modules}">
-      <include name="*/build/classes/" />
-    </dirset>
-    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
   </path>
   
   <!-- This classpath is needed only for the apply.module task-->
   <path id="apply.module.runtime.classpath">
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
     <pathelement path="${build.apply.module}" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
@@ -276,10 +280,6 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
     </fileset>
-    <dirset dir="${base.modules}">
-      <include name="*/build/classes/" />
-    </dirset>
-    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
   </path>
   
   <macrodef name="updatesystemstatus">
