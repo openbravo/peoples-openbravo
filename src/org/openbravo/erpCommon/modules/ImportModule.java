@@ -1563,7 +1563,7 @@ public class ImportModule {
       HttpURLConnection conn = null;
 
       if (strUrl.startsWith("https://")) {
-        ActivationKey ak = new ActivationKey();
+        ActivationKey ak = ActivationKey.getInstance();
         String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
         conn = HttpsUtils.sendHttpsRequest(url, instanceKey, "localhost-1", "changeit");
       } else {

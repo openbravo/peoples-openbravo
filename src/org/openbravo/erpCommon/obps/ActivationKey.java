@@ -54,7 +54,6 @@ import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
 
 public class ActivationKey {
-
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
 
   private boolean isActive = false;
@@ -86,7 +85,38 @@ public class ActivationKey {
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
 
+  private static final ActivationKey instance = new ActivationKey();
+
+  /**
+   * Obtains the ActivationKey instance. Instances should be get in this way, rather than creating a
+   * new one.
+   * 
+   */
+  public static synchronized ActivationKey getInstance() {
+    return instance;
+  }
+
+  /**
+   * Reloads ActivationKey instance from information in DB.
+   */
+  public static synchronized ActivationKey reaload() {
+    ActivationKey ak = getInstance();
+    ak.loadInfo();
+    return ak;
+  }
+
+  /**
+   * ActivationKey constructor, this should not be used. ActivationKey should be treated as
+   * Singleton, so the {@link ActivationKey#getInstance()} method should be used instead.
+   * <p/>
+   * This constructor is public to maintain backwards compatibility.
+   */
   public ActivationKey() {
+    super();
+    loadInfo();
+  }
+
+  private void loadInfo() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
     strPublicKey = sys.getInstanceKey();
@@ -139,7 +169,9 @@ public class ActivationKey {
       // verify signature
       signer.update(bos.toByteArray());
       boolean signed = signer.verify(signature);
-      log.debug("signature length:" + buf.length);
+      if (buf != null) {
+        log.debug("signature length:" + buf.length);
+      }
       log.debug("singature:" + (new BigInteger(signature).toString(16).toUpperCase()));
       log.debug("signed:" + signed);
       if (!signed) {

@@ -233,8 +233,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           boolean correctSystemStatus = sysInfo.getSystemStatus() == null
               || this.globalParameters.getOBProperty("safe.mode", "false")
                   .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
-          ActivationKey ak = new ActivationKey();
-          LicenseRestriction limitation = ak.checkOPSLimitations(variables.getDBSession());
+          LicenseRestriction limitation = ActivationKey.getInstance().checkOPSLimitations(
+              variables.getDBSession());
           // We check if there is a Openbravo Professional Subscription restriction in the license,
           // or if the last rebuild didn't go well. If any of these are true, then the user is
           // allowed to login only as system administrator
@@ -1132,10 +1132,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-          throw new ServletException(e.getCause() instanceof SQLException 
-              ? e.getCause().getMessage()
-              : e.getMessage()
-              , e);
+        throw new ServletException(e.getCause() instanceof SQLException ? e.getCause().getMessage()
+            : e.getMessage(), e);
       } finally {
         releaseRollbackConnection(con);
       }

@@ -132,7 +132,7 @@ public class LoginHandler extends HttpBaseServlet {
       String strUserAuth, String sessionId) throws IOException {
     OBContext.setAdminMode();
     try {
-      ActivationKey ak = new ActivationKey();
+      ActivationKey ak = ActivationKey.getInstance();
       boolean hasSystem = false;
 
       try {

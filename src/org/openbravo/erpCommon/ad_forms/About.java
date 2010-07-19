@@ -53,7 +53,7 @@ public class About extends HttpSecureAppServlet {
 
     OBContext.setAdminMode();
     try {
-      ActivationKey ak = new ActivationKey();
+      ActivationKey ak = ActivationKey.getInstance();
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       String discard[] = { "", "" };

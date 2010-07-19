@@ -931,7 +931,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private boolean checkCommercialModules(ImportModule im, Map<String, String> minVersions,
       HttpServletResponse response, VariablesSecureApp vars, Module selectedModule)
       throws IOException {
-    ActivationKey ak = new ActivationKey();
+    ActivationKey ak = ActivationKey.getInstance();
     ArrayList<Module> notAllowedMods = new ArrayList<Module>();
 
     String notSubscribed = "";

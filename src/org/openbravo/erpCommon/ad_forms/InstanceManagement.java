@@ -55,8 +55,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      ActivationKey activationKey = new ActivationKey();
-      printPageActive(response, vars, activationKey);
+      printPageActive(response, vars, ActivationKey.getInstance());
     } else if (vars.commandIn("SHOW_ACTIVATE")) {
       printPageNotActive(response, vars);
     } else if (vars.commandIn("ACTIVATE")) {
@@ -143,7 +142,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActivateLocal(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException {
 
-    ActivationKey ak = new ActivationKey();
+    ActivationKey ak = ActivationKey.getInstance();
     String discard[] = { "", "" };
 
     if (ak.isOPSInstance()) {
@@ -290,7 +289,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageNotActive(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
 
-    ActivationKey activationKey = new ActivationKey();
+    ActivationKey activationKey = ActivationKey.getInstance();
     response.setContentType("text/html; charset=UTF-8");
     String discard[] = { "", "" };
     if (activationKey.isOPSInstance()) {

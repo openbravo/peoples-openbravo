@@ -55,7 +55,7 @@ public class ActiveInstanceProcess implements Process {
       System sys = OBDal.getInstance().get(System.class, "0");
       sys.setActivationKey(result[1]);
       sys.setInstanceKey(publicKey);
-      ActivationKey ak = new ActivationKey();
+      ActivationKey ak = ActivationKey.reaload();
       if (ak.isActive()) {
         msg.setType("Success");
         msg.setMessage(result[0]);
