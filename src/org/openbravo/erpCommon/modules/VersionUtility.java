@@ -139,13 +139,6 @@ public class VersionUtility {
               + mod.availableMinVer + "\". ");
           return false;
         }
-      } else {
-        if (versionCompare(dep.minVer, mod.availableMaxVer, false) != 0) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
-              + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
-              + mod.availableMaxVer + "\". ");
-          return false;
-        }
       }
     }
     return true;
