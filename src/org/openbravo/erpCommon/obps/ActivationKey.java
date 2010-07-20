@@ -21,11 +21,19 @@ package org.openbravo.erpCommon.obps;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.math.BigInteger;
+import java.net.URL;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,15 +43,20 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.CRC32;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -52,6 +65,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class ActivationKey {
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
@@ -70,6 +85,7 @@ public class ActivationKey {
   private boolean subscriptionConvertedProperty = false;
   private boolean subscriptionActuallyConverted = false;
   private LicenseClass licenseClass;
+  private List<String> restrictedArtifacts;
 
   private boolean notActiveYet = false;
 
@@ -116,6 +132,7 @@ public class ActivationKey {
   public static synchronized ActivationKey reaload() {
     ActivationKey ak = getInstance();
     ak.loadInfo();
+    ak.loadRestrictions();
     return ak;
   }
 
@@ -128,6 +145,7 @@ public class ActivationKey {
   public ActivationKey() {
     super();
     loadInfo();
+    loadRestrictions();
   }
 
   private void loadInfo() {
@@ -141,6 +159,7 @@ public class ActivationKey {
     hasExpired = false;
     subscriptionConvertedProperty = false;
     subscriptionActuallyConverted = false;
+    restrictedArtifacts = null;
 
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
@@ -163,56 +182,20 @@ public class ActivationKey {
     }
     hasActivationKey = true;
     try {
-      PublicKey obPk = getPublicKey(OB_PUBLIC_KEY); // get OB public key to check signature
-      Signature signer = Signature.getInstance("MD5withRSA");
-      signer.initVerify(obPk);
-
-      Cipher cipher = Cipher.getInstance("RSA");
-
-      ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
-          .decodeBase64(activationKey.getBytes()));
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      if (decrypt(activationKey.getBytes(), pk, bos)) {
+        byte[] props = bos.toByteArray();
+        ByteArrayInputStream isProps = new ByteArrayInputStream(props);
+        InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
+        instanceProperties = new Properties();
 
-      // Encryptation only accepts 128B size, it must be chuncked
-      final byte[] buf = new byte[128];
-      final byte[] signature = new byte[128];
-
-      // read the signature
-      if (!(bis.read(signature) > 0)) {
+        instanceProperties.load(reader);
+        reader.close();
+      } else {
         isActive = false;
         errorMessage = "@NotSigned@";
         setLogger();
-        return;
       }
-
-      // decrypt
-      while ((bis.read(buf)) > 0) {
-        cipher.init(Cipher.DECRYPT_MODE, pk);
-        bos.write(cipher.doFinal(buf));
-      }
-
-      // verify signature
-      signer.update(bos.toByteArray());
-      boolean signed = signer.verify(signature);
-      if (buf != null) {
-        log.debug("signature length:" + buf.length);
-      }
-      log.debug("singature:" + (new BigInteger(signature).toString(16).toUpperCase()));
-      log.debug("signed:" + signed);
-      if (!signed) {
-        isActive = false;
-        errorMessage = "@NotSigned@";
-        setLogger();
-        return;
-      }
-
-      byte[] props = bos.toByteArray();
-
-      ByteArrayInputStream isProps = new ByteArrayInputStream(props);
-      InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
-      instanceProperties = new Properties();
-
-      instanceProperties.load(reader);
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
@@ -285,6 +268,99 @@ public class ActivationKey {
       licenseClass = LicenseClass.BASIC;
     }
     setLogger();
+  }
+
+  private boolean decrypt(byte[] bytes, PublicKey pk, ByteArrayOutputStream bos)
+      throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IOException,
+      IllegalBlockSizeException, BadPaddingException, SignatureException {
+    PublicKey obPk = getPublicKey(OB_PUBLIC_KEY); // get OB public key to check signature
+    Signature signer = Signature.getInstance("MD5withRSA");
+    signer.initVerify(obPk);
+
+    Cipher cipher = Cipher.getInstance("RSA");
+
+    ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
+        .decodeBase64(bytes));
+
+    // Encryptation only accepts 128B size, it must be chuncked
+    final byte[] buf = new byte[128];
+    final byte[] signature = new byte[128];
+
+    // read the signature
+    if (!(bis.read(signature) > 0)) {
+      return false;
+    }
+
+    // decrypt
+    while ((bis.read(buf)) > 0) {
+      cipher.init(Cipher.DECRYPT_MODE, pk);
+      bos.write(cipher.doFinal(buf));
+    }
+
+    // verify signature
+    signer.update(bos.toByteArray());
+    boolean signed = signer.verify(signature);
+    log.debug("signature length:" + buf.length);
+    log.debug("singature:" + (new BigInteger(signature).toString(16).toUpperCase()));
+    log.debug("signed:" + signed);
+    if (!signed) {
+      isActive = false;
+      errorMessage = "@NotSigned@";
+      setLogger();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Loads information about the restricted artifacts due to license (Premium and Advance features).
+   */
+  @SuppressWarnings("unchecked")
+  private void loadRestrictions() {
+    try {
+      File restrictionsFile = getFileFromDevelopmentPath("licenseRestrictions");
+      FileInputStream fis = new FileInputStream(restrictionsFile);
+      byte fileContent[] = new byte[(int) restrictionsFile.length()];
+      fis.read(fileContent);
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      decrypt(fileContent, getPublicKey(OB_PUBLIC_KEY), bos);
+      ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+      HashMap<String, ArrayList<String>> m1 = (HashMap<String, ArrayList<String>>) ois.readObject();
+      ois.close();
+
+      restrictedArtifacts = new ArrayList<String>();
+      if (!isActive()) {
+        // no active, restrict Premium and Advance
+        restrictedArtifacts.addAll(m1.get("P"));
+        restrictedArtifacts.addAll(m1.get("A"));
+      } else if (licenseClass == LicenseClass.BASIC) {
+        // basic, restrict Advance
+        restrictedArtifacts.addAll(m1.get("A"));
+      }
+    } catch (Exception e) {
+      log4j.error("Error reading license restriction file", e);
+      restrictedArtifacts = null;
+    }
+  }
+
+  private File getFileFromDevelopmentPath(String fileName) {
+    // get the location of the current class file
+    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
+    File f = new File(url.getPath());
+    File propertiesFile = null;
+    while (f.getParentFile() != null && f.getParentFile().exists()) {
+      f = f.getParentFile();
+      final File configDirectory = new File(f, "config");
+      if (configDirectory.exists()) {
+        propertiesFile = new File(configDirectory, fileName);
+        if (propertiesFile.exists()) {
+          log4j.info("Reading " + propertiesFile.getAbsolutePath());
+          // found it and break
+          break;
+        }
+      }
+    }
+    return propertiesFile;
   }
 
   @SuppressWarnings( { "static-access", "unchecked" })
@@ -690,22 +766,44 @@ public class ActivationKey {
     return moduleList.get(moduleId);
   }
 
+  /**
+   * Checks whether there is access to an artifact because of license restrictions (checking core
+   * advance and premium features).
+   * 
+   * @param type
+   *          Type of artifact (Window, Report, Process...)
+   * @param id
+   *          Id of the Artifact
+   * @return true in case it has access, false if not
+   */
   public boolean hasLicenseAccess(String type, String id) {
-    log4j.info("Type:" + type + " id:" + id);
-    if (isActive()) {
+    if (type == null || type.isEmpty() || id == null || id.isEmpty()) {
       return true;
-    } else {
-      switch (licenseClass) {
-      case BASIC:
-        break;
+    }
+    log4j.debug("Type:" + type + " id:" + id);
+    if (restrictedArtifacts == null) {
+      log4j.error("No restrictions set, do not allow access");
 
-      case SMB:
-      case UNLIMITED:
-        // SMB and Unlimited instances do not have limitation
-        return true;
+      throw new OBException(Utility.messageBD(new DalConnectionProvider(), "NoRestrictionsFile",
+          OBContext.getOBContext().getLanguage().getLanguage()));
+    }
+
+    String artifactId = id;
+    if ("W".equals(type)) {
+      // Access is granted to window, but permissions is checked for tabs
+      OBContext.setAdminMode();
+      try {
+        Tab tab = OBDal.getInstance().get(Tab.class, id);
+        if (tab == null) {
+          log4j.error("Could't find tab " + id + " to check access. Access not allowed");
+          return false;
+        }
+        artifactId = tab.getWindow().getId();
+      } finally {
+        OBContext.restorePreviousMode();
       }
     }
-    return true;
+    return !restrictedArtifacts.contains(type + artifactId);
   }
 
 }
