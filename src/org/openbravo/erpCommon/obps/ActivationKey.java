@@ -317,6 +317,12 @@ public class ActivationKey {
    */
   @SuppressWarnings("unchecked")
   private void loadRestrictions() {
+    restrictedArtifacts = new ArrayList<String>();
+    if (isActive() && (licenseClass == LicenseClass.UNLIMITED || licenseClass == LicenseClass.SMB)) {
+      // Don't read restrictions for unlimited or SMB instances
+      return;
+    }
+
     try {
       File restrictionsFile = getFileFromDevelopmentPath("licenseRestrictions");
       FileInputStream fis = new FileInputStream(restrictionsFile);
@@ -328,7 +334,6 @@ public class ActivationKey {
       HashMap<String, ArrayList<String>> m1 = (HashMap<String, ArrayList<String>>) ois.readObject();
       ois.close();
 
-      restrictedArtifacts = new ArrayList<String>();
       if (!isActive()) {
         // no active, restrict Premium and Advance
         restrictedArtifacts.addAll(m1.get("P"));
