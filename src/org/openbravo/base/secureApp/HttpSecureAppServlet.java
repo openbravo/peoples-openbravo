@@ -49,12 +49,14 @@ import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
+import org.hibernate.criterion.Expression;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
@@ -67,6 +69,12 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.Form;
+import org.openbravo.model.ad.ui.FormTrl;
+import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.ad.ui.ProcessTrl;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -355,13 +363,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       SessionInfo.setSessionId(vars1.getSessionValue("#AD_Session_ID"));
 
       if (!ActivationKey.getInstance().hasLicenseAccess(classInfo.type, classInfo.id)) {
-        if ((strPopUp != null && !strPopUp.equals("")) || (classInfo.type.equals("S")))
-          bdErrorGeneralPopUp(request, response, Utility.messageBD(this, "Error", variables
-              .getLanguage()), Utility
-              .messageBD(this, "AccessTableNoView", variables.getLanguage()));
-        else {
-          bdError(request, response, "AccessTableNoView", vars1.getLanguage());
-        }
+        licenseError(classInfo.type, classInfo.id, response, vars1);
       }
 
       if (vars1.getRole().equals("") || hasAccess(vars1)) {
@@ -872,6 +874,78 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void whitePage(HttpServletResponse response) throws IOException {
     whitePage(response, "");
+  }
+
+  protected void licenseError(String type, String id, HttpServletResponse response,
+      VariablesSecureApp vars) throws IOException {
+    String titleText = getArtifactName(type, id, vars.getLanguage());
+
+    // <p> in java, to allow multi-paragraph text via the parameter
+    String infoText = "<p>" + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
+        + "</p>";
+    String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
+    String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly").createXmlDocument();
+
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("titleText", titleText);
+    xmlDocument.setParameter("infoText", infoText);
+    xmlDocument.setParameter("linkText", linkText);
+    xmlDocument.setParameter("afterLinkText", afterLinkText);
+
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private String getArtifactName(String type, String id, String language) {
+    OBContext.setAdminMode();
+    try {
+      if ("W".equals(type)) {
+        Tab tab = OBDal.getInstance().get(Tab.class, id);
+        if (tab != null) {
+          OBCriteria<WindowTrl> qtTrl = OBDal.getInstance().createCriteria(WindowTrl.class);
+          qtTrl.add(Expression.eq(WindowTrl.PROPERTY_WINDOW, tab.getWindow()));
+          qtTrl.add(Expression.eq(WindowTrl.PROPERTY_LANGUAGE + ".language", language));
+          if (qtTrl.list().size() != 0) {
+            return qtTrl.list().get(0).getName();
+          } else {
+            return tab.getWindow().getName();
+          }
+        }
+      } else if ("X".equals(type)) {
+        OBCriteria<FormTrl> qfTrl = OBDal.getInstance().createCriteria(FormTrl.class);
+        qfTrl.add(Expression.eq(FormTrl.PROPERTY_SPECIALFORM + ".id", id));
+        qfTrl.add(Expression.eq(FormTrl.PROPERTY_LANGUAGE + ".language", language));
+        if (qfTrl.list().size() != 0) {
+          return qfTrl.list().get(0).getName();
+        }
+
+        Form f = OBDal.getInstance().get(Form.class, id);
+        if (f != null) {
+          return f.getName();
+        }
+      } else if ("R".endsWith(type) || "P".equals(type)) {
+        OBCriteria<ProcessTrl> qfTrl = OBDal.getInstance().createCriteria(ProcessTrl.class);
+        qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_PROCESS + ".id", id));
+        qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_LANGUAGE + ".language", language));
+        if (qfTrl.list().size() != 0) {
+          return qfTrl.list().get(0).getName();
+        }
+
+        Process f = OBDal.getInstance().get(Process.class, id);
+        if (f != null) {
+          return f.getName();
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return "";
   }
 
   protected void whitePage(HttpServletResponse response, String strAlert) throws IOException {
