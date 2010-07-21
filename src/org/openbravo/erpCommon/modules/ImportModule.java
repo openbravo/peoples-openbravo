@@ -893,16 +893,22 @@ public class ImportModule {
       rt[i].setHelp((String) dynModule.get("HELP"));
       rt[i].setDependencies(dyanaBeanToDependencies(dynDependencies, rt[i].getModuleID()));
       // old modules don't have iscommercial column
-      Object isCommercial = dynModule.get("ISCOMMERCIAL");
-      rt[i].setIsCommercial(isCommercial != null && ((String) isCommercial).equals("Y"));
-      rt[i].setModuleVersionID((String) dynModule.get("AD_MODULE_ID")); // To
-      // show
-      // details
-      // in
-      // local
-      // ad_module_id
-      // is
-      // used
+      String commercial = (String) dynModule.get("ISCOMMERCIAL");
+      boolean isCommercial = commercial != null && commercial.equals("Y");
+      rt[i].setIsCommercial(isCommercial);
+      // To show details in local ad_module_id is used
+      rt[i].setModuleVersionID((String) dynModule.get("AD_MODULE_ID"));
+
+      // use this for information that is not contained in standard fields
+      HashMap<String, Object> additionalInfo = new HashMap<String, Object>();
+      if (isCommercial) {
+        String tier = (String) dynModule.get("COMMERCIAL_TIER");
+        if (tier == null || tier.isEmpty()) {
+          tier = "1";
+        }
+        additionalInfo.put("tier", tier);
+      }
+      rt[i].setAdditionalInfo(additionalInfo);
       i++;
     }
     return rt;
