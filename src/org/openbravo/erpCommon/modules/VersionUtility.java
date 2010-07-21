@@ -143,7 +143,7 @@ public class VersionUtility {
         }
       } else {
         // if lastVerrsion==null, firtVersion same major version than installedVersion
-        if (versionCompare(dep.minVer, mod.availableMaxVer, false) != 0) {
+        if (versionCompare(dep.minVer, mod.availableMaxVer, true) != 0) {
           errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
               + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
               + mod.availableMaxVer + "\". ");
