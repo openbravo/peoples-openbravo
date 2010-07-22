@@ -33,7 +33,11 @@
   </script>
   <script language="JavaScript" type="text/javascript">
   function closeThisPage() {
-    window.close();
+    if (typeof parent === 'undefined'){
+      window.close();
+    } else { 
+      parent.window.close();
+    }
     return true;
   }
 
