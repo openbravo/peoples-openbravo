@@ -62,6 +62,9 @@
       <foreign-key foreignTable="AD_ORG" name="C_PERIODCONTROL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="C_PERIODCONTROL_PERIOD" unique="false">
+        <index-column name="C_PERIOD_ID"/>
+      </index>
       <check name="C_PERIODCONTROL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
