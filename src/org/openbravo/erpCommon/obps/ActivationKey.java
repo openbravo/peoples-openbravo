@@ -91,6 +91,9 @@ public class ActivationKey {
 
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
 
+  private static final String TIER_1_PREMIUM_FEATURE = "T1P";
+  private static final String TIER_2_PREMIUM_FEATURE = "T2P";
+
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED
   }
@@ -100,7 +103,7 @@ public class ActivationKey {
   }
 
   private enum LicenseClass {
-    BASIC("B"), SMB("SMB"), UNLIMITED("U");
+    BASIC("B"), STD("STD");
     private String code;
 
     private LicenseClass(String code) {
@@ -256,13 +259,11 @@ public class ActivationKey {
     isActive = true;
 
     // Get license class, old Activation Keys do not have this info, so treat them as SMB
-    String pLicenseClass = getProperty("licenseclass");
-    if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("SMB")) {
-      licenseClass = LicenseClass.SMB;
+    String pLicenseClass = getProperty("licenseedition");
+    if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("STD")) {
+      licenseClass = LicenseClass.STD;
     } else if (pLicenseClass.equals("B")) {
       licenseClass = LicenseClass.BASIC;
-    } else if (pLicenseClass.equals("U")) {
-      licenseClass = LicenseClass.UNLIMITED;
     } else {
       log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
       licenseClass = LicenseClass.BASIC;
@@ -318,8 +319,8 @@ public class ActivationKey {
   @SuppressWarnings("unchecked")
   private void loadRestrictions() {
     restrictedArtifacts = new ArrayList<String>();
-    if (isActive() && (licenseClass == LicenseClass.UNLIMITED || licenseClass == LicenseClass.SMB)) {
-      // Don't read restrictions for unlimited or SMB instances
+    if (isActive() && licenseClass == LicenseClass.STD) {
+      // Don't read restrictions for Standard instances
       return;
     }
 
@@ -336,11 +337,11 @@ public class ActivationKey {
 
       if (!isActive()) {
         // no active, restrict Premium and Advance
-        restrictedArtifacts.addAll(m1.get("P"));
-        restrictedArtifacts.addAll(m1.get("A"));
+        restrictedArtifacts.addAll(m1.get(TIER_1_PREMIUM_FEATURE));
+        restrictedArtifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       } else if (licenseClass == LicenseClass.BASIC) {
         // basic, restrict Advance
-        restrictedArtifacts.addAll(m1.get("A"));
+        restrictedArtifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       }
     } catch (Exception e) {
       log4j.error("Error reading license restriction file", e);
@@ -608,9 +609,9 @@ public class ActivationKey {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
           .append("</td><td>").append(getProperty("customer")).append("</td></tr>");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseClass", lang)).append(
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseEdition", lang)).append(
           "</td><td>").append(
-          Utility.getListValueName("OBPSLicenseClass", licenseClass.getCode(), lang)).append(
+          Utility.getListValueName("OBPSLicenseEdition", licenseClass.getCode(), lang)).append(
           "</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang)).append(
           "</td><td>").append(
