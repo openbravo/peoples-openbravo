@@ -28,51 +28,51 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT DISTINCT R.AD_ALERTRULE_ID,
+       SELECT DISTINCT AD_ALERTRULE.AD_ALERTRULE_ID,
               '' as RuleName,
-              A.Description as AlertDescription,
-              A.AD_ALERT_ID,
-              A.NOTE,
-              A.RECORD_ID,
-              A.ISACTIVE,
-              A.ISFIXED,
-              A.REFERENCEKEY_ID,
+              AD_ALERT.Description as AlertDescription,
+              AD_ALERT.AD_ALERT_ID,
+              AD_ALERT.NOTE,
+              AD_ALERT.RECORD_ID,
+              AD_ALERT.ISACTIVE,
+              AD_ALERT.ISFIXED,
+              AD_ALERT.REFERENCEKEY_ID,
               '' AS FILTERCLAUSE,
               '' AS DISPLAY,
-              W.NAME as WINDOWNAME,
-              T.NAME AS TABNAME,
-              T.AD_TAB_ID,
-              C.COLUMNNAME,
+              AD_WINDOW.NAME as WINDOWNAME,
+              AD_TAB.NAME AS TABNAME,
+              AD_TAB.AD_TAB_ID,
+              AD_COLUMN.COLUMNNAME,
               '' AS URL,
               '' AS ID,
               '' AS NAME
-         FROM AD_ALERT     A,
-              AD_ALERTRECIPIENT RE,
-              AD_ALERTRULE R LEFT JOIN AD_TAB T ON T.AD_TAB_ID = R.AD_TAB_ID
-                             LEFT JOIN AD_WINDOW W ON W.AD_WINDOW_ID = T.AD_WINDOW_ID
-                             LEFT JOIN AD_COLUMN C ON C.AD_TABLE_ID = T.AD_TABLE_ID
-                                                  AND C.ISKEY='Y'
-        WHERE R.ISACTIVE = 'Y'
-          AND A.ISACTIVE = ?
-          AND A.ISFIXED  = ?
-          AND A.AD_CLIENT_ID IN ('1') 
-          AND A.AD_ORG_ID IN ('1')
-          AND R.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
-          AND RE.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
-          AND ((RE.AD_USER_ID IS NOT NULL AND RE.AD_USER_ID = ?) 
+         FROM AD_ALERT,
+              AD_ALERTRECIPIENT,
+              AD_ALERTRULE LEFT JOIN AD_TAB ON AD_TAB.AD_TAB_ID = AD_ALERTRULE.AD_TAB_ID
+                             LEFT JOIN AD_WINDOW ON AD_WINDOW.AD_WINDOW_ID = AD_TAB.AD_WINDOW_ID
+                             LEFT JOIN AD_COLUMN ON AD_COLUMN.AD_TABLE_ID = AD_TAB.AD_TABLE_ID
+                                                  AND AD_COLUMN.ISKEY='Y'
+        WHERE AD_ALERTRULE.ISACTIVE = 'Y'
+          AND AD_ALERT.ISACTIVE = ?
+          AND AD_ALERT.ISFIXED  = ?
+          AND AD_ALERT.AD_CLIENT_ID IN ('1') 
+          AND AD_ALERT.AD_ORG_ID IN ('1')
+          AND AD_ALERTRULE.AD_ALERTRULE_ID = AD_ALERT.AD_ALERTRULE_ID
+          AND AD_ALERTRECIPIENT.AD_ALERTRULE_ID = AD_ALERT.AD_ALERTRULE_ID
+          AND ((AD_ALERTRECIPIENT.AD_USER_ID IS NOT NULL AND AD_ALERTRECIPIENT.AD_USER_ID = ?) 
                OR 
-              (RE.AD_USER_ID IS NULL AND RE.AD_ROLE_ID = ?)) 
-          AND A.AD_ALERTRULE_ID = ?
+              (AD_ALERTRECIPIENT.AD_USER_ID IS NULL AND AD_ALERTRECIPIENT.AD_ROLE_ID = ?)) 
+          AND AD_ALERT.AD_ALERTRULE_ID = ?
           AND 1=1 AND 2=2
-          ORDER BY R.AD_ALERTRULE_ID, A.AD_ALERT_ID
+          ORDER BY AD_ALERTRULE.AD_ALERTRULE_ID, AD_ALERT.AD_ALERT_ID
           
      ]]>
      </Sql>
      <Field name="position" value="count"/>
      <Parameter name="active"/>
      <Parameter name="fixed"/>
-     <Parameter name="userclient" optional="true" type="replace" after="AND A.AD_CLIENT_ID IN (" text="'1'"/>
-     <Parameter name="userorg" optional="true" type="replace" after="AND A.AD_ORG_ID IN (" text="'1'"/>
+     <Parameter name="userclient" optional="true" type="replace" after="AND AD_ALERT.AD_CLIENT_ID IN (" text="'1'"/>
+     <Parameter name="userorg" optional="true" type="replace" after="AND AD_ALERT.AD_ORG_ID IN (" text="'1'"/>
      <Parameter name="user"/>
      <Parameter name="role"/>
      <Parameter name="alertRule"/>
@@ -83,38 +83,38 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT DISTINCT a.AD_ALERTRULE_ID,
-              a.FILTERCLAUSE,
-              AD_COLUMN_IDENTIFIER('AD_AlertRule',to_char(a.AD_ALERTRULE_ID),to_char(?)) as rulename      
-         FROM AD_ALERTRULE A,
-              AD_ALERTRECIPIENT R 
-        WHERE A.ISACTIVE='Y'
-          AND R.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
-          AND ((R.AD_USER_ID IS NOT NULL AND R.AD_USER_ID = ?) 
+       SELECT DISTINCT AD_ALERTRULE.AD_ALERTRULE_ID,
+              AD_ALERTRULE.FILTERCLAUSE,
+              AD_COLUMN_IDENTIFIER('AD_AlertRule',to_char(AD_ALERTRULE.AD_ALERTRULE_ID),to_char(?)) as rulename      
+         FROM AD_ALERTRULE,
+              AD_ALERTRECIPIENT
+        WHERE AD_ALERTRULE.ISACTIVE='Y'
+          AND AD_ALERTRECIPIENT.AD_ALERTRULE_ID = AD_ALERTRULE.AD_ALERTRULE_ID
+          AND ((AD_ALERTRECIPIENT.AD_USER_ID IS NOT NULL AND AD_ALERTRECIPIENT.AD_USER_ID = ?) 
                OR 
-              (R.AD_USER_ID IS NULL AND R.AD_ROLE_ID = ?)) 
+              (AD_ALERTRECIPIENT.AD_USER_ID IS NULL AND AD_ALERTRECIPIENT.AD_ROLE_ID = ?)) 
           AND 1=1
       ]]>
     </Sql>
     <Parameter name="lang"/>
     <Parameter name="user"/>
     <Parameter name="role"/>
-    <Parameter name="alertRule" optional="true" after="AND 1=1"><![CDATA[ AND A.AD_ALERTRULE_ID = ?]]></Parameter>
+    <Parameter name="alertRule" optional="true" after="AND 1=1"><![CDATA[ AND AD_ALERTRULE.AD_ALERTRULE_ID = ?]]></Parameter>
   </SqlMethod>
    
   <SqlMethod name="selectComboAlertRules" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT a.AD_ALERTRULE_ID as ID,
-              AD_COLUMN_IDENTIFIER('AD_AlertRule',to_char(a.AD_ALERTRULE_ID),to_char(?)) as name
-         FROM AD_ALERTRULE A,
-              AD_ALERTRECIPIENT R 
-        WHERE A.ISACTIVE='Y'
-          AND R.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
-          AND ((R.AD_USER_ID IS NOT NULL AND R.AD_USER_ID = ?) 
+       SELECT AD_ALERTRULE.AD_ALERTRULE_ID as ID,
+              AD_COLUMN_IDENTIFIER('AD_AlertRule',to_char(AD_ALERTRULE.AD_ALERTRULE_ID),to_char(?)) as name
+         FROM AD_ALERTRULE,
+              AD_ALERTRECIPIENT
+        WHERE AD_ALERTRULE.ISACTIVE='Y'
+          AND AD_ALERTRECIPIENT.AD_ALERTRULE_ID = AD_ALERTRULE.AD_ALERTRULE_ID
+          AND ((AD_ALERTRECIPIENT.AD_USER_ID IS NOT NULL AND AD_ALERTRECIPIENT.AD_USER_ID = ?) 
                OR 
-              (R.AD_USER_ID IS NULL AND R.AD_ROLE_ID = ?)) 
+              (AD_ALERTRECIPIENT.AD_USER_ID IS NULL AND AD_ALERTRECIPIENT.AD_ROLE_ID = ?)) 
       ]]>
     </Sql>
     <Parameter name="lang"/>
