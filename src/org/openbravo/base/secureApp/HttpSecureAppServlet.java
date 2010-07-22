@@ -61,6 +61,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
@@ -362,8 +363,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       SessionInfo.setUserId(strUserAuth);
       SessionInfo.setSessionId(vars1.getSessionValue("#AD_Session_ID"));
 
-      if (!ActivationKey.getInstance().hasLicenseAccess(classInfo.type, classInfo.id)) {
-        licenseError(classInfo.type, classInfo.id, response, vars1);
+      FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess(
+          classInfo.type, classInfo.id);
+      if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
+        licenseError(classInfo.type, classInfo.id, featureRestriction, response, vars1);
       }
 
       if (vars1.getRole().equals("") || hasAccess(vars1)) {
@@ -876,8 +879,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     whitePage(response, "");
   }
 
-  protected void licenseError(String type, String id, HttpServletResponse response,
-      VariablesSecureApp vars) throws IOException {
+  protected void licenseError(String type, String id, FeatureRestriction featureRestriction,
+      HttpServletResponse response, VariablesSecureApp vars) throws IOException {
     String titleText = getArtifactName(type, id, vars.getLanguage());
 
     // <p> in java, to allow multi-paragraph text via the parameter

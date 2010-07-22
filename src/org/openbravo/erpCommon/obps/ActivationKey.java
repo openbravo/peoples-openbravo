@@ -85,7 +85,8 @@ public class ActivationKey {
   private boolean subscriptionConvertedProperty = false;
   private boolean subscriptionActuallyConverted = false;
   private LicenseClass licenseClass;
-  private List<String> restrictedArtifacts;
+  private List<String> tier1Artifacts;
+  private List<String> tier2Artifacts;
 
   private boolean notActiveYet = false;
 
@@ -100,6 +101,10 @@ public class ActivationKey {
 
   public enum CommercialModuleStatus {
     NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION, INCOMPATIBLE_TIER
+  }
+
+  public enum FeatureRestriction {
+    NO_RESTRICTION, TIER1_RESTRICTION, TIER2_RESTRICTION, UNKNOWN_RESTRICTION;
   }
 
   private enum LicenseClass {
@@ -162,7 +167,8 @@ public class ActivationKey {
     hasExpired = false;
     subscriptionConvertedProperty = false;
     subscriptionActuallyConverted = false;
-    restrictedArtifacts = null;
+    tier1Artifacts = null;
+    tier2Artifacts = null;
 
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
@@ -318,7 +324,8 @@ public class ActivationKey {
    */
   @SuppressWarnings("unchecked")
   private void loadRestrictions() {
-    restrictedArtifacts = new ArrayList<String>();
+    tier1Artifacts = new ArrayList<String>();
+    tier2Artifacts = new ArrayList<String>();
     if (isActive() && licenseClass == LicenseClass.STD) {
       // Don't read restrictions for Standard instances
       return;
@@ -336,16 +343,17 @@ public class ActivationKey {
       ois.close();
 
       if (!isActive()) {
-        // no active, restrict Premium and Advance
-        restrictedArtifacts.addAll(m1.get(TIER_1_PREMIUM_FEATURE));
-        restrictedArtifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
+        // no active, restrict both tiers
+        tier1Artifacts.addAll(m1.get(TIER_1_PREMIUM_FEATURE));
+        tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       } else if (licenseClass == LicenseClass.BASIC) {
-        // basic, restrict Advance
-        restrictedArtifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
+        // basic, restrict tier 2
+        tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       }
     } catch (Exception e) {
       log4j.error("Error reading license restriction file", e);
-      restrictedArtifacts = null;
+      tier1Artifacts = null;
+      tier2Artifacts = null;
     }
   }
 
@@ -795,12 +803,12 @@ public class ActivationKey {
    *          Id of the Artifact
    * @return true in case it has access, false if not
    */
-  public boolean hasLicenseAccess(String type, String id) {
+  public FeatureRestriction hasLicenseAccess(String type, String id) {
     if (type == null || type.isEmpty() || id == null || id.isEmpty()) {
-      return true;
+      return FeatureRestriction.NO_RESTRICTION;
     }
     log4j.debug("Type:" + type + " id:" + id);
-    if (restrictedArtifacts == null) {
+    if (tier1Artifacts == null || tier2Artifacts == null) {
       log4j.error("No restrictions set, do not allow access");
 
       throw new OBException(Utility.messageBD(new DalConnectionProvider(), "NoRestrictionsFile",
@@ -815,14 +823,20 @@ public class ActivationKey {
         Tab tab = OBDal.getInstance().get(Tab.class, id);
         if (tab == null) {
           log4j.error("Could't find tab " + id + " to check access. Access not allowed");
-          return false;
+          return FeatureRestriction.UNKNOWN_RESTRICTION;
         }
         artifactId = tab.getWindow().getId();
       } finally {
         OBContext.restorePreviousMode();
       }
     }
-    return !restrictedArtifacts.contains(type + artifactId);
+    if (tier1Artifacts.contains(type + artifactId)) {
+      return FeatureRestriction.TIER1_RESTRICTION;
+    }
+    if (tier2Artifacts.contains(type + artifactId)) {
+      return FeatureRestriction.TIER2_RESTRICTION;
+    }
+    return FeatureRestriction.NO_RESTRICTION;
   }
 
 }
