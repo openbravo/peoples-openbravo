@@ -85,9 +85,33 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strDPM = vars.getRequestGlobalVariable("inpDPM", "ReportDebtPaymentTrack|DPM");
       String strDPC = vars.getRequestGlobalVariable("inpDPC", "ReportDebtPaymentTrack|DPC");
       String strDPB = vars.getRequestGlobalVariable("inpDPB", "ReportDebtPaymentTrack|DPB");
+      vars.setSessionValue("ReportDebtPaymentTrack.initRecordNumber", "0");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strAmtFrom,
           strAmtTo, strInvoice, strDPCNA, strDPCA, strDPGNA, strDPGA, strDPM, strDPC, strDPB);
-      // setHistoryCommand(request, "FIND");
+    } else if (vars.commandIn("PREVIOUS_RELATION")) {
+      String strInitRecord = vars.getSessionValue("ReportDebtPaymentTrack.initRecordNumber");
+      String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
+          "ReportDebtPaymentTrack");
+      int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
+      if (strInitRecord.equals("") || strInitRecord.equals("0"))
+        vars.setSessionValue("ReportDebtPaymentTrack.initRecordNumber", "0");
+      else {
+        int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
+        initRecord -= intRecordRange;
+        strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
+        vars.setSessionValue("ReportDebtPaymentTrack.initRecordNumber", strInitRecord);
+      }
+      response.sendRedirect(strDireccion + request.getServletPath());
+    } else if (vars.commandIn("NEXT_RELATION")) {
+      String strInitRecord = vars.getSessionValue("ReportDebtPaymentTrack.initRecordNumber");
+      String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
+          "ReportDebtPaymentTrack");
+      int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
+      int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
+      initRecord += intRecordRange;
+      strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
+      vars.setSessionValue("ReportDebtPaymentTrack.initRecordNumber", strInitRecord);
+      response.sendRedirect(strDireccion + request.getServletPath());
     } else if (vars.commandIn("PRINT_PDF")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportDebtPaymentTrack|DateFrom");
@@ -108,32 +132,53 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String strDPM = vars.getRequestGlobalVariable("inpDPM", "ReportDebtPaymentTrack|DPM");
       String strDPC = vars.getRequestGlobalVariable("inpDPC", "ReportDebtPaymentTrack|DPC");
       String strDPB = vars.getRequestGlobalVariable("inpDPB", "ReportDebtPaymentTrack|DPB");
-      printPageDataPdf(response, vars, strDateFrom, strDateTo, strcBpartnerId, strAmtFrom,
+      printPageDataPdf(request, response, vars, strDateFrom, strDateTo, strcBpartnerId, strAmtFrom,
           strAmtTo, strInvoice, strDPCNA, strDPCA, strDPGNA, strDPGA, strDPM, strDPC, strDPB);
       // setHistoryCommand(request, "FIND");
     } else
       pageError(response);
   }
 
-  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strcBpartnerId, String strAmtFrom,
-      String strAmtTo, String strInvoice, String strDPCNA, String strDPCA, String strDPGNA,
-      String strDPGA, String strDPM, String strDPC, String strDPB) throws IOException,
-      ServletException {
+  private void printPageDataPdf(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId,
+      String strAmtFrom, String strAmtTo, String strInvoice, String strDPCNA, String strDPCA,
+      String strDPGNA, String strDPGA, String strDPM, String strDPC, String strDPB)
+      throws IOException, ServletException {
+    int limit = 0;
+    int mycount = 0;
+    try {
+      limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+      if (limit > 0) {
+        String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','"
+            + strDPGNA + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
+        mycount = Integer.parseInt(ReportDebtPaymentTrackData.selectCount(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility
+                .getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId,
+            strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes));
+      }
+    } catch (NumberFormatException e) {
+    }
+
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     ReportDebtPaymentTrackData[] data = null;
-
-    String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
-        + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
-    data = ReportDebtPaymentTrackData.select(this, vars.getLanguage(), Utility.getContext(this,
-        vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
-        strAmtFrom, strAmtTo, strDocTypes);
-    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTracker.jrxml";
-    renderJR(vars, response, strReportName, "pdf", null, data, null);
-
+    if (limit > 0 && mycount > limit) {
+      String msgbody = Utility.messageBD(this, "ReportsLimitBody", vars.getLanguage());
+      msgbody = msgbody.replace("@rows@", Integer.toString(mycount));
+      msgbody = msgbody.replace("@limit@", Integer.toString(limit));
+      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "ReportsLimitHeader", vars
+          .getLanguage()), msgbody);
+    } else {
+      String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
+          + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
+      data = ReportDebtPaymentTrackData.select(this, "0", vars.getLanguage(), Utility.getContext(
+          this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
+          "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
+          strAmtFrom, strAmtTo, strDocTypes, null, null, null);
+      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTracker.jrxml";
+      renderJR(vars, response, strReportName, "pdf", null, data, null);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
@@ -144,6 +189,26 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
+    String strRecordRange = Utility
+        .getContext(this, vars, "#RecordRange", "ReportDebtPaymentTrack");
+    int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
+    String strInitRecord = vars.getSessionValue("ReportDebtPaymentTrack.initRecordNumber");
+    int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
+    String rowNum = "0";
+    String oraLimit1 = null;
+    String oraLimit2 = null;
+    String pgLimit = null;
+    if (intRecordRange != 0) {
+      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+        rowNum = "ROWNUM";
+        oraLimit1 = String.valueOf(initRecordNumber + intRecordRange);
+        oraLimit2 = (initRecordNumber + 1) + " AND " + oraLimit1;
+      } else {
+        rowNum = "0";
+        pgLimit = intRecordRange + " OFFSET " + initRecordNumber;
+      }
+    }
+
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
     ReportDebtPaymentTrackData[] data = null;
@@ -157,17 +222,19 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     } else {
       String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
-      data = ReportDebtPaymentTrackData.select(this, vars.getLanguage(), Utility.getContext(this,
-          vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
-          strAmtFrom, strAmtTo, strDocTypes);
+      data = ReportDebtPaymentTrackData.select(this, rowNum, vars.getLanguage(), Utility
+          .getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this,
+          vars, "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
+          strAmtFrom, strAmtTo, strDocTypes, oraLimit1, oraLimit2, pgLimit);
     }
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTrack", discard).createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportDebtPaymentTrack", false, "",
         "", "", false, "ad_reports", strReplaceWith, false, true);
-    toolbar.prepareSimpleToolBarTemplate();
+    boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
+    boolean hasNext = !(data == null || data.length == 0 || data.length < intRecordRange);
+    toolbar.prepareRelationBarTemplate(hasPrevious, hasNext);
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
       WindowTabs tabs = new WindowTabs(this, vars,
