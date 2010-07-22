@@ -883,8 +883,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       HttpServletResponse response, VariablesSecureApp vars) throws IOException {
     String titleText = getArtifactName(type, id, vars.getLanguage());
 
+    String editionType;
+    switch (featureRestriction) {
+    case TIER2_RESTRICTION:
+      editionType = "OBPSStandardEdition";
+      break;
+    default:
+      editionType = "OBPSAnyEdition";
+      break;
+    }
+
     // <p> in java, to allow multi-paragraph text via the parameter
-    String infoText = "<p>" + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
+    String infoText = "<p>"
+        + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage()).replace(
+            "@ProfessionalEditionType@", Utility.messageBD(this, editionType, vars.getLanguage()))
         + "</p>";
     String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
     String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
