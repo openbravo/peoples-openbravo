@@ -78,7 +78,7 @@
     v_DPId varchar2(32);
     v_DPMLineId varchar2(32);
     v_GeneratedAmt NUMBER;
-    v_PaymetRule VARCHAR2(2) ;
+    v_PaymetRule VARCHAR2(60) ;
     v_IsReceipt CHAR(1) ;
     v_BankPartner varchar2(32);
     v_vSettlementId varchar2(32);
