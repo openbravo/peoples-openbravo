@@ -1670,14 +1670,14 @@ public abstract class AcctServer {
     return false;
   } // end of checkDocuments() method
 
-  void setMessageResult(OBError error) {
+  public void setMessageResult(OBError error) {
     messageResult = error;
   }
 
   /*
    * Sets OBError message for the given status
    */
-  void setMessageResult(ConnectionProvider conn, VariablesSecureApp vars, String strStatus,
+  public void setMessageResult(ConnectionProvider conn, VariablesSecureApp vars, String strStatus,
       String strMessageType) {
     if (strStatus == null || strStatus.equals(""))
       strStatus = getStatus();
