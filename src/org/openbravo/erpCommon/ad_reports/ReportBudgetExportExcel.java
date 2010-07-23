@@ -53,7 +53,7 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
 
     vars.removeSessionValue("ReportBudgetGenerateExcel|inpTabId");
 
-    response.setContentType("application/xls");
+    response.setContentType("application/xls; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
     XmlDocument xmlDocument = null;
