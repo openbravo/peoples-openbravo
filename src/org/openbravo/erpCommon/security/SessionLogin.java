@@ -135,7 +135,7 @@ public class SessionLogin {
       session.setLoginStatus(status);
       session.setUsername(username);
       OBDal.getInstance().save(session);
-      OBDal.getInstance().flush();
+      OBDal.getInstance().commitAndClose();
       setSessionID(session.getId());
       return 1;
     } catch (Exception e) {

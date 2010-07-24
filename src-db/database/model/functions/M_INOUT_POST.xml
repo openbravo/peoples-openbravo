@@ -87,6 +87,7 @@
     v_Count NUMBER:=0;
     v_Line VARCHAR2(10) ;
     v_OrderID_old VARCHAR2(32);
+    Cur_MILines RECORD;
     FINISH_PROCESS BOOLEAN:=false;
     v_Aux NUMBER;
   BEGIN
@@ -503,6 +504,46 @@
             END IF;
           END IF;
           -- Close Shipment
+          --Entry in Match Invoices
+          FOR Cur_MILines IN
+                (SELECT sl.AD_Client_ID,
+                  sl.AD_Org_ID,
+                  il.C_InvoiceLine_ID,
+                  sl.M_InOutLine_ID,
+                  sl.M_Product_ID,
+                  sl.M_AttributeSetInstance_ID,
+                  sl.MovementQty,
+                  il.QTYINVOICED,
+                  i.DateAcct
+                FROM M_INOUTLINE sl,
+                  C_INVOICE i,
+                  C_INVOICELINE il
+                WHERE sl.M_InOutLine_ID=il.M_InOutLine_ID
+                  AND sl.M_InOut_ID=Cur_InOut.M_InOut_ID
+                  AND i.C_INVOICE_ID = il.C_INVOICE_ID
+                )
+              LOOP
+                --Ad_Sequence_Next('M_MatchInv', Cur_MILines.AD_Org_ID, v_MatchInv_ID) ;
+                -- The min qty. Modified by Ismael Ciordia
+                v_Qty:=Cur_MILines.MovementQty;
+              --  v_ResultStr:='InsertMatchPO ' || v_MatchPO_ID;
+                INSERT
+                INTO M_MATCHINV
+                  (
+                    M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+                    CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+                    M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID, DATETRX,
+                    QTY, PROCESSING, PROCESSED, POSTED
+                  )
+                  VALUES
+                  (
+                    GET_UUID(), Cur_MILines.AD_Client_ID, Cur_MILines.AD_Org_ID, 'Y',
+                    now(), v_User, now(), v_User,
+                    Cur_MILines.M_InOutLine_ID, Cur_MILines.C_InvoiceLine_ID, Cur_MILines.M_Product_ID, Cur_MILines.DateAcct,
+                    v_Qty, 'N', 'Y', 'N'
+                  )
+                  ;
+              END LOOP;
           v_ResultStr:='CloseShipment';
           UPDATE M_INOUT
             SET Processed='Y',

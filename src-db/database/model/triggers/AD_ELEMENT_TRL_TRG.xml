@@ -17,7 +17,7 @@
 * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
 * All Rights Reserved.
 * Contributor(s): Openbravo SLU
-* Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+* Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
 *
 * Specifically, this derivative work is based upon the following Compiere
 * file and version.
@@ -74,6 +74,46 @@ BEGIN
                   AND F.IsCentrallyMaintained = 'Y'
                   AND M.aD_Module_id = f.ad_module_id
                   and m.AD_Language = :new.AD_Language)
+      AND exists (SELECT 1 from ad_module m
+              where m.ad_module_id=ad_field.ad_module_id
+              and m.isindevelopment='Y');
+
+      -- Field SO
+      UPDATE AD_Field_Trl
+         SET NAME = coalesce(:NEW.PO_NAME, :new.Name),
+             Description = coalesce(:NEW.PO_Description, :new.Description),
+             HELP = coalesce(:NEW.PO_HELP, :new.Help),
+             IsTranslated = :NEW.IsTranslated
+      WHERE  AD_Language = :NEW.AD_Language
+         AND AD_Field_ID IN (
+               SELECT F.AD_Field_ID
+                 FROM AD_Field F, AD_Column C, AD_Module M, 
+                      AD_Tab T, AD_Window w
+                WHERE F.AD_Column_ID = C.AD_Column_ID
+                  AND C.AD_Element_ID = :NEW.AD_Element_ID
+                  AND F.IsCentrallyMaintained = 'Y'
+                  AND M.aD_Module_id = f.ad_module_id
+                  and m.AD_Language != :new.AD_Language
+                  and f.AD_Tab_ID = T.AD_Tab_ID
+                  and w.AD_Window_ID = t.AD_Window_ID
+                  and w.IsSoTrx='N');
+                  
+      UPDATE AD_Field
+         SET NAME = coalesce(:NEW.PO_NAME, :new.Name),
+             Description = coalesce(:NEW.PO_Description, :new.Description), 
+             HELP = coalesce(:NEW.PO_HELP, :new.Help)
+      WHERE  AD_Field_ID IN (
+               SELECT F.AD_Field_ID
+                 FROM AD_Field F, AD_Column C, AD_Module M,
+                      AD_Tab T, AD_Window w
+                WHERE F.AD_Column_ID = C.AD_Column_ID
+                  AND C.AD_Element_ID = :NEW.AD_Element_ID
+                  AND F.IsCentrallyMaintained = 'Y'
+                  AND M.aD_Module_id = f.ad_module_id
+                  and m.AD_Language = :new.AD_Language
+		  and f.AD_Tab_ID = T.AD_Tab_ID
+                  and w.AD_Window_ID = t.AD_Window_ID
+                  and w.IsSoTrx='N')
       AND exists (SELECT 1 from ad_module m
               where m.ad_module_id=ad_field.ad_module_id
               and m.isindevelopment='Y');
