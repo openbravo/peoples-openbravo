@@ -100,7 +100,7 @@ public class ActivationKey {
   }
 
   public enum CommercialModuleStatus {
-    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION, INCOMPATIBLE_TIER
+    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION
   }
 
   public enum FeatureRestriction {
@@ -765,29 +765,17 @@ public class ActivationKey {
   }
 
   /**
-   * @deprecated user {@link ActivationKey#isModuleSubscribed(String, String)}
-   */
-  public CommercialModuleStatus isModuleSubscribed(String moduleId) {
-    return isModuleSubscribed(moduleId, "1");
-  }
-
-  /**
-   * Returns the status for the commercial module passed as parameter
+   * Returns the status for the commercial module passed as parameter. Note that module tier is not
+   * checked here, this should be correctly handled in the license itself.
    * 
    * @param moduleId
-   *          ID for the module to check
-   * @param tier
-   *          Module version's tier
    * @return the status for the commercial module passed as parameter
    */
-  public CommercialModuleStatus isModuleSubscribed(String moduleId, String tier) {
+  public CommercialModuleStatus isModuleSubscribed(String moduleId) {
     HashMap<String, CommercialModuleStatus> moduleList = getSubscribedModules();
 
     if (!moduleList.containsKey(moduleId)) {
       return CommercialModuleStatus.NO_SUBSCRIBED;
-    }
-    if ("2".equals(tier) && licenseClass == LicenseClass.BASIC) {
-      return CommercialModuleStatus.INCOMPATIBLE_TIER;
     }
 
     return moduleList.get(moduleId);

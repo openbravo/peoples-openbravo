@@ -1026,8 +1026,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       for (Module instMod : im.getModulesToInstall()) {
         if (instMod.isIsCommercial()) {
-          CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(instMod.getModuleID(),
-              (String) instMod.getAdditionalInfo().get("tier"));
+          CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(instMod.getModuleID());
           if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
             notAllowedMods.add(instMod);
             if (expired.length() > 0) {
@@ -1040,8 +1039,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
               notActiveYet += ", ";
             }
             notActiveYet += instMod.getName();
-          } else if (!ak.isOPSInstance() || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED
-              || moduleStatus == CommercialModuleStatus.INCOMPATIBLE_TIER) {
+          } else if (!ak.isOPSInstance() || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
             notAllowedMods.add(instMod);
             if (notSubscribed.length() > 0) {
               notSubscribed += ", ";
