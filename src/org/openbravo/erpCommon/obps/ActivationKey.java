@@ -108,7 +108,7 @@ public class ActivationKey {
     NO_RESTRICTION, TIER1_RESTRICTION, TIER2_RESTRICTION, UNKNOWN_RESTRICTION;
   }
 
-  private enum LicenseClass {
+  public enum LicenseClass {
     BASIC("B"), STD("STD");
     private String code;
 
@@ -807,10 +807,11 @@ public class ActivationKey {
    * @return true in case it has access, false if not
    */
   public FeatureRestriction hasLicenseAccess(String type, String id) {
-    if (type == null || type.isEmpty() || id == null || id.isEmpty()) {
+    String actualType = type;
+    if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()) {
       return FeatureRestriction.NO_RESTRICTION;
     }
-    log4j.debug("Type:" + type + " id:" + id);
+    log4j.debug("Type:" + actualType + " id:" + id);
     if (tier1Artifacts == null || tier2Artifacts == null) {
       log4j.error("No restrictions set, do not allow access");
 
@@ -819,7 +820,7 @@ public class ActivationKey {
     }
 
     String artifactId = id;
-    if ("W".equals(type)) {
+    if ("W".equals(actualType)) {
       // Access is granted to window, but permissions is checked for tabs
       OBContext.setAdminMode();
       try {
@@ -832,11 +833,14 @@ public class ActivationKey {
       } finally {
         OBContext.restorePreviousMode();
       }
+    } else if ("MW".equals(actualType)) {
+      // Menu window, it receives window instead of tab
+      actualType = "W";
     }
-    if (tier1Artifacts.contains(type + artifactId)) {
+    if (tier1Artifacts.contains(actualType + artifactId)) {
       return FeatureRestriction.TIER1_RESTRICTION;
     }
-    if (tier2Artifacts.contains(type + artifactId)) {
+    if (tier2Artifacts.contains(actualType + artifactId)) {
       return FeatureRestriction.TIER2_RESTRICTION;
     }
     return FeatureRestriction.NO_RESTRICTION;
