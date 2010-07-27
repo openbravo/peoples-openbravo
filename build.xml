@@ -100,6 +100,7 @@ export.database: exports database structure and data to xml files.
   <property name="stopOnWadError" value="false"/>
   <property name="friendlyWarnings" value="false"/>
   <property name="checkTranslationConsistency" value="true"/>
+  <property name="buildValidation" value="true"/>
 
   <available file=".hg" property="is.hg" />
 
@@ -177,6 +178,13 @@ export.database: exports database structure and data to xml files.
     </or>
   </condition>
 
+  <condition property="allow.root.user" value="true" else="false">
+    <or>
+      <equals arg1="yes" arg2="${allow.root}" />
+      <equals arg1="true" arg2="${allow.root}" />
+    </or>
+  </condition>
+
   <condition property="no.java.home" value="true">
     <not>
       <isset property="env.JAVA_HOME" />
@@ -188,7 +196,17 @@ export.database: exports database structure and data to xml files.
       <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
     </and>
   </condition>
- 
+
+  <condition property="root.user">
+    <and>
+      <equals arg1="${user.name}" arg2="root" />
+      <not>
+        <contains string="${os.name}" substring="Windows" />
+      </not>
+      <equals arg1="false" arg2="${allow.root.user}" />
+    </and>
+  </condition>
+
   <path id="project.class.path">
     <dirset dir="${base.modules}">
       <include name="*/build/classes/" />
@@ -298,6 +316,7 @@ export.database: exports database structure and data to xml files.
   
   <target name="init" depends="code.rev">
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
+    <fail if="root.user" message="Don't run ant tasks with the root user" />
   </target>
 
   <target name="code.rev" depends="set.code.rev">
@@ -389,6 +408,9 @@ export.database: exports database structure and data to xml files.
 
   <target name="buildvalidation" depends="init, core.lib">
     <updatesystemstatus v="RB11"/> 
+    <condition property="buildValidation.var">
+      <istrue value="${buildValidation}"  />
+    </condition>
     <ant dir="src-util/buildvalidation" target="buildvalidation" inheritAll="true" inheritRefs="true" />
   </target>
   
