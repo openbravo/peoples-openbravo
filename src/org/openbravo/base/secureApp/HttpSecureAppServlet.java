@@ -363,13 +363,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       SessionInfo.setUserId(strUserAuth);
       SessionInfo.setSessionId(vars1.getSessionValue("#AD_Session_ID"));
 
+      // Hack to know whether the servlet is a poup. strPopup cannot be used because it indicates in
+      // has been called from a popup.
+      boolean isPopup = vars1.getCommand().indexOf("BUTTON") != -1
+          || vars1.getCommand().indexOf("POPUP") != -1
+          || !vars1.getStringParameter("inpProcessId").equals("");
+
       FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess(
           classInfo.type, classInfo.id);
       if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
-        licenseError(classInfo.type, classInfo.id, featureRestriction, response, vars1);
-      }
-
-      if (vars1.getRole().equals("") || hasAccess(vars1)) {
+        licenseError(classInfo.type, classInfo.id, featureRestriction, response, request, vars1,
+            isPopup);
+      } else if (vars1.getRole().equals("") || hasAccess(vars1)) {
         if (classInfo.id != null && !classInfo.id.equals("")) {
           SessionInfo.setProcessId(classInfo.id);
           SessionInfo.setProcessType(classInfo.type);
@@ -415,8 +420,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               // the hash of the post data
               if (!hash.equals(vars1.getPostDataHash())) {
                 request.setAttribute("autosave", true);
-                if (vars1.getCommand().indexOf("BUTTON") != -1
-                    || !vars1.getStringParameter("inpProcessId").equals(""))
+                if (isPopup)
                   // Adding pop-up window attribute to close the window on failed auto-save
                   request.setAttribute("popupWindow", true);
                 // forward request
@@ -788,8 +792,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   private void bdErrorGeneral(HttpServletRequest request, HttpServletResponse response,
       String strTitle, String strText) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error")
-        .createXmlDocument();
+    String discard[] = { "" };
+    if (OBContext.getOBContext().isNewUI()) {
+      discard[0] = "backButton";
+    }
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error",
+        discard).createXmlDocument();
 
     String myTheme;
     if (request != null)
@@ -880,7 +889,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   protected void licenseError(String type, String id, FeatureRestriction featureRestriction,
-      HttpServletResponse response, VariablesSecureApp vars) throws IOException {
+      HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,
+      boolean isPopup) throws IOException {
     String titleText = getArtifactName(type, id, vars.getLanguage());
 
     String editionType;
@@ -900,21 +910,27 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         + "</p>";
     String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
     String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly").createXmlDocument();
 
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("titleText", titleText);
-    xmlDocument.setParameter("infoText", infoText);
-    xmlDocument.setParameter("linkText", linkText);
-    xmlDocument.setParameter("afterLinkText", afterLinkText);
+    if (isPopup) {
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly").createXmlDocument();
 
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("titleText", titleText);
+      xmlDocument.setParameter("infoText", infoText);
+      xmlDocument.setParameter("linkText", linkText);
+      xmlDocument.setParameter("afterLinkText", afterLinkText);
+
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    } else {
+      bdErrorGeneral(request, response, titleText, infoText + "\n"
+          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage()));
+    }
   }
 
   private String getArtifactName(String type, String id, String language) {
