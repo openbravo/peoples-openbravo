@@ -100,6 +100,7 @@ export.database: exports database structure and data to xml files.
   <property name="stopOnWadError" value="false"/>
   <property name="friendlyWarnings" value="false"/>
   <property name="checkTranslationConsistency" value="true"/>
+  <property name="buildValidation" value="true"/>
 
   <available file=".hg" property="is.hg" />
 
@@ -407,6 +408,9 @@ export.database: exports database structure and data to xml files.
 
   <target name="buildvalidation" depends="init, core.lib">
     <updatesystemstatus v="RB11"/> 
+    <condition property="buildValidation.var">
+      <istrue value="${buildValidation}"  />
+    </condition>
     <ant dir="src-util/buildvalidation" target="buildvalidation" inheritAll="true" inheritRefs="true" />
   </target>
   
