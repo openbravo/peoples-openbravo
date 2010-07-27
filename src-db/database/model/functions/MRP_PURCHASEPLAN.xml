@@ -72,7 +72,7 @@ BEGIN
     v_ResultStr := 'Purchase mrp';
 
     FOR Cur_PlanProduct IN (
-        SELECT MRP_RUN_PURCHASELINE.M_PRODUCT_ID,
+        SELECT MRP_RUN_PURCHASELINE.M_PRODUCT_ID, M_PRODUCT.NAME AS PRODUCTNAME,
           COALESCE(M_PRODUCT_PO.CAPACITY, M_PRODUCT_ORG.CAPACITY, M_PRODUCT.CAPACITY) AS CAPACITY,
           COALESCE(M_PRODUCT_PO.DELIVERYTIME_PROMISED, M_PRODUCT_ORG.DELAYMIN, M_PRODUCT.DELAYMIN, 0) AS DELAYMIN,
           COALESCE(M_PRODUCT_PO.QTYTYPE, M_PRODUCT_ORG.QTYTYPE, M_PRODUCT_ORG.QTYTYPE, 'E') AS qtytype,
@@ -93,7 +93,7 @@ BEGIN
           AND PRODUCT_PO.C_BPARTNER_ID = M_PRODUCT_PO.C_BPARTNER_ID
           AND PRODUCT_PO.M_PRODUCT_ID = M_PRODUCT_PO.M_PRODUCT_ID
           AND M_PRODUCT.ISPURCHASED = 'Y'
-      GROUP BY MRP_RUN_PURCHASELINE.M_PRODUCT_ID, M_PRODUCT_PO.CAPACITY, M_PRODUCT_ORG.CAPACITY, M_PRODUCT.CAPACITY,
+      GROUP BY MRP_RUN_PURCHASELINE.M_PRODUCT_ID, M_PRODUCT.NAME, M_PRODUCT_PO.CAPACITY, M_PRODUCT_ORG.CAPACITY, M_PRODUCT.CAPACITY,
         M_PRODUCT_PO.DELIVERYTIME_PROMISED, M_PRODUCT_ORG.DELAYMIN, M_PRODUCT.DELAYMIN,
         M_PRODUCT_PO.QTYTYPE, M_PRODUCT_ORG.QTYTYPE, M_PRODUCT_ORG.QTYTYPE,
         M_PRODUCT_PO.ORDER_MIN, M_PRODUCT_ORG.QTYMIN, M_PRODUCT_ORG.QTYMIN,
@@ -133,6 +133,10 @@ BEGIN
               v_Qty_new := CEIL(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
             END IF;
 
+            IF (Cur_PlanProduct.CAPACITY = 0) THEN
+		RAISE_APPLICATION_ERROR(-20000, '@CapacityZero@ ' || Cur_PlanProduct.PRODUCTNAME);
+            END IF;
+
             v_plannedorderdate_new := TRUNC(v_planneddate_new -
                                       GREATEST(Cur_PlanProduct.DELAYMIN, (CASE WHEN Cur_PlanProduct.CAPACITY IS NULL THEN 0
                                                                   ELSE CEIL(v_Qty_new/Cur_PlanProduct.CAPACITY)
@@ -146,6 +150,10 @@ BEGIN
             v_qty_new := GREATEST(v_qty_new, v_neededqty_new);
             IF (Cur_PlanProduct.qtytype = 'M') THEN --Multiple lot qty
               v_Qty_new := CEIL(v_qty_new/Cur_PlanProduct.qtystd)*Cur_PlanProduct.qtystd;
+            END IF;
+
+            IF (Cur_PlanProduct.CAPACITY = 0) THEN
+		RAISE_APPLICATION_ERROR(-20000, '@CapacityZero@ ' || Cur_PlanProduct.PRODUCTNAME);
             END IF;
 
             v_plannedorderdate_new := TRUNC(v_planneddate_old -

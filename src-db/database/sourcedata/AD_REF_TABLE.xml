@@ -619,7 +619,7 @@
 <!--197-->  <AD_KEY><![CDATA[1151]]></AD_KEY>
 <!--197-->  <AD_DISPLAY><![CDATA[1152]]></AD_DISPLAY>
 <!--197-->  <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--197-->  <WHERECLAUSE><![CDATA[M_Warehouse.AD_Client_ID=@#AD_Client_ID@]]></WHERECLAUSE>
+<!--197-->  <WHERECLAUSE><![CDATA[M_Warehouse.AD_Client_ID=@#AD_Client_ID@ AND (select ad.isactive from ad_org ad where ad.ad_org_id = M_Warehouse.AD_Org_ID) = 'Y']]></WHERECLAUSE>
 <!--197--></AD_REF_TABLE>
 
 <!--199--><AD_REF_TABLE>

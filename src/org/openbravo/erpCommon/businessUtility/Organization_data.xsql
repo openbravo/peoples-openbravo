@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+<SqlClass name="OrganizationData" package="org.openbravo.erpCommon.businessUtility" accessModifier="public">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT '' AS RESULT
+        FROM AD_ORG
+      ]]>
+    </Sql>
+  </SqlMethod>
+
+  <SqlMethod name="isOrgInTree" type="preparedStatement" return="Boolean" default="false">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select count(*) as result
+        from dual
+        where ad_isorgincluded(?,?,?) <> -1
+           or ad_isorgincluded(?,?,?) <> -1
+      ]]>
+    </Sql>
+    <Parameter name="adOrg1Id"/>
+    <Parameter name="adOrg2Id"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrg2Id"/>
+    <Parameter name="adOrg1Id"/>
+    <Parameter name="adClientId"/>
+  </SqlMethod>
+
+  <SqlMethod name="isParentOrg" type="preparedStatement" return="Boolean" default="false">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select count(*) as result
+        from dual
+        where ad_isorgincluded(?,?,?) <> -1
+      ]]>
+    </Sql>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adParentOrgId"/>
+    <Parameter name="adClientId"/>
+  </SqlMethod>
+
+</SqlClass>

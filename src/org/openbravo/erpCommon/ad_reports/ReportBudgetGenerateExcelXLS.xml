@@ -21,7 +21,6 @@
   <template file="ReportBudgetGenerateExcelXLS.html"/>
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
-	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <structure name="structure1">
     <FIELD id="fieldQty">qty</FIELD>
     <FIELD id="fieldPrice">price</FIELD>

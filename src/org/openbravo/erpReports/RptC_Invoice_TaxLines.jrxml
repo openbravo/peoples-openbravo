@@ -37,7 +37,6 @@
 		fontName="Bitstream Vera Sans"
 		fontSize="18"
 	>
-					<box leftPadding="5"></box>
 	</style>
 	<style 
 		name="Report_Subtitle"
@@ -46,7 +45,6 @@
 		fontName="Bitstream Vera Sans"
 		fontSize="14"
 	>
-					<box leftPadding="5"></box>
 	</style>
 	<style 
 		name="Report_Data_Label"
@@ -75,7 +73,6 @@
 		fontSize="11"
 		isBold="true"
 	>
-					<box leftPadding="5"></box>
 	</style>
 	<style 
 		name="GroupHeader_DarkGray"
@@ -88,7 +85,6 @@
 		fontSize="12"
 		isBold="true"
 	>
-					<box leftPadding="5"></box>
 	</style>
 	<style 
 		name="Group_Data_Label"
@@ -116,9 +112,6 @@
 		fontSize="10"
 		isBold="true"
 	>
-					<box leftPadding="5">					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
 	</style>
 	<style 
 		name="Detail_Line"
@@ -215,9 +208,7 @@
 						width="482"
 						height="0"
 						key="line-1"/>
-					<graphicElement stretchType="NoStretch">
-					<pen lineWidth="1.0" lineStyle="Solid"/>
-</graphicElement>
+					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>
 			</groupFooter>
@@ -240,6 +231,16 @@
 		</columnHeader>
 		<detail>
 			<band height="16"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="482"
+						height="0"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
@@ -247,16 +248,16 @@
 						y="0"
 						width="400"
 						height="16"
+						forecolor="#000000"
 						key="textField"/>
-					<box leftPadding="4" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement>
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NAME}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[" " + $F{NAME}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -265,17 +266,39 @@
 						y="0"
 						width="82"
 						height="16"
+						forecolor="#000000"
 						key="textField"/>
-					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<box>					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{TAXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXAMT}):new String(" ")]]></textFieldExpression>
 				</textField>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="0"
+						height="16"
+						key="line-3"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="482"
+						y="0"
+						width="0"
+						height="16"
+						key="line-4"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
 			</band>
 		</detail>
 		<columnFooter>

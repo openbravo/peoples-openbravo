@@ -17,8 +17,10 @@
 * The Initial Developer of the Original Code is Openbravo SLU
 * All portions are Copyright (C) 2009 Openbravo SLU
 * All Rights Reserved.
-* Contributor(s):  ______________________________________.
+* Contributor(s):  Valery Lezhebokov.
 ************************************************************************/
+  number_pattern CONSTANT CHAR(10):= '0123456789';
+  
   v1 VARCHAR(10);
   v2 VARCHAR(10);
   v3 VARCHAR(10);
@@ -36,8 +38,10 @@ BEGIN
     v2 := SUBSTR(:new.VERSION,instr(:new.VERSION,'.')+1,instr(:new.VERSION,'.',1,2)-instr(:new.VERSION,'.')-1);
     v3 := SUBSTR(:new.VERSION,instr(:new.VERSION,'.',1,2)+1);
     
-    IF TRIM(TRANSLATE(v1, '0123456789','')) <> '' OR TRIM(TRANSLATE(v2, '0123456789','')) <> '' OR TRIM(TRANSLATE(v3, '0123456789','')) <> '' THEN
-       RAISE_APPLICATION_ERROR(-20104, 'The version has to be formatted like x.y.z where x, y and z are integers.');
+    IF COALESCE(LENGTH(TRIM(TRANSLATE(v1, number_pattern, ' '))),0) <> 0 OR 
+       COALESCE(LENGTH(TRIM(TRANSLATE(v2, number_pattern, ' '))),0) <> 0 OR 
+       COALESCE(LENGTH(TRIM(TRANSLATE(v3, number_pattern, ' '))),0) <> 0 THEN
+            RAISE_APPLICATION_ERROR(-20104, 'The version has to be formatted like x.y.z where x, y and z are integers.');
     END IF;
 
 END AD_MODULE_VERSION_TRG
