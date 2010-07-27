@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -13,11 +13,12 @@ dojo.require("dojo.window");
 dojo.require("dojo.regexp");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
+dojo.require("dijit._CssStateMixin");
 
 dojo.require("dijit.form._FormWidget");
 dojo.require("dijit.form.ValidationTextBox");
 
-dojo.requireLocalization("dijit.form", "ComboBox", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit.form", "ComboBox", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare(
 	"dijit.form.ComboBoxMixin",
@@ -116,9 +117,9 @@ dojo.declare(
 		//		Defaults to true.
 		hasDownArrow: true,
 
-		templateString: dojo.cache("dijit.form", "templates/ComboBox.html", "<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\"\n\tdojoAttachPoint=\"comboNode\" waiRole=\"combobox\" tabIndex=\"-1\"\n\t><div style=\"overflow:hidden;\"\n\t\t><div class='dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton'\n\t\t\tdojoAttachPoint=\"downArrowNode\" waiRole=\"presentation\"\n\t\t\tdojoAttachEvent=\"onmousedown:_onArrowMouseDown\"\n\t\t\t><div class=\"dijitArrowButtonInner\">&nbsp;</div\n\t\t\t><div class=\"dijitArrowButtonChar\">&#9660;</div\n\t\t></div\n\t\t><div class=\"dijitReset dijitValidationIcon\"><br></div\n\t\t><div class=\"dijitReset dijitValidationIconText\">&Chi;</div\n\t\t><div class=\"dijitReset dijitInputField\"\n\t\t\t><input ${nameAttrSetting} type=\"text\" autocomplete=\"off\" class='dijitReset'\n\t\t\tdojoAttachEvent=\"onkeypress:_onKeyPress,compositionend\"\n\t\t\tdojoAttachPoint=\"textbox,focusNode\" waiRole=\"textbox\" waiState=\"haspopup-true,autocomplete-list\"\n\t\t/></div\n\t></div\n></div>\n"),
+		templateString: dojo.cache("dijit.form", "templates/ComboBox.html", "<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\"\n\tdojoAttachPoint=\"comboNode\" waiRole=\"combobox\"\n\t><div class='dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer'\n\t\tdojoAttachPoint=\"downArrowNode\" waiRole=\"presentation\"\n\t\tdojoAttachEvent=\"onmousedown:_onArrowMouseDown\"\n\t\t><input class=\"dijitReset dijitInputField dijitArrowButtonInner\" value=\"&#9660; \" type=\"text\" tabIndex=\"-1\" readOnly waiRole=\"presentation\"\n\t\t\t${_buttonInputDisabled}\n\t/></div\n\t><div class='dijitReset dijitValidationContainer'\n\t\t><input class=\"dijitReset dijitInputField dijitValidationIcon dijitValidationInner\" value=\"&Chi; \" type=\"text\" tabIndex=\"-1\" readOnly waiRole=\"presentation\"\n\t/></div\n\t><div class=\"dijitReset dijitInputField dijitInputContainer\"\n\t\t><input class='dijitReset dijitInputInner' ${!nameAttrSetting} type=\"text\" autocomplete=\"off\"\n\t\t\tdojoAttachEvent=\"onkeypress:_onKeyPress,compositionend\"\n\t\t\tdojoAttachPoint=\"textbox,focusNode\" waiRole=\"textbox\" waiState=\"haspopup-true,autocomplete-list\"\n\t/></div\n></div>\n"),
 
-		baseClass:"dijitTextBox dijitComboBox",
+		baseClass: "dijitTextBox dijitComboBox",
 
 		// Set classes like dijitDownArrowButtonHover depending on
 		// mouse action over button node
@@ -176,6 +177,17 @@ dojo.declare(
 				if(this._fetchHandle.abort){ this._fetchHandle.abort(); }
 				this._fetchHandle = null;
 			}
+		},
+
+		_onInput: function(/*Event*/ evt){
+			// summary:
+			//		Handles paste events
+			if(!this.searchTimer && (evt.type == 'paste'/*IE|WebKit*/ || evt.type == 'input'/*Firefox*/) && this._lastInput != this.textbox.value){
+				this.searchTimer = setTimeout(dojo.hitch(this, function(){
+					this._onKeyPress({charOrCode: 229}); // fake IME key to cause a search
+				}), 100); // long delay that will probably be preempted by keyboard input
+			}
+			this.inherited(arguments);
 		},
 
 		_onKeyPress: function(/*Event*/ evt){
@@ -237,7 +249,7 @@ dojo.declare(
 					// fall through
 
 				case dk.TAB:
-					var newvalue = this.attr('displayedValue');
+					var newvalue = this.get('displayedValue');
 					//	if the user had More Choices selected fall into the
 					//	_onBlur handler
 					if(pw && (
@@ -420,7 +432,7 @@ dojo.declare(
 			// then need to reposition the drop down (wrapper) so (all of) the drop down still
 			// appears underneath the ComboBox.domNode
 			if(newwidth < this.domNode.offsetWidth){
-				this._popupWidget.domNode.parentNode.style.left = dojo.position(this.domNode).x + "px";
+				this._popupWidget.domNode.parentNode.style.left = dojo.position(this.domNode, true).x + "px";
 			}
 
 			dijit.setWaiState(this.comboNode, "expanded", "true");
@@ -442,7 +454,7 @@ dojo.declare(
 			// #4617:
 			//		if value is now more choices or previous choices, revert
 			//		the value
-			var newvalue = this.attr('displayedValue');
+			var newvalue = this.get('displayedValue');
 			var pw = this._popupWidget;
 			if(pw && (
 				newvalue == pw._messages["previousMessage"] ||
@@ -453,7 +465,7 @@ dojo.declare(
 			}else if(typeof this.item == "undefined"){
 				// Update 'value' (ex: KY) according to currently displayed text
 				this.item = null;
-				this.attr('displayedValue', newvalue);
+				this.set('displayedValue', newvalue);
 			}else{
 				if(this.value != this._lastValueReported){
 					dijit.form._FormValueWidget.prototype._setValueAttr.call(this, this.value, true);
@@ -502,7 +514,7 @@ dojo.declare(
 				this.value = '';
 			}else{
 				newValue = this.labelFunc(node.item, this.store);
-				this.attr('item', node.item, false, newValue);
+				this.set('item', node.item, false, newValue);
 			}
 			// get the text that the user manually entered (cut off autocompleted text)
 			this.focusNode.value = this.focusNode.value.substring(0, this._lastInput.length);
@@ -557,7 +569,8 @@ dojo.declare(
 				var popupId = this.id + "_popup";
 				this._popupWidget = new dijit.form._ComboBoxMenu({
 					onChange: dojo.hitch(this, this._selectOption),
-					id: popupId
+					id: popupId,
+					dir: this.dir
 				});
 				dijit.removeWaiState(this.focusNode,"activedescendant");
 				dijit.setWaiState(this.textbox,"owns",popupId); // associate popup with textbox
@@ -767,7 +780,7 @@ dojo.declare(
 
 dojo.declare(
 	"dijit.form._ComboBoxMenu",
-	[dijit._Widget, dijit._Templated],
+	[dijit._Widget, dijit._Templated, dijit._CssStateMixin],
 	{
 		// summary:
 		//		Focus-less menu for internal use in `dijit.form.ComboBox`
@@ -782,6 +795,8 @@ dojo.declare(
 		// _messages: Object
 		//		Holds "next" and "previous" text for paging buttons on drop down
 		_messages: null,
+		
+		baseClass: "dijitComboBoxMenu",
 
 		postMixInProperties: function(){
 			this._messages = dojo.i18n.getLocalization("dijit.form", "ComboBox", this.lang);
@@ -867,7 +882,8 @@ dojo.declare(
 			//		iterate over cache nondestructively
 			dojo.forEach(results, function(item, i){
 				var menuitem = this._createOption(item, labelFunc);
-				menuitem.className = "dijitReset dijitMenuItem";
+				menuitem.className = "dijitReset dijitMenuItem" +
+					(this.isLeftToRight() ? "" : " dijitMenuItemRtl");
 				dojo.attr(menuitem, "id", this.id + i);
 				this.domNode.insertBefore(menuitem, this.nextButton);
 			}, this);

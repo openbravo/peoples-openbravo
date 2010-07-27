@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -133,14 +133,14 @@ dojo.declare("dijit._KeyNavContainer",
 			// tags:
 			//		private
 			
-			widget.attr("tabIndex", "-1");
+			widget.set("tabIndex", "-1");
 			
 			this.connect(widget, "_onFocus", function(){
 				// Set valid tabIndex so tabbing away from widget goes to right place, see #10272
-				widget.attr("tabIndex", this.tabIndex);
+				widget.set("tabIndex", this.tabIndex);
 			});
 			this.connect(widget, "_onBlur", function(){
-				widget.attr("tabIndex", "-1");
+				widget.set("tabIndex", "-1");
 			});
 		},
 

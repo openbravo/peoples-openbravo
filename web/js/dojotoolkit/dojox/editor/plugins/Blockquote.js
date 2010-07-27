@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -13,7 +13,7 @@ dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dojox.editor.plugins", "Blockquote", null, "ROOT");
+dojo.requireLocalization("dojox.editor.plugins", "Blockquote", null, "ROOT,ro");
 
 dojo.declare("dojox.editor.plugins.Blockquote",dijit._editor._Plugin,{
 	//	summary:
@@ -61,7 +61,7 @@ dojo.declare("dojox.editor.plugins.Blockquote",dijit._editor._Plugin,{
 			var ed = this.editor;
 			ed.focus();
 
-			var quoteIt = this.button.attr("checked");
+			var quoteIt = this.button.get("checked");
 			var sel = dijit.range.getSelection(ed.window);
 			var range, elem, start, end;
 			if(sel && sel.rangeCount > 0){
@@ -344,7 +344,7 @@ dojo.declare("dojox.editor.plugins.Blockquote",dijit._editor._Plugin,{
 				elem = elem.parentNode;
 			}
 			// toggle whether or not the current selection is blockquoted.
-			this.button.attr("checked", found);
+			this.button.set("checked", found);
 		}
 	},
 

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -54,12 +54,12 @@ dojo.declare("dijit.form.NumberTextBoxMixin",
 		======*/
 
 		// value: Number
-		//		The value of this NumberTextBox as a javascript Number (ie, not a String).
+		//		The value of this NumberTextBox as a Javascript Number (i.e., not a String).
 		//		If the displayed value is blank, the value is NaN, and if the user types in
 		//		an gibberish value (like "hello world"), the value is undefined
 		//		(i.e. attr('value') returns undefined).
 		//
-		//		Symetrically, attr('value', NaN) will clear the displayed value,
+		//		Symmetrically, attr('value', NaN) will clear the displayed value,
 		//		whereas attr('value', undefined) will have no effect.
 		value: NaN,
 
@@ -97,13 +97,13 @@ dojo.declare("dijit.form.NumberTextBoxMixin",
 			}
 			this.inherited(arguments, [ constraints ]);
 			if(this.focusNode && this.focusNode.value && !isNaN(this.value)){
-				this.attr('value', this.value);
+				this.set('value', this.value);
 			}
 		},
 
 		_onFocus: function(){
 			if(this.disabled){ return; }
-			var val = this.attr('value');
+			var val = this.get('value');
 			if(typeof val == "number" && !isNaN(val)){
 				var formattedValue = this.format(val, this.constraints);
 				if(formattedValue !== undefined){
@@ -220,7 +220,7 @@ dojo.declare("dijit.form.NumberTextBoxMixin",
 			if(!this._focused || this._isEmpty(this.textbox.value)){
 				return this.inherited(arguments);
 			}else{
-				var v = this.attr('value');
+				var v = this.get('value');
 				if(!isNaN(v) && this.rangeCheck(v, this.constraints)){
 					if(this.constraints.exponent !== false && /\de[-+]?\d/i.test(this.textbox.value)){ // exponential, parse doesn't like it
 						return true; // valid exponential number in range

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -179,7 +179,7 @@ dojo.declare("dojox.layout.FloatingPane",
 	setTitle: function(/* String */ title){
 		// summary: Update the Title bar with a new string
 		dojo.deprecated("pane.setTitle", "Use pane.attr('title', someTitle)", "2.0");
-		this.attr("title", title);
+		this.set("title", title);
 		// this.setTitle = dojo.hitch(this, "setTitle") ?? 
 	},
 		

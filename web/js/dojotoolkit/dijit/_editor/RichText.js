@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -110,6 +110,10 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 			this.contentPostFilters.push(this._normalizeFontStyle);
 		}
 		//this.contentDomPostFilters.push(this._postDomFixUrlAttributes);
+
+		if(params && dojo.isString(params.value)){
+			this.value = params.value;
+		}
 
 		this.onLoadDeferred = new dojo.Deferred();
 	},
@@ -301,7 +305,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 		//		node.
 		// description:
 		//		Sets up the editing area asynchronously. This will result in
-		//		the creation and replacement with an <iframe>.
+		//		the creation and replacement with an iframe.
 		//
 		//		A dojo.Deferred object is created at this.onLoadDeferred, and
 		//		users may attach to it to be informed when the rich-text area
@@ -327,7 +331,14 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 		// initialize the editor.
 		var html;
 
-		if(dn.nodeName && dn.nodeName.toLowerCase() == "textarea"){
+		if(dojo.isString(this.value)){
+			// Allow setting the editor content programmatically instead of
+			// relying on the initial content being contained within the target
+			// domNode.
+			html = this.value;
+			delete this.value;
+			dn.innerHTML = "";
+		}else if(dn.nodeName && dn.nodeName.toLowerCase() == "textarea"){
 			// if we were created from a textarea, then we need to create a
 			// new editing harness node.
 			var ta = (this.textarea = dn);
@@ -444,21 +455,15 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 			if(dojo.isIE){
 				this._localizeEditorCommands();
 			}
-
+			
 			// Do final setup and set initial contents of editor
 			this.onLoad(html);
-
-			this.savedContent = this.getValue(true);
 		});
 
 		// Set the iframe's initial (blank) content.
 		var s = 'javascript:parent.' + dijit._scopeName + '.byId("'+this.id+'")._iframeSrc';
 		ifr.setAttribute('src', s);
 		this.editingArea.appendChild(ifr);
-
-		if(dojo.isSafari){ // Safari seems to always append iframe with src=about:blank
-			setTimeout(function(){ifr.setAttribute('src', s);},0);
-		}
 
 		// TODO: this is a guess at the default line-height, kinda works
 		if(dn.nodeName == "LI"){
@@ -512,7 +517,30 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 			lineHeight = "normal";
 		}
 		var userStyle = "";
-		this.style.replace(/(^|;)\s*(line-|font-?)[^;]+/ig, function(match){ userStyle += match.replace(/^;/ig,"") + ';'; });
+		var self = this;
+		this.style.replace(/(^|;)\s*(line-|font-?)[^;]+/ig, function(match){ 
+			match = match.replace(/^;/ig,"") + ';'; 
+			var s = match.split(":")[0];
+			if(s){
+				s = dojo.trim(s);
+				s = s.toLowerCase();
+				var i;
+				var sC = "";
+				for(i = 0; i < s.length; i++){
+					var c = s.charAt(i);
+					switch(c){
+						case "-":
+							i++;
+							c = s.charAt(i).toUpperCase();
+						default:
+							sC += c;
+					}
+				}
+				dojo.style(self.domNode, sC, "");
+			}
+			userStyle += match + ';'; 
+		});
+
 
 		// need to find any associated label element and update iframe document title
 		var label=dojo.query('label[for="'+this.id+'"]');
@@ -749,7 +777,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 
 		this.isLoaded = true;
 
-		this.attr('disabled', this.disabled); // initialize content to editable (or not)
+		this.set('disabled', this.disabled); // initialize content to editable (or not)
 
 		// Note that setValue() call will only work after isLoaded is set to true (above)
 
@@ -767,6 +795,8 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 				// onNormalizedDisplayChanged has run to avoid input caret issues
 				dojo.addOnLoad(dojo.hitch(this, function(){ setTimeout(dojo.hitch(this, "focus"), this.updateInterval); }));
 			}
+			// Save off the initial content now
+			this.savedContent = this.getValue(true);
 		});
 		if(this.setValueDeferred){
 			this.setValueDeferred.addCallback(setContent);
@@ -831,11 +861,11 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 
 	setDisabled: function(/*Boolean*/ disabled){
 		// summary:
-		//		Deprecated, use attr('disabled', ...) instead.
+		//		Deprecated, use set('disabled', ...) instead.
 		// tags:
 		//		deprecated
 		dojo.deprecated('dijit.Editor::setDisabled is deprecated','use dijit.Editor::attr("disabled",boolean) instead', 2.0);
-		this.attr('disabled',disabled);
+		this.set('disabled',disabled);
 	},
 	_setValueAttr: function(/*String*/ value){
 		// summary:
@@ -866,7 +896,8 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 
 		if(handlers && !e.altKey){
 			dojo.some(handlers, function(h){
-				if(!(h.shift ^ e.shiftKey) && !(h.ctrl ^ e.ctrlKey)){
+				// treat meta- same as ctrl-, for benefit of mac users
+				if(!(h.shift ^ e.shiftKey) && !(h.ctrl ^ (e.ctrlKey||e.metaKey))){
 					if(!h.handler.apply(this, args)){
 						e.preventDefault();
 					}
@@ -956,7 +987,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 		// console.info('_onFocus')
 		if(!this.disabled){
 			if(!this._disabledOK){
-				this.attr('disabled', false);
+				this.set('disabled', false);
 			}
 			this.inherited(arguments);
 		}
@@ -1394,7 +1425,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 	setValue: function(/*String*/ html){
 		// summary:
 		//		This function sets the content. No undo history is preserved.
-		//		Users should use attr('value', ...) instead.
+		//		Users should use set('value', ...) instead.
 		// tags:
 		//		deprecated
 
@@ -1571,7 +1602,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 
 	escapeXml: function(/*String*/ str, /*Boolean*/ noSingleQuotes){
 		// summary:
-		//		Adds escape sequences for special characters in XML: &<>"'
+		//		Adds escape sequences for special characters in XML.
 		//		Optionally skips escapes for single quotes
 		// tags:
 		//		private
@@ -1708,12 +1739,12 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 	},
 	_normalizeFontStyle: function(/* String */ html){
 		// summary:
-		//		Convert <strong> and <em> to <b> and <i>.
+		//		Convert 'strong' and 'em' to 'b' and 'i'.
 		// description:
 		//		Moz can not handle strong/em tags correctly, so to help
-		//		mozilla and also to normalize output, convert them to <b> and <i>.
+		//		mozilla and also to normalize output, convert them to 'b' and 'i'.
 		//
-		//		Note the IE generates <strong> and <em> rather than <b> and <i>
+		//		Note the IE generates 'strong' and 'em' rather than 'b' and 'i'
 		// tags:
 		//		private
 		return html.replace(/<(\/)?strong([ \>])/gi, '<$1b$2')
@@ -1739,7 +1770,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 
 	_inserthorizontalruleImpl: function(argument){
 		// summary:
-		//		This function implements the insertion of HTML <HR> tags.
+		//		This function implements the insertion of HTML 'HR' tags.
 		//		into a point on the page.  IE doesn't to it right, so
 		//		we have to use an alternate form
 		// argument:
@@ -1754,7 +1785,7 @@ dojo.declare("dijit._editor.RichText", [dijit._Widget, dijit._CssStateMixin], {
 
 	_unlinkImpl: function(argument){
 		// summary:
-		//		This function implements the unlink of an <a> tag.
+		//		This function implements the unlink of an 'a' tag.
 		// argument:
 		//		arguments to the exec command, if any.
 		// tags:

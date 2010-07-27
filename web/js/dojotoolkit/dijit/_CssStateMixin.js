@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -26,11 +26,6 @@ dojo.declare("dijit._CssStateMixin", [], {
 	//		By setting the cssStateNodes attribute, a widget can also track events on subnodes (like buttons
 	//		within the widget).
 
-	// baseClass: [protected] String
-	//		Root CSS class of the widget (ex: dijitTextBox), used to construct CSS classes to indicate
-	//		widget state.
-	baseClass: "",
-
 	// cssStateNodes: [protected] Object
 	//		List of sub-nodes within the widget that need CSS classes applied on mouse hover/press and focus
 	//.
@@ -53,8 +48,8 @@ dojo.declare("dijit._CssStateMixin", [], {
 		}, this);
 		
 		// Monitoring changes to disabled, readonly, etc. state, and update CSS class of root node
-		this.connect(this, "attr", function(name, value){
-			if(arguments.length == 2 && {disabled: true, readOnly: true, checked:true, selected:true}[name]){
+		this.connect(this, "set", function(name, value){
+			if(arguments.length >= 2 && {disabled: true, readOnly: true, checked:true, selected:true}[name]){
 				this._setStateClass();
 			}
 		});
@@ -142,6 +137,11 @@ dojo.declare("dijit._CssStateMixin", [], {
 			newStateClasses = newStateClasses.concat(dojo.map(newStateClasses, function(c){ return c+modifier; }), "dijit"+modifier);
 		}
 
+		if(!this.isLeftToRight()){
+			// For RTL mode we need to set an addition class like dijitTextBoxRtl.
+			multiply("Rtl");
+		}
+
 		if(this.checked){
 			multiply("Checked");
 		}
@@ -162,9 +162,10 @@ dojo.declare("dijit._CssStateMixin", [], {
 			}else if(this._hovering){
 				multiply("Hover");
 			}
-			if(this._focused){
-				multiply("Focused");
-			}
+		}
+
+		if(this._focused){
+			multiply("Focused");
 		}
 
 		// Remove old state classes and add new ones.
@@ -251,8 +252,8 @@ dojo.declare("dijit._CssStateMixin", [], {
 
 		// Just in case widget is enabled/disabled while it has focus/hover/active state.
 		// Maybe this is overkill.
-		this.connect(this, "attr", function(name, value){
-			if(arguments.length == 2 && (name == "disabled" || name == "readOnly")){
+		this.connect(this, "set", function(name, value){
+			if(name == "disabled" || name == "readOnly"){
 				setClass();
 			}
 		});

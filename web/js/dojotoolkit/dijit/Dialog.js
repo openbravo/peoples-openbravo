@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -21,7 +21,7 @@ dojo.require("dijit.form._FormMixin");
 dojo.require("dijit._DialogMixin");
 dojo.require("dijit.DialogUnderlay");
 dojo.require("dijit.layout.ContentPane");
-dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 /*=====
 dijit._underlay = function(kwArgs){
@@ -153,7 +153,12 @@ dojo.declare(
 			//		callback
 
 			// when href is specified we need to reposition the dialog after the data is loaded
+			// and find the focusable elements
 			this._position();
+			if(this.autofocus){
+				this._getFocusItems(this.domNode);
+				dijit.focus(this._firstFocusItem);
+			}
 			this.inherited(arguments);
 		},
 
@@ -199,13 +204,16 @@ dojo.declare(
 					if(!underlay){
 						underlay = dijit._underlay = new dijit.DialogUnderlay(this.underlayAttrs);
 					}else{
-						underlay.attr(this.underlayAttrs);
+						underlay.set(this.underlayAttrs);
 					}
 
-					var zIndex = 948 + dijit._dialogStack.length*2;
+					var ds = dijit._dialogStack,
+						zIndex = 948 + ds.length*2;
+					if(ds.length == 1){	// first dialog
+						underlay.show();
+					}
 					dojo.style(dijit._underlay.domNode, 'zIndex', zIndex);
 					dojo.style(this.domNode, 'zIndex', zIndex + 1);
-					underlay.show();
 				}),
 				onEnd: dojo.hitch(this, function(){
 					if(this.autofocus){
@@ -230,7 +238,7 @@ dojo.declare(
 						dijit._underlay.hide();
 					}else{
 						dojo.style(dijit._underlay.domNode, 'zIndex', 948 + ds.length*2);
-						dijit._underlay.attr(ds[ds.length-1].underlayAttrs);
+						dijit._underlay.set(ds[ds.length-1].underlayAttrs);
 					}
 
 					// Restore focus to wherever it was before this dialog was displayed

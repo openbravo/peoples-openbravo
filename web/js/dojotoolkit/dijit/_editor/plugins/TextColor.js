@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -24,8 +24,10 @@ dojo.declare("dijit._editor.plugins.TextColor", dijit._editor._Plugin, {
 	// Override _Plugin.buttonClass to use DropDownButton (with ColorPalette) to control this plugin
 	buttonClass: dijit.form.DropDownButton,
 	
-	//TODO: set initial focus/selection state?
-	
+	// useDefaultCommand: Boolean
+	//		False as we do not use the default editor command/click behavior.
+	useDefaultCommand: false,
+
 	constructor: function(){
 		this.dropDown = new dijit.ColorPalette();
 		this.connect(this.dropDown, "onChange", function(color){
@@ -76,8 +78,8 @@ dojo.declare("dijit._editor.plugins.TextColor", dijit._editor._Plugin, {
 			
 		}
 		
-		if(value !== this.dropDown.attr('value')){
-			this.dropDown.attr('value', value, false);
+		if(value !== this.dropDown.get('value')){
+			this.dropDown.set('value', value, false);
 		}
 	}
 });

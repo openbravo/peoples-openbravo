@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -62,7 +62,7 @@ dojox.drawing.tools.Rect = dojox.drawing.util.oo.declare(
 					{x:s.x, y:s.y+e}
 				]);
 				this.render();
-			} else {
+			}else{
 			
 				// if too small, need to reset
 				var o = this.data;
