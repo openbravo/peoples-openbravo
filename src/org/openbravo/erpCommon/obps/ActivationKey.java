@@ -56,6 +56,7 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -123,7 +124,7 @@ public class ActivationKey {
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
 
-  private static final ActivationKey instance = new ActivationKey();
+  private static ActivationKey instance = new ActivationKey();
 
   /**
    * Obtains the ActivationKey instance. Instances should be get in this way, rather than creating a
@@ -134,12 +135,18 @@ public class ActivationKey {
     return instance;
   }
 
+  public static synchronized void setInstance(ActivationKey ak) {
+    instance = ak;
+  }
+
   /**
    * Reloads ActivationKey instance from information in DB.
    */
   public static synchronized ActivationKey reaload() {
     ActivationKey ak = getInstance();
-    ak.loadInfo();
+    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+        org.openbravo.model.ad.system.System.class, "0");
+    ak.loadInfo(sys.getActivationKey());
     ak.loadRestrictions();
     return ak;
   }
@@ -151,12 +158,21 @@ public class ActivationKey {
    * This constructor is public to maintain backwards compatibility.
    */
   public ActivationKey() {
-    super();
-    loadInfo();
+    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+        org.openbravo.model.ad.system.System.class, "0");
+    strPublicKey = sys.getInstanceKey();
+    String activationKey = sys.getActivationKey();
+    loadInfo(activationKey);
     loadRestrictions();
   }
 
-  private void loadInfo() {
+  public ActivationKey(String publicKey, String activationKey) {
+    strPublicKey = publicKey;
+    loadInfo(activationKey);
+    loadRestrictions();
+  }
+
+  private void loadInfo(String activationKey) {
     // Reset
     isActive = false;
     hasActivationKey = false;
@@ -169,11 +185,6 @@ public class ActivationKey {
     subscriptionActuallyConverted = false;
     tier1Artifacts = null;
     tier2Artifacts = null;
-
-    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-        org.openbravo.model.ad.system.System.class, "0");
-    strPublicKey = sys.getInstanceKey();
-    String activationKey = sys.getActivationKey();
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -355,6 +366,10 @@ public class ActivationKey {
       tier1Artifacts = null;
       tier2Artifacts = null;
     }
+  }
+
+  public LicenseClass getLicenseClass() {
+    return licenseClass;
   }
 
   private File getFileFromDevelopmentPath(String fileName) {
@@ -827,4 +842,28 @@ public class ActivationKey {
     return FeatureRestriction.NO_RESTRICTION;
   }
 
+  /**
+   * Verifies all the commercial installed modules are allowed to the instance.
+   * 
+   * @return List of non allowed modules
+   */
+  public String verifyInstalledModules() {
+    String rt = "";
+
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<Module> mods = OBDal.getInstance().createCriteria(Module.class);
+      mods.add(Expression.eq(Module.PROPERTY_COMMERCIAL, true));
+      mods.addOrder(Order.asc(Module.PROPERTY_NAME));
+      for (Module mod : mods.list()) {
+        if (!isActiveInstance()
+            || isModuleSubscribed(mod.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+          rt += (rt.isEmpty() ? "" : ", ") + mod.getName();
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return rt;
+  }
 }

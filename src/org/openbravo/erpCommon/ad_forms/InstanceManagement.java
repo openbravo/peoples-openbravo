@@ -124,13 +124,20 @@ public class InstanceManagement extends HttpSecureAppServlet {
         buf.append(new String(b, 0, n));
       }
 
-      System sys = OBDal.getInstance().get(System.class, "0");
-      sys.setActivationKey(buf.toString());
-      sys.setInstanceKey(vars.getStringParameter("publicKey"));
-      ActivationKey.reaload();
-      msg.setType("Success");
-      msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-
+      ActivationKey ak = new ActivationKey(vars.getStringParameter("publicKey"), buf.toString());
+      String nonAllowedMods = ak.verifyInstalledModules();
+      if (!nonAllowedMods.isEmpty()) {
+        msg.setType("Error");
+        msg.setMessage(Utility.messageBD(this, "LicenseWithoutAccessTo", vars.getLanguage())
+            + nonAllowedMods);
+      } else {
+        System sys = OBDal.getInstance().get(System.class, "0");
+        sys.setActivationKey(buf.toString());
+        sys.setInstanceKey(vars.getStringParameter("publicKey"));
+        ActivationKey.setInstance(ak);
+        msg.setType("Success");
+        msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      }
     } catch (Exception e) {
       log4j.error(e);
       msg.setType("Error");
