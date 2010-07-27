@@ -184,7 +184,7 @@ END IF;
      VALUES
          (v_OrderLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
         now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
-       :NEW.C_OrderLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt,v_Precision));
+       :NEW.C_OrderLine_ID, v_lineno, Cur_Offer.M_Offer_Id, COALESCE(ROUND(v_Price,v_Precision),0), COALESCE(ROUND(v_Amt,v_Precision),0));
       v_Price := v_PriceNew;
    END IF;
   END LOOP;
