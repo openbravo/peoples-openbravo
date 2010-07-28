@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -19,7 +19,7 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 	//		The individual items for a CheckedMultiSelect
 
 	widgetsInTemplate: true,
-	templateString: dojo.cache("dojox.form", "resources/_CheckedMultiSelectItem.html", "<div class=\"dijitReset ${baseClass}\"\n\t><input class=\"${baseClass}Box\" dojoType=\"dijit.form.CheckBox\" dojoAttachPoint=\"checkBox\" \n\t\tdojoAttachEvent=\"_onClick:_changeBox\" type=\"${_type.type}\" baseClass=\"${_type.baseClass}\"\n\t><div class=\"dijitInline ${baseClass}Label\" dojoAttachPoint=\"labelNode\" dojoAttachEvent=\"onclick:_onClick\"></div\n></div>\n"),
+	templateString: dojo.cache("dojox.form", "resources/_CheckedMultiSelectItem.html", "<div class=\"dijitReset ${baseClass}\"\n\t><input class=\"${baseClass}Box\" dojoType=\"dijit.form.CheckBox\" dojoAttachPoint=\"checkBox\" \n\t\tdojoAttachEvent=\"_onClick:_changeBox\" type=\"${_type.type}\" baseClass=\"${_type.baseClass}\"\n\t/><div class=\"dijitInline ${baseClass}Label\" dojoAttachPoint=\"labelNode\" dojoAttachEvent=\"onclick:_onClick\"></div\n></div>\n"),
 
 	baseClass: "dojoxMultiSelectItem",
 
@@ -62,7 +62,7 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 		//		Called to force the select to match the state of the check box
 		//		(only on click of the checkbox)  Radio-based calls _setValueAttr
 		//		instead.
-		if(this.attr("disabled") || this.attr("readOnly")){ return; }
+		if(this.get("disabled") || this.get("readOnly")){ return; }
 		if(this.parent.multiple){
 			this.option.selected = this.checkBox.attr('value') && true;
 		}else{
@@ -78,7 +78,7 @@ dojo.declare("dojox.form._CheckedMultiSelectItem",
 	_onClick: function(e){
 		// summary:
 		//		Sets the click state (passes through to the check box)
-		if(this.attr("disabled") || this.attr("readOnly")){
+		if(this.get("disabled") || this.get("readOnly")){
 			dojo.stopEvent(e);
 		}else{
 			this.checkBox._onClick(e);

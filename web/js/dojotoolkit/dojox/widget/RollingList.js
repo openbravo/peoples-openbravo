@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -22,7 +22,7 @@ dojo.require("dijit.form.Button");
 dojo.require("dojox.html.metrics");
 
 dojo.require("dojo.i18n"); 
-dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dojox.widget._RollingListPane",
 	[dijit.layout.ContentPane, dijit._Templated, dijit._Contained], {
@@ -895,7 +895,7 @@ dojo.declare("dojox.widget.RollingList",
 					fx();
 				}
 			}else if(idx === 0){
-				this.attr("value", null);
+				this.set("value", null);
 			}
 		});
 		
@@ -1083,7 +1083,7 @@ dojo.declare("dojox.widget.RollingList",
 	
 	_resetValue: function(){
 		// Summary: function called when the value is reset.
-		this.attr("value", this._lastExecutedValue);
+		this.set("value", this._lastExecutedValue);
 	},
 	
 	_onCancel: function(){
@@ -1096,7 +1096,7 @@ dojo.declare("dojox.widget.RollingList",
 	_onExecute: function(){
 		// Summary: function called when the OK button is clicked or when an
 		//		item is selected (double-clicked or "enter" pressed on it)
-		this._lastExecutedValue = this.attr("value");
+		this._lastExecutedValue = this.get("value");
 		this.onExecute();
 	},
 	
@@ -1157,9 +1157,9 @@ dojo.declare("dojox.widget.RollingList",
 		this.connect(this, "addChild", "_updateChildClasses");
 		this.connect(this, "removeChild", "_updateChildClasses");
 		this._setStore(this.store);
-		this.attr("showButtons", this.showButtons);	
+		this.set("showButtons", this.showButtons);	
 		this.inherited(arguments);
-		this._lastExecutedValue = this.attr("value");
+		this._lastExecutedValue = this.get("value");
 	},
 	
 	getChildItems: function(/*item*/ item){

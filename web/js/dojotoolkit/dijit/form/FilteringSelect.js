@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -51,7 +51,13 @@ dojo.declare(
 
 		isValid: function(){
 			// Overrides ValidationTextBox.isValid()
-			return this._isvalid || (!this.required && this.attr('displayedValue') == ""); // #5974
+			return this._isvalid || (!this.required && this.get('displayedValue') == ""); // #5974
+		},
+
+		_refreshState: function(){
+			if(!this.searchTimer){ // state will be refreshed after results are returned
+				this.inherited(arguments);
+			}
 		},
 
 		_callbackSetLabel: function(	/*Array*/ result,
@@ -77,7 +83,7 @@ dojo.declare(
 				this.validate(this._focused);
 				this.item = null;
 			}else{
-				this.attr('item', result[0], priorityChange);
+				this.set('item', result[0], priorityChange);
 			}
 		},
 
@@ -206,7 +212,7 @@ dojo.declare(
 		},
 
 		undo: function(){
-			this.attr('displayedValue', this._lastDisplayedValue);
+			this.set('displayedValue', this._lastDisplayedValue);
 		}
 	}
 );

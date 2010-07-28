@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -28,7 +28,7 @@ dojo.window.get = function(doc){
 	// reference to the real window object (maybe a copy), so we must fix it as well
 	// We use IE specific execScript to attach the real window reference to
 	// document._parentWindow for later use
-	if(dojo.isIE && window !== document.parentWindow && !doc._parentWindow){
+	if(dojo.isIE && window !== document.parentWindow){
 		/*
 		In IE 6, only the variable "window" can be used to connect events (others
 		may be only copies).
@@ -41,7 +41,7 @@ dojo.window.get = function(doc){
 		return win;	//	Window
 	}
 
-	return doc._parentWindow || doc.parentWindow || doc.defaultView;	//	Window
+	return doc.parentWindow || doc.defaultView;	//	Window
 };
 
 dojo.window.scrollIntoView = function(/*DomNode*/ node, /*Object?*/ pos){

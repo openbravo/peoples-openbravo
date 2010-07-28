@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,21 +8,23 @@
 if(!dojo._hasResource["dojox.mobile.compat"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.mobile.compat"] = true;
 dojo.provide("dojox.mobile.compat");
+dojo.require("dojo._base.fx");
 dojo.require("dojo.fx");
+dojo.require("dojox.fx.flip");
 
 // summary:
 //		CSS3 compatibility module
 // description:
-//		This module provides support for some of the CSS3 features to djMobile
+//		This module provides support for some of the CSS3 features to dojox.mobile
 //		for non-CSS3 browsers, such as IE or Firefox.
 //		If you load this module, it directly replaces some of the methods of
-//		djMobile instead of subclassing. This way, html pages remains the same
+//		dojox.mobile instead of subclassing. This way, html pages remains the same
 //		regardless of whether this compatibility module is used or not.
-//		Recommended usage is as follows. the code below loads dojox.mobile._compat
+//		Recommended usage is as follows. the code below loads dojox.mobile.compat
 //		only when isWebKit is true.
 //
 //		dojo.require("dojox.mobile");
-//		ojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
+//		dojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
 //
 //		This module also loads compatibility CSS files, which has -compat.css
 //		suffix. You should use the <link> tag instead of @import to load theme
@@ -32,76 +34,56 @@ dojo.require("dojo.fx");
 //		Of course, you can explicitly load iphone.css and iphone-compat.css
 //		with the @import rule if you would like.
 
-dojo.extend(dojox.mobile.Page, {
-	performTransition: function(/*String|DomNode*/toNode, dir, transition, /*Object|null*/context, /*String|Function*/method /*optional args*/){
-		// summary:
-		//		Function to perform the various types of page transitions, such as fade, slide, and flip, using
-		//		dojo.animateProperty and dojox.gfx where possible.  Some effects cannot be simulated, such as flip.
-		// toNode: DOMNode
-		//		The DOM	node to transition the view to.
-		// dir: Number
-		//		The direction to slide, positive for slide right, negative for slide left.
-		// transision: Object
-		//		The tioe of transition to perform.
-		// context: Object
-		//		The context object TODO: Doc this better, need to follow up with Kamiyama.
-		// method: String|Function
-		//		The method name or function to use as part of the transition
-		//		TODO:  Followup with Kamiyama for better documentation.
-		// tags:
-		//		public
-		var a, _this;
-		this._context = context;
-		this._method = method;
-		var args = [];
-		if(context || method){
-			for(var i = 5; i < arguments.length; i++){
-				args.push(arguments[i]);
-			}
-		}
-		this._args = args;
-		if(!toNode){
-			if(!this._dummyNode){
-				this._dummyNode = dojo.doc.createElement("DIV");
-				dojo.body().appendChild(this._dummyNode);
-			}
-			toNode = this._dummyNode;
-		}
-		var fromNode = this.domNode;
-		toNode = this.toNode = dojo.byId(toNode);
+dojo.extend(dojox.mobile.View, {
+	_doTransition: function(fromNode, toNode, transition, dir){
+		var anim;
 		this.wakeUp(toNode);
-        if(transition == "none"){
-			fromNode.style.display = "none";
-			toNode.style.position = "absolute";
-			toNode.style.left = "0px";
-			toNode.style.top = fromNode.offsetTop + "px";
+		if(!transition || transition == "none"){
 			toNode.style.display = "";
+			fromNode.style.display = "none";
+			toNode.style.left = "0px";
 			this.invokeCallback();
 		}else if(transition == "slide"){
 			var w = fromNode.offsetWidth;
 			var s1 = dojo.fx.slideTo({
 				node: fromNode,
-				duration: 500,
-				left: -w*dir
+				duration: 400,
+				left: -w*dir,
+				top: fromNode.offsetTop
 			});
 			var s2 = dojo.fx.slideTo({
 				node: toNode,
-				duration: 500,
+				duration: 400,
 				left: 0
 			});
 			toNode.style.position = "absolute";
 			toNode.style.left = w*dir + "px";
-			toNode.style.top = fromNode.offsetTop + "px";
 			toNode.style.display = "";
-			a = dojo.fx.combine([s1,s2]);
-			_this = this;
-			dojo.connect(a, "onEnd", function(){
+			anim = dojo.fx.combine([s1,s2]);
+			dojo.connect(anim, "onEnd", this, function(){
 				fromNode.style.display = "none";
-				_this.invokeCallback();
+				toNode.style.position = "relative";
+				this.invokeCallback();
 			});
-			a.play();
-		}else if(transition == "fade" || transition == "flip"){
-			a = dojo.fx.chain([
+			anim.play();
+		}else if(transition == "flip"){
+			anim = dojox.fx.flip({
+				node: fromNode,
+				dir: "right",
+				depth: 0.5,
+				duration: 400
+			});
+			toNode.style.position = "absolute";
+			toNode.style.left = "0px";
+			dojo.connect(anim, "onEnd", this, function(){
+				fromNode.style.display = "none";
+				toNode.style.position = "relative";
+				toNode.style.display = "";
+				this.invokeCallback();
+			});
+			anim.play();
+		}else if(transition == "fade"){
+			anim = dojo.fx.chain([
 				dojo.fadeOut({
 					node: fromNode,
 					duration: 600
@@ -113,16 +95,15 @@ dojo.extend(dojox.mobile.Page, {
 			]);
 			toNode.style.position = "absolute";
 			toNode.style.left = "0px";
-			toNode.style.top = fromNode.offsetTop + "px";
-			dojo.style(toNode, "opacity", 0);
 			toNode.style.display = "";
-			_this = this;
-			dojo.connect(a, "onEnd", function(){
+			dojo.style(toNode, "opacity", 0);
+			dojo.connect(anim, "onEnd", this, function(){
 				fromNode.style.display = "none";
+				toNode.style.position = "relative";
 				dojo.style(fromNode, "opacity", 1);
-				_this.invokeCallback();
+				this.invokeCallback();
 			});
-			a.play();
+			anim.play();
 		}
 	},
 
@@ -136,6 +117,7 @@ dojo.extend(dojox.mobile.Page, {
 		//		public
 		if(dojo.isIE && !node._wokeup){
 			node._wokeup = true;
+			var disp = node.style.display;
 			node.style.display = "";
 			var nodes = node.getElementsByTagName("*");
 			for(var i = 0, len = nodes.length; i < len; i++){
@@ -144,39 +126,7 @@ dojo.extend(dojox.mobile.Page, {
 				nodes[i].style.display = "";
 				nodes[i].style.display = val;
 			}
-		}
-	},
-
-	_loadCss: function (/*String|Array*/files){
-		// summary:
-		//		Function to load and register CSS files with the page
-		//	files: String|Array
-		//		The CSS files to load and register with the page.
-		// tags:
-		//		private
-		if(!dojo.global._loadedCss){dojo.global._loadedCss = {};}
-		if(!dojo.isArray(files)){ files = [files]; }
-		for(var i = 0; i < files.length; i++){
-			var file = files[i];
-			if(!dojo.global._loadedCss[file]){
-				dojo.global._loadedCss[file] = true;
-				if(dojo.doc.createStyleSheet){
-					// for some reason, IE hangs when you try to load
-					// multiple css files almost at once.
-					setTimeout(function(file){
-						return function(){
-							dojo.doc.createStyleSheet(file);
-						};
-					}(file), 0);
-				}else{
-					var link = dojo.doc.createElement("link");
-					link.href = file;
-					link.type = "text/css";
-					link.rel = "stylesheet";
-					var head = dojo.doc.getElementsByTagName('head')[0];
-					head.appendChild(link);
-				}
-			}
+			node.style.display = disp;
 		}
 	}
 });
@@ -192,33 +142,33 @@ dojo.extend(dojox.mobile.Switch, {
 		this.domNode.className = "mblSwitch";
 		this.domNode.innerHTML =
 			  '<div class="mblSwitchInner">'
-			+   '<div class="mblSwitchBg mblSwitchBgLeft">'
-			+     '<div class="mblSwitchCorner mblSwitchCorner1T"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner2T"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner3T"></div>'
-			+     '<div class="mblSwitchText mblSwitchTextLeft">'+this.leftLabel+'</div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner1B"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner2B"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner3B"></div>'
-			+   '</div>'
-			+   '<div class="mblSwitchBg mblSwitchBgRight">'
-			+     '<div class="mblSwitchCorner mblSwitchCorner1T"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner2T"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner3T"></div>'
-			+     '<div class="mblSwitchText mblSwitchTextRight">'+this.rightLabel+'</div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner1B"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner2B"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner3B"></div>'
-			+   '</div>'
-			+   '<div class="mblSwitchKnobContainer">'
-			+     '<div class="mblSwitchCorner mblSwitchCorner1T"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner2T"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner3T"></div>'
-			+     '<div class="mblSwitchKnob"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner1B"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner2B"></div>'
-			+     '<div class="mblSwitchCorner mblSwitchCorner3B"></div>'
-			+   '</div>'
+			+	'<div class="mblSwitchBg mblSwitchBgLeft">'
+			+		'<div class="mblSwitchCorner mblSwitchCorner1T"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner2T"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner3T"></div>'
+			+		'<div class="mblSwitchText mblSwitchTextLeft">'+this.leftLabel+'</div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner1B"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner2B"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner3B"></div>'
+			+	'</div>'
+			+	'<div class="mblSwitchBg mblSwitchBgRight">'
+			+		'<div class="mblSwitchCorner mblSwitchCorner1T"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner2T"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner3T"></div>'
+			+		'<div class="mblSwitchText mblSwitchTextRight">'+this.rightLabel+'</div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner1B"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner2B"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner3B"></div>'
+			+	'</div>'
+			+	'<div class="mblSwitchKnobContainer">'
+			+		'<div class="mblSwitchCorner mblSwitchCorner1T"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner2T"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner3T"></div>'
+			+		'<div class="mblSwitchKnob"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner1B"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner2B"></div>'
+			+		'<div class="mblSwitchCorner mblSwitchCorner3B"></div>'
+			+	'</div>'
 			+ '</div>';
 		var n = this.inner = this.domNode.firstChild;
 		this.left = n.childNodes[0];
@@ -276,6 +226,7 @@ dojo.extend(dojox.mobile.RoundRect, {
 	}
 });
 
+dojox.mobile.RoundRectList._addChild = dojox.mobile.RoundRectList.prototype.addChild;
 dojo.extend(dojox.mobile.RoundRectList, {
 	buildRendering: function(){
 		// summary:
@@ -288,20 +239,51 @@ dojo.extend(dojox.mobile.RoundRectList, {
 	},
 
 	postCreate: function(){
+		this.redrawBorders();
+	},
+
+	addChild: function(widget){
+		dojox.mobile.RoundRectList._addChild.apply(this, arguments);
+		this.redrawBorders();
+		if(dojox.mobile.applyPngFilter){
+			dojox.mobile.applyPngFilter(widget.domNode);
+		}
+	},
+
+	redrawBorders: function(){
 		// summary:
 		//		Function to adjust the creation of RoundRectLists on IE.
 		//		Removed undesired styles.
 		// tags:
-		//		protected
+		//		public
 
 		// Remove a border of the last ListItem.
 		// This is for browsers that do not support the last-child CSS pseudo-class.
+
+		var lastChildFound = false;
 		for(var i = this.containerNode.childNodes.length - 1; i >= 0; i--){
 			var c = this.containerNode.childNodes[i];
 			if(c.tagName == "LI"){
-				c.style.borderStyle = "none";
-				break;
+				c.style.borderBottomStyle = lastChildFound ? "solid" : "none";
+				lastChildFound = true;
 			}
+		}
+	}
+});
+
+dojo.extend(dojox.mobile.EdgeToEdgeList, {
+	buildRendering: function(){
+		this.domNode = this.containerNode = this.srcNodeRef || dojo.doc.createElement("UL");
+		this.domNode.className = "mblEdgeToEdgeList";
+	}
+});
+
+dojox.mobile.IconContainer._addChild = dojox.mobile.IconContainer.prototype.addChild;
+dojo.extend(dojox.mobile.IconContainer, {
+	addChild: function(widget){
+		dojox.mobile.IconContainer._addChild.apply(this, arguments);
+		if(dojox.mobile.applyPngFilter){
+			dojox.mobile.applyPngFilter(widget.domNode);
 		}
 	}
 });
@@ -313,20 +295,21 @@ dojo.mixin(dojox.mobile, {
 		//		Deals with IE's lack of borderRadius support
 		// tags:
 		//		public
+		var i;
 		_this.domNode = dojo.doc.createElement("DIV");
 		_this.domNode.style.padding = "0px";
 		_this.domNode.style.backgroundColor = "transparent";
 		_this.domNode.style.borderStyle = "none";
 		_this.containerNode = dojo.doc.createElement(isList?"UL":"DIV");
 		_this.containerNode.className = "mblRoundRectContainer";
-		_this.srcNodeRef.parentNode.replaceChild(_this.domNode, _this.srcNodeRef);
-		_this.domNode.appendChild(_this.containerNode);
-
-		var i;
-		for(i = 0, len = _this.srcNodeRef.childNodes.length; i < len; i++){
-			_this.containerNode.appendChild(_this.srcNodeRef.removeChild(_this.srcNodeRef.firstChild));
+		if(_this.srcNodeRef){
+			_this.srcNodeRef.parentNode.replaceChild(_this.domNode, _this.srcNodeRef);
+			for(i = 0, len = _this.srcNodeRef.childNodes.length; i < len; i++){
+				_this.containerNode.appendChild(_this.srcNodeRef.removeChild(_this.srcNodeRef.firstChild));
+			}
+			_this.srcNodeRef = null;
 		}
-		_this.srcNodeRef = null;
+		_this.domNode.appendChild(_this.containerNode);
 
 		for(i = 0; i <= 5; i++){
 			var top = dojo.create("DIV");
@@ -342,18 +325,85 @@ dojo.mixin(dojox.mobile, {
 
 } // if(dojo.isIE)
 
-dojo.addOnLoad(function(){
+if(dojo.isIE <= 6){
+	dojox.mobile.applyPngFilter = function(root){
+		root = root || dojo.body();
+		var nodes = root.getElementsByTagName("IMG");
+		var blank = dojo.moduleUrl("dojo", "resources/blank.gif");
+		for(var i = 0, len = nodes.length; i < len; i++){
+			var img = nodes[i];
+			var w = img.offsetWidth;
+			var h = img.offsetHeight;
+			if(w === 0 || h === 0){ return; }
+			var src = img.src;
+			if(src.indexOf("resources/blank.gif") != -1){ continue; }
+			img.src = blank;
+			img.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + src+"')";
+			img.style.width = w + "px";
+			img.style.height = h + "px";
+		}
+	};
+} // if(dojo.isIE <= 6)
+
+dojox.mobile.loadCss = function(/*String|Array*/files){
+	// summary:
+	//		Function to load and register CSS files with the page
+	//	files: String|Array
+	//		The CSS files to load and register with the page.
+	// tags:
+	//		private
+	if(!dojo.global._loadedCss){
+		var obj = {};
+		dojo.forEach(dojo.doc.getElementsByTagName("link"), function(item){
+			obj[item.href] = true;
+		});
+		dojo.global._loadedCss = obj;
+	}
+	if(!dojo.isArray(files)){ files = [files]; }
+	for(var i = 0; i < files.length; i++){
+		var file = files[i];
+		if(!dojo.global._loadedCss[file]){
+			dojo.global._loadedCss[file] = true;
+			if(dojo.doc.createStyleSheet){
+				// for some reason, IE hangs when you try to load
+				// multiple css files almost at once.
+				setTimeout(function(file){
+					return function(){
+						dojo.doc.createStyleSheet(file);
+					};
+				}(file), 0);
+			}else{
+				var link = dojo.doc.createElement("link");
+				link.href = file;
+				link.type = "text/css";
+				link.rel = "stylesheet";
+				var head = dojo.doc.getElementsByTagName('head')[0];
+				head.appendChild(link);
+			}
+		}
+	}
+};
+
+dojox.mobile.loadCompatCssFiles = function(){
 	// summary:
 	//		Function to perform page-level adjustments on browsers such as
-	//		IE and firefox.  It loads compat specific css files into the 
+	//		IE and firefox.  It loads compat specific css files into the
 	//		page header.
 	var elems = dojo.doc.getElementsByTagName("link");
 	for(var i = 0, len = elems.length; i < len; i++){
 		var href = elems[i].href;
-		if(href.indexOf("/themes/") != 0 && href.substring(href.length - 4) == ".css"){
+		if((href.indexOf("/mobile/themes/") != -1 || location.href.indexOf("/mobile/tests/") != -1)
+			 && href.substring(href.length - 4) == ".css"){
 			var compatCss = href.substring(0, href.length-4)+"-compat.css";
-			dojox.mobile.Page.prototype._loadCss(compatCss);
+			dojox.mobile.loadCss(compatCss);
 		}
+	}
+};
+
+dojo.addOnLoad(function(){
+	dojox.mobile.loadCompatCssFiles();
+	if(dojox.mobile.applyPngFilter){
+		dojox.mobile.applyPngFilter();
 	}
 });
 

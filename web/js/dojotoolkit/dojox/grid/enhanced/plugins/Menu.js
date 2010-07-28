@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -30,9 +30,9 @@ dojo.declare("dojox.grid.enhanced.plugins.Menu", null, {
 		!this.rowMenu && (this.rowMenu = this._getMenuWidget(this.menus['rowMenu']));
 		!this.cellMenu && (this.cellMenu = this._getMenuWidget(this.menus['cellMenu']));
 		!this.selectedRegionMenu && (this.selectedRegionMenu = this._getMenuWidget(this.menus['selectedRegionMenu']));
-		this.headerMenu && this.attr('headerMenu', this.headerMenu) && this.setupHeaderMenu();
-		this.rowMenu && this.attr('rowMenu', this.rowMenu);
-		this.cellMenu && this.attr('cellMenu', this.cellMenu);
+		this.headerMenu && this.set('headerMenu', this.headerMenu) && this.setupHeaderMenu();
+		this.rowMenu && this.set('rowMenu', this.rowMenu);
+		this.cellMenu && this.set('cellMenu', this.cellMenu);
 		this.isDndSelectEnable && this.selectedRegionMenu && dojo.connect(this.select, 'setDrugCoverDivs', dojo.hitch(this, this._bindDnDSelectEvent));
 	},
 	

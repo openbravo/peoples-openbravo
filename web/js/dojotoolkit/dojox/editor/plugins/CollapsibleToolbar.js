@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -13,7 +13,7 @@ dojo.require("dijit._Widget")
 dojo.require("dijit._Templated");
 dojo.require("dijit._editor._Plugin");
 
-dojo.requireLocalization("dojox.editor.plugins", "CollapsibleToolbar", null, "ROOT");
+dojo.requireLocalization("dojox.editor.plugins", "CollapsibleToolbar", null, "ROOT,ro");
 
 dojo.declare("dojox.editor.plugins._CollapsibleToolbarButton", [dijit._Widget, dijit._Templated], {
 	// summary:

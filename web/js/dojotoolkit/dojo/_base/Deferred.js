@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,9 +8,10 @@
 if(!dojo._hasResource["dojo._base.Deferred"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojo._base.Deferred"] = true;
 dojo.provide("dojo._base.Deferred");
+dojo.require("dojo._base.lang");
 
 (function(){
-		
+	var mutator = function(){};		
 	var freeze = Object.freeze || function(){};
 	// A deferred provides an API for creating and resolving a promise.
 	dojo.Deferred = function(/*Function?*/canceller){
@@ -155,11 +156,6 @@ dojo.provide("dojo._base.Deferred");
 	//
 	//		Note that the caller doesn't have to change his code at all to
 	//		handle the asynchronous case.
-		return new Deferred(canceller);
-	} 
-	var mutator = function(){};
-	
-	function Deferred(canceller){
 		var result, finished, isError, head, nextListener;
 		var promise = this.promise = {};
 		
@@ -184,10 +180,11 @@ dojo.provide("dojo._base.Deferred");
 					try {
 						var newResult = func(result);
 						if (newResult && typeof newResult.then === "function") {
-							newResult.then(listener.deferred.resolve, listener.deferred.reject);
+							newResult.then(dojo.hitch(listener.deferred, "resolve"), dojo.hitch(listener.deferred, "reject"));
 							continue;
 						}
-						listener.deferred.resolve(mutated && newResult === undefined ? result : newResult);
+						var unchanged = mutated && newResult === undefined;
+						listener.deferred[unchanged && isError ? "reject" : "resolve"](unchanged ? result : newResult);
 					}
 					catch (e) {
 						listener.deferred.reject(e);
@@ -202,22 +199,26 @@ dojo.provide("dojo._base.Deferred");
 			}	
 		}
 		// calling resolve will resolve the promise
-		var resolve = this.resolve = this.callback = function(value){
+		this.resolve = this.callback = function(value){
 			// summary:
 			//		Fulfills the Deferred instance successfully with the provide value
-			this.fired = 0; 
+			this.fired = 0;
+			this.results = [value, null];
 			complete(value);
 		};
 		
 		
 		// calling error will indicate that the promise failed
-		var reject = this.reject = this.errback = function(error){
+		this.reject = this.errback = function(error){
 			// summary:
 			//		Fulfills the Deferred instance as an error with the provided error 
 			isError = true;
 			this.fired = 1;
 			complete(error);
-			(dojo.config.deferredOnError || function(x){ console.error(x); })(error);
+			this.results = [null, error];
+			if(!error || error.log !== false){
+				(dojo.config.deferredOnError || function(x){ console.error(x); })(error);
+			}
 		};
 		// call progress to provide updates on the progress on the completion of the promise
 		this.progress = function(update){
@@ -258,7 +259,7 @@ dojo.provide("dojo._base.Deferred");
 			//		|		then(printResult, onError);
   			//		|	>44 
 			// 		
-			var returnDeferred = progressCallback == mutator ? this : new Deferred(promise.cancel);
+			var returnDeferred = progressCallback == mutator ? this : new dojo.Deferred(promise.cancel);
 			var listener = {
 				resolved: resolvedCallback, 
 				error: errorCallback, 
@@ -276,21 +277,24 @@ dojo.provide("dojo._base.Deferred");
 			}
 			return returnDeferred.promise;
 		};
-		
+		var deferred = this;
 		this.cancel = promise.cancel = function () {
 			// summary:
 			//		Cancels the asynchronous operation
 			if(!finished){
-				var error = canceller && canceller(this);
-				if (!(error instanceof Error)) {
-					error = new Error(error);
+				var error = canceller && canceller(deferred);
+				if(!finished){
+					if (!(error instanceof Error)) {
+						error = new Error(error);
+					}
+					error.log = false;
+					deferred.reject(error);
 				}
-				reject(error);
 			}
 		}
 		freeze(promise);
 	};
-	dojo.extend(Deferred, {
+	dojo.extend(dojo.Deferred, {
 		addCallback: function (/*Function*/callback) {
 			return this.addCallbacks(dojo.hitch.apply(dojo, arguments));
 		},
@@ -305,7 +309,6 @@ dojo.provide("dojo._base.Deferred");
 		},
 		fired: -1
 	});
-	
 })();
 dojo.when = function(promiseOrValue, /*Function?*/callback, /*Function?*/errback, /*Function?*/progressHandler){
 	// summary:

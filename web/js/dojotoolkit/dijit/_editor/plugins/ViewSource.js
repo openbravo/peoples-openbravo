@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -15,7 +15,7 @@ dojo.require("dojo.i18n");
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
 
-dojo.requireLocalization("dijit._editor", "commands", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit._editor", "commands", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 	// summary:
@@ -59,16 +59,19 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 		// If we did it all the time, buttons like bold, italic, etc
 		// break.
 		if(dojo.isWebKit){this._vsFocused = true;}
-		this.button.attr("checked", !this.button.attr("checked"));
+		this.button.set("checked", !this.button.get("checked"));
 
 	},
 
 	_initButton: function(){
 		// summary:
 		//		Over-ride for creation of the resize button.
-		var strings = dojo.i18n.getLocalization("dijit._editor", "commands");
+		var strings = dojo.i18n.getLocalization("dijit._editor", "commands"),
+			editor = this.editor;
 		this.button = new dijit.form.ToggleButton({
 			label: strings["viewSource"],
+			dir: editor.dir,
+			lang: editor.lang,
 			showLabel: false,
 			iconClass: this.iconClassPrefix + " " + this.iconClassPrefix + "ViewSource",
 			tabIndex: "-1",
@@ -88,7 +91,7 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 			}, dojo.body());
 		}
 		// Make sure readonly mode doesn't make the wrong cursor appear over the button.
-		this.button.attr("readOnly", false);
+		this.button.set("readOnly", false);
 	},
 
 
@@ -146,19 +149,19 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 					}
 				};
 				this.editor.onDisplayChanged();
-				html = ed.attr("value");
+				html = ed.get("value");
 				html = this._filter(html);
-				ed.attr("value", html);
+				ed.set("value", html);
 				this._pluginList = [];
 				this._disabledPlugins = dojo.filter(edPlugins, function(p){
 					// Turn off any plugins not controlled by queryCommandenabled.
-					if(p && p.button && !p.button.attr("disabled") &&
+					if(p && p.button && !p.button.get("disabled") &&
 						!(p instanceof dijit._editor.plugins.ViewSource)){
 						p._vs_updateState = p.updateState;
 						p.updateState = function(){
 							return false;
 						};
-						p.button.attr("disabled", true);
+						p.button.set("disabled", true);
 						if(p.command){
 							// FF has a weird behavior when spellcheck is off,
 							// queryCommandValue() returns true on the doc, and as such
@@ -172,7 +175,7 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 								case "strikethrough":
 								case "superscript":
 								case "subscript":
-									p.button.attr("checked", false);
+									p.button.set("checked", false);
 									break;
 								default:
 									break;
@@ -254,12 +257,14 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 				if(!this._readOnly){
 					html = this.sourceArea.value;
 					html = this._filter(html);
-					ed.attr("value", html);
+					ed.beginEditing();
+					ed.set("value", html);
+					ed.endEditing();
 				}
 
 				dojo.forEach(this._disabledPlugins, function(p){
 					// Turn back on any plugins we turned off.
-					p.button.attr("disabled", false);
+					p.button.set("disabled", false);
 					if(p._vs_updateState){
 						p.updateState = p._vs_updateState;
 					}
@@ -283,7 +288,7 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 						container.resize();
 					}
 				}
-                ed.resize()
+                ed.resize();
 			}), 300);
 		}catch(e){
 			console.log(e);
@@ -431,7 +436,7 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 		this.connect(this.sourceArea, "onkeydown", dojo.hitch(this, function(e){
 			if(this._sourceShown && e.keyCode == dojo.keys.F12 && e.ctrlKey && e.shiftKey){
 				this.button.focus();
-				this.button.attr("checked", false);
+				this.button.set("checked", false);
 				setTimeout(dojo.hitch(this, function(){ed.focus();}), 100);
 				dojo.stopEvent(e);
 			}
@@ -448,7 +453,7 @@ dojo.declare("dijit._editor.plugins.ViewSource",dijit._editor._Plugin,{
 		if(html){
 			// Look for closed and unclosed (malformed) script attacks.
 			html = html.replace(/<\s*script[^>]*>((.|\s)*?)<\\?\/\s*script\s*>/ig, "");
-			html = html.replace(/<\s*script\b([^<>]|\s)*>?/ig, "")
+			html = html.replace(/<\s*script\b([^<>]|\s)*>?/ig, "");
 			html = html.replace(/<[^>]*=(\s|)*[("|')]javascript:[^$1][(\s|.)]*[$1][^>]*>/ig, "");
 		}
 		return html;

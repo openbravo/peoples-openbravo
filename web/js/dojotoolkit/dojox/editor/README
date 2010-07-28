@@ -12,8 +12,12 @@ Credits
 	Jared Jurkiewicz - Author (PrettyPrint, PageBreak, ShowBlockNodes, 
 		Preview, Save, ToolbarLineBreak, InsertEntity, 
 		NormalizeIndentOutdent, Breadcrumb, FindReplace, 
-		CollapsibleToolbar, Blockquote, PasteFromWord, InsertAnchor)
+		CollapsibleToolbar, Blockquote, PasteFromWord, InsertAnchor,
+		TextColor, NormalizeStyle, StatusBar)
 	Dustin Machi 	 - Technical Assistance
+	David Schwartz and Gu Yi He (IBM) - Contributed enhancements to the
+		look and feel of FindReplace, as well as behavioral
+		improvements.
 -------------------------------------------------------------------------------
 Project description
 
@@ -118,12 +122,28 @@ dojox.editor.plugins.InsertAnchor:
 	A plugin that allows anchor points to be inserted into the document being edited.
 	The anchors are styled in the doc to make them easily visible/editable in the document.
 
+dojox.editor.plugins.TextColor:
+	Status: Experimental (unsupported).
+	A plugin that makes use of the dojox.widget.ColorPicker widget in lieu of the
+	dijit.ColorPalette.  
+
+dojox.editor.plugins.NormalizeStyle:
+	Status: Experimental (unsupported).
+	A plugin that tries to normalize the output from the editor as either CSS styled or semantic (<b>, <i>, etc)
+	style.
+
+dojox.editor.plugins.StatusBar:
+	Status: Experimental (unsupported).
+	A plugin that adds a status bar and an optional resize handle to the footer of the editor.
+
 -------------------------------------------------------------------------------
 Dependencies:
 
 dijit
 dojox.form
 dojox.html.format
+dojox.widget.ColorPicker
+dojox.layout.ResizeHandle
 
 -------------------------------------------------------------------------------
 Documentation
@@ -145,7 +165,10 @@ See also:
         http://docs.dojocampus.org/dojox/editor/plugins/CollapsibleToolbar
 	http://docs.dojocampus.org/dojox/editor/plugins/Blockquote
 	http://docs.dojocampus.org/dojox/editor/plugins/PasteFromWord
-	http://docs.dojocampus.org/dojox/editor/plugins/InsertAnchor        
+	http://docs.dojocampus.org/dojox/editor/plugins/InsertAnchor       
+	http://docs.dojocampus.org/dojox/editor/plugins/TextColor
+	http://docs.dojocampus.org/dojox/editor/plugins/NormalizeStyle
+	http://docs.dojocampus.org/dojox/editor/plugins/StatusBar 
 
 -------------------------------------------------------------------------------
 Plugin Installation instructions
@@ -235,6 +258,21 @@ For the InsertAnchor plugin:
         and CSS:
         <link href="[path]dojox/editor/plugins/resources/css/InsertAnchor.css" type="text/css" rel="stylesheet" />
 
+For the TextColor plugin:
+	dojo.require("dojox.editor.plugins.TextColor");
+	and CSS:
+	<link href="[path]dojox/editor/plugins/resources/css/TextColor.css" type="text/css" rel="stylesheet" />
+
+For the NormalizeStyle plugin:
+	dojo.require("dojox.editor.plugins.NormalizeStyle");
+	and CSS:
+	No CSS required.
+
+For the StatusBar plugin:
+        dojo.require("dojox.editor.plugins.StatusBar");
+        and CSS:
+        <link href="[path]dojox/editor/plugins/resources/css/StatusBar.css" type="text/css" rel="stylesheet" />
+
 See tests for examples:
 	dojox/editor/tests/editorTablePlugs.html
 	dojox/editor/tests/editorUploadPlug.html
@@ -252,3 +290,7 @@ See tests for examples:
 	dojox/editor/tests/editorBlockquote.html
 	dojox/editor/tests/editorPasteFromWord.html
 	dojox/editor/tests/editorInsertAnchor.html
+	dojox/editor/tests/editorTextColor.html
+	dojox/editor/tests/editorNormalizeStyle.html
+	dojox/editor/tests/editorStatusBar.html
+	dojox/editor/tests/testPluginsAll.html

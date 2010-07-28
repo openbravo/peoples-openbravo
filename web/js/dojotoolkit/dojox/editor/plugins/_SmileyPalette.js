@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -15,7 +15,7 @@ dojo.require("dojo.i18n");
 
 dojo.require("dijit._PaletteMixin");
 
-dojo.requireLocalization("dojox.editor.plugins", "Smiley", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
+dojo.requireLocalization("dojox.editor.plugins", "Smiley", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ro,ru,zh,zh-tw");
 
 dojo.experimental("dojox.editor.plugins._SmileyPalette");
 
@@ -38,7 +38,7 @@ dojo.declare("dojox.editor.plugins._SmileyPalette",
 	//		The template of this widget.
 	templateString: 
 		'<table class="dijitInline dijitEditorSmileyPalette dijitPaletteTable"' +
-		' cellSpacing=0 cellPadding=0 dojoAttachPoint="gridNode"></table>',
+		' cellSpacing=0 cellPadding=0><tbody dojoAttachPoint="gridNode"></tbody></table>',
 
 	baseClass: "dijitEditorSmileyPalette",
 

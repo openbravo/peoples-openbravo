@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -24,14 +24,13 @@ dojox.drawing.tools.Line = dojox.drawing.util.oo.declare(
 			//	Overwrites _Base.onTransformEnd
 			//
 			this._toggleSelected();
-			//ace: This sets the zero length vector to zero within the minimum size 
 			if(this.getRadius()<this.minimumSize){ 
 				var p = this.points; 
 				this.setPoints([ 
 					{x:p[0].x, y:p[0].y}, 
 					{x:p[0].x, y:p[0].y} 
 				]); 
-			} else {
+			}else{
 				var d = this.data;
 				var obj = {start:{x:d.x1,y:d.y1},x:d.x2,y:d.y2};
 				var pt = this.util.snapAngle(obj, this.angleSnap/180);
@@ -95,7 +94,7 @@ dojox.drawing.tools.Line = dojox.drawing.util.oo.declare(
 				]);
 				this.render();
 				
-			} else {
+			}else{
 				// if too small, need to reset
 				
 				if(this.getRadius()<this.minimumSize){
