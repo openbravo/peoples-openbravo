@@ -48,7 +48,12 @@ class ToolBar_Image implements HTMLElement {
     toolbar.append("<img class=\"Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_").append(
         imageClass).append("\" src=\"").append(base_direction).append("/images/blank.gif\" ");
     toolbar.append("title=\"").append(description);
-    toolbar.append("\" border=\"0\" id=\"button").append(name).append("\"");
+    // Needed to build the HTML tag id as refresh has in classic layout
+    if (name.equals("Refresh")) {
+      toolbar.append("\" border=\"0\" id=\"linkButton").append(name).append("\"");
+    } else {
+      toolbar.append("\" border=\"0\" id=\"button").append(name).append("\"");
+    }
     toolbar.append(">");
     return toolbar.toString();
   }
