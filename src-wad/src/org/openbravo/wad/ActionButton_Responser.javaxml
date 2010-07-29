@@ -72,7 +72,7 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
       FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess("P",
           strProcessId);
       if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
-        licenseError("P", strProcessId, featureRestriction, response, vars);
+        licenseError("P", strProcessId, featureRestriction, response, vars, true);
       }
       if (!hasGeneralAccess(vars, "P", strProcessId)) {
         bdErrorGeneralPopUp(request, response,
