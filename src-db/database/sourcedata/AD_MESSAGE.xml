@@ -30291,8 +30291,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--2BEC27AADFC4404C8170AA87F5107E1E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2BEC27AADFC4404C8170AA87F5107E1E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2BEC27AADFC4404C8170AA87F5107E1E-->  <VALUE><![CDATA[LicenseWithoutAccessTo]]></VALUE>
-<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <MSGTEXT><![CDATA[Current license has not access to the following installed modules. Uninstall them before renewing the license:
-]]></MSGTEXT>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <MSGTEXT><![CDATA[Current license has not access to the following installed modules. Uninstall them before renewing the license:<br/>]]></MSGTEXT>
 <!--2BEC27AADFC4404C8170AA87F5107E1E-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--2BEC27AADFC4404C8170AA87F5107E1E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2BEC27AADFC4404C8170AA87F5107E1E--></AD_MESSAGE>
