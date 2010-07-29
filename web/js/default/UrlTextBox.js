@@ -45,7 +45,7 @@ isMissingUrlTextBox= function(/*String*/ id){
 isValidUrl = function(/*String*/str_url) {
   if (str_url.length == 0) return true;
 // url parsing and formatting routimes. modify them if you wish other url format
-	var re_date = /^([http|ftp])+\:\/\/(([A-Za-z0-9]+)(\.)?)+((\/)([A-Za-z0-9]*(\.)?[A-Za-z0-9]*))*$/;
+	var re_date = /^([http|ftp])+\:\/\/(([A-Za-z0-9]+)(\.)?(\-)?)+((\/)([A-Za-z0-9\-\_]*(\.)?[A-Za-z0-9\-\_]*))*$/;
 	if (!re_date.exec(str_url))
 		return false;
 	return (true);
