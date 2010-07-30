@@ -81,6 +81,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FIN_PAYMENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_TAXPAYMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -98,6 +102,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_SETTLEMENT" name="C_TAXPAYMENT_C_SETTLEMENT">
         <reference local="C_SETTLEMENT_ID" foreign="C_SETTLEMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENT" name="C_TAXPAYMENT_FIN_PAYMENT">
+        <reference local="FIN_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="GL_JOURNAL" name="C_TAXPAYMENT_GL_JOURNAL">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
