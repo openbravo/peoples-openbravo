@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -25,9 +25,9 @@ dojo.declare(
 		//	|		Name: <input type="text" name="name" />
 		//	|	</form>
 		//	|	myObj = {name: "John Doe"};
-		//	|	dijit.byId('myForm').attr('value', myObj);
+		//	|	dijit.byId('myForm').set('value', myObj);
 		//	|
-		//	|	myObj=dijit.byId('myForm').attr('value');
+		//	|	myObj=dijit.byId('myForm').get('value');
 
 		// HTML <FORM> attributes
 
@@ -59,7 +59,7 @@ dojo.declare(
 		//		Target frame for the document to be opened in.
 		target: "",
 
-		templateString: "<form dojoAttachPoint='containerNode' dojoAttachEvent='onreset:_onReset,onsubmit:_onSubmit' ${nameAttrSetting}></form>",
+		templateString: "<form dojoAttachPoint='containerNode' dojoAttachEvent='onreset:_onReset,onsubmit:_onSubmit' ${!nameAttrSetting}></form>",
 
 		attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
 			action: "",
@@ -103,7 +103,7 @@ dojo.declare(
 			if(dojo.isIE && this.srcNodeRef && this.srcNodeRef.attributes){
 				var item = this.srcNodeRef.attributes.getNamedItem('encType');
 				if(item && !item.specified && (typeof item.value == "string")){
-					this.attr('encType', item.value);
+					this.set('encType', item.value);
 				}
 			}
 			this.inherited(arguments);

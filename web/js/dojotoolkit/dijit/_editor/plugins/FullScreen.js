@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -15,7 +15,7 @@ dojo.require("dojo.i18n");
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
 
-dojo.requireLocalization("dijit._editor", "commands", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit._editor", "commands", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
 	// summary:
@@ -48,15 +48,18 @@ dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
 	toggle: function(){
 		// summary:
 		//		Function to allow programmatic toggling of the view.
-		this.button.attr("checked", !this.button.attr("checked"));
+		this.button.set("checked", !this.button.get("checked"));
 	},
 
 	_initButton: function(){
 		// summary:
 		//		Over-ride for creation of the resize button.
-		var strings = dojo.i18n.getLocalization("dijit._editor", "commands");
+		var strings = dojo.i18n.getLocalization("dijit._editor", "commands"),
+			editor = this.editor;
 		this.button = new dijit.form.ToggleButton({
 			label: strings["fullScreen"],
+			dir: editor.dir,
+			lang: editor.lang,
 			showLabel: false,
 			iconClass: this.iconClassPrefix + " " + this.iconClassPrefix + "FullScreen",
 			tabIndex: "-1",
@@ -269,7 +272,11 @@ dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
 					body.parentNode.style.overflow){
 					this._oldBodyParentOverflow = body.parentNode.style.overflow;
 				}else{
-					this._oldBodyParentOverflow = "scroll";
+					try{
+						this._oldBodyParentOverflow = dojo.style(body.parentNode, "overflow");
+					}catch(e){
+						this._oldBodyParentOverflow = "scroll";
+					}
 				}
 				dojo.style(body.parentNode, "overflow", "hidden");
 			}

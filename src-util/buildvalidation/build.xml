@@ -99,7 +99,7 @@
   <target name="compile" depends="checkmodule, sqlcCore, sqlcModules, javacCore, javacModule">
   </target>
 
-  <target name="buildvalidation" >
+  <target name="buildvalidation" if="buildValidation.var">
     <java classname="org.openbravo.buildvalidation.BuildValidationHandler" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="yes">
       <arg value="${base.src}/../"/>
       <arg value="${module}"/>

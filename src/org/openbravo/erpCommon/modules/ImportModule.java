@@ -1342,6 +1342,14 @@ public class ImportModule {
       final HashMap<String, String> updateModules = new HashMap<String, String>();
       final String user = vars == null ? "0" : vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
+
+      if (!HttpsUtils.isInternetAvailable()) {
+        // Check Internet availability and set proxy if required
+        ImportModuleData.insertLog(conn, user, "", "", "",
+            "Scan for updates: Couldn't contact with webservice server", "E");
+        return updateModules;
+      }
+
       WebService3ImplServiceLocator loc;
       WebService3Impl ws = null;
       SimpleModule[] updates;

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -7,7 +7,7 @@
 
 if(!dojo._hasResource["dojox.date.timezone"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.date.timezone"] = true;
-/*******************************************************************************
+/******************************************************************************
  * Dojo port of fleegix date plugin from
  *
  *   http://js.fleegix.org/plugins/date/date
@@ -17,7 +17,7 @@ dojo._hasResource["dojox.date.timezone"] = true;
  *
  * Credits: Ideas included from incomplete JS implementation of Olson
  * parser, "XMLDate" by Philippe Goetz (philippe.goetz@wanadoo.fr)
- ******************************************************************************/
+ *****************************************************************************/
 dojo.experimental("dojox.date.timezone");
 dojo.provide("dojox.date.timezone");
 
@@ -608,19 +608,41 @@ dojo.require("dojo.date.locale");
 		return res; // String
 	}
 	
+/*=====
+dojox.date.timezone = function(){
+	// summary:
+	//	mix-in to dojo.date to provide timezones based on
+	//	the Olson timezone data
+	//
+	// description:
+	//	mix-in to dojo.date to provide timezones based on
+	//	the Olson timezone data.
+	//	If you pass "timezone" as a parameter to your format options,
+	//	then you get the date formatted (and offset) for that timezone
+
+//TODOC
+};
+
+dojox.date.timezone.getTzInfo = function(dt, tz){
+	// summary:
+	//	Returns the timezone information for the given date and
+	//	timezone string
+	//
+	// dt: Date
+	//	The Date - a "proxyDate"
+	//
+	// tz: String
+	//	String representation of the timezone you want to get info
+	//	for date
+};
+
+dojox.date.timezone.getAllZones = function(){
+	// summary:
+	//	Returns an array of zones that have been loaded
+};
+=====*/
 	_d.setObject("dojox.date.timezone", {
 		getTzInfo: function(/* Date */ dt, /* String */ tz){
-			// summary:
-			//		Returns the timezone information for the given date and
-			//		timezone string
-			//
-			// dt: Date
-			//		The Date - a "proxyDate"
-			//
-			// tz: String
-			//		String representation of the timezone you want to get info
-			//		for date
-
 			// Lazy-load any zones not yet loaded
 			if(loadingScheme == "lazyLoad"){
 				// Get the correct region for the zone
@@ -652,8 +674,6 @@ dojo.require("dojo.date.locale");
 			return { tzOffset: off, tzAbbr: abbr }; // Object
 		},
 		getAllZones: function(){
-			// summary:
-			//		Returns an array of zones that have been loaded
 			var arr = [];
 			for(var z in _zones){ arr.push(z); }
 			arr.sort();

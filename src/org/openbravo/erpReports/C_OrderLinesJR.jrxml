@@ -6,9 +6,9 @@
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
-		 pageWidth="535"
+		 pageWidth="477"
 		 pageHeight="802"
-		 columnWidth="535"
+		 columnWidth="477"
 		 columnSpacing="0"
 		 leftMargin="0"
 		 rightMargin="0"
@@ -24,6 +24,26 @@
 	<import value="net.sf.jasperreports.engine.data.*" />
 
 	<style 
+		name="default"
+		isDefault="false"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+	>
+	</style>
+	<style 
+		name="Detail_Header"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#5D5D5D"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+		isBold="true"
+	>
+	</style>
+	<style 
 		name="Detail_Line"
 		isDefault="false"
 	>
@@ -34,8 +54,17 @@
 				isDefault="false"
 				mode="Opaque"
 				backcolor="#CCCCCC"
-			/>
+			>
+			</style>
 		</conditionalStyle>
+	</style>
+	<style 
+		name="Total_Gray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+	>
 	</style>
 	<style 
 		name="Column_Header"
@@ -43,7 +72,8 @@
 		mode="Opaque"
 		forecolor="#FFFFFF"
 		backcolor="#666666"
-	/>
+	>
+	</style>
 
 	<parameter name="C_ORDER_ID" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["'1000069'"]]></defaultValueExpression>
@@ -51,7 +81,8 @@
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<queryString><![CDATA[SELECT 1 AS ISBOM, C_ORDERLINE.LINE, COALESCE(M_PRODUCT.NAME, C_ORDERLINE.DESCRIPTION) AS PRODUCT_NAME, C_ORDERLINE.QTYORDERED AS QUANTITY,
-        TO_CHAR(C_UOM.UOMSYMBOL) AS UOM,  C_ORDERLINE.PRICEACTUAL, TO_NUMBER(NULL) AS BASE, C_ORDERLINE.LINENETAMT, TO_NUMBER(NULL) AS TAXLINE,   C_CURRENCY.CURSYMBOL as CURRENCY
+        C_UOM.NAME AS UOM,  C_ORDERLINE.PRICEACTUAL, TO_NUMBER(NULL) AS BASE, C_ORDERLINE.LINENETAMT, TO_NUMBER(NULL) AS TAXLINE,
+        C_CURRENCY.CURSYMBOL as CURRENCY, C_ORDER.docstatus AS STATUS, C_CURRENCY.ISO_CODE as CURRENCY_ISO, M_PRODUCT.VALUE
         FROM C_ORDERLINE left join M_PRODUCT on C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID 
                          left join C_UOM on C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID,
                          C_ORDER, C_CURRENCY 
@@ -60,7 +91,8 @@
               AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID
         UNION
         SELECT 2 AS ISBOM, C_ORDERLINE.LINE, M_PRODUCT.NAME AS PRODUCT_NAME, C_ORDERLINE.QTYORDERED*M_PRODUCT_BOM.BOMQTY AS QUANTITY,
-        TO_CHAR(C_UOM.UOMSYMBOL) AS UOM, TO_NUMBER(NULL) AS PRICEACTUAL, TO_NUMBER(NULL) AS BASE, TO_NUMBER(NULL) AS LINENETAMT, TO_NUMBER(NULL) AS TAXLINE, C_CURRENCY.CURSYMBOL as CURRENCY
+        C_UOM.NAME AS UOM, TO_NUMBER(NULL) AS PRICEACTUAL, TO_NUMBER(NULL) AS BASE, TO_NUMBER(NULL) AS LINENETAMT, TO_NUMBER(NULL) AS TAXLINE,
+        C_CURRENCY.ISO_CODE as CURRENCY, C_ORDER.docstatus AS STATUS, C_CURRENCY.ISO_CODE as CURRENCY_ISO, M_PRODUCT.VALUE
         FROM M_PRODUCT_BOM, M_PRODUCT, C_ORDERLINE, C_UOM,  C_ORDER, C_CURRENCY
         WHERE  C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT_BOM.M_PRODUCT_ID
             AND M_PRODUCT_BOM.M_PRODUCTBOM_ID = M_PRODUCT.M_PRODUCT_ID
@@ -69,8 +101,9 @@
             AND C_ORDERLINE.C_ORDER_ID=C_ORDER.C_ORDER_ID
             AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID
         UNION
-        SELECT 3 AS ISBOM, TO_NUMBER(null) AS LINE, C_TAX.NAME AS PRODUCT_NAME, TO_NUMBER(NULL) AS QUANTITY, TO_CHAR(NULL) AS UOM, TO_NUMBER(NULL) AS PRICEACTUAL,
-        C_ORDERTAX.TAXBASEAMT AS BASE, C_ORDERTAX.TAXAMT AS LINENETAMT, C_ORDERTAX.LINE AS TAXLINE, C_CURRENCY.CURSYMBOL as CURRENCY
+        SELECT 3 AS ISBOM, TO_NUMBER(null) AS LINE, C_TAX.NAME AS PRODUCT_NAME, TO_NUMBER(NULL) AS QUANTITY, '' AS UOM, TO_NUMBER(NULL) AS PRICEACTUAL,
+        C_ORDERTAX.TAXBASEAMT AS BASE, C_ORDERTAX.TAXAMT AS LINENETAMT, C_ORDERTAX.LINE AS TAXLINE, C_CURRENCY.CURSYMBOL as CURRENCY, C_ORDER.docstatus AS STATUS,
+        C_CURRENCY.ISO_CODE as CURRENCY_ISO, '' AS VALUE
         FROM C_ORDER, C_ORDERTAX, C_TAX, C_CURRENCY
         WHERE C_ORDER.C_ORDER_ID = C_ORDERTAX.C_ORDER_ID
             AND C_TAX.C_TAX_ID = C_ORDERTAX.C_TAX_ID
@@ -79,7 +112,7 @@
             AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID
         ORDER BY LINE,ISBOM, TAXLINE]]></queryString>
 
-	<field name="ISBOM" class="java.math.BigDecimal"/>
+	<field name="ISBOM" class="java.lang.Integer"/>
 	<field name="LINE" class="java.math.BigDecimal"/>
 	<field name="PRODUCT_NAME" class="java.lang.String"/>
 	<field name="QUANTITY" class="java.math.BigDecimal"/>
@@ -89,10 +122,220 @@
 	<field name="LINENETAMT" class="java.math.BigDecimal"/>
 	<field name="TAXLINE" class="java.math.BigDecimal"/>
 	<field name="CURRENCY" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="CURRENCY_ISO" class="java.lang.String"/>
+	<field name="VALUE" class="java.lang.String"/>
 
-	<variable name="SUM_LINENETAMT" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+	<variable name="SUM_LINENETAMT" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{LINENETAMT}]]></variableExpression>
 	</variable>
+
+		<group  name="C_Order_Id" isResetPageNumber="true" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="20"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="235"
+						y="3"
+						width="55"
+						height="17"
+						forecolor="#FFFFFF"
+						backcolor="#666666"
+						key="staticText"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[QUANTITY]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						x="200"
+						y="3"
+						width="35"
+						height="17"
+						forecolor="#FFFFFF"
+						key="staticText"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement verticalAlignment="Top">
+						<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[UOM]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						x="65"
+						y="3"
+						width="135"
+						height="17"
+						forecolor="#FFFFFF"
+						key="staticText"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement verticalAlignment="Top">
+						<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[PRODUCT NAME]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						x="290"
+						y="3"
+						width="65"
+						height="17"
+						key="textField-3"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["PRICE (" + $F{CURRENCY_ISO} + ")"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						x="355"
+						y="3"
+						width="60"
+						height="17"
+						key="textField-4"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["BASE (" + $F{CURRENCY_ISO} + ")"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						x="415"
+						y="3"
+						width="60"
+						height="17"
+						key="textField-5"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["NET (" + $F{CURRENCY_ISO} + ")"]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="290"
+						y="3"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						key="line-14"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="3"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						key="line-15"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="235"
+						y="3"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						key="line-16"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="415"
+						y="3"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						key="line-17"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="355"
+						y="3"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						key="line-18"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="200"
+						y="3"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						key="line-19"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="475"
+						y="3"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						key="line-20"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						x="1"
+						y="3"
+						width="65"
+						height="17"
+						key="staticText-1"/>
+					<box></box>
+					<textElement verticalAlignment="Top">
+						<font isBold="false"/>
+					</textElement>
+				<text><![CDATA[REFERENCE]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="65"
+						y="3"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						key="line-21"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
 		<background>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
@@ -106,99 +349,7 @@
 			</band>
 		</pageHeader>
 		<columnHeader>
-			<band height="20"  isSplitAllowed="true" >
-				<staticText>
-					<reportElement
-						style="Column_Header"
-						mode="Opaque"
-						x="0"
-						y="3"
-						width="50"
-						height="17"
-						forecolor="#FFFFFF"
-						backcolor="#666666"
-						key="staticText"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Quantity]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Column_Header"
-						x="50"
-						y="3"
-						width="50"
-						height="17"
-						forecolor="#FFFFFF"
-						key="staticText"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Top">
-						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Unit]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Column_Header"
-						x="100"
-						y="3"
-						width="170"
-						height="17"
-						forecolor="#FFFFFF"
-						key="staticText"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Top">
-						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Product]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Column_Header"
-						x="270"
-						y="3"
-						width="60"
-						height="17"
-						forecolor="#FFFFFF"
-						key="staticText"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Price]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Column_Header"
-						x="330"
-						y="3"
-						width="70"
-						height="17"
-						forecolor="#FFFFFF"
-						key="staticText"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Base]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Column_Header"
-						x="400"
-						y="3"
-						width="70"
-						height="17"
-						forecolor="#FFFFFF"
-						key="staticText"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
-					</textElement>
-				<text><![CDATA[Net]]></text>
-				</staticText>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</columnHeader>
 		<detail>
@@ -207,160 +358,226 @@
 						style="Detail_Line"
 						x="0"
 						y="0"
-						width="470"
+						width="475"
 						height="16"
 						key="frame-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 				</frame>				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="0"
+						style="default"
+						x="235"
 						y="0"
-						width="50"
+						width="55"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{QUANTITY}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITY}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="50"
+						style="default"
+						x="200"
 						y="0"
-						width="50"
+						width="35"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Top">
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOM}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="100"
+						style="default"
+						x="65"
 						y="0"
-						width="170"
+						width="135"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Top">
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PRODUCT_NAME}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="270"
+						style="default"
+						x="290"
+						y="0"
+						width="65"
+						height="16"
+						forecolor="#000000"
+						key="textField"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{PRICEACTUAL}!=null)?$P{NUMBERFORMAT}.format($F{PRICEACTUAL}).toString():new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="355"
 						y="0"
 						width="60"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{PRICEACTUAL}!=null)?$P{NUMBERFORMAT}.format($F{PRICEACTUAL}).toString()+new String(" ") +$F{CURRENCY} :new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{BASE}!=null)?$P{NUMBERFORMAT}.format($F{BASE}).toString() :new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="330"
+						style="default"
+						x="415"
 						y="0"
-						width="70"
+						width="60"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{BASE}!=null)?$P{NUMBERFORMAT}.format($F{BASE}).toString()+new String(" ") +$F{CURRENCY} :new String(" ")
-]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($F{LINENETAMT}) : new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="400"
-						y="0"
-						width="49"
-						height="16"
-						forecolor="#000000"
-						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" isStrikeThrough="false" />
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($F{LINENETAMT}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="454"
-						y="0"
-						width="16"
-						height="16"
-						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CURRENCY}]]></textFieldExpression>
-				</textField>
-			</band>
-		</detail>
-		<columnFooter>
-			<band height="18"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
 						x="0"
 						y="0"
-						width="470"
-						height="0"
-						key="line-1"/>
-					<graphicElement stretchType="NoStretch"/>
+						width="0"
+						height="16"
+						key="line-2"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
 				</line>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<line direction="TopDown">
 					<reportElement
-						x="400"
-						y="1"
-						width="49"
+						x="200"
+						y="0"
+						width="0"
 						height="16"
-						key="textField-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($V{SUM_LINENETAMT}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<staticText>
+						key="line-3"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
 					<reportElement
-						x="330"
-						y="1"
-						width="70"
+						x="235"
+						y="0"
+						width="0"
 						height="16"
-						key="staticText-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<text><![CDATA[Total:]]></text>
-				</staticText>
+						key="line-4"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="290"
+						y="0"
+						width="0"
+						height="16"
+						key="line-5"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="355"
+						y="0"
+						width="0"
+						height="16"
+						key="line-6"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="415"
+						y="0"
+						width="0"
+						height="16"
+						key="line-7"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="475"
+						y="0"
+						width="0"
+						height="16"
+						key="line-8"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="454"
-						y="2"
-						width="16"
+						style="default"
+						x="1"
+						y="0"
+						width="65"
 						height="16"
-						key="textField-2"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font size="10"/>
+						key="textField-6"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CURRENCY}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{VALUE}]]></textFieldExpression>
 				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="65"
+						y="0"
+						width="0"
+						height="16"
+						key="line-22"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</columnFooter>
 		<pageFooter>
@@ -368,7 +585,83 @@
 			</band>
 		</pageFooter>
 		<summary>
-			<band height="0"  isSplitAllowed="true" >
+			<band height="18"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="476"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Total_Gray"
+						x="397"
+						y="2"
+						width="78"
+						height="16"
+						key="textField-1"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($V{SUM_LINENETAMT}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="319"
+						y="2"
+						width="78"
+						height="16"
+						key="textField-2"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[" TOTAL ("+$F{CURRENCY_ISO}+"): "]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="318"
+						y="3"
+						width="0"
+						height="15"
+						key="line-10"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="318"
+						y="17"
+						width="158"
+						height="0"
+						key="line-11"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="318"
+						y="2"
+						width="158"
+						height="0"
+						key="line-12"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="475"
+						y="3"
+						width="0"
+						height="15"
+						key="line-13"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 			</band>
 		</summary>
 </jasperReport>

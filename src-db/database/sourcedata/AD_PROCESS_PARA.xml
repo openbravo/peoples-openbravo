@@ -445,8 +445,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--152-->  <HELP><![CDATA[An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.]]></HELP>
 <!--152-->  <AD_PROCESS_ID><![CDATA[118]]></AD_PROCESS_ID>
 <!--152-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--152-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
-<!--152-->  <AD_REFERENCE_VALUE_ID><![CDATA[130]]></AD_REFERENCE_VALUE_ID>
+<!--152-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
+<!--152-->  <AD_VAL_RULE_ID><![CDATA[130]]></AD_VAL_RULE_ID>
 <!--152-->  <COLUMNNAME><![CDATA[AD_Org_ID]]></COLUMNNAME>
 <!--152-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--152-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>

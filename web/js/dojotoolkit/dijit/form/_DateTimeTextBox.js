@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -13,6 +13,8 @@ dojo.require("dojo.date");
 dojo.require("dojo.date.locale");
 dojo.require("dojo.date.stamp");
 dojo.require("dijit.form.ValidationTextBox");
+
+new Date("X"); // workaround for #11279, new Date("") == NaN
 
 /*=====
 dojo.declare(
@@ -82,7 +84,7 @@ dojo.declare(
 		},
 
 		// value: Date
-		//		The value of this widget as a JavaScript Date object.  Use attr("value") / attr("value", val) to manipulate.
+		//		The value of this widget as a JavaScript Date object.  Use get("value") / set("value", val) to manipulate.
 		//		When passed to the parser in markup, must be specified according to `dojo.date.stamp.fromISOString`
 		value: new Date(""),	// value.toString()="NaN"
 		_blankValue: null,	// used by filter() when the textbox is blank
@@ -140,7 +142,7 @@ dojo.declare(
 			if(this._picker){
 				// #3948: fix blank date on popup only
 				if(!value){value = new this.dateClassObj();}
-				this._picker.attr('value', value);
+				this._picker.set('value', value);
 			}
 		},
 
@@ -167,7 +169,9 @@ dojo.declare(
 						dijit.form._DateTimeTextBox.superclass._setValueAttr.call(textBox, value, true);
 					},
 					id: this.id + "_popup",
+					dir: textBox.dir,
 					lang: textBox.lang,
+					value: this.get('value') || new this.dateClassObj(),
 					constraints: textBox.constraints,
 
 					datePackage: textBox.datePackage,
@@ -183,7 +187,6 @@ dojo.declare(
 						);
 					}
 				});
-				this._picker.attr('value', this.attr('value') || new this.dateClassObj());
 			}
 			if(!this._opened){
 				// Open drop down.  Align left sides of input box and drop down, even in RTL mode,

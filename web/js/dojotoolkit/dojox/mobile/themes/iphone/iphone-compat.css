@@ -1,5 +1,5 @@
 /* mbl.widget.Heading */
-h1.mblHeading {
+.mblHeading {
 	background-image: url(compat/heading-bg.png);
 }
 
@@ -81,15 +81,24 @@ h1.mblHeading {
 	margin: 0px 5px;
 }
 
+/* dojox.mobile.EdgeToEdgeCategory */
+.mblEdgeToEdgeCategory {
+	background-image: url(compat/edge-categ-bg.png);
+}
+
 /* mbl.widget.ListItem */
-li.mblListItem span.mblArrow {
+*html li.mblListItem.mblVariableHeight { /* IE6 hack */
+	height: 0;
+}
+
+li.mblListItem .mblArrow, div.mblListItem .mblArrow {
 	border-style: none;
 	top: 16px;
 	width: 9px;
 	height: 13px;
 	background-image: url(compat/gray-arrow.png);
 }
-li.mblItemSelected span.mblArrow {
+li.mblItemSelected .mblArrow, div.mblItemSelected .mblArrow {
 	background-image: url(compat/white-arrow.png);
 }
 
@@ -201,13 +210,16 @@ li.mblItemSelected span.mblArrow {
 }
 
 /* Icon Content Heading */
-h2.mblIconContentHeading {
+.mblIconContentHeading {
 	background-image: url(compat/icon-content-heading-bg.png);
 }
 
-/* ysl.mbl.Button */
-.mblButton {
+/* dojox.mobile.Button */
+.mblBlueButton {
 	background-image: url(compat/blue-button-bg.png);
+}
+.mblBlueButtonSelected {
+	background-image: url(compat/blue-button-sel-bg.png);
 }
 
 /* Tab Container */
@@ -228,4 +240,51 @@ h2.mblIconContentHeading {
 			el.style.behavior = "none";
 		})(this)
 	);
+}
+
+/* Progress Indicator */
+.mblProg {
+	position: absolute;
+	top: 0px;
+	width: 4px;
+	font-size: 1px;
+	height: 36px;
+	overflow: hidden;
+	background-color: #C0C0C0;
+}
+.mblProg0 {
+	left: 0px;
+}
+.mblProg1 {
+	left: 8px;
+}
+.mblProg2 {
+	left: 16px;
+}
+.mblProg3 {
+	left: 24px;
+}
+.mblProg4 {
+	left: 32px;
+}
+.mblProg5 {
+	left: 40px;
+}
+.mblProg6 {
+	left: 48px;
+}
+.mblProg7 {
+	left: 56px;
+}
+.mblProg8 {
+	left: 64px;
+}
+.mblProg9 {
+	left: 72px;
+}
+.mblProg10 {
+	left: 80px;
+}
+.mblProg11 {
+	left: 80px;
 }

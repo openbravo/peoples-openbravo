@@ -385,9 +385,14 @@ public class DatabaseValidator implements SystemValidator {
       final org.apache.ddlutils.model.Column dbColumn = dbColumnsByName.get(column
           .getDBColumnName().toUpperCase());
       if (dbColumn == null) {
+        String message = "";
+        if (column.getDBColumnName().substring(0, 3).equalsIgnoreCase("EM_")) {
+          message = " The problem could also be that the column name has a dbprefix of a non existant module or that it starts with the dbprefix of the module which owns the table. In this second case, the column doesn't need the 'EM_DBPREFIX' prefix, you can use the name you want.";
+        }
         result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB, "Column "
             + adTable.getDBTableName() + "." + column.getDBColumnName()
-            + " defined in the Application Dictionary but not present in the database.");
+            + " defined in the Application Dictionary but not present in the database." + message);
+
       } else {
         checkDataType(column, dbColumn, result, dbTable);
 

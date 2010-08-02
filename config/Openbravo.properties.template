@@ -175,3 +175,11 @@ strict.template.application=false
 login.trial.delay.increment=0
 login.trial.delay.max=0
 login.trial.user.lock=0
+
+##########
+# Others #
+##########
+
+# You are not allowed to run ant commands with the root user.
+# Set allow.root to true to override this.
+allow.root=false

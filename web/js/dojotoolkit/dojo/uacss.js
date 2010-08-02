@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -33,6 +33,7 @@ dojo.provide("dojo.uacss");
 			dj_ie6: maj(ie) == 6,
 			dj_ie7: maj(ie) == 7,
 			dj_ie8: maj(ie) == 8,
+			dj_quirks: d.isQuirks,
 			dj_iequirks: ie && d.isQuirks,
 
 			// NOTE: Opera not supported by dijit

@@ -41,6 +41,7 @@
   v_DateColumn VARCHAR2(2000):='';
   v_AD_Org_ID VARCHAR2(32);
   v_TableName VARCHAR2(48):='';
+  v_AD_Org_CalOwner VARCHAR(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -207,6 +208,7 @@
           -- Update Table
           v_ResultStr:='ResetTable:' || Cur_Tables.TableName;
            IF(v_DeletePosting='Y') THEN
+            v_AD_Org_CalOwner := AD_ORG_GETCALENDAROWNER(v_AD_Org_ID);
             FOR Cur_Fact_Acct IN (
               SELECT DISTINCT Record_ID
               FROM FACT_ACCT
@@ -226,7 +228,7 @@
                       AND fa_aux.AD_TABLE_ID = FACT_ACCT.AD_TABLE_ID
                       AND fa_aux.RECORD_ID = FACT_ACCT.RECORD_ID
                       AND C_PeriodControl.AD_Org_ID=AD_Org.AD_Org_ID
-                      AND C_PeriodControl.AD_Org_ID=AD_ORG_GETCALENDAROWNER(v_AD_Org_ID)
+                      AND C_PeriodControl.AD_Org_ID=v_AD_Org_CalOwner
                     )
                 AND Record_ID=(
                       CASE COALESCE(v_Record_ID, '0') WHEN '0' THEN Record_ID ELSE v_Record_ID

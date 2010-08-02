@@ -9,15 +9,6 @@
     <default>true</default>
     <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
   </EmailTemplate>
-  <EmailTemplate id="878ECF0D5A268C7BE040007F010129BA" identifier="AR Invoice Indirect Report template - ">
-    <id>878ECF0D5A268C7BE040007F010129BA</id>
-    <active>true</active>
-    <pocDocumentType id="29F7240568EC43E583E157911773C3A5" entity-name="DocumentTemplate" identifier="AR Invoice Indirect Report template"/>
-    <subject xsi:nil="true"/>
-    <body xsi:nil="true"/>
-    <default>true</default>
-    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
-  </EmailTemplate>
   <EmailTemplate id="878ECF0D5A298C7BE040007F010129BA" identifier="AR Credit Memo Report template - ">
     <id>878ECF0D5A298C7BE040007F010129BA</id>
     <active>true</active>
@@ -557,7 +548,7 @@
     <salesTransaction>true</salesTransaction>
     <sOSubType>WR</sOSubType>
     <documentTypeForShipment id="F8CC92C7234644DEAD9F63174F45B2BF" entity-name="DocumentType" identifier="MM Shipment Indirect"/>
-    <documentTypeForInvoice id="B896128A9164438A9B85CC8821FC7162" entity-name="DocumentType" identifier="AR Invoice Indirect"/>
+    <documentTypeForInvoice id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice Indirect"/>
     <sequencedDocument>true</sequencedDocument>
     <documentSequence id="FFB42B38D6A34634B534AB499B13644C" entity-name="ADSequence" identifier="POS Order"/>
     <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
@@ -855,28 +846,6 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
   </DocumentType>
-  <DocumentType id="B896128A9164438A9B85CC8821FC7162" identifier="AR Invoice Indirect">
-    <id>B896128A9164438A9B85CC8821FC7162</id>
-    <active>true</active>
-    <name>AR Invoice Indirect</name>
-    <printText>Invoice Indirect.</printText>
-    <description xsi:nil="true"/>
-    <documentCategory>ARI</documentCategory>
-    <salesTransaction>true</salesTransaction>
-    <sOSubType xsi:nil="true"/>
-    <documentTypeForShipment id="0" entity-name="DocumentType" identifier="** New **"/>
-    <documentTypeForInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
-    <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="4ED4DE47C4F44E578747E0FA81E29885" entity-name="ADSequence" identifier="AR Invoice Indirect"/>
-    <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
-    <comments xsi:nil="true"/>
-    <default>false</default>
-    <numberOfCopies>0</numberOfCopies>
-    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
-    <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
-    <expense>false</expense>
-  </DocumentType>
   <DocumentType id="B968C737ED3E4C808E425A72CC445DFE" identifier="Manual Settlement">
     <id>B968C737ED3E4C808E425A72CC445DFE</id>
     <active>true</active>
@@ -1106,22 +1075,6 @@
     <startingNo>700000</startingNo>
     <nextAssignedNumber>700000</nextAssignedNumber>
     <currentNextSystem>70000</currentNextSystem>
-    <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
-    <restartSequenceEveryYear>false</restartSequenceEveryYear>
-  </ADSequence>
-  <ADSequence id="4ED4DE47C4F44E578747E0FA81E29885" identifier="AR Invoice Indirect">
-    <id>4ED4DE47C4F44E578747E0FA81E29885</id>
-    <active>true</active>
-    <name>AR Invoice Indirect</name>
-    <description xsi:nil="true"/>
-    <valueFormat xsi:nil="true"/>
-    <autoNumbering>true</autoNumbering>
-    <incrementBy>1</incrementBy>
-    <startingNo>200000</startingNo>
-    <nextAssignedNumber>200000</nextAssignedNumber>
-    <currentNextSystem>20000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1512,15 +1465,6 @@
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
-  </DocumentTemplate>
-  <DocumentTemplate id="29F7240568EC43E583E157911773C3A5" identifier="AR Invoice Indirect Report template">
-    <name>AR Invoice Indirect Report template</name>
-    <id>29F7240568EC43E583E157911773C3A5</id>
-    <active>true</active>
-    <documentType id="B896128A9164438A9B85CC8821FC7162" entity-name="DocumentType" identifier="AR Invoice Indirect"/>
-    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
-    <reportFilename>Sales Invoice-@our_ref@</reportFilename>
-    <templateFilename>RptC_Invoice.jrxml</templateFilename>
   </DocumentTemplate>
   <DocumentTemplate id="4F23CD7CD64D468EA4753C0C7B09FD53" identifier="Return Material Report template">
     <name>Return Material Report template</name>

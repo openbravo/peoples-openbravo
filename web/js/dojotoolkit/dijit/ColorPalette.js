@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -16,7 +16,7 @@ dojo.require("dojo.i18n");
 
 dojo.require("dijit._PaletteMixin");
 
-dojo.requireLocalization("dojo", "colors", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dojo", "colors", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dijit.ColorPalette",
 	[dijit._Widget, dijit._Templated, dijit._PaletteMixin],
@@ -61,13 +61,15 @@ dojo.declare("dijit.ColorPalette",
 	//		This is stores the path to the palette images
 	_imagePaths: {
 		"7x10": dojo.moduleUrl("dijit.themes", "a11y/colors7x10.png"),
-		"3x4": dojo.moduleUrl("dijit.themes", "a11y/colors3x4.png")
+		"3x4": dojo.moduleUrl("dijit.themes", "a11y/colors3x4.png"),
+		"7x10-rtl": dojo.moduleUrl("dijit.themes", "a11y/colors7x10-rtl.png"),
+		"3x4-rtl": dojo.moduleUrl("dijit.themes", "a11y/colors3x4-rtl.png")
 	},
 
 	// templateString: String
 	//		The template of this widget.
-	templateString: dojo.cache("dijit", "templates/ColorPalette.html", "<div class=\"dijitInline dijitColorPalette\">\n\t<img class=\"dijitColorPaletteUnder\" dojoAttachPoint=\"imageNode\" waiRole=\"presentation\" alt=\"\"/>\n\t<table class=\"dijitPaletteTable\" cellSpacing=0 cellPadding=0>\n\t\t<tbody dojoAttachPoint=\"gridNode\"></tbody>\n\t</table>\n</div>\n"),
-	
+	templateString: dojo.cache("dijit", "templates/ColorPalette.html", "<div class=\"dijitInline dijitColorPalette\">\n\t<img class=\"dijitColorPaletteUnder\" dojoAttachPoint=\"imageNode\" waiRole=\"presentation\" alt=\"\"/>\n\t<table class=\"dijitPaletteTable\" cellSpacing=\"0\" cellPadding=\"0\">\n\t\t<tbody dojoAttachPoint=\"gridNode\"></tbody>\n\t</table>\n</div>\n"),
+
 	baseClass: "dijitColorPalette",
 
 	dyeClass: 'dijit._Color',
@@ -78,7 +80,7 @@ dojo.declare("dijit.ColorPalette",
 
 		this.inherited(arguments);
 
-		this.imageNode.setAttribute("src", this._imagePaths[this.palette].toString());
+		this.imageNode.setAttribute("src", this._imagePaths[this.palette + (this.isLeftToRight() ? "" : "-rtl")].toString());
 
 		var i18nColorNames = dojo.i18n.getLocalization("dojo", "colors", this.lang);
 		this._preparePalette(

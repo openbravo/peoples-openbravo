@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -14,7 +14,7 @@ dojo.require("dijit._Templated");
 dojo.require("dijit._PaletteMixin");
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dojox.editor.plugins", "latinEntities", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ru,zh,zh-tw");
+dojo.requireLocalization("dojox.editor.plugins", "latinEntities", null, "ROOT,cs,de,es,fr,hu,it,ja,ko,pl,pt,ro,ru,zh,zh-tw");
 
 dojo.experimental("dojox.editor.plugins.EntityPalette");
 
@@ -42,7 +42,8 @@ dojo.declare("dojox.editor.plugins.EntityPalette",
 					'		<tbody>\n' +
 					'			<tr>\n' +
 					'				<td>\n' +
-					'					<table class="dijitPaletteTable" dojoAttachPoint="gridNode">\n' +
+					'					<table class="dijitPaletteTable">\n' +
+					'						<tbody dojoAttachPoint="gridNode"></tbody>\n' +
 					'				   </table>\n' +
 					'				</td>\n' +
 					'			</tr>\n' +
@@ -95,7 +96,6 @@ dojo.declare("dojox.editor.plugins.EntityPalette",
 	paletteClass: 'editorLatinEntityPalette',
 
 	cellClass: "dojoxEntityPaletteCell",
-	highlightClass: "dojoxEntityPaletteCellHighlight",
 
 	postMixInProperties: function(){
 		// Convert hash of entities into two-dimensional rows/columns table (array of arrays)
@@ -132,6 +132,22 @@ dojo.declare("dojox.editor.plugins.EntityPalette",
 			this._palette,
 			i18n
 		);
+
+		var cells = dojo.query(".dojoxEntityPaletteCell", this.gridNode);
+		dojo.forEach(cells, function(cellNode){
+			this.connect(cellNode, "onmouseenter", "_onCellMouseEnter");
+		}, this);
+	},
+
+	_onCellMouseEnter: function(e){
+		// summary:
+		//		Simple function to handle updating the display at the bottom of
+		//		the palette.
+		// e:
+		//		The event.
+		// tags:
+		//		private
+		this._displayDetails(e.target);
 	},
 
 	postCreate: function(){
@@ -145,13 +161,6 @@ dojo.declare("dojox.editor.plugins.EntityPalette",
 
 		if(!this.showPreview){
 			dojo.style(this.previewNode,"display","none");
-		}
-	},
-
-	_onCellMouseEnter: function(/*Event*/ evt){ 
-		this.inherited(arguments);
-		if(this.showPreview){
-			this._displayDetails(evt.target);
 		}
 	},
 
