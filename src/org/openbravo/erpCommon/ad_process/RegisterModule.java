@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.services.webservice.Module;
@@ -74,22 +75,25 @@ public class RegisterModule extends HttpSecureAppServlet {
       module.setDescription(data.description);
 
       WebService3Impl ws = null;
-      boolean error = false;
+      boolean error = !HttpsUtils.isInternetAvailable();
       try {
-        // retrieve the module details from the webservice
-        WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-        ws = (WebService3Impl) loc.getWebService3();
+        if (!error) {
+          // retrieve the module details from the webservice
+          WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+          ws = (WebService3Impl) loc.getWebService3();
+        }
       } catch (Exception e) {
+        error = true;
+        log4j.error("Error obtaining ws to register module", e);
+      }
+
+      if (error) {
         OBError message = new OBError();
         message.setType("Error");
         message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
         message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
         vars.setMessage("RegisterModule", message);
-        e.printStackTrace();
-        error = true;
-      }
-
-      if (!error) {
+      } else {
         try {
           module = ws.moduleRegister(module, vars.getStringParameter("inpUser"), vars
               .getStringParameter("inpPassword"));
