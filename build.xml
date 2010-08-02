@@ -949,6 +949,7 @@ export.database: exports database structure and data to xml files.
         <equals arg1="${os.arch}" arg2="x86" />
         <equals arg1="${os.arch}" arg2="i386" />
         <contains string="${os.name}" substring="Windows" />
+        <contains string="${os.name}" substring="OS X" />
       </or>
     </condition>
     <condition property="osarch" value="-x64">
@@ -957,6 +958,9 @@ export.database: exports database structure and data to xml files.
         <equals arg1="${os.arch}" arg2="x86_64" />
         <not>
           <contains string="${os.name}" substring="Windows" />
+        </not>
+        <not>
+          <contains string="${os.name}" substring="OS X" />
         </not>
       </or>
     </condition>
@@ -972,8 +976,18 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="setup.exists.test">
-    <condition property="bin.ext" value="exe" else="bin">
+    <condition property="bin.ext" value="exe">
       <os family="windows" />
+    </condition>
+
+    <condition property="bin.ext" value="app.tar.gz">
+      <os family="mac" />
+    </condition>
+
+    <condition property="bin.ext" value="bin">
+      <not>
+        <isset property="${bin.ext}" />
+      </not>
     </condition>
 
     <available file="config/setup-properties-${osname}${osarch}.${bin.ext}" property="setup.exists" value="true" />
