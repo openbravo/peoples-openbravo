@@ -645,11 +645,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // if it is a remote installation get the module from webservice,
       // other case the obx file is passed as an InputStream
       try {
-        final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-        final WebService3Impl ws = loc.getWebService3();
-        module = ws.moduleDetail(recordId);
+        if (HttpsUtils.isInternetAvailable()) {
+          final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
+          final WebService3Impl ws = loc.getWebService3();
+          module = ws.moduleDetail(recordId);
+        }
       } catch (final Exception e) {
-        log4j.error(e);
+        log4j.error("Error obtaining module info", e);
       }
     } else {
       discard[4] = "core";
@@ -1285,25 +1287,25 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private String getSearchResults(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String text) {
     SimpleModule[] modules = null;
-    SystemInformation info = OBDal.getInstance().get(SystemInformation.class, "0");
     try {
-      if (info.isProxyRequired() && !info.getProxyServer().equals("") && info.getProxyPort() > 0) {
-        if (!HttpsUtils.isInternetAvailable(info.getProxyServer(), info.getProxyPort().intValue())) {
-          final OBError message = new OBError();
-          message.setType("Error");
-          message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
-          vars.setMessage("ModuleManagement", message);
-          try {
-            response
-                .sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
-          } catch (final Exception ex) {
-            log4j.error(ex);
-          }
+      if (!HttpsUtils.isInternetAvailable()) {
+        final OBError message = new OBError();
+        message.setType("Error");
+        message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+        message.setMessage(Utility.messageBD(this, "WSError", vars.getLanguage()));
+        vars.setMessage("ModuleManagement", message);
+        try {
+          response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD_NOSEARCH");
+        } catch (final Exception ex) {
+          log4j.error(ex.getMessage(), ex);
         }
       }
       final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
       final WebService3Impl ws = loc.getWebService3();
+
+      // Stub stub = (javax.xml.rpc.Stub) ws;
+      // stub._setProperty(Stub.USERNAME_PROPERTY, "test");
+      // stub._setProperty(Stub.PASSWORD_PROPERTY, "1");
 
       HashMap<String, String> maturitySearch = new HashMap<String, String>();
       maturitySearch.put("search.level", getSystemMaturity(false));

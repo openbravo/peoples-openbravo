@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.services.webservice.WebService3Impl;
 import org.openbravo.services.webservice.WebService3ImplServiceLocator;
@@ -39,6 +40,9 @@ public class MaturityLevel {
    * service is not available or the request fails, the list is initiallized with 500-Production.
    */
   public MaturityLevel() {
+    // Check internet availability and set proxy, to obtain maturity levels
+    boolean error = !HttpsUtils.isInternetAvailable();
+    log4j.error("Couldn't connect to Internet to obtain maturity levels");
     try {
       // retrieve the module details from the webservice
       final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
@@ -46,6 +50,11 @@ public class MaturityLevel {
       levels = ws.getMaturityLevels();
     } catch (final Exception e) {
       log4j.error("Error obtaining maturity levels", e);
+      error = true;
+    }
+
+    if (error) {
+      // could not obtain actual levels, setting production only
       log4j.warn("Setting default Production level");
       levels = new String[1][2];
       levels[0][0] = "500";
