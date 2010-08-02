@@ -208,27 +208,12 @@ public class DataImportService implements OBSingleton {
         // so that the objects on which other depend are inserted first
         final List<BaseOBObject> toInsert = xec.getToInsert();
         int done = 0;
-        final Set<BaseOBObject> visited = new HashSet<BaseOBObject>();
         final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
         for (int i = toInsert.size() - 1; i > -1; i--) {
-
           final BaseOBObject ins = toInsert.get(i);
-
-          // use a temporary visited which is not used in the second round
-          final Set<BaseOBObject> tempVisited = new HashSet<BaseOBObject>(inserted);
-
-          // insert the mandatory properties
-          insertObjectGraph(ins, tempVisited, inserted, true);
-
-          // insert the non-mandatory references
-          insertObjectGraph(ins, visited, inserted, null);
-
-          if ((i % 100) == 0) {
-            OBDal.getInstance().flush();
-          }
-
+          // for (final BaseOBObject ins : toInsert) {
+          insertObjectGraph(ins, inserted);
           ir.getInsertedObjects().add(ins);
-
           done++;
         }
         Check.isTrue(done == toInsert.size(),
@@ -526,20 +511,11 @@ public class DataImportService implements OBSingleton {
     final List<BaseOBObject> toInsert = xec.getToInsert();
     int done = 0;
     final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
-    final Set<BaseOBObject> visited = new HashSet<BaseOBObject>();
     for (int i = toInsert.size() - 1; i > -1; i--) {
       final BaseOBObject ins = toInsert.get(i);
-
-      // use a temporary visited which is not used in the second round
-      final Set<BaseOBObject> tempVisited = new HashSet<BaseOBObject>(inserted);
-
-      insertObjectGraph(ins, tempVisited, inserted, true);
-      insertObjectGraph(ins, visited, inserted, null);
-
-      OBDal.getInstance().flush();
-
+      // for (final BaseOBObject ins : toInsert) {
+      insertObjectGraph(ins, inserted);
       ir.getInsertedObjects().add(ins);
-
       done++;
     }
     Check.isTrue(done == toInsert.size(), "Not all objects have been inserted, check for loop: "
@@ -605,34 +581,24 @@ public class DataImportService implements OBSingleton {
   // which have not been inserted yet
   // this works fine as long the graph has no cycles
   // if there are cycles then Hibernate needs to resolve those
-  // the mandatory parameter is used to first insert only mandatory properties
-  // to take care of cylic relations, i.e. that at least first the mandatory
-  // properties are saved.
-  // This method is called twice with first the mandatory on true and then with the
-  // value null. Between the 2 calls the inserted Set is cleared.
-  private void insertObjectGraph(BaseOBObject toInsert, Set<BaseOBObject> visited,
-      Set<BaseOBObject> inserted, Boolean mandatory) {
+  private void insertObjectGraph(BaseOBObject toInsert, Set<BaseOBObject> inserted) {
     // prevent infinite looping and don't do the ones we already inserted
     // in a previous objectgraph
-    if (visited.contains(toInsert)) {
+    if (inserted.contains(toInsert)) {
       return;
     }
-    visited.add(toInsert);
+    inserted.add(toInsert);
     final Entity entity = toInsert.getEntity();
     for (final Property property : entity.getProperties()) {
-      if (!property.isPrimitive() && !property.isOneToMany()
-          && (mandatory == null || property.isMandatory() == mandatory)) {
+      if (!property.isPrimitive() && !property.isOneToMany()) {
         final Object value = toInsert.get(property.getName());
         if (value instanceof BaseOBObject && ((BaseOBObject) value).isNewOBObject()) {
-          insertObjectGraph((BaseOBObject) value, visited, inserted, mandatory);
+          insertObjectGraph((BaseOBObject) value, inserted);
         }
       }
     }
     try {
-      if (!inserted.contains(toInsert)) {
-        inserted.add(toInsert);
-        OBDal.getInstance().save(toInsert);
-      }
+      OBDal.getInstance().save(toInsert);
     } catch (final Exception e) {
       log.warn("There was a problem inserting data in the database.");
       log.info("The following exception was raised: ", e);
