@@ -769,6 +769,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } else { // Dependencies not satisfied, do not show continue button
         message = im.getCheckError();
         discard[5] = "discardContinue";
+
+        if (message == null || message.getMessage() == null || message.getMessage().isEmpty()) {
+          // No message: set generic one
+          message = new OBError();
+          message.setType("Error");
+          message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
+          message.setMessage(Utility.messageBD(this, "ModulesNotInstallable", vars.getLanguage()));
+        }
       }
       if (upd == null || upd.length == 0)
         discard[1] = "updateModules";
