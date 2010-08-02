@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -19,8 +19,8 @@ dojo.require("dijit.form.Select");
 dojo.require("dijit._editor.range");
 dojo.require("dojo.i18n");
 dojo.require("dojo.string");
-dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.requireLocalization("dojox.editor.plugins", "InsertAnchor", null, "ROOT");
+dojo.requireLocalization("dijit", "common", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dojox.editor.plugins", "InsertAnchor", null, "ROOT,ro");
 
 dojo.declare("dojox.editor.plugins.InsertAnchor", dijit._editor._Plugin, {
 	// summary:
@@ -88,7 +88,7 @@ dojo.declare("dojox.editor.plugins.InsertAnchor", dijit._editor._Plugin, {
 		messages.id = dijit.getUniqueId(this.editor.id);
 		this._uniqueId = messages.id;
 
-		this.dropDown.attr('content', dropDown.title +
+		this.dropDown.set('content', dropDown.title +
 			"<div style='border-bottom: 1px black solid;padding-bottom:2pt;margin-bottom:4pt'></div>" +
 			dojo.string.substitute(this._template, messages));
 
@@ -132,7 +132,7 @@ dojo.declare("dojox.editor.plugins.InsertAnchor", dijit._editor._Plugin, {
 		if(this._anchorInput.isValid()){
 			disable = false;
 		}
-		this._setButton.attr("disabled", disable);
+		this._setButton.set("disabled", disable);
 	},
 
 	_setup: function(){
@@ -353,8 +353,8 @@ dojo.declare("dojox.editor.plugins.InsertAnchor", dijit._editor._Plugin, {
 				"getAncestorElement", dijit._editor.selection, ["a"]);
 		}
 		this.dropDown.reset();
-		this._setButton.attr("disabled", true);
-		this.dropDown.attr("value", this._getCurrentValues(a));
+		this._setButton.set("disabled", true);
+		this.dropDown.set("value", this._getCurrentValues(a));
 	},
 
 	_onDblClick: function(e){
@@ -377,7 +377,7 @@ dojo.declare("dojox.editor.plugins.InsertAnchor", dijit._editor._Plugin, {
 				setTimeout(dojo.hitch(this, function(){
 					// Focus shift outside the event handler.
 					// IE doesn't like focus changes in event handles.
-					this.button.attr("disabled", false);
+					this.button.set("disabled", false);
 					this.button.openDropDown();
 				}), 10);
 			}

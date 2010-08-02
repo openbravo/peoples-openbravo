@@ -1,5 +1,5 @@
 /* mbl.widget.Heading */
-h1.mblHeading {
+.mblHeading {
 	background-image: url(compat/heading-bg.png);
 }
 
@@ -18,7 +18,7 @@ h1.mblHeading {
 
 /* Round Corner */
 .mblRoundCorner {
-	background-color: white;
+	background-color: black;
 	height: 1px;
 	font-size: 1px;
 	overflow: hidden;
@@ -28,7 +28,7 @@ h1.mblHeading {
 }
 .mblRoundRectContainer {
 	padding: 3px 8px;
-	background-color: white;
+	background-color: black;
 	border-style: solid;
 	border-color: #ADAAAD;
 	border-width: 0px 1px;
@@ -82,13 +82,17 @@ h1.mblHeading {
 }
 
 /* mbl.widget.ListItem */
-li.mblListItem span.mblArrow {
+*html li.mblListItem.mblVariableHeight { /* IE6 hack */
+	height: 0;
+}
+
+li.mblListItem .mblArrow {
 	border-style: none;
 	width: 9px;
 	height: 13px;
 	background-image: url(compat/gray-arrow.png);
 }
-li.mblItemSelected span.mblArrow {
+li.mblItemSelected .mblArrow {
 	background-image: url(compat/white-arrow.png);
 }
 
@@ -134,55 +138,55 @@ li.mblItemSelected span.mblArrow {
 }
 .mblSwitchCorner1T {
 	background-color: #848684;
-	margin: 0px 4px;
+	margin: 0px 1px;
 	border-width: 0px;
 }
 .mblSwitchCorner2T {
 	background-color: #C0C0C0;
-	margin: 0px 2px;
-	border-width: 0px 2px;
+	margin: 0px 0px;
+	border-width: 0px 1px;
 }
 .mblSwitchCorner3T {
 	background-color: #C6C7C6;
-	margin: 0px 1px;
+	margin: 0px 0px;
 	border-width: 0px 1px;
 }
 
 .mblSwitchCorner1B {
 	background-color: #FBFBFB;
-	margin: 0px 1px;
+	margin: 0px 0px;
 	border-width: 0px 1px;
 }
 .mblSwitchCorner2B {
 	background-color: #FBFBFB;
-	margin: 0px 2px;
-	border-width: 0px 2px;
+	margin: 0px 0px;
+	border-width: 0px 1px;
 }
 .mblSwitchCorner3B {
 	background-color: #878787;
-	margin: 0px 4px;
+	margin: 0px 1px;
 	border-width: 0px;
 }
 
 .mblSwitchBgLeft .mblSwitchCorner1T {
 	border-width: 0px 2px;
-	background-color: #093889;
+	background-color: #00A600;
 }
 .mblSwitchBgLeft .mblSwitchCorner2T {
-	background-color: #285AB2;
+	background-color: #00A600;
 }
 .mblSwitchBgLeft .mblSwitchCorner3T {
-	background-color: #285AB2;
+	background-color: #00A600;
 }
 
 .mblSwitchBgLeft .mblSwitchCorner1B {
-	background-color: #66A1F6;
+	background-color: #00D700;
 }
 .mblSwitchBgLeft .mblSwitchCorner2B {
-	background-color: #66A1F6;
+	background-color: #00D700;
 }
 .mblSwitchBgLeft .mblSwitchCorner3B {
-	background-color: #5289D7;
+	background-color: #00D700;
 }
 
 .mblSwitchText {
@@ -190,7 +194,7 @@ li.mblItemSelected span.mblArrow {
 	line-height: 21px;
 }
 .mblSwitchTextLeft {
-	background-image: url(compat/switch-blue-bg.png);
+	background-image: url(compat/switch-green-bg.png);
 	border-left: 1px solid #848684;
 }
 .mblSwitchTextRight {
@@ -200,13 +204,16 @@ li.mblItemSelected span.mblArrow {
 }
 
 /* Icon Content Heading */
-h2.mblIconContentHeading {
+.mblIconContentHeading {
 	background-image: url(compat/icon-content-heading-bg.png);
 }
 
-/* ysl.mbl.Button */
-.mblButton {
+/* dojox.mobile.Button */
+.mblBlueButton {
 	background-image: url(compat/blue-button-bg.png);
+}
+.mblBlueButtonSelected {
+	background-image: url(compat/blue-button-sel-bg.png);
 }
 
 /* Tab Container */
@@ -227,4 +234,51 @@ h2.mblIconContentHeading {
 			el.style.behavior = "none";
 		})(this)
 	);
+}
+
+/* Progress Indicator */
+.mblProg {
+	position: absolute;
+	top: 0px;
+	width: 4px;
+	font-size: 1px;
+	height: 36px;
+	overflow: hidden;
+	background-color: #C0C0C0;
+}
+.mblProg0 {
+	left: 0px;
+}
+.mblProg1 {
+	left: 8px;
+}
+.mblProg2 {
+	left: 16px;
+}
+.mblProg3 {
+	left: 24px;
+}
+.mblProg4 {
+	left: 32px;
+}
+.mblProg5 {
+	left: 40px;
+}
+.mblProg6 {
+	left: 48px;
+}
+.mblProg7 {
+	left: 56px;
+}
+.mblProg8 {
+	left: 64px;
+}
+.mblProg9 {
+	left: 72px;
+}
+.mblProg10 {
+	left: 80px;
+}
+.mblProg11 {
+	left: 80px;
 }

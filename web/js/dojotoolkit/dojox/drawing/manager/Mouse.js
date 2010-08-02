@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -175,6 +175,14 @@ EventObject: function(){
 				left:this.container.parentNode.scrollLeft		
 			}; // Object
 		},
+
+		resize: function(width,height){
+			if(this.origin){
+				this.origin.w=width;
+				this.origin.h=height;
+			}
+		},
+
 		register: function(/* Object*/scope){
 			// summary:
 			//		All objects (Stencils) should register here if they
@@ -187,7 +195,7 @@ EventObject: function(){
 			// See: CustomEventMethod and EventObject
 			//
 			var handle = scope.id || "reg_"+(this.__reg++);
-			if(!this.registered[handle]) { this.registered[handle] = scope; }
+			if(!this.registered[handle]){ this.registered[handle] = scope; }
 			return handle; // String
 		},
 		unregister: function(handle){
@@ -241,9 +249,9 @@ EventObject: function(){
 		overName: function(obj,evt){
 			var nm = obj.id.split(".");
 			evt = evt.charAt(0).toUpperCase() + evt.substring(1);
-			if(nm[0] == "dojox" && (dojox.drawing.defaults.clickable || !dojox.drawing.defaults.clickMode)) {
+			if(nm[0] == "dojox" && (dojox.drawing.defaults.clickable || !dojox.drawing.defaults.clickMode)){
 				return "onStencil"+evt;	
-			} else {
+			}else{
 				return "on"+evt;	
 			}
 			
@@ -361,14 +369,12 @@ EventObject: function(){
 			this._lastpagex = dim.x;
 			this._lastpagey = dim.y;
 			var o = this.origin;
-			var x = dim.x - o.x;
-			var y = dim.y - o.y;
+			var x = dim.x - o.x + sc.left;
+			var y = dim.y - o.y + sc.top;
 			
+			var withinCanvas = x>=0 && y>=0 && x<=o.w && y<=o.h;
 			x*= this.zoom;
 			y*= this.zoom;
-			x += sc.left*this.zoom;
-			y += sc.top*this.zoom;
-			var withinCanvas = x>=0 && y>=0 && x<=o.w && y<=o.h;
 			
 			o.startx = x;
 			o.starty = y;
@@ -439,16 +445,14 @@ EventObject: function(){
 			var pagex = dim.x;
 			var pagey = dim.y;
 			
-			var x = dim.x - this.origin.x;
-			var y = dim.y - this.origin.y;
 			var o = this.origin;
-			
-			x += sc.left;
-			y += sc.top;
+			var x = dim.x - o.x + sc.left;
+			var y = dim.y - o.y + sc.top;
+
+			var withinCanvas = x>=0 && y>=0 && x<=o.w && y<=o.h;
 			x*= this.zoom;
 			y*= this.zoom;
 			
-			var withinCanvas = x>=0 && y>=0 && x<=o.w && y<=o.h;
 			var id = withinCanvas ? this._getId(evt, squelchErrors) : "";
 			var ret = {
 				mid:this.id,
@@ -502,9 +506,9 @@ EventObject: function(){
 			// summary:
 			//		Sets the cursor for  a given node.  If no
 			//		node is specified the containing node is used.
-			if(!node) { 
+			if(!node){ 
 				dojo.style(this.container, "cursor", cursor); 
-			} else {
+			}else{
 				dojo.style(node, "cursor", cursor);
 			}
 		}

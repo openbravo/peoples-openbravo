@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -63,7 +63,7 @@ dojo.declare(
 				var style = this.selectedChildWidget.containerNode.style;
 				style.display = "";
 				style.overflow = "auto";
-				this.selectedChildWidget._wrapperWidget.attr("selected", true);
+				this.selectedChildWidget._wrapperWidget.set("selected", true);
 			}
 		},
 
@@ -85,8 +85,11 @@ dojo.declare(
 			// Implement _LayoutWidget.layout() virtual method.
 			// Set the height of the open pane based on what room remains.
 
-			var openPane = this.selectedChildWidget,
-				openPaneContainer = openPane._wrapperWidget.domNode,
+			var openPane = this.selectedChildWidget;
+			
+			if(!openPane){ return;}
+
+			var openPaneContainer = openPane._wrapperWidget.domNode,
 				openPaneContainerMargin = dojo._getMarginExtents(openPaneContainer),
 				openPaneContainerPadBorder = dojo._getPadBorderExtents(openPaneContainer),
 				mySize = this._contentBox;
@@ -120,6 +123,8 @@ dojo.declare(
 				contentWidget: child,
 				buttonWidget: this.buttonWidget,
 				id: child.id + "_wrapper",
+				dir: child.dir,
+				lang: child.lang,
 				parent: this
 			});
 
@@ -158,12 +163,12 @@ dojo.declare(
 		removeChild: function(child){
 			// Overrides _LayoutWidget.removeChild().
 
-			this.inherited(arguments);
-
-			// destroy wrapper widget after child, because child tries to detach itself from it's parent
+			// destroy wrapper widget first, before StackContainer.getChildren() call
 			child._wrapperWidget.destroy();
 			delete child._wrapperWidget;
 			dojo.removeClass(child.domNode, "dijitHidden");
+
+			this.inherited(arguments);
 		},
 
 		getChildren: function(){
@@ -180,16 +185,15 @@ dojo.declare(
 			this.inherited(arguments);
 		},
 
-		_transition: function(/*Widget?*/newWidget, /*Widget?*/oldWidget){
+		_transition: function(/*dijit._Widget?*/newWidget, /*dijit._Widget?*/oldWidget, /*Boolean*/ animate){
 			// Overrides StackContainer._transition() to provide sliding of title bars etc.
 
 //TODO: should be able to replace this with calls to slideIn/slideOut
 			if(this._inTransition){ return; }
-			this._inTransition = true;
 			var animations = [];
 			var paneHeight = this._verticalSpace;
 			if(newWidget){
-				newWidget._wrapperWidget.attr("selected", true);
+				newWidget._wrapperWidget.set("selected", true);
 
 				this._showChild(newWidget);	// prepare widget to be slid in
 
@@ -203,43 +207,70 @@ dojo.declare(
 				var newContents = newWidget.domNode;
 				dojo.addClass(newContents, "dijitVisible");
 				dojo.removeClass(newContents, "dijitHidden");
-				var newContentsOverflow = newContents.style.overflow;
-				newContents.style.overflow = "hidden";
-				animations.push(dojo.animateProperty({
-					node: newContents,
-					duration: this.duration,
-					properties: {
-						height: { start: 1, end: this._getTargetHeight(newContents) }
-					},
-					onEnd: dojo.hitch(this, function(){
-						newContents.style.overflow = newContentsOverflow;
-						delete this._inTransition;
-					})
-				}));
+				
+				if(animate){
+					var newContentsOverflow = newContents.style.overflow;
+					newContents.style.overflow = "hidden";
+					animations.push(dojo.animateProperty({
+						node: newContents,
+						duration: this.duration,
+						properties: {
+							height: { start: 1, end: this._getTargetHeight(newContents) }
+						},
+						onEnd: function(){
+							newContents.style.overflow = newContentsOverflow;
+
+							// Kick IE to workaround layout bug, see #11415
+							if(dojo.isIE){
+								setTimeout(function(){
+									dojo.removeClass(newContents.parentNode, "dijitAccordionInnerContainerFocused");
+									setTimeout(function(){
+										dojo.addClass(newContents.parentNode, "dijitAccordionInnerContainerFocused");
+									}, 0);
+								}, 0);
+							}
+						}
+					}));
+				}
 			}
 			if(oldWidget){
-				oldWidget._wrapperWidget.attr("selected", false);
-				var oldContents = oldWidget.domNode,
-					oldContentsOverflow = oldContents.style.overflow;
-				oldContents.style.overflow = "hidden";
-				animations.push(dojo.animateProperty({
-					node: oldContents,
-					duration: this.duration,
-					properties: {
-						height: { start: this._getTargetHeight(oldContents), end: 1 }
-					},
-					onEnd: function(){
-						dojo.addClass(oldContents, "dijitHidden");
-						dojo.removeClass(oldContents, "dijitVisible");
-						oldContents.style.overflow = oldContentsOverflow;
-						if(oldWidget.onHide){
-							oldWidget.onHide();
+				oldWidget._wrapperWidget.set("selected", false);
+				var oldContents = oldWidget.domNode;
+				if(animate){
+					var oldContentsOverflow = oldContents.style.overflow;
+					oldContents.style.overflow = "hidden";
+					animations.push(dojo.animateProperty({
+						node: oldContents,
+						duration: this.duration,
+						properties: {
+							height: { start: this._getTargetHeight(oldContents), end: 1 }
+						},
+						onEnd: function(){
+							dojo.addClass(oldContents, "dijitHidden");
+							dojo.removeClass(oldContents, "dijitVisible");
+							oldContents.style.overflow = oldContentsOverflow;
+							if(oldWidget.onHide){
+								oldWidget.onHide();
+							}
 						}
+					}));
+				}else{
+					dojo.addClass(oldContents, "dijitHidden");
+					dojo.removeClass(oldContents, "dijitVisible");
+					if(oldWidget.onHide){
+						oldWidget.onHide();
 					}
-				}));
+				}
 			}
 
-			dojo.fx.combine(animations).play();
+			if(animate){
+				this._inTransition = true;
+				var combined = dojo.fx.combine(animations);
+				combined.onEnd = dojo.hitch(this, function(){
+					delete this._inTransition;
+				});
+				combined.play();
+			}			
 		},
 
 		// note: we are treating the container as controller here
@@ -308,6 +339,8 @@ dojo.declare("dijit.layout._AccordionInnerContainer",
 				contentWidget: child,
 				label: child.title,
 				title: child.tooltip,
+				dir: child.dir,
+				lang: child.lang,
 				iconClass: child.iconClass,
 				id: child.id + "_button",
 				parent: this.parent
@@ -319,19 +352,17 @@ dojo.declare("dijit.layout._AccordionInnerContainer",
 
 		postCreate: function(){
 			this.inherited(arguments);
-			this.connect(this.contentWidget, 'attr', function(name, value){
-				if(arguments.length == 2){
-					var mappedName = {title: "label", tooltip: "title", iconClass: "iconClass"}[name];
-					if(mappedName){
-						this.button.attr(mappedName, value);
-					}
+			this.connect(this.contentWidget, 'set', function(name, value){
+				var mappedName = {title: "label", tooltip: "title", iconClass: "iconClass"}[name];
+				if(mappedName){
+					this.button.set(mappedName, value);
 				}
 			}, this);
 		},
 
 		_setSelectedAttr: function(/*Boolean*/ isSelected){
 			this.selected = isSelected;
-			this.button.attr("selected", isSelected);
+			this.button.set("selected", isSelected);
 			if(isSelected){
 				var cw = this.contentWidget;
 				if(cw.onSelected){ cw.onSelected(); }
@@ -367,7 +398,7 @@ dojo.declare("dijit.layout._AccordionButton",
 	// tags:
 	//		private
 
-	templateString: dojo.cache("dijit.layout", "templates/AccordionButton.html", "<div dojoAttachPoint='titleNode,focusNode' dojoAttachEvent='ondijitclick:_onTitleClick,onkeypress:_onTitleKeyPress'\n\t\tclass='dijitAccordionTitle' wairole=\"tab\" waiState=\"expanded-false\"\n\t\t><span class='dijitInline dijitAccordionArrow' waiRole=\"presentation\"></span\n\t\t><span class='arrowTextUp' waiRole=\"presentation\">+</span\n\t\t><span class='arrowTextDown' waiRole=\"presentation\">-</span\n\t\t><img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='iconNode' style=\"vertical-align: middle\" waiRole=\"presentation\"/>\n\t\t<span waiRole=\"presentation\" dojoAttachPoint='titleTextNode' class='dijitAccordionText'></span>\n</div>\n"),
+	templateString: dojo.cache("dijit.layout", "templates/AccordionButton.html", "<div dojoAttachEvent='onclick:_onTitleClick' class='dijitAccordionTitle'>\n\t<div dojoAttachPoint='titleNode,focusNode' dojoAttachEvent='onkeypress:_onTitleKeyPress'\n\t\t\tclass='dijitAccordionTitleFocus' wairole=\"tab\" waiState=\"expanded-false\"\n\t\t><span class='dijitInline dijitAccordionArrow' waiRole=\"presentation\"></span\n\t\t><span class='arrowTextUp' waiRole=\"presentation\">+</span\n\t\t><span class='arrowTextDown' waiRole=\"presentation\">-</span\n\t\t><img src=\"${_blankGif}\" alt=\"\" class=\"dijitIcon\" dojoAttachPoint='iconNode' style=\"vertical-align: middle\" waiRole=\"presentation\"/>\n\t\t<span waiRole=\"presentation\" dojoAttachPoint='titleTextNode' class='dijitAccordionText'></span>\n\t</div>\n</div>\n"),
 	attributeMap: dojo.mixin(dojo.clone(dijit.layout.ContentPane.prototype.attributeMap), {
 		label: {node: "titleTextNode", type: "innerHTML" },
 		title: {node: "titleTextNode", type: "attribute", attribute: "title"},
@@ -395,7 +426,7 @@ dojo.declare("dijit.layout._AccordionButton",
 	getTitleHeight: function(){
 		// summary:
 		//		Returns the height of the title dom node.
-		return dojo.marginBox(this.titleNode).h;	// Integer
+		return dojo.marginBox(this.domNode).h;	// Integer
 	},
 
 	// TODO: maybe the parent should set these methods directly rather than forcing the code
@@ -405,7 +436,7 @@ dojo.declare("dijit.layout._AccordionButton",
 		//		Callback when someone clicks my title.
 		var parent = this.getParent();
 		if(!parent._inTransition){
-			parent.selectChild(this.contentWidget);
+			parent.selectChild(this.contentWidget, true);
 			dijit.focus(this.focusNode);
 		}
 	},

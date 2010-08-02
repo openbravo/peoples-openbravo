@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -51,7 +51,7 @@ dojox.drawing.tools.Ellipse = dojox.drawing.util.oo.declare(
 			if(this.created || !this._downOnCanvas){ return; }
 			this._downOnCanvas = false;
 			//Default shape on single click
-			if (!this.shape) {
+			if(!this.shape){
 				var s = obj.start, e = this.minimumSize*2;
 				this.data = {
 					cx: s.x+e,
@@ -61,7 +61,7 @@ dojox.drawing.tools.Ellipse = dojox.drawing.util.oo.declare(
 				};
 				this.dataToPoints();
 				this.render();
-			} else {
+			}else{
 			// if too small, need to reset
 				var o = this.pointsToData();
 				console.log("Create a default shape here, pt to data: ",o);

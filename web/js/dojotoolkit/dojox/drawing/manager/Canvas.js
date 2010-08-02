@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -101,6 +101,7 @@ dojo.provide("dojox.drawing.manager.Canvas");
 					this.height -= sw;
 				}
 				
+				this.mouse.resize(this.width,this.height);
 				this.gfxSurface.setDimensions(this.width, this.height);
 
 			
@@ -145,7 +146,7 @@ dojo.provide("dojox.drawing.manager.Canvas");
 				}; // Object
 			},
 			
-			getScrollWidth: function() {
+			getScrollWidth: function(){
 				// summary:
 				//		Special method used to detect the width (and height)
 				// 		of the browser scrollbars. Becomes memoized.

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.businessUtility.OrganizationData;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
 import org.openbravo.erpCommon.businessUtility.Tax;
@@ -65,6 +66,13 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
+      String strWarehouseOrg = SLOrderProductData.getWarehouseOrg(this, strWharehouse);
+      String strWarehouseForOrg = "";
+      if (!OrganizationData.isOrgInTree(this, strADOrgID, strWarehouseOrg, vars.getClient()))
+        strWarehouseForOrg = SLOrderProductData.getWarehouseOfOrg(this, vars.getClient(),
+            strADOrgID);
+      if (!strWarehouseForOrg.equals(""))
+        strWharehouse = strWarehouseForOrg;
       String strTabId = vars.getStringParameter("inpTabId");
 
       try {

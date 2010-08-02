@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -245,9 +245,7 @@ dojo.mixin(dijit._editor.selection, {
 			}
 		}else if(win.getSelection){
 			var selection = dojo.global.getSelection();
-			if(selection.setBaseAndExtent){ // Safari
-				selection.setBaseAndExtent(element, 0, element, element.innerText.length - 1);
-			}else if(dojo.isOpera){
+			if(dojo.isOpera){
 				//Opera's selectAllChildren doesn't seem to work right
 				//against <body> nodes and possibly others ... so
 				//we use the W3C range API
@@ -259,7 +257,7 @@ dojo.mixin(dijit._editor.selection, {
 				range.setStart(element, 0);
 				range.setEnd(element,(element.nodeType == 3)?element.length:element.childNodes.length);
 				selection.addRange(range);
-			}else if(selection.selectAllChildren){ // Mozilla
+			}else{
 				selection.selectAllChildren(element);
 			}
 		}

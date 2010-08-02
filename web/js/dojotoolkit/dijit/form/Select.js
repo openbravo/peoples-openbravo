@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -12,20 +12,20 @@ dojo.provide("dijit.form.Select");
 dojo.require("dijit.form._FormSelectWidget");
 dojo.require("dijit._HasDropDown");
 dojo.require("dijit.Menu");
+dojo.require("dijit.Tooltip");
 
-dojo.requireLocalization("dijit.form", "validate", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.requireLocalization("dijit.form", "validate", null, "ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
 
 dojo.declare("dijit.form._SelectMenu", dijit.Menu, {
 	// summary:
-	//		An internally-used menu for dropdown that allows us to more
-	//		gracefully overflow our menu
+	//		An internally-used menu for dropdown that allows us a vertical scrollbar
 	buildRendering: function(){
 		// summary:
 		//		Stub in our own changes, so that our domNode is not a table
 		//		otherwise, we won't respond correctly to heights/overflows
 		this.inherited(arguments);
 		var o = (this.menuTableNode = this.domNode);
-		var n = (this.domNode = dojo.doc.createElement("div"));
+		var n = (this.domNode = dojo.create("div", {style: {overflowX: "hidden", overflowY: "scroll"}}));
 		if(o.parentNode){
 			o.parentNode.replaceChild(n, o);
 		}
@@ -35,7 +35,6 @@ dojo.declare("dijit.form._SelectMenu", dijit.Menu, {
 		dijit.setWaiRole(o,"listbox");
 		dijit.setWaiRole(n,"presentation");
 		n.appendChild(o);
-		this.tabIndex=null; // so tabindex=0 does not get set on domNode (role="presentation" AND tabindex is invalid)
 	},
 	resize: function(/*Object*/ mb){
 		// summary:
@@ -48,17 +47,12 @@ dojo.declare("dijit.form._SelectMenu", dijit.Menu, {
 		//		The margin box to set this dropdown to.
 		if(mb){
 			dojo.marginBox(this.domNode, mb);
-			var w = dojo.contentBox(this.domNode).w;
-			if(dojo.isMoz && this.domNode.scrollHeight > this.domNode.clientHeight){
-				w--;
-			}else if(dojo.isIE < 8 || (dojo.isIE && dojo.isQuirks)){
-				// IE < 8 and IE8 in quirks mode doesn't need this additional
-				// width of the scrollbar...it causes a horizontal scroll bar
-				// (as well as continually expanding the dropdown each time
-				// it is opened)
-				w -= 16;
+			if("w" in mb){
+				// We've explicitly set the wrapper <div>'s width, so set <table> width to match.
+				// 100% is safer than a pixel value because there may be a scroll bar with
+				// browser/OS specific width.
+				this.menuTableNode.style.width = "100%";
 			}
-			dojo.marginBox(this.menuTableNode, {w: w});
 		}
 	}
 });
@@ -70,7 +64,7 @@ dojo.declare("dijit.form.Select", [dijit.form._FormSelectWidget, dijit._HasDropD
 
 	baseClass: "dijitSelect",
 
-	templateString: dojo.cache("dijit.form", "templates/Select.html", "<table class='dijit dijitReset dijitInline dijitLeft'\n\tdojoAttachPoint=\"_buttonNode,tableNode\" cellspacing='0' cellpadding='0' waiRole=\"presentation\"\n\t><tbody waiRole=\"presentation\"><tr waiRole=\"presentation\"\n\t\t><td class=\"dijitReset dijitStretch dijitButtonContents dijitButtonNode\" dojoAttachPoint=\"focusNode\"\n\t\t\twaiRole=\"combobox\" waiState=\"haspopup-true\"\n\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"  dojoAttachPoint=\"containerNode,_popupStateNode\"></span\n\t\t\t><input type=\"hidden\" ${nameAttrSetting} dojoAttachPoint=\"valueNode\" value=\"${value}\" waiState=\"hidden-true\" />\n\t\t</td><td class=\"dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton\"\n\t\t\t\tdojoAttachPoint=\"titleNode\" waiRole=\"presentation\"\n\t\t\t><div class=\"dijitReset dijitArrowButtonInner\" waiRole=\"presentation\">&thinsp;</div\n\t\t\t><div class=\"dijitReset dijitArrowButtonChar\" waiRole=\"presentation\">&#9660;</div\n\t\t></td\n\t></tr></tbody\n></table>\n"),
+	templateString: dojo.cache("dijit.form", "templates/Select.html", "<table class=\"dijit dijitReset dijitInline dijitLeft\"\n\tdojoAttachPoint=\"_buttonNode,tableNode,focusNode\" cellspacing='0' cellpadding='0'\n\twaiRole=\"combobox\" waiState=\"haspopup-true\"\n\t><tbody waiRole=\"presentation\"><tr waiRole=\"presentation\"\n\t\t><td class=\"dijitReset dijitStretch dijitButtonContents dijitButtonNode\" waiRole=\"presentation\"\n\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"  dojoAttachPoint=\"containerNode,_popupStateNode\"></span\n\t\t\t><input type=\"hidden\" ${!nameAttrSetting} dojoAttachPoint=\"valueNode\" value=\"${value}\" waiState=\"hidden-true\"\n\t\t/></td><td class=\"dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton\"\n\t\t\t\tdojoAttachPoint=\"titleNode\" waiRole=\"presentation\"\n\t\t\t><div class=\"dijitReset dijitArrowButtonInner\" waiRole=\"presentation\"></div\n\t\t\t><div class=\"dijitReset dijitArrowButtonChar\" waiRole=\"presentation\">&#9660;</div\n\t\t></td\n\t></tr></tbody\n></table>\n"),
 
 	// attributeMap: Object
 	//		Add in our style to be applied to the focus node
@@ -110,7 +104,7 @@ dojo.declare("dijit.form.Select", [dijit.form._FormSelectWidget, dijit._HasDropD
 		}
 
 		// Create the dropDown widget
-		this.dropDown = new dijit.form._SelectMenu();
+		this.dropDown = new dijit.form._SelectMenu({id: this.id + "_menu"});
 		dojo.addClass(this.dropDown.domNode, this.baseClass + "Menu");
 	},
 
@@ -192,7 +186,7 @@ dojo.declare("dijit.form.Select", [dijit.form._FormSelectWidget, dijit._HasDropD
 
 	_setValueAttr: function(value){
 		this.inherited(arguments);
-		dojo.attr(this.valueNode, "value", this.attr("value"));
+		dojo.attr(this.valueNode, "value", this.get("value"));
 	},
 
 	_setDisplay: function(/*String*/ newDisplay){
@@ -201,7 +195,7 @@ dojo.declare("dijit.form.Select", [dijit.form._FormSelectWidget, dijit._HasDropD
 		this.containerNode.innerHTML = '<span class="dijitReset dijitInline ' + this.baseClass + 'Label">' +
 					(newDisplay || this.emptyLabel || "&nbsp;") +
 					'</span>';
-		dijit.setWaiState(this.focusNode, "valuenow", (newDisplay || this.emptyLabel || "&nbsp;") );
+		dijit.setWaiState(this.focusNode, "valuetext", (newDisplay || this.emptyLabel || "&nbsp;") );
 	},
 
 	validate: function(/*Boolean*/ isFocused){
@@ -221,7 +215,7 @@ dojo.declare("dijit.form.Select", [dijit.form._FormSelectWidget, dijit._HasDropD
 			this._message = message;
 			dijit.hideTooltip(this.domNode);
 			if(message){
-				dijit.showTooltip(message, this.domNode, this.tooltipPosition);
+				dijit.showTooltip(message, this.domNode, this.tooltipPosition, !this.isLeftToRight());
 			}
 		}
 		return isValid;
@@ -269,6 +263,18 @@ dojo.declare("dijit.form.Select", [dijit.form._FormSelectWidget, dijit._HasDropD
 		this._loadChildren(true);
 		this._isLoaded = true;
 		loadCallback();
+	},
+
+	closeDropDown: function(){
+		// overriding _HasDropDown.closeDropDown()
+		this.inherited(arguments);
+
+		if(this.dropDown && this.dropDown.menuTableNode){
+			// Erase possible width: 100% setting from _SelectMenu.resize().
+			// Leaving it would interfere with the next openDropDown() call, which
+			// queries the natural size of the drop down.
+			this.dropDown.menuTableNode.style.width = "";
+		}
 	},
 
 	uninitialize: function(preserveDom){

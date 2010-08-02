@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -16,7 +16,7 @@ dojo.require("dojo.i18n");
 dojo.require("dojo.string");
 dojo.require("dojox.html.format");
 
-dojo.requireLocalization("dojox.editor.plugins", "PasteFromWord", null, "ROOT");
+dojo.requireLocalization("dojox.editor.plugins", "PasteFromWord", null, "ROOT,ro");
 
 dojo.declare("dojox.editor.plugins.PasteFromWord",dijit._editor._Plugin,{
 	// summary:
@@ -39,9 +39,9 @@ dojo.declare("dojox.editor.plugins.PasteFromWord",dijit._editor._Plugin,{
 	//		The height to use for the rich text area in the copy/pate dialog, in px.  Default is 300px.
 	height: "300px",
 
-	_template: ["<div>",
+	_template: ["<div class='dijitPasteFromWordEmbeddedRTE'>",
 				"<div style='width: ${width}; padding-top: 5px; padding-bottom: 5px;'>${instructions}</div>",
-				"<div id='${uId}_rte' style='width: ${width}; height: ${height}' class='dijitPasteFromWordEmbeddedRTE'></div>",
+				"<div id='${uId}_rte' style='width: ${width}; height: ${height}'></div>",
 				"<table style='width: ${width}' tabindex='-1'>", 
 					"<tbody>",
 						"<tr>",
@@ -95,7 +95,7 @@ dojo.declare("dojox.editor.plugins.PasteFromWord",dijit._editor._Plugin,{
 		strings.height = this.height || "300px";
 
 		this._dialog = new dijit.Dialog({title: strings["pasteFromWord"]}).placeAt(dojo.body());
-		this._dialog.attr("content", dojo.string.substitute(this._template, strings));
+		this._dialog.set("content", dojo.string.substitute(this._template, strings));
 
 		// Make it translucent so we can fade in the window when the RTE is created.
 		// the RTE has to be created 'visible, and this is a ncie trick to make the creation
@@ -146,7 +146,7 @@ dojo.declare("dojox.editor.plugins.PasteFromWord",dijit._editor._Plugin,{
 
 		// Gather the content and try to format it a bit (makes regexp cleanup simpler).
 		// It also normalizes tag names and styles, so regexps are the same across browsers.
-		var content = dojox.html.format.prettyPrint(this._rte.attr("value"));
+		var content = dojox.html.format.prettyPrint(this._rte.get("value"));
 
 		//Close up the dialog and clear old content.
 		this._dialog.hide();
@@ -181,7 +181,7 @@ dojo.declare("dojox.editor.plugins.PasteFromWord",dijit._editor._Plugin,{
 		//		copy from dialog into the editor.
 		// tags:
 		//		private
-		this._rte.attr("value", "");
+		this._rte.set("value", "");
 	},
 
 	destroy: function(){

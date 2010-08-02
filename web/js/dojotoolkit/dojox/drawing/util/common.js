@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -38,13 +38,13 @@ dojo.require("dojox.math.round");
 		//			}
 		//
 		//
-		radToDeg: function(/*Numer*/n) {
+		radToDeg: function(/*Numer*/n){
 			// summary:
 			//		Convert the passed number to degrees.
 			return (n*180)/Math.PI;	//	Number
 		},
 		
-		degToRad: function(/*Numer*/n) {
+		degToRad: function(/*Numer*/n){
 			// summary:
 			//		Convert the passed number to radians.
 			return (n*Math.PI)/180;	// Number
@@ -73,13 +73,18 @@ dojo.require("dojox.math.round");
 			}
 		},
 		
+		oppAngle: function(/*Angle*/ang){
+			(ang+=180) > 360 ? ang = ang - 360 : ang;
+			return ang;
+		},
+		
 		radians: function(/*EventObject*/o){
 			// summary:
 			//		Return the radians derived from the coordinates
 			//		in the Mouse object.
 			//
 			//var o = this.argsToObj.apply(this, arguments);
-			return Math.atan2(o.start.y-o.y,o.start.x-o.x);
+			return Math.atan2(o.start.y-o.y,o.x-o.start.x);
 		},
 		
 		length: function(/*EventObject*/o){
@@ -94,7 +99,7 @@ dojo.require("dojox.math.round");
 			// summary:
 			//		Subtract an amount from a line
 			// description:
-			//		x1,y1,x2,y2 represents the Line. 'amt' represnets the amount
+			//		x1,y1,x2,y2 represents the Line. 'amt' represents the amount
 			//		to subtract from it.
 			//
 			var len = this.distance(this.argsToObj.apply(this, arguments));
@@ -148,11 +153,11 @@ dojo.require("dojox.math.round");
 			//		x,y point at the end of that line.
 			//
 			var radians =  angle * Math.PI / 180.0;
-			var x = radius * Math.cos(radians) * -1;
-			var y = radius * Math.sin(radians) * -1;
+			var x = radius * Math.cos(radians);
+			var y = radius * Math.sin(radians);
 			return {
 				x:cx+x,
-				y:cy+y
+				y:cy-y
 			}; // Object
 		},
 		
@@ -242,7 +247,7 @@ dojo.require("dojox.math.round");
 			//		Helper function to attach attributes to SVG and VML raw nodes.
 			//
 			
-			if(!elem) { return false; }
+			if(!elem){ return false; }
 			try{
 				
 				// util is a crappy check, but we need to tell the diff

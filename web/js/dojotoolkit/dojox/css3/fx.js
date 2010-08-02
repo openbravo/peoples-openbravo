@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -92,19 +92,20 @@ dojo.mixin(dojox.css3.fx, {
 			whichAnims = args.whichAnims || [0, 1, 2, 3],
 				direction = args.direction || 1,
 			transforms = [
-				{ start: "scale(1, 1) skewY(0deg)", end: "scale(0, 1) skewY(" + (direction * 30) + "deg)" },
-				{ start: "scale(0, 1) skewY(" + (direction * 30) + "deg)", end: "scale(-1, 1) skewY(0)" },
-				{ start: "scale(-1, 1) skewY(0deg)", end: "scale(0, 1) skewY(" + (-direction * 30) + "deg)" },
-				{ start: "scale(0, 1) skewY(" + (-direction * 30) + "deg)", end: "scale(1, 1) skewY(0)" }
+				{ start: "scale(1, 1) skew(0deg,0deg)", end: "scale(0, 1) skew(0," + (direction * 30) + "deg)" },
+				{ start: "scale(0, 1) skew(0deg," + (direction * 30) + "deg)", end: "scale(-1, 1) skew(0deg,0deg)" },
+				{ start: "scale(-1, 1) skew(0deg,0deg)", end: "scale(0, 1) skew(0deg," + (-direction * 30) + "deg)" },
+				{ start: "scale(0, 1) skew(0deg," + (-direction * 30) + "deg)", end: "scale(1, 1) skew(0deg,0deg)" }
 		];
 		for(var i = 0; i < whichAnims.length; i++){
-			anims.push(dojo.animateProperty({
+			anims.push(dojo.animateProperty(
+				dojo.mixin({
 				node: args.node,
 				duration: args.duration || 600,
 				properties: {
 					transform: transforms[whichAnims[i]]
-				}
-			}));
+				}}, args)
+			));
 		}
 		return dojo.fx.chain(anims);
 	},

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -125,8 +125,8 @@ dojo.declare("dijit._PaletteMixin",
 			// The down key the index is increase by the x dimension.
 			DOWN_ARROW: this._xDim,
 			// Right and left move the index by 1.
-			RIGHT_ARROW: dojo._isBodyLtr() ? 1 : -1,
-			LEFT_ARROW: dojo._isBodyLtr() ? -1 : 1
+			RIGHT_ARROW: this.isLeftToRight() ? 1 : -1,
+			LEFT_ARROW: this.isLeftToRight() ? -1 : 1
 		};
 		for(var key in keyIncrementMap){
 			this._connects.push(
@@ -147,13 +147,9 @@ dojo.declare("dijit._PaletteMixin",
 
 	postCreate: function(){
 		this.inherited(arguments);
-		// Set initial navigable node.   At any point in time there's exactly one
-		// cell with tabIndex != -1.   If focus is inside the palette then
-		// focus is on that cell.
-		// TODO: if we set aria info (for the current value) on the palette itself then can we avoid
-		// having to focus each individual cell?
-		this._currentFocus = this._cells[0].node;
-		dojo.attr(this._currentFocus, "tabIndex", this.tabIndex);
+
+		// Set initial navigable node.
+		this._setCurrent(this._cells[0].node);
 	},
 
 	focus: function(){
@@ -162,21 +158,6 @@ dojo.declare("dijit._PaletteMixin",
 
 		// The cell already has tabIndex set, just need to set CSS and focus it
 		dijit.focus(this._currentFocus);
-	},
-
-	_onBlur: function(){
-		// summary:
-		//		Handler for when the widget loses focus
-		// tags:
-		//		protected
-
-		// Just to be the same as 1.3, when I am focused again go to first (0,0) cell rather than
-		// currently focused node.
-		dojo.attr(this._currentFocus, "tabIndex", "-1");
-		this._currentFocus = this._cells[0].node;
-		dojo.attr(this._currentFocus, "tabIndex", this.tabIndex);
-
-		this.inherited(arguments);
 	},
 
 	_onCellClick: function(/*Event*/ evt){
@@ -189,7 +170,17 @@ dojo.declare("dijit._PaletteMixin",
 
 		var target = evt.currentTarget,	
 			value = this._getDye(target).getValue();
-		this._setValueAttr(value, true);		
+
+		// First focus the clicked cell, and then send onChange() notification.
+		// onChange() (via _setValueAttr) must be after the focus call, because
+		// it may trigger a refocus to somewhere else (like the Editor content area), and that
+		// second focus should win.
+		// Use setTimeout because IE doesn't like changing focus inside of an event handler.
+		this._setCurrent(target);
+		setTimeout(dojo.hitch(this, function(){
+			dijit.focus(target);		
+			this._setValueAttr(value, true);		
+		}));
 
 		// workaround bug where hover class is not removed on popup because the popup is
 		// closed and then there's no onblur event on the cell
@@ -200,9 +191,14 @@ dojo.declare("dijit._PaletteMixin",
 
 	_setCurrent: function(/*DomNode*/ node){
 		// summary:
-		//		Called to focus a cell.
+		//		Sets which node is the focused cell.
 		// description:
-		//		Moves the tabIndex setting to the new cell.
+   		//		At any point in time there's exactly one
+		//		cell with tabIndex != -1.   If focus is inside the palette then
+		// 		focus is on that cell.
+		//
+		//		After calling this method, arrow key handlers and mouse click handlers
+		//		should focus the cell in a setTimeout().
 		// tags:
 		//		protected
 		if("_currentFocus" in this){

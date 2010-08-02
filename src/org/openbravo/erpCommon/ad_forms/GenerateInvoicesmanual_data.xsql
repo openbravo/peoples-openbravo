@@ -28,16 +28,17 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT C_Order_ID, o.Name as adorgname, COALESCE(dttrl.Name, dt.Name) as cdoctypename, DocumentNo, bp.Name as cbpartnername, DateOrdered,
+      SELECT ic.C_Order_ID, o.Name as adorgname, COALESCE(dttrl.Name, dt.Name) as cdoctypename, ic.DocumentNo, bp.Name as cbpartnername, ic.DateOrdered,
       amountlines, notinvoicedlines, l.Name as TermName, l.Value as TermValue, pendinglines as pendinglines, '' as amountlinesgross, '' as notinvoicedlinesgross, 
       '' as pendinglinesgross, ic.qtyordered as qtyordered, ic.qtydelivered as qtydelivered
-      FROM C_Invoice_Candidate_v ic, AD_Org o, C_BPartner bp, AD_Ref_List l left join AD_Ref_List_trl ltrl on l.AD_Ref_List_ID=ltrl.AD_Ref_List_ID and ltrl.ad_language=?, 
+      FROM C_Invoice_Candidate_v ic, C_ORDER ord, AD_Org o, C_BPartner bp, AD_Ref_List l left join AD_Ref_List_trl ltrl on l.AD_Ref_List_ID=ltrl.AD_Ref_List_ID and ltrl.ad_language=?, 
       C_DocType dt left join C_DocType_trl dttrl on dt.C_DocType_ID=dttrl.C_DocType_ID AND dttrl.ad_language=?
       WHERE ic.AD_Org_ID=o.AD_Org_ID
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
       AND l.value = ic.term
-      AND ic.term <> 'N'
+      AND ord.C_ORDER_ID=ic.C_ORDER_ID
+      AND ((ic.term = 'D' AND ic.qtydelivered <>0) OR (ic.term = 'I' AND (SELECT SUM(ol.QTYORDERED)-SUM(ol.QTYINVOICED) FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = ord.C_ORDER_ID) <> 0) OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )
       AND AD_Reference_ID='150'
       AND ic.ad_client_id in ('1')
       AND ic.ad_org_id in ('1')

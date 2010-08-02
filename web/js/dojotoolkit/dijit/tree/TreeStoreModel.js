@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -264,7 +264,8 @@ dojo.declare(
 			// modify target item's children attribute to include this item
 			if(newParentItem){
 				if(typeof insertIndex == "number"){
-					var childItems = store.getValues(newParentItem, parentAttr);
+					// call slice() to avoid modifying the original array, confusing the data store
+					var childItems = store.getValues(newParentItem, parentAttr).slice();
 					childItems.splice(insertIndex, 0, childItem);
 					store.setValues(newParentItem, parentAttr, childItems);
 				}else{

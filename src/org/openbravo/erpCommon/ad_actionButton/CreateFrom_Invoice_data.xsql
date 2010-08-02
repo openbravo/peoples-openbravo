@@ -114,12 +114,13 @@
     <Sql>
       <![CDATA[
         SELECT o.C_ORDER_ID as ID, Ad_Column_Identifier(to_char('C_Order'), to_char(o.c_order_id), to_char(?)) AS NAME 
-        FROM C_INVOICE_CANDIDATE_V ic, C_ORDER o 
+        FROM C_INVOICE_CANDIDATE_V ic, C_ORDER o
         WHERE o.C_ORDER_ID = ic.C_ORDER_ID 
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
         AND ic.C_BPartner_ID = ? 
-        AND ((ic.term = 'D' AND ic.qtydelivered <>0) OR (ic.term = 'I') OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )
+        AND o.C_Order_Id = ic.C_Order_Id
+        AND ((ic.term = 'D' AND ic.qtydelivered <>0) OR (ic.term = 'I' AND (SELECT SUM(ol.QTYORDERED)-SUM(ol.QTYINVOICED) FROM C_ORDERLINE ol WHERE ol.C_ORDER_ID = o.C_ORDER_ID) <> 0) OR (ic.term <> 'N' AND (ic.term IN ('O','S') AND (ic.qtyordered = ic.qtydelivered) )) )
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
         ORDER BY NAME
       ]]>

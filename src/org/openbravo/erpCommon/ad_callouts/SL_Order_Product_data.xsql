@@ -147,4 +147,33 @@
      <Parameter name="adUserClient" type="replace" optional="true" after="AD_Client_ID IN (" text="'1'"/>
      <Parameter name="adUserOrg" type="replace" optional="true" after="AD_Org_ID IN (" text="'1'"/>
   </SqlMethod>
+
+  <SqlMethod name="getWarehouseOrg" type="preparedStatement" return="String">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+	  SELECT AD_ORG_ID
+      FROM M_WAREHOUSE
+      WHERE M_WAREHOUSE_ID = ?
+	 </Sql>
+    <Parameter name="cWarehouseID"/>
+  </SqlMethod>
+
+  <SqlMethod name="getWarehouseOfOrg" type="preparedStatement" return="String">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select min(w.m_warehouse_id)
+        from m_warehouse w
+        where w.ad_client_id=?
+          and (ad_isorgincluded(?,w.ad_org_id,?)<>-1
+            or ad_isorgincluded(w.ad_org_id,?,?)<>-1)
+      ]]>
+    </Sql>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adClientId"/>
+  </SqlMethod>
+
 </SqlClass>

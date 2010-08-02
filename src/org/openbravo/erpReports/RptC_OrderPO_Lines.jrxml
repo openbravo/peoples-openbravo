@@ -191,7 +191,7 @@
 		<defaultValueExpression ><![CDATA["EUR"]]></defaultValueExpression>
 	</parameter>
 	<queryString><![CDATA[SELECT M_PRODUCT.VALUE, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.NAME, SUM(C_ORDERLINE.QTYORDERED) AS QTYORDERED, 
-       C_UOM.UOMSYMBOL AS UOMSYMBOL, C_ORDERLINE.LINENETAMT AS PRICEACTUAL, 
+       C_UOM.NAME AS UOMSYMBOL, C_ORDERLINE.LINENETAMT AS PRICEACTUAL, 
           (CASE WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID IS NULL THEN '' 
                 WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID='0' THEN '' 
                 ELSE TO_CHAR(M_ATTRIBUTESETINSTANCE.DESCRIPTION) END) AS ATTRIBUTE,
@@ -207,7 +207,7 @@ AND C_ORDER.C_ORDER_ID = $P{C_ORDER_ID}
 GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERLINE.LINENETAMT, 
       (CASE WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID IS NULL THEN '' 
             WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID='0' THEN '' 
-            ELSE TO_CHAR(M_ATTRIBUTESETINSTANCE.DESCRIPTION) END), M_PRODUCT.WEIGHT, C_UOM.UOMSYMBOL]]></queryString>
+            ELSE TO_CHAR(M_ATTRIBUTESETINSTANCE.DESCRIPTION) END), M_PRODUCT.WEIGHT, C_UOM.NAME]]></queryString>
 
 	<field name="VALUE" class="java.lang.String"/>
 	<field name="VENDORPRODUCTNO" class="java.lang.String"/>
@@ -234,7 +234,7 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 						style="Detail_Header"
 						x="0"
 						y="0"
-						width="50"
+						width="100"
 						height="16"
 						key="element-1"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -243,36 +243,17 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font pdfFontName="Helvetica" isBold="false"/>
 					</textElement>
-				<text><![CDATA[Reference]]></text>
+				<text><![CDATA[REFERENCE]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="50"
+						x="99"
 						y="0"
-						width="46"
-						height="16"
-						key="element-2"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica"/>
-					</textElement>
-				<text><![CDATA[Code]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Detail_Header"
-						x="96"
-						y="0"
-						width="139"
+						width="180"
 						height="16"
 						key="element-3"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -281,17 +262,17 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font isBold="false"/>
 					</textElement>
-				<text><![CDATA[Product Name]]></text>
+				<text><![CDATA[PRODUCT NAME]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="295"
+						x="328"
 						y="0"
-						width="46"
+						width="71"
 						height="16"
 						key="element-4"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -300,36 +281,17 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font isBold="false"/>
 					</textElement>
-				<text><![CDATA[Quantity]]></text>
+				<text><![CDATA[QUANTITY ]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="401"
+						x="278"
 						y="0"
-						width="82"
-						height="16"
-						key="element-5"/>
-					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<text><![CDATA[Price]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Detail_Header"
-						x="235"
-						y="0"
-						width="60"
+						width="50"
 						height="16"
 						key="element-6"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -338,34 +300,34 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font isBold="false"/>
 					</textElement>
-				<text><![CDATA[Size]]></text>
+				<text><![CDATA[UOM]]></text>
 				</staticText>
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Header"
-						x="341"
+						x="399"
 						y="0"
-						width="60"
+						width="83"
 						height="16"
-						key="element-7"/>
+						key="textField-9"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font isBold="false"/>
 					</textElement>
-				<text><![CDATA[Weight]]></text>
-				</staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["PRICE(" + $P{ISO_CODE} + ")"]]></textFieldExpression>
+				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="17"  isSplitAllowed="true" >
+			<band height="22"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
 						x="0"
@@ -381,8 +343,8 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 				</line>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="235"
-						y="1"
+						x="295"
+						y="5"
 						width="106"
 						height="16"
 						key="textField-8"/>
@@ -391,34 +353,16 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Total (" + $P{ISO_CODE} + "): "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["TOTAL (" + $P{ISO_CODE} + "): "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Gray"
-						x="341"
-						y="1"
-						width="60"
-						height="16"
-						key="textField"/>
-					<box leftPadding="2" rightPadding="2" topPadding="2" bottomPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-					<textElement textAlignment="Right">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{WEIGHT_SUM}!=null)?$P{NUMBERFORMAT}.format($V{WEIGHT_SUM}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Total_Gray"
-						x="401"
-						y="1"
+						x="400"
+						y="5"
 						width="82"
 						height="16"
 						key="textField"/>
@@ -427,11 +371,61 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNT_SUM}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNT_SUM}):new String(" ")]]></textFieldExpression>
 				</textField>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="295"
+						y="4"
+						width="188"
+						height="0"
+						key="line-9"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="295"
+						y="4"
+						width="0"
+						height="17"
+						key="line-10"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="295"
+						y="21"
+						width="188"
+						height="0"
+						key="line-11"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="482"
+						y="5"
+						width="0"
+						height="17"
+						key="line-12"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="482"
+						height="0"
+						key="line-13"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 			</band>
 			</groupFooter>
 		</group>
@@ -471,8 +465,9 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 						style="default"
 						x="0"
 						y="0"
-						width="50"
+						width="100"
 						height="16"
+						forecolor="#000000"
 						key="textField-1"
 						stretchType="RelativeToBandHeight"/>
 					<box leftPadding="2" rightPadding="2" topPadding="2" bottomPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -480,7 +475,7 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Left" verticalAlignment="Top">
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{VALUE}]]></textFieldExpression>
@@ -488,29 +483,11 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="50"
+						x="99"
 						y="0"
-						width="46"
+						width="180"
 						height="16"
-						key="textField-2"
-						stretchType="RelativeToBandHeight"/>
-					<box leftPadding="2" rightPadding="2" topPadding="2" bottomPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Top">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{VENDORPRODUCTNO}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="default"
-						x="96"
-						y="0"
-						width="139"
-						height="16"
+						forecolor="#000000"
 						key="textField-3"
 						stretchType="RelativeToBandHeight"/>
 					<box leftPadding="2" rightPadding="2" topPadding="2" bottomPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -518,7 +495,7 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement verticalAlignment="Top">
+					<textElement verticalAlignment="Middle">
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NAME}]]></textFieldExpression>
@@ -526,10 +503,11 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="235"
+						x="278"
 						y="0"
-						width="60"
+						width="50"
 						height="16"
+						forecolor="#000000"
 						key="textField-6"
 						stretchType="RelativeToBandHeight"/>
 					<box leftPadding="2" rightPadding="2" topPadding="2" bottomPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -537,18 +515,19 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement verticalAlignment="Top">
+					<textElement verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ATTRIBUTE}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="295"
+						x="328"
 						y="0"
-						width="46"
+						width="71"
 						height="16"
+						forecolor="#000000"
 						key="textField-4"
 						stretchType="RelativeToBandHeight"/>
 					<box leftPadding="2" rightPadding="2" topPadding="2" bottomPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -556,37 +535,19 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Right" verticalAlignment="Top">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{QTYORDERED}!=null)?$P{NUMBERFORMAT}.format($F{QTYORDERED})+" "+$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="default"
-						x="341"
-						y="0"
-						width="60"
-						height="16"
-						key="textField-7"
-						stretchType="RelativeToBandHeight"/>
-					<box leftPadding="2" rightPadding="2" topPadding="2" bottomPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{WEIGHT}!=null)?$P{NUMBERFORMAT}.format($F{WEIGHT}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{QTYORDERED}!=null)?$P{NUMBERFORMAT}.format($F{QTYORDERED}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="401"
+						x="399"
 						y="0"
-						width="82"
+						width="83"
 						height="16"
+						forecolor="#000000"
 						key="textField-5"
 						stretchType="RelativeToBandHeight"/>
 					<box leftPadding="2" rightPadding="2" topPadding="2" bottomPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -594,12 +555,78 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 </box>
-					<textElement textAlignment="Right" verticalAlignment="Top">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{PRICEACTUAL}!=null)?$P{NUMBERFORMAT}.format($F{PRICEACTUAL}):new String(" ")]]></textFieldExpression>
 				</textField>
-				</frame>			</band>
+				</frame>				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="0"
+						height="16"
+						key="line-1"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="99"
+						y="0"
+						width="0"
+						height="16"
+						key="line-2"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="278"
+						y="0"
+						width="0"
+						height="16"
+						key="line-4"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="328"
+						y="0"
+						width="0"
+						height="16"
+						key="line-5"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="399"
+						y="0"
+						width="0"
+						height="16"
+						key="line-7"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="482"
+						y="0"
+						width="0"
+						height="16"
+						key="line-8"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight"/>
+				</line>
+			</band>
 		</detail>
 		<columnFooter>
 			<band height="0"  isSplitAllowed="true" >
@@ -609,28 +636,6 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</pageFooter>
-		<lastPageFooter>
-			<band height="48"  isSplitAllowed="true" >
-				<staticText>
-					<reportElement
-						style="default"
-						x="41"
-						y="19"
-						width="340"
-						height="16"
-						key="staticText-1"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<text><![CDATA[REGARDS]]></text>
-				</staticText>
-			</band>
-		</lastPageFooter>
 		<summary>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
