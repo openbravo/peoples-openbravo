@@ -23,17 +23,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.net.URL;
-import java.security.InvalidKeyException;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.security.SignatureException;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,10 +43,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.zip.CRC32;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
@@ -288,9 +281,7 @@ public class ActivationKey {
     setLogger();
   }
 
-  private boolean decrypt(byte[] bytes, PublicKey pk, ByteArrayOutputStream bos)
-      throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IOException,
-      IllegalBlockSizeException, BadPaddingException, SignatureException {
+  private boolean decrypt(byte[] bytes, PublicKey pk, ByteArrayOutputStream bos) throws Exception {
     PublicKey obPk = getPublicKey(OB_PUBLIC_KEY); // get OB public key to check signature
     Signature signer = Signature.getInstance("MD5withRSA");
     signer.initVerify(obPk);
