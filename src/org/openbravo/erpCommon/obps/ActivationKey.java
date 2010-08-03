@@ -64,6 +64,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class ActivationKey {
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
+  private final static String OB_PUBLIC_KEY2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCeivfuzeE+hdv7mXEyOWTpGglsT1J+UHcp9RrHydgLgccPdQ5EjqtKVSc/jzzJV5g+9XaSxz9pK5TuzzdN4fJHPCnuO0EiwWI2dxS/t1Boo+gGageGZyFRMhMsULU4902gzmw1qugEskUSKONJcR65H06HYRn2fTgVbGvEhFMASwIDAQAB";
 
   private boolean isActive = false;
   private boolean hasActivationKey = false;
@@ -196,7 +197,16 @@ public class ActivationKey {
     hasActivationKey = true;
     try {
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      if (decrypt(activationKey.getBytes(), pk, bos)) {
+      boolean signed = decrypt(activationKey.getBytes(), pk, bos, OB_PUBLIC_KEY);
+
+      if (!signed) {
+        // Basic license is only supported from 2.50mp21, they are signed with second key. So in
+        // case first key does not work, try to use the second one.
+        bos = new ByteArrayOutputStream();
+        signed = decrypt(activationKey.getBytes(), pk, bos, OB_PUBLIC_KEY2);
+      }
+
+      if (signed) {
         byte[] props = bos.toByteArray();
         ByteArrayInputStream isProps = new ByteArrayInputStream(props);
         InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
@@ -208,6 +218,7 @@ public class ActivationKey {
         isActive = false;
         errorMessage = "@NotSigned@";
         setLogger();
+        return;
       }
     } catch (Exception e) {
       isActive = false;
@@ -281,8 +292,9 @@ public class ActivationKey {
     setLogger();
   }
 
-  private boolean decrypt(byte[] bytes, PublicKey pk, ByteArrayOutputStream bos) throws Exception {
-    PublicKey obPk = getPublicKey(OB_PUBLIC_KEY); // get OB public key to check signature
+  private boolean decrypt(byte[] bytes, PublicKey pk, ByteArrayOutputStream bos,
+      String strOBPublicKey) throws Exception {
+    PublicKey obPk = getPublicKey(strOBPublicKey); // get OB public key to check signature
     Signature signer = Signature.getInstance("MD5withRSA");
     signer.initVerify(obPk);
 
@@ -339,7 +351,7 @@ public class ActivationKey {
       byte fileContent[] = new byte[(int) restrictionsFile.length()];
       fis.read(fileContent);
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      decrypt(fileContent, getPublicKey(OB_PUBLIC_KEY), bos);
+      decrypt(fileContent, getPublicKey(OB_PUBLIC_KEY), bos, OB_PUBLIC_KEY);
       ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
       HashMap<String, ArrayList<String>> m1 = (HashMap<String, ArrayList<String>>) ois.readObject();
       ois.close();
