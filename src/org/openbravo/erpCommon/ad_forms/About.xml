@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,11 +28,13 @@
     <PARAMETER id="paramLicensedTo" name="paramLicensedTo" default=""/>
     <PARAMETER id="paraOPSPurpose" name="paraOPSPurpose" default=""/>
     <PARAMETER id="paraOPSType" name="paraOPSType" default=""/>
-    <structure name="structure1">
-        <FIELD id="fieldLang">lang</FIELD>
-        <FIELD id="fieldTranslator">translatedby</FIELD>
-        <FIELD id="fieldDocumentno">documentno</FIELD>
-        <SECTION id="sectionDetail"/>
+    
+    <structure name="installedModules">
+      <FIELD id="modTab">tab</FIELD>
+      <FIELD id="moduleName">moduleName</FIELD>
+      <FIELD id="moduleVersion">moduleVersion</FIELD>
+      <FIELD id="moduleAuthor">moduleAuthor</FIELD>
+      <SECTION id="installedModulesDetail"/>
     </structure>
  
 </REPORT>
