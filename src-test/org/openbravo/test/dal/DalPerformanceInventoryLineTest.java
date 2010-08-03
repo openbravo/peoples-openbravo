@@ -22,6 +22,7 @@ package org.openbravo.test.dal;
 import java.math.BigDecimal;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.criterion.Expression;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
@@ -108,6 +109,8 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
     final InventoryCountLine baseLine = (InventoryCountLine) DalUtil.copy(iclObc.list().get(0),
         false);
     final long time = System.currentTimeMillis();
+    Hibernate.initialize(baseLine.getUpdatedBy());
+    Hibernate.initialize(baseLine.getCreatedBy());
     commitTransaction();
 
     final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
