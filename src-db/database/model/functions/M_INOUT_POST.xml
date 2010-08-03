@@ -317,7 +317,7 @@
               AND IsStocked='Y'
               AND ProductType='I';
             -- Create Transaction for stocked product
-            IF(Cur_InOutLine.M_Product_ID IS NOT NULL AND v_IsStocked=1) THEN
+            IF(Cur_InOutLine.M_Product_ID IS NOT NULL AND v_IsStocked=1 AND Cur_InOutLine.IsDescription <> 'Y') THEN
               v_ResultStr:='CreateTransaction';
               Ad_Sequence_Next('M_Transaction', Cur_InOutLine.AD_Org_ID, v_NextNo) ;
               INSERT
@@ -514,7 +514,8 @@
                   sl.M_AttributeSetInstance_ID,
                   sl.MovementQty,
                   il.QTYINVOICED,
-                  i.DateAcct
+                  i.DateAcct,
+                  il.IsDescription
                 FROM M_INOUTLINE sl,
                   C_INVOICE i,
                   C_INVOICELINE il
@@ -648,7 +649,7 @@
                 CreatedBy, Updated, UpdatedBy, M_Product_ID,
                 M_AttributeSetInstance_ID, C_UOM_ID, M_Locator_ID, MovementQty,
                 Description, IsInvoiced,  --MODIFIED BY F.IRIAZABAL
-                QuantityOrder, M_Product_UOM_ID
+                QuantityOrder, M_Product_UOM_ID, IsDescription
               )
               VALUES
               (
@@ -657,7 +658,7 @@
                 v_User, now(), v_User, Cur_InOutLine.M_Product_ID,
                 Cur_InOutLine.M_AttributeSetInstance_ID, Cur_InOutLine.C_UOM_ID, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.MovementQty * -1,
                  '*R*: ' || Cur_InOutLine.Description, Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
-                Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID
+                Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID, Cur_InOutLine.IsDescription
               )
               ;
             INSERT INTO M_MATCHINV

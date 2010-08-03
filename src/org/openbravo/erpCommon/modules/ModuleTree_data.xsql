@@ -46,7 +46,7 @@
                      '' as linkClick1,
                      '' as linkName1,
                      '' as Description,
-                     '' as Version,
+                     COALESCE(MI.version, M.version) as Version,
                      '' as Status_Name,
                      M.Status,
                      M.Update_Available,
@@ -62,7 +62,9 @@
                      '' as updatedescription,
                      '' as position,
                      '' as UPDATE_VER_ID,
-                     coalesce (MI.Seqno, M.SeqNo) as Seqno
+                     coalesce (MI.Seqno, M.SeqNo) as Seqno,
+                     coalesce (mi.name, m.name) as ModuleName,
+                     coalesce (mi.version_label, m.version_label) as version_label
            FROM AD_Module M left join AD_Module_Install MI
                                    on M.AD_Module_ID = MI.AD_Module_ID
           WHERE NOT EXISTS (SELECT 1 
@@ -82,7 +84,7 @@
                      '' as linkClick1,
                      '' as linkName1,
                      '' as Description,
-                     '' as Version,
+                     m.Version,
                      '' as Status_Name,
                      M.Status,
                      M.Update_Available,
@@ -98,7 +100,9 @@
                      '' as updatedescription,
                      '' as position,
                      '' as UPDATE_VER_ID,
-                     Seqno
+                     Seqno,
+                     m.name as ModuleName,
+                     m.version_label
            FROM AD_Module_Install M 
           WHERE NOT EXISTS (SELECT 1 
                               FROM AD_Module_Dependency_Inst
@@ -136,7 +140,10 @@
                            WHERE AD_Module_ID = M2.AD_Module_ID
                              AND IsIncluded = 'Y'))                as display,
                      m.Status,
-                     m.Update_Available 
+                     m.Update_Available,
+                     m.version,
+                     m.name as moduleName,
+                     m.version_label
             FROM AD_MODULE M LEFT JOIN AD_MODULE_INSTALL MI
                                     ON MI.AD_MODULE_ID = M.AD_MODULE_ID
            WHERE EXISTS (SELECT 1 
@@ -158,7 +165,10 @@
                    WHERE AD_Module_ID = M.AD_Module_ID
                      AND IsIncluded = 'Y')                as display,
                      Status,
-                     Update_Available 
+                     Update_Available,
+                     m.version,
+                     m.name as moduleName,
+                     m.version_label
             FROM AD_MODULE_Install M
            WHERE EXISTS (SELECT 1 
                            FROM AD_Module_Dependency_Inst 

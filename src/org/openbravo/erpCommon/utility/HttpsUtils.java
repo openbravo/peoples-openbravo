@@ -37,8 +37,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
@@ -59,8 +61,13 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.utils.FormatUtilities;
 
 public class HttpsUtils {
 
@@ -356,26 +363,87 @@ public class HttpsUtils {
     }
   };
 
+  /**
+   * Checks Internet availability. In case system information is defined to use proxy, proxy is set.
+   * Therefore this method should be invoked before each Internet connection.
+   * 
+   * @return true in case Internet (https://butler.openbravo.com) is reachable.
+   */
   public static boolean isInternetAvailable() {
     return isInternetAvailable(null, 0);
   }
 
+  /**
+   * Checks the Internet availability and sets the proxy in case it is needed.
+   * 
+   * @deprecated Proxy settings should not be passed as parameter, but obtained from system
+   *             information. Use instead {@link HttpsUtils#isInternetAvailable()}
+   * @param proxyHost
+   * @param proxyPort
+   * @return
+   */
   public static boolean isInternetAvailable(String proxyHost, int proxyPort) {
-    if (proxyHost != null && !proxyHost.equals("")) {
-      System.getProperties().put("proxySet", true);
-      System.getProperties().put("http.proxyHost", proxyHost);
-      System.getProperties().put("https.proxyHost", proxyHost);
-      System.getProperties().put("http.proxyPort", String.valueOf(proxyPort));
-      System.getProperties().put("https.proxyPort", String.valueOf(proxyPort));
-      System.setProperty("java.net.useSystemProxies", "true");
-    } else {
-      System.getProperties().put("proxySet", false);
-      System.getProperties().remove("http.proxyHost");
-      System.getProperties().remove("http.proxyPort");
-      System.getProperties().remove("https.proxyHost");
-      System.getProperties().remove("https.proxyPort");
-      System.setProperty("java.net.useSystemProxies", "false");
+    OBContext.setAdminMode();
+    try {
+      final SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+      if (sys.isProxyRequired() || (proxyHost != null && !proxyHost.isEmpty())) {
+        // Proxy is required for connection.
+        String host;
+        int port;
+        if (proxyHost == null || proxyHost.isEmpty()) {
+          // to maintain backwards compatibility, set host in case it is provided as parameter (it
+          // shouldn't be)
+          host = sys.getProxyServer();
+          port = sys.getProxyPort().intValue();
+        } else {
+          host = proxyHost;
+          port = proxyPort;
+        }
+        host = "localhost2";
+        System.getProperties().put("proxySet", "true");
+        System.getProperties().put("http.proxyHost", host);
+        System.getProperties().put("https.proxyHost", host);
+        System.getProperties().put("http.proxyPort", String.valueOf(port));
+        System.getProperties().put("https.proxyPort", String.valueOf(port));
+
+        System.setProperty("java.net.useSystemProxies", "true");
+
+        if (sys.isRequiresProxyAuthentication()) {
+          final String user = sys.getProxyUser();
+          String pass = "";
+          try {
+            pass = FormatUtilities.encryptDecrypt(sys.getProxyPassword(), false);
+          } catch (ServletException e) {
+            log4j.error("Error setting proxy authenticator", e);
+          }
+          final String password = pass;
+
+          // Used for standard http and https connections
+          Authenticator.setDefault(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+              return new PasswordAuthentication(user, password.toCharArray());
+            }
+          });
+
+          // Used for SOAP webservices
+          System.getProperties().setProperty("http.proxyUser", user);
+          System.getProperties().setProperty("http.proxyPassword", password);
+        }
+      } else {
+        System.getProperties().put("proxySet", false);
+        System.getProperties().remove("http.proxyHost");
+        System.getProperties().remove("http.proxyPort");
+        System.getProperties().remove("https.proxyHost");
+        System.getProperties().remove("https.proxyPort");
+        System.getProperties().remove("http.proxyUser");
+        System.getProperties().remove("http.proxyPassword");
+        System.setProperty("java.net.useSystemProxies", "false");
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
     try {
       // Double check.
       URL url = new URL("https://butler.openbravo.com");
