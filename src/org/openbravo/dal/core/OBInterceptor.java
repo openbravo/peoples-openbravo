@@ -279,7 +279,7 @@ public class OBInterceptor extends EmptyInterceptor {
     // check is done (see onSave). This is before hibernate can copy
     // the changes from currentState to the object. This happens slighlty later.
     final OBContext obContext = OBContext.getOBContext();
-    final User currentUser = obContext.getUser();
+    final User currentUser = getCurrentUser();
     log.debug("OBEvent for new object " + traceable.getClass().getName() + " user "
         + currentUser.getName());
 
@@ -329,7 +329,7 @@ public class OBInterceptor extends EmptyInterceptor {
   // Sets the updated/updatedby
   // TODO: can the client/organization change?
   protected void onUpdate(Traceable t, String[] propertyNames, Object[] currentState) {
-    final User currentUser = OBContext.getOBContext().getUser();
+    final User currentUser = getCurrentUser();
     log.debug("OBEvent for updated object " + t.getClass().getName() + " user "
         + currentUser.getName());
     for (int i = 0; i < propertyNames.length; i++) {
@@ -351,4 +351,10 @@ public class OBInterceptor extends EmptyInterceptor {
     }
   }
 
+  // reads the current user from the database, note multiple reads
+  // will hit the session cache
+  private User getCurrentUser() {
+    return SessionHandler.getInstance()
+        .find(User.class, OBContext.getOBContext().getUser().getId());
+  }
 }
