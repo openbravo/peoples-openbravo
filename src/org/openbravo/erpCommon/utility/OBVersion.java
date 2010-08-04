@@ -36,7 +36,7 @@ public class OBVersion {
 
   private static final OBVersion instance = new OBVersion();
 
-  public OBVersion getInstance() {
+  public static OBVersion getInstance() {
     return instance;
   }
 
