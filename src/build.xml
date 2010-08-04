@@ -861,7 +861,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="compile.complete.development" depends="compile.complete, copy.files">
-    <updatesystemstatus v="RB51"/>
+    <updatesystemstatus v="RB60"/>
   </target>
 
   <target name="compile.web" depends="build.web.folder">
@@ -879,7 +879,7 @@ build.war: build a war file in the lib directory.
       </zipfileset>
       <classes dir="${build}" />
     </war>
-    <updatesystemstatus v="RB51"/>
+    <updatesystemstatus v="RB60"/>
   </target>
 
   <target name="generate-wsdd">
