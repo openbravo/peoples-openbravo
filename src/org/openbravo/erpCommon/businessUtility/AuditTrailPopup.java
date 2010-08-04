@@ -52,6 +52,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
@@ -106,6 +108,12 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    // Prevent execution in Community instances
+    if (!ActivationKey.getInstance().isActive()) {
+      licenseError(classInfo.type, classInfo.id, FeatureRestriction.TIER1_RESTRICTION, response,
+          request, vars, true);
+    }
 
     String accesTabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
     if (!hasGeneralAccess(vars, "W", accesTabId)) {
