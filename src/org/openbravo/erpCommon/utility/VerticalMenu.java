@@ -36,7 +36,6 @@ import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess.HeartBeatOrRegistration;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -256,25 +255,23 @@ public class VerticalMenu extends HttpSecureAppServlet {
             open);
         String strID = "";
 
-        boolean hasAccess = true;
-        if (ActivationKey.getInstance().getLicenseClass() == LicenseClass.BASIC) {
-          // Hide non accessible entries for Basic Licenses.
-          String menuAction = menuData[i].action;
-          if (menuAction.equals("W")) {
-            menuAction = "MW";
-          }
-          String artifactId = "";
-          if (menuAction.equals("MW")) {
-            artifactId = menuData[i].adWindowId;
-          } else if (menuAction.equals("P") || menuAction.equals("P")) {
-            artifactId = menuData[i].adProcessId;
-          } else if (menuAction.equals("X")) {
-            artifactId = menuData[i].adFormId;
-          }
-          hasAccess = ActivationKey.getInstance().hasLicenseAccess(menuAction, artifactId) == FeatureRestriction.NO_RESTRICTION;
+        // Hide non accessible entries because of license
+        String menuAction = menuData[i].action;
+        if (menuAction.equals("W")) {
+          menuAction = "MW";
         }
+        String artifactId = "";
+        if (menuAction.equals("MW")) {
+          artifactId = menuData[i].adWindowId;
+        } else if (menuAction.equals("P") || menuAction.equals("P")) {
+          artifactId = menuData[i].adProcessId;
+        } else if (menuAction.equals("X")) {
+          artifactId = menuData[i].adFormId;
+        }
+        boolean hasLicenseAccess = ActivationKey.getInstance().hasLicenseAccess(menuAction,
+            artifactId) == FeatureRestriction.NO_RESTRICTION;
 
-        if (hasAccess && (!strHijos.equals("") || menuData[i].issummary.equals("N"))) {
+        if (hasLicenseAccess && (!strHijos.equals("") || menuData[i].issummary.equals("N"))) {
           strText.append("<tr>\n");
           strText.append("  <td>\n");
           strText.append("    <table cellspacing=\"0\" cellpadding=\"0\"");
