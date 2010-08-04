@@ -110,7 +110,7 @@ public class ActivationKey {
       this.code = code;
     }
 
-    String getCode() {
+    public String getCode() {
       return code;
     }
   }
