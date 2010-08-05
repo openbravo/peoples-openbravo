@@ -897,6 +897,7 @@ public class ActivationKey {
     try {
       OBCriteria<Module> mods = OBDal.getInstance().createCriteria(Module.class);
       mods.add(Expression.eq(Module.PROPERTY_COMMERCIAL, true));
+      mods.add(Expression.eq(Module.PROPERTY_ENABLED, true));
       // Allow development of commercial modules which are not in the license.
       mods.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, false));
       mods.addOrder(Order.asc(Module.PROPERTY_NAME));
