@@ -892,28 +892,44 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,
       boolean isPopup) throws IOException {
     String titleText = getArtifactName(type, id, vars.getLanguage());
+    String infoText = "";
 
-    String editionType;
+    String editionType = null;
+    String completeWindowMsg = "";
+    String discard[] = { "" };
+
     switch (featureRestriction) {
+    case TIER1_RESTRICTION:
+      editionType = "OBPSAnyEdition";
+      // do not break continue with next tier restriction
     case TIER2_RESTRICTION:
-      editionType = "OBPSStandardEdition";
+      if (editionType != null) {
+        editionType = "OBPSStandardEdition";
+      }
+      // <p> in java, to allow multi-paragraph text via the parameter
+      infoText = "<p>"
+          + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
+              .replace("@ProfessionalEditionType@",
+                  Utility.messageBD(this, editionType, vars.getLanguage())) + "</p>";
+      completeWindowMsg = infoText + "\n"
+          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
+      break;
+    case DISABLED_MODULE_RESTRICTION:
+      discard[0] = "links";
+      String msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
+      infoText = msg;
+      completeWindowMsg = msg;
       break;
     default:
-      editionType = "OBPSAnyEdition";
       break;
     }
 
-    // <p> in java, to allow multi-paragraph text via the parameter
-    String infoText = "<p>"
-        + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage()).replace(
-            "@ProfessionalEditionType@", Utility.messageBD(this, editionType, vars.getLanguage()))
-        + "</p>";
     String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
     String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
 
     if (isPopup) {
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly").createXmlDocument();
+          "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly", discard).createXmlDocument();
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -928,8 +944,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       out.println(xmlDocument.print());
       out.close();
     } else {
-      bdErrorGeneral(request, response, titleText, infoText + "\n"
-          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage()));
+      bdErrorGeneral(request, response, titleText, completeWindowMsg);
     }
   }
 

@@ -21,6 +21,7 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.modules.DisabledModules;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -229,6 +230,10 @@ public class LoginUtils {
       vars.setSessionValue("#ShowConfirmation", Utility.getPreference(vars,
           "ShowConfirmationDefault", ""));
       vars.setSessionValue("#Autosave", Utility.getPreference(vars, "Autosave", ""));
+
+      // Reload disabled modules
+      DisabledModules.reload();
+
       SystemPreferencesData[] dataSystem = SystemPreferencesData.select(conn);
       if (dataSystem != null && dataSystem.length > 0) {
         vars.setSessionValue("#RecordRange", dataSystem[0].tadRecordrange);

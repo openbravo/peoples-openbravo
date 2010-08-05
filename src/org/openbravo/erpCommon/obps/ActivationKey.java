@@ -56,6 +56,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.modules.DisabledModules;
+import org.openbravo.erpCommon.modules.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
@@ -101,7 +103,7 @@ public class ActivationKey {
   }
 
   public enum FeatureRestriction {
-    NO_RESTRICTION, TIER1_RESTRICTION, TIER2_RESTRICTION, UNKNOWN_RESTRICTION;
+    NO_RESTRICTION, DISABLED_MODULE_RESTRICTION, TIER1_RESTRICTION, TIER2_RESTRICTION, UNKNOWN_RESTRICTION;
   }
 
   public enum LicenseClass {
@@ -818,9 +820,7 @@ public class ActivationKey {
     String actualType = type;
     VersionComparator vc = new VersionComparator();
 
-    if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()
-        || (!isActive() && vc.compare("3.0.0", OBVersion.getInstance().getVersionNumber()) > 0)
-        || licenseClass == LicenseClass.STD) {
+    if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()) {
       return FeatureRestriction.NO_RESTRICTION;
     }
     log4j.debug("Type:" + actualType + " id:" + id);
@@ -842,6 +842,12 @@ public class ActivationKey {
           return FeatureRestriction.UNKNOWN_RESTRICTION;
         }
         artifactId = tab.getWindow().getId();
+
+        // For windows check whether the window's module is disabled, and later whether the tab is
+        // disabled
+        if (!DisabledModules.isEnabled(Artifacts.MODULE, tab.getWindow().getModule().getId())) {
+          return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+        }
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -849,6 +855,27 @@ public class ActivationKey {
       // Menu window, it receives window instead of tab
       actualType = "W";
     }
+
+    // Check disabled modules restrictions
+    Artifacts artifactType;
+    if ("W".equals(actualType)) {
+      artifactType = Artifacts.TAB;
+    } else if ("X".equals(actualType)) {
+      artifactType = Artifacts.FORM;
+    } else {
+      artifactType = Artifacts.PROCESS;
+    }
+    // Use id instead of artifactId to keep tabs' ids
+    if (!DisabledModules.isEnabled(artifactType, id)) {
+      return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+    }
+
+    // Check core premium features restrictions
+    if ((!isActive() && vc.compare("3.0.0", OBVersion.getInstance().getVersionNumber()) > 0)
+        || licenseClass == LicenseClass.STD) {
+      return FeatureRestriction.NO_RESTRICTION;
+    }
+
     if (tier1Artifacts.contains(actualType + artifactId)) {
       return FeatureRestriction.TIER1_RESTRICTION;
     }
