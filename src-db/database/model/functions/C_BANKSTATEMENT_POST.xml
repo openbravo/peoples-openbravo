@@ -145,7 +145,7 @@
           v_ResultStr := 'Reversed';
 
    --Unpost Settlement
-   FOR Cur_AutomaticSettlementCancel IN (SELECT DISTINCT S.C_SETTLEMENT_ID
+   FOR Cur_AutomaticSettlementCancel IN (SELECT DISTINCT S.C_SETTLEMENT_ID, DP.C_BPartner_ID
             FROM C_DEBT_PAYMENT DP, C_SETTLEMENT S
             WHERE DP.C_SETTLEMENT_CANCEL_ID = S.C_SETTLEMENT_ID
             AND DP.C_BANKSTATEMENTLINE_ID IN
@@ -170,8 +170,8 @@
         FOR Cur_Debts IN
           (SELECT DISTINCT C_BPartner_ID
           FROM C_DEBT_PAYMENT
-          WHERE C_Settlement_Cancel_ID=Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID
-            OR C_Settlement_Cancel_ID IS NULL
+          WHERE 
+          C_BPartner_ID = Cur_AutomaticSettlementCancel.C_BPartner_ID
             OR C_Settlement_Generate_ID=Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID AND ISRECEIPT = 'Y'
           )
         LOOP

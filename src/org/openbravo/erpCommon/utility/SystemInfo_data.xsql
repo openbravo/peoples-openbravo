@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,14 +89,6 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	select Ant_Version from ad_system_info
-    ]]></Sql>
-   </SqlMethod>
-   <SqlMethod name="selectObVersion" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-    select version || version_label as ob_version
-      from ad_module
-     where ad_module_id = '0'
     ]]></Sql>
    </SqlMethod>
    <SqlMethod name="selectObInstallMode" type="preparedStatement" return="string">

@@ -211,8 +211,7 @@ public class DataImportService implements OBSingleton {
         final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
         for (int i = toInsert.size() - 1; i > -1; i--) {
           final BaseOBObject ins = toInsert.get(i);
-          // for (final BaseOBObject ins : toInsert) {
-          insertObjectGraph(ins, inserted);
+          insertObjectGraph(ins, inserted, new HashSet<BaseOBObject>());
           ir.getInsertedObjects().add(ins);
           done++;
         }
@@ -514,7 +513,7 @@ public class DataImportService implements OBSingleton {
     for (int i = toInsert.size() - 1; i > -1; i--) {
       final BaseOBObject ins = toInsert.get(i);
       // for (final BaseOBObject ins : toInsert) {
-      insertObjectGraph(ins, inserted);
+      insertObjectGraph(ins, inserted, new HashSet<BaseOBObject>());
       ir.getInsertedObjects().add(ins);
       done++;
     }
@@ -581,27 +580,43 @@ public class DataImportService implements OBSingleton {
   // which have not been inserted yet
   // this works fine as long the graph has no cycles
   // if there are cycles then Hibernate needs to resolve those
-  private void insertObjectGraph(BaseOBObject toInsert, Set<BaseOBObject> inserted) {
+  private void insertObjectGraph(BaseOBObject toInsert, Set<BaseOBObject> inserted,
+      Set<BaseOBObject> cycleDetect) {
     // prevent infinite looping and don't do the ones we already inserted
     // in a previous objectgraph
+    if (cycleDetect.contains(toInsert)) {
+      // just save it for now and hope for the best...
+      try {
+        OBDal.getInstance().save(toInsert);
+      } catch (final Exception e) {
+        log.warn("There was a problem inserting data in the database.");
+        log.info("The following exception was raised: ", e);
+        throw new OBException(e);
+      }
+      cycleDetect.remove(toInsert);
+      return;
+    }
     if (inserted.contains(toInsert)) {
       return;
     }
     inserted.add(toInsert);
+    cycleDetect.add(toInsert);
     final Entity entity = toInsert.getEntity();
     for (final Property property : entity.getProperties()) {
       if (!property.isPrimitive() && !property.isOneToMany()) {
         final Object value = toInsert.get(property.getName());
         if (value instanceof BaseOBObject && ((BaseOBObject) value).isNewOBObject()) {
-          insertObjectGraph((BaseOBObject) value, inserted);
+          insertObjectGraph((BaseOBObject) value, inserted, cycleDetect);
         }
       }
     }
+    cycleDetect.remove(toInsert);
     try {
       OBDal.getInstance().save(toInsert);
     } catch (final Exception e) {
       log.warn("There was a problem inserting data in the database.");
       log.info("The following exception was raised: ", e);
+      throw new OBException(e);
     }
   }
 }

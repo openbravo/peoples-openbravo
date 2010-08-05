@@ -630,7 +630,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
       String strLanguage = vars.getLanguage();
 
-      parameters.put("Title", classInfo.name);
       StringBuilder strSubTitle = new StringBuilder();
       strSubTitle.append(Utility.messageBD(this, "DateFrom", strLanguage) + ": " + strDateFrom
           + " - " + Utility.messageBD(this, "DateTo", strLanguage) + ": " + strDateTo + " (");
