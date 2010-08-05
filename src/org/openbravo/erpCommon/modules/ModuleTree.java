@@ -178,7 +178,7 @@ public class ModuleTree extends GenericTree {
       }
       if ("N".equals(modules[i].enabled)) {
         String link = Utility.messageBD(conn, "Enable", lang);
-        String click = "openServletNewWindow('ENABLE', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;";
+        String click = "enableModule('" + modules[i].nodeId + "'); return false;";
 
         if (modules[i].linkname != null && !modules[i].linkname.isEmpty()) {
           modules[i].linkname1 = link;

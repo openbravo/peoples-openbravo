@@ -44,6 +44,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.modules.DisabledModules;
 import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -145,6 +146,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
       vars.setMessage("ModuleManagement|message", msg);
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
       log4j.info(modules);
+    } else if (vars.commandIn("DISABLE")) {
+      disable(vars);
+      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
+    } else if (vars.commandIn("ENABLE")) {
+      ArrayList<String> notEnabledModules = new ArrayList<String>();
+      enableDisableModule(OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
+          vars.getStringParameter("inpcRecordId")), true, notEnabledModules);
+      finishEnabling(notEnabledModules, vars);
+      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
     } else if (vars.commandIn("SCAN")) {
       printScan(response, vars);
     } else if (vars.commandIn("UPDATE")) {
@@ -1643,4 +1653,95 @@ public class ModuleManagement extends HttpSecureAppServlet {
     }
   }
 
+  /**
+   * Disables all the selected modules
+   */
+  private void disable(VariablesSecureApp vars) throws ServletException {
+    String modules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
+
+    // check if disabling core
+    if (modules.contains("'0'")) {
+      OBError msg = new OBError();
+      msg.setType("Error");
+      msg.setMessage("Cannot disable core");
+      vars.setMessage("ModuleManagement|message", msg);
+      return;
+    }
+    String[] moduleIds = modules.replace("(", "").replace(")", "").replace(" ", "")
+        .replace("'", "").split(",");
+    ArrayList<String> notEnabledModules = new ArrayList<String>();
+    for (String moduleId : moduleIds) {
+      org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
+          org.openbravo.model.ad.module.Module.class, moduleId);
+      enableDisableModule(module, false, notEnabledModules);
+    }
+
+    finishEnabling(notEnabledModules, vars);
+  }
+
+  /**
+   * Enables or disables the module passed as parameter. In case it has other modules has inclusions
+   * they are disabled/enabled recursively.
+   * 
+   * @param module
+   *          Module to enable or disable
+   * @param enable
+   *          If true, the module will be enabled, if false, it will be disabled
+   * @param notEnabledModules
+   *          List of modules that couldn't be enabled because they are commercial and are not part
+   *          of the instance license's subscribed modules
+   */
+  private void enableDisableModule(org.openbravo.model.ad.module.Module module, boolean enable,
+      List<String> notEnabledModules) {
+    if (module == null) {
+      return;
+    }
+
+    if (enable
+        && module.isCommercial()
+        && ActivationKey.getInstance().isModuleSubscribed(module.getId()) != CommercialModuleStatus.ACTIVE) {
+      log4j.warn("Cannot enable not subscribed commercial module " + module);
+      notEnabledModules.add(module.getName());
+    } else {
+      log4j.info((enable ? "Enabling " : "Disabling ") + module.getName());
+      module.setEnabled(enable);
+    }
+    if ("M".equals(module.getType())) {
+      // Standard modules do not have inclusions
+      return;
+    }
+
+    // For packs and templates enable/disable recursively all inclusions
+    for (org.openbravo.model.ad.module.ModuleDependency depenency : module
+        .getModuleDependencyList()) {
+      if (depenency.isIncluded()) {
+        enableDisableModule(depenency.getDependentModule(), enable, notEnabledModules);
+      }
+    }
+  }
+
+  /**
+   * Finishes the enabling/disabling process. The actions it performs are:
+   * <ul>
+   * <li>In case the are no modules that couldn't be enabled, it reloads the disabled modules in
+   * memory.
+   * <li>If any module coudn't no be enabled, shows an error message and rolls back the transaction
+   * </ul>
+   */
+  private void finishEnabling(List<String> notEnabledModules, VariablesSecureApp vars) {
+    if (notEnabledModules == null || notEnabledModules.isEmpty()) {
+      OBDal.getInstance().flush();
+      DisabledModules.reload();
+      return;
+    }
+    String msg = Utility.messageBD(this, "CannotEnableNonSubscribedModules", vars.getLanguage());
+    for (String module : notEnabledModules) {
+      msg += "<br/>" + module;
+    }
+    OBError err = new OBError();
+    err.setType("Error");
+    err.setMessage(msg);
+    vars.setMessage("ModuleManagement|message", err);
+    OBDal.getInstance().rollbackAndClose();
+  }
 }

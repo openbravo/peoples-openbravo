@@ -409,15 +409,18 @@
       var nodeId = node.getAttribute('id').replace('node_','');
       if (document.getElementById('inpNodes_' + nodeId)) {
         if (isClick == true && navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
-          gt_setActiveUninstall();
+          gt_setActiveUninstall('buttonUninstall');
+          gt_setActiveUninstall('buttonDisable');
         } else if (isClick == true) {
           setTimeout(function () {
             document.getElementById('inpNodes_' + nodeId).checked = !document.getElementById('inpNodes_' + nodeId).checked;
-            gt_setActiveUninstall();
+            gt_setActiveUninstall('buttonUninstall');
+            gt_setActiveUninstall('buttonDisable');
           },10);
         } else {
           document.getElementById('inpNodes_' + nodeId).checked = !document.getElementById('inpNodes_' + nodeId).checked;
-          gt_setActiveUninstall();
+          gt_setActiveUninstall('buttonUninstall');
+          gt_setActiveUninstall('buttonDisable');
         }
       }
     }
@@ -457,12 +460,12 @@
     return gt_getElementByName(gt_returnPositionArrayToName(parentPositionArray));
   }
   
-  function gt_setActiveUninstall() {
-    disableButton('buttonUninstall');
+  function gt_setActiveUninstall(buttonName) {
+    disableButton(buttonName);
     boxes = gt_getElementsByName('inpNodes','input');
     for (i=0; i<boxes.length; i++) {
       if (boxes[i].checked == true) {
-        enableButton('buttonUninstall');
+        enableButton(buttonName);
         return;
       }
     }

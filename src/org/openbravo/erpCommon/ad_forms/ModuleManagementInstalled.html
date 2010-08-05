@@ -76,7 +76,8 @@ var baseDirectory = "../../../../../web/";
     if (document.getElementById('notifications').innerHTML == "") {
       changeClass('notifications', 'Tree_Actions_Invisible', 'Tree_Actions');
     } 
-    gt_setActiveUninstall();
+    gt_setActiveUninstall('buttonUninstall');
+    gt_setActiveUninstall('buttonDisable');
 
     resizeArea();
     gt_adjustTreeWidth();
@@ -136,6 +137,19 @@ var baseDirectory = "../../../../../web/";
     if (showJSMessage(29)) {
       submitCommandForm('UNINSTALL', false, null, 'ModuleManagement.html', '_self', null, true);
     }
+  }
+  
+  function disableModule(id){
+    if (showJSMessage(31)) {
+	  submitCommandForm('DISABLE', false, null, 'ModuleManagement.html', '_self', null, true);
+	}
+  }
+
+  function enableModule(id){
+	if (showJSMessage(32)) {
+	 frmMain.inpcRecordId.value = id;  
+	 submitCommandForm('ENABLE', false, null, 'ModuleManagement.html', '_self', null, true);
+	}
   }
   </script>
 </head>
@@ -384,6 +398,33 @@ var baseDirectory = "../../../../../web/";
                                 <tr>
                                   <td class="Button_left"><img class="Button_Icon" alt="Uninstall selected" title="Uninstall selected" src="../../../../../web/images/blank.gif" border="0" /></td>
                                   <td class="Button_text">Uninstall selected</td>
+                                  <td class="Button_right"></td>
+                                </tr>
+                              </table>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="Button_LeftAlign_ContentCell" colspan="2">
+                          <div>
+                            <button type="button" 
+                              id="buttonDisable" 
+                              class="ButtonLink" 
+                              onclick="disableModule();return false;" 
+                              onfocus="buttonEvent('onfocus', this); window.status='Disable selected'; return true;" 
+                              onblur="buttonEvent('onblur', this);" 
+                              onkeyup="buttonEvent('onkeyup', this);" 
+                              onkeydown="buttonEvent('onkeydown', this);" 
+                              onkeypress="buttonEvent('onkeypress', this);" 
+                              onmouseup="buttonEvent('onmouseup', this);" 
+                              onmousedown="buttonEvent('onmousedown', this);" 
+                              onmouseover="buttonEvent('onmouseover', this); window.status='Disable selected'; return true;" 
+                              onmouseout="buttonEvent('onmouseout', this);">
+                              <table class="Button">
+                                <tr>
+                                  <td class="Button_left"><img class="Button_Icon" alt="Disable selected" title="Disable selected" src="../../../../../web/images/blank.gif" border="0" /></td>
+                                  <td class="Button_text">Disable selected</td>
                                   <td class="Button_right"></td>
                                 </tr>
                               </table>
