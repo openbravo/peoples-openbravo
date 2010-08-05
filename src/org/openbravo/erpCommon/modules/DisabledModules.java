@@ -31,6 +31,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 
 /**
  * This class maintains a list of all elements that are disabled because a module is disabled. It is
@@ -39,10 +40,11 @@ import org.openbravo.model.ad.ui.Tab;
  */
 public class DisabledModules {
   public enum Artifacts {
-    MODULE, TAB, PROCESS, FORM
+    MODULE, TAB, PROCESS, FORM, WINDOW
   };
 
   private static List<String> disabledModules = new ArrayList<String>();
+  private static List<String> disabledWindows = new ArrayList<String>();
   private static List<String> disabledTabs = new ArrayList<String>();
   private static List<String> disabledProcesses = new ArrayList<String>();
   private static List<String> disabledForms = new ArrayList<String>();
@@ -55,6 +57,7 @@ public class DisabledModules {
   public static synchronized void reload() {
     log4j.info("Loading disabled modules...");
     disabledModules = new ArrayList<String>();
+    disabledWindows = new ArrayList<String>();
     disabledTabs = new ArrayList<String>();
     disabledProcesses = new ArrayList<String>();
     disabledForms = new ArrayList<String>();
@@ -66,6 +69,13 @@ public class DisabledModules {
       for (Module disabledModule : qMods.list()) {
         disabledModules.add(disabledModule.getId());
         log4j.debug(disabledModule.getName() + " module is disabled");
+
+        OBCriteria<Window> qWindows = OBDal.getInstance().createCriteria(Window.class);
+        qWindows.add(Expression.eq(Window.PROPERTY_MODULE, disabledModule));
+        for (Window window : qWindows.list()) {
+          disabledTabs.add(window.getId());
+          log4j.debug("Diasabled tab: " + window.getIdentifier());
+        }
 
         OBCriteria<Tab> qTabs = OBDal.getInstance().createCriteria(Tab.class);
         qTabs.add(Expression.eq(Tab.PROPERTY_MODULE, disabledModule));
@@ -112,6 +122,8 @@ public class DisabledModules {
       return !disabledProcesses.contains(id);
     case TAB:
       return !disabledTabs.contains(id);
+    case WINDOW:
+      return !disabledWindows.contains(id);
     }
     return true;
   }

@@ -858,7 +858,9 @@ public class ActivationKey {
 
     // Check disabled modules restrictions
     Artifacts artifactType;
-    if ("W".equals(actualType)) {
+    if ("MW".equals(actualType)) {
+      artifactType = Artifacts.WINDOW;
+    } else if ("W".equals(actualType)) {
       artifactType = Artifacts.TAB;
     } else if ("X".equals(actualType)) {
       artifactType = Artifacts.FORM;
