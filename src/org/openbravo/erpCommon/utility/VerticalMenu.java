@@ -267,6 +267,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
           artifactId = menuData[i].adProcessId;
         } else if (menuAction.equals("X")) {
           artifactId = menuData[i].adFormId;
+        } else if (menuAction.equals("F")) {
+          artifactId = menuData[i].adWorkflowId;
         }
         boolean hasLicenseAccess = ActivationKey.getInstance().hasLicenseAccess(menuAction,
             artifactId) == FeatureRestriction.NO_RESTRICTION;

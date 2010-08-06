@@ -76,6 +76,8 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
+import org.openbravo.model.ad.ui.Workflow;
+import org.openbravo.model.ad.ui.WorkflowTrl;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -960,7 +962,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         if (f != null) {
           return f.getName();
         }
-      } else if ("R".endsWith(type) || "P".equals(type)) {
+      } else if ("R".equals(type) || "P".equals(type)) {
         OBCriteria<ProcessTrl> qfTrl = OBDal.getInstance().createCriteria(ProcessTrl.class);
         qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_PROCESS + ".id", id));
         qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_LANGUAGE + ".language", language));
@@ -969,6 +971,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         }
 
         Process f = OBDal.getInstance().get(Process.class, id);
+        if (f != null) {
+          return f.getName();
+        }
+      } else if ("F".equals(type)) {
+        OBCriteria<WorkflowTrl> qfWorkflowTrl = OBDal.getInstance().createCriteria(
+            WorkflowTrl.class);
+        qfWorkflowTrl.add(Expression.eq(WorkflowTrl.PROPERTY_WORKFLOW + ".id", id));
+        qfWorkflowTrl.add(Expression.eq(WorkflowTrl.PROPERTY_LANGUAGE + ".language", language));
+        if (qfWorkflowTrl.list().size() != 0) {
+          return qfWorkflowTrl.list().get(0).getName();
+        }
+
+        Workflow f = OBDal.getInstance().get(Workflow.class, id);
         if (f != null) {
           return f.getName();
         }
