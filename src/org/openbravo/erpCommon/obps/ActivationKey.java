@@ -99,7 +99,7 @@ public class ActivationKey {
   }
 
   public enum CommercialModuleStatus {
-    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION
+    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION, DISABLED
   }
 
   public enum FeatureRestriction {
@@ -768,7 +768,9 @@ public class ActivationKey {
         if (moduleData.length > 2) {
           validTo = sd.parse(moduleData[2]);
         }
-        if (subscriptionActuallyConverted) {
+        if (!DisabledModules.isEnabled(Artifacts.MODULE, moduleData[0])) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.DISABLED);
+        } else if (subscriptionActuallyConverted) {
           moduleList.put(moduleData[0], CommercialModuleStatus.CONVERTED_SUBSCRIPTION);
         } else if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
           moduleList.put(moduleData[0], CommercialModuleStatus.ACTIVE);
