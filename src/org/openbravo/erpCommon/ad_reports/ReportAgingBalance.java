@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,9 +48,12 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
 
   // static Category log4j = Category.getInstance(ReportAgingBalance.class);
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    // Get user Client's base currency
+    final String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
 
     if (vars.commandIn("DEFAULT")) {
       String strisReceipt = vars.getGlobalVariable("inpReceipt", "ReportAgingBalance|IsReceipt",
@@ -66,8 +69,10 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportAgingBalance|cBpartnerId", "", IsIDFilter.instance);
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportAgingBalance|Org", "");
+      final String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportAgingBalance|currency", strUserCurrencyId);
       printPageDataSheet(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
-          strcolumn4, strcBpartnerId, strOrg, "Y");
+          strcolumn4, strcBpartnerId, strOrg, "Y", strCurrencyId);
     } else if (vars.commandIn("FIND")) {
       String strisReceipt = vars.getRequestGlobalVariable("inpReceipt",
           "ReportAgingBalance|IsReceipt");
@@ -82,8 +87,10 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportAgingBalance|cBpartnerId", IsIDFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAgingBalance|Org");
+      final String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportAgingBalance|currency", strUserCurrencyId);
       printPageDataSheet(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
-          strcolumn4, strcBpartnerId, strOrg, "N");
+          strcolumn4, strcBpartnerId, strOrg, "N", strCurrencyId);
     } else if (vars.commandIn("PRINT_PDF")) {
       String strisReceipt = vars.getRequestGlobalVariable("inpReceipt",
           "ReportAgingBalance|IsReceipt");
@@ -98,16 +105,18 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportAgingBalance|cBpartnerId", IsIDFilter.instance);
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportAgingBalance|Org");
-      printPageDataPdf(response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
-          strcolumn4, strcBpartnerId, strOrg, "N");
+      final String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportAgingBalance|currency", strUserCurrencyId);
+      printPageDataPdf(request, response, vars, strisReceipt, strcolumn1, strcolumn2, strcolumn3,
+          strcolumn4, strcBpartnerId, strOrg, "N", strCurrencyId);
     } else
       pageError(response);
   }
 
-  private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
-      String strisReceipt, String strcolumn1, String strcolumn2, String strcolumn3,
-      String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint)
-      throws IOException, ServletException {
+  private void printPageDataPdf(final HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strisReceipt, String strcolumn1, String strcolumn2,
+      String strcolumn3, String strcolumn4, String strcBpartnerId, String strOrgTrx,
+      String strfirstPrint, final String strCurrencyId) throws IOException, ServletException {
     ReportAgingBalanceData[] data = null;
     // Jarenor
     /*
@@ -121,10 +130,16 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     if (strisReceipt.equals(""))
       strisReceipt = "N";
 
-    data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strcolumn1,
-        strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId, strOrgFamily, Utility
-            .getContext(this, vars, "#User_Client", "ReportAgingBalance"), Utility.getContext(this,
-            vars, "#AccessibleOrgTree", "ReportAgingBalance"));
+    try {
+      data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strCurrencyId,
+          strcolumn1, strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId,
+          strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
+    } catch (ServletException ex) {
+      advisePopUp(request, response, Utility.messageBD(this, "NoConversionRateHeader", vars
+          .getLanguage()), Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage())
+          .getMessage());
+    }
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAgingBalance.jrxml";
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("col1", "0 - " + strcolumn1);
@@ -138,8 +153,8 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strisReceipt, String strcolumn1, String strcolumn2, String strcolumn3,
-      String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint)
-      throws IOException, ServletException {
+      String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint,
+      final String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -155,10 +170,19 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       strisReceipt = "N";
 
     if (vars.commandIn("FIND")) {
-      data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strcolumn1,
-          strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId, strOrgFamily, Utility
-              .getContext(this, vars, "#User_Client", "ReportAgingBalance"), Utility.getContext(
-              this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
+      try {
+        data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strCurrencyId,
+            strcolumn1, strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId,
+            strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
+      } catch (final ServletException ex) {
+        final OBError message = new OBError();
+        message.setType("Error");
+        message.setTitle(Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()));
+        message.setMessage(Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage())
+            .getMessage());
+        vars.setMessage("ReportAgingBalance", message);
+      }
     }
     if (strfirstPrint == "Y" || data == null || data.length == 0) {
       xmlDocument = xmlEngine.readXmlTemplate(
@@ -220,6 +244,19 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionCost"),
+          Utility.getContext(this, vars, "#User_Client", "ReportProductionCost"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProductionCost",
+          strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     xmlDocument.setParameter("titleColumn1", "0 - " + strcolumn1);
     Integer iAux = Integer.valueOf(strcolumn1).intValue() + Integer.valueOf("1").intValue();
     xmlDocument.setParameter("titleColumn2", iAux.toString() + " - " + strcolumn2);
@@ -272,6 +309,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
      */
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportAgingBalance. This Servlet was made by David Alsasua";
   } // end of the getServletInfo() method
