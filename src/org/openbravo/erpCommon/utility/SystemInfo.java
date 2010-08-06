@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,7 +78,8 @@ public class SystemInfo {
       systemInfo.put(i, getVersion(SystemInfoData.selectAntVersion(conn)));
       break;
     case OB_VERSION:
-      systemInfo.put(i, SystemInfoData.selectObVersion(conn));
+      OBVersion version = new OBVersion();
+      systemInfo.put(i, version.getVersionNumber() + version.getMP());
       break;
     case OB_INSTALL_MODE:
       systemInfo.put(i, SystemInfoData.selectObInstallMode(conn));

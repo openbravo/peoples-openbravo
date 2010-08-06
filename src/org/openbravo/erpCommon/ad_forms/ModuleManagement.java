@@ -746,7 +746,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
           return;
         }
 
-        // Show warning message when installing/updating modules not in production level
+        // Show warning message when installing/updating modules not in General availability level
         if (!islocal) {
           if (!"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
             discard[6] = "";
@@ -1362,7 +1362,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         @SuppressWarnings("unchecked")
         HashMap<String, String> additioanlInfo = mod.getAdditionalInfo();
         if (additioanlInfo != null && !"500".equals(additioanlInfo.get("maturity.level"))) {
-          // Display module's maturity in case it is not Production (500)
+          // Display module's maturity in case it is not General availability (500)
           moduleBox.put("maturityStyle", "true");
           moduleBox.put("maturityLevel", additioanlInfo.get("maturity.name"));
         } else {

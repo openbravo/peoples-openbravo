@@ -67,7 +67,7 @@
            ?,TO_NUMBER(?),?,?,
            TO_DATE(?),TO_DATE(?),?,?,
            ?,?,TO_NUMBER(?),TO_NUMBER(?),0,0,0,
-           ?,TO_NUMBER(?),M_GET_OFFER_PRICE(M_GET_OFFER(TO_DATE(now()), ?, ?), TO_NUMBER(?)),
+           ?,TO_NUMBER(?),M_GET_OFFERS_PRICE(TO_DATE(now()), ?, ?, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)),
            TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),M_GET_OFFER(TO_DATE(now()), ?, ?),?,?)
       ]]>
     </Sql>
@@ -93,6 +93,8 @@
     <Parameter name="cBpartnerId"/>
     <Parameter name="mProductId"/>
     <Parameter name="priceactual"/>
+    <Parameter name="qtyordered"/>
+    <Parameter name="pricelist"/>
     <Parameter name="pricelimit"/>
     <Parameter name="cTaxId"/>
     <Parameter name="discount"/>
