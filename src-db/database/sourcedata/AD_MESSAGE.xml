@@ -33597,7 +33597,7 @@ Fix it and restart Tomcat.]]></MSGTEXT>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <VALUE><![CDATA[OPS_MODULE_EXPIRED]]></VALUE>
-<!--FD5CDA03260B436D832C49C33AD3BB66-->  <MSGTEXT><![CDATA[The license for the following installed modules has expired. Only System Administrator role can log into the application to renew the license or uninstall the modules.]]></MSGTEXT>
+<!--FD5CDA03260B436D832C49C33AD3BB66-->  <MSGTEXT><![CDATA[The license for the following installed modules has expired. Only System Administrator role can log into the application to renew the license, uninstall or disable the modules.]]></MSGTEXT>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FD5CDA03260B436D832C49C33AD3BB66--></AD_MESSAGE>
