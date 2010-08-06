@@ -29,8 +29,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -41,6 +45,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -91,19 +96,43 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
   private void printPageDeactivateProcess(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-
     OBError msg = new OBError();
+    OBContext.setAdminMode();
     try {
-      System sys = OBDal.getInstance().get(System.class, "0");
-      sys.setActivationKey(null);
-      sys.setInstanceKey(null);
-      ActivationKey.reaload();
-      msg.setType("Success");
-      msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      // Check for commercial modules installed in the instance
+      OBCriteria<Module> qMods = OBDal.getInstance().createCriteria(Module.class);
+      qMods.add(Expression.eq(Module.PROPERTY_COMMERCIAL, true));
+      qMods.add(Expression.eq(Module.PROPERTY_ENABLED, true));
+      qMods.addOrder(Order.asc(Module.PROPERTY_NAME));
+
+      // core can be commercial, do not take it into account
+      qMods.add(Expression.ne(Module.PROPERTY_ID, "0"));
+      boolean deactivable = true;
+      String commercialModules = "";
+      for (Module mod : qMods.list()) {
+        deactivable = false;
+        commercialModules += "<br/>" + mod.getName();
+      }
+      if (!deactivable) {
+        msg.setType("Error");
+        msg.setMessage(Utility.messageBD(this, "CannotDeactivateWithCommercialModules", vars
+            .getLanguage())
+            + commercialModules);
+      } else {
+        // Deactivate instance
+        System sys = OBDal.getInstance().get(System.class, "0");
+        sys.setActivationKey(null);
+        sys.setInstanceKey(null);
+        ActivationKey.reaload();
+        msg.setType("Success");
+        msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      }
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error deactivating instance", e);
       msg.setType("Error");
       msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+    } finally {
+      OBContext.restorePreviousMode();
     }
     vars.setMessage("InstanceManagement", msg);
     printPageClosePopUp(response, vars, "");
