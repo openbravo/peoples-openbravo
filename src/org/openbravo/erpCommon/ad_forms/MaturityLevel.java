@@ -54,11 +54,11 @@ public class MaturityLevel {
     }
 
     if (error) {
-      // could not obtain actual levels, setting production only
-      log4j.warn("Setting default Production level");
+      // could not obtain actual levels, setting General availability only
+      log4j.warn("Setting default General availability level");
       levels = new String[1][2];
       levels[0][0] = "500";
-      levels[0][1] = "Production";
+      levels[0][1] = "General availability";
     }
   }
 
