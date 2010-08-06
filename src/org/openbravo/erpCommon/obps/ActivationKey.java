@@ -848,6 +848,8 @@ public class ActivationKey {
     } else if ("MW".equals(actualType)) {
       // Menu window, it receives window instead of tab
       actualType = "W";
+    } else if ("R".equals(actualType)) {
+      actualType = "P";
     }
     if (tier1Artifacts.contains(actualType + artifactId)) {
       return FeatureRestriction.TIER1_RESTRICTION;
