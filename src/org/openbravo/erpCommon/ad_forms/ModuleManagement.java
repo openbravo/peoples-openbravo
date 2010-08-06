@@ -960,7 +960,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
       for (Module mod : im.getModulesToUpdate()) {
         if (mod.isIsCommercial()) {
-          if (selectedModule != null && !!mod.getModuleID().equals(selectedModule.getModuleID())) {
+          if (selectedModule != null && !mod.getModuleID().equals(selectedModule.getModuleID())) {
             // Show only in case there are commercial dependencies
             showNotActivatedError = true;
           }
