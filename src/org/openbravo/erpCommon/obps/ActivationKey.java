@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
-import java.net.URL;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -348,7 +347,9 @@ public class ActivationKey {
     }
 
     try {
-      File restrictionsFile = getFileFromDevelopmentPath("licenseRestrictions");
+      File restrictionsFile = new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .get("source.path")
+          + "/config/licenseRestrictions");
       FileInputStream fis = new FileInputStream(restrictionsFile);
       byte fileContent[] = new byte[(int) restrictionsFile.length()];
       fis.read(fileContent);
@@ -378,26 +379,6 @@ public class ActivationKey {
 
   public LicenseClass getLicenseClass() {
     return licenseClass;
-  }
-
-  private File getFileFromDevelopmentPath(String fileName) {
-    // get the location of the current class file
-    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
-    File f = new File(url.getPath());
-    File propertiesFile = null;
-    while (f.getParentFile() != null && f.getParentFile().exists()) {
-      f = f.getParentFile();
-      final File configDirectory = new File(f, "config");
-      if (configDirectory.exists()) {
-        propertiesFile = new File(configDirectory, fileName);
-        if (propertiesFile.exists()) {
-          log4j.info("Reading " + propertiesFile.getAbsolutePath());
-          // found it and break
-          break;
-        }
-      }
-    }
-    return propertiesFile;
   }
 
   @SuppressWarnings( { "static-access", "unchecked" })
