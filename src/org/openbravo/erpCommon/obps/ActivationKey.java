@@ -232,6 +232,17 @@ public class ActivationKey {
       return;
     }
 
+    // Get license class, old Activation Keys do not have this info, so treat them as SMB
+    String pLicenseClass = getProperty("licenseedition");
+    if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("STD")) {
+      licenseClass = LicenseClass.STD;
+    } else if (pLicenseClass.equals("B")) {
+      licenseClass = LicenseClass.BASIC;
+    } else {
+      log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
+      licenseClass = LicenseClass.BASIC;
+    }
+
     // Check for dates to know if the instance is active
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate = null;
@@ -283,16 +294,6 @@ public class ActivationKey {
     }
     isActive = true;
 
-    // Get license class, old Activation Keys do not have this info, so treat them as SMB
-    String pLicenseClass = getProperty("licenseedition");
-    if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("STD")) {
-      licenseClass = LicenseClass.STD;
-    } else if (pLicenseClass.equals("B")) {
-      licenseClass = LicenseClass.BASIC;
-    } else {
-      log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
-      licenseClass = LicenseClass.BASIC;
-    }
     setLogger();
   }
 

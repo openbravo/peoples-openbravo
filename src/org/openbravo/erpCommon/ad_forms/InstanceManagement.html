@@ -429,7 +429,18 @@ var baseDirectory = "../../../../../web/";
                     </span>
                   </td>
                 </tr>
-                <tr>
+                <tr id="OPSExpired">
+                  <td>&nbsp;</td>
+                </tr>
+                <tr id="OPSExpired">
+                  <td/>
+                  <td colspan="5" class="TitleCell" style="text-align:left;">
+                    <span class="Label_ReadOnly_Text" >
+                    <p class="Label_ReadOnly_Text">To cancel this Instance from a Professional Subscription System, press the button below.</p>
+                    </span>
+                  </td>
+                </tr>
+                 <tr>
                   <td>&nbsp;</td>
                 </tr> 
                 <tr> 
@@ -440,7 +451,7 @@ var baseDirectory = "../../../../../web/";
                         id="buttonDeactivate" 
                         class="ButtonLink" 
                         onclick="openServletNewWindow('SHOW_DEACTIVATE', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
-                        onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Deactivate'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
                         onkeydown="buttonEvent('onkeydown', this);" 
@@ -451,7 +462,7 @@ var baseDirectory = "../../../../../web/";
                         onmouseout="buttonEvent('onmouseout', this);">
                         <table class="Button">
                           <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Deactivate" title="Deactivate" src="../../../../../web/images/blank.gif" border="0" /></td>
                             <td class="Button_text">Deactivate</td>
                             <td class="Button_right"></td>
                           </tr>
@@ -459,8 +470,33 @@ var baseDirectory = "../../../../../web/";
                       </button>
                     </div>
                   </td>
+                  <td class="Button_LeftAlign_ContentCell" colspan="2">
+                    <div id="OPSExpired">
+                      <button type="button" 
+                        id="buttonCancel" 
+                        class="ButtonLink" 
+                        onclick="openServletNewWindow('SHOW_CANCEL', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Cancel Subscription'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Cancel Subscription" title="Cancel Subscription" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text">Cancel Subscription</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
+                    </div>
+                  </td>
                   
-                  <td colspan="3"/>
+                  <td colspan="2"/>
                 </tr>
               </div>
               </table>

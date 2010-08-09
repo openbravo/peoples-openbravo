@@ -64,26 +64,37 @@ public class InstanceManagement extends HttpSecureAppServlet {
     } else if (vars.commandIn("SHOW_ACTIVATE")) {
       printPageNotActive(response, vars);
     } else if (vars.commandIn("ACTIVATE")) {
-      activateRemote(vars);
+      activateCancelRemote(vars, true);
       printPageClosePopUp(response, vars);
     } else if (vars.commandIn("SHOW_ACTIVATE_LOCAL")) {
       printPageActivateLocal(response, vars);
     } else if (vars.commandIn("INSTALLFILE")) {
       printPageInstallFile(response, vars);
     } else if (vars.commandIn("SHOW_DEACTIVATE")) {
-      printPageDeactivate(response, vars);
+      printPageDeactivateCancel(response, vars, true);
     } else if (vars.commandIn("DEACTIVATE")) {
       printPageDeactivateProcess(response, vars);
+    } else if (vars.commandIn("SHOW_CANCEL")) {
+      printPageDeactivateCancel(response, vars, false);
+    } else if (vars.commandIn("CANCEL")) {
+      activateCancelRemote(vars, false);
+      printPageClosePopUp(response, vars);
     } else {
       pageError(response);
     }
-
   }
 
-  private void printPageDeactivate(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException {
+  private void printPageDeactivateCancel(HttpServletResponse response, VariablesSecureApp vars,
+      boolean deactivate) throws IOException {
+    String discard[] = { "" };
+    if (deactivate) {
+      discard[0] = "discardCancel";
+    } else {
+      discard[0] = "discardDeactivate";
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagementDeactivate").createXmlDocument();
+        "org/openbravo/erpCommon/ad_forms/InstanceManagementDeactivate", discard)
+        .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -411,14 +422,34 @@ public class InstanceManagement extends HttpSecureAppServlet {
     out.close();
   }
 
-  private boolean activateRemote(VariablesSecureApp vars) {
+  /**
+   * Activates or cancels the instance.
+   * 
+   * @param vars
+   * @param activate
+   *          true in case it is activating, false in case it is canceling
+   * @return true if everything went correctly
+   */
+  private boolean activateCancelRemote(VariablesSecureApp vars, boolean activate) {
     boolean result = false;
     ProcessBundle pb = new ProcessBundle(null, vars);
 
     HashMap<String, Object> params = new HashMap<String, Object>();
-    params.put("publicKey", vars.getStringParameter("publicKey"));
-    params.put("purpose", vars.getStringParameter("purpose"));
-    params.put("instanceNo", vars.getStringParameter("instanceNo"));
+    params.put("activate", activate);
+    if (activate) {
+      // activating instance, get parameters from form
+      params.put("publicKey", vars.getStringParameter("publicKey"));
+      params.put("purpose", vars.getStringParameter("purpose"));
+      params.put("instanceNo", vars.getStringParameter("instanceNo"));
+
+    } else {
+      // canceling instance, get parameters from DB
+      System sys = OBDal.getInstance().get(System.class, "0");
+      params.put("publicKey", sys.getInstanceKey());
+      params.put("instanceNo", ActivationKey.getInstance().getProperty("instanceno"));
+      params.put("purpose", ActivationKey.getInstance().getProperty("purpose"));
+    }
+
     pb.setParams(params);
 
     OBError msg = new OBError();

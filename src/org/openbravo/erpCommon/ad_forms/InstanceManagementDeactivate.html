@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,8 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Deactivate</title>
+  <title id="discardDeactivate">Deactivate</title>
+  <title id="discardCancel">Cancel Subscription</title>
   <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"></link>
 
@@ -86,7 +87,10 @@
             <td class="Popup_NavBar_bg_logo_left"></td>
             <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
-            <td class="Popup_NavBar_Popup_title_cell"><span>Deactivate</span></td>
+            <td class="Popup_NavBar_Popup_title_cell">
+              <span id="discardDeactivate">Deactivate</span>
+              <span id="discardCancel">Cancel Subscription</span>
+            </td>
             <td class="Popup_NavBar_separator_cell"></td>
           </tr>
         </table>
@@ -110,7 +114,8 @@
             <td class="Popup_InfoBar_text_table">
               <table>
                 <tr>
-                  <td class="Popup_InfoBar_text" id="processHelp">Please note that all commercial features without a valid perpetual subscription will become inactive in this Instance.</td>
+                  <td class="Popup_InfoBar_text" id="discardDeactivate">Please note that all commercial features without a valid perpetual subscription will become inactive in this Instance.</td>
+                  <td class="Popup_InfoBar_text" id="discardCancel">Commercial features will remain as they are now, not beeing possible to update modules.</td>
                 </tr>
               </table>
             </td>
@@ -242,18 +247,9 @@
 
             <tr><td height="20px"></td></tr>
             
-            
-            
-            
-            
-            
-            
-            
             <tr>
-              
-              
               <td class="Button_RightAlign_ContentCell" colspan="2">
-                <div>
+                <div id="discardDeactivate">
                   <button type="button" 
                     id="buttonOK" 
                     class="ButtonLink" 
@@ -271,6 +267,29 @@
                       <tr>
                         <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
                         <td class="Button_text">Deactivate Instance</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </button>
+                </div>
+                <div id="discardCancel">
+                  <button type="button" 
+                    id="buttonCancelSubscription" 
+                    class="ButtonLink" 
+                    onclick="submitCommandForm('CANCEL', false, null, 'InstanceManagement.html', '_self', null, false);return false;" 
+                    onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
+                    onblur="buttonEvent('onblur', this);" 
+                    onkeyup="buttonEvent('onkeyup', this);" 
+                    onkeydown="buttonEvent('onkeydown', this);" 
+                    onkeypress="buttonEvent('onkeypress', this);" 
+                    onmouseup="buttonEvent('onmouseup', this);" 
+                    onmousedown="buttonEvent('onmousedown', this);" 
+                    onmouseover="buttonEvent('onmouseover', this); window.status='Continue'; return true;" 
+                    onmouseout="buttonEvent('onmouseout', this);">
+                    <table class="Button">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text">Cancel Subscription</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>
