@@ -137,7 +137,7 @@ public class ActivationKey {
   /**
    * Reloads ActivationKey instance from information in DB.
    */
-  public static synchronized ActivationKey reaload() {
+  public static synchronized ActivationKey reload() {
     ActivationKey ak = getInstance();
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");

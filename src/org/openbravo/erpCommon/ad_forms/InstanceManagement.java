@@ -97,7 +97,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       System sys = OBDal.getInstance().get(System.class, "0");
       sys.setActivationKey(null);
       sys.setInstanceKey(null);
-      ActivationKey.reaload();
+      ActivationKey.reload();
       msg.setType("Success");
       msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch (Exception e) {
