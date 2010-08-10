@@ -32,7 +32,7 @@
           '' AS InvoiceRule, '' AS DeliveryRule, '' AS FreightCostRule, '' AS DeliveryViaRule,
           '' AS PaymentRulePO, '' AS PO_PaymentTerm_ID, '' AS DESCRIPTION, '' AS C_UOM_ID, '' AS QUANTITYORDER, '' AS M_PRODUCT_UOM_ID,
           '' AS PRICELIMIT, '' AS PRICEACTUAL, '' AS DISCOUNT, '' AS TAX, '' AS C_ORDERLINE_ID,
-          '' AS PADRE, '' AS ID, '' AS NAME, '' AS PRICESTD, '' AS TO_CLOSE, '' AS UOMNAME, '' AS SECUOMNAME
+          '' AS PADRE, '' AS ID, '' AS NAME, '' AS PRICESTD, '' AS TO_CLOSE, '' AS UOMNAME, '' AS SECUOMNAME, '' AS PO_PAYMENTMETHOD_ID
         FROM DUAL
       ]]></Sql>
     <Field name="rownum" value="count"/>
@@ -231,7 +231,7 @@
     <Sql>
       <![CDATA[
       SELECT p.InvoiceRule, p.DeliveryRule, DeliveryViaRule,
-        p.PaymentRulePO, p.PO_PaymentTerm_ID
+        p.PaymentRulePO, p.PO_PaymentTerm_ID, p.PO_PaymentMethod_ID
       FROM C_BPartner p
       WHERE p.C_BPartner_ID = ?
       ]]>
@@ -375,8 +375,10 @@
         DATEORDERED, DATEPROMISED, DATEACCT, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, BILLTO_ID, C_CURRENCY_ID, 
         PAYMENTRULE, C_PAYMENTTERM_ID, INVOICERULE, DELIVERYRULE, FREIGHTCOSTRULE, 
         DELIVERYVIARULE, M_WAREHOUSE_ID, M_PRICELIST_ID, 
-        C_PROJECT_ID, C_ACTIVITY_ID, C_CAMPAIGN_ID, PRIORITYRULE, ISSOTRX)
-        VALUES (?,?,?,now(),?,now(),?,?,?,?,?,?,TO_DATE(?),TO_DATE(?),TO_DATE(?),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'5', 'N')
+        C_PROJECT_ID, C_ACTIVITY_ID, C_CAMPAIGN_ID, PRIORITYRULE, ISSOTRX,
+        FIN_PAYMENTMETHOD_ID)
+        VALUES (?,?,?,now(),?,now(),?,?,?,?,?,?,TO_DATE(?),TO_DATE(?),TO_DATE(?),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'5', 'N',
+        ?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -407,6 +409,7 @@
     <Parameter name="cProjectId"/>
     <Parameter name="cActivityId"/>
     <Parameter name="cCampaignId"/>
+    <Parameter name="finPaymentMethodId"/>
   </SqlMethod>
   <SqlMethod name="insertCOrderline" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

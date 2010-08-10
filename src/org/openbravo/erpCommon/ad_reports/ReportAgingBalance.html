@@ -28,8 +28,6 @@
     <script language="JavaScript" type="text/javascript" id="paramDirectory">
       var baseDirectory = "../../../../../web/";
       </script>
-      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
-      </script>
       <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var defaultLang = "en_US";
@@ -445,8 +443,12 @@ function columnChange() {
 							  <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn3" class="required TextBox_OneCell_width" type="text" name="inpColumn4" id="paramColumn4" maxlength="4"  size="4" onchange="columnChange();" value="xxx7" width="4" outputformat="integerEdition"/><script>djConfig.searchIds.push("paramColumn4");</script></td></tr>
 
 						    <tr>
-							  <td class="TitleCell"></td>
-							  <td class="TitleCell"></td>
+							  <td class="TitleCell"> <span class="LabelText">Currency</span></td>
+							  <td class="Combo_ContentCell"> 
+                                 <select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                                   <option value=""> <div id="reportC_Currency_ID"></div></option>
+                                 </select>
+                              </td>
 							  <td class="TitleCell"></td>
 							  <td class="TitleCell"></td>
 						      <td class="TitleCell">&gt; 
