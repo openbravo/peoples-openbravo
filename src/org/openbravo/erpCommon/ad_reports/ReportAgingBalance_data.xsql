@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,9 @@
         SUM(CASE(SCOPE) WHEN 5 THEN AMOUNT ELSE 0 END) AS FIVE,
         SUM(AMOUNT) AS TOTAL, ? AS AD_ORG_ID
         FROM(
-          SELECT C_BPARTNER_ID AS BPARTNER, AMOUNT, ISRECEIPT, DATEPLANNED,
+          SELECT C_BPARTNER_ID AS BPARTNER, 
+          C_CURRENCY_CONVERT(AMOUNT, C_CURRENCY_ID, ?, DATEPLANNED, null, ad_client_id, ad_org_id) AS AMOUNT, 
+          ISRECEIPT, DATEPLANNED,
           C_AGING_GET_SCOPE(DATEPLANNED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)) AS SCOPE, C_DEBT_PAYMENT_ID
           FROM  C_DEBT_PAYMENT
           WHERE C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, CANCEL_PROCESSED, GENERATE_PROCESSED,ISPAID,ISVALID,C_CASHLINE_ID,C_BANKSTATEMENTLINE_ID) = 'P'
@@ -46,6 +48,7 @@
       ]]></Sql>
     <Parameter name="adLanguage"/>  
     <Parameter name="orgTrx"></Parameter>
+    <Parameter name="cCurrencyConv"/>
     <Parameter name="one"></Parameter>
     <Parameter name="two"></Parameter>
     <Parameter name="three"></Parameter>

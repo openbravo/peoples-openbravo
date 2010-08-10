@@ -34,21 +34,25 @@ var gDefaultType = 0;
  * http call to MessagesJS in most places, by getting the two arrays from the
  * menu if they are not found in the local page
  */
-if (typeof arrMessages == "undefined") {
-	var arrMessages;
-	var arrTypes;
-	if (parent.frameMenu) {
-		arrMessages = parent.frameMenu.arrMessages;
-		arrTypes = parent.frameMenu.arrTypes;
-	} else if (top.opener.parent.frameMenu) {
-		arrMessages = top.opener.parent.frameMenu.arrMessages;
-		arrTypes = top.opener.parent.frameMenu.arrTypes;
-	} else if (top.opener.top.opener.parent.frameMenu) {
-		arrMessages = top.opener.top.opener.parent.frameMenu.arrMessages;
-		arrTypes = top.opener.top.opener.parent.frameMenu.arrTypes;
-	} else {
+
+if (typeof arrMessages === 'undefined') {
+  var arrMessages;
+  var arrTypes;
+
+  if(typeof getFrame === 'function' && getFrame('frameMenu')) {
     arrMessages = getFrame('frameMenu').arrMessages;
-    arrTypes = getFrame('frameMenu').arrTypes;
+    arrTypes = getFrame('frameMenu').arrTypes;		
+  } else {
+    if (parent.frameMenu) {
+      arrMessages = parent.frameMenu.arrMessages;
+      arrTypes = parent.frameMenu.arrTypes;
+    } else if (top.opener.parent.frameMenu) {
+      arrMessages = top.opener.parent.frameMenu.arrMessages;
+      arrTypes = top.opener.parent.frameMenu.arrTypes;
+    } else if (top.opener.top.opener.parent.frameMenu) {
+      arrMessages = top.opener.top.opener.parent.frameMenu.arrMessages;
+      arrTypes = top.opener.top.opener.parent.frameMenu.arrTypes;
+    }
   }
 }
 
