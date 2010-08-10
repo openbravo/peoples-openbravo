@@ -230,37 +230,45 @@ public class InstanceManagement extends HttpSecureAppServlet {
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
     String discard[] = { "", "", "", "", "", "" };
-    if (activationKey.isOPSInstance()) {
-      discard[0] = "CEInstance";
-      if (activationKey.isSubscriptionConverted()) {
-        discard[1] = "OPSActiveTitle";
-        discard[2] = "OPSExpired";
-        discard[3] = "OPSNoActiveYet";
-      } else if (activationKey.hasExpired()) {
-        discard[1] = "OPSActiveTitle";
-        discard[2] = "OPSNoActiveYet";
-        discard[3] = "OPSConverted";
-        discard[4] = "OPSActive";
-      } else if (activationKey.isNotActiveYet()) {
-        discard[1] = "OPSExpired";
-        discard[2] = "OPSActiveTitle";
-        discard[3] = "OPSConverted";
-        discard[4] = "OPSActive";
-      } else {
-        discard[1] = "OPSExpired";
-        if (!activationKey.hasExpirationDate()) {
-          discard[2] = "OPSExpirationTime";
-        }
-        discard[3] = "OPSConverted";
-        discard[4] = "OPSNoActiveYet";
-      }
-    } else {
+
+    switch (activationKey.getSubscriptionStatus()) {
+    case COMMUNITY:
       discard[0] = "OPSInstance";
       discard[1] = "OPSActiveTitle";
       discard[2] = "OPSExpired";
       discard[3] = "OPSConverted";
       discard[4] = "OPSNoActiveYet";
       discard[5] = "OPSActive";
+      break;
+    case ACTIVE:
+      discard[0] = "CEInstance";
+      discard[1] = "OPSExpired";
+      if (!activationKey.hasExpirationDate()) {
+        discard[2] = "OPSExpirationTime";
+      }
+      discard[3] = "OPSConverted";
+      discard[4] = "OPSNoActiveYet";
+      break;
+    case CANCEL:
+      discard[0] = "CEInstance";
+      discard[1] = "OPSActiveTitle";
+      discard[2] = "OPSExpired";
+      discard[3] = "OPSNoActiveYet";
+      break;
+    case EXPIRED:
+      discard[0] = "CEInstance";
+      discard[1] = "OPSActiveTitle";
+      discard[2] = "OPSNoActiveYet";
+      discard[3] = "OPSConverted";
+      discard[4] = "OPSActive";
+      break;
+    case NO_ACTIVE_YET:
+      discard[0] = "CEInstance";
+      discard[1] = "OPSExpired";
+      discard[2] = "OPSActiveTitle";
+      discard[3] = "OPSConverted";
+      discard[4] = "OPSActive";
+      break;
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

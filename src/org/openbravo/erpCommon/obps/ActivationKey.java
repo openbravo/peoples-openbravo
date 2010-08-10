@@ -119,6 +119,23 @@ public class ActivationKey {
     }
   }
 
+  public enum SubscriptionStatus {
+    COMMUNITY("COM"), ACTIVE("ACT"), CANCEL("CAN"), EXPIRED("EXP"), NO_ACTIVE_YET("NAY");
+    private String code;
+
+    private SubscriptionStatus(String code) {
+      this.code = code;
+    }
+
+    /**
+     * Returns the name of the current status in the given language.
+     */
+    public String getStatusName(String language) {
+      return Utility.getListValueName("OBPSLicenseStatus", code, language);
+    }
+
+  }
+
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
 
@@ -916,5 +933,22 @@ public class ActivationKey {
       OBContext.restorePreviousMode();
     }
     return rt;
+  }
+
+  /**
+   * Returns current subscription status
+   */
+  public SubscriptionStatus getSubscriptionStatus() {
+    if (!isOPSInstance()) {
+      return SubscriptionStatus.COMMUNITY;
+    } else if (isSubscriptionConverted()) {
+      return SubscriptionStatus.CANCEL;
+    } else if (hasExpired()) {
+      return SubscriptionStatus.EXPIRED;
+    } else if (isNotActiveYet()) {
+      return SubscriptionStatus.NO_ACTIVE_YET;
+    } else {
+      return SubscriptionStatus.ACTIVE;
+    }
   }
 }
