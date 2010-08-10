@@ -280,7 +280,8 @@ public class ActivationKey {
     }
     isActive = true;
 
-    // Get license class, old Activation Keys do not have this info, so treat them as SMB
+    // Get license class, old Activation Keys do not have this info, so treat them as Standard
+    // Edition instances
     String pLicenseClass = getProperty("licenseedition");
     if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("STD")) {
       licenseClass = LicenseClass.STD;

@@ -26735,7 +26735,7 @@ In case the field is not checked, the preference is defined by Attribute, which 
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <DESCRIPTION><![CDATA[Tier for commercial modules]]></DESCRIPTION>
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <HELP><![CDATA[Commercial modules are defined in different tiers:
 1st Tier: The module can be installed in any Professional instance that has bought the module.
-2nd Tier: The module can be installed in SMB and Unlimited instances that have bought it.]]></HELP>
+2nd Tier: The module can be installed in Standard Professional Edition instances that have bought it.]]></HELP>
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8BCFEC1D2693D1A8E040007F010135A9--></AD_ELEMENT>
 
