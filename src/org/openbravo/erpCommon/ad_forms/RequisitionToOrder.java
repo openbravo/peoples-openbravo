@@ -472,7 +472,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
             data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule, data1[0].deliveryrule
                 .equals("") ? "A" : data1[0].deliveryrule, "I",
             data1[0].deliveryviarule.equals("") ? "D" : data1[0].deliveryviarule, strWarehouse,
-            strPriceListId, "", "", "");
+            strPriceListId, "", "", "", data1[0].poPaymentmethodId);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         releaseRollbackConnection(conn);
