@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,8 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.database.SessionInfo;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -65,8 +67,18 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
     SessionInfo.setProcessType("P");
     SessionInfo.setProcessId(strProcessId);
     
-    if (!vars.commandIn("DEFAULT") &amp;&amp; !hasGeneralAccess(vars, "P", strProcessId)) {
-      bdErrorGeneralPopUp(request, response, Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
+    if (!vars.commandIn("DEFAULT")) {
+      //Check access
+      FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess("P",
+          strProcessId);
+      if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
+        licenseError("P", strProcessId, featureRestriction, response, request, vars, true);
+      }
+      if (!hasGeneralAccess(vars, "P", strProcessId)) {
+        bdErrorGeneralPopUp(request, response,
+            Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this,
+                "AccessTableNoView", vars.getLanguage()));
+      }
     }
     
       

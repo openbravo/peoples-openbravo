@@ -55,8 +55,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      ActivationKey activationKey = new ActivationKey();
-      printPageActive(response, vars, activationKey);
+      printPageActive(response, vars, ActivationKey.getInstance());
     } else if (vars.commandIn("SHOW_ACTIVATE")) {
       printPageNotActive(response, vars);
     } else if (vars.commandIn("ACTIVATE")) {
@@ -98,6 +97,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       System sys = OBDal.getInstance().get(System.class, "0");
       sys.setActivationKey(null);
       sys.setInstanceKey(null);
+      ActivationKey.reload();
       msg.setType("Success");
       msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch (Exception e) {
@@ -124,12 +124,20 @@ public class InstanceManagement extends HttpSecureAppServlet {
         buf.append(new String(b, 0, n));
       }
 
-      System sys = OBDal.getInstance().get(System.class, "0");
-      sys.setActivationKey(buf.toString());
-      sys.setInstanceKey(vars.getStringParameter("publicKey"));
-      msg.setType("Success");
-      msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-
+      ActivationKey ak = new ActivationKey(vars.getStringParameter("publicKey"), buf.toString());
+      String nonAllowedMods = ak.verifyInstalledModules();
+      if (!nonAllowedMods.isEmpty()) {
+        msg.setType("Error");
+        msg.setMessage(Utility.messageBD(this, "LicenseWithoutAccessTo", vars.getLanguage())
+            + nonAllowedMods);
+      } else {
+        System sys = OBDal.getInstance().get(System.class, "0");
+        sys.setActivationKey(buf.toString());
+        sys.setInstanceKey(vars.getStringParameter("publicKey"));
+        ActivationKey.setInstance(ak);
+        msg.setType("Success");
+        msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      }
     } catch (Exception e) {
       log4j.error(e);
       msg.setType("Error");
@@ -143,7 +151,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActivateLocal(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException {
 
-    ActivationKey ak = new ActivationKey();
+    ActivationKey ak = ActivationKey.getInstance();
     String discard[] = { "", "" };
 
     if (ak.isOPSInstance()) {
@@ -290,7 +298,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageNotActive(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
 
-    ActivationKey activationKey = new ActivationKey();
+    ActivationKey activationKey = ActivationKey.getInstance();
     response.setContentType("text/html; charset=UTF-8");
     String discard[] = { "", "" };
     if (activationKey.isOPSInstance()) {

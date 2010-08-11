@@ -64,8 +64,7 @@ public class CheckCleanCache extends HttpBaseServlet {
     boolean active = false;
     OBContext.setAdminMode();
     try {
-      ActivationKey ak = new ActivationKey();
-      active = ak.isActive();
+      active = ActivationKey.getInstance().isActive();
       log4j.debug("Instance activate: " + active);
     } finally {
       OBContext.restorePreviousMode();

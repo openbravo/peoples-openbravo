@@ -52,18 +52,23 @@ public class ActiveInstanceProcess implements Process {
     if (result.length == 2 && result[0] != null && result[1] != null
         && result[0].equals("@Success@")) {
       // now we have the activation key, lets save it
-      System sys = OBDal.getInstance().get(System.class, "0");
-      sys.setActivationKey(result[1]);
-      sys.setInstanceKey(publicKey);
-      ActivationKey ak = new ActivationKey();
-      if (ak.isActive()) {
+
+      ActivationKey ak = new ActivationKey(publicKey, result[1]);
+      String nonAllowedMods = ak.verifyInstalledModules();
+      if (!nonAllowedMods.isEmpty()) {
+        msg.setType("Error");
+        msg.setMessage("@LicenseWithoutAccessTo@ " + nonAllowedMods);
+      } else if (ak.isActive()) {
+        System sys = OBDal.getInstance().get(System.class, "0");
+        sys.setActivationKey(result[1]);
+        sys.setInstanceKey(publicKey);
+        ActivationKey.setInstance(ak);
         msg.setType("Success");
         msg.setMessage(result[0]);
       } else {
         msg.setType("Error");
         msg.setMessage(ak.getErrorMessage());
       }
-
     } else {
       // If there is error do not save keys, thus we maitain previous ones in case they were valid
       msg.setType("Error");

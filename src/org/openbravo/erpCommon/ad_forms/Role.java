@@ -192,12 +192,12 @@ public class Role extends HttpSecureAppServlet {
       // We check if there is a Openbravo Professional Subscription restriction in the license,
       // or if the last rebuild didn't go well. If any of these are true, then the user is
       // allowed to login only as system administrator
-      ActivationKey ak = new ActivationKey();
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
       boolean correctSystemStatus = sysInfo.getSystemStatus() == null
           || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false")
           || sysInfo.getSystemStatus().equals("RB70");
-      LicenseRestriction limitation = ak.checkOPSLimitations(vars.getDBSession());
+      LicenseRestriction limitation = ActivationKey.getInstance().checkOPSLimitations(
+          vars.getDBSession());
       if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
           || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
           || limitation == LicenseRestriction.MODULE_EXPIRED || !correctSystemStatus) {

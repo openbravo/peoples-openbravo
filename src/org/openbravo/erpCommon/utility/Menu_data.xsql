@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,9 +40,11 @@
                               when 'F' then MOMF.MAPPINGNAME
                               else MOMP.MAPPINGNAME
                               end) AS MAPPINGNAME, 
+        menuData.AD_Window_ID,
         menuData.AD_Process_ID, 
         menuData.AD_Task_ID, 
         menuData.AD_Workflow_ID, 
+        menuData.AD_Form_ID,
         menuData.url,
         P.IsExternalService,
         P.Service_Type

@@ -53,6 +53,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
@@ -108,6 +109,12 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
+    // Prevent execution in Community instances
+    if (!ActivationKey.getInstance().isActive()) {
+      licenseError(classInfo.type, classInfo.id, FeatureRestriction.TIER1_RESTRICTION, response,
+          request, vars, true);
+    }
+
     String accesTabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
     if (!hasGeneralAccess(vars, "W", accesTabId)) {
       // do security check based on tabId passed in
@@ -121,7 +128,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
       if (vars.commandIn("POPUP_HISTORY")) {
         // popup showing the history of a single record
-        checkIfEnabled(request, response, vars);
 
         removePageSessionVariables(vars);
         vars.removeSessionValue("AuditTrail.tabId");
@@ -172,7 +178,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
       } else if (vars.commandIn("POPUP_DELETED")) {
         // popup showing all deleted records of a single tab
-        checkIfEnabled(request, response, vars);
 
         removePageSessionVariables(vars);
         vars.removeSessionValue("AuditTrail.recordId");
@@ -225,45 +230,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
-  }
-
-  /**
-   * If the instance is not activated, show error message.
-   */
-  private boolean checkIfEnabled(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars) throws IOException {
-    // ActivationKey already initialized in i.e. HSAS, so just take static info
-    if (ActivationKey.isActiveInstance()) {
-      return true;
-    }
-    String titleText = Utility.messageBD(this, "AUDIT_TRAIL", vars.getLanguage());
-    // <p> in java, to allow multi-paragraph text via the parameter
-    String infoText = "<p>" + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
-        + "</p>";
-    String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
-    String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
-    showErrorActivatedInstancesOnly(response, vars, titleText, infoText, linkText, afterLinkText);
-    return false;
-  }
-
-  private void showErrorActivatedInstancesOnly(HttpServletResponse response,
-      VariablesSecureApp vars, String titleText, String infoText, String linkText,
-      String afterLinkText) throws IOException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly").createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("titleText", titleText);
-    xmlDocument.setParameter("infoText", infoText);
-    xmlDocument.setParameter("linkText", linkText);
-    xmlDocument.setParameter("afterLinkText", afterLinkText);
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   private void removePageSessionVariables(VariablesSecureApp vars) {
