@@ -140,7 +140,7 @@ public class ActivationKey {
   /**
    * Reloads ActivationKey instance from information in DB.
    */
-  public static synchronized ActivationKey reaload() {
+  public static synchronized ActivationKey reload() {
     ActivationKey ak = getInstance();
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
@@ -283,7 +283,8 @@ public class ActivationKey {
     }
     isActive = true;
 
-    // Get license class, old Activation Keys do not have this info, so treat them as SMB
+    // Get license class, old Activation Keys do not have this info, so treat them as Standard
+    // Edition instances
     String pLicenseClass = getProperty("licenseedition");
     if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("STD")) {
       licenseClass = LicenseClass.STD;
@@ -350,7 +351,9 @@ public class ActivationKey {
     }
 
     try {
-      File restrictionsFile = getFileFromDevelopmentPath("licenseRestrictions");
+      File restrictionsFile = new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .get("source.path")
+          + "/config/licenseRestrictions");
       FileInputStream fis = new FileInputStream(restrictionsFile);
       byte fileContent[] = new byte[(int) restrictionsFile.length()];
       fis.read(fileContent);
@@ -380,26 +383,6 @@ public class ActivationKey {
 
   public LicenseClass getLicenseClass() {
     return licenseClass;
-  }
-
-  private File getFileFromDevelopmentPath(String fileName) {
-    // get the location of the current class file
-    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
-    File f = new File(url.getPath());
-    File propertiesFile = null;
-    while (f.getParentFile() != null && f.getParentFile().exists()) {
-      f = f.getParentFile();
-      final File configDirectory = new File(f, "config");
-      if (configDirectory.exists()) {
-        propertiesFile = new File(configDirectory, fileName);
-        if (propertiesFile.exists()) {
-          log4j.info("Reading " + propertiesFile.getAbsolutePath());
-          // found it and break
-          break;
-        }
-      }
-    }
-    return propertiesFile;
   }
 
   @SuppressWarnings( { "static-access", "unchecked" })
@@ -856,6 +839,8 @@ public class ActivationKey {
     } else if ("MW".equals(actualType)) {
       // Menu window, it receives window instead of tab
       actualType = "W";
+    } else if ("R".equals(actualType)) {
+      actualType = "P";
     }
 
     // Check disabled modules restrictions

@@ -168,7 +168,6 @@
       <check name="AD_MODULE_ISDEFAULT_CHK"><![CDATA[(ISDEFAULT = 'N') OR ((ISDEFAULT = 'Y') AND (ISINDEVELOPMENT = 'Y'))]]></check>
       <check name="AD_MODULE_ISREGISTERED_CHK"><![CDATA[ISREGISTERED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISTRANSLATEABLE_CHK"><![CDATA[ISTRANSLATIONREQUIRED IN ('Y', 'N')]]></check>
-      <check name="AD_MODULE_TIER_CHK"><![CDATA[((ISCOMMERCIAL = 'N') AND ((COMMERCIAL_TIER) = 'NA')) OR ((ISCOMMERCIAL = 'Y') AND (((COMMERCIAL_TIER) = '1') OR ((COMMERCIAL_TIER) = '2')))]]></check>
       <check name="AD_MODULE_TYPE_CHK"><![CDATA[TYPE IN ('M', 'P', 'T')]]></check>
     </table>
   </database>

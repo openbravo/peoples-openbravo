@@ -263,10 +263,12 @@ public class VerticalMenu extends HttpSecureAppServlet {
         String artifactId = "";
         if (menuAction.equals("MW")) {
           artifactId = menuData[i].adWindowId;
-        } else if (menuAction.equals("P") || menuAction.equals("P")) {
+        } else if (menuAction.equals("P") || menuAction.equals("R")) {
           artifactId = menuData[i].adProcessId;
         } else if (menuAction.equals("X")) {
           artifactId = menuData[i].adFormId;
+        } else if (menuAction.equals("F")) {
+          artifactId = menuData[i].adWorkflowId;
         }
         boolean hasLicenseAccess = ActivationKey.getInstance().hasLicenseAccess(menuAction,
             artifactId) == FeatureRestriction.NO_RESTRICTION;
