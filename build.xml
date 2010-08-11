@@ -446,6 +446,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="compile.deploy" depends="compile.war, compile.development">
+    <updatesystemstatus v="RB60"/>
   </target>
 
   <target name="compile.development" depends="init" unless="mode.war">
