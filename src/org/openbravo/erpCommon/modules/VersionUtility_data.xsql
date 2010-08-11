@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         select '' as ad_module_id, '' as name, '' as version, '' as type,
-          '' as ad_module_dependency_id, '' as ad_dependent_module_id, '' as dependant_module_name, '' as startVersion, '' as endVersion
+          '' as ad_module_dependency_id, '' as ad_dependent_module_id, '' as dependant_module_name, '' as startVersion, '' as endVersion,
+          '' as dependency_enforcement, '' as user_editable_enforcement, '' as instance_enforcement
         from dual
       </Sql>
    </SqlMethod>
@@ -47,7 +48,8 @@
         select ad_module_dependency_id,
           ad_dependent_module_id,
           dependant_module_name,
-          startVersion, endVersion
+          startVersion, endVersion, 
+          dependency_enforcement, user_editable_enforcement, instance_enforcement
         from ad_module_dependency
         where ad_module_id = ?
         and isIncluded = 'N'
@@ -61,7 +63,8 @@
         select ad_module_dependency_id,
           ad_dependent_module_id,
           dependant_module_name,
-          startVersion, endVersion
+          startVersion, endVersion,
+          dependency_enforcement, user_editable_enforcement, instance_enforcement
         from ad_module_dependency
         where ad_module_id = ?
         and isIncluded = 'Y'

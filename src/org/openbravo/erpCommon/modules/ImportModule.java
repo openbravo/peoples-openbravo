@@ -58,8 +58,10 @@ import org.apache.ddlutils.io.DataToArraySink;
 import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
@@ -880,6 +882,7 @@ public class ImportModule {
       Vector<DynaBean> dynDependencies) {
     final Module[] rt = new Module[dModulesToInstall.size()];
     int i = 0;
+
     for (final DynaBean dynModule : dModulesToInstall) {
       rt[i] = new Module();
       rt[i].setModuleID((String) dynModule.get("AD_MODULE_ID"));
@@ -891,20 +894,22 @@ public class ImportModule {
       rt[i].setType((String) dynModule.get("TYPE"));
       rt[i].setDescription((String) dynModule.get("DESCRIPTION"));
       rt[i].setHelp((String) dynModule.get("HELP"));
-      rt[i].setDependencies(dyanaBeanToDependencies(dynDependencies, rt[i].getModuleID()));
+      HashMap<String, String> enforcements = new HashMap<String, String>();
+      rt[i].setDependencies(dyanaBeanToDependencies(dynDependencies, rt[i].getModuleID(),
+          enforcements));
       // old modules don't have iscommercial column
       Object isCommercial = dynModule.get("ISCOMMERCIAL");
       rt[i].setIsCommercial(isCommercial != null && ((String) isCommercial).equals("Y"));
-      rt[i].setModuleVersionID((String) dynModule.get("AD_MODULE_ID")); // To
-      // show
-      // details
-      // in
-      // local
-      // ad_module_id
-      // is
-      // used
+      // To show details in local ad_module_id is used
+      rt[i].setModuleVersionID((String) dynModule.get("AD_MODULE_ID"));
+
+      // use this for information that is not contained in standard fields
+      HashMap<String, HashMap<String, String>> additionalInfo = new HashMap<String, HashMap<String, String>>();
+      additionalInfo.put("enforcements", enforcements);
+      rt[i].setAdditionalInfo(additionalInfo);
       i++;
     }
+
     return rt;
   }
 
@@ -914,23 +919,53 @@ public class ImportModule {
    * 
    */
   private ModuleDependency[] dyanaBeanToDependencies(Vector<DynaBean> dynDependencies,
-      String ad_module_id) {
+      String ad_module_id, HashMap<String, String> enforcements) {
     final ArrayList<ModuleDependency> dep = new ArrayList<ModuleDependency>();
-    for (final DynaBean dynModule : dynDependencies) {
-      if (((String) dynModule.get("AD_MODULE_ID")).equals(ad_module_id)) {
-        final ModuleDependency md = new ModuleDependency();
-        md.setModuleID((String) dynModule.get("AD_DEPENDENT_MODULE_ID"));
-        md.setVersionStart((String) dynModule.get("STARTVERSION"));
-        md.setVersionEnd((String) dynModule.get("ENDVERSION"));
-        md.setModuleName((String) dynModule.get("DEPENDANT_MODULE_NAME"));
-        dep.add(md);
+    try {
+      OBContext.setAdminMode();
+      for (final DynaBean dynModule : dynDependencies) {
+        if (((String) dynModule.get("AD_MODULE_ID")).equals(ad_module_id)) {
+          final ModuleDependency md = new ModuleDependency();
+          String modId = (String) dynModule.get("AD_DEPENDENT_MODULE_ID");
+          md.setModuleID(modId);
+          md.setVersionStart((String) dynModule.get("STARTVERSION"));
+          md.setVersionEnd((String) dynModule.get("ENDVERSION"));
+          md.setModuleName((String) dynModule.get("DEPENDANT_MODULE_NAME"));
+
+          // calculate enforcements, set the local one in case is editable and there is one, other
+          // case set the defined in the obx
+          OBCriteria<org.openbravo.model.ad.module.ModuleDependency> qDependentMod = OBDal
+              .getInstance().createCriteria(org.openbravo.model.ad.module.ModuleDependency.class);
+          qDependentMod
+              .add(Expression.eq(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_MODULE
+                  + ".id", ad_module_id));
+          qDependentMod.add(Expression.eq(
+              org.openbravo.model.ad.module.ModuleDependency.PROPERTY_DEPENDENTMODULE + ".id",
+              modId));
+          String enforcement = null;
+          if (!qDependentMod.list().isEmpty()
+              && qDependentMod.list().get(0).isUserEditableEnforcement()
+              && qDependentMod.list().get(0).getInstanceEnforcement() != null) {
+            enforcement = qDependentMod.list().get(0).getInstanceEnforcement();
+          } else {
+            enforcement = (String) dynModule.get("DEPENDENCY_ENFORCEMENT");
+          }
+          if (enforcement == null || enforcement.isEmpty()) {
+            enforcement = "MAJOR";
+          }
+          enforcements.put(modId, enforcement);
+
+          dep.add(md);
+        }
       }
+      final ModuleDependency rt[] = new ModuleDependency[dep.size()];
+      for (int i = 0; i < rt.length; i++) {
+        rt[i] = dep.get(i);
+      }
+      return rt;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    final ModuleDependency rt[] = new ModuleDependency[dep.size()];
-    for (int i = 0; i < rt.length; i++) {
-      rt[i] = dep.get(i);
-    }
-    return rt;
   }
 
   /**
@@ -1430,6 +1465,8 @@ public class ImportModule {
    *         <li>VersionInfo [x][3] -> If type=="D", to version</li>
    *         <li>VersionInfo [x][4] -> If type=="D", "Y"/"N" is included</li>
    *         <li>VersionInfo [x][5] -> If type=="D", Dependent module name</li>
+   *         <li>VersionInfo [x][6] -> If type=="D", Dependency enforcement</li>
+   *         <li>VersionInfo [x][7] -> If type=="D", Instance dependency enforcement</li>
    *         </ul>
    */
   public static HashMap<String, String[][]> getInstalledModulesAndDeps() {
@@ -1453,13 +1490,15 @@ public class ImportModule {
 
         int i = 1;
         for (org.openbravo.model.ad.module.ModuleDependency dep : dependencies) {
-          versionInfo[i] = new String[6];
+          versionInfo[i] = new String[8];
           versionInfo[i][0] = "D";
           versionInfo[i][1] = dep.getDependentModule().getId();
           versionInfo[i][2] = dep.getFirstVersion();
           versionInfo[i][3] = dep.getLastVersion();
           versionInfo[i][4] = dep.isIncluded() ? "Y" : "N";
           versionInfo[i][5] = dep.getDependantModuleName();
+          versionInfo[i][6] = dep.getDependencyEnforcement();
+          versionInfo[i][7] = dep.isUserEditableEnforcement() ? dep.getInstanceEnforcement() : null;
           i++;
         }
 
