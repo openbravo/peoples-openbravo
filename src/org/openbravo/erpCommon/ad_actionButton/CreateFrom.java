@@ -1338,17 +1338,18 @@ public class CreateFrom extends HttpSecureAppServlet {
       return null;
     OBError myMessage = null;
     Connection conn = null;
-
     if (strPayment.equals(""))
       return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    String[] ids = restrictParameter(strPayment);
 
     try {
       conn = this.getTransactionConnection();
-      if (strPayment.startsWith("("))
-        strPayment = strPayment.substring(1, strPayment.length() - 1);
-      if (!strPayment.equals("")) {
-        strPayment = Replace.replace(strPayment, "'", "");
-        final StringTokenizer st = new StringTokenizer(strPayment, ",", false);
+      for(int k=0;k<ids.length;k++){
+      if (ids[k].startsWith("("))
+    	  ids[k] = ids[k].substring(1, ids[k].length() - 1);
+      if (!ids[k].equals("")) {
+    	  ids[k] = Replace.replace(ids[k], "'", "");
+        final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
         while (st.hasMoreTokens()) {
           String strDebtPaymentId = st.nextToken().trim();
           if (!CreateFromBankData.NotIsReconcilied(conn, this, strDebtPaymentId)) {
@@ -1395,7 +1396,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           }
         }
       }
-
+      }
       releaseCommitConnection(conn);
       myMessage = new OBError();
       myMessage.setType("Success");
@@ -1430,13 +1431,15 @@ public class CreateFrom extends HttpSecureAppServlet {
     CreateFromInvoiceData[] dataAux = null;
     OBError myMessage = null;
     Connection conn = null;
+    String[] ids = restrictParameter(strClaves);
     try {
       conn = this.getTransactionConnection();
+      for(int k=0;k<ids.length;k++){
       if (strType.equals("SHIPMENT")) {
         if (isSOTrx.equals("Y"))
-          data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this, strClaves);
+          data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this, ids[k]);
         else
-          data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, strClaves);
+          data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, ids[k]);
         dataAux = CreateFromInvoiceData.selectPriceList(conn, this, strDateInvoiced, strPriceList);
         if (dataAux == null || dataAux.length == 0) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(),
@@ -1448,9 +1451,9 @@ public class CreateFrom extends HttpSecureAppServlet {
       } else {
         strPO = vars.getStringParameter("inpPurchaseOrder");
         if (isSOTrx.equals("Y"))
-          data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, strClaves);
+          data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
         else
-          data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, strClaves);
+          data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, ids[k]);
       }
       if (data != null) {
         for (int i = 0; i < data.length; i++) {
@@ -1529,7 +1532,7 @@ public class CreateFrom extends HttpSecureAppServlet {
         }
 
       }
-
+      }
       releaseCommitConnection(conn);
       if (log4j.isDebugEnabled())
         log4j.debug("Save commit");
@@ -1573,18 +1576,20 @@ public class CreateFrom extends HttpSecureAppServlet {
     CreateFromShipmentData[] data = null;
     OBError myMessage = null;
     Connection conn = null;
+    String[] ids = restrictParameter(strClaves);
     try {
       conn = this.getTransactionConnection();
+      for(int k=0;k<ids.length;k++){
       if (strType.equals("INVOICE")) {
         strInvoice = vars.getStringParameter("inpInvoice");
         if (!isSOTrx.equals("Y"))
-          data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, strClaves);
+          data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, ids[k]);
       } else {
         strPO = vars.getStringParameter("inpPurchaseOrder");
         if (isSOTrx.equals("Y"))
-          data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, strClaves);
+          data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
         else
-          data = CreateFromShipmentData.selectFromPOUpdate(conn, this, strClaves);
+          data = CreateFromShipmentData.selectFromPOUpdate(conn, this, ids[k]);
       }
       if (data != null) {
         for (int i = 0; i < data.length; i++) {
@@ -1759,7 +1764,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           return myMessage;
         }
       }
-
+      }
       releaseCommitConnection(conn);
       if (log4j.isDebugEnabled())
         log4j.debug("Save commit");
@@ -1792,20 +1797,22 @@ public class CreateFrom extends HttpSecureAppServlet {
     CreateFromShipmentData[] data = null;
     OBError myMessage = null;
     Connection conn = null;
+    String[] ids = restrictParameter(strClaves);
     try {
       conn = this.getTransactionConnection();
+      for(int k=0;k<ids.length;k++){
       if (strType.equals("INVOICE")) {
         strInvoice = vars.getStringParameter("inpInvoice");
         if (isSOTrx.equals("Y"))
-          data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this, strClaves);
+          data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this, ids[k]);
         else
-          data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, strClaves);
+          data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, ids[k]);
       } else {
         strPO = vars.getStringParameter("inpPurchaseOrder");
         if (isSOTrx.equals("Y"))
-          data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, strClaves);
+          data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
         else
-          data = CreateFromShipmentData.selectFromPOUpdate(conn, this, strClaves);
+          data = CreateFromShipmentData.selectFromPOUpdate(conn, this, ids[k]);
       }
       if (data != null) {
         for (int i = 0; i < data.length; i++) {
@@ -1928,7 +1935,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           return myMessage;
         }
       }
-
+      }
       releaseCommitConnection(conn);
       if (log4j.isDebugEnabled())
         log4j.debug("Save commit");
@@ -1964,13 +1971,15 @@ public class CreateFrom extends HttpSecureAppServlet {
       return null;
     OBError myMessage = null;
     Connection conn = null;
+    String[] ids = restrictParameter(strDebtPayment);
     try {
       conn = this.getTransactionConnection();
-      if (strDebtPayment.startsWith("("))
-        strDebtPayment = strDebtPayment.substring(1, strDebtPayment.length() - 1);
-      if (!strDebtPayment.equals("")) {
-        strDebtPayment = Replace.replace(strDebtPayment, "'", "");
-        final StringTokenizer st = new StringTokenizer(strDebtPayment, ",", false);
+      for(int k=0;k<ids.length;k++){
+      if (ids[k].startsWith("("))
+    	  ids[k] = ids[k].substring(1, ids[k].length() - 1);
+      if (!ids[k].equals("")) {
+    	  ids[k] = Replace.replace(ids[k], "'", "");
+        final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
         while (st.hasMoreTokens()) {
           final String strDebtPaymentId = st.nextToken().trim();
           final String strWriteOff = vars.getNumericParameter("inpwriteoff" + strDebtPaymentId);
@@ -1992,6 +2001,7 @@ public class CreateFrom extends HttpSecureAppServlet {
             return myMessage;
           }
         }
+      }
       }
       releaseCommitConnection(conn);
       myMessage = new OBError();
@@ -2019,15 +2029,17 @@ public class CreateFrom extends HttpSecureAppServlet {
       return null;
     OBError myMessage = null;
     Connection conn = null;
+    String[] ids = restrictParameter(strDebtPayment);
     try {
       conn = this.getTransactionConnection();
       final String strStatusTo = vars.getStringParameter("inpStatusTo");
-      if (strDebtPayment.startsWith("("))
-        strDebtPayment = strDebtPayment.substring(1, strDebtPayment.length() - 1);
-      if (!strDebtPayment.equals("")) {
-        strDebtPayment = Replace.replace(strDebtPayment, "'", "");
+      for(int k=0;k<ids.length;k++){
+      if (ids[k].startsWith("("))
+    	  ids[k] = ids[k].substring(1, ids[k].length() - 1);
+      if (!ids[k].equals("")) {
+    	  ids[k] = Replace.replace(ids[k], "'", "");
         Integer line = new Integer(CreateFromDPManagementData.getLine(this, strKey));
-        final StringTokenizer st = new StringTokenizer(strDebtPayment, ",", false);
+        final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
         while (st.hasMoreTokens()) {
           final String strDebtPaymentId = st.nextToken().trim();
           if (!CreateFromDPManagementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
@@ -2050,6 +2062,7 @@ public class CreateFrom extends HttpSecureAppServlet {
             return myMessage;
           }
         }
+      }
       }
       releaseCommitConnection(conn);
       myMessage = new OBError();
@@ -2077,16 +2090,18 @@ public class CreateFrom extends HttpSecureAppServlet {
       return null;
     OBError myMessage = null;
     Connection conn = null;
+    String[] ids = restrictParameter(strDebtPayment);
     try {
       conn = this.getTransactionConnection();
       Integer lineNo = Integer.valueOf(CreateFromCRemittanceData.selectLineNo(this, strKey))
           .intValue();
+      for(int k=0;k<ids.length;k++){
       // String strStatusTo = vars.getStringParameter("inpStatusTo");
-      if (strDebtPayment.startsWith("("))
-        strDebtPayment = strDebtPayment.substring(1, strDebtPayment.length() - 1);
-      if (!strDebtPayment.equals("")) {
-        strDebtPayment = Replace.replace(strDebtPayment, "'", "");
-        final StringTokenizer st = new StringTokenizer(strDebtPayment, ",", false);
+      if (ids[k].startsWith("("))
+    	  ids[k] = ids[k].substring(1, ids[k].length() - 1);
+      if (!ids[k].equals("")) {
+    	  ids[k] = Replace.replace(ids[k], "'", "");
+        final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
         while (st.hasMoreTokens()) {
           final String strDebtPaymentId = st.nextToken().trim();
 
@@ -2110,6 +2125,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           }
         }
       }
+      }
       releaseCommitConnection(conn);
       myMessage = new OBError();
       myMessage.setType("Success");
@@ -2127,6 +2143,43 @@ public class CreateFrom extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  public String[] restrictParameter(String strClaves){
+	  	  String[] ids = null;
+	  	  if(strClaves!=null && !("").equals(strClaves)){
+	  		  strClaves = strClaves.substring(1, strClaves.length() - 1);
+	  		    StringTokenizer st = new StringTokenizer(strClaves,",");
+	  		    int noOfRecords=1;
+	  		    int tokenCount=st.countTokens();
+	  		    final double totalRecords = 900.0;
+	  		    int strArrayCount=tokenCount<=totalRecords?0:(int) Math.ceil(tokenCount/totalRecords);
+	  		    if(strArrayCount != 0){
+	  		     ids = new String[strArrayCount];
+	  		    }else{
+	  		    	ids=new String[1];
+	  		    	ids[0]="("+strClaves+")";
+	  		    }
+	  	
+	  		    int count =1;
+	  		    String tempIds = "";
+	  		    if(strArrayCount!=0){
+	  		    	while(st.hasMoreTokens()){
+	  		    		tempIds = tempIds + st.nextToken();
+	  		    		if((noOfRecords%totalRecords)!=0 && st.hasMoreTokens()){
+	  		    			tempIds= tempIds+",";
+	  		    		}
+	  		    		if((noOfRecords%totalRecords)==0 || (strArrayCount == count && !st.hasMoreTokens())){
+	  		    			ids[count-1] = "("+tempIds+")";
+	  		    			tempIds ="";
+	  		    			count++;
+	  		    		}
+	  		    		noOfRecords++;	
+	  		    	}
+	  	
+	  		    }
+	  	    return ids;
+	  	  }
+	  	  return new String[0];
+	    }
   @Override
   public String getServletInfo() {
     return "Servlet that presents the button of CreateFrom";
