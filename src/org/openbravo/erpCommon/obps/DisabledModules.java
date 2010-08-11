@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.erpCommon.modules;
+package org.openbravo.erpCommon.obps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ import org.openbravo.model.ad.ui.Window;
  * 
  */
 public class DisabledModules {
-  public enum Artifacts {
+  enum Artifacts {
     MODULE, TAB, PROCESS, FORM, WINDOW
   };
 
@@ -112,7 +112,7 @@ public class DisabledModules {
    *          artifact id
    * @return true in case it is enabled
    */
-  public static boolean isEnabled(Artifacts artifactType, String id) {
+  static boolean isEnabled(Artifacts artifactType, String id) {
     switch (artifactType) {
     case MODULE:
       return !disabledModules.contains(id);
