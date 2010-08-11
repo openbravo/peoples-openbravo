@@ -266,7 +266,27 @@ var baseDirectory = "../../../../../web/";
                   <td class="TableEdition_OneCell_width"></td>
                 </tr>
                 
-                
+                <tr>
+                  <td colspan="6">
+                    <table border=0 cellspacing=0 cellpadding=0 class="FieldGroup">
+                      <tr class="FieldGroup_TopMargin"/>
+                      <tr>
+                        <td class="FieldGroupTitle_Left">
+                          <img src="../../../../../web/images/blank.gif" class="FieldGroupTitle_Left_bg" border=0/>
+                         </td>
+                         <td class="FieldGroupTitle">
+                           <span>Life Cycle</span>
+                         </td>
+                         <td class="FieldGroupTitle_Right">
+                           <img src="../../../../../web/images/blank.gif" class="FieldGroupTitle_Right_bg" border=0/>
+                         </td>
+                         <td class="FieldGroupContent">&nbsp;</td>
+                       </tr>
+                       <tr class="FieldGroup_BottomMargin"/>
+                     </table>      
+                   </td>
+                 </tr>
+
                 <tr>
                   <td colspan="6">
                     <span class="LabelText">
@@ -311,7 +331,7 @@ var baseDirectory = "../../../../../web/";
                 </tr>
                 </table>
                 
-                <table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;" id="moduleTable">
+                <table cellspacing="0" cellpadding="0" width="1000px" style="text-align:-moz-center;_text-align:center;" id="moduleTable">
 				    <tr>
 				      <td>
 				      <div class="Popup_ContentPane_Client" style="overflow: auto;">
@@ -420,6 +440,81 @@ var baseDirectory = "../../../../../web/";
                 
                 <tr>
                   <td colspan="6">&nbsp;</td>
+                </tr>
+                
+                <tr>
+                  <td colspan="6">
+                    <table border=0 cellspacing=0 cellpadding=0 class="FieldGroup">
+                      <tr class="FieldGroup_TopMargin"/>
+                      <tr>
+                        <td class="FieldGroupTitle_Left">
+                          <img src="../../../../../web/images/blank.gif" class="FieldGroupTitle_Left_bg" border=0/>
+                         </td>
+                         <td class="FieldGroupTitle">
+                           <span>Editable Dependencies</span>
+                         </td>
+                         <td class="FieldGroupTitle_Right">
+                           <img src="../../../../../web/images/blank.gif" class="FieldGroupTitle_Right_bg" border=0/>
+                         </td>
+                         <td class="FieldGroupContent">&nbsp;</td>
+                       </tr>
+                       <tr class="FieldGroup_BottomMargin"/>
+                     </table>      
+                   </td>
+                 </tr>
+                
+                  <tr id="noEditableEnforcement">
+                    <td colspan="4">
+                      <span class="Label_ReadOnly_Text">Your instance does not contain any module with an editable dependency enforcement level.</span>
+                    </td>
+                  </tr>
+                </table>
+                
+                <table id="enforcementTable" cellspacing="0" cellpadding="0" width="1000px" style="text-align:-moz-center;_text-align:center;">
+                    <tr>
+                      <td>
+                      <div class="Popup_ContentPane_Client" style="overflow: auto;">
+                        <table cellspacing="0" cellpadding="0" width="80%" class="DataGrid_Header_Table DataGrid_Body_Table">
+                          <tr class="Popup_Client_Selector_DataGrid_HeaderRow"> 
+                            <th class="DataGrid_Header_Cell" width="24%">Module</th>
+                            <th class="DataGrid_Header_Cell" width="9%">Type</th>
+                            <th class="DataGrid_Header_Cell" width="24%">Included/Base Module</th>
+                            <th class="DataGrid_Header_Cell" width="17%">Enforcement</th>
+                            <th class="DataGrid_Header_Cell" width="8%">Current</th>
+                            <th class="DataGrid_Header_Cell" width="8%">First Version</th>
+                            <th class="DataGrid_Header_Cell" width="8%">Last Version</th>
+                          </tr>
+                          <div id="sectionDependencyDetail"> 
+                            <tr class="DataGrid_Body_Row DataGrid_Body_Row_xx" id="funcEvenOddRow"> 
+                              <td class="DataGrid_Body_Cell" id="fieldDepModName">xxNeverland Localization Pack</td>
+                              <td class="DataGrid_Body_Cell" id="fieldDepType">xxInclusion</td>
+                              <td class="DataGrid_Body_Cell" id="fieldDepBaseMod">xxTaxes for Neverland</td>
+                              <td class="DataGrid_Body_Cell">
+			                    <select class="Combo" name="inpEnforcementxx" id="enforcementCombo">
+			                      <div id="reportEnforcementType">
+                                    <div id="sectionEnforcementType"></div>
+                                  </div>
+			                    </select>
+                              </td>
+                              <td class="DataGrid_Body_Cell" id="fieldDepCurrent"></td>
+                              <td class="DataGrid_Body_Cell" id="fieldDepFirst"></td>
+                              <td class="DataGrid_Body_Cell" id="fieldDepLast"></td>
+                            </tr>
+                          </div>
+                        </table>
+                     </div>
+                    </td>
+                   </tr>
+                </table>
+                
+               <table class="Main_Client_TableEdition" id="client_top3">
+                <tr>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
                 </tr>
                 
                 <tr>
