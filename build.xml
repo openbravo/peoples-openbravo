@@ -371,7 +371,7 @@ export.database: exports database structure and data to xml files.
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
-    <updatesystemstatus v="RB60"/>
+    <updatesystemstatus v="RB51"/>
     <!-- only restart tomcat if the restart prop was set to true -->
     <condition property="dorestart">
       <istrue value="${restart}" />
@@ -446,7 +446,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="compile.deploy" depends="compile.war, compile.development">
-    <updatesystemstatus v="RB60"/>
+    <updatesystemstatus v="RB51"/>
   </target>
 
   <target name="compile.development" depends="init" unless="mode.war">
@@ -651,7 +651,7 @@ export.database: exports database structure and data to xml files.
 
     <antcall target="import.sample.data" />
     <antcall target="load.logoimages" />
-    <updatesystemstatus v="RB60"/> 
+    <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
     <!--
@@ -670,7 +670,7 @@ export.database: exports database structure and data to xml files.
     <echo message="applying modules" />    
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
-    <updatesystemstatus v="RB60"/>
+    <updatesystemstatus v="RB51"/>
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
   </target>
 
