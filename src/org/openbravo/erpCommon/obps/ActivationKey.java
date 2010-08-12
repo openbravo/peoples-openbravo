@@ -925,8 +925,7 @@ public class ActivationKey {
       mods.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, false));
       mods.addOrder(Order.asc(Module.PROPERTY_NAME));
       for (Module mod : mods.list()) {
-        if (!isActiveInstance()
-            || isModuleSubscribed(mod.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+        if (isModuleSubscribed(mod.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {
           rt += (rt.isEmpty() ? "" : ", ") + mod.getName();
         }
       }
