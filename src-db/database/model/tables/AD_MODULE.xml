@@ -158,6 +158,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_MODULE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <unique name="AD_MODULE_JAVAPACKAGE_UN">
+        <unique-column name="JAVAPACKAGE"/>
+      </unique>
       <check name="AD_MODULE_INDEVELOPMENT_CHK"><![CDATA[ISINDEVELOPMENT IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISCOMMERCIAL_CHCK"><![CDATA[ISCOMMERCIAL IN ('Y', 'N')]]></check>
