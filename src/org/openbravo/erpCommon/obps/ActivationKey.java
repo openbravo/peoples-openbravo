@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
-import java.net.URL;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -56,9 +55,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.modules.DisabledModules;
-import org.openbravo.erpCommon.modules.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
+import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
@@ -361,6 +359,7 @@ public class ActivationKey {
    */
   @SuppressWarnings("unchecked")
   private void loadRestrictions() {
+    DisabledModules.reload();
     tier1Artifacts = new ArrayList<String>();
     tier2Artifacts = new ArrayList<String>();
     if (isActive() && licenseClass == LicenseClass.STD) {

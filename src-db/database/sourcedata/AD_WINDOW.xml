@@ -2192,8 +2192,8 @@
 <!--800027-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800027-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800027-->  <NAME><![CDATA[Assets]]></NAME>
-<!--800027-->  <DESCRIPTION><![CDATA[Define assets owned by your company their amortization characteristics.]]></DESCRIPTION>
-<!--800027-->  <HELP><![CDATA[Define assets owned by your company their amortization characteristics.]]></HELP>
+<!--800027-->  <DESCRIPTION><![CDATA[Define amortization characteristics for assets owned by your company.]]></DESCRIPTION>
+<!--800027-->  <HELP><![CDATA[Define amortization characteristics for assets owned by your company.]]></HELP>
 <!--800027-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800027-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800027-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2312,8 +2312,8 @@
 <!--800051-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800051-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800051-->  <NAME><![CDATA[Process Plan]]></NAME>
-<!--800051-->  <DESCRIPTION><![CDATA[Define the steps and processes to be completed for an intermediate or finished good, taking in account available resources.]]></DESCRIPTION>
-<!--800051-->  <HELP><![CDATA[Define the steps and processes to be completed for an intermediate or finished good, taking in account available resources.]]></HELP>
+<!--800051-->  <DESCRIPTION><![CDATA[Define the steps and processes to be completed for an intermediate or finished good, taking into account available resources.]]></DESCRIPTION>
+<!--800051-->  <HELP><![CDATA[Define the steps and processes to be completed for an intermediate or finished good, taking into account available resources.]]></HELP>
 <!--800051-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800051-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800051-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2447,8 +2447,8 @@
 <!--800069-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800069-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800069-->  <NAME><![CDATA[Promissory Note Format]]></NAME>
-<!--800069-->  <DESCRIPTION><![CDATA[Create and edit the structure of how of to print a promissory note.]]></DESCRIPTION>
-<!--800069-->  <HELP><![CDATA[Create and edit the structure of how of to print a promissory note.]]></HELP>
+<!--800069-->  <DESCRIPTION><![CDATA[Create and edit the structure of how to print a promissory note.]]></DESCRIPTION>
+<!--800069-->  <HELP><![CDATA[Create and edit the structure of how to print a promissory note.]]></HELP>
 <!--800069-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800069-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800069-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -2717,7 +2717,7 @@
 <!--800092-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800092-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800092-->  <NAME><![CDATA[Requisition]]></NAME>
-<!--800092-->  <DESCRIPTION><![CDATA[Create requests for the procurement department to buy necessities items based on your defined plan.]]></DESCRIPTION>
+<!--800092-->  <DESCRIPTION><![CDATA[Create requests for the procurement department to buy necessary items based on your defined plan.]]></DESCRIPTION>
 <!--800092-->  <HELP><![CDATA[Users create Requisitions in this window. Each requisition can have a preferred vendor and/or Price List. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
 <!--800092-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800092-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
@@ -3175,7 +3175,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
-<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <DESCRIPTION><![CDATA[It allows to open or close periods for the allowed organizations]]></DESCRIPTION>
+<!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <DESCRIPTION><![CDATA[Open or close periods for the allowed organizations]]></DESCRIPTION>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <HELP><![CDATA[Only organizations where transactions are possible can open or close periods.]]></HELP>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--E56E701CCBA14B8BA480CBDE37C50D7A-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>

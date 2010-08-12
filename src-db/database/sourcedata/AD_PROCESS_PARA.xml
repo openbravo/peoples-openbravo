@@ -3768,8 +3768,8 @@ You find the current status in the Document Status field. The options are listed
 <!--367-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--367-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--367-->  <NAME><![CDATA[Consolidate to one Document]]></NAME>
-<!--367-->  <DESCRIPTION><![CDATA[Consilidate Lines into one Document]]></DESCRIPTION>
-<!--367-->  <HELP><![CDATA[Consilidate Lines into one Document]]></HELP>
+<!--367-->  <DESCRIPTION><![CDATA[Consolidate Lines into one Document]]></DESCRIPTION>
+<!--367-->  <HELP><![CDATA[Consolidate Lines into one Document]]></HELP>
 <!--367-->  <AD_PROCESS_ID><![CDATA[225]]></AD_PROCESS_ID>
 <!--367-->  <SEQNO><![CDATA[30]]></SEQNO>
 <!--367-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>

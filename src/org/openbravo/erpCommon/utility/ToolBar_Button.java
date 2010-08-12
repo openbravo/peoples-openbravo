@@ -85,7 +85,7 @@ class ToolBar_Button implements HTMLElement {
     toolbar
         .append("onMouseOut=\"window.status='';return true;\" onclick=\"this.hideFocus=true\" onblur=\"this.hideFocus=false\" ");
     // Needed to build the HTML tag id as refresh has in classic layout
-    if (name.equals("Refresh")) {
+    if (name.equals("Refresh") || name.equals("Edition") || name.equals("Relation")) {
       toolbar.append("id=\"button").append(name).append("\">");
     } else {
       toolbar.append("id=\"linkButton").append(name).append("\">");

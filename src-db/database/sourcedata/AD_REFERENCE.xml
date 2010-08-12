@@ -35,7 +35,7 @@
 <!--3-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--3-->  <NAME><![CDATA[AD_Column ColumName]]></NAME>
+<!--3-->  <NAME><![CDATA[AD_Column ColumnName]]></NAME>
 <!--3-->  <DESCRIPTION><![CDATA[Column selection]]></DESCRIPTION>
 <!--3-->  <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
 <!--3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -2069,7 +2069,7 @@
 <!--223-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--223-->  <NAME><![CDATA[C_BPartner Vendors Avtive]]></NAME>
+<!--223-->  <NAME><![CDATA[C_BPartner Vendors Active]]></NAME>
 <!--223-->  <DESCRIPTION><![CDATA[Vendor selection]]></DESCRIPTION>
 <!--223-->  <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
 <!--223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -2541,7 +2541,7 @@
 <!--258-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--258-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--258-->  <NAME><![CDATA[AD_Column YesNo]]></NAME>
-<!--258-->  <DESCRIPTION><![CDATA[Coluns YesNo (Name)]]></DESCRIPTION>
+<!--258-->  <DESCRIPTION><![CDATA[Columns YesNo (Name)]]></DESCRIPTION>
 <!--258-->  <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
 <!--258-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--258-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
@@ -3158,7 +3158,7 @@
 <!--800017-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800017-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800017-->  <NAME><![CDATA[Strorage Payment Rule]]></NAME>
+<!--800017-->  <NAME><![CDATA[Storage Payment Rule]]></NAME>
 <!--800017-->  <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--800017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800017-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
@@ -4168,7 +4168,7 @@ For example, if you want to create different invoices for each ship location for
 <!--1000300000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000300000-->  <NAME><![CDATA[AD_AlertRule Type]]></NAME>
 <!--1000300000-->  <DESCRIPTION><![CDATA[Alert Rule Type]]></DESCRIPTION>
-<!--1000300000-->  <HELP><![CDATA[Type of an Alert Rule. Data driven (check for a valid SQL clause) or External (not check the SQL clause).]]></HELP>
+<!--1000300000-->  <HELP><![CDATA[Type of an Alert Rule. Data driven (check for a valid SQL clause) or External (do not check the SQL clause).]]></HELP>
 <!--1000300000-->  <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--1000300000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000300000-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
@@ -4250,7 +4250,7 @@ For example, if you want to create different invoices for each ship location for
 <!--1004400000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400000-->  <NAME><![CDATA[Requisition status]]></NAME>
-<!--1004400000-->  <HELP><![CDATA[List of the possible status of a requisition:
+<!--1004400000-->  <HELP><![CDATA[List of the possible statuses of a requisition:
 -O: Open
 -P: Planned
 -C: Closed
@@ -4633,7 +4633,7 @@ For example, if you want to create different invoices for each ship location for
 <!--5AD08D5DF85549E0BCC0DEBDE4C0D340-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5AD08D5DF85549E0BCC0DEBDE4C0D340-->  <NAME><![CDATA[Use Attribute Set Value As]]></NAME>
 <!--5AD08D5DF85549E0BCC0DEBDE4C0D340-->  <DESCRIPTION><![CDATA[A distinct Attribute Set Value characteristic.]]></DESCRIPTION>
-<!--5AD08D5DF85549E0BCC0DEBDE4C0D340-->  <HELP><![CDATA[Permits to define different types of Attribute Set Values, depending on their usage.]]></HELP>
+<!--5AD08D5DF85549E0BCC0DEBDE4C0D340-->  <HELP><![CDATA[Permits the user to define different types of Attribute Set Values, depending on their usage.]]></HELP>
 <!--5AD08D5DF85549E0BCC0DEBDE4C0D340-->  <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--5AD08D5DF85549E0BCC0DEBDE4C0D340-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5AD08D5DF85549E0BCC0DEBDE4C0D340-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
@@ -4759,7 +4759,7 @@ For example, if you want to create different invoices for each ship location for
 <!--725CD8C6882C40AFB4D1C27B1AEF8BB4-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--725CD8C6882C40AFB4D1C27B1AEF8BB4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--725CD8C6882C40AFB4D1C27B1AEF8BB4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--725CD8C6882C40AFB4D1C27B1AEF8BB4-->  <NAME><![CDATA[Module statuts]]></NAME>
+<!--725CD8C6882C40AFB4D1C27B1AEF8BB4-->  <NAME><![CDATA[Module status]]></NAME>
 <!--725CD8C6882C40AFB4D1C27B1AEF8BB4-->  <DESCRIPTION><![CDATA[Status for modules]]></DESCRIPTION>
 <!--725CD8C6882C40AFB4D1C27B1AEF8BB4-->  <HELP><![CDATA[Status for modules]]></HELP>
 <!--725CD8C6882C40AFB4D1C27B1AEF8BB4-->  <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
@@ -4775,7 +4775,7 @@ For example, if you want to create different invoices for each ship location for
 <!--7CD9193198B94EF5B174D0F8512B0857-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7CD9193198B94EF5B174D0F8512B0857-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7CD9193198B94EF5B174D0F8512B0857-->  <NAME><![CDATA[Module Action]]></NAME>
-<!--7CD9193198B94EF5B174D0F8512B0857-->  <DESCRIPTION><![CDATA[List of action for loggin modules]]></DESCRIPTION>
+<!--7CD9193198B94EF5B174D0F8512B0857-->  <DESCRIPTION><![CDATA[List of actions for logging modules]]></DESCRIPTION>
 <!--7CD9193198B94EF5B174D0F8512B0857-->  <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--7CD9193198B94EF5B174D0F8512B0857-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7CD9193198B94EF5B174D0F8512B0857-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
@@ -4789,8 +4789,8 @@ For example, if you want to create different invoices for each ship location for
 <!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <NAME><![CDATA[Process Status]]></NAME>
-<!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <DESCRIPTION><![CDATA[The status a process - Scheduled, Processing, Error, Success, Misfired]]></DESCRIPTION>
-<!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <HELP><![CDATA[The status a process - Scheduled, Processing, Error, Success, Misfired]]></HELP>
+<!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <DESCRIPTION><![CDATA[The status for a process - Scheduled, Processing, Error, Success, Misfired]]></DESCRIPTION>
+<!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <HELP><![CDATA[The status for a process - Scheduled, Processing, Error, Success, Misfired]]></HELP>
 <!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7DB6D4792CDC4ED297C70A4F4282A52E-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
