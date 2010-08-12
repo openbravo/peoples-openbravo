@@ -45,14 +45,10 @@ function keyArrayItem(key, evalfunc, field, auxKey, propagateKey, event) {
 * Defines the keys array for all the application.
 */
 function getShortcuts(type) {
-  // note these methods/variables are defined in utils.js
-  setMDIEnvironment();
-  var inMDIEnvironment = (isWindowInMDITab || isWindowInMDIContext); 
-  
   if (type==null || type=="" || type=="null") {
   } else if (type=='applicationCommonKeys') {
     // don't override browser shortcuts in case of MDI environment
-    if (!inMDIEnvironment) {
+    if (!isWindowInMDIContext) {
       this.keyArray.splice(keyArray.length-1, 0,
           new keyArrayItem("M", "executeMenuButton('buttonExpand');executeMenuButton('buttonCollapse');", null, "ctrlKey+shiftKey", false, 'onkeydown'),
           new keyArrayItem("U", "executeMenuButton('buttonUserOptions');", null, "ctrlKey", false, 'onkeydown'),
@@ -64,6 +60,16 @@ function getShortcuts(type) {
           new keyArrayItem("R", "executeWindowButton('buttonRefresh');", null, "ctrlKey", false, 'onkeydown'),
           new keyArrayItem("BACKSPACE", "executeWindowButton('buttonBack');", null, "ctrlKey+shiftKey", false, 'onkeydown')
         );
+    } else {
+      var LayoutMDI = getFrame('LayoutMDI');
+      if (typeof LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard === "object" && typeof LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.getMDIKS === "function") {
+        var MDIKeyJSON = LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.getMDIKS();
+        for (var i=0; i<MDIKeyJSON.length; i++) {
+          this.keyArray.splice(keyArray.length-1, 0,
+              new keyArrayItem(MDIKeyJSON[i].key, [MDIKeyJSON[i].action, MDIKeyJSON[i].funcParam], null, MDIKeyJSON[i].auxKey, false, 'onkeydown')
+          );
+        }
+      }
     }
   } else if (type=='menuSpecificKeys') {
       this.keyArray.splice(keyArray.length-1, 0,

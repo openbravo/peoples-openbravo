@@ -53,8 +53,11 @@
         m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 
         m.AD_FORM_ID, m.AD_Task_ID, m.AD_Workflow_ID, m.url 
         FROM AD_MENU m left join AD_MENU_TRL m_t on m.AD_MENU_ID = m_t.AD_MENU_ID 
-                                                AND m_t.AD_LANGUAGE = ? 
-        WHERE m.IsActive='Y' 
+                                                AND m_t.AD_LANGUAGE = ?,
+             AD_MODULE mod
+        WHERE m.IsActive='Y'
+        AND m.AD_Module_ID = mod.AD_Module_ID
+        AND mod.Enabled='Y' 
         AND (m.IsSummary='Y' OR m.Action='B' OR m.Action='L' OR m.Action='I'
         OR EXISTS (SELECT * FROM AD_WINDOW_ACCESS wa WHERE wa.AD_Window_ID=m.AD_Window_ID AND wa.AD_Role_ID=?)
         OR EXISTS (SELECT * FROM AD_PROCESS_ACCESS wa WHERE wa.AD_Process_ID=m.AD_Process_ID AND wa.AD_Role_ID=?)

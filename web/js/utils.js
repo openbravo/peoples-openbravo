@@ -62,6 +62,7 @@ var isPopupLoadingWindowLoaded=false;
 
 var isCtrlPressed = null;
 var isAltPressed = null;
+var isShiftPressed = null;
 var isTabBlocked = false;
 var pressedKeyCode = null;
 var isInputFile = false;
@@ -88,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '7928';
+  var number = '8117';
   return number;
 }
 
@@ -1409,8 +1410,10 @@ function keyControl(pushedKey) {
   var thereIsShortcut = false;
   isCtrlPressed = false;
   isAltPressed = false;
+  isShiftPressed = false;
   if (pushedKey.ctrlKey) isCtrlPressed = true;
   if (pushedKey.altKey) isAltPressed = true;
+  if (pushedKey.shiftKey) isShiftPressed = true;
   pressedKeyCode = pushedKey.keyCode;
   if (isTabPressed == true && isInputFile == true) {
     return true;
@@ -1442,7 +1445,12 @@ function keyControl(pushedKey) {
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
-                  eval(evalfuncTrl);
+                  if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
+                    eval(evalfuncTrl);
+                  } else {
+                    var LayoutMDI = getFrame('LayoutMDI');
+                    LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.executeKSFunction(keyArray[i].evalfunc[0], keyArray[i].evalfunc[1]);
+                  }
                   thereIsShortcut = true;
                   if (propagateEnter == false && keyArray[i].key == 'ENTER') { // Special ENTER case logic to not propagate if there is default action
                     propagateEnter = true;
@@ -1467,9 +1475,15 @@ function keyControl(pushedKey) {
             if ((keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) ||
                 (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
                 (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
-                (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey)) {
+                (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "ctrlKey+altKey" && pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey)) {
               try {
-                eval(evalfuncTrl);
+                if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
+                  eval(evalfuncTrl);
+                } else {
+                  var LayoutMDI = getFrame('LayoutMDI');
+                  LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.executeKSFunction(keyArray[i].evalfunc[0], keyArray[i].evalfunc[1]);
+                }
                 thereIsShortcut = true;
                 startKeyPressEvent();
                 if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
@@ -1509,7 +1523,12 @@ function keyControl(pushedKey) {
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
-                  eval(evalfuncTrl);
+                  if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
+                    eval(evalfuncTrl);
+                  } else {
+                    var LayoutMDI = getFrame('LayoutMDI');
+                    LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.executeKSFunction(keyArray[i].evalfunc[0], keyArray[i].evalfunc[1]);
+                  }
                   thereIsShortcut = true;
                   if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {
                     return false;
@@ -1530,9 +1549,15 @@ function keyControl(pushedKey) {
             if ((keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) ||
                 (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
                 (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
-                (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey)) {
+                (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "ctrlKey+altKey" && pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey)) {
               try {
-                eval(evalfuncTrl);
+                if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
+                  eval(evalfuncTrl);
+                } else {
+                  var LayoutMDI = getFrame('LayoutMDI');
+                  LayoutMDI.OB.Layout.ClassicOBCompatibility.Keyboard.executeKSFunction(keyArray[i].evalfunc[0], keyArray[i].evalfunc[1]);
+                }
                 thereIsShortcut = true;
                 startKeyPressEvent();
                 if ((!keyArray[i].propagateKey || isGridFocused) && !(keyArray[i].key == 'TAB' && isOBTabBehavior == false)) {

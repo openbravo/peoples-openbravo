@@ -383,10 +383,11 @@ Each time that is pressed the Create button is opened a popup to create a unique
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <NAME><![CDATA[Module Management]]></NAME>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <DESCRIPTION><![CDATA[Mangament for installed modules]]></DESCRIPTION>
-<!--25C886DA08E947F29AAC1D30D8B753A1-->  <HELP><![CDATA[Use Module Management to browse the currently installed modules, to check for updates to installed modules and search for new modules to install.
+<!--25C886DA08E947F29AAC1D30D8B753A1-->  <HELP><![CDATA[
+Use Module Management to browse the currently installed modules, to check for updates to installed modules and search for new modules to install.
 <div class="HelpItems">
 <h3><a name="installed">Installed Modules</a></h3>
-<span>View the details of currently installed modules. You can also find updates to installed modules and rebuild the system after installing/uninstalling a module.</span>
+<span>View the details of currently installed modules. You can also find updates to installed modules. Uninstall installed modules, disable or enable modules and rebuild the system after installing/uninstalling a module.</span>
 <h3><a name="add">Add Modules</a></h3>
 <span>Search for a specific module, or browse all available modules in the Central Repository. You can also browse for modules from the file system. Click Install Now to install a module.</span>
 <h3><a name="history">Installation History</a></h3>
@@ -397,7 +398,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
 <li><b><a name="restart">Restart server:</a></b> Restarts the application server and launches the login screen.</li>
 <li><b><a name="reload">Reload context:</a></b> Reloads the Openbravo context and launches the login screen. <i>Note:</i> There is a know issue with the application server leaking 30MB of memory each time the context is reloaded.</li>
 <li><b><a name="nothing">Take no action:</a></b> Select if you intend to restart the server or reload the application manually, later.</li>
-</ul>]]></HELP>
+</ul></div>]]></HELP>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.ModuleManagement]]></CLASSNAME>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

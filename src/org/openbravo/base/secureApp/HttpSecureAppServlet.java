@@ -76,8 +76,6 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
-import org.openbravo.model.ad.ui.Workflow;
-import org.openbravo.model.ad.ui.WorkflowTrl;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -894,28 +892,44 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,
       boolean isPopup) throws IOException {
     String titleText = getArtifactName(type, id, vars.getLanguage());
+    String infoText = "";
 
-    String editionType;
+    String editionType = null;
+    String completeWindowMsg = "";
+    String discard[] = { "" };
+
     switch (featureRestriction) {
+    case TIER1_RESTRICTION:
+      editionType = "OBPSAnyEdition";
+      // do not break continue with next tier restriction
     case TIER2_RESTRICTION:
-      editionType = "OBPSStandardEdition";
+      if (editionType != null) {
+        editionType = "OBPSStandardEdition";
+      }
+      // <p> in java, to allow multi-paragraph text via the parameter
+      infoText = "<p>"
+          + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
+              .replace("@ProfessionalEditionType@",
+                  Utility.messageBD(this, editionType, vars.getLanguage())) + "</p>";
+      completeWindowMsg = infoText + "\n"
+          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
+      break;
+    case DISABLED_MODULE_RESTRICTION:
+      discard[0] = "links";
+      String msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
+      infoText = msg;
+      completeWindowMsg = msg;
       break;
     default:
-      editionType = "OBPSAnyEdition";
       break;
     }
 
-    // <p> in java, to allow multi-paragraph text via the parameter
-    String infoText = "<p>"
-        + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage()).replace(
-            "@ProfessionalEditionType@", Utility.messageBD(this, editionType, vars.getLanguage()))
-        + "</p>";
     String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
     String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
 
     if (isPopup) {
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly").createXmlDocument();
+          "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly", discard).createXmlDocument();
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -930,8 +944,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       out.println(xmlDocument.print());
       out.close();
     } else {
-      bdErrorGeneral(request, response, titleText, infoText + "\n"
-          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage()));
+      bdErrorGeneral(request, response, titleText, completeWindowMsg);
     }
   }
 
@@ -962,7 +975,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         if (f != null) {
           return f.getName();
         }
-      } else if ("R".equals(type) || "P".equals(type)) {
+      } else if ("R".endsWith(type) || "P".equals(type)) {
         OBCriteria<ProcessTrl> qfTrl = OBDal.getInstance().createCriteria(ProcessTrl.class);
         qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_PROCESS + ".id", id));
         qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_LANGUAGE + ".language", language));
@@ -971,19 +984,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         }
 
         Process f = OBDal.getInstance().get(Process.class, id);
-        if (f != null) {
-          return f.getName();
-        }
-      } else if ("F".equals(type)) {
-        OBCriteria<WorkflowTrl> qfWorkflowTrl = OBDal.getInstance().createCriteria(
-            WorkflowTrl.class);
-        qfWorkflowTrl.add(Expression.eq(WorkflowTrl.PROPERTY_WORKFLOW + ".id", id));
-        qfWorkflowTrl.add(Expression.eq(WorkflowTrl.PROPERTY_LANGUAGE + ".language", language));
-        if (qfWorkflowTrl.list().size() != 0) {
-          return qfWorkflowTrl.list().get(0).getName();
-        }
-
-        Workflow f = OBDal.getInstance().get(Workflow.class, id);
         if (f != null) {
           return f.getName();
         }

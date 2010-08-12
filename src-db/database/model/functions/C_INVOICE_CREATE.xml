@@ -630,7 +630,7 @@
             v_gBillTo_ID VARCHAR2(32) ;
             v_gBPartner_Location_ID VARCHAR2(32) ;
             v_gSalesRep_ID VARCHAR2(32) ;
-            v_gPaymentRule CHAR(1) ;
+            v_gPaymentRule VARCHAR2(60) ;
             v_gPaymentTerm_ID VARCHAR2(32) ;
             v_gCurrency_ID VARCHAR2(32) ;
             v_gCampaign_ID VARCHAR2(32) ;

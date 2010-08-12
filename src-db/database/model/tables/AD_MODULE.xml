@@ -149,6 +149,10 @@
         <default><![CDATA[NA]]></default>
         <onCreateDefault><![CDATA[CASE WHEN ISCOMMERCIAL='N' THEN 'NA' ELSE '1' END]]></onCreateDefault>
       </column>
+      <column name="ENABLED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
