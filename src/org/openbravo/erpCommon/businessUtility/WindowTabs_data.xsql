@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,10 +26,12 @@
       <Sql><![CDATA[
         select t.AD_Tab_ID, t.TabLevel, t.Name, coalesce(t_trl.name, t.name) as tabname, t.seqno, 
         t.IsTranslationTab, t.isInfoTab, 'N' AS isBreadCrumb, ('tabname' || t.ad_tab_id) AS tabNameId,
-        t.isActive, '' AS ID, '' AS Action
+        t.isActive, m.enabled, '' AS ID, '' AS Action
         from ad_tab t left join ad_tab_trl t_trl on t.ad_tab_id = t_trl.ad_tab_id
-                              and t_trl.ad_language = ?
+                              and t_trl.ad_language = ?,
+             ad_module m
         where t.ad_window_id = ?
+          and t.ad_module_id = m.ad_module_id
         order by t.seqno, t.tablevel
        ]]>
       </Sql>

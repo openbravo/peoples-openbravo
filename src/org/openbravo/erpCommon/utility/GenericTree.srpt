@@ -37,7 +37,7 @@
              <div id="icon2_xx" class="Tree_Icon_Update"></div>
            </div>
            <div class="Tree_Text_Container">
-             <div class="Tree_Text_Title" id="name">xxName</div>
+             <div class="Tree_Text_Titlexx" id="name">xxName</div>
            </div>
            <div class="Tree_Text_Separator"></div>
              <div class="Tree_Text_Update">

@@ -69,10 +69,12 @@ public class ModuleTree extends GenericTree {
    */
   public void setRootTree() {
     try {
-      data = ModuleTreeData.select(conn, (lang.equals("") ? "en_US" : lang));
+      String language = (lang.equals("") ? "en_US" : lang);
+      data = ModuleTreeData.select(conn, language);
       addLinks();
       setLevel(0);
       setIcons();
+      setDisabled(language);
     } catch (ServletException ex) {
       ex.printStackTrace();
       data = null;
@@ -87,10 +89,12 @@ public class ModuleTree extends GenericTree {
   public void setSubTree(String nodeId, String level) {
     setIsSubTree(true);
     try {
-      data = ModuleTreeData.selectSubTree(conn, (lang.equals("") ? "en_US" : lang), nodeId);
+      String language = (lang.equals("") ? "en_US" : lang);
+      data = ModuleTreeData.selectSubTree(conn, language, nodeId);
       addLinks();
       setLevel(new Integer(level).intValue());
       setIcons();
+      setDisabled(language);
     } catch (ServletException ex) {
       ex.printStackTrace();
       data = null;
@@ -172,6 +176,18 @@ public class ModuleTree extends GenericTree {
         modules[i].linkname = Utility.messageBD(conn, "UninstalledModule", lang);
         modules[i].linkclick = "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;";
       }
+      if ("N".equals(modules[i].enabled)) {
+        String link = Utility.messageBD(conn, "Enable", lang);
+        String click = "enableModule('" + modules[i].nodeId + "'); return false;";
+
+        if (modules[i].linkname != null && !modules[i].linkname.isEmpty()) {
+          modules[i].linkname1 = link;
+          modules[i].linkclick1 = click;
+        } else {
+          modules[i].linkname = link;
+          modules[i].linkclick = click;
+        }
+      }
     }
   }
 
@@ -181,6 +197,20 @@ public class ModuleTree extends GenericTree {
    */
   protected void setIcons() {
     setIcons(data);
+  }
+
+  /**
+   * Adds the "Disabled" text to the name of the disabled modules
+   */
+  private void setDisabled(String lang) {
+    for (ModuleTreeData module : (ModuleTreeData[]) data) {
+      if ("N".equals(module.enabled)) {
+        // close current div and create a new one to add style
+        module.name += "</div><div class='Tree_Text_Title_DisableText'>";
+        module.name += Utility.messageBD(conn, "Disabled", lang);
+        module.style = " Tree_Text_Title_Disabled";
+      }
+    }
   }
 
   /**

@@ -26,6 +26,7 @@
     <FIELD id="buttonTreexx" attribute="id" replace="xx">nodeId</FIELD>
     <FIELD id="name" attribute="onclick" replace="xx">nodeId</FIELD>
     <FIELD id="name">name</FIELD>
+    <FIELD id="name" attribute="class" replace="xx" default="">style</FIELD>
     <FIELD id="icon" attribute="class">icon</FIELD>
     <FIELD id="icon2_xx" attribute="class">icon2</FIELD>
     <FIELD id="icon2_xx" attribute="id" replace="xx">nodeId</FIELD>

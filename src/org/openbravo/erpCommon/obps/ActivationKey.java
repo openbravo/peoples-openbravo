@@ -56,6 +56,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
+import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
@@ -96,11 +97,11 @@ public class ActivationKey {
   }
 
   public enum CommercialModuleStatus {
-    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION
+    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION, DISABLED
   }
 
   public enum FeatureRestriction {
-    NO_RESTRICTION, TIER1_RESTRICTION, TIER2_RESTRICTION, UNKNOWN_RESTRICTION;
+    NO_RESTRICTION, DISABLED_MODULE_RESTRICTION, TIER1_RESTRICTION, TIER2_RESTRICTION, UNKNOWN_RESTRICTION;
   }
 
   public enum LicenseClass {
@@ -340,6 +341,7 @@ public class ActivationKey {
    */
   @SuppressWarnings("unchecked")
   private void loadRestrictions() {
+    DisabledModules.reload();
     tier1Artifacts = new ArrayList<String>();
     tier2Artifacts = new ArrayList<String>();
     if (isActive() && licenseClass == LicenseClass.STD) {
@@ -748,7 +750,9 @@ public class ActivationKey {
         if (moduleData.length > 2) {
           validTo = sd.parse(moduleData[2]);
         }
-        if (subscriptionActuallyConverted) {
+        if (!DisabledModules.isEnabled(Artifacts.MODULE, moduleData[0])) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.DISABLED);
+        } else if (subscriptionActuallyConverted) {
           moduleList.put(moduleData[0], CommercialModuleStatus.CONVERTED_SUBSCRIPTION);
         } else if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
           moduleList.put(moduleData[0], CommercialModuleStatus.ACTIVE);
@@ -800,9 +804,7 @@ public class ActivationKey {
     String actualType = type;
     VersionComparator vc = new VersionComparator();
 
-    if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()
-        || (!isActive() && vc.compare("3.0.0", OBVersion.getInstance().getVersionNumber()) > 0)
-        || licenseClass == LicenseClass.STD) {
+    if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()) {
       return FeatureRestriction.NO_RESTRICTION;
     }
     log4j.debug("Type:" + actualType + " id:" + id);
@@ -824,6 +826,12 @@ public class ActivationKey {
           return FeatureRestriction.UNKNOWN_RESTRICTION;
         }
         artifactId = tab.getWindow().getId();
+
+        // For windows check whether the window's module is disabled, and later whether the tab is
+        // disabled
+        if (!DisabledModules.isEnabled(Artifacts.MODULE, tab.getWindow().getModule().getId())) {
+          return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+        }
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -833,6 +841,29 @@ public class ActivationKey {
     } else if ("R".equals(actualType)) {
       actualType = "P";
     }
+
+    // Check disabled modules restrictions
+    Artifacts artifactType;
+    if ("MW".equals(actualType)) {
+      artifactType = Artifacts.WINDOW;
+    } else if ("W".equals(actualType)) {
+      artifactType = Artifacts.TAB;
+    } else if ("X".equals(actualType)) {
+      artifactType = Artifacts.FORM;
+    } else {
+      artifactType = Artifacts.PROCESS;
+    }
+    // Use id instead of artifactId to keep tabs' ids
+    if (!DisabledModules.isEnabled(artifactType, id)) {
+      return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+    }
+
+    // Check core premium features restrictions
+    if ((!isActive() && vc.compare("3.0.0", OBVersion.getInstance().getVersionNumber()) > 0)
+        || licenseClass == LicenseClass.STD) {
+      return FeatureRestriction.NO_RESTRICTION;
+    }
+
     if (tier1Artifacts.contains(actualType + artifactId)) {
       return FeatureRestriction.TIER1_RESTRICTION;
     }
@@ -854,6 +885,7 @@ public class ActivationKey {
     try {
       OBCriteria<Module> mods = OBDal.getInstance().createCriteria(Module.class);
       mods.add(Expression.eq(Module.PROPERTY_COMMERCIAL, true));
+      mods.add(Expression.eq(Module.PROPERTY_ENABLED, true));
       // Allow development of commercial modules which are not in the license.
       mods.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, false));
       mods.addOrder(Order.asc(Module.PROPERTY_NAME));

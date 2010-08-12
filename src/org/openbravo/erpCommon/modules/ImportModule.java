@@ -918,7 +918,6 @@ public class ImportModule {
       rt[i].setAdditionalInfo(additionalInfo);
       i++;
     }
-
     return rt;
   }
 
