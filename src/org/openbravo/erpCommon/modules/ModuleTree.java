@@ -208,7 +208,7 @@ public class ModuleTree extends GenericTree {
         // close current div and create a new one to add style
         module.name += "</div><div class='Tree_Text_Title_DisableText'>";
         module.name += Utility.messageBD(conn, "Disabled", lang);
-        module.style = "Tree_Text_Title_Disabled";
+        module.style = " Tree_Text_Title_Disabled";
       }
     }
   }
