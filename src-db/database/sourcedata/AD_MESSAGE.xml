@@ -17,7 +17,7 @@
 <!--102-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--102-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--102-->  <VALUE><![CDATA[1]]></VALUE>
-<!--102-->  <MSGTEXT><![CDATA[Unique key repeated.You may check the data]]></MSGTEXT>
+<!--102-->  <MSGTEXT><![CDATA[Unique key repeated. Please check the related data.]]></MSGTEXT>
 <!--102-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--102-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--102--></AD_MESSAGE>
@@ -6530,7 +6530,7 @@
 <!--800001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800001-->  <VALUE><![CDATA[2292]]></VALUE>
-<!--800001-->  <MSGTEXT><![CDATA[There are dependents child records]]></MSGTEXT>
+<!--800001-->  <MSGTEXT><![CDATA[There are dependent child records]]></MSGTEXT>
 <!--800001-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800001--></AD_MESSAGE>
@@ -6552,7 +6552,7 @@
 <!--800003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800003-->  <VALUE><![CDATA[2290]]></VALUE>
-<!--800003-->  <MSGTEXT><![CDATA[There is a constraint that is not satisfied. You may check the data]]></MSGTEXT>
+<!--800003-->  <MSGTEXT><![CDATA[There is a constraint that is not satisfied. Please check the related data.]]></MSGTEXT>
 <!--800003-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800003--></AD_MESSAGE>
@@ -6563,7 +6563,7 @@
 <!--800004-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800004-->  <VALUE><![CDATA[2291]]></VALUE>
-<!--800004-->  <MSGTEXT><![CDATA[There has not found the referential integrity.You may check the data]]></MSGTEXT>
+<!--800004-->  <MSGTEXT><![CDATA[Referential integrity issue found. Please check the related data.]]></MSGTEXT>
 <!--800004-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800004--></AD_MESSAGE>
@@ -6586,7 +6586,7 @@
 <!--800006-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800006-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800006-->  <VALUE><![CDATA[1722]]></VALUE>
-<!--800006-->  <MSGTEXT><![CDATA[The number is not correct.You may check the data]]></MSGTEXT>
+<!--800006-->  <MSGTEXT><![CDATA[The number is not correct. Please check the related data.]]></MSGTEXT>
 <!--800006-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800006--></AD_MESSAGE>
@@ -6641,7 +6641,7 @@
 <!--800011-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800011-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800011-->  <VALUE><![CDATA[1422]]></VALUE>
-<!--800011-->  <MSGTEXT><![CDATA[The search gives back more than one row.You may check the data]]></MSGTEXT>
+<!--800011-->  <MSGTEXT><![CDATA[The search gives back more than one row. Please check the related data.]]></MSGTEXT>
 <!--800011-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800011--></AD_MESSAGE>
@@ -6652,7 +6652,7 @@
 <!--800012-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800012-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800012-->  <VALUE><![CDATA[20003]]></VALUE>
-<!--800012-->  <MSGTEXT><![CDATA[There are duplicate prices for this product. You may check the data]]></MSGTEXT>
+<!--800012-->  <MSGTEXT><![CDATA[There are duplicate prices for this product. Please check the related data.]]></MSGTEXT>
 <!--800012-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800012--></AD_MESSAGE>
@@ -6663,7 +6663,7 @@
 <!--800013-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800013-->  <VALUE><![CDATA[DebtPaymentCancelled]]></VALUE>
-<!--800013-->  <MSGTEXT><![CDATA[There are some debt or payment cancelled]]></MSGTEXT>
+<!--800013-->  <MSGTEXT><![CDATA[There are some debts or payments cancelled]]></MSGTEXT>
 <!--800013-->  <MSGTYPE><![CDATA[M]]></MSGTYPE>
 <!--800013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800013--></AD_MESSAGE>
@@ -6674,7 +6674,7 @@
 <!--800014-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800014-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800014-->  <VALUE><![CDATA[DebtPaymentReconcilied]]></VALUE>
-<!--800014-->  <MSGTEXT><![CDATA[There are some debt or payment reconcilied]]></MSGTEXT>
+<!--800014-->  <MSGTEXT><![CDATA[There are some debts or payments reconciled]]></MSGTEXT>
 <!--800014-->  <MSGTYPE><![CDATA[M]]></MSGTYPE>
 <!--800014-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800014--></AD_MESSAGE>
@@ -6751,7 +6751,7 @@
 <!--800021-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800021-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800021-->  <VALUE><![CDATA[NoClientLogin]]></VALUE>
-<!--800021-->  <MSGTEXT><![CDATA[There are no clients asociated to this user]]></MSGTEXT>
+<!--800021-->  <MSGTEXT><![CDATA[There are no clients associated to this user]]></MSGTEXT>
 <!--800021-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800021-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800021--></AD_MESSAGE>
@@ -6762,7 +6762,7 @@
 <!--800022-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800022-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800022-->  <VALUE><![CDATA[NoOrgLogin]]></VALUE>
-<!--800022-->  <MSGTEXT><![CDATA[There are no organization asociated to this user]]></MSGTEXT>
+<!--800022-->  <MSGTEXT><![CDATA[There is no organization associated to this user]]></MSGTEXT>
 <!--800022-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800022-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800022--></AD_MESSAGE>
@@ -6905,7 +6905,7 @@
 <!--800035-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800035-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800035-->  <VALUE><![CDATA[PostCodeError]]></VALUE>
-<!--800035-->  <MSGTEXT><![CDATA[Postcode needed for bussiness partner:]]></MSGTEXT>
+<!--800035-->  <MSGTEXT><![CDATA[Postcode needed for business partner:]]></MSGTEXT>
 <!--800035-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800035-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800035--></AD_MESSAGE>
@@ -6916,7 +6916,7 @@
 <!--800036-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800036-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800036-->  <VALUE><![CDATA[TownError]]></VALUE>
-<!--800036-->  <MSGTEXT><![CDATA[Town needed for bussiness partner:]]></MSGTEXT>
+<!--800036-->  <MSGTEXT><![CDATA[Town needed for business partner:]]></MSGTEXT>
 <!--800036-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800036-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800036--></AD_MESSAGE>
@@ -6927,7 +6927,7 @@
 <!--800037-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800037-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800037-->  <VALUE><![CDATA[InvoiceDateError]]></VALUE>
-<!--800037-->  <MSGTEXT><![CDATA[Invoice date needed for bussiness partner:]]></MSGTEXT>
+<!--800037-->  <MSGTEXT><![CDATA[Invoice date needed for business partner:]]></MSGTEXT>
 <!--800037-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800037-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800037--></AD_MESSAGE>
@@ -6960,7 +6960,7 @@
 <!--800040-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800040-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800040-->  <VALUE><![CDATA[DebtPaymentBalanceNotMatch]]></VALUE>
-<!--800040-->  <MSGTEXT><![CDATA[The amount of Debt/Payment not match with balance amounts]]></MSGTEXT>
+<!--800040-->  <MSGTEXT><![CDATA[The amount of Debt/Payment does not match with balance amounts]]></MSGTEXT>
 <!--800040-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800040-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800040--></AD_MESSAGE>
@@ -6971,7 +6971,7 @@
 <!--800041-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800041-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800041-->  <VALUE><![CDATA[ForcedOrgNotMatch]]></VALUE>
-<!--800041-->  <MSGTEXT><![CDATA[The forced organization for the business partner don't match with the main organization]]></MSGTEXT>
+<!--800041-->  <MSGTEXT><![CDATA[The forced organization for the business partner doesn't match with the main organization]]></MSGTEXT>
 <!--800041-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800041-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800041--></AD_MESSAGE>
@@ -7686,7 +7686,7 @@
 <!--800106-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800106-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800106-->  <VALUE><![CDATA[PromissoryNoteBank]]></VALUE>
-<!--800106-->  <MSGTEXT><![CDATA[The Debtpayment has no assigned bank account.]]></MSGTEXT>
+<!--800106-->  <MSGTEXT><![CDATA[The Debt payment has no assigned bank account.]]></MSGTEXT>
 <!--800106-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800106-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800106--></AD_MESSAGE>
@@ -7697,7 +7697,7 @@
 <!--800107-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800107-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800107-->  <VALUE><![CDATA[PromissoryNoteFormat]]></VALUE>
-<!--800107-->  <MSGTEXT><![CDATA[This bank account hasn't got any promissory note configuration.]]></MSGTEXT>
+<!--800107-->  <MSGTEXT><![CDATA[This bank account has no promissory note / check configuration.]]></MSGTEXT>
 <!--800107-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800107-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800107--></AD_MESSAGE>
@@ -7741,7 +7741,7 @@
 <!--800111-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800111-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800111-->  <VALUE><![CDATA[ManagedDebtPayement]]></VALUE>
-<!--800111-->  <MSGTEXT><![CDATA[There are manged debt payments.]]></MSGTEXT>
+<!--800111-->  <MSGTEXT><![CDATA[There are managed debt payments.]]></MSGTEXT>
 <!--800111-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800111--></AD_MESSAGE>
@@ -7807,7 +7807,7 @@
 <!--800117-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800117-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800117-->  <VALUE><![CDATA[NotFreight]]></VALUE>
-<!--800117-->  <MSGTEXT><![CDATA[Not freight cost defined for given conditions.]]></MSGTEXT>
+<!--800117-->  <MSGTEXT><![CDATA[No freight cost defined for given conditions.]]></MSGTEXT>
 <!--800117-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800117--></AD_MESSAGE>
@@ -7829,7 +7829,7 @@
 <!--800119-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800119-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800119-->  <VALUE><![CDATA[SerialProcessStillRunning]]></VALUE>
-<!--800119-->  <MSGTEXT><![CDATA[There are identical process still running. Try again.]]></MSGTEXT>
+<!--800119-->  <MSGTEXT><![CDATA[There are identical processes still running. Try again.]]></MSGTEXT>
 <!--800119-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800119-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800119--></AD_MESSAGE>
@@ -7840,7 +7840,7 @@
 <!--800120-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800120-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800120-->  <VALUE><![CDATA[BankAccountError]]></VALUE>
-<!--800120-->  <MSGTEXT><![CDATA[There is not bank account defined.]]></MSGTEXT>
+<!--800120-->  <MSGTEXT><![CDATA[There is no bank account defined.]]></MSGTEXT>
 <!--800120-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800120-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800120--></AD_MESSAGE>
@@ -7851,7 +7851,7 @@
 <!--800121-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800121-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800121-->  <VALUE><![CDATA[10000000]]></VALUE>
-<!--800121-->  <MSGTEXT><![CDATA[There is not defined name.]]></MSGTEXT>
+<!--800121-->  <MSGTEXT><![CDATA[There is no defined name.]]></MSGTEXT>
 <!--800121-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800121-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800121--></AD_MESSAGE>
@@ -7873,7 +7873,7 @@
 <!--800123-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800123-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800123-->  <VALUE><![CDATA[TodayHigherDueData]]></VALUE>
-<!--800123-->  <MSGTEXT><![CDATA[Today cannot be higher than the due date.]]></MSGTEXT>
+<!--800123-->  <MSGTEXT><![CDATA[Today cannot be later than the due date.]]></MSGTEXT>
 <!--800123-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--800123-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800123--></AD_MESSAGE>
@@ -7961,7 +7961,7 @@
 <!--800131-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800131-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800131-->  <VALUE><![CDATA[20502]]></VALUE>
-<!--800131-->  <MSGTEXT><![CDATA[Cannot change bussiness partner nor price list if there are lines.]]></MSGTEXT>
+<!--800131-->  <MSGTEXT><![CDATA[Cannot change business partner or price list if there are lines.]]></MSGTEXT>
 <!--800131-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800131-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800131--></AD_MESSAGE>
@@ -8038,7 +8038,7 @@
 <!--800138-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800138-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800138-->  <VALUE><![CDATA[ChargeAmtsDontMatch]]></VALUE>
-<!--800138-->  <MSGTEXT><![CDATA[the  Statement amount   do not match with the  Transaction Amount  less the charges]]></MSGTEXT>
+<!--800138-->  <MSGTEXT><![CDATA[the  Statement amount   does not match with the  Transaction Amount  less the charges]]></MSGTEXT>
 <!--800138-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800138-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800138--></AD_MESSAGE>
@@ -8071,7 +8071,7 @@
 <!--800141-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800141-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800141-->  <VALUE><![CDATA[20505]]></VALUE>
-<!--800141-->  <MSGTEXT><![CDATA[Date To is lower than Date From]]></MSGTEXT>
+<!--800141-->  <MSGTEXT><![CDATA[Date To is sooner than Date From]]></MSGTEXT>
 <!--800141-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800141-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800141--></AD_MESSAGE>
@@ -8137,7 +8137,7 @@
 <!--800148-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800148-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800148-->  <VALUE><![CDATA[20509]]></VALUE>
-<!--800148-->  <MSGTEXT><![CDATA[Exists another report with same employee and date.]]></MSGTEXT>
+<!--800148-->  <MSGTEXT><![CDATA[There exists another report with the same employee and date.]]></MSGTEXT>
 <!--800148-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800148-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800148--></AD_MESSAGE>
@@ -8258,7 +8258,7 @@
 <!--800160-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800160-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800160-->  <VALUE><![CDATA[20511]]></VALUE>
-<!--800160-->  <MSGTEXT><![CDATA[This Debt/Payment can not be modified]]></MSGTEXT>
+<!--800160-->  <MSGTEXT><![CDATA[This Debt/Payment cannot be modified]]></MSGTEXT>
 <!--800160-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800160--></AD_MESSAGE>
@@ -8302,7 +8302,7 @@
 <!--800164-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800164-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800164-->  <VALUE><![CDATA[20004]]></VALUE>
-<!--800164-->  <MSGTEXT><![CDATA[There is no data or it doesn't exist a default parent tree node business partner in the tab Client info]]></MSGTEXT>
+<!--800164-->  <MSGTEXT><![CDATA[There is no data or there is not a default parent tree node business partner in the tab Client info]]></MSGTEXT>
 <!--800164-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800164-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800164--></AD_MESSAGE>
@@ -8313,7 +8313,7 @@
 <!--800165-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800165-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800165-->  <VALUE><![CDATA[20005]]></VALUE>
-<!--800165-->  <MSGTEXT><![CDATA[There is no data or it doesn't exist a default parent tree node menu in the tab Client info]]></MSGTEXT>
+<!--800165-->  <MSGTEXT><![CDATA[There is no data or there is not a default parent tree node menu in the tab Client info]]></MSGTEXT>
 <!--800165-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800165-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800165--></AD_MESSAGE>
@@ -8335,7 +8335,7 @@
 <!--800167-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800167-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800167-->  <VALUE><![CDATA[20009]]></VALUE>
-<!--800167-->  <MSGTEXT><![CDATA[There is no data or it doesn't exist a default parent tree node product in the tab Client info]]></MSGTEXT>
+<!--800167-->  <MSGTEXT><![CDATA[There is no data or there is not default parent tree node product in the tab Client info]]></MSGTEXT>
 <!--800167-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800167--></AD_MESSAGE>
@@ -8346,7 +8346,7 @@
 <!--800168-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800168-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800168-->  <VALUE><![CDATA[20010]]></VALUE>
-<!--800168-->  <MSGTEXT><![CDATA[There is no data or it doesn't exist a default parent tree node sales region in the tab Client info]]></MSGTEXT>
+<!--800168-->  <MSGTEXT><![CDATA[There is no data or there is no default parent tree node sales region in the tab Client info]]></MSGTEXT>
 <!--800168-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800168--></AD_MESSAGE>
@@ -8357,7 +8357,7 @@
 <!--800169-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800169-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800169-->  <VALUE><![CDATA[20013]]></VALUE>
-<!--800169-->  <MSGTEXT><![CDATA[It doesn´t exist a default parent tree in the tab Element so the element value can´t be connected to a default parent tree]]></MSGTEXT>
+<!--800169-->  <MSGTEXT><![CDATA[There is not a default parent tree in the tab Element so the element value can´t be connected to a default parent tree]]></MSGTEXT>
 <!--800169-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800169--></AD_MESSAGE>
@@ -8368,7 +8368,7 @@
 <!--800170-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800170-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800170-->  <VALUE><![CDATA[20014]]></VALUE>
-<!--800170-->  <MSGTEXT><![CDATA[There is no data or it doesn't exist a default parent tree node org in the tab Client info]]></MSGTEXT>
+<!--800170-->  <MSGTEXT><![CDATA[There is no data or there is no default parent tree node org in the tab Client info]]></MSGTEXT>
 <!--800170-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800170--></AD_MESSAGE>
@@ -8390,7 +8390,7 @@
 <!--800172-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800172-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800172-->  <VALUE><![CDATA[InvoiceWithManualDP]]></VALUE>
-<!--800172-->  <MSGTEXT><![CDATA[It is not possible to avoid an invoice containing Manual Debt/Payments.]]></MSGTEXT>
+<!--800172-->  <MSGTEXT><![CDATA[It is not possible to void an invoice containing Manual Debt/Payments.]]></MSGTEXT>
 <!--800172-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800172--></AD_MESSAGE>
@@ -8489,7 +8489,7 @@
 <!--800181-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800181-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800181-->  <VALUE><![CDATA[JS9]]></VALUE>
-<!--800181-->  <MSGTEXT><![CDATA[The value is out of a valid range]]></MSGTEXT>
+<!--800181-->  <MSGTEXT><![CDATA[The value is not in a valid range]]></MSGTEXT>
 <!--800181-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800181-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800181--></AD_MESSAGE>
@@ -8522,7 +8522,7 @@
 <!--800184-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800184-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800184-->  <VALUE><![CDATA[JS13]]></VALUE>
-<!--800184-->  <MSGTEXT><![CDATA[There are more than one record selected]]></MSGTEXT>
+<!--800184-->  <MSGTEXT><![CDATA[There is more than one record selected]]></MSGTEXT>
 <!--800184-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800184--></AD_MESSAGE>
@@ -8533,7 +8533,7 @@
 <!--800185-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800185-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800185-->  <VALUE><![CDATA[JS14]]></VALUE>
-<!--800185-->  <MSGTEXT><![CDATA[Transfer from cash and bank at once is not allowed]]></MSGTEXT>
+<!--800185-->  <MSGTEXT><![CDATA[Transfer from cash and bank at the same time is not allowed]]></MSGTEXT>
 <!--800185-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800185--></AD_MESSAGE>
@@ -8544,7 +8544,7 @@
 <!--800186-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800186-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800186-->  <VALUE><![CDATA[JS15]]></VALUE>
-<!--800186-->  <MSGTEXT><![CDATA[Transfer to cash and bank at once is not allowed]]></MSGTEXT>
+<!--800186-->  <MSGTEXT><![CDATA[Transfer to cash and bank at the same time is not allowed]]></MSGTEXT>
 <!--800186-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800186--></AD_MESSAGE>
@@ -8720,7 +8720,7 @@
 <!--800202-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800202-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800202-->  <VALUE><![CDATA[C_BP_CUSTOMER_ACCT_BPARTNER_UN]]></VALUE>
-<!--800202-->  <MSGTEXT><![CDATA[The customer already has a record with the same accounting schema, with the same organization and with the same status. At least change one of the three]]></MSGTEXT>
+<!--800202-->  <MSGTEXT><![CDATA[The customer already has a record with the same accounting schema, with the same organization and with the same status. Please change at least one of the three]]></MSGTEXT>
 <!--800202-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800202--></AD_MESSAGE>
@@ -8731,7 +8731,7 @@
 <!--800203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800203-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800203-->  <VALUE><![CDATA[C_BP_VENDOR_ACCT_ACCTSCHEMA_UN]]></VALUE>
-<!--800203-->  <MSGTEXT><![CDATA[The vendor already has a record with the same accounting schema and with the same status. At least change one of them]]></MSGTEXT>
+<!--800203-->  <MSGTEXT><![CDATA[The vendor already has a record with the same accounting schema and with the same status. Please change at least one of them]]></MSGTEXT>
 <!--800203-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800203--></AD_MESSAGE>
@@ -8975,7 +8975,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800225-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800225-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800225-->  <VALUE><![CDATA[C_ORDERLINE_CHECK2]]></VALUE>
-<!--800225-->  <MSGTEXT><![CDATA[Line Net  containts a value other than zero. Select a  Tax]]></MSGTEXT>
+<!--800225-->  <MSGTEXT><![CDATA[Line Net  contains a value other than zero. Select a  Tax]]></MSGTEXT>
 <!--800225-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800225--></AD_MESSAGE>
@@ -9085,7 +9085,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800235-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800235-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800235-->  <VALUE><![CDATA[M_INOUTLINE]]></VALUE>
-<!--800235-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or viceversa. Fill in both fields, or leave them empty]]></MSGTEXT>
+<!--800235-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or vice versa. Fill in both fields, or leave them empty]]></MSGTEXT>
 <!--800235-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800235-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800235--></AD_MESSAGE>
@@ -9096,7 +9096,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800236-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800236-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800236-->  <VALUE><![CDATA[M_INVENTORYLINE]]></VALUE>
-<!--800236-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or viceversa. Fill in both fields, or leave them empty]]></MSGTEXT>
+<!--800236-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or vice versa. Fill in both fields, or leave them empty]]></MSGTEXT>
 <!--800236-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800236--></AD_MESSAGE>
@@ -9107,7 +9107,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800237-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800237-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800237-->  <VALUE><![CDATA[M_MOVEMENTLINE_CHECK1]]></VALUE>
-<!--800237-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or viceversa. Fill in both fields, or leave them empty]]></MSGTEXT>
+<!--800237-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or vice versa. Fill in both fields, or leave them empty]]></MSGTEXT>
 <!--800237-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800237-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800237--></AD_MESSAGE>
@@ -9129,7 +9129,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800239-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800239-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800239-->  <VALUE><![CDATA[M_PRODUCTIONLINE_CHECK1]]></VALUE>
-<!--800239-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or viceversa. Fill in both fields, or leave them empty]]></MSGTEXT>
+<!--800239-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or vice versa. Fill in both fields, or leave them empty]]></MSGTEXT>
 <!--800239-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800239-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800239--></AD_MESSAGE>
@@ -9162,7 +9162,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800242-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800242-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800242-->  <VALUE><![CDATA[M_STORAGE_DETAIL_CHECK1]]></VALUE>
-<!--800242-->  <MSGTEXT><![CDATA[There is an error in table M_Storage_Detail. Quantity order without UOM order, or viceversa. Please contact your Openbravo administrator]]></MSGTEXT>
+<!--800242-->  <MSGTEXT><![CDATA[There is an error in table M_Storage_Detail. Quantity order without UOM order, or vice versa. Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800242-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800242-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800242--></AD_MESSAGE>
@@ -9173,7 +9173,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800243-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800243-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800243-->  <VALUE><![CDATA[M_STORAGE_PENDING_CHECK1]]></VALUE>
-<!--800243-->  <MSGTEXT><![CDATA[There is an error in table M_Storage_Pending. Quantity order without UOM order, or viceversa. Please contact your Openbravo administrator]]></MSGTEXT>
+<!--800243-->  <MSGTEXT><![CDATA[There is an error in table M_Storage_Pending. Quantity order without UOM order, or vice versa. Please contact your Openbravo administrator]]></MSGTEXT>
 <!--800243-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800243-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800243--></AD_MESSAGE>
@@ -9184,7 +9184,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--800244-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800244-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800244-->  <VALUE><![CDATA[M_TRANSACTION_CHECK1]]></VALUE>
-<!--800244-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or viceversa. Fill in both fields, or leave them empty]]></MSGTEXT>
+<!--800244-->  <MSGTEXT><![CDATA[You have filled in  Quantity order  without selecting a corresponding  UOM order , or vice versa. Fill in both fields, or leave them empty]]></MSGTEXT>
 <!--800244-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800244-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800244--></AD_MESSAGE>
@@ -24738,7 +24738,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804727-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--804727-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804727-->  <VALUE><![CDATA[JS20]]></VALUE>
-<!--804727-->  <MSGTEXT><![CDATA[The new password and the retyped password are differents]]></MSGTEXT>
+<!--804727-->  <MSGTEXT><![CDATA[The new password and the retyped password are different]]></MSGTEXT>
 <!--804727-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--804727-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804727--></AD_MESSAGE>
@@ -25068,7 +25068,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804761-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--804761-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804761-->  <VALUE><![CDATA[SettlementmanualNotMatch]]></VALUE>
-<!--804761-->  <MSGTEXT><![CDATA[does not match with the  Ballancing amount]]></MSGTEXT>
+<!--804761-->  <MSGTEXT><![CDATA[does not match with the  Balancing amount]]></MSGTEXT>
 <!--804761-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--804761-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804761--></AD_MESSAGE>
@@ -25310,7 +25310,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804785-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--804785-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804785-->  <VALUE><![CDATA[DPInvoiceManaged]]></VALUE>
-<!--804785-->  <MSGTEXT><![CDATA[The invoice has debt payments manage in a DP Management]]></MSGTEXT>
+<!--804785-->  <MSGTEXT><![CDATA[The invoice has debt payments managed in a DP Management]]></MSGTEXT>
 <!--804785-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--804785-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804785--></AD_MESSAGE>
@@ -25762,7 +25762,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804828-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804828-->  <VALUE><![CDATA[DPR_PENDING]]></VALUE>
 <!--804828-->  <MSGTEXT><![CDATA[Pending]]></MSGTEXT>
-<!--804828-->  <MSGTIP><![CDATA[Text used for heading translation by the Deb/Payment Report]]></MSGTIP>
+<!--804828-->  <MSGTIP><![CDATA[Text used for heading translation by the Debt/Payment Report]]></MSGTIP>
 <!--804828-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--804828-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804828--></AD_MESSAGE>
@@ -25774,7 +25774,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804829-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804829-->  <VALUE><![CDATA[DPR_SETTLE]]></VALUE>
 <!--804829-->  <MSGTEXT><![CDATA[Settle]]></MSGTEXT>
-<!--804829-->  <MSGTIP><![CDATA[Text used for heading translation by the Deb/Payment Report]]></MSGTIP>
+<!--804829-->  <MSGTIP><![CDATA[Text used for heading translation by the Debt/Payment Report]]></MSGTIP>
 <!--804829-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--804829-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804829--></AD_MESSAGE>
@@ -25786,7 +25786,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804830-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804830-->  <VALUE><![CDATA[DPR_CONCILIATED]]></VALUE>
 <!--804830-->  <MSGTEXT><![CDATA[Conciliated]]></MSGTEXT>
-<!--804830-->  <MSGTIP><![CDATA[Text used for heading translation by the Deb/Payment Report]]></MSGTIP>
+<!--804830-->  <MSGTIP><![CDATA[Text used for heading translation by the Debt/Payment Report]]></MSGTIP>
 <!--804830-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--804830-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804830--></AD_MESSAGE>
@@ -25798,7 +25798,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804831-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804831-->  <VALUE><![CDATA[DPR_INVALID]]></VALUE>
 <!--804831-->  <MSGTEXT><![CDATA[Invalid]]></MSGTEXT>
-<!--804831-->  <MSGTIP><![CDATA[Text used for heading translation by the Deb/Payment Report]]></MSGTIP>
+<!--804831-->  <MSGTIP><![CDATA[Text used for heading translation by the Debt/Payment Report]]></MSGTIP>
 <!--804831-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--804831-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804831--></AD_MESSAGE>
@@ -25810,7 +25810,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804832-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804832-->  <VALUE><![CDATA[DPR_CANCELLED]]></VALUE>
 <!--804832-->  <MSGTEXT><![CDATA[Cancelled]]></MSGTEXT>
-<!--804832-->  <MSGTIP><![CDATA[Text used for heading translation by the Deb/Payment Report]]></MSGTIP>
+<!--804832-->  <MSGTIP><![CDATA[Text used for heading translation by the Debt/Payment Report]]></MSGTIP>
 <!--804832-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--804832-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804832--></AD_MESSAGE>
@@ -26162,7 +26162,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804864-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--804864-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804864-->  <VALUE><![CDATA[NoprojectBusinesspartner]]></VALUE>
-<!--804864-->  <MSGTEXT><![CDATA[The project has not associated a business partner]]></MSGTEXT>
+<!--804864-->  <MSGTEXT><![CDATA[The project has not been associated to a business partner]]></MSGTEXT>
 <!--804864-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--804864-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804864--></AD_MESSAGE>
@@ -26459,7 +26459,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804893-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--804893-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--804893-->  <VALUE><![CDATA[RemittanceTypeError]]></VALUE>
-<!--804893-->  <MSGTEXT><![CDATA[Error in Remittance Type definition, or there might not defined file type for this remittance type.]]></MSGTEXT>
+<!--804893-->  <MSGTEXT><![CDATA[Error in Remittance Type definition, or there might not be a defined file type for this remittance type.]]></MSGTEXT>
 <!--804893-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--804893-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804893--></AD_MESSAGE>
@@ -26481,7 +26481,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000100000-->  <VALUE><![CDATA[SaveAndTry]]></VALUE>
-<!--1000100000-->  <MSGTEXT><![CDATA[You are trying to perform a process in a non-saved record, please save it and try it again.]]></MSGTEXT>
+<!--1000100000-->  <MSGTEXT><![CDATA[You are trying to perform a process in a non-saved record. Please save it and try it again.]]></MSGTEXT>
 <!--1000100000-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1000100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000100000--></AD_MESSAGE>
@@ -26503,7 +26503,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000100002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000100002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000100002-->  <VALUE><![CDATA[DuplicatedDefaults]]></VALUE>
-<!--1000100002-->  <MSGTEXT><![CDATA[There are more than one record set as default.]]></MSGTEXT>
+<!--1000100002-->  <MSGTEXT><![CDATA[There is more than one record set as default.]]></MSGTEXT>
 <!--1000100002-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1000100002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000100002--></AD_MESSAGE>
@@ -26558,7 +26558,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000200001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000200001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000200001-->  <VALUE><![CDATA[20112]]></VALUE>
-<!--1000200001-->  <MSGTEXT><![CDATA[There are some products without attribute]]></MSGTEXT>
+<!--1000200001-->  <MSGTEXT><![CDATA[There are some products without attributes]]></MSGTEXT>
 <!--1000200001-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1000200001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000200001--></AD_MESSAGE>
@@ -27010,7 +27010,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000500003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000500003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500003-->  <VALUE><![CDATA[C_BPSALCAT_SALCAT_DFROM_UN_KEY]]></VALUE>
-<!--1000500003-->  <MSGTEXT><![CDATA[Unique constraint violated. Exists another record with the same Salary category and Date from for this business partner.]]></MSGTEXT>
+<!--1000500003-->  <MSGTEXT><![CDATA[Unique constraint violated. There exists another record with the same Salary category and Date from for this business partner.]]></MSGTEXT>
 <!--1000500003-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1000500003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500003--></AD_MESSAGE>
@@ -27021,7 +27021,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000500004-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000500004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500004-->  <VALUE><![CDATA[UnknownDocumentType]]></VALUE>
-<!--1000500004-->  <MSGTEXT><![CDATA[Can not create report. Unknown document type: ]]></MSGTEXT>
+<!--1000500004-->  <MSGTEXT><![CDATA[Cannot create report. Unknown document type: ]]></MSGTEXT>
 <!--1000500004-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1000500004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500004--></AD_MESSAGE>
@@ -27098,7 +27098,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000500011-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000500011-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500011-->  <VALUE><![CDATA[NoSalesRepEmail]]></VALUE>
-<!--1000500011-->  <MSGTEXT><![CDATA[Can not send email because there is no sales representative email address!]]></MSGTEXT>
+<!--1000500011-->  <MSGTEXT><![CDATA[Cannot send email because there is no sales representative email address!]]></MSGTEXT>
 <!--1000500011-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1000500011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500011--></AD_MESSAGE>
@@ -27109,7 +27109,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000500012-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1000500012-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500012-->  <VALUE><![CDATA[NoCustomerEmail]]></VALUE>
-<!--1000500012-->  <MSGTEXT><![CDATA[Can not send email because there is no customer email address!]]></MSGTEXT>
+<!--1000500012-->  <MSGTEXT><![CDATA[Cannot send email because there is no customer email address!]]></MSGTEXT>
 <!--1000500012-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1000500012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500012--></AD_MESSAGE>
@@ -27274,7 +27274,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1001100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1001100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1001100000-->  <VALUE><![CDATA[AD_IMPFORMAT_NAME]]></VALUE>
-<!--1001100000-->  <MSGTEXT><![CDATA[Already exists a File Format with the same name. Please provide a different one.]]></MSGTEXT>
+<!--1001100000-->  <MSGTEXT><![CDATA[There already exists a File Format with the same name. Please provide a different one.]]></MSGTEXT>
 <!--1001100000-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1001100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1001100000--></AD_MESSAGE>
@@ -27398,7 +27398,7 @@ Control Digit must be length 1.]]></MSGTEXT>
 <!--1002100003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1002100003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1002100003-->  <VALUE><![CDATA[TwoRegisterTypesNeeded]]></VALUE>
-<!--1002100003-->  <MSGTEXT><![CDATA[At least two lines are needed in Tax Register Type (one has to be a sale transaction and the other one not)]]></MSGTEXT>
+<!--1002100003-->  <MSGTEXT><![CDATA[At least two lines are needed in Tax Register Type (one has to be a sales transaction and the other one not)]]></MSGTEXT>
 <!--1002100003-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1002100003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100003--></AD_MESSAGE>
@@ -27431,7 +27431,7 @@ Control Digit must be length 1.]]></MSGTEXT>
 <!--1004400001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400001-->  <VALUE><![CDATA[20525]]></VALUE>
-<!--1004400001-->  <MSGTEXT><![CDATA[It is not possible insert a new line in a completed requisition]]></MSGTEXT>
+<!--1004400001-->  <MSGTEXT><![CDATA[It is not possible to insert a new line in a completed requisition]]></MSGTEXT>
 <!--1004400001-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1004400001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400001--></AD_MESSAGE>
@@ -27574,7 +27574,7 @@ Control Digit must be length 1.]]></MSGTEXT>
 <!--1004400014-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400014-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400014-->  <VALUE><![CDATA[MoreThanOneOrg]]></VALUE>
-<!--1004400014-->  <MSGTEXT><![CDATA[The selected lines are of more than one organization. Please, select the Organization of the Purchase Order.]]></MSGTEXT>
+<!--1004400014-->  <MSGTEXT><![CDATA[The selected lines are from more than one organization. Please, select the Organization of the Purchase Order.]]></MSGTEXT>
 <!--1004400014-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1004400014-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400014--></AD_MESSAGE>
@@ -27587,10 +27587,10 @@ Control Digit must be length 1.]]></MSGTEXT>
 <!--1004400015-->  <VALUE><![CDATA[RequisitionToOrderCreate]]></VALUE>
 <!--1004400015-->  <MSGTEXT><![CDATA[To create the Purchase Order, after selecting the desired Requisition Lines, it is necessary to set some values:
 -The date of the Purchase Order.
--The vendor. If all the selected requisition lines have associated the same Vendor the field is filled with it.
--The price list. If all the selected requisition lines have associated the same Price List the field is filled with it.
--The organization. If all the selected requisition lines belong the same Organization the field is filled with it.
-For the other necessary values is taken the correspondent default values. Once the Purchase Order is created it is also completed and its Document number shown in the success message.]]></MSGTEXT>
+-The vendor. If all the selected requisition lines are associated with the same Vendor the field is filled with it.
+-The price list. If all the selected requisition lines are associated with the same Price List the field is filled with it.
+-The organization. If all the selected requisition lines belong to the same Organization the field is filled with it.
+For the other necessary values the corresponding default values are used. Once the Purchase Order is created it is also completed and its Document number shown in the success message.]]></MSGTEXT>
 <!--1004400015-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1004400015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400015--></AD_MESSAGE>
@@ -27601,7 +27601,7 @@ For the other necessary values is taken the correspondent default values. Once t
 <!--1004400016-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400016-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400016-->  <VALUE><![CDATA[LinesWithNoPrice]]></VALUE>
-<!--1004400016-->  <MSGTEXT><![CDATA[There are lines selected with no Price Actual defined that its product is not in the Price List selected.]]></MSGTEXT>
+<!--1004400016-->  <MSGTEXT><![CDATA[There are lines selected with no Price Actual defined or in which the product is not in the Price List selected.]]></MSGTEXT>
 <!--1004400016-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1004400016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400016--></AD_MESSAGE>
@@ -27623,7 +27623,7 @@ For the other necessary values is taken the correspondent default values. Once t
 <!--1004400018-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400018-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400018-->  <VALUE><![CDATA[NoProposalsWithoutRequisitionLine]]></VALUE>
-<!--1004400018-->  <MSGTEXT><![CDATA[There is not any proposal without an associated requisition line.]]></MSGTEXT>
+<!--1004400018-->  <MSGTEXT><![CDATA[Proposals must have an associated requisition line.]]></MSGTEXT>
 <!--1004400018-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1004400018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400018--></AD_MESSAGE>
@@ -28043,7 +28043,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1005900000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005900000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005900000-->  <VALUE><![CDATA[NoProjectPhases]]></VALUE>
-<!--1005900000-->  <MSGTEXT><![CDATA[The project has not phases]]></MSGTEXT>
+<!--1005900000-->  <MSGTEXT><![CDATA[The project has no phases]]></MSGTEXT>
 <!--1005900000-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1005900000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005900000--></AD_MESSAGE>
@@ -28087,7 +28087,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1005900005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005900005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005900005-->  <VALUE><![CDATA[NoExpenseLines]]></VALUE>
-<!--1005900005-->  <MSGTEXT><![CDATA[There are not expense lines to process]]></MSGTEXT>
+<!--1005900005-->  <MSGTEXT><![CDATA[There are no expense lines to process]]></MSGTEXT>
 <!--1005900005-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1005900005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005900005--></AD_MESSAGE>
@@ -28369,7 +28369,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006300020-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006300020-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006300020-->  <VALUE><![CDATA[MBPS_SO_CREDITAVAILABLE]]></VALUE>
-<!--1006300020-->  <MSGTEXT><![CDATA[Credit Aval.]]></MSGTEXT>
+<!--1006300020-->  <MSGTEXT><![CDATA[Credit Avail.]]></MSGTEXT>
 <!--1006300020-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006300020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1006300020--></AD_MESSAGE>
@@ -29472,7 +29472,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006400058-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006400058-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006400058-->  <VALUE><![CDATA[SRLS_QTY]]></VALUE>
-<!--1006400058-->  <MSGTEXT><![CDATA[Quatity]]></MSGTEXT>
+<!--1006400058-->  <MSGTEXT><![CDATA[Quantity]]></MSGTEXT>
 <!--1006400058-->  <MSGTIP><![CDATA[Used for column name translation in Shipment Receipt Line Selector]]></MSGTIP>
 <!--1006400058-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006400058-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -29596,7 +29596,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--04DF3348E44948778DDB4FC98A55B141-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--04DF3348E44948778DDB4FC98A55B141-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--04DF3348E44948778DDB4FC98A55B141-->  <VALUE><![CDATA[MODULE_DEPENDS_ON_COMMERCIAL]]></VALUE>
-<!--04DF3348E44948778DDB4FC98A55B141-->  <MSGTEXT><![CDATA[Module <b>@MODULE@</b> depends on the following modules that are available in the Central Repository only as commercial solutions that require activating your instance.]]></MSGTEXT>
+<!--04DF3348E44948778DDB4FC98A55B141-->  <MSGTEXT><![CDATA[Module <b>@MODULE@</b> depends on the following modules that are available in the Central Repository only as commercial solutions.  Access to commercial modules requires activating your instance.]]></MSGTEXT>
 <!--04DF3348E44948778DDB4FC98A55B141-->  <MSGTIP><![CDATA[@MODULE@ is a placeholder for dynamic text. It must be not changed.]]></MSGTIP>
 <!--04DF3348E44948778DDB4FC98A55B141-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--04DF3348E44948778DDB4FC98A55B141-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -29718,7 +29718,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--0DA35B013D2D46EB9A79D92B5895C76E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0DA35B013D2D46EB9A79D92B5895C76E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0DA35B013D2D46EB9A79D92B5895C76E-->  <VALUE><![CDATA[NotAllOrdered]]></VALUE>
-<!--0DA35B013D2D46EB9A79D92B5895C76E-->  <MSGTEXT><![CDATA[Not all elements could be correctly ordered, some of them have the same sequence, this might cause unexpected order.]]></MSGTEXT>
+<!--0DA35B013D2D46EB9A79D92B5895C76E-->  <MSGTEXT><![CDATA[Not all elements could be correctly ordered.  Some of them have the same sequence number and this might cause unexpected order.]]></MSGTEXT>
 <!--0DA35B013D2D46EB9A79D92B5895C76E-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--0DA35B013D2D46EB9A79D92B5895C76E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0DA35B013D2D46EB9A79D92B5895C76E--></AD_MESSAGE>
@@ -29734,13 +29734,24 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--0EABAB89726A4A3C800199142CF8E17F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0EABAB89726A4A3C800199142CF8E17F--></AD_MESSAGE>
 
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516--><AD_MESSAGE>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <AD_MESSAGE_ID><![CDATA[0FC7B0C6F4FC4F04BEAD06F30E895516]]></AD_MESSAGE_ID>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <VALUE><![CDATA[OBPSAnyEdition]]></VALUE>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <MSGTEXT><![CDATA[Professional Edition]]></MSGTEXT>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516--></AD_MESSAGE>
+
 <!--10E779E8F227496B86B3136A09EB6043--><AD_MESSAGE>
 <!--10E779E8F227496B86B3136A09EB6043-->  <AD_MESSAGE_ID><![CDATA[10E779E8F227496B86B3136A09EB6043]]></AD_MESSAGE_ID>
 <!--10E779E8F227496B86B3136A09EB6043-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--10E779E8F227496B86B3136A09EB6043-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--10E779E8F227496B86B3136A09EB6043-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--10E779E8F227496B86B3136A09EB6043-->  <VALUE><![CDATA[CR_OBXGetNotAuthorized]]></VALUE>
-<!--10E779E8F227496B86B3136A09EB6043-->  <MSGTEXT><![CDATA[This instance has not a license for this commercial module.]]></MSGTEXT>
+<!--10E779E8F227496B86B3136A09EB6043-->  <MSGTEXT><![CDATA[This instance does not have a license for this commercial module.]]></MSGTEXT>
 <!--10E779E8F227496B86B3136A09EB6043-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--10E779E8F227496B86B3136A09EB6043-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--10E779E8F227496B86B3136A09EB6043--></AD_MESSAGE>
@@ -29755,6 +29766,17 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--11314163807C4401B2964F93256597EA-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--11314163807C4401B2964F93256597EA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--11314163807C4401B2964F93256597EA--></AD_MESSAGE>
+
+<!--11509F0E2D6E4D4A96518FECB69A5B8F--><AD_MESSAGE>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F-->  <AD_MESSAGE_ID><![CDATA[11509F0E2D6E4D4A96518FECB69A5B8F]]></AD_MESSAGE_ID>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F-->  <VALUE><![CDATA[LearnHowToActivate]]></VALUE>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F-->  <MSGTEXT><![CDATA[<a href='http://www.openbravo.com/product/erp/module/acquire' target='_blank'>Learn how to</a> activate your instance.]]></MSGTEXT>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--11509F0E2D6E4D4A96518FECB69A5B8F--></AD_MESSAGE>
 
 <!--116AB3D795544212B785D0243B70B21F--><AD_MESSAGE>
 <!--116AB3D795544212B785D0243B70B21F-->  <AD_MESSAGE_ID><![CDATA[116AB3D795544212B785D0243B70B21F]]></AD_MESSAGE_ID>
@@ -29906,7 +29928,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--164937FDAAF344F1A958007F98DD53FC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--164937FDAAF344F1A958007F98DD53FC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--164937FDAAF344F1A958007F98DD53FC-->  <VALUE><![CDATA[AttrSetValTypeSpecification]]></VALUE>
-<!--164937FDAAF344F1A958007F98DD53FC-->  <MSGTEXT><![CDATA[The product selected has defined an attribute set value which completely specifies it. You can not select a different value for the Attribute Set Value field.]]></MSGTEXT>
+<!--164937FDAAF344F1A958007F98DD53FC-->  <MSGTEXT><![CDATA[The product selected has a completely defined Attribute Set value. You cannot select a different value for the Attribute Set Value field.]]></MSGTEXT>
 <!--164937FDAAF344F1A958007F98DD53FC-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--164937FDAAF344F1A958007F98DD53FC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--164937FDAAF344F1A958007F98DD53FC--></AD_MESSAGE>
@@ -29917,7 +29939,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--173455990A494A799F86C2737D8F9617-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--173455990A494A799F86C2737D8F9617-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--173455990A494A799F86C2737D8F9617-->  <VALUE><![CDATA[QtyChangedForInvoiceLineLinked]]></VALUE>
-<!--173455990A494A799F86C2737D8F9617-->  <MSGTEXT><![CDATA[The invoice line of a re-activated invoice that is linked to a Goods Receipt line cannot modify its quantity. Please create a new invoice line.]]></MSGTEXT>
+<!--173455990A494A799F86C2737D8F9617-->  <MSGTEXT><![CDATA[The invoice line of a re-activated invoice that is linked to a Goods Receipt line cannot have its quantity modified. Please create a new invoice line.]]></MSGTEXT>
 <!--173455990A494A799F86C2737D8F9617-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--173455990A494A799F86C2737D8F9617-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--173455990A494A799F86C2737D8F9617--></AD_MESSAGE>
@@ -29933,13 +29955,24 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--17EB942A41BC417FA70FDFCA35027276-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--17EB942A41BC417FA70FDFCA35027276--></AD_MESSAGE>
 
+<!--17F9F89C2965434E9190E5E6FF92CF20--><AD_MESSAGE>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <AD_MESSAGE_ID><![CDATA[17F9F89C2965434E9190E5E6FF92CF20]]></AD_MESSAGE_ID>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <VALUE><![CDATA[OBPSStandardEdition]]></VALUE>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <MSGTEXT><![CDATA[Standard Professional Edition]]></MSGTEXT>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--17F9F89C2965434E9190E5E6FF92CF20--></AD_MESSAGE>
+
 <!--1824C7A592B245A5A14EEF4F72FFDFE3--><AD_MESSAGE>
 <!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <AD_MESSAGE_ID><![CDATA[1824C7A592B245A5A14EEF4F72FFDFE3]]></AD_MESSAGE_ID>
 <!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <VALUE><![CDATA[CR_ModuleAlreadyRegister]]></VALUE>
-<!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <MSGTEXT><![CDATA[ModuleID is already register.]]></MSGTEXT>
+<!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <MSGTEXT><![CDATA[ModuleID is already registered.]]></MSGTEXT>
 <!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1824C7A592B245A5A14EEF4F72FFDFE3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1824C7A592B245A5A14EEF4F72FFDFE3--></AD_MESSAGE>
@@ -30096,7 +30129,7 @@ Deploy the war file into the server to make the changes available.]]></MSGTEXT>
 <!--2228C3AEB0884B8CA413CE56F5B82682-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2228C3AEB0884B8CA413CE56F5B82682-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2228C3AEB0884B8CA413CE56F5B82682-->  <VALUE><![CDATA[CannotUninstallCore]]></VALUE>
-<!--2228C3AEB0884B8CA413CE56F5B82682-->  <MSGTEXT><![CDATA[Cannot uninstall core. Core module cannot be uninstalled.]]></MSGTEXT>
+<!--2228C3AEB0884B8CA413CE56F5B82682-->  <MSGTEXT><![CDATA[Core module cannot be uninstalled.]]></MSGTEXT>
 <!--2228C3AEB0884B8CA413CE56F5B82682-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--2228C3AEB0884B8CA413CE56F5B82682-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2228C3AEB0884B8CA413CE56F5B82682--></AD_MESSAGE>
@@ -30252,6 +30285,17 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--2ADD7BAB84FF44F8BA55C270DC4F7F41-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2ADD7BAB84FF44F8BA55C270DC4F7F41--></AD_MESSAGE>
 
+<!--2BEC27AADFC4404C8170AA87F5107E1E--><AD_MESSAGE>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <AD_MESSAGE_ID><![CDATA[2BEC27AADFC4404C8170AA87F5107E1E]]></AD_MESSAGE_ID>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <VALUE><![CDATA[LicenseWithoutAccessTo]]></VALUE>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <MSGTEXT><![CDATA[Current license has not access to the following installed modules. Uninstall them before renewing the license:<br/>]]></MSGTEXT>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--2BEC27AADFC4404C8170AA87F5107E1E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2BEC27AADFC4404C8170AA87F5107E1E--></AD_MESSAGE>
+
 <!--2C9BE7698E31458E966E9CFBF91A35BF--><AD_MESSAGE>
 <!--2C9BE7698E31458E966E9CFBF91A35BF-->  <AD_MESSAGE_ID><![CDATA[2C9BE7698E31458E966E9CFBF91A35BF]]></AD_MESSAGE_ID>
 <!--2C9BE7698E31458E966E9CFBF91A35BF-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -30269,7 +30313,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <VALUE><![CDATA[JS24]]></VALUE>
-<!--2E175A7785AD4313B24D3E9034B05BAD-->  <MSGTEXT><![CDATA[Server is taking too long to respond. Data shown could be incomplete, please check the connection with the server and try again.]]></MSGTEXT>
+<!--2E175A7785AD4313B24D3E9034B05BAD-->  <MSGTEXT><![CDATA[Server is taking too long to respond. Data shown could be incomplete - please check the connection with the server and try again.]]></MSGTEXT>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--2E175A7785AD4313B24D3E9034B05BAD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2E175A7785AD4313B24D3E9034B05BAD--></AD_MESSAGE>
@@ -30357,7 +30401,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--32218842A1E740BE9E9FFAEC1B446322-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--32218842A1E740BE9E9FFAEC1B446322-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--32218842A1E740BE9E9FFAEC1B446322-->  <VALUE><![CDATA[CouldntConnectToWS]]></VALUE>
-<!--32218842A1E740BE9E9FFAEC1B446322-->  <MSGTEXT><![CDATA[Error trying to connect to webservice server, it can be down.]]></MSGTEXT>
+<!--32218842A1E740BE9E9FFAEC1B446322-->  <MSGTEXT><![CDATA[Error trying to connect to webservice server - it may be down.]]></MSGTEXT>
 <!--32218842A1E740BE9E9FFAEC1B446322-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--32218842A1E740BE9E9FFAEC1B446322-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--32218842A1E740BE9E9FFAEC1B446322--></AD_MESSAGE>
@@ -30379,7 +30423,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--338EF3E59A594EFC807843510BDEAF46-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--338EF3E59A594EFC807843510BDEAF46-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--338EF3E59A594EFC807843510BDEAF46-->  <VALUE><![CDATA[SystemLoginRequired]]></VALUE>
-<!--338EF3E59A594EFC807843510BDEAF46-->  <MSGTEXT><![CDATA[It is required a System role to login.]]></MSGTEXT>
+<!--338EF3E59A594EFC807843510BDEAF46-->  <MSGTEXT><![CDATA[A System role is required in order to login.]]></MSGTEXT>
 <!--338EF3E59A594EFC807843510BDEAF46-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--338EF3E59A594EFC807843510BDEAF46-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--338EF3E59A594EFC807843510BDEAF46--></AD_MESSAGE>
@@ -30423,7 +30467,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--34EFA62A7253493EB68EF2729587AF47-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--34EFA62A7253493EB68EF2729587AF47-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--34EFA62A7253493EB68EF2729587AF47-->  <VALUE><![CDATA[OPSLicensedTo]]></VALUE>
-<!--34EFA62A7253493EB68EF2729587AF47-->  <MSGTEXT><![CDATA[Professional Edition Instance licensed to]]></MSGTEXT>
+<!--34EFA62A7253493EB68EF2729587AF47-->  <MSGTEXT><![CDATA[@OBPSEdition@ Instance licensed to]]></MSGTEXT>
 <!--34EFA62A7253493EB68EF2729587AF47-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--34EFA62A7253493EB68EF2729587AF47-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--34EFA62A7253493EB68EF2729587AF47--></AD_MESSAGE>
@@ -30434,7 +30478,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--361FEAEE66A145B09F5D95FC47F218FF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--361FEAEE66A145B09F5D95FC47F218FF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--361FEAEE66A145B09F5D95FC47F218FF-->  <VALUE><![CDATA[ExceptionInCommit]]></VALUE>
-<!--361FEAEE66A145B09F5D95FC47F218FF-->  <MSGTEXT><![CDATA[Exception occured while performing commit in database. Your data may have NOT been saved in database.]]></MSGTEXT>
+<!--361FEAEE66A145B09F5D95FC47F218FF-->  <MSGTEXT><![CDATA[Exception occurred while performing commit in database. Your data may have NOT been saved in database.]]></MSGTEXT>
 <!--361FEAEE66A145B09F5D95FC47F218FF-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--361FEAEE66A145B09F5D95FC47F218FF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--361FEAEE66A145B09F5D95FC47F218FF--></AD_MESSAGE>
@@ -30600,7 +30644,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--3D3CCBA5FE3643C8BF38071DD57C6261-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3D3CCBA5FE3643C8BF38071DD57C6261-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3D3CCBA5FE3643C8BF38071DD57C6261-->  <VALUE><![CDATA[NoApplicableModules]]></VALUE>
-<!--3D3CCBA5FE3643C8BF38071DD57C6261-->  <MSGTEXT><![CDATA[No write permissions to openbravo folder. Tomcat is not able to write in this folder, change permissions.]]></MSGTEXT>
+<!--3D3CCBA5FE3643C8BF38071DD57C6261-->  <MSGTEXT><![CDATA[No write permissions to openbravo folder. Tomcat is not able to write in this folder. Please change permissions.]]></MSGTEXT>
 <!--3D3CCBA5FE3643C8BF38071DD57C6261-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--3D3CCBA5FE3643C8BF38071DD57C6261-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3D3CCBA5FE3643C8BF38071DD57C6261--></AD_MESSAGE>
@@ -30722,7 +30766,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--467F2D9DFA8E4254B205D872DC75193C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--467F2D9DFA8E4254B205D872DC75193C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--467F2D9DFA8E4254B205D872DC75193C-->  <VALUE><![CDATA[CannotRemoveModule]]></VALUE>
-<!--467F2D9DFA8E4254B205D872DC75193C-->  <MSGTEXT><![CDATA[Module contents directory couldn't be deleted, check permissions.]]></MSGTEXT>
+<!--467F2D9DFA8E4254B205D872DC75193C-->  <MSGTEXT><![CDATA[Module contents directory couldn't be deleted. Please check permissions.]]></MSGTEXT>
 <!--467F2D9DFA8E4254B205D872DC75193C-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--467F2D9DFA8E4254B205D872DC75193C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--467F2D9DFA8E4254B205D872DC75193C--></AD_MESSAGE>
@@ -30766,7 +30810,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--48F0550A900840B0A9D9D74A23EA2E28-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--48F0550A900840B0A9D9D74A23EA2E28-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--48F0550A900840B0A9D9D74A23EA2E28-->  <VALUE><![CDATA[FEATURE_OBPS_ONLY]]></VALUE>
-<!--48F0550A900840B0A9D9D74A23EA2E28-->  <MSGTEXT><![CDATA[This feature is only available for Professional Edition subscribers.]]></MSGTEXT>
+<!--48F0550A900840B0A9D9D74A23EA2E28-->  <MSGTEXT><![CDATA[This feature is only available for @ProfessionalEditionType@ subscribers.]]></MSGTEXT>
 <!--48F0550A900840B0A9D9D74A23EA2E28-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--48F0550A900840B0A9D9D74A23EA2E28-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--48F0550A900840B0A9D9D74A23EA2E28--></AD_MESSAGE>
@@ -30832,7 +30876,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--4E0404CF395D422B8B1D7A8FFA40E23F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4E0404CF395D422B8B1D7A8FFA40E23F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4E0404CF395D422B8B1D7A8FFA40E23F-->  <VALUE><![CDATA[20530]]></VALUE>
-<!--4E0404CF395D422B8B1D7A8FFA40E23F-->  <MSGTEXT><![CDATA[A module of "Module" type cannot contain other modules, it is only allowed for "Templates" and "Packages"]]></MSGTEXT>
+<!--4E0404CF395D422B8B1D7A8FFA40E23F-->  <MSGTEXT><![CDATA[A module of "Module" type cannot contain other modules.  This is only allowed for "Templates" and "Packages"]]></MSGTEXT>
 <!--4E0404CF395D422B8B1D7A8FFA40E23F-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--4E0404CF395D422B8B1D7A8FFA40E23F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4E0404CF395D422B8B1D7A8FFA40E23F--></AD_MESSAGE>
@@ -30855,7 +30899,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--4ECAA12B455F4BE497A92FC3F4C86BD6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4ECAA12B455F4BE497A92FC3F4C86BD6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4ECAA12B455F4BE497A92FC3F4C86BD6-->  <VALUE><![CDATA[CR_RegisterInvalidName]]></VALUE>
-<!--4ECAA12B455F4BE497A92FC3F4C86BD6-->  <MSGTEXT><![CDATA[A valid module name should be a string upto 60 characters in natural English.]]></MSGTEXT>
+<!--4ECAA12B455F4BE497A92FC3F4C86BD6-->  <MSGTEXT><![CDATA[A valid module name should be a string up to 60 characters in natural English.]]></MSGTEXT>
 <!--4ECAA12B455F4BE497A92FC3F4C86BD6-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--4ECAA12B455F4BE497A92FC3F4C86BD6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4ECAA12B455F4BE497A92FC3F4C86BD6--></AD_MESSAGE>
@@ -30888,7 +30932,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <VALUE><![CDATA[20531]]></VALUE>
-<!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <MSGTEXT><![CDATA[Not valid DB Prefix. DB Prefix must contain only upper alpha numeric characters and it must start with an alphabetic character.]]></MSGTEXT>
+<!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <MSGTEXT><![CDATA[Not a valid DB Prefix. DB Prefix must contain only upper alpha numeric characters and it must start with an alphabetic character.]]></MSGTEXT>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--51AF5F10036A4B14A54EC2DF10A94B7C--></AD_MESSAGE>
@@ -30910,7 +30954,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--54034A3A704740A5A1A22245348DF06B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--54034A3A704740A5A1A22245348DF06B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--54034A3A704740A5A1A22245348DF06B-->  <VALUE><![CDATA[SkippingReferenceData]]></VALUE>
-<!--54034A3A704740A5A1A22245348DF06B-->  <MSGTEXT><![CDATA[No refence data was selected by the user: skipping reference data creation]]></MSGTEXT>
+<!--54034A3A704740A5A1A22245348DF06B-->  <MSGTEXT><![CDATA[No reference data was selected by the user: skipping reference data creation]]></MSGTEXT>
 <!--54034A3A704740A5A1A22245348DF06B-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--54034A3A704740A5A1A22245348DF06B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--54034A3A704740A5A1A22245348DF06B--></AD_MESSAGE>
@@ -30932,7 +30976,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--5540AC0002F64173A712205D6D4DDC74-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5540AC0002F64173A712205D6D4DDC74-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5540AC0002F64173A712205D6D4DDC74-->  <VALUE><![CDATA[CR_RegisterDBPrefixExceedSize]]></VALUE>
-<!--5540AC0002F64173A712205D6D4DDC74-->  <MSGTEXT><![CDATA[DB_prefix must not exceed from 7 characters.]]></MSGTEXT>
+<!--5540AC0002F64173A712205D6D4DDC74-->  <MSGTEXT><![CDATA[DB_prefix must not exceed 7 characters.]]></MSGTEXT>
 <!--5540AC0002F64173A712205D6D4DDC74-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--5540AC0002F64173A712205D6D4DDC74-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5540AC0002F64173A712205D6D4DDC74--></AD_MESSAGE>
@@ -30976,7 +31020,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--570FBA13196A4136A3E36AFC0EFF0948-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--570FBA13196A4136A3E36AFC0EFF0948-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--570FBA13196A4136A3E36AFC0EFF0948-->  <VALUE><![CDATA[CanNotBeSplit]]></VALUE>
-<!--570FBA13196A4136A3E36AFC0EFF0948-->  <MSGTEXT><![CDATA[can not be split, as it may cause inconsistent data in accounting. Please, reactivate the manual settlement were it was created and split it there.]]></MSGTEXT>
+<!--570FBA13196A4136A3E36AFC0EFF0948-->  <MSGTEXT><![CDATA[cannot be split, as it may cause inconsistent data in accounting. Please, reactivate the manual settlement where it was created and split it there.]]></MSGTEXT>
 <!--570FBA13196A4136A3E36AFC0EFF0948-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--570FBA13196A4136A3E36AFC0EFF0948-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--570FBA13196A4136A3E36AFC0EFF0948--></AD_MESSAGE>
@@ -31003,13 +31047,24 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--584FAADEFE06422E988159E2B3800F3B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--584FAADEFE06422E988159E2B3800F3B--></AD_MESSAGE>
 
+<!--59A653928EC7415C9B375F69451E19B2--><AD_MESSAGE>
+<!--59A653928EC7415C9B375F69451E19B2-->  <AD_MESSAGE_ID><![CDATA[59A653928EC7415C9B375F69451E19B2]]></AD_MESSAGE_ID>
+<!--59A653928EC7415C9B375F69451E19B2-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--59A653928EC7415C9B375F69451E19B2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--59A653928EC7415C9B375F69451E19B2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--59A653928EC7415C9B375F69451E19B2-->  <VALUE><![CDATA[OPSLicenseEdition]]></VALUE>
+<!--59A653928EC7415C9B375F69451E19B2-->  <MSGTEXT><![CDATA[License Edition]]></MSGTEXT>
+<!--59A653928EC7415C9B375F69451E19B2-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--59A653928EC7415C9B375F69451E19B2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--59A653928EC7415C9B375F69451E19B2--></AD_MESSAGE>
+
 <!--59E27235F1D1402B9DC1E9EE5BC64814--><AD_MESSAGE>
 <!--59E27235F1D1402B9DC1E9EE5BC64814-->  <AD_MESSAGE_ID><![CDATA[59E27235F1D1402B9DC1E9EE5BC64814]]></AD_MESSAGE_ID>
 <!--59E27235F1D1402B9DC1E9EE5BC64814-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--59E27235F1D1402B9DC1E9EE5BC64814-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--59E27235F1D1402B9DC1E9EE5BC64814-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--59E27235F1D1402B9DC1E9EE5BC64814-->  <VALUE><![CDATA[TabName1stCharUpper]]></VALUE>
-<!--59E27235F1D1402B9DC1E9EE5BC64814-->  <MSGTEXT><![CDATA[Tab name must start by an alphabetic upper case character.]]></MSGTEXT>
+<!--59E27235F1D1402B9DC1E9EE5BC64814-->  <MSGTEXT><![CDATA[Tab name must start with an alphabetic upper case character.]]></MSGTEXT>
 <!--59E27235F1D1402B9DC1E9EE5BC64814-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--59E27235F1D1402B9DC1E9EE5BC64814-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--59E27235F1D1402B9DC1E9EE5BC64814--></AD_MESSAGE>
@@ -31244,7 +31299,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--68082E2D67E94A7E8FB1416A7FCEBC47-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--68082E2D67E94A7E8FB1416A7FCEBC47-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--68082E2D67E94A7E8FB1416A7FCEBC47-->  <VALUE><![CDATA[M_INOUT_CURRENCY_CHECK]]></VALUE>
-<!--68082E2D67E94A7E8FB1416A7FCEBC47-->  <MSGTEXT><![CDATA[With freight amount different from zero select a freight currency.]]></MSGTEXT>
+<!--68082E2D67E94A7E8FB1416A7FCEBC47-->  <MSGTEXT><![CDATA[With freight amount greater than zero please select a freight currency.]]></MSGTEXT>
 <!--68082E2D67E94A7E8FB1416A7FCEBC47-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--68082E2D67E94A7E8FB1416A7FCEBC47-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--68082E2D67E94A7E8FB1416A7FCEBC47--></AD_MESSAGE>
@@ -31554,7 +31609,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--7AB33AB8041941FFA6CE201A4217C8DE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7AB33AB8041941FFA6CE201A4217C8DE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7AB33AB8041941FFA6CE201A4217C8DE-->  <VALUE><![CDATA[SelectAttrSetDeleteAttrSetValue]]></VALUE>
-<!--7AB33AB8041941FFA6CE201A4217C8DE-->  <MSGTEXT><![CDATA[The Attribute Set can not be blanked if there is an Attribute Set Value. Please select an Attribute Set.]]></MSGTEXT>
+<!--7AB33AB8041941FFA6CE201A4217C8DE-->  <MSGTEXT><![CDATA[The Attribute Set cannot be blank if there is an Attribute Set Value. Please select an Attribute Set.]]></MSGTEXT>
 <!--7AB33AB8041941FFA6CE201A4217C8DE-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--7AB33AB8041941FFA6CE201A4217C8DE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7AB33AB8041941FFA6CE201A4217C8DE--></AD_MESSAGE>
@@ -31598,7 +31653,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--7FD28F8FE35B492FA9200FF14D0A7749-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7FD28F8FE35B492FA9200FF14D0A7749-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7FD28F8FE35B492FA9200FF14D0A7749-->  <VALUE><![CDATA[C_BANKSTATLN_PA_GLITEM_ID_CHK]]></VALUE>
-<!--7FD28F8FE35B492FA9200FF14D0A7749-->  <MSGTEXT><![CDATA[You should not allow to select a debt payment and g/l item at same time.]]></MSGTEXT>
+<!--7FD28F8FE35B492FA9200FF14D0A7749-->  <MSGTEXT><![CDATA[You may not select a debt payment and g/l item at same time.]]></MSGTEXT>
 <!--7FD28F8FE35B492FA9200FF14D0A7749-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--7FD28F8FE35B492FA9200FF14D0A7749-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7FD28F8FE35B492FA9200FF14D0A7749--></AD_MESSAGE>
@@ -31808,7 +31863,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--89FDE3CB1891401A8CEDB277C95D6A90-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--89FDE3CB1891401A8CEDB277C95D6A90-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--89FDE3CB1891401A8CEDB277C95D6A90-->  <VALUE><![CDATA[20542]]></VALUE>
-<!--89FDE3CB1891401A8CEDB277C95D6A90-->  <MSGTEXT><![CDATA[Every legal entity with accounting must have itself or an ancestor at least an accounting schema attached to it]]></MSGTEXT>
+<!--89FDE3CB1891401A8CEDB277C95D6A90-->  <MSGTEXT><![CDATA[Every legal entity with accounting must have an accounting schema attached to it or to an ancestor.]]></MSGTEXT>
 <!--89FDE3CB1891401A8CEDB277C95D6A90-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--89FDE3CB1891401A8CEDB277C95D6A90-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--89FDE3CB1891401A8CEDB277C95D6A90--></AD_MESSAGE>
@@ -31944,7 +31999,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--9210E705A80B442688E09A6C7C6BAEBA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9210E705A80B442688E09A6C7C6BAEBA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9210E705A80B442688E09A6C7C6BAEBA-->  <VALUE><![CDATA[CR_DBPrefixInUse]]></VALUE>
-<!--9210E705A80B442688E09A6C7C6BAEBA-->  <MSGTEXT><![CDATA[The given DB prefix is already in use. Try with different DB prefix.]]></MSGTEXT>
+<!--9210E705A80B442688E09A6C7C6BAEBA-->  <MSGTEXT><![CDATA[The given DB prefix is already in use. Try a different DB prefix.]]></MSGTEXT>
 <!--9210E705A80B442688E09A6C7C6BAEBA-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--9210E705A80B442688E09A6C7C6BAEBA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9210E705A80B442688E09A6C7C6BAEBA--></AD_MESSAGE>
@@ -32021,7 +32076,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--9D295DA584704A8C85459E14061EC2F0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9D295DA584704A8C85459E14061EC2F0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9D295DA584704A8C85459E14061EC2F0-->  <VALUE><![CDATA[@ERROR=@NoDefaultCashBook@]]></VALUE>
-<!--9D295DA584704A8C85459E14061EC2F0-->  <MSGTEXT><![CDATA[Invoice has payment form cash, the organization has however no default cashbook defined. ]]></MSGTEXT>
+<!--9D295DA584704A8C85459E14061EC2F0-->  <MSGTEXT><![CDATA[Invoice has payment form cash but the organization has no default cashbook defined. ]]></MSGTEXT>
 <!--9D295DA584704A8C85459E14061EC2F0-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--9D295DA584704A8C85459E14061EC2F0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9D295DA584704A8C85459E14061EC2F0--></AD_MESSAGE>
@@ -32032,7 +32087,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--9DEDEDDC6E44428A8DC45444FCB9A1DD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9DEDEDDC6E44428A8DC45444FCB9A1DD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9DEDEDDC6E44428A8DC45444FCB9A1DD-->  <VALUE><![CDATA[CR_PackageInUse]]></VALUE>
-<!--9DEDEDDC6E44428A8DC45444FCB9A1DD-->  <MSGTEXT><![CDATA[The given Java Package is already in use. Try with different Java Package.]]></MSGTEXT>
+<!--9DEDEDDC6E44428A8DC45444FCB9A1DD-->  <MSGTEXT><![CDATA[The given Java Package is already in use. Try a different Java Package.]]></MSGTEXT>
 <!--9DEDEDDC6E44428A8DC45444FCB9A1DD-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--9DEDEDDC6E44428A8DC45444FCB9A1DD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9DEDEDDC6E44428A8DC45444FCB9A1DD--></AD_MESSAGE>
@@ -32065,7 +32120,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--A028CFDE75274327BF364041696938AE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A028CFDE75274327BF364041696938AE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A028CFDE75274327BF364041696938AE-->  <VALUE><![CDATA[RemittanceTypeContractError]]></VALUE>
-<!--A028CFDE75274327BF364041696938AE-->  <MSGTEXT><![CDATA[Error in Remittance Type definition, parameter contract missing.]]></MSGTEXT>
+<!--A028CFDE75274327BF364041696938AE-->  <MSGTEXT><![CDATA[Error in Remittance Type definition - parameter contract missing.]]></MSGTEXT>
 <!--A028CFDE75274327BF364041696938AE-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--A028CFDE75274327BF364041696938AE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A028CFDE75274327BF364041696938AE--></AD_MESSAGE>
@@ -32098,7 +32153,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--A300D165786C4B2B87243BF4F27AE739-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A300D165786C4B2B87243BF4F27AE739-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A300D165786C4B2B87243BF4F27AE739-->  <VALUE><![CDATA[NoAccountingEntryInvoice]]></VALUE>
-<!--A300D165786C4B2B87243BF4F27AE739-->  <MSGTEXT><![CDATA[But no Accounting entries has been generated]]></MSGTEXT>
+<!--A300D165786C4B2B87243BF4F27AE739-->  <MSGTEXT><![CDATA[But no Accounting entries have been generated]]></MSGTEXT>
 <!--A300D165786C4B2B87243BF4F27AE739-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--A300D165786C4B2B87243BF4F27AE739-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A300D165786C4B2B87243BF4F27AE739--></AD_MESSAGE>
@@ -32187,7 +32242,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--A713234C4A624CFEA900BBBBF8F876B0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A713234C4A624CFEA900BBBBF8F876B0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A713234C4A624CFEA900BBBBF8F876B0-->  <VALUE><![CDATA[10101]]></VALUE>
-<!--A713234C4A624CFEA900BBBBF8F876B0-->  <MSGTEXT><![CDATA[The module has User Interface artifacts, translation required must be set to Yes (checked).]]></MSGTEXT>
+<!--A713234C4A624CFEA900BBBBF8F876B0-->  <MSGTEXT><![CDATA[The module has User Interface artifacts and therefore translation required must be set to Yes (checked).]]></MSGTEXT>
 <!--A713234C4A624CFEA900BBBBF8F876B0-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--A713234C4A624CFEA900BBBBF8F876B0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A713234C4A624CFEA900BBBBF8F876B0--></AD_MESSAGE>
@@ -32231,7 +32286,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--AA196DCD58DA494FA1ADCF695FFAA80C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--AA196DCD58DA494FA1ADCF695FFAA80C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--AA196DCD58DA494FA1ADCF695FFAA80C-->  <VALUE><![CDATA[ACCOUNT_LENGTH_CHECK]]></VALUE>
-<!--AA196DCD58DA494FA1ADCF695FFAA80C-->  <MSGTEXT><![CDATA[Account Length can not be greater than the Sub Account Length.]]></MSGTEXT>
+<!--AA196DCD58DA494FA1ADCF695FFAA80C-->  <MSGTEXT><![CDATA[Account Length cannot be greater than the Sub Account Length.]]></MSGTEXT>
 <!--AA196DCD58DA494FA1ADCF695FFAA80C-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--AA196DCD58DA494FA1ADCF695FFAA80C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--AA196DCD58DA494FA1ADCF695FFAA80C--></AD_MESSAGE>
@@ -32391,6 +32446,17 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--B5701BDA0DF64BD8922EE3FB41F7BCCC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B5701BDA0DF64BD8922EE3FB41F7BCCC--></AD_MESSAGE>
 
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC--><AD_MESSAGE>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC-->  <AD_MESSAGE_ID><![CDATA[B5B771C2ACC04FE4A75C39249BFAD2EC]]></AD_MESSAGE_ID>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC-->  <VALUE><![CDATA[AD_MODULE_TIER_CHK]]></VALUE>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC-->  <MSGTEXT><![CDATA[Incorrect Tier/Commercial. Commercial modules must be defined in Tier 1 or Tier 2.]]></MSGTEXT>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B5B771C2ACC04FE4A75C39249BFAD2EC--></AD_MESSAGE>
+
 <!--B785B8EF16CB412DB2E0FE32F55E9869--><AD_MESSAGE>
 <!--B785B8EF16CB412DB2E0FE32F55E9869-->  <AD_MESSAGE_ID><![CDATA[B785B8EF16CB412DB2E0FE32F55E9869]]></AD_MESSAGE_ID>
 <!--B785B8EF16CB412DB2E0FE32F55E9869-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -32485,7 +32551,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--BC074121BD9F4E839BBDF1E926A8F0E9-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--BC074121BD9F4E839BBDF1E926A8F0E9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--BC074121BD9F4E839BBDF1E926A8F0E9-->  <VALUE><![CDATA[CR_RegUnknownError]]></VALUE>
-<!--BC074121BD9F4E839BBDF1E926A8F0E9-->  <MSGTEXT><![CDATA[Unknown error occured while registering module. Contact forge admin.]]></MSGTEXT>
+<!--BC074121BD9F4E839BBDF1E926A8F0E9-->  <MSGTEXT><![CDATA[Unknown error occurred while registering module. Contact forge admin.]]></MSGTEXT>
 <!--BC074121BD9F4E839BBDF1E926A8F0E9-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--BC074121BD9F4E839BBDF1E926A8F0E9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BC074121BD9F4E839BBDF1E926A8F0E9--></AD_MESSAGE>
@@ -32529,7 +32595,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <VALUE><![CDATA[CodeBankBPErrorMultiple]]></VALUE>
-<!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <MSGTEXT><![CDATA[has associated more than one bank accounts. Please deactivate all his bank accounts but the one to be used for the remittance.]]></MSGTEXT>
+<!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <MSGTEXT><![CDATA[has associated more than one bank account. Please deactivate all bank accounts except the one to be used for the remittance.]]></MSGTEXT>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F--></AD_MESSAGE>
@@ -32628,7 +32694,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C3A6BC984AF7478A85D63CE69E113200-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C3A6BC984AF7478A85D63CE69E113200-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C3A6BC984AF7478A85D63CE69E113200-->  <VALUE><![CDATA[DifferentDocumentNo]]></VALUE>
-<!--C3A6BC984AF7478A85D63CE69E113200-->  <MSGTEXT><![CDATA[Two invoices can not have the same document number in the same organization tree within the same fiscal year.]]></MSGTEXT>
+<!--C3A6BC984AF7478A85D63CE69E113200-->  <MSGTEXT><![CDATA[Two invoices cannot have the same document number in the same organization tree within the same fiscal year.]]></MSGTEXT>
 <!--C3A6BC984AF7478A85D63CE69E113200-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C3A6BC984AF7478A85D63CE69E113200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C3A6BC984AF7478A85D63CE69E113200--></AD_MESSAGE>
@@ -32685,7 +32751,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <VALUE><![CDATA[OPS_MODULE_EXPIRED_TITLE]]></VALUE>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <MSGTEXT><![CDATA[Expired module license]]></MSGTEXT>
-<!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <MSGTIP><![CDATA[The licenses for the following modules is expired. Only System Adminstrator can login to reactivate or uninstall them.]]></MSGTIP>
+<!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <MSGTIP><![CDATA[The licenses for the following modules are expired. Only System Adminstrator can login to reactivate or uninstall them.]]></MSGTIP>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D--></AD_MESSAGE>
@@ -32817,7 +32883,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <VALUE><![CDATA[LAST_BUILD_FAILED]]></VALUE>
-<!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <MSGTEXT><![CDATA[The last system build failed. You will only be able to log in the system in a System Administrator role.<br> You should fix the problems that arised in the last build, and start a new one as soon as possible. Until then the system is potentially unstable.]]></MSGTEXT>
+<!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <MSGTEXT><![CDATA[The last system build failed. You will only be able to log in the system in a System Administrator role.<br> You should fix the problems that occurred in the last build, and start a new one as soon as possible. Until then the system is potentially unstable.]]></MSGTEXT>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3--></AD_MESSAGE>
@@ -32883,7 +32949,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--D4208AC7E8B348D08F0D621DB273F257-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D4208AC7E8B348D08F0D621DB273F257-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D4208AC7E8B348D08F0D621DB273F257-->  <VALUE><![CDATA[20543]]></VALUE>
-<!--D4208AC7E8B348D08F0D621DB273F257-->  <MSGTEXT><![CDATA[A ready organization can not be moved into the tree structure]]></MSGTEXT>
+<!--D4208AC7E8B348D08F0D621DB273F257-->  <MSGTEXT><![CDATA[A ready organization cannot be moved into the tree structure]]></MSGTEXT>
 <!--D4208AC7E8B348D08F0D621DB273F257-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--D4208AC7E8B348D08F0D621DB273F257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D4208AC7E8B348D08F0D621DB273F257--></AD_MESSAGE>
@@ -33218,7 +33284,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--EA8C3BCA062B4BB687AE2A2AAE4E32EE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--EA8C3BCA062B4BB687AE2A2AAE4E32EE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EA8C3BCA062B4BB687AE2A2AAE4E32EE-->  <VALUE><![CDATA[CR_RegisterInvalidDesc]]></VALUE>
-<!--EA8C3BCA062B4BB687AE2A2AAE4E32EE-->  <MSGTEXT><![CDATA[A valid module description should be a string upto 255 characters in natural English.]]></MSGTEXT>
+<!--EA8C3BCA062B4BB687AE2A2AAE4E32EE-->  <MSGTEXT><![CDATA[A valid module description should be a string up to 255 characters in natural English.]]></MSGTEXT>
 <!--EA8C3BCA062B4BB687AE2A2AAE4E32EE-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--EA8C3BCA062B4BB687AE2A2AAE4E32EE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EA8C3BCA062B4BB687AE2A2AAE4E32EE--></AD_MESSAGE>
@@ -33229,7 +33295,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--EB21629341AC4F7CB3F7EE16BCA24E4D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--EB21629341AC4F7CB3F7EE16BCA24E4D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EB21629341AC4F7CB3F7EE16BCA24E4D-->  <VALUE><![CDATA[MultipleDevelopmentTemplates]]></VALUE>
-<!--EB21629341AC4F7CB3F7EE16BCA24E4D-->  <MSGTEXT><![CDATA[template is in development. Only one template can be in development at the same time. Current template has been set not in developemnt.]]></MSGTEXT>
+<!--EB21629341AC4F7CB3F7EE16BCA24E4D-->  <MSGTEXT><![CDATA[template is in development. Only one template can be in development at the same time. Current template is not marked as in development.]]></MSGTEXT>
 <!--EB21629341AC4F7CB3F7EE16BCA24E4D-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--EB21629341AC4F7CB3F7EE16BCA24E4D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EB21629341AC4F7CB3F7EE16BCA24E4D--></AD_MESSAGE>
@@ -33297,7 +33363,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--EF6ECE31E8474A289803BC07D3774F17-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--EF6ECE31E8474A289803BC07D3774F17-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EF6ECE31E8474A289803BC07D3774F17-->  <VALUE><![CDATA[CR_RegisterInvalidType]]></VALUE>
-<!--EF6ECE31E8474A289803BC07D3774F17-->  <MSGTEXT><![CDATA[A valid module type should be one character. 'M' for module  'P' for packages and 'T' for industry templates.]]></MSGTEXT>
+<!--EF6ECE31E8474A289803BC07D3774F17-->  <MSGTEXT><![CDATA[A valid module type should be one character. 'M' for module, 'P' for packages and 'T' for industry templates.]]></MSGTEXT>
 <!--EF6ECE31E8474A289803BC07D3774F17-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--EF6ECE31E8474A289803BC07D3774F17-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EF6ECE31E8474A289803BC07D3774F17--></AD_MESSAGE>
@@ -33308,7 +33374,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--F2275928624C4B3EA173DA274358BFF9-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F2275928624C4B3EA173DA274358BFF9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F2275928624C4B3EA173DA274358BFF9-->  <VALUE><![CDATA[orgnizationHeaderCheck]]></VALUE>
-<!--F2275928624C4B3EA173DA274358BFF9-->  <MSGTEXT><![CDATA[Header organization can not be changed to an organization that does not belong to the organization tree of the lines.]]></MSGTEXT>
+<!--F2275928624C4B3EA173DA274358BFF9-->  <MSGTEXT><![CDATA[Header organization cannot be changed to an organization that does not belong to the organization tree of the lines.]]></MSGTEXT>
 <!--F2275928624C4B3EA173DA274358BFF9-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--F2275928624C4B3EA173DA274358BFF9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F2275928624C4B3EA173DA274358BFF9--></AD_MESSAGE>
@@ -33353,7 +33419,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--F376FBC96F46443AB1B51579EB442AED-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F376FBC96F46443AB1B51579EB442AED-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F376FBC96F46443AB1B51579EB442AED-->  <VALUE><![CDATA[CR_RegisterInvalidUser]]></VALUE>
-<!--F376FBC96F46443AB1B51579EB442AED-->  <MSGTEXT><![CDATA[Invalid user/pasword.]]></MSGTEXT>
+<!--F376FBC96F46443AB1B51579EB442AED-->  <MSGTEXT><![CDATA[Invalid user/password.]]></MSGTEXT>
 <!--F376FBC96F46443AB1B51579EB442AED-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--F376FBC96F46443AB1B51579EB442AED-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F376FBC96F46443AB1B51579EB442AED--></AD_MESSAGE>
@@ -33364,7 +33430,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--F38A8843E6504699A91571A79C3AA3DF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F38A8843E6504699A91571A79C3AA3DF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F38A8843E6504699A91571A79C3AA3DF-->  <VALUE><![CDATA[20532]]></VALUE>
-<!--F38A8843E6504699A91571A79C3AA3DF-->  <MSGTEXT><![CDATA[Cannot update an object in a module not in developement and without an active template]]></MSGTEXT>
+<!--F38A8843E6504699A91571A79C3AA3DF-->  <MSGTEXT><![CDATA[Cannot update an object in a module not in development and without an active template]]></MSGTEXT>
 <!--F38A8843E6504699A91571A79C3AA3DF-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--F38A8843E6504699A91571A79C3AA3DF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F38A8843E6504699A91571A79C3AA3DF--></AD_MESSAGE>
@@ -33386,7 +33452,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <VALUE><![CDATA[isle_isbu_exclude]]></VALUE>
-<!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <MSGTEXT><![CDATA[An organization type can not be Legal Entity and Business Unit at the same time. ]]></MSGTEXT>
+<!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <MSGTEXT><![CDATA[An organization type cannot be Legal Entity and Business Unit at the same time. ]]></MSGTEXT>
 <!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--F6FCD10C8D0349F48C4F7EF4BF591996-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F6FCD10C8D0349F48C4F7EF4BF591996--></AD_MESSAGE>
@@ -33490,6 +33556,18 @@ You can revert your changes by reloading the current record from the database cl
 <!--FA5C4E4CAED74DEFA58E298F8771E547-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FA5C4E4CAED74DEFA58E298F8771E547--></AD_MESSAGE>
 
+<!--FB074AB5BE884C2FAEE6159575A47F09--><AD_MESSAGE>
+<!--FB074AB5BE884C2FAEE6159575A47F09-->  <AD_MESSAGE_ID><![CDATA[FB074AB5BE884C2FAEE6159575A47F09]]></AD_MESSAGE_ID>
+<!--FB074AB5BE884C2FAEE6159575A47F09-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--FB074AB5BE884C2FAEE6159575A47F09-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--FB074AB5BE884C2FAEE6159575A47F09-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--FB074AB5BE884C2FAEE6159575A47F09-->  <VALUE><![CDATA[NoRestrictionsFile]]></VALUE>
+<!--FB074AB5BE884C2FAEE6159575A47F09-->  <MSGTEXT><![CDATA[Restrictions file was not found in config/licenseRestrictions, or it was corrupted. 
+Fix it and restart Tomcat.]]></MSGTEXT>
+<!--FB074AB5BE884C2FAEE6159575A47F09-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--FB074AB5BE884C2FAEE6159575A47F09-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FB074AB5BE884C2FAEE6159575A47F09--></AD_MESSAGE>
+
 <!--FBD240BC51C8471F85D65EFB40E079B6--><AD_MESSAGE>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <AD_MESSAGE_ID><![CDATA[FBD240BC51C8471F85D65EFB40E079B6]]></AD_MESSAGE_ID>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -33552,7 +33630,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <VALUE><![CDATA[IDENTIFICATION_FAILURE_TITLE]]></VALUE>
-<!--FE88E1D0FB204477983A77FE42C1297A-->  <MSGTEXT><![CDATA[Identification failure.Try again.]]></MSGTEXT>
+<!--FE88E1D0FB204477983A77FE42C1297A-->  <MSGTEXT><![CDATA[Identification failure. Try again.]]></MSGTEXT>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FE88E1D0FB204477983A77FE42C1297A--></AD_MESSAGE>

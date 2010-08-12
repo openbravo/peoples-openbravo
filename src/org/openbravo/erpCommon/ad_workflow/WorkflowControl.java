@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.MenuData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.VerticalMenu;
@@ -51,9 +53,17 @@ public class WorkflowControl extends HttpSecureAppServlet {
     final String strAD_Workflow_ID = vars.getGlobalVariable("inpadWorkflowId",
         "WorkflowControl|adWorkflowId");
 
-    if (!vars.commandIn("DEFAULT") && !hasGeneralAccess(vars, "F", strAD_Workflow_ID)) {
-      bdError(request, response, "AccessTableNoView", vars.getLanguage());
-      return;
+    if (!vars.commandIn("DEFAULT")) {
+      FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess("F",
+          strAD_Workflow_ID);
+      if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
+        licenseError("F", strAD_Workflow_ID, featureRestriction, response, request, vars, true);
+      }
+
+      if (!hasGeneralAccess(vars, "F", strAD_Workflow_ID)) {
+        bdError(request, response, "AccessTableNoView", vars.getLanguage());
+        return;
+      }
     }
 
     if (vars.commandIn("DEFAULT")) {

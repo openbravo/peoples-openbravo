@@ -1775,8 +1775,8 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--283-->  <COLUMNNAME><![CDATA[DisplayLogic]]></COLUMNNAME>
 <!--283-->  <NAME><![CDATA[Display Logic]]></NAME>
 <!--283-->  <PRINTNAME><![CDATA[Display Logic]]></PRINTNAME>
-<!--283-->  <DESCRIPTION><![CDATA[A specification of statements which, when evaluated as false, cause the the field to appear hidden.]]></DESCRIPTION>
-<!--283-->  <HELP><![CDATA[A specification of statements which, when evaluated as false, cause the the field to appear hidden.]]></HELP>
+<!--283-->  <DESCRIPTION><![CDATA[A specification of statements which, when evaluated as false, cause the field to appear hidden.]]></DESCRIPTION>
+<!--283-->  <HELP><![CDATA[A specification of statements which, when evaluated as false, cause the field to appear hidden.]]></HELP>
 <!--283-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--283--></AD_ELEMENT>
 
@@ -3275,8 +3275,8 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--484-->  <COLUMNNAME><![CDATA[P_Date_To]]></COLUMNNAME>
 <!--484-->  <NAME><![CDATA[Process Date To]]></NAME>
 <!--484-->  <PRINTNAME><![CDATA[P Date To]]></PRINTNAME>
-<!--484-->  <DESCRIPTION><![CDATA[Date passed as maximun date as parameter to a process instance.]]></DESCRIPTION>
-<!--484-->  <HELP><![CDATA[Date passed as maximun date as parameter to a process instance.]]></HELP>
+<!--484-->  <DESCRIPTION><![CDATA[Date passed as maximum date as parameter to a process instance.]]></DESCRIPTION>
+<!--484-->  <HELP><![CDATA[Date passed as maximum date as parameter to a process instance.]]></HELP>
 <!--484-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--484--></AD_ELEMENT>
 
@@ -3302,7 +3302,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--492-->  <NAME><![CDATA[P_String_To]]></NAME>
 <!--492-->  <PRINTNAME><![CDATA[P_String_To]]></PRINTNAME>
 <!--492-->  <DESCRIPTION><![CDATA[Parameter String To]]></DESCRIPTION>
-<!--492-->  <HELP><![CDATA[String passed as maximun string range to a process instance.]]></HELP>
+<!--492-->  <HELP><![CDATA[String passed as maximum string range to a process instance.]]></HELP>
 <!--492-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--492--></AD_ELEMENT>
 
@@ -6646,7 +6646,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1122-->  <NAME><![CDATA[Process Number To]]></NAME>
 <!--1122-->  <PRINTNAME><![CDATA[P Number To]]></PRINTNAME>
 <!--1122-->  <DESCRIPTION><![CDATA[Parameter number to]]></DESCRIPTION>
-<!--1122-->  <HELP><![CDATA[Number passed as maximun range as parameter to a process instance.]]></HELP>
+<!--1122-->  <HELP><![CDATA[Number passed as maximum range as parameter to a process instance.]]></HELP>
 <!--1122-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1122--></AD_ELEMENT>
 
@@ -6782,7 +6782,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1135-->  <COLUMNNAME><![CDATA[TaxIndicator]]></COLUMNNAME>
 <!--1135-->  <NAME><![CDATA[Tax Search Key]]></NAME>
 <!--1135-->  <PRINTNAME><![CDATA[Tax Indicator]]></PRINTNAME>
-<!--1135-->  <DESCRIPTION><![CDATA[A fast method for finding a a specific tax.]]></DESCRIPTION>
+<!--1135-->  <DESCRIPTION><![CDATA[A fast method for finding a specific tax.]]></DESCRIPTION>
 <!--1135-->  <HELP><![CDATA[The Tax Indicator identifies the short name that will print on documents referencing this tax.]]></HELP>
 <!--1135-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1135--></AD_ELEMENT>
@@ -6938,7 +6938,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1176-->  <NAME><![CDATA[Print Details on Pick List]]></NAME>
 <!--1176-->  <PRINTNAME><![CDATA[Print detail records on pick list]]></PRINTNAME>
 <!--1176-->  <DESCRIPTION><![CDATA[Print detail BOM elements on the pick list]]></DESCRIPTION>
-<!--1176-->  <HELP><![CDATA[If “Print Details on Pick List” is checked then the details of the individual elements of the BOM will be printed on the Pick List.]]></HELP>
+<!--1176-->  <HELP><![CDATA[The Print Details on Pick List indicates that the BOM element products will print on the Pick List as opposed to this product.]]></HELP>
 <!--1176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1176--></AD_ELEMENT>
 
@@ -11641,7 +11641,7 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2003-->  <NAME><![CDATA[Overdue Payment Day Rule]]></NAME>
 <!--2003-->  <PRINTNAME><![CDATA[Net Day]]></PRINTNAME>
 <!--2003-->  <DESCRIPTION><![CDATA[A plan to give until a specific day after the agreed payment term to pay without penalty.]]></DESCRIPTION>
-<!--2003-->  <HELP><![CDATA[When defined, overwrites the number of net days with the relative number of days to the the day defined.]]></HELP>
+<!--2003-->  <HELP><![CDATA[When defined, overwrites the number of net days with the relative number of days to the day defined.]]></HELP>
 <!--2003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2003--></AD_ELEMENT>
 
@@ -12173,7 +12173,7 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2072-->  <COLUMNNAME><![CDATA[C_OrgAssignment_ID]]></COLUMNNAME>
 <!--2072-->  <NAME><![CDATA[Org Assignment]]></NAME>
 <!--2072-->  <PRINTNAME><![CDATA[Org Assignment]]></PRINTNAME>
-<!--2072-->  <DESCRIPTION><![CDATA[Assigment to (transaction) Organization]]></DESCRIPTION>
+<!--2072-->  <DESCRIPTION><![CDATA[Assignment to (transaction) Organization]]></DESCRIPTION>
 <!--2072-->  <HELP><![CDATA[Assignment to the transacation organization (cost center).]]></HELP>
 <!--2072-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2072--></AD_ELEMENT>
@@ -12910,8 +12910,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2182-->  <COLUMNNAME><![CDATA[ConsolidateDocument]]></COLUMNNAME>
 <!--2182-->  <NAME><![CDATA[Consolidate to one Document]]></NAME>
 <!--2182-->  <PRINTNAME><![CDATA[Consolidate]]></PRINTNAME>
-<!--2182-->  <DESCRIPTION><![CDATA[Consilidate Lines into one Document]]></DESCRIPTION>
-<!--2182-->  <HELP><![CDATA[Consilidate Lines into one Document]]></HELP>
+<!--2182-->  <DESCRIPTION><![CDATA[Consolidate Lines into one Document]]></DESCRIPTION>
+<!--2182-->  <HELP><![CDATA[Consolidate Lines into one Document]]></HELP>
 <!--2182-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2182--></AD_ELEMENT>
 
@@ -13410,7 +13410,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800038-->  <COLUMNNAME><![CDATA[Invoice_ToProject]]></COLUMNNAME>
 <!--800038-->  <NAME><![CDATA[Invoice to Project]]></NAME>
 <!--800038-->  <PRINTNAME><![CDATA[Invoice_ToProject]]></PRINTNAME>
-<!--800038-->  <HELP><![CDATA[This option indicates if invoices received are to be posted to the project.]]></HELP>
+<!--800038-->  <HELP><![CDATA[This option indicates if the invoices has been sent to the winner are "Origen invoices"]]></HELP>
 <!--800038-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800038--></AD_ELEMENT>
 
@@ -13662,8 +13662,8 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800062-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800062-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800062-->  <COLUMNNAME><![CDATA[C_Settlement_Generate_ID]]></COLUMNNAME>
-<!--800062-->  <NAME><![CDATA[Settlement generate]]></NAME>
-<!--800062-->  <PRINTNAME><![CDATA[Settlement generate]]></PRINTNAME>
+<!--800062-->  <NAME><![CDATA[C_Settlement_Generate_ID]]></NAME>
+<!--800062-->  <PRINTNAME><![CDATA[C_Settlement_Generate_ID]]></PRINTNAME>
 <!--800062-->  <DESCRIPTION><![CDATA[Settlement generate]]></DESCRIPTION>
 <!--800062-->  <HELP><![CDATA[Refers to the settlement in which this Debt/Payment has been generated.]]></HELP>
 <!--800062-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -14069,7 +14069,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800109-->  <COLUMNNAME><![CDATA[M_WH_Period_Invoiced_ID]]></COLUMNNAME>
 <!--800109-->  <NAME><![CDATA[M_WH_Period_Invoiced_ID]]></NAME>
 <!--800109-->  <PRINTNAME><![CDATA[M_WH_Period_Invoiced_ID]]></PRINTNAME>
-<!--800109-->  <HELP><![CDATA[The ID identifies a unique period invoiced for the the period]]></HELP>
+<!--800109-->  <HELP><![CDATA[The ID identifies a unique period invoiced for the period]]></HELP>
 <!--800109-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800109--></AD_ELEMENT>
 
@@ -14812,7 +14812,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800185-->  <NAME><![CDATA[De-encryptable]]></NAME>
 <!--800185-->  <PRINTNAME><![CDATA[Is desencryptable]]></PRINTNAME>
 <!--800185-->  <DESCRIPTION><![CDATA[Is desencryptable]]></DESCRIPTION>
-<!--800185-->  <HELP><![CDATA[If “De-encryptable” is selected then the content of this column can be decrypted.]]></HELP>
+<!--800185-->  <HELP><![CDATA[When Is Desencryptable field is 'Y' the content of this column will be saved in a desencryptable way.]]></HELP>
 <!--800185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800185--></AD_ELEMENT>
 
@@ -16558,7 +16558,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800462-->  <COLUMNNAME><![CDATA[Bydefault]]></COLUMNNAME>
 <!--800462-->  <NAME><![CDATA[By Default]]></NAME>
 <!--800462-->  <PRINTNAME><![CDATA[Bydefault]]></PRINTNAME>
-<!--800462-->  <HELP><![CDATA[Controls how the cost center use is calculated. If “By Default” is selected then data is taken from the work requirement phase, not from the work effort header.]]></HELP>
+<!--800462-->  <HELP><![CDATA[When calculated is checked determines how is calculated the cost center use. When is by default the data is taken from the work requirement phase, when not from the work effort header.]]></HELP>
 <!--800462-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800462--></AD_ELEMENT>
 
@@ -16782,7 +16782,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800485-->  <COLUMNNAME><![CDATA[Copyversion]]></COLUMNNAME>
 <!--800485-->  <NAME><![CDATA[Copy Version]]></NAME>
 <!--800485-->  <PRINTNAME><![CDATA[Copy Version]]></PRINTNAME>
-<!--800485-->  <HELP><![CDATA[A process that copies a selected version to a new version and changes the corresponding time periods.]]></HELP>
+<!--800485-->  <HELP><![CDATA[A process that copies a selected reference version a new one and changing the corresponding time periods at the same time.]]></HELP>
 <!--800485-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800485--></AD_ELEMENT>
 
@@ -17803,7 +17803,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800583-->  <NAME><![CDATA[Max. Amount]]></NAME>
 <!--800583-->  <PRINTNAME><![CDATA[Amnt To]]></PRINTNAME>
 <!--800583-->  <DESCRIPTION><![CDATA[Amount to]]></DESCRIPTION>
-<!--800583-->  <HELP><![CDATA[The maximun amount the discount is applied to.]]></HELP>
+<!--800583-->  <HELP><![CDATA[The maximum amount the discount is applied to.]]></HELP>
 <!--800583-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800583--></AD_ELEMENT>
 
@@ -17828,7 +17828,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800586-->  <NAME><![CDATA[Scaled]]></NAME>
 <!--800586-->  <PRINTNAME><![CDATA[Scaled]]></PRINTNAME>
 <!--800586-->  <DESCRIPTION><![CDATA[Scaled]]></DESCRIPTION>
-<!--800586-->  <HELP><![CDATA[If rappel is scaled each scale of amount will have a different discount, otherwise the maximun applicable discount will be applied to every amount.]]></HELP>
+<!--800586-->  <HELP><![CDATA[If rappel is scaled each scale of amount will have a different discount, otherwise the maximum applicable discount will be applied to every amount.]]></HELP>
 <!--800586-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800586--></AD_ELEMENT>
 
@@ -18455,7 +18455,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800643-->  <NAME><![CDATA[Consolidate]]></NAME>
 <!--800643-->  <PRINTNAME><![CDATA[Consolidate]]></PRINTNAME>
 <!--800643-->  <DESCRIPTION><![CDATA[Consolidate]]></DESCRIPTION>
-<!--800643-->  <HELP><![CDATA[When a Remittance Type is consolidated, a cancel settlement will be created for the remittance and a new remittance will be created with the amount being the sum of all debt/payments.]]></HELP>
+<!--800643-->  <HELP><![CDATA[When a remittance type is consolidated it will be created a cancel settlement from the debt/payments in the remittance and another one with the amount being the sum of all debt/payments.]]></HELP>
 <!--800643-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800643--></AD_ELEMENT>
 
@@ -18888,7 +18888,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800683-->  <NAME><![CDATA[Cost Type]]></NAME>
 <!--800683-->  <PRINTNAME><![CDATA[Cost Type]]></PRINTNAME>
 <!--800683-->  <DESCRIPTION><![CDATA[A distinct cost characteristic used for processes.]]></DESCRIPTION>
-<!--800683-->  <HELP><![CDATA[The cost type defines when the cost is added to the product; select “Production” if the cost is to be added to each product or “Structure” if the cost is to be added to cost of the final product that is sold.]]></HELP>
+<!--800683-->  <HELP><![CDATA[The cost type defines when the cost is added to the product, production in each product and structure only to final product that is sold.]]></HELP>
 <!--800683-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800683--></AD_ELEMENT>
 
@@ -19109,7 +19109,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800701-->  <NAME><![CDATA[Min. Quantity]]></NAME>
 <!--800701-->  <PRINTNAME><![CDATA[Qty From]]></PRINTNAME>
 <!--800701-->  <DESCRIPTION><![CDATA[Quantity From]]></DESCRIPTION>
-<!--800701-->  <HELP><![CDATA[Quantity From is the minimun amount that the offer will be applied from.]]></HELP>
+<!--800701-->  <HELP><![CDATA[Quantity From is the minimum amount that the offer will be applied from.]]></HELP>
 <!--800701-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800701--></AD_ELEMENT>
 
@@ -19122,7 +19122,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800702-->  <NAME><![CDATA[Max. Quantity]]></NAME>
 <!--800702-->  <PRINTNAME><![CDATA[Qty To]]></PRINTNAME>
 <!--800702-->  <DESCRIPTION><![CDATA[Quantity to]]></DESCRIPTION>
-<!--800702-->  <HELP><![CDATA[Quantity to is the maximun amount to apply the offer.]]></HELP>
+<!--800702-->  <HELP><![CDATA[Quantity to is the maximum amount to apply the offer.]]></HELP>
 <!--800702-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800702--></AD_ELEMENT>
 
@@ -19655,9 +19655,9 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800751-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800751-->  <COLUMNNAME><![CDATA[Qtymax]]></COLUMNNAME>
 <!--800751-->  <NAME><![CDATA[Max. Quantity]]></NAME>
-<!--800751-->  <PRINTNAME><![CDATA[Maximun Quantity]]></PRINTNAME>
-<!--800751-->  <DESCRIPTION><![CDATA[Maximun Quantity]]></DESCRIPTION>
-<!--800751-->  <HELP><![CDATA[Maximun Quantity]]></HELP>
+<!--800751-->  <PRINTNAME><![CDATA[Maximum Quantity]]></PRINTNAME>
+<!--800751-->  <DESCRIPTION><![CDATA[Maximum Quantity]]></DESCRIPTION>
+<!--800751-->  <HELP><![CDATA[Maximum Quantity]]></HELP>
 <!--800751-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800751--></AD_ELEMENT>
 
@@ -19670,7 +19670,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800752-->  <NAME><![CDATA[Minimum Lead Time]]></NAME>
 <!--800752-->  <PRINTNAME><![CDATA[Minimum Lead Time]]></PRINTNAME>
 <!--800752-->  <DESCRIPTION><![CDATA[Delaymin]]></DESCRIPTION>
-<!--800752-->  <HELP><![CDATA[Minimun number of days to complete the transaction]]></HELP>
+<!--800752-->  <HELP><![CDATA[Minimum number of days to complete the transaction]]></HELP>
 <!--800752-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800752--></AD_ELEMENT>
 
@@ -20201,7 +20201,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800799-->  <NAME><![CDATA[Reference Search Key]]></NAME>
 <!--800799-->  <PRINTNAME><![CDATA[Reference Key]]></PRINTNAME>
 <!--800799-->  <DESCRIPTION><![CDATA[The exact reference specification for a list or a table.]]></DESCRIPTION>
-<!--800799-->  <HELP><![CDATA[Reference Search Key identifies the record that triggers an alert.  In the event that this record belongs to a table with only a key field, then the key field should be the value, otherwise it will be necessary to compose a value from different keys of the table.]]></HELP>
+<!--800799-->  <HELP><![CDATA[Reference Key identifies the record that raised the alert, in case that this record belongs to a table with only a key field this should be the value, otherwise it will be necessary to compose a value from the different keys of the table.]]></HELP>
 <!--800799-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800799--></AD_ELEMENT>
 
@@ -24624,8 +24624,8 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--617A15297075583BE040007F0101562D-->  <COLUMNNAME><![CDATA[Isinitialbalance]]></COLUMNNAME>
 <!--617A15297075583BE040007F0101562D-->  <NAME><![CDATA[Year Initial Balance]]></NAME>
 <!--617A15297075583BE040007F0101562D-->  <PRINTNAME><![CDATA[Year Initial Balance]]></PRINTNAME>
-<!--617A15297075583BE040007F0101562D-->  <DESCRIPTION><![CDATA[If checked the the system will automatically calculate the opening balance for the fiscal year (regardless of whether the period is monthly or quarterly).]]></DESCRIPTION>
-<!--617A15297075583BE040007F0101562D-->  <HELP><![CDATA[If checked the the system will automatically calculate the opening balance for the fiscal year (regardless of whether the period is monthly or quarterly).]]></HELP>
+<!--617A15297075583BE040007F0101562D-->  <DESCRIPTION><![CDATA[If checked the system will automatically calculate the opening balance for the fiscal year (regardless of whether the period is monthly or quarterly).]]></DESCRIPTION>
+<!--617A15297075583BE040007F0101562D-->  <HELP><![CDATA[If checked the system will automatically calculate the opening balance for the fiscal year (regardless of whether the period is monthly or quarterly).]]></HELP>
 <!--617A15297075583BE040007F0101562D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--617A15297075583BE040007F0101562D--></AD_ELEMENT>
 
@@ -24982,7 +24982,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--7079E2FD4AA8799EE040007F010104AD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <COLUMNNAME><![CDATA[IsCommercial]]></COLUMNNAME>
-<!--7079E2FD4AA8799EE040007F010104AD-->  <NAME><![CDATA[IsCommercial]]></NAME>
+<!--7079E2FD4AA8799EE040007F010104AD-->  <NAME><![CDATA[Commercial]]></NAME>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <PRINTNAME><![CDATA[Commercial]]></PRINTNAME>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <DESCRIPTION><![CDATA[Commercial Module]]></DESCRIPTION>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <HELP><![CDATA[Commercial modules are only available to Professional Subscription active Instances whereas non commercial ones can be downloaded and installed in Community Edition Instances.
@@ -26768,6 +26768,21 @@ The values it can contain are:
 <!--8B53A1513DB8DD41E040007F01011767-->  <HELP><![CDATA[In case the dependency is set as "User Editable", this value overwrites the Instance Enforcement one.]]></HELP>
 <!--8B53A1513DB8DD41E040007F01011767-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8B53A1513DB8DD41E040007F01011767--></AD_ELEMENT>
+
+<!--8BCFEC1D2693D1A8E040007F010135A9--><AD_ELEMENT>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <AD_ELEMENT_ID><![CDATA[8BCFEC1D2693D1A8E040007F010135A9]]></AD_ELEMENT_ID>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <COLUMNNAME><![CDATA[Commercial_Tier]]></COLUMNNAME>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <NAME><![CDATA[Tier]]></NAME>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <PRINTNAME><![CDATA[Tier]]></PRINTNAME>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <DESCRIPTION><![CDATA[Tier for commercial modules]]></DESCRIPTION>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <HELP><![CDATA[Commercial modules are defined in different tiers:
+1st Tier: The module can be installed in any Professional instance that has bought the module.
+2nd Tier: The module can be installed in Standard Professional Edition instances that have bought it.]]></HELP>
+<!--8BCFEC1D2693D1A8E040007F010135A9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8BCFEC1D2693D1A8E040007F010135A9--></AD_ELEMENT>
 
 <!--8C84C8C2042BA648E040007F010137E1--><AD_ELEMENT>
 <!--8C84C8C2042BA648E040007F010137E1-->  <AD_ELEMENT_ID><![CDATA[8C84C8C2042BA648E040007F010137E1]]></AD_ELEMENT_ID>

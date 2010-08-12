@@ -3703,7 +3703,7 @@
 <!--800114-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800114-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800114-->  <NAME><![CDATA[Assets]]></NAME>
-<!--800114-->  <DESCRIPTION><![CDATA[Define assets owned by your company their amortization characteristics.]]></DESCRIPTION>
+<!--800114-->  <DESCRIPTION><![CDATA[Define amortization characteristics for assets owned by your company.]]></DESCRIPTION>
 <!--800114-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800114-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800114-->  <AD_WINDOW_ID><![CDATA[800027]]></AD_WINDOW_ID>
@@ -3857,7 +3857,7 @@
 <!--800137-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800137-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800137-->  <NAME><![CDATA[Process Plan]]></NAME>
-<!--800137-->  <DESCRIPTION><![CDATA[Define the steps and processes to be completed for an intermediate or finished good, taking in account available resources.]]></DESCRIPTION>
+<!--800137-->  <DESCRIPTION><![CDATA[Define the steps and processes to be completed for an intermediate or finished good, taking into account available resources.]]></DESCRIPTION>
 <!--800137-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800137-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800137-->  <AD_WINDOW_ID><![CDATA[800051]]></AD_WINDOW_ID>
@@ -4063,7 +4063,7 @@
 <!--800181-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800181-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800181-->  <NAME><![CDATA[Promissory Note Format]]></NAME>
-<!--800181-->  <DESCRIPTION><![CDATA[Create and edit the structure of how of to print a promissory note.]]></DESCRIPTION>
+<!--800181-->  <DESCRIPTION><![CDATA[Create and edit the structure of how to print a promissory note.]]></DESCRIPTION>
 <!--800181-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800181-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800181-->  <AD_WINDOW_ID><![CDATA[800069]]></AD_WINDOW_ID>
@@ -4475,7 +4475,7 @@
 <!--800216-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800216-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800216-->  <NAME><![CDATA[Requisition]]></NAME>
-<!--800216-->  <DESCRIPTION><![CDATA[Create requests for the procurement department to buy necessities items based on your defined plan.]]></DESCRIPTION>
+<!--800216-->  <DESCRIPTION><![CDATA[Create requests for the procurement department to buy necessary items based on your defined plan.]]></DESCRIPTION>
 <!--800216-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800216-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800216-->  <AD_WINDOW_ID><![CDATA[800092]]></AD_WINDOW_ID>
@@ -4863,7 +4863,7 @@
 <!--800257-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800257-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800257-->  <NAME><![CDATA[Deprecated]]></NAME>
-<!--800257-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports , windows, forma that are goign to be deprecated]]></DESCRIPTION>
+<!--800257-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports , windows, forms that are going to be deprecated]]></DESCRIPTION>
 <!--800257-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800257--></AD_MENU>
@@ -5375,7 +5375,7 @@
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <NAME><![CDATA[Open/Close Period Control]]></NAME>
-<!--1C00140BAFA946E3A63F1AD557A35F45-->  <DESCRIPTION><![CDATA[It allows to open or close periods for the allowed organizations]]></DESCRIPTION>
+<!--1C00140BAFA946E3A63F1AD557A35F45-->  <DESCRIPTION><![CDATA[Open or close periods for the allowed organizations]]></DESCRIPTION>
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <AD_WINDOW_ID><![CDATA[E56E701CCBA14B8BA480CBDE37C50D7A]]></AD_WINDOW_ID>

@@ -898,13 +898,22 @@ public class ImportModule {
       rt[i].setDependencies(dyanaBeanToDependencies(dynDependencies, rt[i].getModuleID(),
           enforcements));
       // old modules don't have iscommercial column
-      Object isCommercial = dynModule.get("ISCOMMERCIAL");
-      rt[i].setIsCommercial(isCommercial != null && ((String) isCommercial).equals("Y"));
+
+      String commercial = (String) dynModule.get("ISCOMMERCIAL");
+      boolean isCommercial = commercial != null && commercial.equals("Y");
+      rt[i].setIsCommercial(isCommercial);
       // To show details in local ad_module_id is used
       rt[i].setModuleVersionID((String) dynModule.get("AD_MODULE_ID"));
 
       // use this for information that is not contained in standard fields
-      HashMap<String, HashMap<String, String>> additionalInfo = new HashMap<String, HashMap<String, String>>();
+      HashMap<String, Object> additionalInfo = new HashMap<String, Object>();
+      if (isCommercial) {
+        String tier = (String) dynModule.get("COMMERCIAL_TIER");
+        if (tier == null || tier.isEmpty()) {
+          tier = "1";
+        }
+        additionalInfo.put("tier", tier);
+      }
       additionalInfo.put("enforcements", enforcements);
       rt[i].setAdditionalInfo(additionalInfo);
       i++;
@@ -1610,7 +1619,7 @@ public class ImportModule {
       HttpURLConnection conn = null;
 
       if (strUrl.startsWith("https://")) {
-        ActivationKey ak = new ActivationKey();
+        ActivationKey ak = ActivationKey.getInstance();
         String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
         conn = HttpsUtils.sendHttpsRequest(url, instanceKey, "localhost-1", "changeit");
       } else {
