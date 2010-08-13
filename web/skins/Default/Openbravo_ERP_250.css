@@ -5127,6 +5127,22 @@ td.TextBox_MsgContainerVt_td {
   float: left;
 }
 
+.Tree_Text_Title_Disabled {
+  font-style: italic;
+  color: grey;
+  text-decoration: line-through;
+}
+
+.Tree_Text_Title_DisableText {
+  font-size: 8pt;
+  font-weight: normal;
+  font-family: tahoma,arial,helvetica,sans-serif;
+  padding: 2 10 0;
+  cursor: pointer;
+  float: right;
+  color: red;
+}
+
 .Tree_Text_Separator {
   width: 19px;
   height: 19px;

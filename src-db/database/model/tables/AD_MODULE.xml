@@ -145,6 +145,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="COMMERCIAL_TIER" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[NA]]></default>
+        <onCreateDefault><![CDATA[CASE WHEN ISCOMMERCIAL='N' THEN 'NA' ELSE '1' END]]></onCreateDefault>
+      </column>
+      <column name="ENABLED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -154,6 +162,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_MODULE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <unique name="AD_MODULE_JAVAPACKAGE_UN">
+        <unique-column name="JAVAPACKAGE"/>
+      </unique>
       <check name="AD_MODULE_INDEVELOPMENT_CHK"><![CDATA[ISINDEVELOPMENT IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISCOMMERCIAL_CHCK"><![CDATA[ISCOMMERCIAL IN ('Y', 'N')]]></check>

@@ -21,7 +21,10 @@ package org.openbravo.erpCommon.obps;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -35,6 +38,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.CRC32;
 
@@ -44,18 +48,25 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
+import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
+import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class ActivationKey {
-
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
+  private final static String OB_PUBLIC_KEY2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCeivfuzeE+hdv7mXEyOWTpGglsT1J+UHcp9RrHydgLgccPdQ5EjqtKVSc/jzzJV5g+9XaSxz9pK5TuzzdN4fJHPCnuO0EiwWI2dxS/t1Boo+gGageGZyFRMhMsULU4902gzmw1qugEskUSKONJcR65H06HYRn2fTgVbGvEhFMASwIDAQAB";
 
   private boolean isActive = false;
   private boolean hasActivationKey = false;
@@ -70,27 +81,123 @@ public class ActivationKey {
   private boolean hasExpired = false;
   private boolean subscriptionConvertedProperty = false;
   private boolean subscriptionActuallyConverted = false;
+  private LicenseClass licenseClass;
+  private List<String> tier1Artifacts;
+  private List<String> tier2Artifacts;
 
   private boolean notActiveYet = false;
 
   private static final Logger log4j = Logger.getLogger(ActivationKey.class);
+
+  private static final String TIER_1_PREMIUM_FEATURE = "T1P";
+  private static final String TIER_2_PREMIUM_FEATURE = "T2P";
 
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED
   }
 
   public enum CommercialModuleStatus {
-    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION
+    NO_SUBSCRIBED, ACTIVE, EXPIRED, NO_ACTIVE_YET, CONVERTED_SUBSCRIPTION, DISABLED
+  }
+
+  public enum FeatureRestriction {
+    NO_RESTRICTION, DISABLED_MODULE_RESTRICTION, TIER1_RESTRICTION, TIER2_RESTRICTION, UNKNOWN_RESTRICTION;
+  }
+
+  public enum LicenseClass {
+    BASIC("B"), STD("STD");
+    private String code;
+
+    private LicenseClass(String code) {
+      this.code = code;
+    }
+
+    public String getCode() {
+      return code;
+    }
+  }
+
+  public enum SubscriptionStatus {
+    COMMUNITY("COM"), ACTIVE("ACT"), CANCEL("CAN"), EXPIRED("EXP"), NO_ACTIVE_YET("NAY");
+    private String code;
+
+    private SubscriptionStatus(String code) {
+      this.code = code;
+    }
+
+    /**
+     * Returns the name of the current status in the given language.
+     */
+    public String getStatusName(String language) {
+      return Utility.getListValueName("OBPSLicenseStatus", code, language);
+    }
+
   }
 
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
 
+  private static ActivationKey instance = new ActivationKey();
+
+  /**
+   * Obtains the ActivationKey instance. Instances should be get in this way, rather than creating a
+   * new one.
+   * 
+   */
+  public static synchronized ActivationKey getInstance() {
+    return instance;
+  }
+
+  public static synchronized void setInstance(ActivationKey ak) {
+    instance = ak;
+  }
+
+  /**
+   * Reloads ActivationKey instance from information in DB.
+   */
+  public static synchronized ActivationKey reload() {
+    ActivationKey ak = getInstance();
+    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+        org.openbravo.model.ad.system.System.class, "0");
+    ak.loadInfo(sys.getActivationKey());
+    ak.loadRestrictions();
+    return ak;
+  }
+
+  /**
+   * ActivationKey constructor, this should not be used. ActivationKey should be treated as
+   * Singleton, so the {@link ActivationKey#getInstance()} method should be used instead.
+   * <p/>
+   * This constructor is public to maintain backwards compatibility.
+   */
   public ActivationKey() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
         org.openbravo.model.ad.system.System.class, "0");
     strPublicKey = sys.getInstanceKey();
     String activationKey = sys.getActivationKey();
+    loadInfo(activationKey);
+    loadRestrictions();
+  }
+
+  public ActivationKey(String publicKey, String activationKey) {
+    strPublicKey = publicKey;
+    loadInfo(activationKey);
+    loadRestrictions();
+  }
+
+  private void loadInfo(String activationKey) {
+    // Reset
+    isActive = false;
+    hasActivationKey = false;
+    errorMessage = "";
+    messageType = "Error";
+    instanceProperties = null;
+    opsLog = false;
+    hasExpired = false;
+    subscriptionConvertedProperty = false;
+    subscriptionActuallyConverted = false;
+    tier1Artifacts = null;
+    tier2Artifacts = null;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -108,60 +215,48 @@ public class ActivationKey {
     }
     hasActivationKey = true;
     try {
-      PublicKey obPk = getPublicKey(OB_PUBLIC_KEY); // get OB public key to check signature
-      Signature signer = Signature.getInstance("MD5withRSA");
-      signer.initVerify(obPk);
-
-      Cipher cipher = Cipher.getInstance("RSA");
-
-      ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
-          .decodeBase64(activationKey.getBytes()));
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      boolean signed = decrypt(activationKey.getBytes(), pk, bos, OB_PUBLIC_KEY);
 
-      // Encryptation only accepts 128B size, it must be chuncked
-      final byte[] buf = new byte[128];
-      final byte[] signature = new byte[128];
-
-      // read the signature
-      if (!(bis.read(signature) > 0)) {
-        isActive = false;
-        errorMessage = "@NotSigned@";
-        setLogger();
-        return;
-      }
-
-      // decrypt
-      while ((bis.read(buf)) > 0) {
-        cipher.init(Cipher.DECRYPT_MODE, pk);
-        bos.write(cipher.doFinal(buf));
-      }
-
-      // verify signature
-      signer.update(bos.toByteArray());
-      boolean signed = signer.verify(signature);
-      log.debug("signature length:" + buf.length);
-      log.debug("singature:" + (new BigInteger(signature).toString(16).toUpperCase()));
-      log.debug("signed:" + signed);
       if (!signed) {
+        // Basic license is only supported from 2.50mp21, they are signed with second key. So in
+        // case first key does not work, try to use the second one.
+        bos = new ByteArrayOutputStream();
+        signed = decrypt(activationKey.getBytes(), pk, bos, OB_PUBLIC_KEY2);
+      }
+
+      if (signed) {
+        byte[] props = bos.toByteArray();
+        ByteArrayInputStream isProps = new ByteArrayInputStream(props);
+        InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
+        instanceProperties = new Properties();
+
+        instanceProperties.load(reader);
+        reader.close();
+      } else {
         isActive = false;
         errorMessage = "@NotSigned@";
         setLogger();
         return;
       }
-
-      byte[] props = bos.toByteArray();
-
-      ByteArrayInputStream isProps = new ByteArrayInputStream(props);
-      InputStreamReader reader = new InputStreamReader(isProps, "UTF-8");
-      instanceProperties = new Properties();
-
-      instanceProperties.load(reader);
     } catch (Exception e) {
       isActive = false;
       errorMessage = "@NotAValidKey@";
       e.printStackTrace();
       setLogger();
       return;
+    }
+
+    // Get license class, old Activation Keys do not have this info, so treat them as Standard
+    // Edition instances
+    String pLicenseClass = getProperty("licenseedition");
+    if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("STD")) {
+      licenseClass = LicenseClass.STD;
+    } else if (pLicenseClass.equals("B")) {
+      licenseClass = LicenseClass.BASIC;
+    } else {
+      log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
+      licenseClass = LicenseClass.BASIC;
     }
 
     // Check for dates to know if the instance is active
@@ -214,7 +309,97 @@ public class ActivationKey {
       }
     }
     isActive = true;
+
     setLogger();
+  }
+
+  private boolean decrypt(byte[] bytes, PublicKey pk, ByteArrayOutputStream bos,
+      String strOBPublicKey) throws Exception {
+    PublicKey obPk = getPublicKey(strOBPublicKey); // get OB public key to check signature
+    Signature signer = Signature.getInstance("MD5withRSA");
+    signer.initVerify(obPk);
+
+    Cipher cipher = Cipher.getInstance("RSA");
+
+    ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
+        .decodeBase64(bytes));
+
+    // Encryptation only accepts 128B size, it must be chuncked
+    final byte[] buf = new byte[128];
+    final byte[] signature = new byte[128];
+
+    // read the signature
+    if (!(bis.read(signature) > 0)) {
+      return false;
+    }
+
+    // decrypt
+    while ((bis.read(buf)) > 0) {
+      cipher.init(Cipher.DECRYPT_MODE, pk);
+      bos.write(cipher.doFinal(buf));
+    }
+
+    // verify signature
+    signer.update(bos.toByteArray());
+    boolean signed = signer.verify(signature);
+    log.debug("signature length:" + buf.length);
+    log.debug("singature:" + (new BigInteger(signature).toString(16).toUpperCase()));
+    log.debug("signed:" + signed);
+    if (!signed) {
+      isActive = false;
+      errorMessage = "@NotSigned@";
+      setLogger();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Loads information about the restricted artifacts due to license (Premium and Advance features).
+   */
+  @SuppressWarnings("unchecked")
+  private void loadRestrictions() {
+    DisabledModules.reload();
+    tier1Artifacts = new ArrayList<String>();
+    tier2Artifacts = new ArrayList<String>();
+    if (isActive() && licenseClass == LicenseClass.STD) {
+      // Don't read restrictions for Standard instances
+      return;
+    }
+
+    try {
+      File restrictionsFile = new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .get("source.path")
+          + "/config/licenseRestrictions");
+      FileInputStream fis = new FileInputStream(restrictionsFile);
+      byte fileContent[] = new byte[(int) restrictionsFile.length()];
+      fis.read(fileContent);
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      decrypt(fileContent, getPublicKey(OB_PUBLIC_KEY), bos, OB_PUBLIC_KEY);
+      ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+      HashMap<String, ArrayList<String>> m1 = (HashMap<String, ArrayList<String>>) ois.readObject();
+      ois.close();
+
+      if (!isActive()) {
+        VersionComparator vc = new VersionComparator();
+        if (vc.compare("3.0.0", OBVersion.getInstance().getVersionNumber()) <= 0) {
+          // community 3.0 instance, restrict both tiers
+          tier1Artifacts.addAll(m1.get(TIER_1_PREMIUM_FEATURE));
+          tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
+        }
+      } else if (licenseClass == LicenseClass.BASIC) {
+        // basic, restrict tier 2
+        tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
+      }
+    } catch (Exception e) {
+      log4j.error("Error reading license restriction file", e);
+      tier1Artifacts = null;
+      tier2Artifacts = null;
+    }
+  }
+
+  public LicenseClass getLicenseClass() {
+    return licenseClass;
   }
 
   @SuppressWarnings( { "static-access", "unchecked" })
@@ -452,10 +637,15 @@ public class ActivationKey {
     } catch (ParseException e) {
       log.error("Error parsing date", e);
     }
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     if (instanceProperties != null) {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
           .append("</td><td>").append(getProperty("customer")).append("</td></tr>");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseEdition", lang)).append(
+          "</td><td>").append(
+          Utility.getListValueName("OBPSLicenseEdition", licenseClass.getCode(), lang)).append(
+          "</td></tr>");
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang)).append(
           "</td><td>").append(
           Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append(
@@ -578,7 +768,9 @@ public class ActivationKey {
         if (moduleData.length > 2) {
           validTo = sd.parse(moduleData[2]);
         }
-        if (subscriptionActuallyConverted) {
+        if (!DisabledModules.isEnabled(Artifacts.MODULE, moduleData[0])) {
+          moduleList.put(moduleData[0], CommercialModuleStatus.DISABLED);
+        } else if (subscriptionActuallyConverted) {
           moduleList.put(moduleData[0], CommercialModuleStatus.CONVERTED_SUBSCRIPTION);
         } else if (validFrom.before(now) && (validTo == null || validTo.after(now))) {
           moduleList.put(moduleData[0], CommercialModuleStatus.ACTIVE);
@@ -600,7 +792,8 @@ public class ActivationKey {
   }
 
   /**
-   * Returns the status for the commercial module passed as parameter
+   * Returns the status for the commercial module passed as parameter. Note that module tier is not
+   * checked here, this should be correctly handled in the license itself.
    * 
    * @param moduleId
    * @return the status for the commercial module passed as parameter
@@ -615,4 +808,130 @@ public class ActivationKey {
     return moduleList.get(moduleId);
   }
 
+  /**
+   * Checks whether there is access to an artifact because of license restrictions (checking core
+   * advance and premium features).
+   * 
+   * @param type
+   *          Type of artifact (Window, Report, Process...)
+   * @param id
+   *          Id of the Artifact
+   * @return true in case it has access, false if not
+   */
+  public FeatureRestriction hasLicenseAccess(String type, String id) {
+    String actualType = type;
+    VersionComparator vc = new VersionComparator();
+
+    if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()) {
+      return FeatureRestriction.NO_RESTRICTION;
+    }
+    log4j.debug("Type:" + actualType + " id:" + id);
+    if (tier1Artifacts == null || tier2Artifacts == null) {
+      log4j.error("No restrictions set, do not allow access");
+
+      throw new OBException(Utility.messageBD(new DalConnectionProvider(), "NoRestrictionsFile",
+          OBContext.getOBContext().getLanguage().getLanguage()));
+    }
+
+    String artifactId = id;
+    if ("W".equals(actualType)) {
+      // Access is granted to window, but permissions is checked for tabs
+      OBContext.setAdminMode();
+      try {
+        Tab tab = OBDal.getInstance().get(Tab.class, id);
+        if (tab == null) {
+          log4j.error("Could't find tab " + id + " to check access. Access not allowed");
+          return FeatureRestriction.UNKNOWN_RESTRICTION;
+        }
+        artifactId = tab.getWindow().getId();
+
+        // For windows check whether the window's module is disabled, and later whether the tab is
+        // disabled
+        if (!DisabledModules.isEnabled(Artifacts.MODULE, tab.getWindow().getModule().getId())) {
+          return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } else if ("MW".equals(actualType)) {
+      // Menu window, it receives window instead of tab
+      actualType = "W";
+    } else if ("R".equals(actualType)) {
+      actualType = "P";
+    }
+
+    // Check disabled modules restrictions
+    Artifacts artifactType;
+    if ("MW".equals(actualType)) {
+      artifactType = Artifacts.WINDOW;
+    } else if ("W".equals(actualType)) {
+      artifactType = Artifacts.TAB;
+    } else if ("X".equals(actualType)) {
+      artifactType = Artifacts.FORM;
+    } else {
+      artifactType = Artifacts.PROCESS;
+    }
+    // Use id instead of artifactId to keep tabs' ids
+    if (!DisabledModules.isEnabled(artifactType, id)) {
+      return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+    }
+
+    // Check core premium features restrictions
+    if ((!isActive() && vc.compare("3.0.0", OBVersion.getInstance().getVersionNumber()) > 0)
+        || licenseClass == LicenseClass.STD) {
+      return FeatureRestriction.NO_RESTRICTION;
+    }
+
+    if (tier1Artifacts.contains(actualType + artifactId)) {
+      return FeatureRestriction.TIER1_RESTRICTION;
+    }
+    if (tier2Artifacts.contains(actualType + artifactId)) {
+      return FeatureRestriction.TIER2_RESTRICTION;
+    }
+    return FeatureRestriction.NO_RESTRICTION;
+  }
+
+  /**
+   * Verifies all the commercial installed modules are allowed to the instance.
+   * 
+   * @return List of non allowed modules
+   */
+  public String verifyInstalledModules() {
+    String rt = "";
+
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<Module> mods = OBDal.getInstance().createCriteria(Module.class);
+      mods.add(Expression.eq(Module.PROPERTY_COMMERCIAL, true));
+      mods.add(Expression.eq(Module.PROPERTY_ENABLED, true));
+      // Allow development of commercial modules which are not in the license.
+      mods.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, false));
+      mods.addOrder(Order.asc(Module.PROPERTY_NAME));
+      for (Module mod : mods.list()) {
+        if (isModuleSubscribed(mod.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+          rt += (rt.isEmpty() ? "" : ", ") + mod.getName();
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return rt;
+  }
+
+  /**
+   * Returns current subscription status
+   */
+  public SubscriptionStatus getSubscriptionStatus() {
+    if (!isOPSInstance()) {
+      return SubscriptionStatus.COMMUNITY;
+    } else if (isSubscriptionConverted()) {
+      return SubscriptionStatus.CANCEL;
+    } else if (hasExpired()) {
+      return SubscriptionStatus.EXPIRED;
+    } else if (isNotActiveYet()) {
+      return SubscriptionStatus.NO_ACTIVE_YET;
+    } else {
+      return SubscriptionStatus.ACTIVE;
+    }
+  }
 }

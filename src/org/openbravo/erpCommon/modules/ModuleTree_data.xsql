@@ -62,9 +62,11 @@
                      '' as updatedescription,
                      '' as position,
                      '' as UPDATE_VER_ID,
+                     '' as style,
                      coalesce (MI.Seqno, M.SeqNo) as Seqno,
                      coalesce (mi.name, m.name) as ModuleName,
-                     coalesce (mi.version_label, m.version_label) as version_label
+                     coalesce (mi.version_label, m.version_label) as version_label,
+                     m.enabled
            FROM AD_Module M left join AD_Module_Install MI
                                    on M.AD_Module_ID = MI.AD_Module_ID
           WHERE NOT EXISTS (SELECT 1 
@@ -100,9 +102,11 @@
                      '' as updatedescription,
                      '' as position,
                      '' as UPDATE_VER_ID,
+                     '' as style,
                      Seqno,
                      m.name as ModuleName,
-                     m.version_label
+                     m.version_label,
+                     'Y' as enabled
            FROM AD_Module_Install M 
           WHERE NOT EXISTS (SELECT 1 
                               FROM AD_Module_Dependency_Inst
@@ -143,7 +147,8 @@
                      m.Update_Available,
                      m.version,
                      m.name as moduleName,
-                     m.version_label
+                     m.version_label,
+                     m.enabled
             FROM AD_MODULE M LEFT JOIN AD_MODULE_INSTALL MI
                                     ON MI.AD_MODULE_ID = M.AD_MODULE_ID
            WHERE EXISTS (SELECT 1 
@@ -168,7 +173,8 @@
                      Update_Available,
                      m.version,
                      m.name as moduleName,
-                     m.version_label
+                     m.version_label,
+                     'Y' as enabled
             FROM AD_MODULE_Install M
            WHERE EXISTS (SELECT 1 
                            FROM AD_Module_Dependency_Inst 

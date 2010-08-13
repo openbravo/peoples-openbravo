@@ -49,7 +49,7 @@ class ToolBar_Image implements HTMLElement {
         imageClass).append("\" src=\"").append(base_direction).append("/images/blank.gif\" ");
     toolbar.append("title=\"").append(description);
     // Needed to build the HTML tag id as refresh has in classic layout
-    if (name.equals("Refresh")) {
+    if (name.equals("Refresh") || name.equals("Edition") || name.equals("Relation")) {
       toolbar.append("\" border=\"0\" id=\"linkButton").append(name).append("\"");
     } else {
       toolbar.append("\" border=\"0\" id=\"button").append(name).append("\"");

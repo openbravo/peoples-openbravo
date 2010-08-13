@@ -29,8 +29,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -41,6 +45,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -55,31 +60,41 @@ public class InstanceManagement extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      ActivationKey activationKey = new ActivationKey();
-      printPageActive(response, vars, activationKey);
+      printPageActive(response, vars, ActivationKey.getInstance());
     } else if (vars.commandIn("SHOW_ACTIVATE")) {
       printPageNotActive(response, vars);
     } else if (vars.commandIn("ACTIVATE")) {
-      activateRemote(vars);
+      activateCancelRemote(vars, true);
       printPageClosePopUp(response, vars);
     } else if (vars.commandIn("SHOW_ACTIVATE_LOCAL")) {
       printPageActivateLocal(response, vars);
     } else if (vars.commandIn("INSTALLFILE")) {
       printPageInstallFile(response, vars);
     } else if (vars.commandIn("SHOW_DEACTIVATE")) {
-      printPageDeactivate(response, vars);
+      printPageDeactivateCancel(response, vars, true);
     } else if (vars.commandIn("DEACTIVATE")) {
       printPageDeactivateProcess(response, vars);
+    } else if (vars.commandIn("SHOW_CANCEL")) {
+      printPageDeactivateCancel(response, vars, false);
+    } else if (vars.commandIn("CANCEL")) {
+      activateCancelRemote(vars, false);
+      printPageClosePopUp(response, vars);
     } else {
       pageError(response);
     }
-
   }
 
-  private void printPageDeactivate(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException {
+  private void printPageDeactivateCancel(HttpServletResponse response, VariablesSecureApp vars,
+      boolean deactivate) throws IOException {
+    String discard[] = { "" };
+    if (deactivate) {
+      discard[0] = "discardCancel";
+    } else {
+      discard[0] = "discardDeactivate";
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/InstanceManagementDeactivate").createXmlDocument();
+        "org/openbravo/erpCommon/ad_forms/InstanceManagementDeactivate", discard)
+        .createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -92,18 +107,43 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
   private void printPageDeactivateProcess(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-
     OBError msg = new OBError();
+    OBContext.setAdminMode();
     try {
-      System sys = OBDal.getInstance().get(System.class, "0");
-      sys.setActivationKey(null);
-      sys.setInstanceKey(null);
-      msg.setType("Success");
-      msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      // Check for commercial modules installed in the instance
+      OBCriteria<Module> qMods = OBDal.getInstance().createCriteria(Module.class);
+      qMods.add(Expression.eq(Module.PROPERTY_COMMERCIAL, true));
+      qMods.add(Expression.eq(Module.PROPERTY_ENABLED, true));
+      qMods.addOrder(Order.asc(Module.PROPERTY_NAME));
+
+      // core can be commercial, do not take it into account
+      qMods.add(Expression.ne(Module.PROPERTY_ID, "0"));
+      boolean deactivable = true;
+      String commercialModules = "";
+      for (Module mod : qMods.list()) {
+        deactivable = false;
+        commercialModules += "<br/>" + mod.getName();
+      }
+      if (!deactivable) {
+        msg.setType("Error");
+        msg.setMessage(Utility.messageBD(this, "CannotDeactivateWithCommercialModules", vars
+            .getLanguage())
+            + commercialModules);
+      } else {
+        // Deactivate instance
+        System sys = OBDal.getInstance().get(System.class, "0");
+        sys.setActivationKey(null);
+        sys.setInstanceKey(null);
+        ActivationKey.reload();
+        msg.setType("Success");
+        msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      }
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error deactivating instance", e);
       msg.setType("Error");
       msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+    } finally {
+      OBContext.restorePreviousMode();
     }
     vars.setMessage("InstanceManagement", msg);
     printPageClosePopUp(response, vars, "");
@@ -124,12 +164,20 @@ public class InstanceManagement extends HttpSecureAppServlet {
         buf.append(new String(b, 0, n));
       }
 
-      System sys = OBDal.getInstance().get(System.class, "0");
-      sys.setActivationKey(buf.toString());
-      sys.setInstanceKey(vars.getStringParameter("publicKey"));
-      msg.setType("Success");
-      msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-
+      ActivationKey ak = new ActivationKey(vars.getStringParameter("publicKey"), buf.toString());
+      String nonAllowedMods = ak.verifyInstalledModules();
+      if (!nonAllowedMods.isEmpty()) {
+        msg.setType("Error");
+        msg.setMessage(Utility.messageBD(this, "LicenseWithoutAccessTo", vars.getLanguage())
+            + nonAllowedMods);
+      } else {
+        System sys = OBDal.getInstance().get(System.class, "0");
+        sys.setActivationKey(buf.toString());
+        sys.setInstanceKey(vars.getStringParameter("publicKey"));
+        ActivationKey.setInstance(ak);
+        msg.setType("Success");
+        msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      }
     } catch (Exception e) {
       log4j.error(e);
       msg.setType("Error");
@@ -143,7 +191,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageActivateLocal(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException {
 
-    ActivationKey ak = new ActivationKey();
+    ActivationKey ak = ActivationKey.getInstance();
     String discard[] = { "", "" };
 
     if (ak.isOPSInstance()) {
@@ -182,37 +230,45 @@ public class InstanceManagement extends HttpSecureAppServlet {
       ActivationKey activationKey) throws IOException, ServletException {
     response.setContentType("text/html; charset=UTF-8");
     String discard[] = { "", "", "", "", "", "" };
-    if (activationKey.isOPSInstance()) {
-      discard[0] = "CEInstance";
-      if (activationKey.isSubscriptionConverted()) {
-        discard[1] = "OPSActiveTitle";
-        discard[2] = "OPSExpired";
-        discard[3] = "OPSNoActiveYet";
-      } else if (activationKey.hasExpired()) {
-        discard[1] = "OPSActiveTitle";
-        discard[2] = "OPSNoActiveYet";
-        discard[3] = "OPSConverted";
-        discard[4] = "OPSActive";
-      } else if (activationKey.isNotActiveYet()) {
-        discard[1] = "OPSExpired";
-        discard[2] = "OPSActiveTitle";
-        discard[3] = "OPSConverted";
-        discard[4] = "OPSActive";
-      } else {
-        discard[1] = "OPSExpired";
-        if (!activationKey.hasExpirationDate()) {
-          discard[2] = "OPSExpirationTime";
-        }
-        discard[3] = "OPSConverted";
-        discard[4] = "OPSNoActiveYet";
-      }
-    } else {
+
+    switch (activationKey.getSubscriptionStatus()) {
+    case COMMUNITY:
       discard[0] = "OPSInstance";
       discard[1] = "OPSActiveTitle";
       discard[2] = "OPSExpired";
       discard[3] = "OPSConverted";
       discard[4] = "OPSNoActiveYet";
       discard[5] = "OPSActive";
+      break;
+    case ACTIVE:
+      discard[0] = "CEInstance";
+      discard[1] = "OPSExpired";
+      if (!activationKey.hasExpirationDate()) {
+        discard[2] = "OPSExpirationTime";
+      }
+      discard[3] = "OPSConverted";
+      discard[4] = "OPSNoActiveYet";
+      break;
+    case CANCEL:
+      discard[0] = "CEInstance";
+      discard[1] = "OPSActiveTitle";
+      discard[2] = "OPSExpired";
+      discard[3] = "OPSNoActiveYet";
+      break;
+    case EXPIRED:
+      discard[0] = "CEInstance";
+      discard[1] = "OPSActiveTitle";
+      discard[2] = "OPSNoActiveYet";
+      discard[3] = "OPSConverted";
+      discard[4] = "OPSActive";
+      break;
+    case NO_ACTIVE_YET:
+      discard[0] = "CEInstance";
+      discard[1] = "OPSExpired";
+      discard[2] = "OPSActiveTitle";
+      discard[3] = "OPSConverted";
+      discard[4] = "OPSActive";
+      break;
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -290,7 +346,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
   private void printPageNotActive(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
 
-    ActivationKey activationKey = new ActivationKey();
+    ActivationKey activationKey = ActivationKey.getInstance();
     response.setContentType("text/html; charset=UTF-8");
     String discard[] = { "", "" };
     if (activationKey.isOPSInstance()) {
@@ -374,14 +430,34 @@ public class InstanceManagement extends HttpSecureAppServlet {
     out.close();
   }
 
-  private boolean activateRemote(VariablesSecureApp vars) {
+  /**
+   * Activates or cancels the instance.
+   * 
+   * @param vars
+   * @param activate
+   *          true in case it is activating, false in case it is canceling
+   * @return true if everything went correctly
+   */
+  private boolean activateCancelRemote(VariablesSecureApp vars, boolean activate) {
     boolean result = false;
     ProcessBundle pb = new ProcessBundle(null, vars);
 
     HashMap<String, Object> params = new HashMap<String, Object>();
-    params.put("publicKey", vars.getStringParameter("publicKey"));
-    params.put("purpose", vars.getStringParameter("purpose"));
-    params.put("instanceNo", vars.getStringParameter("instanceNo"));
+    params.put("activate", activate);
+    if (activate) {
+      // activating instance, get parameters from form
+      params.put("publicKey", vars.getStringParameter("publicKey"));
+      params.put("purpose", vars.getStringParameter("purpose"));
+      params.put("instanceNo", vars.getStringParameter("instanceNo"));
+
+    } else {
+      // canceling instance, get parameters from DB
+      System sys = OBDal.getInstance().get(System.class, "0");
+      params.put("publicKey", sys.getInstanceKey());
+      params.put("instanceNo", ActivationKey.getInstance().getProperty("instanceno"));
+      params.put("purpose", ActivationKey.getInstance().getProperty("purpose"));
+    }
+
     pb.setParams(params);
 
     OBError msg = new OBError();

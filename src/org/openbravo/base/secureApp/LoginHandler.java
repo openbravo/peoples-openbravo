@@ -132,7 +132,7 @@ public class LoginHandler extends HttpBaseServlet {
       String strUserAuth, String sessionId) throws IOException {
     OBContext.setAdminMode();
     try {
-      ActivationKey ak = new ActivationKey();
+      ActivationKey ak = ActivationKey.getInstance();
       boolean hasSystem = false;
 
       try {
@@ -199,7 +199,7 @@ public class LoginHandler extends HttpBaseServlet {
         // Last build went fine and tomcat was restarted. We should login as usual
         goToTarget(res, vars);
       } else if (sysInfo.getSystemStatus().equals("RB60")
-          || sysInfo.getSystemStatus().equals("RB50")) {
+          || sysInfo.getSystemStatus().equals("RB51")) {
         String msg = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED", vars.getLanguage());
         String title = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED_TITLE", vars.getLanguage());
         log4j.warn("Tomcat not restarted");

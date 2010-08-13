@@ -1630,7 +1630,7 @@
 <!--200-->  <VALUE><![CDATA[Invoice_Print]]></VALUE>
 <!--200-->  <NAME><![CDATA[Print Invoices]]></NAME>
 <!--200-->  <DESCRIPTION><![CDATA[Print Invoices to paper or send PDF]]></DESCRIPTION>
-<!--200-->  <HELP><![CDATA[Remark: If you only enter a Document No FROM value, all invoices greater or equal that document number are printed; you can alternatively use the % character as a widcard.]]></HELP>
+<!--200-->  <HELP><![CDATA[Remark: If you enter just a Document No FROM value, all invoices greater or equal to that document number are printed; alternatively, you may use the % character as a wildcard.]]></HELP>
 <!--200-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--200-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--200-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -1710,7 +1710,7 @@
 <!--205-->  <VALUE><![CDATA[Cache Reset]]></VALUE>
 <!--205-->  <NAME><![CDATA[Cache Reset]]></NAME>
 <!--205-->  <DESCRIPTION><![CDATA[Reset Cache of the System ** Close all Windows before proceeding **]]></DESCRIPTION>
-<!--205-->  <HELP><![CDATA[To increase performance, Openbravo caches repetedly used data. This process clears the local cache.]]></HELP>
+<!--205-->  <HELP><![CDATA[To increase performance, Openbravo caches repeatedly used data. This process clears the local cache.]]></HELP>
 <!--205-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--205-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
 <!--205-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -3685,7 +3685,7 @@ The product price of each receipt is calculated based on the on the product pric
 <!--800103-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800103-->  <VALUE><![CDATA[MA_WorkRequirement]]></VALUE>
 <!--800103-->  <NAME><![CDATA[Process Work Requirement]]></NAME>
-<!--800103-->  <DESCRIPTION><![CDATA[Process to create, if explodePhases is checked, the phases and all the productos of the phases.]]></DESCRIPTION>
+<!--800103-->  <DESCRIPTION><![CDATA[Process to create, if explodePhases is checked, the phases and all the products of the phases.]]></DESCRIPTION>
 <!--800103-->  <HELP><![CDATA[With this process the operations and the products will be generated from the selected production plan. If the plan is not of type "explodePhases", only the products from the previously registered phases will be generated.]]></HELP>
 <!--800103-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800103-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>

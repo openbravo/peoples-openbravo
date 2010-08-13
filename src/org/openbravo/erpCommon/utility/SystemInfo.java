@@ -78,7 +78,7 @@ public class SystemInfo {
       systemInfo.put(i, getVersion(SystemInfoData.selectAntVersion(conn)));
       break;
     case OB_VERSION:
-      OBVersion version = new OBVersion();
+      OBVersion version = OBVersion.getInstance();
       systemInfo.put(i, version.getVersionNumber() + version.getMP());
       break;
     case OB_INSTALL_MODE:

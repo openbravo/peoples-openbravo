@@ -34,6 +34,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess.HeartBeatOrRegistration;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -252,7 +254,26 @@ public class VerticalMenu extends HttpSecureAppServlet {
         final String strHijos = generarMenuVertical(menuData, strDireccion, menuData[i].nodeId,
             open);
         String strID = "";
-        if (!strHijos.equals("") || menuData[i].issummary.equals("N")) {
+
+        // Hide non accessible entries because of license
+        String menuAction = menuData[i].action;
+        if (menuAction.equals("W")) {
+          menuAction = "MW";
+        }
+        String artifactId = "";
+        if (menuAction.equals("MW")) {
+          artifactId = menuData[i].adWindowId;
+        } else if (menuAction.equals("P") || menuAction.equals("R")) {
+          artifactId = menuData[i].adProcessId;
+        } else if (menuAction.equals("X")) {
+          artifactId = menuData[i].adFormId;
+        } else if (menuAction.equals("F")) {
+          artifactId = menuData[i].adWorkflowId;
+        }
+        boolean hasLicenseAccess = ActivationKey.getInstance().hasLicenseAccess(menuAction,
+            artifactId) == FeatureRestriction.NO_RESTRICTION;
+
+        if (hasLicenseAccess && (!strHijos.equals("") || menuData[i].issummary.equals("N"))) {
           strText.append("<tr>\n");
           strText.append("  <td>\n");
           strText.append("    <table cellspacing=\"0\" cellpadding=\"0\"");
@@ -260,8 +281,9 @@ public class VerticalMenu extends HttpSecureAppServlet {
             strText.append(" id=\"").append(tipoVentanaNico(menuData[i].action)).append(
                 menuData[i].nodeId).append("\"");
             strID = tipoVentanaNico(menuData[i].action) + menuData[i].nodeId;
-          } else
+          } else {
             strText.append(" id=\"folder").append(menuData[i].nodeId).append("\"");
+          }
           strText.append(" onmouseover=\"window.status='");
           strText.append(FormatUtilities.replaceJS(menuData[i].description));
           strText.append("';return true;\"");

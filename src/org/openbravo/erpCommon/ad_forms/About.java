@@ -60,7 +60,7 @@ public class About extends HttpSecureAppServlet {
 
     OBContext.setAdminMode();
     try {
-      ActivationKey ak = new ActivationKey();
+      ActivationKey ak = ActivationKey.getInstance();
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       String discard[] = { "" };
@@ -68,17 +68,19 @@ public class About extends HttpSecureAppServlet {
 
       String licenseInfo = "";
       if (ActivationKey.isActiveInstance()) {
-        licenseInfo = Utility.messageBD(this, "OPSLicensedTo", vars.getLanguage()) + " "
-            + ak.getProperty("customer");
+        licenseInfo = Utility.messageBD(this, "OPSLicensedTo", vars.getLanguage()).replace(
+            "@OBPSEdition@",
+            Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(), vars
+                .getLanguage()))
+            + " " + ak.getProperty("customer");
       } else {
         licenseInfo = Utility.messageBD(this, "OPSCommunityEdition", vars.getLanguage());
-
         discard[0] = "paramOPSInfo";
       }
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About", discard)
           .createXmlDocument();
 
-      OBVersion version = new OBVersion();
+      OBVersion version = OBVersion.getInstance();
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -92,6 +94,8 @@ public class About extends HttpSecureAppServlet {
       if (ActivationKey.isActiveInstance()) {
         xmlDocument.setParameter("paraOPSPurpose", ak.getPurpose(vars.getLanguage()));
         xmlDocument.setParameter("paraOPSType", ak.getLicenseExplanation(this, vars.getLanguage()));
+        xmlDocument.setParameter("paraOBPSStatus", ak.getSubscriptionStatus().getStatusName(
+            vars.getLanguage()));
       }
 
       out.println(xmlDocument.print());

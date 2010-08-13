@@ -353,7 +353,7 @@ public class WindowTabs {
           else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
               && data.istranslationtab.equals("Y"))
             continue;
-          else if (data.isactive.equals("N"))
+          else if (data.isactive.equals("N") || data.enabled.equals("N"))
             continue;
           if (!isFirstTab)
             text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
@@ -458,7 +458,7 @@ public class WindowTabs {
         else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
             && data.istranslationtab.equals("Y"))
           continue;
-        else if (data.isactive.equals("N"))
+        else if (data.isactive.equals("N") || data.enabled.equals("N"))
           continue;
         if (!isFirstTab)
           text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
@@ -525,7 +525,7 @@ public class WindowTabs {
       else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
           && data.istranslationtab.equals("Y"))
         continue;
-      else if (data.isactive.equals("N"))
+      else if (data.isactive.equals("N") || data.enabled.equals("N"))
         continue;
       if (!isFirst)
         text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");

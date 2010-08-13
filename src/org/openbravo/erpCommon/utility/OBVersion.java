@@ -34,7 +34,13 @@ public class OBVersion {
   private Module versionModule;
   private Module core;
 
-  public OBVersion() {
+  private static final OBVersion instance = new OBVersion();
+
+  public static OBVersion getInstance() {
+    return instance;
+  }
+
+  private OBVersion() {
     OBContext.setAdminMode();
     try {
       core = OBDal.getInstance().get(Module.class, CORE);

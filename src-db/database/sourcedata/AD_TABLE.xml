@@ -252,7 +252,7 @@ The Language needs to be a (verified) System Language]]></HELP>
 <!--112-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--112-->  <NAME><![CDATA[ADClient]]></NAME>
 <!--112-->  <DESCRIPTION><![CDATA[Client Definition]]></DESCRIPTION>
-<!--112-->  <HELP><![CDATA[The Client Definition Tab defines a unique client.Do not create a new client in this window, but use "Initial Client Setup" (System Administrator Role) to set up the required security and access rules. If you create a new client here, you will not be abl]]></HELP>
+<!--112-->  <HELP><![CDATA[The Client Definition Tab defines a unique client. Do not create a new client in this window, but use "Initial Client Setup" (System Administrator Role) to set up the required security and access rules. If you create a new client here, you will not be abl]]></HELP>
 <!--112-->  <TABLENAME><![CDATA[AD_Client]]></TABLENAME>
 <!--112-->  <CLASSNAME><![CDATA[Client]]></CLASSNAME>
 <!--112-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -319,7 +319,7 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--115-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--115-->  <NAME><![CDATA[ADSequence]]></NAME>
 <!--115-->  <DESCRIPTION><![CDATA[Sequence Definition]]></DESCRIPTION>
-<!--115-->  <HELP><![CDATA[The Sequence Tab defines the numeric sequencing to use for documents.  These can also include a alpha suffix and / or prefix.]]></HELP>
+<!--115-->  <HELP><![CDATA[The Sequence Tab defines the numeric sequencing to use for documents.  These can also include an alpha suffix and / or prefix.]]></HELP>
 <!--115-->  <TABLENAME><![CDATA[AD_Sequence]]></TABLENAME>
 <!--115-->  <CLASSNAME><![CDATA[Sequence]]></CLASSNAME>
 <!--115-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -454,7 +454,7 @@ Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--123-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--123-->  <NAME><![CDATA[ADTabTrl]]></NAME>
 <!--123-->  <DESCRIPTION><![CDATA[Allows the translation of any tab of the application]]></DESCRIPTION>
-<!--123-->  <HELP><![CDATA[Allows the translation of any tab of the application.After the edition, the window must be regenerated.]]></HELP>
+<!--123-->  <HELP><![CDATA[Allows the translation of any tab of the application. After the performing your edits, the window must be regenerated.]]></HELP>
 <!--123-->  <TABLENAME><![CDATA[AD_Tab_Trl]]></TABLENAME>
 <!--123-->  <CLASSNAME><![CDATA[TabTrl]]></CLASSNAME>
 <!--123-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -476,7 +476,7 @@ Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--124-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--124-->  <NAME><![CDATA[ADTaskTrl]]></NAME>
 <!--124-->  <DESCRIPTION><![CDATA[Allows the translation of any task of the application.]]></DESCRIPTION>
-<!--124-->  <HELP><![CDATA[Allows the translation of any task of the application. After the edition, the window must be regenerated.]]></HELP>
+<!--124-->  <HELP><![CDATA[Allows the translation of any task of the application. After performing any edits, the window must be regenerated.]]></HELP>
 <!--124-->  <TABLENAME><![CDATA[AD_Task_Trl]]></TABLENAME>
 <!--124-->  <CLASSNAME><![CDATA[TaskTrl]]></CLASSNAME>
 <!--124-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -520,7 +520,7 @@ Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--127-->  <DESCRIPTION><![CDATA[Menu Translation - May not need to be translated
 Allows the translation of any field of the application. Please note, that most of the fields translations are derived from Element!]]></DESCRIPTION>
 <!--127-->  <HELP><![CDATA[Fields are automatically translated, if centrally maintained.  You only need to translate not centrally maintained Fields.
-Allows the translation of any field of the application. After the edition, the window must be regenerated.]]></HELP>
+Allows the translation of any field of the application. After performing any edits, the window must be regenerated.]]></HELP>
 <!--127-->  <TABLENAME><![CDATA[AD_Field_Trl]]></TABLENAME>
 <!--127-->  <CLASSNAME><![CDATA[FieldTrl]]></CLASSNAME>
 <!--127-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -564,7 +564,7 @@ Allows the translation of any field of the application. After the edition, the w
 <!--130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--130-->  <NAME><![CDATA[ADWFNodeTrl]]></NAME>
 <!--130-->  <DESCRIPTION><![CDATA[Allows the translation of any workflow node of the application.]]></DESCRIPTION>
-<!--130-->  <HELP><![CDATA[Allows the translation of any workflow node of the application. After the edition, the window must be regenerated.]]></HELP>
+<!--130-->  <HELP><![CDATA[Allows the translation of any workflow node of the application. After performing any edits, the window must be regenerated.]]></HELP>
 <!--130-->  <TABLENAME><![CDATA[AD_WF_Node_Trl]]></TABLENAME>
 <!--130-->  <CLASSNAME><![CDATA[WFNodeTrl]]></CLASSNAME>
 <!--130-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -630,7 +630,7 @@ Allows the translation of any field of the application. After the edition, the w
 <!--133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--133-->  <NAME><![CDATA[ADWorkflowTrl]]></NAME>
 <!--133-->  <DESCRIPTION><![CDATA[Allows the translation of any workflow of the application.]]></DESCRIPTION>
-<!--133-->  <HELP><![CDATA[Allows the translation of any workflow of the application. After the edition, the window must be regenerated.]]></HELP>
+<!--133-->  <HELP><![CDATA[Allows the translation of any workflow of the application. After performing any edits, the window must be regenerated.]]></HELP>
 <!--133-->  <TABLENAME><![CDATA[AD_Workflow_Trl]]></TABLENAME>
 <!--133-->  <CLASSNAME><![CDATA[WorkflowTrl]]></CLASSNAME>
 <!--133-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -672,7 +672,7 @@ Allows the translation of any field of the application. After the edition, the w
 <!--136-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--136-->  <NAME><![CDATA[ADListTrl]]></NAME>
 <!--136-->  <DESCRIPTION><![CDATA[Allows the translation of any reference list of the application]]></DESCRIPTION>
-<!--136-->  <HELP><![CDATA[Allows the translation of any reference list of the application. After the edition, the window must be regenerated.]]></HELP>
+<!--136-->  <HELP><![CDATA[Allows the translation of any reference list of the application. After performing any edits, the window must be regenerated.]]></HELP>
 <!--136-->  <TABLENAME><![CDATA[AD_Ref_List_Trl]]></TABLENAME>
 <!--136-->  <CLASSNAME><![CDATA[ListTrl]]></CLASSNAME>
 <!--136-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -827,9 +827,9 @@ The Conversion Rates tab is used to define conversion rates to be used when conv
 <!--155-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--155-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--155-->  <NAME><![CDATA[Organization]]></NAME>
-<!--155-->  <DESCRIPTION><![CDATA[Define Organizations<BR>Maintain Organizationt Accounting Dimension Tree]]></DESCRIPTION>
+<!--155-->  <DESCRIPTION><![CDATA[Define Organizations<BR>Maintain Organization Accounting Dimension Tree]]></DESCRIPTION>
 <!--155-->  <HELP><![CDATA[The Organization Tab is used to define an Organization.  Each Organization has a Key and Name and optionally a Description.  When adding a new organization, you must re-login to be able to access the new organization.
-Please note that you will not be able to create new entities in this window if you have not default set for all mandatory values!]]></HELP>
+Please note that you will not be able to create new entities in this window if you have not set defaults for all mandatory values!]]></HELP>
 <!--155-->  <TABLENAME><![CDATA[AD_Org]]></TABLENAME>
 <!--155-->  <CLASSNAME><![CDATA[Organization]]></CLASSNAME>
 <!--155-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -988,7 +988,7 @@ The User Assignment Tab displays Users who have been defined for this Role.]]></
 <!--175-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--175-->  <NAME><![CDATA[UOMConversion]]></NAME>
 <!--175-->  <DESCRIPTION><![CDATA[Define standard Unit of Measure Conversion]]></DESCRIPTION>
-<!--175-->  <HELP><![CDATA[The Conversion defines the rates for converting a Unit of Measure. The system provides some automatic conversions between units of measures (e.g. minute, hour, day, working day, etc.) if they are not explicitly defined here.Conversions need to be dir]]></HELP>
+<!--175-->  <HELP><![CDATA[The Conversion defines the rates for converting a Unit of Measure. The system provides some automatic conversions between units of measures (e.g. minute, hour, day, working day, etc.) if they are not explicitly defined here. Conversions need to be dir]]></HELP>
 <!--175-->  <TABLENAME><![CDATA[C_UOM_Conversion]]></TABLENAME>
 <!--175-->  <CLASSNAME><![CDATA[UOMConversion]]></CLASSNAME>
 <!--175-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -1326,7 +1326,7 @@ The Workflow Access Tab defines the Roles who have access to this Workflow.]]></
 <!--203-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--203-->  <NAME><![CDATA[Project]]></NAME>
 <!--203-->  <DESCRIPTION><![CDATA[Define different kinds of projects]]></DESCRIPTION>
-<!--203-->  <HELP><![CDATA[Contains the Value, Name and Description for each project.  It also is defines the tracks the amounts assigned to, committed to and used for this project. This tab is used in order to introduce information regarding a project: Address, status, …]]></HELP>
+<!--203-->  <HELP><![CDATA[Contains the Value, Name and Description for each project.  It also defines and tracks the amounts assigned to, committed to and used for this project. This tab is used in order to introduce information regarding a project: Address, status, …]]></HELP>
 <!--203-->  <TABLENAME><![CDATA[C_Project]]></TABLENAME>
 <!--203-->  <CLASSNAME><![CDATA[Project]]></CLASSNAME>
 <!--203-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -1956,7 +1956,7 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--270-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--270-->  <NAME><![CDATA[FinancialMgmtAccountingFact]]></NAME>
 <!--270-->  <DESCRIPTION><![CDATA[Setup the accounting accounts]]></DESCRIPTION>
-<!--270-->  <HELP><![CDATA[Recods accounting entries of all accounting schemas.]]></HELP>
+<!--270-->  <HELP><![CDATA[Records accounting entries of all accounting schemas.]]></HELP>
 <!--270-->  <TABLENAME><![CDATA[Fact_Acct]]></TABLENAME>
 <!--270-->  <CLASSNAME><![CDATA[AccountingFact]]></CLASSNAME>
 <!--270-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -2335,7 +2335,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--295-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--295-->  <NAME><![CDATA[PricingPriceListVersion]]></NAME>
 <!--295-->  <DESCRIPTION><![CDATA[Maintain price list versions]]></DESCRIPTION>
-<!--295-->  <HELP><![CDATA[Price lists are automatically created based on Product Purchasing Information and the Vendor Category Discount.The other alternative is to copy them from existing pricelists and the re-calculate them.You can also re-calculate the pricelist by referencin]]></HELP>
+<!--295-->  <HELP><![CDATA[Price lists are automatically created based on Product Purchasing Information and the Vendor Category Discount. The other alternative is to copy them from existing pricelists and then re-calculate them. You can also re-calculate the pricelist by referencin]]></HELP>
 <!--295-->  <TABLENAME><![CDATA[M_PriceList_Version]]></TABLENAME>
 <!--295-->  <CLASSNAME><![CDATA[PriceListVersion]]></CLASSNAME>
 <!--295-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -2621,8 +2621,8 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--316-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--316-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--316-->  <NAME><![CDATA[MaterialMgmtABCActivity]]></NAME>
-<!--316-->  <DESCRIPTION><![CDATA[Activity for Activity Based Costing<BR>Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
-<!--316-->  <HELP><![CDATA[Defines tasks that are preformed and in Activity Based Costing.]]></HELP>
+<!--316-->  <DESCRIPTION><![CDATA[Activity for Activity Based Costing<BR>Maintain Activity Accounting Dimension Tree]]></DESCRIPTION>
+<!--316-->  <HELP><![CDATA[Defines tasks that are performed in Activity Based Costing.]]></HELP>
 <!--316-->  <TABLENAME><![CDATA[C_Activity]]></TABLENAME>
 <!--316-->  <CLASSNAME><![CDATA[ABCActivity]]></CLASSNAME>
 <!--316-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -2824,8 +2824,8 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--326-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--326-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--326-->  <NAME><![CDATA[ManufacturingProductionLine]]></NAME>
-<!--326-->  <DESCRIPTION><![CDATA[Produt balance on the work effort]]></DESCRIPTION>
-<!--326-->  <HELP><![CDATA[Contains all the products that have been used or created in the production run and the quantities]]></HELP>
+<!--326-->  <DESCRIPTION><![CDATA[Product balance on the work effort]]></DESCRIPTION>
+<!--326-->  <HELP><![CDATA[Contains all the products that have been used or created in the production run and the related quantities]]></HELP>
 <!--326-->  <TABLENAME><![CDATA[M_ProductionLine]]></TABLENAME>
 <!--326-->  <CLASSNAME><![CDATA[ProductionLine]]></CLASSNAME>
 <!--326-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -3266,7 +3266,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--377-->  <DESCRIPTION><![CDATA[Form translation
 Allows the translation of any form of the application.]]></DESCRIPTION>
 <!--377-->  <HELP><![CDATA[This tab contains form tab data translation to different languages
-Allows the translation of any form of the application.After the edition, the window must be regenerated.]]></HELP>
+Allows the translation of any form of the application. After performing any edits, the window must be regenerated.]]></HELP>
 <!--377-->  <TABLENAME><![CDATA[AD_Form_Trl]]></TABLENAME>
 <!--377-->  <CLASSNAME><![CDATA[FormTrl]]></CLASSNAME>
 <!--377-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -3777,7 +3777,7 @@ Available Quantity:
 <!--414-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--414-->  <NAME><![CDATA[ADFieldGroup]]></NAME>
 <!--414-->  <DESCRIPTION><![CDATA[System Admin use only.  Field Groups allow for grouping of fields within a window]]></DESCRIPTION>
-<!--414-->  <HELP><![CDATA[A field group is defined as a fields agrupation inside a tab.]]></HELP>
+<!--414-->  <HELP><![CDATA[A field group is defined as a grouping of fields inside a tab.]]></HELP>
 <!--414-->  <TABLENAME><![CDATA[AD_FieldGroup]]></TABLENAME>
 <!--414-->  <CLASSNAME><![CDATA[FieldGroup]]></CLASSNAME>
 <!--414-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -3801,7 +3801,7 @@ Available Quantity:
 <!--415-->  <DESCRIPTION><![CDATA[Field group translation
 Allows the translation of any field group of the application.]]></DESCRIPTION>
 <!--415-->  <HELP><![CDATA[This tab contains field group translations to different languages
-Run Synchronize Terminology to update menu translation. You need only to translate Fields, which are not centrally maintained. After the edition, the window must be regenerated.]]></HELP>
+Run Synchronize Terminology to update menu translation. You need only to translate Fields, which are not centrally maintained. After performing any edits, the window must be regenerated.]]></HELP>
 <!--415-->  <TABLENAME><![CDATA[AD_FieldGroup_Trl]]></TABLENAME>
 <!--415-->  <CLASSNAME><![CDATA[FieldGroupTrl]]></CLASSNAME>
 <!--415-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -3849,7 +3849,7 @@ Define Request
 Business Partner Requests]]></DESCRIPTION>
 <!--417-->  <HELP><![CDATA[The Request Tab defines any Request submitted by a Business Partner.
 The Request Tab defines any Request submitted by a Business Partner.
-Shows all the resquests  of the partner selected.]]></HELP>
+Shows all the requests  of the partner selected.]]></HELP>
 <!--417-->  <TABLENAME><![CDATA[R_Request]]></TABLENAME>
 <!--417-->  <CLASSNAME><![CDATA[Request]]></CLASSNAME>
 <!--417-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -4062,7 +4062,7 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--434-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--434-->  <NAME><![CDATA[ProjectLine]]></NAME>
 <!--434-->  <DESCRIPTION><![CDATA[Define Project Lines]]></DESCRIPTION>
-<!--434-->  <HELP><![CDATA[Contians the lines (products and/or services) associated with the Project]]></HELP>
+<!--434-->  <HELP><![CDATA[Contains the lines (products and/or services) associated with the Project]]></HELP>
 <!--434-->  <TABLENAME><![CDATA[C_ProjectLine]]></TABLENAME>
 <!--434-->  <CLASSNAME><![CDATA[ProjectLine]]></CLASSNAME>
 <!--434-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -4106,7 +4106,7 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--437-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--437-->  <NAME><![CDATA[SalesCommissionDetail]]></NAME>
 <!--437-->  <DESCRIPTION><![CDATA[Commission Detail Information]]></DESCRIPTION>
-<!--437-->  <HELP><![CDATA[You may alter the amount and quantity of the detail records, but the suggested way is to add new correcting lines.The amounts are converted from the transaction currency to the Commission Currency (defined in the Commission window)]]></HELP>
+<!--437-->  <HELP><![CDATA[You may alter the amount and quantity of the detail records, but the suggested way is to add new correcting lines. The amounts are converted from the transaction currency to the Commission Currency (defined in the Commission window)]]></HELP>
 <!--437-->  <TABLENAME><![CDATA[C_CommissionDetail]]></TABLENAME>
 <!--437-->  <CLASSNAME><![CDATA[CommissionDetail]]></CLASSNAME>
 <!--437-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -4128,7 +4128,7 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--443-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--443-->  <NAME><![CDATA[RevenueRecognitionPlan]]></NAME>
 <!--443-->  <DESCRIPTION><![CDATA[View Revenue Recognition Plan]]></DESCRIPTION>
-<!--443-->  <HELP><![CDATA[The Revenue Recognition plan is generated then invoicing a product with revenue recognition.  With Revenue Recognition, the amount is posted to the Unrecognized revenue and over time or based on Service Level booked to Earned Revenue.]]></HELP>
+<!--443-->  <HELP><![CDATA[The Revenue Recognition plan is generated then invoicing a product with revenue recognition.  With Revenue Recognition, the amount is posted to the Unrecognized revenue account and over time, or based on Service Level, will be booked to Earned Revenue.]]></HELP>
 <!--443-->  <TABLENAME><![CDATA[C_RevenueRecognition_Plan]]></TABLENAME>
 <!--443-->  <CLASSNAME><![CDATA[RevenueRecognitionPlan]]></CLASSNAME>
 <!--443-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -4294,7 +4294,7 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--472-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--472-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--472-->  <NAME><![CDATA[ProcurementReceiptInvoiceMatch]]></NAME>
-<!--472-->  <HELP><![CDATA[This table contains all the matches between the material receipt lines and the invoice lines. It uses only for the purchase transactions. For each material receipt line we can have one or more invoice lines, so the sum of the invoice lines has to match with his material receipt line own. When everything matches it means the material receipt line is already invoiced]]></HELP>
+<!--472-->  <HELP><![CDATA[This table contains all the matches between the material receipt lines and the invoice lines. It is used only for the purchase transactions. For each material receipt line we can have one or more invoice lines, so the sum of the invoice lines has to match with the amount on the material receipt line. When everything matches it means the material receipt line is already invoiced]]></HELP>
 <!--472-->  <TABLENAME><![CDATA[M_MatchInv]]></TABLENAME>
 <!--472-->  <CLASSNAME><![CDATA[ReceiptInvoiceMatch]]></CLASSNAME>
 <!--472-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -4383,7 +4383,7 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--477-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--477-->  <NAME><![CDATA[PricingPriceListSchemeLine]]></NAME>
 <!--477-->  <DESCRIPTION><![CDATA[Trade Discount Price List Lines]]></DESCRIPTION>
-<!--477-->  <HELP><![CDATA[Pricelists are created based on Product Purchase and Category Discounts.The parameters listed here allow to copy and calculate pricelists.<BR>The calculation:<UL><LI>Copy and convert price from referenced price list<LI>result plus Surcharge Amount<L]]></HELP>
+<!--477-->  <HELP><![CDATA[Pricelists are created based on Product Purchase and Category Discounts. The parameters listed here allow to copy and calculate pricelists.<BR>The calculation:<UL><LI>Copy and convert price from referenced price list<LI>result plus Surcharge Amount<L]]></HELP>
 <!--477-->  <TABLENAME><![CDATA[M_DiscountSchemaLine]]></TABLENAME>
 <!--477-->  <CLASSNAME><![CDATA[PriceListSchemeLine]]></CLASSNAME>
 <!--477-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -4426,7 +4426,7 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--481-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--481-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--481-->  <NAME><![CDATA[ExpenseType]]></NAME>
-<!--481-->  <HELP><![CDATA[Contains all the expsenses types for reporting purpose]]></HELP>
+<!--481-->  <HELP><![CDATA[Contains all the expenses types for reporting purpose]]></HELP>
 <!--481-->  <TABLENAME><![CDATA[S_ExpenseType]]></TABLENAME>
 <!--481-->  <CLASSNAME><![CDATA[ExpenseType]]></CLASSNAME>
 <!--481-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -4690,9 +4690,9 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--528-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--528-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--528-->  <NAME><![CDATA[ContactInterest]]></NAME>
-<!--528-->  <DESCRIPTION><![CDATA[Business Partner Contact Areas of Interest<BR>Areas of Interest suscription]]></DESCRIPTION>
+<!--528-->  <DESCRIPTION><![CDATA[Business Partner Contact Areas of Interest<BR>Areas of Interest subscription]]></DESCRIPTION>
 <!--528-->  <HELP><![CDATA[Areas of Interest can be used for Marketing Campaigns
-The subscription is used to follow up the contacts which are subscribed to an specific areas of interest and also add new subscribers.]]></HELP>
+The subscription is used to follow up with the contacts which are subscribed to specific areas of interest and also to add new subscribers.]]></HELP>
 <!--528-->  <TABLENAME><![CDATA[R_ContactInterest]]></TABLENAME>
 <!--528-->  <CLASSNAME><![CDATA[ContactInterest]]></CLASSNAME>
 <!--528-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -4801,7 +4801,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--533-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--533-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--533-->  <NAME><![CDATA[DataImportBusinessPartner]]></NAME>
-<!--533-->  <HELP><![CDATA[The import business partner is an interin table which is used when importing external data into the system]]></HELP>
+<!--533-->  <HELP><![CDATA[The import business partner is an interim table which is used when importing external data into the system]]></HELP>
 <!--533-->  <TABLENAME><![CDATA[I_BPartner]]></TABLENAME>
 <!--533-->  <CLASSNAME><![CDATA[BusinessPartner]]></CLASSNAME>
 <!--533-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -5234,7 +5234,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--575-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--575-->  <NAME><![CDATA[ProjectType]]></NAME>
 <!--575-->  <DESCRIPTION><![CDATA[Maintain Type of a Project]]></DESCRIPTION>
-<!--575-->  <HELP><![CDATA[Contains the differents types of a project.]]></HELP>
+<!--575-->  <HELP><![CDATA[Contains the different types of a project.]]></HELP>
 <!--575-->  <TABLENAME><![CDATA[C_ProjectType]]></TABLENAME>
 <!--575-->  <CLASSNAME><![CDATA[ProjectType]]></CLASSNAME>
 <!--575-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -5753,8 +5753,8 @@ Log of data changes]]></HELP>
 <!--800001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800001-->  <NAME><![CDATA[ADAuxiliaryInput]]></NAME>
-<!--800001-->  <DESCRIPTION><![CDATA[Auxiliar inputs definition]]></DESCRIPTION>
-<!--800001-->  <HELP><![CDATA[To configure an auxiliar input, you need to select the corresponding tab, name the auxiliar inout and define a validation code. For example, when selecting the payment method, you can force that all payments are done in cash.]]></HELP>
+<!--800001-->  <DESCRIPTION><![CDATA[Auxiliary inputs definition]]></DESCRIPTION>
+<!--800001-->  <HELP><![CDATA[To configure an auxiliary input, you need to select the corresponding tab, name the auxiliary input and define a validation code. For example, when selecting the payment method, you can force that all payments are done in cash.]]></HELP>
 <!--800001-->  <TABLENAME><![CDATA[AD_AuxiliarInput]]></TABLENAME>
 <!--800001-->  <CLASSNAME><![CDATA[AuxiliaryInput]]></CLASSNAME>
 <!--800001-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -5777,7 +5777,7 @@ Log of data changes]]></HELP>
 <!--800002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800002-->  <NAME><![CDATA[ProjectVendor]]></NAME>
 <!--800002-->  <DESCRIPTION><![CDATA[Vendor registration]]></DESCRIPTION>
-<!--800002-->  <HELP><![CDATA[Contians all the vendors which have participated in the budgetting of a certain project]]></HELP>
+<!--800002-->  <HELP><![CDATA[Contains all the vendors which have participated in the budgeting of a certain project.]]></HELP>
 <!--800002-->  <TABLENAME><![CDATA[C_Project_Vendor]]></TABLENAME>
 <!--800002-->  <CLASSNAME><![CDATA[ProjectVendor]]></CLASSNAME>
 <!--800002-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -5820,8 +5820,8 @@ Log of data changes]]></HELP>
 <!--800004-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800004-->  <NAME><![CDATA[ProjectProposalLine]]></NAME>
-<!--800004-->  <DESCRIPTION><![CDATA[Proposal líne configuration]]></DESCRIPTION>
-<!--800004-->  <HELP><![CDATA[Contains all budgetted products to a Business Partner detailing information such as quantity, price,…]]></HELP>
+<!--800004-->  <DESCRIPTION><![CDATA[Proposal line configuration]]></DESCRIPTION>
+<!--800004-->  <HELP><![CDATA[Contains all budgeted products to a Business Partner detailing information such as quantity, price,…]]></HELP>
 <!--800004-->  <TABLENAME><![CDATA[C_ProjectProposalLine]]></TABLENAME>
 <!--800004-->  <CLASSNAME><![CDATA[ProjectProposalLine]]></CLASSNAME>
 <!--800004-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -5894,7 +5894,7 @@ CIP (Carriage and Insurance Paid to)]]></HELP>
 <!--800007-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800007-->  <NAME><![CDATA[BusinessPartnerProductTemplate]]></NAME>
 <!--800007-->  <DESCRIPTION><![CDATA[Product template configuration]]></DESCRIPTION>
-<!--800007-->  <HELP><![CDATA[The product template is used to configure standard orders for a business partner. Can be define as a template for orders. Using templates is a good way to avoid having to repeat the entry of each line of the order when there are few changes.]]></HELP>
+<!--800007-->  <HELP><![CDATA[The product template is used to configure standard orders for a business partner. Can be defined as a template for orders. Using templates is a good way to avoid having to repeat the entry of each line of the order when there are few changes.]]></HELP>
 <!--800007-->  <TABLENAME><![CDATA[M_Product_Template]]></TABLENAME>
 <!--800007-->  <CLASSNAME><![CDATA[ProductTemplate]]></CLASSNAME>
 <!--800007-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -5917,7 +5917,7 @@ CIP (Carriage and Insurance Paid to)]]></HELP>
 <!--800009-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800009-->  <NAME><![CDATA[WarehouseShipper]]></NAME>
 <!--800009-->  <DESCRIPTION><![CDATA[Track configuration]]></DESCRIPTION>
-<!--800009-->  <HELP><![CDATA[This table defines shipper path tracks. Each movil warehouse has a particular track.]]></HELP>
+<!--800009-->  <HELP><![CDATA[This table defines shipper path tracks. Each mobile warehouse has a particular track.]]></HELP>
 <!--800009-->  <TABLENAME><![CDATA[M_Warehouse_Shipper]]></TABLENAME>
 <!--800009-->  <CLASSNAME><![CDATA[WarehouseShipper]]></CLASSNAME>
 <!--800009-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6100,7 +6100,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800020-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800020-->  <NAME><![CDATA[FinancialMgmtDebtPaymentCancelV]]></NAME>
 <!--800020-->  <DESCRIPTION><![CDATA[Debt payment cancel]]></DESCRIPTION>
-<!--800020-->  <HELP><![CDATA[Canceled debt paymet tab allows the debt paymet transformation into a generated debt payment. If you want to add new records in this tab, you must use the Create from button on the settlement tab. Once you have a cancelled debt payment, the only way to ed]]></HELP>
+<!--800020-->  <HELP><![CDATA[Canceled debt payment tab allows the debt payment transformation into a generated debt payment. If you want to add new records in this tab, you must use the Create from button on the settlement tab. Once you have a cancelled debt payment, the only way to ed]]></HELP>
 <!--800020-->  <TABLENAME><![CDATA[C_Debt_Payment_Cancel]]></TABLENAME>
 <!--800020-->  <CLASSNAME><![CDATA[DebtPaymentCancelV]]></CLASSNAME>
 <!--800020-->  <ISVIEW><![CDATA[Y]]></ISVIEW>
@@ -6275,7 +6275,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800030-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800030-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800030-->  <NAME><![CDATA[WarehouseSchedule]]></NAME>
-<!--800030-->  <HELP><![CDATA[Contains all the differents schedules for a warehouse. These schedules are used to invoice rented locators]]></HELP>
+<!--800030-->  <HELP><![CDATA[Contains all the different schedules for a warehouse. These schedules are used to invoice rented locators]]></HELP>
 <!--800030-->  <TABLENAME><![CDATA[M_WH_Schedule]]></TABLENAME>
 <!--800030-->  <CLASSNAME><![CDATA[WarehouseSchedule]]></CLASSNAME>
 <!--800030-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6338,7 +6338,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800033-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800033-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800033-->  <NAME><![CDATA[WarehouseScheduleProduct]]></NAME>
-<!--800033-->  <HELP><![CDATA[Contains all the differents product that will be used in the invoices]]></HELP>
+<!--800033-->  <HELP><![CDATA[Contains all the different products that will be used in the invoices]]></HELP>
 <!--800033-->  <TABLENAME><![CDATA[M_WH_Schedule_Product]]></TABLENAME>
 <!--800033-->  <CLASSNAME><![CDATA[WarehouseScheduleProduct]]></CLASSNAME>
 <!--800033-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6359,7 +6359,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800035-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800035-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800035-->  <NAME><![CDATA[LocatorType]]></NAME>
-<!--800035-->  <HELP><![CDATA[Contains all the differents types for a locator]]></HELP>
+<!--800035-->  <HELP><![CDATA[Contains all the different types for a locator]]></HELP>
 <!--800035-->  <TABLENAME><![CDATA[M_Locator_Type]]></TABLENAME>
 <!--800035-->  <CLASSNAME><![CDATA[LocatorType]]></CLASSNAME>
 <!--800035-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6402,7 +6402,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800037-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800037-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800037-->  <NAME><![CDATA[MaterialMgmtStoragePending]]></NAME>
-<!--800037-->  <HELP><![CDATA[Constains the reserved quantity and  the ordered quantity]]></HELP>
+<!--800037-->  <HELP><![CDATA[Contains the reserved quantity and  the ordered quantity]]></HELP>
 <!--800037-->  <TABLENAME><![CDATA[M_Storage_Pending]]></TABLENAME>
 <!--800037-->  <CLASSNAME><![CDATA[StoragePending]]></CLASSNAME>
 <!--800037-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6486,8 +6486,8 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800042-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800042-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800042-->  <NAME><![CDATA[ProductCustomer]]></NAME>
-<!--800042-->  <DESCRIPTION><![CDATA[Asigns products to customers]]></DESCRIPTION>
-<!--800042-->  <HELP><![CDATA[Asigns products to customers]]></HELP>
+<!--800042-->  <DESCRIPTION><![CDATA[Assigns products to customers]]></DESCRIPTION>
+<!--800042-->  <HELP><![CDATA[Assigns products to customers]]></HELP>
 <!--800042-->  <TABLENAME><![CDATA[M_Product_Customer]]></TABLENAME>
 <!--800042-->  <CLASSNAME><![CDATA[ProductCustomer]]></CLASSNAME>
 <!--800042-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6645,7 +6645,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800049-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800049-->  <NAME><![CDATA[ADMonth]]></NAME>
 <!--800049-->  <DESCRIPTION><![CDATA[Month of the year]]></DESCRIPTION>
-<!--800049-->  <HELP><![CDATA[It is necessary to configurate the months of the year to the terms of the year.]]></HELP>
+<!--800049-->  <HELP><![CDATA[It is necessary to configure the months of the year to the terms of the year.]]></HELP>
 <!--800049-->  <TABLENAME><![CDATA[AD_Month]]></TABLENAME>
 <!--800049-->  <CLASSNAME><![CDATA[ADMonth]]></CLASSNAME>
 <!--800049-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6667,8 +6667,8 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800050-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800050-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800050-->  <NAME><![CDATA[FinancialMgmtDimension]]></NAME>
-<!--800050-->  <DESCRIPTION><![CDATA[Dimension confguration]]></DESCRIPTION>
-<!--800050-->  <HELP><![CDATA[The dimensions are needed for the multidimensional analisys reports]]></HELP>
+<!--800050-->  <DESCRIPTION><![CDATA[Dimension configuration]]></DESCRIPTION>
+<!--800050-->  <HELP><![CDATA[The dimensions are needed for the multidimensional analysis reports]]></HELP>
 <!--800050-->  <TABLENAME><![CDATA[AD_Dimension]]></TABLENAME>
 <!--800050-->  <CLASSNAME><![CDATA[Dimension]]></CLASSNAME>
 <!--800050-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6689,8 +6689,8 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800051-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800051-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800051-->  <NAME><![CDATA[ATTest]]></NAME>
-<!--800051-->  <DESCRIPTION><![CDATA[This window contains all the instructions of the applicaction.]]></DESCRIPTION>
-<!--800051-->  <HELP><![CDATA[This window contains all the instructions of the applicaction.]]></HELP>
+<!--800051-->  <DESCRIPTION><![CDATA[This window contains all the instructions of the application.]]></DESCRIPTION>
+<!--800051-->  <HELP><![CDATA[This window contains all the instructions of the application.]]></HELP>
 <!--800051-->  <TABLENAME><![CDATA[AT_Test]]></TABLENAME>
 <!--800051-->  <CLASSNAME><![CDATA[ATTest]]></CLASSNAME>
 <!--800051-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6712,8 +6712,8 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800052-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800052-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800052-->  <NAME><![CDATA[TestDocument]]></NAME>
-<!--800052-->  <DESCRIPTION><![CDATA[This window contiains different instructions' documents. Is based on AT_Document table.]]></DESCRIPTION>
-<!--800052-->  <HELP><![CDATA[This window contiains different instructions' documents.]]></HELP>
+<!--800052-->  <DESCRIPTION><![CDATA[This window contains different instructions' documents. Is based on the AT_Document table.]]></DESCRIPTION>
+<!--800052-->  <HELP><![CDATA[This window contains different instructions' documents.]]></HELP>
 <!--800052-->  <TABLENAME><![CDATA[AT_TestDocument]]></TABLENAME>
 <!--800052-->  <CLASSNAME><![CDATA[TestDocument]]></CLASSNAME>
 <!--800052-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6850,8 +6850,8 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800058-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800058-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800058-->  <NAME><![CDATA[FinancialMgmtPaymentTermLine]]></NAME>
-<!--800058-->  <DESCRIPTION><![CDATA[Line in a Pyament Term]]></DESCRIPTION>
-<!--800058-->  <HELP><![CDATA[Line in a Pyament Term]]></HELP>
+<!--800058-->  <DESCRIPTION><![CDATA[Line in a Payment Term]]></DESCRIPTION>
+<!--800058-->  <HELP><![CDATA[Line in a Payment Term]]></HELP>
 <!--800058-->  <TABLENAME><![CDATA[C_Paymenttermline]]></TABLENAME>
 <!--800058-->  <CLASSNAME><![CDATA[PaymentTermLine]]></CLASSNAME>
 <!--800058-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -6942,7 +6942,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800062-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800062-->  <NAME><![CDATA[PricingAdjustment]]></NAME>
 <!--800062-->  <DESCRIPTION><![CDATA[Price Adjustments configuration]]></DESCRIPTION>
-<!--800062-->  <HELP><![CDATA[The Price Adjustments has a vigence period and are applicated for the configurated business partners, products, product categorys and partners groups. The offer can be percentual, fixed or set.]]></HELP>
+<!--800062-->  <HELP><![CDATA[The Price Adjustments have a valid period and are applied to the configured business partners, products, product categories and business partner groups. The offer can be based upon percentage or fixed price.]]></HELP>
 <!--800062-->  <TABLENAME><![CDATA[M_Offer]]></TABLENAME>
 <!--800062-->  <CLASSNAME><![CDATA[PriceAdjustment]]></CLASSNAME>
 <!--800062-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7103,7 +7103,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800070-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800070-->  <NAME><![CDATA[ManufacturingWorkCenter]]></NAME>
 <!--800070-->  <DESCRIPTION><![CDATA[Work Station configuration]]></DESCRIPTION>
-<!--800070-->  <HELP><![CDATA[In this table it's defined the work station. It's indicated to which section belongs and the GFHs of preparations and work.]]></HELP>
+<!--800070-->  <HELP><![CDATA[In this table is defined the work station. It is possible to indicate the section to which the workstation belongs, as well as other attributes.]]></HELP>
 <!--800070-->  <TABLENAME><![CDATA[MA_Workstation]]></TABLENAME>
 <!--800070-->  <CLASSNAME><![CDATA[WorkCenter]]></CLASSNAME>
 <!--800070-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7150,7 +7150,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800072-->  <NAME><![CDATA[ManufacturingActivity]]></NAME>
 <!--800072-->  <DESCRIPTION><![CDATA[Process configuration
 Production process configuration]]></DESCRIPTION>
-<!--800072-->  <HELP><![CDATA[In this table are described the diferent process that are done in the work station.]]></HELP>
+<!--800072-->  <HELP><![CDATA[In this table are described the different processes that are done in the work station.]]></HELP>
 <!--800072-->  <TABLENAME><![CDATA[MA_Process]]></TABLENAME>
 <!--800072-->  <CLASSNAME><![CDATA[Activity]]></CLASSNAME>
 <!--800072-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7221,9 +7221,9 @@ Production process configuration]]></DESCRIPTION>
 <!--800081-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800081-->  <NAME><![CDATA[ManufacturingActivityToolset]]></NAME>
 <!--800081-->  <DESCRIPTION><![CDATA[Toolset process configuration
-Toolset configuratio for process use.]]></DESCRIPTION>
-<!--800081-->  <HELP><![CDATA[In case that are needed in this tab are introduced the diferent toolset used in the selected process.
-In case that are needed in this tab are introduced the diferent toolset used in the selected process.]]></HELP>
+Toolset configuration for process use.]]></DESCRIPTION>
+<!--800081-->  <HELP><![CDATA[This tab is used to indicate the different toolsets used in the selected process.
+This tab is used to indicate the different toolsets used in the selected process.]]></HELP>
 <!--800081-->  <TABLENAME><![CDATA[MA_ToolsetProcess]]></TABLENAME>
 <!--800081-->  <CLASSNAME><![CDATA[ActivityToolset]]></CLASSNAME>
 <!--800081-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7361,8 +7361,8 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800099-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800099-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800099-->  <NAME><![CDATA[ManufacturingWorkRequirementOperation]]></NAME>
-<!--800099-->  <DESCRIPTION><![CDATA[Work Requirement Fase configuration]]></DESCRIPTION>
-<!--800099-->  <HELP><![CDATA[In this table there are defined the diferent phases of the work requirement. Each phase corresponds to a sequence of the selected&nbsp;process plan.]]></HELP>
+<!--800099-->  <DESCRIPTION><![CDATA[Work Requirement Phase configuration]]></DESCRIPTION>
+<!--800099-->  <HELP><![CDATA[In this table there are defined the different phases of the work requirement. Each phase corresponds to a sequence of the selected&nbsp;process plan.]]></HELP>
 <!--800099-->  <TABLENAME><![CDATA[MA_WRPhase]]></TABLENAME>
 <!--800099-->  <CLASSNAME><![CDATA[WorkRequirementOperation]]></CLASSNAME>
 <!--800099-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7454,7 +7454,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800105-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800105-->  <NAME><![CDATA[ManufacturingProductionRunToolset]]></NAME>
 <!--800105-->  <DESCRIPTION><![CDATA[Toolset registration on the application]]></DESCRIPTION>
-<!--800105-->  <HELP><![CDATA[In this tab are introduced the diferent toolset used in the production run.]]></HELP>
+<!--800105-->  <HELP><![CDATA[In this tab are introduced the different toolsets used in the production run.]]></HELP>
 <!--800105-->  <TABLENAME><![CDATA[MA_ToolsetUsed]]></TABLENAME>
 <!--800105-->  <CLASSNAME><![CDATA[ProductionRunToolset]]></CLASSNAME>
 <!--800105-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7548,7 +7548,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800132-->  <NAME><![CDATA[ManufacturingCheckPoint]]></NAME>
 <!--800132-->  <DESCRIPTION><![CDATA[CCP Point configuration]]></DESCRIPTION>
-<!--800132-->  <HELP><![CDATA[This tab contains each of the measures that will be controled.]]></HELP>
+<!--800132-->  <HELP><![CDATA[This tab contains each of the measures that will be controlled.]]></HELP>
 <!--800132-->  <TABLENAME><![CDATA[MA_CCP]]></TABLENAME>
 <!--800132-->  <CLASSNAME><![CDATA[CheckPoint]]></CLASSNAME>
 <!--800132-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7737,7 +7737,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800142-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800142-->  <NAME><![CDATA[ManufacturingValue]]></NAME>
 <!--800142-->  <DESCRIPTION><![CDATA[Value registration]]></DESCRIPTION>
-<!--800142-->  <HELP><![CDATA[This tab registrates the planned periodic control values]]></HELP>
+<!--800142-->  <HELP><![CDATA[This tab registers the planned periodic control values.]]></HELP>
 <!--800142-->  <TABLENAME><![CDATA[MA_PC_Value]]></TABLENAME>
 <!--800142-->  <CLASSNAME><![CDATA[Value]]></CLASSNAME>
 <!--800142-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7760,7 +7760,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800143-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800143-->  <NAME><![CDATA[ManufacturingGlobalUse]]></NAME>
 <!--800143-->  <DESCRIPTION><![CDATA[Global use configuration]]></DESCRIPTION>
-<!--800143-->  <HELP><![CDATA[This tabs contains global consume products. When the work effort is processed the global use products are distributed proportionaly.]]></HELP>
+<!--800143-->  <HELP><![CDATA[This tabs contains global consume products. When the work effort is processed the global use products are distributed proportionally.]]></HELP>
 <!--800143-->  <TABLENAME><![CDATA[MA_GlobalUse]]></TABLENAME>
 <!--800143-->  <CLASSNAME><![CDATA[GlobalUse]]></CLASSNAME>
 <!--800143-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -7979,7 +7979,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800156-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800156-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800156-->  <NAME><![CDATA[FinancialMgmtPromissoryFormat]]></NAME>
-<!--800156-->  <DESCRIPTION><![CDATA[Contains Promissory Notes parametrization values for each Promissory format.]]></DESCRIPTION>
+<!--800156-->  <DESCRIPTION><![CDATA[Contains Promissory Notes parameterization values for each Promissory format.]]></DESCRIPTION>
 <!--800156-->  <HELP><![CDATA[It is necessary a Promissory format to print any Promissory Note with each Bank. Currently this format is prepared for the Spanish model.]]></HELP>
 <!--800156-->  <TABLENAME><![CDATA[C_PromissoryFormat]]></TABLENAME>
 <!--800156-->  <CLASSNAME><![CDATA[PromissoryFormat]]></CLASSNAME>
@@ -8357,7 +8357,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800175-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800175-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800175-->  <NAME><![CDATA[DataImportBudgetLine]]></NAME>
-<!--800175-->  <HELP><![CDATA[Is an interin table which is used when external data into the system]]></HELP>
+<!--800175-->  <HELP><![CDATA[Is an interim table which is used when external data into the system]]></HELP>
 <!--800175-->  <TABLENAME><![CDATA[I_Budgetline]]></TABLENAME>
 <!--800175-->  <CLASSNAME><![CDATA[BudgetLine]]></CLASSNAME>
 <!--800175-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -8762,8 +8762,8 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800193-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800193-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800193-->  <NAME><![CDATA[BusinessPartnerTaxCategory]]></NAME>
-<!--800193-->  <DESCRIPTION><![CDATA[Defines Tax Categories for bussines partners]]></DESCRIPTION>
-<!--800193-->  <HELP><![CDATA[Defines Tax Categories for bussines partners. These categories are used in order to choose which tax will be applied.]]></HELP>
+<!--800193-->  <DESCRIPTION><![CDATA[Defines Tax Categories for business partners]]></DESCRIPTION>
+<!--800193-->  <HELP><![CDATA[Defines Tax Categories for business partners. These categories are used in order to choose which tax will be applied.]]></HELP>
 <!--800193-->  <TABLENAME><![CDATA[C_BP_TaxCategory]]></TABLENAME>
 <!--800193-->  <CLASSNAME><![CDATA[TaxCategory]]></CLASSNAME>
 <!--800193-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -9900,7 +9900,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--0DF2FECF5F054A1791A89A86709BC6C6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0DF2FECF5F054A1791A89A86709BC6C6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0DF2FECF5F054A1791A89A86709BC6C6-->  <NAME><![CDATA[ADErrorLog]]></NAME>
-<!--0DF2FECF5F054A1791A89A86709BC6C6-->  <DESCRIPTION><![CDATA[Table that contains information related the warnings and errors that arised in the last build]]></DESCRIPTION>
+<!--0DF2FECF5F054A1791A89A86709BC6C6-->  <DESCRIPTION><![CDATA[Table that contains information related the warnings and errors that have arisen in the last build]]></DESCRIPTION>
 <!--0DF2FECF5F054A1791A89A86709BC6C6-->  <TABLENAME><![CDATA[AD_error_log]]></TABLENAME>
 <!--0DF2FECF5F054A1791A89A86709BC6C6-->  <CLASSNAME><![CDATA[ErrorLog]]></CLASSNAME>
 <!--0DF2FECF5F054A1791A89A86709BC6C6-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -10783,7 +10783,7 @@ Configuration Properties are defined by modules with the purpose other modules a
 <!--A789EDFD186644B5A9B6EEA9A10CF040-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A789EDFD186644B5A9B6EEA9A10CF040-->  <NAME><![CDATA[SQLScript]]></NAME>
 <!--A789EDFD186644B5A9B6EEA9A10CF040-->  <DESCRIPTION><![CDATA[Auxiliary table used by several processes]]></DESCRIPTION>
-<!--A789EDFD186644B5A9B6EEA9A10CF040-->  <HELP><![CDATA[Auxiliary table used by several processes to store temporarily sql commands and execute them]]></HELP>
+<!--A789EDFD186644B5A9B6EEA9A10CF040-->  <HELP><![CDATA[Auxiliary table used by several processes to temporarily store sql commands and later execute them]]></HELP>
 <!--A789EDFD186644B5A9B6EEA9A10CF040-->  <TABLENAME><![CDATA[AD_Script_SQL]]></TABLENAME>
 <!--A789EDFD186644B5A9B6EEA9A10CF040-->  <CLASSNAME><![CDATA[SQLScript]]></CLASSNAME>
 <!--A789EDFD186644B5A9B6EEA9A10CF040-->  <ISVIEW><![CDATA[N]]></ISVIEW>

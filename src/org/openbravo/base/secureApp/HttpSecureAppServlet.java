@@ -49,16 +49,19 @@ import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
+import org.hibernate.criterion.Expression;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
@@ -67,6 +70,12 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.Form;
+import org.openbravo.model.ad.ui.FormTrl;
+import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.ad.ui.ProcessTrl;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -233,8 +242,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           boolean correctSystemStatus = sysInfo.getSystemStatus() == null
               || this.globalParameters.getOBProperty("safe.mode", "false")
                   .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
-          ActivationKey ak = new ActivationKey();
-          LicenseRestriction limitation = ak.checkOPSLimitations(variables.getDBSession());
+          LicenseRestriction limitation = ActivationKey.getInstance().checkOPSLimitations(
+              variables.getDBSession());
           // We check if there is a Openbravo Professional Subscription restriction in the license,
           // or if the last rebuild didn't go well. If any of these are true, then the user is
           // allowed to login only as system administrator
@@ -354,7 +363,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       SessionInfo.setUserId(strUserAuth);
       SessionInfo.setSessionId(vars1.getSessionValue("#AD_Session_ID"));
 
-      if (vars1.getRole().equals("") || hasAccess(vars1)) {
+      // Hack to know whether the servlet is a poup. strPopup cannot be used because it indicates in
+      // has been called from a popup.
+      boolean isPopup = vars1.getCommand().indexOf("BUTTON") != -1
+          || vars1.getCommand().indexOf("POPUP") != -1
+          || !vars1.getStringParameter("inpProcessId").equals("");
+
+      FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess(
+          classInfo.type, classInfo.id);
+      if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
+        licenseError(classInfo.type, classInfo.id, featureRestriction, response, request, vars1,
+            isPopup);
+      } else if (vars1.getRole().equals("") || hasAccess(vars1)) {
         if (classInfo.id != null && !classInfo.id.equals("")) {
           SessionInfo.setProcessId(classInfo.id);
           SessionInfo.setProcessType(classInfo.type);
@@ -400,8 +420,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               // the hash of the post data
               if (!hash.equals(vars1.getPostDataHash())) {
                 request.setAttribute("autosave", true);
-                if (vars1.getCommand().indexOf("BUTTON") != -1
-                    || !vars1.getStringParameter("inpProcessId").equals(""))
+                if (isPopup)
                   // Adding pop-up window attribute to close the window on failed auto-save
                   request.setAttribute("popupWindow", true);
                 // forward request
@@ -773,8 +792,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   private void bdErrorGeneral(HttpServletRequest request, HttpServletResponse response,
       String strTitle, String strText) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error")
-        .createXmlDocument();
+    String discard[] = { "" };
+    if (OBContext.getOBContext().isNewUI()) {
+      discard[0] = "backButton";
+    }
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error",
+        discard).createXmlDocument();
 
     String myTheme;
     if (request != null)
@@ -862,6 +886,112 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void whitePage(HttpServletResponse response) throws IOException {
     whitePage(response, "");
+  }
+
+  protected void licenseError(String type, String id, FeatureRestriction featureRestriction,
+      HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,
+      boolean isPopup) throws IOException {
+    String titleText = getArtifactName(type, id, vars.getLanguage());
+    String infoText = "";
+
+    String editionType = null;
+    String completeWindowMsg = "";
+    String discard[] = { "" };
+
+    switch (featureRestriction) {
+    case TIER1_RESTRICTION:
+      editionType = "OBPSAnyEdition";
+      // do not break continue with next tier restriction
+    case TIER2_RESTRICTION:
+      if (editionType != null) {
+        editionType = "OBPSStandardEdition";
+      }
+      // <p> in java, to allow multi-paragraph text via the parameter
+      infoText = "<p>"
+          + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
+              .replace("@ProfessionalEditionType@",
+                  Utility.messageBD(this, editionType, vars.getLanguage())) + "</p>";
+      completeWindowMsg = infoText + "\n"
+          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
+      break;
+    case DISABLED_MODULE_RESTRICTION:
+      discard[0] = "links";
+      String msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
+      infoText = msg;
+      completeWindowMsg = msg;
+      break;
+    default:
+      break;
+    }
+
+    String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
+    String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
+
+    if (isPopup) {
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly", discard).createXmlDocument();
+
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("titleText", titleText);
+      xmlDocument.setParameter("infoText", infoText);
+      xmlDocument.setParameter("linkText", linkText);
+      xmlDocument.setParameter("afterLinkText", afterLinkText);
+
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    } else {
+      bdErrorGeneral(request, response, titleText, completeWindowMsg);
+    }
+  }
+
+  private String getArtifactName(String type, String id, String language) {
+    OBContext.setAdminMode();
+    try {
+      if ("W".equals(type)) {
+        Tab tab = OBDal.getInstance().get(Tab.class, id);
+        if (tab != null) {
+          OBCriteria<WindowTrl> qtTrl = OBDal.getInstance().createCriteria(WindowTrl.class);
+          qtTrl.add(Expression.eq(WindowTrl.PROPERTY_WINDOW, tab.getWindow()));
+          qtTrl.add(Expression.eq(WindowTrl.PROPERTY_LANGUAGE + ".language", language));
+          if (qtTrl.list().size() != 0) {
+            return qtTrl.list().get(0).getName();
+          } else {
+            return tab.getWindow().getName();
+          }
+        }
+      } else if ("X".equals(type)) {
+        OBCriteria<FormTrl> qfTrl = OBDal.getInstance().createCriteria(FormTrl.class);
+        qfTrl.add(Expression.eq(FormTrl.PROPERTY_SPECIALFORM + ".id", id));
+        qfTrl.add(Expression.eq(FormTrl.PROPERTY_LANGUAGE + ".language", language));
+        if (qfTrl.list().size() != 0) {
+          return qfTrl.list().get(0).getName();
+        }
+
+        Form f = OBDal.getInstance().get(Form.class, id);
+        if (f != null) {
+          return f.getName();
+        }
+      } else if ("R".endsWith(type) || "P".equals(type)) {
+        OBCriteria<ProcessTrl> qfTrl = OBDal.getInstance().createCriteria(ProcessTrl.class);
+        qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_PROCESS + ".id", id));
+        qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_LANGUAGE + ".language", language));
+        if (qfTrl.list().size() != 0) {
+          return qfTrl.list().get(0).getName();
+        }
+
+        Process f = OBDal.getInstance().get(Process.class, id);
+        if (f != null) {
+          return f.getName();
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return "";
   }
 
   protected void whitePage(HttpServletResponse response, String strAlert) throws IOException {
@@ -1132,10 +1262,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
       } catch (final Exception e) {
-          throw new ServletException(e.getCause() instanceof SQLException 
-              ? e.getCause().getMessage()
-              : e.getMessage()
-              , e);
+        throw new ServletException(e.getCause() instanceof SQLException ? e.getCause().getMessage()
+            : e.getMessage(), e);
       } finally {
         releaseRollbackConnection(con);
       }

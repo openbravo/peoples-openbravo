@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,9 +40,11 @@
                               when 'F' then MOMF.MAPPINGNAME
                               else MOMP.MAPPINGNAME
                               end) AS MAPPINGNAME, 
+        menuData.AD_Window_ID,
         menuData.AD_Process_ID, 
         menuData.AD_Task_ID, 
         menuData.AD_Workflow_ID, 
+        menuData.AD_Form_ID,
         menuData.url,
         P.IsExternalService,
         P.Service_Type
@@ -51,8 +53,11 @@
         m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 
         m.AD_FORM_ID, m.AD_Task_ID, m.AD_Workflow_ID, m.url 
         FROM AD_MENU m left join AD_MENU_TRL m_t on m.AD_MENU_ID = m_t.AD_MENU_ID 
-                                                AND m_t.AD_LANGUAGE = ? 
-        WHERE m.IsActive='Y' 
+                                                AND m_t.AD_LANGUAGE = ?,
+             AD_MODULE mod
+        WHERE m.IsActive='Y'
+        AND m.AD_Module_ID = mod.AD_Module_ID
+        AND mod.Enabled='Y' 
         AND (m.IsSummary='Y' OR m.Action='B' OR m.Action='L' OR m.Action='I'
         OR EXISTS (SELECT * FROM AD_WINDOW_ACCESS wa WHERE wa.AD_Window_ID=m.AD_Window_ID AND wa.AD_Role_ID=?)
         OR EXISTS (SELECT * FROM AD_PROCESS_ACCESS wa WHERE wa.AD_Process_ID=m.AD_Process_ID AND wa.AD_Role_ID=?)

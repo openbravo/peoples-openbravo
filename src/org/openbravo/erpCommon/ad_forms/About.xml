@@ -28,6 +28,7 @@
     <PARAMETER id="paramLicensedTo" name="paramLicensedTo" default=""/>
     <PARAMETER id="paraOPSPurpose" name="paraOPSPurpose" default=""/>
     <PARAMETER id="paraOPSType" name="paraOPSType" default=""/>
+    <PARAMETER id="paraOBPSStatus" name="paraOBPSStatus" default=""/>
     
     <structure name="installedModules">
       <FIELD id="modTab">tab</FIELD>
