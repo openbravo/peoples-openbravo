@@ -266,7 +266,7 @@ var baseDirectory = "../../../../../web/";
                     <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:green;" id="subStatus_active">Active</span>.<span id="OPSExpirationTime">&nbsp;You have&nbsp;<span id="OPSdaysLeft">xx</span>&nbsp;days left before your&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>&nbsp;expires.</span></span>
                   </td>
                   <td id="OPSConverted" colspan="5" class="TitleCell" style="text-align:left;">
-                    <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:orange;" id="subStatus_active">Subscription Converted</span>.</span>
+                    <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:orange;" id="subStatus_active">Subscription Canceled</span>.</span>
                   </td>
                   <td id="OPSNoActiveYet" colspan="5" class="TitleCell" style="text-align:left;">
                     <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:red;" id="subStatus_unactive">No Active Yet</span>.</span>
@@ -423,13 +423,24 @@ var baseDirectory = "../../../../../web/";
                   <td/>
                   <td colspan="5" class="TitleCell" style="text-align:left;">
                     <span class="Label_ReadOnly_Text" >
-                    <p class="Label_ReadOnly_Text">To deactivate this Instance from a Professional Subscription System, press the button below.</p>
-                    <p class="Label_ReadOnly_Text">Please note that all commercial features without a valid perpetual subscription will become inactive in this Instance.</p>
-                    <p class="Label_ReadOnly_Text">Please note that all commercial features will become inactive in this Instance.</p>
+                    <p class="Label_ReadOnly_Text">You may convert back your Professional Edition to Community Edition by pressing the Deactivate button.</p> 
+                    <p class="Label_ReadOnly_Text">Please notice that all of installed commercial modules must be uninstalled or disabled first.</p>
                     </span>
                   </td>
                 </tr>
-                <tr>
+                <tr id="OPSExpired">
+                  <td>&nbsp;</td>
+                </tr>
+                <tr id="OPSExpired">
+                  <td/>
+                  <td colspan="5" class="TitleCell" style="text-align:left;">
+                    <span class="Label_ReadOnly_Text" >
+                    <p class="Label_ReadOnly_Text">Alternatively, you may cancel your subscription by pressing the Cancel Subscription button.</p> 
+                    <p class="Label_ReadOnly_Text">Your system will remain a Professional Edition and you will continue to be able to use your currently installed commercial modules but you will no longer able to install new commercial modules or update existing ones.</p>
+                    </span>
+                  </td>
+                </tr>
+                 <tr>
                   <td>&nbsp;</td>
                 </tr> 
                 <tr> 
@@ -440,7 +451,7 @@ var baseDirectory = "../../../../../web/";
                         id="buttonDeactivate" 
                         class="ButtonLink" 
                         onclick="openServletNewWindow('SHOW_DEACTIVATE', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
-                        onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Deactivate'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
                         onkeydown="buttonEvent('onkeydown', this);" 
@@ -451,7 +462,7 @@ var baseDirectory = "../../../../../web/";
                         onmouseout="buttonEvent('onmouseout', this);">
                         <table class="Button">
                           <tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Deactivate" title="Deactivate" src="../../../../../web/images/blank.gif" border="0" /></td>
                             <td class="Button_text">Deactivate</td>
                             <td class="Button_right"></td>
                           </tr>
@@ -459,8 +470,33 @@ var baseDirectory = "../../../../../web/";
                       </button>
                     </div>
                   </td>
+                  <td class="Button_LeftAlign_ContentCell" colspan="2">
+                    <div id="OPSExpired">
+                      <button type="button" 
+                        id="buttonCancel" 
+                        class="ButtonLink" 
+                        onclick="openServletNewWindow('SHOW_CANCEL', false, 'InstanceManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Cancel Subscription'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Cancel Subscription" title="Cancel Subscription" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text">Cancel Subscription</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
+                    </div>
+                  </td>
                   
-                  <td colspan="3"/>
+                  <td colspan="2"/>
                 </tr>
               </div>
               </table>

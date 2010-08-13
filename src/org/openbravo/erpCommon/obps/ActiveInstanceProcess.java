@@ -43,11 +43,12 @@ public class ActiveInstanceProcess implements Process {
     String publicKey = (String) bundle.getParams().get("publicKey");
     String purpose = (String) bundle.getParams().get("purpose");
     String instanceNo = (String) bundle.getParams().get("instanceNo");
+    Boolean activate = (Boolean) bundle.getParams().get("activate");
     OBError msg = new OBError();
 
     bundle.setResult(msg);
 
-    String[] result = send(publicKey, purpose, instanceNo);
+    String[] result = send(publicKey, purpose, instanceNo, activate);
 
     if (result.length == 2 && result[0] != null && result[1] != null
         && result[0].equals("@Success@")) {
@@ -58,21 +59,24 @@ public class ActiveInstanceProcess implements Process {
       if (!nonAllowedMods.isEmpty()) {
         msg.setType("Error");
         msg.setMessage("@LicenseWithoutAccessTo@ " + nonAllowedMods);
-      } else if (ak.isActive()) {
+      } else {
         System sys = OBDal.getInstance().get(System.class, "0");
         sys.setActivationKey(result[1]);
         sys.setInstanceKey(publicKey);
         ActivationKey.setInstance(ak);
-        msg.setType("Success");
-        msg.setMessage(result[0]);
-      } else {
-        msg.setType("Error");
-        msg.setMessage(ak.getErrorMessage());
+        if (ak.isActive()) {
+          msg.setType("Success");
+          msg.setMessage(result[0]);
+        } else {
+          msg.setType("Error");
+          msg.setMessage(ak.getErrorMessage());
+        }
       }
     } else {
       // If there is error do not save keys, thus we maitain previous ones in case they were valid
       msg.setType("Error");
       msg.setMessage(result[0]);
+      log.error(result[0]);
     }
 
   }
@@ -86,14 +90,20 @@ public class ActiveInstanceProcess implements Process {
    *          Instance's purpose
    * @param instanceNo
    *          current instance number (for reactivation purposes)
+   * @param activate
+   *          activate (true) or cancel (false)
    * @return returns a String[] with 2 elements, the first one in the message (@Success@ in case of
    *         success) and the second one the activation key
    * @throws Exception
    */
-  private String[] send(String publickey, String purpose, String instanceNo) throws Exception {
+  private String[] send(String publickey, String purpose, String instanceNo, boolean activate)
+      throws Exception {
     log.debug("Sending request");
     String content = "publickey=" + URLEncoder.encode(publickey, "utf-8");
     content += "&purpose=" + purpose;
+    if (!activate) {
+      content += "&cancel=Y";
+    }
     if (instanceNo != null && !instanceNo.equals(""))
       content += "&instanceNo=" + instanceNo;
 

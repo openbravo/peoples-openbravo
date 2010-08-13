@@ -1887,10 +1887,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
     }
 
     // For packs and templates enable/disable recursively all inclusions
-    for (org.openbravo.model.ad.module.ModuleDependency depenency : module
+    for (org.openbravo.model.ad.module.ModuleDependency dependency : module
         .getModuleDependencyList()) {
-      if (depenency.isIncluded()) {
-        enableDisableModule(depenency.getDependentModule(), enable, notEnabledModules);
+      if (dependency.isIncluded()) {
+        enableDisableModule(dependency.getDependentModule(), enable, notEnabledModules);
       }
     }
   }

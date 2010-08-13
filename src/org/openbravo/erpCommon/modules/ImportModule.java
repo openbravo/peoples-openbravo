@@ -1355,6 +1355,7 @@ public class ImportModule {
         // Check Internet availability and set proxy if required
         ImportModuleData.insertLog(conn, user, "", "", "",
             "Scan for updates: Couldn't contact with webservice server", "E");
+        log4j.error("Scan for updates, error cound't reach ws server");
         return updateModules;
       }
 
