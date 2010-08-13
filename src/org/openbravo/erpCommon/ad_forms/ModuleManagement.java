@@ -54,6 +54,8 @@ import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.DisabledModules;
 import org.openbravo.erpCommon.obps.ActivationKey.CommercialModuleStatus;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
+import org.openbravo.erpCommon.obps.ActivationKey.SubscriptionStatus;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.HttpsUtils;
@@ -950,210 +952,151 @@ public class ModuleManagement extends HttpSecureAppServlet {
     }
   }
 
+  /**
+   * Verifies the commercial modules to be installed/updated and shows an error message with the
+   * actions to be taken in case some of them cannot be installed due to license restrictions.
+   */
   private boolean checkCommercialModules(ImportModule im, Map<String, String> minVersions,
       HttpServletResponse response, VariablesSecureApp vars, Module selectedModule)
       throws IOException {
+    // get the list of all commercial modules that are not allowed in this instance
+    List<Module> notAllowedModules = getNotAllowedModules(im.getModulesToInstall());
+    notAllowedModules.addAll(getNotAllowedModules(im.getModulesToUpdate()));
+    if (notAllowedModules.isEmpty()) {
+      // all modules are allowed, continue the installation without error
+      return true;
+    }
+    String discard[] = { "", "", "", "", "", "" };
     ActivationKey ak = ActivationKey.getInstance();
-    ArrayList<Module> notAllowedMods = new ArrayList<Module>();
 
-    String notSubscribed = "";
-    String expired = "";
-    String notActiveYet = "";
-    String converted = "";
+    // check if the only module is core as a dependency of another one
+    String minCoreVersion = "";
+    List<Module> modulesToAcquire = getModulesToAcquire((ArrayList<Module>) notAllowedModules);
 
-    boolean showNotActivatedError = false;
-
-    // checks whether selected version is commercial and it is installed on a community instance
-    boolean selectedCommercial = false;
-
-    if (!ak.isOPSInstance()) {
-      for (Module mod : im.getModulesToInstall()) {
-        if (mod.isIsCommercial()) {
-          if (selectedModule != null && !mod.getModuleID().equals(selectedModule.getModuleID())) {
-            // Show only in case there are commercial dependencies
-            showNotActivatedError = true;
-          }
-        } else if (selectedModule != null
-            && !mod.getModuleID().equals(selectedModule.getModuleID())) {
-          selectedCommercial = true;
-        }
-      }
-      for (Module mod : im.getModulesToUpdate()) {
-        if (mod.isIsCommercial()) {
-          if (selectedModule != null && !mod.getModuleID().equals(selectedModule.getModuleID())) {
-            // Show only in case there are commercial dependencies
-            showNotActivatedError = true;
-          }
-        } else if (selectedModule != null
-            && !mod.getModuleID().equals(selectedModule.getModuleID())) {
-          selectedCommercial = true;
-        }
-      }
-    }
-
-    if (showNotActivatedError) {
-      // Showing dependencies on commercial modules
-      String msgHeader = Utility
-          .messageBD(this, "MODULE_DEPENDS_ON_COMMERCIAL", vars.getLanguage());
-      String moduleTemplate = Utility.messageBD(this, "COMMERCIAL_MODULE_DETAIL", vars
-          .getLanguage());
-
-      boolean firstModule = true;
-      String moduleID = "";
-      for (Module mod : im.getModulesToInstall()) {
-        if (firstModule) {
-          moduleID = mod.getModuleID();
-          notSubscribed = msgHeader.replace("@MODULE@", mod.getName() + " - " + mod.getVersionNo());
-          notSubscribed += "<br><br>";
-          firstModule = false;
-        }
-
-        if (moduleID.equals(mod.getModuleID()) || !mod.isIsCommercial()) {
-          continue; // skip details
-        }
-        String moduleDetail = moduleTemplate.replace("@MODULE@", mod.getName());
-        String minVersion = minVersions.get(mod.getModuleID());
-        if (minVersion == null) {
-          minVersion = mod.getVersionNo();
-        }
-        moduleDetail = moduleDetail.replace("@MIN_VERSION@", minVersion);
-        moduleDetail = moduleDetail.replace("@RECOMMENDED_VERSION@", mod.getVersionNo());
-        notSubscribed += moduleDetail;
-        notSubscribed += "<br><br>";
-      }
-
-      for (Module mod : im.getModulesToUpdate()) {
-        if (firstModule) {
-          moduleID = mod.getModuleID();
-          notSubscribed = msgHeader.replace("@MODULE@", mod.getName() + " - " + mod.getVersionNo());
-          notSubscribed += "<br><br>";
-          firstModule = false;
-        }
-
-        if (moduleID.equals(mod.getModuleID()) || !mod.isIsCommercial()) {
-          continue; // skip details
-        }
-
-        String moduleDetail = moduleTemplate.replace("@MODULE@", mod.getName());
-        String minVersion = minVersions.get(mod.getModuleID());
-        if (minVersion == null) {
-          minVersion = mod.getVersionNo();
-        }
-        moduleDetail = moduleDetail.replace("@MIN_VERSION@", minVersion);
-        moduleDetail = moduleDetail.replace("@RECOMMENDED_VERSION@", mod.getVersionNo());
-        notSubscribed += moduleDetail;
-        notSubscribed += "<br><br>";
-      }
+    if (notAllowedModules.size() == 1 && !"0".equals(selectedModule.getModuleID())
+        && "0".equals(notAllowedModules.get(0).getModuleID())) {
+      discard[0] = "OBPSInstance-Canceled";
+      discard[1] = "actionList";
+      minCoreVersion = minVersions.get("0");
     } else {
+      discard[0] = "installCore";
+      // check canceled instance
+      if (ak.getSubscriptionStatus() == SubscriptionStatus.CANCEL) {
+        discard[1] = "actionList";
 
-      for (Module instMod : im.getModulesToInstall()) {
-        if (instMod.isIsCommercial()) {
-          CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(instMod.getModuleID());
-          if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
-            notAllowedMods.add(instMod);
-            if (expired.length() > 0) {
-              expired += ", ";
-            }
-            expired += instMod.getName();
-          } else if (ak.isNotActiveYet() || moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
-            notAllowedMods.add(instMod);
-            if (notActiveYet.length() > 0) {
-              notActiveYet += ", ";
-            }
-            notActiveYet += instMod.getName();
-          } else if (!ak.isOPSInstance() || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
-            notAllowedMods.add(instMod);
-            if (notSubscribed.length() > 0) {
-              notSubscribed += ", ";
-            }
-            notSubscribed += instMod.getName();
-          } else if (moduleStatus == CommercialModuleStatus.CONVERTED_SUBSCRIPTION) {
-            notAllowedMods.add(instMod);
-            if (converted.length() > 0) {
-              converted += ", ";
-            }
-            converted += instMod.getName();
-          }
-        }
-      }
-
-      for (Module updMod : im.getModulesToUpdate()) {
-        if (updMod.isIsCommercial()) {
-          CommercialModuleStatus moduleStatus = ak.isModuleSubscribed(updMod.getModuleID());
-          if (ak.hasExpired() || moduleStatus == CommercialModuleStatus.EXPIRED) {
-            notAllowedMods.add(updMod);
-            if (expired.length() > 0) {
-              expired += ", ";
-            }
-            expired += updMod.getName();
-          } else if (ak.isNotActiveYet() || moduleStatus == CommercialModuleStatus.NO_ACTIVE_YET) {
-            notAllowedMods.add(updMod);
-            if (notActiveYet.length() > 0) {
-              notActiveYet += ", ";
-            }
-            notActiveYet += updMod.getName();
-          } else if (!ak.isOPSInstance() || moduleStatus == CommercialModuleStatus.NO_SUBSCRIBED) {
-            notAllowedMods.add(updMod);
-            if (notSubscribed.length() > 0) {
-              notSubscribed += ", ";
-            }
-            notSubscribed += updMod.getName();
-          } else if (moduleStatus == CommercialModuleStatus.CONVERTED_SUBSCRIPTION) {
-            notAllowedMods.add(updMod);
-            if (converted.length() > 0) {
-              converted += ", ";
-            }
-            converted += updMod.getName();
-          }
-        }
-      }
-    }
-
-    if (notSubscribed.length() > 0 || expired.length() > 0 || notActiveYet.length() > 0
-        || converted.length() > 0) {
-      String discard[] = { "", "", "", "", "" };
-
-      if (!ak.isOPSInstance()) {
-        discard[0] = "OBPSInstance-NotActive";
-        discard[1] = "OBPSInstance-Expired";
-        discard[2] = "OBPSInstance-NoActiveYet";
-        discard[3] = "OBPSInstance-Converted";
-        if (showNotActivatedError && selectedCommercial) {
-          // Community module depending on commercial
-          discard[4] = "CEInstance-text";
-        }
+        // show all commercial modules, not only the ones that should be paid
+        modulesToAcquire = notAllowedModules;
       } else {
-        discard[0] = "CEInstance";
-        if (notSubscribed.length() == 0) {
-          discard[1] = "OBPSInstance-NotActive";
-        }
-        if (expired.length() == 0) {
-          discard[2] = "OBPSInstance-Expired";
-        }
-        if (notActiveYet.length() == 0) {
-          discard[3] = "OBPSInstance-NoActiveYet";
-        }
-        if (converted.length() == 0) {
-          discard[4] = "OBPSInstance-Converted";
-        }
+        discard[1] = "OBPSInstance-Canceled";
       }
 
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/ModuleManagement_ErrorCommercial", discard)
-          .createXmlDocument();
-      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("theme", vars.getTheme());
-      xmlDocument.setParameter("modules", notSubscribed);
-      xmlDocument.setParameter("expired", expired);
-      xmlDocument.setParameter("converted", converted);
-      xmlDocument.setParameter("noActiveYet", notActiveYet);
-      response.setContentType("text/html; charset=UTF-8");
-      final PrintWriter out = response.getWriter();
-      out.println(xmlDocument.print());
-      out.close();
+      // Decide license type, if any
+      int maxTier = getMaxTier(notAllowedModules);
+      LicenseClass licenseEdition = ak.getLicenseClass();
+
+      if (!ak.isActive()) {
+        if (maxTier == 1) {
+          // show subscribe to Basic
+          discard[2] = "subscribeSTD";
+          discard[3] = "upgradeSTD";
+        } else {
+          // show subscribe to Standard
+          discard[2] = "subscribeBAS";
+          discard[3] = "upgradeSTD";
+        }
+      } else if (licenseEdition == LicenseClass.BASIC) {
+        discard[2] = "subscribeBAS";
+        discard[3] = "subscribeSTD";
+        if (maxTier == 1) {
+          // do not show license action
+          discard[4] = "upgradeSTD";
+        } else {
+          // show upgrade to Standard
+        }
+      } else if (licenseEdition == LicenseClass.STD) {
+        // do not show license action
+        discard[2] = "subscribeBAS";
+        discard[3] = "subscribeSTD";
+        discard[4] = "upgradeSTD";
+      }
     }
-    return notAllowedMods.size() == 0;
+
+    if (modulesToAcquire.isEmpty()) {
+      discard[5] = "acquireModules";
+    }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_forms/ModuleManagement_ErrorCommercial", discard)
+        .createXmlDocument();
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("minCoreVersion", minCoreVersion);
+    xmlDocument.setData("notAllowedModules", FieldProviderFactory
+        .getFieldProviderArray(modulesToAcquire));
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+
+    return false;
+  }
+
+  /**
+   * Returns the list of modules which license must be acquired to be installed in the instance.
+   * Currently it only removes core from the list of not allowed modules because it is not needed to
+   * acquire a license for the module, just the Professional Subscription. It could be implemented
+   * to remove also all the free commercial modules, in case this info came from CR.
+   * 
+   * @param notAllowedModules
+   *          List with all the not allowed commercial modules
+   * @return List with all the commercial modules that need a license to be acquired
+   */
+  @SuppressWarnings("unchecked")
+  private List<Module> getModulesToAcquire(ArrayList<Module> notAllowedModules) {
+    List<Module> rt = (List<Module>) notAllowedModules.clone();
+    for (Module mod : rt) {
+      if ("0".equals(mod.getModuleID())) {
+        rt.remove(mod);
+        break;
+      }
+    }
+    return rt;
+  }
+
+  /**
+   * Returns the maximum tier of the commercial modules passed as parameter.
+   * 
+   * @param modulesToCheck
+   * @return The maximum tier of the modules (1 or 2)
+   */
+  private int getMaxTier(List<Module> modulesToCheck) {
+    for (Module mod : modulesToCheck) {
+      String modTier = (String) mod.getAdditionalInfo().get("tier");
+      if ("2".equals(modTier)) {
+        return 2;
+      }
+    }
+    return 1;
+  }
+
+  /**
+   * Checks from the array of commercial modules passed as parameter, which ones are not allowed to
+   * be installed in the instance and returns this list.
+   * 
+   * @param modulesToCheck
+   * @return List of modules that cannot be installed in the instance
+   */
+  private List<Module> getNotAllowedModules(Module[] modulesToCheck) {
+    ArrayList<Module> notAllowedModules = new ArrayList<Module>();
+    ActivationKey ak = ActivationKey.getInstance();
+    for (Module mod : modulesToCheck) {
+      if (mod.isIsCommercial()
+          && ak.isModuleSubscribed(mod.getModuleID()) != CommercialModuleStatus.ACTIVE) {
+        notAllowedModules.add(mod);
+      }
+    }
+    return notAllowedModules;
   }
 
   /**
