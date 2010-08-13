@@ -77,7 +77,7 @@ function getMessage(index, _language) {
 			_language = LNG_POR_DEFECTO;
 		}
 	}
-    var total = arrMessages.length;
+  var total = (arrMessages ? arrMessages.length : 0);
 	for (var i=0;i<total;i++) {
 		if (arrMessages[i].language == _language)
 			if (arrMessages[i].message == index)
@@ -95,7 +95,7 @@ function getDefaultText(index, _language) {
       _language = LNG_POR_DEFECTO;
     }
   }
-  var total = arrMessages.length;
+  var total = (arrMessages ? arrMessages.length : 0);
 	for (var i=0;i<total;i++) {
 		if (arrMessages[i].language == _language)
 			if (arrMessages[i].message == index)
