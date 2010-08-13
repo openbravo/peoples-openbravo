@@ -24,6 +24,7 @@ exist NUMBER:= 0;
 indTempName NVARCHAR2(50) := 'System Customization';
 indTempPackage NVARCHAR2(50) := 'mySystem.CustomizationTemplate';
 idCustomizationModule NVARCHAR2(50);
+coreVersion NVARCHAR2(10);
 
     
 BEGIN
@@ -61,15 +62,20 @@ BEGIN
         'N','N',null,null,null);
         
       -- add dependency on the core module
+      select version into coreVersion 
+      from AD_MODULE 
+      where AD_MODULE_ID='0';
+      
       Insert into AD_MODULE_DEPENDENCY (
          AD_MODULE_DEPENDENCY_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
          UPDATED, UPDATEDBY, AD_MODULE_ID, AD_DEPENDENT_MODULE_ID, 
-         STARTVERSION, ENDVERSION, ISINCLUDED, DEPENDANT_MODULE_NAME)
+         STARTVERSION, ENDVERSION, ISINCLUDED, DEPENDANT_MODULE_NAME,
+         DEPENDENCY_ENFORCEMENT, USER_EDITABLE_ENFORCEMENT, INSTANCE_ENFORCEMENT)
       values(
          get_uuid(),'0','0', 'Y', now(), '0',
          now(),'0', to_char(idCustomizationModule), '0', 
-         '2.50.0000', null, 'N', 'Will be overwritten by insert/update trigger'
-      );
+         to_char(coreVersion), null, 'N', 'Will be overwritten by insert/update trigger',
+         'MAJOR', 'N', null);
     end if;
   end if;
   
