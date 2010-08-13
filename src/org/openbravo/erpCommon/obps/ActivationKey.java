@@ -117,6 +117,23 @@ public class ActivationKey {
     }
   }
 
+  public enum SubscriptionStatus {
+    COMMUNITY("COM"), ACTIVE("ACT"), CANCEL("CAN"), EXPIRED("EXP"), NO_ACTIVE_YET("NAY");
+    private String code;
+
+    private SubscriptionStatus(String code) {
+      this.code = code;
+    }
+
+    /**
+     * Returns the name of the current status in the given language.
+     */
+    public String getStatusName(String language) {
+      return Utility.getListValueName("OBPSLicenseStatus", code, language);
+    }
+
+  }
+
   private static final int MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int PING_TIMEOUT_SECS = 120;
 
@@ -230,6 +247,18 @@ public class ActivationKey {
       return;
     }
 
+    // Get license class, old Activation Keys do not have this info, so treat them as Standard
+    // Edition instances
+    String pLicenseClass = getProperty("licenseedition");
+    if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("STD")) {
+      licenseClass = LicenseClass.STD;
+    } else if (pLicenseClass.equals("B")) {
+      licenseClass = LicenseClass.BASIC;
+    } else {
+      log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
+      licenseClass = LicenseClass.BASIC;
+    }
+
     // Check for dates to know if the instance is active
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate = null;
@@ -281,17 +310,6 @@ public class ActivationKey {
     }
     isActive = true;
 
-    // Get license class, old Activation Keys do not have this info, so treat them as Standard
-    // Edition instances
-    String pLicenseClass = getProperty("licenseedition");
-    if (pLicenseClass == null || pLicenseClass.isEmpty() || pLicenseClass.equals("STD")) {
-      licenseClass = LicenseClass.STD;
-    } else if (pLicenseClass.equals("B")) {
-      licenseClass = LicenseClass.BASIC;
-    } else {
-      log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
-      licenseClass = LicenseClass.BASIC;
-    }
     setLogger();
   }
 
@@ -890,8 +908,7 @@ public class ActivationKey {
       mods.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, false));
       mods.addOrder(Order.asc(Module.PROPERTY_NAME));
       for (Module mod : mods.list()) {
-        if (!isActiveInstance()
-            || isModuleSubscribed(mod.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+        if (isModuleSubscribed(mod.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {
           rt += (rt.isEmpty() ? "" : ", ") + mod.getName();
         }
       }
@@ -899,5 +916,22 @@ public class ActivationKey {
       OBContext.restorePreviousMode();
     }
     return rt;
+  }
+
+  /**
+   * Returns current subscription status
+   */
+  public SubscriptionStatus getSubscriptionStatus() {
+    if (!isOPSInstance()) {
+      return SubscriptionStatus.COMMUNITY;
+    } else if (isSubscriptionConverted()) {
+      return SubscriptionStatus.CANCEL;
+    } else if (hasExpired()) {
+      return SubscriptionStatus.EXPIRED;
+    } else if (isNotActiveYet()) {
+      return SubscriptionStatus.NO_ACTIVE_YET;
+    } else {
+      return SubscriptionStatus.ACTIVE;
+    }
   }
 }
