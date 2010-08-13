@@ -27,22 +27,31 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_UOM_ID, QTYINVOICED, C_InvoiceLine_ID,PRICELIST, PRICELIMIT, PRICEACTUAL, LINENETAMT, '' AS AD_ORG_ID, '' AS AD_CLIENT_ID, '' AS C_BPartner_Location_ID, 
-        '' AS DateInvoiced, '' AS C_Project_ID, M_PRODUCT_ID AS PRODUCT_ID, 
+        SELECT
+        C_INVOICELINE.C_UOM_ID, C_INVOICELINE.QTYINVOICED, C_INVOICELINE.C_InvoiceLine_ID,C_INVOICELINE.PRICELIST, 
+        C_INVOICELINE.PRICELIMIT, C_INVOICELINE.PRICEACTUAL, C_INVOICELINE.LINENETAMT,
+        '' AS AD_ORG_ID, '' AS AD_CLIENT_ID, 
+        '' AS C_BPartner_Location_ID, 
+        '' AS DateInvoiced, '' AS C_Project_ID,
+        C_INVOICELINE.M_PRODUCT_ID AS PRODUCT_ID, 
         '' AS C_BPARTNER_ID, '' AS C_CURRENCY_ID,
         '' AS M_PRICELIST_ID, '' AS LINE,
         '' AS ISSOTRX, '' AS TAXDATE,
         '' AS PRICESTD, '' AS VALIDFROM,
-        '' AS StdPrecision, '' AS PricePrecision, '' AS EnforcePriceLimit FROM C_InvoiceLine 
-        WHERE C_Invoice_ID = ? 
-        AND AD_CLIENT_ID IN ('1') 
-        AND AD_ORG_ID IN ('1') 
-        AND ISACTIVE = 'Y'
+        '' AS StdPrecision, '' AS PricePrecision, '' AS EnforcePriceLimit 
+        FROM C_INVOICELINE 
+        LEFT OUTER JOIN C_INVOICE_DISCOUNT ON C_INVOICELINE.C_INVOICE_DISCOUNT_ID = C_INVOICE_DISCOUNT.C_INVOICE_DISCOUNT_ID
+        LEFT OUTER JOIN C_BPARTNER_DISCOUNT ON C_INVOICE_DISCOUNT.C_DISCOUNT_ID = C_BPARTNER_DISCOUNT.C_DISCOUNT_ID
+        WHERE C_INVOICELINE.C_Invoice_ID = ?
+        AND C_INVOICELINE.AD_CLIENT_ID IN ('1')
+        AND C_INVOICELINE.AD_ORG_ID IN ('1')
+        AND C_INVOICELINE.ISACTIVE = 'Y'
+        AND (APPLYINORDER IS NULL OR APPLYINORDER <> 'N')
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>
-    <Parameter name="userclient" optional="true" type="replace" after="AND AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="userorg" optional="true" type="replace" after="AND AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="userclient" optional="true" type="replace" after="AND C_INVOICELINE.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="userorg" optional="true" type="replace" after="AND C_INVOICELINE.AD_ORG_ID IN (" text="'1'"/>
   </SqlMethod>
   <SqlMethod name="insert" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
