@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 
@@ -254,6 +255,8 @@ public class ImportOrder extends ImportProcess {
       no = ImportOrderData.updateProductError(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled())
         log4j.debug("Invalid Product errors = " + no);
+      if (log4j.isDebugEnabled())
+        log4j.debug("Updated Attribute from value = " + no);
       // Tax
       no = ImportOrderData.updateTax(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled())
@@ -609,6 +612,147 @@ public class ImportOrder extends ImportProcess {
         lineNo += 10;
         if (data[i].mProductId != null && !data[i].mProductId.equals(""))
           line.mProductId = data[i].mProductId;
+        // Attributeset - begin
+        String attributesetIdent = data[i].attributesetident;
+        if ((data[i].mAttributesetinstanceId == null || "".equals(data[i].mAttributesetinstanceId))
+            && attributesetIdent != null && !"".equals(attributesetIdent)) {
+          String attribsetid = ImportOrderData.getProductAttributesetId(conn, data[i].mProductId);
+          if (attribsetid != null && !attribsetid.equals("")) {
+            String avalue = null;
+            String asrlno = null;
+            String atblot = null;
+            String atdate = null;
+            String aldesc = null;
+            String locked = null;
+            String valuid = null;
+            StringBuffer descpt = new StringBuffer("");
+            String attrbsetinsid = ImportOrderData.selectAttributesetInstanceId(conn,
+                attributesetIdent);
+            if (attrbsetinsid == null) {
+              attrbsetinsid = SequenceIdData.getUUID();
+              ImportOrderData.insertAttributesetInstance(con, conn, attrbsetinsid,
+                  getAD_Client_ID(), getAD_Org_ID(), getAD_User_ID(), attribsetid, null, null,
+                  null, null, null, null, null);
+              String[] strvalue = attributesetIdent.split("_");
+              ImportOrderData[] attribInfo = ImportOrderData.getAttributesetInfo(conn, attribsetid);
+              if (attribInfo.length >= 1 && strvalue.length >= 1) {
+                for (int indx = 0; indx < attribInfo.length; indx++) {
+                  if (attribInfo[indx].mattributeid != null) {
+                    if ("Y".equals(attribInfo[indx].islist)) {
+                      ImportOrderData[] attribValue = ImportOrderData.getAttributeValue(conn,
+                          attribInfo[indx].mattributeid);
+                      for (int j = 0; j < attribValue.length; j++) {
+                        if (strvalue[indx].equalsIgnoreCase(attribValue[j].attributevalue)) {
+                          avalue = attribValue[j].attributevalue;
+                          valuid = attribValue[j].attributevalueid;
+                        }
+                      }
+                      if (avalue == null) {
+                        valuid = SequenceIdData.getUUID();
+                        ImportOrderData.insertAttributeValue(con, conn, getAD_Client_ID(),
+                            getAD_Org_ID(), attribInfo[indx].mattributeid, strvalue[indx],
+                            strvalue[indx], null, "Y", valuid, getAD_User_ID(), getAD_User_ID());
+                        avalue = strvalue[indx];
+                      }
+                      ImportOrderData.insertAttributeInstance(con, conn, attrbsetinsid,
+                          attribInfo[indx].mattributeid, getAD_Client_ID(), getAD_Org_ID(),
+                          getAD_User_ID(), getAD_User_ID(), valuid, avalue);
+                    } else {
+                      ImportOrderData.insertAttributeInstance(con, conn, attrbsetinsid,
+                          attribInfo[indx].mattributeid, getAD_Client_ID(), getAD_Org_ID(),
+                          getAD_User_ID(), getAD_User_ID(), null, strvalue[indx]);
+                    }
+                    if (descpt.length() == 0) {
+                      descpt.append(avalue);
+                    } else {
+                      descpt.append("_");
+                      descpt.append(avalue);
+                    }
+                    avalue = null;
+                  }
+                }
+                if ("Y".equals(attribInfo[0].islot)) {
+                  for (int j = 0; j < strvalue.length; j++) {
+                    if (strvalue[j].length() > 1) {
+                      String lot = strvalue[j].substring(0, 1);
+                      if ("L".equals(lot)) {
+                        atblot = strvalue[j].substring(1, strvalue[j].length());
+                      }
+                    }
+                  }
+                  if (atblot != null) {
+                    if (descpt.length() == 0) {
+                      descpt.append("L");
+                      descpt.append(atblot);
+                    } else {
+                      descpt.append("_L");
+                      descpt.append(atblot);
+                    }
+                  }
+                }
+                if ("Y".equals(attribInfo[0].isserno)) {
+                  for (int j = 0; j < strvalue.length; j++) {
+                    if (strvalue[j].length() > 1) {
+                      String hsh = strvalue[j].substring(0, 1);
+                      if ("#".equals(hsh)) {
+                        asrlno = strvalue[j].substring(1, strvalue[j].length());
+                      }
+                    }
+                  }
+                  if (asrlno != null) {
+                    if (descpt.length() == 0) {
+                      descpt.append("#");
+                      descpt.append(asrlno);
+                    } else {
+                      descpt.append("_#");
+                      descpt.append(asrlno);
+                    }
+                  }
+                }
+                if ("Y".equals(attribInfo[0].isguaranteedate)) {
+                  SimpleDateFormat sdf = new SimpleDateFormat(vars.getJavaDateFormat());
+                  for (int j = 0; j < strvalue.length; j++) {
+                    try {
+                      sdf.parse(strvalue[j]);
+                      atdate = strvalue[j];
+                    } catch (Exception e) {
+                    }
+                  }
+                  if (atdate != null) {
+                    if (descpt.length() == 0) {
+                      descpt.append(atdate);
+                    } else {
+                      descpt.append("_");
+                      descpt.append(atdate);
+                    }
+                  }
+                }
+                if ("Y".equals(attribInfo[0].islockable)) {
+                  for (int j = 0; j < strvalue.length; j++) {
+                    aldesc = strvalue[j];
+                    locked = "Y";
+                  }
+                  if (aldesc != null) {
+                    if (descpt.length() == 0) {
+                      descpt.append(aldesc);
+                    } else {
+                      descpt.append("_");
+                      descpt.append(aldesc);
+                    }
+                  }
+                }
+                ImportOrderData.updateAttributesetInstance(con, conn, asrlno, atblot, atdate,
+                    descpt.toString(), locked, aldesc, attrbsetinsid);
+              }
+            }
+            ImportOrderData.updateAttributesetInstanceId(con, conn, attrbsetinsid,
+                data[i].iOrderId, getAD_Client_ID());
+            data[i].mAttributesetinstanceId = attrbsetinsid;
+          }
+        }
+        // Attributeset - end
+        if (data[i].mAttributesetinstanceId != null && !data[i].mAttributesetinstanceId.equals(""))
+          line.mAttributesetinstanceId = data[i].mAttributesetinstanceId;
         line.qtyordered = data[i].qtyordered;
         // set price
         if (line.mProductId != null && !line.mProductId.equals("")) {
@@ -828,4 +972,5 @@ public class ImportOrder extends ImportProcess {
     }
     return messageResult;
   }
+
 }
