@@ -146,7 +146,7 @@
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="COMMERCIAL_TIER" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[NA]]></default>
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="ENABLED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
