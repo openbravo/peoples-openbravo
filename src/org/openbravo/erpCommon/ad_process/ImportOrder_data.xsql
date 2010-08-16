@@ -31,10 +31,11 @@
 				C_Currency_ID, M_Shipper_ID, isSOTRX, billTo_ID, C_Location_ID, Address1, Address2, Postal, City,
 				C_Region_ID, RegionName, C_Country_ID, CountryCode, AD_User_ID, Phone, C_Project_ID, C_Activity_ID,
 				C_DocType_ID, DocTypeName, C_PaymentTerm_ID, PaymentTermValue, C_Order_ID, DocumentNo, Description,
-				M_Product_ID, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
+				M_Product_ID, AttributesetIdent, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
 				C_UOM_ID, QtyOrdered, PriceActual, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
 				BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Vendor_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2,
-				'' AS c_debt_payment_id
+				'' AS c_debt_payment_id, '' AS IsSerno, '' AS IsLot, '' AS IsGuaranteeDate, '' AS IsLockable, '' AS mAttributeId, 
+				'' AS AttributeValue, '' AS AttributeValueID, M_AttributesetInstance_ID, '' AS IsList
 				FROM I_Order
 				WHERE I_IsImported='N'
 				AND AD_Client_ID = ?
@@ -1281,9 +1282,10 @@
           C_Currency_ID, M_Shipper_ID, isSOTRX, billTo_ID, C_Location_ID, Address1, Address2, Postal, City,
           C_Region_ID, RegionName, C_Country_ID, CountryCode, AD_User_ID, Phone, C_Project_ID, C_Activity_ID,
           C_DocType_ID, DocTypeName, C_PaymentTerm_ID, PaymentTermValue, C_Order_ID, DocumentNo, Description,
-          M_Product_ID, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
+          M_Product_ID, AttributesetIdent, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
           C_UOM_ID, QtyOrdered, PriceActual, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
-          BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2
+          BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2, 
+          M_AttributesetInstance_ID
         FROM I_Order
 				WHERE I_IsImported='N'
 				AND AD_Client_ID = ?
@@ -1463,6 +1465,142 @@
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
+  </SqlMethod>
+
+  <SqlMethod name="insertAttributesetInstance" type="preparedStatement" connection="true" return="rowCount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+        INSERT INTO M_ATTRIBUTESETINSTANCE (M_ATTRIBUTESETINSTANCE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, 
+        UPDATED, UPDATEDBY, M_ATTRIBUTESET_ID, SERNO, LOT, GUARANTEEDATE, DESCRIPTION, M_LOT_ID, ISLOCKED, LOCK_DESCRIPTION) 
+        VALUES ( ?, ?, ?, 'Y', now(), ?, now(), ?, ?, ?, ?, TO_DATE(?), ?, ?, ?, ?)
+      ]]></Sql>
+        <Parameter name="mAttributesetinstanceId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="adOrgId"/>
+        <Parameter name="adUserId"/>
+        <Parameter name="adUserId"/>
+        <Parameter name="mAttributesetId"/>
+        <Parameter name="serno"/>
+        <Parameter name="lot"/>
+        <Parameter name="guaranteedate"/>
+        <Parameter name="description"/>
+        <Parameter name="mLotId"/>
+        <Parameter name="islocked"/>
+        <Parameter name="lockDescription"/>
+   </SqlMethod>
+
+    <SqlMethod name="updateAttributesetInstanceId" type="preparedStatement" connection="true" return="rowCount">
+        <SqlMethodComment></SqlMethodComment>
+        <Sql> <![CDATA[
+          UPDATE I_Order
+          SET M_ATTRIBUTESETINSTANCE_ID = ?
+          WHERE M_ATTRIBUTESETINSTANCE_ID IS NULL
+          AND I_Order_ID = ?
+          AND I_IsImported<>'Y'
+          AND AD_Client_ID = ?
+        ]]>
+        </Sql>
+        <Parameter name="mAttributesetinstanceId"/>
+        <Parameter name="iOrderId"/>
+        <Parameter name="ad_client_id"/>
+    </SqlMethod>
+
+  <SqlMethod name="getProductAttributesetId" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+    SELECT M_PRODUCT.M_ATTRIBUTESET_ID FROM M_PRODUCT WHERE M_PRODUCT.M_PRODUCT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="productId"/>
+  </SqlMethod>
+
+  <SqlMethod name="getAttributesetInfo" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT M_ATTRIBUTESET.ISSERNO, M_ATTRIBUTESET.ISLOT, M_ATTRIBUTESET.ISGUARANTEEDATE,
+        M_ATTRIBUTESET.ISLOCKABLE, M_ATTRIBUTEUSE.M_ATTRIBUTE_ID AS MATTRIBUTEID, M_ATTRIBUTE.ISLIST
+        FROM M_ATTRIBUTESET 
+        LEFT JOIN M_ATTRIBUTEUSE ON M_ATTRIBUTEUSE.M_ATTRIBUTESET_ID = ? 
+        LEFT JOIN M_ATTRIBUTE ON M_ATTRIBUTE.M_ATTRIBUTE_ID = M_ATTRIBUTEUSE.M_ATTRIBUTE_ID
+        WHERE M_ATTRIBUTESET.M_ATTRIBUTESET_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="attributeSetId"/>
+    <Parameter name="attributeSetId"/>
+  </SqlMethod>
+
+  <SqlMethod name="getAttributeValue" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT M_ATTRIBUTEVALUE_ID AS ATTRIBUTEVALUEID, NAME AS ATTRIBUTEVALUE FROM M_ATTRIBUTEVALUE WHERE M_ATTRIBUTE_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="attributeId"/>
+  </SqlMethod>
+
+  <SqlMethod name="insertAttributeValue" type="preparedStatement" return="rowCount" connection="true">
+    <Sql><![CDATA[
+        INSERT INTO M_AttributeValue 
+        (AD_Client_ID, AD_Org_ID, M_Attribute_ID, Value, Name, Description, IsActive, M_AttributeValue_ID, created, createdby, updated, updatedBy)
+        VALUES ((?), (?), (?), (?), (?), (?), (?), ?, now(), ?, now(), ?)
+    ]]></Sql>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="mAttributeId"/>
+    <Parameter name="value"/>
+    <Parameter name="name"/>
+    <Parameter name="description"/>
+    <Parameter name="isactive"/>
+    <Parameter name="attributeValueId"/>
+    <Parameter name="createdby"/>
+    <Parameter name="updatedby"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectAttributesetInstanceId" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT M_ATTRIBUTESETINSTANCE_ID FROM M_ATTRIBUTESETINSTANCE
+        WHERE UPPER(M_ATTRIBUTESETINSTANCE.DESCRIPTION) = UPPER(?)
+      ]]>
+    </Sql>
+    <Parameter name="description"/>
+  </SqlMethod>
+
+  <SqlMethod name="insertAttributeInstance" type="preparedStatement" return="rowCount" connection="true">
+    <Sql><![CDATA[
+        INSERT INTO M_ATTRIBUTEINSTANCE (M_ATTRIBUTEINSTANCE_ID, M_ATTRIBUTESETINSTANCE_ID, M_ATTRIBUTE_ID,
+        AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, M_ATTRIBUTEVALUE_ID, VALUE)
+        VALUES (GET_UUID(), ?, ?, ?, ?, 'Y', NOW(), ?, NOW(), ?, ?, ?)
+    ]]></Sql>
+    <Parameter name="attributeSetId"/>
+    <Parameter name="mAttributeId"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="createdby"/>
+    <Parameter name="updatedby"/>
+    <Parameter name="attributeValueId"/>
+    <Parameter name="value"/>
+  </SqlMethod>
+
+  <SqlMethod name="updateAttributesetInstance" type="preparedStatement" connection="true" return="rowCount">
+        <SqlMethodComment></SqlMethodComment>
+        <Sql> <![CDATA[
+          UPDATE M_ATTRIBUTESETINSTANCE
+          SET SERNO = ?, LOT = ?, GUARANTEEDATE = TO_DATE(?), DESCRIPTION = ?, ISLOCKED = ?, LOCK_DESCRIPTION = ?
+          WHERE M_ATTRIBUTESETINSTANCE_ID = ?
+        ]]>
+        </Sql>
+    <Parameter name="serialno"/>
+    <Parameter name="lot"/>
+    <Parameter name="guaranteedate"/>
+    <Parameter name="description"/>
+    <Parameter name="islocked"/>
+    <Parameter name="lockdescript"/>
+    <Parameter name="attributeSetInstanceId"/>
   </SqlMethod>
 
 </SqlClass>

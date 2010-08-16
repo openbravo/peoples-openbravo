@@ -28,7 +28,7 @@
       <![CDATA[
         SELECT ol.C_OrderLine_ID, ol.Line, ol.M_Product_ID, ol.QtyOrdered, ol.PriceActual, ol.C_Tax_ID, ol.FreightAmt,
 				ol.AD_Client_ID, ol.AD_Org_ID, o.AD_User_ID, ol.C_Order_ID, ol.PriceList, ol.PriceStd, ol.PriceLimit, ol.Discount, ol.C_UOM_ID,
-				ol.DateOrdered, ol.M_Warehouse_ID, ol.C_Currency_ID, ol.Description, ol.C_BPartner_ID, ol.C_BPartner_Location_ID
+				ol.DateOrdered, ol.M_Warehouse_ID, ol.C_Currency_ID, ol.Description, ol.C_BPartner_ID, ol.C_BPartner_Location_ID, ol.m_attributesetinstance_id
 			  FROM C_OrderLine ol, C_Order o
 				WHERE ol.C_Order_ID = o.C_Order_ID
 			  AND ol.AD_Client_ID = ?
@@ -45,12 +45,13 @@
                 (C_OrderLine_ID, AD_Client_ID, AD_Org_ID, isActive, Created, CreatedBy, Updated, UpdatedBy,
                 Line, M_Product_ID, QtyOrdered, PriceActual, C_Tax_ID, 
                 FreightAmt, C_Order_ID, PriceList, PriceStd, PriceLimit,
-                Discount, C_UOM_ID, DateOrdered, M_Warehouse_ID, C_Currency_ID, Description, C_BPartner_ID, C_BPartner_Location_ID)
+                Discount, C_UOM_ID, DateOrdered, M_Warehouse_ID, C_Currency_ID, Description, C_BPartner_ID, C_BPartner_Location_ID,
+                M_AttributesetInstance_ID)
                 VALUES 
                 (?, ?, ?, 'Y', now(), ?, now(), ?, 
                  TO_NUMBER(?), ?, TO_NUMBER(?), TO_NUMBER(?), ?, 
                  COALESCE(TO_NUMBER(?), 0), ?, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 
-                 TO_NUMBER(?), ?, TO_DATE(?), ?, ?, ?, ?, ?)
+                 TO_NUMBER(?), ?, TO_DATE(?), ?, ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -76,6 +77,7 @@
 		<Parameter name="description"/>
 		<Parameter name="cBpartnerId"/>
 		<Parameter name="cBpartnerLocationId"/>
+		<Parameter name="mAttributesetinstanceId"/>
 		</SqlMethod>
 
 </SqlClass>
