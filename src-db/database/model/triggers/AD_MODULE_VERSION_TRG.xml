@@ -32,11 +32,11 @@ BEGIN
     
     IF UPDATING THEN
       IF :new.IsCommercial = 'N' and :old.IsCommercial ='Y' THEN
-        :new.commercial_Tier := 'NA';
+        :new.commercial_Tier := null;
       END IF;
     END IF;
     
-    IF :new.IsCommercial='Y' AND :new.commercial_Tier NOT IN ('1','2') THEN
+    IF :new.IsCommercial='Y' AND coalesce(:new.commercial_Tier,'.') NOT IN ('1','2') THEN
       RAISE_APPLICATION_ERROR(-20000, '@AD_MODULE_TIER_CHK@');
     END IF;
 
