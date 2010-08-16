@@ -174,16 +174,16 @@ public class UIReferenceUtility {
       text.append("TO_DATE(?").append((reference.equals("24") ? ", 'HH24:MI:SS'" : "")).append(")");
       if (!first && !reference.equals("24"))
         text.append("+1");
-    } else if (reference.equals("11") || reference.equals("12") || reference.equals("13")
-        || reference.equals("22") || reference.equals("29") || reference.equals("800008")
-        || reference.equals("800019")) {
+    } else if (reference.equals("11") || reference.equals("12") || reference.equals("22")
+        || reference.equals("29") || reference.equals("800008") || reference.equals("800019")) {
       text.append(tablename).append(".").append(columnname).append(" ");
       if (first)
         text.append(">= ");
       else
         text.append("<= ");
       text.append("TO_NUMBER(?)");
-    } else if (reference.equals("10") || reference.equals("14") || reference.equals("34")) {
+    } else if (reference.equals("10") || reference.equals("14") || reference.equals("34")
+        || reference.equals("13")) {
       text.append("C_IGNORE_ACCENT").append("(");
       text.append(tablename).append(".").append(columnname).append(") LIKE ");
       text.append("C_IGNORE_ACCENT").append("(?)");
