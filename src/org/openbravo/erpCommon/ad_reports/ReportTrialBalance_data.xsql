@@ -134,7 +134,7 @@
                     AND F.AD_ORG_ID IN('1')
                     AND 1=1
                     AND F.ISACTIVE = 'Y')
-              UNION
+              UNION ALL
               (SELECT F.ACCOUNT_ID AS ID, EV.VALUE AS ACCOUNT_ID, EV.NAME AS NAME,
                      F.AMTACCTDR, F.AMTACCTCR, F.FACTACCTTYPE, F.DATEACCT,
                      CASE ?
