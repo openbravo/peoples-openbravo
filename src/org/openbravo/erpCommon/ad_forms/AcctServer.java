@@ -1069,7 +1069,7 @@ public abstract class AcctServer {
             acctSchema.m_CurrencyRateType, AD_Client_ID, AD_Org_ID, conn);
         // if (log4j.isDebugEnabled()) log4j.debug
         // ("get converted amount (end)");
-        if (amt == null) {
+        if (amt == null || amt.equals("")) {
           convertible = false;
           log4j.warn("AcctServer - isConvertible NOT from " + currency + " - " + DocumentNo);
         } else if (log4j.isDebugEnabled())
