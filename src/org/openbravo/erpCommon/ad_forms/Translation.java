@@ -55,8 +55,6 @@ public class Translation extends HttpSecureAppServlet {
         "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl"); // added
     // for
     // JDK1.5
-    setLog4j(log4j);
-    setConnectionProvicer(this);
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("EXPORT")) {
@@ -68,8 +66,8 @@ public class Translation extends HttpSecureAppServlet {
         log4j.debug("Lang " + strLang + " Client " + strClient);
 
       // New message system
-      final OBError myMessage = TranslationManager.exportTrl(cp, globalParameters.strFTPDirectory,
-          strLang, strClient, vars.getLanguage());
+      final OBError myMessage = TranslationManager.exportTrl(this,
+          globalParameters.strFTPDirectory, strLang, strClient, vars.getLanguage());
 
       if (log4j.isDebugEnabled())
         log4j.debug("message:" + myMessage.getMessage());
@@ -84,7 +82,7 @@ public class Translation extends HttpSecureAppServlet {
         log4j.debug("Lang " + strLang + " Client " + strClient);
 
       final String directory = globalParameters.strFTPDirectory + "/lang/" + strLang + "/";
-      final OBError myMessage = TranslationManager.importTrlDirectory(cp, directory, strLang,
+      final OBError myMessage = TranslationManager.importTrlDirectory(this, directory, strLang,
           strClient, vars.getLanguage());
       if (log4j.isDebugEnabled())
         log4j.debug("message:" + myMessage.getMessage());
@@ -94,10 +92,12 @@ public class Translation extends HttpSecureAppServlet {
     }
   }
 
+  @Deprecated
   public static void setConnectionProvicer(ConnectionProvider conn) {
     cp = conn;
   }
 
+  @Deprecated
   public static void setLog4j(Logger logger) {
     // Note: This method does not do anything anymore, however is kept to keep the API stable.
     // Logging of the import/export code is not always done using the same static logger as the rest
