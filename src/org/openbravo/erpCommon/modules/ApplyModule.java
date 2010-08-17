@@ -34,7 +34,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_forms.Translation;
+import org.openbravo.erpCommon.ad_forms.TranslationManager;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -117,12 +117,9 @@ public class ApplyModule {
         }
 
         // Import language modules
-        Translation.setLog4j(log4j);
-        Translation.setConnectionProvicer(pool);
-
         for (int i = 0; i < data.length; i++) {
           log4j.info("Importing language " + data[i].adLanguage + " from module " + data[i].name);
-          Translation.importTrlDirectory(obDir + "/modules/" + data[i].javapackage
+          TranslationManager.importTrlDirectory(pool, obDir + "/modules/" + data[i].javapackage
               + "/referencedata/translation", data[i].adLanguage, "0", null);
         }
       }
