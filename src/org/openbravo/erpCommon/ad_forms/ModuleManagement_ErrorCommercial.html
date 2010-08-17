@@ -212,34 +212,43 @@
             
             <tr>
               <td class="PlainText_normal" colspan="4" style="padding: 0 0 10 0; text-align: left;">
-                <div id="OBPSInstance-NotActive">
-                <p class="Label_ReadOnly_Text">The following module(s) are released under a commercial license that require acquiring an activation key before Installation:&nbsp;<FIELD_TMP id="name"></FIELD_TMP><br /></p>
-                <p>Some of them can be new free commercial modules, please &nbsp;<a class="Label_ReadOnly_Text LabelLink_noicon" href="#" onclick="opener.window.location='InstanceManagement.html';window.close();">Refresh Online</a>&nbsp; your Activation File as a System Administrator in General Setup >> Application >> Instance Activation or&nbsp;<a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/module/acquire" target="_blank">learn how</a>&nbsp;to acquire modules.</p>
-                <br/>
+                <div id="installCore" class="Label_ReadOnly_Text">
+                  <p>Installing this module requires updating Core to a version more recent than the one currently installed.</p>
+                  <br/>
+                  <p>Minimum version of Core required:&nbsp;<span id="minCoreVersion">x</span>.</p>
+                  <br/>
+                  <p>Automated click-thru update to this Core version is only available to Professional Edition subscribers.</p>
+                  <br/>
+                </div>
+              
+                <div id="OBPSInstance-Canceled" class="Label_ReadOnly_Text">
+                  <p>You canceled your Professional Edition subscription and you are no longer entitled to update or install commercial modules. You cannot update or install the following module(s) which are released under a commercial license:&nbsp;<FIELD_TMP id="converted"></FIELD_TMP><br /></p>
+                  <ul style="padding: 0 25;" id="notAllowedModules">
+                    <li id="moduleName">xxModule</li>
+                  </ul>
+                  <br/>
                 </div>
                 
-                <div id="OBPSInstance-Expired">
-                <p class="Label_ReadOnly_Text">The following module(s) are released under a commercial license that has expired:&nbsp;<FIELD_TMP id="expired"></FIELD_TMP><br /></p>
-                <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/module/acquire" target="_blank">Learn how</a>&nbsp;to renew licenses for commercial modules.</p>
-                <br/>
+                <div id="actionList" class="Label_ReadOnly_Text">
+                  <p>Your license does not allow you to complete this action.</p>
+                  <br/>
+                  <p>Please take the following steps and try again:</p>
+                 
+                  <ul style="padding: 0 25;">
+                    <li id="subscribeBAS">Subscribe to Basic Professional Edition</li>
+                    <li id="subscribeSTD">Subscribe to Standard Professional Edition</li>
+                    <li id="upgradeSTD">Upgrade your Basic Professional Edition subscription to Standard Professional Edition</li>
+                    <li id="acquireModules">Acquire a license for the following modules:
+                      <ul style="padding: 0 25;" id="notAllowedModules">
+                        <li id="moduleName">xxModule</li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <br/>
                 </div>
-                
-                <div id="OBPSInstance-Converted">
-                <p class="Label_ReadOnly_Text">You canceled your Professional Edition subscription and you are no longer entitled to update or install commercial modules. You cannot update or install the following module(s) which are released under a commercial license:&nbsp;<FIELD_TMP id="converted"></FIELD_TMP><br /></p>
-                <br/>
-                </div>
-                
-                <div id="OBPSInstance-NoActiveYet">
-                <p class="Label_ReadOnly_Text">The following module(s) are released under a commercial license that is not active yet:&nbsp;<FIELD_TMP id="noActiveYet"></FIELD_TMP><br /></p>
-                <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/module/acquire" target="_blank">Learn how</a>&nbsp;to renew licenses for commercial modules.</p>
-                <br/>
-                </div>
-                
-                <div id="CEInstance">
-                <div><p class="Label_ReadOnly_Text"><FIELD_TMP id="CEInstance-text">The following module(s) are released under a commercial license that require acquiring an activation key before installation:&nbsp;</FIELD_TMP><FIELD_TMP id="name"></FIELD_TMP><br /></p>
-                <p><br><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/acquire" target="_blank">Learn how</a>&nbsp;to acquire a subscription and activate your instance.</p>
-                <br/>
-                </div>
+                              
+                <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://www.openbravo.com/product/erp/module/acquire" target="_blank">Learn more...</a></p>
+
                </td>
             </tr>
             

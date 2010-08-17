@@ -60,7 +60,6 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -2284,17 +2283,12 @@ public class Utility {
   /**
    * Returns the complete URL for a tab
    * 
-   * @param servlet
    * @param tabId
    *          Id for the tab to obtain the url for
    * @param type
    *          "R" -> Relation, "E" -> Edition, "X" -> Excel
    * @return the complete URL for a tab.
    */
-  public static String getTabURL(HttpSecureAppServlet servlet, String tabId, String type) {
-    return getTabURL((ConnectionProvider) servlet, tabId, type);
-  }
-
   public static String getTabURL(ConnectionProvider conn, String tabId, String type) {
     if (!(type.equals("R") || type.equals("E") || type.equals("X")))
       type = "E";

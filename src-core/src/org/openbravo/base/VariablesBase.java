@@ -115,7 +115,8 @@ public class VariablesBase {
     }
     for (String input : inputs) {
       if (!requestFilter.accept(input)) {
-        log4j.error("Input: " + input + " not accepted by filter: " + requestFilter);
+        log4j.error("Input: " + input + " not accepted by filter: " + requestFilter,
+            new Throwable());
         throw new ServletException("Input: " + input + " is not an accepted input");
       }
     }

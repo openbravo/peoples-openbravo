@@ -105,7 +105,7 @@ public class ActivationKey {
   }
 
   public enum LicenseClass {
-    BASIC("B"), STD("STD");
+    COMMUNITY("C"), BASIC("B"), STD("STD");
     private String code;
 
     private LicenseClass(String code) {
@@ -399,7 +399,7 @@ public class ActivationKey {
   }
 
   public LicenseClass getLicenseClass() {
-    return licenseClass;
+    return licenseClass == null ? LicenseClass.COMMUNITY : licenseClass;
   }
 
   @SuppressWarnings( { "static-access", "unchecked" })

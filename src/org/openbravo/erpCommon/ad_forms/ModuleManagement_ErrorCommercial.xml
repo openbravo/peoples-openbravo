@@ -30,10 +30,12 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  
+  <PARAMETER id="minCoreVersion" name="minCoreVersion" default=""/>
 
-  <PARAMETER id="name" name="modules" default=""/>
-  <PARAMETER id="expired" name="expired" default=""/>
-  <PARAMETER id="noActiveYet" name="noActiveYet" default=""/>
-  <PARAMETER id="converted" name="converted" default=""/>
+  <structure name="notAllowedModules">
+    <FIELD id="moduleName">name</FIELD>
+    <SECTION id="notAllowedModules"/>
+  </structure>
 
 </REPORT>
