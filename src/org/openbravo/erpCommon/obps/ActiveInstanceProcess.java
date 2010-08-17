@@ -48,6 +48,11 @@ public class ActiveInstanceProcess implements Process {
 
     bundle.setResult(msg);
 
+    if (!HttpsUtils.isInternetAvailable()) {
+      msg.setType("Error");
+      msg.setMessage("@WSError@");
+    }
+
     String[] result = send(publicKey, purpose, instanceNo, activate);
 
     if (result.length == 2 && result[0] != null && result[1] != null

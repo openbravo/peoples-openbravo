@@ -399,7 +399,6 @@ public class HttpsUtils {
           host = proxyHost;
           port = proxyPort;
         }
-        host = "localhost2";
         System.getProperties().put("proxySet", "true");
         System.getProperties().put("http.proxyHost", host);
         System.getProperties().put("https.proxyHost", host);
