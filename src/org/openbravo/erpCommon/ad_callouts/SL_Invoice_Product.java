@@ -28,13 +28,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.businessUtility.OrganizationData;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -68,11 +71,17 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
       String strWarehouseOrg = SLOrderProductData.getWarehouseOrg(this, strWharehouse);
       String strWarehouseForOrg = "";
-      if (!OrganizationData.isOrgInTree(this, strADOrgID, strWarehouseOrg, vars.getClient()))
-        strWarehouseForOrg = SLOrderProductData.getWarehouseOfOrg(this, vars.getClient(),
-            strADOrgID);
-      if (!strWarehouseForOrg.equals(""))
-        strWharehouse = strWarehouseForOrg;
+      final OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(vars.getClient());
+      if (!strADOrgID.equals(strWarehouseOrg)) {
+        Organization org = OBDal.getInstance().get(Organization.class, strADOrgID);
+        Organization warehouseOrg = OBDal.getInstance().get(Organization.class, strWarehouseOrg);
+        if (osp.isInNaturalTree(org, warehouseOrg) || osp.isInNaturalTree(warehouseOrg, org))
+          strWarehouseForOrg = SLOrderProductData.getWarehouseOfOrg(this, vars.getClient(),
+              strADOrgID);
+        if (!strWarehouseForOrg.equals(""))
+          strWharehouse = strWarehouseForOrg;
+      }
       String strTabId = vars.getStringParameter("inpTabId");
 
       try {
