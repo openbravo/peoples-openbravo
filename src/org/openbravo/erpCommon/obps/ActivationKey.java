@@ -412,7 +412,12 @@ public class ActivationKey {
         if (appender.getLayout() instanceof PatternLayout) {
           PatternLayout l = (PatternLayout) appender.getLayout();
           opsLogId = getOpsLogId();
-          l.setConversionPattern(opsLogId + l.getConversionPattern());
+          String conversionPattern = l.getConversionPattern();
+
+          // do not set checksum in case it is already set
+          if (conversionPattern == null || !conversionPattern.startsWith(opsLogId)) {
+            l.setConversionPattern(opsLogId + conversionPattern);
+          }
         }
       }
       opsLog = true;
