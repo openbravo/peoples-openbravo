@@ -88,25 +88,25 @@ class TranslationHandler extends DefaultHandler {
    */
   public void startElement(String uri, String localName, String qName, Attributes attributes)
       throws org.xml.sax.SAXException {
-    if (qName.equals(Translation.XML_TAG)) {
-      m_AD_Language = attributes.getValue(Translation.XML_ATTRIBUTE_LANGUAGE);
+    if (qName.equals(TranslationManager.XML_TAG)) {
+      m_AD_Language = attributes.getValue(TranslationManager.XML_ATTRIBUTE_LANGUAGE);
 
-      m_TableName = attributes.getValue(Translation.XML_ATTRIBUTE_TABLE);
+      m_TableName = attributes.getValue(TranslationManager.XML_ATTRIBUTE_TABLE);
       m_updateSQL = "UPDATE " + m_TableName;
 
       m_updateSQL += "_Trl";
       m_updateSQL += " SET ";
       if (log4j.isDebugEnabled())
         log4j.debug("AD_Language=" + m_AD_Language + ", TableName=" + m_TableName);
-    } else if (qName.equals(Translation.XML_ROW_TAG)) {
-      m_curID = attributes.getValue(Translation.XML_ROW_ATTRIBUTE_ID);
-      m_Translated = attributes.getValue(Translation.XML_ROW_ATTRIBUTE_TRANSLATED);
+    } else if (qName.equals(TranslationManager.XML_ROW_TAG)) {
+      m_curID = attributes.getValue(TranslationManager.XML_ROW_ATTRIBUTE_ID);
+      m_Translated = attributes.getValue(TranslationManager.XML_ROW_ATTRIBUTE_TRANSLATED);
       m_sql = new StringBuffer();
-    } else if (qName.equals(Translation.XML_VALUE_TAG)) {
-      m_curColumnName = attributes.getValue(Translation.XML_VALUE_ATTRIBUTE_COLUMN);
+    } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
+      m_curColumnName = attributes.getValue(TranslationManager.XML_VALUE_ATTRIBUTE_COLUMN);
 
-    } else if (qName.equals(Translation.XML_CONTRIB)) {
-      m_AD_Language = attributes.getValue(Translation.XML_ATTRIBUTE_LANGUAGE);
+    } else if (qName.equals(TranslationManager.XML_CONTRIB)) {
+      m_AD_Language = attributes.getValue(TranslationManager.XML_ATTRIBUTE_LANGUAGE);
     } else
       log4j.error("startElement - UNKNOWN TAG: " + qName);
     m_curValue = new StringBuffer();
@@ -142,8 +142,8 @@ class TranslationHandler extends DefaultHandler {
     // Log.trace(Log.l6_Database+1, "TranslationHandler.endElement", qName);
     if (log4j.isDebugEnabled())
       log4j.debug("endelement " + qName);
-    if (qName.equals(Translation.XML_TAG)) {
-    } else if (qName.equals(Translation.XML_ROW_TAG)) {
+    if (qName.equals(TranslationManager.XML_TAG)) {
+    } else if (qName.equals(TranslationManager.XML_ROW_TAG)) {
       // Set section
       if (m_sql.length() > 0)
         m_sql.append(",");
@@ -184,11 +184,11 @@ class TranslationHandler extends DefaultHandler {
         log4j.info("Not Found - " + m_sql.toString());
       else
         log4j.error("Update Rows=" + no + " (Should be 1) - " + m_sql.toString());
-    } else if (qName.equals(Translation.XML_VALUE_TAG)) {
+    } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
       if (m_sql.length() > 0)
         m_sql.append(",");
       m_sql.append(m_curColumnName).append("=").append(TO_STRING(m_curValue.toString()));
-    } else if (qName.equals(Translation.XML_CONTRIB)) {
+    } else if (qName.equals(TranslationManager.XML_CONTRIB)) {
       if (log4j.isDebugEnabled())
         log4j.debug("Contibutors:" + TO_STRING(m_curValue.toString()));
       try {
