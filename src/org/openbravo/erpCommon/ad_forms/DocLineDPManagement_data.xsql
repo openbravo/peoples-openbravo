@@ -24,7 +24,8 @@
     <Sql>
       <![CDATA[
         SELECT ml.AD_ORG_ID, ml.C_DP_MANAGEMENTLINE_ID, STATUS_FROM, STATUS_TO, DP.ISRECEIPT, AMOUNT, DP.C_BPARTNER_ID,
-        ML.C_DEBT_PAYMENT_ID, DP.C_CURRENCY_ID, TRUNC(COALESCE((SELECT O.DATEACCT
+        ML.C_DEBT_PAYMENT_ID, DP.C_CURRENCY_ID, DP.ISMANUAL, DP.ISDIRECTPOSTING,
+                                  TRUNC(COALESCE((SELECT O.DATEACCT
                                   FROM C_ORDER O
                                         WHERE DP.C_ORDER_ID = O.C_ORDER_ID),
                                      (SELECT I.DATEACCT

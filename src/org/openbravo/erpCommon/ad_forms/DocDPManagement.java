@@ -131,6 +131,8 @@ public class DocDPManagement extends AcctServer {
       docLine.Isreceipt = data[i].getField("ISRECEIPT");
       docLine.StatusTo = data[i].getField("STATUS_TO");
       docLine.StatusFrom = data[i].getField("STATUS_FROM");
+      docLine.IsManual = data[i].getField("ISMANUAL");
+      docLine.IsDirectPosting = data[i].getField("ISDIRECTPOSTING");
       list.add(docLine);
     }
 
@@ -183,22 +185,24 @@ public class DocDPManagement extends AcctServer {
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_DPManagement line = (DocLine_DPManagement) p_lines[i];
-      String amount = calculateAmount(as, line, conn);
-      if (line.Isreceipt.equals("Y")) {
-        fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo,
-            conn), line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
-        fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusFrom,
-            conn), line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+      if (line.IsManual.equals("N") || line.IsDirectPosting.equals("Y")) {
+        String amount = calculateAmount(as, line, conn);
+        if (line.Isreceipt.equals("Y")) {
+          fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo,
+              conn), line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+          fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as,
+              line.StatusFrom, conn), line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
 
-      } else {
-        fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo,
-            conn), line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
-        fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusFrom,
-            conn), line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+        } else {
+          fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo,
+              conn), line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+          fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as,
+              line.StatusFrom, conn), line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        }
       }
     }
     SeqNo = "0";
