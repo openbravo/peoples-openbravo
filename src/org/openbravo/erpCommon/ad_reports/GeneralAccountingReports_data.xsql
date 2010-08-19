@@ -267,6 +267,7 @@
                                                 (CASE WHEN AD_ORGTYPE.ISBUSINESSUNIT='Y' OR AD_ORGTYPE.ISLEGALENTITY='Y' THEN 'Y' ELSE 'N' END) AS BALANCED
                                               FROM AD_ORG, AD_ORGTYPE
                                               WHERE AD_ORGTYPE.AD_ORGTYPE_ID = AD_ORG.AD_ORGTYPE_ID
+                                              AND AD_ORG.ISACTIVE = 'Y'
                                              ) O
       WHERE R.C_ACCTSCHEMA_ID = S.C_ACCTSCHEMA_ID
         AND AD_ISORGINCLUDED(O.AD_ORG_ID, S.AD_ORG_ID, S.AD_CLIENT_ID) <> -1
@@ -281,6 +282,7 @@
                                                 (CASE WHEN AD_ORGTYPE.ISBUSINESSUNIT='Y' OR AD_ORGTYPE.ISLEGALENTITY='Y' THEN 'Y' ELSE 'N' END) AS BALANCED
                                               FROM AD_ORG, AD_ORGTYPE
                                               WHERE AD_ORGTYPE.AD_ORGTYPE_ID = AD_ORG.AD_ORGTYPE_ID
+                                              AND AD_ORG.ISACTIVE = 'Y'
                                              ) O
       WHERE R.C_ACCTSCHEMA_ID = S.C_ACCTSCHEMA_ID
         AND (AD_ISORGINCLUDED(O.AD_ORG_ID, S.AD_ORG_ID, S.AD_CLIENT_ID) <> -1
