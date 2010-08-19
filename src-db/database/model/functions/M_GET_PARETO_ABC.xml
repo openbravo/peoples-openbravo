@@ -35,11 +35,13 @@
   VARaCUMB NUMBER:=0;
   v_limitA NUMBER:=80;
   v_limitB NUMBER:=15;
+  v_percentange NUMBER:=0;
   varComprobadoA NUMBER:=0;
   varComprobadoB NUMBER:=0;
   TYPE RECORD IS REF CURSOR;
   Cur_Cursor RECORD;
 BEGIN
+  v_percentange := trunc(p_percentageactual,6);
   varAcum :=0;
   varComprobadoA := 0;
   for Cur_Cursor in (
@@ -67,7 +69,7 @@ BEGIN
   varAcum := varAcum+Cur_Cursor.percentage;
    if(varComprobadoA=0)then
      if (varAcum>=v_limitA) then
-       if (p_percentageactual>=Cur_Cursor.percentage) then
+       if (v_percentange>=Cur_Cursor.percentage) then
 	     return 'A';
        else
          varComprobadoA:=-1;
@@ -79,7 +81,7 @@ BEGIN
   if (varComprobadoA=-1 and varComprobadoB=0) then
   varAcumB:=varAcumB+Cur_Cursor.percentage;
    if (varAcumB>=v_limitB) then
-     if (p_percentageactual>=Cur_Cursor.percentage) then return 'B';
+     if (v_percentange>=Cur_Cursor.percentage) then return 'B';
 	 else varComprobadoB:=-1;
      end if;
    end if;
