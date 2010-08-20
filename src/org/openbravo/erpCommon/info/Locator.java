@@ -58,16 +58,18 @@ public class Locator extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       removePageSessionVariables(vars);
-      String strWarehouse = vars.getRequestGlobalVariable("inpNameValue", "Locator.warehousename");
-      if (strWarehouse.equals("") || strWarehouse == null) {
-        String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
-        if (!windowId.equals("") && windowId != null)
-          strWarehouse = LocatorData.selectname(this, Utility.getContext(this, vars,
-              "M_Warehouse_ID", windowId));
+      String strName = vars.getRequestGlobalVariable("inpNameValue", "Locator.warehousename");
+      String strWarehouse = "";
+      String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
+      if (!windowId.equals("") && windowId != null) {
+        strWarehouse = LocatorData.selectname(this, Utility.getContext(this, vars,
+            "M_Warehouse_ID", windowId));
       }
+      strName = strName + "%";
       strWarehouse = strWarehouse + "%";
+      vars.setSessionValue("Locator.name", strName);
       vars.setSessionValue("Locator.warehousename", strWarehouse);
-      printPage(response, vars, "", strWarehouse);
+      printPage(response, vars, strName, strWarehouse);
     } else if (vars.commandIn("KEY")) {
       removePageSessionVariables(vars);
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Locator.name");
