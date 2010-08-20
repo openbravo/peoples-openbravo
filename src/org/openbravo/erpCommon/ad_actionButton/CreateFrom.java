@@ -1344,58 +1344,58 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       conn = this.getTransactionConnection();
-      for(int k=0;k<ids.length;k++){
-      if (ids[k].startsWith("("))
-    	  ids[k] = ids[k].substring(1, ids[k].length() - 1);
-      if (!ids[k].equals("")) {
-    	  ids[k] = Replace.replace(ids[k], "'", "");
-        final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
-        while (st.hasMoreTokens()) {
-          String strDebtPaymentId = st.nextToken().trim();
-          if (!CreateFromBankData.NotIsReconcilied(conn, this, strDebtPaymentId)) {
-            releaseRollbackConnection(conn);
-            log4j
-                .warn("CreateFrom.saveBank - debt_payment " + strDebtPaymentId + " is reconcilied");
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-                "DebtPaymentReconcilied");
-            return myMessage;
-          }
-          strDateplanned = vars.getStringParameter("inpplanneddate" + strDebtPaymentId.trim());
-          strChargeamt = vars.getNumericParameter("inpcost" + strDebtPaymentId.trim());
-          strProposedAmt = vars.getNumericParameter("inpproposed" + strDebtPaymentId.trim());
-          // Amount + writeoff amount = FinalAmount to be paid/collected
-          String strFinalAmount = CreateFromBankData.selectPaymentFinalAmount(this,
-              strDebtPaymentId.trim());
-          BigDecimal finalAmount = new BigDecimal(strFinalAmount);
-          if (strProposedAmt != null && !strProposedAmt.equals("")
-              && new BigDecimal(strProposedAmt).signum() != 0
-              && new BigDecimal(strProposedAmt).compareTo(finalAmount) != 0) {
-            final String strSettlement = SequenceIdData.getUUID();
-            final String strDocNo = Utility.getDocumentNoConnection(conn, this, vars.getClient(),
-                "C_Settlement", true);
-            CreateFromBankData.insertSettlement(conn, this, strSettlement, vars.getUser(),
-                strDocNo, strStatementDate, strDebtPaymentId);
-            final String strNewPayment = SequenceIdData.getUUID();
-            CreateFromBankData.insertPayment(conn, this, strNewPayment, vars.getUser(),
-                strSettlement, strProposedAmt, strDebtPaymentId);
-            CreateFromBankData.cancelOriginalPayment(conn, this, strSettlement, strDebtPaymentId);
-            CreateFromBankData.insertSecondPayment(conn, this, vars.getUser(), strSettlement,
-                strProposedAmt, strDebtPaymentId);
-            strDebtPaymentId = strNewPayment;
-            CreateFromBankData.processSettlement(conn, this, strSettlement);
-          }
-          final String strSequence = SequenceIdData.getUUID();
-          try {
-            CreateFromBankData.insert(conn, this, strSequence, vars.getClient(), vars.getUser(),
-                strKey, strDateplanned.equals("") ? strStatementDate : strDateplanned,
-                strChargeamt, strDebtPaymentId);
-          } catch (final ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-            return myMessage;
+      for (int k = 0; k < ids.length; k++) {
+        if (ids[k].startsWith("("))
+          ids[k] = ids[k].substring(1, ids[k].length() - 1);
+        if (!ids[k].equals("")) {
+          ids[k] = Replace.replace(ids[k], "'", "");
+          final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
+          while (st.hasMoreTokens()) {
+            String strDebtPaymentId = st.nextToken().trim();
+            if (!CreateFromBankData.NotIsReconcilied(conn, this, strDebtPaymentId)) {
+              releaseRollbackConnection(conn);
+              log4j.warn("CreateFrom.saveBank - debt_payment " + strDebtPaymentId
+                  + " is reconcilied");
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                  "DebtPaymentReconcilied");
+              return myMessage;
+            }
+            strDateplanned = vars.getStringParameter("inpplanneddate" + strDebtPaymentId.trim());
+            strChargeamt = vars.getNumericParameter("inpcost" + strDebtPaymentId.trim());
+            strProposedAmt = vars.getNumericParameter("inpproposed" + strDebtPaymentId.trim());
+            // Amount + writeoff amount = FinalAmount to be paid/collected
+            String strFinalAmount = CreateFromBankData.selectPaymentFinalAmount(this,
+                strDebtPaymentId.trim());
+            BigDecimal finalAmount = new BigDecimal(strFinalAmount);
+            if (strProposedAmt != null && !strProposedAmt.equals("")
+                && new BigDecimal(strProposedAmt).signum() != 0
+                && new BigDecimal(strProposedAmt).compareTo(finalAmount) != 0) {
+              final String strSettlement = SequenceIdData.getUUID();
+              final String strDocNo = Utility.getDocumentNoConnection(conn, this, vars.getClient(),
+                  "C_Settlement", true);
+              CreateFromBankData.insertSettlement(conn, this, strSettlement, vars.getUser(),
+                  strDocNo, strStatementDate, strDebtPaymentId);
+              final String strNewPayment = SequenceIdData.getUUID();
+              CreateFromBankData.insertPayment(conn, this, strNewPayment, vars.getUser(),
+                  strSettlement, strProposedAmt, strDebtPaymentId);
+              CreateFromBankData.cancelOriginalPayment(conn, this, strSettlement, strDebtPaymentId);
+              CreateFromBankData.insertSecondPayment(conn, this, vars.getUser(), strSettlement,
+                  strProposedAmt, strDebtPaymentId);
+              strDebtPaymentId = strNewPayment;
+              CreateFromBankData.processSettlement(conn, this, strSettlement);
+            }
+            final String strSequence = SequenceIdData.getUUID();
+            try {
+              CreateFromBankData.insert(conn, this, strSequence, vars.getClient(), vars.getUser(),
+                  strKey, strDateplanned.equals("") ? strStatementDate : strDateplanned,
+                  strChargeamt, strDebtPaymentId);
+            } catch (final ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
           }
         }
-      }
       }
       releaseCommitConnection(conn);
       myMessage = new OBError();
@@ -1434,104 +1434,105 @@ public class CreateFrom extends HttpSecureAppServlet {
     String[] ids = restrictParameter(strClaves);
     try {
       conn = this.getTransactionConnection();
-      for(int k=0;k<ids.length;k++){
-      if (strType.equals("SHIPMENT")) {
-        if (isSOTrx.equals("Y"))
-          data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this, ids[k]);
-        else
-          data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, ids[k]);
-        dataAux = CreateFromInvoiceData.selectPriceList(conn, this, strDateInvoiced, strPriceList);
-        if (dataAux == null || dataAux.length == 0) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-              "PriceListVersionNotFound");
-          releaseRollbackConnection(conn);
-          return myMessage;
-        }
-        strPriceListVersion = dataAux[0].id;
-      } else {
-        strPO = vars.getStringParameter("inpPurchaseOrder");
-        if (isSOTrx.equals("Y"))
-          data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
-        else
-          data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, ids[k]);
-      }
-      if (data != null) {
-        for (int i = 0; i < data.length; i++) {
-          final String strSequence = SequenceIdData.getUUID();
-          CreateFromInvoiceData[] price = null;
-          String C_Tax_ID = "";
-          if (data[i].cOrderlineId.equals(""))
-            C_Tax_ID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId, vars
-                .getWarehouse(), strBPartnerLocation, strBPartnerLocation, CreateFromInvoiceData
-                .selectProject(this, strKey), isSOTrx.equals("Y") ? true : false);
+      for (int k = 0; k < ids.length; k++) {
+        if (strType.equals("SHIPMENT")) {
+          if (isSOTrx.equals("Y"))
+            data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this, ids[k]);
           else
-            C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
+            data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, ids[k]);
+          dataAux = CreateFromInvoiceData
+              .selectPriceList(conn, this, strDateInvoiced, strPriceList);
+          if (dataAux == null || dataAux.length == 0) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                "PriceListVersionNotFound");
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
+          strPriceListVersion = dataAux[0].id;
+        } else {
+          strPO = vars.getStringParameter("inpPurchaseOrder");
+          if (isSOTrx.equals("Y"))
+            data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
+          else
+            data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, ids[k]);
+        }
+        if (data != null) {
+          for (int i = 0; i < data.length; i++) {
+            final String strSequence = SequenceIdData.getUUID();
+            CreateFromInvoiceData[] price = null;
+            String C_Tax_ID = "";
+            if (data[i].cOrderlineId.equals(""))
+              C_Tax_ID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId, vars
+                  .getWarehouse(), strBPartnerLocation, strBPartnerLocation, CreateFromInvoiceData
+                  .selectProject(this, strKey), isSOTrx.equals("Y") ? true : false);
+            else
+              C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
 
-          final int stdPrecision;
-          final int curPrecision;
-          stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
-          if (strType.equals("SHIPMENT")) {
-            curPrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
-          } else {
-            curPrecision = Integer.valueOf(data[i].priceprecision).intValue();
+            final int stdPrecision;
+            final int curPrecision;
+            stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
+            if (strType.equals("SHIPMENT")) {
+              curPrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
+            } else {
+              curPrecision = Integer.valueOf(data[i].priceprecision).intValue();
+            }
+            if (!data[i].cOrderlineId.equals("")) {
+              price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
+              if (price != null && price.length > 0) {
+                priceList = price[0].pricelist;
+                priceLimit = price[0].pricelimit;
+                priceStd = price[0].pricestd;
+                priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
+                    strBPartner, data[i].mProductId, priceStd, data[i].quantityorder, strPriceList,
+                    strKey);
+              }
+              if (isSOTrx.equals("Y") && price[0].cancelpricead.equals("Y")) {
+                priceActual = priceStd;
+              }
+              price = null;
+            } else {
+              price = CreateFromInvoiceData.selectBOM(conn, this, strDateInvoiced, strBPartner,
+                  data[i].mProductId, strPriceListVersion);
+              if (price != null && price.length > 0) {
+                priceList = price[0].pricelist;
+                priceLimit = price[0].pricelimit;
+                priceStd = price[0].pricestd;
+                priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
+                    strBPartner, data[i].mProductId, priceStd, data[i].quantityorder, strPriceList,
+                    strKey);
+              }
+              price = null;
+            }
+            BigDecimal LineNetAmt = (new BigDecimal(priceActual)).multiply(new BigDecimal(
+                data[i].id));
+            LineNetAmt = LineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+            try {
+              CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
+                  data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
+                  data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
+                  priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder,
+                  data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd,
+                  data[i].taxbaseamt);
+            } catch (final ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
           }
-          if (!data[i].cOrderlineId.equals("")) {
-            price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
-            if (price != null && price.length > 0) {
-              priceList = price[0].pricelist;
-              priceLimit = price[0].pricelimit;
-              priceStd = price[0].pricestd;
-              priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
-            		  strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
-            		  strPriceList, strKey);
-            }
-            if(isSOTrx.equals("Y") && price[0].cancelpricead.equals("Y")){
-            	priceActual = priceStd;
-            }
-            price = null;
-          } else {
-            price = CreateFromInvoiceData.selectBOM(conn, this, strDateInvoiced, strBPartner,
-                data[i].mProductId, strPriceListVersion);
-            if (price != null && price.length > 0) {
-              priceList = price[0].pricelist;
-              priceLimit = price[0].pricelimit;
-              priceStd = price[0].pricestd;
-              priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
-            		  strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
-            		  strPriceList, strKey);
-            }
-            price = null;
-          }
-          BigDecimal LineNetAmt = (new BigDecimal(priceActual))
-              .multiply(new BigDecimal(data[i].id));
-          LineNetAmt = LineNetAmt.setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
+        }
+
+        if (!strPO.equals("")) {
           try {
-            CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
-                data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
-                data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
-                priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder,
-                data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd,
-                data[i].taxbaseamt);
+            final int total = CreateFromInvoiceData.deleteC_Order_ID(conn, this, strKey, strPO);
+            if (total == 0)
+              CreateFromInvoiceData.updateC_Order_ID(conn, this, strPO, strKey);
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
             return myMessage;
           }
-        }
-      }
 
-      if (!strPO.equals("")) {
-        try {
-          final int total = CreateFromInvoiceData.deleteC_Order_ID(conn, this, strKey, strPO);
-          if (total == 0)
-            CreateFromInvoiceData.updateC_Order_ID(conn, this, strPO, strKey);
-        } catch (final ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(conn);
-          return myMessage;
         }
-
-      }
       }
       releaseCommitConnection(conn);
       if (log4j.isDebugEnabled())
@@ -1579,130 +1580,160 @@ public class CreateFrom extends HttpSecureAppServlet {
     String[] ids = restrictParameter(strClaves);
     try {
       conn = this.getTransactionConnection();
-      for(int k=0;k<ids.length;k++){
-      if (strType.equals("INVOICE")) {
-        strInvoice = vars.getStringParameter("inpInvoice");
-        if (!isSOTrx.equals("Y"))
-          data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, ids[k]);
-      } else {
-        strPO = vars.getStringParameter("inpPurchaseOrder");
-        if (isSOTrx.equals("Y"))
-          data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
-        else
-          data = CreateFromShipmentData.selectFromPOUpdate(conn, this, ids[k]);
-      }
-      if (data != null) {
-        for (int i = 0; i < data.length; i++) {
+      for (int k = 0; k < ids.length; k++) {
+        if (strType.equals("INVOICE")) {
+          strInvoice = vars.getStringParameter("inpInvoice");
+          if (!isSOTrx.equals("Y"))
+            data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, ids[k]);
+        } else {
+          strPO = vars.getStringParameter("inpPurchaseOrder");
+          if (isSOTrx.equals("Y"))
+            data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
+          else
+            data = CreateFromShipmentData.selectFromPOUpdate(conn, this, ids[k]);
+        }
+        if (data != null) {
+          for (int i = 0; i < data.length; i++) {
 
-          // Obtain the values from the window
+            // Obtain the values from the window
 
-          String strLineId = "";
+            String strLineId = "";
 
-          if (strType.equals("INVOICE")) {
-            strLineId = data[i].cInvoicelineId;
-          } else {
-            strLineId = data[i].cOrderlineId;
-          }
-
-          final String strMovementqty = vars.getRequiredStringParameter("inpmovementqty"
-              + strLineId);
-          String strQuantityorder = "";
-          String strProductUomId = "";
-          String strLocator = vars.getStringParameter("inpmLocatorId" + strLineId);
-          final String strmAttributesetinstanceId = vars
-              .getStringParameter("inpmAttributesetinstanceId" + strLineId);
-          final String strcUomIdConversion = "";
-          String strbreakdown = "";
-          CreateFromShipmentData[] dataUomIdConversion = null;
-
-          if ("".equals(strLocator)) {
-            strLocator = strLocatorCommon;
-          }
-
-          if ("".equals(data[i].mProductUomId)) {
-            strQuantityorder = "";
-            strProductUomId = "";
-          } else {
-            strQuantityorder = vars.getRequiredStringParameter("inpquantityorder" + strLineId);
-            strProductUomId = vars.getRequiredStringParameter("inpmProductUomId" + strLineId);
-            dataUomIdConversion = CreateFromShipmentData.selectcUomIdConversion(this,
-                strProductUomId);
-
-            if (dataUomIdConversion == null || dataUomIdConversion.length == 0) {
-              dataUomIdConversion = CreateFromShipmentData.set();
-              strbreakdown = "N";
+            if (strType.equals("INVOICE")) {
+              strLineId = data[i].cInvoicelineId;
             } else {
-              strbreakdown = dataUomIdConversion[0].breakdown;
+              strLineId = data[i].cOrderlineId;
             }
-          }
 
-          //
+            final String strMovementqty = vars.getRequiredStringParameter("inpmovementqty"
+                + strLineId);
+            String strQuantityorder = "";
+            String strProductUomId = "";
+            String strLocator = vars.getStringParameter("inpmLocatorId" + strLineId);
+            final String strmAttributesetinstanceId = vars
+                .getStringParameter("inpmAttributesetinstanceId" + strLineId);
+            final String strcUomIdConversion = "";
+            String strbreakdown = "";
+            CreateFromShipmentData[] dataUomIdConversion = null;
 
-          String strMultiplyRate = "";
-          int stdPrecision = 0;
-          if ("Y".equals(strbreakdown)) {
-            if (dataUomIdConversion[i].cUomIdConversion.equals("")) {
-              releaseRollbackConnection(conn);
-              myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-              return myMessage;
+            if ("".equals(strLocator)) {
+              strLocator = strLocatorCommon;
             }
-            final String strInitUOM = dataUomIdConversion[i].cUomIdConversion;
-            final String strUOM = data[i].cUomId;
-            if (strInitUOM.equals(strUOM))
-              strMultiplyRate = "1";
-            else
-              strMultiplyRate = CreateFromShipmentData.multiplyRate(this, strInitUOM, strUOM);
-            if (strMultiplyRate.equals(""))
-              strMultiplyRate = CreateFromShipmentData.divideRate(this, strUOM, strInitUOM);
-            if (strMultiplyRate.equals("")) {
-              strMultiplyRate = "1";
-              releaseRollbackConnection(conn);
-              myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-              return myMessage;
-            }
-            stdPrecision = Integer.valueOf(dataUomIdConversion[i].stdprecision).intValue();
-            BigDecimal quantity, qty, multiplyRate;
 
-            multiplyRate = new BigDecimal(strMultiplyRate);
-            qty = new BigDecimal(strMovementqty);
-            boolean qtyIsNegative = false;
-            if (qty.compareTo(ZERO) < 0) {
-              qtyIsNegative = true;
-              qty = qty.negate();
-            }
-            quantity = qty.multiply(multiplyRate);
-            if (quantity.scale() > stdPrecision)
-              quantity = quantity.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-            while (qty.compareTo(ZERO) > 0) {
-              String total = "1";
-              BigDecimal conversion;
-              if (quantity.compareTo(BigDecimal.ONE) < 0) {
-                total = quantity.toString();
-                conversion = qty;
-                quantity = ZERO;
-                qty = ZERO;
+            if ("".equals(data[i].mProductUomId)) {
+              strQuantityorder = "";
+              strProductUomId = "";
+            } else {
+              strQuantityorder = vars.getRequiredStringParameter("inpquantityorder" + strLineId);
+              strProductUomId = vars.getRequiredStringParameter("inpmProductUomId" + strLineId);
+              dataUomIdConversion = CreateFromShipmentData.selectcUomIdConversion(this,
+                  strProductUomId);
+
+              if (dataUomIdConversion == null || dataUomIdConversion.length == 0) {
+                dataUomIdConversion = CreateFromShipmentData.set();
+                strbreakdown = "N";
               } else {
-                conversion = multiplyRate;
-                if (conversion.compareTo(qty) > 0) {
-                  conversion = qty;
-                  qty = ZERO;
-                } else
-                  qty = qty.subtract(conversion);
-                quantity = quantity.subtract(BigDecimal.ONE);
+                strbreakdown = dataUomIdConversion[0].breakdown;
               }
-              final String strConversion = conversion.toString();
+            }
+
+            //
+
+            String strMultiplyRate = "";
+            int stdPrecision = 0;
+            if ("Y".equals(strbreakdown)) {
+              if (dataUomIdConversion[i].cUomIdConversion.equals("")) {
+                releaseRollbackConnection(conn);
+                myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                    "ProcessRunError");
+                return myMessage;
+              }
+              final String strInitUOM = dataUomIdConversion[i].cUomIdConversion;
+              final String strUOM = data[i].cUomId;
+              if (strInitUOM.equals(strUOM))
+                strMultiplyRate = "1";
+              else
+                strMultiplyRate = CreateFromShipmentData.multiplyRate(this, strInitUOM, strUOM);
+              if (strMultiplyRate.equals(""))
+                strMultiplyRate = CreateFromShipmentData.divideRate(this, strUOM, strInitUOM);
+              if (strMultiplyRate.equals("")) {
+                strMultiplyRate = "1";
+                releaseRollbackConnection(conn);
+                myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                    "ProcessRunError");
+                return myMessage;
+              }
+              stdPrecision = Integer.valueOf(dataUomIdConversion[i].stdprecision).intValue();
+              BigDecimal quantity, qty, multiplyRate;
+
+              multiplyRate = new BigDecimal(strMultiplyRate);
+              qty = new BigDecimal(strMovementqty);
+              boolean qtyIsNegative = false;
+              if (qty.compareTo(ZERO) < 0) {
+                qtyIsNegative = true;
+                qty = qty.negate();
+              }
+              quantity = qty.multiply(multiplyRate);
+              if (quantity.scale() > stdPrecision)
+                quantity = quantity.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+              while (qty.compareTo(ZERO) > 0) {
+                String total = "1";
+                BigDecimal conversion;
+                if (quantity.compareTo(BigDecimal.ONE) < 0) {
+                  total = quantity.toString();
+                  conversion = qty;
+                  quantity = ZERO;
+                  qty = ZERO;
+                } else {
+                  conversion = multiplyRate;
+                  if (conversion.compareTo(qty) > 0) {
+                    conversion = qty;
+                    qty = ZERO;
+                  } else
+                    qty = qty.subtract(conversion);
+                  quantity = quantity.subtract(BigDecimal.ONE);
+                }
+                final String strConversion = conversion.toString();
+                final String strSequence = SequenceIdData.getUUID();
+                try {
+                  CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
+                      data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
+                      data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
+                      data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn,
+                          this, data[i].cInvoicelineId), (qtyIsNegative ? "-" + total : total),
+                      data[i].mProductUomId, strmAttributesetinstanceId);
+                  if (!strInvoice.equals(""))
+                    CreateFromShipmentData.updateInvoice(conn, this, strSequence,
+                        data[i].cInvoicelineId);
+                  else
+                    CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
+                        data[i].cOrderlineId);
+                } catch (final ServletException ex) {
+                  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex
+                      .getMessage());
+                  releaseRollbackConnection(conn);
+                  return myMessage;
+                }
+              }
+            } else {
               final String strSequence = SequenceIdData.getUUID();
               try {
                 CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                     data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
-                    data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
-                    data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this,
-                        data[i].cInvoicelineId), (qtyIsNegative ? "-" + total : total),
-                    data[i].mProductUomId, strmAttributesetinstanceId);
-                if (!strInvoice.equals(""))
-                  CreateFromShipmentData.updateInvoice(conn, this, strSequence,
+                    data[i].cUomId, strMovementqty, data[i].cOrderlineId, strLocator,
+                    CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
+                    strQuantityorder, strProductUomId, strmAttributesetinstanceId);
+                if (!strInvoice.equals("")) {
+                  String strInOutLineId = CreateFromShipmentData.selectInvoiceInOut(conn, this,
                       data[i].cInvoicelineId);
-                else
+                  if (strInOutLineId.isEmpty())
+                    CreateFromShipmentData.updateInvoice(conn, this, strSequence,
+                        data[i].cInvoicelineId);
+                  else {
+                    CreateFromShipmentData.insertMatchInv(conn, this, vars.getUser(),
+                        data[i].cInvoicelineId, strSequence, data[i].cInvoiceId);
+                  }
+                } else
                   CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                       data[i].cOrderlineId);
               } catch (final ServletException ex) {
@@ -1711,59 +1742,32 @@ public class CreateFrom extends HttpSecureAppServlet {
                 return myMessage;
               }
             }
-          } else {
-            final String strSequence = SequenceIdData.getUUID();
-            try {
-              CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
-                  data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
-                  data[i].cUomId, strMovementqty, data[i].cOrderlineId, strLocator,
-                  CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
-                  strQuantityorder, strProductUomId, strmAttributesetinstanceId);
-              if (!strInvoice.equals("")) {
-                String strInOutLineId = CreateFromShipmentData.selectInvoiceInOut(conn, this,
-                    data[i].cInvoicelineId);
-                if (strInOutLineId.isEmpty())
-                  CreateFromShipmentData.updateInvoice(conn, this, strSequence,
-                      data[i].cInvoicelineId);
-                else {
-                  CreateFromShipmentData.insertMatchInv(conn, this, vars.getUser(),
-                      data[i].cInvoicelineId, strSequence, data[i].cInvoiceId);
-                }
-              } else
-                CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
-                    data[i].cOrderlineId);
-            } catch (final ServletException ex) {
-              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-              releaseRollbackConnection(conn);
-              return myMessage;
-            }
           }
         }
-      }
 
-      if (!strPO.equals("")) {
-        try {
-          final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
-          if (total == 0)
-            CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
-        } catch (final ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(conn);
-          return myMessage;
+        if (!strPO.equals("")) {
+          try {
+            final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
+            if (total == 0)
+              CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+          } catch (final ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
-      }
-      if (!strInvoice.equals("")) {
-        try {
-          final int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey,
-              strInvoice);
-          if (total == 0)
-            CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
-        } catch (final ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(conn);
-          return myMessage;
+        if (!strInvoice.equals("")) {
+          try {
+            final int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey,
+                strInvoice);
+            if (total == 0)
+              CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
+          } catch (final ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
-      }
       }
       releaseCommitConnection(conn);
       if (log4j.isDebugEnabled())
@@ -1800,83 +1804,106 @@ public class CreateFrom extends HttpSecureAppServlet {
     String[] ids = restrictParameter(strClaves);
     try {
       conn = this.getTransactionConnection();
-      for(int k=0;k<ids.length;k++){
-      if (strType.equals("INVOICE")) {
-        strInvoice = vars.getStringParameter("inpInvoice");
-        if (isSOTrx.equals("Y"))
-          data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this, ids[k]);
-        else
-          data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, ids[k]);
-      } else {
-        strPO = vars.getStringParameter("inpPurchaseOrder");
-        if (isSOTrx.equals("Y"))
-          data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
-        else
-          data = CreateFromShipmentData.selectFromPOUpdate(conn, this, ids[k]);
-      }
-      if (data != null) {
-        for (int i = 0; i < data.length; i++) {
-          String strMultiplyRate = "";
-          int stdPrecision = 0;
-          if (data[i].breakdown.equals("Y")) {
-            if (data[i].cUomIdConversion.equals("")) {
-              releaseRollbackConnection(conn);
-              myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-              return myMessage;
-            }
-            final String strInitUOM = data[i].cUomIdConversion;
-            final String strUOM = data[i].cUomId;
-            if (strInitUOM.equals(strUOM))
-              strMultiplyRate = "1";
-            else
-              strMultiplyRate = CreateFromShipmentData.multiplyRate(this, strInitUOM, strUOM);
-            if (strMultiplyRate.equals(""))
-              strMultiplyRate = CreateFromShipmentData.divideRate(this, strUOM, strInitUOM);
-            if (strMultiplyRate.equals("")) {
-              strMultiplyRate = "1";
-              releaseRollbackConnection(conn);
-              myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-              return myMessage;
-            }
-            stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
-            BigDecimal quantity, qty, multiplyRate;
-
-            multiplyRate = new BigDecimal(strMultiplyRate);
-            qty = new BigDecimal(data[i].id);
-            boolean qtyIsNegative = false;
-            if (qty.compareTo(ZERO) < 0) {
-              qtyIsNegative = true;
-              qty = qty.negate();
-            }
-            quantity = qty.multiply(multiplyRate);
-            if (quantity.scale() > stdPrecision)
-              quantity = quantity.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-            while (qty.compareTo(ZERO) > 0) {
-              String total = "1";
-              BigDecimal conversion;
-              if (quantity.compareTo(BigDecimal.ONE) < 0) {
-                total = quantity.toString();
-                conversion = qty;
-                quantity = ZERO;
-                qty = ZERO;
-              } else {
-                conversion = multiplyRate;
-                if (conversion.compareTo(qty) > 0) {
-                  conversion = qty;
-                  qty = ZERO;
-                } else
-                  qty = qty.subtract(conversion);
-                quantity = quantity.subtract(BigDecimal.ONE);
+      for (int k = 0; k < ids.length; k++) {
+        if (strType.equals("INVOICE")) {
+          strInvoice = vars.getStringParameter("inpInvoice");
+          if (isSOTrx.equals("Y"))
+            data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this, ids[k]);
+          else
+            data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, ids[k]);
+        } else {
+          strPO = vars.getStringParameter("inpPurchaseOrder");
+          if (isSOTrx.equals("Y"))
+            data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, ids[k]);
+          else
+            data = CreateFromShipmentData.selectFromPOUpdate(conn, this, ids[k]);
+        }
+        if (data != null) {
+          for (int i = 0; i < data.length; i++) {
+            String strMultiplyRate = "";
+            int stdPrecision = 0;
+            if (data[i].breakdown.equals("Y")) {
+              if (data[i].cUomIdConversion.equals("")) {
+                releaseRollbackConnection(conn);
+                myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                    "ProcessRunError");
+                return myMessage;
               }
-              final String strConversion = conversion.toString();
+              final String strInitUOM = data[i].cUomIdConversion;
+              final String strUOM = data[i].cUomId;
+              if (strInitUOM.equals(strUOM))
+                strMultiplyRate = "1";
+              else
+                strMultiplyRate = CreateFromShipmentData.multiplyRate(this, strInitUOM, strUOM);
+              if (strMultiplyRate.equals(""))
+                strMultiplyRate = CreateFromShipmentData.divideRate(this, strUOM, strInitUOM);
+              if (strMultiplyRate.equals("")) {
+                strMultiplyRate = "1";
+                releaseRollbackConnection(conn);
+                myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                    "ProcessRunError");
+                return myMessage;
+              }
+              stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
+              BigDecimal quantity, qty, multiplyRate;
+
+              multiplyRate = new BigDecimal(strMultiplyRate);
+              qty = new BigDecimal(data[i].id);
+              boolean qtyIsNegative = false;
+              if (qty.compareTo(ZERO) < 0) {
+                qtyIsNegative = true;
+                qty = qty.negate();
+              }
+              quantity = qty.multiply(multiplyRate);
+              if (quantity.scale() > stdPrecision)
+                quantity = quantity.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+              while (qty.compareTo(ZERO) > 0) {
+                String total = "1";
+                BigDecimal conversion;
+                if (quantity.compareTo(BigDecimal.ONE) < 0) {
+                  total = quantity.toString();
+                  conversion = qty;
+                  quantity = ZERO;
+                  qty = ZERO;
+                } else {
+                  conversion = multiplyRate;
+                  if (conversion.compareTo(qty) > 0) {
+                    conversion = qty;
+                    qty = ZERO;
+                  } else
+                    qty = qty.subtract(conversion);
+                  quantity = quantity.subtract(BigDecimal.ONE);
+                }
+                final String strConversion = conversion.toString();
+                final String strSequence = SequenceIdData.getUUID();
+                try {
+                  CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
+                      data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
+                      data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
+                      data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn,
+                          this, data[i].cInvoicelineId), (qtyIsNegative ? "-" + total : total),
+                      data[i].mProductUomId, data[i].mAttributesetinstanceId);
+                  if (!strInvoice.equals(""))
+                    CreateFromShipmentData.updateInvoice(conn, this, strSequence,
+                        data[i].cInvoicelineId);
+                  else
+                    CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
+                        data[i].cOrderlineId);
+                } catch (final ServletException ex) {
+                  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex
+                      .getMessage());
+                  releaseRollbackConnection(conn);
+                  return myMessage;
+                }
+              }
+            } else {
               final String strSequence = SequenceIdData.getUUID();
               try {
                 CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                     data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
-                    data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
-                    data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this,
-                        data[i].cInvoicelineId), (qtyIsNegative ? "-" + total : total),
-                    data[i].mProductUomId, data[i].mAttributesetinstanceId);
+                    data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator,
+                    CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
+                    data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId);
                 if (!strInvoice.equals(""))
                   CreateFromShipmentData.updateInvoice(conn, this, strSequence,
                       data[i].cInvoicelineId);
@@ -1889,52 +1916,32 @@ public class CreateFrom extends HttpSecureAppServlet {
                 return myMessage;
               }
             }
-          } else {
-            final String strSequence = SequenceIdData.getUUID();
-            try {
-              CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
-                  data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
-                  data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator,
-                  CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
-                  data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId);
-              if (!strInvoice.equals(""))
-                CreateFromShipmentData.updateInvoice(conn, this, strSequence,
-                    data[i].cInvoicelineId);
-              else
-                CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
-                    data[i].cOrderlineId);
-            } catch (final ServletException ex) {
-              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-              releaseRollbackConnection(conn);
-              return myMessage;
-            }
           }
         }
-      }
 
-      if (!strPO.equals("")) {
-        try {
-          final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
-          if (total == 0)
-            CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
-        } catch (final ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(conn);
-          return myMessage;
+        if (!strPO.equals("")) {
+          try {
+            final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
+            if (total == 0)
+              CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+          } catch (final ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
-      }
-      if (!strInvoice.equals("")) {
-        try {
-          final int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey,
-              strInvoice);
-          if (total == 0)
-            CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
-        } catch (final ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(conn);
-          return myMessage;
+        if (!strInvoice.equals("")) {
+          try {
+            final int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey,
+                strInvoice);
+            if (total == 0)
+              CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
+          } catch (final ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
-      }
       }
       releaseCommitConnection(conn);
       if (log4j.isDebugEnabled())
@@ -1974,34 +1981,34 @@ public class CreateFrom extends HttpSecureAppServlet {
     String[] ids = restrictParameter(strDebtPayment);
     try {
       conn = this.getTransactionConnection();
-      for(int k=0;k<ids.length;k++){
-      if (ids[k].startsWith("("))
-    	  ids[k] = ids[k].substring(1, ids[k].length() - 1);
-      if (!ids[k].equals("")) {
-    	  ids[k] = Replace.replace(ids[k], "'", "");
-        final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
-        while (st.hasMoreTokens()) {
-          final String strDebtPaymentId = st.nextToken().trim();
-          final String strWriteOff = vars.getNumericParameter("inpwriteoff" + strDebtPaymentId);
-          final String strIsPaid = vars.getStringParameter("inpispaid" + strDebtPaymentId, "N");
-          if (!CreateFromSettlementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
-            releaseRollbackConnection(conn);
-            log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
-                + " is cancelled");
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-                "DebtPaymentCancelled");
-            return myMessage;
-          }
-          try {
-            CreateFromSettlementData.update(conn, this, vars.getUser(), strKey, strWriteOff,
-                strIsPaid, strDebtPaymentId);
-          } catch (final ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-            return myMessage;
+      for (int k = 0; k < ids.length; k++) {
+        if (ids[k].startsWith("("))
+          ids[k] = ids[k].substring(1, ids[k].length() - 1);
+        if (!ids[k].equals("")) {
+          ids[k] = Replace.replace(ids[k], "'", "");
+          final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
+          while (st.hasMoreTokens()) {
+            final String strDebtPaymentId = st.nextToken().trim();
+            final String strWriteOff = vars.getNumericParameter("inpwriteoff" + strDebtPaymentId);
+            final String strIsPaid = vars.getStringParameter("inpispaid" + strDebtPaymentId, "N");
+            if (!CreateFromSettlementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
+              releaseRollbackConnection(conn);
+              log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
+                  + " is cancelled");
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                  "DebtPaymentCancelled");
+              return myMessage;
+            }
+            try {
+              CreateFromSettlementData.update(conn, this, vars.getUser(), strKey, strWriteOff,
+                  strIsPaid, strDebtPaymentId);
+            } catch (final ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
           }
         }
-      }
       }
       releaseCommitConnection(conn);
       myMessage = new OBError();
@@ -2033,36 +2040,37 @@ public class CreateFrom extends HttpSecureAppServlet {
     try {
       conn = this.getTransactionConnection();
       final String strStatusTo = vars.getStringParameter("inpStatusTo");
-      for(int k=0;k<ids.length;k++){
-      if (ids[k].startsWith("("))
-    	  ids[k] = ids[k].substring(1, ids[k].length() - 1);
-      if (!ids[k].equals("")) {
-    	  ids[k] = Replace.replace(ids[k], "'", "");
-        Integer line = new Integer(CreateFromDPManagementData.getLine(this, strKey));
-        final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
-        while (st.hasMoreTokens()) {
-          final String strDebtPaymentId = st.nextToken().trim();
-          if (!CreateFromDPManagementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
-            releaseRollbackConnection(conn);
-            log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
-                + " is cancelled");
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-                "DebtPaymentCancelled");
-            return myMessage;
-          }
-          final String strDPManagementLineID = SequenceIdData.getUUID();
+      for (int k = 0; k < ids.length; k++) {
+        if (ids[k].startsWith("("))
+          ids[k] = ids[k].substring(1, ids[k].length() - 1);
+        if (!ids[k].equals("")) {
+          ids[k] = Replace.replace(ids[k], "'", "");
+          Integer line = new Integer(CreateFromDPManagementData.getLine(this, strKey));
+          final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
+          while (st.hasMoreTokens()) {
+            final String strDebtPaymentId = st.nextToken().trim();
+            if (!CreateFromDPManagementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
+              releaseRollbackConnection(conn);
+              log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
+                  + " is cancelled");
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                  "DebtPaymentCancelled");
+              return myMessage;
+            }
+            final String strDPManagementLineID = SequenceIdData.getUUID();
 
-          line += 10;
-          try {
-            CreateFromDPManagementData.insert(conn, this, strDPManagementLineID, vars.getClient(),
-                vars.getUser(), strKey, strStatusTo, line.toString(), strDebtPaymentId);
-          } catch (final ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-            return myMessage;
+            line += 10;
+            try {
+              CreateFromDPManagementData.insert(conn, this, strDPManagementLineID,
+                  vars.getClient(), vars.getUser(), strKey, strStatusTo, line.toString(),
+                  strDebtPaymentId);
+            } catch (final ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
           }
         }
-      }
       }
       releaseCommitConnection(conn);
       myMessage = new OBError();
@@ -2095,36 +2103,36 @@ public class CreateFrom extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       Integer lineNo = Integer.valueOf(CreateFromCRemittanceData.selectLineNo(this, strKey))
           .intValue();
-      for(int k=0;k<ids.length;k++){
-      // String strStatusTo = vars.getStringParameter("inpStatusTo");
-      if (ids[k].startsWith("("))
-    	  ids[k] = ids[k].substring(1, ids[k].length() - 1);
-      if (!ids[k].equals("")) {
-    	  ids[k] = Replace.replace(ids[k], "'", "");
-        final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
-        while (st.hasMoreTokens()) {
-          final String strDebtPaymentId = st.nextToken().trim();
+      for (int k = 0; k < ids.length; k++) {
+        // String strStatusTo = vars.getStringParameter("inpStatusTo");
+        if (ids[k].startsWith("("))
+          ids[k] = ids[k].substring(1, ids[k].length() - 1);
+        if (!ids[k].equals("")) {
+          ids[k] = Replace.replace(ids[k], "'", "");
+          final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
+          while (st.hasMoreTokens()) {
+            final String strDebtPaymentId = st.nextToken().trim();
 
-          if (!CreateFromDPManagementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
-            releaseRollbackConnection(conn);
-            log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
-                + " is cancelled");
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-                "DebtPaymentCancelled");
-            return myMessage;
-          }
-          final String strCRemittanceLineID = SequenceIdData.getUUID();
-          lineNo += 10;
-          try {
-            CreateFromCRemittanceData.insert(conn, this, strCRemittanceLineID, vars.getClient(),
-                vars.getUser(), strKey, lineNo.toString(), strDebtPaymentId);
-          } catch (final ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-            return myMessage;
+            if (!CreateFromDPManagementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
+              releaseRollbackConnection(conn);
+              log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
+                  + " is cancelled");
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                  "DebtPaymentCancelled");
+              return myMessage;
+            }
+            final String strCRemittanceLineID = SequenceIdData.getUUID();
+            lineNo += 10;
+            try {
+              CreateFromCRemittanceData.insert(conn, this, strCRemittanceLineID, vars.getClient(),
+                  vars.getUser(), strKey, lineNo.toString(), strDebtPaymentId);
+            } catch (final ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
           }
         }
-      }
       }
       releaseCommitConnection(conn);
       myMessage = new OBError();
@@ -2143,43 +2151,45 @@ public class CreateFrom extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  public String[] restrictParameter(String strClaves){
-	  	  String[] ids = null;
-	  	  if(strClaves!=null && !("").equals(strClaves)){
-	  		  strClaves = strClaves.substring(1, strClaves.length() - 1);
-	  		    StringTokenizer st = new StringTokenizer(strClaves,",");
-	  		    int noOfRecords=1;
-	  		    int tokenCount=st.countTokens();
-	  		    final double totalRecords = 900.0;
-	  		    int strArrayCount=tokenCount<=totalRecords?0:(int) Math.ceil(tokenCount/totalRecords);
-	  		    if(strArrayCount != 0){
-	  		     ids = new String[strArrayCount];
-	  		    }else{
-	  		    	ids=new String[1];
-	  		    	ids[0]="("+strClaves+")";
-	  		    }
-	  	
-	  		    int count =1;
-	  		    String tempIds = "";
-	  		    if(strArrayCount!=0){
-	  		    	while(st.hasMoreTokens()){
-	  		    		tempIds = tempIds + st.nextToken();
-	  		    		if((noOfRecords%totalRecords)!=0 && st.hasMoreTokens()){
-	  		    			tempIds= tempIds+",";
-	  		    		}
-	  		    		if((noOfRecords%totalRecords)==0 || (strArrayCount == count && !st.hasMoreTokens())){
-	  		    			ids[count-1] = "("+tempIds+")";
-	  		    			tempIds ="";
-	  		    			count++;
-	  		    		}
-	  		    		noOfRecords++;	
-	  		    	}
-	  	
-	  		    }
-	  	    return ids;
-	  	  }
-	  	  return new String[0];
-	    }
+  private String[] restrictParameter(String strIds) {
+    String[] ids = null;
+    if (strIds == null || ("").equals(strIds)) {
+      return new String[0];
+    }
+    strIds = strIds.substring(1, strIds.length() - 1);
+    StringTokenizer st = new StringTokenizer(strIds, ",");
+    int noOfRecords = 1;
+    int tokenCount = st.countTokens();
+    final double totalRecords = 900.0;
+    int strArrayCount = tokenCount <= totalRecords ? 0 : (int) Math.ceil(tokenCount / totalRecords);
+    if (strArrayCount != 0) {
+      ids = new String[strArrayCount];
+    } else {
+      ids = new String[1];
+      ids[0] = "(" + strIds + ")";
+    }
+
+    int count = 1;
+    String tempIds = "";
+    if (strArrayCount != 0) {
+      while (st.hasMoreTokens()) {
+        tempIds = tempIds + st.nextToken();
+        if ((noOfRecords % totalRecords) != 0 && st.hasMoreTokens()) {
+          tempIds = tempIds + ",";
+        }
+        if ((noOfRecords % totalRecords) == 0 || (strArrayCount == count && !st.hasMoreTokens())) {
+          ids[count - 1] = "(" + tempIds + ")";
+          tempIds = "";
+          count++;
+        }
+        noOfRecords++;
+      }
+
+    }
+    return ids;
+
+  }
+
   @Override
   public String getServletInfo() {
     return "Servlet that presents the button of CreateFrom";

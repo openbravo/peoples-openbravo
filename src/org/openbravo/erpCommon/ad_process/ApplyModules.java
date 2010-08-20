@@ -18,9 +18,12 @@
  */
 package org.openbravo.erpCommon.ad_process;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -339,7 +342,10 @@ public class ApplyModules extends HttpSecureAppServlet {
     }
     if (translationFile == null)
       return null;
-    FileReader xmlReader = new FileReader(translationFile);
+    FileInputStream fis = new FileInputStream(translationFile);
+    InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+
+    BufferedReader xmlReader = new BufferedReader(isr);
 
     BeanReader beanReader = new BeanReader();
 

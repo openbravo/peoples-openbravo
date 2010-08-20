@@ -40,7 +40,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   private static final Logger log4j = Logger.getLogger(InitialClientSetup.class);
   private static final long serialVersionUID = 1L;
-  private static final String STRMESSAGEOK = "Success";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -158,8 +157,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strModules, StringBuffer strLog) throws IOException {
 
     log4j.debug("process() - Initial Client Setup Process Start - strModules - " + strModules);
-    OBError obeResult = new OBError();
-    obeResult.setType(STRMESSAGEOK);
 
     String strClientName = vars.getStringParameter("inpClient");
     String strClientUser = vars.getStringParameter("inpClientUser");
@@ -176,10 +173,10 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         + strClientUser);
 
     org.openbravo.erpCommon.businessUtility.InitialClientSetup ics = new org.openbravo.erpCommon.businessUtility.InitialClientSetup();
-    obeResult = ics.createClient(vars, strCurrency, strClientName, strClientUser, strPassword,
-        strModules, Utility.messageBD(this, "Account_ID", vars.getLanguage()), Utility.messageBD(
-            this, "C_Calendar_ID", vars.getLanguage()), bCreateAccounting, fileCoAFilePath,
-        bBPartner, bProduct, bProject, bCampaign, bSalesRegion);
+    OBError obeResult = ics.createClient(vars, strCurrency, strClientName, strClientUser,
+        strPassword, strModules, Utility.messageBD(this, "Account_ID", vars.getLanguage()), Utility
+            .messageBD(this, "C_Calendar_ID", vars.getLanguage()), bCreateAccounting,
+        fileCoAFilePath, bBPartner, bProduct, bProject, bCampaign, bSalesRegion);
 
     strLog.append(ics.getLog());
 
