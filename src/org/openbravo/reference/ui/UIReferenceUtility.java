@@ -22,7 +22,10 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.ComboTableQueryData;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 
@@ -32,6 +35,7 @@ import org.openbravo.erpCommon.utility.TableSQLData;
  */
 public class UIReferenceUtility {
   public static final int MAX_TEXTBOX_LENGTH = 150;
+  public static final String INACTIVE_DATA = "**";
 
   /**
    * Checks whether there is trl for the table and creates the query if needed.
@@ -50,8 +54,9 @@ public class UIReferenceUtility {
     int myIndex = tableSql.index++;
     tableSql.addSelectField("(CASE WHEN td_trl" + myIndex + "." + data[0].columnname
         + " IS NULL THEN "
-        + formatField(ref, tableSql, (tableName + "." + field.getProperty("ColumnName")))
-        + " ELSE " + formatField(ref, tableSql, ("td_trl" + myIndex + "." + data[0].columnname))
+        + formatField(tableSql.getVars(), ref, (tableName + "." + field.getProperty("ColumnName")))
+        + " ELSE "
+        + formatField(tableSql.getVars(), ref, ("td_trl" + myIndex + "." + data[0].columnname))
         + " END)", identifierName);
 
     String columnName;
@@ -69,13 +74,57 @@ public class UIReferenceUtility {
   }
 
   /**
-   * Formats the fields to get a correct output.
+   * Checks if the table has a translated table, making the joins to the translated one.
    * 
+   * @param comboTableData
+   * 
+   * @param tableName
+   *          Name of the table.
    * @param field
-   *          String with the field.
-   * @return String with the formated field.
+   *          Name of the field.
+   * @param reference
+   *          Id of the reference.
+   * @return Boolean to indicate if the translated table has been found.
+   * @throws Exception
+   */
+  static public boolean checkTableTranslation(ComboTableData comboTableData, String tableName,
+      FieldProvider field, String reference) throws Exception {
+    if (tableName == null || tableName.equals("") || field == null)
+      return false;
+    ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(comboTableData
+        .getPool(), field.getField("tablename"), field.getField("name"));
+    if (data == null || data.length == 0)
+      return false;
+    int myIndex = comboTableData.index++;
+    comboTableData.addSelectField("(CASE WHEN td_trl"
+        + myIndex
+        + "."
+        + data[0].columnname
+        + " IS NULL THEN "
+        + formatField(comboTableData.getVars(), reference, (tableName + "." + field
+            .getField("name")))
+        + " ELSE "
+        + formatField(comboTableData.getVars(), reference,
+            ("td_trl" + myIndex + "." + data[0].columnname)) + " END)", "NAME");
+    comboTableData.addFromField(data[0].tablename + " td_trl" + myIndex + " on " + tableName + "."
+        + data[0].reference + " = td_trl" + myIndex + "." + data[0].reference + " AND td_trl"
+        + myIndex + ".AD_Language = ?", "td_trl" + myIndex);
+    comboTableData.addFromParameter("#AD_LANGUAGE", "LANGUAGE");
+    return true;
+  }
+
+  /**
+   * @deprecated use instead
+   *             {@link UIReferenceUtility#formatField(VariablesSecureApp, String, String)}
    */
   static String formatField(String reference, TableSQLData tableSql, String field) {
+    return formatField(tableSql.getVars(), reference, field);
+  }
+
+  /**
+   * Formats the fields to get a correct output.
+   */
+  static String formatField(VariablesSecureApp vars, String reference, String field) {
     String result = "";
     if (field == null)
       return "";
@@ -94,16 +143,13 @@ public class UIReferenceUtility {
       result = "TO_NUMBER(" + field + ")";
     } else if (reference.equals("15")) {
       // DATE
-      result = "TO_CHAR("
-          + field
-          + (tableSql.getVars() == null ? "" : (", '"
-              + tableSql.getVars().getSessionValue("#AD_SqlDateFormat") + "'")) + ")";
+      result = "TO_CHAR(" + field
+          + (vars == null ? "" : (", '" + vars.getSessionValue("#AD_SqlDateFormat") + "'")) + ")";
     } else if (reference.equals("16")) {
       // DATE-TIME
-      result = "TO_CHAR("
-          + field
-          + (tableSql.getVars() == null ? "" : (", '"
-              + tableSql.getVars().getSessionValue("#AD_SqlDateTimeFormat") + "'")) + ")";
+      result = "TO_CHAR(" + field
+          + (vars == null ? "" : (", '" + vars.getSessionValue("#AD_SqlDateTimeFormat") + "'"))
+          + ")";
     } else if (reference.equals("24")) {
       // TIME
       result = "TO_CHAR(" + field + ", 'HH24:MI:SS')";
@@ -212,4 +258,5 @@ public class UIReferenceUtility {
       list.add(value);
     }
   }
+
 }

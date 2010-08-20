@@ -32,6 +32,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.reference.Reference;
+import org.openbravo.reference.ui.UIReference;
 
 /**
  * @author Fernando Iriazabal
@@ -55,7 +57,7 @@ public class ComboTableData {
   private Vector<QueryFieldStructure> from = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> where = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> orderBy = new Vector<QueryFieldStructure>();
-  private int index = 0;
+  public int index = 0;
 
   /**
    * Constructor
@@ -149,7 +151,7 @@ public class ComboTableData {
    * 
    * @return Session object.
    */
-  private VariablesSecureApp getVars() {
+  public VariablesSecureApp getVars() {
     return this.vars;
   }
 
@@ -171,7 +173,7 @@ public class ComboTableData {
    * 
    * @return Database handler object.
    */
-  private ConnectionProvider getPool() {
+  public ConnectionProvider getPool() {
     return this.pool;
   }
 
@@ -219,7 +221,7 @@ public class ComboTableData {
    * 
    * @return String with the object name.
    */
-  private String getObjectName() {
+  public String getObjectName() {
     return getParameter(internalPrefix + "name");
   }
 
@@ -255,7 +257,7 @@ public class ComboTableData {
    * 
    * @return String with the object reference id.
    */
-  private String getObjectReference() {
+  public String getObjectReference() {
     return getParameter(internalPrefix + "objectReference");
   }
 
@@ -303,7 +305,7 @@ public class ComboTableData {
    * 
    * @return String with the granted organizations list.
    */
-  private String getOrgList() {
+  public String getOrgList() {
     return getParameter(internalPrefix + "orgList");
   }
 
@@ -323,7 +325,7 @@ public class ComboTableData {
    * 
    * @return String with the granted clients list.
    */
-  private String getClientList() {
+  public String getClientList() {
     return getParameter(internalPrefix + "clientList");
   }
 
@@ -335,7 +337,7 @@ public class ComboTableData {
    * @param _alias
    *          String with the alias for this field.
    */
-  private void addSelectField(String _field, String _alias) {
+  public void addSelectField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
     if (this.select == null)
       this.select = new Vector<QueryFieldStructure>();
@@ -359,7 +361,7 @@ public class ComboTableData {
    * @param _alias
    *          String with the alias for the field.
    */
-  private void addFromField(String _field, String _alias) {
+  public void addFromField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM");
     if (this.from == null)
       this.from = new Vector<QueryFieldStructure>();
@@ -383,7 +385,7 @@ public class ComboTableData {
    * @param _type
    *          String for group fields.
    */
-  private void addWhereField(String _field, String _type) {
+  public void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.where == null)
       this.where = new Vector<QueryFieldStructure>();
@@ -405,7 +407,7 @@ public class ComboTableData {
    * @param _field
    *          String with the field.
    */
-  private void addOrderByField(String _field) {
+  public void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
     if (this.orderBy == null)
       this.orderBy = new Vector<QueryFieldStructure>();
@@ -453,7 +455,7 @@ public class ComboTableData {
    * @param _fieldName
    *          String with the name od the field.
    */
-  private void addFromParameter(String _parameter, String _fieldName) {
+  public void addFromParameter(String _parameter, String _fieldName) {
     if (this.paramFrom == null)
       this.paramFrom = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM");
@@ -479,7 +481,7 @@ public class ComboTableData {
    * @param _type
    *          String with a group name.
    */
-  private void addWhereParameter(String _parameter, String _fieldName, String _type) {
+  public void addWhereParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWhere == null)
       this.paramWhere = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
@@ -528,7 +530,7 @@ public class ComboTableData {
    *          The value for this parameter.
    * @throws Exception
    */
-  void setParameter(String name, String value) throws Exception {
+  public void setParameter(String name, String value) throws Exception {
     if (name == null || name.equals(""))
       throw new Exception("Invalid parameter name");
     if (this.parameters == null)
@@ -646,181 +648,6 @@ public class ComboTableData {
   }
 
   /**
-   * Auxiliar method to build the query for list types.
-   * 
-   * @param tableName
-   *          Name of the table
-   * @param fieldName
-   *          Name of the field.
-   * @param referenceValue
-   *          Id of the reference value.
-   * @throws Exception
-   */
-  private void setListQuery(String tableName, String fieldName, String referenceValue)
-      throws Exception {
-    boolean isValueDisplayed = ComboTableQueryData.isValueDisplayed(getPool(),
-        ((referenceValue != null && !referenceValue.equals("")) ? referenceValue
-            : getObjectReference()));
-
-    int myIndex = this.index++;
-    addSelectField("td" + myIndex + ".value", "id");
-
-    StringBuffer identifier = new StringBuffer();
-    // Add inactive data info
-    identifier.append("((CASE td").append(myIndex).append(".isActive WHEN 'N' THEN '").append(
-        INACTIVE_DATA).append("' ELSE '' END) ");
-    // Add value
-    if (isValueDisplayed) {
-      identifier.append(" || td").append(myIndex).append(".value ||' - '");
-    }
-
-    // Add name
-    identifier.append("|| (CASE WHEN td_trl").append(myIndex).append(".name IS NULL THEN td")
-        .append(myIndex).append(".name ELSE td_trl").append(myIndex).append(".name END))");
-
-    addSelectField(identifier.toString(), "NAME");
-    addSelectField("(CASE WHEN td_trl" + myIndex + ".description IS NULL THEN td" + myIndex
-        + ".description ELSE td_trl" + myIndex + ".description END)", "DESCRIPTION");
-    String tables = "ad_ref_list td" + myIndex;
-    if (tableName != null && tableName.length() != 0 && fieldName != null
-        && fieldName.length() != 0)
-      tables += " on " + tableName + "." + fieldName + " = td" + myIndex + ".value ";
-    addFromField(tables, "td" + myIndex);
-    addFromField("ad_ref_list_trl td_trl" + myIndex + " on td" + myIndex
-        + ".ad_ref_list_id = td_trl" + myIndex + ".ad_ref_list_id AND td_trl" + myIndex
-        + ".ad_language = ?", "td_trl" + myIndex);
-    addFromParameter("#AD_LANGUAGE", "LANGUAGE");
-    addWhereField("td" + myIndex + ".ad_reference_id = (?)", "KEY");
-    if (referenceValue == null || referenceValue.equals("")) {
-      addWhereParameter("AD_REFERENCE_ID", "KEY", "KEY");
-      setParameter("AD_REFERENCE_ID", getObjectReference());
-    } else {
-      addWhereParameter("TD" + myIndex + ".AD_REFERENCE_ID", "KEY", "KEY");
-      setParameter("TD" + myIndex + ".AD_REFERENCE_ID", referenceValue);
-    }
-    if (tableName == null || tableName.length() == 0) {
-      parseValidation();
-      addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + ".Value = ? )",
-          "ISACTIVE");
-      addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
-    }
-    addOrderByField("td" + myIndex + ".SeqNo");
-    addOrderByField("(CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex
-        + ".name ELSE td_trl" + myIndex + ".name END)");
-  }
-
-  /**
-   * Auxiliar method to build the query for the Table type
-   * 
-   * @param tableName
-   *          Name of the table
-   * @param fieldName
-   *          Name of the field.
-   * @param referenceValue
-   *          Id of the reference value.
-   * @throws Exception
-   */
-  private void setTableQuery(String tableName, String fieldName, String referenceValue)
-      throws Exception {
-    int myIndex = this.index++;
-    ComboTableQueryData trd[] = ComboTableQueryData.selectRefTable(getPool(),
-        ((referenceValue != null && !referenceValue.equals("")) ? referenceValue
-            : getObjectReference()));
-    if (trd == null || trd.length == 0)
-      return;
-    addSelectField("td" + myIndex + "." + trd[0].keyname, "ID");
-    if (trd[0].isvaluedisplayed.equals("Y"))
-      addSelectField("td" + myIndex + ".VALUE", "NAME");
-    ComboTableQueryData fieldsAux = new ComboTableQueryData();
-    fieldsAux.name = trd[0].name;
-    fieldsAux.tablename = trd[0].tablename;
-    fieldsAux.reference = trd[0].reference;
-    fieldsAux.referencevalue = trd[0].referencevalue;
-    fieldsAux.required = trd[0].required;
-    String tables = trd[0].tablename + " td" + myIndex;
-    if (tableName != null && !tableName.equals("") && fieldName != null && !fieldName.equals("")) {
-      tables += " on " + tableName + "." + fieldName + " = td" + myIndex + "." + trd[0].keyname
-          + " \n";
-      tables += "AND td" + myIndex + ".AD_Client_ID IN (" + getClientList() + ") \n";
-      tables += "AND td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")";
-    } else {
-      addWhereField("td" + myIndex + ".AD_Client_ID IN (" + getClientList() + ")", "CLIENT_LIST");
-      if (getOrgList() != null)
-        addWhereField("td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")", "ORG_LIST");
-    }
-    addFromField(tables, "td" + myIndex);
-    String strSQL = trd[0].whereclause;
-    if (strSQL == null)
-      strSQL = "";
-
-    if (!strSQL.equals("")) {
-      if (strSQL.indexOf("@") != -1)
-        strSQL = parseContext(strSQL, "WHERE");
-      addWhereField(strSQL, "FILTER");
-    }
-    if (tableName == null || tableName.equals("")) {
-      parseValidation();
-      addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + trd[0].keyname
-          + " = (?) )", "ISACTIVE");
-      addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
-    }
-    String orderByAux = (trd[0].orderbyclause.equals("") ? "2" : trd[0].orderbyclause);
-    if (orderByAux.indexOf("@") != -1)
-      orderByAux = parseContext(orderByAux, "ORDERBY");
-    identifier("td" + myIndex, fieldsAux);
-    addOrderByField(orderByAux);
-  }
-
-  /**
-   * Auxiliar method to build the query for the TableDir type.
-   * 
-   * @param tableName
-   *          Name of the table.
-   * @param fieldName
-   *          Name of the field.
-   * @param parentFieldName
-   *          Real name of the parent column.
-   * @throws Exception
-   */
-  private void setTableDirQuery(String tableName, String fieldName, String parentFieldName)
-      throws Exception {
-    int myIndex = this.index++;
-    String name = ((fieldName != null && !fieldName.equals("")) ? fieldName : getObjectName());
-
-    String tableDirName;
-    if (name.equalsIgnoreCase("createdby") || name.equalsIgnoreCase("updatedby")) {
-      tableDirName = "AD_User";
-      name = "AD_User_ID";
-    } else {
-      tableDirName = name.substring(0, name.length() - 3);
-    }
-    ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(getPool(), tableDirName);
-    addSelectField("td" + myIndex + "." + name, "ID");
-
-    String tables = tableDirName + " td" + myIndex;
-    if (tableName != null && !tableName.equals("") && parentFieldName != null
-        && !parentFieldName.equals("")) {
-      tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name + "\n";
-      tables += "AND td" + myIndex + ".AD_Client_ID IN (" + getClientList() + ") \n";
-      tables += "AND td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")";
-    } else {
-      addWhereField("td" + myIndex + ".AD_Client_ID IN (" + getClientList() + ")", "CLIENT_LIST");
-      if (getOrgList() != null)
-        addWhereField("td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")", "ORG_LIST");
-    }
-    addFromField(tables, "td" + myIndex);
-    if (tableName == null || tableName.equals("")) {
-      parseValidation();
-      addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + name + " = (?) )",
-          "ISACTIVE");
-      addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
-    }
-    for (int i = 0; i < trd.length; i++)
-      identifier("td" + myIndex, trd[i]);
-    addOrderByField("2");
-  }
-
-  /**
    * Method to fix the names of the fields. Searchs all the fields in the where clause and order by
    * clause to change the names with correct aliases. This intends to fix the problem of the names
    * in the whereclauses, filterclauses and orderbyclauses fields of the tab's table, where the user
@@ -908,7 +735,7 @@ public class ComboTableData {
    * 
    * @throws Exception
    */
-  private void parseValidation() throws Exception {
+  public void parseValidation() throws Exception {
     if (getValidation() == null || getValidation().equals(""))
       return;
     if (log4j.isDebugEnabled())
@@ -933,7 +760,7 @@ public class ComboTableData {
    *          String with the type of the clause (WHERE, ORDER...)
    * @return String with the text replaced.
    */
-  private String parseContext(String context, String type) {
+  public String parseContext(String context, String type) {
     if (context == null || context.equals(""))
       return "";
     StringBuffer strOut = new StringBuffer();
@@ -979,131 +806,10 @@ public class ComboTableData {
    *          String with the name of the field.
    * @throws Exception
    */
-  private void identifier(String tableName, FieldProvider field) throws Exception {
-    String reference;
-    if (field == null)
-      reference = getReferenceType();
-    else
-      reference = field.getField("reference");
-    switch (Integer.valueOf(reference).intValue()) {
-    case 17: // List
-      setListQuery(tableName, ((field == null) ? "" : field.getField("name")),
-          ((field == null) ? "" : field.getField("referencevalue")));
-      break;
-    case 18: // Table
-      setTableQuery(tableName, ((field == null) ? "" : field.getField("name")),
-          ((field == null) ? "" : field.getField("referencevalue")));
-      break;
-    case 19: // TableDir
-      setTableDirQuery(tableName, ((field == null) ? "" : field.getField("name")),
-          ((field == null) ? "" : field.getField("name")));
-      break;
-    case 30: // Search
-      setTableDirQuery(tableName, ((field == null) ? "" : field.getField("name")),
-          ((field == null) ? "" : field.getField("name")));
-      break;
-    case 31: // Locator
-      setTableDirQuery(tableName, "M_Locator_ID", ((field == null) ? getObjectName() : field
-          .getField("name")));
-      break;
-    case 35:
-      setTableDirQuery(tableName, ((field == null) ? "" : field.getField("name")),
-          ((field == null) ? "" : field.getField("name")));
-      break;
-    case 25: // Account
-      setTableDirQuery(tableName, "C_ValidCombination_ID", ((field == null) ? getObjectName()
-          : field.getField("name")));
-      break;
-    case 800011: // Product Search
-      setTableDirQuery(tableName, "M_Product_ID", ((field == null) ? getObjectName() : field
-          .getField("name")));
-      break;
-    default:
-      if (!checkTableTranslation(tableName, field, reference)) {
-        addSelectField(formatField(
-            (((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field
-                .getField("name")), reference), "NAME");
-      }
-      break;
-    }
-  }
-
-  /**
-   * Checks if the table has a translated table, making the joins to the translated one.
-   * 
-   * @param tableName
-   *          Name of the table.
-   * @param field
-   *          Name of the field.
-   * @param reference
-   *          Id of the reference.
-   * @return Boolean to indicate if the translated table has been found.
-   * @throws Exception
-   */
-  private boolean checkTableTranslation(String tableName, FieldProvider field, String reference)
-      throws Exception {
-    if (tableName == null || tableName.equals("") || field == null)
-      return false;
-    ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(getPool(), field
-        .getField("tablename"), field.getField("name"));
-    if (data == null || data.length == 0)
-      return false;
-    int myIndex = this.index++;
-    addSelectField("(CASE WHEN td_trl" + myIndex + "." + data[0].columnname + " IS NULL THEN "
-        + formatField((tableName + "." + field.getField("name")), reference) + " ELSE "
-        + formatField(("td_trl" + myIndex + "." + data[0].columnname), reference) + " END)", "NAME");
-    addFromField(data[0].tablename + " td_trl" + myIndex + " on " + tableName + "."
-        + data[0].reference + " = td_trl" + myIndex + "." + data[0].reference + " AND td_trl"
-        + myIndex + ".AD_Language = ?", "td_trl" + myIndex);
-    addFromParameter("#AD_LANGUAGE", "LANGUAGE");
-    return true;
-  }
-
-  /**
-   * Formating method to add the correct functions to the fields for the presentation. It depends on
-   * the type of field (DATE, NUMBER...).
-   * 
-   * @param field
-   *          Name of the field.
-   * @param reference
-   *          Id of the reference type.
-   * @return String with the format applied.
-   */
-  private String formatField(String field, String reference) {
-    String result = "";
-    if (field == null || field.length() == 0)
-      return "";
-    else if (reference == null || reference.length() == 0)
-      return field;
-    switch (Integer.valueOf(reference).intValue()) {
-    case 11: // INTEGER
-      result = "CAST(" + field + " AS INTEGER)";
-      break;
-    case 12: // AMOUNT
-    case 22: // NUMBER
-    case 26: // ROWID
-    case 29: // QUANTITY
-    case 800008: // PRICE
-    case 800019: // GENERAL QUANTITY
-      result = "TO_NUMBER(" + field + ")";
-      break;
-    case 15: // DATE
-      result = "TO_CHAR("
-          + field
-          + (getVars() == null ? ""
-              : (", '" + getVars().getSessionValue("#AD_SqlDateFormat") + "'")) + ")";
-      break;
-    case 16: // DATETIME
-      result = "TO_CHAR(" + field + ")";
-      break;
-    case 24: // TIME
-      result = "TO_CHAR(" + field + ", 'HH24:MI:SS')";
-      break;
-    default:
-      result = "TO_CHAR(" + field + ")";
-      break;
-    }
-    return result;
+  public void identifier(String tableName, FieldProvider field) throws Exception {
+    UIReference uiref = Reference.getUIReference(field == null ? getReferenceType() : field
+        .getField("reference"), null);
+    uiref.setComboTableDataIdentifier(this, tableName, field);
   }
 
   /**
