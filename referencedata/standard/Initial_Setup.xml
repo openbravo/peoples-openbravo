@@ -355,7 +355,7 @@
     <documentSequence id="2D47C580583242259DF1FFEA4D914A94" entity-name="ADSequence" identifier="MM Shipment"/>
     <gLCategory id="160C37CC0D36480E8B91B015FAC747DC" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="319" entity-name="ADTable" identifier="M_InOut"/>
     <filterByOrganization>false</filterByOrganization>
@@ -364,7 +364,7 @@
   </DocumentType>
   <DocumentType id="15C8DCE82DA841968ABCD614FED68576" identifier="Proposal">
     <id>15C8DCE82DA841968ABCD614FED68576</id>
-    <active>true</active>
+    <active>false</active>
     <name>Proposal</name>
     <printText>Non binding offer</printText>
     <description xsi:nil="true"/>
@@ -386,7 +386,7 @@
   </DocumentType>
   <DocumentType id="15F495A6290040F194A9AA4622FE0C01" identifier="Prepay Order">
     <id>15F495A6290040F194A9AA4622FE0C01</id>
-    <active>true</active>
+    <active>false</active>
     <name>Prepay Order</name>
     <printText>Prepay Order</printText>
     <description xsi:nil="true"/>
@@ -421,7 +421,7 @@
     <documentSequence xsi:nil="true"/>
     <gLCategory id="160C37CC0D36480E8B91B015FAC747DC" entity-name="FinancialMgmtGLCategory" identifier="Material Management"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="319" entity-name="ADTable" identifier="M_InOut"/>
     <filterByOrganization>false</filterByOrganization>
@@ -430,7 +430,7 @@
   </DocumentType>
   <DocumentType id="2D7C15F0F44E4F289A729415EFD700C1" identifier="Return Material">
     <id>2D7C15F0F44E4F289A729415EFD700C1</id>
-    <active>true</active>
+    <active>false</active>
     <name>Return Material</name>
     <printText>Return Material Authorization</printText>
     <description xsi:nil="true"/>
@@ -465,7 +465,7 @@
     <documentSequence id="A7C5B67A2BB244A19F475160A5AFCE5E" entity-name="ADSequence" identifier="Inventory Move"/>
     <gLCategory id="3005499D637B41AF86222E4BDA29D415" entity-name="FinancialMgmtGLCategory" identifier="Movement"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="323" entity-name="ADTable" identifier="M_Movement"/>
     <filterByOrganization>false</filterByOrganization>
@@ -487,7 +487,7 @@
     <documentSequence id="EC5B218F09F44618B98FA0D233E3DC70" entity-name="ADSequence" identifier="AR Invoice"/>
     <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
     <filterByOrganization>false</filterByOrganization>
@@ -531,7 +531,7 @@
     <documentSequence id="B380E35582BD4D1A930146F1BA72C03F" entity-name="ADSequence" identifier="GL Journal"/>
     <gLCategory id="47D760C2B9C942EA86D47E6422C3BF9C" entity-name="FinancialMgmtGLCategory" identifier="Manual"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="224" entity-name="ADTable" identifier="GL_Journal"/>
     <filterByOrganization>false</filterByOrganization>
@@ -575,7 +575,7 @@
     <documentSequence xsi:nil="true"/>
     <gLCategory id="A431AFE1356141728139523053B672C4" entity-name="FinancialMgmtGLCategory" identifier="AP Invoice"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
     <filterByOrganization>false</filterByOrganization>
@@ -597,7 +597,7 @@
     <documentSequence id="A55E308B07EF453B87ED12516E3C9F7D" entity-name="ADSequence" identifier="Matched Invoices"/>
     <gLCategory id="82B88F71CF71401584FC1DFEFD9EB33D" entity-name="FinancialMgmtGLCategory" identifier="MatchInv"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="472" entity-name="ADTable" identifier="M_MatchInv"/>
     <filterByOrganization>false</filterByOrganization>
@@ -641,7 +641,7 @@
     <documentSequence id="81EEB6FAFE5D4E6B9389CAAC6297495B" entity-name="ADSequence" identifier="Physical Inventory"/>
     <gLCategory id="5106A21601924DA9996DC40C34954F8A" entity-name="FinancialMgmtGLCategory" identifier="Inventory"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="321" entity-name="ADTable" identifier="M_Inventory"/>
     <filterByOrganization>false</filterByOrganization>
@@ -650,7 +650,7 @@
   </DocumentType>
   <DocumentType id="6F3BBCA488F6474A806C59FD1137CBF5" identifier="Purchase Requisition">
     <id>6F3BBCA488F6474A806C59FD1137CBF5</id>
-    <active>true</active>
+    <active>false</active>
     <name>Purchase Requisition</name>
     <printText>Purchase Requisition</printText>
     <description xsi:nil="true"/>
@@ -707,7 +707,7 @@
     <documentSequence id="AE79ADF07A5E4E6E9C5367505C1C3463" entity-name="ADSequence" identifier="Purchase Order"/>
     <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="259" entity-name="ADTable" identifier="C_Order"/>
     <filterByOrganization>false</filterByOrganization>
@@ -773,7 +773,7 @@
     <documentSequence id="BCF68C60AFAE45358B7D78FCAB3EB783" entity-name="ADSequence" identifier="Matched Purchase Orders"/>
     <gLCategory id="FA9102F37B904275A3CCD9935D69ED51" entity-name="FinancialMgmtGLCategory" identifier="MatchPO"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="473" entity-name="ADTable" identifier="M_MatchPO"/>
     <filterByOrganization>false</filterByOrganization>
@@ -883,7 +883,7 @@
     <documentSequence id="0FBF9530BC584A6E9415F7AD01A23201" entity-name="ADSequence" identifier="Standard Order"/>
     <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="259" entity-name="ADTable" identifier="C_Order"/>
     <filterByOrganization>false</filterByOrganization>
@@ -905,7 +905,7 @@
     <documentSequence id="F3659AAEFC2741F788BB474159616023" entity-name="ADSequence" identifier="AR Receipt"/>
     <gLCategory id="E8752D97421B434F8355331B680DC652" entity-name="FinancialMgmtGLCategory" identifier="AR Receipt"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="D1A97202E832470285C9B1EB026D54E2" entity-name="ADTable" identifier="FIN_Payment"/>
     <filterByOrganization>false</filterByOrganization>
@@ -914,7 +914,7 @@
   </DocumentType>
   <DocumentType id="E7F4802D902A42A59143DCCBEDE4DE85" identifier="Credit Order">
     <id>E7F4802D902A42A59143DCCBEDE4DE85</id>
-    <active>true</active>
+    <active>false</active>
     <name>Credit Order</name>
     <printText>Order Confirmation</printText>
     <description xsi:nil="true"/>
@@ -949,7 +949,7 @@
     <documentSequence id="267B166C6F4B49E893CF6276EE396E7D" entity-name="ADSequence" identifier="Production"/>
     <gLCategory id="37501231BC434F2DB0BF5F706CEBCC1F" entity-name="FinancialMgmtGLCategory" identifier="Production"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="325" entity-name="ADTable" identifier="M_Production"/>
     <filterByOrganization>false</filterByOrganization>
@@ -971,7 +971,7 @@
     <documentSequence id="4D72691638A24A0194882A302FCF9494" entity-name="ADSequence" identifier="AP Payment"/>
     <gLCategory id="C79381E3F81140DBAAD73E6B0CD74901" entity-name="FinancialMgmtGLCategory" identifier="AP Payment"/>
     <comments xsi:nil="true"/>
-    <default>false</default>
+    <default>true</default>
     <numberOfCopies>0</numberOfCopies>
     <table id="D1A97202E832470285C9B1EB026D54E2" entity-name="ADTable" identifier="FIN_Payment"/>
     <filterByOrganization>false</filterByOrganization>
@@ -980,7 +980,7 @@
   </DocumentType>
   <DocumentType id="F8CC92C7234644DEAD9F63174F45B2BF" identifier="MM Shipment Indirect">
     <id>F8CC92C7234644DEAD9F63174F45B2BF</id>
-    <active>true</active>
+    <active>false</active>
     <name>MM Shipment Indirect</name>
     <printText>Delivery Note</printText>
     <description xsi:nil="true"/>
