@@ -77,8 +77,8 @@ public class UIReference {
 
     if (!UIReferenceUtility.checkTableTranslation(tableSql, parentTableName, field, reference,
         identifierName, realName, tableRef)) {
-      tableSql.addSelectField(UIReferenceUtility.formatField(reference, tableSql, (parentTableName
-          + "." + field.getProperty("ColumnName"))), identifierName);
+      tableSql.addSelectField(UIReferenceUtility.formatField(tableSql.getVars(), reference,
+          (parentTableName + "." + field.getProperty("ColumnName"))), identifierName);
     }
   }
 
