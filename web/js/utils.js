@@ -89,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8155';
+  var number = '8202';
   return number;
 }
 
@@ -1367,8 +1367,9 @@ function obtainKeyCode(code) {
     case "RIGHTARROW": return 39;
     case "UPARROW": return 38;
     case "DOWNARROW": return 40;
-    case "NEGATIVE": return 189;
+    case "NUMBERPOSITIVE": return 107;
     case "NUMBERNEGATIVE": return 109;
+    case "NEGATIVE": return 189;
     case "DECIMAL": return 190;
     case "NUMBERDECIMAL": return 110;
     case "ESCAPE": return 27;
