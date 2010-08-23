@@ -118,11 +118,11 @@
         <onCreateDefault/>
       </column>
       <column name="GENERATED_CREDIT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <column name="USED_CREDIT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_PAYMENTS">
