@@ -26,7 +26,10 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BuscadorData;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.ComboTableQueryData;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.reference.Reference;
 
@@ -76,7 +79,8 @@ public class UITable extends UIReference {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
+      Vector<Object> vecKeys) throws IOException, ServletException {
     UITableDir tableDir = new UITableDir(reference, subReference);
     tableDir.generateFilterHtml(strHtml, vars, fields, strTab, strWindow, vecScript, null);
   }
@@ -85,5 +89,61 @@ public class UITable extends UIReference {
       StringBuffer paramsData) {
     UITableDir tableDir = new UITableDir(reference, subReference);
     tableDir.generateFilterAcceptScript(field, params, paramsData);
+  }
+
+  public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,
+      FieldProvider field) throws Exception {
+    String fieldName = field == null ? "" : field.getField("name");
+    String referenceValue = field == null ? "" : field.getField("referencevalue");
+
+    int myIndex = comboTableData.index++;
+    ComboTableQueryData trd[] = ComboTableQueryData.selectRefTable(comboTableData.getPool(),
+        ((referenceValue != null && !referenceValue.equals("")) ? referenceValue : comboTableData
+            .getObjectReference()));
+    if (trd == null || trd.length == 0)
+      return;
+    comboTableData.addSelectField("td" + myIndex + "." + trd[0].keyname, "ID");
+    if (trd[0].isvaluedisplayed.equals("Y"))
+      comboTableData.addSelectField("td" + myIndex + ".VALUE", "NAME");
+    ComboTableQueryData fieldsAux = new ComboTableQueryData();
+    fieldsAux.name = trd[0].name;
+    fieldsAux.tablename = trd[0].tablename;
+    fieldsAux.reference = trd[0].reference;
+    fieldsAux.referencevalue = trd[0].referencevalue;
+    fieldsAux.required = trd[0].required;
+    String tables = trd[0].tablename + " td" + myIndex;
+    if (tableName != null && !tableName.equals("") && fieldName != null && !fieldName.equals("")) {
+      tables += " on " + tableName + "." + fieldName + " = td" + myIndex + "." + trd[0].keyname
+          + " \n";
+      tables += "AND td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ") \n";
+      tables += "AND td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")";
+    } else {
+      comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN ("
+          + comboTableData.getClientList() + ")", "CLIENT_LIST");
+      if (comboTableData.getOrgList() != null)
+        comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN ("
+            + comboTableData.getOrgList() + ")", "ORG_LIST");
+    }
+    comboTableData.addFromField(tables, "td" + myIndex);
+    String strSQL = trd[0].whereclause;
+    if (strSQL == null)
+      strSQL = "";
+
+    if (!strSQL.equals("")) {
+      if (strSQL.indexOf("@") != -1)
+        strSQL = comboTableData.parseContext(strSQL, "WHERE");
+      comboTableData.addWhereField(strSQL, "FILTER");
+    }
+    if (tableName == null || tableName.equals("")) {
+      comboTableData.parseValidation();
+      comboTableData.addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "."
+          + trd[0].keyname + " = (?) )", "ISACTIVE");
+      comboTableData.addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
+    }
+    String orderByAux = (trd[0].orderbyclause.equals("") ? "2" : trd[0].orderbyclause);
+    if (orderByAux.indexOf("@") != -1)
+      orderByAux = comboTableData.parseContext(orderByAux, "ORDERBY");
+    comboTableData.identifier("td" + myIndex, fieldsAux);
+    comboTableData.addOrderByField(orderByAux);
   }
 }
