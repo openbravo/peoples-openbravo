@@ -653,6 +653,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
           + "_MODULE&inpcRecordId=" + inpcRecordId);
+      return;
     }
 
     if (!islocal && (updateModules == null || updateModules.length == 0)) {

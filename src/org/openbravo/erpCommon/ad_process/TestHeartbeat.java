@@ -153,7 +153,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           msg += "\n" + log;
           msg = Utility.formatMessageBDToHtml(msg);
 
-          if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE")) {
+          if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_INSTALL", "CONFIGURE_MODULE_UPDATE")) {
             OBError err = new OBError();
             err.setType("Error");
             err.setMessage(msg);
@@ -216,20 +216,21 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           OBScheduler.getInstance().reschedule(pr.getId(), bundle2);
         }
 
-        if (vars.commandIn("CONFIGURE_MODULE")) {
+        if (vars.commandIn("CONFIGURE_MODULE_INSTALL", "CONFIGURE_MODULE_UPDATE")) {
           // Continue with the module install
           String recordId = vars.getStringParameter("inpcRecordId", IsIDFilter.instance);
-          String command = "INSTALL";
+          String command = vars.getCommand().endsWith("UPDATE") ? "UPDATE" : "INSTALL";
 
-          if (recordId.equals(ModuleManagement.UPDATE_ALL_RECORD_ID)) {
-            command = "UPDATE";
-            recordId = "&inpcUpdate=all";
+          if (command.equals("UPDATE")) {
+            recordId = (recordId.equals(ModuleManagement.UPDATE_ALL_RECORD_ID) ? "&inpcUpdate=all"
+                : "&inpcUpdate=" + recordId);
           } else {
             recordId = "&inpcRecordId=" + recordId;
           }
 
           response.sendRedirect(strDireccion + "/ad_forms/ModuleManagement.html?Command=" + command
               + recordId);
+          return;
         } else {
           // Prompt HB configured
           String msg = Utility.messageBD(connectionProvider, "HB_SUCCESS", vars.getLanguage());
