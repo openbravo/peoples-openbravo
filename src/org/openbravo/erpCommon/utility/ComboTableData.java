@@ -811,11 +811,8 @@ public class ComboTableData {
     if (field == null) {
       uiref = Reference.getUIReference(getReferenceType(), null);
     } else {
-      String referenceId = field.getField("referenceValue");
-      if (referenceId == null || referenceId.length() == 0) {
-        referenceId = field.getField("reference");
-      }
-      uiref = Reference.getUIReference(referenceId, null);
+      uiref = Reference.getUIReference(field.getField("reference"), field
+          .getField("referenceValue"));
     }
     uiref.setComboTableDataIdentifier(this, tableName, field);
   }
