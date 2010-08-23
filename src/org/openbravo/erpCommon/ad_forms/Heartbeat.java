@@ -65,7 +65,7 @@ public class Heartbeat extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT", "DEFAULT_MODULE", "UPDATE_MODULE")) {
       printPageDataSheet(response, vars);
-    } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE")) {
+    } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_UPDATE", "CONFIGURE_MODULE_INSTALL")) {
       response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="
           + vars.getCommand() + "&inpcRecordId="
           + vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
@@ -100,7 +100,8 @@ public class Heartbeat extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       jsCommand += "CONFIGURE";
     } else {
-      jsCommand += "CONFIGURE_MODULE";
+      String moduleAction = vars.getCommand().equals("UPDATE_MODULE") ? "UPDATE" : "INSTALL";
+      jsCommand += "CONFIGURE_MODULE_" + moduleAction;
     }
     jsCommand += "';";
     xmlDocument.setParameter("cmd", jsCommand);
@@ -121,8 +122,8 @@ public class Heartbeat extends HttpSecureAppServlet {
         final Date today = new Date();
         if ((rPostponeDate == null || rPostponeDate.equals("")) || date.before(today)) {
           final String openRegistrationString = "\n function openRegistration() { "
-              + "\n var w = window.opener; " + "\n if(w) { " + "\n w.setTimeout(\"openRegistration();\",100); "
-              + "\n } " + "\n return true; \n }";
+              + "\n var w = window.opener; " + "\n if(w) { "
+              + "\n w.setTimeout(\"openRegistration();\",100); " + "\n } " + "\n return true; \n }";
           xmlDocument.setParameter("registration", openRegistrationString);
         } else {
           xmlDocument.setParameter("registration",
