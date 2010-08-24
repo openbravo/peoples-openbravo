@@ -95,7 +95,7 @@ class DataValue implements XmlComponentValue {
     // vector of Sections
     log4jDataValue.debug("vector of Sections");
     vecSectionValue = new Vector<Object>();
-    for (Enumeration<Object> e1 = dataTemplate.vecSectionTemplate.elements(); e1.hasMoreElements();) {
+    for (Enumeration<SectionTemplate> e1 = dataTemplate.vecSectionTemplate.elements(); e1.hasMoreElements();) {
       SectionTemplate sectionTemplate = (SectionTemplate) e1.nextElement();
       SectionValue sectionValue = sectionTemplate.createSectionValue(xmlDocument, this);
       vecSectionValue.addElement(sectionValue);

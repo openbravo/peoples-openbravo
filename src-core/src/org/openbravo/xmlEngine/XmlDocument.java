@@ -13,7 +13,6 @@ package org.openbravo.xmlEngine;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -305,58 +304,48 @@ public class XmlDocument implements XmlComponentValue {
    *          DataValue object that might contain sections to be translated
    */
   private void translateDataValue(DataValue elementDataValue) {
-    if (elementDataValue.dataTemplate != null) {
-      DataTemplate dataTemplate = elementDataValue.dataTemplate;
-      if (dataTemplate.vecSectionTemplate != null) {
-        Vector<Object> vecSectionTemplate = dataTemplate.vecSectionTemplate;
-        for (Iterator<?> iterator = vecSectionTemplate.iterator(); iterator.hasNext();) {
-          SectionTemplate sectionTemplate = (SectionTemplate) iterator.next();
-          if (sectionTemplate.vecHeadTemplate != null) {
-            XmlVectorTemplate template = sectionTemplate.vecHeadTemplate;
-            for (Iterator<?> iterator2 = template.iterator(); iterator2.hasNext();) {
-              Object componentTemplate = (Object) iterator2.next();
-              if (CharacterComponent.class.isInstance(componentTemplate)) {
-                CharacterComponent charComponent = (CharacterComponent) componentTemplate;
-                if (charComponent.character != null && !charComponent.equals("")) {
-                  String original = charComponent.character.trim();
-                  if (xmlVectorValue != null && xmlVectorValue.getTextMap() != null) {
-                    String trl = xmlVectorValue.getTextMap().get(original);
 
-                    if (trl != null && !trl.equals(""))
-                      charComponent.character = trl;
-                  }
-                }
-                componentTemplate = charComponent;
-              }
-            }
-            sectionTemplate.vecHeadTemplate = template;
-          }
-
-          if (sectionTemplate.vecFootTemplate != null) {
-            XmlVectorTemplate xmlFootTemplate = sectionTemplate.vecFootTemplate;
-            for (Iterator<?> iterator2 = xmlFootTemplate.iterator(); iterator2.hasNext();) {
-              Object componentTemplate = (Object) iterator2.next();
-              if (CharacterComponent.class.isInstance(componentTemplate)) {
-                CharacterComponent charComponent = (CharacterComponent) componentTemplate;
-                if (charComponent.character != null && !charComponent.equals("")) {
-                  String original = charComponent.character.trim();
-                  if (xmlVectorValue.getTextMap() != null) {
-                    String trl = xmlVectorValue.getTextMap().get(original);
-                    if (trl != null && !trl.equals(""))
-                      charComponent.character = trl;
-                  }
-                }
-                componentTemplate = charComponent;
-              }
-            }
-            sectionTemplate.vecFootTemplate = xmlFootTemplate;
-          }
-        }
-        dataTemplate.vecSectionTemplate = vecSectionTemplate;
-      }
-      elementDataValue.dataTemplate = dataTemplate;
+    if (xmlVectorValue == null || xmlVectorValue.getTextMap() == null) {
+      return;
     }
 
+    if (elementDataValue.dataTemplate == null) {
+      return;
+    }
+
+    DataTemplate dataTemplate = elementDataValue.dataTemplate;
+    if (dataTemplate.vecSectionTemplate == null) {
+      return;
+    }
+
+    for (SectionTemplate sectionTemplate : dataTemplate.vecSectionTemplate) {
+      translateXmlVectorTemplate(sectionTemplate.vecHeadTemplate);
+      translateXmlVectorTemplate(sectionTemplate.vecFootTemplate);
+    }
+  }
+
+  /**
+   * Utility method to translate all CharacterComponents contained in the passed XmlVectorTemplate.
+   */
+  private void translateXmlVectorTemplate(XmlVectorTemplate xmlVectorTemplate) {
+
+    if (xmlVectorTemplate == null) {
+      return;
+    }
+
+    for (Object componentTemplate : xmlVectorTemplate) {
+      if (CharacterComponent.class.isInstance(componentTemplate)) {
+        CharacterComponent charComponent = (CharacterComponent) componentTemplate;
+        if (charComponent.character != null && !charComponent.character.equals("")) {
+          String original = charComponent.character.trim();
+          String trl = xmlVectorValue.getTextMap().get(original);
+          if (trl != null && !trl.equals("")) {
+            charComponent.character = trl;
+          }
+        }
+        componentTemplate = charComponent;
+      }
+    }
   }
 
   public String printPrevious() {
