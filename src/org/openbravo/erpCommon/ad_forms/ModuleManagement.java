@@ -39,6 +39,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -1485,12 +1486,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
         org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
             org.openbravo.model.ad.module.Module.class, moduleId);
         if (mod != null) {
-          if (vars.commandIn("SETTINGS_ADD")) {
-            mod.setMaturityUpdate(vars.getStringParameter("inpModuleLevel"));
-          } else {
-            mod.setMaturityUpdate(null);
+          // do not update the audit info here, as its a local config change, which should not be
+          // treated as 'local changes' by i.e. update.database
+          try {
+            OBInterceptor.setPreventUpdateInfoChange(true);
+            if (vars.commandIn("SETTINGS_ADD")) {
+              mod.setMaturityUpdate(vars.getStringParameter("inpModuleLevel"));
+            } else {
+              mod.setMaturityUpdate(null);
+            }
+            OBDal.getInstance().flush();
+          } finally {
+            OBInterceptor.setPreventUpdateInfoChange(false);
           }
-          OBDal.getInstance().flush();
         } else {
           log4j.error("Module does not exists ID:" + moduleId);
         }
