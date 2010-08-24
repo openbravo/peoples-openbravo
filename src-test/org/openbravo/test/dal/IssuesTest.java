@@ -39,6 +39,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -46,6 +47,7 @@ import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.Client;
@@ -108,6 +110,9 @@ import org.openbravo.test.base.BaseTest;
  * 
  * https://issues.openbravo.com/view.php?id=13509: In a OBCriteria you can't use list() after a
  * count() call
+ * 
+ * https://issues.openbravo.com/view.php?id=14276: Need feature to disable maintaining audit info
+ * via dal for one request/dal-session
  * 
  * @author mtaal
  * @author iperdomo
@@ -472,5 +477,48 @@ public class IssuesTest extends BaseTest {
     final Organization org = orgs.list().get(0);
     assertTrue(null != org);
     assertTrue(cnt == orgs.list().size());
+  }
+
+  /**
+   * https://issues.openbravo.com/view.php?id=14276: Need feature to disable maintaining audit info
+   * via dal for one request/dal-session
+   */
+  public void test14276() throws Exception {
+    setSystemAdministratorContext();
+    OBInterceptor.setPreventUpdateInfoChange(true);
+    boolean oldIndevelopment = false;
+    String oldName = null;
+    try {
+      Table table = OBDal.getInstance().get(Table.class, "100");
+      oldIndevelopment = table.getDataPackage().getModule().isInDevelopment();
+      table.getDataPackage().getModule().setInDevelopment(true);
+      OBDal.getInstance().save(table.getDataPackage().getModule());
+      OBDal.getInstance().flush();
+      oldName = table.getName();
+      final Date oldUpdated = table.getUpdated();
+      table.setName(table.getName() + "t");
+      OBDal.getInstance().save(table);
+      OBDal.getInstance().commitAndClose();
+      table = OBDal.getInstance().get(Table.class, "100");
+      assertFalse(oldName.equals(table.getName()));
+      assertTrue(table.getUpdated().getTime() == oldUpdated.getTime());
+    } finally {
+      OBInterceptor.setPreventUpdateInfoChange(null);
+    }
+
+    // now do the same with preventupdate disabled
+    {
+      Table table = OBDal.getInstance().get(Table.class, "100");
+      final Date oldUpdated = table.getUpdated();
+      table.setName(oldName);
+      OBDal.getInstance().save(table);
+      OBDal.getInstance().flush();
+      table.getDataPackage().getModule().setInDevelopment(oldIndevelopment);
+      OBDal.getInstance().save(table.getDataPackage().getModule());
+      OBDal.getInstance().commitAndClose();
+      table = OBDal.getInstance().get(Table.class, "100");
+      assertTrue(oldName.equals(table.getName()));
+      assertFalse(table.getUpdated().getTime() == oldUpdated.getTime());
+    }
   }
 }

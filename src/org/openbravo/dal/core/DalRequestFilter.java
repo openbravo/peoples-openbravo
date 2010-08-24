@@ -94,6 +94,8 @@ public class DalRequestFilter implements Filter {
 
         OBContext.clearAdminModeStack();
 
+        OBInterceptor.setPreventUpdateInfoChange(null);
+
         super.doFinal(errorOccured);
       }
     };
