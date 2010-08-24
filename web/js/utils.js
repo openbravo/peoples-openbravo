@@ -89,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8202';
+  var number = '8213';
   return number;
 }
 
@@ -3794,7 +3794,7 @@ function changeToEditingMode(special, field) {
 }
 
 function checkIE7DelSuprKeys() {
-  if (focusedWindowElement.tagName.toUpperCase().indexOf("SELECT") == -1 && navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+  if (focusedWindowElement.tagName.toUpperCase().indexOf("SELECT") == -1 && getBrowserInfo('name').indexOf("Firefox") == -1) {
     if (pressedKeyCode=='46' || pressedKeyCode=='8') {
       setWindowEditing(true);
     }
