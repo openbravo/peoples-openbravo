@@ -155,10 +155,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       disable(vars);
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
     } else if (vars.commandIn("ENABLE")) {
-      ArrayList<String> notEnabledModules = new ArrayList<String>();
-      enableDisableModule(OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
-          vars.getStringParameter("inpcRecordId")), true, notEnabledModules);
-      finishEnabling(notEnabledModules, vars);
+      enable(vars);
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
     } else if (vars.commandIn("SCAN")) {
       printScan(response, vars);
@@ -1781,6 +1778,21 @@ public class ModuleManagement extends HttpSecureAppServlet {
   }
 
   /**
+   * Enable the passed in module
+   */
+  private void enable(VariablesSecureApp vars) throws ServletException {
+    try {
+      OBInterceptor.setPreventUpdateInfoChange(true);
+      ArrayList<String> notEnabledModules = new ArrayList<String>();
+      enableDisableModule(OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
+          vars.getStringParameter("inpcRecordId")), true, notEnabledModules);
+      finishEnabling(notEnabledModules, vars);
+    } finally {
+      OBInterceptor.setPreventUpdateInfoChange(false);
+    }
+  }
+
+  /**
    * Disables all the selected modules
    */
   private void disable(VariablesSecureApp vars) throws ServletException {
@@ -1797,13 +1809,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
     String[] moduleIds = modules.replace("(", "").replace(")", "").replace(" ", "")
         .replace("'", "").split(",");
     ArrayList<String> notEnabledModules = new ArrayList<String>();
-    for (String moduleId : moduleIds) {
-      org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
-          org.openbravo.model.ad.module.Module.class, moduleId);
-      enableDisableModule(module, false, notEnabledModules);
-    }
+    try {
+      OBInterceptor.setPreventUpdateInfoChange(true);
 
-    finishEnabling(notEnabledModules, vars);
+      for (String moduleId : moduleIds) {
+        org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
+            org.openbravo.model.ad.module.Module.class, moduleId);
+        enableDisableModule(module, false, notEnabledModules);
+      }
+
+      finishEnabling(notEnabledModules, vars);
+    } finally {
+      OBInterceptor.setPreventUpdateInfoChange(false);
+    }
   }
 
   /**
