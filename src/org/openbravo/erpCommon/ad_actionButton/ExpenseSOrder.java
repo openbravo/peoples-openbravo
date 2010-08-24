@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -31,8 +31,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.ActionButtonData;
@@ -41,6 +43,8 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -254,13 +258,21 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
         BpartnerMiscData[] data1 = null;
         data1 = BpartnerMiscData.select(this, data.cBpartnerId);
-
-        if (data1[0].paymentrule.equals("") || data1[0].paymentrule == null) {
+        boolean newFlow = isNewFlow();
+        if ((data1[0].paymentrule.equals("") || data1[0].paymentrule == null) && !newFlow) {
           myMessage.setType("Error");
           myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
           myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
               + strCust + ' '
               + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()) + ".");
+          return myMessage;
+        } else if ((data1[0].finPaymentmethodId.equals("") || data1[0].finPaymentmethodId == null)
+            && newFlow) {
+          myMessage.setType("Error");
+          myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
+              + strCust + ' '
+              + Utility.messageBD(this, "PayementMethodNotdefined", vars.getLanguage()) + ".");
           return myMessage;
         } else {
           String docTargetType = ExpenseSOrderData.cDoctypeTarget(conn, this, data.adClientId,
@@ -274,13 +286,13 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                   .billto(this, data.cBpartnerId).equals("") ? ExpenseSOrderData
                   .cBPartnerLocationId(this, data.cBpartnerId) : ExpenseSOrderData.billto(this,
                   data.cBpartnerId), strBPCCurrencyId, data1[0].paymentrule,
-              data1[0].cPaymenttermId.equals("") ? ExpenseSOrderData.selectPaymentTerm(this,
-                  data.adClientId) : data1[0].cPaymenttermId, data1[0].invoicerule.equals("") ? "I"
-                  : data1[0].invoicerule, data1[0].deliveryrule.equals("") ? "A"
-                  : data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("") ? "D"
-                  : data1[0].deliveryviarule, data.mWarehouseId.equals("") ? vars.getWarehouse()
-                  : data.mWarehouseId, data.mPricelistId, data.cProjectId, data.cActivityId,
-              data.cCampaignId);
+              data1[0].finPaymentmethodId, data1[0].cPaymenttermId.equals("") ? ExpenseSOrderData
+                  .selectPaymentTerm(this, data.adClientId) : data1[0].cPaymenttermId,
+              data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule, data1[0].deliveryrule
+                  .equals("") ? "A" : data1[0].deliveryrule, "I", data1[0].deliveryviarule
+                  .equals("") ? "D" : data1[0].deliveryviarule, data.mWarehouseId.equals("") ? vars
+                  .getWarehouse() : data.mWarehouseId, data.mPricelistId, data.cProjectId,
+              data.cActivityId, data.cCampaignId);
           myMessage.setType("Success");
           myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
           myMessage.setMessage(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage())
@@ -560,6 +572,27 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  @SuppressWarnings("deprecation")
+  private boolean isNewFlow() {
+    // Extra check for Payment Flow-disabling switch
+    try {
+      // Use Utility.getPropertyValue for backward compatibility
+      try {
+        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
+            .getOBContext().getUser(), null, null);
+        return true;
+      } catch (PropertyNotFoundException e) {
+        if (Utility.getPropertyValue("FinancialManagement", OBContext.getOBContext()
+            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId()) != null) {
+          return true;
+        } else
+          return false;
+      }
+    } catch (PropertyException e) {
+      return false;
+    }
   }
 
   public String getServletInfo() {
