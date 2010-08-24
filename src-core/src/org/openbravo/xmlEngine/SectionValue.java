@@ -63,7 +63,7 @@ class SectionValue {
       functionInstance.init();
     }
     if (sectionTemplate.intLevel != sectionTemplate.dataTemplate.intTotalLevels) {
-      SectionValue section = (SectionValue) dataValue.vecSectionValue
+      SectionValue section = dataValue.vecSectionValue
           .elementAt(sectionTemplate.intLevel + 1);
       section.strSection = new StringBuffer();
     } else {
@@ -75,7 +75,7 @@ class SectionValue {
     log4jSectionValue.debug("(Close) Levels:" + sectionTemplate.dataTemplate.intTotalLevels
         + " actual level: " + sectionTemplate.intLevel);
     if (sectionTemplate.intLevel != sectionTemplate.dataTemplate.intTotalLevels) {
-      SectionValue section = (SectionValue) dataValue.vecSectionValue
+      SectionValue section = dataValue.vecSectionValue
           .elementAt(sectionTemplate.intLevel + 1);
       section.close();
     }
@@ -84,7 +84,7 @@ class SectionValue {
 
     // add next section
     if (sectionTemplate.intLevel != sectionTemplate.dataTemplate.intTotalLevels) {
-      SectionValue section = (SectionValue) dataValue.vecSectionValue
+      SectionValue section = dataValue.vecSectionValue
           .elementAt(sectionTemplate.intLevel + 1);
       strSection.append(section.strSection);
     } else {
