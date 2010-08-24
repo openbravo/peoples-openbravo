@@ -309,38 +309,42 @@ public class XmlDocument implements XmlComponentValue {
       return;
     }
 
-    if (elementDataValue.dataTemplate == null) {
+    if (elementDataValue.vecSectionValue == null) {
       return;
     }
 
-    DataTemplate dataTemplate = elementDataValue.dataTemplate;
-    if (dataTemplate.vecSectionTemplate == null) {
-      return;
-    }
-
-    for (SectionTemplate sectionTemplate : dataTemplate.vecSectionTemplate) {
-      translateXmlVectorTemplate(sectionTemplate.vecHeadTemplate);
-      translateXmlVectorTemplate(sectionTemplate.vecFootTemplate);
+    for (SectionValue sectionValue : elementDataValue.vecSectionValue) {
+      translateXmlVectorTemplate(sectionValue.vecHeadValue);
+      translateXmlVectorTemplate(sectionValue.vecFootValue);
     }
   }
 
   /**
    * Utility method to translate all CharacterComponents contained in the passed XmlVectorTemplate.
    */
-  private void translateXmlVectorTemplate(XmlVectorTemplate xmlVectorTemplate) {
+  private void translateXmlVectorTemplate(XmlVectorValue vecXmlVectorValue) {
 
-    if (xmlVectorTemplate == null) {
+    if (vecXmlVectorValue == null) {
       return;
     }
 
-    for (Object componentTemplate : xmlVectorTemplate) {
+    for (int i = 0; i < vecXmlVectorValue.size(); i++) {
+      Object componentTemplate = vecXmlVectorValue.get(i);
       if (CharacterComponent.class.isInstance(componentTemplate)) {
         CharacterComponent charComponent = (CharacterComponent) componentTemplate;
         if (charComponent.character != null && !charComponent.character.equals("")) {
           String original = charComponent.character.trim();
           String trl = xmlVectorValue.getTextMap().get(original);
           if (trl != null && !trl.equals("")) {
-            charComponent.character = trl;
+            /*
+             * Need to create a new instance here, instead of just modifying the attribute of the
+             * existing instance, as SectionTemplate and SectionValue do share the same
+             * CharacterComponent instances and do not copy them. Without the new instance here we
+             * would silently modify the templates' text also and effectively translating the
+             * (cached) template.
+             */
+            charComponent = new CharacterComponent(trl);
+            vecXmlVectorValue.set(i, charComponent);
           }
         }
         componentTemplate = charComponent;

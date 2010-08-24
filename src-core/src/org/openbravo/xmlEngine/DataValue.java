@@ -36,7 +36,7 @@ class DataValue implements XmlComponentValue {
   PreparedStatement preparedStatement;
   ResultSet result;
 
-  Vector<Object> vecSectionValue;
+  Vector<SectionValue> vecSectionValue;
   XmlVectorValue vecDetailValue; // vector of XmlComponentValues
   Vector<Object> vecFieldValue; // vector of FieldValues
   Vector<Object> vecParameterValue; // vector of ParameterValues for the query
@@ -94,7 +94,7 @@ class DataValue implements XmlComponentValue {
 
     // vector of Sections
     log4jDataValue.debug("vector of Sections");
-    vecSectionValue = new Vector<Object>();
+    vecSectionValue = new Vector<SectionValue>();
     for (Enumeration<SectionTemplate> e1 = dataTemplate.vecSectionTemplate.elements(); e1.hasMoreElements();) {
       SectionTemplate sectionTemplate = (SectionTemplate) e1.nextElement();
       SectionValue sectionValue = sectionTemplate.createSectionValue(xmlDocument, this);
@@ -356,8 +356,7 @@ class DataValue implements XmlComponentValue {
   private void init() {
     if (log4jDataValue.isDebugEnabled())
       log4jDataValue.debug("DataValue: init");
-    for (Enumeration<Object> e = vecSectionValue.elements(); e.hasMoreElements();) {
-      SectionValue section = (SectionValue) e.nextElement();
+    for (SectionValue section : vecSectionValue) {
       log4jDataValue.debug("DataValue: init, section:" + section.sectionTemplate.name);
       section.init();
     }
@@ -372,8 +371,7 @@ class DataValue implements XmlComponentValue {
   }
 
   private void firstValues() {
-    for (Enumeration<Object> e = vecSectionValue.elements(); e.hasMoreElements();) {
-      SectionValue sectionValue = (SectionValue) e.nextElement();
+    for (SectionValue sectionValue : vecSectionValue) {
       if (sectionValue.breakFieldValue != null) {
         sectionValue.breakFieldValue.savePrevious();
       }
@@ -387,12 +385,10 @@ class DataValue implements XmlComponentValue {
   }
 
   private void check() {
-    boolean checked = true;
-    for (Enumeration<Object> e = vecSectionValue.elements(); e.hasMoreElements() && checked;) {
-      SectionValue sectionValue = (SectionValue) e.nextElement();
+    for (SectionValue sectionValue : vecSectionValue) {
       if (!sectionValue.check()) {
-        checked = false;
         sectionValue.close();
+        return;
       }
     }
   }
@@ -428,8 +424,7 @@ class DataValue implements XmlComponentValue {
   }
 
   public void acumulate() {
-    for (Enumeration<Object> e = vecSectionValue.elements(); e.hasMoreElements();) {
-      SectionValue sectionValue = (SectionValue) e.nextElement();
+    for (SectionValue sectionValue : vecSectionValue) {
       sectionValue.acumulate();
     }
 
