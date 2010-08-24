@@ -3794,7 +3794,7 @@ function changeToEditingMode(special, field) {
 }
 
 function checkIE7DelSuprKeys() {
-  if (focusedWindowElement.tagName.toUpperCase().indexOf("SELECT") == -1 && getBrowserInfo('name').indexOf("Firefox") == -1) {
+  if (focusedWindowElement.tagName.toUpperCase().indexOf("SELECT") == -1 && getBrowserInfo('name').indexOf("Firefox") == -1 && getBrowserInfo('name').indexOf("IceWeasel") == -1) {
     if (pressedKeyCode=='46' || pressedKeyCode=='8') {
       setWindowEditing(true);
     }
