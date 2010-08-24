@@ -30,7 +30,6 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.BuscadorData;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.ComboTableQueryData;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.reference.Reference;
