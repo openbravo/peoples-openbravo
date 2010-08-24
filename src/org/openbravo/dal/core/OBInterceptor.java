@@ -62,12 +62,12 @@ public class OBInterceptor extends EmptyInterceptor {
   private static ThreadLocal<Boolean> preventUpdateInfoChange = new ThreadLocal<Boolean>();
 
   /**
-   * If true is passed then the update info (updated/updatedBy) is not updated when an object gets
-   * updated.
+   * If true is passed and we are in adminMode then the update info (updated/updatedBy) is not
+   * updated when an object gets updated.
    * 
    * @param value
    */
-  public static void setPreventUpdateInfoChange(Boolean value) {
+  public static void setPreventUpdateInfoChange(boolean value) {
     preventUpdateInfoChange.set(value);
   }
 

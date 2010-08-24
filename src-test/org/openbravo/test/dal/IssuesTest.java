@@ -512,7 +512,7 @@ public class IssuesTest extends BaseTest {
       assertFalse(oldName.equals(table.getName()));
       assertTrue(table.getUpdated().getTime() == oldUpdated.getTime());
     } finally {
-      OBInterceptor.setPreventUpdateInfoChange(null);
+      OBInterceptor.setPreventUpdateInfoChange(false);
     }
 
     // now do the same with preventupdate disabled
