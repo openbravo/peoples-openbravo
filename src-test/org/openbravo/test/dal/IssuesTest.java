@@ -498,6 +498,15 @@ public class IssuesTest extends BaseTest {
       final Date oldUpdated = table.getUpdated();
       table.setName(table.getName() + "t");
       OBDal.getInstance().save(table);
+
+      // test if flush already works fine
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
+
+      table = OBDal.getInstance().get(Table.class, "100");
+      assertFalse(oldName.equals(table.getName()));
+      assertTrue(table.getUpdated().getTime() == oldUpdated.getTime());
+
       OBDal.getInstance().commitAndClose();
       table = OBDal.getInstance().get(Table.class, "100");
       assertFalse(oldName.equals(table.getName()));
