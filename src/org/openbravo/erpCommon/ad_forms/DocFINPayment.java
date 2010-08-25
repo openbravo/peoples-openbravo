@@ -66,7 +66,7 @@ public class DocFINPayment extends AcctServer {
   @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DateDoc = data[0].getField("PaymentDate");
-    Amounts[0] = data[0].getField("Amount");
+    Amounts[AMTTYPE_Gross] = data[0].getField("Amount");
     loadDocumentType();
     p_lines = loadLines();
     return true;
@@ -224,9 +224,29 @@ public class DocFINPayment extends AcctServer {
     return SeqNo;
   }
 
+  /**
+   * Get Source Currency Balance - subtracts line amounts from total - no rounding
+   * 
+   * @return positive amount, if total is bigger than lines
+   */
+  @Override
   public BigDecimal getBalance() {
-    return null;
-  }
+    BigDecimal retValue = ZERO;
+    StringBuffer sb = new StringBuffer(" [");
+    // Total
+    retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
+    sb.append(getAmount(AcctServer.AMTTYPE_Gross));
+    // - Lines
+    for (int i = 0; i < p_lines.length; i++) {
+      BigDecimal lineBalance = new BigDecimal(((DocLine_FINPayment) p_lines[i]).Amount);
+      retValue = retValue.subtract(lineBalance);
+      sb.append("-").append(lineBalance);
+    }
+    sb.append("]");
+    //
+    log4j.debug(" Balance=" + retValue + sb.toString());
+    return retValue;
+  } // getBalance
 
   @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

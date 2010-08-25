@@ -73,7 +73,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Constructor
-   * 
+   *
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -88,7 +88,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Load Specific Document Details
-   * 
+   *
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -137,7 +137,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Load Invoice Line. 4 amounts AMTTYPE_Payment AMTTYPE_Statement2 AMTTYPE_Charge AMTTYPE_Interest
-   * 
+   *
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -176,8 +176,8 @@ public class DocBank extends AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line amounts from total - no rounding
-   * 
-   * @return positive amount, if total invoice is bigger than lines
+   *
+   * @return positive amount, if total is bigger than lines
    */
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
@@ -199,14 +199,14 @@ public class DocBank extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for CMB.
-   * 
+   *
    * <pre>
    *      BankAsset       DR      CR  (Statement)
    *      BankInTransit   DR      CR              (Payment)
    *      Charge          DR          (Charge)
    *      Interest        DR      CR  (Interest)
    * </pre>
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact
@@ -311,7 +311,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   * 
+   *
    * @param strcBankstatementlineId
    * @param as
    *          accounting schema
@@ -358,7 +358,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
+   *
    * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

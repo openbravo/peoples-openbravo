@@ -76,7 +76,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     DateDoc = data[0].getField("trxdate");
     BigDecimal paymentAmount = new BigDecimal(data[0].getField("PaymentAmount"));
     BigDecimal depositAmount = new BigDecimal(data[0].getField("DepositAmount"));
-    Amounts[0] = depositAmount.subtract(paymentAmount).toString();
+    Amounts[AMTTYPE_Gross] = depositAmount.subtract(paymentAmount).toString();
     loadDocumentType();
     p_lines = loadLines();
     return true;
@@ -265,7 +265,7 @@ public class DocFINFinAccTransaction extends AcctServer {
       FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
           Record_ID);
       // 3 Scenarios: 1st Bank fee 2nd glitem transaction 3rd payment related transaction
-      if (transaction.getTransactionType().equals(TRXTYPE_BankFee))
+      if (TRXTYPE_BankFee.equals(transaction.getTransactionType()))
         fact = createFactFee(line, transaction, as, conn, fact);
       else if (!"".equals(line.getFinPaymentId()))
         fact = createFactPaymentDetails(line, as, conn, fact);
@@ -354,10 +354,32 @@ public class DocFINFinAccTransaction extends AcctServer {
     return SeqNo;
   }
 
+  /**
+   * Get Source Currency Balance - subtracts line amounts from total - no rounding
+   * 
+   * @return positive amount, if total is bigger than lines
+   */
   @Override
   public BigDecimal getBalance() {
-    return null;
-  }
+    BigDecimal retValue = ZERO;
+    StringBuffer sb = new StringBuffer(" [");
+    // Total
+    retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
+    sb.append(getAmount(AcctServer.AMTTYPE_Gross));
+    // - Lines
+    for (int i = 0; i < p_lines.length; i++) {
+      BigDecimal lineBalance = new BigDecimal(
+          ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
+      lineBalance = lineBalance.subtract(new BigDecimal(
+          ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
+      retValue = retValue.subtract(lineBalance);
+      sb.append("-").append(lineBalance);
+    }
+    sb.append("]");
+    //
+    log4j.debug(" Balance=" + retValue + sb.toString());
+    return retValue;
+  } // getBalance
 
   /*
    * Checks if Accounting for payments are enabled for the given payment

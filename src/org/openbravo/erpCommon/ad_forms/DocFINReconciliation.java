@@ -457,10 +457,32 @@ public class DocFINReconciliation extends AcctServer {
     return SeqNo;
   }
 
+  /**
+   * Get Source Currency Balance - subtracts line amounts from total - no rounding
+   * 
+   * @return positive amount, if total is bigger than lines
+   */
   @Override
   public BigDecimal getBalance() {
-    return null;
-  }
+    BigDecimal retValue = ZERO;
+    StringBuffer sb = new StringBuffer(" [");
+    // Total
+    retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
+    sb.append(getAmount(AcctServer.AMTTYPE_Gross));
+    // - Lines
+    for (int i = 0; i < p_lines.length; i++) {
+      BigDecimal lineBalance = new BigDecimal(
+          ((DocLine_FINReconciliation) p_lines[i]).DepositAmount);
+      lineBalance = lineBalance.subtract(new BigDecimal(
+          ((DocLine_FINReconciliation) p_lines[i]).PaymentAmount));
+      retValue = retValue.subtract(lineBalance);
+      sb.append("-").append(lineBalance);
+    }
+    sb.append("]");
+    //
+    log4j.debug(" Balance=" + retValue + sb.toString());
+    return retValue;
+  } // getBalance
 
   public boolean getDocumentPaymentConfirmation(FIN_Payment payment) {
     boolean confirmation = false;
