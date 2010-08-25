@@ -74,7 +74,7 @@ public final class AcctSchema implements Serializable {
       if (data.length == 1) {
         m_UseSuspenseBalancing = data[0].usesuspensebalancing;
         String ID = data[0].suspensebalancingAcct;
-        if (m_UseSuspenseBalancing.equals("Y") && !ID.equals(""))// antes
+        if ("Y".equals(m_UseSuspenseBalancing) && !ID.equals(""))// antes
           // era
           // "0"
           m_SuspenseBalancing_Acct = Account.getAccount(conn, ID);
@@ -84,7 +84,7 @@ public final class AcctSchema implements Serializable {
             + m_SuspenseBalancing_Acct);
         m_UseSuspenseError = data[0].usesuspenseerror;
         ID = data[0].suspenseerrorAcct;
-        if (m_UseSuspenseError.equals("Y") && !ID.equals(""))// antes
+        if ("Y".equals(m_UseSuspenseError) && !ID.equals(""))// antes
           // era "0"
           m_SuspenseError_Acct = Account.getAccount(conn, ID);
         else
@@ -92,7 +92,7 @@ public final class AcctSchema implements Serializable {
         log4jAcctSchema.debug("SuspenseError=" + m_UseSuspenseError + " " + m_SuspenseError_Acct);
         m_UseCurrencyBalancing = data[0].usecurrencybalancing;
         ID = data[0].currencybalancingAcct;
-        if (m_UseCurrencyBalancing.equals("Y") && !ID.equals(""))// antes
+        if ("Y".equals(m_UseCurrencyBalancing) && !ID.equals(""))// antes
           // era
           // "0"
           m_CurrencyBalancing_Acct = Account.getAccount(conn, ID);
@@ -120,7 +120,7 @@ public final class AcctSchema implements Serializable {
    * @return true if currency balancing
    */
   public boolean isCurrencyBalancing() {
-    return m_UseCurrencyBalancing.equals("Y");
+    return "Y".equals(m_UseCurrencyBalancing);
   } // useCurrencyBalancing
 
   /**
@@ -182,7 +182,7 @@ public final class AcctSchema implements Serializable {
    * @return true if suspense balancing
    */
   public boolean isSuspenseBalancing() {
-    return m_UseSuspenseBalancing.equals("Y");
+    return "Y".equals(m_UseSuspenseBalancing);
   } // useSuspenseBalancing
 
   /**
@@ -191,7 +191,7 @@ public final class AcctSchema implements Serializable {
    * @return true if accrual
    */
   public boolean isAccrual() {
-    return m_IsAccrual.equals("Y");
+    return "Y".equals(m_IsAccrual);
   } // isAccrual
 
   /**

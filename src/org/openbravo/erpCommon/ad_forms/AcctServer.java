@@ -262,7 +262,7 @@ public abstract class AcctServer {
 
   /**
    * Cosntructor
-   * 
+   *
    * @param m_AD_Client_ID
    *          Client ID of these Documents
    * @param connectionProvider
@@ -339,7 +339,7 @@ public abstract class AcctServer {
 
   /**
    * Factory - Create Posting document
-   * 
+   *
    * @param AD_Table_ID
    *          Table ID of Documents
    * @param AD_Client_ID
@@ -661,7 +661,7 @@ public abstract class AcctServer {
 
   /**
    * Post Commit. Save Facts & Document
-   * 
+   *
    * @param status
    *          status
    * @return Posting Status
@@ -707,7 +707,7 @@ public abstract class AcctServer {
 
   /**
    * Save to Disk - set posted flag
-   * 
+   *
    * @param con
    *          connection
    * @param strUser
@@ -925,7 +925,7 @@ public abstract class AcctServer {
 
   /**
    * Posting logic for Accounting Schema index
-   * 
+   *
    * @param index
    *          Accounting Schema index
    * @return posting status/error code
@@ -1005,7 +1005,7 @@ public abstract class AcctServer {
 
   /**
    * Is the Source Document Balanced
-   * 
+   *
    * @return true if (source) balanced
    */
   public boolean isBalanced() {
@@ -1014,17 +1014,17 @@ public abstract class AcctServer {
       return true;
     //
     boolean retValue = (getBalance().compareTo(new BigDecimal("0.00")) == 0);
-    if (retValue)
+    if (retValue) {
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - isBalanced - " + DocumentNo);
-      else
-        log4j.warn("AcctServer - is not Balanced - " + DocumentNo);
+    } else
+      log4j.warn("AcctServer - is not Balanced - " + DocumentNo);
     return retValue;
   } // isBalanced
 
   /**
    * Is Document convertible to currency and Conversion Type
-   * 
+   *
    * @param acctSchema
    *          accounting schema
    * @return true, if convertable to accounting currency
@@ -1032,7 +1032,7 @@ public abstract class AcctServer {
   public boolean isConvertible(AcctSchema acctSchema, ConnectionProvider conn)
       throws ServletException {
     // No Currency in document
-    if (C_Currency_ID.equals("-1")) {
+    if (NO_CURRENCY.equals(C_Currency_ID)) {
       // if (log4j.isDebugEnabled())
       // log4j.debug("AcctServer - isConvertible (none) - " + DocumentNo);
       return true;
@@ -1084,7 +1084,7 @@ public abstract class AcctServer {
 
   /**
    * Get the Amount (loaded in loadDocumentDetails)
-   * 
+   *
    * @param AmtType
    *          see AMTTYPE_*
    * @return Amount
@@ -1097,7 +1097,7 @@ public abstract class AcctServer {
 
   /**
    * Get Amount with index 0
-   * 
+   *
    * @return Amount (primary document amount)
    */
   public String getAmount() {
@@ -1106,7 +1106,7 @@ public abstract class AcctServer {
 
   /**
    * Convert an amount
-   * 
+   *
    * @param CurFrom_ID
    *          The C_Currency_ID FROM
    * @param CurTo_ID
@@ -1165,7 +1165,7 @@ public abstract class AcctServer {
 
   /**
    * Is Period Open
-   * 
+   *
    * @return true if period is open
    */
   public boolean isPeriodOpen() {
@@ -1211,7 +1211,7 @@ public abstract class AcctServer {
 
   /**
    * Matching
-   * 
+   *
    * <pre>
    *  Derive Invoice-Receipt Match from PO-Invoice and PO-Receipt
    *  Purchase Order (20)
@@ -1225,10 +1225,10 @@ public abstract class AcctServer {
    *  (b) Creates Indirects
    *      - Invoice1 - Receipt2 (5)
    *  (Not imlemented)
-   * 
-   * 
+   *
+   *
    * </pre>
-   * 
+   *
    * @return number of records created
    */
   public int match(VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
@@ -1283,7 +1283,7 @@ public abstract class AcctServer {
 
   /**
    * Create MatchInv record
-   * 
+   *
    * @param AD_Client_ID
    *          Client
    * @param AD_Org_ID
@@ -1321,7 +1321,7 @@ public abstract class AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   * 
+   *
    * @param AcctType
    *          see ACCTTYPE_*
    * @param as
@@ -1463,7 +1463,7 @@ public abstract class AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   * 
+   *
    * @param cBPartnerId
    *          business partner id
    * @param as
@@ -1615,14 +1615,14 @@ public abstract class AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line (and tax) amounts from total - no rounding
-   * 
+   *
    * @return positive amount, if total header is bigger than lines
    */
   public abstract BigDecimal getBalance();
 
   /**
    * Create Facts (the accounting logic)
-   * 
+   *
    * @param as
    *          accounting schema
    * @return Fact
