@@ -93,7 +93,7 @@
     FOR Cur_workproposal IN (
       SELECT rp.*, bp.PO_PRICELIST_ID, pl.C_Currency_ID,
              BP.PAYMENTRULEPO as paymentrule, BP.PO_PAYMENTTERM_ID AS C_PAYMENTTERM_ID,
-             bp.DeliveryViaRule, p.C_UOM_ID
+             bp.DeliveryViaRule, p.C_UOM_ID, bp.po_paymentmethod_id
       FROM MRP_RUN_PURCHASELINE rp,
            C_BPartner bp,
            M_PriceList pl,
@@ -142,7 +142,8 @@
            C_BPARTNER_LOCATION_ID, C_CURRENCY_ID, PAYMENTRULE, C_PAYMENTTERM_ID,
            INVOICERULE, DELIVERYRULE, FREIGHTCOSTRULE, DELIVERYVIARULE,
            PRIORITYRULE, TOTALLINES, GRANDTOTAL,
-           M_WAREHOUSE_ID, M_PRICELIST_ID, ISTAXINCLUDED, DATEPROMISED)
+           M_WAREHOUSE_ID, M_PRICELIST_ID, ISTAXINCLUDED, DATEPROMISED,
+           FIN_PAYMENTMETHOD_ID)
         VALUES
          (v_COrder_ID, v_Client_ID, v_Org_ID,'Y',
          now(), v_User_ID, now(), v_User_ID,
@@ -152,7 +153,8 @@
           v_BPartner_Location_ID, Cur_workproposal.C_Currency_ID, Cur_workproposal.paymentrule, Cur_workproposal.C_PAYMENTTERM_ID,
           'D', 'A', 'I',COALESCE(Cur_workproposal.DeliveryViaRule,'D'),
           '5',0,0,
-          v_M_Warehouse_ID, Cur_workproposal.PO_PRICELIST_ID, 'N', v_DateDoc
+          v_M_Warehouse_ID, Cur_workproposal.PO_PRICELIST_ID, 'N', v_DateDoc,
+          cur_workproposal.po_paymentmethod_id
           );
       end if; --header
       LastCBPartner_ID := Cur_workproposal.C_BPartner_ID;
