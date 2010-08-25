@@ -30,6 +30,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.BuscadorData;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.ComboTableQueryData;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.reference.Reference;
@@ -232,5 +233,50 @@ public class UITableDir extends UIReference {
         ".selectedIndex].value:");
     params.append("\"\")");
     params.append(")");
+  }
+
+  public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,
+      FieldProvider field) throws Exception {
+    String fieldName = field == null ? "" : field.getField("name");
+    String parentFieldName = fieldName;
+
+    int myIndex = comboTableData.index++;
+    String name = ((fieldName != null && !fieldName.equals("")) ? fieldName : comboTableData
+        .getObjectName());
+
+    String tableDirName;
+    if (name.equalsIgnoreCase("createdby") || name.equalsIgnoreCase("updatedby")) {
+      tableDirName = "AD_User";
+      name = "AD_User_ID";
+    } else {
+      tableDirName = name.substring(0, name.length() - 3);
+    }
+    ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(comboTableData.getPool(),
+        tableDirName);
+    comboTableData.addSelectField("td" + myIndex + "." + name, "ID");
+
+    String tables = tableDirName + " td" + myIndex;
+    if (tableName != null && !tableName.equals("") && parentFieldName != null
+        && !parentFieldName.equals("")) {
+      tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name + "\n";
+      tables += "AND td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ") \n";
+      tables += "AND td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")";
+    } else {
+      comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN ("
+          + comboTableData.getClientList() + ")", "CLIENT_LIST");
+      if (comboTableData.getOrgList() != null)
+        comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN ("
+            + comboTableData.getOrgList() + ")", "ORG_LIST");
+    }
+    comboTableData.addFromField(tables, "td" + myIndex);
+    if (tableName == null || tableName.equals("")) {
+      comboTableData.parseValidation();
+      comboTableData.addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + name
+          + " = (?) )", "ISACTIVE");
+      comboTableData.addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
+    }
+    for (int i = 0; i < trd.length; i++)
+      comboTableData.identifier("td" + myIndex, trd[i]);
+    comboTableData.addOrderByField("2");
   }
 }

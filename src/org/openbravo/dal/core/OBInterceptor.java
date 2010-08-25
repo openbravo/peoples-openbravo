@@ -59,6 +59,18 @@ public class OBInterceptor extends EmptyInterceptor {
 
   private static final long serialVersionUID = 1L;
 
+  private static ThreadLocal<Boolean> preventUpdateInfoChange = new ThreadLocal<Boolean>();
+
+  /**
+   * If true is passed and we are in adminMode then the update info (updated/updatedBy) is not
+   * updated when an object gets updated.
+   * 
+   * @param value
+   */
+  public static void setPreventUpdateInfoChange(boolean value) {
+    preventUpdateInfoChange.set(value);
+  }
+
   /**
    * Determines if the object is transient (==new and not yet persisted in Hibernate).
    * 
@@ -329,6 +341,10 @@ public class OBInterceptor extends EmptyInterceptor {
   // Sets the updated/updatedby
   // TODO: can the client/organization change?
   protected void onUpdate(Traceable t, String[] propertyNames, Object[] currentState) {
+    if (OBContext.getOBContext().isInAdministratorMode() && preventUpdateInfoChange.get() != null
+        && preventUpdateInfoChange.get()) {
+      return;
+    }
     final User currentUser = getCurrentUser();
     log.debug("OBEvent for updated object " + t.getClass().getName() + " user "
         + currentUser.getName());

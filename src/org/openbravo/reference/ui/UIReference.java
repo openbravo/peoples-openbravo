@@ -26,8 +26,10 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.BuscadorData;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.TableSQLData;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -75,8 +77,8 @@ public class UIReference {
 
     if (!UIReferenceUtility.checkTableTranslation(tableSql, parentTableName, field, reference,
         identifierName, realName, tableRef)) {
-      tableSql.addSelectField(UIReferenceUtility.formatField(reference, tableSql, (parentTableName
-          + "." + field.getProperty("ColumnName"))), identifierName);
+      tableSql.addSelectField(UIReferenceUtility.formatField(tableSql.getVars(), reference,
+          (parentTableName + "." + field.getProperty("ColumnName"))), identifierName);
     }
   }
 
@@ -220,6 +222,16 @@ public class UIReference {
 
   public boolean isNumeric() {
     return numeric;
+  }
+
+  public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,
+      FieldProvider field) throws Exception {
+    if (!UIReferenceUtility.checkTableTranslation(comboTableData, tableName, field, reference)) {
+      comboTableData.addSelectField(UIReferenceUtility.formatField(comboTableData.getVars(),
+          reference,
+          (((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field
+              .getField("name"))), "NAME");
+    }
   }
 
 }

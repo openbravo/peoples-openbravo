@@ -199,7 +199,7 @@ function setWindowEditing(value) {
   var isNewWindow;
 
   if (isWindowInMDITab) {
-    if (document.getElementById('buttonEdition').className.indexOf('Main_ToolBar_Button_Icon_Edition_new') === -1) {
+    if (document.getElementById('linkButtonEdition').className.indexOf('Main_ToolBar_Button_Icon_Edition_new') === -1) {
       isNewWindow = false;
     } else {
       isNewWindow = true;
