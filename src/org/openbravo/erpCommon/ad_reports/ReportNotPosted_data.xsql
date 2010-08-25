@@ -89,7 +89,20 @@
         from GL_Journal
         where processed = 'Y'
         and posted = 'N'
-        and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='224' and ad_client_id=?)) AAA
+        and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='224' and ad_client_id=?)
+        union all
+        select ad_client_id,name, movementdate , ad_column_identifier('M_INVENTORY',to_char(m_inventory_id), TO_CHAR(?)) , 0 as GRANDTOTAL, coalesce(to_char((select printname from c_doctype_trl where c_doctype_id=(select min(c_doctype_id) from c_doctype where ad_client_id=? and docbasetype='MMI') and ad_language=to_char(?) and ad_client_id=?)), 'Physical Inventory') as document
+        from m_inventory
+        where processed = 'Y'
+        and posted = 'N'
+        and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='321' and ad_client_id=?)
+        union all
+        select ad_client_id,name, movementdate , ad_column_identifier('M_MOVEMENT',to_char(m_movement_id), TO_CHAR(?)) , 0 as GRANDTOTAL,coalesce(to_char((select printname from c_doctype_trl where c_doctype_id=(select min(c_doctype_id) from c_doctype where ad_client_id=? and docbasetype='MMM') and ad_language=to_char(?) and ad_client_id=?)), 'Goods Movement')  as document
+        from m_movement
+        where processed = 'Y'
+        and posted = 'N'
+        and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='323' and ad_client_id=?)
+        ) AAA
         where dateacct >= ?
         and dateacct <= ?
         and ad_client_id = ?
@@ -130,6 +143,16 @@
     <Parameter name="client"></Parameter>
     <Parameter name="client"></Parameter>
     <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="client"></Parameter>
+    <Parameter name="client"></Parameter>
+    <Parameter name="adLanguage"/>
+    <Parameter name="client"></Parameter>
+    <Parameter name="adLanguage"/>
+    <Parameter name="client"></Parameter>
+    <Parameter name="client"></Parameter>
+    <Parameter name="adLanguage"/>
+    <Parameter name="client"></Parameter>
     <Parameter name="adLanguage"/>
     <Parameter name="client"></Parameter>
     <Parameter name="client"></Parameter>
