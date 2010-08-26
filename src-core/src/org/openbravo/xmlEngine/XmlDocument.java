@@ -346,7 +346,6 @@ public class XmlDocument implements XmlComponentValue {
             vecXmlVectorValue.set(i, charComponent);
           }
         }
-        componentTemplate = charComponent;
       }
     }
   }
