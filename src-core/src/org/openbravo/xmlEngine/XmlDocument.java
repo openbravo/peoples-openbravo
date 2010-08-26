@@ -313,15 +313,15 @@ public class XmlDocument implements XmlComponentValue {
     }
 
     for (SectionValue sectionValue : elementDataValue.vecSectionValue) {
-      translateXmlVectorTemplate(sectionValue.vecHeadValue);
-      translateXmlVectorTemplate(sectionValue.vecFootValue);
+      translateXmlVectorValue(sectionValue.vecHeadValue);
+      translateXmlVectorValue(sectionValue.vecFootValue);
     }
   }
 
   /**
-   * Utility method to translate all CharacterComponents contained in the passed XmlVectorTemplate.
+   * Utility method to translate all CharacterComponents contained in the passed translateXmlVectorValue.
    */
-  private void translateXmlVectorTemplate(XmlVectorValue vecXmlVectorValue) {
+  private void translateXmlVectorValue(XmlVectorValue vecXmlVectorValue) {
 
     if (vecXmlVectorValue == null) {
       return;
