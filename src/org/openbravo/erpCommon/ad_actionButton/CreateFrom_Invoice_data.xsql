@@ -358,7 +358,11 @@
         AND s.C_BPartner_ID = ?  
         AND EXISTS (SELECT 1 FROM M_INOUTLINE l 
         WHERE l.M_INOUT_ID = s.M_INOUT_ID 
-        AND l.isinvoiced = 'N') 
+        AND l.isinvoiced = 'N')
+        AND NOT EXISTS (SELECT 1 FROM C_INVOICE_CANDIDATE_V ic, C_ORDER o 
+        WHERE o.C_ORDER_ID = s.C_ORDER_ID
+        AND o.C_ORDER_ID = ic.C_ORDER_ID
+        AND ic.term = 'N') 
         ORDER BY NAME
       ]]>
     </Sql>
