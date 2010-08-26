@@ -495,6 +495,15 @@ public class ImportOrder extends ImportProcess {
             } else {
               corder.cCurrencyId = data[i].cCurrencyId;
             }
+            if ("Y".equals(data[i].issotrx)) {
+              if (data1[0].finPaymentmethodId != null && !data1[0].finPaymentmethodId.equals("")) {
+                corder.finPaymentmethodId = data1[0].finPaymentmethodId;
+              }
+            } else {
+              if (data1[0].poPaymentmethodId != null && !data1[0].poPaymentmethodId.equals("")) {
+                corder.finPaymentmethodId = data1[0].poPaymentmethodId;
+              }
+            }
             if (data1[0].paymentrule != null && !data1[0].paymentrule.equals("")) {
               corder.paymentrule = data1[0].paymentrule;
             } else {

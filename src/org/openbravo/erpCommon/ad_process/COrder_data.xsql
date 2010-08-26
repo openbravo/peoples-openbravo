@@ -5,15 +5,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2006 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -31,7 +31,7 @@
 				M_Warehouse_ID, M_Shipper_ID, SalesRep_ID, AD_Orgtrx_ID, C_Activity_ID, DocStatus,
 				C_Campaign_ID, C_Project_ID, AD_Client_ID, AD_Org_ID, DocAction, C_DocType_ID, DateOrdered, DatePromised,
 				C_Currency_ID, PaymentRule, InvoiceRule, DeliveryRule, FreightcostRule, DeliveryviaRule,
-				PriorityRule, IsDiscountPrinted, Processing
+				PriorityRule, IsDiscountPrinted, Processing, FIN_PaymentMethod_ID
 			  FROM C_Order
 			  WHERE AD_Client_ID = ?
       ]]>
@@ -48,9 +48,9 @@
 				Description, C_PaymentTerm_ID, M_PriceList_ID, M_Warehouse_ID, M_Shipper_ID, SalesRep_ID, AD_Orgtrx_ID,
 				C_Activity_ID, DocStatus, DocAction, C_Doctype_ID, DateOrdered, DatePromised, DateAcct, C_Currency_ID,
 				PaymentRule, InvoiceRule, DeliveryRule, FreightcostRule, DeliveryviaRule, PriorityRule, IsDiscountPrinted,
-				Processing)
+				Processing, FIN_PaymentMethod_ID)
 				VALUES (?, ?, ?, 'Y', TO_DATE(now()), ?, TO_DATE(now()), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-				TO_DATE(?), TO_DATE(?), TO_DATE(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				TO_DATE(?), TO_DATE(?), TO_DATE(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -87,7 +87,8 @@
 		<Parameter name="deliveryviarule"/>
 		<Parameter name="priorityrule"/>
 		<Parameter name="isdiscountprinted"/>
-		<Parameter name="processing"/>
+        <Parameter name="processing"/>
+        <Parameter name="finPaymentmethodId"/>
 		</SqlMethod>
 
   <SqlMethod name="selectCurrency" type="preparedStatement" return="String">
