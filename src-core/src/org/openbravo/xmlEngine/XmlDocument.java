@@ -13,7 +13,6 @@ package org.openbravo.xmlEngine;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
