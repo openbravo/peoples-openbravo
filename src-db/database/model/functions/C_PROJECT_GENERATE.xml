@@ -89,12 +89,13 @@
       v_C_Tax_ID VARCHAR2(32) ;
       v_Discount NUMBER;
       v_PriceStd NUMBER;
+      v_FIN_PaymentMethod_ID C_ORDER.FIN_PAYMENTMETHOD_ID%TYPE;
     BEGIN
       FOR CUR_Project IN
         (SELECT *  FROM C_PROJECT  WHERE C_Project_ID=v_Record_ID)
       LOOP
         v_ResultStr:='NullTest';
-		IF CUR_Project.C_BPARTNER_ID IS NULL THEN
+	IF CUR_Project.C_BPARTNER_ID IS NULL THEN
             RAISE_APPLICATION_ERROR(-20000, '@NoprojectBusinesspartner@');
             /* Eliminado a peticion de Huesker
             ELSIF Cur_SO.AD_USER_ID IS NULL THEN
@@ -116,6 +117,8 @@
         v_ResultStr:='NoDocType';
         v_C_DocType_ID:=Ad_Get_Doctype(CUR_Project.AD_Client_ID, CUR_Project.AD_Org_ID, 'SOO', 'SO') ;
         --
+        SELECT FIN_PAYMENTMETHOD_ID INTO v_FIN_PaymentMethod_ID
+        FROM C_BPARTNER WHERE C_BPARTNER_ID = CUR_Project.C_BPARTNER_ID;
         v_ResultStr:='NoPriceList';
         SELECT M_PriceList_ID
         INTO v_M_PriceList_ID
@@ -137,7 +140,7 @@
             Processed, C_DocType_ID, C_DocTypeTarget_ID, Description,
             SalesRep_ID, DateOrdered, DateAcct, POReference,
             C_BPartner_ID, BillTo_ID, C_BPartner_Location_ID, AD_User_ID,
-            C_Currency_ID, C_PaymentTerm_ID, PaymentRule, InvoiceRule,
+            C_Currency_ID, C_PaymentTerm_ID, PaymentRule, FIN_PaymentMethod_ID, InvoiceRule,
             DeliveryRule, DeliveryViaRule, FreightCostRule, PriorityRule,
             M_Warehouse_ID, M_PriceList_ID, C_Project_ID, C_Campaign_ID
           )
@@ -149,7 +152,7 @@
              'N', v_C_DocType_ID, v_C_DocType_ID, CUR_Project.Description,
             CUR_Project.AD_User_ID, CUR_Project.DateContract, CUR_Project.DateContract, CUR_Project.POReference,
             CUR_Project.C_BPartner_ID, CUR_Project.C_BPartner_Location_ID, CUR_Project.C_BPartner_Location_ID, CUR_Project.AD_User_ID,
-            CUR_Project.C_Currency_ID, CUR_Project.C_PaymentTerm_ID, 'P', 'D',
+            CUR_Project.C_Currency_ID, CUR_Project.C_PaymentTerm_ID, 'P', v_FIN_PaymentMethod_ID, 'D',
              'A', 'P', 'I', '5', -- OnCredit, afterDelivery, Availability, Pickup, Included,
             v_M_Warehouse_ID, v_M_PriceList_ID, CUR_Project.C_Project_ID, CUR_Project.C_Campaign_ID
           )
