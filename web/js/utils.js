@@ -89,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8215';
+  var number = '8244';
   return number;
 }
 
@@ -3456,26 +3456,26 @@ function inputValueForms(name, field) {
         for (var fieldsCount=0;fieldsCount<length;fieldsCount++) {
           if (field.options[fieldsCount].selected) {
             if (result!="") result += "&";
-            result += name + "=" + escape(field.options[fieldsCount].value);
+            result += name + "=" + encodeURIComponent(field.options[fieldsCount].value);
           }
         }
         return result;
       }
     } else if (field.type.toUpperCase().indexOf("RADIO")!=-1 || field.type.toUpperCase().indexOf("CHECK")!=-1) {
       if (!field.length) {
-        if (field.checked) return (name + "=" + escape(field.value));
+        if (field.checked) return (name + "=" + encodeURIComponent(field.value));
         else return "";
       } else {
         var total = field.length;
         for (var i=0;i<total;i++) {
           if (field[i].checked) {
             if (result!="") result += "&";
-            result += name + "=" + escape(field[i].value);
+            result += name + "=" + encodeURIComponent(field[i].value);
           }
         }
         return result;
       }
-    } else return name + "=" + escape(field.value);
+    } else return name + "=" + encodeURIComponent(field.value);
   }
 
   return "";

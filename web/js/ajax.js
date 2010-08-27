@@ -136,7 +136,7 @@ function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, A
     alert("Your browser doesn't support this technology");
     return false;
   }
-  var sendText = "Command=" + escape(Command);
+  var sendText = "Command=" + encodeURIComponent(Command);
   sendText += "&IsAjaxCall=1";
   var length = formObject.elements.length;
   for (var i=0;i<length;i++) {

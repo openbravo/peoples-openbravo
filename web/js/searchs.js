@@ -82,7 +82,7 @@ function windowSearch(strPage, strHeight, strWidth, strTop, strLeft, strWindow, 
   if (strWindow==null)
     strWindow="SELECTOR";
   if (strValueID!=null && strValueID!="") {
-    auxField = "inpNameValue=" + escape(strValueID);
+    auxField = "inpNameValue=" + encodeURIComponent(strValueID);
   }
   var hidden;
   if (parameters!=null) {
@@ -90,7 +90,7 @@ function windowSearch(strPage, strHeight, strWidth, strTop, strLeft, strWindow, 
     for (var i=0;i<total;i++) {
       if (auxField!="") auxField+="&";
       if (parameters[i]=="isMultiLine" && parameters[i+1]=="Y") gIsMultiLineSearch=true;
-      auxField += parameters[i] + "=" + ((parameters[i+1]!=null)?escape(parameters[i+1]):"");
+      auxField += parameters[i] + "=" + ((parameters[i+1]!=null)?encodeURIComponent(parameters[i+1]):"");
       if (parameters[i]=="Command") hidden=true;
       i++;
     }
