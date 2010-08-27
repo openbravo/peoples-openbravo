@@ -80,7 +80,7 @@ BEGIN
     END IF;
     v_SQL:=v_SQL || AD_COLUMN_IDENTIFIER_REF_SQL(p_TableRef||'T', v_TableDir, v_FieldDisplay, v_NewReference, v_NewReferenceValue) ;
     v_SQL:=v_SQL || ' FROM ' || v_TableDir || ' '||p_TableRef||'T WHERE '||p_TableRef||'T.' || v_FieldValue || '='|| p_TableRef||'.'|| p_ColumnName||'),'''') ';
-  ELSIF p_Reference_ID IN('19', '30', '31', '35', '25', '800011', '32') THEN -- SEARCHS
+  ELSIF p_Reference_ID IN('19', '30', '31', '35', '25', '800011', '32', '95E2A8B50A254B2AAE6774B8C2F28120') THEN -- SEARCHS
     IF p_Reference_ID='25' THEN
       v_TableDir:='C_ValidCombination';
     ELSIF p_Reference_ID='31' THEN
@@ -89,6 +89,13 @@ BEGIN
       v_TableDir:='M_Product';
     ELSIF p_Reference_ID='32' THEN
       v_TableDir:='AD_Image';
+    ELSIF p_Reference_ID='95E2A8B50A254B2AAE6774B8C2F28120' THEN
+      SELECT t.TableName INTO v_TableDir FROM OBUISEL_SELECTOR s, AD_TABLE t
+      WHERE s.AD_Table_ID = t.AD_Table_ID
+      AND s.AD_Reference_ID = p_Reference_Value_ID;
+      IF (v_TableDir IS NULL) THEN
+        v_TableDir:=SUBSTR(p_ColumnName, 1, LENGTH(p_ColumnName) -3) ;
+      END IF;
     ELSE
       v_TableDir:=SUBSTR(p_ColumnName, 1, LENGTH(p_ColumnName) -3) ;
     END IF;
@@ -131,7 +138,7 @@ BEGIN
       v_SQL:='TO_CHAR(COALESCE(TO_CHAR('||p_TableRef||'.'|| p_ColumnName||'),''''))';
     END IF;
   END IF;
-  IF p_Reference_ID IN('19', '32', '30', '31', '35', '25', '800011') THEN
+  IF p_Reference_ID IN('19', '32', '30', '31', '35', '25', '800011', '95E2A8B50A254B2AAE6774B8C2F28120') THEN
     DECLARE
       v_PartialDisplay VARCHAR2(2000) ;
       v_KeyName        VARCHAR2(50) ;
