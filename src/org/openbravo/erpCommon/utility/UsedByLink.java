@@ -136,7 +136,7 @@ public class UsedByLink extends HttpSecureAppServlet {
           try {
             keyValue = UsedByLinkData.selectKeyValue(this, UsedByLinkData.selectColumnName(this,
                 data[i].referencedColumnId), UsedByLinkData.selectTableName(this, tableId),
-                keyColumn, keyId);
+                data[i].columnname, keyId);
           } catch (Exception e) {
             // TODO: handle exception
           }
