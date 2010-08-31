@@ -9135,7 +9135,7 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800212-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800212-->  <NAME><![CDATA[ProcurementRequisition]]></NAME>
 <!--800212-->  <DESCRIPTION><![CDATA[Requisition material]]></DESCRIPTION>
-<!--800212-->  <HELP><![CDATA[This table contains the headers of products demand. In the header it can be set a preferred vendor and/or price list. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
+<!--800212-->  <HELP><![CDATA[This table contains the headers of products demand. In the header it can be set a preferred vendor and/or price list. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.In this window users manage only his own requisitions.]]></HELP>
 <!--800212-->  <TABLENAME><![CDATA[M_Requisition]]></TABLENAME>
 <!--800212-->  <CLASSNAME><![CDATA[Requisition]]></CLASSNAME>
 <!--800212-->  <ISVIEW><![CDATA[N]]></ISVIEW>
