@@ -72,11 +72,13 @@
       <Sql>
         UPDATE AD_MODULE
            SET UPDATE_AVAILABLE = ?,
-               UPDATE_VER_ID = ?
+               UPDATE_VER_ID = ?,
+               UPDATEINFO = ?
          WHERE AD_MODULE_ID = ?
       </Sql>
       <Parameter name="moduleVersionNo"/>
       <Parameter name="moduleVersionId"/>
+      <Parameter name="updateInfo"/>
       <Parameter name="moduleId"/>
    </SqlMethod>
    
