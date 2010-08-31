@@ -26,6 +26,7 @@
     
     TYPE RECORD IS REF CURSOR;
     Cur_Discounts RECORD;
+    V_RequiresDescription CHAR(1);
         
 BEGIN
     
@@ -81,6 +82,14 @@ BEGIN
       )
       ;
   END LOOP;
+  END IF;
+  IF(INSERTING OR UPDATING) THEN
+  	IF(:NEW.C_INCOTERMS_ID IS NOT NULL) THEN
+  		SELECT REQUIRESDESCRIPTION INTO V_RequiresDescription FROM C_INCOTERMS WHERE C_INCOTERMS_ID = :NEW.C_INCOTERMS_ID;
+  		IF(V_RequiresDescription = 'Y' AND :NEW.INCOTERMSDESCRIPTION IS NULL) THEN
+  			RAISE_APPLICATION_ERROR(-20000, '@NoIncotermDescription@');
+  		END IF;
+  	END IF;  	
   END IF;
 END C_ORDER_TRG2
 ]]></body>
