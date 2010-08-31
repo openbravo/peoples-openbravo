@@ -38,7 +38,10 @@ BEGIN
 
 
   IF (UPDATING) THEN
-    IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.') OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.'))) THEN
+    IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.') 
+         OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.')
+         OR :old.AD_Module_ID<>:new.AD_Module_ID)
+         ) THEN
       RETURN;
     END IF;
 
