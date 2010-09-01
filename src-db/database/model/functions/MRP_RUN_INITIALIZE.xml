@@ -212,6 +212,7 @@ BEGIN
                                 WHERE WR.MA_WORKREQUIREMENT_ID = WP.MA_WORKREQUIREMENT_ID
                                   AND WP.MA_WRPHASE_ID = WPP.MA_WRPHASE_ID
                                   AND WR.CLOSED = 'N'
+                                  AND WP.donequantity < WP.quantity
                                   AND WPP.M_PRODUCT_ID = Cur_Product.M_Product_ID
                                   AND TO_NUMBER(WR.ENDDATE - p_PlanningDate) < p_TimeHorizon
                                   AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID, 'WR',
