@@ -1385,7 +1385,7 @@ public class ImportModule {
           if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(), updates[i]
               .getModuleVersionID())) {
             ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i]
-                .getModuleVersionID(), updates[i].getModuleID(), updates[i].getUpdateDescription());
+                .getModuleVersionID(), updates[i].getUpdateDescription(), updates[i].getModuleID());
             ImportModuleData.insertLog(conn, user, updates[i].getModuleID(), updates[i]
                 .getModuleVersionID(), updates[i].getName(), "Found new version "
                 + updates[i].getVersionNo() + " for module " + updates[i].getName(), "S");
