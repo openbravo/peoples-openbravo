@@ -118,7 +118,9 @@ BEGIN
                               AND pl.MRP_RUN_PRODUCTION_ID = p_Run_ID
                               AND pl.M_PRODUCT_ID = MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID
                               AND parent.isplanned = 'N'
-                              AND pl.qty < 0 )
+                              AND pl.isfixed = 'Y'
+                              AND ((pl.qty < 0 and parent.qty > 0 ) OR (pl.qty > 0 AND parent.qty < 0)))
+
           ORDER BY planneddate
           ) LOOP
           v_Planned := 'Y';
