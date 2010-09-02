@@ -27943,7 +27943,7 @@ For the other necessary values the corresponding default values are used. Once t
 <!--1005500008-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005500008-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005500008-->  <VALUE><![CDATA[20259]]></VALUE>
-<!--1005500008-->  <MSGTEXT><![CDATA[The IBAN number defined in the bank account tab, must fit the IBAN data of the country defined in the bank tab.]]></MSGTEXT>
+<!--1005500008-->  <MSGTEXT><![CDATA[The IBAN number defined in the bank account tab, must fit the IBAN data of the country defined.]]></MSGTEXT>
 <!--1005500008-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1005500008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005500008--></AD_MESSAGE>
