@@ -38,7 +38,7 @@
     v_DocumentNo NUMBER;
     v_Sequence_ID VARCHAR2(32);
     v_Product_ID VARCHAR2(32);
-    v_DateFrom DATE :=now();
+    v_DateFrom DATE :=trunc(now());
     v_DateTo DATE :=TO_DATE('31-12-9999', 'DD-MM-YYYY');
     v_Count NUMBER;
     --  v_Processing        CHAR;
