@@ -490,10 +490,12 @@ public class VersionUtility {
       Ver ver = new Ver();
       ver.verId = modules[i].getModuleVersionID();
       ver.version = modules[i].getVersionNo();
-      if (mod.availableMinVer == null || versionCompare(ver.version, mod.availableMinVer) == -1)
+      if (mod.availableMinVer == null || versionCompare(ver.version, mod.availableMinVer) == -1) {
         mod.availableMinVer = ver.version;
-      else if (mod.availableMaxVer == null || versionCompare(ver.version, mod.availableMaxVer) == 1)
+      }
+      if (mod.availableMaxVer == null || versionCompare(ver.version, mod.availableMaxVer) == 1) {
         mod.availableMaxVer = ver.version;
+      }
 
       ver.dependencies = new HashMap<String, Dep>();
       ver.includes = new HashMap<String, Dep>();
