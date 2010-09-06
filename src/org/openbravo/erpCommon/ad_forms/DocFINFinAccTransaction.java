@@ -299,13 +299,19 @@ public class DocFINFinAccTransaction extends AcctServer {
     boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
-    if (!getDocumentPaymentConfirmation(payment))
+    if (!getDocumentPaymentConfirmation(payment)) {
       fact.createLine(line, getAccountBPartner(
           (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
               : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
           !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-    else
+      if (payment.getWriteoffAmount() != null
+          && payment.getWriteoffAmount().compareTo(BigDecimal.ZERO) != 0) {
+        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
+            C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line
+                .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      }
+    } else
       fact.createLine(line, getAccountPayment(conn, payment.getPaymentMethod(), payment
           .getAccount(), as, isReceipt), C_Currency_ID, !isReceipt ? line.getAmount() : "",
           isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
@@ -314,12 +320,6 @@ public class DocFINFinAccTransaction extends AcctServer {
         .getAccount(), as, isReceipt), C_Currency_ID, isReceipt ? line.getAmount() : "",
         !isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, "999999", DocumentType, conn);
 
-    if (payment.getWriteoffAmount() != null
-        && payment.getWriteoffAmount().compareTo(BigDecimal.ZERO) != 0) {
-      fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-          C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line
-              .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-    }
     SeqNo = "0";
     return fact;
   }
