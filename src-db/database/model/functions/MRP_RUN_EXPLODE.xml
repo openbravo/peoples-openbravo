@@ -70,7 +70,7 @@ BEGIN
 
     WHILE (v_Count <> 0) LOOP
       v_New := 'N';
-      v_lastProductID := ''; -- non-existant value
+      v_lastProductID := '-1'; -- non-existant value
       FOR Cur_Run_Lines IN (
         SELECT MRP_RUN_PRODUCTIONLINE.MRP_RUN_PRODUCTIONLINE_ID AS MRP_RUN_LINE_ID, InOutTrxType,
                MRP_RUN_PRODUCTIONLINE.QTY, MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID, M_PRODUCT.ISPURCHASED,
