@@ -53,6 +53,15 @@
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
+  <SqlMethod name="getIsDicountPrinted" type="preparedStatement" return="string" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT COALESCE(IsDiscountPrinted,'N') AS IsDiscountPrinted FROM C_BPARTNER WHERE C_BPARTNER_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="cBpartnerId"/>
+  </SqlMethod>
   <SqlMethod name="selectPaymentTerm" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
