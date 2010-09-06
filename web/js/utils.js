@@ -89,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8273';
+  var number = '8274';
   return number;
 }
 
@@ -5110,7 +5110,7 @@ function formattedNumberOp(number1, operator, number2, result_maskNumeric, decSe
   } else if (operator == "round") {
     result = roundNumber(number1, number2);
   } else {
-    result = eval(number1 + operator + number2);
+    result = eval('('+number1+')' + operator + '('+number2+')');
   }
   if (result != true && result != false && result != null && result != "") {
     result = returnCalcToFormatted(result, result_maskNumeric, decSeparator, groupSeparator, groupInterval)
