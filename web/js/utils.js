@@ -89,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8244';
+  var number = '8269';
   return number;
 }
 
@@ -2585,7 +2585,10 @@ function executeMenuButton(id) {
 
 function getAppUrl() {
   var menuFrame = getFrame('frameMenu');
-  var appUrl = menuFrame.getAppUrlFromMenu();
+  var appUrl = null;
+  if (typeof menuFrame.getAppUrlFromMenu === "function") {
+    appUrl = menuFrame.getAppUrlFromMenu();
+  }
   return appUrl;
 }
 
@@ -5386,6 +5389,9 @@ function sendWindowInfoToMDI() {
 
   var obManualURL = document.location.href;
   var appUrl = getAppUrl();
+  if (!appUrl) {
+    return false;
+  }
 
   obManualURL = obManualURL.replace(appUrl, "");
 //obManualURL = obManualURL.replace("?hideMenu=true&noprefs=true", "");
