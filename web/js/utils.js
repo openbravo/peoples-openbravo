@@ -89,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8269';
+  var number = '8273';
   return number;
 }
 
@@ -3094,26 +3094,29 @@ function getFrame(frameName) {
         var securityEscape = 0;
         var securityEscapeLimit = 50;
 
-        while (eval(targetFrame) !== eval(targetFrame_opener)) {
-          while (eval(targetFrame) !== eval(targetFrame_parent)) {
+        try {  //try-catch to avoid security issues when executing Openbravo inside a frame or iframe
+          while (eval(targetFrame) !== eval(targetFrame_opener)) {
+            while (eval(targetFrame) !== eval(targetFrame_parent)) {
+              if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+                success = true;
+                break;
+              }
+              targetFrame = targetFrame + '.parent';
+              targetFrame_parent = targetFrame + '.parent';
+              securityEscape = securityEscape + 1;
+            }
             if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
               success = true;
               break;
             }
-            targetFrame = targetFrame + '.parent';
-            targetFrame_parent = targetFrame + '.parent';
+            targetFrame = targetFrame + '.opener';
+            targetFrame_opener = targetFrame + '.opener';
             securityEscape = securityEscape + 1;
+            if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
+              break;
+            }
           }
-          if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
-            success = true;
-            break;
-          }
-          targetFrame = targetFrame + '.opener';
-          targetFrame_opener = targetFrame + '.opener';
-          securityEscape = securityEscape + 1;
-          if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
-            break;
-          }
+        } catch (e) {
         }
         targetFrame = eval(targetFrame);
       }
@@ -5314,7 +5317,6 @@ function checkWindowInMDITab(target) {
       target = target.parent;
     }
   } catch (e) {
-    result = false;
   }
 
   if (!LayoutMDICheck(target)) {
