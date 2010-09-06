@@ -69,9 +69,18 @@ function redirectWhenPopup() {
     }
   }
   catch (e) {}
-  if (top.opener && permission) {
+  if (permission && top.opener) {
     top.opener.parent.location.href = top.document.location.href;
     top.window.close();
+  }
+}
+
+function redirectWhenInsideMDI() {
+  if (isWindowInMDITab) {
+    var LayoutMDI = getFrame('LayoutMDI');
+    if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === "object") {
+      LayoutMDI.location.href = parent.window.location.href;
+    }
   }
 }
 
@@ -100,6 +109,7 @@ function redirectWhenPopup() {
 <script language="JavaScript" type="text/javascript">
   function onLoadDo() {
     redirectWhenPopup();
+    redirectWhenInsideMDI();
     this.windowTables = new Array(
       new windowTableId('client', 'buttonOK')
     );
