@@ -61,6 +61,8 @@ public class OBInterceptor extends EmptyInterceptor {
 
   private static ThreadLocal<Boolean> preventUpdateInfoChange = new ThreadLocal<Boolean>();
 
+  private static ThreadLocal<Boolean> disableCheckReferencedOrganizations = new ThreadLocal<Boolean>();
+
   /**
    * If true is passed and we are in adminMode then the update info (updated/updatedBy) is not
    * updated when an object gets updated.
@@ -69,6 +71,15 @@ public class OBInterceptor extends EmptyInterceptor {
    */
   public static void setPreventUpdateInfoChange(boolean value) {
     preventUpdateInfoChange.set(value);
+  }
+
+  /**
+   * If true is passed then the checkReferencedOrganizations check is not done
+   * 
+   * @param value
+   */
+  public static void setDisableCheckReferencedOrganizations(boolean value) {
+    disableCheckReferencedOrganizations.set(value);
   }
 
   /**
@@ -160,9 +171,9 @@ public class OBInterceptor extends EmptyInterceptor {
     // }
 
     doEvent(entity, currentState, propertyNames);
-
-    checkReferencedOrganizations(entity, currentState, previousState, propertyNames);
-
+    if (!disableCheckReferencedOrganizations.get()) {
+      checkReferencedOrganizations(entity, currentState, previousState, propertyNames);
+    }
     if (entity instanceof Traceable || entity instanceof ClientEnabled
         || entity instanceof OrganizationEnabled) {
       return true;

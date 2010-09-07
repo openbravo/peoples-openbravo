@@ -33,6 +33,7 @@ import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.ddlutils.util.DBSMOBUtil;
@@ -45,6 +46,7 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
   private static final Logger log = Logger.getLogger(ImportReferenceDataTask.class);
   private Platform platform;
   private Database xmlModel;
+  private boolean disableCheckReferencedOrganizations = false;
 
   @Override
   public void execute() {
@@ -61,6 +63,7 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
   protected void doExecute() {
     final File importDir = getReferenceDataDir();
 
+    OBInterceptor.setDisableCheckReferencedOrganizations(disableCheckReferencedOrganizations);
     for (final File importFile : importDir.listFiles()) {
       if (importFile.isDirectory() || !importFile.getName().endsWith(".xml")) {
         continue;
@@ -128,5 +131,13 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
 
   private void enableConstraints() {
     platform.enableCheckConstraints(xmlModel);
+  }
+
+  public void setDisableCheckReferencedOrganizations(boolean disableCheckReferencedOrganizations) {
+    this.disableCheckReferencedOrganizations = disableCheckReferencedOrganizations;
+  }
+
+  public boolean isDisableCheckReferencedOrganizations() {
+    return disableCheckReferencedOrganizations;
   }
 }

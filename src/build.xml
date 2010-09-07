@@ -235,7 +235,7 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <echo message="Importing sample reference data" />
-    <importsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" />
+    <importsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" disableCheckReferencedOrganizations="${disableCheckReferencedOrganizations}"/>
     <ant dir="${base.db}" target="database.postupdate.${bbdd.rdbms}" inheritAll="true" inheritRefs="true" />
   </target>
 
