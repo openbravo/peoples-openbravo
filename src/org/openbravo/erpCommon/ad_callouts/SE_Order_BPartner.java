@@ -157,8 +157,8 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     resultado.append("\n),");
     FieldProvider[] td = null;
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
+      ComboTableData comboTableData = new ComboTableData(vars, this, "18", "M_Warehouse_ID", "197",
+          "", Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId")), Utility
               .getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       td = comboTableData.select(false);
