@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.U.
+ * Copyright (C) 2001-2010 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 class DataTemplate implements XmlComponentTemplate {
   String strName; // the name should be initialized
 
-  Vector<Object> vecSectionTemplate;
+  Vector<SectionTemplate> vecSectionTemplate;
   XmlVectorTemplate vecDetailTemplate; // vector of XmlComponents
   Vector<Object> vecFieldTemplate; // vector of FieldComponent's
   Vector<Object> vecParameterTemplate; // vector of ParameterTemplates for the
@@ -46,7 +46,7 @@ class DataTemplate implements XmlComponentTemplate {
   public DataTemplate() {
     intTotalLevels = -1;
     log4jDataTemplate.debug("Initial value: " + intTotalLevels);
-    vecSectionTemplate = new Vector<Object>();
+    vecSectionTemplate = new Vector<SectionTemplate>();
     vecDetailTemplate = new XmlVectorTemplate();
     vecFieldTemplate = new Vector<Object>();
     vecParameterTemplate = new Vector<Object>();

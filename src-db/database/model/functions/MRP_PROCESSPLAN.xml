@@ -104,7 +104,7 @@ BEGIN
 
       IF (v_Planned = 'N') THEN
         -- Check for dead-locks
-        v_ResultStr := 'dead-lock';
+        v_ResultStr := 'Consider production plans with more than one produed products.';
         FOR Cur_DeadLock IN (
           SELECT MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID
           FROM MRP_RUN_PRODUCTIONLINE, M_PRODUCT
@@ -118,7 +118,9 @@ BEGIN
                               AND pl.MRP_RUN_PRODUCTION_ID = p_Run_ID
                               AND pl.M_PRODUCT_ID = MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID
                               AND parent.isplanned = 'N'
-                              AND pl.qty < 0 )
+                              AND pl.isfixed = 'Y'
+                              AND ((pl.qty < 0 and parent.qty > 0 ) OR (pl.qty > 0 AND parent.qty < 0)))
+
           ORDER BY planneddate
           ) LOOP
           v_Planned := 'Y';
@@ -130,6 +132,7 @@ BEGIN
 
       IF (v_Planned = 'N') THEN
         -- ERROR: Circular reference
+        v_ResultStr := 'Break while loop. Nothing planned with pending lines to plan.';
         v_Message := '@CircularReference@';
         RAISE_APPLICATION_ERROR(-20000, v_Message) ;
       END IF;
@@ -144,6 +147,7 @@ BEGIN
             GROUP BY pl.M_PRODUCT_ID) BBB;
 
       IF v_Count = v_Count_Aux THEN
+        v_ResultStr := 'Break while loop. Planned flag set to ''Y'' but unplanned lines amount do not change.';
         RAISE_APPLICATION_ERROR(-20000, '@CircularReference@');
       END IF;
       v_Count := v_Count_Aux;

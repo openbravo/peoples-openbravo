@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
  * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SLU 
+ * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2001-2010 Openbravo SLU
- * All Rights Reserved. 
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -89,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8215';
+  var number = '8274';
   return number;
 }
 
@@ -2585,7 +2585,10 @@ function executeMenuButton(id) {
 
 function getAppUrl() {
   var menuFrame = getFrame('frameMenu');
-  var appUrl = menuFrame.getAppUrlFromMenu();
+  var appUrl = null;
+  if (typeof menuFrame.getAppUrlFromMenu === "function") {
+    appUrl = menuFrame.getAppUrlFromMenu();
+  }
   return appUrl;
 }
 
@@ -3091,26 +3094,29 @@ function getFrame(frameName) {
         var securityEscape = 0;
         var securityEscapeLimit = 50;
 
-        while (eval(targetFrame) !== eval(targetFrame_opener)) {
-          while (eval(targetFrame) !== eval(targetFrame_parent)) {
+        try {  //try-catch to avoid security issues when executing Openbravo inside a frame or iframe
+          while (eval(targetFrame) !== eval(targetFrame_opener)) {
+            while (eval(targetFrame) !== eval(targetFrame_parent)) {
+              if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
+                success = true;
+                break;
+              }
+              targetFrame = targetFrame + '.parent';
+              targetFrame_parent = targetFrame + '.parent';
+              securityEscape = securityEscape + 1;
+            }
             if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
               success = true;
               break;
             }
-            targetFrame = targetFrame + '.parent';
-            targetFrame_parent = targetFrame + '.parent';
+            targetFrame = targetFrame + '.opener';
+            targetFrame_opener = targetFrame + '.opener';
             securityEscape = securityEscape + 1;
+            if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
+              break;
+            }
           }
-          if (eval(targetFrame).document.getElementById('paramFrameMenuLoading') || securityEscape > securityEscapeLimit) { //paramFrameMenuLoading is an existing Login_FS.html ID to check if we are aiming at this html
-            success = true;
-            break;
-          }
-          targetFrame = targetFrame + '.opener';
-          targetFrame_opener = targetFrame + '.opener';
-          securityEscape = securityEscape + 1;
-          if (typeof eval(targetFrame) === 'undefined' || eval(targetFrame) === null || eval(targetFrame) === 'null' || eval(targetFrame) === '') {
-            break;
-          }
+        } catch (e) {
         }
         targetFrame = eval(targetFrame);
       }
@@ -3456,26 +3462,26 @@ function inputValueForms(name, field) {
         for (var fieldsCount=0;fieldsCount<length;fieldsCount++) {
           if (field.options[fieldsCount].selected) {
             if (result!="") result += "&";
-            result += name + "=" + escape(field.options[fieldsCount].value);
+            result += name + "=" + encodeURIComponent(field.options[fieldsCount].value);
           }
         }
         return result;
       }
     } else if (field.type.toUpperCase().indexOf("RADIO")!=-1 || field.type.toUpperCase().indexOf("CHECK")!=-1) {
       if (!field.length) {
-        if (field.checked) return (name + "=" + escape(field.value));
+        if (field.checked) return (name + "=" + encodeURIComponent(field.value));
         else return "";
       } else {
         var total = field.length;
         for (var i=0;i<total;i++) {
           if (field[i].checked) {
             if (result!="") result += "&";
-            result += name + "=" + escape(field[i].value);
+            result += name + "=" + encodeURIComponent(field[i].value);
           }
         }
         return result;
       }
-    } else return name + "=" + escape(field.value);
+    } else return name + "=" + encodeURIComponent(field.value);
   }
 
   return "";
@@ -5104,7 +5110,7 @@ function formattedNumberOp(number1, operator, number2, result_maskNumeric, decSe
   } else if (operator == "round") {
     result = roundNumber(number1, number2);
   } else {
-    result = eval(number1 + operator + number2);
+    result = eval('('+number1+')' + operator + '('+number2+')');
   }
   if (result != true && result != false && result != null && result != "") {
     result = returnCalcToFormatted(result, result_maskNumeric, decSeparator, groupSeparator, groupInterval)
@@ -5311,7 +5317,6 @@ function checkWindowInMDITab(target) {
       target = target.parent;
     }
   } catch (e) {
-    result = false;
   }
 
   if (!LayoutMDICheck(target)) {
@@ -5386,6 +5391,9 @@ function sendWindowInfoToMDI() {
 
   var obManualURL = document.location.href;
   var appUrl = getAppUrl();
+  if (!appUrl) {
+    return false;
+  }
 
   obManualURL = obManualURL.replace(appUrl, "");
 //obManualURL = obManualURL.replace("?hideMenu=true&noprefs=true", "");

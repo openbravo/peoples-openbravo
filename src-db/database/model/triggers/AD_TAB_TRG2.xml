@@ -38,7 +38,10 @@ BEGIN
 
 
   IF (UPDATING) THEN
-    IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.') OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.'))) THEN
+    IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.') 
+         OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.')
+         OR :old.AD_Module_ID<>:new.AD_Module_ID)
+         ) THEN
       RETURN;
     END IF;
 
@@ -51,8 +54,8 @@ BEGIN
 
 
     
-    IF v_IsActive <> 'Y' THEN
-      v_IsActive := :NEW.ISACTIVE;
+    IF v_IsActive = 'N' or :new.IsActive='N' THEN
+      v_IsActive := 'N';
     END IF;
 
     SELECT AD_MAPPING_FORMAT(TO_CHAR(W.NAME)), 

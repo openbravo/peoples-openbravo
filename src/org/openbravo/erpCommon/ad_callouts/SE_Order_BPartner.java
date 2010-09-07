@@ -267,6 +267,8 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     resultado.append("\n),");
     resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentrule + "\"),");
     resultado.append("new Array(\"inpdeliveryviarule\", \"" + strDeliveryViaRule + "\"),");
+    resultado.append("new Array(\"inpisdiscountprinted\", \""
+        + SEOrderBPartnerData.getIsDicountPrinted(this, strBPartner) + "\"),");
     resultado.append("new Array(\"inpcPaymenttermId\", \""
         + (strPaymentterm.equals("") ? SEOrderBPartnerData.selectPaymentTerm(this, Utility
             .getContext(this, vars, "#User_Client", strWindowId)) : strPaymentterm) + "\"),");

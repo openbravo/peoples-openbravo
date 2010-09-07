@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -82,7 +82,7 @@ function windowSearch(strPage, strHeight, strWidth, strTop, strLeft, strWindow, 
   if (strWindow==null)
     strWindow="SELECTOR";
   if (strValueID!=null && strValueID!="") {
-    auxField = "inpNameValue=" + escape(strValueID);
+    auxField = "inpNameValue=" + encodeURIComponent(strValueID);
   }
   var hidden;
   if (parameters!=null) {
@@ -90,7 +90,7 @@ function windowSearch(strPage, strHeight, strWidth, strTop, strLeft, strWindow, 
     for (var i=0;i<total;i++) {
       if (auxField!="") auxField+="&";
       if (parameters[i]=="isMultiLine" && parameters[i+1]=="Y") gIsMultiLineSearch=true;
-      auxField += parameters[i] + "=" + ((parameters[i+1]!=null)?escape(parameters[i+1]):"");
+      auxField += parameters[i] + "=" + ((parameters[i+1]!=null)?encodeURIComponent(parameters[i+1]):"");
       if (parameters[i]=="Command") hidden=true;
       i++;
     }

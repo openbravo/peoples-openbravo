@@ -49,6 +49,8 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
         isVendorTab ? srtPOPaymentMethodId : srtPaymentMethodId);
 
     info.addSelect(isVendorTab ? "inppoFinancialAccountId" : "inpfinFinancialAccountId");
+    String srtSelectedFinancialAccount = info.getStringParameter(
+        isVendorTab ? "inppoFinancialAccountId" : "inpfinFinancialAccountId", IsIDFilter.instance);
 
     // No Payment Method selected
     if (srtPaymentMethodId.isEmpty() && srtPOPaymentMethodId.isEmpty()) {
@@ -67,7 +69,11 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
       obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
 
       for (FinAccPaymentMethod accPm : obc.list()) {
-        info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier());
+        if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId()))
+          info
+              .addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(), true);
+        else
+          info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier());
       }
     }
 

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.U.
+ * Copyright (C) 2001-2010 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -63,7 +63,7 @@ class SectionValue {
       functionInstance.init();
     }
     if (sectionTemplate.intLevel != sectionTemplate.dataTemplate.intTotalLevels) {
-      SectionValue section = (SectionValue) dataValue.vecSectionValue
+      SectionValue section = dataValue.vecSectionValue
           .elementAt(sectionTemplate.intLevel + 1);
       section.strSection = new StringBuffer();
     } else {
@@ -75,7 +75,7 @@ class SectionValue {
     log4jSectionValue.debug("(Close) Levels:" + sectionTemplate.dataTemplate.intTotalLevels
         + " actual level: " + sectionTemplate.intLevel);
     if (sectionTemplate.intLevel != sectionTemplate.dataTemplate.intTotalLevels) {
-      SectionValue section = (SectionValue) dataValue.vecSectionValue
+      SectionValue section = dataValue.vecSectionValue
           .elementAt(sectionTemplate.intLevel + 1);
       section.close();
     }
@@ -84,7 +84,7 @@ class SectionValue {
 
     // add next section
     if (sectionTemplate.intLevel != sectionTemplate.dataTemplate.intTotalLevels) {
-      SectionValue section = (SectionValue) dataValue.vecSectionValue
+      SectionValue section = dataValue.vecSectionValue
           .elementAt(sectionTemplate.intLevel + 1);
       strSection.append(section.strSection);
     } else {
