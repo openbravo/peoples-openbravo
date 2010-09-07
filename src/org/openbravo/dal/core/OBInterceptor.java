@@ -171,7 +171,8 @@ public class OBInterceptor extends EmptyInterceptor {
     // }
 
     doEvent(entity, currentState, propertyNames);
-    if (!disableCheckReferencedOrganizations.get()) {
+    if (disableCheckReferencedOrganizations.get() == null
+        || !disableCheckReferencedOrganizations.get()) {
       checkReferencedOrganizations(entity, currentState, previousState, propertyNames);
     }
     if (entity instanceof Traceable || entity instanceof ClientEnabled
