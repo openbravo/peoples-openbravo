@@ -101,6 +101,7 @@ export.database: exports database structure and data to xml files.
   <property name="friendlyWarnings" value="false"/>
   <property name="checkTranslationConsistency" value="true"/>
   <property name="buildValidation" value="true"/>
+  <property name="disableCheckReferencedOrganizations" value="false"/>
 
   <available file=".hg" property="is.hg" />
 
