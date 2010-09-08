@@ -25,6 +25,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
@@ -41,6 +46,8 @@ import java.util.zip.CRC32;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
 public class SystemInfo {
@@ -65,6 +72,9 @@ public class SystemInfo {
       break;
     case MAC_IDENTIFIER:
       systemInfo.put(i, getMacAddress());
+      break;
+    case DB_IDENTIFIER:
+      systemInfo.put(i, getDBIdentifier(conn));
       break;
     case DATABASE:
       systemInfo.put(i, conn.getRDBMS());
@@ -186,6 +196,60 @@ public class SystemInfo {
       return "";
     } catch (SocketException e) {
       log4j.error("Error getting mac address", e);
+      return "";
+    }
+  }
+
+  /**
+   * Obtains a unique identifier for database
+   */
+  private final static String getDBIdentifier(ConnectionProvider conn) {
+    Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+    if ("ORACLE".equals(conn.getRDBMS())) {
+      Connection con = null;
+      Statement st = null;
+      try {
+        // Obtain a direct jdbc connection instead of using DAL nor ConnectionProvider. This query
+        // is needed to be executed with DBA privileges, which standard user might not have.
+
+        con = DriverManager.getConnection(obProps.getProperty("bbdd.url"), obProps
+            .getProperty("bbdd.systemUser"), obProps.getProperty("bbdd.systemPassword"));
+        st = con.createStatement();
+        st.execute("select dbid from v$database");
+        st.getResultSet().next();
+        String id = st.getResultSet().getString(1);
+        st.getResultSet().close();
+        st.close();
+        con.close();
+        return id;
+      } catch (SQLException e) {
+        log4j.error("Error obtaining Oracle's DB identifier");
+        return "";
+      } finally {
+        try {
+          st.getResultSet().close();
+          st.close();
+          con.close();
+        } catch (SQLException e) {
+          log4j.error("Error closing connection for setting db id", e);
+        }
+      }
+    } else { // PG
+      Vector<String> param = new Vector<String>();
+      param.add(obProps.getProperty("bbdd.sid"));
+      try {
+        // Executing query in this way instead of with sqlc not to have to create pg_stat_database
+        // view in Oracle
+        ExecuteQuery q = new ExecuteQuery(conn,
+            "select datid from pg_stat_database where datname=?", param);
+        FieldProvider[] results = q.select();
+        if (results.length != 0) {
+          return results[0].getField("datid");
+        }
+      } catch (Exception e) {
+        log4j.error("Error getting PG DB ID", e);
+      }
+      log4j.warn("Not found DB id");
       return "";
     }
   }
@@ -349,9 +413,9 @@ public class SystemInfo {
   }
 
   public enum Item {
-    SYSTEM_IDENTIFIER("systemIdentifier"), MAC_IDENTIFIER("macId"), OPERATING_SYSTEM("os"), OPERATING_SYSTEM_VERSION(
-        "osVersion"), DATABASE("db"), DATABASE_VERSION("dbVersion"), WEBSERVER("webserver"), WEBSERVER_VERSION(
-        "webserverVersion"), SERVLET_CONTAINER("servletContainer"), SERVLET_CONTAINER_VERSION(
+    SYSTEM_IDENTIFIER("systemIdentifier"), MAC_IDENTIFIER("macId"), DB_IDENTIFIER("dbIdentifier"), OPERATING_SYSTEM(
+        "os"), OPERATING_SYSTEM_VERSION("osVersion"), DATABASE("db"), DATABASE_VERSION("dbVersion"), WEBSERVER(
+        "webserver"), WEBSERVER_VERSION("webserverVersion"), SERVLET_CONTAINER("servletContainer"), SERVLET_CONTAINER_VERSION(
         "servletContainerVersion"), ANT_VERSION("antVersion"), OB_VERSION("obVersion"), OB_INSTALL_MODE(
         "obInstallMode"), CODE_REVISION("codeRevision"), NUM_REGISTERED_USERS("numRegisteredUsers"), ISHEARTBEATACTIVE(
         "isheartbeatactive"), ISPROXYREQUIRED("isproxyrequired"), PROXY_SERVER("proxyServer"), PROXY_PORT(
