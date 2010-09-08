@@ -23,8 +23,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +36,16 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.CRC32;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class SystemInfo {
 
+  private static final Logger log4j = Logger.getLogger(SystemInfo.class);
   private static Map<Item, String> systemInfo;
 
   static {
@@ -55,6 +62,9 @@ public class SystemInfo {
     switch (i) {
     case SYSTEM_IDENTIFIER:
       systemInfo.put(i, getSystemIdentifier(conn));
+      break;
+    case MAC_IDENTIFIER:
+      systemInfo.put(i, getMacAddress());
       break;
     case DATABASE:
       systemInfo.put(i, conn.getRDBMS());
@@ -128,6 +138,56 @@ public class SystemInfo {
       SystemInfoData.updateSystemIdentifier(conn, systemIdentifier);
     }
     return systemIdentifier;
+  }
+
+  /**
+   * Obtains mac address a CRC of the byte[] array for the obtained mac address.
+   * 
+   * In case multiple interfaces are present, it is taken the first one with mac address of the list
+   * sorted in this way: loopbacks are sorted at the end, the rest of interfaces are sorted by name.
+   * 
+   * @return
+   */
+  private final static String getMacAddress() {
+    List<NetworkInterface> interfaces = new ArrayList<NetworkInterface>();
+    try {
+      interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+
+      Collections.sort(interfaces, new Comparator<NetworkInterface>() {
+        @Override
+        public int compare(NetworkInterface o1, NetworkInterface o2) {
+          try {
+            if (o1.isLoopback() && !o2.isLoopback()) {
+              return 1;
+            }
+            if (!o1.isLoopback() && o2.isLoopback()) {
+              return -1;
+            }
+          } catch (SocketException e) {
+            log4j.error("Error sorting network interfaces", e);
+            return 0;
+          }
+          return o1.getName().compareTo(o2.getName());
+        }
+      });
+
+      for (NetworkInterface iface : interfaces) {
+        if (iface.getHardwareAddress() != null) {
+          // get the first not null hw address and CRC it
+          CRC32 crc = new CRC32();
+          crc.update(iface.getHardwareAddress());
+          return Long.toHexString(crc.getValue());
+        }
+      }
+
+      if (interfaces.isEmpty()) {
+        log4j.warn("Not found mac adress");
+      }
+      return "";
+    } catch (SocketException e) {
+      log4j.error("Error getting mac address", e);
+      return "";
+    }
   }
 
   private final static String getDatabaseVersion(ConnectionProvider conn) throws ServletException {
@@ -289,7 +349,7 @@ public class SystemInfo {
   }
 
   public enum Item {
-    SYSTEM_IDENTIFIER("systemIdentifier"), OPERATING_SYSTEM("os"), OPERATING_SYSTEM_VERSION(
+    SYSTEM_IDENTIFIER("systemIdentifier"), MAC_IDENTIFIER("macId"), OPERATING_SYSTEM("os"), OPERATING_SYSTEM_VERSION(
         "osVersion"), DATABASE("db"), DATABASE_VERSION("dbVersion"), WEBSERVER("webserver"), WEBSERVER_VERSION(
         "webserverVersion"), SERVLET_CONTAINER("servletContainer"), SERVLET_CONTAINER_VERSION(
         "servletContainerVersion"), ANT_VERSION("antVersion"), OB_VERSION("obVersion"), OB_INSTALL_MODE(
