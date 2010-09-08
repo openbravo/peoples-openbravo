@@ -567,16 +567,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   protected void logout(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
-    HttpSession session = request.getSession(false);
-    if (session != null) {
-      // finally invalidate the session (this event will be caught by the session listener
-      session.invalidate();
-    }
+    invalidateSession(request);
 
     // reset the obcontext
     OBContext.setOBContext((OBContext) null);
 
     m_AuthManager.logout(request, response);
+  }
+
+  protected void invalidateSession(HttpServletRequest request) {
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      // finally invalidate the session (this event will be caught by the session listener
+      session.invalidate();
+    }
   }
 
   /**
