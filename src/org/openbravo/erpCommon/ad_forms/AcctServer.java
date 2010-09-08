@@ -1013,7 +1013,7 @@ public abstract class AcctServer {
     if (MultiCurrency)
       return true;
     //
-    boolean retValue = (getBalance().compareTo(new BigDecimal("0.00")) == 0);
+    boolean retValue = (getBalance().compareTo(ZERO) == 0);
     if (retValue) {
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - isBalanced - " + DocumentNo);
