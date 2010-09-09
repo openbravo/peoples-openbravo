@@ -18,6 +18,7 @@
   v_UOM_ID    varchar2(32);
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   V_COUNT  NUMBER;
+  v_ISSOTRX CHAR(1);
 /******************************************************************************
  * The contents of this file are subject to the   Compiere License  Version 1.1
  * ("License"); You may not use this file except in compliance with the License
@@ -52,8 +53,9 @@ BEGIN
          RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
        END IF;
      END IF;
+  END IF;
  END IF;
- 
+
  IF (UPDATING OR INSERTING) THEN
   v_ID := :new.M_InOut_ID;
 
@@ -67,9 +69,12 @@ BEGIN
          v_qty := :NEW.MOVEMENTQTY;
          v_qtyorder := :NEW.QUANTITYORDER;
      END IF;
-   END IF;
 
-   IF (:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
+   SELECT ISSOTRX INTO v_ISSOTRX
+   FROM M_INOUT
+   WHERE M_INOUT_ID = :NEW.M_INOUT_ID;
+
+   IF (v_ISSOTRX = 'Y' AND :NEW.C_ORDERLINE_ID IS NOT NULL) THEN
       SELECT COUNT(*) INTO V_COUNT FROM C_ORDERLINE ol 
       WHERE ol.C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID 
       AND :NEW.MOVEMENTQTY > ol.QTYORDERED;
@@ -77,8 +82,8 @@ BEGIN
 	    RAISE_APPLICATION_ERROR(-20000, '@MovementQtyCheck@');
 	  END IF;
    END IF;
- END IF;
-  
+ END IF;  
+
  IF (UPDATING) THEN
   IF (COALESCE(:OLD.C_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
     IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
