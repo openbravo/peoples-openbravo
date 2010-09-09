@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@
   <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript" id="openRegistration">
   function openRegistration() {
 	 var w = window.opener;
@@ -47,6 +48,9 @@
   }
 
   function cancel() {
+	var paramXMLReq = null;
+	// call cancel on servlet but do not wait for response
+	submitXmlHttpRequest(xx, null, "CANCEL", "Heartbeat.html", false, null, paramXMLReq);
   	if (typeof openRegistration === "function") {
   		openRegistration();
   	}

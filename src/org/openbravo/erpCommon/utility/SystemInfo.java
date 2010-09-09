@@ -59,9 +59,31 @@ public class SystemInfo {
     systemInfo = new HashMap<Item, String>();
   }
 
+  /**
+   * Loads system information but ID
+   * 
+   * @param conn
+   * @throws ServletException
+   */
   public static void load(ConnectionProvider conn) throws ServletException {
     for (Item i : Item.values()) {
-      load(i, conn);
+      if (!i.isIdInfo()) {
+        load(i, conn);
+      }
+    }
+  }
+
+  /**
+   * Loads ID information
+   * 
+   * @param conn
+   * @throws ServletException
+   */
+  public static void loadId(ConnectionProvider conn) throws ServletException {
+    for (Item i : Item.values()) {
+      if (i.isIdInfo()) {
+        load(i, conn);
+      }
     }
   }
 
@@ -218,9 +240,6 @@ public class SystemInfo {
         st.execute("select dbid from v$database");
         st.getResultSet().next();
         String id = st.getResultSet().getString(1);
-        st.getResultSet().close();
-        st.close();
-        con.close();
         return id;
       } catch (SQLException e) {
         log4j.error("Error obtaining Oracle's DB identifier");
@@ -413,23 +432,32 @@ public class SystemInfo {
   }
 
   public enum Item {
-    SYSTEM_IDENTIFIER("systemIdentifier"), MAC_IDENTIFIER("macId"), DB_IDENTIFIER("dbIdentifier"), OPERATING_SYSTEM(
-        "os"), OPERATING_SYSTEM_VERSION("osVersion"), DATABASE("db"), DATABASE_VERSION("dbVersion"), WEBSERVER(
-        "webserver"), WEBSERVER_VERSION("webserverVersion"), SERVLET_CONTAINER("servletContainer"), SERVLET_CONTAINER_VERSION(
-        "servletContainerVersion"), ANT_VERSION("antVersion"), OB_VERSION("obVersion"), OB_INSTALL_MODE(
-        "obInstallMode"), CODE_REVISION("codeRevision"), NUM_REGISTERED_USERS("numRegisteredUsers"), ISHEARTBEATACTIVE(
-        "isheartbeatactive"), ISPROXYREQUIRED("isproxyrequired"), PROXY_SERVER("proxyServer"), PROXY_PORT(
-        "proxyPort"), ACTIVITY_RATE("activityRate"), COMPLEXITY_RATE("complexityRate"), JAVA_VERSION(
-        "javaVersion");
+    SYSTEM_IDENTIFIER("systemIdentifier", true), MAC_IDENTIFIER("macId", true), DB_IDENTIFIER(
+        "dbIdentifier", true), OPERATING_SYSTEM("os", false), OPERATING_SYSTEM_VERSION("osVersion",
+        false), DATABASE("db", false), DATABASE_VERSION("dbVersion", false), WEBSERVER("webserver",
+        false), WEBSERVER_VERSION("webserverVersion", false), SERVLET_CONTAINER("servletContainer",
+        false), SERVLET_CONTAINER_VERSION("servletContainerVersion", false), ANT_VERSION(
+        "antVersion", false), OB_VERSION("obVersion", false), OB_INSTALL_MODE("obInstallMode",
+        false), CODE_REVISION("codeRevision", false), NUM_REGISTERED_USERS("numRegisteredUsers",
+        false), ISHEARTBEATACTIVE("isheartbeatactive", false), ISPROXYREQUIRED("isproxyrequired",
+        false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), ACTIVITY_RATE(
+        "activityRate", false), COMPLEXITY_RATE("complexityRate", false), JAVA_VERSION(
+        "javaVersion", false);
 
     private String label;
+    private boolean isIdInfo;
 
-    private Item(String label) {
+    private Item(String label, boolean isIdInfo) {
       this.label = label;
+      this.isIdInfo = isIdInfo;
     }
 
-    private String getLabel() {
+    public String getLabel() {
       return label;
+    }
+
+    public boolean isIdInfo() {
+      return isIdInfo;
     }
   }
 

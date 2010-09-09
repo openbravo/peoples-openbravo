@@ -109,7 +109,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NUM_REGISTERED_USERS" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="NUM_REGISTERED_USERS" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -119,6 +119,14 @@
       </column>
       <column name="BEAT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[U]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="DB_IDENTIFIER" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="MAC_IDENTIFIER" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_HEARTBEAT_LOG_AD_CLIENT">

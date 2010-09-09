@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -37,7 +38,9 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -45,9 +48,9 @@ import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.HeartbeatLog;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.Process;
@@ -67,6 +70,9 @@ public class HeartbeatProcess implements Process {
   private static final String ENABLING_BEAT = "E";
   private static final String SCHEDULED_BEAT = "S";
   private static final String DISABLING_BEAT = "D";
+  private static final String DECLINING_BEAT = "DEC";
+  private static final String DEFERRING_BEAT = "DEF";
+
   private static final String UNKNOWN_BEAT = "U";
   public static final String HB_PROCESS_ID = "1005800000";
   public static final String STATUS_SCHEDULED = "SCH";
@@ -86,7 +92,7 @@ public class HeartbeatProcess implements Process {
 
     this.ctx = bundle.getContext();
 
-    SystemInfo.load(bundle.getConnection());
+    SystemInfo.loadId(connection);
 
     String msg = null;
     if (this.channel == Channel.SCHEDULED && !isHeartbeatActive()) {
@@ -103,8 +109,6 @@ public class HeartbeatProcess implements Process {
 
     logger.logln("Hearbeat process starting...");
     try {
-      Properties systemInfo = getSystemInfo(connection);
-
       String beatType = UNKNOWN_BEAT;
 
       if (this.channel == Channel.SCHEDULED) {
@@ -112,18 +116,26 @@ public class HeartbeatProcess implements Process {
       } else {
         final String active = SystemInfoData.isHeartbeatActive(connection);
         if (active.equals("") || active.equals("N")) {
-          beatType = ENABLING_BEAT;
+          String action = bundle.getParams().get("action") == null ? "" : ((String) bundle
+              .getParams().get("action"));
+          if ("DECLINE".equals(action)) {
+            beatType = DECLINING_BEAT;
+          } else if ("DEFER".equals(action)) {
+            beatType = DEFERRING_BEAT;
+          } else {
+            beatType = ENABLING_BEAT;
+          }
         } else {
           beatType = DISABLING_BEAT;
         }
       }
 
-      String queryStr = createQueryStr(systemInfo, beatType);
+      String queryStr = createQueryStr(beatType);
       String response = sendInfo(queryStr);
-      logSystemInfo(connection, systemInfo, beatType);
+      logSystemInfo(beatType);
       List<Alert> updates = parseUpdates(response);
       saveUpdateAlerts(connection, updates);
-      updateHeartbeatStatus();
+      updateHeartbeatStatus(beatType);
 
     } catch (Exception e) {
       logger.logln(e.getMessage());
@@ -132,15 +144,16 @@ public class HeartbeatProcess implements Process {
     }
   }
 
-  private void updateHeartbeatStatus() throws Exception {
+  private void updateHeartbeatStatus(String beatType) throws Exception {
 
-    if (this.channel == Channel.SCHEDULED) {
-      // Don't update status when is a scheduled beat
+    if (this.channel == Channel.SCHEDULED || DEFERRING_BEAT.equals(beatType)) {
+      // Don't update status when is a scheduled beat or deferring beat
       return;
     }
 
-    String active = SystemInfoData.isHeartbeatActive(connection);
-    if (active.equals("") || active.equals("N")) {
+    String active = "";
+
+    if (ENABLING_BEAT.equals(beatType)) {
       active = "Y";
     } else {
       active = "N";
@@ -159,11 +172,10 @@ public class HeartbeatProcess implements Process {
   }
 
   /**
-   * @param con
    * @return the system info as properties
    * @throws ServletException
    */
-  private Properties getSystemInfo(ConnectionProvider con) throws ServletException {
+  private Properties getSystemInfo() {
     logger.logln(logger.messageDb("HB_GATHER", ctx.getLanguage()));
     return SystemInfo.getSystemInfo();
   }
@@ -174,12 +186,26 @@ public class HeartbeatProcess implements Process {
    * @param props
    * @return the UTF-8 encoded query string
    */
-  private String createQueryStr(Properties props, String beatType) {
+  private String createQueryStr(String beatType) {
     logger.logln(logger.messageDb("HB_QUERY", ctx.getLanguage()));
-    if (props == null)
-      return null;
+
     StringBuilder sb = new StringBuilder();
-    Enumeration e = props.propertyNames();
+    if (DECLINING_BEAT.equals(beatType) || DEFERRING_BEAT.equals(beatType)) {
+      // Complete beat with all available instance info
+      try {
+        SystemInfo.load(connection);
+      } catch (ServletException e1) {
+        log.error("Error reading system info", e1);
+      }
+    }
+
+    Properties props = null;
+    props = getSystemInfo();
+    if (props == null) {
+      return null;
+    }
+
+    Enumeration<?> e = props.propertyNames();
     while (e.hasMoreElements()) {
       String elem = (String) e.nextElement();
       String value = props.getProperty(elem);
@@ -211,37 +237,62 @@ public class HeartbeatProcess implements Process {
     return HttpsUtils.sendSecure(url, queryStr, CERT_ALIAS, "changeit");
   }
 
-  private void logSystemInfo(ConnectionProvider conn, Properties systemInfo, String beatType)
-      throws ServletException {
+  private void logSystemInfo(String beatType) {
     logger.logln(logger.messageDb("HB_LOG", ctx.getLanguage()));
-    String id = SequenceIdData.getUUID();
-    String systemIdentifier = systemInfo.getProperty("systemIdentifier");
-    String servletContainer = systemInfo.getProperty("servletContainer");
-    String servletContainerVersion = systemInfo.getProperty("servletContainerVersion");
-    String antVersion = systemInfo.getProperty("antVersion");
-    String obVersion = systemInfo.getProperty("obVersion");
-    String obInstallMode = systemInfo.getProperty("obInstallMode");
-    String codeRevision = systemInfo.getProperty("codeRevision");
-    String webserver = systemInfo.getProperty("webserver");
-    String webserverVersion = systemInfo.getProperty("webserverVersion");
-    String os = systemInfo.getProperty("os");
-    String osVersion = systemInfo.getProperty("osVersion");
-    String db = systemInfo.getProperty("db");
-    String dbVersion = systemInfo.getProperty("dbVersion");
-    String javaVersion = systemInfo.getProperty("javaVersion");
-    String activityRate = systemInfo.getProperty("activityRate");
-    String complexityRate = systemInfo.getProperty("complexityRate");
-    String isHeartbeatActive = systemInfo.getProperty("isheartbeatactive");
-    String isProxyRequired = systemInfo.getProperty("isproxyrequired");
-    String proxyServer = systemInfo.getProperty("proxyServer");
-    String proxyPort = systemInfo.getProperty("proxyPort");
-    String numRegisteredUsers = systemInfo.getProperty("numRegisteredUsers");
 
-    HeartbeatProcessData.insertHeartbeatLog(conn, id, "0", "0", systemIdentifier,
-        isHeartbeatActive, isProxyRequired, proxyServer, proxyPort, activityRate, complexityRate,
-        os, osVersion, db, dbVersion, servletContainer, servletContainerVersion, webserver,
-        webserverVersion, obVersion, obInstallMode, codeRevision, numRegisteredUsers, javaVersion,
-        antVersion, beatType);
+    try {
+      Properties systemInfo = SystemInfo.getSystemInfo();
+      OBContext.setAdminMode();
+      HeartbeatLog hbLog = OBProvider.getInstance().get(HeartbeatLog.class);
+      hbLog.setSystemIdentifier(systemInfo.getProperty("systemIdentifier"));
+      hbLog.setDatabaseIdentifier(systemInfo.getProperty(SystemInfo.Item.DB_IDENTIFIER.getLabel()));
+      hbLog.setMacIdentifier(systemInfo.getProperty(SystemInfo.Item.MAC_IDENTIFIER.getLabel()));
+      hbLog.setBeatType(beatType);
+
+      if (!(DECLINING_BEAT.equals(beatType) || DEFERRING_BEAT.equals(beatType))) {
+        hbLog.setServletContainer(systemInfo.getProperty("servletContainer"));
+        hbLog.setServletContainerVersion(systemInfo.getProperty("servletContainerVersion"));
+        hbLog.setAntVersion(systemInfo.getProperty("antVersion"));
+        hbLog.setOpenbravoVersion(systemInfo.getProperty("obVersion"));
+        hbLog.setOpenbravoInstallMode(systemInfo.getProperty("obInstallMode"));
+        hbLog.setCodeRevision(systemInfo.getProperty("codeRevision"));
+        hbLog.setWebServer(systemInfo.getProperty("webserver"));
+        hbLog.setWebServerVersion(systemInfo.getProperty("webserverVersion"));
+        hbLog.setOperatingSystem(systemInfo.getProperty("os"));
+        hbLog.setOperatingSystemVersion(systemInfo.getProperty("osVersion"));
+        hbLog.setDatabase(systemInfo.getProperty("db"));
+        hbLog.setDatabaseVersion(systemInfo.getProperty("dbVersion"));
+        hbLog.setJavaVersion(systemInfo.getProperty("javaVersion"));
+        try {
+          hbLog.setActivityRate(new BigDecimal(systemInfo.getProperty("activityRate")));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect activity rate: " + systemInfo.getProperty("activityRate"));
+        }
+        try {
+          hbLog.setComplexityRate(new BigDecimal(systemInfo.getProperty("complexityRate")));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect complexity rate: " + systemInfo.getProperty("complexityRate"));
+        }
+        hbLog.setActive("Y".equals(systemInfo.getProperty("isheartbeatactive")));
+        hbLog.setProxyRequired("Y".equals(systemInfo.getProperty("isproxyrequired")));
+        hbLog.setProxyServer(systemInfo.getProperty("proxyServer"));
+        try {
+          hbLog.setProxyPort(Long.parseLong(systemInfo.getProperty("proxyPort")));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect port: " + systemInfo.getProperty("proxyPort"));
+        }
+        try {
+          hbLog.setNumberOfRegisteredUsers(Long.parseLong(systemInfo
+              .getProperty("numRegisteredUsers")));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect number of registered users: "
+              + systemInfo.getProperty("numRegisteredUsers"));
+        }
+      }
+      OBDal.getInstance().save(hbLog);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,8 +30,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Heartbeat extends HttpSecureAppServlet {
@@ -69,8 +73,15 @@ public class Heartbeat extends HttpSecureAppServlet {
       response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="
           + vars.getCommand() + "&inpcRecordId="
           + vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
-    } else
+    } else if (vars.commandIn("CANCEL")) {
+      // Sending Deferring beat
+      ProcessBundle bundle = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars).init(this);
+      Map<String, Object> params = bundle.getParams();
+      params.put("action", "DEFER");
+      new ProcessRunner(bundle).execute(this);
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
