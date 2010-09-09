@@ -190,7 +190,7 @@ public class HeartbeatProcess implements Process {
     logger.logln(logger.messageDb("HB_QUERY", ctx.getLanguage()));
 
     StringBuilder sb = new StringBuilder();
-    if (DECLINING_BEAT.equals(beatType) || DEFERRING_BEAT.equals(beatType)) {
+    if (!(DECLINING_BEAT.equals(beatType) || DEFERRING_BEAT.equals(beatType))) {
       // Complete beat with all available instance info
       try {
         SystemInfo.load(connection);
@@ -288,6 +288,7 @@ public class HeartbeatProcess implements Process {
           log.warn("Incorrect number of registered users: "
               + systemInfo.getProperty("numRegisteredUsers"));
         }
+        hbLog.setInstalledModules(systemInfo.getProperty(SystemInfo.Item.MODULES.getLabel()));
       }
       OBDal.getInstance().save(hbLog);
     } finally {

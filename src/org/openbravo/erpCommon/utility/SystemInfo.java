@@ -46,9 +46,15 @@ import java.util.zip.CRC32;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Order;
+import org.json.JSONArray;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.ad.module.Module;
 
 public class SystemInfo {
 
@@ -158,6 +164,9 @@ public class SystemInfo {
       break;
     case JAVA_VERSION:
       systemInfo.put(i, System.getProperty("java.version"));
+      break;
+    case MODULES:
+      systemInfo.put(i, getModules());
       break;
     }
   }
@@ -380,6 +389,31 @@ public class SystemInfo {
     return result;
   }
 
+  /**
+   * Obtain all the modules installed in the instance.
+   * 
+   * @return
+   */
+  private final static String getModules() {
+    try {
+      OBContext.setAdminMode();
+      OBCriteria<Module> qMods = OBDal.getInstance().createCriteria(Module.class);
+      qMods.addOrder(Order.asc(Module.PROPERTY_JAVAPACKAGE));
+      JSONArray mods = new JSONArray();
+      for (Module mod : qMods.list()) {
+        ArrayList<String> modInfo = new ArrayList<String>();
+        modInfo.add(mod.getId());
+        modInfo.add(mod.getVersion());
+        modInfo.add(mod.isEnabled() ? "Y" : "N");
+        modInfo.add(mod.getName());
+        mods.put(modInfo);
+      }
+      return mods.toString();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   private static boolean validateConnection(ConnectionProvider conn) throws ServletException {
     if (conn == null) {
       throw new ServletException("Invalid database connection provided.");
@@ -442,7 +476,7 @@ public class SystemInfo {
         false), ISHEARTBEATACTIVE("isheartbeatactive", false), ISPROXYREQUIRED("isproxyrequired",
         false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), ACTIVITY_RATE(
         "activityRate", false), COMPLEXITY_RATE("complexityRate", false), JAVA_VERSION(
-        "javaVersion", false);
+        "javaVersion", false), MODULES("modules", false);
 
     private String label;
     private boolean isIdInfo;
