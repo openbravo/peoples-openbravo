@@ -54,6 +54,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.module.Module;
 
 public class SystemInfo {
@@ -167,6 +168,9 @@ public class SystemInfo {
       break;
     case MODULES:
       systemInfo.put(i, getModules());
+      break;
+    case OBPS_INSTANCE:
+      systemInfo.put(i, getOBPSInstance());
       break;
     }
   }
@@ -458,6 +462,19 @@ public class SystemInfo {
   }
 
   /**
+   * In case it is an OBPS instance, it returns the CRC of the activation key
+   * 
+   * @return
+   */
+  private static String getOBPSInstance() {
+    if (ActivationKey.getInstance().isOPSInstance()) {
+      return ActivationKey.getInstance().getOpsLogId();
+    } else {
+      return "";
+    }
+  }
+
+  /**
    * @param item
    * @return the systemInfo of the passed item
    */
@@ -476,7 +493,7 @@ public class SystemInfo {
         false), ISHEARTBEATACTIVE("isheartbeatactive", false), ISPROXYREQUIRED("isproxyrequired",
         false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), ACTIVITY_RATE(
         "activityRate", false), COMPLEXITY_RATE("complexityRate", false), JAVA_VERSION(
-        "javaVersion", false), MODULES("modules", false);
+        "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false);
 
     private String label;
     private boolean isIdInfo;

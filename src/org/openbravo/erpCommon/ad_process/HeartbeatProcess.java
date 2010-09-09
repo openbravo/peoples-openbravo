@@ -289,6 +289,8 @@ public class HeartbeatProcess implements Process {
               + systemInfo.getProperty("numRegisteredUsers"));
         }
         hbLog.setInstalledModules(systemInfo.getProperty(SystemInfo.Item.MODULES.getLabel()));
+        hbLog.setActivationKeyIdentifier(systemInfo.getProperty(SystemInfo.Item.OBPS_INSTANCE
+            .getLabel()));
       }
       OBDal.getInstance().save(hbLog);
     } finally {
