@@ -89,7 +89,7 @@ public class OBContext implements OBNotSingleton {
 
   private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
 
-  private static ThreadLocal<Stack<Boolean>> adminModeStack = new ThreadLocal<Stack<Boolean>>();
+  private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
   private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<List<String>>();
 
   public static final String CONTEXT_PARAM = "#OBContext";
@@ -132,11 +132,16 @@ public class OBContext implements OBNotSingleton {
    * 
    * To restore the previous privileges call the {@link #restorePreviousMode()}.
    * 
+   * @param chekEntityAccess
+   *          Whether entity access should also be checked
    * @see OBContext#restorePreviousMode()
    * @since 2.50MP18
    */
-  public static void setAdminMode() {
-    getAdminModeStack().push(Boolean.TRUE);
+  public static void setAdminMode(boolean doOrgClientAccessCheck) {
+    OBAdminMode am = new OBAdminMode();
+    am.setAdminMode(true);
+    am.setOrgClientAccessCheck(doOrgClientAccessCheck);
+    getAdminModeStack().push(am);
     if (OBContext.getOBContext() == null) {
       OBContext.setAdminContextLocally();
     } else if (OBContext.getOBContext() == adminContext) {
@@ -147,9 +152,25 @@ public class OBContext implements OBNotSingleton {
     }
   }
 
-  private static Stack<Boolean> getAdminModeStack() {
+  /**
+   * Let's the current user run with Administrator privileges. If there is no current user then the
+   * special Administrator context is used.
+   * 
+   * To restore the previous privileges call the {@link #restorePreviousMode()}.
+   * 
+   * If this method is used, entity access will also be checked. If you don't want entity access to
+   * be checked, you should use {@link #setAdminMode(boolean checkEntityAccess)}
+   * 
+   * @see OBContext#restorePreviousMode()
+   * @since 2.50MP18
+   */
+  public static void setAdminMode() {
+    setAdminMode(false);
+  }
+
+  private static Stack<OBAdminMode> getAdminModeStack() {
     if (adminModeStack.get() == null) {
-      adminModeStack.set(new Stack<Boolean>());
+      adminModeStack.set(new Stack<OBAdminMode>());
     }
     return adminModeStack.get();
   }
@@ -171,7 +192,7 @@ public class OBContext implements OBNotSingleton {
    */
   public static void restorePreviousMode() {
     // remove the last admin mode from the stack
-    final Stack<Boolean> stack = getAdminModeStack();
+    final Stack<OBAdminMode> stack = getAdminModeStack();
     if (stack.size() > 0) {
       stack.pop();
     } else {
@@ -696,7 +717,10 @@ public class OBContext implements OBNotSingleton {
     // can't use enableAsAdminContext here otherwise there is a danger of
     // recursive/infinite calls.
     // enableAsAdminContext();
-    getAdminModeStack().push(Boolean.TRUE);
+    OBAdminMode am = new OBAdminMode();
+    am.setAdminMode(true);
+    am.setOrgClientAccessCheck(true);
+    getAdminModeStack().push(am);
     try {
       setUser(u);
       Hibernate.initialize(getUser().getClient());
@@ -949,10 +973,17 @@ public class OBContext implements OBNotSingleton {
   }
 
   public boolean isInAdministratorMode() {
-    if (getAdminModeStack().size() > 0 && getAdminModeStack().peek()) {
+    if (getAdminModeStack().size() > 0 && getAdminModeStack().peek().isAdminMode()) {
       return true;
     }
     return adminModeSet.get() != null || isAdministrator;
+  }
+
+  public boolean doOrgClientAccessCheck() {
+    if (getAdminModeStack().size() > 0 && !getAdminModeStack().peek().doOrgClientAccessCheck()) {
+      return false;
+    }
+    return !(adminModeSet.get() != null || isAdministrator);
   }
 
   public boolean isAdminContext() {
@@ -1034,5 +1065,27 @@ public class OBContext implements OBNotSingleton {
 
   public void setNewUI(boolean newUI) {
     this.newUI = newUI;
+  }
+
+  private static class OBAdminMode {
+
+    private boolean adminMode;
+    private boolean doOrgClientAccessCheck;
+
+    public void setAdminMode(boolean adminMode) {
+      this.adminMode = adminMode;
+    }
+
+    public boolean isAdminMode() {
+      return adminMode;
+    }
+
+    public void setOrgClientAccessCheck(boolean doOrgClientAccessCheck) {
+      this.doOrgClientAccessCheck = doOrgClientAccessCheck;
+    }
+
+    public boolean doOrgClientAccessCheck() {
+      return doOrgClientAccessCheck;
+    }
   }
 }
