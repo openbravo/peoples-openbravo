@@ -301,6 +301,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
             }
 
             final boolean hasChanged = (currentValue == null && newValue != null)
+                || (currentValue != null && newValue == null)
                 || (currentValue != null && newValue != null && !currentValue.equals(newValue));
             if (hasChanged) {
               log.debug("Setting value " + newValue);
