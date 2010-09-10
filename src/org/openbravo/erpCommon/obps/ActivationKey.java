@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
+import java.net.URL;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -368,9 +369,12 @@ public class ActivationKey {
     }
 
     try {
-      File restrictionsFile = new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .get("source.path")
-          + "/config/licenseRestrictions");
+      // read restriction file from this package's directory
+      URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
+      File classDir = new File(url.getPath());
+      File restrictionsFile = new File(classDir.getParent(), "licenseRestrictions");
+      log4j.debug("Restrictions file: " + restrictionsFile.getAbsolutePath());
+
       FileInputStream fis = new FileInputStream(restrictionsFile);
       byte fileContent[] = new byte[(int) restrictionsFile.length()];
       fis.read(fileContent);
