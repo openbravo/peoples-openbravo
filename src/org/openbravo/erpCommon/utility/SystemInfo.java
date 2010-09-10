@@ -29,10 +29,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,7 @@ import java.util.zip.CRC32;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.json.JSONArray;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -61,9 +65,14 @@ public class SystemInfo {
 
   private static final Logger log4j = Logger.getLogger(SystemInfo.class);
   private static Map<Item, String> systemInfo;
+  private static Date firstLogin;
+  private static Date lastLogin;
+  private static Long numberOfLogins;
+  private static SimpleDateFormat sd;
 
   static {
     systemInfo = new HashMap<Item, String>();
+    sd = new SimpleDateFormat("dd-MM-yyyy");
   }
 
   /**
@@ -73,6 +82,7 @@ public class SystemInfo {
    * @throws ServletException
    */
   public static void load(ConnectionProvider conn) throws ServletException {
+    loadLoginInfo();
     for (Item i : Item.values()) {
       if (!i.isIdInfo()) {
         load(i, conn);
@@ -95,6 +105,7 @@ public class SystemInfo {
   }
 
   private static void load(Item i, ConnectionProvider conn) throws ServletException {
+
     switch (i) {
     case SYSTEM_IDENTIFIER:
       systemInfo.put(i, getSystemIdentifier(conn));
@@ -172,6 +183,14 @@ public class SystemInfo {
     case OBPS_INSTANCE:
       systemInfo.put(i, getOBPSInstance());
       break;
+    case FIRT_LOGIN:
+      systemInfo.put(i, sd.format(firstLogin));
+      break;
+    case LAST_LOGIN:
+      systemInfo.put(i, sd.format(lastLogin));
+      break;
+    case TOTAL_LOGINS:
+      systemInfo.put(i, numberOfLogins.toString());
     }
   }
 
@@ -474,6 +493,21 @@ public class SystemInfo {
     }
   }
 
+  private static void loadLoginInfo() {
+    StringBuilder hql = new StringBuilder();
+    hql.append("select min(s.creationDate) as firstLogin, ");
+    hql.append("       max(s.creationDate) as lastLogin, ");
+    hql.append("       count(*) as totalLogins");
+    hql.append("  from ADSession s");
+    Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
+    if (q.list().size() != 0) {
+      Object[] logInfo = (Object[]) q.list().get(0);
+      firstLogin = (Date) logInfo[0];
+      lastLogin = (Date) logInfo[1];
+      numberOfLogins = (Long) logInfo[2];
+    }
+  }
+
   /**
    * @param item
    * @return the systemInfo of the passed item
@@ -493,7 +527,8 @@ public class SystemInfo {
         false), ISHEARTBEATACTIVE("isheartbeatactive", false), ISPROXYREQUIRED("isproxyrequired",
         false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), ACTIVITY_RATE(
         "activityRate", false), COMPLEXITY_RATE("complexityRate", false), JAVA_VERSION(
-        "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false);
+        "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRT_LOGIN(
+        "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false);
 
     private String label;
     private boolean isIdInfo;
@@ -510,6 +545,13 @@ public class SystemInfo {
     public boolean isIdInfo() {
       return isIdInfo;
     }
+  }
+
+  /**
+   * Parses a date represented by a String with the format used for the date properties into a Date
+   */
+  public static Date parseDate(String date) throws ParseException {
+    return sd.parse(date);
   }
 
 }

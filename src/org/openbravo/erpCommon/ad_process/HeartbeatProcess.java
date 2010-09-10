@@ -291,6 +291,29 @@ public class HeartbeatProcess implements Process {
         hbLog.setInstalledModules(systemInfo.getProperty(SystemInfo.Item.MODULES.getLabel()));
         hbLog.setActivationKeyIdentifier(systemInfo.getProperty(SystemInfo.Item.OBPS_INSTANCE
             .getLabel()));
+        try {
+          hbLog.setFirstLogin(SystemInfo.parseDate(systemInfo
+              .getProperty(SystemInfo.Item.FIRT_LOGIN.getLabel())));
+        } catch (ParseException e) {
+          log.warn("Incorrect date of first login: "
+              + systemInfo.getProperty(systemInfo
+                  .getProperty(SystemInfo.Item.FIRT_LOGIN.getLabel())));
+        }
+        try {
+          hbLog.setLastLogin(SystemInfo.parseDate(systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN
+              .getLabel())));
+        } catch (ParseException e) {
+          log.warn("Incorrect date of last login: "
+              + systemInfo.getProperty(systemInfo
+                  .getProperty(SystemInfo.Item.LAST_LOGIN.getLabel())));
+        }
+        try {
+          hbLog.setTotalLogins(Long.parseLong(systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS
+              .getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect number of total logins: "
+              + systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS.getLabel()));
+        }
       }
       OBDal.getInstance().save(hbLog);
     } finally {
