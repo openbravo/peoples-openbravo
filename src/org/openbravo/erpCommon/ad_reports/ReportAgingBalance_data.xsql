@@ -32,17 +32,19 @@
         SUM(CASE(SCOPE) WHEN 5 THEN AMOUNT ELSE 0 END) AS FIVE,
         SUM(AMOUNT) AS TOTAL, ? AS AD_ORG_ID
         FROM(
-          SELECT C_BPARTNER_ID AS BPARTNER, 
-          C_CURRENCY_CONVERT(AMOUNT, C_CURRENCY_ID, ?, DATEPLANNED, null, ad_client_id, ad_org_id) AS AMOUNT, 
-          ISRECEIPT, DATEPLANNED,
-          C_AGING_GET_SCOPE(DATEPLANNED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)) AS SCOPE, C_DEBT_PAYMENT_ID
-          FROM  C_DEBT_PAYMENT
-          WHERE C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, CANCEL_PROCESSED, GENERATE_PROCESSED,ISPAID,ISVALID,C_CASHLINE_ID,C_BANKSTATEMENTLINE_ID) = 'P'
-          AND ISRECEIPT = ?
+          SELECT P.C_BPARTNER_ID AS BPARTNER, 
+          C_CURRENCY_CONVERT(P.AMOUNT, P.C_CURRENCY_ID, ?, (CASE WHEN P.C_INVOICE_ID IS NOT NULL THEN I.DATEINVOICED 
+                                                                 WHEN P.C_SETTLEMENT_GENERATE_ID IS NOT NULL THEN S.DATETRX 
+                                                                 ELSE P.DATEPLANNED END), null, P.ad_client_id, P.ad_org_id) AS AMOUNT, 
+          P.ISRECEIPT, C_AGING_GET_SCOPE(P.DATEPLANNED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)) AS SCOPE, P.C_DEBT_PAYMENT_ID
+          FROM  C_DEBT_PAYMENT P LEFT JOIN C_INVOICE I ON (I.C_INVOICE_ID = P.C_INVOICE_ID)
+          LEFT JOIN C_SETTLEMENT S ON (S.C_SETTLEMENT_ID = P.C_SETTLEMENT_GENERATE_ID)
+          WHERE C_DEBT_PAYMENT_STATUS(P.C_SETTLEMENT_CANCEL_ID, P.CANCEL_PROCESSED, P.GENERATE_PROCESSED, P.ISPAID, P.ISVALID, P.C_CASHLINE_ID, P.C_BANKSTATEMENTLINE_ID) = 'P'
+          AND P.ISRECEIPT = ?
           AND 1=1
-          AND AD_ORG_ID IN('2')
-          AND AD_CLIENT_ID IN ('1')
-          AND AD_ORG_ID IN ('1')
+          AND P.AD_ORG_ID IN('2')
+          AND P.AD_CLIENT_ID IN ('1')
+          AND P.AD_ORG_ID IN ('1')
           ) AAA
         GROUP BY BPARTNER, ISRECEIPT
       ]]></Sql>
@@ -54,10 +56,10 @@
     <Parameter name="three"></Parameter>
     <Parameter name="four"></Parameter>
     <Parameter name="isreceipt"></Parameter>
-    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER_ID IN ]]></Parameter>
-    <Parameter name="orgFamily" type="replace" optional="true" after="AD_ORG_ID IN(" text="'2'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND P.C_BPARTNER_ID IN ]]></Parameter>
+    <Parameter name="orgFamily" type="replace" optional="true" after="P.AD_ORG_ID IN(" text="'2'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment>Create a registry</SqlMethodComment>

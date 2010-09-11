@@ -26,12 +26,14 @@
       <![CDATA[
       SELECT COALESCE(qtyorderonhand,0) AS qtyorder, COALESCE(qtyonhand,0) AS qty
       FROM M_storage_detail 
-      WHERE m_product_id=? AND m_locator_id=? AND c_uom_id=? AND m_attributesetinstance_id=?
+      WHERE m_product_id=? AND m_locator_id=? AND c_uom_id=? AND 1=1 AND m_attributesetinstance_id=?
       ]]>
     </Sql>
      <Parameter name="product"/>
      <Parameter name="locator"/>
      <Parameter name="uom"/>
+     <Parameter name="mProductUomId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT_UOM_ID = ?]]></Parameter>
+     <Parameter name="productuom" optional="true" type="none" after="AND 1=1" text=" AND M_PRODUCT_UOM_ID IS NULL"/>
      <Parameter name="attribute"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
