@@ -1,5 +1,4 @@
-/*
- *************************************************************************
+/*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -117,8 +116,14 @@
   
   function gt_selectAllNodes(value){
     boxes = gt_getElementsByName('inpNodes','input');
-    for (i=0; i<boxes.length; i++)
-      boxes[i].checked=value;
+    for (i=0; i<boxes.length; i++){
+    	if(boxes[i].disabled == true){
+    		continue;
+    	}
+    	boxes[i].checked=value;
+    }
+    gt_setActiveUninstall('buttonUninstall');
+    gt_setActiveUninstall('buttonDisable');
   }
 
   var gt_focusedNode;
