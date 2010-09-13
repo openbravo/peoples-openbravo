@@ -1480,6 +1480,7 @@ public abstract class AcctServer {
       whereClause.append(" as cusa ");
       whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
       whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+      whereClause.append(" and (cusa.status is null or cusa.status = 'DE')");
 
       final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance().createQuery(
           CustomerAccounts.class, whereClause.toString());
@@ -1495,9 +1496,10 @@ public abstract class AcctServer {
     } else {
       final StringBuilder whereClause = new StringBuilder();
 
-      whereClause.append(" as cusa ");
-      whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
-      whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+      whereClause.append(" as vena ");
+      whereClause.append(" where vena.businessPartner.id = '" + cBPartnerId + "'");
+      whereClause.append(" and vena.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+      whereClause.append(" and (vena.status is null or vena.status = 'DE')");
 
       final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance().createQuery(
           VendorAccounts.class, whereClause.toString());
