@@ -910,7 +910,8 @@ public class ImportModule {
       if (isCommercial) {
         String tier = (String) dynModule.get("COMMERCIAL_TIER");
         if (tier == null || tier.isEmpty()) {
-          tier = "1";
+          // If tier is not set in the obx, assume tier 2 to show a more restrictive error message
+          tier = "2";
         }
         additionalInfo.put("tier", tier);
       }
