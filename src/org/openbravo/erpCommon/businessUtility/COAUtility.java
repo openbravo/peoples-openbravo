@@ -304,7 +304,7 @@ public class COAUtility {
       if (strElement.equals(ACCT_SCHEMA_ELEMENT_PRODUCT) && hasProduct) {
         try {
           productAcctSchemaElement = InitialSetupUtility.insertAcctSchemaElement(acctSchema,
-              organization, listElement, 30L, true, false, null, element);
+              organization, listElement, 30L, false, false, null, element);
         } catch (Exception e) {
           return logError(
               "@CreateAccountingFailed@",
