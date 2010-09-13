@@ -23,6 +23,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.sql.Connection;
@@ -33,6 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -50,6 +53,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.json.JSONArray;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -59,6 +63,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
 
 public class SystemInfo {
@@ -69,6 +74,10 @@ public class SystemInfo {
   private static Date lastLogin;
   private static Long numberOfLogins;
   private static SimpleDateFormat sd;
+  private static int numberOfLonginsThisMoth = 0;
+  private static BigDecimal avgUsers = BigDecimal.ZERO;
+  private static BigDecimal usagePercentageTime = BigDecimal.ZERO;
+  private static int maxUsers = 0;
 
   static {
     systemInfo = new HashMap<Item, String>();
@@ -82,7 +91,7 @@ public class SystemInfo {
    * @throws ServletException
    */
   public static void load(ConnectionProvider conn) throws ServletException {
-    loadLoginInfo();
+    loadSessionInfo();
     for (Item i : Item.values()) {
       if (!i.isIdInfo()) {
         load(i, conn);
@@ -191,6 +200,19 @@ public class SystemInfo {
       break;
     case TOTAL_LOGINS:
       systemInfo.put(i, numberOfLogins.toString());
+      break;
+    case AVG_CONCURRENT_USERS:
+      systemInfo.put(i, avgUsers.toString());
+      break;
+    case MAX_CONCURRENT_USERS:
+      systemInfo.put(i, Integer.toString(maxUsers));
+      break;
+    case PERC_TIME_USAGE:
+      systemInfo.put(i, usagePercentageTime.toString());
+      break;
+    case TOTAL_LOGINS_LAST_MOTH:
+      systemInfo.put(i, Integer.toString(numberOfLonginsThisMoth));
+      break;
     }
   }
 
@@ -493,7 +515,18 @@ public class SystemInfo {
     }
   }
 
-  private static void loadLoginInfo() {
+  /**
+   * Reads all information about session:
+   * <ul>
+   * <li>First and last login in the instance
+   * <li>Number o total of logins in the instance
+   * <li>Maximum concurrent users during last month
+   * <li>Average concurrent users during last month
+   * <li>Percentage of usage time during last month
+   * <ul>
+   */
+  private static void loadSessionInfo() {
+    // Obtain login counts
     StringBuilder hql = new StringBuilder();
     hql.append("select min(s.creationDate) as firstLogin, ");
     hql.append("       max(s.creationDate) as lastLogin, ");
@@ -505,6 +538,101 @@ public class SystemInfo {
       firstLogin = (Date) logInfo[0];
       lastLogin = (Date) logInfo[1];
       numberOfLogins = (Long) logInfo[2];
+    }
+
+    // Calculate statistics
+
+    // Obtain all sessions that have been alive during last 30 days
+    try {
+      long computationTime = System.currentTimeMillis();
+      Calendar now = Calendar.getInstance();
+      Calendar startOfPeriod = (Calendar) now.clone();
+      startOfPeriod.add(Calendar.DAY_OF_MONTH, -30);
+      OBCriteria<Session> qSession = OBDal.getInstance().createCriteria(Session.class);
+      qSession.add(Expression.isNotNull(Session.PROPERTY_LASTPING));
+      qSession.add(Expression.ge(Session.PROPERTY_LASTPING, startOfPeriod.getTime()));
+      qSession.addOrder(Order.asc(Session.PROPERTY_CREATIONDATE));
+
+      // Prepare a list of events based on logins and logouts.
+      List<Event> events = new ArrayList<Event>();
+      List<Session> sessions = qSession.list();
+
+      numberOfLonginsThisMoth = sessions.size();
+      for (Session session : sessions) {
+        Event newSession = new Event();
+        newSession.eventDate = session.getCreationDate();
+        newSession.sessionCount = 1;
+
+        Event closeSession = new Event();
+        closeSession.eventDate = session.getLastPing();
+        closeSession.sessionCount = -1;
+
+        events.add(newSession);
+        events.add(closeSession);
+      }
+      Collections.sort(events);
+
+      // At this point we have all events of last month, let's compute them to obtain summarized
+      // information. For each login sum 1 to number of concurrent users at this time, for each
+      // logout subtract 1.
+      maxUsers = 0;
+      int concurrentUsers = 0;
+      BigDecimal totalUsageTime = BigDecimal.ZERO;
+      BigDecimal usersPeriod = BigDecimal.ZERO;
+      for (int i = 0; i < events.size() - 1; i++) {
+        Event event = events.get(i);
+
+        concurrentUsers += event.sessionCount;
+
+        if (log4j.isDebugEnabled()) {
+          log4j.debug("Period " + event.eventDate + " - " + events.get(i + 1).eventDate + " u:"
+              + concurrentUsers + " t:"
+              + ((events.get(i + 1).eventDate.getTime() - event.eventDate.getTime()) / 60000));
+        }
+
+        if (concurrentUsers > 0) {
+          if (concurrentUsers > maxUsers) {
+            maxUsers = concurrentUsers;
+          }
+          // If there is at least one user, the system is in use. Sum it up.
+          BigDecimal periodTime = new BigDecimal(events.get(i + 1).eventDate.getTime())
+              .subtract(new BigDecimal(event.eventDate.getTime()));
+          totalUsageTime = totalUsageTime.add(periodTime);
+          usersPeriod = usersPeriod.add(periodTime.multiply(new BigDecimal(concurrentUsers)));
+        }
+      }
+
+      BigDecimal totalTime = new BigDecimal(now.getTimeInMillis() - startOfPeriod.getTimeInMillis());
+      if (totalUsageTime.compareTo(BigDecimal.ZERO) != 0) {
+        avgUsers = usersPeriod.divide(totalUsageTime, 3, RoundingMode.HALF_DOWN);
+        usagePercentageTime = totalUsageTime.divide(totalTime, 5, RoundingMode.HALF_DOWN).multiply(
+            new BigDecimal(100));
+      }
+      log4j.debug("max:" + maxUsers + " total:" + totalUsageTime + " "
+          + usagePercentageTime.toString() + "% avg usr:" + avgUsers.toString());
+      log4j
+          .debug("Total time computing sessions:" + (System.currentTimeMillis() - computationTime));
+    } catch (Exception e) {
+      log4j.error("Error calculating login information", e);
+    }
+  }
+
+  /**
+   * Auxiliary class to keep track of session events. It contains the time when the event occurred
+   * and which kind of event is (in sessionCount field) +1 in case it is login, -1 for logout, so
+   * then it is possible to compute number of users taking into account all the events.
+   * 
+   */
+  private static class Event implements Comparable<Event> {
+    Date eventDate;
+    int sessionCount;
+
+    /**
+     * Sort by event date
+     */
+    @Override
+    public int compareTo(Event o) {
+      return this.eventDate.compareTo(o.eventDate);
     }
   }
 
@@ -528,7 +656,9 @@ public class SystemInfo {
         false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), ACTIVITY_RATE(
         "activityRate", false), COMPLEXITY_RATE("complexityRate", false), JAVA_VERSION(
         "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRT_LOGIN(
-        "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false);
+        "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
+        "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
+        "avgUsers", false), PERC_TIME_USAGE("timeUsage", false);
 
     private String label;
     private boolean isIdInfo;

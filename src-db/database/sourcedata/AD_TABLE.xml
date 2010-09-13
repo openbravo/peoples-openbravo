@@ -9750,7 +9750,7 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--1005400006-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005400006-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005400006-->  <NAME><![CDATA[ADHeartbeatLog]]></NAME>
-<!--1005400006-->  <DESCRIPTION><![CDATA[Heartbeat%20Log]]></DESCRIPTION>
+<!--1005400006-->  <DESCRIPTION><![CDATA[Heartbeat Log]]></DESCRIPTION>
 <!--1005400006-->  <TABLENAME><![CDATA[AD_Heartbeat_Log]]></TABLENAME>
 <!--1005400006-->  <CLASSNAME><![CDATA[HeartbeatLog]]></CLASSNAME>
 <!--1005400006-->  <ISVIEW><![CDATA[N]]></ISVIEW>

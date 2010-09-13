@@ -276,10 +276,13 @@ public class HeartbeatProcess implements Process {
         hbLog.setActive("Y".equals(systemInfo.getProperty("isheartbeatactive")));
         hbLog.setProxyRequired("Y".equals(systemInfo.getProperty("isproxyrequired")));
         hbLog.setProxyServer(systemInfo.getProperty("proxyServer"));
-        try {
-          hbLog.setProxyPort(Long.parseLong(systemInfo.getProperty("proxyPort")));
-        } catch (NumberFormatException e) {
-          log.warn("Incorrect port: " + systemInfo.getProperty("proxyPort"));
+        if (systemInfo.getProperty("proxyPort") != null
+            && !systemInfo.getProperty("proxyPort").isEmpty()) {
+          try {
+            hbLog.setProxyPort(Long.parseLong(systemInfo.getProperty("proxyPort")));
+          } catch (NumberFormatException e) {
+            log.warn("Incorrect port: " + systemInfo.getProperty("proxyPort"));
+          }
         }
         try {
           hbLog.setNumberOfRegisteredUsers(Long.parseLong(systemInfo
@@ -314,6 +317,35 @@ public class HeartbeatProcess implements Process {
           log.warn("Incorrect number of total logins: "
               + systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS.getLabel()));
         }
+        try {
+          hbLog.setTotalLoginsLastMonth(Long.parseLong(systemInfo
+              .getProperty(SystemInfo.Item.TOTAL_LOGINS_LAST_MOTH.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect number of total logins of last 30 days: "
+              + systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS_LAST_MOTH.getLabel()));
+        }
+        try {
+          hbLog.setConcurrentUsersAverage(new BigDecimal(systemInfo
+              .getProperty(SystemInfo.Item.AVG_CONCURRENT_USERS.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect avg users last 30 days: "
+              + systemInfo.getProperty(SystemInfo.Item.AVG_CONCURRENT_USERS.getLabel()));
+        }
+        try {
+          hbLog.setUsagePercentage(new BigDecimal(systemInfo
+              .getProperty(SystemInfo.Item.PERC_TIME_USAGE.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect usage percentage last 30 days: "
+              + systemInfo.getProperty(SystemInfo.Item.PERC_TIME_USAGE.getLabel()));
+        }
+        try {
+          hbLog.setMaximumConcurrentUsers(Long.parseLong(systemInfo
+              .getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect maximum number of concurrent users during last 30 days: "
+              + systemInfo.getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel()));
+        }
+
       }
       OBDal.getInstance().save(hbLog);
     } finally {
