@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
-import java.net.URL;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -52,6 +51,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -369,10 +369,10 @@ public class ActivationKey {
     }
 
     try {
-      // read restriction file from this package's directory
-      URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
-      File classDir = new File(url.getPath());
-      File restrictionsFile = new File(classDir.getParent(), "licenseRestrictions");
+      // read restriction file from context directory
+      String restrictionsFilePath = DalContextListener.getServletContext().getRealPath(
+          "src-loc/design/org/openbravo/erpCommon/obps/licenseRestrictions");
+      File restrictionsFile = new File(restrictionsFilePath);
       log4j.debug("Restrictions file: " + restrictionsFile.getAbsolutePath());
 
       FileInputStream fis = new FileInputStream(restrictionsFile);
