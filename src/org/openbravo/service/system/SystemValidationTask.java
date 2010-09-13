@@ -84,8 +84,9 @@ public class SystemValidationTask extends DalInitializingTask {
         Platform platform = getPlatform();
         String dbPrefix = module.getModuleDBPrefixList().get(0).getName();
 
-        String excludeobjects = "com.openbravo.db.OpenbravoExcludeFilter";
-        DBSMOBUtil.getInstance().getModules(platform, excludeobjects);
+        ExcludeFilter excludeFilter;
+        excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(getProject().getBaseDir());
+        DBSMOBUtil.getInstance().getModules(platform, excludeFilter);
         final ModuleRow row = DBSMOBUtil.getInstance().getRowFromDir(module.getJavaPackage());
         ExcludeFilter filter = row.filter;
 
