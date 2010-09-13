@@ -263,16 +263,6 @@ public class HeartbeatProcess implements Process {
         hbLog.setDatabase(systemInfo.getProperty("db"));
         hbLog.setDatabaseVersion(systemInfo.getProperty("dbVersion"));
         hbLog.setJavaVersion(systemInfo.getProperty("javaVersion"));
-        try {
-          hbLog.setActivityRate(new BigDecimal(systemInfo.getProperty("activityRate")));
-        } catch (NumberFormatException e) {
-          log.warn("Incorrect activity rate: " + systemInfo.getProperty("activityRate"));
-        }
-        try {
-          hbLog.setComplexityRate(new BigDecimal(systemInfo.getProperty("complexityRate")));
-        } catch (NumberFormatException e) {
-          log.warn("Incorrect complexity rate: " + systemInfo.getProperty("complexityRate"));
-        }
         hbLog.setActive("Y".equals(systemInfo.getProperty("isheartbeatactive")));
         hbLog.setProxyRequired("Y".equals(systemInfo.getProperty("isproxyrequired")));
         hbLog.setProxyServer(systemInfo.getProperty("proxyServer"));
@@ -345,7 +335,20 @@ public class HeartbeatProcess implements Process {
           log.warn("Incorrect maximum number of concurrent users during last 30 days: "
               + systemInfo.getProperty(SystemInfo.Item.MAX_CONCURRENT_USERS.getLabel()));
         }
-
+        try {
+          hbLog.setNumberOfClients(Long.parseLong(systemInfo
+              .getProperty(SystemInfo.Item.NUMBER_OF_CLIENTS.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect number of clients: "
+              + systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_CLIENTS.getLabel()));
+        }
+        try {
+          hbLog.setNumberOfOrganizations(Long.parseLong(systemInfo
+              .getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect number of orgs: "
+              + systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel()));
+        }
       }
       OBDal.getInstance().save(hbLog);
     } finally {

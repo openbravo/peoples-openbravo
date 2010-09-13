@@ -117,18 +117,6 @@
       	select Isproxyrequired from ad_system_info
     ]]></Sql>
    </SqlMethod>
-   <SqlMethod name="selectActivityRate" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	select count(*) from ad_session where created > now() - 30
-    ]]></Sql>
-   </SqlMethod> 
-   <SqlMethod name="selectComplexityRate" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	select count(*) from ad_org
-    ]]></Sql>
-   </SqlMethod>
    <SqlMethod name="selectNumRegisteredUsers" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

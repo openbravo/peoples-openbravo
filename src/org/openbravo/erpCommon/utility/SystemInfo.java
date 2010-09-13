@@ -65,6 +65,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class SystemInfo {
 
@@ -171,12 +173,6 @@ public class SystemInfo {
     case PROXY_PORT:
       systemInfo.put(i, SystemInfoData.selectProxyPort(conn));
       break;
-    case ACTIVITY_RATE:
-      systemInfo.put(i, getActivityRate(conn));
-      break;
-    case COMPLEXITY_RATE:
-      systemInfo.put(i, getComplexityRate(conn));
-      break;
     case OPERATING_SYSTEM:
       systemInfo.put(i, System.getProperty("os.name"));
       break;
@@ -212,6 +208,12 @@ public class SystemInfo {
       break;
     case TOTAL_LOGINS_LAST_MOTH:
       systemInfo.put(i, Integer.toString(numberOfLonginsThisMoth));
+      break;
+    case NUMBER_OF_CLIENTS:
+      systemInfo.put(i, getNumberOfClients());
+      break;
+    case NUMBER_OF_ORGS:
+      systemInfo.put(i, getNumberOfOrgs());
       break;
     }
   }
@@ -389,49 +391,33 @@ public class SystemInfo {
   }
 
   /**
-   * Returns the activity rate of the system. Range: 0..............1.- Inactive 1-100..........2.-
-   * Low 101-500........3.- Medium 500-1000.......4.- High 1001 or more...5.- Very High
-   * 
-   * @param data
-   * @return
-   * @throws ServletException
+   * Obtain the total number of clients in the system
    */
-  private final static String getActivityRate(ConnectionProvider conn) throws ServletException {
-    String result = null;
-    int activityRate = Integer.valueOf(SystemInfoData.selectActivityRate(conn));
-    if (activityRate == 0) {
-      result = "1";
-    } else if (activityRate > 0 && activityRate < 101) {
-      result = "2";
-    } else if (activityRate > 100 && activityRate < 501) {
-      result = "3";
-    } else if (activityRate > 500 && activityRate < 1001) {
-      result = "4";
-    } else if (activityRate > 1001) {
-      result = "5";
+  private final static String getNumberOfClients() {
+    try {
+      OBContext.setAdminMode();
+      OBCriteria<Client> qClients = OBDal.getInstance().createCriteria(Client.class);
+      qClients.setFilterOnReadableOrganization(false);
+      qClients.setFilterOnReadableClients(false);
+      return Integer.toString(qClients.count());
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return result;
   }
 
   /**
-   * Returns the complexity rate of the system Range: 0-2 ............1.- Low 3-6.............2.-
-   * Medium 7 or more.......3.- High
-   * 
-   * @param data
-   * @return
-   * @throws ServletException
+   * Obtain the total number of organizations in the system
    */
-  private final static String getComplexityRate(ConnectionProvider conn) throws ServletException {
-    String result = null;
-    int complexityRate = Integer.valueOf(SystemInfoData.selectComplexityRate(conn));
-    if (complexityRate > 0 && complexityRate < 3) {
-      result = "1";
-    } else if (complexityRate > 2 && complexityRate < 7) {
-      result = "2";
-    } else {
-      result = "3";
+  private final static String getNumberOfOrgs() {
+    try {
+      OBContext.setAdminMode();
+      OBCriteria<Organization> qOrgs = OBDal.getInstance().createCriteria(Organization.class);
+      qOrgs.setFilterOnReadableOrganization(false);
+      qOrgs.setFilterOnReadableClients(false);
+      return Integer.toString(qOrgs.count());
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return result;
   }
 
   /**
@@ -653,12 +639,12 @@ public class SystemInfo {
         "antVersion", false), OB_VERSION("obVersion", false), OB_INSTALL_MODE("obInstallMode",
         false), CODE_REVISION("codeRevision", false), NUM_REGISTERED_USERS("numRegisteredUsers",
         false), ISHEARTBEATACTIVE("isheartbeatactive", false), ISPROXYREQUIRED("isproxyrequired",
-        false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), ACTIVITY_RATE(
-        "activityRate", false), COMPLEXITY_RATE("complexityRate", false), JAVA_VERSION(
+        false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), JAVA_VERSION(
         "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRT_LOGIN(
         "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
         "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
-        "avgUsers", false), PERC_TIME_USAGE("timeUsage", false);
+        "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
+        false), NUMBER_OF_ORGS("orgNum", false);
 
     private String label;
     private boolean isIdInfo;
