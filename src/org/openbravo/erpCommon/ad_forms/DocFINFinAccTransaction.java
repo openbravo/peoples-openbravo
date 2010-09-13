@@ -56,6 +56,8 @@ public class DocFINFinAccTransaction extends AcctServer {
   public static final String TRXTYPE_BPDeposit = "BPD";
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
+  BigDecimal usedCredit = ZERO;
+  BigDecimal generatedCredit = ZERO;
 
   private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DocFINFinAccTransaction.class);
@@ -76,6 +78,8 @@ public class DocFINFinAccTransaction extends AcctServer {
     DateDoc = data[0].getField("trxdate");
     BigDecimal paymentAmount = new BigDecimal(data[0].getField("PaymentAmount"));
     BigDecimal depositAmount = new BigDecimal(data[0].getField("DepositAmount"));
+    usedCredit = new BigDecimal(data[0].getField("UsedCredit"));
+    generatedCredit = new BigDecimal(data[0].getField("GeneratedCredit"));
     Amounts[AMTTYPE_Gross] = depositAmount.subtract(paymentAmount).toString();
     loadDocumentType();
     p_lines = loadLines();
@@ -102,6 +106,10 @@ public class DocFINFinAccTransaction extends AcctServer {
     try {
       for (int i = 0; i < data.length; i++) {
         if (!getPaymentConfirmation(payment))
+          continue;
+        // Details refunded used credit are excluded as the entry will be created using the credit
+        // used
+        if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment())
           continue;
         data[i] = new FieldProviderFactory(new HashMap());
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
@@ -189,6 +197,8 @@ public class DocFINFinAccTransaction extends AcctServer {
     if (data == null || data.length == 0)
       return null;
     for (int i = 0; i < data.length; i++) {
+      if (data[i] == null)
+        continue;
       String Line_ID = data[i].getField("FIN_Finacc_Transaction_ID");
       DocLine_FINFinAccTransaction docLine = new DocLine_FINFinAccTransaction(DocumentType,
           Record_ID, Line_ID);
@@ -260,65 +270,84 @@ public class DocFINFinAccTransaction extends AcctServer {
       OBContext.restorePreviousMode();
     }
     Fact fact = new Fact(this, as, Fact.POST_Actual);
-    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-      DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          Record_ID);
-      // 3 Scenarios: 1st Bank fee 2nd glitem transaction 3rd payment related transaction
-      if (TRXTYPE_BankFee.equals(transaction.getTransactionType()))
-        fact = createFactFee(line, transaction, as, conn, fact);
-      else if (!"".equals(line.getFinPaymentId()))
-        fact = createFactPaymentDetails(line, as, conn, fact);
-      else
-        fact = createFactGLItem(line, as, conn, fact);
-    }
+    FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+        Record_ID);
+    // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd glitem transaction
+    if (TRXTYPE_BankFee.equals(transaction.getTransactionType()))
+      fact = createFactFee(transaction, as, conn, fact);
+    else if (transaction.getFinPayment() != null)
+      fact = createFactPaymentDetails(as, conn, fact);
+    else
+      fact = createFactGLItem(as, conn, fact);
     return fact;
   }
 
   /*
    * Creates accounting related to a bank fee transaction
    */
-  public Fact createFactFee(DocLine_FINFinAccTransaction line, FIN_FinaccTransaction transaction,
-      AcctSchema as, ConnectionProvider conn, Fact fact) throws ServletException {
+  public Fact createFactFee(FIN_FinaccTransaction transaction, AcctSchema as,
+      ConnectionProvider conn, Fact fact) throws ServletException {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-    fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
-        .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-        DocumentType, conn);
-    fact.createLine(line, getWithdrawalAccount(as, null, transaction.getAccount(), conn),
-        C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
-        nextSeqNo(SeqNo), DocumentType, conn);
+    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+      DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
+      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
+          .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+      fact.createLine(line, getWithdrawalAccount(as, null, transaction.getAccount(), conn),
+          C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn);
+    }
     SeqNo = "0";
     return fact;
   }
 
-  public Fact createFactPaymentDetails(DocLine_FINFinAccTransaction line, AcctSchema as,
-      ConnectionProvider conn, Fact fact) throws ServletException {
-    boolean isPrepayment = "Y".equals(line.getIsPrepayment());
-    BigDecimal paymentAmount = new BigDecimal(line.getPaymentAmount());
-    BigDecimal depositAmount = new BigDecimal(line.getDepositAmount());
-    boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
+  public Fact createFactPaymentDetails(AcctSchema as, ConnectionProvider conn, Fact fact)
+      throws ServletException {
+    FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+        Record_ID);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-    FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
-    if (!getDocumentPaymentConfirmation(payment)) {
-      fact.createLine(line, getAccountBPartner(
-          (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-              : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
-          !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
-          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      if (payment.getWriteoffAmount() != null
-          && payment.getWriteoffAmount().compareTo(BigDecimal.ZERO) != 0) {
-        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-            C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line
-                .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+      DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
+      boolean isPrepayment = "Y".equals(line.getIsPrepayment());
+      boolean isReceipt = transaction.getFinPayment().isReceipt();
+      FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
+      if (!getDocumentPaymentConfirmation(payment)) {
+        fact.createLine(line, getAccountBPartner(
+            (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
+            !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        if (payment.getWriteoffAmount() != null
+            && payment.getWriteoffAmount().compareTo(BigDecimal.ZERO) != 0) {
+          fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
+              C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line
+                  .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        }
+      } else
+        fact.createLine(line, getAccountPayment(conn, payment.getPaymentMethod(), payment
+            .getAccount(), as, isReceipt), C_Currency_ID, !isReceipt ? line.getAmount() : "",
+            isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+            conn);
+    }
+    if (!getDocumentPaymentConfirmation(transaction.getFinPayment())) {
+      // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
+      // credit is generated
+      if (transaction.getFinPayment().getUsedCredit().compareTo(ZERO) != 0
+          && transaction.getFinPayment().getGeneratedCredit().compareTo(ZERO) == 0) {
+        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, transaction.getFinPayment()
+            .isReceipt(), true, conn), C_Currency_ID,
+            (transaction.getFinPayment().isReceipt() ? transaction.getFinPayment().getUsedCredit()
+                .toString() : ""), (transaction.getFinPayment().isReceipt() ? "" : transaction
+                .getFinPayment().getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
       }
-    } else
-      fact.createLine(line, getAccountPayment(conn, payment.getPaymentMethod(), payment
-          .getAccount(), as, isReceipt), C_Currency_ID, !isReceipt ? line.getAmount() : "",
-          isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-          conn);
-    fact.createLine(line, getAccountUponDepositWithdrawal(conn, payment.getPaymentMethod(), payment
-        .getAccount(), as, isReceipt), C_Currency_ID, isReceipt ? line.getAmount() : "",
-        !isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, "999999", DocumentType, conn);
+    }
+    fact.createLine(null, getAccountUponDepositWithdrawal(conn, transaction.getFinPayment()
+        .getPaymentMethod(), transaction.getFinPayment().getAccount(), as, transaction
+        .getFinPayment().isReceipt()), C_Currency_ID,
+        transaction.getFinPayment().isReceipt() ? Amounts[AMTTYPE_Gross].toString() : "",
+        !transaction.getFinPayment().isReceipt() ? Amounts[AMTTYPE_Gross].toString() : "",
+        Fact_Acct_Group_ID, "999999", DocumentType, conn);
 
     SeqNo = "0";
     return fact;
@@ -327,23 +356,26 @@ public class DocFINFinAccTransaction extends AcctServer {
   /*
    * Creates the accounting for a transaction related directly with a GLItem
    */
-  public Fact createFactGLItem(DocLine_FINFinAccTransaction line, AcctSchema as,
-      ConnectionProvider conn, Fact fact) throws ServletException {
-    BigDecimal paymentAmount = new BigDecimal(line.getPaymentAmount());
-    BigDecimal depositAmount = new BigDecimal(line.getDepositAmount());
-    boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
-    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-    if (!"".equals(line.getCGlItemId()))
-      fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
-          line.getCGlItemId()), as, isReceipt, conn), C_Currency_ID, line.getPaymentAmount(), line
-          .getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-    FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-        Record_ID);
-    fact.createLine(line,
-        getAccountUponDepositWithdrawal(conn, transaction.getFinPayment() != null ? transaction
-            .getFinPayment().getPaymentMethod() : null, transaction.getAccount(), as, isReceipt),
-        C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
-        "999999", DocumentType, conn);
+  public Fact createFactGLItem(AcctSchema as, ConnectionProvider conn, Fact fact)
+      throws ServletException {
+    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+      DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
+      BigDecimal paymentAmount = new BigDecimal(line.getPaymentAmount());
+      BigDecimal depositAmount = new BigDecimal(line.getDepositAmount());
+      boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
+      String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+      if (!"".equals(line.getCGlItemId()))
+        fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
+            line.getCGlItemId()), as, isReceipt, conn), C_Currency_ID, line.getPaymentAmount(),
+            line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+          Record_ID);
+      fact.createLine(line, getAccountUponDepositWithdrawal(conn,
+          transaction.getFinPayment() != null ? transaction.getFinPayment().getPaymentMethod()
+              : null, transaction.getAccount(), as, isReceipt), C_Currency_ID, line
+          .getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, "999999", DocumentType,
+          conn);
+    }
     SeqNo = "0";
     return fact;
   }
@@ -355,7 +387,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   }
 
   /**
-   * Get Source Currency Balance - subtracts line amounts from total - no rounding
+   * Get Source Currency Balance - subtracts line amounts from total + usedCredit - no rounding
    * 
    * @return positive amount, if total is bigger than lines
    */
@@ -365,7 +397,9 @@ public class DocFINFinAccTransaction extends AcctServer {
     StringBuffer sb = new StringBuffer(" [");
     // Total
     retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
-    sb.append(getAmount(AcctServer.AMTTYPE_Gross));
+    if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
+      retValue.add(usedCredit);
+    sb.append(retValue);
     // - Lines
     for (int i = 0; i < p_lines.length; i++) {
       BigDecimal lineBalance = new BigDecimal(
@@ -630,6 +664,15 @@ public class DocFINFinAccTransaction extends AcctServer {
       // FieldProviderFactory.setField(data[0], "User2_ID", transaction.getNdDimension().getId());
       FieldProviderFactory.setField(data[0], "FIN_Payment_ID",
           transaction.getFinPayment() != null ? transaction.getFinPayment().getId() : "");
+      FieldProviderFactory.setField(data[0], "C_BPartner_ID",
+          transaction.getFinPayment() != null ? transaction.getFinPayment().getBusinessPartner()
+              .getId() : "");
+      FieldProviderFactory.setField(data[0], "UsedCredit",
+          transaction.getFinPayment() != null ? transaction.getFinPayment().getUsedCredit()
+              .toString() : "");
+      FieldProviderFactory.setField(data[0], "GeneratedCredit",
+          transaction.getFinPayment() != null ? transaction.getFinPayment().getGeneratedCredit()
+              .toString() : "");
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
           "dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
