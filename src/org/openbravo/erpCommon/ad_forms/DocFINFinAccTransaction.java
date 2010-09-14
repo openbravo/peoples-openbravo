@@ -301,6 +301,16 @@ public class DocFINFinAccTransaction extends AcctServer {
     return fact;
   }
 
+  /*
+   * Creates accounting related to a bank fee transaction
+   */
+  @Deprecated
+  public Fact createFactFee(DocLine_FINFinAccTransaction docline,
+      FIN_FinaccTransaction transaction, AcctSchema as, ConnectionProvider conn, Fact fact)
+      throws ServletException {
+    return createFactFee(transaction, as, conn, fact);
+  }
+
   public Fact createFactPaymentDetails(AcctSchema as, ConnectionProvider conn, Fact fact)
       throws ServletException {
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
@@ -353,6 +363,12 @@ public class DocFINFinAccTransaction extends AcctServer {
     return fact;
   }
 
+  @Deprecated
+  public Fact createFactPaymentDetails(DocLine_FINFinAccTransaction docline, AcctSchema as,
+      ConnectionProvider conn, Fact fact) throws ServletException {
+    return createFactPaymentDetails(as, conn, fact);
+  }
+
   /*
    * Creates the accounting for a transaction related directly with a GLItem
    */
@@ -378,6 +394,15 @@ public class DocFINFinAccTransaction extends AcctServer {
     }
     SeqNo = "0";
     return fact;
+  }
+
+  /*
+   * Creates the accounting for a transaction related directly with a GLItem
+   */
+  @Deprecated
+  public Fact createFactGLItem(DocLine_FINFinAccTransaction docline, AcctSchema as,
+      ConnectionProvider conn, Fact fact) throws ServletException {
+    return createFactGLItem(as, conn, fact);
   }
 
   public String nextSeqNo(String oldSeqNo) {
