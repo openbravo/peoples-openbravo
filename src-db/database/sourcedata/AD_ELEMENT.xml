@@ -26336,6 +26336,8 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--828EE0AE80325FA1E040007F010067C7-->  <COLUMNNAME><![CDATA[PO_Financial_Account_ID]]></COLUMNNAME>
 <!--828EE0AE80325FA1E040007F010067C7-->  <NAME><![CDATA[PO Financial account]]></NAME>
 <!--828EE0AE80325FA1E040007F010067C7-->  <PRINTNAME><![CDATA[PO Financial account]]></PRINTNAME>
+<!--828EE0AE80325FA1E040007F010067C7-->  <DESCRIPTION><![CDATA[Financial account used to deposit / withdrawal money such as bank accounts or petty cash]]></DESCRIPTION>
+<!--828EE0AE80325FA1E040007F010067C7-->  <HELP><![CDATA[Financial account used to deposit / withdrawal money such as bank accounts or petty cash]]></HELP>
 <!--828EE0AE80325FA1E040007F010067C7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--828EE0AE80325FA1E040007F010067C7--></AD_ELEMENT>
 
