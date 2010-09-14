@@ -28155,7 +28155,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006300002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006300002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006300002-->  <VALUE><![CDATA[BPS_SO_CREDITAVAILABLE]]></VALUE>
-<!--1006300002-->  <MSGTEXT><![CDATA[Credit available]]></MSGTEXT>
+<!--1006300002-->  <MSGTEXT><![CDATA[Credit Line available]]></MSGTEXT>
 <!--1006300002-->  <MSGTIP><![CDATA[Used for column name translation in Business Partner Selector]]></MSGTIP>
 <!--1006300002-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006300002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -28167,7 +28167,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006300003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006300003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006300003-->  <VALUE><![CDATA[BPS_SO_CREDITUSED]]></VALUE>
-<!--1006300003-->  <MSGTEXT><![CDATA[Credit used]]></MSGTEXT>
+<!--1006300003-->  <MSGTEXT><![CDATA[Customer Balance]]></MSGTEXT>
 <!--1006300003-->  <MSGTIP><![CDATA[Used for column name translation in Business Partner Selector]]></MSGTIP>
 <!--1006300003-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006300003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
