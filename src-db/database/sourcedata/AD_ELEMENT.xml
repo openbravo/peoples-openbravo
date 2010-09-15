@@ -3871,10 +3871,10 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--553-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--553-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--553-->  <COLUMNNAME><![CDATA[SO_CreditLimit]]></COLUMNNAME>
-<!--553-->  <NAME><![CDATA[Credit Limit]]></NAME>
-<!--553-->  <PRINTNAME><![CDATA[Credit Limit]]></PRINTNAME>
+<!--553-->  <NAME><![CDATA[Credit Line Limit]]></NAME>
+<!--553-->  <PRINTNAME><![CDATA[Credit Line Limit]]></PRINTNAME>
 <!--553-->  <DESCRIPTION><![CDATA[Total outstanding invoice amounts allowed]]></DESCRIPTION>
-<!--553-->  <HELP><![CDATA[The Credit Limit indicates the total amount allowed 'on account'.  If this is exceeded a warning message will be generated.]]></HELP>
+<!--553-->  <HELP><![CDATA[The Credit Line Limit indicates the total amount allowed 'on account'.  If this is exceeded a warning message will be generated.]]></HELP>
 <!--553-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--553--></AD_ELEMENT>
 
@@ -3884,10 +3884,10 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--554-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--554-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--554-->  <COLUMNNAME><![CDATA[SO_CreditUsed]]></COLUMNNAME>
-<!--554-->  <NAME><![CDATA[Credit Used]]></NAME>
-<!--554-->  <PRINTNAME><![CDATA[Credit Used]]></PRINTNAME>
+<!--554-->  <NAME><![CDATA[Customer Balance]]></NAME>
+<!--554-->  <PRINTNAME><![CDATA[Customer Balance]]></PRINTNAME>
 <!--554-->  <DESCRIPTION><![CDATA[Current open balance]]></DESCRIPTION>
-<!--554-->  <HELP><![CDATA[The Credit Used indicates the total amount of open or unpaid invoices for this Business Partner.]]></HELP>
+<!--554-->  <HELP><![CDATA[The Customer Balance indicates the total amount of open or unpaid invoices for this Business Partner.]]></HELP>
 <!--554-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--554--></AD_ELEMENT>
 
@@ -26336,6 +26336,8 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--828EE0AE80325FA1E040007F010067C7-->  <COLUMNNAME><![CDATA[PO_Financial_Account_ID]]></COLUMNNAME>
 <!--828EE0AE80325FA1E040007F010067C7-->  <NAME><![CDATA[PO Financial account]]></NAME>
 <!--828EE0AE80325FA1E040007F010067C7-->  <PRINTNAME><![CDATA[PO Financial account]]></PRINTNAME>
+<!--828EE0AE80325FA1E040007F010067C7-->  <DESCRIPTION><![CDATA[Financial account used to deposit / withdrawal money such as bank accounts or petty cash]]></DESCRIPTION>
+<!--828EE0AE80325FA1E040007F010067C7-->  <HELP><![CDATA[Financial account used to deposit / withdrawal money such as bank accounts or petty cash]]></HELP>
 <!--828EE0AE80325FA1E040007F010067C7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--828EE0AE80325FA1E040007F010067C7--></AD_ELEMENT>
 

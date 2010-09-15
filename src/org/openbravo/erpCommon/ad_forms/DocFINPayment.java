@@ -55,6 +55,8 @@ public class DocFINPayment extends AcctServer {
   static Logger log4j = Logger.getLogger(DocFINPayment.class);
 
   String SeqNo = "0";
+  String generatedAmount = "";
+  String usedAmount = "";
 
   public DocFINPayment() {
   }
@@ -67,6 +69,8 @@ public class DocFINPayment extends AcctServer {
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DateDoc = data[0].getField("PaymentDate");
     Amounts[AMTTYPE_Gross] = data[0].getField("Amount");
+    generatedAmount = data[0].getField("GeneratedCredit");
+    usedAmount = data[0].getField("UsedCredit");
     loadDocumentType();
     p_lines = loadLines();
     return true;
@@ -82,6 +86,10 @@ public class DocFINPayment extends AcctServer {
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
+        // Details refunded used credit are excluded as the entry will be created using the credit
+        // used
+        if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment())
+          continue;
         data[i] = new FieldProviderFactory(new HashMap());
         FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
             .getId());
@@ -115,6 +123,8 @@ public class DocFINPayment extends AcctServer {
     if (data == null || data.length == 0)
       return null;
     for (int i = 0; i < data.length; i++) {
+      if (data[i] == null)
+        continue;
       String Line_ID = data[i].getField("FIN_Payment_Detail_ID");
       DocLine_FINPayment docLine = new DocLine_FINPayment(DocumentType, Record_ID, Line_ID);
       docLine.loadAttributes(data[i], this);
@@ -185,7 +195,7 @@ public class DocFINPayment extends AcctServer {
 
         String bpAmount = line.getAmount();
         if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
-            && !line.WriteOffAmt.equals("0")) {
+            && new BigDecimal(line.WriteOffAmt).compareTo(ZERO) != 0) {
           fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
               C_Currency_ID, (isReceipt ? line.WriteOffAmt : ""), (isReceipt ? ""
                   : line.WriteOffAmt), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
@@ -205,10 +215,20 @@ public class DocFINPayment extends AcctServer {
               : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
         }
-        FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);
-        fact.createLine(line, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(),
-            as, isReceipt), C_Currency_ID, (isReceipt ? line.getAmount() : ""), (isReceipt ? ""
-            : line.getAmount()), Fact_Acct_Group_ID, "999999", DocumentType, conn);
+      }
+      FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);
+      fact.createLine(null, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
+          payment.isReceipt()), C_Currency_ID, (payment.isReceipt() ? Amounts[AMTTYPE_Gross] : ""),
+          (payment.isReceipt() ? "" : Amounts[AMTTYPE_Gross]), Fact_Acct_Group_ID, "999999",
+          DocumentType, conn);
+      // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
+      // credit is generated
+      if (new BigDecimal(usedAmount).compareTo(ZERO) != 0
+          && new BigDecimal(generatedAmount).compareTo(ZERO) == 0) {
+        fact.createLine(null,
+            getAccountBPartner(C_BPartner_ID, as, payment.isReceipt(), true, conn), C_Currency_ID,
+            (payment.isReceipt() ? usedAmount : ""), (payment.isReceipt() ? "" : usedAmount),
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -291,6 +311,13 @@ public class DocFINPayment extends AcctServer {
                 && account.getClearedPaymentAccountOUT() != null)
               confirmation = true;
           }
+          // For payments with Amount ZERO which consumes credit always create an entry for the
+          // consumption as no transaction will be created
+          if (payment.getGeneratedCredit().compareTo(ZERO) == 0
+              && payment.getUsedCredit().compareTo(ZERO) != 0
+              && payment.getAmount().compareTo(ZERO) == 0) {
+            confirmation = true;
+          }
         }
       }
     } catch (Exception e) {
@@ -323,6 +350,9 @@ public class DocFINPayment extends AcctServer {
     FieldProviderFactory.setField(data[0], "C_DocType_ID", payment.getDocumentType().getId());
     FieldProviderFactory.setField(data[0], "C_Currency_ID", payment.getCurrency().getId());
     FieldProviderFactory.setField(data[0], "Amount", payment.getAmount().toString());
+    FieldProviderFactory.setField(data[0], "GeneratedCredit", payment.getGeneratedCredit()
+        .toString());
+    FieldProviderFactory.setField(data[0], "UsedCredit", payment.getUsedCredit().toString());
     FieldProviderFactory.setField(data[0], "WriteOffAmt", payment.getWriteoffAmount().toString());
     FieldProviderFactory.setField(data[0], "Description", payment.getDescription());
     FieldProviderFactory.setField(data[0], "Posted", payment.getPosted());

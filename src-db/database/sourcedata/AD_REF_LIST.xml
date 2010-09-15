@@ -5967,7 +5967,7 @@
 <!--800080-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800080-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800080-->  <VALUE><![CDATA[N]]></VALUE>
-<!--800080-->  <NAME><![CDATA[All Selected]]></NAME>
+<!--800080-->  <NAME><![CDATA[Only those defined]]></NAME>
 <!--800080-->  <AD_REFERENCE_ID><![CDATA[800029]]></AD_REFERENCE_ID>
 <!--800080-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800080--></AD_REF_LIST>
@@ -5978,7 +5978,7 @@
 <!--800081-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800081-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800081-->  <VALUE><![CDATA[Y]]></VALUE>
-<!--800081-->  <NAME><![CDATA[Not Selected]]></NAME>
+<!--800081-->  <NAME><![CDATA[All excluding defined]]></NAME>
 <!--800081-->  <AD_REFERENCE_ID><![CDATA[800029]]></AD_REFERENCE_ID>
 <!--800081-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800081--></AD_REF_LIST>
