@@ -76,10 +76,14 @@ public class DocFINFinAccTransaction extends AcctServer {
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_FinAccTransaction;
     DateDoc = data[0].getField("trxdate");
-    BigDecimal paymentAmount = new BigDecimal(data[0].getField("PaymentAmount"));
-    BigDecimal depositAmount = new BigDecimal(data[0].getField("DepositAmount"));
-    usedCredit = new BigDecimal(data[0].getField("UsedCredit"));
-    generatedCredit = new BigDecimal(data[0].getField("GeneratedCredit"));
+    BigDecimal paymentAmount = "".equals(data[0].getField("PaymentAmount")) ? ZERO
+        : new BigDecimal(data[0].getField("PaymentAmount"));
+    BigDecimal depositAmount = "".equals(data[0].getField("DepositAmount")) ? ZERO
+        : new BigDecimal(data[0].getField("DepositAmount"));
+    usedCredit = "".equals(data[0].getField("UsedCredit")) ? ZERO : new BigDecimal(data[0]
+        .getField("UsedCredit"));
+    generatedCredit = "".equals(data[0].getField("GeneratedCredit")) ? ZERO : new BigDecimal(
+        data[0].getField("GeneratedCredit"));
     Amounts[AMTTYPE_Gross] = depositAmount.subtract(paymentAmount).toString();
     loadDocumentType();
     p_lines = loadLines();
