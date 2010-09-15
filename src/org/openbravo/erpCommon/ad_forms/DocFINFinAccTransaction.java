@@ -320,12 +320,12 @@ public class DocFINFinAccTransaction extends AcctServer {
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         Record_ID);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-      DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
-      boolean isPrepayment = "Y".equals(line.getIsPrepayment());
-      boolean isReceipt = transaction.getFinPayment().isReceipt();
-      FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
-      if (!getDocumentPaymentConfirmation(payment)) {
+    if (!getDocumentPaymentConfirmation(transaction.getFinPayment())) {
+      for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+        DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
+        boolean isPrepayment = "Y".equals(line.getIsPrepayment());
+        boolean isReceipt = transaction.getFinPayment().isReceipt();
+        FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
         fact.createLine(line, getAccountBPartner(
             (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
                 : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
@@ -337,13 +337,7 @@ public class DocFINFinAccTransaction extends AcctServer {
               C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line
                   .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
-      } else
-        fact.createLine(line, getAccountPayment(conn, payment.getPaymentMethod(), payment
-            .getAccount(), as, isReceipt), C_Currency_ID, !isReceipt ? line.getAmount() : "",
-            isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-            conn);
-    }
-    if (!getDocumentPaymentConfirmation(transaction.getFinPayment())) {
+      }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
       if (transaction.getFinPayment().getUsedCredit().compareTo(ZERO) != 0
@@ -355,13 +349,17 @@ public class DocFINFinAccTransaction extends AcctServer {
                 .getFinPayment().getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
       }
+    } else {
+      fact.createLine(null, getAccountPayment(conn, transaction.getFinPayment().getPaymentMethod(),
+          transaction.getFinPayment().getAccount(), as, transaction.getFinPayment().isReceipt()),
+          C_Currency_ID, !transaction.getFinPayment().isReceipt() ? transaction.getFinPayment()
+              .getAmount().toString() : "", transaction.getFinPayment().isReceipt() ? transaction
+              .getFinPayment().getAmount().toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
     }
-    fact.createLine(null, getAccountUponDepositWithdrawal(conn, transaction.getFinPayment()
-        .getPaymentMethod(), transaction.getFinPayment().getAccount(), as, transaction
-        .getFinPayment().isReceipt()), C_Currency_ID,
-        transaction.getFinPayment().isReceipt() ? Amounts[AMTTYPE_Gross].toString() : "",
-        !transaction.getFinPayment().isReceipt() ? Amounts[AMTTYPE_Gross].toString() : "",
-        Fact_Acct_Group_ID, "999999", DocumentType, conn);
+    fact.createLine(null, getWithdrawalAccount(as, null, transaction.getAccount(), conn),
+        C_Currency_ID, transaction.getDepositAmount().toString(), transaction.getPaymentAmount()
+            .toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
 
     SeqNo = "0";
     return fact;
