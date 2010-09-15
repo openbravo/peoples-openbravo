@@ -568,6 +568,7 @@ public abstract class AcctServer {
         loadObjectFieldProvider(connectionProvider, AD_Client_ID, strClave);
       } catch (ServletException e) {
         log4j.warn(e);
+        e.printStackTrace();
       }
       FieldProvider data[] = getObjectFieldProvider();
       try {
@@ -584,6 +585,7 @@ public abstract class AcctServer {
         Status = AcctServer.STATUS_Error;
         save(conn, vars.getUser());
         log4j.warn(e);
+        e.printStackTrace();
       }
     } catch (ServletException e) {
       log4j.error(e);
@@ -720,6 +722,7 @@ public abstract class AcctServer {
       no = AcctServerData.updateSave(conn, tableName, Status, strUser, Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     return no == 1;
   } // save
@@ -743,6 +746,7 @@ public abstract class AcctServer {
       return loadDocument(data, force, conn, con);
     } catch (NoConnectionAvailableException e) {
       log4j.warn(e);
+      e.printStackTrace();
       return false;
     }
   }
@@ -835,6 +839,7 @@ public abstract class AcctServer {
         AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
       } catch (ServletException e) {
         log4j.warn(e);
+        e.printStackTrace();
       }
       // if (log4j.isDebugEnabled()) log4j.debug("post - deleted=" + no);
     } else if (Posted.equals("Y")) {
@@ -872,6 +877,7 @@ public abstract class AcctServer {
       }
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     if (GL_Category_ID != null && GL_Category_ID.equals(""))
       log4j.warn("AcctServer - loadDocumentType - No GL Info");
@@ -918,6 +924,7 @@ public abstract class AcctServer {
       }
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
 
     return no == 1;
@@ -953,6 +960,7 @@ public abstract class AcctServer {
       m_fact[index] = createFact(m_as[index], conn, con, vars);
     } catch (Exception e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     if (m_fact[index] == null)
       return STATUS_Error;
@@ -1149,6 +1157,7 @@ public abstract class AcctServer {
           client, org);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     if (data == null || data.length == 0) {
       /*
@@ -1206,6 +1215,7 @@ public abstract class AcctServer {
             + DocumentType + " => " + C_Period_ID);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
   } // setC_Period_ID
 
@@ -1255,6 +1265,7 @@ public abstract class AcctServer {
           compare = DateTimeData.compare(conn, dateTrx1, dateTrx2);
         } catch (ServletException e) {
           log4j.warn(e);
+          e.printStackTrace();
         }
         String DateTrx = dateTrx1;
         if (compare.equals("-1"))
@@ -1274,6 +1285,7 @@ public abstract class AcctServer {
       }
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Matcher.match - Client_ID=" + AD_Client_ID
@@ -1315,6 +1327,7 @@ public abstract class AcctServer {
           M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx, Qty);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     return no;
   } // createMatchInv
@@ -1437,6 +1450,7 @@ public abstract class AcctServer {
       // log4j.debug("AcctServer - *******************************getAccount 3");
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     // Get Acct
     String Account_ID = "";
@@ -1457,6 +1471,7 @@ public abstract class AcctServer {
       acct = Account.getAccount(conn, Account_ID);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     return acct;
   } // getAccount
