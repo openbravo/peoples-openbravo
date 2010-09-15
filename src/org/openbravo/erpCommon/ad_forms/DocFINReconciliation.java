@@ -704,8 +704,6 @@ public class DocFINReconciliation extends AcctServer {
     } finally {
       OBContext.restorePreviousMode();
     }
-    if (!confirmation)
-      setStatus(STATUS_DocumentDisabled);
     return confirmation;
   }
 
@@ -1054,11 +1052,11 @@ public class DocFINReconciliation extends AcctServer {
         else if (("CLE").equals(lines.get(0).getINUponClearingUse()))
           result = accountList.get(0).getClearedPaymentAccount();
       } else {
-        if (("INT").equals(lines.get(0).getINUponClearingUse()))
+        if (("INT").equals(lines.get(0).getOUTUponClearingUse()))
           result = accountList.get(0).getFINOutIntransitAcct();
-        else if (("WIT").equals(lines.get(0).getINUponClearingUse()))
+        else if (("WIT").equals(lines.get(0).getOUTUponClearingUse()))
           result = accountList.get(0).getWithdrawalAccount();
-        else if (("CLE").equals(lines.get(0).getINUponClearingUse()))
+        else if (("CLE").equals(lines.get(0).getOUTUponClearingUse()))
           result = accountList.get(0).getClearedPaymentAccountOUT();
       }
       if (result != null)
