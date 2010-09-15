@@ -137,6 +137,7 @@ BEGIN
                                            --AND C_Order_Status(o.C_ORDER_ID) IN (1, 2, 3)
                                            AND o.PROCESSED = 'Y'
                                            AND ol.QTYORDERED <> ol.QTYDELIVERED
+                                           AND ol.m_product_id = p.m_product_id
                                            AND ol.DatePromised IS NOT NULL
                                            AND Mrp_Check_Planningmethod(
                                                     COALESCE(po.MRP_PlanningMethod_ID, p.MRP_PlanningMethod_ID),
@@ -147,6 +148,7 @@ BEGIN
                                            WHERE sf.MRP_SALESFORECAST_ID = sfl.MRP_SALESFORECAST_ID
                                              AND sf.IsActive = 'Y'
                                              AND sf.C_BPartner_ID = bp.C_BPartner_ID
+                                             AND sfl.m_product_id = p.m_product_id
                                              AND bp.C_BP_Group_ID = p_BP_Group_ID
                                              AND Mrp_Check_Planningmethod(
                                                     COALESCE(po.MRP_PlanningMethod_ID, p.MRP_PlanningMethod_ID),
