@@ -325,18 +325,19 @@ public class DocFINFinAccTransaction extends AcctServer {
         DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
         boolean isPrepayment = "Y".equals(line.getIsPrepayment());
         boolean isReceipt = transaction.getFinPayment().isReceipt();
-        FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
-        fact.createLine(line, getAccountBPartner(
-            (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-                : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
-            !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
-            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-        if (payment.getWriteoffAmount() != null
-            && payment.getWriteoffAmount().compareTo(BigDecimal.ZERO) != 0) {
+        BigDecimal bpamount = new BigDecimal(line.getAmount());
+        if (!"".equals(line.getWriteOffAmt())
+            && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
           fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
               C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line
                   .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          bpamount = bpamount.add(new BigDecimal(line.getWriteOffAmt()));
         }
+        fact.createLine(line, getAccountBPartner(
+            (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
+            !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount.toString() : "",
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
