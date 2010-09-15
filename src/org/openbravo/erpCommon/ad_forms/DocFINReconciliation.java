@@ -156,6 +156,10 @@ public class DocFINReconciliation extends AcctServer {
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
+        // Details refunded used credit are excluded as the entry will be created using the credit
+        // used
+        if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment())
+          continue;
         data[i] = new FieldProviderFactory(new HashMap());
         FieldProviderFactory.setField(data[i], "FIN_Reconciliation_ID", transaction
             .getReconciliation().getId());
@@ -445,6 +449,8 @@ public class DocFINReconciliation extends AcctServer {
     else if (!getDocumentPaymentConfirmation(payment)) {
       FieldProviderFactory[] data = loadLinesPaymentDetailsFieldProvider(transaction);
       for (int i = 0; i < data.length; i++) {
+        if (data[i] == null)
+          continue;
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             data[i].getField("FIN_Payment_Detail_ID"));
         fact = createFactPaymentDetails(line, paymentDetail, as, conn, fact, Fact_Acct_Group_ID);
