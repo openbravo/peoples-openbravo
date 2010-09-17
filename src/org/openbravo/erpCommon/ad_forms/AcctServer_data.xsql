@@ -62,7 +62,7 @@
         WHERE CLAVE_ID = ?
         AND Processed='Y'
         AND (Processing='N' OR Processing IS NULL)
-        AND Posted='N'
+        AND Posted<>'Y'
      ]]>
      </Sql>
      <Parameter name="tableName" type="replace" optional="true" after="UPDATE " text="DUAL"/>
@@ -651,5 +651,17 @@
         AND AD_TABLE.AD_TABLE_ID = ?
       </Sql>
       <Parameter name="adTableId"/>
+   </SqlMethod>
+   <SqlMethod name="selectBackgroundEnabled" type="preparedStatement" return="boolean" default="false">
+     <SqlMethodComment></SqlMethodComment>
+     <Sql><![CDATA[
+       SELECT COUNT(*) AS NAME FROM C_ACCTSCHEMA_TABLE
+       WHERE C_ACCTSCHEMA_ID = ?
+       AND AD_TABLE_ID = ?
+       AND ISACTIVE = 'Y'
+       AND ISBACKGROUNDDISABLED = 'N'
+     ]]></Sql>
+     <Parameter name="acctschemaId"/>
+     <Parameter name="tableId"/>
    </SqlMethod>
   </SqlClass>
