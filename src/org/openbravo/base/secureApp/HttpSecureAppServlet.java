@@ -907,7 +907,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       editionType = "OBPSAnyEdition";
       // do not break continue with next tier restriction
     case TIER2_RESTRICTION:
-      if (editionType != null) {
+      if (editionType == null) {
         editionType = "OBPSStandardEdition";
       }
       // <p> in java, to allow multi-paragraph text via the parameter
