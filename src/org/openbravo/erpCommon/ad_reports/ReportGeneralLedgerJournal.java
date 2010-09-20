@@ -340,8 +340,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (vars.commandIn("DIRECT")) {
       data = ReportGeneralLedgerJournalData.selectDirect(this, Utility.getContext(this, vars,
           "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord, initRecordNumber,
-          intRecordRangePredefined);
+          "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord);
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this, Utility.getContext(
             this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
@@ -350,8 +349,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else if (vars.commandIn("DIRECT2")) {
       data = ReportGeneralLedgerJournalData.selectDirect2(this, Utility.getContext(this, vars,
           "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportGeneralLedger"), strFactAcctGroupId, initRecordNumber,
-          intRecordRangePredefined);
+          "#AccessibleOrgTree", "ReportGeneralLedger"), strFactAcctGroupId);
       if (data != null && data.length > 0)
         strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this, Utility.getContext(
             this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
