@@ -102,15 +102,15 @@ public class DocFINFinAccTransaction extends AcctServer {
 
   public FieldProviderFactory[] loadLinesPaymentDetailsFieldProvider(
       FIN_FinaccTransaction transaction) {
-    FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class,
-        transaction.getFinPayment().getId());
+    FIN_Payment payment = transaction.getFinPayment();
     List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
-        if (!getPaymentConfirmation(payment))
-          continue;
+        /*
+         * if (!getPaymentConfirmation(payment)) continue;
+         */
         // Details refunded used credit are excluded as the entry will be created using the credit
         // used
         if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment())
@@ -492,8 +492,9 @@ public class DocFINFinAccTransaction extends AcctServer {
   }
 
   /*
-   * Checks if Accounting for payments in transactions are enabled for the given paymentis
+   * Checks if Accounting for payments in transactions are enabled for the given payments
    */
+  @Deprecated
   public boolean getPaymentConfirmation(FIN_Payment payment) {
     boolean confirmation = false;
     OBContext.setAdminMode();

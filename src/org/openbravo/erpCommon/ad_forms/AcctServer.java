@@ -146,6 +146,8 @@ public abstract class AcctServer {
   public static final String STATUS_DocumentLocked = "L";
   /** Document Status */
   public static final String STATUS_DocumentDisabled = "D";
+  /** Document Status */
+  public static final String STATUS_BackgroundDisabled = "d";
 
   OBError messageResult = null;
 
@@ -259,9 +261,11 @@ public abstract class AcctServer {
 
   public int errors = 0;
   int success = 0;
+  // Distinguish background process
+  boolean isBackground = false;
 
   /**
-   * Cosntructor
+   * Constructor
    * 
    * @param m_AD_Client_ID
    *          Client ID of these Documents
@@ -335,6 +339,21 @@ public abstract class AcctServer {
     } catch (Exception ex3) {
       log4j.error(ex3.getMessage(), ex3);
     }
+  }
+
+  /**
+   * @return the isBackground
+   */
+  public boolean isBackground() {
+    return isBackground;
+  }
+
+  /**
+   * @param isBackground
+   *          the isBackground to set
+   */
+  public void setBackground(boolean isBackground) {
+    this.isBackground = isBackground;
   }
 
   /**
@@ -623,6 +642,10 @@ public abstract class AcctServer {
     if (log4j.isDebugEnabled())
       log4j.debug("AcctServer - Post -Beforde the loop - C_CURRENCY_ID = " + C_Currency_ID);
     for (int i = 0; OK && i < m_as.length; i++) {
+      if (isBackground && !isBackGroundEnabled(conn, m_as[i], AD_Table_ID)) {
+        setStatus(STATUS_BackgroundDisabled);
+        break;
+      }
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - Post - Before the postLogic - C_CURRENCY_ID = " + C_Currency_ID);
       Status = postLogic(i, conn, con, vars, m_as[i]);
@@ -657,9 +680,13 @@ public abstract class AcctServer {
       if (m_fact[i] != null)
         m_fact[i].dispose();
     p_lines = null;
-
     return Status.equals(STATUS_Posted);
   } // post
+
+  boolean isBackGroundEnabled(ConnectionProvider conn, AcctSchema acctSchema, String adTableId)
+      throws ServletException {
+    return AcctServerData.selectBackgroundEnabled(conn, acctSchema.m_C_AcctSchema_ID, adTableId);
+  }
 
   /**
    * Post Commit. Save Facts & Document
@@ -1714,6 +1741,9 @@ public abstract class AcctServer {
       strMessage = "@InvalidCost@";
     else if (strStatus.equals(STATUS_DocumentDisabled)) {
       strMessage = "@DocumentDisabled@";
+      messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_BackgroundDisabled)) {
+      strMessage = "@BackgroundDisabled@";
       messageResult.setType("Warning");
     } else if (strStatus.equals(STATUS_InvalidAccount))
       strMessage = "@InvalidAccount@";

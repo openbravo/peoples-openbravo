@@ -82,7 +82,7 @@ public class Posted extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("SAVE, strPosted: " + strPosted + " Elim " + strEliminar);
 
-      if (strPosted.equals("N")) {
+      if (!"Y".equals(strPosted)) {
         OBError messageResult = processButton(vars, strKey, strTableId);
         if (!messageResult.getType().equals("Success")) {
           vars.setMessage(strTabId, messageResult);
@@ -229,7 +229,7 @@ public class Posted extends HttpSecureAppServlet {
     String[] discard = { "", "" };
     if (strHelp.equals(""))
       discard[0] = new String("helpDiscard");
-    if (strPosted.equals("N"))
+    if (!"Y".equals(strPosted))
       discard[1] = new String("selEliminar");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/Posted", discard).createXmlDocument();
