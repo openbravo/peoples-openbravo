@@ -28920,7 +28920,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006400012-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006400012-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006400012-->  <VALUE><![CDATA[PCS_QTY]]></VALUE>
-<!--1006400012-->  <MSGTEXT><![CDATA[Quantity]]></MSGTEXT>
+<!--1006400012-->  <MSGTEXT><![CDATA[Quantity on Hand]]></MSGTEXT>
 <!--1006400012-->  <MSGTIP><![CDATA[Used for column name translation in Product Complete Selector]]></MSGTIP>
 <!--1006400012-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006400012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -28956,7 +28956,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006400015-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006400015-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006400015-->  <VALUE><![CDATA[PCS_QTYORDER]]></VALUE>
-<!--1006400015-->  <MSGTEXT><![CDATA[Quant. of order]]></MSGTEXT>
+<!--1006400015-->  <MSGTEXT><![CDATA[On Hand Quantity order]]></MSGTEXT>
 <!--1006400015-->  <MSGTIP><![CDATA[Used for column name translation in Product Complete Selector]]></MSGTIP>
 <!--1006400015-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006400015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -28968,7 +28968,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006400016-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006400016-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006400016-->  <VALUE><![CDATA[PCS_C_UOM2]]></VALUE>
-<!--1006400016-->  <MSGTEXT><![CDATA[Order No.]]></MSGTEXT>
+<!--1006400016-->  <MSGTEXT><![CDATA[Order UOM]]></MSGTEXT>
 <!--1006400016-->  <MSGTIP><![CDATA[Used for column name translation in Product Complete Selector]]></MSGTIP>
 <!--1006400016-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006400016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -28980,7 +28980,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006400017-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006400017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006400017-->  <VALUE><![CDATA[PCS_QTY_REF]]></VALUE>
-<!--1006400017-->  <MSGTEXT><![CDATA[Quant. Served]]></MSGTEXT>
+<!--1006400017-->  <MSGTEXT><![CDATA[Quantity in draft transactions]]></MSGTEXT>
 <!--1006400017-->  <MSGTIP><![CDATA[Used for column name translation in Product Complete Selector]]></MSGTIP>
 <!--1006400017-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006400017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -28992,7 +28992,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--1006400018-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1006400018-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1006400018-->  <VALUE><![CDATA[PCS_QUANTITYORDER_REF]]></VALUE>
-<!--1006400018-->  <MSGTEXT><![CDATA[Quant. of order delivered]]></MSGTEXT>
+<!--1006400018-->  <MSGTEXT><![CDATA[Quantity Order in draft transactions]]></MSGTEXT>
 <!--1006400018-->  <MSGTIP><![CDATA[Used for column name translation in Product Complete Selector]]></MSGTIP>
 <!--1006400018-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1006400018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
