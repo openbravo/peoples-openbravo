@@ -169,9 +169,9 @@
       BEGIN
         FOR Cur_Debts IN
           (SELECT DISTINCT C_BPartner_ID
-          FROM C_DEBT_PAYMENT
-          WHERE C_Settlement_Cancel_ID=Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID
-            OR (C_Settlement_Generate_ID=Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID AND ISRECEIPT = 'Y')
+          FROM C_DEBT_PAYMENT, C_BANKSTATEMENTLINE
+          WHERE C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID = C_BANKSTATEMENTLINE.C_DEBT_PAYMENT_ID
+          AND C_BANKSTATEMENTLINE.C_BANKSTATEMENT_ID = v_Record_ID
           )
         LOOP
           C_BP_SOCREDITUSED_REFRESH(Cur_Debts.C_BPartner_ID) ;
