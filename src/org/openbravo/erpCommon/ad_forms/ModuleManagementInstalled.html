@@ -81,6 +81,8 @@ var baseDirectory = "../../../../../web/";
     resizeArea();
     gt_adjustTreeWidth();
 
+    // disable the core module checkbox (core module can't be disabled or uninstalled)
+    document.getElementById("inpNodes_0").disabled=true;
   }
 
   function onResizeDo(){
