@@ -224,10 +224,10 @@ class TranslationHandler extends DefaultHandler {
    *          String with text
    * @param maxLength
    *          Maximum Length of content or 0 to ignore
-   * @return escaped string for insert statement (NULL if null)
+   * @return escaped string for insert statement (NULL if null or empty)
    */
   private String TO_STRING(String txt, int maxLength) {
-    if (txt == null)
+    if (txt == null || txt.isEmpty())
       return "NULL";
 
     // Length
