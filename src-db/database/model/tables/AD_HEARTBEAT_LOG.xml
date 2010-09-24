@@ -121,7 +121,7 @@
         <default><![CDATA[U]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DB_IDENTIFIER" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false">
+      <column name="DB_IDENTIFIER" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -52,10 +52,10 @@ import java.util.zip.CRC32;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
-import org.json.JSONArray;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -299,7 +299,10 @@ public class SystemInfo {
         String id = st.getResultSet().getString(1);
         // Add schema name to id, it's possible to have multiple schemas in the same db
         id += obProps.getProperty("bbdd.user");
-        return id;
+
+        CRC32 crc = new CRC32();
+        crc.update(id.getBytes());
+        return Long.toHexString(crc.getValue());
       } catch (SQLException e) {
         log4j.error("Error obtaining Oracle's DB identifier");
         return "";
@@ -322,7 +325,10 @@ public class SystemInfo {
             "select datid from pg_stat_database where datname=?", param);
         FieldProvider[] results = q.select();
         if (results.length != 0) {
-          return results[0].getField("datid");
+          String id = results[0].getField("datid");
+          CRC32 crc = new CRC32();
+          crc.update(id.getBytes());
+          return Long.toHexString(crc.getValue());
         }
       } catch (Exception e) {
         log4j.error("Error getting PG DB ID", e);
