@@ -295,7 +295,10 @@ public class SystemInfo {
         st = con.createStatement();
         st.execute("select dbid from v$database");
         st.getResultSet().next();
+
         String id = st.getResultSet().getString(1);
+        // Add schema name to id, it's possible to have multiple schemas in the same db
+        id += obProps.getProperty("bbdd.user");
         return id;
       } catch (SQLException e) {
         log4j.error("Error obtaining Oracle's DB identifier");
