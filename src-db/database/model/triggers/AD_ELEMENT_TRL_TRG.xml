@@ -38,12 +38,13 @@ BEGIN
   IF UPDATING
   THEN
     IF (   COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.')
-        OR COALESCE (:OLD.Description, '.') <>
-                                              COALESCE (:NEW.Description, '.')
+        OR COALESCE (:OLD.Description, '.') <> COALESCE (:NEW.Description, '.')
         OR COALESCE (:OLD.HELP, '.') <> COALESCE (:NEW.HELP, '.')
         OR COALESCE (:OLD.PrintName, '.') <> COALESCE (:NEW.PrintName, '.')
-        OR COALESCE (:OLD.IsTranslated, '.') <>
-                                             COALESCE (:NEW.IsTranslated, '.')
+        OR COALESCE (:OLD.IsTranslated, '.') <> COALESCE (:NEW.IsTranslated, '.')
+        OR COALESCE (:OLD.PO_NAME, '.') <> COALESCE (:NEW.PO_NAME, '.')
+        OR COALESCE (:OLD.PO_Description, '.') <> COALESCE (:NEW.PO_Description, '.')
+        OR COALESCE (:OLD.PO_HELP, '.') <> COALESCE (:NEW.PO_HELP, '.')
        )
     THEN
       -- Field
