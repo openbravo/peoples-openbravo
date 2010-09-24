@@ -313,11 +313,11 @@ public class ApplyModules extends HttpSecureAppServlet {
         return nodeData;
       } else {
         BuildTranslation buildTranslation = getBuildTranslationFromFile(vars.getLanguage());
-        buildTranslation.setBuild(build);
         if (buildTranslation == null) {
           FieldProvider[] nodeData = build.getFieldProvidersForBuild();
           return nodeData;
         }
+        buildTranslation.setBuild(build);
         FieldProvider[] nodeData = buildTranslation.getFieldProvidersForBuild();
         return nodeData;
       }
