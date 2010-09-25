@@ -217,7 +217,6 @@ public class Column extends ModelObject {
     return getDomainType() instanceof PrimitiveDomainType;
   }
 
-  @SuppressWarnings("unchecked")
   public Class<?> getPrimitiveType() {
     if (isPrimitiveType()) {
       return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
