@@ -249,9 +249,7 @@ public class Column extends ModelObject {
       // note calls isSuperActive(), if it would call isActive there is a danger
       // for infinite looping, see issue:
       // https://issues.openbravo.com/view.php?id=8632
-      if (thatColumn != null
-          && (!thatColumn.isSuperActive() || !thatColumn.getTable().isActive() || thatColumn
-              .getTable().isView())) {
+      if (thatColumn != null && (!thatColumn.isSuperActive() || !thatColumn.getTable().isActive())) {
         log.error("Column " + this + " refers to a non active table or column or to a view"
             + thatColumn);
       }
