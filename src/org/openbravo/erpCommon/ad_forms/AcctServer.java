@@ -991,7 +991,7 @@ public abstract class AcctServer {
     }
     if (m_fact[index] == null)
       return STATUS_Error;
-    if (Status.equals(STATUS_InvalidCost))
+    if (!Status.equals(STATUS_Error))
       return Status;
     Status = STATUS_PostPrepared;
 
