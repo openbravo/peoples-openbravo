@@ -47,6 +47,7 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -175,6 +176,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
         sys.setActivationKey(buf.toString());
         sys.setInstanceKey(vars.getStringParameter("publicKey"));
         ActivationKey.setInstance(ak);
+        SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+        sysInfo.setInstancePurpose(ak.getProperty("purpose"));
+        OBDal.getInstance().save(sysInfo);
+
         msg.setType("Success");
         msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
       }
