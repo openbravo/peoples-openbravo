@@ -489,35 +489,27 @@ public class HeartbeatProcess implements Process {
           JSONArray jsonArrayResultRows = new JSONArray();
           int row = 0;
 
-          for (Object strResult : (List<Object>) customQuery.list()) {
+          for (Object objResult : (List<Object>) customQuery.list()) {
             row += 1;
             JSONArray jsonArrayResultRowValues = new JSONArray();
 
-            if (strResult instanceof Object[]) {
-              // query returns multiple fields
-              Object[] resultList = (Object[]) strResult;
-              for (int j = 0; j < resultList.length; j++) {
-                jsonArrayResultRowValues.put(resultList[j]);
-                String fieldName = null;
-                if (properties != null && properties.length > j) {
-                  fieldName = properties[j];
-                }
-                if (fieldName == null) {
-                  fieldName = "??";
-                }
-                logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
-              }
-            } else {
-              // query returns a single field
-              jsonArrayResultRowValues.put(strResult);
+            Object[] resultList = new Object[1];
+            if (objResult instanceof Object[])
+              resultList = (Object[]) objResult;
+            else
+              resultList[0] = objResult;
+
+            for (int j = 0; j < resultList.length; j++) {
+              jsonArrayResultRowValues.put(resultList[j]);
+
               String fieldName = null;
-              if (properties != null && properties.length > 0) {
-                fieldName = properties[0];
+              if (properties != null && properties.length > j) {
+                fieldName = properties[j];
               }
               if (fieldName == null) {
                 fieldName = "??";
               }
-              logCustomQueryResult(hbLogCQ, row, fieldName, strResult.toString());
+              logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
             }
             jsonArrayResultRows.put(jsonArrayResultRowValues);
           }
