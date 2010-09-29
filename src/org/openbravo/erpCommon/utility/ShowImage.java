@@ -28,10 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.utility.Image;
-import org.openbravo.utils.FileUtility;
 
 /**
  * 
@@ -47,41 +43,23 @@ public class ShowImage extends HttpSecureAppServlet {
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    OBContext.setAdminMode();
-    try {
-      VariablesSecureApp vars = new VariablesSecureApp(request);
-      String id = vars.getStringParameter("id");
-      Image img = null;
-      try {
-        img = OBDal.getInstance().get(Image.class, id);
-      } catch (Exception e) {
-        log4j.error("Could not load image from database", e);
-      }
 
-      if (img != null) {
-        byte[] imageBytes = img.getBindaryData();
-        if (imageBytes != null) {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    String id = vars.getStringParameter("id");
 
-          final String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(imageBytes);
+    // read the image data
+    byte[] img = Utility.getImage(id);
 
-          if (!mimeType.equals("")) {
-            response.setContentType(mimeType);
-          }
-          OutputStream out = response.getOutputStream();
-          response.setContentLength(imageBytes.length);
-
-          out.write(imageBytes);
-          out.close();
-        }
-      } else { // If there is not image to show return blank.gif
-        FileUtility f = new FileUtility(this.globalParameters.prefix, "web/images/blank.gif",
-            false, true);
-        f.dumpFile(response.getOutputStream());
-        response.getOutputStream().flush();
-        response.getOutputStream().close();
-      }
-    } finally {
-      OBContext.restorePreviousMode();
+    // write the mimetype
+    final String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+    if (!mimeType.equals("")) {
+      response.setContentType(mimeType);
     }
+
+    // write the image
+    OutputStream out = response.getOutputStream();
+    response.setContentLength(img.length);
+    out.write(img);
+    out.close();
   }
 }

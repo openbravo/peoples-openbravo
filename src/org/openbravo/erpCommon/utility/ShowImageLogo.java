@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,13 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.system.ClientInformation;
-import org.openbravo.model.ad.system.SystemInformation;
-import org.openbravo.model.ad.utility.Image;
-import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.utils.FileUtility;
 
 /**
  * 
@@ -46,75 +39,29 @@ public class ShowImageLogo extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
 
   /**
-   * Receiving an id parameter it looks in database for the image with that id and displays it
+   * Receiving an logo parameter and organization id, it looks in database for the corresponding
+   * logo and displays it
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
+
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String logo = vars.getStringParameter("logo");
-    if (logo == null || logo.equals(""))
-      return;
+    String org = vars.getStringParameter("orgId");
 
-    OBContext.setAdminMode();
-    try {
-      Image img = null;
-      if (logo.equals("yourcompanylogin")) {
-        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyLoginImage();
-      } else if (logo.equals("youritservicelogin")) {
-        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourItServiceLoginImage();
-      } else if (logo.equals("yourcompanymenu")) {
-        img = OBDal.getInstance().get(ClientInformation.class,
-            OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyMenuImage();
-        if (img == null)
-          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyMenuImage();
-      } else if (logo.equals("yourcompanybig")) {
-        img = OBDal.getInstance().get(ClientInformation.class,
-            OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyBigImage();
-        if (img == null)
-          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
-      } else if (logo.equals("yourcompanydoc")) {
-        String orgId = vars.getStringParameter("orgId");
-        if (orgId != null && !orgId.equals("")) {
-          Organization org = OBDal.getInstance().get(Organization.class, orgId);
-          img = org.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
-        }
-        if (img == null)
-          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
-      } else
-        return;
-      byte[] imageBytes = null;
-      if (img != null) {
-        imageBytes = img.getBindaryData();
-        OutputStream out = response.getOutputStream();
-        response.setContentLength(imageBytes.length);
-        out.write(imageBytes);
-        out.close();
-      } else {
-        String imagePath = null;
-        if (logo.equals("yourcompanylogin")) {
-          imagePath = "web/images/CompanyLogo_big.png";
-        } else if (logo.equals("youritservicelogin")) {
-          imagePath = "web/images/SupportLogo_big.png";
-        } else if (logo.equals("yourcompanymenu")) {
-          imagePath = "web/images/CompanyLogo_small.png";
-        } else if (logo.equals("yourcompanybig")) {
-          imagePath = "web/skins/ltr/Default/Login/initialOpenbravoLogo.png";
-        } else if (logo.equals("yourcompanydoc")) {
-          imagePath = "web/images/CompanyLogo_big.png";
-        }
-        if (imagePath == null) {
-          // If there is not image to show return blank.gif
-          imagePath = "web/images/blank.gif";
-        }
+    // read the image data
+    byte[] img = Utility.getImageLogo(logo, org);
 
-        FileUtility f = new FileUtility(this.globalParameters.prefix, imagePath, false, true);
-        f.dumpFile(response.getOutputStream());
-        response.getOutputStream().flush();
-        response.getOutputStream().close();
-      }
-
-    } finally {
-      OBContext.restorePreviousMode();
+    // write the mimetype
+    final String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+    if (!mimeType.equals("")) {
+      response.setContentType(mimeType);
     }
+
+    // write the image
+    OutputStream out = response.getOutputStream();
+    response.setContentLength(img.length);
+    out.write(img);
+    out.close();
   }
 }
