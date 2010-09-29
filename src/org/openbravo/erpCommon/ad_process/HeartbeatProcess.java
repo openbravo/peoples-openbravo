@@ -37,6 +37,11 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -72,6 +77,7 @@ public class HeartbeatProcess implements Process {
   private static final String DISABLING_BEAT = "D";
   private static final String DECLINING_BEAT = "DEC";
   private static final String DEFERRING_BEAT = "DEF";
+  private static final String CUSTOMQUERY_BEAT = "CQ";
 
   private static final String UNKNOWN_BEAT = "U";
   public static final String HB_PROCESS_ID = "1005800000";
@@ -133,9 +139,9 @@ public class HeartbeatProcess implements Process {
       String queryStr = createQueryStr(beatType);
       String response = sendInfo(queryStr);
       logSystemInfo(beatType);
-      List<Alert> updates = parseUpdates(response);
-      saveUpdateAlerts(connection, updates);
       updateHeartbeatStatus(beatType);
+
+      parseResponse(response);
 
     } catch (Exception e) {
       logger.logln(e.getMessage());
@@ -358,13 +364,30 @@ public class HeartbeatProcess implements Process {
 
   /**
    * @param response
-   * @return the list of updates
    */
-  private List<Alert> parseUpdates(String response) {
+  private void parseResponse(String response) {
     logger.logln(logger.messageDb("HB_UPDATES", ctx.getLanguage()));
     if (response == null)
-      return null;
-    String[] updates = response.split("::");
+      return;
+    try {
+      JSONObject json = new JSONObject(response);
+      String beatId = (String) json.get("beatId");
+
+      // Get alerts from JSONOBject and process them
+      String alertsResponse = (String) json.get("alerts");
+      parseAlerts(alertsResponse);
+
+      // Get Custom Queries from JSONObject and process them
+      processCustomQueries((JSONArray) json.get("customQueries"), beatId);
+
+    } catch (JSONException e) {
+      log.error(e.getMessage(), e);
+    }
+
+  }
+
+  private void parseAlerts(String alertsResponse) {
+    String[] updates = alertsResponse.split("::");
     List<Alert> alerts = new ArrayList<Alert>();
     Pattern pattern = Pattern.compile("\\[recordId=\\d+\\]");
     for (String update : updates) {
@@ -380,21 +403,72 @@ public class HeartbeatProcess implements Process {
       alert.setDescription(description);
       alerts.add(alert);
     }
-    return alerts;
+    saveUpdateAlerts(alerts);
+
   }
 
   /**
-   * @param conn
    * @param updates
    */
-  private void saveUpdateAlerts(ConnectionProvider conn, List<Alert> updates) {
+  private void saveUpdateAlerts(List<Alert> updates) {
     if (updates == null) {
       logger.logln("No Updates found...");
       return;
     }
     // info("  ");
     for (Alert update : updates) {
-      update.save(conn);
+      update.save(connection);
+    }
+  }
+
+  /**
+   * 
+   * @param jsonArrayCQueries
+   * @param beatId
+   * @throws JSONException
+   */
+  @SuppressWarnings("unchecked")
+  private void processCustomQueries(JSONArray jsonArrayCQueries, String beatId)
+      throws JSONException {
+    if ("null".equals(jsonArrayCQueries.get(0)))
+      return;
+
+    JSONObject jsonObjectCQReturn = new JSONObject();
+    for (int i = 0; i < jsonArrayCQueries.length(); i++) {
+      JSONObject jsonCustomQuery = (JSONObject) jsonArrayCQueries.get(i);
+      String strQId = (String) jsonCustomQuery.get("QId");
+      String strQName = (String) jsonCustomQuery.get("QName");
+      logger.logln("Processing custom query: " + strQName);
+      String strQType = (String) jsonCustomQuery.get("QType");
+      if ("HQL".equals(strQType)) {
+        String strHQL = (String) jsonCustomQuery.get("HQL");
+        Session obSession = OBDal.getInstance().getSession();
+        Query customQuery = obSession.createQuery(strHQL);
+        String[] properties = customQuery.getReturnAliases();
+        JSONArray jsonArrayResultRows = new JSONArray();
+        for (String[] strResult : (List<String[]>) customQuery.list()) {
+          JSONArray jsonArrayResultRowValues = new JSONArray();
+          for (int j = 0; j < strResult.length; j++)
+            jsonArrayResultRowValues.put(strResult[i]);
+          jsonArrayResultRows.put(jsonArrayResultRowValues);
+        }
+        JSONObject jsonResult = new JSONObject();
+        jsonResult.put("properties", properties);
+        jsonResult.put("values", jsonArrayResultRows);
+        if (jsonArrayResultRows.length() == 0)
+          jsonArrayResultRows.put("null");
+        jsonObjectCQReturn.put(strQId, jsonArrayResultRows);
+      }
+    }
+    JSONObject jsonObjectReturn = new JSONObject();
+    jsonObjectReturn.put("beatType", CUSTOMQUERY_BEAT);
+    jsonObjectReturn.put("beatId", beatId);
+    jsonObjectReturn.put("customQueries", jsonObjectCQReturn);
+
+    try {
+      sendInfo(jsonObjectReturn.toString());
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
     }
   }
 
