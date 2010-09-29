@@ -423,17 +423,34 @@ public class HeartbeatProcess implements Process {
 
   /**
    * Gets a JSON Array with the custom queries and sends back to the heartbeat server the results.
-   * The results of the queries are also stored on the heartbeat local log.
+   * The results of the queries are also stored on the heartbeat local log.</p>
    * 
    * The result that is sent to the heartbeat server is a JSON Object that contains the beat type,
-   * the beat id and another JSON Object with the results of the queries.
+   * the beat id and another JSON Object with the results of the queries.</p>
    * 
    * The JSON Object with the results contains one JSON Object for each executed query identified by
    * the Query Id. This JSON Object is formed by 2 JSON Arrays. The first one, identified by
    * "properties" contains a String array with the header of each returned property. The second one
    * identified by "values" contains a JSON Array for each returned row, each row is a JSON Array
-   * with the value of each returned property.
+   * with the value of each returned property.</p>
    * 
+   * Example of a returned JSON Object string:</p>
+   * 
+   * <code>
+   * {<br>
+   * &nbsp;beatType:CUSTOMQUERY_BEAT,<br>
+   * &nbsp;beatId:1234-5678-90,<br>
+   * &nbsp;customQueries:{<br>
+   * &nbsp;&nbsp;queryId1:{<br>
+   * &nbsp;&nbsp;&nbsp;properties:{"QId1property1","QId1property2"},<br>
+   * &nbsp;&nbsp;&nbsp;values:[[row1value1,row1value2],[row2value1, row2value2],[row3value1, row3value2]]<br>
+   * &nbsp;&nbsp;},<br>
+   * &nbsp;&nbsp;queryId2:{<br>
+   * &nbsp;&nbsp;&nbsp;properties:{"QId2property1","QId2property2"},<br>
+   * &nbsp;&nbsp;&nbsp;values:[[row1value1,row1value2],[row2value1, row2value2],[row3value1, row3value2]]<br>
+   * &nbsp;&nbsp;}<br>
+   * &nbsp;}<br>
+   * }<br></code></p>
    * 
    * @param jsonArrayCQueries
    *          An array of JSON Objects with all the custom queries to be executed. Each JSON Object
