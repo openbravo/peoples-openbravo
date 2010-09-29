@@ -67,6 +67,7 @@ import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class SystemInfo {
 
@@ -80,6 +81,9 @@ public class SystemInfo {
   private static BigDecimal avgUsers = BigDecimal.ZERO;
   private static BigDecimal usagePercentageTime = BigDecimal.ZERO;
   private static int maxUsers = 0;
+  private static String systemIdentifier;
+  private static String macAddress;
+  private static String databaseIdentifier;
 
   static {
     systemInfo = new HashMap<Item, String>();
@@ -122,7 +126,7 @@ public class SystemInfo {
       systemInfo.put(i, getSystemIdentifier(conn));
       break;
     case MAC_IDENTIFIER:
-      systemInfo.put(i, getMacAddress());
+      systemInfo.put(i, calculateMacAddress());
       break;
     case DB_IDENTIFIER:
       systemInfo.put(i, getDBIdentifier(conn));
@@ -218,6 +222,24 @@ public class SystemInfo {
     }
   }
 
+  public final static String getSystemIdentifier() throws ServletException {
+    if (systemIdentifier == null)
+      systemIdentifier = getSystemIdentifier(new DalConnectionProvider());
+    return systemIdentifier;
+  }
+
+  public final static String getDBIdentifier() {
+    if (databaseIdentifier == null)
+      databaseIdentifier = getDBIdentifier(new DalConnectionProvider());
+    return databaseIdentifier;
+  }
+
+  public final static String getMacAddress() {
+    if (macAddress == null)
+      macAddress = calculateMacAddress();
+    return macAddress;
+  }
+
   private final static String getSystemIdentifier(ConnectionProvider conn) throws ServletException {
     validateConnection(conn);
     String systemIdentifier = SystemInfoData.selectSystemIdentifier(conn);
@@ -236,7 +258,7 @@ public class SystemInfo {
    * 
    * @return
    */
-  private final static String getMacAddress() {
+  private final static String calculateMacAddress() {
     List<NetworkInterface> interfaces = new ArrayList<NetworkInterface>();
     try {
       interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
