@@ -244,7 +244,7 @@ public class HeartbeatProcess implements Process {
     }
     log.info("Heartbeat sending: '" + queryStr + "'");
     logger.logln(queryStr);
-    return HttpsUtils.sendSecure(url, queryStr, CERT_ALIAS, "changeit");
+    return HttpsUtils.sendSecure(url, queryStr);
   }
 
   private void logSystemInfo(String beatType) {

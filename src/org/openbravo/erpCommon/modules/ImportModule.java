@@ -1621,7 +1621,7 @@ public class ImportModule {
       if (strUrl.startsWith("https://")) {
         ActivationKey ak = ActivationKey.getInstance();
         String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
-        conn = HttpsUtils.sendHttpsRequest(url, instanceKey, "localhost-1", "changeit");
+        conn = HttpsUtils.sendHttpsRequest(url, instanceKey);
       } else {
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Keep-Alive", "300");

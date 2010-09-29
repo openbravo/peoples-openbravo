@@ -125,7 +125,7 @@ public class ActiveInstanceProcess implements Process {
 
     URL url = new URL(BUTLER_URL);
     try {
-      String result = HttpsUtils.sendSecure(url, content, CERT_ALIAS, "changeit");
+      String result = HttpsUtils.sendSecure(url, content);
       log.debug("Activation key response:" + result);
 
       return result.split("\n");
