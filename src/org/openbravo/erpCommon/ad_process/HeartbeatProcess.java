@@ -292,11 +292,11 @@ public class HeartbeatProcess implements Process {
             .getLabel()));
         try {
           hbLog.setFirstLogin(SystemInfo.parseDate(systemInfo
-              .getProperty(SystemInfo.Item.FIRT_LOGIN.getLabel())));
+              .getProperty(SystemInfo.Item.FIRST_LOGIN.getLabel())));
         } catch (ParseException e) {
           log.warn("Incorrect date of first login: "
-              + systemInfo.getProperty(systemInfo
-                  .getProperty(SystemInfo.Item.FIRT_LOGIN.getLabel())));
+              + systemInfo.getProperty(systemInfo.getProperty(SystemInfo.Item.FIRST_LOGIN
+                  .getLabel())));
         }
         try {
           hbLog.setLastLogin(SystemInfo.parseDate(systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN
