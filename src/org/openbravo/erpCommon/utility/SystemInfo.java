@@ -188,7 +188,7 @@ public class SystemInfo {
     case OBPS_INSTANCE:
       systemInfo.put(i, getOBPSInstance());
       break;
-    case FIRT_LOGIN:
+    case FIRST_LOGIN:
       systemInfo.put(i, sd.format(firstLogin));
       break;
     case LAST_LOGIN:
@@ -649,7 +649,7 @@ public class SystemInfo {
         false), CODE_REVISION("codeRevision", false), NUM_REGISTERED_USERS("numRegisteredUsers",
         false), ISHEARTBEATACTIVE("isheartbeatactive", false), ISPROXYREQUIRED("isproxyrequired",
         false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), JAVA_VERSION(
-        "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRT_LOGIN(
+        "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRST_LOGIN(
         "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
         "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
         "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
