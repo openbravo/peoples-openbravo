@@ -27,6 +27,7 @@ import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -474,32 +475,33 @@ public class HeartbeatProcess implements Process {
       logger.logln("Processing custom query: " + strQName);
       String strQType = (String) jsonCustomQuery.get("QType");
       if ("HQL".equals(strQType)) {
-        String strHQL = (String) jsonCustomQuery.get("HQL");
+        String strHQL = (String) jsonCustomQuery.get("QCode");
         Session obSession = OBDal.getInstance().getSession();
         Query customQuery = obSession.createQuery(strHQL);
         String[] properties = customQuery.getReturnAliases();
         JSONArray jsonArrayResultRows = new JSONArray();
-        for (String[] strResult : (List<String[]>) customQuery.list()) {
+        for (Object[] strResult : (List<Object[]>) customQuery.list()) {
           JSONArray jsonArrayResultRowValues = new JSONArray();
-          for (int j = 0; j < strResult.length; j++)
-            jsonArrayResultRowValues.put(strResult[i]);
+          for (int j = 0; j < strResult.length; j++) {
+            jsonArrayResultRowValues.put(strResult[j]);
+          }
           jsonArrayResultRows.put(jsonArrayResultRowValues);
         }
         if (customQuery.list().isEmpty())
           jsonArrayResultRows.put("null");
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put("properties", properties);
+        jsonResult.put("properties", Arrays.asList(properties));
         jsonResult.put("values", jsonArrayResultRows);
         jsonObjectCQReturn.put(strQId, jsonResult);
       }
     }
     JSONObject jsonObjectReturn = new JSONObject();
-    jsonObjectReturn.put("beatType", CUSTOMQUERY_BEAT);
     jsonObjectReturn.put("beatId", beatId);
     jsonObjectReturn.put("customQueries", jsonObjectCQReturn);
 
     try {
-      sendInfo(jsonObjectReturn.toString());
+      String info = "beatType=" + CUSTOMQUERY_BEAT + "&q=" + jsonObjectReturn.toString();
+      sendInfo(info);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }
