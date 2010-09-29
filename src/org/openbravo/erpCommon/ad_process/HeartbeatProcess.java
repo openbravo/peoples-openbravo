@@ -422,9 +422,25 @@ public class HeartbeatProcess implements Process {
   }
 
   /**
+   * Gets a JSON Array with the custom queries and sends back to the heartbeat server the results.
+   * The results of the queries are also stored on the heartbeat local log.
+   * 
+   * The result that is sent to the heartbeat server is a JSON Object that contains the beat type,
+   * the beat id and another JSON Object with the results of the queries.
+   * 
+   * The JSON Object with the results contains one JSON Object for each executed query identified by
+   * the Query Id. This JSON Object is formed by 2 JSON Arrays. The first one, identified by
+   * "properties" contains a String array with the header of each returned property. The second one
+   * identified by "values" contains a JSON Array for each returned row, each row is a JSON Array
+   * with the value of each returned property.
+   * 
    * 
    * @param jsonArrayCQueries
+   *          An array of JSON Objects with all the custom queries to be executed. Each JSON Object
+   *          contains the query Id, the query name, the query type and depending of the type the
+   *          corresponding code.
    * @param beatId
+   *          The identifier of the beat on the heartbeat server.
    * @throws JSONException
    */
   @SuppressWarnings("unchecked")
@@ -452,12 +468,12 @@ public class HeartbeatProcess implements Process {
             jsonArrayResultRowValues.put(strResult[i]);
           jsonArrayResultRows.put(jsonArrayResultRowValues);
         }
+        if (customQuery.list().isEmpty())
+          jsonArrayResultRows.put("null");
         JSONObject jsonResult = new JSONObject();
         jsonResult.put("properties", properties);
         jsonResult.put("values", jsonArrayResultRows);
-        if (jsonArrayResultRows.length() == 0)
-          jsonArrayResultRows.put("null");
-        jsonObjectCQReturn.put(strQId, jsonArrayResultRows);
+        jsonObjectCQReturn.put(strQId, jsonResult);
       }
     }
     JSONObject jsonObjectReturn = new JSONObject();
