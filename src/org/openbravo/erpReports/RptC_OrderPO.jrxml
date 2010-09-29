@@ -322,7 +322,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID FROM AD_ORG o JOIN AD_OrgType t USING
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.lang.String"><![CDATA[$P{BASE_WEB}+"/../utility/ShowImageLogo?logo=yourcompanydoc&orgId=" + $F{ORGANIZATIONID}]]></imageExpression>
+					<imageExpression class="java.awt.Image"><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanydoc", $F{ORGANIZATIONID})]]></imageExpression>
 				</image>
 				<line direction="TopDown">
 					<reportElement
