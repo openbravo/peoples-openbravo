@@ -490,28 +490,33 @@ public class HeartbeatProcess implements Process {
           int row = 0;
 
           for (Object objResult : (List<Object>) customQuery.list()) {
-            row += 1;
-            JSONArray jsonArrayResultRowValues = new JSONArray();
+            try {
+              row += 1;
+              JSONArray jsonArrayResultRowValues = new JSONArray();
 
-            Object[] resultList = new Object[1];
-            if (objResult instanceof Object[])
-              resultList = (Object[]) objResult;
-            else
-              resultList[0] = objResult;
+              Object[] resultList = new Object[1];
+              if (objResult instanceof Object[])
+                resultList = (Object[]) objResult;
+              else
+                resultList[0] = objResult;
 
-            for (int j = 0; j < resultList.length; j++) {
-              jsonArrayResultRowValues.put(resultList[j]);
+              for (int j = 0; j < resultList.length; j++) {
+                jsonArrayResultRowValues.put(resultList[j]);
 
-              String fieldName = null;
-              if (properties != null && properties.length > j) {
-                fieldName = properties[j];
+                String fieldName = null;
+                if (properties != null && properties.length > j) {
+                  fieldName = properties[j];
+                }
+                if (fieldName == null) {
+                  fieldName = "??";
+                }
+                logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
               }
-              if (fieldName == null) {
-                fieldName = "??";
-              }
-              logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
+              jsonArrayResultRows.put(jsonArrayResultRowValues);
+            } catch (Exception e) {
+              // ignore exception
+              log.error("Error processing custom query: " + strQName, e);
             }
-            jsonArrayResultRows.put(jsonArrayResultRowValues);
           }
 
           if (customQuery.list().isEmpty())
