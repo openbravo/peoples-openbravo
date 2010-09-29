@@ -553,6 +553,10 @@ public class HeartbeatProcess implements Process {
     hbLogCQ.setType(strQType);
     hbLogCQ.setValidationCode(strHQL);
 
+    List<HeartbeatLogCustomQuery> hbLogCQs = hbLog.getADHeartbeatLogCustomQueryList();
+    hbLogCQs.add(hbLogCQ);
+    hbLog.setADHeartbeatLogCustomQueryList(hbLogCQs);
+
     return hbLogCQ;
   }
 
@@ -564,6 +568,10 @@ public class HeartbeatProcess implements Process {
     hbLogCQRow.setPropertyname(strProperty);
     hbLogCQRow.setPropertyvalue(strValue);
     hbLogCQRow.setRowno(new BigDecimal(row));
+
+    List<HeartbeatLogCustomQueryRow> hbLogCQRows = hbLogCQ.getADHeartbeatLogCustomQueryRowList();
+    hbLogCQRows.add(hbLogCQRow);
+    hbLogCQ.setADHeartbeatLogCustomQueryRowList(hbLogCQRows);
   }
 
   public enum HeartBeatOrRegistration {
