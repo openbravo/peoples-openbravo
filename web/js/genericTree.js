@@ -117,8 +117,14 @@
   
   function gt_selectAllNodes(value){
     boxes = gt_getElementsByName('inpNodes','input');
-    for (i=0; i<boxes.length; i++)
-      boxes[i].checked=value;
+    for (i=0; i<boxes.length; i++){
+    	if(boxes[i].disabled == true){
+    		continue;
+    	}
+    	boxes[i].checked=value;
+    }
+    gt_setActiveUninstall('buttonUninstall');
+    gt_setActiveUninstall('buttonDisable');
   }
 
   var gt_focusedNode;

@@ -173,7 +173,13 @@ public class NamingUtil {
         return propertyName;
       }
       final Field fld = clz.getField(PROPERTY_CONSTANT_PREFIX + propertyName.toUpperCase());
-      return (String) fld.get(null);
+      final String fldPropertyValue = (String) fld.get(null);
+      // see issue:
+      // 14619: Generate entities do not notice that a field name has changed one letter to upper
+      if (fldPropertyValue != null && propertyName.equals(fldPropertyValue)) {
+        return fldPropertyValue;
+      }
+      return propertyName;
     } catch (final NoSuchFieldException e) {
       // ignoring on purpose, exception can occur when a new column is
       // added and its business object class has not yet been generated

@@ -23,7 +23,6 @@ $BODY$ DECLARE
 BEGIN
  FOR Cur_Triggers IN (SELECT OBJECT_NAME AS NAME, TABLE_NAME
                       FROM USER_OBJECTS
-                      WHERE OBJECT_TYPE = 'TRIGGER'
                       ORDER BY OBJECT_NAME) LOOP
     v_seqNo := v_seqNo + 1;
   --      INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' DISABLE');
@@ -96,7 +95,6 @@ $BODY$ DECLARE
 BEGIN
  FOR Cur_Triggers IN (SELECT OBJECT_NAME AS NAME, TABLE_NAME
                       FROM USER_OBJECTS
-                      WHERE OBJECT_TYPE = 'TRIGGER'
                       ORDER BY OBJECT_NAME) LOOP
       v_seqNo := v_seqNo + 1;
 --    INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' ENABLE');
