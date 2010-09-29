@@ -489,12 +489,35 @@ public class HeartbeatProcess implements Process {
           JSONArray jsonArrayResultRows = new JSONArray();
           int row = 0;
 
-          for (Object[] strResult : (List<Object[]>) customQuery.list()) {
+          for (Object strResult : (List<Object>) customQuery.list()) {
             row += 1;
             JSONArray jsonArrayResultRowValues = new JSONArray();
-            for (int j = 0; j < strResult.length; j++) {
-              jsonArrayResultRowValues.put(strResult[j]);
-              logCustomQueryResult(hbLogCQ, row, properties[j], strResult[j].toString());
+
+            if (strResult instanceof Object[]) {
+              // query returns multiple fields
+              Object[] resultList = (Object[]) strResult;
+              for (int j = 0; j < resultList.length; j++) {
+                jsonArrayResultRowValues.put(resultList[j]);
+                String fieldName = null;
+                if (properties != null && properties.length > j) {
+                  fieldName = properties[j];
+                }
+                if (fieldName == null) {
+                  fieldName = "??";
+                }
+                logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
+              }
+            } else {
+              // query returns a single field
+              jsonArrayResultRowValues.put(strResult);
+              String fieldName = null;
+              if (properties != null && properties.length > 0) {
+                fieldName = properties[0];
+              }
+              if (fieldName == null) {
+                fieldName = "??";
+              }
+              logCustomQueryResult(hbLogCQ, row, fieldName, strResult.toString());
             }
             jsonArrayResultRows.put(jsonArrayResultRowValues);
           }
@@ -503,7 +526,7 @@ public class HeartbeatProcess implements Process {
             jsonArrayResultRows.put("null");
 
           JSONObject jsonResult = new JSONObject();
-          jsonResult.put("properties", Arrays.asList(properties));
+          jsonResult.put("properties", properties == null ? null : Arrays.asList(properties));
           jsonResult.put("values", jsonArrayResultRows);
           jsonObjectCQReturn.put(strQId, jsonResult);
         }
