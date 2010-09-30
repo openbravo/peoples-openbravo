@@ -648,6 +648,6 @@ public class HeartbeatProcess implements Process {
     }
 
     // Must exist a scheduled process request for HB and must be enable at SystemInfo level
-    return prRequestList.size() > 0 && sys.isEnableHeartbeat();
+    return prRequestList.size() > 0 && sys.isEnableHeartbeat() != null && sys.isEnableHeartbeat();
   }
 }
