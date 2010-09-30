@@ -55,6 +55,7 @@ import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -69,6 +70,7 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.SessionUsageAudit;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -378,6 +380,21 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         if (classInfo.id != null && !classInfo.id.equals("")) {
           SessionInfo.setProcessId(classInfo.id);
           SessionInfo.setProcessType(classInfo.type);
+        }
+
+        if (!"".equals(classInfo.type) && !"".equals(classInfo.id)) {
+          // Session Usage Audit
+          SessionUsageAudit usageAudit = OBProvider.getInstance().get(SessionUsageAudit.class);
+          usageAudit.setJavaClassName(this.getClass().getName());
+          usageAudit.setModule(OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
+              classInfo.adModuleId));
+          usageAudit
+              .setSession(OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class,
+                  vars1.getSessionValue("#AD_Session_ID")));
+          usageAudit.setObject(classInfo.id);
+          usageAudit.setCommand(vars1.getCommand());
+          usageAudit.setObejctType(classInfo.type);
+          OBDal.getInstance().save(usageAudit);
         }
 
         // Autosave logic
