@@ -1842,9 +1842,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       return;
     }
 
-    if (enable
-        && module.isCommercial()
-        && ActivationKey.getInstance().isModuleSubscribed(module.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+    if (enable && !ActivationKey.getInstance().isModuleEnableable(module)) {
       log4j.warn("Cannot enable not subscribed commercial module " + module);
       notEnabledModules.add(module.getName());
     } else {
