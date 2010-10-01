@@ -73,8 +73,6 @@ public class HeartbeatProcess implements Process {
 
   private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
 
-  private static final String CERT_ALIAS = "openbravo-butler";
-
   private static final String ENABLING_BEAT = "E";
   private static final String SCHEDULED_BEAT = "S";
   private static final String DISABLING_BEAT = "D";
