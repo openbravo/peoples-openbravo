@@ -5,7 +5,7 @@
 <!--0-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--0-->  <NAME><![CDATA[core]]></NAME>
+<!--0-->  <NAME><![CDATA[Core]]></NAME>
 <!--0-->  <VERSION><![CDATA[2.50.18452]]></VERSION>
 <!--0-->  <DESCRIPTION><![CDATA[Core module is the base one]]></DESCRIPTION>
 <!--0-->  <HELP><![CDATA[Core module is the base one, all developments in core are included as part of the standard Openbravo ERP.]]></HELP>
@@ -15,7 +15,7 @@
 You may obtain a copy of the License at http://www.openbravo.com/legal/license.html or in the legal folder of the Openbravo ERP core distribution.]]></LICENSE>
 <!--0-->  <JAVAPACKAGE><![CDATA[org.openbravo]]></JAVAPACKAGE>
 <!--0-->  <LICENSETYPE><![CDATA[OBPL]]></LICENSETYPE>
-<!--0-->  <AUTHOR><![CDATA[Openbravo SLU]]></AUTHOR>
+<!--0-->  <AUTHOR><![CDATA[Openbravo S.L.U.]]></AUTHOR>
 <!--0-->  <ISTRANSLATIONREQUIRED><![CDATA[Y]]></ISTRANSLATIONREQUIRED>
 <!--0-->  <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
 <!--0-->  <HASCHARTOFACCOUNTS><![CDATA[N]]></HASCHARTOFACCOUNTS>
