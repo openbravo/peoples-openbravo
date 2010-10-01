@@ -64,6 +64,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.access.Session;
+import org.openbravo.model.ad.access.SessionUsageAudit;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
@@ -462,12 +463,19 @@ public class SystemInfo {
       OBCriteria<Module> qMods = OBDal.getInstance().createCriteria(Module.class);
       qMods.addOrder(Order.asc(Module.PROPERTY_JAVAPACKAGE));
       JSONArray mods = new JSONArray();
+      Date startOfPeriod = getStartOfPeriod().getTime();
       for (Module mod : qMods.list()) {
         ArrayList<String> modInfo = new ArrayList<String>();
+        OBCriteria<SessionUsageAudit> qUsage = OBDal.getInstance().createCriteria(
+            SessionUsageAudit.class);
+        qUsage.add(Expression.eq(SessionUsageAudit.PROPERTY_MODULE, mod));
+        qUsage.add(Expression.ge(SessionUsageAudit.PROPERTY_CREATIONDATE, startOfPeriod));
+
         modInfo.add(mod.getId());
         modInfo.add(mod.getVersion());
         modInfo.add(mod.isEnabled() ? "Y" : "N");
         modInfo.add(mod.getName());
+        modInfo.add(Integer.toString(qUsage.count()));
         mods.put(modInfo);
       }
       return mods.toString();
@@ -563,8 +571,8 @@ public class SystemInfo {
     try {
       long computationTime = System.currentTimeMillis();
       Calendar now = Calendar.getInstance();
-      Calendar startOfPeriod = (Calendar) now.clone();
-      startOfPeriod.add(Calendar.DAY_OF_MONTH, -30);
+      Calendar startOfPeriod = getStartOfPeriod();
+
       OBCriteria<Session> qSession = OBDal.getInstance().createCriteria(Session.class);
       qSession.add(Expression.isNotNull(Session.PROPERTY_LASTPING));
       qSession.add(Expression.ge(Session.PROPERTY_LASTPING, startOfPeriod.getTime()));
@@ -632,6 +640,17 @@ public class SystemInfo {
     } catch (Exception e) {
       log4j.error("Error calculating login information", e);
     }
+  }
+
+  /**
+   * Returns the date to start the computation data period which is 30 days before now.
+   * 
+   * @return Starting date
+   */
+  private static Calendar getStartOfPeriod() {
+    Calendar startOfPeriod = Calendar.getInstance();
+    startOfPeriod.add(Calendar.DAY_OF_MONTH, -30);
+    return startOfPeriod;
   }
 
   /**
