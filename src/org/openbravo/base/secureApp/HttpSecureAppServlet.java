@@ -386,19 +386,25 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           SessionInfo.setModuleId(classInfo.adModuleId);
         }
 
-        if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null) {
+        if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null
+            && OBDal.getInstance().get(SystemInformation.class, "0").isUsageauditenabled()) {
           // Session Usage Audit
-          SessionUsageAudit usageAudit = OBProvider.getInstance().get(SessionUsageAudit.class);
-          usageAudit.setJavaClassName(this.getClass().getName());
-          usageAudit.setModule(OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
-              SessionInfo.getModuleId()));
-          usageAudit
-              .setSession(OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class,
-                  vars1.getSessionValue("#AD_Session_ID")));
-          usageAudit.setObject(SessionInfo.getProcessId());
-          usageAudit.setCommand(vars1.getCommand());
-          usageAudit.setObejctType(SessionInfo.getProcessType());
-          OBDal.getInstance().save(usageAudit);
+          try {
+            OBContext.setAdminMode();
+            SessionUsageAudit usageAudit = OBProvider.getInstance().get(SessionUsageAudit.class);
+            usageAudit.setJavaClassName(this.getClass().getName());
+            usageAudit.setModule(OBDal.getInstance().get(
+                org.openbravo.model.ad.module.Module.class, SessionInfo.getModuleId()));
+            usageAudit.setSession(OBDal.getInstance().get(
+                org.openbravo.model.ad.access.Session.class,
+                vars1.getSessionValue("#AD_Session_ID")));
+            usageAudit.setObject(SessionInfo.getProcessId());
+            usageAudit.setCommand(vars1.getCommand());
+            usageAudit.setObejctType(SessionInfo.getProcessType());
+            OBDal.getInstance().save(usageAudit);
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         }
 
         // Autosave logic

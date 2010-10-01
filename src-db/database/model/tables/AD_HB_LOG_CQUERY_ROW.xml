@@ -61,5 +61,6 @@
       <index name="AD_HB_LOG_CQUERY_ROW_CQUERY" unique="false">
         <index-column name="AD_HB_LOG_CQUERY_ID"/>
       </index>
+      <check name="AD_HB_LOG_CQUERY_ROW_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

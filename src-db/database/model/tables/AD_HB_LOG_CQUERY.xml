@@ -61,5 +61,6 @@
       <index name="AD_HB_LOG_CQUERY_HEARTBEAT_LOG" unique="false">
         <index-column name="AD_HEARTBEAT_LOG_ID"/>
       </index>
+      <check name="AD_HB_LOG_CQUERY_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -75,5 +75,6 @@
       <index name="AD_SESSION_USAGE_AUDIT_SESSION" unique="false">
         <index-column name="AD_SESSION_ID"/>
       </index>
+      <check name="AD_SESSION_USAGEAUDIT_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
