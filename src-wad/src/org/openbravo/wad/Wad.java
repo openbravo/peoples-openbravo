@@ -1623,7 +1623,7 @@ public class Wad extends DefaultHandler {
     }
 
     final String[] discard = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "" };
+        "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "" };
 
     if (parentsFieldsData == null || parentsFieldsData.length == 0) {
       discard[0] = "parent"; // remove the parent tags
@@ -1693,6 +1693,18 @@ public class Wad extends DefaultHandler {
     // [1879633] and shoudn't
     // be necessary in r2.5x
     // because of new PKs
+
+    // Obtain action buttons processes to be called from tab trough buttons
+    final ActionButtonRelationData[] actBtns = WadActionButton.buildActionButtonCall(pool, strTab,
+        tabName, keyColumnName, isSOTrx, strWindow);
+    final ActionButtonRelationData[] actBtnsJava = WadActionButton.buildActionButtonCallJava(pool,
+        strTab, tabName, keyColumnName, isSOTrx, strWindow);
+
+    if ((actBtns == null || actBtns.length == 0)
+        && (actBtnsJava == null || actBtnsJava.length == 0)) {
+      // No action buttons, service method is not neccessary
+      discard[31] = "discardService";
+    }
 
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard)
         .createXmlDocument();
@@ -2047,23 +2059,18 @@ public class Wad extends DefaultHandler {
     xmlDocument.setData("structure9", fieldsSession);
     xmlDocument.setData("structure10", auxiliarFields);
     xmlDocument.setData("structure11", auxiliarPFields);
-    {
-      final ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonCall(pool, strTab,
-          tabName, keyColumnName, isSOTrx, strWindow);
-      xmlDocument.setData("structure14", abrd);
-      xmlDocument.setData("structure15", abrd);
-      xmlDocument.setData("structure16", abrd);
-    }
 
-    {
-      // process standard UI java implemented buttons
-      final ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonCallJava(pool,
-          strTab, tabName, keyColumnName, isSOTrx, strWindow);
-      xmlDocument.setData("structure14java", abrd);
-      xmlDocument.setData("structure15java", abrd);
-      xmlDocument.setData("structure16java", abrd);
+    // process action buttons
+    xmlDocument.setData("structure14", actBtns);
+    xmlDocument.setData("structure15", actBtns);
+    xmlDocument.setData("structure16", actBtns);
+    xmlDocument.setData("structureActionBtnService", actBtns);
 
-    }
+    // process standard UI java implemented buttons
+    xmlDocument.setData("structure14java", actBtnsJava);
+    xmlDocument.setData("structure15java", actBtnsJava);
+    xmlDocument.setData("structure16java", actBtnsJava);
+    xmlDocument.setData("structureActionBtnServiceJava", actBtnsJava);
 
     xmlDocument.setData("structure18", selCol);
     xmlDocument.setData("structure20", selCol);

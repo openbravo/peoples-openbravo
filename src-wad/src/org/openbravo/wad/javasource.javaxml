@@ -43,6 +43,7 @@ import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.util.Vector;
 import java.util.StringTokenizer;
+import org.openbravo.database.SessionInfo;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -60,6 +61,32 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   private static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
   private static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
   private static final double SUBTABS_COL_SIZE = 15;
+  
+  <PARAMETER_TMP id="discardService">
+  @Override
+  public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    String command = vars.getCommand();
+    if (command.contains("BUTTON")) {
+     <FIELDS_TMP id="sectionActionButtonsService">
+      if (command.contains("<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>")) {
+        SessionInfo.setProcessType("P");
+        SessionInfo.setProcessId("<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>");
+        SessionInfo.setModuleId("<FIELD_TMP id="ProcessModulesrv">moduleId</FIELD_TMP>");
+      }
+     </FIELDS_TMP>
+     <FIELDS_TMP id="sectionActionButtonsServiceJava">
+      if (command.contains("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>")) {
+        SessionInfo.setProcessType("P");
+        SessionInfo.setProcessId("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>");
+        SessionInfo.setModuleId("<FIELD_TMP id="ProcessModulesrvJ">moduleId</FIELD_TMP>");
+      }
+     </FIELDS_TMP>
+    }
+    super.service(request, response);
+  }
+  </PARAMETER_TMP>
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     TableSQLData tableSQL = null;
