@@ -57,6 +57,12 @@ public class SessionInfo {
   private static ThreadLocal<Connection> sessionConnection = new ThreadLocal<Connection>();
   private static ThreadLocal<Boolean> changedInfo = new ThreadLocal<Boolean>();
 
+  /*
+   * Maintain artifact's module id. This element is not persisted in auxiliary session table, it is
+   * intended to be used in the usage audit.
+   */
+  private static ThreadLocal<String> moduleId = new ThreadLocal<String>();
+
   /**
    * Sets all session information to null. Called at the end of http-request handling, to reset the
    * audit information for that thread.
@@ -67,6 +73,7 @@ public class SessionInfo {
     processType.set(null);
     processId.set(null);
     changedInfo.set(null);
+    moduleId.set(null);
     // if there is an open connection associated to get current request, close it
     Connection conn = sessionConnection.get();
     try {
@@ -263,5 +270,13 @@ public class SessionInfo {
 
   static void setSessionConnection(Connection conn) {
     sessionConnection.set(conn);
+  }
+
+  public static String getModuleId() {
+    return moduleId.get();
+  }
+
+  public static void setModuleId(String moduleId) {
+    SessionInfo.moduleId.set(moduleId);
   }
 }

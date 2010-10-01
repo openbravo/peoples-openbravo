@@ -377,23 +377,27 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         licenseError(classInfo.type, classInfo.id, featureRestriction, response, request, vars1,
             isPopup);
       } else if (vars1.getRole().equals("") || hasAccess(vars1)) {
-        if (classInfo.id != null && !classInfo.id.equals("")) {
+
+        if (classInfo.id != null && !classInfo.id.equals("") && SessionInfo.getProcessId() != null) {
+          // Set process id in session in case there is info for that and it has not been already
+          // set by the Servlet itself
           SessionInfo.setProcessId(classInfo.id);
           SessionInfo.setProcessType(classInfo.type);
+          SessionInfo.setModuleId(classInfo.adModuleId);
         }
 
-        if (!"".equals(classInfo.type) && !"".equals(classInfo.id)) {
+        if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null) {
           // Session Usage Audit
           SessionUsageAudit usageAudit = OBProvider.getInstance().get(SessionUsageAudit.class);
           usageAudit.setJavaClassName(this.getClass().getName());
           usageAudit.setModule(OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
-              classInfo.adModuleId));
+              SessionInfo.getModuleId()));
           usageAudit
               .setSession(OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class,
                   vars1.getSessionValue("#AD_Session_ID")));
-          usageAudit.setObject(classInfo.id);
+          usageAudit.setObject(SessionInfo.getProcessId());
           usageAudit.setCommand(vars1.getCommand());
-          usageAudit.setObejctType(classInfo.type);
+          usageAudit.setObejctType(SessionInfo.getProcessType());
           OBDal.getInstance().save(usageAudit);
         }
 
