@@ -143,7 +143,10 @@ public class HeartbeatProcess implements Process {
       logSystemInfo(beatType);
       updateHeartbeatStatus(beatType);
 
-      parseResponse(response);
+      if (!(DEFERRING_BEAT.equals(beatType) || DECLINING_BEAT.equals(beatType))) {
+        // Parse response for all standard beats, but not for non-skippable ones
+        parseResponse(response);
+      }
 
     } catch (Exception e) {
       logger.logln(e.getMessage());
