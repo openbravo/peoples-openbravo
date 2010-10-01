@@ -34,7 +34,7 @@
         l.C_OrderLine_ID AS ID, '' AS C_Invoice_ID, l.DESCRIPTION AS DESCRIPTION,
         ((l.QtyOrdered-SUM(COALESCE(m.Qty,0)))/COALESCE(
         (SELECT DIVIDERATE FROM C_UOM_CONVERSION WHERE C_UOM_CONVERSION.C_UOM_ID = l.C_UOM_ID
-        AND C_UOM_CONVERSION.C_UOM_TO_ID = (SELECT C_UOM.C_UOM_ID FROM M_PRODUCT_UOM, C_UOM WHERE M_PRODUCT_UOM_ID = l.M_PRODUCT_UOM_ID AND M_PRODUCT_UOM.C_UOM_ID = C_UOM.C_UOM_ID)),1)) 
+        AND C_UOM_CONVERSION.C_UOM_TO_ID = (SELECT C_UOM.C_UOM_ID FROM M_PRODUCT_UOM, C_UOM WHERE M_PRODUCT_UOM_ID = l.M_PRODUCT_UOM_ID AND M_PRODUCT_UOM.C_UOM_ID = C_UOM.C_UOM_ID)),1))
         as SECQTY, l.M_PRODUCT_UOM_ID as SEC_PRODUCT_UOM_ID,
         (SELECT M_ATTRIBUTESETINSTANCE.DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE 
         l.M_ATTRIBUTESETINSTANCE_ID = M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID) as ATTRIBUTESETINSTANCENAME, 
@@ -103,7 +103,8 @@
         AND ic.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID = uom.C_UOM_ID
         AND l.M_Product_ID=p.M_Product_ID 
-        AND ic.C_Order_ID = ? 
+        AND ic.C_Order_ID = ?
+        AND l.QtyOrdered > COALESCE(l.qtydelivered,0)
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION
         ORDER BY NAME, l.Line
@@ -191,7 +192,8 @@
         AND ic.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID = uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
-        AND ic.C_Order_ID = ? 
+        AND ic.C_Order_ID = ?
+        AND l.QtyOrdered > COALESCE(l.qtydelivered,0)
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
         ORDER BY NAME, l.Line
