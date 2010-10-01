@@ -50,12 +50,14 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
    * to the oldest one. Used for navigation purposes
    */
   private static final String PREVIOUS_ACCTENTRIES = "ReportGeneralLedgerJournal.previousAcctEntries";
+  private static final String PREVIOUS_ACCTENTRIES_OLD = "ReportGeneralLedgerJournal.previousAcctEntriesOld";
 
   /**
    * Keeps a comma-separated list of the line's range that has been shown, from the newest one to
    * the oldest one. Used for navigation purposes
    */
   private static final String PREVIOUS_RANGE = "ReportGeneralLedgerJournal.previousRange";
+  private static final String PREVIOUS_RANGE_OLD = "ReportGeneralLedgerJournal.previousRangeOld";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
@@ -87,10 +89,16 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       log4j.debug("********DEFAULT***************  strShowClosing: " + strShowClosing);
       log4j.debug("********DEFAULT***************  strShowReg: " + strShowReg);
       log4j.debug("********DEFAULT***************  strShowOpening: " + strShowOpening);
+      String initRecordNumberOld = vars.getSessionValue(
+          "ReportGeneralLedgerJournal.initRecordNumberOld", "0");
       if (vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0").equals("0")) {
         vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
         vars.setSessionValue(PREVIOUS_ACCTENTRIES, "0");
         vars.setSessionValue(PREVIOUS_RANGE, "");
+      } else if (!"-1".equals(initRecordNumberOld)) {
+        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", initRecordNumberOld);
+        vars.setSessionValue(PREVIOUS_ACCTENTRIES, vars.getSessionValue(PREVIOUS_ACCTENTRIES_OLD));
+        vars.setSessionValue(PREVIOUS_RANGE, vars.getSessionValue(PREVIOUS_RANGE_OLD));
       }
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
@@ -225,8 +233,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         vars.setSessionValue(PREVIOUS_ACCTENTRIES, sb_previousAcctEntries.toString());
       }
 
+      vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", "-1");
       response.sendRedirect(strDireccion + request.getServletPath());
     } else if (vars.commandIn("NEXT_RELATION")) {
+      vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", "-1");
       response.sendRedirect(strDireccion + request.getServletPath());
     } else
       pageError(response);
@@ -255,8 +265,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     toolbar.setEmail(false);
     int totalAcctEntries = 0;
     int lastRecordNumber = 0;
-    if (vars.commandIn("FIND") || vars.commandIn("DEFAULT")
-        && !vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber").equals("0")) {
+    if (vars.commandIn("FIND")
+        || vars.commandIn("DEFAULT")
+        && (!vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber").equals("0") || "0"
+            .equals(vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", "")))) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening);
       String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
       String strOrgFamily = getFamily(strTreeOrg, strOrg);
@@ -308,10 +320,13 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         }
         vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", String
             .valueOf(lastRecordNumber));
+        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", strInitRecord);
 
         // Stores historical for navigation purposes
+        vars.setSessionValue(PREVIOUS_ACCTENTRIES_OLD, vars.getSessionValue(PREVIOUS_ACCTENTRIES));
         vars.setSessionValue(PREVIOUS_ACCTENTRIES, String.valueOf(acctEntries - 1) + ","
             + vars.getSessionValue(PREVIOUS_ACCTENTRIES));
+        vars.setSessionValue(PREVIOUS_RANGE_OLD, vars.getSessionValue(PREVIOUS_RANGE));
         vars.setSessionValue(PREVIOUS_RANGE, String.valueOf(intRecordRangeUsed) + ","
             + vars.getSessionValue(PREVIOUS_RANGE));
 
