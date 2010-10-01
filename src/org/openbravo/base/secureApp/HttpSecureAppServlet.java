@@ -378,7 +378,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             isPopup);
       } else if (vars1.getRole().equals("") || hasAccess(vars1)) {
 
-        if (classInfo.id != null && !classInfo.id.equals("") && SessionInfo.getProcessId() != null) {
+        if (classInfo.id != null && !classInfo.id.equals("") && SessionInfo.getProcessId() == null) {
           // Set process id in session in case there is info for that and it has not been already
           // set by the Servlet itself
           SessionInfo.setProcessId(classInfo.id);
