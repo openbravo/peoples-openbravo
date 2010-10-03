@@ -499,7 +499,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("urlLink", getLink(url));
       xmlDocument.setParameter("url", url);
     }
-    xmlDocument.setParameter("license", module.getLicenseAgreement());
+    xmlDocument.setParameter("license", Utility.getListValueName("License Type", module
+        .getLicenseType(), vars.getLanguage()));
 
     if (dependencies != null && dependencies.length > 0) {
       xmlDocument.setData("dependencies", formatDeps4Display(dependencies, vars, this));
