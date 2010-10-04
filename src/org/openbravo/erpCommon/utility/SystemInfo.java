@@ -688,7 +688,7 @@ public class SystemInfo {
         false), SERVLET_CONTAINER_VERSION("servletContainerVersion", false), ANT_VERSION(
         "antVersion", false), OB_VERSION("obVersion", false), OB_INSTALL_MODE("obInstallMode",
         false), CODE_REVISION("codeRevision", false), NUM_REGISTERED_USERS("numRegisteredUsers",
-        false), ISHEARTBEATACTIVE("isheartbeatactive", false), ISPROXYREQUIRED("isproxyrequired",
+        false), ISHEARTBEATACTIVE("isheartbeatactive", true), ISPROXYREQUIRED("isproxyrequired",
         false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), JAVA_VERSION(
         "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRST_LOGIN(
         "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
