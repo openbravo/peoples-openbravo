@@ -48,11 +48,16 @@
     return true;
   }
   </script>
-  <script language="JavaScript" type="text/javascript" id="paramCMD">var cmd = 'SAVE';</script>
+  <script language="JavaScript" type="text/javascript" id="paramCMD">var cmd = 'PROCEED';</script>
   <script language="JavaScript" type="text/javascript" id="paramNextPopup">var nextPopup = 'HB';</script>
   <script language="JavaScript" type="text/javascript">
   function buttonOK() {
-    var command = typeof cmd === 'undefined' ? 'SAVE' : cmd;
+    if (document.frmMain.instancePurpose.value == null || document.frmMain.instancePurpose.value == "") {
+      setWindowElementFocus(document.frmMain.instancePurpose);
+      return false;
+    }
+
+    var command = typeof cmd === 'undefined' ? 'PROCEED' : cmd;
     setProcessingMode('popup', true);
     submitCommandForm(command, false, null);
     if (nextPopup == 'HB')
@@ -61,16 +66,7 @@
       openRegistration();
     window.close();
   }
-
-  function cancel() {
-    if (nextPopup == 'HB')
-      openHeartbeat();
-    if (nextPopup == 'R')
-      openRegistration();
-    window.close();
-  }
   </script>
-
   <script language="JavaScript" type="text/javascript">
   function onLoadDo(){
     this.windowTables = new Array(
@@ -79,6 +75,7 @@
     setWindowTableParentElement();
     enableShortcuts('popup');
     setBrowserAutoComplete(false);
+
     setWindowElementFocus('firstElement');
   }
 
@@ -114,7 +111,7 @@
           <td class="Popup_NavBar_bg_logo_left"></td>
           <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
           <td class="Popup_NavBar_bg_logo_right"></td>
-          <td class="Popup_NavBar_Popup_title_cell"><span>Instance Purpose Configuration</span></td>
+          <td class="Popup_NavBar_Popup_title_cell"><span id="paramTitle">xxInstance Purpose Configuration</span></td>
           <td class="Popup_NavBar_separator_cell"></td>
         </tr>
       </table>
@@ -158,9 +155,7 @@
           <tr>
             <td class="Combo_ContentCell" colspan="2"><select name="instancePurpose" id="inpInstancePurpose" class"ComboKey Combo_TwoCell_width" required="yes">
                 <option value="">--please select--</option>
-                <option value="P">Production</option>
-                <option value="D">Development</option>
-                <option value="T">Testing</option>
+                <div id="reportPurpose"></div>
             </select></td>
             <td colspan="2"></td>
           </tr>
@@ -170,7 +165,7 @@
             <td class="Button_RightAlign_ContentCell">
               <div>
                 <button type="button" 
-                  id="buttonContinue" 
+                  id="buttonProceed" 
                   class="ButtonLink" 
                   onclick="buttonOK();return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
@@ -185,37 +180,14 @@
                   <table class="Button">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
-                      <td class="Button_text Button_width" id="paramCaption">xxSave</td>
+                      <td class="Button_text Button_width">Proceed</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>
                 </button>
               </div>
             </td>
-            <td class="Button_LeftAlign_ContentCell">
-              <div>
-                <button type="button" 
-                  class="ButtonLink" 
-                  onclick="cancel();return false;" 
-                  onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
-                  onblur="buttonEvent('onblur', this);" 
-                  onkeyup="buttonEvent('onkeyup', this);" 
-                  onkeydown="buttonEvent('onkeydown', this);" 
-                  onkeypress="buttonEvent('onkeypress', this);" 
-                  onmouseup="buttonEvent('onmouseup', this);" 
-                  onmousedown="buttonEvent('onmousedown', this);" 
-                  onmouseover="buttonEvent('onmouseover', this); window.status='Cancel'; return true;" 
-                  onmouseout="buttonEvent('onmouseout', this);">
-                  <table class="Button">
-                    <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border="0" /></td>
-                      <td class="Button_text Button_width">Cancel</td>
-                      <td class="Button_right"></td>
-                    </tr>
-                  </table>
-                </button>
-              </div>
-            </td>
+            <td/>
             <td/>
           </tr>
         </tbody></table>

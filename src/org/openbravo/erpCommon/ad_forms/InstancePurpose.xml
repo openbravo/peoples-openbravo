@@ -23,8 +23,14 @@
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="language" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-  <PARAMETER id="paramCMD" name="cmd" default="var cmd='SAVE';" />
+  <PARAMETER id="paramCMD" name="cmd" default="var cmd='PROCEED';" />
   <PARAMETER id="paramNextPopup" name="nextPopup" default="var nextPopup='HB';" />
   <PARAMETER id="paramRecordId" name="recordId" attribute="value" default="" replace="xx" />
-  <PARAMETER id="paramCaption" name="caption" default="Save"/>
+  <PARAMETER id="paramTitle" name="title"/>
+  <PARAMETER id="paramShowCombo" name="showCombo" default="Y" attribute="value"/>
+  <PARAMETER id="paramShowButtonProceed" name="showButtonProceed" default="Y" attribute="value"/>
+  <PARAMETER id="paramSelPurpose" name="selectedPurpose" default=""/>
+  <SUBREPORT id="reportPurpose" name="reportPurpose" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramSelPurpose"/>
+  </SUBREPORT>
 </REPORT>

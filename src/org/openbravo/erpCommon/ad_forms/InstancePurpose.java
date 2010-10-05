@@ -33,6 +33,8 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -53,7 +55,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
-    } else if (vars.commandIn("SAVE")) {
+    } else if (vars.commandIn("PROCEED")) {
       savePurpose(vars.getRequiredStringParameter("instancePurpose", availablePurposeFilter));
     } else {
       pageError(response);
@@ -74,11 +76,33 @@ public class InstancePurpose extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
+    String strTitle = "IP_WELCOME_TITLE";
+    String strWelcomeMsg = "IP_WELCOME_MSG";
+    if (HeartbeatProcess.isClonedInstance()) {
+      strTitle = "IP_CLONED_TITLE";
+      strWelcomeMsg = "IP_CLONED_MSG";
+      ActivationKey ak = ActivationKey.getInstance();
+      if (ak.isOPSInstance()) {
+      } else {
+      }
+    }
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
-        "IP_WELCOME_MSG", vars.getLanguage())));
+        strWelcomeMsg, vars.getLanguage())));
+    xmlDocument.setParameter("title", Utility.messageBD(myPool, strTitle, vars.getLanguage()));
 
     xmlDocument.setParameter("recordId", vars.getStringParameter("inpcRecordId",
         IsIDFilter.instance));
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstancePurpose"), Utility
+              .getContext(this, vars, "#User_Client", "InstancePurpose"), 0);
+      xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw new ServletException(ex);
+    }
 
     String strNextPopup = "var nextPopup='";
     if (HeartbeatProcess.isShowHeartbeatRequired(vars, myPool))
@@ -90,7 +114,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
 
     String jsCommand = "var cmd='";
     if (vars.commandIn("DEFAULT")) {
-      jsCommand += "SAVE";
+      jsCommand += "PROCEED";
     }
     jsCommand += "';";
     xmlDocument.setParameter("cmd", jsCommand);
