@@ -69,15 +69,17 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
       obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
 
       for (FinAccPaymentMethod accPm : obc.list()) {
-        if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId()))
+        if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId())) {
           info
               .addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(), true);
-        else
+        } else if (srtSelectedFinancialAccount.isEmpty()) {
+          srtSelectedFinancialAccount = accPm.getAccount().getIdentifier();
+          info.addSelectResult(accPm.getAccount().getId(), srtSelectedFinancialAccount, true);
+        } else {
           info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier());
+        }
       }
     }
-
     info.endSelect();
-
   }
 }
