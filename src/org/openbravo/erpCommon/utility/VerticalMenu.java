@@ -566,7 +566,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       throws ServletException {
 
     final HeartBeatOrRegistration showHeartBeatOrRegistration = HeartbeatProcess
-        .showHeartBeatOrRegistration(vars, myPool);
+        .isLoginPopupRequired(vars, myPool);
 
     switch (showHeartBeatOrRegistration) {
     case InstancePurpose:
