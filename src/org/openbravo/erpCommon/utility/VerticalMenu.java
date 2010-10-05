@@ -569,6 +569,9 @@ public class VerticalMenu extends HttpSecureAppServlet {
         .showHeartBeatOrRegistration(vars, myPool);
 
     switch (showHeartBeatOrRegistration) {
+    case InstancePurpose:
+      xmlDocument.setParameter("popup", "openInstancePurpose();");
+      return;
     case HeartBeat:
       xmlDocument.setParameter("popup", "openHeartbeat();");
       return;

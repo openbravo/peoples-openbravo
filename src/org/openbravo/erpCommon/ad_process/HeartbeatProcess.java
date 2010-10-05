@@ -573,13 +573,17 @@ public class HeartbeatProcess implements Process {
   }
 
   public enum HeartBeatOrRegistration {
-    HeartBeat, Registration, None;
+    InstancePurpose, HeartBeat, Registration, None;
   }
 
   public static HeartBeatOrRegistration showHeartBeatOrRegistration(VariablesSecureApp vars,
       ConnectionProvider connectionProvider) throws ServletException {
 
     if (vars.getRole() != null && vars.getRole().equals("0")) {
+      // Check if the instance purpose is set.
+      if (isShowInstancePurposeRequired())
+        return HeartBeatOrRegistration.InstancePurpose;
+
       // Check if the heartbeat popup needs to be displayed
       final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
       if (hbData.length > 0) {
@@ -626,6 +630,77 @@ public class HeartbeatProcess implements Process {
       }
     }
     return HeartBeatOrRegistration.None;
+  }
+
+  public static HeartBeatOrRegistration isLoginPopupRequired(VariablesSecureApp vars,
+      ConnectionProvider connectionProvider) throws ServletException {
+    if (vars.getRole() != null && vars.getRole().equals("0")) {
+      // Check if the instance purpose is set.
+      if (isShowInstancePurposeRequired())
+        return HeartBeatOrRegistration.InstancePurpose;
+      if (isShowHeartbeatRequired(vars, connectionProvider))
+        return HeartBeatOrRegistration.HeartBeat;
+      if (isShowRegistrationRequired(vars, connectionProvider))
+        return HeartBeatOrRegistration.Registration;
+    }
+    return HeartBeatOrRegistration.None;
+  }
+
+  public static boolean isShowInstancePurposeRequired() {
+    final SystemInformation systemInformation = OBDal.getInstance().get(SystemInformation.class,
+        "0");
+    return (systemInformation.getInstancePurpose() == null || systemInformation
+        .getInstancePurpose().isEmpty());
+  }
+
+  public static boolean isShowHeartbeatRequired(VariablesSecureApp vars,
+      ConnectionProvider connectionProvider) throws ServletException {
+    final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
+    if (hbData.length > 0) {
+      final String isheartbeatactive = hbData[0].isheartbeatactive;
+      final String postponeDate = hbData[0].postponeDate;
+      if (isheartbeatactive == null || isheartbeatactive.equals("")) {
+        if (postponeDate == null || postponeDate.equals("")) {
+          return true;
+        } else {
+          Date date = null;
+          try {
+            date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(postponeDate);
+            if (date.before(new Date())) {
+              return true;
+            }
+          } catch (final ParseException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  public static boolean isShowRegistrationRequired(VariablesSecureApp vars,
+      ConnectionProvider connectionProvider) throws ServletException {
+    final RegistrationData[] rData = RegistrationData.select(connectionProvider);
+    if (rData.length > 0) {
+      final String isregistrationactive = rData[0].isregistrationactive;
+      final String rPostponeDate = rData[0].postponeDate;
+      if (isregistrationactive == null || isregistrationactive.equals("")) {
+        if (rPostponeDate == null || rPostponeDate.equals("")) {
+          return true;
+        } else {
+          Date date = null;
+          try {
+            date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(rPostponeDate);
+            if (date.before(new Date())) {
+              return true;
+            }
+          } catch (final ParseException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+    return false;
   }
 
   public static boolean isHeartbeatEnabled() {
