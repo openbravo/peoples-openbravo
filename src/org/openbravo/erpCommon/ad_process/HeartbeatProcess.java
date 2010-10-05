@@ -581,8 +581,12 @@ public class HeartbeatProcess implements Process {
 
     if (vars.getRole() != null && vars.getRole().equals("0")) {
       // Check if the instance purpose is set.
-      if (isShowInstancePurposeRequired())
+      if (isShowInstancePurposeRequired()) {
         return HeartBeatOrRegistration.InstancePurpose;
+      }
+      if (isClonedInstance()) {
+        return HeartBeatOrRegistration.InstancePurpose;
+      }
 
       // Check if the heartbeat popup needs to be displayed
       final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
@@ -636,12 +640,15 @@ public class HeartbeatProcess implements Process {
       ConnectionProvider connectionProvider) throws ServletException {
     if (vars.getRole() != null && vars.getRole().equals("0")) {
       // Check if the instance purpose is set.
-      if (isShowInstancePurposeRequired())
+      if (isShowInstancePurposeRequired()) {
         return HeartBeatOrRegistration.InstancePurpose;
-      if (isShowHeartbeatRequired(vars, connectionProvider))
+      } else if (isClonedInstance()) {
+        return HeartBeatOrRegistration.InstancePurpose;
+      } else if (isShowHeartbeatRequired(vars, connectionProvider)) {
         return HeartBeatOrRegistration.HeartBeat;
-      if (isShowRegistrationRequired(vars, connectionProvider))
+      } else if (isShowRegistrationRequired(vars, connectionProvider)) {
         return HeartBeatOrRegistration.Registration;
+      }
     }
     return HeartBeatOrRegistration.None;
   }
@@ -651,6 +658,33 @@ public class HeartbeatProcess implements Process {
         "0");
     return (systemInformation.getInstancePurpose() == null || systemInformation
         .getInstancePurpose().isEmpty());
+  }
+
+  public static boolean isClonedInstance() throws ServletException {
+    HeartbeatLog lastBeat = getLastHBLog();
+    if (lastBeat != null
+        && (!lastBeat.getSystemIdentifier().equals(SystemInfo.getSystemIdentifier())
+            || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier()) || !lastBeat
+            .getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+      sysInfo.setInstancePurpose(null);
+      OBDal.getInstance().save(sysInfo);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private static HeartbeatLog getLastHBLog() {
+    OBCriteria<HeartbeatLog> obc = OBDal.getInstance().createCriteria(HeartbeatLog.class);
+    obc.addOrderBy(HeartbeatLog.PROPERTY_CREATIONDATE, false);
+    obc.setMaxResults(1);
+    List<HeartbeatLog> hbLogs = obc.list();
+    if (hbLogs.isEmpty()) {
+      return null;
+    }
+
+    return hbLogs.get(0);
   }
 
   public static boolean isShowHeartbeatRequired(VariablesSecureApp vars,
