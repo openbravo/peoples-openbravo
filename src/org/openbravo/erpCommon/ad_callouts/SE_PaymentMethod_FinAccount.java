@@ -52,6 +52,8 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
     String srtSelectedFinancialAccount = info.getStringParameter(
         isVendorTab ? "inppoFinancialAccountId" : "inpfinFinancialAccountId", IsIDFilter.instance);
 
+    boolean isSelected = true;
+
     // No Payment Method selected
     if (srtPaymentMethodId.isEmpty() && srtPOPaymentMethodId.isEmpty()) {
       OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
@@ -70,14 +72,14 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
 
       for (FinAccPaymentMethod accPm : obc.list()) {
         if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId())) {
-          info
-              .addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(), true);
+          isSelected = true;
         } else if (srtSelectedFinancialAccount.isEmpty()) {
           srtSelectedFinancialAccount = accPm.getAccount().getIdentifier();
-          info.addSelectResult(accPm.getAccount().getId(), srtSelectedFinancialAccount, true);
-        } else {
-          info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier());
+          isSelected = true;
         }
+        info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(),
+            isSelected);
+        isSelected = false;
       }
     }
     info.endSelect();
