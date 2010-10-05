@@ -27987,9 +27987,9 @@ For the other necessary values the corresponding default values are used. Once t
 <!--1005800000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005800000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005800000-->  <VALUE><![CDATA[REG_WELCOME]]></VALUE>
-<!--1005800000-->  <MSGTEXT><![CDATA[Considering an Openbravo implementation, for your company or for one of your clients? 
+<!--1005800000-->  <MSGTEXT><![CDATA[Are you thinking of an Openbravo implementation? You should learn about the benefits of Openbravo Professional Edition.
 
- Register now for more information. It is quick and easy, and we will contact you to answer any questions. Find out if our ERP is right for you.]]></MSGTEXT>
+Register now for more information. It is quick and easy. An Openbravo representative will contact you to answer any of your questions. Find out if Openbravo Professional Edition is right for you.]]></MSGTEXT>
 <!--1005800000-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1005800000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005800000--></AD_MESSAGE>
@@ -28013,15 +28013,9 @@ And Release features, bla, bla, bla]]></MSGTEXT>
 <!--1005800002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005800002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005800002-->  <VALUE><![CDATA[HB_WELCOME]]></VALUE>
-<!--1005800002-->  <MSGTEXT><![CDATA[Welcome to Openbravo ERP!
+<!--1005800002-->  <MSGTEXT><![CDATA[To help us improve the software quality and understand its worldwide usage, we invite you to enable the Heartbeat. This tool periodically sends to Openbravo anonymous updates regarding your technical system specifications (e.g. operating system, database, Openbravo version, etc.). Enabling the Heartbeat is required to access additional services provided by Openbravo, such as the ability to download and install extension modules. For a full description of the information transmitted to Openbravo, see the Heartbeat Configuration chapter of the User Manual.
 
-To help us improve the software quality and understand its worldwide use, we invite you to configure the Heartbeat. This tool sends Openbravo periodic updates regarding your technical system specifications (e.g. Operating System, Database, and ERP Version). See Help window in Heartbeat Configuration page for information on data processing. You can disable this feature from that window.
-
-To say thanks, configuring the Heartbeat will automatically notify you about specific updates to your installation via an alert (e.g. Openbravo patches, new versions tested with your database).
-
-Thank you for downloading and supporting our open source ERP.
-
-Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
+Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--1005800002-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1005800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005800002--></AD_MESSAGE>
@@ -30932,7 +30926,9 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--5319728ED743474AA75BB9BBF8F08321-->  <VALUE><![CDATA[IP_WELCOME_MSG]]></VALUE>
 <!--5319728ED743474AA75BB9BBF8F08321-->  <MSGTEXT><![CDATA[Welcome to Openbravo!
 
-Please tell us the purpose of this Openbravo Instance. This information is used for Openbravo to know how the product is used.]]></MSGTEXT>
+Thank you for downloading and supporting our open source ERP.
+
+Since this is the first time that you login, please select the purpose of this instance. Learn more.]]></MSGTEXT>
 <!--5319728ED743474AA75BB9BBF8F08321-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--5319728ED743474AA75BB9BBF8F08321-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5319728ED743474AA75BB9BBF8F08321--></AD_MESSAGE>
@@ -31525,6 +31521,17 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--732DC3E4647C4926BA2BA697AA53EB7F-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--732DC3E4647C4926BA2BA697AA53EB7F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--732DC3E4647C4926BA2BA697AA53EB7F--></AD_MESSAGE>
+
+<!--737DD13DA9E84E3190F47FAB7863833D--><AD_MESSAGE>
+<!--737DD13DA9E84E3190F47FAB7863833D-->  <AD_MESSAGE_ID><![CDATA[737DD13DA9E84E3190F47FAB7863833D]]></AD_MESSAGE_ID>
+<!--737DD13DA9E84E3190F47FAB7863833D-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--737DD13DA9E84E3190F47FAB7863833D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--737DD13DA9E84E3190F47FAB7863833D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--737DD13DA9E84E3190F47FAB7863833D-->  <VALUE><![CDATA[IP_CLONED_TITLE]]></VALUE>
+<!--737DD13DA9E84E3190F47FAB7863833D-->  <MSGTEXT><![CDATA[Instance Clone]]></MSGTEXT>
+<!--737DD13DA9E84E3190F47FAB7863833D-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--737DD13DA9E84E3190F47FAB7863833D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--737DD13DA9E84E3190F47FAB7863833D--></AD_MESSAGE>
 
 <!--74560B0C1A2C42DABDEFE33B6AEB3B86--><AD_MESSAGE>
 <!--74560B0C1A2C42DABDEFE33B6AEB3B86-->  <AD_MESSAGE_ID><![CDATA[74560B0C1A2C42DABDEFE33B6AEB3B86]]></AD_MESSAGE_ID>
@@ -32644,6 +32651,17 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--BCB10A144F40465993D15709F8C057F2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BCB10A144F40465993D15709F8C057F2--></AD_MESSAGE>
 
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28--><AD_MESSAGE>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28-->  <AD_MESSAGE_ID><![CDATA[BDB7F0E3A28C4A01AA85BEEFB2B8DF28]]></AD_MESSAGE_ID>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28-->  <VALUE><![CDATA[IP_WELCOME_TITLE]]></VALUE>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28-->  <MSGTEXT><![CDATA[Instance Purpose Configuration]]></MSGTEXT>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--BDB7F0E3A28C4A01AA85BEEFB2B8DF28--></AD_MESSAGE>
+
 <!--BDBAEDC585EA4D06BACC9E2469003E4F--><AD_MESSAGE>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <AD_MESSAGE_ID><![CDATA[BDBAEDC585EA4D06BACC9E2469003E4F]]></AD_MESSAGE_ID>
 <!--BDBAEDC585EA4D06BACC9E2469003E4F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -33108,6 +33126,17 @@ Ask System Administrator to unlock it.]]></MSGTEXT>
 <!--D72FBA25557F4E0D851E1002D9DA61A9-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--D72FBA25557F4E0D851E1002D9DA61A9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D72FBA25557F4E0D851E1002D9DA61A9--></AD_MESSAGE>
+
+<!--D73ABE1272844C34A5A5E353BD57FBF3--><AD_MESSAGE>
+<!--D73ABE1272844C34A5A5E353BD57FBF3-->  <AD_MESSAGE_ID><![CDATA[D73ABE1272844C34A5A5E353BD57FBF3]]></AD_MESSAGE_ID>
+<!--D73ABE1272844C34A5A5E353BD57FBF3-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--D73ABE1272844C34A5A5E353BD57FBF3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--D73ABE1272844C34A5A5E353BD57FBF3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--D73ABE1272844C34A5A5E353BD57FBF3-->  <VALUE><![CDATA[IP_CLONED_MSG]]></VALUE>
+<!--D73ABE1272844C34A5A5E353BD57FBF3-->  <MSGTEXT><![CDATA[We have detected that this instance is a clone of another environment. Please specify the purpose of this instance.]]></MSGTEXT>
+<!--D73ABE1272844C34A5A5E353BD57FBF3-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
+<!--D73ABE1272844C34A5A5E353BD57FBF3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--D73ABE1272844C34A5A5E353BD57FBF3--></AD_MESSAGE>
 
 <!--D8089BD51CC84B59915D9B110C96F7B4--><AD_MESSAGE>
 <!--D8089BD51CC84B59915D9B110C96F7B4-->  <AD_MESSAGE_ID><![CDATA[D8089BD51CC84B59915D9B110C96F7B4]]></AD_MESSAGE_ID>
