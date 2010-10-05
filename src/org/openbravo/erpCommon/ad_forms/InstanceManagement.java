@@ -408,13 +408,17 @@ public class InstanceManagement extends HttpSecureAppServlet {
       }
     }
 
+    final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     // Purpose combo
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
           Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"), Utility
               .getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement",
-          activationKey.isOPSInstance() ? activationKey.getProperty("purpose") : null);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement", sysInfo
+          .getInstancePurpose());
+      if (sysInfo.getInstancePurpose() != null) {
+        xmlDocument.setParameter("selectedPurpose", sysInfo.getInstancePurpose());
+      }
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
