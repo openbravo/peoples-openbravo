@@ -32,29 +32,29 @@
   <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript" id="openRegistration">
   function openRegistration() {
-	 var w = window.opener;
-	  	if(w) {
-	  		w.setTimeout("openRegistration();",100);
-	  	}
-	  	return true;
-   }
+    var w = window.opener;
+    if(w) {
+      w.setTimeout("openRegistration();",100);
+    }
+    return true;
+  }
   </script>
   <script language="JavaScript" type="text/javascript" id="paramCMD">var cmd = 'CONFIGURE';</script>
   <script language="JavaScript" type="text/javascript">  
   function configure() {
-	var command = typeof cmd === 'undefined' ? 'CONFIGURE' : cmd;
-	setProcessingMode('popup', true);
-	submitCommandForm(command, false, null);
+    var command = typeof cmd === 'undefined' ? 'CONFIGURE' : cmd;
+    setProcessingMode('popup', true);
+    submitCommandForm(command, false, null);
   }
 
   function cancel() {
-	var paramXMLReq = null;
-	// call cancel on servlet but do not wait for response
-	submitXmlHttpRequest(xx, null, "CANCEL", "Heartbeat.html", false, null, paramXMLReq);
-  	if (typeof openRegistration === "function") {
-  		openRegistration();
-  	}
-  	window.close();
+    var paramXMLReq = null;
+    // call cancel on servlet but do not wait for response
+    submitXmlHttpRequest(xx, null, "CANCEL", "Heartbeat.html", false, null, paramXMLReq);
+    if (typeof openRegistration === "function") {
+      openRegistration();
+    }
+    window.close();
   }
   </script>
 
@@ -92,7 +92,6 @@
 </div>
 
 <table cellspacing="0" cellpadding="0" width="100%">
-
   <tr>
     <td>
       <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
@@ -120,14 +119,13 @@
     <td>
       <div class="Popup_ContentPane_Client" style="overflow: auto; background: none !important;">
         <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup" style="background: none !important;">
-
           <tr>
             <td>
-              <p class="Wide_Paragraph" id="paramWelcome">xxWelcome to Openbravo ERP</p>              
-        	</td>
+              <p class="Wide_Paragraph" id="paramWelcome">xxWelcome to Openbravo ERP</p>
+            </td>
           </tr>
         </table>
-      </div> 
+      </div>
     </td>
   </tr>
   <tr>
@@ -145,18 +143,18 @@
             <td/>
             <td class="Button_RightAlign_ContentCell">
               <div>
-                <button type="button" 
-                  id="buttonContinue" 
-                  class="ButtonLink" 
-                  onclick="configure();return false;" 
-                  onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
-                  onblur="buttonEvent('onblur', this);" 
-                  onkeyup="buttonEvent('onkeyup', this);" 
-                  onkeydown="buttonEvent('onkeydown', this);" 
-                  onkeypress="buttonEvent('onkeypress', this);" 
-                  onmouseup="buttonEvent('onmouseup', this);" 
-                  onmousedown="buttonEvent('onmousedown', this);" 
-                  onmouseover="buttonEvent('onmouseover', this); window.status='Continue'; return true;" 
+                <button type="button"
+                  id="buttonContinue"
+                  class="ButtonLink"
+                  onclick="configure();return false;"
+                  onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;"
+                  onblur="buttonEvent('onblur', this);"
+                  onkeyup="buttonEvent('onkeyup', this);"
+                  onkeydown="buttonEvent('onkeydown', this);"
+                  onkeypress="buttonEvent('onkeypress', this);"
+                  onmouseup="buttonEvent('onmouseup', this);"
+                  onmousedown="buttonEvent('onmousedown', this);"
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Continue'; return true;"
                   onmouseout="buttonEvent('onmouseout', this);">
                   <table class="Button">
                     <tr>
@@ -170,17 +168,17 @@
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <button type="button" 
-                  class="ButtonLink" 
-                  onclick="cancel();return false;" 
-                  onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
-                  onblur="buttonEvent('onblur', this);" 
-                  onkeyup="buttonEvent('onkeyup', this);" 
-                  onkeydown="buttonEvent('onkeydown', this);" 
-                  onkeypress="buttonEvent('onkeypress', this);" 
-                  onmouseup="buttonEvent('onmouseup', this);" 
-                  onmousedown="buttonEvent('onmousedown', this);" 
-                  onmouseover="buttonEvent('onmouseover', this); window.status='Cancel'; return true;" 
+                <button type="button"
+                  class="ButtonLink"
+                  onclick="cancel();return false;"
+                  onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;"
+                  onblur="buttonEvent('onblur', this);"
+                  onkeyup="buttonEvent('onkeyup', this);"
+                  onkeydown="buttonEvent('onkeydown', this);"
+                  onkeypress="buttonEvent('onkeypress', this);"
+                  onmouseup="buttonEvent('onmouseup', this);"
+                  onmousedown="buttonEvent('onmousedown', this);"
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Cancel'; return true;"
                   onmouseout="buttonEvent('onmouseout', this);">
                   <table class="Button">
                     <tr>
@@ -196,7 +194,7 @@
           </tr>
         </tbody></table>
       </div>
-  	</td>
+    </td>
   </tr>
 </table>
 </form>
