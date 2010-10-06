@@ -576,6 +576,9 @@ public class HeartbeatProcess implements Process {
     InstancePurpose, HeartBeat, Registration, None;
   }
 
+  /**
+   * @deprecated use {@link #isLoginPopupRequired(VariablesSecureApp, ConnectionProvider)}
+   */
   public static HeartBeatOrRegistration showHeartBeatOrRegistration(VariablesSecureApp vars,
       ConnectionProvider connectionProvider) throws ServletException {
 
@@ -636,6 +639,14 @@ public class HeartbeatProcess implements Process {
     return HeartBeatOrRegistration.None;
   }
 
+  /**
+   * Check if a popup is needed to be shown when a user logins.
+   * 
+   * @param vars
+   * @param connectionProvider
+   * @return the type of popup that is needed.
+   * @throws ServletException
+   */
   public static HeartBeatOrRegistration isLoginPopupRequired(VariablesSecureApp vars,
       ConnectionProvider connectionProvider) throws ServletException {
     if (vars.getRole() != null && vars.getRole().equals("0")) {
