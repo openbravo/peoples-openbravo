@@ -132,7 +132,7 @@ public class Heartbeat extends HttpSecureAppServlet {
   }
 
   /**
-   * Executes the HeartbeatProcess to send a bit with the specified action.
+   * Executes the HeartbeatProcess to send a beat with the specified action.
    * 
    * @param vars
    * @param strAction
