@@ -17,9 +17,7 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -30,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
-import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessRunner;
@@ -50,22 +48,7 @@ public class Heartbeat extends HttpSecureAppServlet {
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    final org.openbravo.erpCommon.businessUtility.HeartbeatData[] data = org.openbravo.erpCommon.businessUtility.HeartbeatData
-        .selectSystemProperties(this);
-    if (data.length > 0) {
-      String servletContainer = data[0].servletContainer;
-      String servletContainerVersion = data[0].servletContainerVersion;
-      if ((servletContainer == null || servletContainer.equals(""))
-          && (servletContainerVersion == null || servletContainerVersion.equals(""))) {
-        final String serverInfo = request.getSession().getServletContext().getServerInfo();
-        if (serverInfo != null && serverInfo.contains("/")) {
-          servletContainer = serverInfo.split("/")[0];
-          servletContainerVersion = serverInfo.split("/")[1];
-
-          HeartbeatData.updateServletContainer(this, servletContainer, servletContainerVersion);
-        }
-      }
-    }
+    updateServletContainer(request.getSession().getServletContext().getServerInfo());
 
     if (vars.commandIn("DEFAULT", "DEFAULT_MODULE", "UPDATE_MODULE")) {
       printPageDataSheet(response, vars);
@@ -73,12 +56,11 @@ public class Heartbeat extends HttpSecureAppServlet {
       response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="
           + vars.getCommand() + "&inpcRecordId="
           + vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
-    } else if (vars.commandIn("CANCEL")) {
-      // Sending Deferring beat
-      ProcessBundle bundle = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars).init(this);
-      Map<String, Object> params = bundle.getParams();
-      params.put("action", "DEFER");
-      new ProcessRunner(bundle).execute(this);
+    } else if (vars.commandIn("DEFER")) {
+      setPostponeDate();
+      sendBeat(vars, "DEFER");
+    } else if (vars.commandIn("DECLINE")) {
+      sendBeat(vars, "DECLINE");
     } else {
       pageError(response);
     }
@@ -86,8 +68,7 @@ public class Heartbeat extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
+    log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
 
@@ -117,34 +98,62 @@ public class Heartbeat extends HttpSecureAppServlet {
     jsCommand += "';";
     xmlDocument.setParameter("cmd", jsCommand);
 
-    final RegistrationData[] rData = RegistrationData.select(this);
-    if (rData.length > 0) {
-      final String isregistrationactive = rData[0].isregistrationactive;
-      final String rPostponeDate = rData[0].postponeDate;
-      if (isregistrationactive == null || isregistrationactive.equals("")) {
-        Date date = null;
-        try {
-          if (!rPostponeDate.equals("")) {
-            date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(rPostponeDate);
-          }
-        } catch (final ParseException e) {
-          e.printStackTrace();
-        }
-        final Date today = new Date();
-        if ((rPostponeDate == null || rPostponeDate.equals("")) || date.before(today)) {
-          final String openRegistrationString = "\n function openRegistration() { "
-              + "\n var w = window.opener; " + "\n if(w) { "
-              + "\n w.setTimeout(\"openRegistration();\",100); " + "\n } " + "\n return true; \n }";
-          xmlDocument.setParameter("registration", openRegistrationString);
-        } else {
-          xmlDocument.setParameter("registration",
-              "\n function openRegistration() { \n return true; \n }");
-        }
-      }
+    if (HeartbeatProcess.isShowRegistrationRequired(vars, myPool)) {
+      xmlDocument.setParameter("registration", "Y");
     }
 
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  /**
+   * Updates the servlet container information on the System Information table.
+   * 
+   * @param serverInfo
+   * @throws ServletException
+   */
+  private void updateServletContainer(String serverInfo) throws ServletException {
+    final org.openbravo.erpCommon.businessUtility.HeartbeatData[] data = org.openbravo.erpCommon.businessUtility.HeartbeatData
+        .selectSystemProperties(this);
+    if (data.length > 0) {
+      String servletContainer = data[0].servletContainer;
+      String servletContainerVersion = data[0].servletContainerVersion;
+      if ((servletContainer == null || servletContainer.equals(""))
+          && (servletContainerVersion == null || servletContainerVersion.equals(""))) {
+        if (serverInfo != null && serverInfo.contains("/")) {
+          servletContainer = serverInfo.split("/")[0];
+          servletContainerVersion = serverInfo.split("/")[1];
+
+          HeartbeatData.updateServletContainer(this, servletContainer, servletContainerVersion);
+        }
+      }
+    }
+  }
+
+  /**
+   * Executes the HeartbeatProcess to send a bit with the specified action.
+   * 
+   * @param vars
+   * @param strAction
+   * @throws ServletException
+   */
+  private void sendBeat(VariablesSecureApp vars, String strAction) throws ServletException {
+    ProcessBundle bundle = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars).init(this);
+    Map<String, Object> params = bundle.getParams();
+    params.put("action", strAction);
+    new ProcessRunner(bundle).execute(this);
+  }
+
+  /**
+   * Sets the PostponeDate of the System Information table on 3 days from today.
+   */
+  private void setPostponeDate() {
+    final Calendar cal = Calendar.getInstance();
+    cal.add(Calendar.DATE, 3);
+    org.openbravo.model.ad.system.SystemInformation sysInfo = OBDal.getInstance().get(
+        org.openbravo.model.ad.system.SystemInformation.class, "0");
+    sysInfo.setPostponeDate(cal.getTime());
+    OBDal.getInstance().save(sysInfo);
   }
 
   @Override
