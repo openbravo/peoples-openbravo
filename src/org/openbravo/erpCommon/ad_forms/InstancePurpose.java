@@ -80,10 +80,13 @@ public class InstancePurpose extends HttpSecureAppServlet {
     String strWelcomeMsg = "IP_WELCOME_MSG";
     if (HeartbeatProcess.isClonedInstance()) {
       strTitle = "IP_CLONED_TITLE";
-      strWelcomeMsg = "IP_CLONED_MSG";
       ActivationKey ak = ActivationKey.getInstance();
       if (ak.isOPSInstance()) {
+        strWelcomeMsg = "IP_CLONED_OPS_MSG";
+        xmlDocument.setParameter("showPurposeCombo", "N");
+        xmlDocument.setParameter("showButtonProceed", "N");
       } else {
+        strWelcomeMsg = "IP_CLONED_COMM_MSG";
       }
     }
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,

@@ -27,7 +27,7 @@
   <PARAMETER id="paramNextPopup" name="nextPopup" default="var nextPopup='HB';" />
   <PARAMETER id="paramRecordId" name="recordId" attribute="value" default="" replace="xx" />
   <PARAMETER id="paramTitle" name="title"/>
-  <PARAMETER id="paramShowCombo" name="showCombo" default="Y" attribute="value"/>
+  <PARAMETER id="paramShowPurposeCombo" name="showPurposeCombo" default="Y" attribute="value"/>
   <PARAMETER id="paramShowButtonProceed" name="showButtonProceed" default="Y" attribute="value"/>
   <PARAMETER id="paramSelPurpose" name="selectedPurpose" default=""/>
   <SUBREPORT id="reportPurpose" name="reportPurpose" report="org/openbravo/erpCommon/reference/List">

@@ -51,8 +51,12 @@
   <script language="JavaScript" type="text/javascript" id="paramCMD">var cmd = 'PROCEED';</script>
   <script language="JavaScript" type="text/javascript" id="paramNextPopup">var nextPopup = 'HB';</script>
   <script language="JavaScript" type="text/javascript">
+  function continueButton() {
+    openLink('../ad_forms/InstanceManagement.html', 'appFrame');
+  }
   function buttonOK() {
     if (document.frmMain.instancePurpose.value == null || document.frmMain.instancePurpose.value == "") {
+      displayLogicElement('noPurposeSelected', true);
       setWindowElementFocus(document.frmMain.instancePurpose);
       return false;
     }
@@ -76,6 +80,15 @@
     enableShortcuts('popup');
     setBrowserAutoComplete(false);
 
+    displayLogicElement('noPurposeSelected', false);
+    var showPurposeCombo = document.frmMain.showPurposeCombo.value == 'Y';
+    displayLogicElement('purposeComboRow1', showPurposeCombo);
+    displayLogicElement('purposeComboRow2', showPurposeCombo);
+
+    var showButtonProceed = document.frmMain.showButtonProceed.value == 'Y';
+    displayLogicElement('buttonProceed', showButtonProceed);
+    displayLogicElement('buttonContinue', !showButtonProceed);
+
     setWindowElementFocus('firstElement');
   }
 
@@ -94,6 +107,8 @@
 <input type="hidden" name="Command" />
 <input type="hidden" name="IsPopUpCall" value="1" />
 <input type="hidden" id="paramRecordId" name="inpcRecordId" value="xx" />
+<input type="hidden" id="paramShowPurposeCombo" name="showPurposeCombo" value="Y" />
+<input type="hidden" id="paramShowButtonProceed" name="showButtonProceed" value="Y" />
 
 <div class="Popup_ContentPane_CircleLogo">
   <div class="Popup_WindowLogo">
@@ -151,13 +166,12 @@
             <td class="TableEdition_OneCell_width"/>
           </tr>
           <tr><td height="20" colspan="4"></td></tr>
-          <tr><td colspan="4"><span class="LabelText">What is the purpose of this Openbravo ERP instance?</span></td></tr>
-          <tr>
-            <td class="Combo_ContentCell" colspan="2"><select name="instancePurpose" id="inpInstancePurpose" class"ComboKey Combo_TwoCell_width" required="yes">
+          <tr id="purposeComboRow1"><td colspan="4"><span class="LabelText">What is the purpose of this Openbravo ERP instance?</span></td></tr>
+          <tr id="purposeComboRow2">
+            <td class="Combo_ContentCell" colspan="4"><select name="instancePurpose" id="inpInstancePurpose" class"ComboKey Combo_TwoCell_width" required="yes">
                 <option value="">--please select--</option>
                 <div id="reportPurpose"></div>
-            </select></td>
-            <td colspan="2"></td>
+            </select><span id="noPurposeSelected" class="LabelText" style="color:red">Select purpose!</span></td>
           </tr>
 
           <tr>
@@ -165,9 +179,9 @@
             <td class="Button_RightAlign_ContentCell">
               <div>
                 <button type="button" 
-                  id="buttonProceed" 
+                  id="buttonContinue" 
                   class="ButtonLink" 
-                  onclick="buttonOK();return false;" 
+                  onclick="continueButton();return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 
@@ -180,6 +194,27 @@
                   <table class="Button">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0" /></td>
+                      <td class="Button_text Button_width">Continue</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </button>
+                <button type="button" 
+                  id="buttonProceed" 
+                  class="ButtonLink" 
+                  onclick="buttonOK();return false;" 
+                  onfocus="buttonEvent('onfocus', this); window.status='Proceed'; return true;" 
+                  onblur="buttonEvent('onblur', this);" 
+                  onkeyup="buttonEvent('onkeyup', this);" 
+                  onkeydown="buttonEvent('onkeydown', this);" 
+                  onkeypress="buttonEvent('onkeypress', this);" 
+                  onmouseup="buttonEvent('onmouseup', this);" 
+                  onmousedown="buttonEvent('onmousedown', this);" 
+                  onmouseover="buttonEvent('onmouseover', this); window.status='Proceed'; return true;" 
+                  onmouseout="buttonEvent('onmouseout', this);">
+                  <table class="Button">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Proceed" title="Proceed" src="../../../../../web/images/blank.gif" border="0" /></td>
                       <td class="Button_text Button_width">Proceed</td>
                       <td class="Button_right"></td>
                     </tr>
