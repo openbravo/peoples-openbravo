@@ -98,7 +98,8 @@ public class Heartbeat extends HttpSecureAppServlet {
     jsCommand += "';";
     xmlDocument.setParameter("cmd", jsCommand);
 
-    if (HeartbeatProcess.isShowRegistrationRequired(vars, myPool)) {
+    if (HeartbeatProcess.isShowRegistrationRequired(vars, myPool)
+        && vars.getCommand().equals("DEFAULT")) {
       xmlDocument.setParameter("registration", "Y");
     }
 
