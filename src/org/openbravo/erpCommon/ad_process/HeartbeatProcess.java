@@ -667,7 +667,8 @@ public class HeartbeatProcess implements Process {
             || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier()) || !lastBeat
             .getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-      sysInfo.setInstancePurpose(null);
+      // sysInfo.setInstancePurpose(null);
+      sysInfo.setEnableHeartbeat(null);
       OBDal.getInstance().save(sysInfo);
       return true;
     } else {
