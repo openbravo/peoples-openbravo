@@ -144,11 +144,11 @@ public class DynamicJS extends HttpSecureAppServlet {
     }
     out.println("]};");
     out.print("F.getFormat=function(name)");
-    out.print("{if(typeof name==='undefined'||name==='')");
-    out.print("{return'qtyEdition';}");
+    out.print("{if(!name)");
+    out.print("{return F.getFormat('qtyEdition');}");
     out.print("for(var i=0;i<this.formats.length;i++)");
     out.print("{if(this.formats[i].name===name)");
-    out.println("{return this.formats[i].output;}}return'qtyEdtion';}");
+    out.println("{return this.formats[i].output;}} return F.getFormat('qtyEdtion');};");
 
     out.close();
   }
