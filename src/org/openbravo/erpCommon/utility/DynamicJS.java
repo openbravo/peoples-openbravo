@@ -119,11 +119,11 @@ public class DynamicJS extends HttpSecureAppServlet {
     String globals = "";
 
     globals += "var decSeparator_global = '"
-        + vars.getSessionValue("#DECIMALSEPARATOR|EUROEDITION") + "';\n";
+        + vars.getSessionValue("#DECIMALSEPARATOR|QTYEDITION") + "';\n";
     globals += "var groupSeparator_global = '"
-        + vars.getSessionValue("#GROUPSEPARATOR|EUROEDITION") + "';\n";
+        + vars.getSessionValue("#GROUPSEPARATOR|QTYEDITION") + "';\n";
     globals += "var groupInterval_global = '3';\n";
-    globals += "var maskNumeric_default = '" + vars.getSessionValue("#FORMATOUTPUT|EUROEDITION")
+    globals += "var maskNumeric_default = '" + vars.getSessionValue("#FORMATOUTPUT|QTYEDITION")
         + "';\n";
 
     out.print(globals);
