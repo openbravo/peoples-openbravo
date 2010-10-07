@@ -57,5 +57,6 @@
       <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MA_PL_INVOICELINE_M_PRODUCTION">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
       </foreign-key>
+      <check name="MA_PL_INVOICELI_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

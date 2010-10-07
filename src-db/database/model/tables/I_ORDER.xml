@@ -371,5 +371,9 @@
       <foreign-key foreignTable="AD_USER" name="I_ORDER_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <check name="I_ORDER_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N', 'E')]]></check>
+      <check name="I_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="I_ORDER_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
+      <check name="I_ORDER_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

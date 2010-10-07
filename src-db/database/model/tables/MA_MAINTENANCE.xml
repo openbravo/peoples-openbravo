@@ -80,5 +80,6 @@
       <foreign-key foreignTable="MA_MAINT_OPERATION" name="MA_MAINTENANCE_MA_MAINT_OPERAT">
         <reference local="MA_MAINT_OPERATION_ID" foreign="MA_MAINT_OPERATION_ID"/>
       </foreign-key>
+      <check name="MA_MAINTENANCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

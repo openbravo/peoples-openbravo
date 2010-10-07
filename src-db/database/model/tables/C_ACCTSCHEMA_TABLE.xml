@@ -72,5 +72,6 @@
         <unique-column name="C_ACCTSCHEMA_ID"/>
         <unique-column name="AD_TABLE_ID"/>
       </unique>
+      <check name="C_ACCTSCHEMA_TA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

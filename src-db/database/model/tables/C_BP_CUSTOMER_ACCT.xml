@@ -76,5 +76,6 @@
         <unique-column name="STATUS"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
+      <check name="C_BP_CUSTOMER_A_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

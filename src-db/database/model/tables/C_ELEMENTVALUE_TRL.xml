@@ -69,5 +69,7 @@
         <unique-column name="C_ELEMENTVALUE_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
+      <check name="C_ELEMENTVALUE_TRL_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ELEMENTVALUE_TRL_ISTRANS_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

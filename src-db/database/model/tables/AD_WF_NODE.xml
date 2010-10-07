@@ -112,5 +112,7 @@
       <index name="AD_WF_NODE_WORKFLOW" unique="false">
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
+      <check name="AD_WF_NODE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WF_NODE_ISCENTRALLYMAIN_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
     </table>
   </database>

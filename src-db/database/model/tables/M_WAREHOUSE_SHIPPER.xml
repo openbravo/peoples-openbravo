@@ -57,5 +57,6 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_SHIPPER_M_WAREHOUS">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <check name="M_WAREHOUSE_SHI_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

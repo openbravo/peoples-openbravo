@@ -57,5 +57,6 @@
       <foreign-key foreignTable="MA_SEQUENCE" name="MA_SEQUENCE_IC_MA_SEQUENCE">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
       </foreign-key>
+      <check name="MA_SEQUENCE_IC_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

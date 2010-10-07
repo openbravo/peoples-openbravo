@@ -66,5 +66,6 @@
       <foreign-key foreignTable="MRP_PLANNINGMETHOD" name="MRP_PLANNINGMETHOD_PMLINE">
         <reference local="MRP_PLANNINGMETHOD_ID" foreign="MRP_PLANNINGMETHOD_ID"/>
       </foreign-key>
+      <check name="MRP_PLANNINGMETHODLINE_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

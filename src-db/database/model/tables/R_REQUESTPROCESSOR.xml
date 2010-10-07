@@ -82,5 +82,6 @@
       <foreign-key foreignTable="AD_USER" name="R_REQUESTPROCESSOR_SUPERVISOR">
         <reference local="SUPERVISOR_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <check name="R_REQUESTPROCES_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

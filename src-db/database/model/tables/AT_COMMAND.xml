@@ -91,5 +91,12 @@
       <foreign-key foreignTable="AD_CLIENT" name="AT_COMMAND_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <check name="AT_COMMAND_CHECK_WRITEABLE_CHK"><![CDATA[CHECK_WRITEABLE IN ('Y', 'N')]]></check>
+      <check name="AT_COMMAND_HAS_PREFIX_CHK"><![CDATA[HAS_PREFIX IN ('Y', 'N')]]></check>
+      <check name="AT_COMMAND_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AT_COMMAND_LINE_INTERCHANG_CHK"><![CDATA[LINE_INTERCHANGE IN ('Y', 'N')]]></check>
+      <check name="AT_COMMAND_REMEMBER_FRAME_CHK"><![CDATA[REMEMBER_FRAME IN ('Y', 'N')]]></check>
+      <check name="AT_COMMAND_REMEMBER_TAB_CHK"><![CDATA[REMEMBER_TAB IN ('Y', 'N')]]></check>
+      <check name="AT_COMMAND_REMEMBER_WINDOW_CHK"><![CDATA[REMEMBER_WINDOW IN ('Y', 'N')]]></check>
     </table>
   </database>

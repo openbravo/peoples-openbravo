@@ -74,5 +74,11 @@
       <foreign-key foreignTable="C_TAX" name="C_TAX_REPORT_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
+      <check name="C_TAX_REPORT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_TAX_REPORT_ISNEGATIVE_CHECK"><![CDATA[ISNEGATIVE IN ('Y', 'N')]]></check>
+      <check name="C_TAX_REPORT_ISREPORT_CHECK"><![CDATA[ISREPORT IN ('Y', 'N')]]></check>
+      <check name="C_TAX_REPORT_ISSHOWN_CHECK"><![CDATA[ISSHOWN IN ('Y', 'N')]]></check>
+      <check name="C_TAX_REPORT_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
+      <check name="C_TAX_REPORT_ISSUMMARY_CHECK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
     </table>
   </database>

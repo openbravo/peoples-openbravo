@@ -71,5 +71,6 @@
         <unique-column name="C_CHARGE_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
+      <check name="C_CHARGE_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

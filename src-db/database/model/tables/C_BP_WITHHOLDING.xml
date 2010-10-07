@@ -93,5 +93,8 @@
         <unique-column name="C_WITHHOLDING_ID"/>
         <unique-column name="C_TAX_ID"/>
       </unique>
+      <check name="C_BP_WITHHOLDING_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_BP_WITHHOLDING_ISMANDATO_CHK"><![CDATA[ISMANDATORYWITHHOLDING IN ('Y', 'N')]]></check>
+      <check name="C_BP_WITHHOLDING_ISTEMPORA_CHK"><![CDATA[ISTEMPORARYEXEMPT IN ('Y', 'N')]]></check>
     </table>
   </database>

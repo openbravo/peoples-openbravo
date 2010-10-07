@@ -69,5 +69,7 @@
         <unique-column name="C_CURRENCY_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
+      <check name="C_CURRENCY_TRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_CURRENCY_TRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

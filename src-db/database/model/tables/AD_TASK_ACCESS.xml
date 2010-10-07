@@ -61,5 +61,7 @@
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_TASK_ID"/>
       </index>
+      <check name="AD_TASK_ACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TASK_ACCESS_ISREADWRITE_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

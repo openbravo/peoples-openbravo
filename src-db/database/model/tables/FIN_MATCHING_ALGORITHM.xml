@@ -51,5 +51,6 @@
       <foreign-key foreignTable="AD_ORG" name="FIN_MATCHING_ALGORITHM_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="FIN_MATCH_ALGORITHM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

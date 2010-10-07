@@ -66,5 +66,7 @@
         <unique-column name="C_COUNTRY_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="C_REGION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_REGION_ISDEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
     </table>
   </database>

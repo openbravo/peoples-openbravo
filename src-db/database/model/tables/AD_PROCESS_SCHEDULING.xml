@@ -66,5 +66,6 @@
       <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_SCHEDULING_AD_PROCE" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
+      <check name="AD_PROCESS_SCHEDULING_ISFT"><![CDATA[ISFULLTIME IN ('Y', 'N')]]></check>
     </table>
   </database>

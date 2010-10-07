@@ -64,5 +64,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_DATASET_COLUMN_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_DATASET_COLUMN_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_DATASET_COLUMN_ISEXCLUD_CHK"><![CDATA[ISEXCLUDED IN ('Y', 'N')]]></check>
     </table>
   </database>

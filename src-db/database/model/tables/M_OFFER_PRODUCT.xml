@@ -57,5 +57,6 @@
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="M_OFFER_ID"/>
       </unique>
+      <check name="M_OFFER_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

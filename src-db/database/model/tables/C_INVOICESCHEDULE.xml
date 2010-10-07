@@ -83,5 +83,8 @@
       <foreign-key foreignTable="AD_ORG" name="C_INVOICESCHEDULE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="C_INVOICESCHEDULE_EVENINVO_CHK"><![CDATA[EVENINVOICEWEEK IN ('Y', 'N')]]></check>
+      <check name="C_INVOICESCHEDULE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_INVOICESCHEDULE_ISAMOUNT_CHK"><![CDATA[ISAMOUNT IN ('Y', 'N')]]></check>
     </table>
   </database>

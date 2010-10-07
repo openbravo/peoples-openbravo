@@ -58,5 +58,6 @@
       <foreign-key foreignTable="C_CURRENCY" name="C_CASHBOOK_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
+      <check name="C_CASHBOOK_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

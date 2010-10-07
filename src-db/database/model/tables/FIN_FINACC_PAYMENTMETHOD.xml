@@ -135,5 +135,14 @@
         <unique-column name="FIN_PAYMENTMETHOD_ID"/>
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
       </unique>
+      <check name="FIN_FINACC_METHOD_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="FIN_FINACC_METHOD_DEPOSIT_CHK"><![CDATA[AUTOMATIC_DEPOSIT IN ('Y', 'N')]]></check>
+      <check name="FIN_FINACC_METHOD_PAYMENT_CHK"><![CDATA[AUTOMATIC_PAYMENT IN ('Y', 'N')]]></check>
+      <check name="FIN_FINACC_METHOD_RECEIPT_CHK"><![CDATA[AUTOMATIC_RECEIPT IN ('Y', 'N')]]></check>
+      <check name="FIN_FINACC_METHOD_WITHDRAW_CHK"><![CDATA[AUTOMATIC_WITHDRAWN IN ('Y', 'N')]]></check>
+      <check name="FIN_FINACCMETH_PAYINALLOW_CHK"><![CDATA[PAYIN_ALLOW IN ('Y', 'N')]]></check>
+      <check name="FIN_FINACCMETH_PAYINDEF_CHK"><![CDATA[PAYIN_DEFERRED IN ('Y', 'N')]]></check>
+      <check name="FIN_FINACCMETH_PAYOUTALLOW_CHK"><![CDATA[PAYOUT_ALLOW IN ('Y', 'N')]]></check>
+      <check name="FIN_FINACCMETH_PAYOUTDEF_CHK"><![CDATA[PAYOUT_DEFERRED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -100,5 +100,6 @@
       <index name="M_INTERNAL_CONSUMPTLN_CONS_IDX" unique="false">
         <index-column name="M_INTERNAL_CONSUMPTION_ID"/>
       </index>
+      <check name="M_INTERNAL_CONSUMPTIONLINE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

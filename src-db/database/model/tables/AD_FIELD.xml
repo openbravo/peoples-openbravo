@@ -137,5 +137,12 @@
       <index name="AD_FIELD_TAB" unique="false">
         <index-column name="AD_TAB_ID"/>
       </index>
+      <check name="AD_FIELD_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISCENTRALLYMAINTA_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISDISPLAYED_CHK"><![CDATA[ISDISPLAYED IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISENCRYPTED_CHK"><![CDATA[ISENCRYPTED IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISFIELDONLY_CHK"><![CDATA[ISFIELDONLY IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISREADONLY_CHK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_ISSAMELINE_CHK"><![CDATA[ISSAMELINE IN ('Y', 'N')]]></check>
     </table>
   </database>

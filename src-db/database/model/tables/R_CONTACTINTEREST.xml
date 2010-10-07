@@ -61,5 +61,6 @@
       <foreign-key foreignTable="R_INTERESTAREA" name="R_CONTACTINTEREST_R_INTERESTAR">
         <reference local="R_INTERESTAREA_ID" foreign="R_INTERESTAREA_ID"/>
       </foreign-key>
+      <check name="R_CONTACTINTERE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -363,5 +363,14 @@
       <index name="C_ORDER_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
+      <check name="C_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISDELIVERED_CHECK"><![CDATA[ISDELIVERED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISDISCOUNTPRINTED_CHK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISSELECTED_CHECK"><![CDATA[ISSELECTED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISTAXINCLUDED_CHECK"><![CDATA[ISTAXINCLUDED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

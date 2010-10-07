@@ -184,5 +184,9 @@
       <foreign-key foreignTable="C_INVOICE" name="I_BANKSTATEMENT_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
+      <check name="I_BANKSTATEMENT_I_ISIMPORT_CHK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
+      <check name="I_BANKSTATEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="I_BANKSTATEMENT_ISREVERSAL_CHK"><![CDATA[ISREVERSAL IN ('Y', 'N')]]></check>
+      <check name="I_BANKSTATEMENT_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

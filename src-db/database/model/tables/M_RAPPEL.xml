@@ -66,5 +66,6 @@
       <foreign-key foreignTable="C_CURRENCY" name="M_RAPPEL_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
+      <check name="M_RAPPEL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

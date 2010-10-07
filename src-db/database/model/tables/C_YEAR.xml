@@ -70,5 +70,6 @@
         <unique-column name="C_CALENDAR_ID"/>
         <unique-column name="YEAR"/>
       </unique>
+      <check name="C_YEAR_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

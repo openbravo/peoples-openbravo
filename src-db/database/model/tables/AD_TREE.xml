@@ -59,5 +59,7 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="AD_TREE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TREE_ISALLNODES_CHK"><![CDATA[ISALLNODES IN ('Y', 'N')]]></check>
     </table>
   </database>

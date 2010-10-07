@@ -55,5 +55,6 @@
       <foreign-key foreignTable="AD_CLIENT" name="MA_CCP_GROUP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <check name="MA_CCP_GROUP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -85,5 +85,11 @@
       <foreign-key foreignTable="M_SERNOCTL" name="M_ATTRIBUTESET_M_SERNOCTL">
         <reference local="M_SERNOCTL_ID" foreign="M_SERNOCTL_ID"/>
       </foreign-key>
+      <check name="M_ATTRIBUTESET_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTESET_ISATSETVAL_CHK"><![CDATA[ISONEATTRSETVALREQUIRED IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTESET_ISGUARANTEE_CHK"><![CDATA[ISGUARANTEEDATE IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTESET_ISLOCKABLE_CHK"><![CDATA[ISLOCKABLE IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTESET_ISLOT_CHECK"><![CDATA[ISLOT IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTESET_ISSERNO_CHECK"><![CDATA[ISSERNO IN ('Y', 'N')]]></check>
     </table>
   </database>

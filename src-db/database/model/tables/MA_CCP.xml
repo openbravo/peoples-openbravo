@@ -70,5 +70,7 @@
       <foreign-key foreignTable="MA_CCP_GROUP" name="MA_CCP_GROUP_MACCP">
         <reference local="MA_CCP_GROUP_ID" foreign="MA_CCP_GROUP_ID"/>
       </foreign-key>
+      <check name="MA_CCP_CRITICAL_CHECK"><![CDATA[CRITICAL IN ('Y', 'N')]]></check>
+      <check name="MA_CCP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

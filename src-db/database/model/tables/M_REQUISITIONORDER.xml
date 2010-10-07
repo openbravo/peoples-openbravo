@@ -57,5 +57,6 @@
       <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONORDER_M_REQUISITI">
         <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
       </foreign-key>
+      <check name="M_REQORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

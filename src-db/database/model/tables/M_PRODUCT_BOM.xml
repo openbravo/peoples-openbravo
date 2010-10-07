@@ -72,5 +72,6 @@
       <index name="M_PRODUCT_BOM_M_PRODUCT_ID" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
+      <check name="M_PRODUCT_BOM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

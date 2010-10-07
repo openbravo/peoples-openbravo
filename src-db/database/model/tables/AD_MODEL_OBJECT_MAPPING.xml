@@ -54,5 +54,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_MODEL_OBJECT_MAPPING_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_MODEL_OBJECT_MAPPING_IS_CH1"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
+      <check name="AD_MODEL_OBJECT_MAPPING_IS_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

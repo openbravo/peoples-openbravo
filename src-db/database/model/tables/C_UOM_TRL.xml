@@ -73,5 +73,7 @@
         <unique-column name="C_UOM_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
+      <check name="C_UOM_TRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_UOM_TRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

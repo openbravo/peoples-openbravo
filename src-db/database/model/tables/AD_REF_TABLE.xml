@@ -75,5 +75,7 @@
       <foreign-key foreignTable="AD_REFERENCE" name="AD_REFERENCE_REFTABLE" onDelete="cascade">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
+      <check name="AD_REF_TABLE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_REF_TABLE_ISVALUEDISPLA_CHK"><![CDATA[ISVALUEDISPLAYED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -125,5 +125,7 @@
       <index name="C_CASH_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
+      <check name="C_CASH_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_CASH_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

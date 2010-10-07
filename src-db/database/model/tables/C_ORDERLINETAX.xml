@@ -76,5 +76,6 @@
         <unique-column name="C_ORDERLINE_ID"/>
         <unique-column name="C_TAX_ID"/>
       </unique>
+      <check name="C_ORDERLINETAX_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

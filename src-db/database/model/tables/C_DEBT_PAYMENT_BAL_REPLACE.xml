@@ -65,5 +65,6 @@
       <foreign-key foreignTable="C_GLITEM" name="C_DEBT_PAYMENT_BAL_REPLACE_C_G">
         <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
+      <check name="C_DEBT_PAYMENT_BAL_REPLACE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

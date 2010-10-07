@@ -50,5 +50,6 @@
         <unique-column name="AD_ROLE_ID"/>
         <unique-column name="AD_ORG_ID"/>
       </unique>
+      <check name="AD_ROLE_ORGACCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -150,5 +150,7 @@
         <index-column name="AD_ORG_ID"/>
         <index-column name="ACCOUNT_ID"/>
       </index>
+      <check name="C_VALIDCOMBINATION_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_VALIDCOMBINATION_ISFULLY_CHK"><![CDATA[ISFULLYQUALIFIED IN ('Y', 'N')]]></check>
     </table>
   </database>

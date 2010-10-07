@@ -64,5 +64,6 @@
         <unique-column name="C_WITHHOLDING_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
+      <check name="C_WITHHOLDING_A_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

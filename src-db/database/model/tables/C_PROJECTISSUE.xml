@@ -105,5 +105,6 @@
       <foreign-key foreignTable="S_TIMEEXPENSELINE" name="C_PROJECTISSUE_S_TIMEEXPENSELI">
         <reference local="S_TIMEEXPENSELINE_ID" foreign="S_TIMEEXPENSELINE_ID"/>
       </foreign-key>
+      <check name="C_PROJECTISSUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

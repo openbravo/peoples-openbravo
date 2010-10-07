@@ -61,5 +61,6 @@
       <index name="MA_PROCESSPLAN_VERSION_PPLAN" unique="false">
         <index-column name="MA_PROCESSPLAN_ID"/>
       </index>
+      <check name="MA_PROCESSPLAN_VERSION_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

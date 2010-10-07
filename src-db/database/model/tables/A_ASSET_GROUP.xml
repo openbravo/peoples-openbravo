@@ -59,5 +59,7 @@
       <foreign-key foreignTable="AD_ORG" name="A_ASSET_GROUP_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="A_ASSET_GROUP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="A_ASSET_GROUP_ISOWNED_CHK"><![CDATA[ISOWNED IN ('Y', 'N')]]></check>
     </table>
   </database>

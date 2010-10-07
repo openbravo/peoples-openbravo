@@ -67,5 +67,12 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORGTYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_ORGTYPE_ISACCTLE_CHECK"><![CDATA[ISACCTLEGALENTITY IN ('Y', 'N')]]></check>
+      <check name="AD_ORGTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_ORGTYPE_ISBU_CHECK"><![CDATA[ISBUSINESSUNIT IN ('Y', 'N')]]></check>
+      <check name="AD_ORGTYPE_ISDEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
+      <check name="AD_ORGTYPE_ISLEGALENTITY_CHECK"><![CDATA[ISLEGALENTITY IN ('Y', 'N')]]></check>
+      <check name="AD_ORGTYPE_ISLEGALENTITY_CHK"><![CDATA[(((ISLEGALENTITY = 'Y') AND (ISBUSINESSUNIT = 'N')) OR ((ISLEGALENTITY = 'N') AND (ISBUSINESSUNIT = 'Y'))) OR ((ISLEGALENTITY = 'N') AND (ISBUSINESSUNIT = 'N'))]]></check>
+      <check name="AD_ORGTYPE_ISTRALLOWED_CHECK"><![CDATA[ISTRANSACTIONSALLOWED IN ('Y', 'N')]]></check>
     </table>
   </database>

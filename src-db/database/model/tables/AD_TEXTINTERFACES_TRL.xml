@@ -65,5 +65,7 @@
         <index-column name="AD_LANGUAGE"/>
         <index-column name="AD_TEXTINTERFACES_ID"/>
       </index>
+      <check name="AD_TEXTINTERFACES_TRL_ISAC_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TEXTINTERFACES_TRL_ISTR_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

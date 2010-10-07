@@ -139,5 +139,8 @@
       <index name="C_ACCTSCHEMA_ELEMENT_SCHEMA" unique="false">
         <index-column name="C_ACCTSCHEMA_ID"/>
       </index>
+      <check name="C_ACCTSCHEMA_ELEMENT_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_ELEMENT_ISBAL_CHK"><![CDATA[ISBALANCED IN ('Y', 'N')]]></check>
+      <check name="C_ACCTSCHEMA_ELEMENT_ISMAN_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -57,5 +57,6 @@
         <unique-column name="AD_USER_ID"/>
         <unique-column name="AD_ROLE_ID"/>
       </unique>
+      <check name="AD_USER_ROLES_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

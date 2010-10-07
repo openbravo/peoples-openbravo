@@ -109,5 +109,10 @@
       <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="C_PAYMENTTERMLINE_FIN_PAY_FK1">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
       </foreign-key>
+      <check name="C_PAYMENTTERMLINE_EXCLUDET_CHK"><![CDATA[EXCLUDETAX IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_ISDUEFIX_CHK"><![CDATA[ISDUEFIXED IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_ISNEXTBU_CHK"><![CDATA[ISNEXTBUSINESSDAY IN ('Y', 'N')]]></check>
+      <check name="C_PAYMENTTERMLINE_ONREMAIN_CHK"><![CDATA[ONREMAINDER IN ('Y', 'N')]]></check>
     </table>
   </database>

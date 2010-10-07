@@ -57,5 +57,6 @@
       <foreign-key foreignTable="MA_TOOLSET_TYPE" name="MA_TOOLSETTYPEMATOOLSETPROCESS">
         <reference local="MA_TOOLSET_TYPE_ID" foreign="MA_TOOLSET_TYPE_ID"/>
       </foreign-key>
+      <check name="MA_TOOLSETPROCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

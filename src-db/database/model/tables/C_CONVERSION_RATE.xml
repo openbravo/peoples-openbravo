@@ -81,5 +81,6 @@
         <unique-column name="CONVERSIONRATETYPE"/>
         <unique-column name="VALIDFROM"/>
       </unique>
+      <check name="C_CONVERSION_RA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

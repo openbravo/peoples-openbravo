@@ -109,5 +109,6 @@
       <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="C_PROJECTPROPOSAL_FINPAYMETHOD">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
       </foreign-key>
+      <check name="C_PROJECTPROPOS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

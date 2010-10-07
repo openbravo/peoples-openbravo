@@ -73,5 +73,7 @@
         <index-column name="AD_WF_NODE_ID"/>
         <index-column name="AD_LANGUAGE"/>
       </index>
+      <check name="AD_WF_NODE_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WF_NODE_TRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

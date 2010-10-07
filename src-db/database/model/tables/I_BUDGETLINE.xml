@@ -239,5 +239,6 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_I_BUDGETLINE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="I_BUDGETLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

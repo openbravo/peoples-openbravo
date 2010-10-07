@@ -165,5 +165,12 @@
       <unique name="AD_MODULE_JAVAPACKAGE_UN">
         <unique-column name="JAVAPACKAGE"/>
       </unique>
+      <check name="AD_MODULE_INDEVELOPMENT_CHK"><![CDATA[ISINDEVELOPMENT IN ('Y', 'N')]]></check>
+      <check name="AD_MODULE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_MODULE_ISCOMMERCIAL_CHCK"><![CDATA[ISCOMMERCIAL IN ('Y', 'N')]]></check>
+      <check name="AD_MODULE_ISDEFAULT_CHK"><![CDATA[(ISDEFAULT = 'N') OR ((ISDEFAULT = 'Y') AND (ISINDEVELOPMENT = 'Y'))]]></check>
+      <check name="AD_MODULE_ISREGISTERED_CHK"><![CDATA[ISREGISTERED IN ('Y', 'N')]]></check>
+      <check name="AD_MODULE_ISTRANSLATEABLE_CHK"><![CDATA[ISTRANSLATIONREQUIRED IN ('Y', 'N')]]></check>
+      <check name="AD_MODULE_TYPE_CHK"><![CDATA[TYPE IN ('M', 'P', 'T')]]></check>
     </table>
   </database>

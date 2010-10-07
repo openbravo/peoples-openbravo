@@ -76,5 +76,7 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="S_EXPENSETYPE_M_PRODUCT_CATEGO">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
+      <check name="S_EXPENSETYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="S_EXPENSETYPE_ISINVOICED_CHK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
     </table>
   </database>

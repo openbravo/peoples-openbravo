@@ -61,5 +61,7 @@
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_WINDOW_ID"/>
       </index>
+      <check name="AD_WINDOW_ACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_WINDOW_ACCESS_ISREADWRI_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

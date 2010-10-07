@@ -112,5 +112,11 @@
       <index name="MA_SEUENCE_PROCESSPLAN_VERSION" unique="false">
         <index-column name="MA_PROCESSPLAN_VERSION_ID"/>
       </index>
+      <check name="MA_SEQUENCE_CALCULATED_CHECK"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
+      <check name="MA_SEQUENCE_GROUPUSE_CHECK"><![CDATA[GROUPUSE IN ('Y', 'N')]]></check>
+      <check name="MA_SEQUENCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MA_SEQUENCE_ISDEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
+      <check name="MA_SEQUENCE_NOQTY_CHECK"><![CDATA[NOQTY IN ('Y', 'N')]]></check>
+      <check name="MA_SEQUENCE_OUTSOURCED_CHECK"><![CDATA[OUTSOURCED IN ('Y', 'N')]]></check>
     </table>
   </database>

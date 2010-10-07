@@ -155,5 +155,8 @@
       <index name="C_BPBANKACCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
+      <check name="C_BP_BACC_COUNTRY_CHECK"><![CDATA[(IBAN IS NULL) OR (C_COUNTRY_ID IS NOT NULL)]]></check>
+      <check name="C_BP_BACC_IBAN_CHECK"><![CDATA[(((SHOWIBAN = 'Y') AND (SHOWACCOUNTNO = 'N')) AND (IBAN IS NOT NULL)) OR (((SHOWIBAN = 'N') AND (SHOWACCOUNTNO = 'Y')) AND (ACCOUNTNO IS NOT NULL))]]></check>
+      <check name="C_BP_BANKACCOUNT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

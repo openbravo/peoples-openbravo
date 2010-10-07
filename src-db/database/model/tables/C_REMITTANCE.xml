@@ -99,5 +99,6 @@
       <foreign-key foreignTable="C_SETTLEMENT" name="C_REMITTANCE_C_SETTLEMENT">
         <reference local="C_SETTLEMENT_ID" foreign="C_SETTLEMENT_ID"/>
       </foreign-key>
+      <check name="C_REMITTANCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

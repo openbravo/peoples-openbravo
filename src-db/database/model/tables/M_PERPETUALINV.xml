@@ -89,5 +89,7 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_PERPETUALINV_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <check name="M_PERPETUALINV_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_PERPETVALINU_C_H_MOVEMENT"><![CDATA[COUNTHIGHMOVEMENT IN ('Y', 'N')]]></check>
     </table>
   </database>

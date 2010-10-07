@@ -92,5 +92,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_CCOMMISSION">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="C_COMMISSION_CREATEFROM_CHK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
+      <check name="C_COMMISSION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_COMMISSION_LISTDETAILS_CHK"><![CDATA[LISTDETAILS IN ('Y', 'N')]]></check>
     </table>
   </database>

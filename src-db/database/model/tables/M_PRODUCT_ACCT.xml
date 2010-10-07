@@ -113,5 +113,6 @@
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
+      <check name="M_PRODUCT_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

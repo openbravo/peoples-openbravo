@@ -61,5 +61,6 @@
       <foreign-key foreignTable="C_ELEMENTVALUE" name="C_ELEMENTVALUE_OPERAND_C_ELEME">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
+      <check name="C_ELEMENTVALUE_OPERAND_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

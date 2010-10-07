@@ -101,5 +101,6 @@
         <unique-column name="C_UOM_ID"/>
         <unique-column name="M_PRODUCT_UOM_ID"/>
       </unique>
+      <check name="M_STORAGE_DETAIL_CHECK1"><![CDATA[(((QTYORDERONHAND IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) AND (PREQTYORDERONHAND IS NULL)) OR (((QTYORDERONHAND IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL)) AND (PREQTYORDERONHAND IS NOT NULL))]]></check>
     </table>
   </database>

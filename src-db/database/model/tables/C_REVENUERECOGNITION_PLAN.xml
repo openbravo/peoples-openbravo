@@ -89,5 +89,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_REVENUERECOGNITION_PLAN_UNEA">
         <reference local="UNEARNEDREVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <check name="C_REVENUERECOGNITION_PLAN__CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

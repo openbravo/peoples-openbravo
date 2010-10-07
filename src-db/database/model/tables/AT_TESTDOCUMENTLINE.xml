@@ -101,5 +101,6 @@
         <unique-column name="AT_TESTDOCUMENT_ID"/>
         <unique-column name="AT_COMMAND_ID"/>
       </unique>
+      <check name="AT_TESTDOCL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

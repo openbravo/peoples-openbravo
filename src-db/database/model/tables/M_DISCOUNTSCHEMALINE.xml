@@ -163,5 +163,6 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_DISCOUNTSCHEMALINE_M_PRODUCT" onDelete="setnull">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="M_DISCOUNTSCHEMALINE_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

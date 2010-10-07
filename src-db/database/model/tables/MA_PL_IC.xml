@@ -57,5 +57,6 @@
       <foreign-key foreignTable="MA_INDIRECT_COST" name="MA_PL_IC_MA_INDIRECT_COST">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
+      <check name="MA_PL_IC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -70,5 +70,8 @@
       <foreign-key foreignTable="C_TAXCATEGORY" name="C_CHARGE_C_TAXCATEGORY">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
+      <check name="C_CHARGE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_CHARGE_ISSAMECURRENCY_CHK"><![CDATA[ISSAMECURRENCY IN ('Y', 'N')]]></check>
+      <check name="C_CHARGE_ISSAMETAX_CHK"><![CDATA[ISSAMETAX IN ('Y', 'N')]]></check>
     </table>
   </database>

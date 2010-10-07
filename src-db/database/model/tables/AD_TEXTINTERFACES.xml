@@ -62,5 +62,6 @@
         <index-column name="FILENAME"/>
         <index-column name="TEXT"/>
       </index>
+      <check name="AD_TEXTINTERFACES_IN_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

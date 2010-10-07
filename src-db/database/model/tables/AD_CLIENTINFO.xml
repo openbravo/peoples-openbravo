@@ -203,5 +203,12 @@
       <foreign-key foreignTable="C_UOM" name="C_UOM_WEIGHT_AD_CLIENTINFO">
         <reference local="C_UOM_WEIGHT_ID" foreign="C_UOM_ID"/>
       </foreign-key>
+      <check name="AD_CLIENTINFO_ACCT2_ACTIVE_CHK"><![CDATA[ACCT2_ACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ACCT3_ACTIVE_CHK"><![CDATA[ACCT3_ACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ALLOWNEGATIV_CHK"><![CDATA[ALLOWNEGATIVESTOCK IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_CHECKINOUTOR_CHK"><![CDATA[CHECKINOUTORG IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_CHECKORDEROR_CHK"><![CDATA[CHECKORDERORG IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLIENTINFO_ISDISCOUNTLI_CHK"><![CDATA[ISDISCOUNTLINEAMT IN ('Y', 'N')]]></check>
     </table>
   </database>

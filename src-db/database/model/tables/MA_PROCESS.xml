@@ -65,5 +65,6 @@
       <foreign-key foreignTable="MA_WORKSTATION" name="MA_WORKSTATION_MAPROCESS">
         <reference local="MA_WORKSTATION_ID" foreign="MA_WORKSTATION_ID"/>
       </foreign-key>
+      <check name="MA_PROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

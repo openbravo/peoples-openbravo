@@ -76,5 +76,6 @@
         <unique-column name="Y"/>
         <unique-column name="Z"/>
       </unique>
+      <check name="M_LOCATOR_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

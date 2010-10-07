@@ -151,5 +151,12 @@
       <foreign-key foreignTable="C_ELEMENTVALUE" name="I_ELEMENTVALUE_PARENTELEMENTVA">
         <reference local="PARENTELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
+      <check name="I_ELEMENTVALUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_ISDOCCONTRO_CHK"><![CDATA[ISDOCCONTROLLED IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_POSTACTUAL_CHK"><![CDATA[POSTACTUAL IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_POSTBUDGET_CHK"><![CDATA[POSTBUDGET IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_POSTENCUMBR_CHK"><![CDATA[POSTENCUMBRANCE IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_POSTSTATIST_CHK"><![CDATA[POSTSTATISTICAL IN ('Y', 'N')]]></check>
+      <check name="I_ELEMENTVALUE_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

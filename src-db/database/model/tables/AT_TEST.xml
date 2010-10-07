@@ -86,5 +86,6 @@
       <foreign-key foreignTable="AT_ROLLOGIN" name="AT_TEST_AT_ROLLOGIN">
         <reference local="AT_ROLLOGIN_ID" foreign="AT_ROLLOGIN_ID"/>
       </foreign-key>
+      <check name="AT_TEST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

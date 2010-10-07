@@ -133,5 +133,9 @@
       <index name="AD_PROCESS_PARA_PROCESS" unique="false">
         <index-column name="AD_PROCESS_ID"/>
       </index>
+      <check name="AD_PROCESS_PARA_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_ISCENTRALL_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_ISMANDATOR_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_PARA_ISRANGE_CHK"><![CDATA[ISRANGE IN ('Y', 'N')]]></check>
     </table>
   </database>

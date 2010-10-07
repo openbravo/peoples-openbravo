@@ -68,5 +68,6 @@
       <foreign-key foreignTable="R_REQUESTPROCESSOR" name="R_REQUESTPROCESSOR_ROUTE_R_REQ">
         <reference local="R_REQUESTPROCESSOR_ID" foreign="R_REQUESTPROCESSOR_ID"/>
       </foreign-key>
+      <check name="R_REQPROCROUTE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
