@@ -81,6 +81,5 @@
         <unique-column name="AD_REFERENCE_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="AD_REF_LIST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

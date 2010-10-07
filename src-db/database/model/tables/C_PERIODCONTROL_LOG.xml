@@ -84,9 +84,5 @@
       <foreign-key foreignTable="C_PERIOD" name="C_PERIODCONTROL_LOG_PERIODNO">
         <reference local="PERIODNO" foreign="C_PERIOD_ID"/>
       </foreign-key>
-      <check name="C_PERIODCTRLLOG_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_PERIODCTRLLOG_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
-      <check name="C_PERIODCTRLLOG_PROCESSING_CHK"><![CDATA[PROCESSING IN ('Y', 'N')]]></check>
-      <check name="C_PERIODCTRLLOG_RECURSIVE_CHK"><![CDATA[ISRECURSIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

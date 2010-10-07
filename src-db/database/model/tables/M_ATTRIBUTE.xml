@@ -59,8 +59,5 @@
       <foreign-key foreignTable="AD_ORG" name="M_ATTRIBUTE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="M_ATTRIBUTE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_ATTRIBUTE_ISINSTANCEATTR_CHK"><![CDATA[ISINSTANCEATTRIBUTE IN ('Y', 'N')]]></check>
-      <check name="M_ATTRIBUTE_ISMANDATORY_CHECK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -62,6 +62,5 @@
       <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCT_RPT_C_ACCTSCHEMA">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <check name="C_ACCT_RPT_ISORGBALANCED_CHECK"><![CDATA[ISORGBALANCED IN ('Y', 'N')]]></check>
     </table>
   </database>

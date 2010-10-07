@@ -284,9 +284,5 @@
       <foreign-key foreignTable="AD_USER" name="I_INVOICE_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <check name="I_INVOICE_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
-      <check name="I_INVOICE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="I_INVOICE_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
-      <check name="I_INVOICE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

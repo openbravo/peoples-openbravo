@@ -51,6 +51,5 @@
       <foreign-key foreignTable="AD_ORG" name="FIN_BANKFILE_FORMAT_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="FIN_BANKFILEFORMAT_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

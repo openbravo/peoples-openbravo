@@ -73,7 +73,5 @@
       <foreign-key foreignTable="M_PRODUCT" name="C_SERVICELEVEL_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="C_SERVICELEVEL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_SERVICELEVEL_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

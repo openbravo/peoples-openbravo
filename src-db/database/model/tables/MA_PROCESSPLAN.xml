@@ -71,7 +71,5 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="MA_PROCESSPLAN_EXPLODEPHAS_CHK"><![CDATA[EXPLODEPHASES IN ('Y', 'N')]]></check>
-      <check name="MA_PROCESSPLAN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

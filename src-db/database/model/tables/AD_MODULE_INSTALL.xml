@@ -159,11 +159,5 @@
       <foreign-key foreignTable="AD_ORG" name="AD_MODULE_INSTALL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="AD_MOD_INS_INDEVELOPMENT_CHK"><![CDATA[ISINDEVELOPMENT IN ('Y', 'N')]]></check>
-      <check name="AD_MOD_INS_ISTRANSLATEABLE_CHK"><![CDATA[ISTRANSLATIONREQUIRED IN ('Y', 'N')]]></check>
-      <check name="AD_MODULE_INS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_MODULE_INS_ISREGISTERED_CHK"><![CDATA[ISREGISTERED IN ('Y', 'N')]]></check>
-      <check name="AD_MODULE_INS_TYPE_CHK"><![CDATA[TYPE IN ('M', 'P', 'T')]]></check>
-      <check name="AD_MODULE_INSTALL_ISDEFAUL_CHK"><![CDATA[(ISDEFAULT = 'N') OR ((ISDEFAULT = 'Y') AND (ISINDEVELOPMENT = 'Y'))]]></check>
     </table>
   </database>

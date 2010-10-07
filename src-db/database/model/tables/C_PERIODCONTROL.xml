@@ -65,6 +65,5 @@
       <index name="C_PERIODCONTROL_PERIOD" unique="false">
         <index-column name="C_PERIOD_ID"/>
       </index>
-      <check name="C_PERIODCONTROL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

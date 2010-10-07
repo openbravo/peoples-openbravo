@@ -92,8 +92,5 @@
       <foreign-key foreignTable="C_LOCATION" name="C_BANK_C_LOCATION">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
-      <check name="C_BANK_CODEBANK_CHK"><![CDATA[(((CODEBANK IS NULL) OR (LENGTH((CODEBANK)) = 4)) AND ((CODEBRANCH IS NULL) OR (LENGTH((CODEBRANCH)) = 4))) AND ((DIGITCONTROL IS NULL) OR (LENGTH((DIGITCONTROL)) = 1))]]></check>
-      <check name="C_BANK_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_BANK_ISOWNBANK_CHK"><![CDATA[ISOWNBANK IN ('Y', 'N')]]></check>
     </table>
   </database>

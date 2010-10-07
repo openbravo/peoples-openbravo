@@ -135,7 +135,5 @@
       <index name="M_TRANSSACTION_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <check name="M_TRANSACTION_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
-      <check name="M_TRANSACTION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

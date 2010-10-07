@@ -162,7 +162,5 @@
       <foreign-key foreignTable="C_BANKACCOUNT" name="C_PROMISSORYFORMAT_C_BANKACCOU">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
-      <check name="C_PROMISSORYFORMAT_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_PROMISSORYFORMAT_PRINTBA_CHK"><![CDATA[PRINTBANKLOC IN ('Y', 'N')]]></check>
     </table>
   </database>

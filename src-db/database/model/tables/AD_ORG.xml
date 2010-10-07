@@ -74,9 +74,5 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="AD_ORG_CALENDAR_CHECK"><![CDATA[((ISPERIODCONTROLALLOWED = 'Y') AND (C_CALENDAR_ID IS NOT NULL)) OR (C_CALENDAR_ID IS NULL)]]></check>
-      <check name="AD_ORG_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_ORG_ISPERIODCONTROL_CHECK"><![CDATA[ISPERIODCONTROLALLOWED IN ('Y', 'N')]]></check>
-      <check name="AD_ORG_ISREADY_CHECK"><![CDATA[ISREADY IN ('Y', 'N')]]></check>
     </table>
   </database>

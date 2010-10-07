@@ -177,9 +177,5 @@
       <foreign-key foreignTable="S_TIMETYPE" name="S_TIMEEXPENSELINE_S_TIMETYPE">
         <reference local="S_TIMETYPE_ID" foreign="S_TIMETYPE_ID"/>
       </foreign-key>
-      <check name="S_TIMEEXPENSELINE_CHECK1"><![CDATA[(ISINVOICED = 'N') OR (C_BPARTNER_ID IS NOT NULL)]]></check>
-      <check name="S_TIMEEXPENSELINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="S_TIMEEXPENSELINE_ISINVOIC_CHK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
-      <check name="S_TIMEEXPENSELINE_ISTIMERE_CHK"><![CDATA[ISTIMEREPORT IN ('Y', 'N')]]></check>
     </table>
   </database>

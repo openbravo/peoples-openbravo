@@ -65,6 +65,5 @@
         <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="M_PRODUCT_ID"/>
       </unique>
-      <check name="M_PRODUCT_TEMPL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

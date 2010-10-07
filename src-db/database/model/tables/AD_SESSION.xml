@@ -75,6 +75,5 @@
       <foreign-key foreignTable="AD_ORG" name="AD_SESSION_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="AD_SESSION_ACTIVE_CHK"><![CDATA[SESSION_ACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

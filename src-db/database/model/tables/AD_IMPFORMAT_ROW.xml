@@ -101,7 +101,5 @@
         <unique-column name="AD_IMPFORMAT_ID"/>
         <unique-column name="AD_COLUMN_ID"/>
       </unique>
-      <check name="AD_IMPFORMAT_ROW_DIVIDEBY1_CHK"><![CDATA[DIVIDEBY100 IN ('Y', 'N')]]></check>
-      <check name="AD_IMPFORMAT_ROW_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

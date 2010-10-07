@@ -73,6 +73,5 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="AD_WORKFLOW_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

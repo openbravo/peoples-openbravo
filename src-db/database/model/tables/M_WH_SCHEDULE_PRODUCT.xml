@@ -57,6 +57,5 @@
       <foreign-key foreignTable="M_WH_SCHEDULE" name="M_WH_SP_SCHEDULE">
         <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
       </foreign-key>
-      <check name="M_WH_SCHEDULE_P_CINGTYPE_CHECK"><![CDATA[INVOICINGTYPE IS NOT NULL]]></check>
     </table>
   </database>

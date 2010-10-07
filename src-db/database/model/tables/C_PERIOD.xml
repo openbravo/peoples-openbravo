@@ -95,6 +95,5 @@
         <unique-column name="STARTDATE"/>
         <unique-column name="ENDDATE"/>
       </unique>
-      <check name="C_PERIOD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

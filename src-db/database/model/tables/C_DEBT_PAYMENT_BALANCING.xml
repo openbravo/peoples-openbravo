@@ -65,6 +65,5 @@
         <index-column name="C_DEBT_PAYMENT_ID"/>
         <index-column name="C_GLITEM_ID"/>
       </index>
-      <check name="C_DEBT_PAYMENT_BALANCING_I_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

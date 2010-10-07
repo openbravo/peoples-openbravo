@@ -58,6 +58,5 @@
       <foreign-key foreignTable="AD_TABLE" name="AD_CREATEFACT_TEMPLATE_AD_TABL">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <check name="AD_CREAFACTTEMP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

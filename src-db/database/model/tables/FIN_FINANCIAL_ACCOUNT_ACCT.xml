@@ -148,6 +148,5 @@
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
-      <check name="FIN_FINACC_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

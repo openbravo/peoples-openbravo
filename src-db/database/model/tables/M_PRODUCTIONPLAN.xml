@@ -129,7 +129,5 @@
       <index name="M_PRODUCTIONPLAN_PRODUCTION" unique="false">
         <index-column name="M_PRODUCTION_ID"/>
       </index>
-      <check name="M_PRODUCTIONPLAN_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCTIONPLAN_OUTSOURCE_CHK"><![CDATA[OUTSOURCED IN ('Y', 'N')]]></check>
     </table>
   </database>

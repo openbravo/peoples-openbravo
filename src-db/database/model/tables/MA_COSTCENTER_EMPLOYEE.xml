@@ -61,6 +61,5 @@
       <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MA_COSTCENTER_EMPLOYEE_MA_COST">
         <reference local="MA_COSTCENTER_VERSION_ID" foreign="MA_COSTCENTER_VERSION_ID"/>
       </foreign-key>
-      <check name="MA_COSTCENTER_E_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

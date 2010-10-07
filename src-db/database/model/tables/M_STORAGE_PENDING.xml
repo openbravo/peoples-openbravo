@@ -97,6 +97,5 @@
         <unique-column name="C_UOM_ID"/>
         <unique-column name="M_PRODUCT_UOM_ID"/>
       </unique>
-      <check name="M_STORAGE_PENDING_CHECK1"><![CDATA[(((QTYORDERORDERED IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) AND (QTYORDERRESERVED IS NULL)) OR (((QTYORDERORDERED IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL)) AND (QTYORDERRESERVED IS NOT NULL))]]></check>
     </table>
   </database>

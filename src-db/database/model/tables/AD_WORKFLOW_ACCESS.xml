@@ -61,7 +61,5 @@
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
-      <check name="AD_WORKFLOW_ACCESS_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_WORKFLOW_ACCESS_ISREADW_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

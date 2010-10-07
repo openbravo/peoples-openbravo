@@ -51,6 +51,5 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ACCTPROCESS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="AD_ACCTPROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

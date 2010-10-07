@@ -73,6 +73,5 @@
         <index-column name="AD_PROCESS_ID"/>
         <index-column name="RECORD_ID"/>
       </index>
-      <check name="AD_PINSTANCE_ISACTIVE_CHECK"><![CDATA[ISPROCESSING IN ('Y', 'N')]]></check>
     </table>
   </database>

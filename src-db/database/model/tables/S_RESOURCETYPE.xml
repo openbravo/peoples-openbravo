@@ -128,17 +128,5 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="S_RESOURCETYPE_M_PRODUCT_CATEG">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="S_RESOURCETYPE_ALLOWUOMFRA_CHK"><![CDATA[ALLOWUOMFRACTIONS IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ISDATESLOT_CHK"><![CDATA[ISDATESLOT IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ISSINGLEASS_CHK"><![CDATA[ISSINGLEASSIGNMENT IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ISTIMESLOT_CHK"><![CDATA[ISTIMESLOT IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ONFRIDAY_CHK"><![CDATA[ONFRIDAY IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ONMONDAY_CHK"><![CDATA[ONMONDAY IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ONSATURDAY_CHK"><![CDATA[ONSATURDAY IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ONSUNDAY_CHK"><![CDATA[ONSUNDAY IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ONTHURSDAY_CHK"><![CDATA[ONTHURSDAY IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ONTUESDAY_CHK"><![CDATA[ONTUESDAY IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCETYPE_ONWEDNESDAY_CHK"><![CDATA[ONWEDNESDAY IN ('Y', 'N')]]></check>
     </table>
   </database>

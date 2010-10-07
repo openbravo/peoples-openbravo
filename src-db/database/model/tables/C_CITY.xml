@@ -73,6 +73,5 @@
       <foreign-key foreignTable="AD_ORG" name="C_CITYORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="C_CITY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

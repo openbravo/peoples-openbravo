@@ -72,6 +72,5 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="AD_ORGTO_ID"/>
       </unique>
-      <check name="C_INTERORG_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

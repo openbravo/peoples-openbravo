@@ -82,8 +82,5 @@
       <unique name="AD_LANGUAGE_UN">
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="AD_LANGUAGE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_LANGUAGE_ISBASELANGUAGE_CHK"><![CDATA[ISBASELANGUAGE IN ('Y', 'N')]]></check>
-      <check name="AD_LANGUAGE_ISSYSTEMLANGUA_CHK"><![CDATA[ISSYSTEMLANGUAGE IN ('Y', 'N')]]></check>
     </table>
   </database>

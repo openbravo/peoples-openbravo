@@ -81,7 +81,5 @@
         <unique-column name="AT_COMMAND_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="AT_COMMAND_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AT_COMMAND_TRL_ISTRANSLATE_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

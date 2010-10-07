@@ -71,6 +71,5 @@
       <index name="C_COMMISSIONAMT_RUN" unique="false">
         <index-column name="C_COMMISSIONRUN_ID"/>
       </index>
-      <check name="C_COMMISSIONAMT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -69,6 +69,5 @@
         <unique-column name="AD_TREE_ID"/>
         <unique-column name="NODE_ID"/>
       </unique>
-      <check name="AD_TREENODEPR_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

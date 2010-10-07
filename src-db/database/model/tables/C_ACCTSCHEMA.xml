@@ -113,12 +113,5 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="C_ACCTSCHEMA_AUTOPERIODCON_CHK"><![CDATA[AUTOPERIODCONTROL IN ('Y', 'N')]]></check>
-      <check name="C_ACCTSCHEMA_HASALIAS_CHK"><![CDATA[HASALIAS IN ('Y', 'N')]]></check>
-      <check name="C_ACCTSCHEMA_HASCOMBINATIO_CHK"><![CDATA[HASCOMBINATION IN ('Y', 'N')]]></check>
-      <check name="C_ACCTSCHEMA_ISACCRUAL_CHK"><![CDATA[ISACCRUAL IN ('Y', 'N')]]></check>
-      <check name="C_ACCTSCHEMA_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_ACCTSCHEMA_ISDISCOUNTCOR_CHK"><![CDATA[ISDISCOUNTCORRECTSTAX IN ('Y', 'N')]]></check>
-      <check name="C_ACCTSCHEMA_ISTRADEDISCOU_CHK"><![CDATA[ISTRADEDISCOUNTPOSTED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -66,6 +66,5 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_LOT_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="M_LOT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

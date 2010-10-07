@@ -105,10 +105,5 @@
       <foreign-key foreignTable="C_PAYMENTTERM" name="C_WITHHOLDING_C_PAYMENTTERM">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
-      <check name="C_WITHHOLDING_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_WITHHOLDING_ISPAIDTO3PAR_CHK"><![CDATA[ISPAIDTO3PARTY IN ('Y', 'N')]]></check>
-      <check name="C_WITHHOLDING_ISPERCENTWIT_CHK"><![CDATA[ISPERCENTWITHHOLDING IN ('Y', 'N')]]></check>
-      <check name="C_WITHHOLDING_ISTAXPRORATE_CHK"><![CDATA[ISTAXPRORATED IN ('Y', 'N')]]></check>
-      <check name="C_WITHHOLDING_ISTAXWITHHOL_CHK"><![CDATA[ISTAXWITHHOLDING IN ('Y', 'N')]]></check>
     </table>
   </database>

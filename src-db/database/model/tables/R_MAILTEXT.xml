@@ -55,7 +55,5 @@
       <foreign-key foreignTable="AD_ORG" name="R_MAILTEXT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="R_MAILTEXT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="R_MAILTEXT_ISHTML_CHK"><![CDATA[ISHTML IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -110,10 +110,5 @@
       <foreign-key foreignTable="MRP_PLANNER" name="MRP_PLANNER_RUN_PRODUCTION">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
       </foreign-key>
-      <check name="MRP_RUN_PRODUCTION_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MRP_RUN_PRODUCTION_LAUNCHM_CHK"><![CDATA[LAUNCHMR IN ('Y', 'N')]]></check>
-      <check name="MRP_RUN_PRODUCTION_LAUNCHW_CHK"><![CDATA[LAUNCHWR IN ('Y', 'N')]]></check>
-      <check name="MRP_RUN_PRODUCTION_RECALCU_CHK"><![CDATA[RECALCULATESTOCK IN ('Y', 'N')]]></check>
-      <check name="MRP_RUN_PRODUCTION_SIMULAT_CHK"><![CDATA[SIMULATE IN ('Y', 'N')]]></check>
     </table>
   </database>

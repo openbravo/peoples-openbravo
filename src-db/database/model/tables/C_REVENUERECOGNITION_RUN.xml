@@ -57,6 +57,5 @@
       <foreign-key foreignTable="GL_JOURNAL" name="C_REVENUERECOGNITION_RUN_GL_JO">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
-      <check name="C_REVENUERECOGNITION_RUN_I_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

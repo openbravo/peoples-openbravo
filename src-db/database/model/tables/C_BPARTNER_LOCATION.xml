@@ -106,10 +106,5 @@
       <index name="C_BPLOCATION_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="C_BPARTNER_LOCATION_ISACTI_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_BPARTNER_LOCATION_ISBILL_CHK"><![CDATA[ISBILLTO IN ('Y', 'N')]]></check>
-      <check name="C_BPARTNER_LOCATION_ISPAYF_CHK"><![CDATA[ISPAYFROM IN ('Y', 'N')]]></check>
-      <check name="C_BPARTNER_LOCATION_ISREMI_CHK"><![CDATA[ISREMITTO IN ('Y', 'N')]]></check>
-      <check name="C_BPARTNER_LOCATION_ISSHIP_CHK"><![CDATA[ISSHIPTO IN ('Y', 'N')]]></check>
     </table>
   </database>

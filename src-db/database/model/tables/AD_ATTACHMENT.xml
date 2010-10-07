@@ -73,6 +73,5 @@
         <index-column name="AD_TABLE_ID"/>
         <index-column name="RECORD_ID"/>
       </index>
-      <check name="AD_ATTACHMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -107,7 +107,5 @@
       <index name="M_MOVEMENTLINE_MOVEMENT" unique="false">
         <index-column name="M_MOVEMENT_ID"/>
       </index>
-      <check name="M_MOVEMENTLINE_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
-      <check name="M_MOVEMENTLINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

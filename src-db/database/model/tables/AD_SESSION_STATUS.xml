@@ -43,7 +43,5 @@
       <foreign-key foreignTable="AD_ORG" name="AD_SESSION_STATUS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="AD_SESSION_STATUS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_SESSION_STATUS_ISIMPORT_CHK"><![CDATA[ISIMPORTING IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -129,6 +129,5 @@
       <foreign-key foreignTable="AD_USER" name="R_REQUESTACTION_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <check name="R_REQUESTACTION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

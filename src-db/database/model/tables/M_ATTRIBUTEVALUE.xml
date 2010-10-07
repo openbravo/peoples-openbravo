@@ -58,6 +58,5 @@
       <foreign-key foreignTable="M_ATTRIBUTE" name="M_ATTRIBUTEVALUE_M_ATTRIBUTE" onDelete="cascade">
         <reference local="M_ATTRIBUTE_ID" foreign="M_ATTRIBUTE_ID"/>
       </foreign-key>
-      <check name="M_ATTRIBUTEVALU_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

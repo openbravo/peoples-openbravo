@@ -64,6 +64,5 @@
       <unique name="AD_PACKAGE_NAME">
         <unique-column name="NAME"/>
       </unique>
-      <check name="AD_PACKAGE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

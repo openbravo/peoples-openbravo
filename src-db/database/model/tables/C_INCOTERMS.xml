@@ -55,8 +55,5 @@
       <foreign-key foreignTable="AD_ORG" name="C_INCOTERMS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="C_INCOTERMS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_INCOTERMS_ISDELIVERY_CHECK"><![CDATA[ISDELIVERY IN ('Y', 'N')]]></check>
-      <check name="C_INCOTERMS_REQUIRESDESCRI_CHK"><![CDATA[REQUIRESDESCRIPTION IN ('Y', 'N')]]></check>
     </table>
   </database>

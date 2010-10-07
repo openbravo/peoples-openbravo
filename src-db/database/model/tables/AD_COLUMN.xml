@@ -222,16 +222,5 @@
         <unique-column name="AD_TABLE_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="AD_COLUMN_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISAUTOSAVE_CHK"><![CDATA[ISAUTOSAVE IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISDESENCRYPTABLE_CHK"><![CDATA[ISDESENCRYPTABLE IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISENCRYPTED_CHK"><![CDATA[ISENCRYPTED IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISIDENTIFIER_CHK"><![CDATA[ISIDENTIFIER IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISKEY_CHK"><![CDATA[ISKEY IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISMANDATORY_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISPARENT_CHK"><![CDATA[ISPARENT IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISSELECTIONCOLUM_CHK"><![CDATA[ISSELECTIONCOLUMN IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
-      <check name="AD_COLUMN_ISUPDATEABLE_CHK"><![CDATA[ISUPDATEABLE IN ('Y', 'N')]]></check>
     </table>
   </database>

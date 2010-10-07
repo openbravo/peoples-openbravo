@@ -113,8 +113,5 @@
         <unique-column name="C_PERIOD_ID"/>
         <unique-column name="DOCUMENTNO"/>
       </unique>
-      <check name="GL_JOURNALBATCH_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="GL_JOURNALBATCH_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
-      <check name="GL_JOURNALBATCH_PROCESSING_CHK"><![CDATA[PROCESSING IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -73,7 +73,5 @@
       <foreign-key foreignTable="M_RAPPEL" name="M_RAPPEL_M_RAPPEL_BPARTNER">
         <reference local="M_RAPPEL_ID" foreign="M_RAPPEL_ID"/>
       </foreign-key>
-      <check name="M_RAPPEL_BPARTNER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_RAPPEL_BPARTNER_ISSOTRX_CHK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
     </table>
   </database>

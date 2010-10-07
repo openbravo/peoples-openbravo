@@ -480,6 +480,5 @@
       <unique name="C_ACCTSCHEMA_DE_UN_C_ACCTSCH">
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
-      <check name="C_ACCTSCHEMA_DE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

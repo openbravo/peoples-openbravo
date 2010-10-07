@@ -57,6 +57,5 @@
         <unique-column name="C_BP_GROUP_ID"/>
         <unique-column name="M_OFFER_ID"/>
       </unique>
-      <check name="M_OFFER_BP_GROU_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

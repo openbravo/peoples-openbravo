@@ -88,8 +88,5 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="C_ELEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_ELEMENT_ISBALANCING_CHECK"><![CDATA[ISBALANCING IN ('Y', 'N')]]></check>
-      <check name="C_ELEMENT_ISNATURALACCOUNT_CHK"><![CDATA[ISNATURALACCOUNT IN ('Y', 'N')]]></check>
     </table>
   </database>

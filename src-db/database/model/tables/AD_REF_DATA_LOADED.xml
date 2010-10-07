@@ -61,6 +61,5 @@
       <foreign-key foreignTable="AD_TABLE" name="AD_REF_DATA_LOADED_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <check name="AD_REFDATALOAD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

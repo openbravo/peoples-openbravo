@@ -163,8 +163,5 @@
         <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="VENDORPRODUCTNO"/>
       </unique>
-      <check name="M_PRODUCT_PO_DISCONTINUED_CHK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_PO_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_PO_ISCURRENTVEND_CHK"><![CDATA[ISCURRENTVENDOR IN ('Y', 'N')]]></check>
     </table>
   </database>

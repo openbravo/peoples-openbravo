@@ -61,6 +61,5 @@
         <unique-column name="M_ATTRIBUTE_ID"/>
         <unique-column name="M_ATTRIBUTESET_ID"/>
       </unique>
-      <check name="M_ATTRIBUTEUSE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

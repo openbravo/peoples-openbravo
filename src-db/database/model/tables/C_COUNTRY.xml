@@ -111,9 +111,5 @@
       <unique name="C_COUNTRYCODE">
         <unique-column name="COUNTRYCODE"/>
       </unique>
-      <check name="C_COUNTRY_HASPOSTAL_ADD_CHECK"><![CDATA[HASPOSTAL_ADD IN ('Y', 'N')]]></check>
-      <check name="C_COUNTRY_HASREGION_CHECK"><![CDATA[HASREGION IN ('Y', 'N')]]></check>
-      <check name="C_COUNTRY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_COUNTRY_ISDEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
     </table>
   </database>

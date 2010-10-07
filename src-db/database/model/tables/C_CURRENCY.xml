@@ -70,6 +70,5 @@
       <unique name="C_CURRENCYISOCODE">
         <unique-column name="ISO_CODE"/>
       </unique>
-      <check name="C_CURRENCY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

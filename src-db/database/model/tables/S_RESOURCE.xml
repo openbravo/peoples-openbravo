@@ -80,7 +80,5 @@
       <foreign-key foreignTable="S_RESOURCETYPE" name="S_RESOURCE_S_RESOURCETYPE" onDelete="cascade">
         <reference local="S_RESOURCETYPE_ID" foreign="S_RESOURCETYPE_ID"/>
       </foreign-key>
-      <check name="S_RESOURCE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="S_RESOURCE_ISAVAILABLE_CHK"><![CDATA[ISAVAILABLE IN ('Y', 'N')]]></check>
     </table>
   </database>

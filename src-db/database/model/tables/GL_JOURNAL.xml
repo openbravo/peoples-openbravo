@@ -180,9 +180,5 @@
         <unique-column name="C_PERIOD_ID"/>
         <unique-column name="DOCUMENTNO"/>
       </unique>
-      <check name="GL_JOURNAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="GL_JOURNAL_ISAPPROVED_CHECK"><![CDATA[ISAPPROVED IN ('Y', 'N')]]></check>
-      <check name="GL_JOURNAL_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
-      <check name="GL_JOURNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

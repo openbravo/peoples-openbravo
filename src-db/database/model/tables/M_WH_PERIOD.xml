@@ -54,6 +54,5 @@
       <foreign-key foreignTable="M_WH_SCHEDULE" name="M_WH_PERIOD_M_WH_SCHEDULE">
         <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
       </foreign-key>
-      <check name="M_WH_PERIOD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

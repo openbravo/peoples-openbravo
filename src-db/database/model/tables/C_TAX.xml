@@ -181,7 +181,5 @@
         <unique-column name="NAME"/>
         <unique-column name="PARENT_TAX_ID"/>
       </unique>
-      <check name="C_TAX_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_TAX_ISTAXDEDUCTABLE"><![CDATA[ISTAXDEDUCTABLE IN ('Y', 'N')]]></check>
     </table>
   </database>

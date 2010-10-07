@@ -125,14 +125,5 @@
       <foreign-key foreignTable="FIN_PAY_EXEC_PROCESS" name="FIN_PAYMETH_PAYOUTEXECPROC">
         <reference local="PAYOUT_EXECUTION_PROCESS_ID" foreign="FIN_PAY_EXEC_PROCESS_ID"/>
       </foreign-key>
-      <check name="FIN_PAYMENTMETH_AYOUTALLOW_CHK"><![CDATA[PAYOUT_ALLOW IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTMETH_DEPOSIT_CHK"><![CDATA[AUTOMATIC_DEPOSIT IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTMETH_PAYINALLOW_CHK"><![CDATA[PAYIN_ALLOW IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTMETH_PAYMENT_CHK"><![CDATA[AUTOMATIC_PAYMENT IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTMETH_PAYOUTDEF_CHK"><![CDATA[PAYOUT_DEFERRED IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTMETH_RECEIPT_CHK"><![CDATA[AUTOMATIC_RECEIPT IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTMETH_WITHDRAW_CHK"><![CDATA[AUTOMATIC_WITHDRAWN IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTMETHOD_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTMETHOD_PAYINDEF_CHK"><![CDATA[PAYIN_DEFERRED IN ('Y', 'N')]]></check>
     </table>
   </database>

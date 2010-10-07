@@ -89,6 +89,5 @@
         <unique-column name="A_ASSET_GROUP_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
-      <check name="A_ASSET_GROUP_A_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -61,7 +61,5 @@
       <foreign-key foreignTable="AD_CLIENT" name="FIN_PAYMENTRUNPAYMENT_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <check name="FIN_PAYMENTRUNPAY_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="FIN_PAYMENTRUNPAY_VALCHK_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

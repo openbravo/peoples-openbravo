@@ -77,7 +77,5 @@
         <unique-column name="AD_TAB_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="AD_TABTRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_TABTRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

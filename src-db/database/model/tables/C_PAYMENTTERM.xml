@@ -99,8 +99,5 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="C_PAYMENTTERM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_PAYMENTTERM_ISDUEFIXED_CHK"><![CDATA[ISDUEFIXED IN ('Y', 'N')]]></check>
-      <check name="C_PAYMENTTERM_ISNEXTBUSINE_CHK"><![CDATA[ISNEXTBUSINESSDAY IN ('Y', 'N')]]></check>
     </table>
   </database>

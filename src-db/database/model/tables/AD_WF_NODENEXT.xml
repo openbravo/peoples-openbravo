@@ -61,6 +61,5 @@
         <unique-column name="AD_WF_NODE_ID"/>
         <unique-column name="AD_WF_NEXT_ID"/>
       </unique>
-      <check name="AD_WF_NODENEXT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

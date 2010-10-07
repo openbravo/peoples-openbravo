@@ -98,9 +98,5 @@
       <foreign-key foreignTable="AD_CLIENT" name="MA_WORKREQUIREMENT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <check name="MA_WORKREQUIREMENT_CLOSED_CHK"><![CDATA[CLOSED IN ('Y', 'N')]]></check>
-      <check name="MA_WORKREQUIREMENT_EXPLODE_CHK"><![CDATA[EXPLODEPHASES IN ('Y', 'N')]]></check>
-      <check name="MA_WORKREQUIREMENT_ISACTIV_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MA_WORKREQUIREMENT_PROCESS_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

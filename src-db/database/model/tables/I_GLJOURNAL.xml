@@ -322,8 +322,5 @@
       <foreign-key foreignTable="M_PRODUCT" name="I_GLJOURNAL_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="I_GLJOURNAL_I_ISIMPORTED_CHK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
-      <check name="I_GLJOURNAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="I_GLJOURNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

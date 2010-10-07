@@ -92,6 +92,5 @@
       <index name="AD_ELEMENT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
-      <check name="AD_ELEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

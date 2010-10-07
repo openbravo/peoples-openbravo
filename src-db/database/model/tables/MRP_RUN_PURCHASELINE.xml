@@ -127,7 +127,5 @@
         <index-column name="MRP_RUN_PURCHASE_ID"/>
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <check name="MRP_RUN_PURCHASELINE_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MRP_RUN_PURCHASELINE_ISFIX_CHK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
     </table>
   </database>

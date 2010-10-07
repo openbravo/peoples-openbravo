@@ -55,8 +55,5 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MRP_PLANNER">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="MRP_PLANNER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MRP_PLANNER_ISPRODUCTION_CHK"><![CDATA[ISPRODUCTION IN ('Y', 'N')]]></check>
-      <check name="MRP_PLANNER_ISPURCHASE_CHK"><![CDATA[ISPURCHASE IN ('Y', 'N')]]></check>
     </table>
   </database>

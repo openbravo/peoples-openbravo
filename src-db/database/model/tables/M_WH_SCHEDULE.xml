@@ -55,6 +55,5 @@
       <foreign-key foreignTable="AD_ORG" name="M_WH_SCHEDULE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="M_WH_SCHEDULE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

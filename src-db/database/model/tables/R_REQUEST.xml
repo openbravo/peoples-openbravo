@@ -190,8 +190,5 @@
       <index name="R_REQUEST_USER" unique="false">
         <index-column name="AD_USER_ID"/>
       </index>
-      <check name="R_REQUEST_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="R_REQUEST_ISESCALATED_CHK"><![CDATA[ISESCALATED IN ('Y', 'N')]]></check>
-      <check name="R_REQUEST_PROCESSED_CHK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

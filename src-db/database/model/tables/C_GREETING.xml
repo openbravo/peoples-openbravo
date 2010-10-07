@@ -55,8 +55,5 @@
       <foreign-key foreignTable="AD_ORG" name="C_GREETING_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="C_GREETING_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_GREETING_ISDEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
-      <check name="C_GREETING_ISFIRSTNAMEONLY_CHK"><![CDATA[ISFIRSTNAMEONLY IN ('Y', 'N')]]></check>
     </table>
   </database>

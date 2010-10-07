@@ -51,6 +51,5 @@
       <foreign-key foreignTable="AD_ORG" name="FIN_PAY_EXEC_PROCESS_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="FIN_PAYEXECPROCESS_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

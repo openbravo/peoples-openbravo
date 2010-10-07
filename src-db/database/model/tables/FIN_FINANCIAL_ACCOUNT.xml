@@ -131,6 +131,5 @@
       <foreign-key foreignTable="FIN_MATCHING_ALGORITHM" name="FIN_FINACC_MATCH_ALGORITHM">
         <reference local="FIN_MATCHING_ALGORITHM_ID" foreign="FIN_MATCHING_ALGORITHM_ID"/>
       </foreign-key>
-      <check name="FIN_FINACC_DEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
     </table>
   </database>

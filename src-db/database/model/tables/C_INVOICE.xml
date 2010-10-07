@@ -313,13 +313,5 @@
       <index name="C_INVOICE_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="C_INVOICE_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_ISDISCOUNTPRINTE_CHK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_ISTAXINCLUDED_CHECK"><![CDATA[ISTAXINCLUDED IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

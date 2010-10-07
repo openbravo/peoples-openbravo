@@ -152,12 +152,5 @@
       <unique name="AD_TABLE_TREETYPE_UN">
         <unique-column name="TREETYPE"/>
       </unique>
-      <check name="AD_TABLE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_TABLE_ISDELETEABLE_CHK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
-      <check name="AD_TABLE_ISFULLYAUDITED_CHK"><![CDATA[ISFULLYAUDITED IN ('Y', 'N')]]></check>
-      <check name="AD_TABLE_ISFULLYAUDITED_CHK2"><![CDATA[(ISFULLYAUDITED = 'N') OR (UPPER((TABLENAME)) <> 'AD_AUDIT_TRAIL')]]></check>
-      <check name="AD_TABLE_ISHIGHVOLUME_CHK"><![CDATA[ISHIGHVOLUME IN ('Y', 'N')]]></check>
-      <check name="AD_TABLE_ISSECUR_YENABLED_CHK"><![CDATA[ISSECURITYENABLED IN ('Y', 'N')]]></check>
-      <check name="AD_TABLE_ISVIEW_CHK"><![CDATA[ISVIEW IN ('Y', 'N')]]></check>
     </table>
   </database>

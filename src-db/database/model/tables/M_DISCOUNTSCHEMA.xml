@@ -75,7 +75,5 @@
       <foreign-key foreignTable="AD_ORG" name="M_DISCOUNTSCHEMA_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="M_DISCOUNTSCHEMA_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_DISCOUNTSCHEMA_ISQUANTIT_CHK"><![CDATA[ISQUANTITYBASED IN ('Y', 'N')]]></check>
     </table>
   </database>

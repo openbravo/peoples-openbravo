@@ -114,12 +114,5 @@
       <foreign-key foreignTable="AD_ORG" name="AD_PROCESS_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="AD_PROCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_PROCESS_ISBACKGROUND_CHK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
-      <check name="AD_PROCESS_ISDIRECTPRINT_CHK"><![CDATA[ISDIRECTPRINT IN ('Y', 'N')]]></check>
-      <check name="AD_PROCESS_ISEXTERNALSERVI_CHK"><![CDATA[ISEXTERNALSERVICE IN ('Y', 'N')]]></check>
-      <check name="AD_PROCESS_ISREPORT_CHK"><![CDATA[ISREPORT IN ('Y', 'N')]]></check>
-      <check name="AD_PROCESS_ISUSERSTARTABLE_CHK"><![CDATA[ISUSERSTARTABLE IN ('Y', 'N')]]></check>
-      <check name="AD_PROCESS_UIPATTERN_CHK"><![CDATA[UIPATTERN IN ('S', 'M')]]></check>
     </table>
   </database>

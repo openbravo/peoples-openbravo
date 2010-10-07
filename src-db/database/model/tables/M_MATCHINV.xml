@@ -84,7 +84,5 @@
         <index-column name="C_INVOICELINE_ID"/>
         <index-column name="M_INOUTLINE_ID"/>
       </index>
-      <check name="M_MATCHINV_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_MATCHINV_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>
