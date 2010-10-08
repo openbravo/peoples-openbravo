@@ -38,15 +38,15 @@
 					<fo:table-row>
 						<fo:table-cell>
 							<fo:block font-size="10pt" text-align="left" padding-top="2pt">
-								<fo:inline font-weight="bold">Enterprise:&#160;&#160;</fo:inline>
+								<fo:inline font-weight="bold">Enterprise:</fo:inline>
 								<fo:inline id="fieldCompanyName">xx</fo:inline>&#160;&#160;<fo:inline id="fieldAgnoInitial"/>
-								<fo:inline font-weight="bold">Organization:&#160;&#160;</fo:inline>
+								<fo:inline font-weight="bold">Organization:</fo:inline>
 								<fo:inline id="fieldOrg">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
 						<fo:table-cell>
 							<fo:block font-size="10pt" text-align="left" padding-top="2pt">
-								<fo:inline font-weight="bold">Date:&#160;&#160;</fo:inline>
+								<fo:inline font-weight="bold">Date:</fo:inline>
 								<fo:inline id="fieldDate">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
@@ -54,9 +54,9 @@
 					<fo:table-row>
 						<fo:table-cell number-columns-spanned="2">
 							<fo:block font-size="10pt" text-align="left" padding-top="2pt">
-								<fo:inline font-weight="bold">Conditions:&#160;&#160;</fo:inline>
-								<fo:inline>Period:&#160;&#160;</fo:inline>
-								<fo:inline id="fieldPeriod">xx</fo:inline>&#160;&#160;&#160;&#160;<fo:inline>Period N-1:&#160;&#160;</fo:inline>
+								<fo:inline font-weight="bold">Conditions:</fo:inline>
+								<fo:inline>Period:</fo:inline>
+								<fo:inline id="fieldPeriod">xx</fo:inline>&#160;&#160;&#160;&#160;<fo:inline>Period N-1:</fo:inline>
 								<fo:inline id="fieldPeriodRef">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>

@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -62,6 +62,8 @@
     v_DocAction VARCHAR2(60);
     v_UpdatedBy AD_PINSTANCE.UpdatedBy%TYPE;
     v_DeleteFact varchar2(1):='Y';
+    
+    v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE:='N';    
  BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -119,14 +121,41 @@
           WHERE ' || v_TableName || '_ID =''' || v_Record_ID || ''' AND AD_CLIENT_ID =''' || v_AD_Client_ID || ''' '
           INTO v_AD_Org_ID;
         END IF;
+        
+        -- Check the period control is opened (only if it is legal entity with accounting)
+        SELECT COALESCE(t.ISACCTLEGALENTITY, 'N')
+        INTO v_isacctle
+        FROM AD_Org o JOIN AD_OrgType t ON (o.ad_orgtype_id=t.ad_orgtype_id) 
+        WHERE AD_IsOrgIncluded(v_AD_Org_ID, o.ad_org_id , v_AD_Client_ID) <> -1
+        AND t.ISACCTLEGALENTITY='Y';
+        IF (v_isacctle='Y') THEN
+          DECLARE
+          v_available_period NUMBER:=0;
+          TYPE RECORD IS REF CURSOR;
+            Cur_Fact_Records RECORD;
+          BEGIN
+            FOR Cur_Fact_Records IN
+              (SELECT DATEACCT, DOCBASETYPE, C_DOCTYPE_ID
+               FROM FACT_ACCT
+               WHERE AD_TABLE_ID=v_AD_Table_ID
+               AND Record_ID = v_Record_ID
+              )
+            LOOP
+              v_available_period:=C_CHK_OPEN_PERIOD(v_AD_Org_ID, Cur_Fact_Records.DATEACCT, Cur_Fact_Records.DOCBASETYPE, Cur_Fact_Records.C_DOCTYPE_ID);
+              IF (v_available_period<>1) THEN
+                RAISE_APPLICATION_ERROR(-20000, '@PeriodClosedForUnPosting@');
+              END IF;
+            END LOOP;
+           END; 
+        END IF;
     END IF;
 
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
-   -- Fact_Acct_Rest - Finish_Process Extension Point
+   -- Fact_Acct_Rest - Start_Process Extension Point
    SELECT count(*) INTO v_count
    FROM DUAL
    where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'E1F9635815BF4A44B88E3EAADBD0D10E');
-         IF (v_count=1) THEN
+   IF (v_count=1) THEN
      DECLARE
        v_ep_instance VARCHAR(32);
        v_extension_point_id VARCHAR(32) := 'E1F9635815BF4A44B88E3EAADBD0D10E';
@@ -166,6 +195,7 @@
        WHERE ad_ep_instance_id = v_ep_instance;
       END;
    END IF;
+   -- Fact_Acct_Rest - Finish_Process Extension Point
     DECLARE
     TYPE RECORD IS REF CURSOR;
       Cur_Clients RECORD;

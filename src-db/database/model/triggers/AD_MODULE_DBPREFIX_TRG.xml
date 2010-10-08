@@ -52,17 +52,15 @@ BEGIN
      startsWithLetter := false;
      FOR I IN 1..LENGTH(:new.name) LOOP
        v_char := substr(:new.name,i,1);
-       IF NOT ((v_char between 'A' and 'Z') 
-               or (v_char between '0' and '9'))  THEN
+       IF NOT ((ascii(v_char) between ascii('A') and ascii('Z')) 
+               or (ascii(v_char) between ascii('0') and ascii('9')))  THEN
         RAISE_APPLICATION_ERROR(-20531, '@20531@') ;
        END IF;
-       IF v_char between 'A' and 'Z' THEN
-         startsWithLetter := true;
-       END IF;
-       IF NOT startsWithLetter THEN
-         RAISE_APPLICATION_ERROR(-20531, '@20531@') ;
-       END IF;
      END LOOP;
+     -- DB_Prefix should start with a letter
+     IF NOT (ascii(substr(:new.name,1,1)) between ascii('A') and ascii('Z')) THEN
+         RAISE_APPLICATION_ERROR(-20531, '@20531@') ;
+     END IF;
    END IF;
 END AD_MODULE_DBPREFIX_TRG
 ]]></body>

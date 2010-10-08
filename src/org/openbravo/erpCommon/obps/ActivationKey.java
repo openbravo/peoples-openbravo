@@ -51,6 +51,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -198,6 +199,7 @@ public class ActivationKey {
     subscriptionActuallyConverted = false;
     tier1Artifacts = null;
     tier2Artifacts = null;
+    licenseClass = LicenseClass.COMMUNITY;
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -368,9 +370,12 @@ public class ActivationKey {
     }
 
     try {
-      File restrictionsFile = new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .get("source.path")
-          + "/config/licenseRestrictions");
+      // read restriction file from context directory
+      String restrictionsFilePath = DalContextListener.getServletContext().getRealPath(
+          "src-loc/design/org/openbravo/erpCommon/obps/licenseRestrictions");
+      File restrictionsFile = new File(restrictionsFilePath);
+      log4j.debug("Restrictions file: " + restrictionsFile.getAbsolutePath());
+
       FileInputStream fis = new FileInputStream(restrictionsFile);
       byte fileContent[] = new byte[(int) restrictionsFile.length()];
       fis.read(fileContent);
@@ -751,6 +756,18 @@ public class ActivationKey {
    * @return HashMap<String, CommercialModuleStatus> containing the subscribed modules
    */
   public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
+    return getSubscribedModules(true);
+  }
+
+  /**
+   * Same as {@link ActivationKey#getSubscribedModules()} with the includeDisabled parameter. When
+   * this parameter is true, disabled modules are returned with the DISABLED status, other way they
+   * are returned with the status they would have if they were not disabled.
+   * 
+   * @param includeDisabled
+   * @return
+   */
+  private HashMap<String, CommercialModuleStatus> getSubscribedModules(boolean includeDisabled) {
     HashMap<String, CommercialModuleStatus> moduleList = new HashMap<String, CommercialModuleStatus>();
     if (instanceProperties == null) {
       return moduleList;
@@ -773,7 +790,7 @@ public class ActivationKey {
         if (moduleData.length > 2) {
           validTo = sd.parse(moduleData[2]);
         }
-        if (!DisabledModules.isEnabled(Artifacts.MODULE, moduleData[0])) {
+        if (includeDisabled && !DisabledModules.isEnabled(Artifacts.MODULE, moduleData[0])) {
           moduleList.put(moduleData[0], CommercialModuleStatus.DISABLED);
         } else if (subscriptionActuallyConverted) {
           moduleList.put(moduleData[0], CommercialModuleStatus.CONVERTED_SUBSCRIPTION);
@@ -794,6 +811,32 @@ public class ActivationKey {
 
     }
     return moduleList;
+  }
+
+  /**
+   * Checks whether a disabled module can be enabled again. A commercial module cannot be enabled in
+   * case its license has expired or the instance is not commercial.
+   * 
+   * @param moduleId
+   * @return true in case the module can be enabled
+   */
+  public boolean isModuleEnableable(Module module) {
+    if (!module.isCommercial()) {
+      return true;
+    }
+    if (!isActive()) {
+      return false;
+    }
+
+    HashMap<String, CommercialModuleStatus> moduleList = getSubscribedModules(false);
+
+    if (!moduleList.containsKey(module.getId())) {
+      return false;
+    }
+
+    CommercialModuleStatus status = moduleList.get(module.getId());
+    return status == CommercialModuleStatus.ACTIVE
+        || status == CommercialModuleStatus.CONVERTED_SUBSCRIPTION;
   }
 
   /**

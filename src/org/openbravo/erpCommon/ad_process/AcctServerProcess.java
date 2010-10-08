@@ -117,7 +117,11 @@ public class AcctServerProcess extends DalBaseProcess {
       }
     }
     try {
-      final AcctServerProcessData[] data = AcctServerProcessData.selectAcctTable(connection);
+      final AcctServerProcessData[] data;
+      if ("0".equals(ctx.getClient()))
+        data = AcctServerProcessData.selectAcctTable(connection);
+      else
+        data = AcctServerProcessData.selectAcctTable(connection, ctx.getClient());
       final ArrayList<Object> vTableIds = new ArrayList<Object>();
       for (int i = 0; i < data.length; i++) {
         vTableIds.add(data[i].adTableId);
@@ -150,6 +154,8 @@ public class AcctServerProcess extends DalBaseProcess {
       if (acct == null)
         continue;
       acct.setBatchSize(BATCH_SIZE);
+      // Sets execution as background
+      acct.setBackground(true);
       strTableDesc = AcctServerProcessData.selectDescription(connection, ctx.getLanguage(),
           acct.AD_Table_ID);
       int total = 0;

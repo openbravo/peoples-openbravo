@@ -181,9 +181,6 @@ public class ModelProvider implements OBSingleton {
       // this map stores the mapped tables
       tablesByTableName = new HashMap<String, Table>();
       for (final Table t : tables) {
-        if (t.isView()) {
-          continue;
-        }
         // tables are stored case insensitive!
         tablesByTableName.put(t.getTableName().toLowerCase(), t);
       }
@@ -242,7 +239,8 @@ public class ModelProvider implements OBSingleton {
       for (final Entity e : model) {
         for (final Property p : e.getProperties()) {
           p.initializeName();
-          if (p.getColumnName() != null) {
+          // don't do mandatory value setting for views
+          if (!e.isView() && p.getColumnName() != null) {
             final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(e.getTableName(),
                 p.getColumnName()));
             if (mandatory != null) {
@@ -385,9 +383,10 @@ public class ModelProvider implements OBSingleton {
           log.debug("Setting targetEntity and reference Property for " + thisProp);
           final Column thatColumn = c.getReferenceType();
           if (thatColumn == null) {
-            log.error("Property "
-                + thisProp
-                + " is mapped incorrectly, there is no reference column for it, removing from the mapping");
+            log
+                .error("Property "
+                    + thisProp
+                    + " is mapped incorrectly, there is no reference column for it, removing from the mapping");
             thisProp.getEntity().getProperties().remove(thisProp);
             if (thisProp.getEntity().getIdProperties().remove(thisProp)) {
               Check.fail("Incorrect mapping for property " + thisProp
@@ -429,9 +428,11 @@ public class ModelProvider implements OBSingleton {
       // }
 
       if (t.getPrimaryKeyColumns().size() == 0) {
+        // note, after this issue is solved:
+        // https://issues.openbravo.com/view.php?id=14696
+        // then also log.warn for views
         if (!t.isView()) {
-          // don't log the views, these are ignored anyway
-          log.warn("Ignoring table " + t.getName() + " because it has no primary key columns");
+          log.warn("Ignoring table/view " + t.getName() + " because it has no primary key columns");
         }
         toRemove.add(t);
         continue;

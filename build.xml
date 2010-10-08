@@ -722,7 +722,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
 
-  <target name="apply.modules" depends="update.database.mod">
+  <target name="apply.modules">
 
     <condition property="apply.modules.complete.compilation.var">
       <istrue value="${apply.modules.complete.compilation}"  />

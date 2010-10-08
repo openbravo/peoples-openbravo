@@ -85,6 +85,7 @@
       v_C_PaymentTerm_ID VARCHAR2(32) ;
       v_C_Currency_ID VARCHAR2(32) ;
       v_M_PriceList_ID VARCHAR2(32) ;
+      v_FIN_PaymentMethod_ID VARCHAR2(32) ;
       --
       v_C_UOM_ID VARCHAR2(32) ;
       v_C_Tax_ID VARCHAR2(32) ;
@@ -168,9 +169,9 @@
           IF(CUR_Shipment.C_Order_ID IS NOT NULL) THEN
             v_ResultStr:='GetCurrencyInfo-Order';
             SELECT C_Currency_ID,
-              M_PriceList_ID
+              M_PriceList_ID, FIN_PaymentMethod_ID
             INTO v_C_Currency_ID,
-              v_M_PriceList_ID
+              v_M_PriceList_ID, v_FIN_PaymentMethod_ID
             FROM C_ORDER
             WHERE C_Order_ID=CUR_Shipment.C_Order_ID;
           ELSE
@@ -183,6 +184,9 @@
               M_PRICELIST_VERSION plv
             WHERE pl.M_PriceList_ID=plv.M_PriceList_ID
               AND M_PriceList_Version_ID=v_M_PriceList_Version_ID;
+            SELECT po_paymentmethod_id INTO v_FIN_PaymentMethod_ID
+            FROM c_bpartner
+            WHERE c_bpartner_id = CUR_Shipment.C_BPartner_ID;
           END IF;
           --
           v_ResultStr:='GetDocTypeInfo';
@@ -214,7 +218,7 @@
               C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt,
               TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
               C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
-              User2_ID
+              User2_ID, fin_paymentmethod_id
             )
             VALUES
             (
@@ -229,7 +233,7 @@
               v_C_Currency_ID, v_PaymentRule, NULL, 0,
               0, 0, v_M_PriceList_ID, CUR_Shipment.C_Campaign_ID,
               CUR_Shipment.C_Project_ID, CUR_Shipment.C_Activity_ID, CUR_Shipment.AD_OrgTrx_ID, CUR_Shipment.User1_ID,
-              CUR_Shipment.User2_ID
+              CUR_Shipment.User2_ID, v_fin_paymentmethod_id
             )
             ;
           -- Lines

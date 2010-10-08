@@ -910,7 +910,8 @@ public class ImportModule {
       if (isCommercial) {
         String tier = (String) dynModule.get("COMMERCIAL_TIER");
         if (tier == null || tier.isEmpty()) {
-          tier = "1";
+          // If tier is not set in the obx, assume tier 2 to show a more restrictive error message
+          tier = "2";
         }
         additionalInfo.put("tier", tier);
       }
@@ -1385,7 +1386,7 @@ public class ImportModule {
           if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(), updates[i]
               .getModuleVersionID())) {
             ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i]
-                .getModuleVersionID(), updates[i].getModuleID());
+                .getModuleVersionID(), updates[i].getUpdateDescription(), updates[i].getModuleID());
             ImportModuleData.insertLog(conn, user, updates[i].getModuleID(), updates[i]
                 .getModuleVersionID(), updates[i].getName(), "Found new version "
                 + updates[i].getVersionNo() + " for module " + updates[i].getName(), "S");

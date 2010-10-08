@@ -40,6 +40,7 @@ import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
+import org.openbravo.test.dal.ViewTest;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.OneToManyTest;
@@ -98,6 +99,7 @@ public class AllAntTaskTests {
     suite.addTestSuite(DalStoredProcedureTest.class);
     suite.addTestSuite(ReadByNameTest.class);
     suite.addTestSuite(AdminContextTest.class);
+    suite.addTestSuite(ViewTest.class);
 
     // expression
     suite.addTestSuite(EvaluationTest.class);

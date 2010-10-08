@@ -502,6 +502,7 @@ build.war: build a war file in the lib directory.
     <copy todir="${build}">
       <fileset file="${base.config}/quartz.properties" />
     </copy>
+    <copy todir="${base.design}/design/org/openbravo/erpCommon/obps" file="${basedir}/org/openbravo/erpCommon/obps/licenseRestrictions"/>
     <antcall target="build.local.context" inheritAll="true" inheritrefs="true" />
   </target>
 

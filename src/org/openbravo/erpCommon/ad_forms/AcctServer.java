@@ -146,6 +146,8 @@ public abstract class AcctServer {
   public static final String STATUS_DocumentLocked = "L";
   /** Document Status */
   public static final String STATUS_DocumentDisabled = "D";
+  /** Document Status */
+  public static final String STATUS_BackgroundDisabled = "d";
 
   OBError messageResult = null;
 
@@ -259,10 +261,12 @@ public abstract class AcctServer {
 
   public int errors = 0;
   int success = 0;
+  // Distinguish background process
+  boolean isBackground = false;
 
   /**
-   * Cosntructor
-   *
+   * Constructor
+   * 
    * @param m_AD_Client_ID
    *          Client ID of these Documents
    * @param connectionProvider
@@ -338,8 +342,23 @@ public abstract class AcctServer {
   }
 
   /**
+   * @return the isBackground
+   */
+  public boolean isBackground() {
+    return isBackground;
+  }
+
+  /**
+   * @param isBackground
+   *          the isBackground to set
+   */
+  public void setBackground(boolean isBackground) {
+    this.isBackground = isBackground;
+  }
+
+  /**
    * Factory - Create Posting document
-   *
+   * 
    * @param AD_Table_ID
    *          Table ID of Documents
    * @param AD_Client_ID
@@ -568,6 +587,7 @@ public abstract class AcctServer {
         loadObjectFieldProvider(connectionProvider, AD_Client_ID, strClave);
       } catch (ServletException e) {
         log4j.warn(e);
+        e.printStackTrace();
       }
       FieldProvider data[] = getObjectFieldProvider();
       try {
@@ -584,6 +604,7 @@ public abstract class AcctServer {
         Status = AcctServer.STATUS_Error;
         save(conn, vars.getUser());
         log4j.warn(e);
+        e.printStackTrace();
       }
     } catch (ServletException e) {
       log4j.error(e);
@@ -621,6 +642,10 @@ public abstract class AcctServer {
     if (log4j.isDebugEnabled())
       log4j.debug("AcctServer - Post -Beforde the loop - C_CURRENCY_ID = " + C_Currency_ID);
     for (int i = 0; OK && i < m_as.length; i++) {
+      if (isBackground && !isBackGroundEnabled(conn, m_as[i], AD_Table_ID)) {
+        setStatus(STATUS_BackgroundDisabled);
+        break;
+      }
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - Post - Before the postLogic - C_CURRENCY_ID = " + C_Currency_ID);
       Status = postLogic(i, conn, con, vars, m_as[i]);
@@ -655,13 +680,17 @@ public abstract class AcctServer {
       if (m_fact[i] != null)
         m_fact[i].dispose();
     p_lines = null;
-
     return Status.equals(STATUS_Posted);
   } // post
 
+  boolean isBackGroundEnabled(ConnectionProvider conn, AcctSchema acctSchema, String adTableId)
+      throws ServletException {
+    return AcctServerData.selectBackgroundEnabled(conn, acctSchema.m_C_AcctSchema_ID, adTableId);
+  }
+
   /**
    * Post Commit. Save Facts & Document
-   *
+   * 
    * @param status
    *          status
    * @return Posting Status
@@ -707,7 +736,7 @@ public abstract class AcctServer {
 
   /**
    * Save to Disk - set posted flag
-   *
+   * 
    * @param con
    *          connection
    * @param strUser
@@ -720,6 +749,7 @@ public abstract class AcctServer {
       no = AcctServerData.updateSave(conn, tableName, Status, strUser, Record_ID);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     return no == 1;
   } // save
@@ -743,6 +773,7 @@ public abstract class AcctServer {
       return loadDocument(data, force, conn, con);
     } catch (NoConnectionAvailableException e) {
       log4j.warn(e);
+      e.printStackTrace();
       return false;
     }
   }
@@ -835,6 +866,7 @@ public abstract class AcctServer {
         AcctServerData.delete(connectionProvider, AD_Table_ID, Record_ID);
       } catch (ServletException e) {
         log4j.warn(e);
+        e.printStackTrace();
       }
       // if (log4j.isDebugEnabled()) log4j.debug("post - deleted=" + no);
     } else if (Posted.equals("Y")) {
@@ -872,6 +904,7 @@ public abstract class AcctServer {
       }
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     if (GL_Category_ID != null && GL_Category_ID.equals(""))
       log4j.warn("AcctServer - loadDocumentType - No GL Info");
@@ -918,6 +951,7 @@ public abstract class AcctServer {
       }
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
 
     return no == 1;
@@ -925,7 +959,7 @@ public abstract class AcctServer {
 
   /**
    * Posting logic for Accounting Schema index
-   *
+   * 
    * @param index
    *          Accounting Schema index
    * @return posting status/error code
@@ -953,10 +987,11 @@ public abstract class AcctServer {
       m_fact[index] = createFact(m_as[index], conn, con, vars);
     } catch (Exception e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     if (m_fact[index] == null)
       return STATUS_Error;
-    if (Status.equals(STATUS_InvalidCost))
+    if (!Status.equals(STATUS_Error))
       return Status;
     Status = STATUS_PostPrepared;
 
@@ -1005,7 +1040,7 @@ public abstract class AcctServer {
 
   /**
    * Is the Source Document Balanced
-   *
+   * 
    * @return true if (source) balanced
    */
   public boolean isBalanced() {
@@ -1013,7 +1048,7 @@ public abstract class AcctServer {
     if (MultiCurrency)
       return true;
     //
-    boolean retValue = (getBalance().compareTo(new BigDecimal("0.00")) == 0);
+    boolean retValue = (getBalance().compareTo(ZERO) == 0);
     if (retValue) {
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - isBalanced - " + DocumentNo);
@@ -1024,7 +1059,7 @@ public abstract class AcctServer {
 
   /**
    * Is Document convertible to currency and Conversion Type
-   *
+   * 
    * @param acctSchema
    *          accounting schema
    * @return true, if convertable to accounting currency
@@ -1084,7 +1119,7 @@ public abstract class AcctServer {
 
   /**
    * Get the Amount (loaded in loadDocumentDetails)
-   *
+   * 
    * @param AmtType
    *          see AMTTYPE_*
    * @return Amount
@@ -1097,7 +1132,7 @@ public abstract class AcctServer {
 
   /**
    * Get Amount with index 0
-   *
+   * 
    * @return Amount (primary document amount)
    */
   public String getAmount() {
@@ -1106,7 +1141,7 @@ public abstract class AcctServer {
 
   /**
    * Convert an amount
-   *
+   * 
    * @param CurFrom_ID
    *          The C_Currency_ID FROM
    * @param CurTo_ID
@@ -1149,6 +1184,7 @@ public abstract class AcctServer {
           client, org);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     if (data == null || data.length == 0) {
       /*
@@ -1165,7 +1201,7 @@ public abstract class AcctServer {
 
   /**
    * Is Period Open
-   *
+   * 
    * @return true if period is open
    */
   public boolean isPeriodOpen() {
@@ -1206,12 +1242,13 @@ public abstract class AcctServer {
             + DocumentType + " => " + C_Period_ID);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
   } // setC_Period_ID
 
   /**
    * Matching
-   *
+   * 
    * <pre>
    *  Derive Invoice-Receipt Match from PO-Invoice and PO-Receipt
    *  Purchase Order (20)
@@ -1225,10 +1262,10 @@ public abstract class AcctServer {
    *  (b) Creates Indirects
    *      - Invoice1 - Receipt2 (5)
    *  (Not imlemented)
-   *
-   *
+   * 
+   * 
    * </pre>
-   *
+   * 
    * @return number of records created
    */
   public int match(VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
@@ -1255,6 +1292,7 @@ public abstract class AcctServer {
           compare = DateTimeData.compare(conn, dateTrx1, dateTrx2);
         } catch (ServletException e) {
           log4j.warn(e);
+          e.printStackTrace();
         }
         String DateTrx = dateTrx1;
         if (compare.equals("-1"))
@@ -1274,6 +1312,7 @@ public abstract class AcctServer {
       }
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Matcher.match - Client_ID=" + AD_Client_ID
@@ -1283,7 +1322,7 @@ public abstract class AcctServer {
 
   /**
    * Create MatchInv record
-   *
+   * 
    * @param AD_Client_ID
    *          Client
    * @param AD_Org_ID
@@ -1315,13 +1354,14 @@ public abstract class AcctServer {
           M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx, Qty);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     return no;
   } // createMatchInv
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param AcctType
    *          see ACCTTYPE_*
    * @param as
@@ -1437,6 +1477,7 @@ public abstract class AcctServer {
       // log4j.debug("AcctServer - *******************************getAccount 3");
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     // Get Acct
     String Account_ID = "";
@@ -1457,13 +1498,14 @@ public abstract class AcctServer {
       acct = Account.getAccount(conn, Account_ID);
     } catch (ServletException e) {
       log4j.warn(e);
+      e.printStackTrace();
     }
     return acct;
   } // getAccount
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param cBPartnerId
    *          business partner id
    * @param as
@@ -1480,6 +1522,7 @@ public abstract class AcctServer {
       whereClause.append(" as cusa ");
       whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
       whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+      whereClause.append(" and (cusa.status is null or cusa.status = 'DE')");
 
       final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance().createQuery(
           CustomerAccounts.class, whereClause.toString());
@@ -1495,9 +1538,10 @@ public abstract class AcctServer {
     } else {
       final StringBuilder whereClause = new StringBuilder();
 
-      whereClause.append(" as cusa ");
-      whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
-      whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+      whereClause.append(" as vena ");
+      whereClause.append(" where vena.businessPartner.id = '" + cBPartnerId + "'");
+      whereClause.append(" and vena.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+      whereClause.append(" and (vena.status is null or vena.status = 'DE')");
 
       final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance().createQuery(
           VendorAccounts.class, whereClause.toString());
@@ -1580,16 +1624,16 @@ public abstract class AcctServer {
     Account account = null;
     String strvalidCombination = "";
     try {
-      if (use.equals("INT"))
+      if ("INT".equals(use))
         strvalidCombination = bIsReceipt ? financialAccountAccounting
             .getInTransitPaymentAccountIN().getId() : financialAccountAccounting
             .getFINOutIntransitAcct().getId();
-      else if (use.equals("DEP"))
+      else if ("DEP".equals(use))
         strvalidCombination = financialAccountAccounting.getDepositAccount().getId();
-      else if (use.equals("CLE"))
+      else if ("CLE".equals(use))
         strvalidCombination = bIsReceipt ? financialAccountAccounting.getClearedPaymentAccount()
             .getId() : financialAccountAccounting.getClearedPaymentAccountOUT().getId();
-      else if (use.equals("WIT"))
+      else if ("WIT".equals(use))
         strvalidCombination = financialAccountAccounting.getWithdrawalAccount().getId();
       else
         return null;
@@ -1615,14 +1659,14 @@ public abstract class AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line (and tax) amounts from total - no rounding
-   *
+   * 
    * @return positive amount, if total header is bigger than lines
    */
   public abstract BigDecimal getBalance();
 
   /**
    * Create Facts (the accounting logic)
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
@@ -1697,6 +1741,9 @@ public abstract class AcctServer {
       strMessage = "@InvalidCost@";
     else if (strStatus.equals(STATUS_DocumentDisabled)) {
       strMessage = "@DocumentDisabled@";
+      messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_BackgroundDisabled)) {
+      strMessage = "@BackgroundDisabled@";
       messageResult.setType("Warning");
     } else if (strStatus.equals(STATUS_InvalidAccount))
       strMessage = "@InvalidAccount@";

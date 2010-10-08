@@ -57,45 +57,50 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strQty,
       String strPriceActual, String strDiscount, String strPriceList, String strChanged)
       throws IOException, ServletException {
+
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
+
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String strLineNetAmt = "";
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_RequisitionLine_Amt';\n\n");
     resultado.append("var respuesta = new Array(");
+
     if (!strPriceActual.equals("")) {
+
       BigDecimal qty, LineNetAmt, priceActual, discount, priceList;
 
       String strRequisition = vars.getStringParameter("inpmRequisitionId");
       SLRequisitionLineAmtData[] data = SLRequisitionLineAmtData.select(this, strRequisition);
-      String strPrecision = "0", strPricePrecision = "0";
-      if (data != null && data.length > 0) {
-        strPrecision = data[0].stdprecision;
-        strPricePrecision = data[0].priceprecision;
-      }
-      int stdPrecision = Integer.valueOf(strPrecision).intValue();
-      int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
-      priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual))).setScale(
-          PricePrecision, BigDecimal.ROUND_HALF_UP);
+      Integer stdPrecision = null;
+      Integer pricePrecision = null;
+
+      if (data != null && data.length > 0) {
+        stdPrecision = Integer.valueOf(data[0].stdprecision);
+        pricePrecision = Integer.valueOf(data[0].priceprecision);
+      }
+      priceActual = strPriceActual.equals("") ? ZERO : internalRound(
+          new BigDecimal(strPriceActual), pricePrecision);
       discount = (strDiscount.equals("") ? ZERO : new BigDecimal(strDiscount));
       priceList = (strPriceList.equals("") ? ZERO : new BigDecimal(strPriceList));
       qty = (strQty.equals("") ? ZERO : new BigDecimal(strQty));
 
       // calculating discount
       if (strChanged.equals("inppricelist") || strChanged.equals("inppriceactual")) {
-        if (priceList.compareTo(ZERO) == 0)
+        if (priceList.compareTo(ZERO) == 0) {
           discount = ZERO;
-        else {
+        } else {
           if (log4j.isDebugEnabled())
             log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
           if (log4j.isDebugEnabled())
@@ -103,38 +108,37 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
           discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
               BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"));
         }
+
         if (log4j.isDebugEnabled())
           log4j.debug("Discount: " + discount.toString());
-        if (discount.scale() > stdPrecision)
-          discount = discount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+        discount = internalRound(discount, stdPrecision);
         if (log4j.isDebugEnabled())
           log4j.debug("Discount rounded: " + discount.toString());
-        if (!strDiscount.equals(discount.toString()))
+
+        if (!strDiscount.equals(discount.toString())) {
           resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
+        }
       } else if (strChanged.equals("inpdiscount")) { // calculate std and
         // actual
         BigDecimal discount1 = null;
-        if (priceList.compareTo(ZERO) != 0)
-          discount1 = (((priceList.subtract(priceActual)).divide(priceList, 12,
-              BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(stdPrecision,
-              BigDecimal.ROUND_HALF_UP);
-        else
+        if (priceList.compareTo(ZERO) != 0) {
+          discount1 = internalRound(((priceList.subtract(priceActual)).divide(priceList, 12,
+              BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal("100")), stdPrecision);
+        } else {
           discount1 = new BigDecimal(0);
-        BigDecimal discount2 = discount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-        if (discount1.compareTo(discount2) != 0) // checks if rounded
-        // discount has changed
-        {
+        }
+        BigDecimal discount2 = internalRound(discount, stdPrecision);
+        if (discount1.compareTo(discount2) != 0) { // checks if rounded
+          // discount has changed
           priceActual = priceList.subtract(priceList.multiply(discount).divide(
               new BigDecimal("100"), 12, BigDecimal.ROUND_HALF_EVEN));
-          if (priceActual.scale() > PricePrecision)
-            priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+          priceActual = internalRound(priceActual, pricePrecision);
           resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
         }
       }
       LineNetAmt = qty.multiply(priceActual);
 
-      if (LineNetAmt.scale() > stdPrecision)
-        LineNetAmt = LineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+      LineNetAmt = internalRound(LineNetAmt, stdPrecision);
       strLineNetAmt = LineNetAmt.toString();
     }
 
@@ -147,5 +151,10 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
 
     out.close();
+  }
+
+  private BigDecimal internalRound(BigDecimal value, Integer precision) {
+    return (precision == null || value.scale() <= precision) ? value : value.setScale(precision,
+        BigDecimal.ROUND_HALF_UP);
   }
 }

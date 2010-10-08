@@ -51,15 +51,17 @@ public class SL_Inventory_Locator extends HttpSecureAppServlet {
       final String strLocator = vars.getStringParameter("inpmLocatorId");
       final String strAttribute = vars.getStringParameter("inpmAttributesetinstanceId");
       final String strUOM = vars.getStringParameter("inpcUomId");
+      final String strSecUOM = vars.getStringParameter("inpmProductUomId");
       final String strTabId = vars.getStringParameter("inpTabId");
-      printPage(response, vars, strChanged, strProduct, strLocator, strAttribute, strUOM, strTabId);
+      printPage(response, vars, strChanged, strProduct, strLocator, strAttribute, strUOM,
+          strSecUOM, strTabId);
     } else
       pageError(response);
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
-      String strProduct, String strLocator, String strAttribute, String strUOM, String strTabId)
-      throws IOException, ServletException {
+      String strProduct, String strLocator, String strAttribute, String strUOM, String strSecUOM,
+      String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -75,7 +77,8 @@ public class SL_Inventory_Locator extends HttpSecureAppServlet {
     if (!strProduct.equals("")) {
 
       SLInventoryLocatorData[] data = SLInventoryLocatorData.select(this, strProduct, strLocator,
-          strUOM, ((strAttribute == null || strAttribute.equals("")) ? null : strAttribute));
+          strUOM, strSecUOM, ((strSecUOM == null || strSecUOM.equals("")) ? "productuom" : ""),
+          ((strAttribute == null || strAttribute.equals("")) ? null : strAttribute));
       if (data == null || data.length == 0) {
         data = SLInventoryLocatorData.set();
         data[0].qty = "0";

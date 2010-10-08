@@ -326,7 +326,7 @@ public class ProductComplete extends HttpSecureAppServlet {
     // String[] gridNames = {"Key", "Name","Disp. Credit","Credit used",
     // "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id",
     // "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
-    String[] colWidths = { "73", "86", "166", "62", "32", "145", "104", "67", "97", "167", "0" };
+    String[] colWidths = { "73", "86", "166", "91", "32", "145", "128", "67", "130", "167", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
       dataAux.setData("columnname", colNames[i]);
