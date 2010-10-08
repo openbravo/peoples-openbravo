@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,10 +27,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Home extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static final String COMMUNITY_BRANDING_URL = "https://butler.openbravo.com:443/heartbeat-server";
+  private static final String STATIC_COMMUNITY_BRANDING_URL = "StaticCommunityBranding.html";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -43,18 +47,63 @@ public class Home extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/Home")
-        .createXmlDocument();
+    log4j.debug("Output: dataSheet");
+
+    String[] discard = { "communityBranding" };
+    OBContext.setAdminMode();
+    try {
+      if (OBDal.getInstance().get(org.openbravo.model.ad.system.SystemInformation.class, "0")
+          .isShowCommunityBranding()
+          || vars.getRole().equals("0")) {
+        discard[0] = "";
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/Home",
+        discard).createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "Home.html", strReplaceWith);
     xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+
+    xmlDocument.setParameter("iframeURL", getCommunityBrandingUrl());
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String getCommunityBrandingUrl() throws ServletException {
+    String url = "";
+    String strIsOPS = "N";
+    OBContext.setAdminMode();
+    try {
+      strIsOPS = org.openbravo.erpCommon.obps.ActivationKey.getInstance().isOPSInstance() ? "Y"
+          : "N";
+      if (isCommunityBrandingAvailable()) {
+        url = COMMUNITY_BRANDING_URL;
+      } else {
+        url = STATIC_COMMUNITY_BRANDING_URL;
+      }
+      url += "?isOPS=" + strIsOPS + "";
+      url += "&version=" + OBVersion.getInstance().getMajorVersion() + "";
+      url += "&language=" + OBContext.getOBContext().getLanguage().getLanguage() + "";
+      url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier() + "";
+      url += ";";
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return url;
+  }
+
+  private boolean isCommunityBrandingAvailable() {
+    if (HttpsUtils.isInternetAvailable()) {
+      // return true;
+    }
+    return false;
   }
 }

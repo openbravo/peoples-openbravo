@@ -5317,6 +5317,12 @@ td.Login_Home_Logo {
   background-image: url(../../../../utility/ShowImageLogo?logo=yourcompanybig);
 }
 
+.Login_Home_Community_Branding {
+  height: 360;
+  width: 608;
+  margin: 0 auto;
+}
+
 table.Login_ToolBar_bg {
   background-repeat: repeat-x;
   background-position: top center;
