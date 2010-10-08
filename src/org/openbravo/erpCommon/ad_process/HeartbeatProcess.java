@@ -148,6 +148,15 @@ public class HeartbeatProcess implements Process {
         parseResponse(response);
       }
 
+      if ("S".equals(beatType)) {
+        // Background scheduled beats require explicit commit
+        try {
+          OBContext.setAdminMode();
+          OBDal.getInstance().commitAndClose();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
     } catch (Exception e) {
       logger.logln(e.getMessage());
       log.error(e.getMessage(), e);
@@ -541,6 +550,7 @@ public class HeartbeatProcess implements Process {
       } catch (Exception e) {
         log.error(e.getMessage(), e);
       }
+
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -556,6 +566,7 @@ public class HeartbeatProcess implements Process {
     List<HeartbeatLogCustomQuery> hbLogCQs = hbLog.getADHeartbeatLogCustomQueryList();
     hbLogCQs.add(hbLogCQ);
     hbLog.setADHeartbeatLogCustomQueryList(hbLogCQs);
+    OBDal.getInstance().save(hbLogCQ);
 
     return hbLogCQ;
   }
@@ -572,6 +583,8 @@ public class HeartbeatProcess implements Process {
     List<HeartbeatLogCustomQueryRow> hbLogCQRows = hbLogCQ.getADHeartbeatLogCustomQueryRowList();
     hbLogCQRows.add(hbLogCQRow);
     hbLogCQ.setADHeartbeatLogCustomQueryRowList(hbLogCQRows);
+
+    OBDal.getInstance().save(hbLogCQRow);
   }
 
   public enum HeartBeatOrRegistration {
@@ -774,4 +787,5 @@ public class HeartbeatProcess implements Process {
     // Must exist a scheduled process request for HB and must be enable at SystemInfo level
     return prRequestList.size() > 0 && sys.isEnableHeartbeat() != null && sys.isEnableHeartbeat();
   }
+
 }
