@@ -52,7 +52,12 @@
   <script language="JavaScript" type="text/javascript" id="paramNextPopup">var nextPopup = 'HB';</script>
   <script language="JavaScript" type="text/javascript">
   function continueButton() {
-    openLink('../ad_forms/InstanceManagement.html', 'appFrame');
+    if (!isWindowInMDIContext) {
+      openLink('../ad_forms/InstanceManagement.html', 'appFrame');
+    } else {
+      getFrame('LayoutMDI').OB.Layout.ViewManager.openView("ClassicOBWindow",  {viewId: "ClassicOBWindow", obManualURL: '/ad_forms/InstanceManagement.html', id: '/ad_forms/InstanceManagement.html', formId: '8D6282279F464B1696B0EE3E23023B65', command: "DEFAULT", tabTitle: 'Instance Activation'});
+    }
+    window.close();
   }
   function buttonOK() {
     if (document.frmMain.instancePurpose.value == null || document.frmMain.instancePurpose.value == "") {
