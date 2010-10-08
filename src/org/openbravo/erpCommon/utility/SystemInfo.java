@@ -67,6 +67,7 @@ import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.SessionUsageAudit;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -224,6 +225,9 @@ public class SystemInfo {
       break;
     case NUMBER_OF_ORGS:
       systemInfo.put(i, getNumberOfOrgs());
+      break;
+    case USAGE_AUDIT:
+      systemInfo.put(i, isUsageAuditEnabled() ? "true" : "false");
       break;
     }
   }
@@ -460,6 +464,8 @@ public class SystemInfo {
   /**
    * Obtain all the modules installed in the instance.
    * 
+   * @param i
+   * 
    * @return
    */
   private final static String getModules() {
@@ -469,24 +475,32 @@ public class SystemInfo {
       qMods.addOrder(Order.asc(Module.PROPERTY_JAVAPACKAGE));
       JSONArray mods = new JSONArray();
       Date startOfPeriod = getStartOfPeriod().getTime();
+      boolean usageAuditEnabled = isUsageAuditEnabled();
       for (Module mod : qMods.list()) {
         ArrayList<String> modInfo = new ArrayList<String>();
-        OBCriteria<SessionUsageAudit> qUsage = OBDal.getInstance().createCriteria(
-            SessionUsageAudit.class);
-        qUsage.add(Expression.eq(SessionUsageAudit.PROPERTY_MODULE, mod));
-        qUsage.add(Expression.ge(SessionUsageAudit.PROPERTY_CREATIONDATE, startOfPeriod));
-
         modInfo.add(mod.getId());
         modInfo.add(mod.getVersion());
         modInfo.add(mod.isEnabled() ? "Y" : "N");
         modInfo.add(mod.getName());
-        modInfo.add(Integer.toString(qUsage.count()));
+
+        if (usageAuditEnabled) {
+          OBCriteria<SessionUsageAudit> qUsage = OBDal.getInstance().createCriteria(
+              SessionUsageAudit.class);
+          qUsage.add(Expression.eq(SessionUsageAudit.PROPERTY_MODULE, mod));
+          qUsage.add(Expression.ge(SessionUsageAudit.PROPERTY_CREATIONDATE, startOfPeriod));
+          modInfo.add(Integer.toString(qUsage.count()));
+        }
         mods.put(modInfo);
       }
       return mods.toString();
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private static boolean isUsageAuditEnabled() {
+    SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+    return sys.isUsageauditenabled();
   }
 
   private static boolean validateConnection(ConnectionProvider conn) throws ServletException {
@@ -699,7 +713,7 @@ public class SystemInfo {
         "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
         "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
         "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
-        false), NUMBER_OF_ORGS("orgNum", false);
+        false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false);
 
     private String label;
     private boolean isIdInfo;
