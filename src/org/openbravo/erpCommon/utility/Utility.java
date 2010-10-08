@@ -11,15 +11,19 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.utility;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,6 +52,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import javax.imageio.ImageIO;
 
 import javax.servlet.ServletException;
 
@@ -60,6 +65,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -69,9 +75,14 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.model.ad.system.ClientInformation;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.ad.utility.Image;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.uiTranslation.TranslationHandler;
+import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.utils.Replace;
 
@@ -2543,5 +2554,159 @@ public class Utility {
   public static boolean isNewUI() {
     OBContext context = OBContext.getOBContext();
     return context != null && context.isNewUI();
+  }
+
+  private static byte[] getBlankImage() {
+
+    try {
+      ByteArrayOutputStream bout = new ByteArrayOutputStream();
+      new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
+          "web/images/blank.gif", false, true).dumpFile(bout);
+      bout.close();
+      return bout.toByteArray();
+    } catch (IOException ex) {
+      log4j.error("Could not load blank image.");
+      return new byte[0];
+    }
+  }
+
+  /**
+   * Provides the image as a byte array. These images are stored in the table AD_IMAGES as a BLOB
+   * field.
+   * 
+   * @param id
+   *          The id of the image to display
+   * @return The image requested
+   * @see #getImage(String)
+   */
+  public static byte[] getImage(String id) {
+
+    OBContext.setAdminMode();
+    try {
+      Image img = OBDal.getInstance().get(Image.class, id);
+      if (img == null) {
+        log4j.error("Image does not exist: " + id);
+        return getBlankImage();
+      } else {
+        return img.getBindaryData();
+      }
+    } catch (Exception e) {
+      log4j.error("Could not load image from database: " + id, e);
+      return getBlankImage();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Provides the image as a BufferedImage object.
+   * 
+   * @param id
+   *          The id of the image to display
+   * @return The image requested
+   * @throws IOException
+   * @see #getImage(String)
+   */
+  public static BufferedImage showImage(String id) throws IOException {
+    return ImageIO.read(new ByteArrayInputStream(getImage(id)));
+  }
+
+  private static byte[] defaultImageLogo(Image img, String path) throws IOException {
+
+    if (img == null) {
+      ByteArrayOutputStream bout = new ByteArrayOutputStream();
+      new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
+          path, false, true).dumpFile(bout);
+      bout.close();
+      return bout.toByteArray();
+    } else {
+      return img.getBindaryData();
+    }
+  }
+
+  /**
+   * Provides the image logo as a byte array for the indicated parameters.
+   * 
+   * @param logo
+   *          The name of the logo to display This can be one of the following: yourcompanylogin,
+   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   * @param org
+   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
+   *          logo you can indicate the organization used to request the logo.
+   * @return The image requested
+   */
+  public static byte[] getImageLogo(String logo, String org) {
+
+    OBContext.setAdminMode();
+    try {
+      Image img = null;
+
+      if ("yourcompanylogin".equals(logo)) {
+        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyLoginImage();
+        return defaultImageLogo(img, "web/images/CompanyLogo_big.png");
+      } else if ("youritservicelogin".equals(logo)) {
+        img = OBDal.getInstance().get(SystemInformation.class, "0").getYourItServiceLoginImage();
+        return defaultImageLogo(img, "web/images/SupportLogo_big.png");
+      } else if ("yourcompanymenu".equals(logo)) {
+        img = OBDal.getInstance().get(ClientInformation.class,
+            OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyMenuImage();
+        if (img == null) {
+          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyMenuImage();
+        }
+        return defaultImageLogo(img, "web/images/CompanyLogo_small.png");
+      } else if ("yourcompanybig".equals(logo)) {
+        img = OBDal.getInstance().get(ClientInformation.class,
+            OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyBigImage();
+        if (img == null) {
+          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
+        }
+        return defaultImageLogo(img, "web/skins/ltr/Default/Login/initialOpenbravoLogo.png");
+      } else if ("yourcompanydoc".equals(logo)) {
+        if (org != null && !org.equals("")) {
+          Organization organization = OBDal.getInstance().get(Organization.class, org);
+          img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
+        }
+        if (img == null) {
+          img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
+        }
+        return defaultImageLogo(img, "web/images/CompanyLogo_big.png");
+      } else {
+        log4j.error("Logo key does not exist: " + logo);
+        return getBlankImage();
+      }
+    } catch (Exception e) {
+      log4j.error("Could not load logo from database: " + logo + ", " + org, e);
+      return getBlankImage();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Provides the image logo as a BufferedImage object.
+   * 
+   * @param logo
+   *          The name of the logo to display
+   * @return The image requested
+   * @throws IOException
+   * @see #getImageLogo(String,String)
+   */
+  public static BufferedImage showImageLogo(String logo) throws IOException {
+    return showImageLogo(logo, null);
+  }
+
+  /**
+   * Provides the image logo as a BufferedImage object.
+   * 
+   * @param logo
+   *          The name of the logo to display
+   * @param org
+   *          The organization id used to get the logo
+   * @return The image requested
+   * @throws IOException
+   * @see #getImageLogo(String,String)
+   */
+  public static BufferedImage showImageLogo(String logo, String org) throws IOException {
+    return ImageIO.read(new ByteArrayInputStream(getImageLogo(logo, org)));
   }
 }
