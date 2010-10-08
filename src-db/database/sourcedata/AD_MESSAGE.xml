@@ -28014,6 +28014,8 @@ And Release features, bla, bla, bla]]></MSGTEXT>
 <!--1005800002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005800002-->  <VALUE><![CDATA[HB_WELCOME]]></VALUE>
 <!--1005800002-->  <MSGTEXT><![CDATA[To help us improve the software quality and understand its worldwide usage, we invite you to enable the Heartbeat. This tool periodically sends to Openbravo anonymous updates regarding your technical system specifications (e.g. operating system, database, Openbravo version, etc.). Enabling the Heartbeat is required to access additional services provided by Openbravo, such as the ability to download and install extension modules. For a full description of the information transmitted to Openbravo, see the Heartbeat Configuration chapter of the User Manual.
+http://wiki.openbravo.com/wiki/ERP/2.50/User_Manual/HeartBeat
+
 
 Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--1005800002-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
@@ -30110,9 +30112,15 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--20008B2C36E44251BB8F715DE450633C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--20008B2C36E44251BB8F715DE450633C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--20008B2C36E44251BB8F715DE450633C-->  <VALUE><![CDATA[IP_CLONED_OPS_MSG]]></VALUE>
-<!--20008B2C36E44251BB8F715DE450633C-->  <MSGTEXT><![CDATA[We have detected that this Openbravo Professional Edition instance is a clone of another environment.
+<!--20008B2C36E44251BB8F715DE450633C-->  <MSGTEXT><![CDATA[We have detected that this Openbravo Professional Subscription instance is a clone of
+another one.
 
-Please go to the Instance Activation window to reactivate your instance setting the new purpose or to convert it to a community instance. Be aware that the Professional Edition subscription can be used for one production instance only.]]></MSGTEXT>
+You need to go to the Instance Activation window to reactivate the clone. Here you will set
+the instance purpose or convert it into a community instance.
+
+Remember that the Activation Key is only valid for one production environment.
+
+Press the Continue button to go to the Instance Activation window.]]></MSGTEXT>
 <!--20008B2C36E44251BB8F715DE450633C-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--20008B2C36E44251BB8F715DE450633C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--20008B2C36E44251BB8F715DE450633C--></AD_MESSAGE>
