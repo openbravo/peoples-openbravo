@@ -98,11 +98,16 @@ public class SystemInfo {
    * @throws ServletException
    */
   public static void load(ConnectionProvider conn) throws ServletException {
-    loadSessionInfo();
-    for (Item i : Item.values()) {
-      if (!i.isIdInfo()) {
-        load(i, conn);
+    try {
+      OBContext.setAdminMode();
+      loadSessionInfo();
+      for (Item i : Item.values()) {
+        if (!i.isIdInfo()) {
+          load(i, conn);
+        }
       }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
