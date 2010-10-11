@@ -30,6 +30,7 @@ public class Module extends ModelObject {
   private String name;
   private Integer seqno;
   private String javaPackage;
+  private String status;
 
   @Override
   public String getName() {
@@ -56,4 +57,13 @@ public class Module extends ModelObject {
   public void setJavaPackage(String javaPackage) {
     this.javaPackage = javaPackage;
   }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
 }
