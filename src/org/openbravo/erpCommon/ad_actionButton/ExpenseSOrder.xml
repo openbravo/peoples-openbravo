@@ -49,9 +49,7 @@
 	<PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
 	<PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 	<DISCARD id="discard"/>
-	<structure name="structureOrganizacion">
-		<FIELD id="fieldClaveOrganizacion" attribute="value" boolean="selected" withId="paramadOrgId">adOrgId</FIELD>
-		<FIELD id="fieldClaveOrganizacion">name</FIELD>
-		<SECTION id="sectionOrganizacion"/>
-	</structure>
+	<SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>
+    </SUBREPORT>
 </REPORT>
