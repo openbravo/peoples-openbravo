@@ -57,7 +57,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
-      String strPriceList = vars.getStringParameter("inpmProductId_PLIST");
+      String strPriceList = vars.getNumericParameter("inpmProductId_PLIST");
       String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
       String strPriceLimit = vars.getStringParameter("inpmProductId_PLIM");
       String strCurrency = vars.getStringParameter("inpmProductId_CURR");
