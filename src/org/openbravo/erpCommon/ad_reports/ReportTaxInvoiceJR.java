@@ -32,7 +32,6 @@ import net.sf.jasperreports.engine.JasperReport;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -281,8 +280,17 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
      * .setData("reportAD_ORGID","liststructure",AdOrgTreeComboData .select(this, strTreeNode,
      * vars.getOrg()));
      */
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
+    try{
+   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTaxInvoiceJR"), Utility
+   	              .getContext(this, vars, "#User_Client", "ReportTaxInvoiceJR"), 0);
+   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportTaxInvoiceJR", strOrg);
+   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+   	      comboTableData = null;
+
+   }catch (Exception ex) {
+   	 throw new ServletException(ex);
+	}
 
     out.println(xmlDocument.print());
     out.close();

@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -331,8 +331,17 @@ public class ReportTaxInvoice extends HttpSecureAppServlet {
      * .setData("reportAD_ORGID","liststructure",AdOrgTreeComboData .select(this, strTreeNode,
      * vars.getOrg()));
      */
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
+    try{
+   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTaxInvoice"), Utility
+   	              .getContext(this, vars, "#User_Client", "ReportTaxInvoice"), 0);
+   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportTaxInvoice", strOrg);
+   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+   	      comboTableData = null;
+
+   }catch (Exception ex) {
+   	 throw new ServletException(ex);
+	}
 
     out.println(xmlDocument.print());
     out.close();

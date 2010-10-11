@@ -32,13 +32,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.ActionButtonData;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -67,7 +67,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strCompleteAuto = vars.getStringParameter("inpShowNullComplete", "Y");
-      printPage(response, vars, "", "", "", "", "", strCompleteAuto);
+      String strOrganization = vars.getGlobalVariable("inpadOrgId", "ExpenseSOrder.adOrgId", "");
+      printPage(response, vars, "", "", "", "", strOrganization, strCompleteAuto);
     } else if (vars.commandIn("SAVE")) {
       String strBPartner = vars.getStringParameter("inpcBpartnerId");
       String strDatefrom = vars.getStringParameter("inpDateFrom");
@@ -536,8 +537,17 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateOrddisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateOrdsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramShowNullComplete", strCompleteAuto);
-    xmlDocument
-        .setData("structureOrganizacion", OrganizationComboData.select(this, vars.getRole()));
+    try{
+   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ExpenseSOrder"), Utility
+   	              .getContext(this, vars, "#User_Client", "ExpenseSOrder"), 0);
+   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseSOrder", strOrganization);
+   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+   	      comboTableData = null;
+
+   }catch (Exception ex) {
+   	 throw new ServletException(ex);
+	}
 
     // New interface parameters
     try {
