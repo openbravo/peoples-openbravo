@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.util.HashMap;
+
 public class OBError {
   private String type = "";
   private String title = "";
@@ -74,5 +76,13 @@ public class OBError {
 
   public boolean isConnectionAvailable() {
     return this.connectionAvailable;
+  }
+
+  public HashMap<String, String> toHashMap() {
+    HashMap<String, String> o = new HashMap<String, String>();
+    o.put("title", title);
+    o.put("message", message);
+    o.put("type", type);
+    return o;
   }
 }
