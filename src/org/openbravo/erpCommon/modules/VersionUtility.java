@@ -95,23 +95,24 @@ public class VersionUtility {
   }
 
   static private boolean checkVersion(String depParentMod, Dep dep, Mod mod, Vector<String> errors) {
+    String strModName = dep.modName != null ? dep.modName : "< @CR_NameNotAvailable@ >";
     if ("MINOR".equals(dep.enforcement)) {
       if (dep.maxVer == null || dep.maxVer.isEmpty()) {
         if (versionCompare(dep.minVer, mod.availableMaxVer, false) != 0) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
               + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
               + mod.availableMaxVer + "\". ");
           return false;
         }
       } else {
         if (versionCompare(dep.minVer, mod.availableMaxVer, false) == 1) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
               + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
               + mod.availableMaxVer + "\". ");
           return false;
         }
         if (versionCompare(mod.availableMinVer, dep.maxVer, false) == 1) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
               + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
               + mod.availableMinVer + "\". ");
           return false;
@@ -119,7 +120,7 @@ public class VersionUtility {
       }
     } else if ("NONE".equals(dep.enforcement)) {
       if (versionCompare(dep.minVer, mod.availableMaxVer, false) == 1) {
-        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
             + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
             + mod.availableMaxVer + "\". ");
         return false;
@@ -127,7 +128,7 @@ public class VersionUtility {
     } else if ("MAJOR".equals(dep.enforcement)) {
       // installedVersion <= dep.fromVersion
       if (versionCompare(dep.minVer, mod.availableMaxVer, true) == 1) {
-        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+        errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
             + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
             + mod.availableMaxVer + "\". ");
         return false;
@@ -136,7 +137,7 @@ public class VersionUtility {
         // if lastVersion!=null, firstVersion >= installedVersion >= lastVersion
         if (versionCompare(dep.minVer, dep.maxVer, false) == 1
             && versionCompare(mod.availableMinVer, dep.maxVer, true) == 1) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
               + "\" @CR_InVersion@ \"" + dep.maxVer + "\", @CR_MaxAvailableVersion@ \""
               + mod.availableMinVer + "\". ");
           return false;
@@ -144,9 +145,9 @@ public class VersionUtility {
       } else {
         // if lastVerrsion==null, firtVersion same major version than installedVersion
         if (versionCompare(dep.minVer, mod.availableMaxVer, true) != 0) {
-          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + dep.modName
-              + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_MaxAvailableVersion@ \""
-              + mod.availableMaxVer + "\". ");
+          errors.add(depParentMod + " @CR_DependensOnModule@ \"" + strModName
+              + "\" @CR_InVersion@ \"" + dep.minVer + "\", @CR_ButOnlyVersion@ \""
+              + mod.availableMaxVer + "\" @CR_IsAvailable@. ");
           return false;
         }
       }
