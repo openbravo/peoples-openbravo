@@ -65,6 +65,7 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     Cur_BankstatementDebtpayment RECORD;
+    Cur_BankstatementLine RECORD;
     -- Parameter Variables
     --  Parameter Variables
     v_Processed CHAR(1) ;
@@ -80,6 +81,8 @@
     v_BS_Date DATE;
     v_AD_Org_ID VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32) ;
+    v_ValutadatePeriod_ID NUMBER(10) ;
+    v_DateacctPeriod_ID NUMBER(10) ;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -371,6 +374,19 @@
        RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@DebtAmountsSamemoneyNoMatch@') ;
       END IF;
     END IF;--FINISH_PROCESS
+    FOR Cur_BankstatementLine IN 
+      (SELECT valutadate, 
+              dateacct 
+      FROM C_BANKSTATEMENTLINE
+      WHERE C_BANKSTATEMENT_ID = v_Record_ID
+      AND ISACTIVE='Y')
+    LOOP
+      v_ValutadatePeriod_ID := C_CHK_OPEN_PERIOD (v_AD_Org_ID, Cur_BankstatementLine.valutadate, 'CMB',NULL);
+      v_DateacctPeriod_ID := C_CHK_OPEN_PERIOD (v_AD_Org_ID, Cur_BankstatementLine.dateacct, 'CMB',NULL);
+      IF (v_ValutadatePeriod_ID <> 1 OR v_DateacctPeriod_ID <> 1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@') ;
+      END IF;
+    END LOOP;
     IF(NOT FINISH_PROCESS) THEN
       SELECT COUNT(*),
         MAX(bsl.Line)
