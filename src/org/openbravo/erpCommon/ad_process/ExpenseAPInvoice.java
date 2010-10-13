@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -102,6 +103,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
     String strPricelist = "";
     String strSalesrepId = "";
     String strPaymentRule = "";
+    String strPaymentMethodId = "";
     String strPaymentterm = "";
     BigDecimal qty = BigDecimal.ZERO;
     BigDecimal amount = BigDecimal.ZERO;
@@ -143,10 +145,21 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         if (strcBpartnerLocationId.equals(""))
           throw new Exception("ShiptoNotdefined");
 
-        strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
-        if (strPaymentRule.equals(""))
-          throw new Exception("FormofPaymentNotdefined");
+        if( isNewFlow() ) {
+          strPaymentMethodId = ExpenseAPInvoiceData.paymentmethodId(this, data[i].cBpartnerId);
+          if (strPaymentMethodId.equals("")) {
+            throw new Exception("PayementMethodNotdefined");
+          }
+          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+          if (strPaymentRule.equals("")) {
+            strPaymentRule="P";
+          }
 
+        } else {
+          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+          if (strPaymentRule.equals(""))
+            throw new Exception("FormofPaymentNotdefined");
+        }
         strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
         if (strPaymentterm.equals(""))
           throw new Exception("PaymenttermNotdefined");        
@@ -160,13 +173,13 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
               strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId,
-              strcBpartnerLocationId, strPaymentRule, strPaymentterm);
+              strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm);
           
         } else {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
               strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId,
-              strcBpartnerLocationId, strPaymentRule, strPaymentterm);
+              strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm);
         }
 
         if (strcInvoiceIdOld.equals("")) {
@@ -185,7 +198,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y",
                 docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId,
                 strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId, strSalesrepId, "N",
-                "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId,
+                "", "", strPaymentRule, strPaymentMethodId,  strPaymentterm, "N", "N", data[i].cProjectId,
                 data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR",
                 strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
           } catch (ServletException ex) {
@@ -528,4 +541,26 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
   public String getServletInfo() {
     return "Servlet ExpenseAPInvoice";
   } // end of getServletInfo() method
+
+  @SuppressWarnings("deprecation")
+  private boolean isNewFlow() {
+    // Extra check for Payment Flow-disabling switch
+    try {
+      // Use Utility.getPropertyValue for backward compatibility
+      try {
+        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
+            .getOBContext().getUser(), null, null);
+        return true;
+      } catch (PropertyNotFoundException e) {
+        if (Utility.getPropertyValue("FinancialManagement", OBContext.getOBContext()
+            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId()) != null) {
+          return true;
+        } else
+          return false;
+      }
+    } catch (PropertyException e) {
+      return false;
+    }
+  }
+
 }
