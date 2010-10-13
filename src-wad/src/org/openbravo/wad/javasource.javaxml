@@ -29,7 +29,7 @@ import org.openbravo.erpCommon.reference.*;
 import org.openbravo.erpCommon.ad_actionButton.*;
 </PARAMETER_TMP>
 
-
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.utils.FormatUtilities;
@@ -613,6 +613,33 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         if (log4j.isDebugEnabled() &amp;&amp; myError!=null) log4j.debug(myError.getMessage());
         printPageClosePopUp(response, vars);
 </FIELDS_TMP>
+    } else if (vars.commandIn("SAVE_XHR")) {
+      <PARAMETER_TMP id="parent">String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
+      OBError myError = new OBError();
+      JSONObject result = new JSONObject();
+      String commandType = vars.getStringParameter("inpCommandType");
+      char saveType = "NEW".equals(commandType) ? 'I' : 'U';
+      try {
+        int total = saveRecord(vars, myError, saveType<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+        if (myError.isEmpty()) {
+          myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=RowsUpdated");
+          myError.setMessage(total + " " + myError.getMessage());
+          myError.setType("Success");
+        }
+        result.put("oberror", myError.toMap());
+        result.put("tabid", vars.getStringParameter("tabID"));
+        result.put("redirect", strDireccion + request.getServletPath() + "?Command=" + commandType);
+      } catch (Exception e) {
+        log4j.error("Error saving record (XHR request): " + e.getMessage(), e);
+        myError.setType("Error");
+        myError.setMessage(e.getMessage());
+      }
+
+      response.setContentType("application/json");
+      PrintWriter out = response.getWriter();
+      out.print(result.toString());
+      out.flush();
+      out.close();
     } else if (vars.getCommand().toUpperCase().startsWith("BUTTON") || vars.getCommand().toUpperCase().startsWith("SAVE_BUTTON")) {
       pageErrorPopUp(response);
     } else pageError(response);

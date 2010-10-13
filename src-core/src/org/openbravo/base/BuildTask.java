@@ -71,8 +71,8 @@ public class BuildTask {
 
     final Vector<String> tasks = new Vector<String>();
     final String unnappliedModules = getUnnapliedModules();
+    tasks.add("update.database");
     if (isUpdatingCoreOrTemplate()) {
-      tasks.add("update.database");
       tasks.add("core.lib");
       tasks.add("wad.lib");
       tasks.add("trl.lib");
@@ -85,7 +85,6 @@ public class BuildTask {
         // files and references
         ant.setProperty("apply.modules.complete.compilation", "true");
       }
-      ant.setProperty("force", "true");
       tasks.add("apply.modules");
       ant.setProperty("module", unnappliedModules);
     }

@@ -43,7 +43,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class AccountElementValue extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  private static final String[] colNames = { "Value", "NAME", "AD_ORG_ID_D", "C_ELEMENTVALUE_ID",
+  private static final String[] colNames = { "value", "name", "AD_ORG_ID_D", "C_ELEMENTVALUE_ID",
       "ROWKEY" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");

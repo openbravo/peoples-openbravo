@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -163,9 +162,17 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+    try{
+   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"), Utility
+   	              .getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
+   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR", strCOrgId);
+   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+   	      comboTableData = null;
 
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
+   }catch (Exception ex) {
+   	 throw new ServletException(ex);
+	}
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

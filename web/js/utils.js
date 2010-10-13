@@ -89,7 +89,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8274';
+  var number = '8495';
   return number;
 }
 
@@ -2586,7 +2586,7 @@ function executeMenuButton(id) {
 function getAppUrl() {
   var menuFrame = getFrame('frameMenu');
   var appUrl = null;
-  if (typeof menuFrame.getAppUrlFromMenu === "function") {
+  if (typeof menuFrame.getAppUrlFromMenu === "function" || typeof menuFrame.getAppUrlFromMenu === "object") {  //"object" clause related to issue https://issues.openbravo.com/view.php?id=14756
     appUrl = menuFrame.getAppUrlFromMenu();
   }
   return appUrl;

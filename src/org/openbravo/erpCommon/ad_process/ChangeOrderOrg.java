@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -261,11 +260,28 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
     xmlDocument.setParameter("shipperpath", strShipperpath);
     xmlDocument.setParameter("tax", strTax);
     xmlDocument.setParameter("bpartnerDes", ChangeOrderOrgData.selectBPartner(this, strBPartner));
+    try{
+   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ChangeOrderOrg"), Utility
+   	              .getContext(this, vars, "#User_Client", "ChangeOrderOrg"), 0);
+   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ChangeOrderOrg", strOrg);
+   	      xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
+   	      comboTableData = null;
 
-    xmlDocument.setData("reportAD_Org_ID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
-    xmlDocument.setData("reportAD_Org_IDNew", "liststructure", OrganizationComboData.selectCombo(
-        this, vars.getRole()));
+   }catch (Exception ex) {
+   	 throw new ServletException(ex);
+	}
+   try{
+	   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+	   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ChangeOrderOrg"), Utility
+	   	              .getContext(this, vars, "#User_Client", "ChangeOrderOrg"), 0);
+	   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ChangeOrderOrg", strOrg);
+	   	      xmlDocument.setData("reportAD_Org_IDNew", "liststructure", comboTableData.select(false));
+	   	      comboTableData = null;
+
+	   }catch (Exception ex) {
+	   	 throw new ServletException(ex);
+		}
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Tax_ID", "",
