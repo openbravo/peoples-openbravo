@@ -29,6 +29,8 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Home extends HttpSecureAppServlet {
@@ -97,8 +99,7 @@ public class Home extends HttpSecureAppServlet {
     String strVersion = "";
     OBContext.setAdminMode();
     try {
-      org.openbravo.erpCommon.obps.ActivationKey ak = org.openbravo.erpCommon.obps.ActivationKey
-          .getInstance();
+      ActivationKey ak = ActivationKey.getInstance();
       strVersion = OBVersion.getInstance().getMajorVersion();
       strVersion += " - ";
       strVersion += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
@@ -113,17 +114,16 @@ public class Home extends HttpSecureAppServlet {
 
   private String getCommunityBrandingUrl() throws ServletException {
     String url = "";
-    String strIsOPS = "N";
+    String strLicenseClass = LicenseClass.COMMUNITY.getCode();
     OBContext.setAdminMode();
     try {
-      strIsOPS = org.openbravo.erpCommon.obps.ActivationKey.getInstance().isOPSInstance() ? "Y"
-          : "N";
+      strLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
       if (isCommunityBrandingAvailable()) {
         url = COMMUNITY_BRANDING_URL;
       } else {
         url = STATIC_COMMUNITY_BRANDING_URL;
       }
-      url += "?isOPS=" + strIsOPS;
+      url += "?licenseClass=" + strLicenseClass;
       url += "&version=" + OBVersion.getInstance().getMajorVersion();
       url += "&language=" + OBContext.getOBContext().getLanguage().getLanguage();
       url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier();

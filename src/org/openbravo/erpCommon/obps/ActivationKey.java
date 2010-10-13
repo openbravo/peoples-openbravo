@@ -106,7 +106,7 @@ public class ActivationKey {
   }
 
   public enum LicenseClass {
-    COMMUNITY("C"), BASIC("B"), STD("STD");
+    COMMUNITY("C"), BASIC("B"), STD("STD"), PROFESSIONAL("PRO");
     private String code;
 
     private LicenseClass(String code) {
