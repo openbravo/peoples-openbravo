@@ -499,7 +499,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("urlLink", getLink(url));
       xmlDocument.setParameter("url", url);
     }
-    xmlDocument.setParameter("license", module.getLicenseType());
+    xmlDocument.setParameter("license", Utility.getListValueName("License Type", module
+        .getLicenseType(), vars.getLanguage()));
 
     if (dependencies != null && dependencies.length > 0) {
       xmlDocument.setData("dependencies", formatDeps4Display(dependencies, vars, this));
@@ -1445,6 +1446,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: ajaxreponse");
 
+    // clean module updates if there are any
+    cleanModulesUpdates();
+
     final HashMap<String, String> updates = ImportModule.scanForUpdates(this, vars);
     String up = "";
     for (final String node : updates.keySet())
@@ -1493,6 +1497,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
               mod.setMaturityUpdate(null);
             }
             OBDal.getInstance().flush();
+            OBDal.getInstance().commitAndClose();
+
+            // clean module updates if there are any
+            boolean isCleaned = cleanModulesUpdates();
+            if (isCleaned) {
+              myMessage = new OBError();
+              myMessage.setType("Info");
+              myMessage.setMessage(Utility.messageBD(this, "ModuleUpdatesRemoved", vars
+                  .getLanguage()));
+            }
+
           } finally {
             OBInterceptor.setPreventUpdateInfoChange(false);
           }
@@ -1500,6 +1515,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
           log4j.error("Module does not exists ID:" + moduleId);
         }
       } else if (vars.commandIn("SETTINGS_SAVE")) {
+
         // Save global maturity levels
         sysInfo.setMaturitySearch(vars.getStringParameter("inpSearchLevel"));
         sysInfo.setMaturityUpdate(vars.getStringParameter("inpScanLevel"));
@@ -1557,6 +1573,20 @@ public class ModuleManagement extends HttpSecureAppServlet {
           myMessage.setMessage(Utility.messageBD(this, "CannotSetMinorEnforcements", vars
               .getLanguage())
               + warnMsg);
+        }
+
+        // clean module updates if there are any
+        boolean isCleaned = cleanModulesUpdates();
+        if (isCleaned) {
+          if (myMessage == null) {
+            myMessage = new OBError();
+            myMessage.setType("Info");
+            myMessage.setMessage(Utility
+                .messageBD(this, "ModuleUpdatesRemoved", vars.getLanguage()));
+          } else {
+            myMessage.setMessage(myMessage.getMessage() + "<br/>"
+                + Utility.messageBD(this, "ModuleUpdatesRemoved", vars.getLanguage()));
+          }
         }
       }
 
@@ -1740,6 +1770,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Checks whether there are any updates available for the installed modules and cleans the update
+   * info if so.
+   */
+  private boolean cleanModulesUpdates() throws ServletException {
+    if (ModuleManagementData.selectUpdateable(this).length > 0) {
+      // cleaning modules updates
+      ModuleManagementData.cleanModulesUpdates(this);
+      return true;
+    }
+    return false;
   }
 
   /**

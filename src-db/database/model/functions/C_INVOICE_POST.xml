@@ -1560,7 +1560,6 @@ BEGIN --BODY
                 AND C_SETTLEMENT_GENERATE_ID IS NOT NULL
                 AND Ad_Isorgincluded(v_Org_id, dp.ad_org_id,v_Client_ID) != -1
                 AND ad_client_id = v_Client_ID
-                AND C_INVOICE_ID=v_Record_ID
                 AND EXISTS (SELECT 1
                             FROM C_SETTLEMENT S
                             WHERE DP.C_SETTLEMENT_GENERATE_ID = S.C_Settlement_ID

@@ -101,5 +101,13 @@
       </Sql>
    </SqlMethod>
    
-  
+    <SqlMethod name="cleanModulesUpdates" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE  AD_MODULE 
+            SET update_available=null, 
+                update_ver_id=null      
+      </Sql>
+   </SqlMethod>
+   
 </SqlClass>

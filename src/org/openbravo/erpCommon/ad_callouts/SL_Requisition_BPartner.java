@@ -60,19 +60,23 @@ public class SL_Requisition_BPartner extends HttpSecureAppServlet {
       String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
-
+    String strPriceList = "";
+    String strCurrency = "";
     if (strBPartner.equals(""))
       vars.removeSessionValue(strWindowId + "|C_BPartner_ID");
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     SLRequisitionBPartnerData[] data = SLRequisitionBPartnerData.select(this, strBPartner);
-
+    if (data.length != 0) {
+      strPriceList = data[0].poPricelistId;
+      strCurrency = data[0].cCurrencyId;
+    }
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Requisition_BPartner';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpmPricelistId\", \"" + data[0].poPricelistId + "\"),");
-    resultado.append("new Array(\"inpcCurrencyId\", \"" + data[0].cCurrencyId + "\")");
+    resultado.append("new Array(\"inpmPricelistId\", \"" + strPriceList + "\"),");
+    resultado.append("new Array(\"inpcCurrencyId\", \"" + strCurrency + "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");
