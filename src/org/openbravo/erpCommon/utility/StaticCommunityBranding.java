@@ -19,7 +19,6 @@
 package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
 
 public class StaticCommunityBranding extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -47,25 +45,24 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, String strIsOPS, String strVersion)
       throws IOException {
     log4j.debug("Output: dataSheet");
-    String strXmlTemplate = "";
+
     if (strVersion.startsWith("3")) {
       if ("Y".equals(strIsOPS)) {
-        strXmlTemplate = "org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-OPS";
+        response
+            .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-OPS.html");
       } else {
-        strXmlTemplate = "org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-Comm";
+        response
+            .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-Comm.html");
       }
     } else {
       if ("Y".equals(strIsOPS)) {
-        strXmlTemplate = "org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-OPS";
+        response
+            .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-OPS.html");
       } else {
-        strXmlTemplate = "org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-Comm";
+        response
+            .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-Comm.html");
       }
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(strXmlTemplate).createXmlDocument();
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 }
