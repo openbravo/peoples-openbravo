@@ -5318,11 +5318,63 @@ td.Login_Home_Logo {
 }
 
 .Login_Home_Community_Branding {
-  height: 360;
+  height: 390;
   width: 608;
   margin: 0 auto;
 }
 
+.Login_Home_Community_Branding_top {
+  height: 30;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/communityBrandingTop.png);
+}
+
+.Login_Home_Community_Branding_title {
+  height: 30;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: repeat-y;
+  background-position: center center;
+  background-image: url(Login/communityBrandingBackground.png);
+}
+
+.Login_Home_Community_Branding_purpose {
+  color: #58A618;
+  font-weight: bold;
+  float: left;
+  height: 30;
+  width: 200;
+  margin: 0 auto;
+}
+
+.Login_Home_Community_Branding_version {
+  font-weight: bold;
+  float: left;
+  height: 30;
+  width: 408;
+  margin: 0 auto;
+}
+
+.Login_Home_Community_Branding_iframe {
+  height: 310;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: repeat-y;
+  background-position: center center;
+  background-image: url(Login/communityBrandingBackground.png);
+}
+
+.Login_Home_Community_Branding_bottom {
+  height: 30;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/communityBrandingBottom.png);
+}
 table.Login_ToolBar_bg {
   background-repeat: repeat-x;
   background-position: top center;

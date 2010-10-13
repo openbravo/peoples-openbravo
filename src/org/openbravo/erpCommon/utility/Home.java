@@ -70,11 +70,45 @@ public class Home extends HttpSecureAppServlet {
     xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
 
     xmlDocument.setParameter("iframeURL", getCommunityBrandingUrl());
+    xmlDocument.setParameter("cbPurpose", getPurpose());
+    xmlDocument.setParameter("cbVersion", getVersion());
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String getPurpose() {
+    String strPurpose = "";
+    OBContext.setAdminMode();
+    try {
+      String strPurposeCode = OBDal.getInstance().get(
+          org.openbravo.model.ad.system.SystemInformation.class, "0").getInstancePurpose();
+      strPurpose = Utility.getListValueName("InstancePurpose", strPurposeCode, OBContext
+          .getOBContext().getLanguage().getLanguage());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return strPurpose;
+  }
+
+  private String getVersion() {
+    String strVersion = "";
+    OBContext.setAdminMode();
+    try {
+      org.openbravo.erpCommon.obps.ActivationKey ak = org.openbravo.erpCommon.obps.ActivationKey
+          .getInstance();
+      strVersion = OBVersion.getInstance().getMajorVersion();
+      strVersion += " - ";
+      strVersion += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
+          OBContext.getOBContext().getLanguage().getLanguage());
+      strVersion += " - ";
+      strVersion += OBVersion.getInstance().getMP();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return strVersion;
   }
 
   private String getCommunityBrandingUrl() throws ServletException {
@@ -89,11 +123,12 @@ public class Home extends HttpSecureAppServlet {
       } else {
         url = STATIC_COMMUNITY_BRANDING_URL;
       }
-      url += "?isOPS=" + strIsOPS + "";
-      url += "&version=" + OBVersion.getInstance().getMajorVersion() + "";
-      url += "&language=" + OBContext.getOBContext().getLanguage().getLanguage() + "";
-      url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier() + "";
-      url += ";";
+      url += "?isOPS=" + strIsOPS;
+      url += "&version=" + OBVersion.getInstance().getMajorVersion();
+      url += "&language=" + OBContext.getOBContext().getLanguage().getLanguage();
+      url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier();
+      url += "&macAddress=" + SystemInfo.getMacAddress();
+      url += "&databaseIdentifier=" + SystemInfo.getDBIdentifier();
     } finally {
       OBContext.restorePreviousMode();
     }

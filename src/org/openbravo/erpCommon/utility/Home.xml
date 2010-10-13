@@ -26,4 +26,6 @@
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="customJS" name="customJS" default="" />
   <PARAMETER id="paramURL" name="iframeURL" attribute="src"/>
+  <PARAMETER id="cbPurpose" name="cbPurpose"/>
+  <PARAMETER id="cbVersion" name="cbVersion"/>
 </REPORT>
