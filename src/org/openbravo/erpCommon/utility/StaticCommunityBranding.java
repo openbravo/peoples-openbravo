@@ -55,10 +55,9 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
       } else if (LicenseClass.BASIC.equals(licenseClass)) {
         response
             .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-Basic.html");
-      } else if (LicenseClass.PROFESSIONAL.equals(licenseClass)
-          || LicenseClass.STD.equals(licenseClass)) {
+      } else if (LicenseClass.STD.equals(licenseClass)) {
         response
-            .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-Pro.html");
+            .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-STD.html");
       } else {
         // Unknown license class, showing community content.
         log4j.error("unknown license class: " + strLicenseClass);
@@ -72,9 +71,9 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
       } else if (LicenseClass.BASIC.equals(licenseClass)) {
         response
             .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-Basic.html");
-      } else if (LicenseClass.PROFESSIONAL.equals(licenseClass)) {
+      } else if (LicenseClass.STD.equals(licenseClass)) {
         response
-            .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-Pro.html");
+            .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-STD.html");
       } else {
         // Unknown license class, showing community content.
         log4j.error("unknown license class: " + strLicenseClass);
