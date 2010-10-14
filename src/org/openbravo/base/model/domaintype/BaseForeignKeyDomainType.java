@@ -26,6 +26,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.Reference;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.validation.ValidationException;
 
 /**
@@ -48,9 +49,16 @@ public abstract class BaseForeignKeyDomainType extends BaseDomainType implements
       return getModelProvider().getTable(getReferedTableName(columnName)).getPrimaryKeyColumns()
           .get(0);
     } catch (final Exception e) {
-      throw new OBException("Reference column for " + columnName
-          + " not found in runtime model [ref: " + getReference().getId()
-          + ", encountered exception " + e.getMessage(), e);
+      if (OBPropertiesProvider.isFriendlyWarnings()) {
+        // won't be logged
+        throw new IllegalArgumentException("Reference column for " + columnName
+            + " not found in runtime model [ref: " + getReference().getId()
+            + ", encountered exception " + e.getMessage(), e);
+      } else {
+        throw new OBException("Reference column for " + columnName
+            + " not found in runtime model [ref: " + getReference().getId()
+            + ", encountered exception " + e.getMessage(), e);
+      }
     }
   }
 

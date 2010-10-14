@@ -44,6 +44,16 @@ public class OBPropertiesProvider {
 
   private static OBPropertiesProvider instance = new OBPropertiesProvider();
 
+  private static boolean friendlyWarnings = false;
+
+  public static boolean isFriendlyWarnings() {
+    return friendlyWarnings;
+  }
+
+  public static void setFriendlyWarnings(boolean doFriendlyWarnings) {
+    friendlyWarnings = doFriendlyWarnings;
+  }
+
   private Properties obProperties = null;
   private Document formatXML;
 
