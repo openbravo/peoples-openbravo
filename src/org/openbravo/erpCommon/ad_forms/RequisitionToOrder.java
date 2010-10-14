@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.businessUtility.WindowTabsData;
@@ -40,6 +42,8 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -468,7 +472,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
             strOrderDate, strVendor, RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
             RequisitionToOrderData.billto(this, strVendor).equals("") ? RequisitionToOrderData
                 .cBPartnerLocationId(this, strVendor) : RequisitionToOrderData.billto(this,
-                strVendor), cCurrencyId, data1[0].paymentrulepo, data1[0].poPaymenttermId,
+                strVendor), cCurrencyId, isAlternativeFinancialFlow() ? "P"
+                : data1[0].paymentrulepo, data1[0].poPaymenttermId,
             data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule, data1[0].deliveryrule
                 .equals("") ? "A" : data1[0].deliveryrule, "I",
             data1[0].deliveryviarule.equals("") ? "D" : data1[0].deliveryviarule, strWarehouse,
@@ -590,6 +595,26 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         pinstance);
     OBError myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
     return myMessage;
+  }
+
+  /**
+   * Checks if the any module implements and alternative Financial Management preference. It should
+   * be the Advanced Payables and Receivables module.
+   * 
+   * @return true if any module implements and alternative Financial Management preference.
+   */
+  private boolean isAlternativeFinancialFlow() {
+    try {
+      try {
+        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
+            .getOBContext().getUser(), null, null);
+      } catch (PropertyNotFoundException e) {
+        return false;
+      }
+    } catch (PropertyException e) {
+      return false;
+    }
+    return true;
   }
 
   public String getServletInfo() {

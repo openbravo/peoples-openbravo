@@ -51,6 +51,8 @@
   v_PriceStd NUMBER;
   v_TaxId varchar2(32);
   v_ProductName NVARCHAR2(90);
+  v_IsAPRMinstalled NUMBER;
+  v_DefaultPaymentRule VARCHAR2(60):=null;
 
   v_Count NUMBER;
 
@@ -133,6 +135,13 @@
           AND ISBILLTO='Y'
           AND C_BPARTNER_ID=Cur_workproposal.C_BPARTNER_ID;
 
+        SELECT COUNT(1) INTO v_IsAPRMinstalled
+        FROM ad_preference
+        WHERE property = 'FinancialManagement' AND ad_module_id <> '0';
+        IF (v_IsAPRMinstalled > 0) THEN
+          v_DefaultPaymentRule := 'P';
+        END IF;
+
         INSERT INTO C_Order
           (C_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
            CREATED, CREATEDBY, UPDATED, UPDATEDBY,
@@ -150,7 +159,7 @@
          'N', v_DocumentNo,  'DR', 'CO','N',
           v_CDocTypeID, v_CDocTypeID, v_Description,
           v_DateDoc,v_DateDoc, Cur_workproposal.C_BPartner_ID,v_BillTo_ID,
-          v_BPartner_Location_ID, Cur_workproposal.C_Currency_ID, Cur_workproposal.paymentrule, Cur_workproposal.C_PAYMENTTERM_ID,
+          v_BPartner_Location_ID, Cur_workproposal.C_Currency_ID, COALESCE(Cur_workproposal.paymentrule, v_DefaultPaymentRule), Cur_workproposal.C_PAYMENTTERM_ID,
           'D', 'A', 'I',COALESCE(Cur_workproposal.DeliveryViaRule,'D'),
           '5',0,0,
           v_M_Warehouse_ID, Cur_workproposal.PO_PRICELIST_ID, 'N', v_DateDoc,

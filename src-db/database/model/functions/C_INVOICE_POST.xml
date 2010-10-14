@@ -1555,6 +1555,7 @@ BEGIN --BODY
               FROM C_DEBT_PAYMENT DP
               WHERE C_BPartner_ID=v_BPartner_ID
                 AND C_Debt_Payment_Status(C_Settlement_Cancel_ID, Cancel_Processed, Generate_Processed, IsPaid, IsValid, C_Cashline_ID, C_BankstatementLine_ID)='P'
+                AND ISRECEIPT=v_IsSOTrx
                 AND (-1) *Amount=v_paymentAmount
                 AND c_currency_ID=v_Currency_ID
                 AND C_SETTLEMENT_GENERATE_ID IS NOT NULL
