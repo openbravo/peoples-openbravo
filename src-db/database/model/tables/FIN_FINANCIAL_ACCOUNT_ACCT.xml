@@ -65,15 +65,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_BANKFEE_ACCT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_BANKFEE_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_BANKREVALUATIONGAIN_ACCT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_BANKREVALUATIONGAIN_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_BANKREVALUATIONLOSS_ACCT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_BANKREVALUATIONLOSS_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
