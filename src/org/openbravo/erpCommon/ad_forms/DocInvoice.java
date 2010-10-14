@@ -688,9 +688,24 @@ public class DocInvoice extends AcctServer {
   /**
    * Get Document Confirmation
    * 
-   * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    DocInvoiceData[] data = null;
+    try {
+      data = DocInvoiceData.selectFinInvCount(conn, strRecordId);
+      if (data.length > 0) {
+        if (Integer.parseInt(data[0].fininvcount) == 0)
+          return true;
+        else if (Integer.parseInt(data[0].fininvcount) == Integer.parseInt(data[0].finacctcount))
+          return true;
+        else {
+          setStatus(STATUS_Error);
+          return false;
+        }
+      }
+    } catch (ServletException e) {
+      log4jDocInvoice.error("Exception in getDocumentConfirmation method: " + e);
+    }
     return true;
   }
 

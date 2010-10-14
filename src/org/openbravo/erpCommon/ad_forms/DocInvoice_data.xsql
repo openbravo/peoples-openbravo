@@ -35,7 +35,8 @@
         '' AS GRANDTOTAL, '' AS M_PRICELIST_ID, '' AS ISTAXINCLUDED, '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID, '' AS C_ACTIVITY_ID,
         '' AS ISPAID, '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE,
         '' AS AD_ORGTRX_ID, '' AS USER1_ID, '' AS USER2_ID, '' as AMOUNT, '' AS STATUS, '' AS ISRECEIPT, '' AS ISMANUAL, '' AS WRITEOFFAMT,
-        '' AS C_DEBT_PAYMENT_ID, '' AS P_REVENUE_ACCT, '' AS P_EXPENSE_ACCT, '' as FIN_PAYMENT_SCHEDULE_ID, '' as FIN_PAYMENTMETHOD_ID, '' AS PREPAIDAMT
+        '' AS C_DEBT_PAYMENT_ID, '' AS P_REVENUE_ACCT, '' AS P_EXPENSE_ACCT, '' as FIN_PAYMENT_SCHEDULE_ID, '' as FIN_PAYMENTMETHOD_ID, '' AS PREPAIDAMT,
+        '' AS FININVCOUNT, '' AS FINACCTCOUNT
         FROM C_Tax t, C_InvoiceTax it
         WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Invoice_ID=?
      ]]>
@@ -153,5 +154,21 @@
     </Sql>
     <Parameter name="taxId"/>
     <Parameter name="invoiceId"/>
+   </SqlMethod>
+   <SqlMethod name="selectFinInvCount" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT (SELECT COUNT(*) FROM C_INVOICELINE WHERE FINANCIAL_INVOICE_LINE='Y'
+        AND C_INVOICE_ID=?) AS FININVCOUNT, 
+        (SELECT COUNT(*) FROM C_INVOICELINE invln LEFT JOIN C_GLITEM_ACCT glact ON 
+        invln.ACCOUNT_ID = glact.C_GLITEM_ID WHERE invln.FINANCIAL_INVOICE_LINE='Y' AND 
+        invln.C_INVOICE_ID=? AND 
+        glact.GLITEM_DEBIT_ACCT IS NOT NULL AND 
+        glact.GLITEM_CREDIT_ACCT IS NOT NULL) AS FINACCTCOUNT FROM DUAL
+     ]]>
+     </Sql>
+     <Parameter name="invoiceId"/>
+     <Parameter name="invoiceId"/>
    </SqlMethod>
 </SqlClass>
