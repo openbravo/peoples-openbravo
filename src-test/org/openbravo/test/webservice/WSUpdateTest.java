@@ -117,6 +117,20 @@ public class WSUpdateTest extends BaseWSTest {
    * @throws Exception
    */
   public void testReadAddDeleteCity() throws Exception {
+    if (cityId == null) {
+      testACreateCity();
+    }
+    doTestReadAddDeleteCity(false);
+  }
+
+  public void testReadAddDeleteQueryCity() throws Exception {
+    if (cityId == null) {
+      testACreateCity();
+    }
+    doTestReadAddDeleteCity(true);
+  }
+
+  private void doTestReadAddDeleteCity(boolean doDeleteQuery) throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
         + "</name>");
@@ -165,7 +179,11 @@ public class WSUpdateTest extends BaseWSTest {
     assertTrue(indexCity2 != -1);
 
     // delete it
-    doDirectDeleteRequest("/ws/dal/City/" + id, 200);
+    if (doDeleteQuery) {
+      doDirectDeleteRequest("/ws/dal/City?where=name='" + newName + "'", 200);
+    } else {
+      doDirectDeleteRequest("/ws/dal/City/" + id, 200);
+    }
 
     // sleep 1 seconds, so that the city is deleted
     Thread.sleep(1000);
