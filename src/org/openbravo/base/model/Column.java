@@ -284,7 +284,6 @@ public class Column extends ModelObject {
       if (!OBPropertiesProvider.isFriendlyWarnings()) {
         log.error("No referenced column found: error >> tableName: " + table.getTableName()
             + " - columnName: " + getColumnName(), e);
-        e.printStackTrace();
       }
     }
   }

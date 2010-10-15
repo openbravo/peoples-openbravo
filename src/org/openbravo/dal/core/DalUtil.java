@@ -31,6 +31,7 @@ import java.util.Map;
 import org.hibernate.proxy.HibernateProxy;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -103,6 +104,25 @@ public class DalUtil {
       }
     }
     return result;
+  }
+
+  /**
+   * Finds a property using the db column name and table name.
+   * 
+   * @param tableName
+   *          the table name, is used to find the {@link Entity}
+   * @param dbColumnName
+   *          is used to find the {@link Property}
+   * @return a Property or null if no property found
+   */
+  public static Property getProperty(String tableName, String dbColumnName) {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableName(tableName);
+    for (Property property : entity.getProperties()) {
+      if (property.getColumnName().equalsIgnoreCase(dbColumnName)) {
+        return property;
+      }
+    }
+    return null;
   }
 
   /**

@@ -290,6 +290,40 @@ public class DalWebService implements WebService {
       return;
     }
 
+    if (segments.length == 1) {
+      final String entityName = segments[0];
+
+      try {
+        ModelProvider.getInstance().getEntity(entityName);
+      } catch (final CheckException ce) {
+        throw new ResourceNotFoundException("Resource " + entityName + " not found", ce);
+      }
+
+      final String where = request.getParameter(PARAMETER_WHERE);
+      String whereOrderByClause = "";
+      if (where != null) {
+        whereOrderByClause += where;
+      }
+
+      try {
+        final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
+            whereOrderByClause);
+
+        Object o = obq.deleteQuery().executeUpdate();
+
+        final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
+            "Action performed successfully", "Removed business objects " + o, null);
+        response.setContentType("text/xml;charset=UTF-8");
+        final Writer w = response.getWriter();
+        w.write(resultXml);
+        w.close();
+      } catch (final Exception e) {
+        throw new OBException(e);
+      }
+
+      return;
+    }
+
     // use the content of the request
     doChangeAction(path, request, response, ChangeAction.DELETE);
   }
