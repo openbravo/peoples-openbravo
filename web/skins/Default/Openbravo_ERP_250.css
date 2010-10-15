@@ -5318,7 +5318,6 @@ td.Login_Home_Logo {
 }
 
 .Login_Home_Community_Branding {
-  height: 390;
   width: 608;
   margin: 0 auto;
 }
@@ -5350,11 +5349,52 @@ td.Login_Home_Logo {
   margin: 0 auto;
 }
 
+.Login_Home_Community_Branding_development {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 25px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/banner-development.png);
+}
+
+.Login_Home_Community_Branding_evaluation {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/banner-evaluation.png);
+}
+
+.Login_Home_Community_Branding_testing {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/banner-testing.png);
+}
+
+.Login_Home_Community_Branding_production {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(../../../../utility/ShowImageLogo?logo=banner-production);
+}
+
 .Login_Home_Community_Branding_version {
   font-weight: bold;
   float: left;
   height: 30;
-  width: 408;
+  width: 403;
+  line-height: 2em;
   margin: 0 auto;
 }
 
@@ -5375,6 +5415,7 @@ td.Login_Home_Logo {
   background-position: center center;
   background-image: url(Login/communityBrandingBottom.png);
 }
+
 table.Login_ToolBar_bg {
   background-repeat: repeat-x;
   background-position: top center;

@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 
 public class StaticCommunityBranding extends HttpSecureAppServlet {
@@ -35,18 +36,16 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
-      String strLicenseClass = vars.getStringParameter("licenseClass");
       String strVersion = vars.getStringParameter("version");
-      printPage(response, strLicenseClass, strVersion);
+      printPage(response, strVersion);
     } else
       pageError(response);
 
   }
 
-  private void printPage(HttpServletResponse response, String strLicenseClass, String strVersion)
-      throws IOException {
+  private void printPage(HttpServletResponse response, String strVersion) throws IOException {
     log4j.debug("Output: dataSheet");
-    LicenseClass licenseClass = LicenseClass.valueOf(strLicenseClass);
+    LicenseClass licenseClass = ActivationKey.getInstance().getLicenseClass();
 
     if (strVersion.startsWith("3")) {
       if (LicenseClass.COMMUNITY.equals(licenseClass)) {
@@ -60,7 +59,7 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
             .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-STD.html");
       } else {
         // Unknown license class, showing community content.
-        log4j.error("unknown license class: " + strLicenseClass);
+        log4j.error("unknown license class: " + licenseClass.getCode());
         response
             .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-3.0-Comm.html");
       }
@@ -76,7 +75,7 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
             .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-STD.html");
       } else {
         // Unknown license class, showing community content.
-        log4j.error("unknown license class: " + strLicenseClass);
+        log4j.error("unknown license class: " + licenseClass.getCode());
         response
             .sendRedirect("../src-loc/design/org/openbravo/erpCommon/utility/StaticCommunityBranding-2.50-Comm.html");
       }

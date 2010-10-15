@@ -72,7 +72,7 @@ public class Home extends HttpSecureAppServlet {
     xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
 
     xmlDocument.setParameter("iframeURL", getCommunityBrandingUrl());
-    xmlDocument.setParameter("cbPurpose", getPurpose());
+    xmlDocument.setParameter("cbPurpose", getPurpose().toLowerCase());
     xmlDocument.setParameter("cbVersion", getVersion());
 
     response.setContentType("text/html; charset=UTF-8");
