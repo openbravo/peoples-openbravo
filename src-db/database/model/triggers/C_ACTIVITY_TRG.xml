@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ACTIVITY_TRG">
     <trigger name="C_ACTIVITY_TRG" table="C_ACTIVITY" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body><![CDATA[/*************************************************************************
+      <body><![CDATA[
+/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
