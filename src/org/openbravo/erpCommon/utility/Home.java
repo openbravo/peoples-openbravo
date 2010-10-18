@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -137,7 +139,7 @@ public class Home extends HttpSecureAppServlet {
       url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier();
       url += "&macAddress=" + SystemInfo.getMacAddress();
       url += "&databaseIdentifier=" + SystemInfo.getDBIdentifier();
-      url += "&systemDate=" + DateTimeData.today(this);
+      url += "&systemDate=" + (new SimpleDateFormat("yyyyMMdd")).format(new Date());
     } finally {
       OBContext.restorePreviousMode();
     }
