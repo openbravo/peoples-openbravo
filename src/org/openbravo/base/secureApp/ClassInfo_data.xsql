@@ -41,7 +41,6 @@
                                     AND m.action IN ('P', 'R')
              LEFT JOIN ad_form f ON mo.ad_form_id = f.ad_form_id
              LEFT JOIN ad_process p ON mo.ad_process_id = p.ad_process_id
-             LEFT JOIN ad_task t ON mo.ad_task_id = t.ad_task_id
              LEFT JOIN ad_reference r ON mo.ad_reference_id = r.ad_reference_id
              LEFT JOIN ad_workflow w ON mo.ad_workflow_id = w.ad_workflow_id
              LEFT JOIN ad_callout c ON mo.ad_callout_id = c.ad_callout_id
