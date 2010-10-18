@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="OBEJCT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="OBJECT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

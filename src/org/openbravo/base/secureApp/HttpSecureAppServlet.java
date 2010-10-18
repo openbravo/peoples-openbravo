@@ -408,7 +408,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                 vars1.getSessionValue("#AD_Session_ID")));
             usageAudit.setObject(SessionInfo.getProcessId());
             usageAudit.setCommand(vars1.getCommand());
-            usageAudit.setObejctType(SessionInfo.getProcessType());
+            usageAudit.setObjectType(SessionInfo.getProcessType());
             OBDal.getInstance().save(usageAudit);
           } finally {
             OBContext.restorePreviousMode();
