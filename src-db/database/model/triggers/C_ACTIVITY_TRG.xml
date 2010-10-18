@@ -32,14 +32,7 @@ BEGIN
   --  for Translation
   --  and TreeNode
   IF INSERTING THEN
-    --  Create TreeNode --
-    --  get AD_Tree_ID + ParentID
-    --SELECT  c.AD_Tree_Menu_ID, n.Node_ID
-    -- INTO  v_xTree_ID, v_xParent_ID
-    -- FROM    AD_CLIENTINFO c, AD_TREENODE n -- AD_TreeNodeMM n
-    --  WHERE   c.AD_Tree_Menu_ID=n.AD_Tree_ID
-    --    AND n.Parent_ID IS NULL
-    --AND c.AD_Client_ID=:NEW.AD_Client_ID;
+    --  get AD_Tree_ID and ParentID
     SELECT AD_TREE_ID,
       0
     INTO v_xTree_ID,
@@ -47,11 +40,9 @@ BEGIN
     FROM AD_TREE
     WHERE treetype='AY'
       AND AD_Client_ID=:NEW.AD_Client_ID;
-    --  DBMS_OUTPUT.PUT_LINE('Tree='||v_xTree_ID||'  Node='||:new.AD_Menu_ID||'  Parent='||v_xParent_ID);
     --  Insert into TreeNode
     INSERT
     INTO AD_TREENODE
-      -- AD_TreeNodeMM
       (
         AD_TreeNode_Id, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
@@ -74,36 +65,19 @@ BEGIN
       ;
     -- Summary Nodes first
   END IF;
-  -- Inserting
-  -- AD_Ref_List update trigger
-  --  synchronize name,...
   IF UPDATING THEN
     IF((COALESCE(:OLD.NAME, '.') <> COALESCE(:NEW.NAME, '.')
    OR COALESCE(:OLD.Description, '.') <> COALESCE(:NEW.Description, '.')
    OR COALESCE(:OLD.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')))
   THEN
       IF(:OLD.IsActive!=:NEW.IsActive) THEN
-        --  get AD_Tree_ID + ParentID
-        --SELECT  c.AD_Tree_Menu_ID, n.Node_ID
-        --INTO  v_xTree_ID, v_xParent_ID
-        --FROM    AD_CLIENTINFO c, AD_TREENODE n -- AD_TreeNodeMM n
-        --WHERE   c.AD_Tree_Menu_ID=n.AD_Tree_ID
-        --  AND n.Parent_ID IS NULL
-        --AND c.AD_Client_ID=:NEW.AD_Client_ID;
-        -- Update
         UPDATE AD_TREENODE
-          -- AD_TreeNodeMM
           SET IsActive=:NEW.IsActive
         WHERE AD_Tree_ID=v_xTree_ID
           AND Node_ID=:NEW.C_ACTIVITY_ID;
       END IF;
     END IF;
   END IF;
-  -- Updating
-/*EXCEPTION
-WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20002, 'AD_AccountingRpt_Element InsertTrigger Error: No ClientInfo or parent TreeNode') ;
-  */
 END C_ACTIVITY_TRG
 ]]></body>
     </trigger>
