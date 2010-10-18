@@ -73,7 +73,11 @@ public class Heartbeat extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
 
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/Heartbeat")
+    String[] discard = { "" };
+    if (!vars.commandIn("DEFAULT")) {
+      discard[0] = "deferButton";
+    }
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/Heartbeat", discard)
         .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
