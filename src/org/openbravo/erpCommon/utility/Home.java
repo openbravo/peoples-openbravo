@@ -137,6 +137,7 @@ public class Home extends HttpSecureAppServlet {
       url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier();
       url += "&macAddress=" + SystemInfo.getMacAddress();
       url += "&databaseIdentifier=" + SystemInfo.getDBIdentifier();
+      url += "&systemDate=" + DateTimeData.today(this);
     } finally {
       OBContext.restorePreviousMode();
     }
