@@ -11,7 +11,6 @@
  */
 package org.openbravo.base.secureApp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -20,11 +19,9 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
@@ -171,45 +168,15 @@ public class LoginUtils {
       OBContext.restorePreviousMode();
     }
 
-    OBContext.setAdminMode();
     try {
       SeguridadData[] data = SeguridadData.select(conn, strRol, strUserAuth);
       if (data == null || data.length == 0) {
         OBContext.setOBContext(currentContext);
         return false;
       }
-
-      List parameters = new ArrayList();
-      parameters.add(strRol);
-      List<RoleOrganization> datarolelist = OBDal.getInstance().createQuery(RoleOrganization.class,
-          "WHERE role.id = ? ORDER BY client.id, organization.id", parameters).list();
-
-      StringBuilder clientlist = new StringBuilder();
-      StringBuilder orglist = new StringBuilder();
-      String currentclient = null;
-      for (RoleOrganization roleorg : datarolelist) {
-
-        if (currentclient == null || !currentclient.equals(roleorg.getClient().getId())) {
-          currentclient = roleorg.getClient().getId();
-          if (clientlist.length() > 0) {
-            clientlist.append(',');
-          }
-          clientlist.append('\'');
-          clientlist.append(roleorg.getClient().getId());
-          clientlist.append('\'');
-        }
-
-        if (orglist.length() > 0) {
-          orglist.append(',');
-        }
-        orglist.append('\'');
-        orglist.append(roleorg.getOrganization().getId());
-        orglist.append('\'');
-      }
-
       vars.setSessionValue("#User_Level", data[0].userlevel);
-      vars.setSessionValue("#User_Client", clientlist.toString());
-      vars.setSessionValue("#User_Org", orglist.toString());
+      vars.setSessionValue("#User_Client", data[0].clientlist);
+      vars.setSessionValue("#User_Org", data[0].orglist);
       vars.setSessionValue("#Approval_C_Currency_ID", data[0].cCurrencyId);
       vars.setSessionValue("#Approval_Amt", data[0].amtapproval);
       vars.setSessionValue("#Client_Value", data[0].value);
@@ -286,8 +253,6 @@ public class LoginUtils {
       OBContext.setOBContext(currentContext);
       log4j.warn("Error while loading session arguments: " + e);
       return false;
-    } finally {
-      OBContext.restorePreviousMode();
     }
 
     // Login process if finished, set the flag as not logging in
