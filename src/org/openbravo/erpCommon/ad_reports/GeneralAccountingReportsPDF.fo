@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,15 +38,15 @@
 					<fo:table-row>
 						<fo:table-cell>
 							<fo:block font-size="10pt" text-align="left" padding-top="2pt">
-								<fo:inline font-weight="bold">Enterprise:</fo:inline>
+								<fo:inline font-weight="bold">Client</fo:inline>:&#160;&#160;
 								<fo:inline id="fieldCompanyName">xx</fo:inline>&#160;&#160;<fo:inline id="fieldAgnoInitial"/>
-								<fo:inline font-weight="bold">Organization:</fo:inline>
+								<fo:inline font-weight="bold">Organization</fo:inline>:&#160;&#160;
 								<fo:inline id="fieldOrg">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
 						<fo:table-cell>
 							<fo:block font-size="10pt" text-align="left" padding-top="2pt">
-								<fo:inline font-weight="bold">Date:</fo:inline>
+								<fo:inline font-weight="bold">Date</fo:inline>:&#160;&#160;
 								<fo:inline id="fieldDate">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
@@ -54,16 +54,19 @@
 					<fo:table-row>
 						<fo:table-cell number-columns-spanned="2">
 							<fo:block font-size="10pt" text-align="left" padding-top="2pt">
-								<fo:inline font-weight="bold">Conditions:</fo:inline>
-								<fo:inline>Period:</fo:inline>
-								<fo:inline id="fieldPeriod">xx</fo:inline>&#160;&#160;&#160;&#160;<fo:inline>Period N-1:</fo:inline>
+								<fo:inline font-weight="bold">Conditions:</fo:inline>&#160;&#160;
+								<fo:inline>Period</fo:inline>:&#160;&#160;
+								<fo:inline id="fieldPeriod">xx</fo:inline>&#160;&#160;&#160;&#160;<fo:inline>Period</fo:inline>&#160;N-1:&#160;&#160;
 								<fo:inline id="fieldPeriodRef">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>
 					<fo:table-row>
 						<fo:table-cell number-columns-spanned="2" border-bottom-style="solid" border-bottom-width="0.5pt">
-							<fo:block font-size="10pt" padding-bottom="4pt" text-align="left" padding-top="2pt" start-indent="2.4cm">Enterprise N-1:&#160;&#160;<fo:inline id="fieldCompanyName">Period</fo:inline>&#160;&#160;<fo:inline id="fieldAgnoRef">xx</fo:inline>
+							<fo:block font-size="10pt" padding-bottom="4pt" text-align="left" padding-top="2pt" start-indent="2.4cm">
+                                <fo:inline>Client</fo:inline>&#160;N-1:&#160;&#160;
+                                <fo:inline id="fieldCompanyName">Period</fo:inline>&#160;&#160;
+                                <fo:inline id="fieldAgnoRef">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>
