@@ -62,6 +62,8 @@ class TranslationHandler extends DefaultHandler {
   private String m_curColumnName = null;
   /** Current Value */
   private StringBuffer m_curValue = null;
+  /** Original Value */
+  private String m_oriValue = null;
   /** SQL */
   private StringBuffer m_sql = null;
 
@@ -104,7 +106,7 @@ class TranslationHandler extends DefaultHandler {
       m_sql = new StringBuffer();
     } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
       m_curColumnName = attributes.getValue(TranslationManager.XML_VALUE_ATTRIBUTE_COLUMN);
-
+      m_oriValue = attributes.getValue(TranslationManager.XML_VALUE_ATTRIBUTE_ORIGINAL);
     } else if (qName.equals(TranslationManager.XML_CONTRIB)) {
       m_AD_Language = attributes.getValue(TranslationManager.XML_ATTRIBUTE_LANGUAGE);
     } else
@@ -185,9 +187,17 @@ class TranslationHandler extends DefaultHandler {
       else
         log4j.error("Update Rows=" + no + " (Should be 1) - " + m_sql.toString());
     } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
-      if (m_sql.length() > 0)
-        m_sql.append(",");
-      m_sql.append(m_curColumnName).append("=").append(TO_STRING(m_curValue.toString()));
+      String value = "";
+      if (m_curValue != null && !m_curValue.toString().equals("")) {
+        value = TO_STRING(m_curValue.toString());
+      } else if (m_oriValue != null && !m_oriValue.toString().equals("")) {
+        value = TO_STRING(m_oriValue.toString());
+      }
+      if (!value.equals("")) {
+        if (m_sql.length() > 0)
+          m_sql.append(",");
+        m_sql.append(m_curColumnName).append("=").append(value);
+      }
     } else if (qName.equals(TranslationManager.XML_CONTRIB)) {
       if (log4j.isDebugEnabled())
         log4j.debug("Contibutors:" + TO_STRING(m_curValue.toString()));

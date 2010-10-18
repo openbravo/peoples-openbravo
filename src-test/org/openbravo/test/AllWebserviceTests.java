@@ -22,7 +22,6 @@ package org.openbravo.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.openbravo.test.webservice.BaseWSTest;
 import org.openbravo.test.webservice.PerformanceTest;
 import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;

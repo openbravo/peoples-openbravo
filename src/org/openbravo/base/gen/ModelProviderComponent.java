@@ -53,6 +53,14 @@ public class ModelProviderComponent implements WorkflowComponent {
     wc.set("model", ModelProvider.getInstance());
   }
 
+  public boolean getFriendlyWarnings() {
+    return OBPropertiesProvider.isFriendlyWarnings();
+  }
+
+  public void setFriendlyWarnings(boolean doFriendlyWarnings) {
+    OBPropertiesProvider.setFriendlyWarnings(doFriendlyWarnings);
+  }
+
   public void setContainer(CompositeComponent arg0) {
   }
 

@@ -24,8 +24,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
@@ -355,5 +357,10 @@ public class DalTest extends BaseTest {
       OBDal.getInstance().remove(cba);
     }
     OBDal.getInstance().remove(OBDal.getInstance().get(CashBook.class, cashBookId));
+  }
+
+  public void testGetPropertyFromColumnName() {
+    final Property property = DalUtil.getProperty("AD_COLUMN", "AD_COLUMN_ID");
+    assertNotNull(property);
   }
 }
