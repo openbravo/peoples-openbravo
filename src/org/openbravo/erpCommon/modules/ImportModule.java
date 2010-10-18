@@ -1488,7 +1488,8 @@ public class ImportModule {
 
       OBCriteria<org.openbravo.model.ad.module.Module> obCriteria = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.module.Module.class);
-      obCriteria.add(Restrictions.not(Restrictions.eq("status", "U")));
+      obCriteria.add(Restrictions.not(Restrictions.eq(
+          org.openbravo.model.ad.module.Module.PROPERTY_STATUS, "U")));
       List<org.openbravo.model.ad.module.Module> modules = obCriteria.list();
 
       for (org.openbravo.model.ad.module.Module mod : modules) {
