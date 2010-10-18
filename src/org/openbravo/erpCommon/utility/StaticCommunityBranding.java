@@ -47,7 +47,7 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
     log4j.debug("Output: dataSheet");
     LicenseClass licenseClass = ActivationKey.getInstance().getLicenseClass();
 
-    String strUrl = strDireccion + "/web/static-content/" + "en_US";
+    String strUrl = strDireccion + "/web/html/" + "en_US";
     if (strVersion.startsWith("3")) {
       if (LicenseClass.COMMUNITY.equals(licenseClass)) {
         response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-Comm.html");
