@@ -27089,7 +27089,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--9150A393672FD51CE040007F01006877-->  <COLUMNNAME><![CDATA[Instance_Purpose]]></COLUMNNAME>
 <!--9150A393672FD51CE040007F01006877-->  <NAME><![CDATA[Instance Purpose]]></NAME>
 <!--9150A393672FD51CE040007F01006877-->  <PRINTNAME><![CDATA[Instance Purpose]]></PRINTNAME>
-<!--9150A393672FD51CE040007F01006877-->  <HELP><![CDATA[Determines which is the purpose for an Openbravo ERP instance]]></HELP>
+<!--9150A393672FD51CE040007F01006877-->  <HELP><![CDATA[Determines which is the purpose of the Openbravo ERP instance]]></HELP>
 <!--9150A393672FD51CE040007F01006877-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9150A393672FD51CE040007F01006877--></AD_ELEMENT>
 
