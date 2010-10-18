@@ -72,7 +72,10 @@ public class Home extends HttpSecureAppServlet {
     xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
 
     xmlDocument.setParameter("iframeURL", getCommunityBrandingUrl());
-    xmlDocument.setParameter("cbPurpose", getPurpose().toLowerCase());
+    String strPurpose = getPurpose();
+    if (strPurpose != null) {
+      xmlDocument.setParameter("cbPurpose", strPurpose.toLowerCase());
+    }
     xmlDocument.setParameter("cbVersion", getVersion());
 
     response.setContentType("text/html; charset=UTF-8");
@@ -87,8 +90,12 @@ public class Home extends HttpSecureAppServlet {
     try {
       String strPurposeCode = OBDal.getInstance().get(
           org.openbravo.model.ad.system.SystemInformation.class, "0").getInstancePurpose();
-      strPurpose = Utility.getListValueName("InstancePurpose", strPurposeCode, OBContext
-          .getOBContext().getLanguage().getLanguage());
+      if (strPurpose == null || "".equals(strPurposeCode)) {
+        return null;
+      } else {
+        strPurpose = Utility.getListValueName("InstancePurpose", strPurposeCode, OBContext
+            .getOBContext().getLanguage().getLanguage());
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -125,6 +132,7 @@ public class Home extends HttpSecureAppServlet {
       }
       url += "?licenseClass=" + strLicenseClass;
       url += "&version=" + OBVersion.getInstance().getMajorVersion();
+      url += "&uimode=" + "2.50";
       url += "&language=" + OBContext.getOBContext().getLanguage().getLanguage();
       url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier();
       url += "&macAddress=" + SystemInfo.getMacAddress();
