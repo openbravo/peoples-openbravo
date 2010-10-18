@@ -61,7 +61,7 @@
   <script language="JavaScript" type="text/javascript">
   function onLoadDo(){
     this.windowTables = new Array(
-      new windowTableId('client', 'buttonAccept')
+      new windowTableId('client', 'buttonContinue')
     );
     setWindowTableParentElement();
     enableShortcuts('popup');
@@ -146,7 +146,7 @@
             <td class="Button_RightAlign_ContentCell">
               <div>
                 <button type="button"
-                  id="buttonAccept"
+                  id="buttonContinue"
                   class="ButtonLink"
                   onclick="accept();return false;"
                   onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;"
