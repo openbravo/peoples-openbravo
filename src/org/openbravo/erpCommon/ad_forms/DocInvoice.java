@@ -353,9 +353,8 @@ public class DocInvoice extends AcctServer {
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
-          BigDecimal amount = new BigDecimal(m_payments[i].Amount);
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
-              this.C_Currency_ID, "", getConvertedAmt(((amount.negate())).toPlainString(),
+              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].Amount,
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
@@ -470,9 +469,8 @@ public class DocInvoice extends AcctServer {
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
-          BigDecimal amount = new BigDecimal(m_payments[i].Amount);
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, false, conn),
-              this.C_Currency_ID, getConvertedAmt(((amount.negate())).toPlainString(),
+              this.C_Currency_ID, getConvertedAmt(m_payments[i].Amount,
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, true, conn),
