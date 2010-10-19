@@ -5340,13 +5340,14 @@ td.Login_Home_Logo {
   background-image: url(Login/communityBrandingBackground.png);
 }
 
-.Login_Home_Community_Branding_purpose {
-  color: #58A618;
-  font-weight: bold;
+.Login_Home_Community_Branding_unknown {
   float: left;
   height: 30;
-  width: 200;
-  margin: 0 auto;
+  width: 180;
+  margin: 0 0 0 25px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/banner-unknown.png);
 }
 
 .Login_Home_Community_Branding_development {

@@ -75,9 +75,10 @@ public class Home extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("iframeURL", getCommunityBrandingUrl());
     String strPurpose = getPurpose();
-    if (strPurpose != null) {
-      xmlDocument.setParameter("cbPurpose", strPurpose.toLowerCase());
+    if (strPurpose == null) {
+      strPurpose = "unknown";
     }
+    xmlDocument.setParameter("cbPurpose", strPurpose.toLowerCase());
     xmlDocument.setParameter("cbVersion", getVersion());
 
     response.setContentType("text/html; charset=UTF-8");
