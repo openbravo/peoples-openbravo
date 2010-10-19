@@ -45,7 +45,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateAccountingReport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static String strTreeOrg = "";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -97,9 +96,9 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId,
-      String strAccountingReportId, String strOrg, String strPeriod, String strYear,
-      String strProcessId) throws IOException, ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
+      String strYear, String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: process CreateAccountingReport");
 
@@ -245,17 +244,16 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
         .getSqlDateFormat());
     strPeriodTo = CreateAccountingReportData.selectFormat(this, strPeriodTo, vars
         .getSqlDateFormat());
-    strTreeOrg = strOrg;
-    treeOrg(vars, strOrg);
+    StringBuilder strTreeOrg = new StringBuilder(strOrg);
+    treeOrg(vars, strOrg, strTreeOrg);
 
     Vector<Object> vectorArray = new Vector<Object>();
 
     childData(vars, vectorArray, strcAcctSchemaId, strAccountingReportId, strPeriodFrom,
-        strPeriodTo, strTreeOrg, level, "0", strPeriod);
+        strPeriodTo, strTreeOrg.toString(), level, "0", strPeriod);
 
     CreateAccountingReportData[] dataTree = convertVector(vectorArray);
     dataTree = filterData(dataTree);
-    strTreeOrg = "";
 
     xmlDocument.setParameter("title", dataTree[0].name);
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -268,7 +266,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId) throws ServletException {
+  private String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId)
+      throws ServletException {
     String result = "";
     CreateAccountingReportData[] data = CreateAccountingReportData
         .selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org",
@@ -306,20 +305,23 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     return result;
   }
 
-  private void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
+  private void treeOrg(VariablesSecureApp vars, String strOrg, StringBuilder treeOrg)
+      throws ServletException {
     CreateAccountingReportData[] dataOrg = CreateAccountingReportData.selectOrg(this, strOrg, vars
         .getClient());
     for (int i = 0; i < dataOrg.length; i++) {
-      strTreeOrg += "," + dataOrg[i].id;
+      treeOrg.append(",");
+      treeOrg.append(dataOrg[i].id);
       if (dataOrg[i].issummary.equals("Y"))
-        treeOrg(vars, dataOrg[i].id);
+        treeOrg(vars, dataOrg[i].id, treeOrg);
     }
     return;
   }
 
-  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strcAcctSchemaId,
-      String strAccountingReportId, String strPeriodFrom, String strPeriodTo, String strOrg,
-      int level, String strParent, String strPeriod) throws IOException, ServletException {
+  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray,
+      String strcAcctSchemaId, String strAccountingReportId, String strPeriodFrom,
+      String strPeriodTo, String strOrg, int level, String strParent, String strPeriod)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("**********************strAccountingReportId: " + strAccountingReportId);
     if (log4j.isDebugEnabled())
@@ -378,7 +380,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     }
   }
 
-  private CreateAccountingReportData[] convertVector(Vector<Object> vectorArray) throws ServletException {
+  private CreateAccountingReportData[] convertVector(Vector<Object> vectorArray)
+      throws ServletException {
     CreateAccountingReportData[] data = new CreateAccountingReportData[vectorArray.size()];
     BigDecimal count = BigDecimal.ZERO;
     for (int i = 0; i < vectorArray.size(); i++) {
