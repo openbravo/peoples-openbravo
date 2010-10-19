@@ -422,7 +422,12 @@ BEGIN --BODY
       SELECT COUNT(*) INTO v_Count
       FROM C_INVOICE C,
            C_DOCTYPE
-      WHERE C_DOCTYPE.DocBaseType IN ('ARI', 'API','ARC','APC')
+      WHERE C_DOCTYPE.DocBaseType IN (
+                                      select docbasetype
+                                      from c_doctype
+                                      where ad_table_id='318'
+                                        and isactive='Y'
+                                        and ad_client_id=C.AD_Client_ID)
         AND C_DOCTYPE.IsSOTrx=C.ISSOTRX
         AND Ad_Isorgincluded(C.AD_Org_ID,C_DOCTYPE.AD_Org_ID, C.AD_Client_ID) <> -1
         AND C.C_DOCTYPETARGET_ID = C_DOCTYPE.C_DOCTYPE_ID
