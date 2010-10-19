@@ -298,10 +298,9 @@ public class DocCash extends AcctServer {
         // Charge DR
         // CashAsset CR
         log4jDocCash.debug("********** DocCash - factAcct - account - "
-            + line.getGlitemAccount(as, new BigDecimal(getAmount()), conn).C_ValidCombination_ID);
-        fact.createLine(line, line.getGlitemAccount(as, new BigDecimal(getAmount()), conn),
-            C_Currency_ID, amount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+            + line.getGlitemAccount(as, amount, conn).C_ValidCombination_ID);
+        fact.createLine(line, line.getGlitemAccount(as, amount, conn), C_Currency_ID, amount
+            .negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         assetAmt = assetAmt.subtract(amount.negate());
       } else if (CashType.equals(DocLine_Cash.CASHTYPE_DIFFERENCE)) {
         // amount is pos/neg
