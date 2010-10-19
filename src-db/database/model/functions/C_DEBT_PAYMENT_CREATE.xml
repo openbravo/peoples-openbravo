@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -51,6 +51,7 @@
     v_c_withholding_id C_DEBT_PAYMENT.C_Withholding_ID%TYPE;
     v_withholdingamount C_DEBT_PAYMENT.withholdingamount%TYPE;
     v_count NUMBER;
+    v_dateacct C_BankStatementLine.DateAcct%TYPE;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -113,10 +114,12 @@
     v_ResultStr:='ReadingBankStatementLine '||v_record_Id;
     SELECT L.AD_Client_ID,
       L.AD_Org_ID,
-      B.C_BankAccount_ID
+      B.C_BankAccount_ID,
+      L.DateAcct
     INTO v_Client_ID,
       v_AD_Org_ID,
-      v_CBankAccount_ID
+      v_CBankAccount_ID,
+      v_dateacct
     FROM C_BankStatementLine L,
       C_BankStatement B
     WHERE L.C_BankStatementLine_ID=v_Record_ID
@@ -155,7 +158,7 @@
       (
         v_SettlementID, v_Client_ID, v_AD_Org_ID, 'Y',
         now(), v_AD_User_ID, now(), v_AD_User_ID,
-        '*DPC*'||v_SDocumentNo, trunc(now()), trunc(now()), 'C',
+        '*DPC*'||v_SDocumentNo, v_dateacct, v_dateacct, 'C',
         v_SettlementDocType_ID, 'N', 'N', 'N',
         v_C_Currency_ID, v_Description, 'Y'
       )
