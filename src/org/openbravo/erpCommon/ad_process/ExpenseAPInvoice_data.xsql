@@ -74,7 +74,6 @@
     <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = ?]]></Parameter>
     <Parameter name="cBpartnerLocationId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_BPARTNER_LOCATION_ID = ?]]></Parameter>
     <Parameter name="paymentrule" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.PAYMENTRULE = ?]]></Parameter>
-    <Parameter name="paymentmethodId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.FIN_PAYMENTMETHOD_ID = ?]]></Parameter>
     <Parameter name="cPaymentTermId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PAYMENTTERM_ID = ?]]></Parameter>
   </SqlMethod>
   
@@ -103,7 +102,6 @@
     <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = ?]]></Parameter>
     <Parameter name="cBpartnerLocationId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_BPARTNER_LOCATION_ID = ?]]></Parameter>
     <Parameter name="paymentrule" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.PAYMENTRULE = ?]]></Parameter>
-    <Parameter name="paymentmethodId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.FIN_PAYMENTMETHOD_ID = ?]]></Parameter>
     <Parameter name="cPaymentTermId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PAYMENTTERM_ID = ?]]></Parameter>
   </SqlMethod>
 
@@ -117,9 +115,9 @@
       AND AD_ORG_ID = ?
       AND M_PRODUCT_ID = ?
       AND C_UOM_ID = ?
-      AND PRICESTD = TO_NUMBER(?)
-      AND PRICELIST = TO_NUMBER(?)
-      AND PRICELIMIT = TO_NUMBER(?)
+      AND PRICESTD = ?
+      AND PRICELIST = ?
+      AND PRICELIMIT = ?
       AND C_INVOICELINE.ISACTIVE = 'Y'
       GROUP BY C_INVOICELINE_ID
       ]]></Sql>
@@ -241,17 +239,6 @@
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
 
-  <SqlMethod name="paymentmethodId" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>nt></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT po_paymentmethod_id
-      FROM C_BPARTNER
-      WHERE C_BPARTNER_ID = ?
-      ]]></Sql>
-    <Parameter name="cBpartnerId"/>
-  </SqlMethod>
-
   <SqlMethod name="pricelistId" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -312,7 +299,7 @@
          , C_DocTypeTarget_ID, DateInvoiced, DateAcct, TaxDate
          , C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID, M_PriceList_ID
          , C_Currency_ID, SalesRep_ID, IsDiscountPrinted, C_Charge_ID
-         , ChargeAmt, PaymentRule, FIN_PaymentMethod_ID, C_PaymentTerm_ID, CreateFrom
+         , ChargeAmt, PaymentRule, C_PaymentTerm_ID, CreateFrom
          
          , GenerateTo, C_Project_ID, C_Activity_ID, C_Campaign_ID
          , AD_OrgTrx_ID, User1_ID, User2_ID, TotalLines
@@ -328,7 +315,7 @@
          , (?), TO_DATE(?), TO_DATE(?), TO_DATE(?)
          , (?), (?), (?), (?)
          , (?), (?), (?), (?)
-         , TO_NUMBER(?), (?), (?), (?), (?)
+         , TO_NUMBER(?), (?), (?), (?)
          
          , (?), (?), (?), (?)
          , (?), (?), (?), TO_NUMBER(?)
@@ -367,7 +354,6 @@
 <Parameter name="cChargeId"/>
 <Parameter name="chargeamt"/>
 <Parameter name="paymentrule"/>
-<Parameter name="paymentmethodId"/>
 <Parameter name="cPaymenttermId"/>
 <Parameter name="createfrom"/>
 <Parameter name="generateto"/>
