@@ -408,7 +408,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         } finally {
           OBContext.restorePreviousMode();
           OBDal.getInstance().flush();
-          OBDal.getInstance().commitAndClose();
+          OBDal.getInstance().getConnection().commit();
         }
 
         // Autosave logic
