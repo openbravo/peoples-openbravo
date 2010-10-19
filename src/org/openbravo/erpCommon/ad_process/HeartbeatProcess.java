@@ -288,6 +288,7 @@ public class HeartbeatProcess implements Process {
         hbLog.setProxyServer(systemInfo.getProperty("proxyServer"));
         hbLog.setUsageAuditEnabled("true".equals(systemInfo.getProperty(SystemInfo.Item.USAGE_AUDIT
             .getLabel())));
+        hbLog.setInstancePurpose(systemInfo.getProperty("instancePurpose"));
         if (systemInfo.getProperty("proxyPort") != null
             && !systemInfo.getProperty("proxyPort").isEmpty()) {
           try {

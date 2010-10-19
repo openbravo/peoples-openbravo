@@ -229,6 +229,9 @@ public class SystemInfo {
     case USAGE_AUDIT:
       systemInfo.put(i, isUsageAuditEnabled() ? "true" : "false");
       break;
+    case INSTANCE_PURPOSE:
+      systemInfo.put(i, OBDal.getInstance().get(SystemInformation.class, "0").getInstancePurpose());
+      break;
     }
   }
 
@@ -713,7 +716,8 @@ public class SystemInfo {
         "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
         "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
         "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
-        false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false);
+        false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false), INSTANCE_PURPOSE(
+        "isntancePurpose", false);
 
     private String label;
     private boolean isIdInfo;
