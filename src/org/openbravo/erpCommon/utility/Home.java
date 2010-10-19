@@ -149,7 +149,7 @@ public class Home extends HttpSecureAppServlet {
 
   private boolean isCommunityBrandingAvailable() {
     if (HttpsUtils.isInternetAvailable()) {
-      // return true;
+      return true;
     }
     return false;
   }
