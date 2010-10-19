@@ -387,18 +387,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         }
 
         boolean usageAuditEnabled = true;
+        OBContext.setAdminMode();
         try {
-          OBContext.setAdminMode();
           usageAuditEnabled = OBDal.getInstance().get(SystemInformation.class, "0")
               .isUsageauditenabled();
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-        if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null
-            && usageAuditEnabled) {
-          // Session Usage Audit
-          try {
-            OBContext.setAdminMode();
+          if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null
+              && usageAuditEnabled) {
+            // Session Usage Audit
             SessionUsageAudit usageAudit = OBProvider.getInstance().get(SessionUsageAudit.class);
             usageAudit.setJavaClassName(this.getClass().getName());
             usageAudit.setModule(OBDal.getInstance().get(
@@ -410,9 +405,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             usageAudit.setCommand(vars1.getCommand());
             usageAudit.setObjectType(SessionInfo.getProcessType());
             OBDal.getInstance().save(usageAudit);
-          } finally {
-            OBContext.restorePreviousMode();
           }
+        } finally {
+          OBContext.restorePreviousMode();
         }
 
         // Autosave logic
