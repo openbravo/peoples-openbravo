@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html
+ * the License at http://www.openbravo.com/legal/license.html 
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License.
- * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2009 Openbravo SLU
- * All Rights Reserved.
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -36,16 +36,7 @@ import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.DateTimeData;
-import org.openbravo.erpCommon.utility.LeftTabsBar;
-import org.openbravo.erpCommon.utility.NavigationBar;
-import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.PropertyNotFoundException;
-import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.erpCommon.utility.ToolBar;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.*;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ExpenseAPInvoice extends HttpSecureAppServlet {
@@ -130,7 +121,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       for (int i = 0; i < data.length; i++) {
         String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId,
             data[i].adOrgId);
-
+        
         // Checks some employee data
         strEmpl = data[i].bpname;
         strProd = data[i].prodname;
@@ -165,7 +156,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         }
         strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
         if (strPaymentterm.equals(""))
-          throw new Exception("PaymenttermNotdefined");
+          throw new Exception("PaymenttermNotdefined");        
 
         // Checks if there are invoices not processed that full filled
         // the requirements
@@ -177,7 +168,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
               strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId,
               strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm);
-
+          
         } else {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
