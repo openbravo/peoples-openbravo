@@ -386,10 +386,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           SessionInfo.setModuleId(classInfo.adModuleId);
         }
 
-        boolean usageAuditEnabled = true;
         OBContext.setAdminMode();
         try {
-          usageAuditEnabled = OBDal.getInstance().get(SystemInformation.class, "0")
+          boolean usageAuditEnabled = OBDal.getInstance().get(SystemInformation.class, "0")
               .isUsageauditenabled();
           if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null
               && usageAuditEnabled) {
@@ -408,6 +407,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           }
         } finally {
           OBContext.restorePreviousMode();
+          OBDal.getInstance().flush();
+          OBDal.getInstance().commitAndClose();
         }
 
         // Autosave logic
