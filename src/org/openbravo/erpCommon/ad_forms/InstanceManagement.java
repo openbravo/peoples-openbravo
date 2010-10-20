@@ -420,9 +420,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
         xmlDocument.setParameter("paramSelPurpose", sysInfo.getInstancePurpose());
       }
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
-      comboTableData = null;
     } catch (Exception ex) {
-      ex.printStackTrace();
+      log4j.error(ex.getMessage(), ex);
       throw new ServletException(ex);
     }
 
@@ -477,7 +476,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
       log4j.error("Error Activating instance", e);
       msg.setType("Error");
       msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
-      e.printStackTrace();
       result = false;
     }
 
