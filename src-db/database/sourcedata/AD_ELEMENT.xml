@@ -25005,7 +25005,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--7079E2FD4AA8799EE040007F010104AD-->  <NAME><![CDATA[Commercial]]></NAME>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <PRINTNAME><![CDATA[Commercial]]></PRINTNAME>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <DESCRIPTION><![CDATA[Commercial Module]]></DESCRIPTION>
-<!--7079E2FD4AA8799EE040007F010104AD-->  <HELP><![CDATA[Commercial modules are only available to Professional Subscription active Instances whereas non commercial ones can be downloaded and installed in Community Edition Instances.
+<!--7079E2FD4AA8799EE040007F010104AD-->  <HELP><![CDATA[Commercial modules are only available to Professional and Basic Edition instances whereas non commercial ones can be downloaded and installed in Community Edition Instances.
 Commercial modules can have a fee to be payed before they can be installed.]]></HELP>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7079E2FD4AA8799EE040007F010104AD--></AD_ELEMENT>
@@ -26814,8 +26814,8 @@ The values it can contain are:
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <PRINTNAME><![CDATA[Tier]]></PRINTNAME>
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <DESCRIPTION><![CDATA[Tier for commercial modules]]></DESCRIPTION>
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <HELP><![CDATA[Commercial modules are defined in different tiers:
-1st Tier: The module can be installed in any Professional instance that has bought the module.
-2nd Tier: The module can be installed in Standard Professional Edition instances that have bought it.]]></HELP>
+1st Tier: The module can be installed in Professional and Basic Edition instances once it has been purchased.
+2nd Tier: The module can be installed in Professional Edition instances once it has been purchased.]]></HELP>
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8BCFEC1D2693D1A8E040007F010135A9--></AD_ELEMENT>
 

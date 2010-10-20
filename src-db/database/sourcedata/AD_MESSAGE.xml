@@ -29739,7 +29739,7 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <VALUE><![CDATA[OBPSAnyEdition]]></VALUE>
-<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <MSGTEXT><![CDATA[Professional Edition]]></MSGTEXT>
+<!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <MSGTEXT><![CDATA[Professional or Basic Edition]]></MSGTEXT>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0FC7B0C6F4FC4F04BEAD06F30E895516--></AD_MESSAGE>
@@ -29982,7 +29982,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--17F9F89C2965434E9190E5E6FF92CF20-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--17F9F89C2965434E9190E5E6FF92CF20-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--17F9F89C2965434E9190E5E6FF92CF20-->  <VALUE><![CDATA[OBPSStandardEdition]]></VALUE>
-<!--17F9F89C2965434E9190E5E6FF92CF20-->  <MSGTEXT><![CDATA[Standard Professional Edition]]></MSGTEXT>
+<!--17F9F89C2965434E9190E5E6FF92CF20-->  <MSGTEXT><![CDATA[Professional Edition]]></MSGTEXT>
 <!--17F9F89C2965434E9190E5E6FF92CF20-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--17F9F89C2965434E9190E5E6FF92CF20-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--17F9F89C2965434E9190E5E6FF92CF20--></AD_MESSAGE>
@@ -31251,7 +31251,7 @@ Press back to return.]]></MSGTEXT>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <VALUE><![CDATA[OPS_INSTANCE_NOT_ACTIVE]]></VALUE>
-<!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTEXT><![CDATA[Your Professional Subscription has expired. However no data has been lost.<br>To renew your Professional Subscription, contact your assigned partner.<br>Only System Administrator users can log in.]]></MSGTEXT>
+<!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTEXT><![CDATA[Your Professional/Basic Edition subscription has expired. However no data has been lost.<br>To renew your Professional/Basic Edition subscription, contact your assigned partner.<br>Only System Administrator users can log in.]]></MSGTEXT>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5F53F7FE0703477883226EA1287EC5BF--></AD_MESSAGE>
@@ -32262,7 +32262,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <VALUE><![CDATA[CannotDeactivateWithCommercialModules]]></VALUE>
-<!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <MSGTEXT><![CDATA[You cannot deactivate your Professional Edition because you have active commercial modules installed. Please uninstall or disable all the commercial modules and try again.]]></MSGTEXT>
+<!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <MSGTEXT><![CDATA[You cannot deactivate your Professional/Basic Edition because you have active commercial modules installed. Please uninstall or disable all the commercial modules and try again.]]></MSGTEXT>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A29E0EA08B7B49B6A89722E6DD67A4EE--></AD_MESSAGE>
@@ -32837,7 +32837,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <VALUE><![CDATA[OPSNotActiveTill]]></VALUE>
-<!--C3172067BB244F8693A584A9FAFBEE38-->  <MSGTEXT><![CDATA[Your Professional Subscription will not be active until ]]></MSGTEXT>
+<!--C3172067BB244F8693A584A9FAFBEE38-->  <MSGTEXT><![CDATA[Your Professional/Basic Edition will not be active until ]]></MSGTEXT>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C3172067BB244F8693A584A9FAFBEE38-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C3172067BB244F8693A584A9FAFBEE38--></AD_MESSAGE>
@@ -33004,7 +33004,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <VALUE><![CDATA[OBPSNeededForAudit]]></VALUE>
-<!--C8433C64354D44C6A76F2A09CAF85907-->  <MSGTEXT><![CDATA[Openbravo Professional Subscription is needed in order to be able to keep track of audit.]]></MSGTEXT>
+<!--C8433C64354D44C6A76F2A09CAF85907-->  <MSGTEXT><![CDATA[Openbravo Professional/Basic Edition is needed in order to be able to keep track of audit.]]></MSGTEXT>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C8433C64354D44C6A76F2A09CAF85907-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C8433C64354D44C6A76F2A09CAF85907--></AD_MESSAGE>
@@ -33382,7 +33382,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <VALUE><![CDATA[OPSActivationExpired]]></VALUE>
-<!--E3EBB7F6B97348EAA669732392EEF310-->  <MSGTEXT><![CDATA[Your Professional Subscription expired on ]]></MSGTEXT>
+<!--E3EBB7F6B97348EAA669732392EEF310-->  <MSGTEXT><![CDATA[Your Professional/Basic Edition expired on ]]></MSGTEXT>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--E3EBB7F6B97348EAA669732392EEF310-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E3EBB7F6B97348EAA669732392EEF310--></AD_MESSAGE>
@@ -33794,7 +33794,7 @@ Fix it and restart Tomcat.]]></MSGTEXT>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <VALUE><![CDATA[OBPS_SUBSCRIPTION_REQUIRED]]></VALUE>
-<!--FBD240BC51C8471F85D65EFB40E079B6-->  <MSGTEXT><![CDATA[The following module(s) are commercial module(s) that require a subscription to an Openbravo Professional Edition:&nbsp;<b>@MODULE_LIST@</b>]]></MSGTEXT>
+<!--FBD240BC51C8471F85D65EFB40E079B6-->  <MSGTEXT><![CDATA[The following module(s) are commercial module(s) that require a subscription to an Openbravo Professional or Basic Edition:&nbsp;<b>@MODULE_LIST@</b>]]></MSGTEXT>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <MSGTIP><![CDATA[@MODULE_LIST@ is a place holder for a list of modules. It must be not changed.]]></MSGTIP>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FBD240BC51C8471F85D65EFB40E079B6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
