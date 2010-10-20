@@ -115,12 +115,11 @@ public class InstancePurpose extends HttpSecureAppServlet {
     strNextPopup += "';";
     xmlDocument.setParameter("nextPopup", strNextPopup);
 
-    String jsCommand = "var cmd='";
+    String jsCommand = "''";
     if (vars.commandIn("DEFAULT")) {
-      jsCommand += "PROCEED";
+      jsCommand = "'PROCEED'";
     }
-    jsCommand += "';";
-    xmlDocument.setParameter("cmd", jsCommand);
+    xmlDocument.setParameter("cmd", "var cmd=" + jsCommand + ";");
 
     out.println(xmlDocument.print());
     out.close();
@@ -135,5 +134,5 @@ public class InstancePurpose extends HttpSecureAppServlet {
   @Override
   public String getServletInfo() {
     return "InstancePurpose pop-up form servlet.";
-  } // end of getServletInfo() method
+  }
 }
