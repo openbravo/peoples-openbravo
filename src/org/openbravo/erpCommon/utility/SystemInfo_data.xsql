@@ -137,32 +137,4 @@
      </Sql>
      <Parameter name="systemIdentifier"/>
    </SqlMethod>
-   <SqlMethod name="disableHeartbeat" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_SYSTEM_INFO set ISHEARTBEATACTIVE = 'N'
-     ]]>
-     </Sql>
-   </SqlMethod>
-   <SqlMethod name="updateWebserver" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_SYSTEM_INFO set WEBSERVER = ?, WEBSERVER_VERSION = ?
-     ]]>
-     </Sql>
-     <Parameter name="webserver"/>
-     <Parameter name="webserverVersion"/>
-   </SqlMethod>
-   <SqlMethod name="updateServletContainer" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_SYSTEM_INFO set SERVLET_CONTAINER = ?, SERVLET_CONTAINER_VERSION = ?
-     ]]>
-     </Sql>
-     <Parameter name="servletContainer"/>
-     <Parameter name="servletContainerVersion"/>
-   </SqlMethod>
 </SqlClass>
