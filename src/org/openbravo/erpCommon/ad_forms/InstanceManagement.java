@@ -417,7 +417,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement", sysInfo
           .getInstancePurpose());
       if (sysInfo.getInstancePurpose() != null) {
-        xmlDocument.setParameter("selectedPurpose", sysInfo.getInstancePurpose());
+        xmlDocument.setParameter("paramSelPurpose", sysInfo.getInstancePurpose());
       }
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -431,7 +431,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
     }
 
     if (activationKey.isOPSInstance()) {
-      xmlDocument.setParameter("paramSelPurpose", activationKey.getProperty("purpose"));
       xmlDocument.setParameter("instanceNo", activationKey.getProperty("instanceno"));
     }
 
