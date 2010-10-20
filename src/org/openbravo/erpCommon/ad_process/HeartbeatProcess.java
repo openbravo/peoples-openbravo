@@ -539,6 +539,8 @@ public class HeartbeatProcess implements Process {
           jsonResult.put("properties", properties == null ? null : Arrays.asList(properties));
           jsonResult.put("values", jsonArrayResultRows);
           jsonObjectCQReturn.put(strQId, jsonResult);
+        } else {
+          log.warn("unknown Query Type: " + strQType);
         }
       }
       JSONObject jsonObjectReturn = new JSONObject();
@@ -589,7 +591,7 @@ public class HeartbeatProcess implements Process {
   }
 
   public enum HeartBeatOrRegistration {
-    InstancePurpose, HeartBeat, Registration, None;
+    HeartBeat, Registration, None, InstancePurpose;
   }
 
   /**
@@ -598,6 +600,16 @@ public class HeartbeatProcess implements Process {
   public static HeartBeatOrRegistration showHeartBeatOrRegistration(VariablesSecureApp vars,
       ConnectionProvider connectionProvider) throws ServletException {
 
+    return isLoginPopupRequired(vars, connectionProvider);
+  }
+
+  /**
+   * Check if a popup is needed to be shown when a user logins.
+   * 
+   * @return the type of popup that is needed.
+   */
+  public static HeartBeatOrRegistration isLoginPopupRequired(VariablesSecureApp vars,
+      ConnectionProvider connectionProvider) throws ServletException {
     if (vars.getRole() != null && vars.getRole().equals("0")) {
       // Check if the instance purpose is set.
       if (isShowInstancePurposeRequired()) {
@@ -606,74 +618,10 @@ public class HeartbeatProcess implements Process {
       if (isClonedInstance()) {
         return HeartBeatOrRegistration.InstancePurpose;
       }
-
-      // Check if the heartbeat popup needs to be displayed
-      final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
-      if (hbData.length > 0) {
-        final String isheartbeatactive = hbData[0].isheartbeatactive;
-        final String postponeDate = hbData[0].postponeDate;
-        if (isheartbeatactive == null || isheartbeatactive.equals("")) {
-          if (postponeDate == null || postponeDate.equals("")) {
-            return HeartBeatOrRegistration.HeartBeat;
-          } else {
-            Date date = null;
-            try {
-              date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(postponeDate);
-              if (date.before(new Date())) {
-                return HeartBeatOrRegistration.HeartBeat;
-              }
-            } catch (final ParseException e) {
-              e.printStackTrace();
-            }
-          }
-        }
-      }
-
-      // If the heartbeat doesn't need to be displayed, check the
-      // registration popup
-      final RegistrationData[] rData = RegistrationData.select(connectionProvider);
-      if (rData.length > 0) {
-        final String isregistrationactive = rData[0].isregistrationactive;
-        final String rPostponeDate = rData[0].postponeDate;
-        if (isregistrationactive == null || isregistrationactive.equals("")) {
-          if (rPostponeDate == null || rPostponeDate.equals("")) {
-            return HeartBeatOrRegistration.Registration;
-          } else {
-            Date date = null;
-            try {
-              date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(rPostponeDate);
-              if (date.before(new Date())) {
-                return HeartBeatOrRegistration.Registration;
-              }
-            } catch (final ParseException e) {
-              e.printStackTrace();
-            }
-          }
-        }
-      }
-    }
-    return HeartBeatOrRegistration.None;
-  }
-
-  /**
-   * Check if a popup is needed to be shown when a user logins.
-   * 
-   * @param vars
-   * @param connectionProvider
-   * @return the type of popup that is needed.
-   * @throws ServletException
-   */
-  public static HeartBeatOrRegistration isLoginPopupRequired(VariablesSecureApp vars,
-      ConnectionProvider connectionProvider) throws ServletException {
-    if (vars.getRole() != null && vars.getRole().equals("0")) {
-      // Check if the instance purpose is set.
-      if (isShowInstancePurposeRequired()) {
-        return HeartBeatOrRegistration.InstancePurpose;
-      } else if (isClonedInstance()) {
-        return HeartBeatOrRegistration.InstancePurpose;
-      } else if (isShowHeartbeatRequired(vars, connectionProvider)) {
+      if (isShowHeartbeatRequired(vars, connectionProvider)) {
         return HeartBeatOrRegistration.HeartBeat;
-      } else if (isShowRegistrationRequired(vars, connectionProvider)) {
+      }
+      if (isShowRegistrationRequired(vars, connectionProvider)) {
         return HeartBeatOrRegistration.Registration;
       }
     }
@@ -688,18 +636,23 @@ public class HeartbeatProcess implements Process {
   }
 
   public static boolean isClonedInstance() throws ServletException {
-    HeartbeatLog lastBeat = getLastHBLog();
-    if (lastBeat != null
-        && (!lastBeat.getSystemIdentifier().equals(SystemInfo.getSystemIdentifier())
-            || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier()) || !lastBeat
-            .getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
-      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-      // sysInfo.setInstancePurpose(null);
-      sysInfo.setEnableHeartbeat(null);
-      OBDal.getInstance().save(sysInfo);
-      return true;
-    } else {
-      return false;
+    OBContext.setAdminMode();
+    try {
+      HeartbeatLog lastBeat = getLastHBLog();
+      if (lastBeat != null
+          && (!lastBeat.getSystemIdentifier().equals(SystemInfo.getSystemIdentifier())
+              || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier()) || !lastBeat
+              .getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
+        SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+        // sysInfo.setInstancePurpose(null);
+        sysInfo.setEnableHeartbeat(null);
+        OBDal.getInstance().save(sysInfo);
+        return true;
+      } else {
+        return false;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -732,7 +685,7 @@ public class HeartbeatProcess implements Process {
               return true;
             }
           } catch (final ParseException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
           }
         }
       }
@@ -757,7 +710,7 @@ public class HeartbeatProcess implements Process {
               return true;
             }
           } catch (final ParseException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
           }
         }
       }
