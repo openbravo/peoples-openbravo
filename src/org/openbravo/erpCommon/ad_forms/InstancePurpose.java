@@ -43,6 +43,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final ValueListFilter availablePurposeFilter = new ValueListFilter("P", "D", "T");
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
@@ -101,9 +102,8 @@ public class InstancePurpose extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#AccessibleOrgTree", "InstancePurpose"), Utility
               .getContext(this, vars, "#User_Client", "InstancePurpose"), 0);
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
-      comboTableData = null;
     } catch (Exception ex) {
-      ex.printStackTrace();
+      log4j.error(ex.getMessage(), ex);
       throw new ServletException(ex);
     }
 
