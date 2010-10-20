@@ -94,9 +94,6 @@ public class SystemInfo {
 
   /**
    * Loads system information but ID
-   * 
-   * @param conn
-   * @throws ServletException
    */
   public static void load(ConnectionProvider conn) throws ServletException {
     try {
@@ -114,9 +111,6 @@ public class SystemInfo {
 
   /**
    * Loads ID information
-   * 
-   * @param conn
-   * @throws ServletException
    */
   public static void loadId(ConnectionProvider conn) throws ServletException {
     for (Item i : Item.values()) {
@@ -133,7 +127,7 @@ public class SystemInfo {
       systemInfo.put(i, getSystemIdentifier(conn));
       break;
     case MAC_IDENTIFIER:
-      systemInfo.put(i, calculateMacAddress());
+      systemInfo.put(i, calculateMacIdentifier());
       break;
     case DB_IDENTIFIER:
       systemInfo.put(i, getDBIdentifier(conn));
@@ -237,21 +231,21 @@ public class SystemInfo {
     }
   }
 
-  public final static String getSystemIdentifier() throws ServletException {
+  public final static synchronized String getSystemIdentifier() throws ServletException {
     if (systemIdentifier == null)
       systemIdentifier = getSystemIdentifier(new DalConnectionProvider());
     return systemIdentifier;
   }
 
-  public final static String getDBIdentifier() {
+  public final static synchronized String getDBIdentifier() {
     if (databaseIdentifier == null)
       databaseIdentifier = getDBIdentifier(new DalConnectionProvider());
     return databaseIdentifier;
   }
 
-  public final static String getMacAddress() {
+  public final static synchronized String getMacAddress() {
     if (macAddress == null)
-      macAddress = calculateMacAddress();
+      macAddress = calculateMacIdentifier();
     return macAddress;
   }
 
@@ -270,10 +264,8 @@ public class SystemInfo {
    * 
    * In case multiple interfaces are present, it is taken the first one with mac address of the list
    * sorted in this way: loopbacks are sorted at the end, the rest of interfaces are sorted by name.
-   * 
-   * @return
    */
-  private final static String calculateMacAddress() {
+  private final static String calculateMacIdentifier() {
     List<NetworkInterface> interfaces = new ArrayList<NetworkInterface>();
     try {
       interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
@@ -341,7 +333,7 @@ public class SystemInfo {
         crc.update(id.getBytes());
         return Long.toHexString(crc.getValue());
       } catch (SQLException e) {
-        log4j.error("Error obtaining Oracle's DB identifier");
+        log4j.error("Error obtaining Oracle's DB identifier", e);
         return "";
       } finally {
         try {
@@ -395,9 +387,6 @@ public class SystemInfo {
    * of paths + commands.
    * 
    * Currently only checks for Apache.
-   * 
-   * @param conn
-   * @throws ServletException
    */
   private final static String[] getWebserver(ConnectionProvider conn) {
     List<String> commands = new ArrayList<String>();
@@ -468,10 +457,6 @@ public class SystemInfo {
 
   /**
    * Obtain all the modules installed in the instance.
-   * 
-   * @param i
-   * 
-   * @return
    */
   private final static String getModules() {
     try {
@@ -553,8 +538,6 @@ public class SystemInfo {
 
   /**
    * In case it is an OBPS instance, it returns the CRC of the activation key
-   * 
-   * @return
    */
   private static String getOBPSInstance() {
     if (ActivationKey.getInstance().isOPSInstance()) {
