@@ -32,6 +32,7 @@ import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 public class StaticCommunityBranding extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
