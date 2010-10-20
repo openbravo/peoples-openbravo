@@ -230,7 +230,9 @@ public class SystemInfo {
       systemInfo.put(i, isUsageAuditEnabled() ? "true" : "false");
       break;
     case INSTANCE_PURPOSE:
-      systemInfo.put(i, OBDal.getInstance().get(SystemInformation.class, "0").getInstancePurpose());
+      String instancePurpose = OBDal.getInstance().get(SystemInformation.class, "0")
+          .getInstancePurpose();
+      systemInfo.put(i, instancePurpose == null ? "U" : instancePurpose);
       break;
     }
   }
