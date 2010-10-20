@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html
+ * the License at http://www.openbravo.com/legal/license.html 
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License.
- * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2009 Openbravo SLU
- * All Rights Reserved.
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -31,9 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -41,8 +39,6 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -106,7 +102,6 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
     String strPricelist = "";
     String strSalesrepId = "";
     String strPaymentRule = "";
-    String strPaymentMethodId = "";
     String strPaymentterm = "";
     BigDecimal qty = BigDecimal.ZERO;
     BigDecimal amount = BigDecimal.ZERO;
@@ -130,7 +125,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       for (int i = 0; i < data.length; i++) {
         String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId,
             data[i].adOrgId);
-
+        
         // Checks some employee data
         strEmpl = data[i].bpname;
         strProd = data[i].prodname;
@@ -148,24 +143,13 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         if (strcBpartnerLocationId.equals(""))
           throw new Exception("ShiptoNotdefined");
 
-        if( isNewFlow() ) {
-          strPaymentMethodId = ExpenseAPInvoiceData.paymentmethodId(this, data[i].cBpartnerId);
-          if (strPaymentMethodId.equals("")) {
-            throw new Exception("PayementMethodNotdefined");
-          }
-          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
-          if (strPaymentRule.equals("")) {
-            strPaymentRule="P";
-          }
+        strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+        if (strPaymentRule.equals(""))
+          throw new Exception("FormofPaymentNotdefined");
 
-        } else {
-          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
-          if (strPaymentRule.equals(""))
-            throw new Exception("FormofPaymentNotdefined");
-        }
         strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
         if (strPaymentterm.equals(""))
-          throw new Exception("PaymenttermNotdefined");
+          throw new Exception("PaymenttermNotdefined");        
 
         // Checks if there are invoices not processed that full filled
         // the requirements
@@ -176,13 +160,13 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
               strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId,
-              strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm);
-
+              strcBpartnerLocationId, strPaymentRule, strPaymentterm);
+          
         } else {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
               strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId,
-              strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm);
+              strcBpartnerLocationId, strPaymentRule, strPaymentterm);
         }
 
         if (strcInvoiceIdOld.equals("")) {
@@ -201,7 +185,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y",
                 docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId,
                 strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId, strSalesrepId, "N",
-                "", "", strPaymentRule, strPaymentMethodId,  strPaymentterm, "N", "N", data[i].cProjectId,
+                "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId,
                 data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR",
                 strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
           } catch (ServletException ex) {
@@ -544,26 +528,4 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
   public String getServletInfo() {
     return "Servlet ExpenseAPInvoice";
   } // end of getServletInfo() method
-
-  @SuppressWarnings("deprecation")
-  private boolean isNewFlow() {
-    // Extra check for Payment Flow-disabling switch
-    try {
-      // Use Utility.getPropertyValue for backward compatibility
-      try {
-        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
-            .getOBContext().getUser(), null, null);
-        return true;
-      } catch (PropertyNotFoundException e) {
-        if (Utility.getPropertyValue("FinancialManagement", OBContext.getOBContext()
-            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId()) != null) {
-          return true;
-        } else
-          return false;
-      }
-    } catch (PropertyException e) {
-      return false;
-    }
-  }
-
 }
