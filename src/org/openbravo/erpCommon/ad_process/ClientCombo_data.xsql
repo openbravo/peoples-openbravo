@@ -27,9 +27,10 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT A_C.AD_CLIENT_ID, A_C.NAME, '' AS ID 
+        SELECT A_C.AD_CLIENT_ID, A_C.NAME, '' AS ID
         FROM AD_CLIENT A_C
-        WHERE A_C.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = ?)
+        WHERE A_C.ISACTIVE = 'Y'
+        AND EXISTS (SELECT 1 FROM AD_ROLE_ORGACCESS WHERE AD_ROLE_ORGACCESS.AD_CLIENT_ID = A_C.AD_CLIENT_ID AND AD_ROLE_ORGACCESS.AD_ROLE_ID = ? AND AD_ROLE_ORGACCESS.ISACTIVE = 'Y')
         ORDER BY A_C.NAME
       </Sql>
         <Parameter name="rol"/>

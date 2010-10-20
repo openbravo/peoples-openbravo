@@ -61,17 +61,21 @@ BEGIN
       )
     LOOP
       IF(v_Client_ID <> Cur_Org.AD_Client_ID) THEN
-        v_Client_ID:=Cur_Org.AD_Client_ID;
-        IF(LENGTH(v_ClientList) <> 0) THEN
-          v_ClientList:=v_ClientList || ',';
+        IF (v_ClientList IS NULL OR (LENGTH(v_ClientList) + LENGTH(Cur_Org.AD_Client_ID) + 1 < 2000)) THEN
+            v_Client_ID:=Cur_Org.AD_Client_ID;
+            IF(LENGTH(v_ClientList) <> 0) THEN
+              v_ClientList:=v_ClientList || ',';
+            END IF;
+            v_ClientList:=v_ClientList || Cur_Org.AD_Client_ID;
         END IF;
-        v_ClientList:=v_ClientList || Cur_Org.AD_Client_ID;
       END IF;
       -- Org
-      IF(LENGTH(v_OrgList) <> 0) THEN
-        v_OrgList:=v_OrgList || ',';
+      IF (v_OrgList IS NULL OR (LENGTH(v_OrgList) + LENGTH(Cur_Org.AD_Org_ID) + 1 < 2000)) THEN
+          IF(LENGTH(v_OrgList) <> 0) THEN
+            v_OrgList:=v_OrgList || ',';
+          END IF;
+          v_OrgList:=v_OrgList || Cur_Org.AD_Org_ID;
       END IF;
-      v_OrgList:=v_OrgList || Cur_Org.AD_Org_ID;
     END LOOP;
     -- Org
     --

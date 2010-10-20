@@ -27,7 +27,7 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT A_R.AD_ROLE_ID, A_R.NAME, A_R.AD_CLIENT_ID, A_R.CLIENTLIST 
+        SELECT A_R.AD_ROLE_ID, A_R.NAME, A_R.AD_CLIENT_ID 
         FROM AD_ROLE A_R, AD_USER_ROLES A_U_R 
         WHERE A_R.AD_ROLE_ID = A_U_R.AD_ROLE_ID 
         AND A_U_R.ISACTIVE = 'Y' 
@@ -40,7 +40,7 @@
    
     <SqlMethod name="selectSystem" type="preparedStatement" return="multiple">
       <Sql>
-        SELECT A_R.AD_ROLE_ID, A_R.NAME, A_R.AD_CLIENT_ID, A_R.CLIENTLIST 
+        SELECT A_R.AD_ROLE_ID, A_R.NAME, A_R.AD_CLIENT_ID 
         FROM AD_ROLE A_R, AD_USER_ROLES A_U_R 
         WHERE A_R.AD_ROLE_ID = A_U_R.AD_ROLE_ID 
         AND A_U_R.ISACTIVE = 'Y' 

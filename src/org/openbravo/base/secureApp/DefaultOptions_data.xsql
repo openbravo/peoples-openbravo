@@ -151,7 +151,7 @@
    <SqlMethod name="getDefaultClient" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT CLIENTLIST AS DEFAULT_AD_CLIENT_ID
+        SELECT role.AD_CLIENT_ID AS DEFAULT_AD_CLIENT_ID
           FROM AD_ROLE role
             INNER JOIN AD_CLIENT client
               ON role.AD_CLIENT_ID = client.AD_CLIENT_ID
