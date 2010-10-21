@@ -43,8 +43,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateTaxReport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static String strTreeOrg = "";
-  private static int rownum = 1;
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -74,9 +72,9 @@ public class CreateTaxReport extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTaxReportId,
-      String strDateFrom, String strDateTo, String strOrg, String strProcessId) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strTaxReportId, String strDateFrom, String strDateTo, String strOrg,
+      String strProcessId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: process CreateTaxReport");
 
@@ -168,24 +166,24 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars, String strTaxReportId,
-      String strDateFrom, String strDateTo, String strOrg) throws IOException, ServletException {
+  private void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars,
+      String strTaxReportId, String strDateFrom, String strDateTo, String strOrg)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pop up CreateTaxReport");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_process/CreateTaxReportPopUp").createXmlDocument();
     int level = 0;
 
-    strTreeOrg = strOrg;
-    treeOrg(vars, strOrg);
+    StringBuilder strTreeOrg = new StringBuilder(strOrg);
+    treeOrg(vars, strOrg, strTreeOrg);
 
     Vector<Object> vectorArray = new Vector<Object>();
 
-    childData(vars, vectorArray, strTaxReportId, strDateFrom, strDateTo, strTreeOrg, level, "0",
-        rownum);
+    childData(vars, vectorArray, strTaxReportId, strDateFrom, strDateTo, strTreeOrg.toString(),
+        level, "0", 1);
 
     CreateTaxReportData[] dataTree = convertVector(vectorArray);
-    strTreeOrg = "";
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -208,19 +206,21 @@ public class CreateTaxReport extends HttpSecureAppServlet {
    * (i<data.length-1) result += ",\n"; } result += ");"; } return result; }
    */
 
-  private void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException {
+  private void treeOrg(VariablesSecureApp vars, String strOrg, StringBuilder treeOrg)
+      throws ServletException {
     CreateTaxReportData[] dataOrg = CreateTaxReportData.selectOrg(this, strOrg, vars.getClient());
     for (int i = 0; i < dataOrg.length; i++) {
-      strTreeOrg += "," + dataOrg[i].id;
+      treeOrg.append(",");
+      treeOrg.append(dataOrg[i].id);
       if (dataOrg[i].issummary.equals("Y"))
-        treeOrg(vars, dataOrg[i].id);
+        treeOrg(vars, dataOrg[i].id, treeOrg);
     }
     return;
   }
 
-  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strTaxReportId,
-      String strPeriodFrom, String strPeriodTo, String strOrg, int level, String strParent,
-      int rownum) throws IOException, ServletException {
+  private void childData(VariablesSecureApp vars, Vector<Object> vectorArray,
+      String strTaxReportId, String strPeriodFrom, String strPeriodTo, String strOrg, int level,
+      String strParent, int rownum) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("**********************strTaxReportId: " + strTaxReportId);
     if (log4j.isDebugEnabled())

@@ -96,6 +96,18 @@ var baseDirectory = "../../../../../web/";
         if (XMLHttpRequestObj.responseText) {
           strText = XMLHttpRequestObj.responseText;
 
+          // revert all tree item icons to default state
+          var treeItems = document.getElementsByClassName('Tree_Row');
+          for (var i=1;i<treeItems.length;i++) {
+              var treeItemChildren = treeItems[i].childNodes;
+
+              for (var j=1;j<treeItemChildren.length;j++) {
+                  if(treeItemChildren[j].id == "icon"){
+                	  treeItemChildren[j].childNodes[1].setAttribute("class","");
+                  }
+              }
+          }
+          
           var elements = strText.split("|");
           document.getElementById('notifications').innerHTML=elements[0];
           for (var i=1;i<elements.length;i++) {

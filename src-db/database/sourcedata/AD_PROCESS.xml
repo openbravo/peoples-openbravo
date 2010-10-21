@@ -692,7 +692,7 @@
 <!--137-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--137-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--137-->  <VALUE><![CDATA[M_Production]]></VALUE>
-<!--137-->  <NAME><![CDATA[Create/Post Production]]></NAME>
+<!--137-->  <NAME><![CDATA[Create/Process Production]]></NAME>
 <!--137-->  <DESCRIPTION><![CDATA[Create production lines, if not created - otherwise process the production]]></DESCRIPTION>
 <!--137-->  <HELP><![CDATA[Create/Post Production will generate the production lines and process the production.  If the production lines already exists, the production will be processed]]></HELP>
 <!--137-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
@@ -702,6 +702,7 @@
 <!--137-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--137-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--137-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--137-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--137-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--137-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--137--></AD_PROCESS>

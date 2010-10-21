@@ -320,10 +320,32 @@ public class DocPayment extends AcctServer {
         // debt-payments
         if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
             && !line.WriteOffAmt.equals("0")) {
-          fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-              C_Currency_ID, (line.isReceipt.equals("Y") ? line.WriteOffAmt : ""), (line.isReceipt
-                  .equals("Y") ? "" : line.WriteOffAmt), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+          String Account_ID = "";
+          AcctServerData[] acctData = AcctServerData.selectWriteOffAcct(conn, line.C_BPARTNER_ID,
+              as.getC_AcctSchema_ID());
+          if (acctData != null && acctData.length != 0) {
+            Account_ID = acctData[0].accountId;
+          } else {
+            acctData = AcctServerData.selectWriteOffDefault(conn, as.getC_AcctSchema_ID());
+            if (acctData != null && acctData.length != 0) {
+              Account_ID = acctData[0].accountId;
+            }
+          }
+          Account acct = null;
+          if (!Account_ID.equals("")) {
+            try {
+              acct = Account.getAccount(conn, Account_ID);
+            } catch (ServletException e) {
+              log4j.warn(e);
+              e.printStackTrace();
+            }
+          } else {
+            log4j.warn("AcctServer - getAccount - NO account Type=" + AcctServer.ACCTTYPE_WriteOff
+                + ", Record=" + Record_ID);
+          }
+          fact.createLine(line, acct, C_Currency_ID, (line.isReceipt.equals("Y") ? line.WriteOffAmt
+              : ""), (line.isReceipt.equals("Y") ? "" : line.WriteOffAmt), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
       }
 

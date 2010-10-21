@@ -38,6 +38,7 @@ import org.openbravo.base.model.domaintype.OneToManyDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.session.UniqueConstraintColumn;
 import org.openbravo.base.util.Check;
@@ -383,10 +384,12 @@ public class ModelProvider implements OBSingleton {
           log.debug("Setting targetEntity and reference Property for " + thisProp);
           final Column thatColumn = c.getReferenceType();
           if (thatColumn == null) {
-            log
-                .error("Property "
-                    + thisProp
-                    + " is mapped incorrectly, there is no reference column for it, removing from the mapping");
+            if (!OBPropertiesProvider.isFriendlyWarnings()) {
+              log
+                  .error("Property "
+                      + thisProp
+                      + " is mapped incorrectly, there is no referenced column for it, removing from the mapping");
+            }
             thisProp.getEntity().getProperties().remove(thisProp);
             if (thisProp.getEntity().getIdProperties().remove(thisProp)) {
               Check.fail("Incorrect mapping for property " + thisProp
@@ -667,8 +670,15 @@ public class ModelProvider implements OBSingleton {
       getModel();
     // search case insensitive!
     final Table table = tablesByTableName.get(tableName.toLowerCase());
-    if (table == null)
-      Check.fail("Table: " + tableName + " not found in runtime model, is it maybe inactive?");
+    if (table == null) {
+      if (OBPropertiesProvider.isFriendlyWarnings()) {
+        // this error won't be logged...
+        throw new IllegalArgumentException("Table: " + tableName
+            + " not found in runtime model, is it maybe inactive?");
+      } else {
+        Check.fail("Table: " + tableName + " not found in runtime model, is it maybe inactive?");
+      }
+    }
     return table;
   }
 

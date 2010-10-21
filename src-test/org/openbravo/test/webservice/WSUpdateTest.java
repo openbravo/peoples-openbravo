@@ -20,6 +20,7 @@
 package org.openbravo.test.webservice;
 
 import java.io.FileNotFoundException;
+import java.net.HttpURLConnection;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
@@ -117,6 +118,20 @@ public class WSUpdateTest extends BaseWSTest {
    * @throws Exception
    */
   public void testReadAddDeleteCity() throws Exception {
+    if (cityId == null) {
+      testACreateCity();
+    }
+    doTestReadAddDeleteCity(false);
+  }
+
+  public void testReadAddDeleteQueryCity() throws Exception {
+    if (cityId == null) {
+      testACreateCity();
+    }
+    doTestReadAddDeleteCity(true);
+  }
+
+  private void doTestReadAddDeleteCity(boolean doDeleteQuery) throws Exception {
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
         + "</name>");
@@ -165,7 +180,11 @@ public class WSUpdateTest extends BaseWSTest {
     assertTrue(indexCity2 != -1);
 
     // delete it
-    doDirectDeleteRequest("/ws/dal/City/" + id, 200);
+    if (doDeleteQuery) {
+      doDirectDeleteRequest("/ws/dal/City?where=name='" + newName + "'", 200);
+    } else {
+      doDirectDeleteRequest("/ws/dal/City/" + id, 200);
+    }
 
     // sleep 1 seconds, so that the city is deleted
     Thread.sleep(1000);
@@ -178,6 +197,16 @@ public class WSUpdateTest extends BaseWSTest {
       e.printStackTrace(System.err);
       assertTrue(e.getCause() instanceof FileNotFoundException);
     }
+  }
+
+  /**
+   * Tests issue 14973 https://issues.openbravo.com/view.php?id=14973 DalWebServiceServlet does not
+   * report errors which occur at commit time
+   */
+  public void test14973() throws Exception {
+    final HttpURLConnection hc = createConnection("/ws/dal/Product/1000004", "DELETE");
+    hc.connect();
+    assertEquals(500, hc.getResponseCode());
   }
 
   /**

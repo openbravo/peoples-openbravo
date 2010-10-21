@@ -57,7 +57,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
-      String strPriceList = vars.getStringParameter("inpmProductId_PLIST");
+      String strPriceList = vars.getNumericParameter("inpmProductId_PLIST");
       String strPriceStd = vars.getNumericParameter("inpmProductId_PSTD");
       String strPriceLimit = vars.getStringParameter("inpmProductId_PLIM");
       String strCurrency = vars.getStringParameter("inpmProductId_CURR");
@@ -75,12 +75,14 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
           .getOrganizationStructureProvider(vars.getClient());
       if (!strADOrgID.equals(strWarehouseOrg)) {
         Organization org = OBDal.getInstance().get(Organization.class, strADOrgID);
-        Organization warehouseOrg = OBDal.getInstance().get(Organization.class, strWarehouseOrg);
-        if (!osp.isInNaturalTree(org, warehouseOrg) && !osp.isInNaturalTree(warehouseOrg, org))
-          strWarehouseForOrg = SLOrderProductData.getWarehouseOfOrg(this, vars.getClient(),
-              strADOrgID);
-        if (!strWarehouseForOrg.equals(""))
-          strWharehouse = strWarehouseForOrg;
+        if (strWarehouseOrg != null) {
+          Organization warehouseOrg = OBDal.getInstance().get(Organization.class, strWarehouseOrg);
+          if (!osp.isInNaturalTree(org, warehouseOrg) && !osp.isInNaturalTree(warehouseOrg, org))
+            strWarehouseForOrg = SLOrderProductData.getWarehouseOfOrg(this, vars.getClient(),
+                strADOrgID);
+          if (!strWarehouseForOrg.equals(""))
+            strWharehouse = strWarehouseForOrg;
+        }
       }
       String strTabId = vars.getStringParameter("inpTabId");
 

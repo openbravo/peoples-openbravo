@@ -119,11 +119,11 @@ public class DynamicJS extends HttpSecureAppServlet {
     String globals = "";
 
     globals += "var decSeparator_global = '"
-        + vars.getSessionValue("#DECIMALSEPARATOR|EUROEDITION") + "';\n";
+        + vars.getSessionValue("#DECIMALSEPARATOR|QTYEDITION") + "';\n";
     globals += "var groupSeparator_global = '"
-        + vars.getSessionValue("#GROUPSEPARATOR|EUROEDITION") + "';\n";
+        + vars.getSessionValue("#GROUPSEPARATOR|QTYEDITION") + "';\n";
     globals += "var groupInterval_global = '3';\n";
-    globals += "var maskNumeric_default = '" + vars.getSessionValue("#FORMATOUTPUT|EUROEDITION")
+    globals += "var maskNumeric_default = '" + vars.getSessionValue("#FORMATOUTPUT|QTYEDITION")
         + "';\n";
 
     out.print(globals);
@@ -144,11 +144,11 @@ public class DynamicJS extends HttpSecureAppServlet {
     }
     out.println("]};");
     out.print("F.getFormat=function(name)");
-    out.print("{if(typeof name==='undefined'||name==='')");
-    out.print("{return'qtyEdition';}");
+    out.print("{if(!name)");
+    out.print("{return F.getFormat('qtyEdition');}");
     out.print("for(var i=0;i<this.formats.length;i++)");
     out.print("{if(this.formats[i].name===name)");
-    out.println("{return this.formats[i].output;}}return'qtyEdtion';}");
+    out.println("{return this.formats[i].output;}} return F.getFormat('qtyEdtion');};");
 
     out.close();
   }

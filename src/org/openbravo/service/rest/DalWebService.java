@@ -276,6 +276,7 @@ public class DalWebService implements WebService {
       final BaseOBObject result = OBDal.getInstance().get(entityName, id);
       final String resIdentifier = result.getIdentifier();
       OBDal.getInstance().remove(result);
+      OBDal.getInstance().commitAndClose();
 
       final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
           "Action performed successfully", "Removed business object " + resIdentifier, null);
@@ -287,6 +288,42 @@ public class DalWebService implements WebService {
       } catch (final Exception e) {
         throw new OBException(e);
       }
+      return;
+    }
+
+    if (segments.length == 1) {
+      final String entityName = segments[0];
+
+      try {
+        ModelProvider.getInstance().getEntity(entityName);
+      } catch (final CheckException ce) {
+        throw new ResourceNotFoundException("Resource " + entityName + " not found", ce);
+      }
+
+      final String where = request.getParameter(PARAMETER_WHERE);
+      String whereOrderByClause = "";
+      if (where != null) {
+        whereOrderByClause += where;
+      }
+
+      try {
+        final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
+            whereOrderByClause);
+
+        Object o = obq.deleteQuery().executeUpdate();
+
+        OBDal.getInstance().commitAndClose();
+
+        final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
+            "Action performed successfully", "Removed business objects " + o, null);
+        response.setContentType("text/xml;charset=UTF-8");
+        final Writer w = response.getWriter();
+        w.write(resultXml);
+        w.close();
+      } catch (final Exception e) {
+        throw new OBException(e);
+      }
+
       return;
     }
 
@@ -313,6 +350,9 @@ public class DalWebService implements WebService {
       HttpServletResponse response, ChangeAction changeAction) {
     response.setContentType("text/xml;charset=UTF-8");
     final String resultXml = doChangeActionXML(path, request, response, changeAction);
+
+    OBDal.getInstance().commitAndClose();
+
     try {
       final Writer w = response.getWriter();
       w.write(resultXml);

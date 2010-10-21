@@ -54,6 +54,14 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
   private String providerConfigDirectory;
   private boolean debug;
 
+  public boolean getFriendlyWarnings() {
+    return OBPropertiesProvider.isFriendlyWarnings();
+  }
+
+  public void setFriendlyWarnings(boolean doFriendlyWarnings) {
+    OBPropertiesProvider.setFriendlyWarnings(doFriendlyWarnings);
+  }
+
   public String getPropertiesFile() {
     return propertiesFile;
   }

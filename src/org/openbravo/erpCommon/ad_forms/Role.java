@@ -217,10 +217,12 @@ public class Role extends HttpSecureAppServlet {
     if (plaindataclient != null) {
 
       for (int i = 0; i < datarole.length; i++) {
-        StringTokenizer st = new StringTokenizer(datarole[i].clientlist, ",", false);
 
+        String clientlist = LoginUtils.buildClientList(LoginUtils.loadRoleOrganization(datarole[i].adRoleId));
+        StringTokenizer st = new StringTokenizer(clientlist, ",", false);
         while (st.hasMoreTokens()) {
           String token = st.nextToken().trim();
+          token = token.substring(1, token.length() -1); // remove quotes
           ClientData auxClient = new ClientData();
           auxClient.padre = datarole[i].adRoleId;
           auxClient.id = token;

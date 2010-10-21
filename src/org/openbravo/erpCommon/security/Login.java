@@ -29,6 +29,8 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -76,6 +78,26 @@ public class Login extends HttpBaseServlet {
     } else if (vars.commandIn("LOGO")) {
       printPageLogo(response, vars);
     } else {
+      // Look for forced login URL property and redirect in case it is set and the login is accessed
+      // through a different URL
+      try {
+        String forcedLoginUrl = Preferences.getPreferenceValue("ForcedLoginURL", true, null, null,
+            null, null, null);
+        log4j.debug("Forced URL: " + forcedLoginUrl);
+        if (forcedLoginUrl != null && !forcedLoginUrl.isEmpty()
+            && !request.getRequestURL().toString().startsWith(forcedLoginUrl)) {
+          log4j.info("Redireting login from " + request.getRequestURL().toString()
+              + " to forced login URL " + forcedLoginUrl);
+          response.sendRedirect(forcedLoginUrl);
+          return;
+        }
+      } catch (PropertyException e) {
+        // Ignore and continue with the standard login. PropertyException is raised in case property
+        // is not defined (standard case) or in case of conflict.
+        log4j.debug("Exception getting ForcedLoginURL", e);
+      }
+
+      // Standard login
       String textDirection = vars.getSessionValue("#TextDirection", "LTR");
       printPageFrameIdentificacion(response, "Login_Welcome.html?Command=WELCOME",
           "Login_F1.html?Command=LOGIN", textDirection);

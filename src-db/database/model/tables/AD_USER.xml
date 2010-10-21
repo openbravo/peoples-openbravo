@@ -152,7 +152,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_USER_AD_ORGTRX">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="AD_USER_C_BPARTNER">
+      <foreign-key foreignTable="C_BPARTNER" name="AD_USER_C_BPARTNER" onDelete="cascade">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="AD_USER_C_BPARTNER_LOCATION">

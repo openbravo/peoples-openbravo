@@ -23,6 +23,7 @@
 	<!-- sets the list of Tables in the model slot -->
 	<component class="org.openbravo.base.gen.ModelProviderComponent">
 		<propFile value="${ob.properties.location}" />
+    <friendlyWarnings value="${friendlyWarnings}" />
 	</component>	
 	<component class="oaw.xpand2.Generator">
 		 <metaModel class="oaw.type.impl.java.JavaMetaModel"/>

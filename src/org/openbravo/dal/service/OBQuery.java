@@ -158,6 +158,28 @@ public class OBQuery<E extends BaseOBObject> {
     return qryStr;
   }
 
+  public Query deleteQuery() {
+    final String qryStr = createQueryString();
+    String whereClause;
+    final int whereIndex = qryStr.toLowerCase().indexOf(WHERE);
+
+    if (whereIndex != -1) {
+      whereClause = qryStr.substring(whereIndex);
+    } else {
+      throw new OBException("Exception when creating delete query " + qryStr);
+    }
+
+    try {
+      final Query qry = getSession().createQuery(
+          "DELETE FROM " + getEntity().getName() + " " + whereClause);
+      setParameters(qry);
+      return qry;
+    } catch (final Exception e) {
+      throw new OBException("Exception when creating delete query " + "DELETE FROM "
+          + getEntity().getName() + " " + whereClause, e);
+    }
+  }
+
   /**
    * Creates a Hibernate Query object using the whereclause and extra filters (for readable
    * organizations etc.).
