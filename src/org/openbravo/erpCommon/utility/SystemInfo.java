@@ -482,6 +482,8 @@ public class SystemInfo {
         if (usageAuditEnabled) {
           OBCriteria<SessionUsageAudit> qUsage = OBDal.getInstance().createCriteria(
               SessionUsageAudit.class);
+          qUsage.setFilterOnReadableClients(false);
+          qUsage.setFilterOnReadableOrganization(false);
           qUsage.add(Expression.eq(SessionUsageAudit.PROPERTY_MODULE, mod));
           qUsage.add(Expression.ge(SessionUsageAudit.PROPERTY_CREATIONDATE, startOfPeriod));
           modInfo.add(Integer.toString(qUsage.count()));
