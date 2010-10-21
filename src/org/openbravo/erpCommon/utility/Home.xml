@@ -25,7 +25,7 @@
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="customJS" name="customJS" default="" />
-  <PARAMETER id="paramURL" name="iframeURL" attribute="src"/>
+  <PARAMETER id="fieldUrls" name="urls" />
   <PARAMETER id="cbPurpose" name="cbPurpose" attribute="class" replace="purpose"/>
   <PARAMETER id="cbVersion" name="cbVersion"/>
 </REPORT>

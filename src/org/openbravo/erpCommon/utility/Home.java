@@ -39,6 +39,7 @@ public class Home extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String COMMUNITY_BRANDING_URL = "http://butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html";
   private static final String STATIC_COMMUNITY_BRANDING_URL = "StaticCommunityBranding.html";
+  private static final String BUTLER_UTILS_URL = "//butler.openbravo.com/web/static-content/js/ob-utils.js";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -73,7 +74,7 @@ public class Home extends HttpSecureAppServlet {
     LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "Home.html", strReplaceWith);
     xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
 
-    xmlDocument.setParameter("iframeURL", getCommunityBrandingUrl());
+    xmlDocument.setParameter("urls", getUrls());
     String strPurpose = getPurpose();
     if (strPurpose == null) {
       strPurpose = "unknown";
@@ -122,17 +123,13 @@ public class Home extends HttpSecureAppServlet {
     return strVersion;
   }
 
-  private String getCommunityBrandingUrl() throws ServletException {
+  private String getUrls() throws ServletException {
     String url = "";
     String strLicenseClass = LicenseClass.COMMUNITY.getCode();
     OBContext.setAdminMode();
     try {
       strLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
-      if (isCommunityBrandingAvailable()) {
-        url = COMMUNITY_BRANDING_URL;
-      } else {
-        url = STATIC_COMMUNITY_BRANDING_URL;
-      }
+      url = COMMUNITY_BRANDING_URL;
       url += "?licenseClass=" + strLicenseClass;
       url += "&version=" + OBVersion.getInstance().getMajorVersion();
       url += "&uimode=" + "2.50";
@@ -140,17 +137,14 @@ public class Home extends HttpSecureAppServlet {
       url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier();
       url += "&macAddress=" + SystemInfo.getMacAddress();
       url += "&databaseIdentifier=" + SystemInfo.getDBIdentifier();
+      url += "&internetConnection=" + HttpsUtils.isInternetAvailable();
       url += "&systemDate=" + (new SimpleDateFormat("yyyyMMdd")).format(new Date());
     } finally {
       OBContext.restorePreviousMode();
     }
+    url = "\nvar communityBrandingUrl = '" + url + "';\n";
+    url += "var staticUrl = '" + STATIC_COMMUNITY_BRANDING_URL + "';\n";
+    url += "var butlerUtilsUrl = '" + BUTLER_UTILS_URL + "'";
     return url;
-  }
-
-  private boolean isCommunityBrandingAvailable() {
-    if (HttpsUtils.isInternetAvailable()) {
-      return true;
-    }
-    return false;
   }
 }

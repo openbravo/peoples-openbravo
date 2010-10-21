@@ -28,10 +28,41 @@
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">var defaultLang = "en_US";</script>
+<script type="text/javascript" id="fieldUrls"></script>
 <script language="JavaScript" type="text/javascript">
+  function setIframeUrl() {
+    var iframe = document.getElementById('cbiframe');
+    if(!iframe) {
+      return;
+    }
+    if(typeof internetConnection !== 'undefined') {
+      iframe.src = communityBrandingUrl;
+      return;
+    }
+    iframe.src = staticUrl;
+  }
+
+  function getBranding() {
+	var utils = document.createElement('script'), s;
+	utils.type = 'text/javascript';
+	utils.src = document.location.protocol + butlerUtilsUrl;
+    utils.onload = function() {
+      setIframeUrl();
+    };
+    utils.onreadystatechange = function() { // IE
+      if(this.readyState == 'complete') {
+        setIframeUrl();
+      }
+    };
+	s = document.getElementsByTagName('script')[0];
+	s.parentNode.insertBefore(utils, s);
+    setIframeUrl();
+  }
+
   function onLoadDo() {
     enableShortcuts('edition');
     resizeArea();
+    getBranding();
     putFocusOnMenu();
   }
 
@@ -87,7 +118,7 @@
                     <div class="Login_Home_Community_Branding_version" id="cbVersion">xx2.50 - Community Edition - MP23</div>
                   </div>
                   <div class="Login_Home_Community_Branding_iframe">
-                    <iframe id="paramURL" src="" width="575" height="100%" scrolling="no" frameborder="0"></iframe>
+                    <iframe id="cbiframe" src="" width="575" height="100%" scrolling="no" frameborder="0"></iframe>
                   </div>
                   <div class="Login_Home_Community_Branding_bottom"></div>
                 </div>
