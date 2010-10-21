@@ -135,7 +135,7 @@ public class Home extends HttpSecureAppServlet {
       url += "&uimode=" + "2.50";
       url += "&language=" + OBContext.getOBContext().getLanguage().getLanguage();
       url += "&systemIdentifier=" + SystemInfo.getSystemIdentifier();
-      url += "&macAddress=" + SystemInfo.getMacAddress();
+      url += "&macIdentifier=" + SystemInfo.getMacAddress();
       url += "&databaseIdentifier=" + SystemInfo.getDBIdentifier();
       url += "&internetConnection=" + (HttpsUtils.isInternetAvailable() ? "Y" : "N");
       url += "&systemDate=" + (new SimpleDateFormat("yyyyMMdd")).format(new Date());
