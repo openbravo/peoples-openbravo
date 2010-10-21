@@ -708,7 +708,7 @@ public class SystemInfo {
         "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
         "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
         false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false), INSTANCE_PURPOSE(
-        "isntancePurpose", false);
+        "instancePurpose", false);
 
     private String label;
     private boolean isIdInfo;
