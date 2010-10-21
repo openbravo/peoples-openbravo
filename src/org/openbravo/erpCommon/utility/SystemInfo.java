@@ -139,10 +139,10 @@ public class SystemInfo {
       systemInfo.put(i, getDatabaseVersion(conn));
       break;
     case WEBSERVER:
-      systemInfo.put(i, getWebserver(conn)[0]);
+      systemInfo.put(i, getWebserver()[0]);
       break;
     case WEBSERVER_VERSION:
-      systemInfo.put(i, getWebserver(conn)[1]);
+      systemInfo.put(i, getWebserver()[1]);
       break;
     case SERVLET_CONTAINER:
       systemInfo.put(i, SystemInfoData.selectServletContainer(conn));
@@ -251,12 +251,12 @@ public class SystemInfo {
 
   private final static String getSystemIdentifier(ConnectionProvider conn) throws ServletException {
     validateConnection(conn);
-    String systemIdentifier = SystemInfoData.selectSystemIdentifier(conn);
-    if (systemIdentifier == null || systemIdentifier.equals("")) {
-      systemIdentifier = UUID.randomUUID().toString();
-      SystemInfoData.updateSystemIdentifier(conn, systemIdentifier);
+    String strSystemIdentifier = SystemInfoData.selectSystemIdentifier(conn);
+    if (strSystemIdentifier == null || strSystemIdentifier.equals("")) {
+      strSystemIdentifier = UUID.randomUUID().toString();
+      SystemInfoData.updateSystemIdentifier(conn, strSystemIdentifier);
     }
-    return systemIdentifier;
+    return strSystemIdentifier;
   }
 
   /**
@@ -333,15 +333,21 @@ public class SystemInfo {
         crc.update(id.getBytes());
         return Long.toHexString(crc.getValue());
       } catch (SQLException e) {
-        log4j.error("Error obtaining Oracle's DB identifier", e);
-        return "";
+        log4j.debug("Error obtaining Oracle's DB identifier", e);
+        return "0";
       } finally {
         try {
-          st.getResultSet().close();
-          st.close();
-          con.close();
+          if (st != null) {
+            if (st.getResultSet() != null) {
+              st.getResultSet().close();
+            }
+            st.close();
+          }
+          if (con != null) {
+            con.close();
+          }
         } catch (SQLException e) {
-          log4j.error("Error closing connection for setting db id", e);
+          // ignore
         }
       }
     } else { // PG
@@ -388,7 +394,7 @@ public class SystemInfo {
    * 
    * Currently only checks for Apache.
    */
-  private final static String[] getWebserver(ConnectionProvider conn) {
+  private final static String[] getWebserver() {
     List<String> commands = new ArrayList<String>();
     String[] paths = { "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin",
         "/bin" };
