@@ -37,16 +37,16 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
-      String strVersion = vars.getStringParameter("version");
-      printPage(response, strVersion);
+      printPage(response);
     } else
       pageError(response);
 
   }
 
-  private void printPage(HttpServletResponse response, String strVersion) throws IOException {
+  private void printPage(HttpServletResponse response) throws IOException {
     log4j.debug("Output: dataSheet");
-    LicenseClass licenseClass = ActivationKey.getInstance().getLicenseClass();
+    final LicenseClass licenseClass = ActivationKey.getInstance().getLicenseClass();
+    final String strVersion = OBVersion.getInstance().getMajorVersion();
 
     String strUrl = strDireccion + "/web/html/" + "en_US";
     if (strVersion.startsWith("3")) {
