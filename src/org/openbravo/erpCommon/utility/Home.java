@@ -88,7 +88,7 @@ public class Home extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String getPurpose() {
+  private static String getPurpose() {
     String strPurpose = "";
     OBContext.setAdminMode();
     try {
@@ -106,7 +106,7 @@ public class Home extends HttpSecureAppServlet {
     return strPurpose;
   }
 
-  private String getVersion() {
+  private static String getVersion() {
     String strVersion = "";
     OBContext.setAdminMode();
     try {
@@ -123,7 +123,7 @@ public class Home extends HttpSecureAppServlet {
     return strVersion;
   }
 
-  private String getUrls() throws ServletException {
+  private static String getUrls() throws ServletException {
     String url = "";
     String strLicenseClass = LicenseClass.COMMUNITY.getCode();
     OBContext.setAdminMode();
