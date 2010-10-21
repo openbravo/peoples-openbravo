@@ -491,19 +491,19 @@ public class HeartbeatProcess implements Process {
         String strQId = jsonCustomQuery.getString("QId");
         String strQName = jsonCustomQuery.getString("QName");
         logger.logln("Processing custom query: " + strQName);
-        String strQType = jsonCustomQuery.getString("QType");
-        if ("HQL".equals(strQType)) {
-          String strHQL = jsonCustomQuery.getString("QCode");
-          HeartbeatLogCustomQuery hbLogCQ = logCustomQuery(strQName, strQType, strHQL);
+        try {
+          String strQType = jsonCustomQuery.getString("QType");
+          if ("HQL".equals(strQType)) {
+            String strHQL = jsonCustomQuery.getString("QCode");
+            HeartbeatLogCustomQuery hbLogCQ = logCustomQuery(strQName, strQType, strHQL);
 
-          Session obSession = OBDal.getInstance().getSession();
-          Query customQuery = obSession.createQuery(strHQL);
-          String[] properties = customQuery.getReturnAliases();
-          JSONArray jsonArrayResultRows = new JSONArray();
-          int row = 0;
+            Session obSession = OBDal.getInstance().getSession();
+            Query customQuery = obSession.createQuery(strHQL);
+            String[] properties = customQuery.getReturnAliases();
+            JSONArray jsonArrayResultRows = new JSONArray();
+            int row = 0;
 
-          for (Object objResult : (List<Object>) customQuery.list()) {
-            try {
+            for (Object objResult : (List<Object>) customQuery.list()) {
               row += 1;
               JSONArray jsonArrayResultRowValues = new JSONArray();
 
@@ -526,22 +526,23 @@ public class HeartbeatProcess implements Process {
                 logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
               }
               jsonArrayResultRows.put(jsonArrayResultRowValues);
-            } catch (Exception e) {
-              // ignore exception
-              log.error("Error processing custom query: " + strQName, e);
             }
+
+            if (customQuery.list().isEmpty())
+              jsonArrayResultRows.put("null");
+
+            JSONObject jsonResult = new JSONObject();
+            jsonResult.put("properties", properties == null ? null : Arrays.asList(properties));
+            jsonResult.put("values", jsonArrayResultRows);
+            jsonObjectCQReturn.put(strQId, jsonResult);
+          } else {
+            log.warn("unknown Query Type: " + strQType);
           }
-
-          if (customQuery.list().isEmpty())
-            jsonArrayResultRows.put("null");
-
-          JSONObject jsonResult = new JSONObject();
-          jsonResult.put("properties", properties == null ? null : Arrays.asList(properties));
-          jsonResult.put("values", jsonArrayResultRows);
-          jsonObjectCQReturn.put(strQId, jsonResult);
-        } else {
-          log.warn("unknown Query Type: " + strQType);
+        } catch (Exception e) {
+          // ignore exception
+          log.error("Error processing custom query: " + strQName, e);
         }
+
       }
       JSONObject jsonObjectReturn = new JSONObject();
       jsonObjectReturn.put("beatId", beatId);
