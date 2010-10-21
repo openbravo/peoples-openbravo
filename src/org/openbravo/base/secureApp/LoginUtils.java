@@ -11,6 +11,7 @@
  */
 package org.openbravo.base.secureApp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -19,9 +20,12 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
@@ -121,6 +125,52 @@ public class LoginUtils {
     return valid;
   }
 
+  public static List<RoleOrganization> loadRoleOrganization(String strRol) {
+
+    OBContext.setAdminMode();
+    try {
+      List parameters = new ArrayList();
+      parameters.add(strRol);
+      OBQuery query = OBDal.getInstance().createQuery(RoleOrganization.class,
+          "WHERE role.id = ? ORDER BY client.id, organization.id", parameters);
+      query.setFilterOnReadableClients(false);
+      query.setFilterOnReadableOrganization(false);
+      return query.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static String buildClientList(List<RoleOrganization> roleorglist) {
+      StringBuilder clientlist = new StringBuilder();
+      String currentclient = null;
+      for (RoleOrganization roleorg : roleorglist) {
+        if (currentclient == null || !currentclient.equals(roleorg.getClient().getId())) {
+          currentclient = roleorg.getClient().getId();
+          if (clientlist.length() > 0) {
+            clientlist.append(',');
+          }
+          clientlist.append('\'');
+          clientlist.append(roleorg.getClient().getId());
+          clientlist.append('\'');
+        }
+      }
+      return clientlist.toString();
+  }
+
+  public static String buildOrgList(List<RoleOrganization> roleorglist) {
+      StringBuilder orglist = new StringBuilder();
+      for (RoleOrganization roleorg : roleorglist) {
+        if (orglist.length() > 0) {
+          orglist.append(',');
+        }
+        orglist.append('\'');
+        orglist.append(roleorg.getOrganization().getId());
+        orglist.append('\'');
+      }
+      return orglist.toString();
+  }
+
   public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars,
       String strUserAuth, String strLanguage, String strIsRTL, String strRol, String strCliente,
       String strOrg, String strAlmacen) throws ServletException {
@@ -174,9 +224,12 @@ public class LoginUtils {
         OBContext.setOBContext(currentContext);
         return false;
       }
+
+      List<RoleOrganization> datarolelist = loadRoleOrganization(strRol);
+
       vars.setSessionValue("#User_Level", data[0].userlevel);
-      vars.setSessionValue("#User_Client", data[0].clientlist);
-      vars.setSessionValue("#User_Org", data[0].orglist);
+      vars.setSessionValue("#User_Client", buildClientList(datarolelist));
+      vars.setSessionValue("#User_Org", buildOrgList(datarolelist));
       vars.setSessionValue("#Approval_C_Currency_ID", data[0].cCurrencyId);
       vars.setSessionValue("#Approval_Amt", data[0].amtapproval);
       vars.setSessionValue("#Client_Value", data[0].value);
