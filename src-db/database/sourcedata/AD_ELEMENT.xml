@@ -22179,6 +22179,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--3DD52B00A13211DD826B3BEAC7761F2B-->  <NAME><![CDATA[Object Type]]></NAME>
 <!--3DD52B00A13211DD826B3BEAC7761F2B-->  <PRINTNAME><![CDATA[Object Type]]></PRINTNAME>
 <!--3DD52B00A13211DD826B3BEAC7761F2B-->  <DESCRIPTION><![CDATA[Type of model object]]></DESCRIPTION>
+<!--3DD52B00A13211DD826B3BEAC7761F2B-->  <HELP><![CDATA[Type of the requested model object.]]></HELP>
 <!--3DD52B00A13211DD826B3BEAC7761F2B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3DD52B00A13211DD826B3BEAC7761F2B--></AD_ELEMENT>
 
@@ -25519,7 +25520,8 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--7C152B5C9EBC4E74B75C469A8A473D34-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7C152B5C9EBC4E74B75C469A8A473D34-->  <COLUMNNAME><![CDATA[Your_Company_Login_Image]]></COLUMNNAME>
 <!--7C152B5C9EBC4E74B75C469A8A473D34-->  <NAME><![CDATA[Default Your Company Login Image]]></NAME>
-<!--7C152B5C9EBC4E74B75C469A8A473D34-->  <PRINTNAME><![CDATA[Default Your Default Company Login Image]]></PRINTNAME>
+<!--7C152B5C9EBC4E74B75C469A8A473D34-->  <PRINTNAME><![CDATA[your default Company Login image]]></PRINTNAME>
+<!--7C152B5C9EBC4E74B75C469A8A473D34-->  <HELP><![CDATA[Default Company Login image]]></HELP>
 <!--7C152B5C9EBC4E74B75C469A8A473D34-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7C152B5C9EBC4E74B75C469A8A473D34--></AD_ELEMENT>
 
@@ -26956,6 +26958,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--8FD498995F25B6CBE040007F01014FBE-->  <NAME><![CDATA[Installed Modules]]></NAME>
 <!--8FD498995F25B6CBE040007F01014FBE-->  <PRINTNAME><![CDATA[Installed Modules]]></PRINTNAME>
 <!--8FD498995F25B6CBE040007F01014FBE-->  <DESCRIPTION><![CDATA[List of the modules installed in the instance]]></DESCRIPTION>
+<!--8FD498995F25B6CBE040007F01014FBE-->  <HELP><![CDATA[List of the modules installed in the instance]]></HELP>
 <!--8FD498995F25B6CBE040007F01014FBE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8FD498995F25B6CBE040007F01014FBE--></AD_ELEMENT>
 
@@ -26981,6 +26984,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--8FE2BB1E3783C02FE040007F01011970-->  <NAME><![CDATA[First Login]]></NAME>
 <!--8FE2BB1E3783C02FE040007F01011970-->  <PRINTNAME><![CDATA[First Login]]></PRINTNAME>
 <!--8FE2BB1E3783C02FE040007F01011970-->  <DESCRIPTION><![CDATA[Date of first login in the application]]></DESCRIPTION>
+<!--8FE2BB1E3783C02FE040007F01011970-->  <HELP><![CDATA[Date of first login in the application]]></HELP>
 <!--8FE2BB1E3783C02FE040007F01011970-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8FE2BB1E3783C02FE040007F01011970--></AD_ELEMENT>
 
@@ -26993,6 +26997,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--8FE2BB1E3784C02FE040007F01011970-->  <NAME><![CDATA[Last Login]]></NAME>
 <!--8FE2BB1E3784C02FE040007F01011970-->  <PRINTNAME><![CDATA[Last Login]]></PRINTNAME>
 <!--8FE2BB1E3784C02FE040007F01011970-->  <DESCRIPTION><![CDATA[Date of last login in the application]]></DESCRIPTION>
+<!--8FE2BB1E3784C02FE040007F01011970-->  <HELP><![CDATA[Date of last login in the application]]></HELP>
 <!--8FE2BB1E3784C02FE040007F01011970-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8FE2BB1E3784C02FE040007F01011970--></AD_ELEMENT>
 
@@ -27005,6 +27010,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--8FE2BB1E3785C02FE040007F01011970-->  <NAME><![CDATA[Total Logins]]></NAME>
 <!--8FE2BB1E3785C02FE040007F01011970-->  <PRINTNAME><![CDATA[Total Logins]]></PRINTNAME>
 <!--8FE2BB1E3785C02FE040007F01011970-->  <DESCRIPTION><![CDATA[Total number of logins]]></DESCRIPTION>
+<!--8FE2BB1E3785C02FE040007F01011970-->  <HELP><![CDATA[Total number of logins]]></HELP>
 <!--8FE2BB1E3785C02FE040007F01011970-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8FE2BB1E3785C02FE040007F01011970--></AD_ELEMENT>
 
@@ -27017,6 +27023,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--901EC583A3D490DBE040007F0101131F-->  <NAME><![CDATA[Usage Percentage]]></NAME>
 <!--901EC583A3D490DBE040007F0101131F-->  <PRINTNAME><![CDATA[Usage Percentage]]></PRINTNAME>
 <!--901EC583A3D490DBE040007F0101131F-->  <DESCRIPTION><![CDATA[Percentage of time the instance has been in use (at least one session active) during last 30 days.]]></DESCRIPTION>
+<!--901EC583A3D490DBE040007F0101131F-->  <HELP><![CDATA[Percentage of time the instance has been in use (at least one session active) during last 30 days.]]></HELP>
 <!--901EC583A3D490DBE040007F0101131F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--901EC583A3D490DBE040007F0101131F--></AD_ELEMENT>
 
@@ -27042,6 +27049,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--901EC583A3D690DBE040007F0101131F-->  <NAME><![CDATA[Total Logins Last Month]]></NAME>
 <!--901EC583A3D690DBE040007F0101131F-->  <PRINTNAME><![CDATA[Total Logins Last Month]]></PRINTNAME>
 <!--901EC583A3D690DBE040007F0101131F-->  <DESCRIPTION><![CDATA[Total number of logins during last 30 days]]></DESCRIPTION>
+<!--901EC583A3D690DBE040007F0101131F-->  <HELP><![CDATA[Total number of logins during last 30 days]]></HELP>
 <!--901EC583A3D690DBE040007F0101131F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--901EC583A3D690DBE040007F0101131F--></AD_ELEMENT>
 
@@ -27054,6 +27062,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--901EF3F0626AEE8AE040007F01011A2E-->  <NAME><![CDATA[Maximum Concurrent Users]]></NAME>
 <!--901EF3F0626AEE8AE040007F01011A2E-->  <PRINTNAME><![CDATA[Maximum Concurrent Users]]></PRINTNAME>
 <!--901EF3F0626AEE8AE040007F01011A2E-->  <DESCRIPTION><![CDATA[Maximum number of concurrent users during last 30 days]]></DESCRIPTION>
+<!--901EF3F0626AEE8AE040007F01011A2E-->  <HELP><![CDATA[Maximum number of concurrent users during last 30 days]]></HELP>
 <!--901EF3F0626AEE8AE040007F01011A2E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--901EF3F0626AEE8AE040007F01011A2E--></AD_ELEMENT>
 
@@ -27066,6 +27075,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--9021468994F9EECFE040007F010128EE-->  <NAME><![CDATA[Number of Clients]]></NAME>
 <!--9021468994F9EECFE040007F010128EE-->  <PRINTNAME><![CDATA[Number of Clients]]></PRINTNAME>
 <!--9021468994F9EECFE040007F010128EE-->  <DESCRIPTION><![CDATA[Total number of clients in the instance.]]></DESCRIPTION>
+<!--9021468994F9EECFE040007F010128EE-->  <HELP><![CDATA[Total number of clients in the instance.]]></HELP>
 <!--9021468994F9EECFE040007F010128EE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9021468994F9EECFE040007F010128EE--></AD_ELEMENT>
 
@@ -27078,6 +27088,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--9021468994FAEECFE040007F010128EE-->  <NAME><![CDATA[Number of Organizations]]></NAME>
 <!--9021468994FAEECFE040007F010128EE-->  <PRINTNAME><![CDATA[Number of Organizations]]></PRINTNAME>
 <!--9021468994FAEECFE040007F010128EE-->  <DESCRIPTION><![CDATA[Total number of organizations in the instance.]]></DESCRIPTION>
+<!--9021468994FAEECFE040007F010128EE-->  <HELP><![CDATA[Total number of organizations in the instance.]]></HELP>
 <!--9021468994FAEECFE040007F010128EE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9021468994FAEECFE040007F010128EE--></AD_ELEMENT>
 
@@ -27149,6 +27160,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--9155635C578C98D2E040007F01001C13-->  <COLUMNNAME><![CDATA[AD_HB_Log_CQuery_Row_ID]]></COLUMNNAME>
 <!--9155635C578C98D2E040007F01001C13-->  <NAME><![CDATA[Executed Custom Query Row property value]]></NAME>
 <!--9155635C578C98D2E040007F01001C13-->  <PRINTNAME><![CDATA[Executed Custom Query Row property value]]></PRINTNAME>
+<!--9155635C578C98D2E040007F01001C13-->  <HELP><![CDATA[The property value of a row result of an executed Custom Query]]></HELP>
 <!--9155635C578C98D2E040007F01001C13-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9155635C578C98D2E040007F01001C13--></AD_ELEMENT>
 
@@ -27160,6 +27172,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--9178CF053CE4BEEDE040007F01002B8B-->  <COLUMNNAME><![CDATA[AD_Session_Usage_Audit_ID]]></COLUMNNAME>
 <!--9178CF053CE4BEEDE040007F01002B8B-->  <NAME><![CDATA[Usage Audit]]></NAME>
 <!--9178CF053CE4BEEDE040007F01002B8B-->  <PRINTNAME><![CDATA[Usage Audit]]></PRINTNAME>
+<!--9178CF053CE4BEEDE040007F01002B8B-->  <HELP><![CDATA[A request to the backend.]]></HELP>
 <!--9178CF053CE4BEEDE040007F01002B8B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9178CF053CE4BEEDE040007F01002B8B--></AD_ELEMENT>
 
@@ -27171,6 +27184,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--9178CF053CE5BEEDE040007F01002B8B-->  <COLUMNNAME><![CDATA[Command]]></COLUMNNAME>
 <!--9178CF053CE5BEEDE040007F01002B8B-->  <NAME><![CDATA[Command]]></NAME>
 <!--9178CF053CE5BEEDE040007F01002B8B-->  <PRINTNAME><![CDATA[Command]]></PRINTNAME>
+<!--9178CF053CE5BEEDE040007F01002B8B-->  <HELP><![CDATA[Value of the Command parameter of the request]]></HELP>
 <!--9178CF053CE5BEEDE040007F01002B8B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9178CF053CE5BEEDE040007F01002B8B--></AD_ELEMENT>
 
@@ -27182,6 +27196,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--9178CF053CE6BEEDE040007F01002B8B-->  <COLUMNNAME><![CDATA[Object_ID]]></COLUMNNAME>
 <!--9178CF053CE6BEEDE040007F01002B8B-->  <NAME><![CDATA[Object_ID]]></NAME>
 <!--9178CF053CE6BEEDE040007F01002B8B-->  <PRINTNAME><![CDATA[Object_ID]]></PRINTNAME>
+<!--9178CF053CE6BEEDE040007F01002B8B-->  <HELP><![CDATA[Id of the object that has been requested.]]></HELP>
 <!--9178CF053CE6BEEDE040007F01002B8B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9178CF053CE6BEEDE040007F01002B8B--></AD_ELEMENT>
 
@@ -27204,6 +27219,8 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--91924AFAAFC60531E040007F01004B6B-->  <COLUMNNAME><![CDATA[IsUsageAuditEnabled]]></COLUMNNAME>
 <!--91924AFAAFC60531E040007F01004B6B-->  <NAME><![CDATA[Usage Audit Enabled]]></NAME>
 <!--91924AFAAFC60531E040007F01004B6B-->  <PRINTNAME><![CDATA[Usage Audit Enabled]]></PRINTNAME>
+<!--91924AFAAFC60531E040007F01004B6B-->  <HELP><![CDATA[When the Usage Audit is enabled each request to the backend is stored on the audit table (AD_Session_Usage_Audit). For each request is stored the object_id, the module_id, the session_id and the command.
+If the Heartbeat is also enabled the number of requests per module on the last 30 days is sent on each beat.]]></HELP>
 <!--91924AFAAFC60531E040007F01004B6B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--91924AFAAFC60531E040007F01004B6B--></AD_ELEMENT>
 
@@ -27215,6 +27232,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--91F5945648D88B53E040007F01005143-->  <COLUMNNAME><![CDATA[Change_Instance_Purpose]]></COLUMNNAME>
 <!--91F5945648D88B53E040007F01005143-->  <NAME><![CDATA[Change Instance Purpose]]></NAME>
 <!--91F5945648D88B53E040007F01005143-->  <PRINTNAME><![CDATA[Change Instance Purpose]]></PRINTNAME>
+<!--91F5945648D88B53E040007F01005143-->  <HELP><![CDATA[Button to change the purpose of Community Edition instances.]]></HELP>
 <!--91F5945648D88B53E040007F01005143-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--91F5945648D88B53E040007F01005143--></AD_ELEMENT>
 
