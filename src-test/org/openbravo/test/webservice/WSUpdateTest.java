@@ -20,6 +20,7 @@
 package org.openbravo.test.webservice;
 
 import java.io.FileNotFoundException;
+import java.net.HttpURLConnection;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
@@ -196,6 +197,16 @@ public class WSUpdateTest extends BaseWSTest {
       e.printStackTrace(System.err);
       assertTrue(e.getCause() instanceof FileNotFoundException);
     }
+  }
+
+  /**
+   * Tests issue 14973 https://issues.openbravo.com/view.php?id=14973 DalWebServiceServlet does not
+   * report errors which occur at commit time
+   */
+  public void test14973() throws Exception {
+    final HttpURLConnection hc = createConnection("/ws/dal/Product/1000004", "DELETE");
+    hc.connect();
+    assertEquals(500, hc.getResponseCode());
   }
 
   /**
