@@ -43,19 +43,20 @@
   }
 
   function getBranding() {
-	var utils = document.createElement('script'), s;
-	utils.type = 'text/javascript';
-	utils.src = document.location.protocol + butlerUtilsUrl;
+    var utils = document.createElement('script'), s;
+    utils.type = 'text/javascript';
     utils.onload = function() {
       setIframeUrl();
     };
     utils.onreadystatechange = function() { // IE
-      if(this.readyState == 'complete') {
+      if(this.readyState == 'complete' ||
+         this.readyState == 'loaded') {
         setIframeUrl();
       }
     };
-	s = document.getElementsByTagName('script')[0];
-	s.parentNode.insertBefore(utils, s);
+    utils.src = document.location.protocol + butlerUtilsUrl;
+    s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(utils, s);
     setIframeUrl();
   }
 
