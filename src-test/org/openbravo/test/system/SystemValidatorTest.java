@@ -19,6 +19,7 @@
 
 package org.openbravo.test.system;
 
+import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
@@ -30,7 +31,7 @@ import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.ddlutils.task.DatabaseUtils;
+import org.openbravo.ddlutils.util.DBSMOBUtil;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.system.DatabaseValidator;
 import org.openbravo.service.system.ModuleValidator;
@@ -98,8 +99,8 @@ public class SystemValidatorTest extends BaseTest {
 
     if (module != null) {
       final String dbPrefix = module.getModuleDBPrefixList().get(0).getName();
-      final String excludeobjects = "com.openbravo.db.OpenbravoExcludeFilter";
-      final ExcludeFilter filter = DatabaseUtils.getExcludeFilter(excludeobjects);
+      final ExcludeFilter filter = DBSMOBUtil.getInstance().getExcludeFilter(
+          new File(props.getProperty("source.path")));
       filter.addPrefix(dbPrefix);
 
       return platform.loadModelFromDatabase(filter, dbPrefix, true, module.getId());
