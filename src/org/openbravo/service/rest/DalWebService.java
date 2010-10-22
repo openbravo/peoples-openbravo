@@ -276,6 +276,7 @@ public class DalWebService implements WebService {
       final BaseOBObject result = OBDal.getInstance().get(entityName, id);
       final String resIdentifier = result.getIdentifier();
       OBDal.getInstance().remove(result);
+      OBDal.getInstance().commitAndClose();
 
       final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
           "Action performed successfully", "Removed business object " + resIdentifier, null);
@@ -310,6 +311,8 @@ public class DalWebService implements WebService {
             whereOrderByClause);
 
         Object o = obq.deleteQuery().executeUpdate();
+
+        OBDal.getInstance().commitAndClose();
 
         final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
             "Action performed successfully", "Removed business objects " + o, null);
@@ -347,6 +350,9 @@ public class DalWebService implements WebService {
       HttpServletResponse response, ChangeAction changeAction) {
     response.setContentType("text/xml;charset=UTF-8");
     final String resultXml = doChangeActionXML(path, request, response, changeAction);
+
+    OBDal.getInstance().commitAndClose();
+
     try {
       final Writer w = response.getWriter();
       w.write(resultXml);

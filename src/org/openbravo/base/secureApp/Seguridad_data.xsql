@@ -18,7 +18,7 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT r.UserLevel,''''||replace(replace(r.ClientList,' ',''),',',''',''')||'''' as ClientList,''''||replace(replace(r.OrgList,' ',''),',',''',''')||'''' as OrgList,r.C_Currency_ID,r.AmtApproval, 
+        SELECT r.UserLevel,'' as ClientList,'' as OrgList,r.C_Currency_ID,r.AmtApproval, 
         r.AD_Client_ID, c.NAME, u.C_BPARTNER_ID, c.VALUE, c.SMTPHOST 
         FROM AD_ROLE r, AD_CLIENT c, AD_USER u, 
         AD_USER_ROLES ur 

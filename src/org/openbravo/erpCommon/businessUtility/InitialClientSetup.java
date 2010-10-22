@@ -670,20 +670,6 @@ public class InitialClientSetup {
         elements = iResult.getUpdatedObjects();
         logEvent(elements.size() + " @RowsUpdated@");
       }
-      ADClientModule clientModule = null;
-      try {
-        clientModule = InitialSetupUtility.insertClientModule(client, module);
-      } catch (Exception e) {
-        return logErrorAndRollback(
-            "@CreateReferenceDataFailed@",
-            "insertReferenceDataModules() - Exception while updating version installed of the accounting module "
-                + module.getName(), e);
-      }
-      if (clientModule == null)
-        return logErrorAndRollback(
-            "@CreateReferenceDataFailed@",
-            "insertReferenceDataModules() - Exception while updating version installed of the accounting module "
-                + module.getName());
     }
     return obeResult;
   }

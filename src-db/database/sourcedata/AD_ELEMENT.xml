@@ -22314,6 +22314,19 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--4AFD554ABDCB488B87F326A3101B50DE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4AFD554ABDCB488B87F326A3101B50DE--></AD_ELEMENT>
 
+<!--50574D2DA84B4F3E9ED8272F414D3B1A--><AD_ELEMENT>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <AD_ELEMENT_ID><![CDATA[50574D2DA84B4F3E9ED8272F414D3B1A]]></AD_ELEMENT_ID>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <COLUMNNAME><![CDATA[InitialBalance]]></COLUMNNAME>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <NAME><![CDATA[Initial Balance]]></NAME>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <PRINTNAME><![CDATA[Initial Balance]]></PRINTNAME>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <DESCRIPTION><![CDATA[Initial balance of the financial account. Amount of the account at the time of registering the financial account.]]></DESCRIPTION>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <HELP><![CDATA[Amount of the account at the time of registering the financial account. This amount is used to initialize financial account and will be used as last reconciliation amount for first reconciliation in OB for the given financial account.]]></HELP>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--50574D2DA84B4F3E9ED8272F414D3B1A--></AD_ELEMENT>
+
 <!--521EA21E6E7777ABE040007F010016C0--><AD_ELEMENT>
 <!--521EA21E6E7777ABE040007F010016C0-->  <AD_ELEMENT_ID><![CDATA[521EA21E6E7777ABE040007F010016C0]]></AD_ELEMENT_ID>
 <!--521EA21E6E7777ABE040007F010016C0-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -25005,7 +25018,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--7079E2FD4AA8799EE040007F010104AD-->  <NAME><![CDATA[Commercial]]></NAME>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <PRINTNAME><![CDATA[Commercial]]></PRINTNAME>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <DESCRIPTION><![CDATA[Commercial Module]]></DESCRIPTION>
-<!--7079E2FD4AA8799EE040007F010104AD-->  <HELP><![CDATA[Commercial modules are only available to Professional Subscription active Instances whereas non commercial ones can be downloaded and installed in Community Edition Instances.
+<!--7079E2FD4AA8799EE040007F010104AD-->  <HELP><![CDATA[Commercial modules are only available to Professional and Basic Edition instances whereas non commercial ones can be downloaded and installed in Community Edition Instances.
 Commercial modules can have a fee to be payed before they can be installed.]]></HELP>
 <!--7079E2FD4AA8799EE040007F010104AD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7079E2FD4AA8799EE040007F010104AD--></AD_ELEMENT>
@@ -26334,8 +26347,8 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--828EE0AE80325FA1E040007F010067C7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--828EE0AE80325FA1E040007F010067C7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--828EE0AE80325FA1E040007F010067C7-->  <COLUMNNAME><![CDATA[PO_Financial_Account_ID]]></COLUMNNAME>
-<!--828EE0AE80325FA1E040007F010067C7-->  <NAME><![CDATA[PO Financial account]]></NAME>
-<!--828EE0AE80325FA1E040007F010067C7-->  <PRINTNAME><![CDATA[PO Financial account]]></PRINTNAME>
+<!--828EE0AE80325FA1E040007F010067C7-->  <NAME><![CDATA[PO Financial Account]]></NAME>
+<!--828EE0AE80325FA1E040007F010067C7-->  <PRINTNAME><![CDATA[PO Financial Account]]></PRINTNAME>
 <!--828EE0AE80325FA1E040007F010067C7-->  <DESCRIPTION><![CDATA[Financial account used to deposit / withdrawal money such as bank accounts or petty cash]]></DESCRIPTION>
 <!--828EE0AE80325FA1E040007F010067C7-->  <HELP><![CDATA[Financial account used to deposit / withdrawal money such as bank accounts or petty cash]]></HELP>
 <!--828EE0AE80325FA1E040007F010067C7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -26814,8 +26827,8 @@ The values it can contain are:
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <PRINTNAME><![CDATA[Tier]]></PRINTNAME>
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <DESCRIPTION><![CDATA[Tier for commercial modules]]></DESCRIPTION>
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <HELP><![CDATA[Commercial modules are defined in different tiers:
-1st Tier: The module can be installed in any Professional instance that has bought the module.
-2nd Tier: The module can be installed in Standard Professional Edition instances that have bought it.]]></HELP>
+1st Tier: The module can be installed in Professional and Basic Edition instances once it has been purchased.
+2nd Tier: The module can be installed in Professional Edition instances once it has been purchased.]]></HELP>
 <!--8BCFEC1D2693D1A8E040007F010135A9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8BCFEC1D2693D1A8E040007F010135A9--></AD_ELEMENT>
 
