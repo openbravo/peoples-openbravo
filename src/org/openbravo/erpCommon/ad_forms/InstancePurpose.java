@@ -41,7 +41,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InstancePurpose extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static final ValueListFilter availablePurposeFilter = new ValueListFilter("P", "D", "T");
+  private static final ValueListFilter availablePurposeFilter = new ValueListFilter("P", "D", "T",
+      "E");
 
   @Override
   public void init(ServletConfig config) {
