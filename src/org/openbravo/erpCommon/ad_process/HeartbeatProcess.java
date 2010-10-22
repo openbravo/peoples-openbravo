@@ -537,10 +537,12 @@ public class HeartbeatProcess implements Process {
             jsonObjectCQReturn.put(strQId, jsonResult);
           } else {
             log.warn("unknown Query Type: " + strQType);
+            jsonObjectCQReturn.put(strQId, "unknown query type: " + strQType);
           }
         } catch (Exception e) {
           // ignore exception
-          log.error("Error processing custom query: " + strQName, e);
+          jsonObjectCQReturn.put(strQId, "exeption executing query: " + e.getMessage());
+          log.warn("Error processing custom query: " + strQName);
         }
 
       }
