@@ -90,6 +90,11 @@ public class InstancePurpose extends HttpSecureAppServlet {
       } else {
         strWelcomeMsg = "IP_CLONED_COMM_MSG";
       }
+    } else {
+      String purpose = OBDal.getInstance().get(SystemInformation.class, "0").getInstancePurpose();
+      if (purpose != null && !purpose.equals("")) {
+        xmlDocument.setParameter("selectedPurpose", purpose);
+      }
     }
     xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
         strWelcomeMsg, vars.getLanguage())));
