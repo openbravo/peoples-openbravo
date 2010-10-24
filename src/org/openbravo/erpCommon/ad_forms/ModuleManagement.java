@@ -63,6 +63,7 @@ import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBErrorBuilder;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -147,8 +148,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
       final UninstallModule um = new UninstallModule(this, vars.getSessionValue("#sourcePath"),
           vars);
       um.execute(modules);
-      final OBError msg = um.getOBError();
+      OBError msg = um.getOBError();
       vars.setMessage("ModuleManagement|message", msg);
+      // clean module updates if there are any
+      boolean isCleaned = cleanModulesUpdates();
+      if (isCleaned) {
+        msg = OBErrorBuilder.buildMessage(msg, "Info", Utility.messageBD(this,
+            "ModuleUpdatesRemoved", vars.getLanguage()));
+      }
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
       log4j.info(modules);
     } else if (vars.commandIn("DISABLE")) {
@@ -1502,11 +1509,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
             // clean module updates if there are any
             boolean isCleaned = cleanModulesUpdates();
             if (isCleaned) {
-              myMessage = new OBError();
-              myMessage.setType("Info");
-              myMessage.setMessage(Utility.messageBD(this, "ModuleUpdatesRemoved", vars
-                  .getLanguage()));
+              myMessage = OBErrorBuilder.buildMessage(myMessage, "Info", Utility.messageBD(this,
+                  "ModuleUpdatesRemoved", vars.getLanguage()));
             }
+            myMessage = OBErrorBuilder.buildMessage(myMessage, "Success", Utility.messageBD(this,
+                "ModuleManagementSettingSaved", vars.getLanguage()));
 
           } finally {
             OBInterceptor.setPreventUpdateInfoChange(false);
@@ -1567,26 +1574,21 @@ public class ModuleManagement extends HttpSecureAppServlet {
             }
           }
         }
-        if (warn) {
-          myMessage = new OBError();
-          myMessage.setType("Warning");
-          myMessage.setMessage(Utility.messageBD(this, "CannotSetMinorEnforcements", vars
-              .getLanguage())
-              + warnMsg);
-        }
 
         // clean module updates if there are any
-        boolean isCleaned = cleanModulesUpdates();
+        final boolean isCleaned = cleanModulesUpdates();
         if (isCleaned) {
-          if (myMessage == null) {
-            myMessage = new OBError();
-            myMessage.setType("Info");
-            myMessage.setMessage(Utility
-                .messageBD(this, "ModuleUpdatesRemoved", vars.getLanguage()));
-          } else {
-            myMessage.setMessage(myMessage.getMessage() + "<br/>"
-                + Utility.messageBD(this, "ModuleUpdatesRemoved", vars.getLanguage()));
-          }
+          myMessage = OBErrorBuilder.buildMessage(myMessage, "Info", Utility.messageBD(this,
+              "ModuleUpdatesRemoved", vars.getLanguage()));
+        }
+
+        if (warn) {
+          myMessage = OBErrorBuilder.buildMessage(myMessage, "Warning", Utility.messageBD(this,
+              "CannotSetMinorEnforcements", vars.getLanguage())
+              + warnMsg);
+        } else {
+          myMessage = OBErrorBuilder.buildMessage(myMessage, "Success", Utility.messageBD(this,
+              "ModuleManagementSettingSaved", vars.getLanguage()));
         }
       }
 

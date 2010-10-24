@@ -59,6 +59,7 @@ import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -266,7 +267,7 @@ public class ImportModule {
 
   /**
    * Check the dependencies for a id. After checking dependencies modulesToInstall and
-   * modulesToUpdate arrays of modules are completed, thus it is possible to know wich are the
+   * modulesToUpdate arrays of modules are completed, thus it is possible to know which are the
    * modules that are needed to install and/or update in order to complete the installation.
    * 
    */
@@ -1464,7 +1465,8 @@ public class ImportModule {
   }
 
   /**
-   * Returns the current installed modules with its version
+   * Returns the current installed modules with its version (with the exception of those which are
+   * marked for deinstallation)
    * 
    * @return HashMap<String, String[][]> --> <ModuleId, VersionInfo[]>
    *         <ul>
@@ -1484,8 +1486,11 @@ public class ImportModule {
     try {
       OBContext.setAdminMode();
 
-      List<org.openbravo.model.ad.module.Module> modules = OBDal.getInstance().createCriteria(
-          org.openbravo.model.ad.module.Module.class).list();
+      OBCriteria<org.openbravo.model.ad.module.Module> obCriteria = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.module.Module.class);
+      obCriteria.add(Restrictions.not(Restrictions.eq(
+          org.openbravo.model.ad.module.Module.PROPERTY_STATUS, "U")));
+      List<org.openbravo.model.ad.module.Module> modules = obCriteria.list();
 
       for (org.openbravo.model.ad.module.Module mod : modules) {
 
