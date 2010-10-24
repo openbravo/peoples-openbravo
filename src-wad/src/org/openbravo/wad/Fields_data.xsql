@@ -334,6 +334,7 @@
       AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
         AND t.ad_tab_id = ?
         and ad_table.ad_table_id = t.ad_table_id
+      ORDER BY adcolumnid
       ]]>
     </Sql>
     <Parameter name="sql" optional="true" after="WHERE " text="ad_column.defaultvalue LIKE ? || '%' AND "/>
