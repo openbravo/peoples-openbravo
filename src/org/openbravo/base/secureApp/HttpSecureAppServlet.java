@@ -391,7 +391,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           boolean usageAuditEnabled = OBDal.getInstance().get(SystemInformation.class, "0")
               .isUsageauditenabled();
           if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null
-              && usageAuditEnabled) {
+              && usageAuditEnabled && vars1.getSessionValue("#AD_Session_ID") != null
+              && !"".equals(vars1.getSessionValue("#AD_Session_ID"))) {
             // Session Usage Audit
             SessionUsageAudit usageAudit = OBProvider.getInstance().get(SessionUsageAudit.class);
             usageAudit.setJavaClassName(this.getClass().getName());
