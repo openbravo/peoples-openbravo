@@ -18,7 +18,6 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -52,8 +51,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import javax.imageio.ImageIO;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 
 import net.sf.jasperreports.engine.JRException;
@@ -2670,6 +2669,9 @@ public class Utility {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
         }
         return defaultImageLogo(img, "web/images/CompanyLogo_big.png");
+      } else if ("banner-production".equals(logo)) {
+        img = OBDal.getInstance().get(SystemInformation.class, "0").getProductionBannerImage();
+        return defaultImageLogo(img, "web/images/blank.gif");
       } else {
         log4j.error("Logo key does not exist: " + logo);
         return getBlankImage();

@@ -57,6 +57,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="HQLWHERECLAUSE" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="HQLORDERBYCLAUSE" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_REFTABLE_DISPLAY">
         <reference local="AD_DISPLAY" foreign="AD_COLUMN_ID"/>
       </foreign-key>

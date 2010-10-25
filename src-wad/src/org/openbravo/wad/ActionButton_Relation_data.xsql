@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,7 @@
     <SqlMethodComment>The table references in dictionary</SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_COLUMN.columnname AS realname, AD_COLUMN.columnname, AD_COLUMN.AD_PROCESS_ID, 
+      SELECT AD_COLUMN.columnname AS realname, AD_COLUMN.columnname, AD_COLUMN.AD_PROCESS_ID, AD_PROCESS.AD_MODULE_ID,
       '' AS htmlfields, '' AS htmltext, '' AS htmlfields_Header, AD_COLUMN.AD_TABLE_ID, '' AS javacode, 
       AD_COLUMN.ad_reference_value_id, '' AS process_Params, '' AS process_code, '' AS additional_code, 
       '' AS process_Params_Code, AD_COLUMN.AD_PROCESS_ID AS xmlid, mo.classname, mom.mappingname,
@@ -60,7 +60,7 @@
     <SqlMethodComment>The table references in dictionary</SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_COLUMN.columnname AS realname, AD_COLUMN.columnname, AD_COLUMN.AD_PROCESS_ID, 
+      SELECT AD_COLUMN.columnname AS realname, AD_COLUMN.columnname, AD_COLUMN.AD_PROCESS_ID, AD_PROCESS.AD_MODULE_ID,
       AD_COLUMN.AD_TABLE_ID,  AD_COLUMN.ad_reference_value_id, 
       AD_COLUMN.AD_PROCESS_ID AS xmlid, mo.classname
       FROM AD_FIELD, AD_COLUMN, ad_model_object mo,

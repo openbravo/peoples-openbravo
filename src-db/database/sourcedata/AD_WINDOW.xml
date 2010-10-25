@@ -2881,22 +2881,11 @@
 <!--1005400002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005400002-->  <NAME><![CDATA[Heartbeat Configuration]]></NAME>
 <!--1005400002-->  <DESCRIPTION><![CDATA[Enable or disable the heartbeat process and configure internet connection proxy information ]]></DESCRIPTION>
-<!--1005400002-->  <HELP><![CDATA[During heartbeat processing, the data that is collected is as follows:
-    * System identifier
-    * Heartbeat date
-    * Activity and complexity rate
-    * Number of registered users
-    * Operating System and version
-    * Database and version
-    * Application server and version
-    * Web server and version
-    * Java version
-    * Apache-Ant version
-    * Openbravo version
-    * Openbravo install mode
-    * System external IP address
+<!--1005400002-->  <HELP><![CDATA[During heartbeat processing, some of the data that is collected. See the complete list of gathered data in http://wiki.openbravo.com/wiki/ERP/2.50/User_Manual/HeartBeat
 
-The heartbeat data is stored in a file controlled by Openbravo S.L.U. It is collected solely to gather and send data about your Openbravo product installation back to a service on Openbravo SLU's infrastructure to assist managing your Openbravo product installation. As a benefit to you, with this information, Openbravo SLU can offer you system configuration and component update information, sent automatically to you. Available updates may include, for example, Operating System updates, Database updates and Openbravo code. This data will be used on an aggregated and anonymous basis to generate reports identifying where and how the Openbravo product is being utilised.
+The Heartbeat server might return several queries to be executed locally. Consult the following link for the historic list of custom queries: http://wiki.openbravo.com/wiki/Projects/Heartbeat/Custom_Queries
+
+The heartbeat data is stored in a file controlled by Openbravo S.L.U. It is collected solely to gather and send data about your Openbravo product installation back to a service on Openbravo SLU's infrastructure to assist managing your Openbravo product installation. As a benefit to you, with this information, Openbravo SLU can offer you system configuration and component update information, sent automatically to you. Available updates may include, for example, Operating System updates, Database updates and Openbravo code. This data will be used on an aggregated and anonymous basis to generate reports identifying where and how the Openbravo product is being utilized.
 
 For further information, please consult http://wiki.openbravo.com/wiki/ERP/2.50/User_Manual/HeartBeat
 
@@ -2904,8 +2893,7 @@ Openbravo stores this information on servers in the USA and implements security 
 
 You may deactivate this feature by disabling the “enable heartbeat” box. In addition, you may exercise your right to access, rectify, oppose and cancel the data by writing to Openbravo, S.L.U. PO Box 5117, 31010 Pamplona, Navarra, Spain, or by email to privacy@openbravo.com.
 
-By enabling the heartbeat, you consent to the processing of this data and storing of the same in the USA as set out above.
-]]></HELP>
+By enabling the heartbeat, you consent to the processing of this data and storing of the same in the USA as set out above.]]></HELP>
 <!--1005400002-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1005400002-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--1005400002-->  <PROCESSING><![CDATA[N]]></PROCESSING>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2009 Openbravo S.L.U.
+ * Copyright (C) 2001-2010 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -18,22 +18,36 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT MO.ACTION AS TYPE, (CASE MO.ACTION WHEN 'X' THEN MO.AD_FORM_ID 
-                              WHEN 'P' THEN MO.AD_PROCESS_ID 
-                              WHEN 'R' THEN MO.AD_PROCESS_ID 
-                              WHEN 'T' THEN MO.AD_TASK_ID 
-                              WHEN 'S' THEN MO.AD_REFERENCE_ID
-                              WHEN 'F' THEN MO.AD_WORKFLOW_ID 
-                              WHEN 'C' THEN MO.AD_CALLOUT_ID 
-                              ELSE MO.AD_TAB_ID END) AS ID, 
-        m.name AS NAME /*Name is only maintained for backwards compatibility, now REPORT_TITLE is automatically filled*/
-        FROM AD_MODEL_OBJECT MO 
-             left join AD_Menu m on MO.ad_process_id = m.ad_process_id 
-                                  AND MO.action in ('P', 'R')
-                                  AND m.action in ('P', 'R')
-        WHERE MO.ClassName = ?
-        AND MO.IsDefault = 'Y'
-        AND MO.IsActive = 'Y'
+        SELECT mo.action AS TYPE, (CASE mo.action WHEN 'X' THEN mo.ad_form_id
+                                                  WHEN 'P' THEN mo.ad_process_id
+                                                  WHEN 'R' THEN mo.ad_process_id
+                                                  WHEN 'T' THEN mo.ad_task_id
+                                                  WHEN 'S' THEN mo.ad_reference_id
+                                                  WHEN 'F' THEN mo.ad_workflow_id
+                                                  WHEN 'C' THEN mo.ad_callout_id
+                                                  ELSE mo.ad_tab_id END) AS ID,
+          m.name AS NAME, /*Name is only maintained for backwards compatibility, now REPORT_TITLE is automatically filled*/
+          COALESCE((CASE mo.action WHEN 'X' THEN f.ad_module_id
+                                   WHEN 'P' THEN p.ad_module_id
+                                   WHEN 'R' THEN p.ad_module_id
+                                   WHEN 'T' THEN null
+                                   WHEN 'S' THEN r.ad_module_id
+                                   WHEN 'F' THEN w.ad_module_id
+                                   WHEN 'C' THEN c.ad_module_id
+                                   ELSE ta.ad_module_id END), mo.ad_module_id) AS ad_module_id
+        FROM ad_model_object mo
+             LEFT JOIN ad_menu m ON mo.ad_process_id = m.ad_process_id
+                                    AND mo.action IN ('P', 'R')
+                                    AND m.action IN ('P', 'R')
+             LEFT JOIN ad_form f ON mo.ad_form_id = f.ad_form_id
+             LEFT JOIN ad_process p ON mo.ad_process_id = p.ad_process_id
+             LEFT JOIN ad_reference r ON mo.ad_reference_id = r.ad_reference_id
+             LEFT JOIN ad_workflow w ON mo.ad_workflow_id = w.ad_workflow_id
+             LEFT JOIN ad_callout c ON mo.ad_callout_id = c.ad_callout_id
+             LEFT JOIN ad_tab ta ON mo.ad_tab_id = ta.ad_tab_id
+        WHERE mo.classname = ?
+          AND mo.isdefault = 'Y'
+          AND mo.isactive = 'Y'
       ]]></Sql>
       <Parameter name="className"/>
    </SqlMethod>

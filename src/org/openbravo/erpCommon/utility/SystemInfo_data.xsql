@@ -117,18 +117,6 @@
       	select Isproxyrequired from ad_system_info
     ]]></Sql>
    </SqlMethod>
-   <SqlMethod name="selectActivityRate" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	select count(*) from ad_session where created > now() - 30
-    ]]></Sql>
-   </SqlMethod> 
-   <SqlMethod name="selectComplexityRate" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	select count(*) from ad_org
-    ]]></Sql>
-   </SqlMethod>
    <SqlMethod name="selectNumRegisteredUsers" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -148,33 +136,5 @@
      ]]>
      </Sql>
      <Parameter name="systemIdentifier"/>
-   </SqlMethod>
-   <SqlMethod name="disableHeartbeat" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_SYSTEM_INFO set ISHEARTBEATACTIVE = 'N'
-     ]]>
-     </Sql>
-   </SqlMethod>
-   <SqlMethod name="updateWebserver" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_SYSTEM_INFO set WEBSERVER = ?, WEBSERVER_VERSION = ?
-     ]]>
-     </Sql>
-     <Parameter name="webserver"/>
-     <Parameter name="webserverVersion"/>
-   </SqlMethod>
-   <SqlMethod name="updateServletContainer" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_SYSTEM_INFO set SERVLET_CONTAINER = ?, SERVLET_CONTAINER_VERSION = ?
-     ]]>
-     </Sql>
-     <Parameter name="servletContainer"/>
-     <Parameter name="servletContainerVersion"/>
    </SqlMethod>
 </SqlClass>

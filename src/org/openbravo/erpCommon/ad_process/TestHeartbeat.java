@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,10 @@ import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
+/**
+ * This process activates and deactivates Heartebeat.
+ * 
+ */
 public class TestHeartbeat extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
@@ -83,10 +88,17 @@ public class TestHeartbeat extends HttpSecureAppServlet {
       try {
 
         if (sysInfo.isEnableHeartbeat() != null && sysInfo.isEnableHeartbeat()) {
-          // Sending beat
+          // Sending deactivation beat
           ProcessBundle beat = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars)
               .init(connectionProvider);
           new ProcessRunner(beat).execute(connectionProvider);
+        } else {
+          // Sending Declining beat
+          ProcessBundle bundle = new ProcessBundle(HeartbeatProcess.HB_PROCESS_ID, vars)
+              .init(connectionProvider);
+          Map<String, Object> params = bundle.getParams();
+          params.put("action", "DECLINE");
+          final String beatExecutionId = new ProcessRunner(bundle).execute(connectionProvider);
         }
 
         // Deactivating the process at SystemInfo

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 
@@ -59,6 +60,8 @@ public class ActiveInstanceProcess implements Process {
         && result[0].equals("@Success@")) {
       // now we have the activation key, lets save it
 
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+      sysInfo.setInstancePurpose(purpose);
       ActivationKey ak = new ActivationKey(publicKey, result[1]);
       String nonAllowedMods = ak.verifyInstalledModules();
       if (!nonAllowedMods.isEmpty()) {
@@ -78,7 +81,7 @@ public class ActiveInstanceProcess implements Process {
         }
       }
     } else {
-      // If there is error do not save keys, thus we maitain previous ones in case they were valid
+      // If there is error do not save keys, thus we maintain previous ones in case they were valid
       msg.setType("Error");
       msg.setMessage(result[0]);
       log.error(result[0]);
@@ -122,7 +125,7 @@ public class ActiveInstanceProcess implements Process {
 
     URL url = new URL(BUTLER_URL);
     try {
-      String result = HttpsUtils.sendSecure(url, content, CERT_ALIAS, "changeit");
+      String result = HttpsUtils.sendSecure(url, content);
       log.debug("Activation key response:" + result);
 
       return result.split("\n");

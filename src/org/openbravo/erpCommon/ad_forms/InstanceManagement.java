@@ -31,11 +31,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActiveInstanceProcess;
@@ -43,10 +45,15 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.HeartbeatLog;
 import org.openbravo.model.ad.system.System;
+import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -137,6 +144,12 @@ public class InstanceManagement extends HttpSecureAppServlet {
         ActivationKey.reload();
         msg.setType("Success");
         msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+
+        // When deactivating a cloned instance insert a dummy heartbeat log so it is not detected as
+        // a cloned instance anymore.
+        if (HeartbeatProcess.isClonedInstance()) {
+          insertDummyHBLog();
+        }
       }
     } catch (Exception e) {
       log4j.error("Error deactivating instance", e);
@@ -175,8 +188,18 @@ public class InstanceManagement extends HttpSecureAppServlet {
         sys.setActivationKey(buf.toString());
         sys.setInstanceKey(vars.getStringParameter("publicKey"));
         ActivationKey.setInstance(ak);
+        SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+        sysInfo.setInstancePurpose(ak.getProperty("purpose"));
+        OBDal.getInstance().save(sysInfo);
+
         msg.setType("Success");
         msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+
+        // When reactivating a cloned instance insert a dummy heartbeat log so it is not detected as
+        // a cloned instance anymore.
+        if (HeartbeatProcess.isClonedInstance()) {
+          insertDummyHBLog();
+        }
       }
     } catch (Exception e) {
       log4j.error(e);
@@ -403,17 +426,20 @@ public class InstanceManagement extends HttpSecureAppServlet {
       }
     }
 
+    final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     // Purpose combo
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
           Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"), Utility
               .getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement",
-          activationKey.isOPSInstance() ? activationKey.getProperty("purpose") : null);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement", sysInfo
+          .getInstancePurpose());
+      if (sysInfo.getInstancePurpose() != null) {
+        xmlDocument.setParameter("paramSelPurpose", sysInfo.getInstancePurpose());
+      }
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
-      comboTableData = null;
     } catch (Exception ex) {
-      ex.printStackTrace();
+      log4j.error(ex.getMessage(), ex);
       throw new ServletException(ex);
     }
 
@@ -422,7 +448,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
     }
 
     if (activationKey.isOPSInstance()) {
-      xmlDocument.setParameter("paramSelPurpose", activationKey.getProperty("purpose"));
       xmlDocument.setParameter("instanceNo", activationKey.getProperty("instanceno"));
     }
 
@@ -438,7 +463,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
    *          true in case it is activating, false in case it is canceling
    * @return true if everything went correctly
    */
-  private boolean activateCancelRemote(VariablesSecureApp vars, boolean activate) {
+  private boolean activateCancelRemote(VariablesSecureApp vars, boolean activate)
+      throws ServletException {
     boolean result = false;
     ProcessBundle pb = new ProcessBundle(null, vars);
 
@@ -469,13 +495,28 @@ public class InstanceManagement extends HttpSecureAppServlet {
       log4j.error("Error Activating instance", e);
       msg.setType("Error");
       msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
-      e.printStackTrace();
       result = false;
+    }
+
+    // When reactivating a cloned instance insert a dummy heartbeat log so it is not detected as
+    // a cloned instance anymore.
+    if (HeartbeatProcess.isClonedInstance() && result) {
+      insertDummyHBLog();
     }
 
     msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMessage()));
     vars.setMessage("InstanceManagement", msg);
     return result;
 
+  }
+
+  private void insertDummyHBLog() throws ServletException {
+    HeartbeatLog hbLog = OBProvider.getInstance().get(HeartbeatLog.class);
+    hbLog.setClient(OBDal.getInstance().get(Client.class, "0"));
+    hbLog.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
+    hbLog.setSystemIdentifier(SystemInfo.getSystemIdentifier());
+    hbLog.setDatabaseIdentifier(SystemInfo.getDBIdentifier());
+    hbLog.setMacIdentifier(SystemInfo.getMacAddress());
+    OBDal.getInstance().save(hbLog);
   }
 }

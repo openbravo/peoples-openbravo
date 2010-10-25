@@ -416,7 +416,7 @@ public class ActivationKey {
         Appender appender = appenders.nextElement();
         if (appender.getLayout() instanceof PatternLayout) {
           PatternLayout l = (PatternLayout) appender.getLayout();
-          opsLogId = getOpsLogId();
+          opsLogId = getOpsLogId() + " ";
           String conversionPattern = l.getConversionPattern();
 
           // do not set checksum in case it is already set
@@ -447,10 +447,10 @@ public class ActivationKey {
 
   }
 
-  private String getOpsLogId() {
+  public String getOpsLogId() {
     CRC32 crc = new CRC32();
     crc.update(getPublicKey().getBytes());
-    return Long.toHexString(crc.getValue()) + " ";
+    return Long.toHexString(crc.getValue());
   }
 
   private PublicKey getPublicKey(String strPublickey) {

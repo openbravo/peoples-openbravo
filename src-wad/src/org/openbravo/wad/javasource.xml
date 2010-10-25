@@ -157,6 +157,18 @@
   <SECTION id="sectionDetailDocumentsNew"/>
 </structure>
 
+<structure name="structureActionBtnService">
+  <FIELD id="ProcessIDsrv">adProcessId</FIELD>
+  <FIELD id="ProcessModulesrv">adModuleId</FIELD>
+  <SECTION id="sectionActionButtonsService"/>
+</structure>
+
+<structure name="structureActionBtnServiceJava">
+  <FIELD id="ProcessIDsrvJ">adProcessId</FIELD>
+  <FIELD id="ProcessModulesrvJ">adModuleId</FIELD>
+  <SECTION id="sectionActionButtonsServiceJava"/>
+</structure>
+
 <structure name="structure14">
   <FIELD id="ProcessID1">adProcessId</FIELD>
   <FIELD id="ButtonName1">columnname</FIELD>

@@ -36,7 +36,6 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=true" type="text/javascript"></script>
@@ -84,7 +83,7 @@ var baseDirectory = "../../../../../web/";
 </head>
 <body onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
 <form method="post" action="InstanceManagement.html" name="frmMain">
-  <input type="hidden" name="Command">
+  <input type="hidden" name="Command"></input>
   <input type="hidden" name="IsPopUpCall" value="1"></input>
   <input type="hidden" name="inpcRecordId" id="inpcRecordId"></input>
   <input type="hidden" name="inpAuxd" value="" id="functionSumAux1"></input>
@@ -263,7 +262,7 @@ var baseDirectory = "../../../../../web/";
                     <span class="LabelText">Subscription Status</span>
                   </td>
                   <td id="OPSActiveTitle" colspan="5" class="TitleCell" style="text-align:left;">
-                    <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:green;" id="subStatus_active">Active</span>.<span id="OPSExpirationTime">&nbsp;You have&nbsp;<span id="OPSdaysLeft">xx</span>&nbsp;days left before your&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional Subscription</a>&nbsp;expires.</span></span>
+                    <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:green;" id="subStatus_active">Active</span>.<span id="OPSExpirationTime">&nbsp;You have&nbsp;<span id="OPSdaysLeft">xx</span>&nbsp;days left before your&nbsp;<a class="LabelLink_noicon" href="http://www.openbravo.com/network" target="_blank">Openbravo Professional/Basic Edition subscription</a>&nbsp;expires.</span></span>
                   </td>
                   <td id="OPSConverted" colspan="5" class="TitleCell" style="text-align:left;">
                     <span class="Label_ReadOnly_Text" id="subStatus"><span style="color:orange;" id="subStatus_active">Subscription Canceled</span>.</span>

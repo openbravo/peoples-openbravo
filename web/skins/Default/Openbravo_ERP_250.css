@@ -5317,6 +5317,106 @@ td.Login_Home_Logo {
   background-image: url(../../../../utility/ShowImageLogo?logo=yourcompanybig);
 }
 
+.Login_Home_Community_Branding {
+  width: 608;
+  margin: 0 auto;
+}
+
+.Login_Home_Community_Branding_top {
+  height: 30;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/communityBrandingTop.png);
+}
+
+.Login_Home_Community_Branding_title {
+  height: 30;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: repeat-y;
+  background-position: center center;
+  background-image: url(Login/communityBrandingBackground.png);
+}
+
+.Login_Home_Community_Branding_unknown {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 25px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/banner-unknown.png);
+}
+
+.Login_Home_Community_Branding_development {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 25px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/banner-development.png);
+}
+
+.Login_Home_Community_Branding_evaluation {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/banner-evaluation.png);
+}
+
+.Login_Home_Community_Branding_testing {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/banner-testing.png);
+}
+
+.Login_Home_Community_Branding_production {
+  float: left;
+  height: 30;
+  width: 180;
+  margin: 0 0 0 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(../../../../utility/ShowImageLogo?logo=banner-production);
+}
+
+.Login_Home_Community_Branding_version {
+  font-weight: bold;
+  float: left;
+  height: 30;
+  width: 403;
+  line-height: 2em;
+  margin: 0 auto;
+}
+
+.Login_Home_Community_Branding_iframe {
+  height: 310;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: repeat-y;
+  background-position: center center;
+  background-image: url(Login/communityBrandingBackground.png);
+}
+
+.Login_Home_Community_Branding_bottom {
+  height: 30;
+  width: 608;
+  margin: 0 auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Login/communityBrandingBottom.png);
+}
+
 table.Login_ToolBar_bg {
   background-repeat: repeat-x;
   background-position: top center;
@@ -9959,6 +10059,12 @@ td.Popup_SeparatorBar_bg {
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Popup/WindowLogo/iconAuditTrail.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
+}
+
+.Popup_WindowLogo_Icon_instancePurpose {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Popup/WindowLogo/iconInstancePurpose.png);  /** sprite-ref: xxspritexx_V; sprite-margin-left: 16px; sprite-margin-right: 16px; sprite-margin-top: 16px; sprite-margin-bottom: 16px */
 }
 
 .Small_cancel {
