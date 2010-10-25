@@ -30123,7 +30123,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--20008B2C36E44251BB8F715DE450633C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--20008B2C36E44251BB8F715DE450633C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--20008B2C36E44251BB8F715DE450633C-->  <VALUE><![CDATA[IP_CLONED_OPS_MSG]]></VALUE>
-<!--20008B2C36E44251BB8F715DE450633C-->  <MSGTEXT><![CDATA[We have detected that this Openbravo Professional Subscription instance is a clone of
+<!--20008B2C36E44251BB8F715DE450633C-->  <MSGTEXT><![CDATA[We have detected that this Openbravo Professional/Basic Edition instance is a clone of
 another one.
 
 You need to go to the Instance Activation window to reactivate the clone. Here you will set
