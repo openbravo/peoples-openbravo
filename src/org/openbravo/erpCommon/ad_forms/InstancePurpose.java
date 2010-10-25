@@ -29,14 +29,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.HeartbeatLog;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InstancePurpose extends HttpSecureAppServlet {
@@ -131,10 +136,23 @@ public class InstancePurpose extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void savePurpose(String strPurpose) {
+  private void savePurpose(String strPurpose) throws ServletException {
     SystemInformation systemInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     systemInfo.setInstancePurpose(strPurpose);
     OBDal.getInstance().save(systemInfo);
+    if (HeartbeatProcess.isClonedInstance()) {
+      insertDummyHBLog();
+    }
+  }
+
+  private void insertDummyHBLog() throws ServletException {
+    HeartbeatLog hbLog = OBProvider.getInstance().get(HeartbeatLog.class);
+    hbLog.setClient(OBDal.getInstance().get(Client.class, "0"));
+    hbLog.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
+    hbLog.setSystemIdentifier(SystemInfo.getSystemIdentifier());
+    hbLog.setDatabaseIdentifier(SystemInfo.getDBIdentifier());
+    hbLog.setMacIdentifier(SystemInfo.getMacAddress());
+    OBDal.getInstance().save(hbLog);
   }
 
   @Override
