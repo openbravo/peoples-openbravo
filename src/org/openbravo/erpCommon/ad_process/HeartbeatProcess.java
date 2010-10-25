@@ -283,7 +283,6 @@ public class HeartbeatProcess implements Process {
         hbLog.setDatabase(systemInfo.getProperty("db"));
         hbLog.setDatabaseVersion(systemInfo.getProperty("dbVersion"));
         hbLog.setJavaVersion(systemInfo.getProperty("javaVersion"));
-        hbLog.setActive("Y".equals(systemInfo.getProperty("isheartbeatactive")));
         hbLog.setProxyRequired("Y".equals(systemInfo.getProperty("isproxyrequired")));
         hbLog.setProxyServer(systemInfo.getProperty("proxyServer"));
         hbLog.setUsageAuditEnabled("true".equals(systemInfo.getProperty(SystemInfo.Item.USAGE_AUDIT
