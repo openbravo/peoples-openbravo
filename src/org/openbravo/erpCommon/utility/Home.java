@@ -114,7 +114,7 @@ public class Home extends HttpSecureAppServlet {
       strVersion = OBVersion.getInstance().getMajorVersion();
       strVersion += " - ";
       strVersion += Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
-          OBContext.getOBContext().getLanguage().getLanguage());
+          "en_US");
       strVersion += " - ";
       strVersion += OBVersion.getInstance().getMP();
     } finally {

@@ -131,10 +131,13 @@ public class InstancePurpose extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void savePurpose(String strPurpose) {
+  private void savePurpose(String strPurpose) throws ServletException {
     SystemInformation systemInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     systemInfo.setInstancePurpose(strPurpose);
     OBDal.getInstance().save(systemInfo);
+    if (HeartbeatProcess.isClonedInstance()) {
+      InstanceManagement.insertDummyHBLog();
+    }
   }
 
   @Override

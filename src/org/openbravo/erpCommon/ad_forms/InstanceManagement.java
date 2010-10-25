@@ -510,7 +510,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
   }
 
-  private void insertDummyHBLog() throws ServletException {
+  static void insertDummyHBLog() throws ServletException {
     HeartbeatLog hbLog = OBProvider.getInstance().get(HeartbeatLog.class);
     hbLog.setClient(OBDal.getInstance().get(Client.class, "0"));
     hbLog.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
