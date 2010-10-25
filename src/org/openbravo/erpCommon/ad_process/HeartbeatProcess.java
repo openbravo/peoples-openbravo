@@ -642,14 +642,11 @@ public class HeartbeatProcess implements Process {
     OBContext.setAdminMode();
     try {
       HeartbeatLog lastBeat = getLastHBLog();
-      if (lastBeat != null
+      if ((lastBeat != null && lastBeat.getDatabaseIdentifier() != null && lastBeat
+          .getMacIdentifier() != null)
           && (!lastBeat.getSystemIdentifier().equals(SystemInfo.getSystemIdentifier())
               || !lastBeat.getDatabaseIdentifier().equals(SystemInfo.getDBIdentifier()) || !lastBeat
               .getMacIdentifier().equals(SystemInfo.getMacAddress()))) {
-        SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-        // sysInfo.setInstancePurpose(null);
-        sysInfo.setEnableHeartbeat(null);
-        OBDal.getInstance().save(sysInfo);
         return true;
       } else {
         return false;
