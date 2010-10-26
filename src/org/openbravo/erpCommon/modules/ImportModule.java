@@ -531,18 +531,6 @@ public class ImportModule {
    * {@link ImportModule#installLocalModule(Module, InputStream, boolean)} method.
    */
   private void installAllModules() {
-    // Do backup for all modules to update and to merge
-    for (Module module : modulesToUpdate) {
-      if (!prepareUpdate(module)) {
-        return;
-      }
-    }
-    for (Module module : modulesToMerge) {
-      if (!prepareUpdate(module)) {
-        return;
-      }
-    }
-
     // Do installation of new modules
     for (Module module : modulesToInstall) {
       InputStream obx = getTemporaryOBX(module);
@@ -553,6 +541,9 @@ public class ImportModule {
 
     // Do installation of updates
     for (Module module : modulesToUpdate) {
+      if (!prepareUpdate(module)) {
+        return;
+      }
       InputStream obx = getTemporaryOBX(module);
       if (obx == null || !installLocalModule(module, obx, false)) {
         return;
@@ -561,14 +552,18 @@ public class ImportModule {
 
     // Uninstall merges
     for (Module module : modulesToMerge) {
-      UninstallModule merge = new UninstallModule(pool, obDir, vars);
-      merge.execute(module.getModuleID());
-      if ("Success".equals(merge.getOBError().getType())) {
-        addLog(merge.getOBError().getMessage(), MSG_SUCCESS);
-      } else {
-        addLog(merge.getOBError().getMessage(), MSG_ERROR);
-        rollback();
+      // saves copy of files and removes module directory
+      if (!prepareUpdate(module)) {
         return;
+      }
+
+      // to uninstall, it is only pending to set status in DB
+      org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+          org.openbravo.model.ad.module.Module.class, module.getModuleID());
+      if (mod != null) {
+        mod.setStatus("U");
+        // TODO: trl
+        addLog("Uninstalled " + mod.getName(), MSG_SUCCESS);
       }
     }
     insertDBLog();
@@ -939,7 +934,7 @@ public class ImportModule {
       logLevel = level;
       log = new StringBuffer(m);
     } else if (level == logLevel)
-      log.append(m + "\n");
+      log.append(m + "<br>\n");
   }
 
   /**
