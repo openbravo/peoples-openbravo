@@ -108,6 +108,7 @@ public class ImportModule {
   // not satisfied
   private Module[] modulesToInstall = null;
   private Module[] modulesToUpdate = null;
+  private Module[] modulesToMerge = null;
   private StringBuffer log = new StringBuffer();
   private int logLevel = 0;
   VariablesSecureApp vars;
@@ -282,23 +283,29 @@ public class ImportModule {
 
     // In case core is in the list of modules to update, put in at the last module to update, so it
     // will be updated only in case the rest of modules were successfully downloaded and updated.
-    Module[] updateModuleAux = mid.getModulesToUpdate();
-    modulesToUpdate = new Module[updateModuleAux.length];
-    int i = 0;
+    List<Module> updates = new ArrayList<Module>();
+    List<Module> merges = new ArrayList<Module>();
+
     boolean updatingCore = false;
     Module core = null;
-    for (Module module : updateModuleAux) {
+    for (Module module : mid.getModulesToUpdate()) {
       if (!module.getModuleID().equals("0")) {
-        modulesToUpdate[i] = module;
-        i++;
+        if ("true".equals(module.getAdditionalInfo().get("remove"))) {
+          merges.add(module);
+        } else {
+          updates.add(module);
+        }
       } else {
         updatingCore = true;
         core = module;
       }
     }
     if (updatingCore) {
-      modulesToUpdate[i] = core;
+      updates.add(core);
     }
+
+    modulesToUpdate = updates.toArray(new Module[0]);
+    modulesToMerge = merges.toArray(new Module[0]);
 
     checked = mid.isValidConfiguration();
 
@@ -687,6 +694,13 @@ public class ImportModule {
    */
   public Module[] getModulesToInstall() {
     return modulesToInstall;
+  }
+
+  /**
+   * Returns the list of modules to merge. This list is set by one of the checkDependencies methods.
+   */
+  public Module[] getModulesToMerge() {
+    return modulesToMerge;
   }
 
   /**
