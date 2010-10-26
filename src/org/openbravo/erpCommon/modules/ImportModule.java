@@ -531,6 +531,19 @@ public class ImportModule {
    * {@link ImportModule#installLocalModule(Module, InputStream, boolean)} method.
    */
   private void installAllModules() {
+    // Do backup for all modules to update and to merge
+    for (Module module : modulesToUpdate) {
+      if (!prepareUpdate(module)) {
+        return;
+      }
+    }
+    for (Module module : modulesToMerge) {
+      if (!prepareUpdate(module)) {
+        return;
+      }
+    }
+
+    // Do installation of new modules
     for (Module module : modulesToInstall) {
       InputStream obx = getTemporaryOBX(module);
       if (obx == null || !installLocalModule(module, obx, true)) {
@@ -538,12 +551,23 @@ public class ImportModule {
       }
     }
 
+    // Do installation of updates
     for (Module module : modulesToUpdate) {
       InputStream obx = getTemporaryOBX(module);
-      if (!prepareUpdate(module)) {
+      if (obx == null || !installLocalModule(module, obx, false)) {
         return;
       }
-      if (obx == null || !installLocalModule(module, obx, false)) {
+    }
+
+    // Uninstall merges
+    for (Module module : modulesToMerge) {
+      UninstallModule merge = new UninstallModule(pool, obDir, vars);
+      merge.execute(module.getModuleID());
+      if ("Success".equals(merge.getOBError().getType())) {
+        addLog(merge.getOBError().getMessage(), MSG_SUCCESS);
+      } else {
+        addLog(merge.getOBError().getMessage(), MSG_ERROR);
+        rollback();
         return;
       }
     }
@@ -845,6 +869,34 @@ public class ImportModule {
         } catch (final Exception e) {
           log4j.error("Error restoring " + module.getName(), e);
         }
+      }
+    }
+
+    for (Module module : modulesToMerge) {
+      ImportModuleData moduleInDB = null;
+      try {
+        moduleInDB = ImportModuleData.getModule(pool, module.getModuleID());
+      } catch (Exception e) {
+        log4j.error("Error reading DB", e);
+      }
+
+      String backupFileName = obDir + "/backup_install/" + moduleInDB.javapackage + "-"
+          + moduleInDB.version + ".zip";
+      File backupFile = new File(backupFileName);
+      if (!backupFile.exists()) {
+        continue;
+      }
+      try {
+        File moduleDir = new File(obDir + "/modules/" + module.getPackageName());
+        if (moduleDir.exists()) {
+          log4j.info("Deleting " + module.getPackageName() + " to restore bakcup...");
+          Utility.deleteDir(new File(obDir + "/modules/" + module.getPackageName()));
+        }
+        log4j.info("Restoring " + backupFileName);
+        Zip.unzip(backupFileName, obDir + "/modules/" + module.getPackageName());
+
+      } catch (final Exception e) {
+        log4j.error("Error restoring " + module.getName(), e);
       }
     }
   }
@@ -1347,6 +1399,12 @@ public class ImportModule {
                   + modulesToUpdate[i].getVersionNo(), "U");
         }
       }
+
+      for (Module merge : modulesToMerge) {
+        ImportModuleData.insertLog(pool, user, merge.getModuleID(), merge.getModuleVersionID(),
+            merge.getName(), "Uninstalled module " + merge.getName() + " because of merge.", "D");
+      }
+
     } catch (final ServletException e) {
       log4j.error("Error inserting log", e);
     }
