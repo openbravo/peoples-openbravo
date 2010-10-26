@@ -104,7 +104,7 @@
         AND l.C_UOM_ID = uom.C_UOM_ID
         AND l.M_Product_ID=p.M_Product_ID 
         AND ic.C_Order_ID = ?
-        AND l.QtyOrdered > COALESCE(l.qtydelivered,0)
+        AND (l.QtyOrdered < 0 OR l.QtyOrdered > COALESCE(l.qtydelivered,0))
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION
         ORDER BY NAME, l.Line
@@ -193,7 +193,7 @@
         AND l.C_UOM_ID = uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
         AND ic.C_Order_ID = ?
-        AND l.QtyOrdered > COALESCE(l.qtydelivered,0)
+        AND (l.QtyOrdered < 0 OR l.QtyOrdered > COALESCE(l.qtydelivered,0))
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
         l.C_UOM_ID,uom.UOMSymbol,uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
         ORDER BY NAME, l.Line
