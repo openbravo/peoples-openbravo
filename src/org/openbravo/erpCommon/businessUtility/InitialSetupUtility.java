@@ -1337,6 +1337,10 @@ public class InitialSetupUtility {
     String strXml = Utility.fileToString(datasetFile.getPath());
     myResult = myData.importDataFromXML(client, organization, strXml, dataset.getModule());
 
+    if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+        && !myResult.getErrorMessages().equals("null"))
+      return myResult;
+
     insertClientModule(client, dataset.getModule());
 
     return myResult;
