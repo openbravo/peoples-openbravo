@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COMMAND" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="COMMAND" primaryKey="false" required="true" type="NVARCHAR" size="200" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
