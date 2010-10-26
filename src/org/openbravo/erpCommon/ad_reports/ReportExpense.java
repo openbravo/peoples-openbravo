@@ -84,13 +84,14 @@ public class ReportExpense extends HttpSecureAppServlet {
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportExpense|currency",
           strUserCurrencyId);
       String strOutput = "html";
-       if (vars.commandIn("PDF")){
+      if (vars.commandIn("PDF")) {
         strOutput = "pdf";
-      printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
-          strPartner, strProject, strExpense, strCurrencyId, strOutput);
-        
-      } else printPageDataHtml(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
-          strPartner, strProject, strExpense, strCurrencyId);
+        printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
+            strPartner, strProject, strExpense, strCurrencyId, strOutput);
+
+      } else
+        printPageDataHtml(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
+            strPartner, strProject, strExpense, strCurrencyId);
     } else
       pageError(response);
   }
@@ -127,6 +128,14 @@ public class ReportExpense extends HttpSecureAppServlet {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
     }
+    for (int i = 0; i < data1.length; i++) {
+      String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
+      if (Integer.parseInt(count) == 0) {
+        advisePopUp(request, response, "ERROR", Utility
+            .messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this,
+            "NoConversionDayUom", vars.getLanguage()));
+      }
+    }
     strConvRateErrorMsg = myMessage.getMessage();
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
@@ -148,10 +157,10 @@ public class ReportExpense extends HttpSecureAppServlet {
     }
   }
 
-private void printPageDataPDF(HttpServletRequest request, HttpServletResponse response,
+  private void printPageDataPDF(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId,
-      String strPartner, String strProject, String strExpense, String strCurrencyId, String strOutput) throws IOException,
-      ServletException {
+      String strPartner, String strProject, String strExpense, String strCurrencyId,
+      String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PDF");
     String discard[] = { "sectionPartner" };
@@ -177,6 +186,14 @@ private void printPageDataPDF(HttpServletRequest request, HttpServletResponse re
             (strExpense.equals("time") ? "Y" : ""), (strExpense.equals("expense") ? "N" : ""));
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      }
+    }
+    for (int i = 0; i < data1.length; i++) {
+      String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
+      if (Integer.parseInt(count) == 0) {
+        advisePopUp(request, response, "ERROR", Utility
+            .messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this,
+            "NoConversionDayUom", vars.getLanguage()));
       }
     }
     strConvRateErrorMsg = myMessage.getMessage();
