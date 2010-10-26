@@ -31004,7 +31004,8 @@ This column is already checked as key: ]]></MSGTEXT>
 
 Thank you for downloading and supporting our open source ERP.
 
-Since this is the first time that you login, please select the purpose of this instance. Learn more.]]></MSGTEXT>
+Since this is the first time that you login, please select the purpose of this instance. Learn more:
+http://wiki.openbravo.com/wiki/ERP/2.50/Configuration_Manual/Getting_started#Configuring_the_Instance_Purpose]]></MSGTEXT>
 <!--5319728ED743474AA75BB9BBF8F08321-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--5319728ED743474AA75BB9BBF8F08321-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5319728ED743474AA75BB9BBF8F08321--></AD_MESSAGE>
