@@ -555,6 +555,7 @@ public class ModelProvider implements OBSingleton {
     newProp.setMandatory(true);
     newProp.setDomainType(idProperty.getDomainType());
     newProp.setColumnName(idProperty.getColumnName());
+    newProp.setColumnId(idProperty.getColumnId());
     newProp.setTargetEntity(idProperty.getTargetEntity());
     newProp.setReferencedProperty(idProperty.getTargetEntity().getIdProperties().get(0));
     newProp.setOneToOne(true);
