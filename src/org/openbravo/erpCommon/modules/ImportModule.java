@@ -433,6 +433,11 @@ public class ImportModule {
               return;
             }
           }
+          for (Module module : modulesToMerge) {
+            if (!prepareUpdate(module)) {
+              return;
+            }
+          }
 
           // Just pick the first module, to install/update as the rest of them are inside the obx
           // file
@@ -440,6 +445,8 @@ public class ImportModule {
               : modulesToUpdate[0];
           installLocalModule(module, file,
               (modulesToInstall != null && modulesToInstall.length > 0));
+
+          uninstallMerges();
         } else { // install remotely
           execute();
         }
@@ -619,13 +626,28 @@ public class ImportModule {
       }
     }
 
-    // Uninstall merges
     for (Module module : modulesToMerge) {
       // saves copy of files and removes module directory
       if (!prepareUpdate(module)) {
         return;
       }
+    }
 
+    uninstallMerges();
+
+    insertDBLog();
+  }
+
+  /**
+   * All modules marked as merged will be uninsntalled, the module directory should have been
+   * already removed, so it is only pending to set the module as uninstalled
+   */
+  private void uninstallMerges() {
+    if (modulesToMerge == null) {
+      return;
+    }
+
+    for (Module module : modulesToMerge) {
       // to uninstall, it is only pending to set status in DB
       org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
           org.openbravo.model.ad.module.Module.class, module.getModuleID());
@@ -635,7 +657,6 @@ public class ImportModule {
         addLog("Uninstalled " + mod.getName(), MSG_SUCCESS);
       }
     }
-    insertDBLog();
   }
 
   /**
