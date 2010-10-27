@@ -262,6 +262,8 @@ public class ImportModule {
       }
     }
 
+    modulesToMerge = mergesList.toArray(new Module[0]);
+
     errors = new OBError();
     checked = VersionUtility.checkLocal(vars, modulesToInstall, modulesToUpdate, modulesToMerge,
         errors);
@@ -1315,7 +1317,7 @@ public class ImportModule {
         obxInputStream.closeEntry();
         foundPrefix = true;
       } else if (entry.getName().replace("\\", "/").endsWith(
-          "/src-db/database/model/tables/AD_MODULE_MERGE.xml")) {
+          "/src-db/database/sourcedata/AD_MODULE_MERGE.xml")) {
         Vector<DynaBean> dynMerges = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
         for (DynaBean merge : dynMerges) {
           merges.put((String) merge.get("MERGED_MODULE_UUID"), (String) merge.get("AD_MODULE_ID"));
