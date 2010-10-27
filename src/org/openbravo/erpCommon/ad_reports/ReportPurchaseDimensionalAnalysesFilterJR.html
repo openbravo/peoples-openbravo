@@ -76,6 +76,11 @@ function validate(action)
 			return false;
 		}
 	}
+    if (frm.inpShown.length == 0) {
+        setWindowElementFocus(frm.inpShown);
+        showJSMessage(7);
+        return false;
+    }
 	markCheckedAllElements(frm.inpmProductId_IN);
 	markCheckedAllElements(frm.inpcBPartnerId_IN);
 	markCheckedAllElements(frm.inpShown);
