@@ -653,8 +653,7 @@ public class ImportModule {
           org.openbravo.model.ad.module.Module.class, module.getModuleID());
       if (mod != null) {
         mod.setStatus("U");
-        // TODO: trl
-        addLog("Uninstalled " + mod.getName(), MSG_SUCCESS);
+        addLog("@MergeUninstalled@ " + mod.getName(), MSG_SUCCESS);
       }
     }
   }
