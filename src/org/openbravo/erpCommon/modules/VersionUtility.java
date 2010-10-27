@@ -367,8 +367,8 @@ public class VersionUtility {
     if (data != null) {
       Ver ver = new Ver();
       ver.version = data.version;
-      ver.dependencies = fillDependencies(ver.verId);
-      ver.includes = fillIncludes(ver.verId);
+      ver.dependencies = fillDependencies(mod.modId);
+      ver.includes = fillIncludes(mod.modId);
       hashVer.put(ver.version, ver);
 
       /** in the local database there is only one version by module */
