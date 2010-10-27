@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
@@ -633,8 +635,23 @@ public class HeartbeatProcess implements Process {
   public static boolean isShowInstancePurposeRequired() {
     final SystemInformation systemInformation = OBDal.getInstance().get(SystemInformation.class,
         "0");
-    return (systemInformation.getInstancePurpose() == null || systemInformation
-        .getInstancePurpose().isEmpty());
+    if (systemInformation.getInstancePurpose() == null
+        || systemInformation.getInstancePurpose().isEmpty()) {
+      if (ActivationKey.isActiveInstance()) {
+        systemInformation.setInstancePurpose(ActivationKey.getInstance().getProperty("purpose"));
+        OBDal.getInstance().save(systemInformation);
+        OBDal.getInstance().flush();
+        try {
+          OBDal.getInstance().getConnection().commit();
+        } catch (SQLException e) {
+          // ignore exception on commit
+          log.error("Error on commit", e);
+        }
+        return false;
+      }
+      return true;
+    }
+    return false;
   }
 
   public static boolean isClonedInstance() throws ServletException {
