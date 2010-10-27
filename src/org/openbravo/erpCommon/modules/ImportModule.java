@@ -252,7 +252,8 @@ public class ImportModule {
       org.openbravo.model.ad.module.Module mergedDALModule = OBDal.getInstance().get(
           org.openbravo.model.ad.module.Module.class, merge.getKey());
       if (mergedDALModule != null) {
-        // Merged module is installed locally, add it as merge to uninstall.
+        // Merged module is installed locally, add it as merge to uninstall. In case it is not
+        // installed, it does not make sense to show any message to user.
         Module mergedModule = getWsModuleFromDalModule(mergedDALModule);
         HashMap<String, String> additionalInfo = new HashMap<String, String>();
         additionalInfo.put("remove", "true");
