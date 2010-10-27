@@ -36,7 +36,7 @@
       return;
     }
     if(typeof internetConnection !== 'undefined') {
-      iframe.src = communityBrandingUrl;
+      iframe.src = document.location.protocol + communityBrandingUrl;
       return;
     }
     iframe.src = staticUrl;
