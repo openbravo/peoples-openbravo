@@ -89,21 +89,24 @@ public class Home extends HttpSecureAppServlet {
   }
 
   private static String getPurpose() {
-    String strPurpose = "";
     OBContext.setAdminMode();
     try {
       String strPurposeCode = OBDal.getInstance().get(
           org.openbravo.model.ad.system.SystemInformation.class, "0").getInstancePurpose();
-      if (strPurpose == null || "".equals(strPurposeCode)) {
-        return null;
-      } else {
-        strPurpose = Utility.getListValueName("InstancePurpose", strPurposeCode, OBContext
-            .getOBContext().getLanguage().getLanguage());
+      if (strPurposeCode == null || "".equals(strPurposeCode)) {
+        if (ActivationKey.isActiveInstance()) {
+          // use value from license if possible
+          strPurposeCode = ActivationKey.getInstance().getProperty("purpose");
+        } else {
+          // community instance without purpose configured
+          return null;
+        }
       }
+      return Utility.getListValueName("InstancePurpose", strPurposeCode, OBContext.getOBContext()
+          .getLanguage().getLanguage());
     } finally {
       OBContext.restorePreviousMode();
     }
-    return strPurpose;
   }
 
   private static String getVersion() {
