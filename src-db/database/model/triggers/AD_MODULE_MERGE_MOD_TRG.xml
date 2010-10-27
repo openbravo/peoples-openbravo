@@ -70,13 +70,13 @@ BEGIN
         :NEW.Merged_Module_Name != :OLD.Merged_Module_Name
        ) THEN
       --Cannot update an object in a module not in developement and without an active template
-      RAISE_APPLICATION_ERROR(-20000, '@20532@'); 
+      RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
   END IF;
   
   IF ((DELETING OR INSERTING) AND devModule='N') THEN
     --Cannot insert/delete objects in a module not in development.
-    RAISE_APPLICATION_ERROR(-20000, '@20533@'); 
+    RAISE_APPLICATION_ERROR(-20000, '@20533@');
   END IF;
 END AD_MODULE_MERGE_MOD_TRG
 ]]></body>
