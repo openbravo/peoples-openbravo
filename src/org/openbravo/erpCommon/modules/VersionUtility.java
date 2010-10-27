@@ -156,8 +156,8 @@ public class VersionUtility {
   }
 
   static private boolean checkDependency(String strModVersion, HashMap<String, Mod> modulesMap,
-      HashMap<String, Mod> modsToInstall, HashMap<String, Mod> modsToUpdate, Dep dependency,
-      Vector<String> errors) throws Exception {
+      HashMap<String, Mod> modsToInstall, HashMap<String, Mod> modsToUpdate,
+      Module[] modulesToMerge, Dep dependency, Vector<String> errors) throws Exception {
     boolean foundModule = false;
 
     Mod mod = null;
@@ -175,11 +175,24 @@ public class VersionUtility {
     if (foundModule && checkVersion(strModVersion, dependency, mod, errors)) {
       return true;
     }
-
-    if (modulesMap.get(dependency.modId) == null) {
-      // Appending not installed error message when module is not present
-      errors.add(strModVersion + " @CR_DependensOnModule@ \"" + dependency.modName
-          + "\", @CR_ModuleNotInstalled@");
+    if (!foundModule) {
+      // Module is not found, check whether it is merged
+      boolean merged = false;
+      if (modulesToMerge != null) {
+        for (Module merge : modulesToMerge) {
+          if (dependency.modId.equals(merge.getModuleID())) {
+            merged = true;
+            errors.add(merge.getName() + " @CR_IsMergedBy@ "
+                + merge.getAdditionalInfo().get("mergedWith") + " @CR_MergeCannotUninstall@ "
+                + strModVersion);
+          }
+        }
+      }
+      if (!merged && modulesMap.get(dependency.modId) == null) {
+        // Appending not installed error message when module is not present
+        errors.add(strModVersion + " @CR_DependensOnModule@ \"" + dependency.modName
+            + "\", @CR_ModuleNotInstalled@");
+      }
     }
 
     return false;
@@ -187,7 +200,8 @@ public class VersionUtility {
 
   static private boolean checkVersionDependency(String strModVersion,
       HashMap<String, Mod> modulesMap, HashMap<String, Mod> modsToInstall,
-      HashMap<String, Mod> modsToUpdate, Ver version, Vector<String> errors) throws Exception {
+      HashMap<String, Mod> modsToUpdate, Module[] modulesToMerge, Ver version, Vector<String> errors)
+      throws Exception {
     boolean checked = true;
     HashMap<String, Dep> depMap = version.dependencies;
     depMap.putAll(version.includes);
@@ -199,8 +213,8 @@ public class VersionUtility {
        * new modules or new updates are needed, they are added to they correspondent list and added
        * to errors vector. and the checked is run again with the new configuration
        */
-      if (!checkDependency(strModVersion, modulesMap, modsToInstall, modsToUpdate, depMap
-          .get(depKey), errors)) {
+      if (!checkDependency(strModVersion, modulesMap, modsToInstall, modsToUpdate, modulesToMerge,
+          depMap.get(depKey), errors)) {
         // If any dependency or include need a new module, it is added
         // to modsToInstall or if needed an update is added to
         // modsToUpdate
@@ -236,7 +250,7 @@ public class VersionUtility {
         Ver ver = verMap.get(verKey);
         String strModVersion = mod.name + "-" + ver.version;
         if (!checkVersionDependency(strModVersion, modulesInstalledLessToUpdate, modsToInstall,
-            modsToUpdate, ver, errors)) {
+            modsToUpdate, modulesToMerge, ver, errors)) {
           /**
            * When any dependency fails, the process continue to found all dependency errors, but the
            * configuration is marked as no valid
@@ -246,50 +260,7 @@ public class VersionUtility {
       }
     }
 
-    // Check merges: none of the merged modules should be part of the dependencies of any other
-    // module
-    if (modulesToMerge == null) {
-      return checked;
-    }
-    for (Module merge : modulesToMerge) {
-      if (mergeIsInDeps(merge, modsForCheckDependencies, errors)) {
-        checked = false;
-      }
-    }
-
     return checked;
-  }
-
-  /**
-   * Checks whether the merged module Id is part of the dependencies for another module.
-   * 
-   * @param mergedModuleId
-   * @param modsForCheckDependencies
-   * @param errors
-   * @return
-   */
-  private static boolean mergeIsInDeps(Module merge, HashMap<String, Mod> modsForCheckDependencies,
-      Vector<String> errors) {
-    if (modsForCheckDependencies == null) {
-      return false;
-    }
-
-    String mergedModuleId = merge.getModuleID();
-    for (Mod mod : modsForCheckDependencies.values()) {
-      for (Ver ver : mod.versions.values()) {
-        for (Dep dep : ver.dependencies.values()) {
-          if (mergedModuleId.equals(dep.modId)) {
-            // TODO: trl
-            errors.add("Module " + merge.getName() + " is merged by "
-                + merge.getAdditionalInfo().get("mergedWith")
-                + ", but it cannot be uninstalled because it is part of the dependencies of "
-                + mod.name + " " + ver.version);
-            return true;
-          }
-        }
-      }
-    }
-    return false;
   }
 
   /**
