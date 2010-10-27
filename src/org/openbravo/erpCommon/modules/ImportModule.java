@@ -35,8 +35,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -139,10 +141,11 @@ public class ImportModule {
     vars = _vars;
     obDir = obdir;
     pool = conn;
-    final File[] files = new File[3];
+    final File[] files = new File[4];
     files[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml");
     files[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
     files[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
+    files[3] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_MERGE.xml");
 
     verifyFilesExist(files);
 
@@ -164,6 +167,8 @@ public class ImportModule {
   /**
    * Check the dependencies for a file name. See
    * {@link #checkDependenciesId(String[], String[], HashMap)}.
+   * 
+   * @deprecated not used
    */
   public boolean checkDependenciesFileName(String fileName) throws Exception {
     final File file = new File(fileName);
@@ -185,7 +190,8 @@ public class ImportModule {
 
     boolean isUpdate = false;
     final Vector<DynaBean> modulesInObx = new Vector<DynaBean>();
-    getModulesFromObx(modulesInObx, dependencies, dbprefix, is);
+    getModulesFromObx(modulesInObx, dependencies, dbprefix, is, new HashMap<String, String>());
+    // don't care about merges at this stage
 
     for (final DynaBean module : modulesInObx) {
 
@@ -210,47 +216,56 @@ public class ImportModule {
   }
 
   /**
-   * Check the dependencies for a file. See
-   * {@link #checkDependenciesId(String[], String[], HashMap)}.
+   * Check the dependencies for a file. Used only for local installation from obx file.
+   * 
+   * @see {@link #checkDependenciesId(String[], String[], HashMap)}.
    */
   public boolean checkDependenciesFile(InputStream file) throws Exception {
-    if (installLocally) {
-      final Vector<DynaBean> modulesInObx = new Vector<DynaBean>();
-      getModulesFromObx(modulesInObx, dependencies, dbprefix, file);
 
-      for (final DynaBean module : modulesInObx) {
+    final Vector<DynaBean> modulesInObx = new Vector<DynaBean>();
+    Map<String, String> merges = new HashMap<String, String>();
 
-        String moduleId = (String) module.get("AD_MODULE_ID");
-        String version = (String) module.get("VERSION");
+    getModulesFromObx(modulesInObx, dependencies, dbprefix, file, merges);
 
-        if (ImportModuleData.moduleInstalled(pool, moduleId)) {
-          String installedVersion = ImportModuleData.selectVersion(pool, moduleId);
-          VersionUtility.VersionComparator comparator = new VersionUtility.VersionComparator();
-          if (comparator.compare(version, installedVersion) > 0) {
-            dynModulesToUpdate.add(module);
-          }
-        } else {
-          dynModulesToInstall.add(module);
+    for (final DynaBean module : modulesInObx) {
+
+      String moduleId = (String) module.get("AD_MODULE_ID");
+      String version = (String) module.get("VERSION");
+
+      if (ImportModuleData.moduleInstalled(pool, moduleId)) {
+        String installedVersion = ImportModuleData.selectVersion(pool, moduleId);
+        VersionUtility.VersionComparator comparator = new VersionUtility.VersionComparator();
+        if (comparator.compare(version, installedVersion) > 0) {
+          dynModulesToUpdate.add(module);
         }
+      } else {
+        dynModulesToInstall.add(module);
       }
-
-      modulesToInstall = dyanaBeanToModules(dynModulesToInstall, dependencies);
-      modulesToUpdate = dyanaBeanToModules(dynModulesToUpdate, dependencies);
-      errors = new OBError();
-      checked = VersionUtility.checkLocal(vars, modulesToInstall, modulesToUpdate, errors);
-    } else {
-      // if it is a remote installation for a file, just take the first
-      // module and
-      // pull the rest of them
-
-      getModulesFromObx(dynModulesToInstall, dependencies, new Vector<DynaBean>(), file);
-      final String[] installableModules = new String[1];
-      installableModules[0] = (String) dynModulesToInstall.get(0).get("AD_MODULE_ID");
-      HashMap<String, String> maturityLevels = new HashMap<String, String>();
-      maturityLevels.put("update.level", "500");
-      maturityLevels.put("install.level", "500");
-      checkDependenciesId(installableModules, new String[0], maturityLevels);
     }
+
+    modulesToInstall = dyanaBeanToModules(dynModulesToInstall, dependencies);
+    modulesToUpdate = dyanaBeanToModules(dynModulesToUpdate, dependencies);
+
+    // Check merges
+    List<Module> mergesList = new ArrayList<Module>();
+    for (Entry<String, String> merge : merges.entrySet()) {
+      org.openbravo.model.ad.module.Module mergedDALModule = OBDal.getInstance().get(
+          org.openbravo.model.ad.module.Module.class, merge.getKey());
+      if (mergedDALModule != null) {
+        // Merged module is installed locally, add it as merge to uninstall.
+        Module mergedModule = getWsModuleFromDalModule(mergedDALModule);
+        HashMap<String, String> additionalInfo = new HashMap<String, String>();
+        additionalInfo.put("remove", "true");
+        additionalInfo.put("mergedWith", getMergedWith(merge.getValue()));
+        mergedModule.setAdditionalInfo(additionalInfo);
+        mergesList.add(mergedModule);
+      }
+    }
+
+    errors = new OBError();
+    checked = VersionUtility.checkLocal(vars, modulesToInstall, modulesToUpdate, modulesToMerge,
+        errors);
+
     if (antInstall) {
       printAntDependenciesLog();
     }
@@ -310,6 +325,57 @@ public class ImportModule {
     checked = mid.isValidConfiguration();
 
     return checked;
+  }
+
+  /**
+   * Obtains a new {@link Module} from a {@link org.openbravo.model.ad.module.Module DAL Module}
+   * 
+   * @param dalModule
+   *          Original DAL module to convert
+   * @return new Module based on DAL module
+   */
+  private Module getWsModuleFromDalModule(org.openbravo.model.ad.module.Module dalModule) {
+    Module rt = new Module();
+    rt.setModuleID(dalModule.getId());
+    rt.setName(dalModule.getName());
+    rt.setVersionNo(dalModule.getVersion());
+    return rt;
+  }
+
+  /**
+   * Obtains the text to show for merged modules about the module that is merged within.
+   * 
+   * @param moduleId
+   * @return
+   */
+  private String getMergedWith(String moduleId) {
+    boolean found = false;
+    Module mergedWith = null;
+
+    for (Module module : modulesToInstall) {
+      if (moduleId.equals(module.getModuleID())) {
+        found = true;
+        mergedWith = module;
+        break;
+      }
+    }
+
+    if (!found) {
+      for (Module module : modulesToUpdate) {
+        if (moduleId.equals(module.getModuleID())) {
+          found = true;
+          mergedWith = module;
+          break;
+        }
+      }
+    }
+
+    if (found) {
+      return mergedWith.getName() + " " + mergedWith.getVersionNo();
+    } else {
+      // This shouldn't happen, the merging module should be found
+      return "??";
+    }
   }
 
   /**
@@ -1206,23 +1272,28 @@ public class ImportModule {
    * @param dModulesToInstall
    * @param dDependencies
    * @param obx
+   * @param merges
+   *          (output param) It contains all the merges defines in the obx as
+   *          (MergedModuleId,MergedBy)
    * @throws Exception
    */
   private void getModulesFromObx(Vector<DynaBean> dModulesToInstall,
-      Vector<DynaBean> dDependencies, Vector<DynaBean> dDBprefix, InputStream obx) throws Exception {
+      Vector<DynaBean> dDependencies, Vector<DynaBean> dDBprefix, InputStream obx,
+      Map<String, String> merges) throws Exception {
     final ZipInputStream obxInputStream = new ZipInputStream(obx);
     ZipEntry entry = null;
     boolean foundAll = false;
     boolean foundModule = false;
     boolean foundDependency = false;
     boolean foundPrefix = false;
+    boolean foundMerge = false;
     while (((entry = obxInputStream.getNextEntry()) != null) && !foundAll) {
 
       if (entry.getName().endsWith(".obx")) {
         // If it is a new module, install it
         final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
         obxInputStream.closeEntry();
-        getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba);
+        getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba, merges);
       } else if (entry.getName().replace("\\", "/").endsWith(
           "src-db/database/sourcedata/AD_MODULE.xml")) {
         final Vector<DynaBean> module = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
@@ -1243,9 +1314,18 @@ public class ImportModule {
         dDBprefix.addAll(getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream)));
         obxInputStream.closeEntry();
         foundPrefix = true;
-      } else
+      } else if (entry.getName().replace("\\", "/").endsWith(
+          "/src-db/database/model/tables/AD_MODULE_MERGE.xml")) {
+        Vector<DynaBean> dynMerges = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
+        for (DynaBean merge : dynMerges) {
+          merges.put((String) merge.get("MERGED_MODULE_UUID"), (String) merge.get("AD_MODULE_ID"));
+        }
         obxInputStream.closeEntry();
-      foundAll = foundModule && foundDependency && foundPrefix;
+        foundMerge = true;
+      } else {
+        obxInputStream.closeEntry();
+      }
+      foundAll = foundModule && foundDependency && foundPrefix && foundMerge;
     }
     obxInputStream.close();
   }
