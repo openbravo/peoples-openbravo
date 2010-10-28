@@ -64,6 +64,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -647,14 +648,22 @@ public class ImportModule {
       return;
     }
 
-    for (Module module : modulesToMerge) {
-      // to uninstall, it is only pending to set status in DB
-      org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
-          org.openbravo.model.ad.module.Module.class, module.getModuleID());
-      if (mod != null) {
-        mod.setStatus("U");
-        addLog("@MergeUninstalled@ " + mod.getName(), MSG_SUCCESS);
+    // do not update the audit info here, as its a local config change, which should not be
+    // treated as 'local changes' by i.e. update.database
+    try {
+      OBInterceptor.setPreventUpdateInfoChange(true);
+      for (Module module : modulesToMerge) {
+        // to uninstall, it is only pending to set status in DB
+        org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+            org.openbravo.model.ad.module.Module.class, module.getModuleID());
+        if (mod != null) {
+          mod.setStatus("U");
+          addLog("@MergeUninstalled@ " + mod.getName(), MSG_SUCCESS);
+        }
       }
+      OBDal.getInstance().flush();
+    } finally {
+      OBInterceptor.setPreventUpdateInfoChange(false);
     }
   }
 
