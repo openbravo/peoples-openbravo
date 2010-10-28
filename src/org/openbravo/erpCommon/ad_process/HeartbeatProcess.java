@@ -373,6 +373,13 @@ public class HeartbeatProcess implements Process {
           log.warn("Incorrect number of orgs: "
               + systemInfo.getProperty(SystemInfo.Item.NUMBER_OF_ORGS.getLabel()));
         }
+        try {
+          hbLog.setRejectedLoginsDueConcUsers(Long.parseLong(systemInfo
+              .getProperty(SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel())));
+        } catch (NumberFormatException e) {
+          log.warn("Incorrect number of rejected logins: "
+              + SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel());
+        }
       }
       OBDal.getInstance().save(hbLog);
     } finally {
