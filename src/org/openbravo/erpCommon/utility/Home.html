@@ -30,6 +30,21 @@
 <script language="JavaScript" type="text/javascript" id="paramLanguage">var defaultLang = "en_US";</script>
 <script type="text/javascript" id="fieldUrls"></script>
 <script language="JavaScript" type="text/javascript">
+  function updatePurposeImage(purposeCode) {
+    var divPurpose = document.getElementById('cbPurpose');
+    if (purposeCode == 'D') {
+      divPurpose.className = 'Login_Home_Community_Branding_development';
+    } else if (purposeCode == 'P') {
+      divPurpose.className = 'Login_Home_Community_Branding_production';
+    } else if (purposeCode == 'T') {
+      divPurpose.className = 'Login_Home_Community_Branding_testing';
+    } else if (purposeCode == 'E') {
+      divPurpose.className = 'Login_Home_Community_Branding_evaluation';
+    } else {
+      divPurpose.className = 'Login_Home_Community_Branding_unknown';
+    }
+  }
+
   function setIframeUrl() {
     var iframe = document.getElementById('cbiframe');
     if(!iframe) {
