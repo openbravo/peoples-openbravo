@@ -19,8 +19,10 @@
 
 package org.openbravo.erpCommon.modules;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
@@ -32,9 +34,11 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.ModuleMerge;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
@@ -258,6 +262,27 @@ public class VersionUtility {
           checked = false;
         }
       }
+    }
+
+    // Check modules to install are not merged
+    if (modsToInstall != null) {
+      List<String> modsIdMerged = new ArrayList<String>();
+      if (modulesToMerge != null) {
+        for (Module merge : modulesToMerge) {
+          modsIdMerged.add(merge.getModuleID());
+        }
+      }
+      for (ModuleMerge merge : OBDal.getInstance().createCriteria(ModuleMerge.class).list()) {
+        modsIdMerged.add(merge.getMergedModuleUUID());
+      }
+
+      for (Mod module : modsToInstall.values()) {
+        if (modsIdMerged.contains(module.modId)) {
+          errors.add("Cannot install merged module " + module.name);
+          checked = false;
+        }
+      }
+
     }
 
     return checked;
