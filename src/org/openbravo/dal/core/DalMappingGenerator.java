@@ -191,10 +191,11 @@ public class DalMappingGenerator implements OBSingleton {
     // ignoring isUpdatable for now as this is primarily used
     // for ui and not for background processes
     // if (!p.isUpdatable() || p.isInactive()) {
-    if (p.isInactive()) {
+
+    if (p.isInactive() || p.getEntity().isView()) {
       sb.append(" update=\"false\"");
     }
-    if (p.isInactive()) {
+    if (p.isInactive() || p.getEntity().isView()) {
       sb.append(" insert=\"false\"");
     }
 
@@ -219,6 +220,13 @@ public class DalMappingGenerator implements OBSingleton {
       // "save-update\"
       if (p.isMandatory()) {
         sb.append(" not-null=\"true\"");
+      }
+
+      if (p.isInactive() || p.getEntity().isView()) {
+        sb.append(" update=\"false\"");
+      }
+      if (p.isInactive() || p.getEntity().isView()) {
+        sb.append(" insert=\"false\"");
       }
     }
     // sb.append(" cascade=\"save-update\"");
@@ -254,12 +262,21 @@ public class DalMappingGenerator implements OBSingleton {
         order = order.replace(order.length() - 1, order.length(), "");
         order.append("\"");
       }
-      sb.append(TAB2 + "<bag name=\"" + p.getName() + "\" cascade=\"all,delete-orphan\" " + order
-          + getAccessorAttribute() + " inverse=\"true\">" + NL);
+
+      String mutable = "";
+      String cascade = " cascade=\"all,delete-orphan\" ";
+      if (p.getEntity().isView() || p.getTargetEntity().isView()) {
+        mutable = " mutable=\"false\" ";
+        cascade = "";
+      }
+
+      sb.append(TAB2 + "<bag name=\"" + p.getName() + "\" " + cascade + order
+          + getAccessorAttribute() + mutable + " inverse=\"true\">" + NL);
       sb.append(TAB3 + "<key column=\"" + p.getReferencedProperty().getColumnName() + "\""
           + (p.getReferencedProperty().isMandatory() ? " not-null=\"true\"" : "") + "/>" + NL);
       sb.append(TAB3 + "<one-to-many entity-name=\"" + p.getTargetEntity().getName() + "\"/>" + NL);
       sb.append(TAB2 + "</bag>" + NL);
+
     }
     return sb.toString();
   }
