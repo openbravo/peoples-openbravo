@@ -1079,4 +1079,11 @@ export.database: exports database structure and data to xml files.
       </classpath>
     </java>
   </target>
+  
+  <target name="check.module.consistency">
+    <taskdef name="checkConsistency" classname="org.openbravo.erpCommon.modules.CheckLocalConsistency">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <checkConsistency userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
+  </target>
 </project>
