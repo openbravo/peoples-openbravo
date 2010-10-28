@@ -78,6 +78,8 @@ public class Home extends HttpSecureAppServlet {
     String strPurpose = getPurpose();
     if (strPurpose == null) {
       strPurpose = "unknown";
+      xmlDocument.setParameter("cbPurposeTooltip", Utility.messageBD(myPool,
+          "Home_Purpose_Tooltip", vars.getLanguage()));
     }
     xmlDocument.setParameter("cbPurpose", strPurpose.toLowerCase());
     xmlDocument.setParameter("cbVersion", getVersion());

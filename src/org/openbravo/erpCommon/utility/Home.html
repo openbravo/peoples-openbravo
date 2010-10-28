@@ -34,12 +34,20 @@
     var divPurpose = document.getElementById('cbPurpose');
     if (purposeCode == 'D') {
       divPurpose.className = 'Login_Home_Community_Branding_development';
+      divPurpose.title = '';
+      divPurpose.alt = '';
     } else if (purposeCode == 'P') {
       divPurpose.className = 'Login_Home_Community_Branding_production';
+      divPurpose.title = '';
+      divPurpose.alt = '';
     } else if (purposeCode == 'T') {
       divPurpose.className = 'Login_Home_Community_Branding_testing';
+      divPurpose.title = '';
+      divPurpose.alt = '';
     } else if (purposeCode == 'E') {
       divPurpose.className = 'Login_Home_Community_Branding_evaluation';
+      divPurpose.title = '';
+      divPurpose.alt = '';
     } else {
       divPurpose.className = 'Login_Home_Community_Branding_unknown';
     }
@@ -130,7 +138,7 @@
                 <div id="communityBranding" class="Login_Home_Community_Branding" border="0">
                   <div class="Login_Home_Community_Branding_top"></div>
                   <div class="Login_Home_Community_Branding_title">
-                    <div class="Login_Home_Community_Branding_purpose" id="cbPurpose"></div>
+                    <div class="Login_Home_Community_Branding_purpose" alt="" title="" id="cbPurpose"></div>
                     <div class="Login_Home_Community_Branding_version" id="cbVersion">xx2.50 - Community Edition - MP23</div>
                   </div>
                   <div class="Login_Home_Community_Branding_iframe">

@@ -27,5 +27,7 @@
   <PARAMETER id="customJS" name="customJS" default="" />
   <PARAMETER id="fieldUrls" name="urls" />
   <PARAMETER id="cbPurpose" name="cbPurpose" attribute="class" replace="purpose"/>
+  <PARAMETER id="cbPurpose" name="cbPurposeTooltip" attribute="alt"/>
+  <PARAMETER id="cbPurpose" name="cbPurposeTooltip" attribute="title"/>
   <PARAMETER id="cbVersion" name="cbVersion"/>
 </REPORT>
