@@ -283,7 +283,7 @@ public class DalUtil {
     for (final Property p : source.getEntity().getProperties()) {
       final Object value = source.getValue(p.getName());
       if (p.isOneToMany()) {
-        if (copyChildren) {
+        if (copyChildren && !p.getTargetEntity().isView()) {
           final List<BaseOBObject> targetChildren = new ArrayList<BaseOBObject>();
           target.setValue(p.getName(), targetChildren);
           @SuppressWarnings("unchecked")
