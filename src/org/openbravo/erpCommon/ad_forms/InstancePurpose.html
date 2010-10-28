@@ -59,9 +59,10 @@
     window.close();
   }
   function buttonOK() {
-    if (document.frmMain.instancePurpose.value == null || document.frmMain.instancePurpose.value == "") {
+    var purpose = document.frmMain.instancePurpose;
+    if (purpose.value == null || purpose.value == "") {
       displayLogicElement('noPurposeSelected', true);
-      setWindowElementFocus(document.frmMain.instancePurpose);
+      setWindowElementFocus(purpose);
       return false;
     }
 
@@ -72,7 +73,24 @@
       openHeartbeat();
     if (nextPopup == 'R')
       openRegistration();
-    window.close();
+    if (!isWindowInMDIContext) {
+      var appFrame = getFrame('appFrame');
+      if (appFrame && !appFrame.updatePurposeImage) {
+        if (appFrame.document.getElementById('buttonRefresh')) {
+          appFrame.document.getElementById('buttonRefresh').onclick();
+        } else {
+          window.close();
+        }
+      } else if (appFrame) {
+        appFrame.updatePurposeImage(purpose.value);
+        window.close();
+      } else {
+        window.close();
+      }
+    } else {
+      window.close();
+    }
+
   }
   </script>
   <script language="JavaScript" type="text/javascript">
