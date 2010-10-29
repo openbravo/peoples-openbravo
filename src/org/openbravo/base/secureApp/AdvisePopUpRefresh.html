@@ -37,12 +37,15 @@ var baseDirectory = "../../../../../web/";
 	}
 
 	function closeThisPage() {
-		var refreshButton = opener.document.getElementById('buttonRefresh');
-		if(refreshButton)
-			refreshButton.onclick();	
-		top.close();
-		return true;
-	}
+    if (opener) {
+      var refreshButton = opener.document.getElementById('buttonRefresh');
+      if (refreshButton) {
+        refreshButton.onclick();
+      }
+    }
+    closePage();
+    return true;
+  }
 </script>
 </head>
 

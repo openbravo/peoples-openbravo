@@ -33,13 +33,6 @@
   <script language="JavaScript" type="text/javascript" id="paramDirectory">
   var baseDirectory="../../../../../web/";
   </script>
-  <script language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
-  function closeThisPage() {
-    window.close();
-    return true;
-  }
-
-  </script>
   <script language="JavaScript" type="text/javascript">
   function onLoadDo(){
     this.windowTables = new Array(
@@ -57,8 +50,7 @@
   
   function viewModule(id) {
     document.frmMain.inpcRecordId.value = id;
-
-    openServletNewWindow('DETAIL', false, 'ModuleManagement.html', 'Details', null, false, 600, 900,null,null,false);
+    openServletNewWindow('DETAIL', false, 'ModuleManagement.html', 'Details', null, false, 600, 900, null, null, false, null, true);
     return false;
   }
   </script>    
@@ -306,7 +298,7 @@
                   <button type="button" 
                     id="buttonCancel" 
                     class="ButtonLink" 
-                    onclick="closeThisPage();return false;" 
+                    onclick="closePage();return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

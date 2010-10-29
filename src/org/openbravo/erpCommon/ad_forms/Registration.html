@@ -33,16 +33,20 @@
   function configure() {
 	var regURL = typeof url === 'undefined' ? 'http://www.openbravo.com/embedreg/form' : url;
   	submitCommandForm('REGISTER', false, null);
-  	window.opener.submitCommandForm('DEFAULT', false, null, regURL, '_blank', null, false);
-  	self.close();
+    if (!isWindowInMDIContext) {
+      window.opener.submitCommandForm('DEFAULT', false, null, regURL, '_blank', null, false);
+    } else {
+      submitCommandForm('DEFAULT', false, null, regURL, '_blank', null, false);
+    }
+  	closePage();
   }
   function disable() {
   	submitCommandForm('DISABLE', false, null);
-  	window.close();
+  	closePage();
   }
   function postpone() {
   	submitCommandForm('POSTPONE', false, null);
-  	window.close();
+  	closePage();
   }
   </script>
 

@@ -44,11 +44,6 @@
   var baseDirectory="../../../../../web/";
   </script>
   <script language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
-  function closeThisPage() {
-    window.close();
-    return true;
-  }
-
   function viewModule(id) {
     document.frmMain.inpcRecordId.value = id;
     submitCommandForm('DETAIL', false, null, 'ModuleManagement.html', '_self', null, true);return false;
@@ -281,7 +276,7 @@
                   <button type="button" 
                     id="buttonCancel" 
                     class="ButtonLink" 
-                    onclick="closeThisPage();return false;" 
+                    onclick="closePage();return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

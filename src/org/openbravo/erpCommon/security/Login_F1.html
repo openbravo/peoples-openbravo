@@ -76,7 +76,7 @@ function redirectWhenPopup() {
 }
 
 function redirectWhenInsideMDI() {
-  if (isWindowInMDITab) {
+  if (isWindowInMDIPage) {
     var LayoutMDI = getFrame('LayoutMDI');
     if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === "object") {
       LayoutMDI.location.href = parent.window.location.href;
@@ -121,7 +121,7 @@ function redirectWhenInsideMDI() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if ((!revisionControl('8742')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('8778')) || (isOpsInstance() != isOpsInstanceCached())) {
       alert(cacheMsg);
     }
 
