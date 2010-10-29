@@ -79,7 +79,7 @@ public class SystemInfo {
   private static Date lastLogin;
   private static Long numberOfLogins;
   private static SimpleDateFormat sd;
-  private static int numberOfLonginsThisMonth = 0;
+  private static int numberOfLoginsThisMonth = 0;
   private static int numberOfRejectedLoginsDueConcUsersThisMonth = 0;
   private static BigDecimal avgUsers = BigDecimal.ZERO;
   private static BigDecimal usagePercentageTime = BigDecimal.ZERO;
@@ -213,7 +213,7 @@ public class SystemInfo {
       systemInfo.put(i, usagePercentageTime.toString());
       break;
     case TOTAL_LOGINS_LAST_MOTH:
-      systemInfo.put(i, Integer.toString(numberOfLonginsThisMonth));
+      systemInfo.put(i, Integer.toString(numberOfLoginsThisMonth));
       break;
     case NUMBER_OF_CLIENTS:
       systemInfo.put(i, getNumberOfClients());
@@ -601,7 +601,7 @@ public class SystemInfo {
       List<Event> events = new ArrayList<Event>();
       List<Session> sessions = qSession.list();
 
-      numberOfLonginsThisMonth = sessions.size();
+      numberOfLoginsThisMonth = sessions.size();
       for (Session session : sessions) {
         Event newSession = new Event();
         newSession.eventDate = session.getCreationDate();
@@ -669,7 +669,7 @@ public class SystemInfo {
     qSession.add(Expression.ge(Session.PROPERTY_CREATIONDATE, startOfPeriod.getTime()));
     qSession.add(Expression.eq(Session.PROPERTY_LOGINSTATUS, "CUR"));
 
-    numberOfRejectedLoginsDueConcUsersThisMonth = qSession.list().size();
+    numberOfRejectedLoginsDueConcUsersThisMonth = qSession.count();
   }
 
   /**
