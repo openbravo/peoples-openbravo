@@ -1621,6 +1621,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--186-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--186-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--186-->  <HQLWHERECLAUSE><![CDATA[salesTransaction=true]]></HQLWHERECLAUSE>
 <!--186--></AD_TAB>
 
 <!--187--><AD_TAB>
@@ -3328,6 +3329,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--294-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--294-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--294-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--294-->  <HQLWHERECLAUSE><![CDATA[salesTransaction=false]]></HQLWHERECLAUSE>
 <!--294--></AD_TAB>
 
 <!--295--><AD_TAB>
