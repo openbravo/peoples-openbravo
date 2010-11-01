@@ -766,7 +766,7 @@ export.database: exports database structure and data to xml files.
   -->
   <target name="apply.module" depends="compile.apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.src}'" />
+      <arg line="'${base.src}' '${friendlyWarnings}'" />
       <classpath refid="apply.module.runtime.classpath" />
     </java>
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
