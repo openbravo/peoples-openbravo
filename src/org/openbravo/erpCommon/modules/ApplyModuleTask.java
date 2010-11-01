@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.database.CPStandAlone;
 
@@ -39,10 +40,15 @@ public class ApplyModuleTask extends DalInitializingTask {
 
   public static void main(String[] args) {
     final String srcPath = args[0];
+    String friendlyWarnings = "false";
+    if (args.length >= 2) {
+      friendlyWarnings = args[1];
+    }
     final File srcDir = new File(srcPath);
     final File baseDir = srcDir.getParentFile();
     try {
       final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
+      antExecutor.setProperty("friendlyWarnings", friendlyWarnings);
       antExecutor.runTask("apply.module.forked");
     } catch (final Exception e) {
       throw new OBException(e);
@@ -50,6 +56,11 @@ public class ApplyModuleTask extends DalInitializingTask {
   }
 
   public void execute() {
+    // always do friendly warnings for the dal layer during apply module
+    // the unfriendly warnings are shown in generate.entities anyway
+    // if the correct property is not set.
+    OBPropertiesProvider.setFriendlyWarnings(true);
+
     // Initialize DAL only in case it is needed: modules have refrence data to be loaded
     CPStandAlone pool = new CPStandAlone(propertiesFile);
     ApplyModuleData[] ds = null;
@@ -73,6 +84,14 @@ public class ApplyModuleTask extends DalInitializingTask {
       }
       // do not execute if not reference data nor translations present
     }
+  }
+
+  public boolean getFriendlyWarnings() {
+    return OBPropertiesProvider.isFriendlyWarnings();
+  }
+
+  public void setFriendlyWarnings(boolean doFriendlyWarnings) {
+    OBPropertiesProvider.setFriendlyWarnings(doFriendlyWarnings);
   }
 
   @Override
