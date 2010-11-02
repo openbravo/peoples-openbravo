@@ -24484,7 +24484,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--5AC5B513B969D9D1E040007F01001637-->  <NAME><![CDATA[Export allowed]]></NAME>
 <!--5AC5B513B969D9D1E040007F01001637-->  <PRINTNAME><![CDATA[Export allowed]]></PRINTNAME>
 <!--5AC5B513B969D9D1E040007F01001637-->  <DESCRIPTION><![CDATA[This data set can be exported]]></DESCRIPTION>
-<!--5AC5B513B969D9D1E040007F01001637-->  <HELP><![CDATA[This data set can be exported.]]></HELP>
+<!--5AC5B513B969D9D1E040007F01001637-->  <HELP><![CDATA[This data set can be exported. There are datasets which are not meant to be exported, such as the AD dataset (which contains the set of tables which define the Application Dictionary), or the Client dataset. If the dataset needs to be exported via the Export Dataset functionality, this check should be marked. If it's going to be used for another purpose, and its data content doesn't need to be included inside the modules, then it should be unchecked. ]]></HELP>
 <!--5AC5B513B969D9D1E040007F01001637-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5AC5B513B969D9D1E040007F01001637--></AD_ELEMENT>
 
