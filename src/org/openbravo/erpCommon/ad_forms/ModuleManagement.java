@@ -787,6 +787,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
             }
           }
         }
+        // Add additional messages that can come from CR
+        OBError additionalMsg = im.getCheckError();
+        if (!additionalMsg.getMessage().isEmpty()) {
+          if (message == null) {
+            message = new OBError();
+            message.setType("Info");
+            message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
+          } else {
+            message.setMessage(message.getMessage() + "\n");
+          }
+          message.setMessage(message.getMessage() + additionalMsg.getMessage());
+        }
 
       } else { // Dependencies not satisfied, do not show continue button
         message = im.getCheckError();
