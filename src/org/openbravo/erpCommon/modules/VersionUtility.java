@@ -683,11 +683,6 @@ public class VersionUtility {
     boolean checked = installModulesLocal(modulesToInstall, modulesToUpdate, modulesToMerge,
         vecErrors);
 
-    // After checking dependencies are satisfied, check for merges
-    if (checked && modulesToMerge != null) {
-
-    }
-
     String[] errors = vecErrors.toArray(new String[0]);
     getOBError(obErrors, pool, vars, errors);
     return checked;
