@@ -41,15 +41,15 @@ if (typeof arrMessages === 'undefined') {
 
   if(typeof getFrame === 'function' && getFrame('frameMenu')) {
     arrMessages = getFrame('frameMenu').arrMessages;
-    arrTypes = getFrame('frameMenu').arrTypes;		
+    arrTypes = getFrame('frameMenu').arrTypes;
   } else {
-    if (parent.frameMenu) {
+    if (parent && parent.frameMenu) {
       arrMessages = parent.frameMenu.arrMessages;
       arrTypes = parent.frameMenu.arrTypes;
-    } else if (top.opener.parent.frameMenu) {
+    } else if (top && top.opener && top.opener.parent && top.opener.parent.frameMenu) {
       arrMessages = top.opener.parent.frameMenu.arrMessages;
       arrTypes = top.opener.parent.frameMenu.arrTypes;
-    } else if (top.opener.top.opener.parent.frameMenu) {
+    } else if (top && top.opener && top.opener.top && top.opener.top.opener && top.opener.top.opener.parent && top.opener.top.opener.parent.frameMenu) {
       arrMessages = top.opener.top.opener.parent.frameMenu.arrMessages;
       arrTypes = top.opener.top.opener.parent.frameMenu.arrTypes;
     }
