@@ -209,6 +209,7 @@ public class VersionUtility {
     boolean checked = true;
     HashMap<String, Dep> depMap = version.dependencies;
     depMap.putAll(version.includes);
+
     /** Navigate through dependencies and includes of the module version */
     for (String depKey : depMap.keySet()) {
       /**
@@ -414,6 +415,18 @@ public class VersionUtility {
       dep.maxVer = data[i].endversion;
       dep.modId = data[i].adDependentModuleId;
       dep.modName = data[i].dependantModuleName;
+
+      // set enforcement
+      if ("Y".equals(data[i].userEditableEnforcement) && data[i].instanceEnforcement != null
+          && !data[i].instanceEnforcement.isEmpty()) {
+        dep.enforcement = data[i].instanceEnforcement;
+      } else {
+        dep.enforcement = data[i].dependencyEnforcement;
+        if (dep.enforcement == null || dep.enforcement.isEmpty()) {
+          dep.enforcement = "MAJOR";
+        }
+      }
+
       hashDep.put(data[i].adModuleDependencyId, dep);
     }
     return hashDep;
