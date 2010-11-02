@@ -76,7 +76,7 @@ function redirectWhenPopup() {
 }
 
 function redirectWhenInsideMDI() {
-  if (isWindowInMDIPage) {
+  if (typeof isWindowInMDIPage !== "undefined" && isWindowInMDIPage) {
     var LayoutMDI = getFrame('LayoutMDI');
     if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === "object") {
       LayoutMDI.location.href = parent.window.location.href;
@@ -121,7 +121,7 @@ function redirectWhenInsideMDI() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if ((!revisionControl('8778')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('8784')) || (isOpsInstance() != isOpsInstanceCached())) {
       alert(cacheMsg);
     }
 
