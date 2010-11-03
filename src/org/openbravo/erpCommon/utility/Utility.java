@@ -2672,6 +2672,22 @@ public class Utility {
       } else if ("banner-production".equals(logo)) {
         img = OBDal.getInstance().get(SystemInformation.class, "0").getProductionBannerImage();
         return defaultImageLogo(img, "web/images/blank.gif");
+      } else if ("yourcompanylegal".equals(logo)) {
+        if (org != null && !org.equals("")) {
+          Organization organization = OBDal.getInstance().get(Organization.class, org);
+          img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
+        }
+        if (img == null) {
+
+          img = OBDal.getInstance().get(ClientInformation.class,
+              OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyDocumentImage();
+
+          if (img == null) {
+            img = OBDal.getInstance().get(SystemInformation.class, "0")
+                .getYourCompanyDocumentImage();
+          }
+        }
+        return defaultImageLogo(img, "web/images/CompanyLogo_big.png");
       } else {
         log4j.error("Logo key does not exist: " + logo);
         return getBlankImage();
