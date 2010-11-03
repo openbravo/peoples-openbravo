@@ -94,7 +94,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8785';
+  var number = '8790';
   return number;
 }
 
@@ -5404,6 +5404,18 @@ function checkWindowInMDIPopup(target) {
   } else {
     MDIPopupId = target.document.getElementById('MDIPopupContainer').name;
   }
+
+  if (result === true && 
+      MDIPopupId !== null && 
+      document.title && 
+      getFrame('LayoutMDI').OB && 
+      getFrame('LayoutMDI').OB.Layout && 
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility && 
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup && 
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.setTitle) {
+    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.setTitle(MDIPopupId, document.title);
+  }
+
   return result;
 }
 
