@@ -64,7 +64,7 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strmProductId, String strPriceListId, String strTabId, String strProjectId,
+      String strmProductId, String strPriceListVersion, String strTabId, String strProjectId,
       String strPhaseId, String strADOrgID) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -92,24 +92,19 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
       String strMWarehouseID = data1[0].warehouse;
       String strProjCat = data1[0].projcat;
 
-      if (!strPriceListId.equals("")) {
-        String strPriceListVersion = SEProjectLineValueData.selectPriceListVersion(this,
-            strPriceListId, strDate);
-        if (!strPriceListVersion.equals("")) {
-          String plannedprice = SEProjectLineValueData.selectPlannedPrice(this,
-              strPriceListVersion, strmProductId, strProjectId);
-          if (plannedprice != null && !plannedprice.equals("")) {
-            if (!strProjCat.equals("S")) {
-              resultado.append("new Array(\"inpplannedprice\", "
-                  + (plannedprice.equals("") ? "\"\"" : plannedprice) + "),\n");
-            } else {
-              resultado.append("new Array(\"inppriceactual\", "
-                  + (plannedprice.equals("") ? "\"\"" : plannedprice) + ")\n");
-            }
-          } else
-            strMessage = "PriceNotFound";
+      if (!strPriceListVersion.equals("")) {
+        String plannedprice = SEProjectLineValueData.selectPlannedPrice(this, strPriceListVersion,
+            strmProductId, strProjectId);
+        if (plannedprice != null && !plannedprice.equals("")) {
+          if (!strProjCat.equals("S")) {
+            resultado.append("new Array(\"inpplannedprice\", "
+                + (plannedprice.equals("") ? "\"\"" : plannedprice) + "),\n");
+          } else {
+            resultado.append("new Array(\"inppriceactual\", "
+                + (plannedprice.equals("") ? "\"\"" : plannedprice) + ")\n");
+          }
         } else
-          strMessage = "PriceListVersionNotFound";
+          strMessage = "PriceNotFound";
       }
       if (!strProjCat.equals("S")) {
         if (strCBPartnerLocationID != null && !strCBPartnerLocationID.equals("")
