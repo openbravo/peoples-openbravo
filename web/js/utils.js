@@ -50,6 +50,7 @@ var dateFormat;
 var defaultDateFormat = "%d-%m-%Y";
 
 var mainFrame_windowObj = "";
+var LayoutMDI_windowObj = "";
 
 //Days of a Month
 var daysOfMonth = [[0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],  //No leap year
@@ -94,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8790';
+  var number = '8794';
   return number;
 }
 
@@ -3094,7 +3095,7 @@ function formElementValue(form, ElementName, Value) {
 function getFrame(frameName) {
   var targetFrame;
   if (frameName == 'main') {
-    if (mainFrame_windowObj !== "") {  //to avoid make the 'main' frame search logic several times in the same html
+    if (mainFrame_windowObj !== "") {  //to avoid go inside the 'main' frame search logic several times in the same html
       targetFrame = mainFrame_windowObj;
     } else {
       var success = false;
@@ -3195,38 +3196,43 @@ function getFrame(frameName) {
       targetFrame = null;
     }
   } else if (frameName === 'LayoutMDI') {
-    var mainParent = getFrame('mainParent');
-    targetFrame = null;
-    if (mainParent !== null) {
-      if (LayoutMDICheck(mainParent)) {
-        targetFrame = mainParent;
-      } else {
-        targetFrame = null;
-      }
+    if (LayoutMDI_windowObj !== "") {  //to avoid go inside the 'LayoutMDI' frame search logic several times in the same html
+      targetFrame = LayoutMDI_windowObj;
     } else {
-      if (targetFrame === null) {  // For case of classic ob popups opened from a MDI tab
-        try {
-          targetFrame = top.opener;
-          while (targetFrame !== null && !LayoutMDICheck(targetFrame)) {
-            targetFrame = targetFrame.top.opener;
+      var mainParent = getFrame('mainParent');
+      targetFrame = null;
+      if (mainParent !== null) {
+        if (LayoutMDICheck(mainParent)) {
+          targetFrame = mainParent;
+        } else {
+          targetFrame = null;
+        }
+      } else {
+        if (targetFrame === null) {  // For case of classic ob popups opened from a MDI tab
+          try {
+            targetFrame = top.opener;
+            while (targetFrame !== null && !LayoutMDICheck(targetFrame)) {
+              targetFrame = targetFrame.top.opener;
+            }
+          } catch (e) {
+            targetFrame = null;
           }
-        } catch (e) {
+        }
+        if (targetFrame === null) {  // For case of classic ob windows/popups opened inside a MDI modal popup
+          try {
+            targetFrame = parent;
+            while (targetFrame !== null && targetFrame !== targetFrame.parent && !LayoutMDICheck(targetFrame)) {
+              targetFrame = targetFrame.parent;
+            }
+          } catch (e) {
+            targetFrame = null;
+          }
+        }
+        if (!LayoutMDICheck(targetFrame)) {
           targetFrame = null;
         }
       }
-      if (targetFrame === null) {  // For case of classic ob windows/popups opened inside a MDI modal popup
-        try {
-          targetFrame = parent;
-          while (targetFrame !== null && targetFrame !== targetFrame.parent && !LayoutMDICheck(targetFrame)) {
-            targetFrame = targetFrame.parent;
-          }
-        } catch (e) {
-          targetFrame = null;
-        }
-      }
-      if (!LayoutMDICheck(targetFrame)) {
-        targetFrame = null;
-      }
+      LayoutMDI_windowObj = targetFrame;
     }
   } else {
     if (getFrame('main') && getFrame('main').frames[frameName]) {
@@ -5408,6 +5414,7 @@ function checkWindowInMDIPopup(target) {
   if (result === true && 
       MDIPopupId !== null && 
       document.title && 
+      getFrame('LayoutMDI') && 
       getFrame('LayoutMDI').OB && 
       getFrame('LayoutMDI').OB.Layout && 
       getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility && 
