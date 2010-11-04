@@ -308,6 +308,16 @@ public class HeartbeatProcess implements Process {
         hbLog.setInstalledModules(systemInfo.getProperty(SystemInfo.Item.MODULES.getLabel()));
         hbLog.setActivationKeyIdentifier(systemInfo.getProperty(SystemInfo.Item.OBPS_INSTANCE
             .getLabel()));
+        if (ActivationKey.getInstance().isOPSInstance()) {
+          try {
+            hbLog.setInstanceNumber(Long.parseLong(systemInfo
+                .getProperty(SystemInfo.Item.INSTANCE_NUMBER.getLabel())));
+          } catch (NumberFormatException e) {
+            log.warn("Incorrect instance number: "
+                + systemInfo.getProperty(SystemInfo.Item.INSTANCE_NUMBER.getLabel()));
+          }
+        }
+
         try {
           hbLog.setFirstLogin(SystemInfo.parseDate(systemInfo
               .getProperty(SystemInfo.Item.FIRST_LOGIN.getLabel())));

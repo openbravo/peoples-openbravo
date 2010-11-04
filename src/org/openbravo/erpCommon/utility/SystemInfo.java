@@ -194,6 +194,9 @@ public class SystemInfo {
     case OBPS_INSTANCE:
       systemInfo.put(i, getOBPSInstance());
       break;
+    case INSTANCE_NUMBER:
+      systemInfo.put(i, getOBPSIntanceNumber());
+      break;
     case FIRST_LOGIN:
       systemInfo.put(i, sd.format(firstLogin));
       break;
@@ -560,6 +563,17 @@ public class SystemInfo {
   }
 
   /**
+   * In case it is an OBPS instance, it returns the number of instance
+   */
+  private static String getOBPSIntanceNumber() {
+    if (ActivationKey.getInstance().isOPSInstance()) {
+      return ActivationKey.getInstance().getProperty("instanceno");
+    } else {
+      return "";
+    }
+  }
+
+  /**
    * Reads all information about session:
    * <ul>
    * <li>First and last login in the instance
@@ -726,7 +740,7 @@ public class SystemInfo {
         "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
         false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false), INSTANCE_PURPOSE(
         "instancePurpose", false), REJECTED_LOGINS_DUE_CONC_USERS("rejectedLoginsDueConcUsers",
-        false);
+        false), INSTANCE_NUMBER("instanceNo", false);
 
     private String label;
     private boolean isIdInfo;
