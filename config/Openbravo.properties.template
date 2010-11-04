@@ -111,7 +111,7 @@ sqlc.queryExecutionStrategy=optimized
 # Authentication #
 ##################
 
-# Leave this empty to use the default login hardler.
+# Leave this empty to use the default login handler.
 # LAM server example: org.openbravo.authentication.lam.LamAuthenticationManager
 authentication.class=
 
@@ -170,8 +170,8 @@ strict.template.application=false
 # Log in security #
 ###################
 
-# If these properties are set, after log in trail failed the response time 
-# will be delayed, and the user can be blocked.
+# If these properties are set, after a failed login the response time 
+# will be delayed, and the user account can be blocked.
 login.trial.delay.increment=0
 login.trial.delay.max=0
 login.trial.user.lock=0
