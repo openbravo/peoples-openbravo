@@ -91,8 +91,13 @@ public class ProcessRunner {
     } finally {
       final String duration = ProcessMonitor.getDuration(endTime - startTime);
       ProcessRequestData.update(conn, COMPLETE, requestId);
-      ProcessRunData.update(conn, ctx.getUser(), status, duration, bundle.getLog().toString(),
-          executionId);
+
+      // Get process log and truncate to 4000 characters if it is bigger
+      String processLog = bundle.getLog();
+      if (processLog.length() > 4000) {
+        processLog = processLog.substring(0, 3997) + "...";
+      }
+      ProcessRunData.update(conn, ctx.getUser(), status, duration, processLog, executionId);
     }
 
     return executionId;
