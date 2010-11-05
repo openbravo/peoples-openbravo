@@ -876,7 +876,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", false, "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "grid", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", strReplaceWith, false);
     toolbar.setTabId(tabId);
-    toolbar.setDeleteable(<PARAMETER_TMP id="deleteable"/>);
+    
+    toolbar.setDeleteable(<PARAMETER_TMP id="deleteable"/> &amp;&amp; !org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId));
     toolbar.prepareRelationTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, !vars.getSessionValue("#ShowTest", "N").equals("Y"), <PARAMETER_TMP id="paramIsReadOnly">readonly</PARAMETER_TMP>, Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
