@@ -288,13 +288,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
         rt = total
             + "&nbsp;"
             + Utility.messageBD(this, "ApplyModules", lang)
-            + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900);return false;\">"
+            + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;\">"
             + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
       }
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
       // Check if last build was done but Tomcat wasn't restarted
       if (!restartTomcat.equals("0")) {
-        rt = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900);return false;\">"
+        rt = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900, null, null, null, null, true);return false;\">"
             + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
         return rt;
 

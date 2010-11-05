@@ -464,10 +464,10 @@ and c_settlement_cancel_id is null]]></SQL>
        m_product_org po
 where p.m_product_id = po.m_product_id
   and po.stockmin is not null
-  and po.stockmin > (select sum(qtyonhand) as QtyStored
+  and po.stockmin > coalesce((select sum(qtyonhand) as QtyStored
                        from m_storage_detail s
                        where s.m_product_id = po.m_product_id
-                        and ad_isOrgIncluded(s.ad_org_id,po.ad_org_id,po.ad_client_id) <> -1)]]></SQL>
+                        and ad_isOrgIncluded(s.ad_org_id,po.ad_org_id,po.ad_client_id) <> -1), 0)]]></SQL>
 <!--1000020-->  <TYPE><![CDATA[D]]></TYPE>
 <!--1000020--></AD_ALERTRULE>
 

@@ -114,6 +114,9 @@ import org.openbravo.test.base.BaseTest;
  * https://issues.openbravo.com/view.php?id=14276: Need feature to disable maintaining audit info
  * via dal for one request/dal-session
  * 
+ * https://issues.openbravo.com/view.php?id=15050: OBQuery: whereclause with alias with a comma
+ * direct after the alias fails
+ * 
  * @author mtaal
  * @author iperdomo
  */
@@ -529,5 +532,16 @@ public class IssuesTest extends BaseTest {
       assertTrue(oldName.equals(table.getName()));
       assertFalse(table.getUpdated().getTime() == oldUpdated.getTime());
     }
+  }
+
+  /**
+   * https://issues.openbravo.com/view.php?id=15050: OBQuery: whereclause with alias with a comma
+   * direct after the alias fails
+   */
+  public void test15050() throws Exception {
+    setSystemAdministratorContext();
+    final String whereClause = " as t, ADColumn as c where c.table = t and c.keyColumn=true";
+    final OBQuery<Table> tables = OBDal.getInstance().createQuery(Table.class, whereClause);
+    assertTrue(tables.list().size() > 0);
   }
 }

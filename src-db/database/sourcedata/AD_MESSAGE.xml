@@ -28013,8 +28013,8 @@ And Release features, bla, bla, bla]]></MSGTEXT>
 <!--1005800002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005800002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005800002-->  <VALUE><![CDATA[HB_WELCOME]]></VALUE>
-<!--1005800002-->  <MSGTEXT><![CDATA[To help us improve the software quality and understand its worldwide usage, we invite you to enable the Heartbeat. This tool periodically sends to Openbravo anonymous updates regarding your technical system specifications (e.g. operating system, database, Openbravo version, etc.). Enabling the Heartbeat is required to access additional services provided by Openbravo, such as the ability to download and install extension modules. For a full description of the information transmitted to Openbravo, see the Heartbeat Configuration chapter of the User Manual.
-http://wiki.openbravo.com/wiki/ERP/2.50/User_Manual/HeartBeat
+<!--1005800002-->  <MSGTEXT><![CDATA[To help us improve the software quality and understand its worldwide usage, we invite you to enable the Heartbeat. This tool periodically sends to Openbravo anonymous updates regarding your technical system specifications (e.g. operating system, database, Openbravo version, etc.). Enabling the Heartbeat is required to access additional services provided by Openbravo, such as the ability to download and install extension modules. For a full description of the information transmitted to Openbravo, see the <a href='http://wiki.openbravo.com/wiki/ERP/2.50/User_Manual/HeartBeat' target='_blank' class='LabelLink'>Heartbeat Configuration</a> chapter of the User Manual.
+
 
 
 Do you want to enable the Heartbeat?]]></MSGTEXT>
@@ -29542,6 +29542,17 @@ Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--01C801B95D4A44E2956F9057C7E38A6A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--01C801B95D4A44E2956F9057C7E38A6A--></AD_MESSAGE>
 
+<!--02758CBBA66D42108380E648EF7C026E--><AD_MESSAGE>
+<!--02758CBBA66D42108380E648EF7C026E-->  <AD_MESSAGE_ID><![CDATA[02758CBBA66D42108380E648EF7C026E]]></AD_MESSAGE_ID>
+<!--02758CBBA66D42108380E648EF7C026E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--02758CBBA66D42108380E648EF7C026E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--02758CBBA66D42108380E648EF7C026E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--02758CBBA66D42108380E648EF7C026E-->  <VALUE><![CDATA[NoConversionDayUom]]></VALUE>
+<!--02758CBBA66D42108380E648EF7C026E-->  <MSGTEXT><![CDATA[There is no Conversion Rate defined for Day to Hour.]]></MSGTEXT>
+<!--02758CBBA66D42108380E648EF7C026E-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--02758CBBA66D42108380E648EF7C026E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--02758CBBA66D42108380E648EF7C026E--></AD_MESSAGE>
+
 <!--03C7B58E00F246E7BA06D153B3DB2D5B--><AD_MESSAGE>
 <!--03C7B58E00F246E7BA06D153B3DB2D5B-->  <AD_MESSAGE_ID><![CDATA[03C7B58E00F246E7BA06D153B3DB2D5B]]></AD_MESSAGE_ID>
 <!--03C7B58E00F246E7BA06D153B3DB2D5B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -30288,6 +30299,17 @@ Do you want to enable the Heartbeat and continue?]]></MSGTEXT>
 <!--272961BF12DB4930A0F8EDDADE8827CA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--272961BF12DB4930A0F8EDDADE8827CA--></AD_MESSAGE>
 
+<!--27D70A51233E44C9B1319F3BE1453507--><AD_MESSAGE>
+<!--27D70A51233E44C9B1319F3BE1453507-->  <AD_MESSAGE_ID><![CDATA[27D70A51233E44C9B1319F3BE1453507]]></AD_MESSAGE_ID>
+<!--27D70A51233E44C9B1319F3BE1453507-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27D70A51233E44C9B1319F3BE1453507-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27D70A51233E44C9B1319F3BE1453507-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27D70A51233E44C9B1319F3BE1453507-->  <VALUE><![CDATA[Home_Purpose_Tooltip]]></VALUE>
+<!--27D70A51233E44C9B1319F3BE1453507-->  <MSGTEXT><![CDATA[Instance purpose is unknown.]]></MSGTEXT>
+<!--27D70A51233E44C9B1319F3BE1453507-->  <MSGTYPE><![CDATA[C]]></MSGTYPE>
+<!--27D70A51233E44C9B1319F3BE1453507-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27D70A51233E44C9B1319F3BE1453507--></AD_MESSAGE>
+
 <!--29C3C655E5394359B44C086A5D8B5C15--><AD_MESSAGE>
 <!--29C3C655E5394359B44C086A5D8B5C15-->  <AD_MESSAGE_ID><![CDATA[29C3C655E5394359B44C086A5D8B5C15]]></AD_MESSAGE_ID>
 <!--29C3C655E5394359B44C086A5D8B5C15-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -30993,8 +31015,7 @@ This column is already checked as key: ]]></MSGTEXT>
 
 Thank you for downloading and supporting our open source ERP.
 
-Since this is the first time that you login, please select the purpose of this instance. Learn more:
-http://wiki.openbravo.com/wiki/ERP/2.50/Configuration_Manual/Getting_started#Configuring_the_Instance_Purpose]]></MSGTEXT>
+Since this is the first time that you login, please select the purpose of this instance. <a href='http://wiki.openbravo.com/wiki/ERP/2.50/Configuration_Manual/Getting_started#Configuring_the_Instance_Purpose' target='_blank' class='LabelLink'>Learn more</a>]]></MSGTEXT>
 <!--5319728ED743474AA75BB9BBF8F08321-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--5319728ED743474AA75BB9BBF8F08321-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5319728ED743474AA75BB9BBF8F08321--></AD_MESSAGE>

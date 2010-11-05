@@ -79,7 +79,8 @@ public class SystemInfo {
   private static Date lastLogin;
   private static Long numberOfLogins;
   private static SimpleDateFormat sd;
-  private static int numberOfLonginsThisMoth = 0;
+  private static int numberOfLoginsThisMonth = 0;
+  private static int numberOfRejectedLoginsDueConcUsersThisMonth = 0;
   private static BigDecimal avgUsers = BigDecimal.ZERO;
   private static BigDecimal usagePercentageTime = BigDecimal.ZERO;
   private static int maxUsers = 0;
@@ -193,6 +194,9 @@ public class SystemInfo {
     case OBPS_INSTANCE:
       systemInfo.put(i, getOBPSInstance());
       break;
+    case INSTANCE_NUMBER:
+      systemInfo.put(i, getOBPSIntanceNumber());
+      break;
     case FIRST_LOGIN:
       systemInfo.put(i, sd.format(firstLogin));
       break;
@@ -212,7 +216,7 @@ public class SystemInfo {
       systemInfo.put(i, usagePercentageTime.toString());
       break;
     case TOTAL_LOGINS_LAST_MOTH:
-      systemInfo.put(i, Integer.toString(numberOfLonginsThisMoth));
+      systemInfo.put(i, Integer.toString(numberOfLoginsThisMonth));
       break;
     case NUMBER_OF_CLIENTS:
       systemInfo.put(i, getNumberOfClients());
@@ -227,6 +231,9 @@ public class SystemInfo {
       String instancePurpose = OBDal.getInstance().get(SystemInformation.class, "0")
           .getInstancePurpose();
       systemInfo.put(i, instancePurpose == null ? "U" : instancePurpose);
+      break;
+    case REJECTED_LOGINS_DUE_CONC_USERS:
+      systemInfo.put(i, Integer.toString(numberOfRejectedLoginsDueConcUsersThisMonth));
       break;
     }
   }
@@ -556,6 +563,17 @@ public class SystemInfo {
   }
 
   /**
+   * In case it is an OBPS instance, it returns the number of instance
+   */
+  private static String getOBPSIntanceNumber() {
+    if (ActivationKey.getInstance().isOPSInstance()) {
+      return ActivationKey.getInstance().getProperty("instanceno");
+    } else {
+      return "";
+    }
+  }
+
+  /**
    * Reads all information about session:
    * <ul>
    * <li>First and last login in the instance
@@ -597,7 +615,7 @@ public class SystemInfo {
       List<Event> events = new ArrayList<Event>();
       List<Session> sessions = qSession.list();
 
-      numberOfLonginsThisMoth = sessions.size();
+      numberOfLoginsThisMonth = sessions.size();
       for (Session session : sessions) {
         Event newSession = new Event();
         newSession.eventDate = session.getCreationDate();
@@ -641,6 +659,7 @@ public class SystemInfo {
           usersPeriod = usersPeriod.add(periodTime.multiply(new BigDecimal(concurrentUsers)));
         }
       }
+      calculateNumberOfRejectedLoginsDueConcurrentUsersLastMonth(startOfPeriod);
 
       BigDecimal totalTime = new BigDecimal(now.getTimeInMillis() - startOfPeriod.getTimeInMillis());
       if (totalUsageTime.compareTo(BigDecimal.ZERO) != 0) {
@@ -655,6 +674,16 @@ public class SystemInfo {
     } catch (Exception e) {
       log4j.error("Error calculating login information", e);
     }
+
+  }
+
+  private static void calculateNumberOfRejectedLoginsDueConcurrentUsersLastMonth(
+      Calendar startOfPeriod) {
+    OBCriteria<Session> qSession = OBDal.getInstance().createCriteria(Session.class);
+    qSession.add(Expression.ge(Session.PROPERTY_CREATIONDATE, startOfPeriod.getTime()));
+    qSession.add(Expression.eq(Session.PROPERTY_LOGINSTATUS, "CUR"));
+
+    numberOfRejectedLoginsDueConcUsersThisMonth = qSession.count();
   }
 
   /**
@@ -710,7 +739,8 @@ public class SystemInfo {
         "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
         "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
         false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false), INSTANCE_PURPOSE(
-        "instancePurpose", false);
+        "instancePurpose", false), REJECTED_LOGINS_DUE_CONC_USERS("rejectedLoginsDueConcUsers",
+        false), INSTANCE_NUMBER("instanceNo", false);
 
     private String label;
     private boolean isIdInfo;

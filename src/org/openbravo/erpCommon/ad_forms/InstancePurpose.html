@@ -31,18 +31,26 @@
   <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript">
   function openRegistration() {
-    var w = window.opener;
-    if(w) {
-      w.setTimeout("openRegistration();",100);
+    if (!isWindowInMDIContext) {
+      var w = window.opener;
+      if(w) {
+        w.setTimeout("openRegistration();",100);
+      }
+    } else {
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
     }
     return true;
   }
   </script>
   <script language="JavaScript" type="text/javascript">
   function openHeartbeat() {
-    var w = window.opener;
-    if(w) {
-      w.setTimeout("openHeartbeat();",100);
+    if (!isWindowInMDIContext) {
+      var w = window.opener;
+      if(w) {
+        w.setTimeout("openHeartbeat();",100);
+      }
+    } else {
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.openHeartbeat();
     }
     return true;
   }
@@ -56,7 +64,7 @@
     } else {
       getFrame('LayoutMDI').OB.Layout.ViewManager.openView("ClassicOBWindow",  {viewId: "ClassicOBWindow", obManualURL: '/ad_forms/InstanceManagement.html', id: '/ad_forms/InstanceManagement.html', formId: '8D6282279F464B1696B0EE3E23023B65', command: "DEFAULT", tabTitle: 'Instance Activation'});
     }
-    window.close();
+    closePage();
   }
   function buttonOK() {
     var purpose = document.frmMain.instancePurpose;
@@ -79,16 +87,16 @@
         if (appFrame.document.getElementById('buttonRefresh')) {
           appFrame.document.getElementById('buttonRefresh').onclick();
         } else {
-          window.close();
+          closePage();
         }
       } else if (appFrame) {
         appFrame.updatePurposeImage(purpose.value);
-        window.close();
+        closePage();
       } else {
-        window.close();
+        closePage();
       }
     } else {
-      window.close();
+      closePage();
     }
 
   }
@@ -188,12 +196,13 @@
             <td class="TableEdition_OneCell_width"/>
           </tr>
           <tr><td height="20" colspan="4"></td></tr>
-          <tr id="purposeComboRow1"><td colspan="4"><span class="LabelText">What is the purpose of this Openbravo ERP instance?</span></td></tr>
+          <tr id="purposeComboRow1" style="height: 30px;"><td colspan="4"><span class="LabelText">What is the purpose of this Openbravo ERP instance?</span></td></tr>
+          <tr></tr>
           <tr id="purposeComboRow2">
             <td class="Combo_ContentCell" colspan="4"><select name="instancePurpose" id="inpInstancePurpose" class="ComboKey Combo_OneCell_width" required="yes">
                 <option value="">--please select--</option>
                 <div id="reportPurpose"></div>
-            </select><span id="noPurposeSelected" class="LabelText" style="color:red">You must select purpose</span></td>
+            </select><span id="noPurposeSelected" class="LabelText" style="color:red; font-weight: bold; padding-left: 10px;">You must select a purpose</span></td>
           </tr>
 
           <tr>

@@ -54,6 +54,7 @@
     v_Value VARCHAR2(60) ;
     v_Name VARCHAR2(80) ;
     v_count NUMBER:=0;
+    v_Asset_Value VARCHAR2(200) ;
   BEGIN
     --  Update AD_PInstance
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -110,6 +111,7 @@
           END IF;
           v_Value:='_' || Cur_Shipline.Value || v_DocumentNo;
           v_Name:='_' || Cur_Shipline.Name || v_DocumentNo;
+          v_Asset_Value:=SUBSTR(Cur_Shipline.BP_Value, 1, 40-LENGTH(v_Value)) || v_Value;
           --
           INSERT
           INTO A_Asset
@@ -120,7 +122,7 @@
               LocationComment, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID
             )
             VALUES
-            (v_A_Asset_ID, Cur_Shipline.AD_Client_ID, Cur_Shipline.AD_Org_ID, 'Y', now(), '0', now(), '0', SUBSTR(Cur_Shipline.BP_Value, 1, 40-LENGTH(v_Value)) || v_Value, SUBSTR(Cur_Shipline.BP_Name, 1,
+            (v_A_Asset_ID, Cur_Shipline.AD_Client_ID, Cur_Shipline.AD_Org_ID, 'Y', now(), '0', now(), '0', SUBSTR(v_Asset_Value,1,40), SUBSTR(Cur_Shipline.BP_Name, 1,
             60-LENGTH(v_Name)) || v_Name, SUBSTR(Cur_Shipline.Description || ' ' || Cur_Shipline.LineDescription, 1, 255), Cur_Shipline.Help, Cur_Shipline.A_Asset_Group_ID, Cur_Shipline.M_Product_ID,
             Cur_Shipline.VersionNo, Cur_Shipline.GuaranteeDate, Cur_Shipline.MovementDate, 'N', 'N', null, 'N', v_DocumentNo, Cur_Shipline.C_BPartner_ID, Cur_Shipline.C_BPartner_Location_ID, Cur_Shipline.AD_User_ID) ;
             DBMS_OUTPUT.PUT_LINE('A_Asset_ID=' || v_A_Asset_ID || ' - ' || Cur_Shipline.Value||v_DocumentNo) ;

@@ -96,8 +96,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
         xmlDocument.setParameter("selectedPurpose", purpose);
       }
     }
-    xmlDocument.setParameter("welcome", Utility.formatMessageBDToHtml(Utility.messageBD(this,
-        strWelcomeMsg, vars.getLanguage())));
+    xmlDocument.setParameter("welcome", Utility.messageBD(this, strWelcomeMsg, vars.getLanguage()));
     xmlDocument.setParameter("title", Utility.messageBD(myPool, strTitle, vars.getLanguage()));
 
     xmlDocument.setParameter("recordId", vars.getStringParameter("inpcRecordId",

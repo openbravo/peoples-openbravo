@@ -37,7 +37,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Home extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static final String COMMUNITY_BRANDING_URL = "http://butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html";
+  private static final String COMMUNITY_BRANDING_URL = "//butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html";
   private static final String STATIC_COMMUNITY_BRANDING_URL = "StaticCommunityBranding.html";
   private static final String BUTLER_UTILS_URL = "//butler.openbravo.com/web/static-content/js/ob-utils.js";
 
@@ -78,6 +78,8 @@ public class Home extends HttpSecureAppServlet {
     String strPurpose = getPurpose();
     if (strPurpose == null) {
       strPurpose = "unknown";
+      xmlDocument.setParameter("cbPurposeTooltip", Utility.messageBD(myPool,
+          "Home_Purpose_Tooltip", vars.getLanguage()));
     }
     xmlDocument.setParameter("cbPurpose", strPurpose.toLowerCase());
     xmlDocument.setParameter("cbVersion", getVersion());

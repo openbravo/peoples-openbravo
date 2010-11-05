@@ -33,12 +33,6 @@
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript" id="paramDirectory"></script>
-  <script language="JavaScript" type="text/javascript">
-    function closeThisPage() {
-      window.close();
-      return true;
-    }
-  </script>
   <script language="JavaScript" type="text/javascript" id="jsparam">
 
   </script>
@@ -216,15 +210,15 @@
       if (document.frmMain.option[0].checked) {
         window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
         restarting=true;
-        closeThisPage();
+        closePage();
         return false;
       } else if (document.frmMain.option[1].checked) {
         window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
         restarting=true;
-        closeThisPage();
+        closePage();
         return false;
       } else if (document.frmMain.option[2].checked) {
-        closeThisPage();
+        closePage();
         return;
       }
     } 
@@ -461,7 +455,7 @@
             var frm = document.frmMain;
             startLocalTimer('localTimer');
             processing = true;
-            top.opener.setProcessingMode('window', true, false);
+            window.opener.setProcessingMode('window', true, false);
             displayLogicElement('confirmation',false);
             displayLogicElement('rebuildTable',true);
             return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, null);
@@ -495,7 +489,7 @@
     }
     
     function onUnloadDo() {
-      top.opener.setProcessingMode('window', false);
+      window.opener.setProcessingMode('window', false);
       if(!restarting){
         reloadOpener();
       }
@@ -705,7 +699,7 @@
                 <button type="button" 
                   id="buttonCancel" 
                   class="ButtonLink" 
-                  onclick="closeThisPage();return false;" 
+                  onclick="closePage();return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 
@@ -747,13 +741,13 @@
               </td></tr>
               <tr><td height="10"></td></tr>
               <tr>
-                <td colspan="4"><span class="Radio_container_NOT_focused"><input name="option" required="true" value="restart" type="radio" checked></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Restart servlet container now &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#restart">learn more</a></span></td>
+                <td colspan="4"><span class="Radio_container_NOT_focused"><input name="option" required="true" value="restart" type="radio" checked></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Restart servlet container now &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1', true);return false;" target="_blank" href="#restart">learn more</a></span></td>
               </tr>
               <tr>
-                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="reload" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Reload the Openbravo application now &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#reload">learn more</a></span></td>
+                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="reload" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Reload the Openbravo application now &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1', true);return false;" target="_blank" href="#reload">learn more</a></span></td>
               </tr>
               <tr>
-                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="doNothing" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Don't do anything now. I will reload the Openbravo application manually later &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1');return false;" target="_blank" href="#nothing">learn more</a></span></td>
+                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="doNothing" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Don't do anything now. I will reload the Openbravo application manually later &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1', true);return false;" target="_blank" href="#nothing">learn more</a></span></td>
               </tr>
 
               <tr><td height="20"></td></tr>
@@ -829,7 +823,7 @@
               <tr>
                 <td colspan="4">
                   <div>
-                    <button type="button" id="buttonLog" class="ButtonLink" onclick="openServletNewWindow('DEFAULT', false, '../ad_forms/ShowLogFile.html?filePath=xx', 'Show Log', null, false, 600, 900,null,null,false);" onfocus="buttonEvent('onfocus', this); window.status='Show log'; return true;" onblur="buttonEvent('onblur', this);" onkeyup="buttonEvent('onkeyup', this);" onkeydown="buttonEvent('onkeydown', this);" onkeypress="buttonEvent('onkeypress', this);" onmouseup="buttonEvent('onmouseup', this);" onmousedown="buttonEvent('onmousedown', this);" onmouseover="buttonEvent('onmouseover', this); window.status='Show log'; return true;" onmouseout="buttonEvent('onmouseout', this);">
+                    <button type="button" id="buttonLog" class="ButtonLink" onclick="openServletNewWindow('DEFAULT', false, '../ad_forms/ShowLogFile.html?filePath=xx', 'Show Log', null, false, 600, 900, null, null, false, null, true);" onfocus="buttonEvent('onfocus', this); window.status='Show log'; return true;" onblur="buttonEvent('onblur', this);" onkeyup="buttonEvent('onkeyup', this);" onkeydown="buttonEvent('onkeydown', this);" onkeypress="buttonEvent('onkeypress', this);" onmouseup="buttonEvent('onmouseup', this);" onmousedown="buttonEvent('onmousedown', this);" onmouseover="buttonEvent('onmouseover', this); window.status='Show log'; return true;" onmouseout="buttonEvent('onmouseout', this);">
                       <table class="Button">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon" alt="Show log" title="Show log" src="../web/images/blank.gif" border="0"/></td>

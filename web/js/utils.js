@@ -26,16 +26,21 @@
  * Code that will be executed once the file is parsed
 */
 function utilsJSDirectExecution() {
+  isWindowInMDIPopup = checkWindowInMDIPopup();
   isWindowInMDITab = checkWindowInMDITab();
+  isWindowInMDIPage = checkWindowInMDIPage();
   isWindowInMDIContext = checkWindowInMDIContext();
   if (isWindowInMDITab) {
     adaptSkinToMDIEnvironment();
   }
 }
 
+var isWindowInMDIPopup = false;
 var isWindowInMDITab = false;
+var isWindowInMDIPage = false;
 var isWindowInMDIContext = false;
 var isMDIEnvironmentSet = false;
+var MDIPopupId = null;
 
 var baseFrameServlet = "../security/Login_FS.html";
 var gColorSelected = "#c0c0c0";
@@ -45,6 +50,7 @@ var dateFormat;
 var defaultDateFormat = "%d-%m-%Y";
 
 var mainFrame_windowObj = "";
+var LayoutMDI_windowObj = "";
 
 //Days of a Month
 var daysOfMonth = [[0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],  //No leap year
@@ -89,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8742';
+  var number = '8794';
   return number;
 }
 
@@ -904,6 +910,7 @@ function addUrlParameters(data) {
   return text;
 }
 
+var openPopUpMDICheck = false;
 /**
 * Opens a pop-up window and adds custom properties to it 
 * @param {String} url This is the URL to be loaded in the newly opened window.
@@ -923,7 +930,7 @@ function addUrlParameters(data) {
 * @see #getArrayValue 
 * @see #submitCommandForm
 */
-function openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading) {
+function openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading, openInMDIPopup) {
   var appUrl = getAppUrl();
   var adds = "";
   var isPopup = null;
@@ -974,6 +981,22 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   if (doSubmit && (getArrayValue(parameters, "debug", false)==true)) {
     if (!depurar_validate_wrapper(getArrayValue(parameters, "Command", "DEFAULT"), null, "")) return false;
   }
+
+  if (isWindowInMDIPage && openInMDIPopup && isPopup == true) {
+    if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB && getFrame('LayoutMDI').OB.Layout && getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility && getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup && getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.open) {
+      if (!openPopUpMDICheck) {
+        getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.open(_name, width, height, "", "", window);
+        openPopUpMDICheck = true;
+      }
+
+      if (!getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.isLoaded(_name)) {
+        setTimeout(function() { openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading, openInMDIPopup); }, 50);
+        return true;
+      }
+      openPopUpMDICheck = false;
+    }
+  }
+
   if (isPopup == true && hasLoading == true) {
     isPopupLoadingWindowLoaded=false;
     var urlLoading = appUrl + '/utility/PopupLoading.html';
@@ -1162,14 +1185,14 @@ function openSearchWindow(url, _name, tabId, windowName, windowId, checkChanges)
 * @see #openPopUp 
 * @see #addArrayValue
 */
-function openHelp(windowId, url, _name, checkChanges, height, width, windowType, windowName) {
+function openHelp(windowId, url, _name, checkChanges, height, width, windowType, windowName, openInMDIPopup) {
   if (height==null) height = 450;
   if (width==null) width = 700;
   var parameters = new Array();
   parameters = addArrayValue(parameters, "inpwindowId", windowId, true);
   parameters = addArrayValue(parameters, "inpwindowType", windowType, true);
   parameters = addArrayValue(parameters, "inpwindowName", windowName, true);
-  return openPopUp(url, _name, height, width, null, null, checkChanges, null, null, true, parameters);
+  return openPopUp(url, _name, height, width, null, null, checkChanges, null, null, true, parameters, null, openInMDIPopup);
 }
 
 /**
@@ -1183,7 +1206,7 @@ function openHelp(windowId, url, _name, checkChanges, height, width, windowType,
 * @see #openPopUp 
 * @see #addArrayValue
 */
-function openServletNewWindow(Command, bolValidation, url, _name, processId, checkChanges, height, width, resizable, hasStatus, closeControl, hasLoading) {
+function openServletNewWindow(Command, bolValidation, url, _name, processId, checkChanges, height, width, resizable, hasStatus, closeControl, hasLoading, openInMDIPopup) {
   if (height==null) height = 350;
   if (width==null) width = 500;
   if (closeControl==null) closeControl = true;
@@ -1192,11 +1215,10 @@ function openServletNewWindow(Command, bolValidation, url, _name, processId, che
   parameters = addArrayValue(parameters, "debug", bolValidation, false);
   if (processId!=null && processId!="") parameters = addArrayValue(parameters, "inpProcessId", processId, true);
   if (Command!=null && Command!="") parameters = addArrayValue(parameters, "Command", Command, false);
-
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
-    setTimeout(function() {return openPopUp(url, _name, height, width, null, null, checkChanges, null, true, closeControl, parameters, hasLoading);},10);
+    setTimeout(function() {return openPopUp(url, _name, height, width, null, null, checkChanges, null, true, closeControl, parameters, hasLoading, openInMDIPopup);},10);
   } else {
-    return openPopUp(url, _name, height, width, null, null, checkChanges, null, true, closeControl, parameters, hasLoading);
+    return openPopUp(url, _name, height, width, null, null, checkChanges, null, true, closeControl, parameters, hasLoading, openInMDIPopup);
   }
 }
 
@@ -1228,13 +1250,13 @@ function openLink(url, _name, height, width) {
 * @see #openPopUp 
 * @see #addArrayValue
 */
-function editHelp(url, type, id, value, height, width) {
+function editHelp(url, type, id, value, height, width, openInMDIPopup) {
   if (height==null) height = 500;
   if (width==null) width = 600;
   var parameters = new Array();
   parameters = addArrayValue(parameters, "Command", type, true);
   parameters = addArrayValue(parameters, "inpClave", value, true);
-  return openPopUp(url, "HELP_EDIT", height, width, null, null, null, null, false, true, parameters);
+  return openPopUp(url, "HELP_EDIT", height, width, null, null, null, null, false, true, parameters, null, openInMDIPopup);
 }
 
 /**
@@ -1594,8 +1616,13 @@ function keyControl(pushedKey) {
 * Put the focus on the Menu frame
 */
 function putFocusOnMenu() {
-  if (parent.appFrame.selectedArea == 'tabs') parent.appFrame.swichSelectedArea();
-  parent.frameMenu.focus();
+  if (parent && parent.appFrame && parent.appFrame.selectedArea == 'tabs') {
+    parent.appFrame.swichSelectedArea();
+  }
+  if (parent && parent.frameMenu) {
+    parent.frameMenu.focus();
+  }
+
   return true;
 }
 
@@ -3068,7 +3095,7 @@ function formElementValue(form, ElementName, Value) {
 function getFrame(frameName) {
   var targetFrame;
   if (frameName == 'main') {
-    if (mainFrame_windowObj !== "") {  //to avoid make the 'main' frame search logic several times in the same html
+    if (mainFrame_windowObj !== "") {  //to avoid go inside the 'main' frame search logic several times in the same html
       targetFrame = mainFrame_windowObj;
     } else {
       var success = false;
@@ -3085,6 +3112,29 @@ function getFrame(frameName) {
         }
       } catch (e) {
         success = false;
+      }
+
+      if (success == false) {
+        try {  //some typical cases to avoid go into the logic loop. try-catch to avoid security issues when executing Openbravo inside a frame or iframe
+          if (opener && opener.parent && opener.parent.frameMenu) {
+            targetFrame = window.opener.parent;
+            success = true;
+          } else if (parent && parent.opener && parent.opener.parent && parent.opener.parent.frameMenu) {
+            targetFrame = window.parent.opener.parent;
+            success = true;
+          } else  if (opener && opener.opener && opener.opener.parent && opener.opener.parent.frameMenu) {
+            targetFrame = window.opener.opener.parent;
+            success = true;
+          } else  if (opener && opener.opener && opener.opener.opener && opener.opener.opener.parent && opener.opener.opener.parent.frameMenu) {
+            targetFrame = window.opener.opener.opener.parent;
+            success = true;
+          } else  if (opener && opener.opener && opener.opener.opener && opener.opener.opener.opener && opener.opener.opener.opener.parent && opener.opener.opener.opener.parent.frameMenu) {
+            targetFrame = window.opener.opener.opener.opener.parent;
+            success = true;
+          }
+        } catch (e) {
+          success = false;
+        }
       }
 
       if (success == false) {
@@ -3146,26 +3196,50 @@ function getFrame(frameName) {
       targetFrame = null;
     }
   } else if (frameName === 'LayoutMDI') {
-    var mainParent = getFrame('mainParent');
-    targetFrame = null;
-    if (mainParent !== null) {
-      if (LayoutMDICheck(mainParent)) {
-        targetFrame = mainParent;
-      } else {
-        targetFrame = null;
-      }
+    if (LayoutMDI_windowObj !== "") {  //to avoid go inside the 'LayoutMDI' frame search logic several times in the same html
+      targetFrame = LayoutMDI_windowObj;
     } else {
-      try {
-        targetFrame = top.opener;
-        while (targetFrame !== null && !LayoutMDICheck(targetFrame)) {
-          targetFrame = targetFrame.top.opener;
+      var mainParent = getFrame('mainParent');
+      targetFrame = null;
+      if (mainParent !== null) {
+        if (LayoutMDICheck(mainParent)) {
+          targetFrame = mainParent;
+        } else {
+          targetFrame = null;
         }
-      } catch (e) {
-        targetFrame = null;
+      } else {
+        if (targetFrame === null) {  // For case of classic ob popups opened from a MDI tab
+          try {
+            targetFrame = top.opener;
+            while (targetFrame !== null && !LayoutMDICheck(targetFrame)) {
+              targetFrame = targetFrame.top.opener;
+            }
+          } catch (e) {
+            targetFrame = null;
+          }
+        }
+        if (targetFrame === null) {  // For case of classic ob windows/popups opened inside a MDI modal popup
+          try {
+            targetFrame = parent;
+            while (targetFrame !== null && targetFrame !== targetFrame.parent && !LayoutMDICheck(targetFrame)) {
+              targetFrame = targetFrame.parent;
+            }
+          } catch (e) {
+            targetFrame = null;
+          }
+        }
+        if (!LayoutMDICheck(targetFrame)) {
+          targetFrame = null;
+        }
       }
+      LayoutMDI_windowObj = targetFrame;
     }
   } else {
-    targetFrame = getFrame('main').frames[frameName];
+    if (getFrame('main') && getFrame('main').frames[frameName]) {
+      targetFrame = getFrame('main').frames[frameName];
+    } else {
+      targetFrame = null;
+    }
   }
   return targetFrame;
 }
@@ -4266,8 +4340,7 @@ function buttonEvent(event, obj) {
 */
 function goToPreviousPage() {
   setMDIEnvironment();
-  var inMDIEnvironment = (isWindowInMDITab || isWindowInMDIContext); 
-  if (inMDIEnvironment) {
+  if (isWindowInMDIPage) {
     var appFrame = getFrame("appFrame");
     appFrame.history.back();
     return;
@@ -5274,6 +5347,16 @@ function replaceAt(string, what, ini, end) {
   return newString;
 }
 
+function closePage() {
+  if (isWindowInMDIPopup) {
+    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId);
+  } else if (isWindowInMDITab) {
+  } else {
+    top.window.close();
+  }
+  return true;
+}
+
 /**
 * Start of functions to communicate with 3.0 tabbed interface
 */
@@ -5297,9 +5380,50 @@ function setMDIEnvironment() {
   }
   isMDIEnvironmentSet = true;
 
-  if (isWindowInMDITab && typeof sendWindowInfoToMDI === "function") {
-    sendWindowInfoToMDI();
+  try {  // To avoid unhandled exceptions suchs a MDI modal popup
+    if (isWindowInMDITab && typeof sendWindowInfoToMDI === "function") {
+      sendWindowInfoToMDI();
+    }
+  } catch (e) {
   }
+}
+
+/*
+ * Function that checks if the rendered html is contained inside a OB 3.0 popup or not.
+ */
+function checkWindowInMDIPopup(target) {
+  var result = true;
+
+  if (!target || target === "null" || target === "") {
+    target = window;
+  }
+
+  try {
+    while ((target.document !== target.parent.document) && (!target.document.getElementById('MDIPopupContainer'))) {
+      target = target.parent;
+    }
+  } catch (e) {
+  }
+
+  if (!target.document.getElementById('MDIPopupContainer')) {
+    result = false;
+  } else {
+    MDIPopupId = target.document.getElementById('MDIPopupContainer').name;
+  }
+
+  if (result === true && 
+      MDIPopupId !== null && 
+      document.title && 
+      getFrame('LayoutMDI') && 
+      getFrame('LayoutMDI').OB && 
+      getFrame('LayoutMDI').OB.Layout && 
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility && 
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup && 
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.setTitle) {
+    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.setTitle(MDIPopupId, document.title);
+  }
+
+  return result;
 }
 
 /*
@@ -5308,19 +5432,34 @@ function setMDIEnvironment() {
 function checkWindowInMDITab(target) {
   var result = true;
 
-  if (!target || target === "null" || target === "") {
-    target = window;
-  }
-
-  try {
-    while ((target.document !== target.parent.document) && (!LayoutMDICheck(target))) {
-      target = target.parent;
-    }
-  } catch (e) {
-  }
-
-  if (!LayoutMDICheck(target)) {
+  if (isWindowInMDIPopup === true) {
     result = false;
+  } else {
+    if (!target || target === "null" || target === "") {
+      target = window;
+    }
+
+    try {
+      while ((target.document !== target.parent.document) && (!LayoutMDICheck(target))) {
+        target = target.parent;
+      }
+    } catch (e) {
+    }
+
+    if (!LayoutMDICheck(target)) {
+      result = false;
+    }
+  }
+  return result;
+}
+
+/*
+ * Function that checks if the rendered html is contained inside a OB 3.0 page or not.
+ */
+function checkWindowInMDIPage(target) {
+  var result = false;
+  if (isWindowInMDIPopup === true || isWindowInMDITab === true) {
+    result = true;
   }
   return result;
 }
@@ -5335,7 +5474,7 @@ function checkWindowInMDIContext(target) {
     target = window;
   }
 
-  if (isWindowInMDITab) {
+  if (isWindowInMDIPage) {
     result = true;
   } else {
     var LayoutMDI = getFrame('LayoutMDI');

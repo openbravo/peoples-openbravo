@@ -32,9 +32,13 @@
   <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript">
   function openRegistration() {
-    var w = window.opener;
-    if(w) {
-      w.setTimeout("openRegistration();",100);
+    if (!isWindowInMDIContext) {
+      var w = window.opener;
+      if(w) {
+        w.setTimeout("openRegistration();",100);
+      }
+    } else {
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
     }
     return true;
   }
@@ -54,7 +58,7 @@
     if (document.frmMain.showRegistration.value == 'Y') {
       openRegistration();
     }
-    window.close();
+    closePage();
   }
   </script>
 

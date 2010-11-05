@@ -353,12 +353,16 @@ public class DocInvoice extends AcctServer {
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
+          BigDecimal amount = new BigDecimal(m_payments[i].Amount);
+          BigDecimal prepaidAmount = new BigDecimal(m_payments[i].PrepaidAmount);
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
-              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].Amount,
+              this.C_Currency_ID, "", getConvertedAmt(amount.negate().toString(),
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          // Pre-payment: Probably not needed as at this point we can not generate pre-payments
+          // against ARC. Amount is negated
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
-              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].PrepaidAmount,
+              this.C_Currency_ID, "", getConvertedAmt(prepaidAmount.negate().toString(),
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
@@ -469,12 +473,16 @@ public class DocInvoice extends AcctServer {
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
+          BigDecimal amount = new BigDecimal(m_payments[i].Amount);
+          BigDecimal prepaidAmount = new BigDecimal(m_payments[i].PrepaidAmount);
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, false, conn),
-              this.C_Currency_ID, getConvertedAmt(m_payments[i].Amount,
+              this.C_Currency_ID, getConvertedAmt(amount.negate().toString(),
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          // Pre-payment: Probably not needed as at this point we can not generate pre-payments
+          // against APC. Amount is negated
           fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, true, conn),
-              this.C_Currency_ID, getConvertedAmt(m_payments[i].PrepaidAmount,
+              this.C_Currency_ID, getConvertedAmt(prepaidAmount.negate().toString(),
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }

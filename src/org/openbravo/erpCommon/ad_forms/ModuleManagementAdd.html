@@ -46,13 +46,13 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" type="text/javascript">
   function viewDetails(id) {
     document.frmMain.inpcRecordId.value = id;
-    openServletNewWindow('DETAIL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900);
+    openServletNewWindow('DETAIL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900, null, null, null, null, true);
     return false;
   }
   
   function installNow(id) {
     document.frmMain.inpcRecordId.value = id;
-    openServletNewWindow('INSTALL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900);
+    openServletNewWindow('INSTALL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900, null, null, null, null, true);
     return false;
   }
   
@@ -71,6 +71,10 @@ var baseDirectory = "../../../../../web/";
     setProcessingMode('window',false);
   }
   
+  function browseFileSystem() {
+    openServletNewWindow('LOCAL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900, null, null, null, null, true);
+    return true;
+  }
 
 </script>
   <script language="JavaScript" type="text/javascript">
@@ -313,7 +317,7 @@ var baseDirectory = "../../../../../web/";
                       <button type="button" 
                         id="buttonScan" 
                         class="ButtonLink" 
-                        onclick="openServletNewWindow('LOCAL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900);return false;" 
+                        onclick="browseFileSystem();return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Browse File System'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 

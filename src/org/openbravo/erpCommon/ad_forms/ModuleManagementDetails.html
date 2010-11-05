@@ -34,14 +34,9 @@
   var baseDirectory="../../../../../web/";
   </script>
   <script language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
-  function closeThisPage() {
-    window.close();
-    return true;
-  }
-
   function viewModule(id) {
     document.frmMain.inpcRecordId.value = id;
-    openServletNewWindow('DETAIL', false, 'ModuleManagement.html', 'Details', null, true, 600, 900,null,null,false);
+    openServletNewWindow('DETAIL', false, 'ModuleManagement.html', 'Details', null, true, 600, 900,null, null, false, null, true);
     return false;
   }
   </script>
@@ -173,7 +168,7 @@
                   <button type="button" 
                     id="buttonOK" 
                     class="ButtonLink" 
-                    onclick="closeThisPage();return false;" 
+                    onclick="closePage();return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

@@ -149,7 +149,7 @@ function getShortcuts(type) {
       );
   } else if (type=='popupSpecificKeys') {
       this.keyArray.splice(keyArray.length-1, 0,
-        new keyArrayItem("ESCAPE", "parent.window.close();", null, null, false, 'onkeydown'),
+        new keyArrayItem("ESCAPE", "closePage();", null, null, false, 'onkeydown'),
         new keyArrayItem("ENTER", "xx();", null, "shiftKey", false, 'onkeydown')
       );
   }

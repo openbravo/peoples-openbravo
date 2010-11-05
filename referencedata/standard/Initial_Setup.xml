@@ -548,7 +548,7 @@
     <salesTransaction>true</salesTransaction>
     <sOSubType>WR</sOSubType>
     <documentTypeForShipment id="F8CC92C7234644DEAD9F63174F45B2BF" entity-name="DocumentType" identifier="MM Shipment Indirect"/>
-    <documentTypeForInvoice id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice Indirect"/>
+    <documentTypeForInvoice id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice"/>
     <sequencedDocument>true</sequencedDocument>
     <documentSequence id="FFB42B38D6A34634B534AB499B13644C" entity-name="ADSequence" identifier="POS Order"/>
     <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
@@ -1449,147 +1449,195 @@
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <DocumentTemplate id="02376C41DA824413A9BE649443924C03" identifier="Purchase Order Report template">
-    <name>Purchase Order Report template</name>
     <id>02376C41DA824413A9BE649443924C03</id>
     <active>true</active>
     <documentType id="808F8818F724497D94282AC83493F394" entity-name="DocumentType" identifier="Purchase Order"/>
+    <name>Purchase Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Purchase Order-@our_ref@</reportFilename>
     <templateFilename>RptC_OrderPO.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="11DD7B13EAC94215B6F8F735BBED4D55" identifier="Quotation Report template">
-    <name>Quotation Report template</name>
     <id>11DD7B13EAC94215B6F8F735BBED4D55</id>
     <active>true</active>
     <documentType id="0A1D4A2DB7144D81A821E31A9B332ACB" entity-name="DocumentType" identifier="Quotation"/>
+    <name>Quotation Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="4F23CD7CD64D468EA4753C0C7B09FD53" identifier="Return Material Report template">
-    <name>Return Material Report template</name>
     <id>4F23CD7CD64D468EA4753C0C7B09FD53</id>
     <active>true</active>
     <documentType id="2D7C15F0F44E4F289A729415EFD700C1" entity-name="DocumentType" identifier="Return Material"/>
+    <name>Return Material Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="70AEA0C77DB743A4A89058BFE091FEEA" identifier="Standard order report template">
-    <name>Standard order report template</name>
     <id>70AEA0C77DB743A4A89058BFE091FEEA</id>
     <active>true</active>
     <documentType id="CB6EEA256BBC41109911215C5A14D39B" entity-name="DocumentType" identifier="Standard Order"/>
+    <name>Standard order report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>StandardOrder-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="9FB97CCA66EA49F29A0EF5080E2AFF29" identifier="AR Credit Memo Report template">
-    <name>AR Credit Memo Report template</name>
     <id>9FB97CCA66EA49F29A0EF5080E2AFF29</id>
     <active>true</active>
     <documentType id="B476CFAE109047DEB5BC9AC80A03297A" entity-name="DocumentType" identifier="AR Credit Memo"/>
+    <name>AR Credit Memo Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Invoice-@our_ref@</reportFilename>
     <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="A16BD46A069F4502BDDFD9A555AEAA48" identifier="AR Invoice Report template">
-    <name>AR Invoice Report template</name>
     <id>A16BD46A069F4502BDDFD9A555AEAA48</id>
     <active>true</active>
     <documentType id="40EE9B1CD3B345FABEFDA62B407B407F" entity-name="DocumentType" identifier="AR Invoice"/>
+    <name>AR Invoice Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Invoice-@our_ref@</reportFilename>
     <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="A76CE6794C2E467394C21675524DBA9C" identifier="Proposal Report template">
-    <name>Proposal Report template</name>
     <id>A76CE6794C2E467394C21675524DBA9C</id>
     <active>true</active>
     <documentType id="15C8DCE82DA841968ABCD614FED68576" entity-name="DocumentType" identifier="Proposal"/>
+    <name>Proposal Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="AF10A903167240F883C7EE7A3325981D" identifier="POS Order Report template">
-    <name>POS Order Report template</name>
     <id>AF10A903167240F883C7EE7A3325981D</id>
     <active>true</active>
     <documentType id="511A9371A0F74195AA3F6D66C722729D" entity-name="DocumentType" identifier="POS Order"/>
+    <name>POS Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="B1DF02E45C4946C7BB1D45C065C49577" identifier="AP Credit Report template">
-    <name>AP Credit Report template</name>
     <id>B1DF02E45C4946C7BB1D45C065C49577</id>
     <active>true</active>
     <documentType id="42B7DE94BC324C3F9CC0934375E90FFF" entity-name="DocumentType" identifier="AP CreditMemo"/>
+    <name>AP Credit Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Purchase Invoice-@our_ref@</reportFilename>
     <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="B94A012B25FB4C319804BED013BD584B" identifier="Prepay Order Report template">
-    <name>Prepay Order Report template</name>
     <id>B94A012B25FB4C319804BED013BD584B</id>
     <active>true</active>
     <documentType id="15F495A6290040F194A9AA4622FE0C01" entity-name="DocumentType" identifier="Prepay Order"/>
+    <name>Prepay Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="BC7220FEA2F44F9C9FB6619FC58B6944" identifier="MM Receipt Report template">
-    <name>MM Receipt Report template</name>
     <id>BC7220FEA2F44F9C9FB6619FC58B6944</id>
     <active>true</active>
     <documentType id="2030AD7DD4284E2B936E261662EF735A" entity-name="DocumentType" identifier="MM Receipt"/>
+    <name>MM Receipt Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Goods Receipt-@our_ref@</reportFilename>
     <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="C6A6AF1CA3C94B3899CAEC27EE427402" identifier="MM Shipment Report template">
-    <name>MM Shipment Report template</name>
     <id>C6A6AF1CA3C94B3899CAEC27EE427402</id>
     <active>true</active>
     <documentType id="0CD50184705A42CCBECA4EC967646440" entity-name="DocumentType" identifier="MM Shipment"/>
+    <name>MM Shipment Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Goods Shipment-@our_ref@</reportFilename>
     <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="C76E1DE89DA04BF6B6FAEDDA0216EE7A" identifier="Warehouse Order Memo Report template">
-    <name>Warehouse Order Memo Report template</name>
     <id>C76E1DE89DA04BF6B6FAEDDA0216EE7A</id>
     <active>true</active>
     <documentType id="76E7C671FCE34556908E563F825C2937" entity-name="DocumentType" identifier="Warehouse Order"/>
+    <name>Warehouse Order Memo Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="D9BB431F120746C8A84266CA42D02029" identifier="On Credit Order Report template">
-    <name>On Credit Order Report template</name>
     <id>D9BB431F120746C8A84266CA42D02029</id>
     <active>true</active>
     <documentType id="E7F4802D902A42A59143DCCBEDE4DE85" entity-name="DocumentType" identifier="Credit Order"/>
+    <name>On Credit Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Sales Order-@our_ref@</reportFilename>
     <templateFilename>C_OrderJR.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="E5901A1122F641089417A08A7317764C" identifier="AP Invoice Report template">
-    <name>AP Invoice Report template</name>
     <id>E5901A1122F641089417A08A7317764C</id>
     <active>true</active>
     <documentType id="5C6E02993E9B4FCA81C07955EF676C62" entity-name="DocumentType" identifier="AP Invoice"/>
+    <name>AP Invoice Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Invoice-@our_ref@</reportFilename>
     <templateFilename>RptC_Invoice.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
   <DocumentTemplate id="E87E9B580A024383B2E79BD768288899" identifier="MM Shipment Indirect Report template">
-    <name>MM Shipment Indirect Report template</name>
     <id>E87E9B580A024383B2E79BD768288899</id>
     <active>true</active>
     <documentType id="F8CC92C7234644DEAD9F63174F45B2BF" entity-name="DocumentType" identifier="MM Shipment Indirect"/>
+    <name>MM Shipment Indirect Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Goods Shipment-@our_ref@</reportFilename>
     <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
   </DocumentTemplate>
 </ob:Openbravo>

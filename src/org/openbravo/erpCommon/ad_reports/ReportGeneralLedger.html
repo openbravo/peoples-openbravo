@@ -74,7 +74,11 @@ function validate() {
     setWindowElementFocus(frm.inpDateTo);
     showJSMessage(7);
     return false;
-  } else if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == ""){
+  }else if (inputValue(frm.inpOrg)==null || inputValue(frm.inpOrg)=="") {
+      setWindowElementFocus(frm.inpOrg);
+      showJSMessage(7);
+      return false;
+    } else if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == ""){
     setWindowElementFocus(frm.inpcAcctSchemaId);
     showJSMessage(7);
     return false;
@@ -90,8 +94,8 @@ function validate() {
 }
 
 function onloadFunctions() {
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'Command', 'KEY');", "inpElementValueIdFrom_DES", "null");
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'Command', 'KEY');", "inpElementValueIdTo_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value);", "inpElementValueIdFrom_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value);", "inpElementValueIdTo_DES", "null");
 }
 
 </script>
@@ -350,7 +354,7 @@ function onloadFunctions() {
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select name="inpOrg" id="inpOrg" class="Combo Combo_TwoCells_width">
+              <td class="Combo_ContentCell" colspan="2"> <select name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width">
                   <option value=""> <div id="reportAD_ORGID"></div></option>
                 </select>
               </td>

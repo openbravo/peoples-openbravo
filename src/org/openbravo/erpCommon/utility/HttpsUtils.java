@@ -238,7 +238,7 @@ public class HttpsUtils {
         return false;
       }
     } catch (Exception e) {
-      log4j.error("Unable to reach butler.openbravo.com", e);
+      log4j.info("Unable to reach butler.openbravo.com");
       return false;
     }
     return true;

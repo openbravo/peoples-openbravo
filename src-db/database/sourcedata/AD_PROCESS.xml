@@ -1232,13 +1232,14 @@
 <!--176-->  <NAME><![CDATA[Reset Accounting]]></NAME>
 <!--176-->  <DESCRIPTION><![CDATA[Reset Accounting Entries]]></DESCRIPTION>
 <!--176-->  <HELP><![CDATA[Delete accounting records of documents to be re-created by the next run of the accounting engine.  This is a dramatic step and you want to do this ONLY after changes of the accounting structure (e.g. different default accounts, etc.) and if fixing via man]]></HELP>
-<!--176-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--176-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--176-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--176-->  <PROCEDURENAME><![CDATA[Fact_Acct_Reset]]></PROCEDURENAME>
 <!--176-->  <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--176-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--176-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--176-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--176-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--176-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--176--></AD_PROCESS>
@@ -3371,7 +3372,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800085-->  <DESCRIPTION><![CDATA[Generates raw materials average costs.]]></DESCRIPTION>
 <!--800085-->  <HELP><![CDATA[Using the previous raw material receipts, calculates its medium cost.<br>
 The product price of each receipt is calculated based on the on the product price in the purchase invoice. If the invoice does not exist the price of the purchase order is used, if the order neither exists the price list of the provider is used. If none of these criterias exist, a warning is generated and the previous cost is used.]]></HELP>
-<!--800085-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800085-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800085-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
 <!--800085-->  <PROCEDURENAME><![CDATA[M_Generate_Average_Costs]]></PROCEDURENAME>
 <!--800085-->  <ISREPORT><![CDATA[N]]></ISREPORT>
@@ -4306,7 +4307,7 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800144-->  <NAME><![CDATA[User Defined Accounting Report]]></NAME>
 <!--800144-->  <DESCRIPTION><![CDATA[Selects an accounting model to obtain its report.]]></DESCRIPTION>
 <!--800144-->  <HELP><![CDATA[Selects an accounting model to obtain its report.]]></HELP>
-<!--800144-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--800144-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800144-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800144-->  <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--800144-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
@@ -4747,13 +4748,14 @@ This operation can take a long time to complete.]]></HELP>
 <!--800172-->  <NAME><![CDATA[Sales Report by Partner and Product]]></NAME>
 <!--800172-->  <DESCRIPTION><![CDATA[Report Sales by partner and Product]]></DESCRIPTION>
 <!--800172-->  <HELP><![CDATA[Report Sales by partner and Product]]></HELP>
-<!--800172-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800172-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800172-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800172-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800172-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800172-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800172-->  <ISJASPER><![CDATA[Y]]></ISJASPER>
 <!--800172-->  <JRNAME><![CDATA[@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesPartnerProduct.jrxml]]></JRNAME>
+<!--800172-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800172-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800172--></AD_PROCESS>
@@ -4767,12 +4769,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800173-->  <NAME><![CDATA[Production Run Status Report]]></NAME>
 <!--800173-->  <DESCRIPTION><![CDATA[Production Run Status Report]]></DESCRIPTION>
 <!--800173-->  <HELP><![CDATA[Production Run Status Report JR]]></HELP>
-<!--800173-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800173-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800173-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800173-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800173-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800173-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800173-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800173-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800173-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800173--></AD_PROCESS>
@@ -4786,12 +4789,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800174-->  <NAME><![CDATA[Production Report]]></NAME>
 <!--800174-->  <DESCRIPTION><![CDATA[Report Production]]></DESCRIPTION>
 <!--800174-->  <HELP><![CDATA[Report Production]]></HELP>
-<!--800174-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800174-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800174-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800174-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800174-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800174-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800174-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800174-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800174-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800174--></AD_PROCESS>
@@ -4805,7 +4809,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800175-->  <NAME><![CDATA[Customer Invoice Report]]></NAME>
 <!--800175-->  <DESCRIPTION><![CDATA[Customer Invoice Report]]></DESCRIPTION>
 <!--800175-->  <HELP><![CDATA[Customer Invoice Report JR]]></HELP>
-<!--800175-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800175-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800175-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800175-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800175-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
@@ -4825,12 +4829,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800176-->  <NAME><![CDATA[Sales Order Report]]></NAME>
 <!--800176-->  <DESCRIPTION><![CDATA[Sales Order Report]]></DESCRIPTION>
 <!--800176-->  <HELP><![CDATA[Sales Order Report JR]]></HELP>
-<!--800176-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800176-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800176-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800176-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800176-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800176-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800176-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800176-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800176-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800176--></AD_PROCESS>
@@ -4863,12 +4868,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800178-->  <NAME><![CDATA[Orders Awaiting Invoice Report]]></NAME>
 <!--800178-->  <DESCRIPTION><![CDATA[Orders Awaiting Invoice Report]]></DESCRIPTION>
 <!--800178-->  <HELP><![CDATA[Orders Awaiting Invoice Report JR]]></HELP>
-<!--800178-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800178-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800178-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800178-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800178-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800178-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800178-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800178-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800178-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800178--></AD_PROCESS>
@@ -4882,12 +4888,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800179-->  <NAME><![CDATA[Expiration Date Report]]></NAME>
 <!--800179-->  <DESCRIPTION><![CDATA[Expiration Date Report]]></DESCRIPTION>
 <!--800179-->  <HELP><![CDATA[Expiration Date Report JR]]></HELP>
-<!--800179-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800179-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800179-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800179-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800179-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800179-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800179-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800179-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800179-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800179--></AD_PROCESS>
@@ -4901,12 +4908,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800180-->  <NAME><![CDATA[Vendor Invoice Report]]></NAME>
 <!--800180-->  <DESCRIPTION><![CDATA[Report Invoice Vendor]]></DESCRIPTION>
 <!--800180-->  <HELP><![CDATA[Report Invoice Vendor JR]]></HELP>
-<!--800180-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800180-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800180-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800180-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800180-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800180-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800180-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800180-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800180-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800180--></AD_PROCESS>
@@ -5054,12 +5062,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800189-->  <NAME><![CDATA[Shipment Report]]></NAME>
 <!--800189-->  <DESCRIPTION><![CDATA[Shipment Report]]></DESCRIPTION>
 <!--800189-->  <HELP><![CDATA[Shipment Report JR]]></HELP>
-<!--800189-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800189-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800189-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800189-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800189-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800189-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800189-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800189-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800189-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800189--></AD_PROCESS>
@@ -5073,12 +5082,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800190-->  <NAME><![CDATA[Invoiced Sales Order Report]]></NAME>
 <!--800190-->  <DESCRIPTION><![CDATA[Invoiced Sales Order Report]]></DESCRIPTION>
 <!--800190-->  <HELP><![CDATA[Invoiced Sales Order Report JR]]></HELP>
-<!--800190-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800190-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800190-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800190-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800190-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800190-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800190-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800190-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800190-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800190-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800190--></AD_PROCESS>
@@ -5111,12 +5121,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800192-->  <NAME><![CDATA[Delivered Sales Order Report]]></NAME>
 <!--800192-->  <DESCRIPTION><![CDATA[Delivered Sales Order Report]]></DESCRIPTION>
 <!--800192-->  <HELP><![CDATA[Delivered Sales Order Report JR]]></HELP>
-<!--800192-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800192-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800192-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800192-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800192-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800192-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800192-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800192-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800192-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800192--></AD_PROCESS>
@@ -5187,12 +5198,13 @@ This operation can take a long time to complete.]]></HELP>
 <!--800197-->  <NAME><![CDATA[Daily Work Requirements Report]]></NAME>
 <!--800197-->  <DESCRIPTION><![CDATA[In this report are showed the work requirements of type ramp. By default only from actual date.]]></DESCRIPTION>
 <!--800197-->  <HELP><![CDATA[In this report are showed the work requirements of type ramp. By default only from actual date.]]></HELP>
-<!--800197-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--800197-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800197-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800197-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800197-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800197-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800197-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800197-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800197-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800197-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800197--></AD_PROCESS>

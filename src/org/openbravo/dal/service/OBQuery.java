@@ -240,6 +240,9 @@ public class OBQuery<E extends BaseOBObject> {
       } else {
         alias = strippedWhereClause.substring(0, index);
       }
+      if (alias.endsWith(",")) {
+        alias = alias.substring(0, alias.length() - 1);
+      }
       prefix = alias + ".";
     }
 

@@ -22,7 +22,10 @@ package org.openbravo.test.dal;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -48,5 +51,26 @@ public class ViewTest extends BaseTest {
     }
     assertTrue(cnt > 0);
     System.err.println(cnt);
+  }
+
+  /**
+   * Tests issue https://issues.openbravo.com/view.php?id=14914 that view objects are not copied.
+   */
+  public void test14914() {
+    setBigBazaarUserContext();
+    OBContext.setAdminMode();
+    boolean testDone = false;
+    try {
+      for (ShipmentInOut o : OBDal.getInstance().createQuery(ShipmentInOut.class, "").list()) {
+        if (!o.getMaterialMgmtShipmentInOutLineVList().isEmpty()) {
+          final ShipmentInOut copied = (ShipmentInOut) DalUtil.copy(o);
+          assertTrue(copied.getMaterialMgmtShipmentInOutLineVList().isEmpty());
+          testDone = true;
+        }
+      }
+      assertTrue(testDone);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

@@ -32,10 +32,10 @@ function cerrarHelpEditor(){
   var key = frm.inpClave.value;
   if (type=="Window") key = "";
   var name=frm.inpName.value;
-  top.opener.layer('param' + type + 'Name' + key, name, true);
+  parent.opener.layer('param' + type + 'Name' + key, name, true);
   var help=frm.inpHelp.value;
-  top.opener.layer('param' + type + 'Help' + key, help, true);
-  top.close();
+  parent.opener.layer('param' + type + 'Help' + key, help, true);
+  closePage();
   return true;
 }
 </script>
