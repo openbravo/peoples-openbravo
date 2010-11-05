@@ -309,6 +309,10 @@ public class ReportManager {
         .getSessionValue("#AD_ReportNumberFormat"), dfs);
     designParameters.put("NUMBERFORMAT", NumberFormat);
 
+    designParameters.put("SHOW_LOGO", report.getTemplateInfo().getShowLogo());
+    designParameters.put("SHOW_COMPANYDATA", report.getTemplateInfo().getShowCompanyData());
+    designParameters.put("HEADER_MARGIN", report.getTemplateInfo().getHeaderMargin());
+
     return designParameters;
   }
 

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="RptFIN_PaymentLines"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="483"
+		 pageHeight="802"
+		 columnWidth="483"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="GroupHeader_DarkGray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#555555"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+		isBold="true"
+	/>
+	<style 
+		name="Gray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+	/>
+
+	<parameter name="FIN_PAYMENT_ID" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<queryString><![CDATA[SELECT LINE_DOCUMENTTYPE, LINE_DOCUMENTNO, LINE_DATE, LINE_CURRENCY ,SUM(A.LINE_AMOUNT) AS AMOUNT
+FROM
+  (SELECT
+     case when psd.fin_payment_schedule_order is not null and psd.fin_payment_schedule_invoice is null then 'O'
+          when psd.fin_payment_schedule_invoice is not null and psd.fin_payment_schedule_order is null then 'I'
+          when psd.fin_payment_schedule_invoice is not null and psd.fin_payment_schedule_order is not null then 'I'
+          when pd.c_glitem_id is not null then 'GL'
+           else 'U'
+     end as LINE_DOCUMENTTYPE,
+     coalesce(to_char(inv.documentno), to_char(ord.documentno), to_char('')) as LINE_DOCUMENTNO,
+     coalesce(to_char(inv.dateinvoiced), to_char(ord.dateordered), to_char('')) as LINE_DATE,
+     coalesce(to_char(psd.amount), to_char(pd.amount)) as LINE_AMOUNT,
+     cur.cursymbol as LINE_CURRENCY
+   FROM fin_payment p join fin_payment_detail pd on (p.fin_payment_id=pd.fin_payment_id)
+        join fin_payment_scheduledetail psd on (pd.fin_payment_detail_id=psd.fin_payment_detail_id)
+        left outer join fin_payment_schedule ps on (psd.fin_payment_schedule_invoice=ps.fin_payment_schedule_id)
+        left outer join c_invoice inv on (ps.c_invoice_id = inv.c_invoice_id)
+        left outer join fin_payment_schedule ps2 on (psd.fin_payment_schedule_order=ps2.fin_payment_schedule_id)
+        left outer join c_order ord on (ps2.c_order_id = ord.c_order_id)
+        left outer join c_glitem gl on (pd.c_glitem_id = gl.c_glitem_id)
+        left outer join c_currency cur on (p.c_currency_id = cur.c_currency_id)
+   WHERE p.fin_payment_id=$P{FIN_PAYMENT_ID}) A
+GROUP BY LINE_DOCUMENTTYPE, LINE_DOCUMENTNO, LINE_DATE, LINE_CURRENCY
+ORDER BY LINE_DOCUMENTTYPE,LINE_DATE, LINE_DOCUMENTNO]]></queryString>
+
+	<field name="LINE_DOCUMENTTYPE" class="java.lang.String"/>
+	<field name="LINE_DOCUMENTNO" class="java.lang.String"/>
+	<field name="LINE_DATE" class="java.lang.String"/>
+	<field name="LINE_CURRENCY" class="java.lang.String"/>
+	<field name="AMOUNT" class="java.math.BigDecimal"/>
+
+	<variable name="SUM_LINEAMT" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="15"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="0"
+						y="0"
+						width="346"
+						height="15"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+				<text><![CDATA[Justification]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="346"
+						y="0"
+						width="137"
+						height="15"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font size="12"/>
+					</textElement>
+				<text><![CDATA[Amount]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="483"
+						y="0"
+						width="0"
+						height="15"
+						key="line-8"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="15"
+						key="line-9"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="14"
+						width="483"
+						height="0"
+						key="line-11"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="346"
+						y="0"
+						width="0"
+						height="15"
+						key="line-12"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="13"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="12"
+						width="483"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="13"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="483"
+						y="0"
+						width="0"
+						height="13"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="346"
+						y="0"
+						width="0"
+						height="13"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="0"
+						width="346"
+						height="12"
+						key="invoice">
+							<printWhenExpression><![CDATA[new Boolean($F{LINE_DOCUMENTTYPE}.equalsIgnoreCase("I"))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Invoice" + "   " + (($F{LINE_DOCUMENTNO}!=null) ? $F{LINE_DOCUMENTNO} : new String("")) + "   " + (($F{LINE_DATE}!=null) ? $F{LINE_DATE} : new String(""))]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="0"
+						width="346"
+						height="12"
+						key="order">
+							<printWhenExpression><![CDATA[new Boolean($F{LINE_DOCUMENTTYPE}.equalsIgnoreCase("O"))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Order" + "   " + (($F{LINE_DOCUMENTNO}!=null) ? $F{LINE_DOCUMENTNO} : new String("")) + "   " + (($F{LINE_DATE}!=null) ? $F{LINE_DATE} : new String(""))]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="0"
+						width="346"
+						height="12"
+						key="others">
+							<printWhenExpression><![CDATA[new Boolean($F{LINE_DOCUMENTTYPE}.equalsIgnoreCase("GL"))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Others" + "   " + (($F{LINE_DOCUMENTNO}!=null) ? $F{LINE_DOCUMENTNO} : new String("")) + "   " + (($F{LINE_DATE}!=null) ? $F{LINE_DATE} : new String(""))]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="-1"
+						y="0"
+						width="346"
+						height="12"
+						key="unapplied">
+							<printWhenExpression><![CDATA[new Boolean($F{LINE_DOCUMENTTYPE}.equalsIgnoreCase("U"))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Unapplied" + "   " + (($F{LINE_DOCUMENTNO}!=null) ? $F{LINE_DOCUMENTNO} : new String("")) + "   " + (($F{LINE_DATE}!=null) ? $F{LINE_DATE} : new String(""))]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="347"
+						y="0"
+						width="136"
+						height="13"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMOUNT}!=null) ? $P{NUMBERFORMAT}.format($F{AMOUNT}).toString() : new String(" ")]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="28"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="346"
+						y="-1"
+						width="0"
+						height="29"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="483"
+						y="0"
+						width="0"
+						height="28"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="347"
+						y="27"
+						width="136"
+						height="0"
+						key="line-7"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Gray"
+						x="347"
+						y="0"
+						width="136"
+						height="27"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{SUM_LINEAMT}!=null) ? $P{NUMBERFORMAT}.format($V{SUM_LINEAMT}).toString() : new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="200"
+						y="0"
+						width="145"
+						height="28"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[" TOTAL (" + $F{LINE_CURRENCY}.toString() + "): "]]></textFieldExpression>
+				</textField>
+			</band>
+		</summary>
+</jasperReport>

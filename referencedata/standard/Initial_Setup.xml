@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <EmailTemplate id="0680791915544EDAA32727AD21542EE3" identifier="AR Receipt Report template - ">
+    <id>0680791915544EDAA32727AD21542EE3</id>
+    <active>true</active>
+    <pocDocumentType id="8E2539C66CFB43F79613217E35CC5D14" entity-name="DocumentTemplate" identifier="AR Receipt Report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
   <EmailTemplate id="878ECF0D5A238C7BE040007F010129BA" identifier="AR Invoice Report template - ">
     <id>878ECF0D5A238C7BE040007F010129BA</id>
     <active>true</active>
@@ -139,6 +148,15 @@
     <id>878ECF0D5A6F8C7BE040007F010129BA</id>
     <active>true</active>
     <pocDocumentType id="AF10A903167240F883C7EE7A3325981D" entity-name="DocumentTemplate" identifier="POS Order Report template"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192" entity-name="ADLanguage" identifier="English (USA)"/>
+  </EmailTemplate>
+  <EmailTemplate id="E8CBFC5AD3784396BC2D14CD1A104316" identifier="AP Payment Report template - ">
+    <id>E8CBFC5AD3784396BC2D14CD1A104316</id>
+    <active>true</active>
+    <pocDocumentType id="FA45DFAC61A542658CC02B64E476F4C0" entity-name="DocumentTemplate" identifier="AP Payment Report template"/>
     <subject xsi:nil="true"/>
     <body xsi:nil="true"/>
     <default>true</default>
@@ -1496,6 +1514,18 @@
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
   </DocumentTemplate>
+  <DocumentTemplate id="8E2539C66CFB43F79613217E35CC5D14" identifier="AR Receipt Report template">
+    <id>8E2539C66CFB43F79613217E35CC5D14</id>
+    <active>true</active>
+    <documentType id="D132517AE775435B8EB2832CC61FCAB1" entity-name="DocumentType" identifier="AR Receipt"/>
+    <name>AR Receipt Report template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Payment In-@our_ref@</reportFilename>
+    <templateFilename>RptFIN_Payment.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
   <DocumentTemplate id="9FB97CCA66EA49F29A0EF5080E2AFF29" identifier="AR Credit Memo Report template">
     <id>9FB97CCA66EA49F29A0EF5080E2AFF29</id>
     <active>true</active>
@@ -1636,6 +1666,18 @@
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Goods Shipment-@our_ref@</reportFilename>
     <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <DocumentTemplate id="FA45DFAC61A542658CC02B64E476F4C0" identifier="AP Payment Report template">
+    <id>FA45DFAC61A542658CC02B64E476F4C0</id>
+    <active>true</active>
+    <documentType id="ED1E059C9CF54062BA43B79F3EB89C77" entity-name="DocumentType" identifier="AP Payment"/>
+    <name>AP Payment Report template</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Payment Out-@our_ref@</reportFilename>
+    <templateFilename>RptFIN_Payment.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
