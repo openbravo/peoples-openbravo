@@ -144,6 +144,16 @@ public class PrintController extends HttpSecureAppServlet {
       if (strDocumentId.equals(""))
         strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpmInoutId");
     }
+    if (request.getServletPath().toLowerCase().indexOf("payments") != -1) {
+      documentType = DocumentType.PAYMENT;
+      // The prefix PRINTPAYMENTS is a fixed name based on the KEY of the
+      // AD_PROCESS
+      sessionValuePrefix = "PRINTPAYMENT";
+
+      strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpfinPaymentId_R");
+      if (strDocumentId.equals(""))
+        strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpfinPaymentId");
+    }
 
     post(request, response, vars, documentType, sessionValuePrefix, strDocumentId);
 
@@ -578,6 +588,8 @@ public class PrintController extends HttpSecureAppServlet {
       return PocData.getContactDetailsForShipments(this, strDocumentId);
     case PURCHASEORDER:
       return PocData.getContactDetailsForOrders(this, strDocumentId);
+    case PAYMENT:
+      return PocData.getContactDetailsForPayments(this, strDocumentId);
     }
     return null;
   }
@@ -1256,6 +1268,11 @@ public class PrintController extends HttpSecureAppServlet {
       }
     } else if (strTable.equals("C_ORDER")) {
       printControllerData = PrintControllerData.selectOrders(this, strIds.toString());
+      for (PrintControllerData docID : printControllerData) {
+        documentIdsOrdered[i++] = docID.getField("Id");
+      }
+    } else if (strTable.equals("FIN_PAYMENT")) {
+      printControllerData = PrintControllerData.selectPayments(this, strIds.toString());
       for (PrintControllerData docID : printControllerData) {
         documentIdsOrdered[i++] = docID.getField("Id");
       }

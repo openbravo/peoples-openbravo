@@ -146,7 +146,38 @@
         <Parameter name="mInoutId" optional="false" type="argument" after="1=1">
            <![CDATA[ and m_inout.m_inout_id in ]]>
         </Parameter>
-   </SqlMethod>   
+   </SqlMethod>
+   
+   <SqlMethod name="getContactDetailsForPayments" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+            select
+                fin_payment.fin_payment_id as document_id,
+                fin_payment.status as docstatus,
+                fin_payment.documentno as ourreference,
+                fin_payment.referenceno as yourreference,
+                salesrep.ad_user_id as salesrep_user_id,
+                salesrep.email as salesrep_email,
+                salesrep.name as salesrep_name,
+                fin_payment.c_bpartner_id as bpartner_id,
+                bp.name as bpartner_name,
+                contact.ad_user_id as contact_user_id,
+                contact.email as contact_email,
+                contact.name as contact_name
+            from
+                fin_payment
+                    join c_bpartner bp on fin_payment.c_bpartner_id = bp.c_bpartner_id
+                    left join ad_user contact on bp.c_bpartner_id = contact.c_bpartner_id
+                    left join ad_user salesrep on bp.salesrep_id = salesrep.c_bpartner_id
+            where
+                1=1
+        ]]>
+        </Sql>
+        <Parameter name="finPaymentId" optional="false" type="argument" after="1=1">
+           <![CDATA[ and fin_payment.fin_payment_id in ]]>
+        </Parameter>
+   </SqlMethod>
    
    <SqlMethod name="getContactDetailsForUser" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

@@ -46,4 +46,17 @@
         </Sql>
         <Parameter name="Id" optional="true" type="replace" after="WHERE C_Order_ID IN (" text="'1'"/>
     </SqlMethod>
+    
+    <SqlMethod name="selectPayments" type="preparedStatement" return="multiple">
+        <SqlMethodComment></SqlMethodComment>
+        <Sql>
+            <![CDATA[
+            SELECT fin_payment_id as ID
+            FROM fin_payment
+            WHERE fin_payment_id IN ('1')
+            ORDER BY documentno ASC
+            ]]>
+        </Sql>
+        <Parameter name="Id" optional="true" type="replace" after="WHERE fin_payment_id IN (" text="'1'"/>
+    </SqlMethod>
 </SqlClass>

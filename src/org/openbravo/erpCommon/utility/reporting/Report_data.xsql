@@ -127,5 +127,30 @@
 		<Parameter name="mInoutId" />
 
 	</SqlMethod>
+  
+    <SqlMethod name="getPaymentInfo" type="preparedStatement" return="multiple">
+        <SqlMethodComment></SqlMethodComment>
+        <Sql>
+            <![CDATA[
+            select
+                fin_payment.ad_org_id,
+                fin_payment.fin_payment_id as document_id,
+                fin_payment.status as docstatus,
+                fin_payment.c_doctype_id as docTypeTargetId,
+                fin_payment.documentno as ourreference,
+                fin_payment.referenceno as cusreference,
+                fin_payment.c_bpartner_id as bpartner_id,
+                fin_payment.isreceipt as isSalesOrderTransaction,
+                c_bpartner.ad_language as bpartner_language
+            from
+                fin_payment left join c_doctype on fin_payment.c_doctype_id = c_doctype.c_doctype_id
+                left join c_bpartner on fin_payment.c_bpartner_id = c_bpartner.c_bpartner_id
+            where
+                fin_payment.fin_payment_id = ?
+            ]]>
+        </Sql>
+        <Parameter name="FinPaymentId" />
+
+    </SqlMethod>
 
 </SqlClass>

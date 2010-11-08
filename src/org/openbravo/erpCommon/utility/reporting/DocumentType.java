@@ -19,7 +19,7 @@ package org.openbravo.erpCommon.utility.reporting;
 public enum DocumentType {
   UNKNOWN(null, null), QUOTATION("C_ORDER", "quotations/"), SALESORDER("C_ORDER", "orders/"), SALESINVOICE(
       "C_INVOICE", "invoices/"), SHIPMENT("M_INOUT", "shipments/"), PURCHASEORDER("C_ORDER",
-      "purchaseorders/");
+      "purchaseorders/"), PAYMENT("FIN_PAYMENT", "payments/");
 
   private String _tableName;
   private String _contextSubFolder;

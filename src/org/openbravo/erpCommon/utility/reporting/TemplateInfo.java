@@ -30,6 +30,9 @@ public class TemplateInfo {
   private String _TemplateLocation;
   private String _TemplateFilename;
   private String _ReportFilename;
+  private String _ShowLogo;
+  private String _ShowCompanyData;
+  private String _HeaderMargin;
   private TemplateData[] templates;
   private EmailDefinition _DefaultEmailDefinition;
   private Map<String, EmailDefinition> _EmailDefinitions;
@@ -72,9 +75,11 @@ public class TemplateInfo {
     final TemplateData template = getSelectedTemplate(templates, templateId);
     if (templates.length > 0) {
       setTemplateLocation(template.getField("template_location"));
-
       _TemplateFilename = template.getField("template_filename");
       _ReportFilename = template.getField("report_filename");
+      _ShowLogo = template.getField("show_logo");
+      _ShowCompanyData = template.getField("show_company_data");
+      _HeaderMargin = template.getField("header_margin");
 
       // READ EMAIL DEFINITIONS!!!!
       _EmailDefinitions = new HashMap<String, EmailDefinition>();
@@ -103,8 +108,7 @@ public class TemplateInfo {
 
   private TemplateData getSelectedTemplate(TemplateData[] templates, String templateId) {
     if ("default".equals(templateId)) {
-      return templates[0];
-
+      return (templates.length == 0) ? new TemplateData() : templates[0];
     } else {
       for (int i = 0; i < templates.length; i++) {
         final TemplateData template = templates[i];
@@ -148,6 +152,18 @@ public class TemplateInfo {
 
   public String getReportFilename() {
     return _ReportFilename;
+  }
+
+  public String getShowLogo() {
+    return _ShowLogo;
+  }
+
+  public String getShowCompanyData() {
+    return _ShowCompanyData;
+  }
+
+  public String getHeaderMargin() {
+    return _HeaderMargin;
   }
 
   EmailDefinition getEmailDefinition(String language) throws ReportingException {

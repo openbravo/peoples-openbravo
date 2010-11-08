@@ -37,6 +37,9 @@
 			'' as template_location,
 			'' as template_filename,
 			'' as report_filename,
+            '' as show_logo,
+            '' as show_company_data,
+            '' as header_margin,
 			'' as id,
 			'' as name
 			
@@ -58,7 +61,10 @@
 			documenttemplate.templatelocation as template_location,
 			documenttemplate.templatefilename as template_filename,
 			documenttemplate.name as name,
-			documenttemplate.reportfilename as report_filename
+			documenttemplate.reportfilename as report_filename,
+            documenttemplate.showlogo as show_logo,
+            documenttemplate.showcompanydata as show_company_data,
+            documenttemplate.headermargin as header_margin
 		from
 			C_poc_doctype_template documenttemplate
 		where
@@ -73,7 +79,10 @@
 			documenttemplate.templatelocation as template_location,
 			documenttemplate.templatefilename as template_filename,
 			documenttemplate.name as name,
-			documenttemplate.reportfilename as report_filename
+			documenttemplate.reportfilename as report_filename,
+            documenttemplate.showlogo as show_logo,
+            documenttemplate.showcompanydata as show_company_data,
+            documenttemplate.headermargin as header_margin
 		from
 			C_poc_doctype_template documenttemplate
 		where
