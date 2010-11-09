@@ -30,6 +30,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
@@ -57,7 +58,11 @@ public class Login extends HttpBaseServlet {
         String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
             .getLanguage());
 
-        printPageIdentificacion(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+        if (OBVersion.getInstance().is30()) {
+          printPageLogin30(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+        } else {
+          printPageLogin250(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+        }
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -73,8 +78,12 @@ public class Login extends HttpBaseServlet {
       out.close();
     } else if (vars.commandIn("WELCOME")) {
       log4j.debug("Command: Welcome");
-      String strTheme = vars.getTheme();
-      printPageWelcome(response, strTheme);
+      if (OBVersion.getInstance().is30()) {
+        printPageBlank(response, vars);
+      } else {
+        String strTheme = vars.getTheme();
+        printPageWelcome(response, strTheme);
+      }
     } else if (vars.commandIn("LOGO")) {
       printPageLogo(response, vars);
     } else {
@@ -173,14 +182,62 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  private void printPageIdentificacion(HttpServletResponse response, String strTheme,
-      String cacheMsg, String browserMsg, String orHigherMsg) throws IOException, ServletException {
+  /**
+   * Shows 2.50 login page
+   */
+  private void printPageLogin250(HttpServletResponse response, String strTheme, String cacheMsg,
+      String browserMsg, String orHigherMsg) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", strTheme);
     xmlDocument.setParameter("itService", SessionLoginData.selectSupportContact(this));
+
+    String cacheMsgFinal = (cacheMsg != null && !cacheMsg.equals("")) ? cacheMsg
+        : "Your browser's cache has outdated files. Please clean it and reload the page.";
+    cacheMsgFinal = "var cacheMsg = \"" + cacheMsgFinal + "\"";
+    xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
+
+    String orHigherMsgFinal = (orHigherMsg != null && !orHigherMsg.equals("")) ? orHigherMsg
+        : "or higher";
+
+    String browserMsgFinal = (browserMsg != null && !browserMsg.equals("")) ? browserMsg
+        : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
+
+    browserMsgFinal = browserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
+        + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsgFinal;
+    browserMsgFinal = "var browserMsg = \"" + browserMsgFinal + "\"";
+    xmlDocument.setParameter("browserMsg", browserMsgFinal.replaceAll("\\n", "\n"));
+
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  /**
+   * Shows 3.0 login page
+   */
+  private void printPageLogin30(HttpServletResponse response, String strTheme, String cacheMsg,
+      String browserMsg, String orHigherMsg) throws IOException, ServletException {
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
+        .createXmlDocument();
+
+    String windowTitle = "TestBravo";
+    String windowFavicon = "http://www.noticias3d.com/favicon.ico";
+    String showYourCompanyLogo = "true";
+    String showYourITServiceLogo = "true";
+    String showForgeLogo = "true";
+
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", strTheme);
+    xmlDocument.setParameter("visualPrefs", "var windowTitle = '" + windowTitle
+        + "', windowFavicon = '" + windowFavicon + "', showYourCompanyLogo = "
+        + showYourCompanyLogo + ", showYourITServiceLogo = " + showYourITServiceLogo
+        + ", showForgeLogo = " + showForgeLogo + ";");
+    xmlDocument.setParameter("itServiceUrl", "var itServiceUrl = '"
+        + SessionLoginData.selectSupportContact(this) + "'");
 
     String cacheMsgFinal = (cacheMsg != null && !cacheMsg.equals("")) ? cacheMsg
         : "Your browser's cache has outdated files. Please clean it and reload the page.";
