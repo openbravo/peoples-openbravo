@@ -48,7 +48,7 @@ BEGIN
   END IF;
   
   IF (v_DocStatus = 'CO' AND DELETING) THEN
-    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+    RAISE_APPLICATION_ERROR(-20000, '@20501@');
   END IF;
 
   IF (v_ReqStatus = 'P') THEN

@@ -25,7 +25,6 @@
   v_xTree_ID VARCHAR2(32);
   v_xParent_ID VARCHAR2(32);
   v_NextNo     VARCHAR2(32);
-  v_orgName    VARCHAR2(60);
   v_Cont NUMBER;
     
 BEGIN
@@ -99,25 +98,17 @@ BEGIN
         SET IsTranslated='N',
         Updated=now()
       WHERE C_ElementValue_ID=:new.C_ElementValue_ID;
-      /** Mutating Trigger
-      --   Update Valid Combination Description
-      UPDATE    C_ValidCombination
-      SET    Updated=now()
-      WHERE    Account_ID=:new.C_ElementValue_ID
-      OR    User1_ID=:new.C_ElementValue_ID OR User2_ID=:new.C_ElementValue_ID;
-      **/
     END IF;
-    SELECT COUNT(1)
-    INTO v_Cont
-    FROM C_VALIDCOMBINATION
-    WHERE ACCOUNT_ID=:NEW.C_ELEMENTVALUE_ID;
-    IF (v_Cont>0) THEN
-     SELECT name INTO v_orgName FROM ad_org WHERE ad_org_id in (SELECT ad_org_id FROM c_validcombination WHERE account_id=:new.C_ElementValue_ID);
-     UPDATE    C_ValidCombination
-       SET    Updated=now(),combination=v_orgName||'-'||:new.VALUE||'-_-_-_',description=v_orgName||'-'||:new.DESCRIPTION||'-_-_-_'  
-       WHERE    Account_ID=:new.C_ElementValue_ID
-       OR    User1_ID=:new.C_ElementValue_ID OR User2_ID=:new.C_ElementValue_ID;
-    END IF;
+    
+     -- Update combination and description fields only if needed to not to trigger a cross tables update     
+    UPDATE C_ValidCombination
+      SET Updated=now(), 
+          combination= TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.VALUE || '-_-_-_',
+          description= TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.DESCRIPTION || '-_-_-_'
+      WHERE (Account_ID=:new.C_ElementValue_ID OR User1_ID=:new.C_ElementValue_ID OR User2_ID=:new.C_ElementValue_ID)
+         AND (combination <> (TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.VALUE || '-_-_-_')
+         OR description <> (TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.DESCRIPTION || '-_-_-_'));
+
      UPDATE Fact_Acct SET AcctValue=:new.VALUE,AcctDescription=:new.DESCRIPTION WHERE Account_ID=:new.C_ElementValue_ID;
   END IF;
   -- Updating
