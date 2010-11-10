@@ -48,7 +48,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_MERGE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="AD_MODULE_MERGE_AD_MODULE">
+      <foreign-key foreignTable="AD_MODULE" name="AD_MODULE_MERGE_AD_MODULE" onDelete="cascade">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_MODULE_MERGEAD_ORG">
