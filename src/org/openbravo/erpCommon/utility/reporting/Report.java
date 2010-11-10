@@ -94,6 +94,10 @@ public class Report {
       reportData = ReportData.getShipmentInfo(connectionProvider, documentId);
       break;
 
+    case PAYMENT: // Retrieve payment information
+      reportData = ReportData.getPaymentInfo(connectionProvider, documentId);
+      break;
+
     default:
       throw new ReportingException(Utility.messageBD(connectionProvider, "UnknownDocumentType",
           strLanguage)
@@ -102,7 +106,7 @@ public class Report {
 
     multiReports = multiReport;
     if (reportData.length == 1) {
-      checkSalesOrder=reportData[0].getField("isSalesOrderTransaction");
+      checkSalesOrder = reportData[0].getField("isSalesOrderTransaction");
       orgId = reportData[0].getField("ad_Org_Id");
       docTypeId = reportData[0].getField("docTypeTargetId");
 
@@ -185,7 +189,7 @@ public class Report {
   }
 
   public boolean isDraft() {
-    return _DocumentStatus.equals("DR");
+    return _DocumentStatus.equals("DR") || _DocumentStatus.equals("RPAP");
   }
 
   public String getFilename() {
@@ -230,12 +234,13 @@ public class Report {
   public void setDeleteable(boolean deleteable) {
     deleteReport = deleteable;
   }
+
   public String getCheckSalesOrder() {
-		return checkSalesOrder;
+    return checkSalesOrder;
   }
 
   public void setCheckSalesOrder(String checkSalesOrder) {
-	this.checkSalesOrder = checkSalesOrder;
+    this.checkSalesOrder = checkSalesOrder;
   }
 
 }

@@ -491,7 +491,8 @@ public class ToolBar {
     // This piece of code used to control the email icon in the manual window. At this point we only
     // use the email functionality
     // only to send order (purchase or sales) and invoices (purchase or sales)
-    if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")) {
+    if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")
+        && !pdf.contains("payments")) {
       removeElement("EMAIL");
     }
     if (!hasTree)
@@ -605,7 +606,8 @@ public class ToolBar {
     if (isReadOnly)
       removeReadOnly();
 
-    if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")) {
+    if (pdf != null && !pdf.contains("orders") && !pdf.contains("invoices")
+        && !pdf.contains("payments")) {
       removeElement("EMAIL");
     }
 

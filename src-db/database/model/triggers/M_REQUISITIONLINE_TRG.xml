@@ -46,6 +46,10 @@ BEGIN
   IF (v_DocStatus = 'CO' AND INSERTING) THEN
     RAISE_APPLICATION_ERROR(-20525, 'It is not possible insert a new line in a completed requisition');
   END IF;
+  
+  IF (v_DocStatus = 'CO' AND DELETING) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@20501@');
+  END IF;
 
   IF (v_ReqStatus = 'P') THEN
     RAISE_APPLICATION_ERROR(-20526, 'It is not possible to modify planned requisition lines');
