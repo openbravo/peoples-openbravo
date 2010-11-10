@@ -279,7 +279,7 @@ public class VersionUtility {
 
       for (Mod module : modsToInstall.values()) {
         if (modsIdMerged.contains(module.modId)) {
-          errors.add("@CannotInstallMerged@ " + module.name);
+          errors.add(module.name + " @CannotInstallMerged@");
           checked = false;
         }
       }
