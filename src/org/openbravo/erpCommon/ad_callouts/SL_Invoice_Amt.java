@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -125,6 +126,9 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
 
     if (strChanged.equals("inplinenetamt")) {
       priceActual = LineNetAmt.divide(qtyInvoice, PricePrecision, BigDecimal.ROUND_HALF_UP);
+      DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+      LineNetAmt = qtyInvoice.multiply(priceActual.setScale(df.getMaximumFractionDigits(),
+          BigDecimal.ROUND_HALF_UP));
     }
     if (priceActual.compareTo(BigDecimal.ZERO) == 0)
       LineNetAmt = BigDecimal.ZERO;
@@ -138,6 +142,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
           dataInvoice[0].dateinvoiced, qtyInvoice.toString(), dataInvoice[0].mPricelistId,
           dataInvoice[0].id));
       resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
+      resultado.append("new Array(\"inplinenetamt\", " + LineNetAmt.toString() + "),");
     }
 
     // If quantity changes, recalculates unit price (actual price) applying
