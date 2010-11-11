@@ -1027,8 +1027,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>600000</startingNo>
-    <nextAssignedNumber>600000</nextAssignedNumber>
-    <currentNextSystem>60000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1043,8 +1041,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>50000</startingNo>
-    <nextAssignedNumber>50000</nextAssignedNumber>
-    <currentNextSystem>5000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1059,8 +1055,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1075,8 +1069,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>500000</startingNo>
-    <nextAssignedNumber>500000</nextAssignedNumber>
-    <currentNextSystem>50000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1091,8 +1083,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>700000</startingNo>
-    <nextAssignedNumber>700000</nextAssignedNumber>
-    <currentNextSystem>70000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1107,8 +1097,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>30000</startingNo>
-    <nextAssignedNumber>30000</nextAssignedNumber>
-    <currentNextSystem>3000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1123,8 +1111,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>900000</startingNo>
-    <nextAssignedNumber>900000</nextAssignedNumber>
-    <currentNextSystem>90000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1139,8 +1125,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
-    <nextAssignedNumber>10000</nextAssignedNumber>
-    <currentNextSystem>1000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1155,8 +1139,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1171,8 +1153,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
-    <nextAssignedNumber>10000</nextAssignedNumber>
-    <currentNextSystem>1000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1187,8 +1167,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>20000</startingNo>
-    <nextAssignedNumber>20000</nextAssignedNumber>
-    <currentNextSystem>2000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1203,8 +1181,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1219,8 +1195,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1235,8 +1209,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1251,8 +1223,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>40000</startingNo>
-    <nextAssignedNumber>40000</nextAssignedNumber>
-    <currentNextSystem>4000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1267,8 +1237,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1283,8 +1251,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>800000</startingNo>
-    <nextAssignedNumber>800000</nextAssignedNumber>
-    <currentNextSystem>80000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1299,8 +1265,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>1000</startingNo>
-    <nextAssignedNumber>1000</nextAssignedNumber>
-    <currentNextSystem>100</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1315,8 +1279,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>300000</startingNo>
-    <nextAssignedNumber>300000</nextAssignedNumber>
-    <currentNextSystem>30000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1331,8 +1293,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
-    <nextAssignedNumber>1000000</nextAssignedNumber>
-    <currentNextSystem>100000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1347,8 +1307,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
-    <nextAssignedNumber>10000</nextAssignedNumber>
-    <currentNextSystem>1000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1363,8 +1321,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
-    <nextAssignedNumber>10000</nextAssignedNumber>
-    <currentNextSystem>1000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1379,8 +1335,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>100000</startingNo>
-    <nextAssignedNumber>100000</nextAssignedNumber>
-    <currentNextSystem>10000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1395,8 +1349,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>400000</startingNo>
-    <nextAssignedNumber>400000</nextAssignedNumber>
-    <currentNextSystem>40000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1411,8 +1363,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>60000</startingNo>
-    <nextAssignedNumber>60000</nextAssignedNumber>
-    <currentNextSystem>6000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1427,8 +1377,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>70000</startingNo>
-    <nextAssignedNumber>70000</nextAssignedNumber>
-    <currentNextSystem>7000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1443,8 +1391,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
-    <nextAssignedNumber>10000</nextAssignedNumber>
-    <currentNextSystem>1000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
@@ -1459,8 +1405,6 @@
     <autoNumbering>true</autoNumbering>
     <incrementBy>1</incrementBy>
     <startingNo>80000</startingNo>
-    <nextAssignedNumber>80000</nextAssignedNumber>
-    <currentNextSystem>8000</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
     <prefix xsi:nil="true"/>
     <suffix xsi:nil="true"/>
