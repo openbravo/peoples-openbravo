@@ -319,11 +319,12 @@ button.ButtonLink_default table.Button .Button_right, table.Button_default .Butt
   height: 26px;
 }
 
-button.ButtonLink_disabled table.Button, .ButtonLink_disabled {
+button.ButtonLink_disabled table.Button, .Button_disabled {
   border-collapse: collapse;
+  text-align: center;
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
-  color: #1b4106;
+  color: #549033;
   font-weight: bold;
   cursor: default;
   background-color: transparent;
@@ -331,35 +332,26 @@ button.ButtonLink_disabled table.Button, .ButtonLink_disabled {
   border: 0px none;
 }
 
-button.ButtonLink_disabled table.Button .Button_left, table.ButtonLink_disabled .Button_left {
+button.ButtonLink_disabled table.Button .Button_left, .Button_disabled .Button_left {
+  background-repeat: no-repeat;
+  background-position: center right; /*~RTL    background-position: center left; */
+  background-image: url(Common/Button/buttonLeft.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
   width: 35px;
   height: 26px;
-  background-repeat: no-repeat;
-  background-position: center right; /*~RTL   background-position: center left; */
-  background-image: url(Common/Button/buttonLeft.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
-  text-align: right;
-  vertical-align: top;
 }
 
-button.ButtonLink_disabled table.Button .Button_text, table.ButtonLink_disabled .Button_text {
+button.ButtonLink_disabled table.Button .Button_text, table.Button_disabled .Button_text {
   background-repeat: repeat-x;
   background-position: center center;
   background-image: url(Common/Button/buttonBody.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
-  text-align: center;
-  height: 26px;
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  color: #549033;
-  font-weight: bold;
-  text-align: center;
 }
 
-button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled .Button_right {
+button.ButtonLink_disabled table.Button .Button_right, table.Button_disabled .Button_right {
+  background-repeat: no-repeat;
+  background-position: center left; 
+  background-image: url(Common/Button/buttonRight.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
   width: 26px;
   height: 26px;
-  background-repeat: no-repeat;
-  background-position: center left;
-  background-image: url(Common/Button/buttonRight.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
 }
 
 
@@ -1542,7 +1534,7 @@ div.calendar {
 .ComboKey {
   border: 1px solid #888888;
   color: #303030;
-  background-color: #FFF6CC !important;
+  background-color: #FFF6CC;
   /*background-image: url(Common/Combo/combo.required.background.png) repeat-x top !important;*/
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
@@ -1564,7 +1556,7 @@ div.calendar {
 
 .Combo_focus {
   border: 2px solid #4D98CA;
-  background-color: #C8E9F9 !important;
+  background-color: #C8E9F9;
   outline: none;
   padding-left: 0px;
   margin-top: -1px;
@@ -2092,8 +2084,8 @@ input.DataGrid_Table_Dummy_Input {
 }
 
 .Dimension_LeftSelect_height {
-  height: 70px;
-  _height: 71px;
+  height: 70px !important;
+  _height: 71px !important;
 }
 
 .Dimension_LeftSelect_width:focus, .Dimension_LeftSelect_height:focus {
@@ -2109,8 +2101,8 @@ input.DataGrid_Table_Dummy_Input {
 }
 
 .Dimension_RightSelect_height {
-  height: 70px;
-  _height: 71px;
+  height: 70px !important;
+  _height: 71px !important;
 }
 
 .Dimension_RightSelect_width:focus, .Dimension_RightSelect_height:focus {
@@ -2937,8 +2929,8 @@ a.LabelLink_noicon_focus {
 }
 
 .List_height {
-  height: 70px;
-  _height: 71px;
+  height: 70px !important;
+  _height: 71px !important;
 }
 
 .List_width:focus, .List_height:focus {
@@ -7073,13 +7065,11 @@ A.dojoTabLink_focus {
 
 A.dojoTabLink:hover {
   text-decoration: underline !important;
-  font-size:  8pt;
 }
 
 A.dojoTabLink:focus {
   color: black;
   text-decoration: none;
-  font-size: 8pt;
   outline: 0;
 }
 
@@ -7244,6 +7234,7 @@ a.Main_ToolBar_Button {
   height: 26px;
   border: 0px;
   vertical-align: middle;
+  outline: none;
   -moz-outline-style: none;
 }
 
@@ -7272,6 +7263,7 @@ a.Main_ToolBar_Button_Selected {
   height: 26px;
   border: 0px;
   vertical-align: middle;
+  outline: none;
   -moz-outline-style: none;
   background-repeat: no-repeat;
   background-position: center center;
@@ -7289,6 +7281,7 @@ a.Main_ToolBar_Button_disabled {
   border: 0px;
   vertical-align: middle;
   cursor: default;
+  outline: none;
   -moz-outline-style: none;
 }
 

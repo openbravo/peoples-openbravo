@@ -30,7 +30,7 @@ function utilsJSDirectExecution() {
   isWindowInMDITab = checkWindowInMDITab();
   isWindowInMDIPage = checkWindowInMDIPage();
   isWindowInMDIContext = checkWindowInMDIContext();
-  if (isWindowInMDITab) {
+  if (isWindowInMDIPage) {
     adaptSkinToMDIEnvironment();
   }
 }
@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '8794';
+  var number = '8847';
   return number;
 }
 
@@ -3327,11 +3327,18 @@ function getStyleRulePosition(selector) {
 * Small changes in a 2.50 skin to proper view in a MDI tab
 */
 function adaptSkinToMDIEnvironment() {
-  addStyleRule(".Main_NavBar_bg_left", "height: 1px;");
-  addStyleRule(".Main_NavBar_bg_right", "height: 1px;");
-  addStyleRule(".Main_ContentPane_LeftTabsBar", "display: none;");
-  addStyleRule(".Main_ContentPane_NavBar", "height: 0px;");
-  addStyleRule(".Main_ContentPane_NavBar#tdtopNavButtons", "display: none;");
+  if (isWindowInMDITab) {
+    addStyleRule(".Main_NavBar_bg_left", "height: 1px;");
+    addStyleRule(".Main_NavBar_bg_right", "height: 1px;");
+    addStyleRule(".Main_ContentPane_LeftTabsBar", "display: none;");
+    addStyleRule(".Main_ContentPane_NavBar", "height: 0px;");
+    addStyleRule(".Main_ContentPane_NavBar#tdtopNavButtons", "display: none;");
+    addStyleRule(".tabTitle_background", "display: none;");
+  } else if (isWindowInMDIPopup) {
+    addStyleRule(".Popup_ContentPane_NavBar", "display: none;");
+    addStyleRule(".Popup_ContentPane_SeparatorBar", "display: none;");
+    addStyleRule(".Popup_ContentPane_CircleLogo", "display: none;");
+  }
 }
 
 /**
