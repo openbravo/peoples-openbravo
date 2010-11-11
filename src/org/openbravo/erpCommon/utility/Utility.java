@@ -115,7 +115,8 @@ public class Utility {
 
   /**
    * Computes the community branding url on the basis of system information. Note the returned url
-   * does not contain the protocal part, it starts with //... So the caller has to prepend 'http:'.
+   * does not contain the protocol part, it starts with //... So the caller has to prepend it with
+   * the needed protocol part (i.e. http: or https:).
    */
   public static String getCommunityBrandingUrl() {
     String strLicenseClass = LicenseClass.COMMUNITY.getCode();
