@@ -20,11 +20,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.security.SessionLogin;
+import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
@@ -32,6 +36,19 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.xmlEngine.XmlDocument;
 
+/**
+ * 
+ * {@link LoginHandler} is called from {@link Login} Servlet after the user has entered user and
+ * password. It checks user/ password validity as well as license settings and decides whether the
+ * user can log in the application or not.
+ * <p>
+ * Depending if the instance is 2.50 or 3.0 the result of this Servlet differs. 2.50 instances show
+ * the messages in a new window served by this Servlet and do the actual redirection in case of
+ * success. 3.0 instance Login Servlet call LoginHandler as an ajax request and they expect to
+ * obtain a json object with information about success or message and in this case the message to
+ * show.
+ * 
+ */
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
   private String strServletPorDefecto;
@@ -129,7 +146,7 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
-      String strUserAuth, String sessionId) throws IOException {
+      String strUserAuth, String sessionId) throws IOException, ServletException {
     OBContext.setAdminMode();
     try {
       ActivationKey ak = ActivationKey.getInstance();
@@ -195,7 +212,7 @@ public class LoginHandler extends HttpBaseServlet {
 
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
       if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")
-          || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false")) {
+          || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false_")) {
         // Last build went fine and tomcat was restarted. We should login as usual
         goToTarget(res, vars);
       } else if (sysInfo.getSystemStatus().equals("RB60")
@@ -232,42 +249,84 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, VariablesSecureApp vars) throws IOException {
+  private void goToTarget(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
 
-    final String target = vars.getSessionValue("target");
+    String target = vars.getSessionValue("target");
     if (target.equals("")) {
-      response.sendRedirect(strDireccion + "/security/Menu.html");
+      target = strDireccion + "/security/Menu.html";
+    }
+
+    if (OBVersion.getInstance().is30()) {
+      // 3.0 instances return a json object with the target to redirect to
+      try {
+        JSONObject jsonResult = new JSONObject();
+        jsonResult.put("showMessage", false);
+        jsonResult.put("target", target);
+
+        response.setContentType("application/json;charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+        out.print(jsonResult.toString());
+        out.close();
+      } catch (JSONException e) {
+        log4j.error("Error setting login msg", e);
+        throw new ServletException(e);
+      }
     } else {
+      // 2.50 instances do the actual redirection
       response.sendRedirect(target);
     }
   }
 
   private void goToRetry(HttpServletResponse response, VariablesSecureApp vars, String message,
-      String title, String msgType, String action) throws IOException {
-    String discard[] = { "" };
-
-    if (msgType.equals("Error")) {
-      discard[0] = "continueButton";
-    } else {
-      discard[0] = "backButton";
-    }
-
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
-
-    // pass relevant mesasge to show inside the error page
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("messageType", msgType);
-    xmlDocument.setParameter("action", action);
-    xmlDocument.setParameter("messageTitle", title);
+      String title, String msgType, String action) throws IOException, ServletException {
     String msg = (message != null && !message.equals("")) ? message
         : "Please enter your username and password.";
-    xmlDocument.setParameter("messageMessage", msg.replaceAll("\\\\n", "<br>"));
 
-    response.setContentType("text/html");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    if (OBVersion.getInstance().is30()) {
+      // 3.0 instances show the message in the same login window, return a json object with the info
+      // to print the message
+      try {
+        JSONObject jsonMsg = new JSONObject();
+        jsonMsg.put("showMessage", true);
+        jsonMsg.put("target", "Error".equals(msgType) ? null : action);
+        jsonMsg.put("messageType", msgType);
+        jsonMsg.put("messageTitle", title);
+        jsonMsg.put("messageText", msg);
+
+        response.setContentType("application/json;charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+        out.print(jsonMsg.toString());
+        out.close();
+      } catch (JSONException e) {
+        log4j.error("Error setting login msg", e);
+        throw new ServletException(e);
+      }
+    } else {
+      // 2.50 instances show the message in a new window, print that window
+      String discard[] = { "" };
+
+      if (msgType.equals("Error")) {
+        discard[0] = "continueButton";
+      } else {
+        discard[0] = "backButton";
+      }
+
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
+
+      // pass relevant mesasge to show inside the error page
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("messageType", msgType);
+      xmlDocument.setParameter("action", action);
+      xmlDocument.setParameter("messageTitle", title);
+      xmlDocument.setParameter("messageMessage", msg.replaceAll("\\\\n", "<br>"));
+
+      response.setContentType("text/html");
+      final PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
   }
 
   @Override
