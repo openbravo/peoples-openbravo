@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?><ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ADClient id="1000001">
     <id>1000001</id>
     <organization id="0"/>
@@ -2180,6 +2179,7 @@
     <primaryTreeMenu xsi:nil="true"/>
     <manual>false</manual>
     <processNow>false</processNow>
+    <clientAdmin>true</clientAdmin>
   </ADRole>
   <ADRole id="1000006">
     <id>1000006</id>
@@ -2196,6 +2196,7 @@
     <primaryTreeMenu xsi:nil="true"/>
     <manual>false</manual>
     <processNow>false</processNow>
+    <clientAdmin>false</clientAdmin>
   </ADRole>
   <ADUserRoles id="52118BF1AAC14D84E040007F01005FEC">
     <id>52118BF1AAC14D84E040007F01005FEC</id>
@@ -2204,6 +2205,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <roleAdmin>true</roleAdmin>
   </ADUserRoles>
   <ADUserRoles id="52118BF1AAC24D84E040007F01005FEC">
     <id>52118BF1AAC24D84E040007F01005FEC</id>
@@ -2212,6 +2214,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <roleAdmin>true</roleAdmin>
   </ADUserRoles>
   <ADUserRoles id="52118BF1AACC4D84E040007F01005FEC">
     <id>52118BF1AACC4D84E040007F01005FEC</id>
@@ -2220,6 +2223,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <roleAdmin>true</roleAdmin>
   </ADUserRoles>
   <ADUserRoles id="52118BF1AACD4D84E040007F01005FEC">
     <id>52118BF1AACD4D84E040007F01005FEC</id>
@@ -2228,6 +2232,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <roleAdmin>true</roleAdmin>
   </ADUserRoles>
   <ADUserRoles id="52118BF1AACE4D84E040007F01005FEC">
     <id>52118BF1AACE4D84E040007F01005FEC</id>
@@ -2236,6 +2241,7 @@
     <client id="1000001"/>
     <organization id="0"/>
     <active>true</active>
+    <roleAdmin>false</roleAdmin>
   </ADUserRoles>
   <Location id="1000048">
     <id>1000048</id>
@@ -10789,6 +10795,78 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADProcessAccess>
+  <ADProcessAccess id="94CADC642838ADE1E040007F010078FB">
+    <id>94CADC642838ADE1E040007F010078FB</id>
+    <process id="176"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="94CADC642839ADE1E040007F010078FB">
+    <id>94CADC642839ADE1E040007F010078FB</id>
+    <process id="800144"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="94CADC64283AADE1E040007F010078FB">
+    <id>94CADC64283AADE1E040007F010078FB</id>
+    <process id="ACD33F81B247441B8659BECF10D7A808"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="94CADC64283BADE1E040007F010078FB">
+    <id>94CADC64283BADE1E040007F010078FB</id>
+    <process id="BB35E1D5CE2648EB8C955DD022E994DA"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="94CADC64283CADE1E040007F010078FB">
+    <id>94CADC64283CADE1E040007F010078FB</id>
+    <process id="FB5E34FD1398452095C7B9C471233910"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="94CADC64283DADE1E040007F010078FB">
+    <id>94CADC64283DADE1E040007F010078FB</id>
+    <process id="ACD33F81B247441B8659BECF10D7A808"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="94CADC64283EADE1E040007F010078FB">
+    <id>94CADC64283EADE1E040007F010078FB</id>
+    <process id="BB35E1D5CE2648EB8C955DD022E994DA"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="94CADC64283FADE1E040007F010078FB">
+    <id>94CADC64283FADE1E040007F010078FB</id>
+    <process id="FB5E34FD1398452095C7B9C471233910"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADProcessAccess>
   <ADProcessAccess id="A64CA5C8B8B44C248D234FA7C4838609">
     <id>A64CA5C8B8B44C248D234FA7C4838609</id>
     <process id="645271C57F8C4DA4A1F64C7ACE37B101"/>
@@ -13822,6 +13900,168 @@
     <active>true</active>
     <editableField>true</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="94CADC642857ADE1E040007F010078FB">
+    <id>94CADC642857ADE1E040007F010078FB</id>
+    <window id="D1D0C603DFC0423099D897A0DB388AC2"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC642859ADE1E040007F010078FB">
+    <id>94CADC642859ADE1E040007F010078FB</id>
+    <window id="24DDE1DDF13942D78B6D6F216979E56A"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64285FADE1E040007F010078FB">
+    <id>94CADC64285FADE1E040007F010078FB</id>
+    <window id="AFE6BDF360C44B99ACA6FB5E9F51EA45"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC642866ADE1E040007F010078FB">
+    <id>94CADC642866ADE1E040007F010078FB</id>
+    <window id="94EAA455D2644E04AB25D93BE5157B6D"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64286AADE1E040007F010078FB">
+    <id>94CADC64286AADE1E040007F010078FB</id>
+    <window id="6F8F913FA60F4CBD93DC1D3AA696E76E"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64286CADE1E040007F010078FB">
+    <id>94CADC64286CADE1E040007F010078FB</id>
+    <window id="557A0AA1D0D745F9A61557C05483072C"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64286DADE1E040007F010078FB">
+    <id>94CADC64286DADE1E040007F010078FB</id>
+    <window id="3CAAC7D54593489384452416ACF356DD"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64286EADE1E040007F010078FB">
+    <id>94CADC64286EADE1E040007F010078FB</id>
+    <window id="E547CE89D4C04429B6340FFA44E70716"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64286FADE1E040007F010078FB">
+    <id>94CADC64286FADE1E040007F010078FB</id>
+    <window id="AFE6BDF360C44B99ACA6FB5E9F51EA45"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC642871ADE1E040007F010078FB">
+    <id>94CADC642871ADE1E040007F010078FB</id>
+    <window id="6F8F913FA60F4CBD93DC1D3AA696E76E"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC642876ADE1E040007F010078FB">
+    <id>94CADC642876ADE1E040007F010078FB</id>
+    <window id="557A0AA1D0D745F9A61557C05483072C"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC642878ADE1E040007F010078FB">
+    <id>94CADC642878ADE1E040007F010078FB</id>
+    <window id="1B7B3BB7FEAF41ED8D9727AB98779D3C"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64287AADE1E040007F010078FB">
+    <id>94CADC64287AADE1E040007F010078FB</id>
+    <window id="24DDE1DDF13942D78B6D6F216979E56A"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64287CADE1E040007F010078FB">
+    <id>94CADC64287CADE1E040007F010078FB</id>
+    <window id="E547CE89D4C04429B6340FFA44E70716"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC642883ADE1E040007F010078FB">
+    <id>94CADC642883ADE1E040007F010078FB</id>
+    <window id="94EAA455D2644E04AB25D93BE5157B6D"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC642885ADE1E040007F010078FB">
+    <id>94CADC642885ADE1E040007F010078FB</id>
+    <window id="1B7B3BB7FEAF41ED8D9727AB98779D3C"/>
+    <role id="1000006"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC642889ADE1E040007F010078FB">
+    <id>94CADC642889ADE1E040007F010078FB</id>
+    <window id="D1D0C603DFC0423099D897A0DB388AC2"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
+  <ADWindowAccess id="94CADC64288AADE1E040007F010078FB">
+    <id>94CADC64288AADE1E040007F010078FB</id>
+    <window id="3CAAC7D54593489384452416ACF356DD"/>
+    <role id="1000005"/>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="96FF10426CA841A89FF37ABF546E87FF">
     <id>96FF10426CA841A89FF37ABF546E87FF</id>
     <window id="FEB8679CAA0D47E5978F10E22566FCEA"/>
@@ -14096,6 +14336,7 @@
     <startingDate xsi:nil="true"/>
     <servicesProvidedCost xsi:nil="true"/>
     <outsourcedCost xsi:nil="true"/>
+    <paymentMethod xsi:nil="true"/>
   </Project>
   <ProjectAccounts id="52118BF1B84B4D84E040007F01005FEC">
     <id>52118BF1B84B4D84E040007F01005FEC</id>
@@ -14144,8 +14385,8 @@
     <bOMVerified>false</bOMVerified>
     <productCategory id="1000009"/>
     <classification xsi:nil="true"/>
-    <volume>0.0</volume>
-    <weight>0.0</weight>
+    <volume>0</volume>
+    <weight>0</weight>
     <shelfWidth xsi:nil="true"/>
     <shelfHeight xsi:nil="true"/>
     <shelfDepth xsi:nil="true"/>
@@ -14197,7 +14438,7 @@
     <name>Standard</name>
     <description xsi:nil="true"/>
     <default>true</default>
-    <plannedMargin>0.0</plannedMargin>
+    <plannedMargin>0</plannedMargin>
     <assetCategory xsi:nil="true"/>
   </ProductCategory>
   <DocumentType id="1000032">
@@ -14222,6 +14463,7 @@
     <table id="224"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000033">
     <id>1000033</id>
@@ -14245,6 +14487,7 @@
     <table id="318"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000034">
     <id>1000034</id>
@@ -14268,6 +14511,7 @@
     <table id="318"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000035">
     <id>1000035</id>
@@ -14291,6 +14535,7 @@
     <table id="318"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000036">
     <id>1000036</id>
@@ -14314,6 +14559,7 @@
     <table xsi:nil="true"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000037">
     <id>1000037</id>
@@ -14337,6 +14583,7 @@
     <table id="319"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000038">
     <id>1000038</id>
@@ -14360,6 +14607,7 @@
     <table id="319"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000039">
     <id>1000039</id>
@@ -14383,6 +14631,7 @@
     <table id="319"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000040">
     <id>1000040</id>
@@ -14406,6 +14655,7 @@
     <table id="318"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000041">
     <id>1000041</id>
@@ -14429,6 +14679,7 @@
     <table id="318"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000042">
     <id>1000042</id>
@@ -14452,6 +14703,7 @@
     <table xsi:nil="true"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000043">
     <id>1000043</id>
@@ -14475,6 +14727,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000044">
     <id>1000044</id>
@@ -14498,6 +14751,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000045">
     <id>1000045</id>
@@ -14521,6 +14775,7 @@
     <table id="800019"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000046">
     <id>1000046</id>
@@ -14544,6 +14799,7 @@
     <table id="800019"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000047">
     <id>1000047</id>
@@ -14567,6 +14823,7 @@
     <table id="392"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000048">
     <id>1000048</id>
@@ -14590,6 +14847,7 @@
     <table id="407"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000049">
     <id>1000049</id>
@@ -14613,6 +14871,7 @@
     <table id="321"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000050">
     <id>1000050</id>
@@ -14636,6 +14895,7 @@
     <table id="323"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000051">
     <id>1000051</id>
@@ -14659,6 +14919,7 @@
     <table id="325"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000052">
     <id>1000052</id>
@@ -14682,6 +14943,7 @@
     <table id="472"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000053">
     <id>1000053</id>
@@ -14705,6 +14967,7 @@
     <table id="473"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000054">
     <id>1000054</id>
@@ -14728,6 +14991,7 @@
     <table id="800176"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000055">
     <id>1000055</id>
@@ -14751,6 +15015,7 @@
     <table id="800060"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000056">
     <id>1000056</id>
@@ -14774,6 +15039,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000057">
     <id>1000057</id>
@@ -14797,6 +15063,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000058">
     <id>1000058</id>
@@ -14820,6 +15087,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000059">
     <id>1000059</id>
@@ -14843,6 +15111,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000060">
     <id>1000060</id>
@@ -14866,6 +15135,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000061">
     <id>1000061</id>
@@ -14889,6 +15159,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000062">
     <id>1000062</id>
@@ -14912,6 +15183,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <DocumentType id="1000063">
     <id>1000063</id>
@@ -14935,6 +15207,7 @@
     <table id="259"/>
     <filterByOrganization>false</filterByOrganization>
     <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
   </DocumentType>
   <FinancialMgmtGLCategory id="1000016">
     <id>1000016</id>
@@ -15153,9 +15426,12 @@
     <dUNS>?          </dUNS>
     <taxID>?</taxID>
     <businessPartner xsi:nil="true"/>
+    <notTaxDeductable>false</notTaxDeductable>
+    <salesTaxExemptRate xsi:nil="true"/>
     <logo xsi:nil="true"/>
     <referenceOrder>false</referenceOrder>
     <yourCompanyDocumentImage xsi:nil="true"/>
+    <automaticWriteoffAmt xsi:nil="true"/>
     <organization id="1000001"/>
   </OrganizationInformation>
   <FinancialMgmtPeriodControl id="1001287">
@@ -18841,6 +19117,7 @@
     <generateTemplate>false</generateTemplate>
     <deliveryLocation xsi:nil="true"/>
     <copyFromPO>false</copyFromPO>
+    <paymentMethod xsi:nil="true"/>
   </Order>
   <Order id="1000052">
     <id>1000052</id>
@@ -18906,6 +19183,7 @@
     <generateTemplate>false</generateTemplate>
     <deliveryLocation xsi:nil="true"/>
     <copyFromPO>false</copyFromPO>
+    <paymentMethod xsi:nil="true"/>
   </Order>
   <Order id="1000053">
     <id>1000053</id>
@@ -18971,6 +19249,7 @@
     <generateTemplate>false</generateTemplate>
     <deliveryLocation xsi:nil="true"/>
     <copyFromPO>false</copyFromPO>
+    <paymentMethod xsi:nil="true"/>
   </Order>
   <Order id="1000054">
     <id>1000054</id>
@@ -19036,6 +19315,7 @@
     <generateTemplate>false</generateTemplate>
     <deliveryLocation xsi:nil="true"/>
     <copyFromPO>false</copyFromPO>
+    <paymentMethod xsi:nil="true"/>
   </Order>
   <Order id="1000055">
     <id>1000055</id>
@@ -19101,6 +19381,7 @@
     <generateTemplate>false</generateTemplate>
     <deliveryLocation xsi:nil="true"/>
     <copyFromPO>false</copyFromPO>
+    <paymentMethod xsi:nil="true"/>
   </Order>
   <OrderLine id="1000066">
     <id>1000066</id>
@@ -19130,7 +19411,7 @@
     <unitPrice>50</unitPrice>
     <priceLimit>50</priceLimit>
     <lineNetAmount>6000</lineNetAmount>
-    <discount>0.0</discount>
+    <discount>0</discount>
     <freightAmount>0</freightAmount>
     <charge xsi:nil="true"/>
     <chargeAmount>0</chargeAmount>
@@ -19145,8 +19426,8 @@
     <standardPrice>50</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </OrderLine>
   <OrderLine id="1000067">
     <id>1000067</id>
@@ -19176,7 +19457,7 @@
     <unitPrice>150</unitPrice>
     <priceLimit>50</priceLimit>
     <lineNetAmount>30000</lineNetAmount>
-    <discount>0.0</discount>
+    <discount>0</discount>
     <freightAmount>0</freightAmount>
     <charge xsi:nil="true"/>
     <chargeAmount>0</chargeAmount>
@@ -19191,8 +19472,8 @@
     <standardPrice>150</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </OrderLine>
   <OrderLine id="1000068">
     <id>1000068</id>
@@ -19222,7 +19503,7 @@
     <unitPrice>50</unitPrice>
     <priceLimit>50</priceLimit>
     <lineNetAmount>1000</lineNetAmount>
-    <discount>0.0</discount>
+    <discount>0</discount>
     <freightAmount>0</freightAmount>
     <charge xsi:nil="true"/>
     <chargeAmount>0</chargeAmount>
@@ -19237,8 +19518,8 @@
     <standardPrice>50</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </OrderLine>
   <OrderLine id="1000069">
     <id>1000069</id>
@@ -19268,7 +19549,7 @@
     <unitPrice>50</unitPrice>
     <priceLimit>50</priceLimit>
     <lineNetAmount>1000</lineNetAmount>
-    <discount>0.0</discount>
+    <discount>0</discount>
     <freightAmount>0</freightAmount>
     <charge xsi:nil="true"/>
     <chargeAmount>0</chargeAmount>
@@ -19283,8 +19564,8 @@
     <standardPrice>50</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </OrderLine>
   <OrderLine id="1000070">
     <id>1000070</id>
@@ -19314,7 +19595,7 @@
     <unitPrice>50</unitPrice>
     <priceLimit>50</priceLimit>
     <lineNetAmount>2500</lineNetAmount>
-    <discount>0.0</discount>
+    <discount>0</discount>
     <freightAmount>0</freightAmount>
     <charge xsi:nil="true"/>
     <chargeAmount>0</chargeAmount>
@@ -19329,8 +19610,8 @@
     <standardPrice>50</standardPrice>
     <cancelPriceAdjustment>false</cancelPriceAdjustment>
     <orderDiscount xsi:nil="true"/>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </OrderLine>
   <FinancialMgmtTaxRate id="1000007">
     <id>1000007</id>
@@ -19342,7 +19623,7 @@
     <taxSearchKey xsi:nil="true"/>
     <validFromDate>1990-01-01T00:00:00.0Z</validFromDate>
     <summaryLevel>false</summaryLevel>
-    <rate>0.0</rate>
+    <rate>0</rate>
     <parentTaxRate xsi:nil="true"/>
     <country id="100"/>
     <region xsi:nil="true"/>
@@ -19360,6 +19641,7 @@
     <deductableRate xsi:nil="true"/>
     <originalRate xsi:nil="true"/>
     <notTaxdeductable>false</notTaxdeductable>
+    <istaxdeductable>false</istaxdeductable>
     <noVAT>false</noVAT>
     <baseAmount>LNA</baseAmount>
     <taxBase xsi:nil="true"/>
@@ -19375,7 +19657,7 @@
     <taxSearchKey xsi:nil="true"/>
     <validFromDate>1990-01-01T00:00:00.0Z</validFromDate>
     <summaryLevel>false</summaryLevel>
-    <rate>15.0</rate>
+    <rate>15</rate>
     <parentTaxRate xsi:nil="true"/>
     <country id="100"/>
     <region xsi:nil="true"/>
@@ -19393,6 +19675,7 @@
     <deductableRate xsi:nil="true"/>
     <originalRate xsi:nil="true"/>
     <notTaxdeductable>false</notTaxdeductable>
+    <istaxdeductable>false</istaxdeductable>
     <noVAT>false</noVAT>
     <baseAmount>LNA</baseAmount>
     <taxBase xsi:nil="true"/>
@@ -23391,6 +23674,10 @@
     <isofiscalcode xsi:nil="true"/>
     <incotermsPO xsi:nil="true"/>
     <incotermsSO xsi:nil="true"/>
+    <paymentMethod xsi:nil="true"/>
+    <pOPaymentMethod xsi:nil="true"/>
+    <account xsi:nil="true"/>
+    <pOFinancialAccount xsi:nil="true"/>
   </BusinessPartner>
   <BusinessPartner id="1000021">
     <id>1000021</id>
@@ -23466,6 +23753,10 @@
     <isofiscalcode xsi:nil="true"/>
     <incotermsPO xsi:nil="true"/>
     <incotermsSO xsi:nil="true"/>
+    <paymentMethod xsi:nil="true"/>
+    <pOPaymentMethod xsi:nil="true"/>
+    <account xsi:nil="true"/>
+    <pOFinancialAccount xsi:nil="true"/>
   </BusinessPartner>
   <BusinessPartner id="1000022">
     <id>1000022</id>
@@ -23541,6 +23832,10 @@
     <isofiscalcode xsi:nil="true"/>
     <incotermsPO xsi:nil="true"/>
     <incotermsSO xsi:nil="true"/>
+    <paymentMethod xsi:nil="true"/>
+    <pOPaymentMethod xsi:nil="true"/>
+    <account xsi:nil="true"/>
+    <pOFinancialAccount xsi:nil="true"/>
   </BusinessPartner>
   <BusinessPartner id="1000023">
     <id>1000023</id>
@@ -23616,6 +23911,10 @@
     <isofiscalcode xsi:nil="true"/>
     <incotermsPO xsi:nil="true"/>
     <incotermsSO xsi:nil="true"/>
+    <paymentMethod xsi:nil="true"/>
+    <pOPaymentMethod xsi:nil="true"/>
+    <account xsi:nil="true"/>
+    <pOFinancialAccount xsi:nil="true"/>
   </BusinessPartner>
   <BusinessPartnerLocation id="1000035">
     <id>1000035</id>
@@ -23695,8 +23994,8 @@
     <currency id="100"/>
     <accountType>C</accountType>
     <accountNo xsi:nil="true"/>
-    <currentBalance>0.0</currentBalance>
-    <creditLimit>0.0</creditLimit>
+    <currentBalance>0</currentBalance>
+    <creditLimit>0</creditLimit>
     <default>false</default>
     <partialAccountNo>0000000000</partialAccountNo>
     <controlDigit>0</controlDigit>
@@ -25328,6 +25627,7 @@
     <dueAmount>0</dueAmount>
     <lastCalculatedOnDate xsi:nil="true"/>
     <updatePaymentMonitor>false</updatePaymentMonitor>
+    <paymentMethod xsi:nil="true"/>
   </Invoice>
   <Invoice id="1000041">
     <id>1000041</id>
@@ -25385,6 +25685,7 @@
     <dueAmount>0</dueAmount>
     <lastCalculatedOnDate xsi:nil="true"/>
     <updatePaymentMonitor>false</updatePaymentMonitor>
+    <paymentMethod xsi:nil="true"/>
   </Invoice>
   <Invoice id="1000042">
     <id>1000042</id>
@@ -25442,6 +25743,7 @@
     <dueAmount>0</dueAmount>
     <lastCalculatedOnDate xsi:nil="true"/>
     <updatePaymentMonitor>false</updatePaymentMonitor>
+    <paymentMethod xsi:nil="true"/>
   </Invoice>
   <Invoice id="1000043">
     <id>1000043</id>
@@ -25499,6 +25801,7 @@
     <dueAmount>0</dueAmount>
     <lastCalculatedOnDate xsi:nil="true"/>
     <updatePaymentMonitor>false</updatePaymentMonitor>
+    <paymentMethod xsi:nil="true"/>
   </Invoice>
   <Invoice id="1000044">
     <id>1000044</id>
@@ -25556,6 +25859,7 @@
     <dueAmount>0</dueAmount>
     <lastCalculatedOnDate xsi:nil="true"/>
     <updatePaymentMonitor>false</updatePaymentMonitor>
+    <paymentMethod xsi:nil="true"/>
   </Invoice>
   <MaterialMgmtShipmentInOut id="1000035">
     <id>1000035</id>
@@ -26047,6 +26351,8 @@
     <goodsShipmentLine id="1000051"/>
     <lineNo>10</lineNo>
     <description xsi:nil="true"/>
+    <financialInvoiceLine>false</financialInvoiceLine>
+    <account xsi:nil="true"/>
     <product id="1000064"/>
     <invoicedQuantity>120</invoicedQuantity>
     <listPrice>50</listPrice>
@@ -26068,8 +26374,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>50</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </InvoiceLine>
   <InvoiceLine id="1000087">
     <id>1000087</id>
@@ -26081,6 +26387,8 @@
     <goodsShipmentLine id="1000052"/>
     <lineNo>10</lineNo>
     <description xsi:nil="true"/>
+    <financialInvoiceLine>false</financialInvoiceLine>
+    <account xsi:nil="true"/>
     <product id="1000064"/>
     <invoicedQuantity>200</invoicedQuantity>
     <listPrice>150</listPrice>
@@ -26102,8 +26410,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>150</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </InvoiceLine>
   <InvoiceLine id="1000088">
     <id>1000088</id>
@@ -26115,6 +26423,8 @@
     <goodsShipmentLine id="1000053"/>
     <lineNo>10</lineNo>
     <description xsi:nil="true"/>
+    <financialInvoiceLine>false</financialInvoiceLine>
+    <account xsi:nil="true"/>
     <product id="1000064"/>
     <invoicedQuantity>20</invoicedQuantity>
     <listPrice>50</listPrice>
@@ -26136,8 +26446,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>50</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </InvoiceLine>
   <InvoiceLine id="1000089">
     <id>1000089</id>
@@ -26149,6 +26459,8 @@
     <goodsShipmentLine id="1000054"/>
     <lineNo>10</lineNo>
     <description xsi:nil="true"/>
+    <financialInvoiceLine>false</financialInvoiceLine>
+    <account xsi:nil="true"/>
     <product id="1000064"/>
     <invoicedQuantity>20</invoicedQuantity>
     <listPrice>50</listPrice>
@@ -26170,8 +26482,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>50</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </InvoiceLine>
   <InvoiceLine id="1000090">
     <id>1000090</id>
@@ -26183,6 +26495,8 @@
     <goodsShipmentLine id="1000055"/>
     <lineNo>10</lineNo>
     <description xsi:nil="true"/>
+    <financialInvoiceLine>false</financialInvoiceLine>
+    <account xsi:nil="true"/>
     <product id="1000064"/>
     <invoicedQuantity>50</invoicedQuantity>
     <listPrice>50</listPrice>
@@ -26204,8 +26518,8 @@
     <priceAdjustment xsi:nil="true"/>
     <standardPrice>50</standardPrice>
     <excludeforwithholding>false</excludeforwithholding>
-    <taxableAmount xsi:nil="true"/>
     <editLineAmount>false</editLineAmount>
+    <taxableAmount xsi:nil="true"/>
   </InvoiceLine>
   <InvoiceTax id="1000039">
     <tax id="1000008"/>
@@ -27019,6 +27333,7 @@
     <organization id="0"/>
     <client id="1000001"/>
     <active>true</active>
+    <orgAdmin>false</orgAdmin>
   </ADRoleOrganization>
   <ADRoleOrganization id="52118BF1A1A94D84E040007F01005FEC">
     <id>52118BF1A1A94D84E040007F01005FEC</id>
@@ -27026,6 +27341,7 @@
     <organization id="1000001"/>
     <client id="1000001"/>
     <active>true</active>
+    <orgAdmin>false</orgAdmin>
   </ADRoleOrganization>
   <ADRoleOrganization id="52118BF1A1AA4D84E040007F01005FEC">
     <id>52118BF1A1AA4D84E040007F01005FEC</id>
@@ -27033,6 +27349,7 @@
     <organization id="1000001"/>
     <client id="1000001"/>
     <active>true</active>
+    <orgAdmin>true</orgAdmin>
   </ADRoleOrganization>
   <BusinessPartnerTreeNode id="52118BF1A9E14D84E040007F01005FEC">
     <id>52118BF1A9E14D84E040007F01005FEC</id>
@@ -27202,7 +27519,7 @@
     <validFromDate>2007-12-11T11:59:26.0Z</validFromDate>
     <discountType>F</discountType>
     <script xsi:nil="true"/>
-    <flatDiscount>0.0</flatDiscount>
+    <flatDiscount>0</flatDiscount>
     <quantityBased>true</quantityBased>
     <cumulativeLevel>L</cumulativeLevel>
     <processNow>false</processNow>
@@ -27736,6 +28053,7 @@
     <active>true</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000002">
     <id>1000002</id>
@@ -27746,6 +28064,7 @@
     <active>true</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000003">
     <id>1000003</id>
@@ -27756,6 +28075,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000004">
     <id>1000004</id>
@@ -27766,6 +28086,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000005">
     <id>1000005</id>
@@ -27776,6 +28097,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000006">
     <id>1000006</id>
@@ -27786,6 +28108,7 @@
     <active>true</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000007">
     <id>1000007</id>
@@ -27796,6 +28119,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000008">
     <id>1000008</id>
@@ -27806,6 +28130,7 @@
     <active>true</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000009">
     <id>1000009</id>
@@ -27816,6 +28141,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000010">
     <id>1000010</id>
@@ -27826,6 +28152,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000011">
     <id>1000011</id>
@@ -27836,6 +28163,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000012">
     <id>1000012</id>
@@ -27846,6 +28174,7 @@
     <active>true</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000013">
     <id>1000013</id>
@@ -27856,6 +28185,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000014">
     <id>1000014</id>
@@ -27866,6 +28196,7 @@
     <active>true</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000015">
     <id>1000015</id>
@@ -27876,6 +28207,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000016">
     <id>1000016</id>
@@ -27886,6 +28218,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <FinancialMgmtAcctSchemaTable id="1000017">
     <id>1000017</id>
@@ -27896,6 +28229,7 @@
     <active>false</active>
     <createfactTemplate xsi:nil="true"/>
     <sQLDescription xsi:nil="true"/>
+    <isBackgroundDisabled>false</isBackgroundDisabled>
   </FinancialMgmtAcctSchemaTable>
   <MaterialMgmtStorageDetail id="1000047">
     <product id="1000064"/>
@@ -27943,7 +28277,7 @@
     <totalMovementQuantity xsi:nil="true"/>
     <costType>AV</costType>
     <permanent>true</permanent>
-    <cost>15.0</cost>
+    <cost>15</cost>
     <productionLine xsi:nil="true"/>
     <production>false</production>
   </MaterialMgmtCosting>
@@ -28024,6 +28358,81 @@
     <description xsi:nil="true"/>
     <lineNo>20</lineNo>
   </FinancialMgmtAcctRptGroup>
+  <DocumentTemplate id="AF2EC579C98A4097AEEADAD50367157F">
+    <id>AF2EC579C98A4097AEEADAD50367157F</id>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <documentType id="1000039"/>
+    <name>MM Receipt</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Goods Receipt-@our_ref@</reportFilename>
+    <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <DocumentTemplate id="BFF8E8906E5D4E6BA14901B58EE3DEF3">
+    <id>BFF8E8906E5D4E6BA14901B58EE3DEF3</id>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <documentType id="1000037"/>
+    <name>MM Shipment</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Goods Shipment-@our_ref@</reportFilename>
+    <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <DocumentTemplate id="EC338A39F6D549C68B430C04D4F0961D">
+    <id>EC338A39F6D549C68B430C04D4F0961D</id>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <documentType id="1000038"/>
+    <name>MM Shipment Indirect</name>
+    <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
+    <reportFilename>Goods Shipment-@our_ref@</reportFilename>
+    <templateFilename>RptM_InOut.jrxml</templateFilename>
+    <showcompanydata>true</showcompanydata>
+    <showlogo>true</showlogo>
+    <headermargin xsi:nil="true"/>
+  </DocumentTemplate>
+  <EmailTemplate id="94CAE117D742E39AE040007F0100799F">
+    <id>94CAE117D742E39AE040007F0100799F</id>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <pocDocumentType id="BFF8E8906E5D4E6BA14901B58EE3DEF3"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192"/>
+  </EmailTemplate>
+  <EmailTemplate id="94CAE117D743E39AE040007F0100799F">
+    <id>94CAE117D743E39AE040007F0100799F</id>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <pocDocumentType id="AF2EC579C98A4097AEEADAD50367157F"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192"/>
+  </EmailTemplate>
+  <EmailTemplate id="94CAE117D744E39AE040007F0100799F">
+    <id>94CAE117D744E39AE040007F0100799F</id>
+    <client id="1000001"/>
+    <organization id="0"/>
+    <active>true</active>
+    <pocDocumentType id="EC338A39F6D549C68B430C04D4F0961D"/>
+    <subject xsi:nil="true"/>
+    <body xsi:nil="true"/>
+    <default>true</default>
+    <language id="192"/>
+  </EmailTemplate>
   <OrganizationAcctSchema id="5AEDC6F79ADDDDC0E040007F010138DD">
     <id>5AEDC6F79ADDDDC0E040007F010138DD</id>
     <client id="1000001"/>
