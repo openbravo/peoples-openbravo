@@ -30,10 +30,12 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Login extends HttpBaseServlet {
@@ -221,21 +223,37 @@ public class Login extends HttpBaseServlet {
    */
   private void printPageLogin30(HttpServletResponse response, String strTheme, String cacheMsg,
       String browserMsg, String orHigherMsg) throws IOException, ServletException {
+
+    boolean showForgeLogo = true;
+    boolean showITLogo = false;
+    boolean showCompanyLogo = false;
+    String itLink = "";
+    String companyLink = "";
+    SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+
+    if (sysInfo == null) {
+      log4j.error("System information not found");
+    } else {
+      // TODO: make use of this info
+      showITLogo = sysInfo.getYourItServiceLoginImage() != null;
+      showCompanyLogo = sysInfo.getYourCompanyLoginImage() != null;
+      showForgeLogo = !ActivationKey.getInstance().isActive()
+          || (ActivationKey.getInstance().isActive() && sysInfo.isShowForgeLogoInLogin());
+      itLink = sysInfo.getSupportContact();
+      companyLink = sysInfo.getYourCompanyURL();
+    }
+
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
         .createXmlDocument();
 
     String windowTitle = "TestBravo";
     String windowFavicon = "http://www.noticias3d.com/favicon.ico";
-    String showYourCompanyLogo = "true";
-    String showYourITServiceLogo = "true";
-    String showForgeLogo = "true";
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", strTheme);
     xmlDocument.setParameter("visualPrefs", "var windowTitle = '" + windowTitle
-        + "', windowFavicon = '" + windowFavicon + "', showYourCompanyLogo = "
-        + showYourCompanyLogo + ", showYourITServiceLogo = " + showYourITServiceLogo
-        + ", showForgeLogo = " + showForgeLogo + ";");
+        + "', windowFavicon = '" + windowFavicon + "', showYourCompanyLogo = " + showCompanyLogo
+        + ", showYourITServiceLogo = " + showITLogo + ", showForgeLogo = " + showForgeLogo + ";");
     xmlDocument.setParameter("itServiceUrl", "var itServiceUrl = '"
         + SessionLoginData.selectSupportContact(this) + "'");
 

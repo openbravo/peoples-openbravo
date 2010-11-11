@@ -181,10 +181,6 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="SHOWITLOGO" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="YOURCOMPANYURL" primaryKey="false" required="false" type="NVARCHAR" size="200" autoIncrement="false">
         <default/>
         <onCreateDefault/>
