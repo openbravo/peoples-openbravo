@@ -123,7 +123,8 @@ public class Home extends HttpSecureAppServlet {
   }
 
   private static String getUrls() throws ServletException {
-    String url = "\nvar communityBrandingUrl = '" + Utility.getCommunityBrandingUrl() + "';\n";
+    String url = "\nvar communityBrandingUrl = '" + Utility.getCommunityBrandingUrl("2.50")
+        + "';\n";
     url += "var staticUrl = '" + Utility.STATIC_COMMUNITY_BRANDING_URL + "';\n";
     url += "var butlerUtilsUrl = '" + Utility.BUTLER_UTILS_URL + "'";
     return url;

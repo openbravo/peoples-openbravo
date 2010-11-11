@@ -117,8 +117,11 @@ public class Utility {
    * Computes the community branding url on the basis of system information. Note the returned url
    * does not contain the protocol part, it starts with //... So the caller has to prepend it with
    * the needed protocol part (i.e. http: or https:).
+   * 
+   * @param uiMode
+   *          valid values are: 2.50 or MyOB
    */
-  public static String getCommunityBrandingUrl() {
+  public static String getCommunityBrandingUrl(String uiMode) {
     String strLicenseClass = LicenseClass.COMMUNITY.getCode();
     OBContext.setAdminMode();
     try {
@@ -126,7 +129,7 @@ public class Utility {
       StringBuilder url = new StringBuilder(COMMUNITY_BRANDING_URL);
       url.append("?licenseClass=" + strLicenseClass);
       url.append("&version=" + OBVersion.getInstance().getMajorVersion());
-      url.append("&uimode=MyOB");
+      url.append("&uimode=" + uiMode);
       url.append("&language=" + OBContext.getOBContext().getLanguage().getLanguage());
       url.append("&systemIdentifier=" + SystemInfo.getSystemIdentifier());
       url.append("&macIdentifier=" + SystemInfo.getMacAddress());
