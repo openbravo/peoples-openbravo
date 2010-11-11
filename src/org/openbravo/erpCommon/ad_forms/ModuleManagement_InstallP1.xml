@@ -58,4 +58,10 @@
     <FIELD id="maturityLevelUpdate" default="">maturityLevel</FIELD>
     <SECTION id="updtList"/>
   </structure>
+  
+  <structure name="merges">
+    <FIELD id="mergedModule">mergedModule</FIELD>
+    <FIELD id="mergedWith">mergedWith</FIELD>
+    <SECTION id="mergeList"/>
+  </structure>
 </REPORT>

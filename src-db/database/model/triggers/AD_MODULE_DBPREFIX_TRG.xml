@@ -43,9 +43,9 @@ BEGIN
      v_old_name := :OLD.NAME;
    END IF;
    
-   IF  (INSERTING AND v_IsRegistered='Y') 
-    OR (UPDATING AND v_IsRegistered='Y' AND :NEW.NAME != v_old_name) THEN
-    RAISE_APPLICATION_ERROR(-20534, 'Cannot modify registered module.');
+   IF  UPDATING AND v_IsRegistered='Y' AND :NEW.NAME != v_old_name THEN
+    -- Cannot modify registered module
+    RAISE_APPLICATION_ERROR(-20000, '@20534@');
    END IF;
    --Check DB_Prefix
    IF INSERTING OR UPDATING THEN

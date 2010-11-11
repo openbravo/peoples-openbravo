@@ -209,16 +209,20 @@
     <SqlMethod name="checkColumnName" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-           select t.tablename||'.'||c.columnname as objectName, 'DB Column Name' as objectType, c.columnname as currentValue, dbp.name as expectedvalue, m.name as moduleName
-          from ad_table t, ad_module m, ad_package p, ad_column c, ad_module_dbprefix dbp
+           select t.tablename||'.'||c.columnname as objectName, 'DB Column Name' as objectType, c.columnname as currentValue, 
+           (select max(name) 
+              from AD_Module_DBPrefix dbp
+             where dbp.AD_Module_ID = c.AD_Module_ID) as expectedvalue, 
+           m.name as moduleName
+          from ad_table t, ad_module m, ad_package p, ad_column c
          where t.ad_package_id = p.ad_package_id
            and t.ad_table_id = c.ad_table_id
            and c.ad_module_id != p.ad_module_id
            and m.ad_module_id = c.ad_module_id
-           and dbp.ad_module_id = c.ad_module_id
            and not exists (select 1 
-                             from dual
-                            where instr(upper(c.columnname), 'EM_'||upper(dbp.name)||'_') = 1)
+                             from ad_module_dbprefix dbp
+                            where instr(upper(c.columnname), 'EM_'||upper(dbp.name)||'_') = 1
+                              and dbp.ad_module_id = c.ad_module_id)
            AND NOT EXISTS( SELECT 1
                              FROM AD_EXCEPTIONS
                              WHERE TYPE='COLUMN'
@@ -226,16 +230,20 @@
                              AND UPPER(NAME1)=UPPER(c.Columnname)) 
            and (1=1 and m.javapackage in ('1') or to_char('Y')=to_char(?))
     union
-        select t.tablename||'.'||c.columnname as objectName, 'Name' as objectType, to_char(c.name) as currentValue, dbp.name as expectedvalue, m.name as moduleName
-          from ad_table t, ad_module m, ad_package p, ad_column c, ad_module_dbprefix dbp
+        select t.tablename||'.'||c.columnname as objectName, 'Name' as objectType, to_char(c.name) as currentValue, 
+        (select max(name) 
+              from AD_Module_DBPrefix dbp
+             where dbp.AD_Module_ID = c.AD_Module_ID) as expectedvalue, 
+        m.name as moduleName
+          from ad_table t, ad_module m, ad_package p, ad_column c
          where t.ad_package_id = p.ad_package_id
            and t.ad_table_id = c.ad_table_id
            and c.ad_module_id != p.ad_module_id
            and m.ad_module_id = c.ad_module_id
-           and dbp.ad_module_id = c.ad_module_id
            and not exists (select 1 
-                             from dual
-                            where instr(upper(c.name), 'EM_'||upper(dbp.name)||'_') = 1)
+                             from ad_module_dbprefix dbp
+                            where instr(upper(c.name), 'EM_'||upper(dbp.name)||'_') = 1
+                              and dbp.ad_module_id = c.ad_module_id)
            AND NOT EXISTS( SELECT 1
                              FROM AD_EXCEPTIONS
                              WHERE TYPE='COLUMN'
@@ -254,12 +262,16 @@
   <SqlMethod name="checkAuxiliarInput" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select i.name as objectName, p.name as expectedvalue
-          from ad_auxiliarInput i, AD_Module_DBPrefix p, AD_Module m
-         where p.AD_Module_ID = i.AD_Module_ID
-           and i.ad_module_id != '0'
+        select i.name as objectName, (select max(name) 
+                                       from AD_Module_DBPrefix p
+                                      where p.AD_Module_ID = i.AD_Module_ID) as expectedvalue
+          from ad_auxiliarInput i, AD_Module m
+         where i.ad_module_id != '0'
            and m.ad_module_id = i.ad_module_id
-           and instr(upper(i.NAME), upper(p.name)||'_') != 1
+           and exists (select 1 
+                         from AD_Module_DBPrefix p
+                        where p.AD_Module_ID = i.AD_Module_ID
+                          and instr(upper(i.NAME), upper(p.name)||'_') != 1)
            and (m.javapackage in ('1') or to_char('Y')=to_char(?))
       ]]>
     </Sql>
