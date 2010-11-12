@@ -42,7 +42,7 @@ BEGIN
   IF(v_Count > 0) THEN
     -- Update Summary Info
     SELECT SUM(PlannedAmt),
-      SUM(PlannedQty), SUM(PlannedMarginAmt), SUM(CommittedAmt),
+      SUM(PlannedQty), ((SUM(COALESCE(PLANNEDPRICE,0))-SUM(COALESCE(PLANNEDPOPRICE,0)))*100/SUM(COALESCE(PLANNEDPRICE,1))), SUM(CommittedAmt),
       SUM(CommittedQty), SUM(InvoicedAmt), SUM(InvoicedQty),
       (SUM(COALESCE(PlannedPrice, 0) *PlannedQty))
     INTO :NEW.PlannedAmt,
