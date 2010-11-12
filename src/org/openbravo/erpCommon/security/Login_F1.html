@@ -77,7 +77,12 @@ function redirectWhenPopup() {
 
 function redirectWhenInsideMDI() {
   if (typeof isWindowInMDIPage !== "undefined" && isWindowInMDIPage) {
-    var LayoutMDI = getFrame('LayoutMDI');
+    var LayoutMDI = null;
+    if (isWindowInMDIPopup && parent.opener) {
+      LayoutMDI = parent.opener.getFrame('LayoutMDI'); // Since getFrame('LayoutMDI') function frameset checks equals the current opened Login_FS.html modal popup
+    } else {
+      LayoutMDI = getFrame('LayoutMDI');
+    }
     if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === "object") {
       LayoutMDI.location.href = parent.window.location.href;
     }
