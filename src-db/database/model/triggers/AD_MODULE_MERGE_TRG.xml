@@ -22,6 +22,9 @@
   v_Aux  NUMBER;
    
 BEGIN
+
+  IF AD_isTriggerEnabled()='N' THEN RETURN;
+  END IF;
   
   SELECT COUNT(*)
     INTO v_Aux
