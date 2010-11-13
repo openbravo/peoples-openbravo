@@ -71,7 +71,7 @@ function redirectWhenPopup() {
   catch (e) {}
   if (permission && top.opener) {
     top.opener.parent.location.href = top.document.location.href;
-    top.window.close();
+    closePage();
   }
 }
 

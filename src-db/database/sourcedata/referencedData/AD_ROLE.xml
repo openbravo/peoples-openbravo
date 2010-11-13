@@ -12,6 +12,7 @@
 <!--0-->  <ORGLIST><![CDATA[0]]></ORGLIST>
 <!--0-->  <AMTAPPROVAL><![CDATA[0]]></AMTAPPROVAL>
 <!--0-->  <ISMANUAL><![CDATA[N]]></ISMANUAL>
+<!--0-->  <IS_CLIENT_ADMIN><![CDATA[N]]></IS_CLIENT_ADMIN>
 <!--0--></AD_ROLE>
 
 </data>

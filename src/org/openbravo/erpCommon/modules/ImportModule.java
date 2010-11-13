@@ -35,8 +35,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -62,6 +64,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -108,6 +111,7 @@ public class ImportModule {
   // not satisfied
   private Module[] modulesToInstall = null;
   private Module[] modulesToUpdate = null;
+  private Module[] modulesToMerge = null;
   private StringBuffer log = new StringBuffer();
   private int logLevel = 0;
   VariablesSecureApp vars;
@@ -138,10 +142,11 @@ public class ImportModule {
     vars = _vars;
     obDir = obdir;
     pool = conn;
-    final File[] files = new File[3];
+    final File[] files = new File[4];
     files[0] = new File(obDir + "/src-db/database/model/tables/AD_MODULE.xml");
     files[1] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
     files[2] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
+    files[3] = new File(obDir + "/src-db/database/model/tables/AD_MODULE_MERGE.xml");
 
     verifyFilesExist(files);
 
@@ -163,6 +168,8 @@ public class ImportModule {
   /**
    * Check the dependencies for a file name. See
    * {@link #checkDependenciesId(String[], String[], HashMap)}.
+   * 
+   * @deprecated not used
    */
   public boolean checkDependenciesFileName(String fileName) throws Exception {
     final File file = new File(fileName);
@@ -184,7 +191,8 @@ public class ImportModule {
 
     boolean isUpdate = false;
     final Vector<DynaBean> modulesInObx = new Vector<DynaBean>();
-    getModulesFromObx(modulesInObx, dependencies, dbprefix, is);
+    getModulesFromObx(modulesInObx, dependencies, dbprefix, is, new HashMap<String, String>());
+    // don't care about merges at this stage
 
     for (final DynaBean module : modulesInObx) {
 
@@ -209,47 +217,59 @@ public class ImportModule {
   }
 
   /**
-   * Check the dependencies for a file. See
-   * {@link #checkDependenciesId(String[], String[], HashMap)}.
+   * Check the dependencies for a file. Used only for local installation from obx file.
+   * 
+   * @see {@link #checkDependenciesId(String[], String[], HashMap)}.
    */
   public boolean checkDependenciesFile(InputStream file) throws Exception {
-    if (installLocally) {
-      final Vector<DynaBean> modulesInObx = new Vector<DynaBean>();
-      getModulesFromObx(modulesInObx, dependencies, dbprefix, file);
 
-      for (final DynaBean module : modulesInObx) {
+    final Vector<DynaBean> modulesInObx = new Vector<DynaBean>();
+    Map<String, String> merges = new HashMap<String, String>();
 
-        String moduleId = (String) module.get("AD_MODULE_ID");
-        String version = (String) module.get("VERSION");
+    getModulesFromObx(modulesInObx, dependencies, dbprefix, file, merges);
 
-        if (ImportModuleData.moduleInstalled(pool, moduleId)) {
-          String installedVersion = ImportModuleData.selectVersion(pool, moduleId);
-          VersionUtility.VersionComparator comparator = new VersionUtility.VersionComparator();
-          if (comparator.compare(version, installedVersion) > 0) {
-            dynModulesToUpdate.add(module);
-          }
-        } else {
-          dynModulesToInstall.add(module);
+    for (final DynaBean module : modulesInObx) {
+
+      String moduleId = (String) module.get("AD_MODULE_ID");
+      String version = (String) module.get("VERSION");
+
+      if (ImportModuleData.moduleInstalled(pool, moduleId)) {
+        String installedVersion = ImportModuleData.selectVersion(pool, moduleId);
+        VersionUtility.VersionComparator comparator = new VersionUtility.VersionComparator();
+        if (comparator.compare(version, installedVersion) > 0) {
+          dynModulesToUpdate.add(module);
         }
+      } else {
+        dynModulesToInstall.add(module);
       }
-
-      modulesToInstall = dyanaBeanToModules(dynModulesToInstall, dependencies);
-      modulesToUpdate = dyanaBeanToModules(dynModulesToUpdate, dependencies);
-      errors = new OBError();
-      checked = VersionUtility.checkLocal(vars, modulesToInstall, modulesToUpdate, errors);
-    } else {
-      // if it is a remote installation for a file, just take the first
-      // module and
-      // pull the rest of them
-
-      getModulesFromObx(dynModulesToInstall, dependencies, new Vector<DynaBean>(), file);
-      final String[] installableModules = new String[1];
-      installableModules[0] = (String) dynModulesToInstall.get(0).get("AD_MODULE_ID");
-      HashMap<String, String> maturityLevels = new HashMap<String, String>();
-      maturityLevels.put("update.level", "500");
-      maturityLevels.put("install.level", "500");
-      checkDependenciesId(installableModules, new String[0], maturityLevels);
     }
+
+    modulesToInstall = dyanaBeanToModules(dynModulesToInstall, dependencies);
+    modulesToUpdate = dyanaBeanToModules(dynModulesToUpdate, dependencies);
+
+    // Check merges
+    List<Module> mergesList = new ArrayList<Module>();
+    for (Entry<String, String> merge : merges.entrySet()) {
+      org.openbravo.model.ad.module.Module mergedDALModule = OBDal.getInstance().get(
+          org.openbravo.model.ad.module.Module.class, merge.getKey());
+      if (mergedDALModule != null) {
+        // Merged module is installed locally, add it as merge to uninstall. In case it is not
+        // installed, it does not make sense to show any message to user.
+        Module mergedModule = getWsModuleFromDalModule(mergedDALModule);
+        HashMap<String, String> additionalInfo = new HashMap<String, String>();
+        additionalInfo.put("remove", "true");
+        additionalInfo.put("mergedWith", getMergedWith(merge.getValue()));
+        mergedModule.setAdditionalInfo(additionalInfo);
+        mergesList.add(mergedModule);
+      }
+    }
+
+    modulesToMerge = mergesList.toArray(new Module[0]);
+
+    errors = new OBError();
+    checked = VersionUtility.checkLocal(vars, modulesToInstall, modulesToUpdate, modulesToMerge,
+        errors);
+
     if (antInstall) {
       printAntDependenciesLog();
     }
@@ -282,27 +302,84 @@ public class ImportModule {
 
     // In case core is in the list of modules to update, put in at the last module to update, so it
     // will be updated only in case the rest of modules were successfully downloaded and updated.
-    Module[] updateModuleAux = mid.getModulesToUpdate();
-    modulesToUpdate = new Module[updateModuleAux.length];
-    int i = 0;
+    List<Module> updates = new ArrayList<Module>();
+    List<Module> merges = new ArrayList<Module>();
+
     boolean updatingCore = false;
     Module core = null;
-    for (Module module : updateModuleAux) {
+    for (Module module : mid.getModulesToUpdate()) {
       if (!module.getModuleID().equals("0")) {
-        modulesToUpdate[i] = module;
-        i++;
+        if ("true".equals(module.getAdditionalInfo().get("remove"))) {
+          merges.add(module);
+        } else {
+          updates.add(module);
+        }
       } else {
         updatingCore = true;
         core = module;
       }
     }
     if (updatingCore) {
-      modulesToUpdate[i] = core;
+      updates.add(core);
     }
+
+    modulesToUpdate = updates.toArray(new Module[0]);
+    modulesToMerge = merges.toArray(new Module[0]);
 
     checked = mid.isValidConfiguration();
 
     return checked;
+  }
+
+  /**
+   * Obtains a new {@link Module} from a {@link org.openbravo.model.ad.module.Module DAL Module}
+   * 
+   * @param dalModule
+   *          Original DAL module to convert
+   * @return new Module based on DAL module
+   */
+  private Module getWsModuleFromDalModule(org.openbravo.model.ad.module.Module dalModule) {
+    Module rt = new Module();
+    rt.setModuleID(dalModule.getId());
+    rt.setName(dalModule.getName());
+    rt.setVersionNo(dalModule.getVersion());
+    return rt;
+  }
+
+  /**
+   * Obtains the text to show for merged modules about the module that is merged within.
+   * 
+   * @param moduleId
+   * @return
+   */
+  private String getMergedWith(String moduleId) {
+    boolean found = false;
+    Module mergedWith = null;
+
+    for (Module module : modulesToInstall) {
+      if (moduleId.equals(module.getModuleID())) {
+        found = true;
+        mergedWith = module;
+        break;
+      }
+    }
+
+    if (!found) {
+      for (Module module : modulesToUpdate) {
+        if (moduleId.equals(module.getModuleID())) {
+          found = true;
+          mergedWith = module;
+          break;
+        }
+      }
+    }
+
+    if (found) {
+      return mergedWith.getName() + " " + mergedWith.getVersionNo();
+    } else {
+      // This shouldn't happen, the merging module should be found
+      return "??";
+    }
   }
 
   /**
@@ -357,6 +434,11 @@ public class ImportModule {
               return;
             }
           }
+          for (Module module : modulesToMerge) {
+            if (!prepareUpdate(module)) {
+              return;
+            }
+          }
 
           // Just pick the first module, to install/update as the rest of them are inside the obx
           // file
@@ -364,6 +446,8 @@ public class ImportModule {
               : modulesToUpdate[0];
           installLocalModule(module, file,
               (modulesToInstall != null && modulesToInstall.length > 0));
+
+          uninstallMerges();
         } else { // install remotely
           execute();
         }
@@ -524,6 +608,7 @@ public class ImportModule {
    * {@link ImportModule#installLocalModule(Module, InputStream, boolean)} method.
    */
   private void installAllModules() {
+    // Do installation of new modules
     for (Module module : modulesToInstall) {
       InputStream obx = getTemporaryOBX(module);
       if (obx == null || !installLocalModule(module, obx, true)) {
@@ -531,16 +616,55 @@ public class ImportModule {
       }
     }
 
+    // Do installation of updates
     for (Module module : modulesToUpdate) {
-      InputStream obx = getTemporaryOBX(module);
       if (!prepareUpdate(module)) {
         return;
       }
+      InputStream obx = getTemporaryOBX(module);
       if (obx == null || !installLocalModule(module, obx, false)) {
         return;
       }
     }
+
+    for (Module module : modulesToMerge) {
+      // saves copy of files and removes module directory
+      if (!prepareUpdate(module)) {
+        return;
+      }
+    }
+
+    uninstallMerges();
+
     insertDBLog();
+  }
+
+  /**
+   * All modules marked as merged will be uninsntalled, the module directory should have been
+   * already removed, so it is only pending to set the module as uninstalled
+   */
+  private void uninstallMerges() {
+    if (modulesToMerge == null) {
+      return;
+    }
+
+    // do not update the audit info here, as its a local config change, which should not be
+    // treated as 'local changes' by i.e. update.database
+    try {
+      OBInterceptor.setPreventUpdateInfoChange(true);
+      for (Module module : modulesToMerge) {
+        // to uninstall, it is only pending to set status in DB
+        org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+            org.openbravo.model.ad.module.Module.class, module.getModuleID());
+        if (mod != null) {
+          mod.setStatus("U");
+          addLog("@MergeUninstalled@ " + mod.getName(), MSG_SUCCESS);
+        }
+      }
+      OBDal.getInstance().flush();
+    } finally {
+      OBInterceptor.setPreventUpdateInfoChange(false);
+    }
   }
 
   /**
@@ -690,6 +814,13 @@ public class ImportModule {
   }
 
   /**
+   * Returns the list of modules to merge. This list is set by one of the checkDependencies methods.
+   */
+  public Module[] getModulesToMerge() {
+    return modulesToMerge;
+  }
+
+  /**
    * Returns the list of errors. This list is set by one of the checkDependencies methods. A list of
    * errors is returned in case the selected modules cannot be installed because dependencies are
    * not satisfied.
@@ -833,6 +964,34 @@ public class ImportModule {
         }
       }
     }
+
+    for (Module module : modulesToMerge) {
+      ImportModuleData moduleInDB = null;
+      try {
+        moduleInDB = ImportModuleData.getModule(pool, module.getModuleID());
+      } catch (Exception e) {
+        log4j.error("Error reading DB", e);
+      }
+
+      String backupFileName = obDir + "/backup_install/" + moduleInDB.javapackage + "-"
+          + moduleInDB.version + ".zip";
+      File backupFile = new File(backupFileName);
+      if (!backupFile.exists()) {
+        continue;
+      }
+      try {
+        File moduleDir = new File(obDir + "/modules/" + module.getPackageName());
+        if (moduleDir.exists()) {
+          log4j.info("Deleting " + module.getPackageName() + " to restore bakcup...");
+          Utility.deleteDir(new File(obDir + "/modules/" + module.getPackageName()));
+        }
+        log4j.info("Restoring " + backupFileName);
+        Zip.unzip(backupFileName, obDir + "/modules/" + module.getPackageName());
+
+      } catch (final Exception e) {
+        log4j.error("Error restoring " + module.getName(), e);
+      }
+    }
   }
 
   /**
@@ -873,7 +1032,7 @@ public class ImportModule {
       logLevel = level;
       log = new StringBuffer(m);
     } else if (level == logLevel)
-      log.append(m + "\n");
+      log.append(m + "<br>\n");
   }
 
   /**
@@ -1145,23 +1304,28 @@ public class ImportModule {
    * @param dModulesToInstall
    * @param dDependencies
    * @param obx
+   * @param merges
+   *          (output param) It contains all the merges defines in the obx as
+   *          (MergedModuleId,MergedBy)
    * @throws Exception
    */
   private void getModulesFromObx(Vector<DynaBean> dModulesToInstall,
-      Vector<DynaBean> dDependencies, Vector<DynaBean> dDBprefix, InputStream obx) throws Exception {
+      Vector<DynaBean> dDependencies, Vector<DynaBean> dDBprefix, InputStream obx,
+      Map<String, String> merges) throws Exception {
     final ZipInputStream obxInputStream = new ZipInputStream(obx);
     ZipEntry entry = null;
     boolean foundAll = false;
     boolean foundModule = false;
     boolean foundDependency = false;
     boolean foundPrefix = false;
+    boolean foundMerge = false;
     while (((entry = obxInputStream.getNextEntry()) != null) && !foundAll) {
 
       if (entry.getName().endsWith(".obx")) {
         // If it is a new module, install it
         final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
         obxInputStream.closeEntry();
-        getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba);
+        getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba, merges);
       } else if (entry.getName().replace("\\", "/").endsWith(
           "src-db/database/sourcedata/AD_MODULE.xml")) {
         final Vector<DynaBean> module = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
@@ -1182,9 +1346,18 @@ public class ImportModule {
         dDBprefix.addAll(getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream)));
         obxInputStream.closeEntry();
         foundPrefix = true;
-      } else
+      } else if (entry.getName().replace("\\", "/").endsWith(
+          "/src-db/database/sourcedata/AD_MODULE_MERGE.xml")) {
+        Vector<DynaBean> dynMerges = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
+        for (DynaBean merge : dynMerges) {
+          merges.put((String) merge.get("MERGED_MODULE_UUID"), (String) merge.get("AD_MODULE_ID"));
+        }
         obxInputStream.closeEntry();
-      foundAll = foundModule && foundDependency && foundPrefix;
+        foundMerge = true;
+      } else {
+        obxInputStream.closeEntry();
+      }
+      foundAll = foundModule && foundDependency && foundPrefix && foundMerge;
     }
     obxInputStream.close();
   }
@@ -1333,6 +1506,12 @@ public class ImportModule {
                   + modulesToUpdate[i].getVersionNo(), "U");
         }
       }
+
+      for (Module merge : modulesToMerge) {
+        ImportModuleData.insertLog(pool, user, merge.getModuleID(), merge.getModuleVersionID(),
+            merge.getName(), "Uninstalled module " + merge.getName() + " because of merge.", "D");
+      }
+
     } catch (final ServletException e) {
       log4j.error("Error inserting log", e);
     }

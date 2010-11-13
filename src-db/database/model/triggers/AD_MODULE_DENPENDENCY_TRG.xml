@@ -14,12 +14,13 @@
   * under the License.
   * The Original Code is Openbravo ERP.
   * The Initial Developer of the Original Code is Openbravo SLU
-  * All portions are Copyright (C) 2008 Openbravo SLU
+  * All portions are Copyright (C) 2008-2010 Openbravo SLU
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
   v_Type VARCHAR2(60);
   v_name VARCHAR2(60);
+  v_Aux  NUMBER;
     
 BEGIN
     
@@ -40,6 +41,16 @@ BEGIN
   IF v_Type = 'M' AND :new.IsIncluded = 'Y' THEN
     RAISE_APPLICATION_ERROR(-20530, 'Simple modules cannot contain other modules') ;
   END IF;
+  
+  SELECT COUNT(*)
+    INTO v_Aux
+    FROM AD_MODULE_MERGE
+   WHERE Merged_Module_UUID = :new.AD_Dependent_Module_ID;
+   
+  IF v_aux>0 THEN
+    RAISE_APPLICATION_ERROR(-20000, '@CannotMergeDependency@');
+  END IF;
+  
   :new.Dependant_Module_Name := v_name;
 END AD_MODULE_DENPENDENCY_TRG
 ]]></body>

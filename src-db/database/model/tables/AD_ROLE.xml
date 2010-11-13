@@ -73,6 +73,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="IS_CLIENT_ADMIN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_TREE" name="AD_ROLE_AD_TREE_MENU">
         <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
@@ -90,5 +94,6 @@
         <unique-column name="NAME"/>
       </unique>
       <check name="AD_ROLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_ROLE_ISCLIENTADMIN_CHECK"><![CDATA[IS_CLIENT_ADMIN IN ('Y', 'N')]]></check>
     </table>
   </database>

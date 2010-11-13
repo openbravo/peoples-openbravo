@@ -41,6 +41,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="IS_ROLE_ADMIN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ROLE" name="AD_USER_ROLES_AD_ROLE" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
@@ -58,5 +62,6 @@
         <unique-column name="AD_ROLE_ID"/>
       </unique>
       <check name="AD_USER_ROLES_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_USER_ROLES_ISROLEADMIN_CHK"><![CDATA[IS_ROLE_ADMIN IN ('Y', 'N')]]></check>
     </table>
   </database>
