@@ -25,7 +25,8 @@
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
-  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <script type="text/javascript">
   function redirectWhenPopup() {
@@ -85,8 +86,8 @@
     } catch (e) {
       target = "_self";
     }
+    disableButton("buttonOK");
     submitXmlHttpRequest(loginResult, document.frmIdentificacion, "DEFAULT", "../secureApp/LoginHandler.html", false, null, null);
-    //submitCommandForm('DEFAULT', false, null, '../secureApp/LoginHandler.html', target, true);
     return false;
   }
 
@@ -105,6 +106,9 @@
   function processResult(result){
     if (result.showMessage) {
       setLoginMessage(result.messageType, result.messageTitle + "\n" + result.messageText);
+      enableButton("buttonOK");
+      document.frmIdentificacion.password.value = "";
+      setFocus(document.frmIdentificacion.password);
     }
 
     if (!result.showMessage || result.messageType === "Warning") {
