@@ -73,6 +73,12 @@
       alert(text);
     }
   }
+
+  function resetMessage(){
+    var msgContainer = document.getElementById('errorMsg');
+    msgContainer.innerHTML = "";
+    msgContainer.style.display = "none";
+  }
 </script>
 <script type="text/javascript">
   function buttonOK_click() {
@@ -153,13 +159,13 @@
                   <label for="user" class="LabelText Login_LabelText">User name</label>
                 </dt>
                 <dd>
-                  <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" />
+                  <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" onKeyDown="resetMessage(); return true;" />
                 </dd>
                 <dt>
                   <label for="password" class="LabelText Login_LabelText">Password</label>
                 </dt>
                 <dd>
-                  <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" />
+                  <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" onKeyDown="resetMessage(); return true;" />
                 </dd>
               </dl>
               <div id="errorMsg" class="LabelText Login_ErrorMsg_LabelText" style="display: none;">The username or password you entered is not correct.</div>
