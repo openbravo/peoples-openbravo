@@ -66,11 +66,12 @@ function onloadFunctions() {
   // init combos
   document.frmMain.language.value = document.frmInput.inputLanguage.value;
   document.frmMain.role.value = document.frmInput.inputRole.value;
-  refreshRole();
+  loadSelectorsClientOrg();
   document.frmMain.client.value = document.frmInput.inputEntity.value;
-  refreshEntity();
   document.frmMain.organization.value = document.frmInput.inputOrg.value;
-  document.frmMain.warehouse.value = document.frmInput.inputWarehouse.value;       
+  loadSelectorWarehouse(function() {
+    document.frmMain.warehouse.value = document.frmInput.inputWarehouse.value;
+  });
 
   if (document.frmInput.saveok.value == "true") {
     getFrame('main').document.location.href="../security/Menu.html";
@@ -83,20 +84,44 @@ function onloadFunctions() {
 
 }
 
-function refreshRole() {
+function loadSelectorsClientOrg() {
   var cmbRole = document.frmMain.role;
-  var cmbEntidad = document.frmMain.client;    
+  var cmbEntidad = document.frmMain.client;
+  var cmbOrg = document.frmMain.organization;
   changeComboData(cmbEntidad, arrClientes, cmbRole.options[cmbRole.selectedIndex].value, false);
-  changeComboData(document.frmMain.organization, arrOrgs, cmbRole.options[cmbRole.selectedIndex].value, false);
-  changeComboData(document.frmMain.warehouse, arrWare, cmbRole.options[cmbRole.selectedIndex].value + "-" + cmbEntidad.options[cmbEntidad.selectedIndex].value, false);
+  changeComboData(cmbOrg, arrOrgs, cmbRole.options[cmbRole.selectedIndex].value, false);
+}
+function loadSelectorWarehouse(updatefunc) {
+    var cmbRole = document.frmMain.role;
+    var cmbEntidad = document.frmMain.client;
+    var warehouse = document.frmMain.warehouse;
+    if (warehouse.options.length!=null) {
+        for (var i = warehouse.options.length; i >= 0; i--) {
+          warehouse.options[i] = null;
+        }
+    }
+    submitXmlHttpRequest(function (paramXMLParticular, XMLHttpRequestObj) {
+      if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+        if (XMLHttpRequestObj.responseText) {
+          var warehouselist = eval("(" + XMLHttpRequestObj.responseText.toString() + ")");;
+          changeComboData(document.frmMain.warehouse, warehouselist, cmbRole.options[cmbRole.selectedIndex].value + "-" + cmbEntidad.options[cmbEntidad.selectedIndex].value, false);
+          if (updatefunc != undefined) {
+            updatefunc();
+          }
+        }
+      }
+    }, null, "WAREHOUSES", "Role.html", false, "&role=" + cmbRole.options[cmbRole.selectedIndex].value + "&client=" + cmbEntidad.options[cmbEntidad.selectedIndex].value, null);
+}
+function refreshRole() {
+  loadSelectorsClientOrg();
+  loadSelectorWarehouse();
   return true;
 }
 function refreshEntity() {
-  var cmbRole = document.frmMain.role;
-  var cmbEntidad = document.frmMain.client;    
-  changeComboData(document.frmMain.warehouse, arrWare, cmbRole.options[cmbRole.selectedIndex].value + '-' + cmbEntidad.options[cmbEntidad.selectedIndex].value, false);
+  loadSelectorWarehouse();
   return true;
 }
+
 function saveOptions() {
   if (document.frmMain.TextDirection.value=="RTL") {
     getFrame('main').isRTL=true;
@@ -114,9 +139,6 @@ var arrClientes=null;
 </script>
 <script language="JavaScript" type="text/javascript" id="paramArrayOrganizaciones">
 var arrOrgs=null;
-</script>
-<script language="JavaScript" type="text/javascript" id="paramArrayWarehouse">
-var arrWare=null;
 </script>
   <script language="JavaScript" type="text/javascript">
   var gUnfolded = "sessionOptions";

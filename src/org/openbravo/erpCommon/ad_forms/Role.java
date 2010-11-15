@@ -94,8 +94,40 @@ public class Role extends HttpSecureAppServlet {
         vars.setMessage("Role", myMessage);
         response.sendRedirect(strDireccion + request.getServletPath());
       }
+    } else if (vars.commandIn("WAREHOUSES")) {
+      printWarehousesJSON(response, vars);
     } else
       pageErrorPopUp(response);
+  }
+
+  private void printWarehousesJSON(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
+    String role = vars.getRequiredStringParameter("role");
+    String client = vars.getRequiredStringParameter("client");
+
+    WarehouseData[] data = WarehouseData.selectByRoleAndClient(this, role, client);
+
+    response.setContentType("application/json; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    if (data == null) {
+      out.println("null");
+    } else {
+      out.println("[");
+      for (int i = 0; i < data.length; i++) {
+        if (i > 0) {
+          out.println(",");
+        }
+        out.print("[\"");
+        out.print(data[i].padre);
+        out.print("\", \"");
+        out.print(data[i].id);
+        out.print("\", \"");
+        out.print(FormatUtilities.replaceJS(data[i].name));
+        out.print("\"]");
+      }
+      out.println("]");
+    }
+    out.close();
   }
 
   private void changePassword(VariablesSecureApp vars, String strClaveOld, String strClaveNew)
@@ -218,11 +250,12 @@ public class Role extends HttpSecureAppServlet {
 
       for (int i = 0; i < datarole.length; i++) {
 
-        String clientlist = LoginUtils.buildClientList(LoginUtils.loadRoleOrganization(datarole[i].adRoleId));
+        String clientlist = LoginUtils.buildClientList(LoginUtils
+            .loadRoleOrganization(datarole[i].adRoleId));
         StringTokenizer st = new StringTokenizer(clientlist, ",", false);
         while (st.hasMoreTokens()) {
           String token = st.nextToken().trim();
-          token = token.substring(1, token.length() -1); // remove quotes
+          token = token.substring(1, token.length() - 1); // remove quotes
           ClientData auxClient = new ClientData();
           auxClient.padre = datarole[i].adRoleId;
           auxClient.id = token;
@@ -237,8 +270,6 @@ public class Role extends HttpSecureAppServlet {
         .toArray(new ClientData[vecClients.size()])));
     xmlDocument.setParameter("organizaciones", Utility.arrayDobleEntrada("arrOrgs",
         OrganizationData.selectLogin(this)));
-    xmlDocument.setParameter("warehouses", Utility.arrayDobleEntrada("arrWare", WarehouseData
-        .select(this)));
 
     {
       OBError myMessage = vars.getMessage("Role");

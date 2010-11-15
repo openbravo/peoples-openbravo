@@ -36,4 +36,22 @@
         ORDER BY AD_ROLE_ORGACCESS.AD_ROLE_ID, M_Warehouse.Name
       </Sql>
    </SqlMethod>
+  <SqlMethod name="selectByRoleAndClient" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT AD_ROLE_ORGACCESS.AD_ROLE_ID || '-' || M_Warehouse.AD_Client_ID as PADRE, M_Warehouse.M_WAREHOUSE_ID AS ID,
+        M_Warehouse.Name AS Name
+        FROM M_Warehouse, AD_ORG , AD_ROLE_ORGACCESS
+        WHERE M_Warehouse.AD_ORG_ID = AD_ORG.AD_ORG_ID
+        AND AD_ORG.AD_ORG_ID = AD_ROLE_ORGACCESS.AD_ORG_ID
+        AND M_Warehouse.IsActive='Y'
+        AND AD_ROLE_ORGACCESS.AD_ROLE_ID = ?
+        AND M_Warehouse.AD_Client_ID = ?
+        ORDER BY AD_ROLE_ORGACCESS.AD_ROLE_ID, M_Warehouse.Name
+      ]]>
+    </Sql>
+    <Parameter name="role"/>
+    <Parameter name="client"/>
+  </SqlMethod>
 </SqlClass>
