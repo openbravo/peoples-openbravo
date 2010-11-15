@@ -79,7 +79,7 @@ public class LoginHandler extends HttpBaseServlet {
 
       String language = systemClient.getLanguage().getLanguage();
 
-      if (strUser.equals("")) {
+      if (strUser.equals("") && !OBVersion.getInstance().is30()) {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
         final String strPass = vars.getStringParameter("password");
