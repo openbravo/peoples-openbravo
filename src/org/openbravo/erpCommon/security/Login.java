@@ -246,13 +246,9 @@ public class Login extends HttpBaseServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
         .createXmlDocument();
 
-    String windowTitle = "TestBravo";
-    String windowFavicon = "http://www.noticias3d.com/favicon.ico";
-
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", strTheme);
-    xmlDocument.setParameter("visualPrefs", "var windowTitle = '" + windowTitle
-        + "', windowFavicon = '" + windowFavicon + "', showYourCompanyLogo = " + showCompanyLogo
+    xmlDocument.setParameter("visualPrefs", "var showYourCompanyLogo = " + showCompanyLogo
         + ", showYourITServiceLogo = " + showITLogo + ", showForgeLogo = " + showForgeLogo + ";");
     xmlDocument.setParameter("itServiceUrl", "var itServiceUrl = '"
         + SessionLoginData.selectSupportContact(this) + "'");
