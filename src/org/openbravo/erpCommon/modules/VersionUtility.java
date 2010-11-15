@@ -19,8 +19,10 @@
 
 package org.openbravo.erpCommon.modules;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
@@ -32,9 +34,11 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.ModuleMerge;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.ModuleInstallDetail;
@@ -156,8 +160,8 @@ public class VersionUtility {
   }
 
   static private boolean checkDependency(String strModVersion, HashMap<String, Mod> modulesMap,
-      HashMap<String, Mod> modsToInstall, HashMap<String, Mod> modsToUpdate, Dep dependency,
-      Vector<String> errors, Vector<String> newModules) throws Exception {
+      HashMap<String, Mod> modsToInstall, HashMap<String, Mod> modsToUpdate,
+      Module[] modulesToMerge, Dep dependency, Vector<String> errors) throws Exception {
     boolean foundModule = false;
 
     Mod mod = null;
@@ -175,11 +179,24 @@ public class VersionUtility {
     if (foundModule && checkVersion(strModVersion, dependency, mod, errors)) {
       return true;
     }
-
-    if (modulesMap.get(dependency.modId) == null) {
-      // Appending not installed error message when module is not present
-      errors.add(strModVersion + " @CR_DependensOnModule@ \"" + dependency.modName
-          + "\", @CR_ModuleNotInstalled@");
+    if (!foundModule) {
+      // Module is not found, check whether it is merged
+      boolean merged = false;
+      if (modulesToMerge != null) {
+        for (Module merge : modulesToMerge) {
+          if (dependency.modId.equals(merge.getModuleID())) {
+            merged = true;
+            errors.add(merge.getName() + " @CR_IsMergedBy@ "
+                + merge.getAdditionalInfo().get("mergedWith") + " @CR_MergeCannotUninstall@ "
+                + strModVersion);
+          }
+        }
+      }
+      if (!merged && modulesMap.get(dependency.modId) == null) {
+        // Appending not installed error message when module is not present
+        errors.add(strModVersion + " @CR_DependensOnModule@ \"" + dependency.modName
+            + "\", @CR_ModuleNotInstalled@");
+      }
     }
 
     return false;
@@ -187,11 +204,12 @@ public class VersionUtility {
 
   static private boolean checkVersionDependency(String strModVersion,
       HashMap<String, Mod> modulesMap, HashMap<String, Mod> modsToInstall,
-      HashMap<String, Mod> modsToUpdate, Ver version, Vector<String> errors,
-      Vector<String> newModules) throws Exception {
+      HashMap<String, Mod> modsToUpdate, Module[] modulesToMerge, Ver version, Vector<String> errors)
+      throws Exception {
     boolean checked = true;
     HashMap<String, Dep> depMap = version.dependencies;
     depMap.putAll(version.includes);
+
     /** Navigate through dependencies and includes of the module version */
     for (String depKey : depMap.keySet()) {
       /**
@@ -200,8 +218,8 @@ public class VersionUtility {
        * new modules or new updates are needed, they are added to they correspondent list and added
        * to errors vector. and the checked is run again with the new configuration
        */
-      if (!checkDependency(strModVersion, modulesMap, modsToInstall, modsToUpdate, depMap
-          .get(depKey), errors, newModules)) {
+      if (!checkDependency(strModVersion, modulesMap, modsToInstall, modsToUpdate, modulesToMerge,
+          depMap.get(depKey), errors)) {
         // If any dependency or include need a new module, it is added
         // to modsToInstall or if needed an update is added to
         // modsToUpdate
@@ -212,8 +230,8 @@ public class VersionUtility {
   }
 
   static private boolean checkAllDependencies(HashMap<String, Mod> modulesMap,
-      HashMap<String, Mod> modsToInstall, HashMap<String, Mod> modsToUpdate, Vector<String> errors)
-      throws Exception {
+      HashMap<String, Mod> modsToInstall, HashMap<String, Mod> modsToUpdate,
+      Module[] modulesToMerge, Vector<String> errors) throws Exception {
     // New hashmap of installed modules less the modules that will be
     // updated
     HashMap<String, Mod> modulesInstalledLessToUpdate = new HashMap<String, Mod>();
@@ -227,7 +245,6 @@ public class VersionUtility {
     modsForCheckDependencies.putAll(modulesInstalledLessToUpdate);
     modsForCheckDependencies.putAll(modsToInstall);
     modsForCheckDependencies.putAll(modsToUpdate);
-    Vector<String> newModules = new Vector<String>();
     Vector<String> modKey = new Vector<String>(modsForCheckDependencies.keySet());
     /** Navigate through modules */
     for (int i = 0; i < modKey.size(); i++) {
@@ -238,23 +255,37 @@ public class VersionUtility {
         Ver ver = verMap.get(verKey);
         String strModVersion = mod.name + "-" + ver.version;
         if (!checkVersionDependency(strModVersion, modulesInstalledLessToUpdate, modsToInstall,
-            modsToUpdate, ver, errors, newModules)) {
+            modsToUpdate, modulesToMerge, ver, errors)) {
           /**
            * When any dependency fails, the process continue to found all dependency errors, but the
            * configuration is marked as no valid
            */
-          if (newModules.size() == 0)
-            checked = false;
+          checked = false;
         }
       }
-      if (newModules.size() > 0) {
-        modKey.addAll(newModules);
-        modsForCheckDependencies.putAll(modsToInstall);
-        modsForCheckDependencies.putAll(modsToUpdate);
-        newModules.removeAllElements();
-        i = 0;
-      }
     }
+
+    // Check modules to install are not merged
+    if (modsToInstall != null) {
+      List<String> modsIdMerged = new ArrayList<String>();
+      if (modulesToMerge != null) {
+        for (Module merge : modulesToMerge) {
+          modsIdMerged.add(merge.getModuleID());
+        }
+      }
+      for (ModuleMerge merge : OBDal.getInstance().createCriteria(ModuleMerge.class).list()) {
+        modsIdMerged.add(merge.getMergedModuleUUID());
+      }
+
+      for (Mod module : modsToInstall.values()) {
+        if (modsIdMerged.contains(module.modId)) {
+          errors.add(module.name + " @CannotInstallMerged@");
+          checked = false;
+        }
+      }
+
+    }
+
     return checked;
   }
 
@@ -287,22 +318,39 @@ public class VersionUtility {
     return modNames.toString();
   }
 
-  static private HashMap<String, Mod> fillModules() throws ServletException {
-    /**
-     * fill Mod objects (include its versions and dependencies from versions) from database for all
-     * Modules IDs
-     */
+  /**
+   * fill Mod objects (include its versions and dependencies from versions) from database for all
+   * Modules IDs excluding the ones to be merged
+   */
+  static private HashMap<String, Mod> fillModules(Module[] modulesToMerge) throws ServletException {
     VersionUtilityData[] data = VersionUtilityData.readModules(pool);
     HashMap<String, Mod> modules = new HashMap<String, Mod>();
     for (int i = 0; i < data.length; i++) {
-      Mod mod = new Mod();
-      mod.modId = data[i].adModuleId;
-      mod.name = data[i].name;
-      mod.type = data[i].type;
-      mod.versions = fillVersions(data[i], mod);
-      modules.put(data[i].adModuleId, mod);
+      if (!isInList(data[i].adModuleId, modulesToMerge)) {
+        Mod mod = new Mod();
+        mod.modId = data[i].adModuleId;
+        mod.name = data[i].name;
+        mod.type = data[i].type;
+        mod.versions = fillVersions(data[i], mod);
+        modules.put(data[i].adModuleId, mod);
+      }
     }
     return modules;
+  }
+
+  /**
+   * Checks whether a module id is in a list of modules
+   */
+  private static boolean isInList(String moduleId, Module[] modules) {
+    if (modules == null) {
+      return false;
+    }
+    for (Module mod : modules) {
+      if (moduleId.equals(mod.getModuleID())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   static private HashMap<String, Ver> fillVersions(VersionUtilityData data, Mod mod)
@@ -316,8 +364,8 @@ public class VersionUtility {
     if (data != null) {
       Ver ver = new Ver();
       ver.version = data.version;
-      ver.dependencies = fillDependencies(ver.verId);
-      ver.includes = fillIncludes(ver.verId);
+      ver.dependencies = fillDependencies(mod.modId);
+      ver.includes = fillIncludes(mod.modId);
       hashVer.put(ver.version, ver);
 
       /** in the local database there is only one version by module */
@@ -367,6 +415,18 @@ public class VersionUtility {
       dep.maxVer = data[i].endversion;
       dep.modId = data[i].adDependentModuleId;
       dep.modName = data[i].dependantModuleName;
+
+      // set enforcement
+      if ("Y".equals(data[i].userEditableEnforcement) && data[i].instanceEnforcement != null
+          && !data[i].instanceEnforcement.isEmpty()) {
+        dep.enforcement = data[i].instanceEnforcement;
+      } else {
+        dep.enforcement = data[i].dependencyEnforcement;
+        if (dep.enforcement == null || dep.enforcement.isEmpty()) {
+          dep.enforcement = "MAJOR";
+        }
+      }
+
       hashDep.put(data[i].adModuleDependencyId, dep);
     }
     return hashDep;
@@ -533,15 +593,16 @@ public class VersionUtility {
   }
 
   static private boolean installModulesLocal(Module[] modulesToInstall, Module[] modulesToUpdate,
-      Vector<String> vecErrors) throws Exception {
+      Module[] modulesToMerge, Vector<String> vecErrors) throws Exception {
     boolean checked = false;
-    HashMap<String, Mod> modsInstalled = fillModules();
+    HashMap<String, Mod> modsInstalled = fillModules(modulesToMerge);
     HashMap<String, Mod> modsToInstall = modules2mods(modulesToInstall);
     HashMap<String, Mod> modsToUpdate = modules2mods(modulesToUpdate);
 
     try {
       /** Check if all dependencies are satisfied with installed modules */
-      checked = checkAllDependencies(modsInstalled, modsToInstall, modsToUpdate, vecErrors);
+      checked = checkAllDependencies(modsInstalled, modsToInstall, modsToUpdate, modulesToMerge,
+          vecErrors);
     } catch (Exception e) {
       throw e;
     }
@@ -621,31 +682,41 @@ public class VersionUtility {
    *          In param. New modules to install, with its dependencies.
    * @param modulesToUpdate
    *          In param. Modules to install, with its dependencies.
+   * @param modulesToMerge
+   *          In param. Modules to merge.
    * @param obErrors
    *          Out param. Errors in dependencies. Null if no errors.
    * @return true if all dependencies can be resolved without need of download any package from
    *         central repository, false in other case.
    */
   static public boolean checkLocal(VariablesSecureApp vars, Module[] modulesToInstall,
-      Module[] modulesToUpdate, OBError obErrors) throws Exception {
+      Module[] modulesToUpdate, Module[] modulesToMerge, OBError obErrors) throws Exception {
     Vector<String> vecErrors = new Vector<String>();
 
-    boolean checked = installModulesLocal(modulesToInstall, modulesToUpdate, vecErrors);
+    boolean checked = installModulesLocal(modulesToInstall, modulesToUpdate, modulesToMerge,
+        vecErrors);
 
     String[] errors = vecErrors.toArray(new String[0]);
     getOBError(obErrors, pool, vars, errors);
     return checked;
-
   }
 
   /**
-   * @deprecated used
-   *             {@link VersionUtility#checkLocal(VariablesSecureApp, Module[], Module[], OBError)}
+   * @deprecated use
+   *             {@link VersionUtility#checkLocal(VariablesSecureApp, Module[], Module[], Module[], OBError)}
+   */
+  static public boolean checkLocal(VariablesSecureApp vars, Module[] modulesToInstall,
+      Module[] modulesToUpdate, OBError obErrors) throws Exception {
+    return checkLocal(vars, modulesToInstall, null, null, obErrors);
+  }
+
+  /**
+   * @deprecated use
+   *             {@link VersionUtility#checkLocal(VariablesSecureApp, Module[], Module[], Module[], OBError)}
    */
   static public boolean checkLocal(VariablesSecureApp vars, Module[] modulesToInstall,
       OBError obErrors) throws Exception {
-    return checkLocal(vars, modulesToInstall, null, obErrors);
-
+    return checkLocal(vars, modulesToInstall, null, null, obErrors);
   }
 
   static public void setPool(ConnectionProvider cp) {

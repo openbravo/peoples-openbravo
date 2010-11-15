@@ -57,7 +57,7 @@ FROM
      end as LINE_DOCUMENTTYPE,
      coalesce(to_char(inv.documentno), to_char(ord.documentno), to_char('')) as LINE_DOCUMENTNO,
      coalesce(to_char(inv.dateinvoiced), to_char(ord.dateordered), to_char('')) as LINE_DATE,
-     coalesce(to_char(psd.amount), to_char(pd.amount)) as LINE_AMOUNT,
+     coalesce(psd.amount, pd.amount) as LINE_AMOUNT,
      cur.cursymbol as LINE_CURRENCY
    FROM fin_payment p join fin_payment_detail pd on (p.fin_payment_id=pd.fin_payment_id)
         join fin_payment_scheduledetail psd on (pd.fin_payment_detail_id=psd.fin_payment_detail_id)

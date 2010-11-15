@@ -37,6 +37,7 @@ import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InstancePurpose extends HttpSecureAppServlet {
@@ -96,7 +97,8 @@ public class InstancePurpose extends HttpSecureAppServlet {
         xmlDocument.setParameter("selectedPurpose", purpose);
       }
     }
-    xmlDocument.setParameter("welcome", Utility.messageBD(this, strWelcomeMsg, vars.getLanguage()));
+    xmlDocument.setParameter("welcome", Replace.replace(Utility.messageBD(this, strWelcomeMsg, vars
+        .getLanguage()), "\\n", "<br/>"));
     xmlDocument.setParameter("title", Utility.messageBD(myPool, strTitle, vars.getLanguage()));
 
     xmlDocument.setParameter("recordId", vars.getStringParameter("inpcRecordId",

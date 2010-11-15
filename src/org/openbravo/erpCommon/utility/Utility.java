@@ -64,6 +64,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -73,6 +74,8 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -93,6 +96,10 @@ import org.openbravo.utils.Replace;
 public class Utility {
   static Logger log4j = Logger.getLogger(Utility.class);
 
+  public static final String COMMUNITY_BRANDING_URL = "//butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html";
+  public static final String STATIC_COMMUNITY_BRANDING_URL = "StaticCommunityBranding.html";
+  public static final String BUTLER_UTILS_URL = "//butler.openbravo.com/web/static-content/js/ob-utils.js";
+
   private static List<String> autosaveExcludedPackages = null;
   private static List<String> autosaveExcludedClasses = null;
 
@@ -104,6 +111,37 @@ public class Utility {
     autosaveExcludedPackages.add("org.openbravo.erpCommon.info");
     autosaveExcludedPackages.add("org.openbravo.erpCommon.ad_callouts");
     autosaveExcludedClasses.add("org.openbravo.erpCommon.utility.PopupLoading");
+  }
+
+  /**
+   * Computes the community branding url on the basis of system information. Note the returned url
+   * does not contain the protocol part, it starts with //... So the caller has to prepend it with
+   * the needed protocol part (i.e. http: or https:).
+   * 
+   * @param uiMode
+   *          valid values are: 2.50 or MyOB
+   */
+  public static String getCommunityBrandingUrl(String uiMode) {
+    String strLicenseClass = LicenseClass.COMMUNITY.getCode();
+    OBContext.setAdminMode();
+    try {
+      strLicenseClass = ActivationKey.getInstance().getLicenseClass().getCode();
+      StringBuilder url = new StringBuilder(COMMUNITY_BRANDING_URL);
+      url.append("?licenseClass=" + strLicenseClass);
+      url.append("&version=" + OBVersion.getInstance().getMajorVersion());
+      url.append("&uimode=" + uiMode);
+      url.append("&language=" + OBContext.getOBContext().getLanguage().getLanguage());
+      url.append("&systemIdentifier=" + SystemInfo.getSystemIdentifier());
+      url.append("&macIdentifier=" + SystemInfo.getMacAddress());
+      url.append("&databaseIdentifier=" + SystemInfo.getDBIdentifier());
+      url.append("&internetConnection=" + (HttpsUtils.isInternetAvailable() ? "Y" : "N"));
+      url.append("&systemDate=" + (new SimpleDateFormat("yyyyMMdd")).format(new Date()));
+      return url.toString();
+    } catch (Exception e) {
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

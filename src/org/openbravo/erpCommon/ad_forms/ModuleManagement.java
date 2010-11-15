@@ -639,7 +639,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
       String[] updateModules, HashMap<String, String> maturityLevels) throws IOException,
       ServletException {
-    final String discard[] = { "", "", "", "", "", "", "warnMaturity" };
+    final String discard[] = { "", "", "", "", "", "", "warnMaturity", "" };
     Module module = null;
 
     // Remote installation is only allowed for heartbeat enabled instances
@@ -680,6 +680,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     Module[] inst = null;
     Module[] upd = null;
+    Module[] merges = null;
     OBError message = null;
     boolean found = false;
     boolean check = false;
@@ -786,6 +787,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
             }
           }
         }
+        // Add additional messages that can come from CR
+        OBError additionalMsg = im.getCheckError();
+        if (!additionalMsg.getMessage().isEmpty()) {
+          if (message == null) {
+            message = new OBError();
+            message.setType("Info");
+            message.setTitle(Utility.messageBD(this, message.getType(), vars.getLanguage()));
+          } else {
+            message.setMessage(message.getMessage() + "\n");
+          }
+          message.setMessage(message.getMessage() + additionalMsg.getMessage());
+        }
 
       } else { // Dependencies not satisfied, do not show continue button
         message = im.getCheckError();
@@ -808,6 +821,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
         discard[3] = "discardAdditional";
         discard[5] = "discardContinue";
       }
+
+      merges = im.getModulesToMerge();
+      if (merges == null || merges.length == 0) {
+        discard[7] = "mergeModules";
+      }
     } catch (final Exception e) {
       log4j.error(e.getMessage(), e);
       message = new OBError();
@@ -829,6 +847,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (upd != null && upd.length > 0) {
       xmlDocument.setData("updates", getModuleFieldProvider(upd, minVersions, false, vars
           .getLanguage(), islocal));
+    }
+
+    if (merges != null && merges.length > 0) {
+      xmlDocument.setData("merges", getMergesFieldProvider(merges));
     }
 
     xmlDocument.setParameter("inpLocalInstall", islocal ? "Y" : "N");
@@ -859,6 +881,22 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  /**
+   * Obtains a FieldProvider to display the merged modules.
+   */
+  private FieldProvider[] getMergesFieldProvider(Module[] merges) {
+    List<Map<String, String>> rt = new ArrayList<Map<String, String>>();
+
+    for (Module merge : merges) {
+      Map<String, String> mod = new HashMap<String, String>();
+      mod.put("mergedModule", merge.getName());
+      mod.put("mergedWith", (String) merge.getAdditionalInfo().get("mergedWith"));
+      rt.add(mod);
+    }
+
+    return FieldProviderFactory.getFieldProviderArray(rt);
   }
 
   private FieldProvider[] getModuleFieldProvider(Module[] inst, Map<String, String> minVersions,

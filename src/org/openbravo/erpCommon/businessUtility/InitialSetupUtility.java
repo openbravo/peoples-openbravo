@@ -373,6 +373,7 @@ public class InitialSetupUtility {
     newRole.setClientList(client.getId());
     newRole.setOrganizationList(organization.getId());
     newRole.setUserLevel(strUserLevel);
+    newRole.setClientAdmin(true);
     OBDal.getInstance().save(newRole);
     OBDal.getInstance().flush();
     return newRole;
@@ -400,6 +401,7 @@ public class InitialSetupUtility {
     newRoleOrganization.setClient(role.getClient());
     newRoleOrganization.setOrganization(organization);
     newRoleOrganization.setRole(role);
+    newRoleOrganization.setOrgAdmin(false);
     OBDal.getInstance().save(newRoleOrganization);
     OBDal.getInstance().flush();
     return newRoleOrganization;
@@ -465,6 +467,7 @@ public class InitialSetupUtility {
       newUserRole.setOrganization(organization);
       newUserRole.setRole(role);
       newUserRole.setUserContact(user);
+      newUserRole.setRoleAdmin(true);
       OBDal.getInstance().save(newUserRole);
       OBDal.getInstance().flush();
       return newUserRole;

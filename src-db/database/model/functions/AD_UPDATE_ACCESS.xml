@@ -71,11 +71,11 @@ BEGIN
     (
        AD_Role_OrgAccess_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
       IsActive, Created, CreatedBy,
-      Updated, UpdatedBy
+      Updated, UpdatedBy, is_org_admin
     )
   SELECT get_uuid(), AD_ROLE.AD_ROLE_ID, AD_ORG.AD_CLIENT_ID, AD_ORG.AD_ORG_ID,
     'Y', now(), '0',
-    now(), '0'
+    now(), '0', 'N'
   FROM AD_ROLE, AD_ORG
   WHERE AD_ROLE.AD_ROLE_ID = '0'
     AND AD_ROLE.AD_CLIENT_ID = AD_ORG.AD_CLIENT_ID
@@ -159,23 +159,23 @@ BEGIN
                        FROM AD_WORKFLOW_ACCESS
                       WHERE AD_WORKFLOW_ID = AD_WORKFLOW.AD_WORKFLOW_ID
                         AND AD_ROLE_ID    = AD_ROLE.AD_ROLE_ID);
-                        
+
   --Add role 0 to user 100 (Openbravo)
   INSERT INTO AD_USER_ROLES
     (AD_USER_ROLES_ID , AD_USER_ID , AD_ROLE_ID, 
      AD_CLIENT_ID     , AD_ORG_ID  , ISACTIVE  , 
      CREATED          , CREATEDBY  , UPDATED   , 
-     UPDATEDBY) 
+     UPDATEDBY, is_role_admin) 
     SELECT get_uuid(), AD_USER_ID, '0',
            '0', '0', 'Y',
            now(), '0', now(),
-           '0'
+           '0', 'Y'
       FROM AD_USER
     WHERE AD_USER_ID IN ('0', '100')
     AND NOT EXISTS (SELECT 1
-			FROM AD_USER_ROLES
-			WHERE AD_USER_ID = AD_USER.AD_USER_ID
-			AND AD_ROLE_ID = '0');
+                    FROM AD_USER_ROLES
+                    WHERE AD_USER_ID = AD_USER.AD_USER_ID
+                      AND AD_ROLE_ID = '0');
 END AD_UPDATE_ACCESS
 ]]></body>
     </function>

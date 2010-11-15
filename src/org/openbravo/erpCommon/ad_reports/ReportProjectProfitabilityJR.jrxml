@@ -363,9 +363,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="99"
+						x="109"
 						y="0"
-						width="436"
+						width="426"
 						height="24"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -410,7 +410,7 @@
 						style="GroupHeader_DarkGray"
 						x="0"
 						y="0"
-						width="99"
+						width="109"
 						height="24"
 						key="staticText-54"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -734,9 +734,9 @@
 				</line>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="65"
+						x="108"
 						y="6"
-						width="183"
+						width="153"
 						height="16"
 						key="textField"
 						isPrintWhenDetailOverflows="true"/>
@@ -752,9 +752,9 @@
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="86"
+						x="109"
 						y="26"
-						width="199"
+						width="151"
 						height="16"
 						key="textField"
 						isPrintWhenDetailOverflows="true"/>
@@ -772,7 +772,7 @@
 					<reportElement
 						x="13"
 						y="26"
-						width="68"
+						width="95"
 						height="16"
 						key="staticText-6"
 						isPrintWhenDetailOverflows="true"/>
@@ -788,9 +788,9 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="291"
+						x="262"
 						y="26"
-						width="78"
+						width="107"
 						height="16"
 						key="staticText-7"
 						isPrintWhenDetailOverflows="true"/>
@@ -842,9 +842,9 @@
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="373"
+						x="372"
 						y="6"
-						width="148"
+						width="149"
 						height="16"
 						key="textField"
 						isPrintWhenDetailOverflows="true"/>
@@ -911,7 +911,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Planned]]></text>
 				</staticText>
@@ -930,7 +930,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Real]]></text>
 				</staticText>
@@ -949,7 +949,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Collected]]></text>
 				</staticText>
@@ -968,7 +968,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Revenue]]></text>
 				</staticText>
@@ -987,7 +987,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Cost]]></text>
 				</staticText>
@@ -1006,7 +1006,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Margin %]]></text>
 				</staticText>
@@ -1130,7 +1130,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Reinvoicing]]></text>
 				</staticText>
@@ -1149,7 +1149,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Margin %]]></text>
 				</staticText>
@@ -1168,7 +1168,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Expenses]]></text>
 				</staticText>
@@ -1187,7 +1187,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Center">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Gross margin]]></text>
 				</staticText>
@@ -1402,7 +1402,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<reportElement
 						x="14"
 						y="6"
-						width="43"
+						width="94"
 						height="16"
 						key="staticText-41"
 						isPrintWhenDetailOverflows="true"/>
@@ -1467,7 +1467,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Outsource]]></text>
 				</staticText>
@@ -1962,7 +1962,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Collected]]></text>
 				</staticText>
@@ -1981,7 +1981,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Real]]></text>
 				</staticText>
@@ -2000,7 +2000,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Planned]]></text>
 				</staticText>
@@ -2019,7 +2019,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Revenue]]></text>
 				</staticText>
@@ -2057,7 +2057,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Cost]]></text>
 				</staticText>
@@ -2076,7 +2076,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Margin %]]></text>
 				</staticText>
@@ -2095,7 +2095,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Center">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Reinvoicing]]></text>
 				</staticText>
@@ -2133,7 +2133,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Center">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Expenses]]></text>
 				</staticText>
@@ -2152,7 +2152,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Margin %]]></text>
 				</staticText>
@@ -2171,7 +2171,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Center">
-						<font fontName="Bitstream Vera Sans" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Gross margin]]></text>
 				</staticText>
@@ -2226,7 +2226,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement textAlignment="Right">
-						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
 				<text><![CDATA[Outsource]]></text>
 				</staticText>

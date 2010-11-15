@@ -96,9 +96,13 @@
         closePage();
       }
     } else {
+      var mdiFrame = getFrame('LayoutMDI'); 
+      mdiFrame.OB.Application.purpose = purpose.value;
+      if (mdiFrame.OB.Application.brandingWidget) {
+        mdiFrame.OB.Application.brandingWidget.update();
+      }
       closePage();
     }
-
   }
   </script>
   <script language="JavaScript" type="text/javascript">

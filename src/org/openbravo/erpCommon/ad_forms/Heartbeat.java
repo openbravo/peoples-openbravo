@@ -33,6 +33,7 @@ import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessRunner;
+import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Heartbeat extends HttpSecureAppServlet {
@@ -86,7 +87,8 @@ public class Heartbeat extends HttpSecureAppServlet {
 
     String msgCode = vars.getCommand().equals("DEFAULT_MODULE") ? "HB_WELCOME_MODULE"
         : "HB_WELCOME";
-    xmlDocument.setParameter("welcome", Utility.messageBD(this, msgCode, vars.getLanguage()));
+    xmlDocument.setParameter("welcome", Replace.replace(Utility.messageBD(this, msgCode, vars
+        .getLanguage()), "\\n", "<br/>"));
 
     xmlDocument.setParameter("recordId", vars.getStringParameter("inpcRecordId",
         IsIDFilter.instance));

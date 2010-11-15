@@ -77,6 +77,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       strcelementvaluetodes = (strcelementvaluetodes.equals("null")) ? "" : strcelementvaluetodes;
       vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
+      vars.removeSessionValue("ReportGeneralLedger|Org");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", "", IsIDFilter.instance);
@@ -114,6 +115,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             strcelementvalueto);
       vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
+      vars.removeSessionValue("ReportGeneralLedger|Org");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
@@ -179,6 +181,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
           "ReportGeneralLedger|C_ElementValue_IDTO");
+      vars.removeSessionValue("ReportGeneralLedger|Org");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);

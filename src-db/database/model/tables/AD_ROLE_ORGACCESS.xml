@@ -37,6 +37,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="IS_ORG_ADMIN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_ROLE_ORGACCESS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -51,5 +55,6 @@
         <unique-column name="AD_ORG_ID"/>
       </unique>
       <check name="AD_ROLE_ORGACCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_ROLE_ORGACCESS_ORGADMIN_CHK"><![CDATA[IS_ORG_ADMIN IN ('Y', 'N')]]></check>
     </table>
   </database>

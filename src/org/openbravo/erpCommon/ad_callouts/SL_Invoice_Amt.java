@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -124,7 +125,11 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     SLOrderProductData[] dataInvoice = SLOrderProductData.selectInvoice(this, strInvoiceId);
 
     if (strChanged.equals("inplinenetamt")) {
-      priceActual = LineNetAmt.divide(qtyInvoice, PricePrecision, BigDecimal.ROUND_HALF_UP);
+      if (qtyInvoice.compareTo(BigDecimal.ZERO) == 0) {
+        priceActual = BigDecimal.ZERO;
+      } else {
+        priceActual = LineNetAmt.divide(qtyInvoice, PricePrecision, BigDecimal.ROUND_HALF_UP);
+      }
     }
     if (priceActual.compareTo(BigDecimal.ZERO) == 0)
       LineNetAmt = BigDecimal.ZERO;
@@ -156,6 +161,26 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (!strChanged.equals("inplinenetamt"))
       // Net amount of a line equals quantity x unit price (actual price)
       LineNetAmt = qtyInvoice.multiply(priceActual);
+
+    if (strChanged.equals("inplinenetamt")) {
+      DecimalFormat priceEditionFmt = Utility.getFormat(vars, "priceEdition");
+      DecimalFormat euroEditionFmt = Utility.getFormat(vars, "euroEdition");
+      BigDecimal CalculatedLineNetAmt = qtyInvoice.multiply(
+          priceActual
+              .setScale(priceEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP))
+          .setScale(euroEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP);
+      if (!LineNetAmt.equals(CalculatedLineNetAmt)) {
+        StringBuffer strMessage = new StringBuffer(Utility.messageBD(this,
+            "NotCorrectAmountProvided", vars.getLanguage()));
+        strMessage.append(": ");
+        strMessage.append((strLineNetAmt.equals("") ? BigDecimal.ZERO : new BigDecimal(
+            strLineNetAmt)));
+        strMessage.append(". ");
+        strMessage.append(Utility.messageBD(this, "CosiderUsing", vars.getLanguage()));
+        strMessage.append(" " + CalculatedLineNetAmt);
+        resultado.append("new Array('MESSAGE', \"" + strMessage.toString() + "\"),");
+      }
+    }
 
     if (LineNetAmt.scale() > StdPrecision)
       LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
