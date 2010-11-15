@@ -25,13 +25,13 @@
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=true" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=false" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = "xx";</script>
-<script language="JavaScript" type="text/javascript" id="browserMsg">var browserMsg = "xx";</script>
+<script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="browserMsg">var browserMsg = 'xx';</script>
 
 <script type="text/javascript">
   function redirectWhenPopup() {
@@ -70,19 +70,19 @@
 </script>
 <script type="text/javascript">
   function setLoginMessage(type, text) {
-    if (type === "Error") {
+    if (type === 'Error') {
       var msgContainer = document.getElementById('errorMsg');
-      msgContainer.innerHTML = text.replace(/\n/g,'<br>').replace(/\\n/g,'<br>');
-      msgContainer.style.display = "";
-    } else if (type === "Warning") {
-      alert(text.replace(/<br>/g,'\n'));
+      msgContainer.innerHTML = text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>');
+      msgContainer.style.display = '';
+    } else if (type === 'Warning') {
+      alert(text.replace(/<br>/g, '\n'));
     }
   }
 
   function resetMessage(){
     var msgContainer = document.getElementById('errorMsg');
-    msgContainer.innerHTML = "";
-    msgContainer.style.display = "none";
+    msgContainer.innerHTML = '';
+    msgContainer.style.display = 'none';
   }
 </script>
 <script type="text/javascript">
@@ -90,41 +90,47 @@
     var target;
     try {
       if (parent.frameMenu) {
-        target = "_parent";
+        target = '_parent';
       } else {
-        target = "_self";
+        target = '_self';
       }
     } catch (e) {
-      target = "_self";
+      target = '_self';
     }
-    disableButton("buttonOK");
-    submitXmlHttpRequest(loginResult, document.frmIdentificacion, "DEFAULT", "../secureApp/LoginHandler.html", false, null, null);
+    disableButton('buttonOK');
+    submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
     return false;
   }
 
   function loginResult(paramXMLParticular, XMLHttpRequestObj) {
-     var strText = "";
-     if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
+     var strText = '';
+     if (getReadyStateHandler(XMLHttpRequestObj, null, false)) {
        if (XMLHttpRequestObj.responseText) {
          strText = XMLHttpRequestObj.responseText;
        }
        strText = strText.toString();
-       var result = eval("("+strText+")");
+       var result = eval('('+strText+')');
        processResult(result);
      }
   }
 
   function processResult(result){
     if (result.showMessage) {
-      setLoginMessage(result.messageType, result.messageTitle + "\n" + result.messageText);
-      document.frmIdentificacion.password.value = "";
+      setLoginMessage(result.messageType, result.messageTitle + '\n' + result.messageText);
+      document.frmIdentificacion.password.value = '';
       setWindowElementFocus(document.frmIdentificacion.password);
     }
 
-    if (!result.showMessage || result.messageType === "Warning") {
-      window.location = result.target;
+    if (!result.showMessage || result.messageType === 'Warning') {
+      var target;
+      if (parent.document.getElementById('framesetMenu')) {
+        target = parent.window;
+      } else {
+        target = window;
+      }
+      target.location = result.target;
     } else {
-      enableButton("buttonOK");
+      enableButton('buttonOK');
     }
   }
 </script>
@@ -142,13 +148,12 @@
     setWindowTableParentElement();
     enableShortcuts('edition');
 
-    
     if ((!revisionControl('8847')) || (isOpsInstance() != isOpsInstanceCached())) {
-      alert(cacheMsg);
+      setLoginMessage('Warning', cacheMsg);
     }
 
     if (!checkBrowserCompatibility()) {
-      alert(browserMsg);
+      setLoginMessage('Warning', browserMsg);
     }
   }
 </script>
