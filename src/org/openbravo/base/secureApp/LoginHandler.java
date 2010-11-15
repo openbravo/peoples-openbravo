@@ -212,7 +212,7 @@ public class LoginHandler extends HttpBaseServlet {
 
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
       if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")
-          || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false_")) {
+          || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false")) {
         // Last build went fine and tomcat was restarted. We should login as usual
         goToTarget(res, vars);
       } else if (sysInfo.getSystemStatus().equals("RB60")
