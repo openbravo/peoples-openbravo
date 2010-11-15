@@ -175,7 +175,7 @@ button.ButtonLink table.Button .Button_left, table.Button .Button_left {
   background-position: center right; /*~RTL   background-position: center left;  */
   background-image: url(Common/Button/buttonLeft.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
   text-align: right; /*~RTL   text-align: left; */
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 button.ButtonLink table.Button .Button_text, table.Button .Button_text {
@@ -432,7 +432,7 @@ a.ButtonLink table.Button .Button_left, table.Button .Button_left {
   background-position: center right; /*~RTL   background-position: center left;  */
   background-image: url(Common/Button/buttonLeft.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
   text-align: right; /*~RTL   text-align: left; */
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 a.ButtonLink table.Button .Button_text, table.Button .Button_text {
@@ -599,7 +599,7 @@ a.ButtonLink_disabled table.Button .Button_left, table.ButtonLink_disabled .Butt
   background-position: center right; /*~RTL background-position: center left; */
   background-image: url(Common/Button/buttonLeft.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
   text-align: right;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 a.ButtonLink_disabled table.Button .Button_text, table.ButtonLink_disabled .Button_text {
@@ -5218,6 +5218,12 @@ td.TextBox_MsgContainerVt_td {
  *************************************************************************
 */
 
+/*
+ *************************
+ * 2.50
+ *************************
+*/
+
 .Login_ContentPane {
   text-indent: 0px;
   vertical-align: middle;
@@ -5444,6 +5450,87 @@ table.Login_ToolBar_bg {
   height: 48px;
   border-collapse: collapse;
 }
+
+/*
+ *************************
+ * 3.00
+ *************************
+*/
+
+.Login_Fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+
+.Login_Img_Link img {
+  border:0;
+}
+
+
+.Login_Main {
+  background: url(Login/Login-bg.png) repeat-x center 128px;
+  background-color: #FFFFFF;
+  width: 100%;
+  height: 100%;
+}
+
+.logbox {
+  background: url(Login/LoginBox-bg.png) repeat-x scroll left bottom transparent;
+  left: 170px;
+  position: absolute;
+  top: 10px;
+  border: 3px solid #B4B4B4;
+  height: 360px;
+  margin: 0 auto;
+  width: 440px;
+}
+
+.container {background: url(Login/Login-bgLogo.png) no-repeat 0 89px; width: 770px; padding-top: 10px; position: absolute; top: 0; left: 50%; margin-left: -375px;}
+
+
+
+.logbox dl {padding-left: 80px; position: relative;}
+.logbox dt {margin-bottom: .2em;}
+.logbox dd {margin-bottom: 1em;}
+.logbox dd select {width: 276px; padding: 4px 2px; margin-left: 0px;}
+
+
+.logbox .button {text-align: center; height: 83px;}
+
+.login-top {width: 100%; padding-top: 20px; height: 360;}
+
+.Login_ErrorMsg_LabelText {
+  color: red !important;
+  font-weight: bold;
+  position: absolute;
+  bottom: 0;
+  left: 80px;
+  margin-bottom: 120px;
+  margin-right: 55px;
+  font-size: 11px;
+}
+
+.Login_LabelText {
+}
+
+.Login_TextBox,
+.Login_TextBox_focus {
+  width: 280px;
+}
+
+.Login_TextBox {
+}
+
+.Login_Combo,
+.Login_Combo_focus {
+  width: 280px;
+}
+
+.Login_Combo {
+}
+
 
 /*
  *************************************************************************
