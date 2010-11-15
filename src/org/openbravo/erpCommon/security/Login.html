@@ -118,7 +118,7 @@
     if (result.showMessage) {
       setLoginMessage(result.messageType, result.messageTitle + "\n" + result.messageText);
       document.frmIdentificacion.password.value = "";
-      setFocus(document.frmIdentificacion.password);
+      setWindowElementFocus(document.frmIdentificacion.password);
     }
 
     if (!result.showMessage || result.messageType === "Warning") {
