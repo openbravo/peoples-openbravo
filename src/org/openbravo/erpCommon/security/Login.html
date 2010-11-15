@@ -28,6 +28,11 @@
 <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/CheckCleanCache.js?cache=true" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/CheckCleanCache.js?cache=false" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = "xx";</script>
+<script language="JavaScript" type="text/javascript" id="browserMsg">var browserMsg = "xx";</script>
+
 <script type="text/javascript">
   function redirectWhenPopup() {
     var permission = false;
@@ -112,14 +117,15 @@
   function processResult(result){
     if (result.showMessage) {
       setLoginMessage(result.messageType, result.messageTitle + "\n" + result.messageText);
-      enableButton("buttonOK");
       document.frmIdentificacion.password.value = "";
       setFocus(document.frmIdentificacion.password);
     }
 
     if (!result.showMessage || result.messageType === "Warning") {
       window.location = result.target;
-    }    
+    } else {
+      enableButton("buttonOK");
+    }
   }
 </script>
 <script type="text/javascript">
@@ -135,6 +141,15 @@
     );
     setWindowTableParentElement();
     enableShortcuts('edition');
+
+    
+    if ((!revisionControl('8847')) || (isOpsInstance() != isOpsInstanceCached())) {
+      alert(cacheMsg);
+    }
+
+    if (!checkBrowserCompatibility()) {
+      alert(browserMsg);
+    }
   }
 </script>
 <script type="text/javascript">
