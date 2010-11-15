@@ -52,5 +52,4 @@
   <PARAMETER id="saveok" name="saveok" attribute="value" default=""/>
 	<PARAMETER id="paramArrayClientes" name="clientes"/>
 	<PARAMETER id="paramArrayOrganizaciones" name="organizaciones"/>
-	<PARAMETER id="paramArrayWarehouse" name="warehouses"/>
 </REPORT>
