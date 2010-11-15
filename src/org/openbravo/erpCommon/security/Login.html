@@ -72,10 +72,10 @@
   function setLoginMessage(type, text) {
     if (type === "Error") {
       var msgContainer = document.getElementById('errorMsg');
-      msgContainer.innerHTML = text;
+      msgContainer.innerHTML = text.replace(/\n/g,'<br>').replace(/\\n/g,'<br>');
       msgContainer.style.display = "";
     } else if (type === "Warning") {
-      alert(text);
+      alert(text.replace(/<br>/g,'\n'));
     }
   }
 

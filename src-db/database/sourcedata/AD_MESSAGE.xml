@@ -31247,8 +31247,7 @@ Since this is the first time that you login, please select the purpose of this i
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <VALUE><![CDATA[IDENTIFICATION_FAILURE_MSG]]></VALUE>
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <MSGTEXT><![CDATA[Please enter your username and password.
-You must also ensure that your browser accepts cookies.
-Press back to return.]]></MSGTEXT>
+You must also ensure that your browser accepts cookies.]]></MSGTEXT>
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5D3624FE019649CCB3B5900F32E59E17--></AD_MESSAGE>
