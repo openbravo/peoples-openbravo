@@ -68,9 +68,12 @@ td.Login_Logo_Company_Container_Cell {
 .Login_Logo_Company {
   width: 197px;
   height: 55px;
+  background: url(../../utility/ShowImageLogo?logo=yourcompanylogin) no-repeat center center;
+}
+
+.Login_Logo_Company_Props {
   margin-top: 3px;
   margin-bottom: 3px;
-  background: url(../../utility/ShowImageLogo?logo=yourcompanylogin) no-repeat center center;
 }
 
 .Login_Logo_Support_Container {
@@ -96,9 +99,18 @@ td.Login_Logo_Support_Container_Cell {
 .Login_Logo_Support {
   width: 197px;
   height: 55px;
+  background: url(../../utility/ShowImageLogo?logo=youritservicelogin) no-repeat center center;
+}
+
+.Login_Logo_Support_Props {
   margin-top: 3px;
   margin-bottom: 3px;
-  background: url(../../utility/ShowImageLogo?logo=youritservicelogin) no-repeat center center;
+}
+
+.Login_Logo_OBForge {
+  width: 325px;
+  height: 55px;
+  background: url(OBForge.gif) no-repeat center center;
 }
 
 .Menu_NavBar_logo {
