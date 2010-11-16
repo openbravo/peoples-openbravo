@@ -36,44 +36,39 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    String uimode = vars.getStringParameter("uimode");
     if (vars.commandIn("DEFAULT")) {
-      printPage(response);
+      printPage(response, uimode);
     } else
       pageError(response);
 
   }
 
-  private void printPage(HttpServletResponse response) throws IOException {
+  private void printPage(HttpServletResponse response, String strUIMode) throws IOException {
     log4j.debug("Output: dataSheet");
     final LicenseClass licenseClass = ActivationKey.getInstance().getLicenseClass();
-    final String strVersion = OBVersion.getInstance().getMajorVersion();
 
-    String strUrl = strDireccion + "/web/html/" + "en_US";
-    if (strVersion.startsWith("3")) {
-      if (LicenseClass.COMMUNITY.equals(licenseClass)) {
-        response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-Comm.html");
-      } else if (LicenseClass.BASIC.equals(licenseClass)) {
-        response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-Basic.html");
-      } else if (LicenseClass.STD.equals(licenseClass)) {
-        response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-STD.html");
-      } else {
-        // Unknown license class, showing community content.
-        log4j.error("unknown license class: " + licenseClass.getCode());
-        response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-Comm.html");
-      }
+    String strFilename = "/StaticCommunityBranding-";
+    strFilename += strUIMode;
+    if (LicenseClass.COMMUNITY.equals(licenseClass)) {
+      strFilename += "-Comm";
+    } else if (LicenseClass.BASIC.equals(licenseClass)) {
+      strFilename += "-Basic";
+    } else if (LicenseClass.STD.equals(licenseClass)) {
+      strFilename += "-STD";
     } else {
-      if (LicenseClass.COMMUNITY.equals(licenseClass)) {
-        response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-Comm.html");
-      } else if (LicenseClass.BASIC.equals(licenseClass)) {
-        response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-Basic.html");
-      } else if (LicenseClass.STD.equals(licenseClass)) {
-        response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-STD.html");
-      } else {
-        // Unknown license class, showing community content.
-        log4j.error("unknown license class: " + licenseClass.getCode());
-        response.sendRedirect(strUrl + "/StaticCommunityBranding-2.50-Comm.html");
-      }
+      // Unknown license class, showing community content.
+      log4j.error("unknown license class: " + licenseClass.getCode());
+      strFilename += "-Comm";
     }
+    strFilename += ".html";
 
+    redirect(response, strFilename);
+  }
+
+  private void redirect(HttpServletResponse response, String filename) throws IOException {
+    String strUrl = strDireccion + "/web/html/";
+    strUrl += "en_US" + filename;
+    response.sendRedirect(strUrl);
   }
 }
