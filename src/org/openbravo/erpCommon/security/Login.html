@@ -129,10 +129,14 @@
 
     if (!result.showMessage || result.messageType === 'Warning') {
       var target;
-      if (parent.document.getElementById('framesetMenu')) {
-        target = parent.window;
-      } else {
-        target = window;
+      try {
+        if (parent.frameMenu) {
+          target = '_parent';
+        } else {
+          target = '_self';
+        }
+      } catch (e) {
+        target = '_self';
       }
       submitCommandForm('DEFAULT', false, null, result.target, target, true);
     } else {
