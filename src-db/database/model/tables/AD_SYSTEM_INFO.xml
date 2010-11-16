@@ -179,7 +179,7 @@
       </column>
       <column name="SHOWFORGELOGO" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
       <column name="YOURCOMPANYURL" primaryKey="false" required="false" type="NVARCHAR" size="200" autoIncrement="false">
         <default/>
@@ -212,6 +212,7 @@
       <check name="AD_SYSTEM_INFO_CHANGE_PURPOSE"><![CDATA[CHANGE_INSTANCE_PURPOSE IN ('Y', 'N')]]></check>
       <check name="AD_SYSTEM_INFO_CUSTOMIZATI_CHK"><![CDATA[CUSTOMIZATION_ALLOWED IN ('Y', 'N')]]></check>
       <check name="AD_SYSTEM_INFO_SHOW_COMMBRAND"><![CDATA[SHOW_COMMUNITY_BRANDING IN ('Y', 'N')]]></check>
+      <check name="AD_SYSTEM_INFO_SHOWFORGE"><![CDATA[SHOWFORGELOGO IN ('Y', 'N')]]></check>
       <check name="AD_SYSTEMINFO_USAGEAUDITENAB"><![CDATA[ISUSAGEAUDITENABLED IN ('Y', 'N')]]></check>
     </table>
   </database>
