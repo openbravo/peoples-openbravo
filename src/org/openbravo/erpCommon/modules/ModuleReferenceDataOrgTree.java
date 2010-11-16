@@ -189,6 +189,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
     OBCriteria<DataSet> criteria = OBDal.getInstance().createCriteria(DataSet.class);
     criteria.add(Expression.eq(DataSet.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
         moduleId)));
+    criteria.addOrderBy(DataSet.PROPERTY_ID, true);
     List<DataSet> datasets = criteria.list();
     String checksum = "";
     for (DataSet ds : datasets) {
