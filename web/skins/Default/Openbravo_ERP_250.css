@@ -5558,7 +5558,7 @@ table.Login_ToolBar_bg {
   padding-bottom: 34px;
 }
 
-.Login_BottomLogos_Container_Support_OBForge {
+.Login_BottomLogos_Container_Support_Forge {
   position: relative;
   left: 110px;
   text-align: center;
@@ -5572,18 +5572,18 @@ table.Login_ToolBar_bg {
   width: 100%;
 }
 
-.Login_BottomLogos_Container_OBForge {
+.Login_BottomLogos_Container_Forge {
   position: relative;
   left: 218px;
   text-align: center;
   width: 100%;
 }
 
-.Login_BottomLogos_Container_Support .Login_BottomLogos_OBForgeLogo_Container {
+.Login_BottomLogos_Container_Support .Login_BottomLogos_ForgeLogo_Container {
   display: none;
 }
 
-.Login_BottomLogos_Container_OBForge .Login_BottomLogos_SupportLogo_Container {
+.Login_BottomLogos_Container_Forge .Login_BottomLogos_SupportLogo_Container {
   display: none;
 }
 
@@ -5605,17 +5605,17 @@ table.Login_ToolBar_bg {
   text-align: center;
 }
 
-.Login_BottomLogos_OBForgeLogo_Container {
+.Login_BottomLogos_ForgeLogo_Container {
   width: 350px;
   position: relative;
   float: left;
 }
 
-.Login_BottomLogos_OBForgeLogo_Text {
+.Login_BottomLogos_ForgeLogo_Text {
   text-align: center;
 }
 
-.Login_BottomLogos_OBForgeLogo_Logo_Container {
+.Login_BottomLogos_ForgeLogo_Logo_Container {
   text-align: center;
 }
 

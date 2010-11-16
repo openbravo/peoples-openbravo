@@ -30,7 +30,8 @@
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=true" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/CheckCleanCache.js?cache=false" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="visualPrefs">var showCompanyLogo = true, showSupportLogo = true, showOBForgeLogo = true, urlCompany = "http://www.openbravo.com/", urlSupport = "http://support.openbravo.com/", urlOBForge = "http://forge.openbravo.com/";/* Parameters retreived from Login.java */</script>
+<script language="JavaScript" type="text/javascript" id="visualPrefs2">var showCompanyLogo = true, showSupportLogo = true, showForgeLogo = true, urlCompany = 'http://www.openbravo.com/', urlSupport = 'http://support.openbravo.com/';/* Parameters retreived from Login.java */</script>
+<script language="JavaScript" type="text/javascript">var urlForge = 'http://forge.openbravo.com/';</script>
 <script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="browserMsg">var browserMsg = 'xx';</script>
 
@@ -88,19 +89,19 @@
 </script>
 <script type="text/javascript">
   function buttonOK_click() {
-    if (focusedWindowElement.id === "user" && document.getElementById('user').value === "") {
+    if (focusedWindowElement.id === 'user' && document.getElementById('user').value === '') {
       return true;
-    } else if (focusedWindowElement.id === "user" && document.getElementById('password').value === "") {
+    } else if (focusedWindowElement.id === 'user' && document.getElementById('password').value === '') {
       setTimeout(function() { // To manage browser autocomplete feature if it is active
-       if (focusedWindowElement.id === "user" && document.getElementById('password').value === "") {
+       if (focusedWindowElement.id === 'user' && document.getElementById('password').value === '') {
          setWindowElementFocus(document.getElementById('password')) 
        } else {
          return true;
        }
       }, 10);
-    } else if (focusedWindowElement.id === "password" && document.getElementById('password').value === "") {
+    } else if (focusedWindowElement.id === 'password' && document.getElementById('password').value === '') {
       return true;
-    } else if (focusedWindowElement.id === "password" && document.getElementById('user').value === "") {
+    } else if (focusedWindowElement.id === 'password' && document.getElementById('user').value === '') {
       setWindowElementFocus(document.getElementById('user'))
     } else {
       disableButton('buttonOK');
@@ -148,32 +149,32 @@
 <script type="text/javascript">
   function manageVisualPreferences() {
     var bottomLogos = document.getElementById('BottomLogos_Container');
-    if (showSupportLogo && showOBForgeLogo) {
-      bottomLogos.className = "Login_BottomLogos_Container_Support_OBForge";
+    if (showSupportLogo && showForgeLogo) {
+      bottomLogos.className = 'Login_BottomLogos_Container_Support_Forge';
     } else if (showSupportLogo) {
-      bottomLogos.className = "Login_BottomLogos_Container_Support";
-    } else if (showOBForgeLogo) {
-      bottomLogos.className = "Login_BottomLogos_Container_OBForge";
+      bottomLogos.className = 'Login_BottomLogos_Container_Support';
+    } else if (showForgeLogo) {
+      bottomLogos.className = 'Login_BottomLogos_Container_Forge';
     } else {
-      bottomLogos.className = "Login_BottomLogos_Container_None";
+      bottomLogos.className = 'Login_BottomLogos_Container_None';
     }
 
-    if (showCompanyLogo && urlCompany !== "") {
+    if (showCompanyLogo && urlCompany !== '') {
       document.getElementById('CompanyLogo_Container').innerHTML = '<a href="' + urlCompany + '" class="Login_Img_Link">' + document.getElementById('CompanyLogo_Container').innerHTML + '</a>';
     }
 
-    if (showSupportLogo && urlSupport !== "") {
+    if (showSupportLogo && urlSupport !== '') {
       document.getElementById('SupportLogo_Container').innerHTML = '<a href="' + urlSupport + '" class="Login_Img_Link">' + document.getElementById('SupportLogo_Container').innerHTML + '</a>';
     }
 
-    if (showOBForgeLogo && urlOBForge !== "") {
-      document.getElementById('OBForgeLogo_Container').innerHTML = '<a href="' + urlOBForge + '" class="Login_Img_Link">' + document.getElementById('OBForgeLogo_Container').innerHTML + '</a>';
+    if (showForgeLogo && urlForge !== '') {
+      document.getElementById('ForgeLogo_Container').innerHTML = '<a href="' + urlForge + '" class="Login_Img_Link">' + document.getElementById('ForgeLogo_Container').innerHTML + '</a>';
     }
 
     if (showCompanyLogo) {
-      document.getElementById('CompanyLogo_Container').style.display = ""
+      document.getElementById('CompanyLogo_Container').style.display = ''
     }
-    bottomLogos.style.display = "";
+    bottomLogos.style.display = '';
   }
 </script>
 <script type="text/javascript">
@@ -273,14 +274,14 @@
         2001-2010</span>
       </div>
 
-      <div class="Login_BottomLogos_Container_Support_OBForge" id="BottomLogos_Container" style="display: none;">
+      <div class="Login_BottomLogos_Container_Support_Forge" id="BottomLogos_Container" style="display: none;">
         <div class="Login_BottomLogos_SupportLogo_Container">
           <div class="LabelText Login_LabelText Login_BottomLogos_SupportLogo_Text">For support, contact:</div>
           <div class="Login_BottomLogos_SupportLogo_Logo_Container" id="SupportLogo_Container"><img class="Login_Logo_Support" src="../../../../../web/images/blank.gif" /></div>
         </div>
-        <div class="Login_BottomLogos_OBForgeLogo_Container">
-          <div class="LabelText Login_LabelText Login_BottomLogos_OBForgeLogo_Text">Project hosted at:</div>
-          <div class="Login_BottomLogos_OBForgeLogo_Logo_Container" id="OBForgeLogo_Container"><img class="Login_Logo_OBForge" src="../../../../../web/images/blank.gif" /></div>
+        <div class="Login_BottomLogos_ForgeLogo_Container">
+          <div class="LabelText Login_LabelText Login_BottomLogos_ForgeLogo_Text">Project hosted at:</div>
+          <div class="Login_BottomLogos_ForgeLogo_Logo_Container" id="ForgeLogo_Container"><img class="Login_Logo_Forge" src="../../../../../web/images/blank.gif" /></div>
         </div>
       </div>
     </div>
