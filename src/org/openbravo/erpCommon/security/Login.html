@@ -87,16 +87,6 @@
 </script>
 <script type="text/javascript">
   function buttonOK_click() {
-    var target;
-    try {
-      if (parent.frameMenu) {
-        target = '_parent';
-      } else {
-        target = '_self';
-      }
-    } catch (e) {
-      target = '_self';
-    }
     if (focusedWindowElement.id === "user" && document.getElementById('user').value === "") {
       return true;
     } else if (focusedWindowElement.id === "user" && document.getElementById('password').value === "") {
@@ -144,7 +134,7 @@
       } else {
         target = window;
       }
-      target.location = result.target;
+      submitCommandForm('DEFAULT', false, null, result.target, target, true);
     } else {
       enableButton('buttonOK');
     }
@@ -186,7 +176,8 @@
 
       <div class="logbox">
         <form method="post" action="../secureApp/LoginHandler.html" name="frmIdentificacion" id="frmFormulario" autocomplete="off">
-
+            <input type="hidden" name="Command" value="" />
+            
             <div style="height: 115px; text-align: center;">
               <div style="padding-top: 25px;"><a href="#" class="Login_Img_Link"><img class="Login_Logo_Company" src="../../../../../web/images/blank.gif" /></a></div>
             </div>
