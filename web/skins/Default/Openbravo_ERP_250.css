@@ -5476,7 +5476,17 @@ table.Login_ToolBar_bg {
   height: 100%;
 }
 
-.logbox {
+.Login_Container {
+  background: url(Login/Login-bgLogo.png) no-repeat 0 89px;
+  width: 770px;
+  padding-top: 10px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -375px;
+}
+
+.Login_LogForm {
   background: url(Login/LoginBox-bg.png) repeat-x scroll left bottom transparent;
   left: 170px;
   position: absolute;
@@ -5487,28 +5497,139 @@ table.Login_ToolBar_bg {
   width: 440px;
 }
 
-.container {background: url(Login/Login-bgLogo.png) no-repeat 0 89px; width: 770px; padding-top: 10px; position: absolute; top: 0; left: 50%; margin-left: -375px;}
+.Login_LogForm dl {
+  padding-left: 80px;
+  position: relative;
+}
 
+.Login_LogForm dt {
+  margin-bottom: .2em;
+}
 
+.Login_LogForm dd {
+  margin-bottom: 1em;
+}
 
-.logbox dl {padding-left: 80px; position: relative;}
-.logbox dt {margin-bottom: .2em;}
-.logbox dd {margin-bottom: 1em;}
-.logbox dd select {width: 276px; padding: 4px 2px; margin-left: 0px;}
+.Login_LogForm_CompanyLogo_Container {
+  height: 115px;
+  text-align: center;
+}
 
+.Login_LogForm_CompanyLogo {
+  padding-top: 25px;
+}
 
-.logbox .button {text-align: center; height: 83px;}
+.Login_LogForm_Input_Container {
+  height: 162px;
+}
 
-.login-top {width: 100%; padding-top: 20px; height: 360;}
+.Login_LogForm_Button_Container {
+  text-align: center;
+  height: 83px;
+}
+
+.Login_LogForm_Button {
+  margin-top: 28px;
+}
+
+.Login_TopLogos_Container {
+  width: 100%;
+  padding-top: 20px;
+  height: 360;
+}
+
+.Login_TopLogos_VersionNumber {
+  margin-left: 520px;
+  font-size: 70px;
+  font-style: italic;
+  font-weight: bold;
+  color: #7F7F7F;
+  font-family:'lucida sans',sans-serif;
+}
+
+.Login_TopLogos_CopyrightText {
+  display: block;
+  margin-top: 215px;
+  color: #afafaf;
+  font-size: .9em;
+  line-height: 0.9em;
+  width: 14em;
+  text-align: center;
+  padding-bottom: 34px;
+}
+
+.Login_BottomLogos_Container_Support_OBForge {
+  position: relative;
+  left: 110px;
+  text-align: center;
+  width: 100%;
+}
+
+.Login_BottomLogos_Container_Support {
+  position: relative;
+  left: 263px;
+  text-align: center;
+  width: 100%;
+}
+
+.Login_BottomLogos_Container_OBForge {
+  position: relative;
+  left: 218px;
+  text-align: center;
+  width: 100%;
+}
+
+.Login_BottomLogos_Container_Support .Login_BottomLogos_OBForgeLogo_Container {
+  display: none;
+}
+
+.Login_BottomLogos_Container_OBForge .Login_BottomLogos_SupportLogo_Container {
+  display: none;
+}
+
+.Login_BottomLogos_Container_None {
+  display: none;
+}
+
+.Login_BottomLogos_SupportLogo_Container {
+  width: 260px;
+  position: relative;
+  float: left;
+}
+
+.Login_BottomLogos_SupportLogo_Text {
+  text-align: center;
+}
+
+.Login_BottomLogos_SupportLogo_Logo_Container {
+  text-align: center;
+}
+
+.Login_BottomLogos_OBForgeLogo_Container {
+  width: 350px;
+  position: relative;
+  float: left;
+}
+
+.Login_BottomLogos_OBForgeLogo_Text {
+  text-align: center;
+}
+
+.Login_BottomLogos_OBForgeLogo_Logo_Container {
+  text-align: center;
+}
+
 
 .Login_ErrorMsg_LabelText {
   color: red !important;
   font-weight: bold;
   position: absolute;
+  overflow: auto;
+  height: 76px;
   bottom: 0;
   left: 80px;
-  margin-bottom: 120px;
-  margin-right: 55px;
+  margin-bottom: 84px;
+  margin-right: 64px;
   font-size: 11px;
 }
 

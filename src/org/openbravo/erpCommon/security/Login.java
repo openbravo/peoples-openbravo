@@ -248,8 +248,8 @@ public class Login extends HttpBaseServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", strTheme);
-    xmlDocument.setParameter("visualPrefs", "var showYourCompanyLogo = " + showCompanyLogo
-        + ", showYourITServiceLogo = " + showITLogo + ", showForgeLogo = " + showForgeLogo + ";");
+    xmlDocument.setParameter("visualPrefs", "var showCompanyLogo = " + showCompanyLogo
+        + ", showSupportLogo = " + showITLogo + ", showOBForgeLogo = " + showForgeLogo + ";");
     xmlDocument.setParameter("itServiceUrl", "var itServiceUrl = '"
         + SessionLoginData.selectSupportContact(this) + "'");
 
