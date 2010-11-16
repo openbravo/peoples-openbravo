@@ -97,8 +97,24 @@
     } catch (e) {
       target = '_self';
     }
-    disableButton('buttonOK');
-    submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
+    if (focusedWindowElement.id === "user" && document.getElementById('user').value === "") {
+      return true;
+    } else if (focusedWindowElement.id === "user" && document.getElementById('password').value === "") {
+      setTimeout(function() { // To manage browser autocomplete feature
+       if (focusedWindowElement.id === "user" && document.getElementById('password').value === "") {
+         setWindowElementFocus(document.getElementById('password')) 
+       } else {
+         return true;
+       }
+      }, 10);
+    } else if (focusedWindowElement.id === "password" && document.getElementById('password').value === "") {
+      return true;
+    } else if (focusedWindowElement.id === "password" && document.getElementById('user').value === "") {
+      setWindowElementFocus(document.getElementById('user'))
+    } else {
+      disableButton('buttonOK');
+      submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
+    }
     return false;
   }
 
@@ -117,8 +133,8 @@
   function processResult(result){
     if (result.showMessage) {
       setLoginMessage(result.messageType, result.messageTitle + '\n' + result.messageText);
-      document.frmIdentificacion.password.value = '';
-      setWindowElementFocus(document.frmIdentificacion.password);
+      document.getElementById('password').value = '';
+      setWindowElementFocus('password', 'id');
     }
 
     if (!result.showMessage || result.messageType === 'Warning') {
@@ -147,6 +163,7 @@
     );
     setWindowTableParentElement();
     enableShortcuts('edition');
+    setWindowElementFocus('user', 'id');
 
     if ((!revisionControl('8847')) || (isOpsInstance() != isOpsInstanceCached())) {
       setLoginMessage('Warning', cacheMsg);
@@ -179,13 +196,13 @@
                   <label for="user" class="LabelText Login_LabelText">User name</label>
                 </dt>
                 <dd>
-                  <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" onKeyDown="resetMessage(); return true;" />
+                  <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" onKeyDown="resetMessage(); return true;" id="user"/>
                 </dd>
                 <dt>
                   <label for="password" class="LabelText Login_LabelText">Password</label>
                 </dt>
                 <dd>
-                  <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" onKeyDown="resetMessage(); return true;" />
+                  <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" onKeyDown="resetMessage(); return true;" id="password"/>
                 </dd>
               </dl>
               <div id="errorMsg" class="LabelText Login_ErrorMsg_LabelText" style="display: none;">The username or password you entered is not correct.</div>
