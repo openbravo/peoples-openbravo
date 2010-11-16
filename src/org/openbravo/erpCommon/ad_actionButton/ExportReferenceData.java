@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -97,9 +99,15 @@ public class ExportReferenceData extends HttpSecureAppServlet {
           + "/referencedata/standard/" + Utility.wikifiedName(data[0].name) + ".xml");
       if (!myFolder.exists())
         myFolder.mkdirs();
+
       FileOutputStream myOutputStream = new FileOutputStream(myFile);
       myOutputStream.write(xml.getBytes("UTF-8"));
       myOutputStream.close();
+
+      MessageDigest cs = MessageDigest.getInstance("MD5");
+      cs.update(xml.getBytes("UTF-8"));
+      myDataset.setChecksum(new BigInteger(1, cs.digest()).toString());
+      OBDal.getInstance().save(myDataset);
       myError = new OBError();
       myError.setType("Success");
       myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));

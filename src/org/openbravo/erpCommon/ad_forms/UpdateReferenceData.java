@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -253,6 +254,19 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
                 Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
                 SALTO_LINEA);
           }
+        }
+        HashMap<String, String> checksums = new HashMap<String, String>();
+        for (int j = 0; j < data.length; j++) {
+          String checksum = data[j].checksum;
+          if (checksums.get(data[j].adModuleId) == null) {
+            checksums.put(data[j].adModuleId, checksum);
+          } else {
+            checksums.put(data[j].adModuleId, checksums.get(data[j].adModuleId) + "," + checksum);
+          }
+        }
+        for (String moduleId : checksums.keySet()) {
+          UpdateReferenceDataData.updateOrgModuleChecksum(this, checksums.get(moduleId), vars
+              .getUser(), vars.getClient(), strOrganization, moduleId);
         }
       } else
         return "WrongModules";

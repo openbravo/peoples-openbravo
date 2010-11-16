@@ -19,16 +19,28 @@
 package org.openbravo.erpCommon.modules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.ADOrgModule;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.DataSet;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -37,6 +49,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleReferenceDataOrgTree extends ModuleTree {
+  private final static Logger log4j = Logger.getLogger(ModuleReferenceDataOrgTree.class);
 
   /**
    * Constructor to generate a root tree
@@ -132,6 +145,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
       data = ModuleReferenceDataOrgTreeData.selectOrg(conn, (lang.equals("") ? "en_US" : lang),
           strClient, strOrg);
       cleanData();
+      filterAlreadyApplied(strClient, strOrg);
       if (bAddLinks)
         addLinks();
       setLevel(0);
@@ -140,6 +154,55 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
       ex.printStackTrace();
       data = null;
     }
+  }
+
+  private void filterAlreadyApplied(String strClient, String strOrg) {
+    OBContext.setAdminMode();
+    ArrayList<ModuleReferenceDataOrgTreeData> dataList = new ArrayList<ModuleReferenceDataOrgTreeData>(
+        Arrays.asList((ModuleReferenceDataOrgTreeData[]) data));
+    for (int i = 0; i < data.length; i++) {
+      String moduleId = data[i].getField("node_id");
+      String checksum = calculateChecksum(moduleId);
+      if (checksum.equals("")) {
+        continue;
+      }
+      OBCriteria<ADOrgModule> adOrgModCriteria = OBDal.getInstance().createCriteria(
+          ADOrgModule.class);
+      adOrgModCriteria.add(Expression.eq(ADOrgModule.PROPERTY_MODULE, OBDal.getInstance().get(
+          Module.class, moduleId)));
+      adOrgModCriteria.add(Expression.eq(ADOrgModule.PROPERTY_CLIENT, OBDal.getInstance().get(
+          Client.class, strClient)));
+      adOrgModCriteria.add(Expression.eq(ADOrgModule.PROPERTY_ORGANIZATION, OBDal.getInstance()
+          .get(Organization.class, strOrg)));
+      adOrgModCriteria.add(Expression.eq(ADOrgModule.PROPERTY_CHECKSUM, checksum));
+      if (adOrgModCriteria.list().size() > 0) {
+        dataList.remove(data[i]);
+        log4j
+            .debug("Module removed because datasets didn't change: " + data[i].getField("node_id"));
+      }
+    }
+    data = dataList.toArray(new ModuleReferenceDataOrgTreeData[0]);
+    OBContext.restorePreviousMode();
+  }
+
+  private String calculateChecksum(String moduleId) {
+    OBCriteria<DataSet> criteria = OBDal.getInstance().createCriteria(DataSet.class);
+    criteria.add(Expression.eq(DataSet.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
+        moduleId)));
+    List<DataSet> datasets = criteria.list();
+    String checksum = "";
+    for (DataSet ds : datasets) {
+      if (ds.getChecksum() != null) {
+        if (!checksum.equals("")) {
+          checksum += ",";
+        }
+        checksum += ds.getChecksum();
+      } else {
+        // If at least one of the datasets doesn't have checksum, this module will not be filtered
+        return "";
+      }
+    }
+    return checksum;
   }
 
   private void cleanData() {
