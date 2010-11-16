@@ -249,7 +249,7 @@ public class Login extends HttpBaseServlet {
     xmlDocument.setParameter("theme", strTheme);
 
     String visualPrefs = "var showCompanyLogo = " + showCompanyLogo + ", showSupportLogo = "
-        + showITLogo + ", showOBForgeLogo = " + showForgeLogo + ", urlCompany = '" + companyLink
+        + showITLogo + ", showForgeLogo = " + showForgeLogo + ", urlCompany = '" + companyLink
         + "', urlSupport = '" + itLink + "', urlOBForge = 'http://forge.openbravo.com/';";
     xmlDocument.setParameter("visualPrefs", visualPrefs);
     xmlDocument.setParameter("itServiceUrl", "var itServiceUrl = '"
