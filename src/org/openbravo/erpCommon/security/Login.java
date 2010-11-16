@@ -234,13 +234,12 @@ public class Login extends HttpBaseServlet {
     if (sysInfo == null) {
       log4j.error("System information not found");
     } else {
-      // TODO: make use of this info
       showITLogo = sysInfo.getYourItServiceLoginImage() != null;
       showCompanyLogo = sysInfo.getYourCompanyLoginImage() != null;
       showForgeLogo = !ActivationKey.getInstance().isActive()
           || (ActivationKey.getInstance().isActive() && sysInfo.isShowForgeLogoInLogin());
-      itLink = sysInfo.getSupportContact();
-      companyLink = sysInfo.getYourCompanyURL();
+      itLink = sysInfo.getSupportContact() == null ? "" : sysInfo.getSupportContact();
+      companyLink = sysInfo.getYourCompanyURL() == null ? "" : sysInfo.getYourCompanyURL();
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
@@ -248,8 +247,11 @@ public class Login extends HttpBaseServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", strTheme);
-    xmlDocument.setParameter("visualPrefs", "var showCompanyLogo = " + showCompanyLogo
-        + ", showSupportLogo = " + showITLogo + ", showOBForgeLogo = " + showForgeLogo + ";");
+
+    String visualPrefs = "var showCompanyLogo = " + showCompanyLogo + ", showSupportLogo = "
+        + showITLogo + ", showOBForgeLogo = " + showForgeLogo + ", urlCompany = '" + companyLink
+        + "', urlSupport = '" + itLink + "', urlOBForge = 'http://forge.openbravo.com/';";
+    xmlDocument.setParameter("visualPrefs", visualPrefs);
     xmlDocument.setParameter("itServiceUrl", "var itServiceUrl = '"
         + SessionLoginData.selectSupportContact(this) + "'");
 
