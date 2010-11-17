@@ -60,6 +60,30 @@ input:-moz-ui-invalid {
   box-shadow: none;
 }
 
+textarea {
+  box-shadow: none;
+}
+
+textarea:-moz-ui-valid {
+  box-shadow: none;
+}
+
+textarea:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+select {
+  box-shadow: none;
+}
+
+select:-moz-ui-valid {
+  box-shadow: none;
+}
+
+select:-moz-ui-invalid {
+  box-shadow: none;
+}
+
 
 /*
  *************************************************************************
