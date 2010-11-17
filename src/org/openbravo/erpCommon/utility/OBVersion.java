@@ -69,4 +69,8 @@ public class OBVersion {
     String ver = versionModule.getVersion();
     return ver.substring(0, ver.lastIndexOf("."));
   }
+
+  public boolean is30() {
+    return getMajorVersion().startsWith("3.0");
+  }
 }

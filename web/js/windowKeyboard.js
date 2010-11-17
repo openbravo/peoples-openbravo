@@ -423,6 +423,7 @@ function drawWindowElementFocus(obj) {
     } else if (obj.tagName == 'SELECT') {
       if (navigator.appName.toUpperCase().indexOf('MICROSOFT') == -1) {
         if (obj.className.indexOf(' Combo_focus') == -1) {
+          obj.className = obj.className.replace('Login_Combo', 'Login_Combo_focus');
           obj.className = obj.className + ' Combo_focus';
         }
       }
@@ -439,6 +440,7 @@ function drawWindowElementFocus(obj) {
         obj.className = obj.className.replace('dojoValidateRange', 'dojoValidateRange_focus');
         obj.className = obj.className.replace('required', 'required_focus');
         obj.className = obj.className.replace('readonly', 'readonly_focus');
+        obj.className = obj.className.replace('Login_TextBox', 'Login_TextBox_focus');
         obj.className = obj.className + ' TextBox_focus';
       } else if (obj.getAttribute('type') == 'checkbox') {
         obj.className = 'Checkbox_Focused';
@@ -547,6 +549,7 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace('ButtonLink_focus','ButtonLink');
     } else if (obj.tagName == 'SELECT') {
       obj.className = obj.className.replace(' Combo_focus','');
+      obj.className = obj.className.replace('Login_Combo_focus','Login_Combo');
     } else if (obj.tagName == 'INPUT') {
       obj.className = obj.className.replace(' TextBox_focus','');
       obj.className = obj.className.replace('dojoValidateEmpty_focus', 'dojoValidateEmpty');
@@ -555,6 +558,7 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace('dojoValidateRange_focus', 'dojoValidateRange');
       obj.className = obj.className.replace('required_focus', 'required');
       obj.className = obj.className.replace('readonly_focus', 'readonly');
+      obj.className = obj.className.replace('Login_TextBox_focus', 'Login_TextBox');
       if (obj.getAttribute('type')=='checkbox') {
         obj.className='Checkbox_NOT_Focused';
         var obj_tmp = obj;
