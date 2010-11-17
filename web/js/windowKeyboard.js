@@ -192,6 +192,16 @@ function mouseDownLogic(evt, obj) {
     catch (e) { }
   }
 
+  if (obj.tagName == 'IMG') { /* To check if clicked IMG is part of a Button */
+    try {
+      var parentOfTable = getObjParent(getObjParent(getObjParent(getObjParent(getObjParent(obj)))));
+      if (parentOfTable.tagName == 'BUTTON') {
+        obj = parentOfTable;
+      }
+    }
+    catch (e) { }
+  }
+
   if (checkGenericTree(obj)) {
     return true;
   }
@@ -219,6 +229,16 @@ function mouseClickLogic(evt, obj) {
   if (obj.tagName == 'TD') { /* To check if clicked TD is part of a Button */
     try {
       var parentOfTable = getObjParent(getObjParent(getObjParent(getObjParent(obj))));
+      if (parentOfTable.tagName == 'BUTTON') {
+        obj = parentOfTable;
+      }
+    }
+    catch (e) { }
+  }
+
+  if (obj.tagName == 'IMG') { /* To check if clicked IMG is part of a Button */
+    try {
+      var parentOfTable = getObjParent(getObjParent(getObjParent(getObjParent(getObjParent(obj)))));
       if (parentOfTable.tagName == 'BUTTON') {
         obj = parentOfTable;
       }
