@@ -306,6 +306,12 @@ public class DocInvoice extends AcctServer {
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
+      if ((m_payments == null || m_payments.length == 0)
+          && (m_debt_payments == null || m_debt_payments.length == 0)) {
+        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, conn),
+            this.C_Currency_ID, Amounts[AMTTYPE_Gross], "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
+      }
       // Charge CR
       log4jDocInvoice.debug("The first create line");
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), C_Currency_ID, "",
@@ -366,6 +372,12 @@ public class DocInvoice extends AcctServer {
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
+      if ((m_payments == null || m_payments.length == 0)
+          && (m_debt_payments == null || m_debt_payments.length == 0)) {
+        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, conn),
+            this.C_Currency_ID, "", Amounts[AMTTYPE_Gross], Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
+      }
       // Charge DR
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), this.C_Currency_ID,
           getAmount(AcctServer.AMTTYPE_Charge), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -423,6 +435,12 @@ public class DocInvoice extends AcctServer {
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
+      if ((m_payments == null || m_payments.length == 0)
+          && (m_debt_payments == null || m_debt_payments.length == 0)) {
+        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+            this.C_Currency_ID, "", Amounts[AMTTYPE_Gross], Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
+      }
       // Charge DR
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), this.C_Currency_ID,
           getAmount(AcctServer.AMTTYPE_Charge), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -486,6 +504,12 @@ public class DocInvoice extends AcctServer {
                   m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", conn), "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
+      if ((m_payments == null || m_payments.length == 0)
+          && (m_debt_payments == null || m_debt_payments.length == 0)) {
+        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+            this.C_Currency_ID, Amounts[AMTTYPE_Gross], "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
+      }
       // Charge CR
       fact.createLine(null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn), this.C_Currency_ID,
           "", getAmount(AcctServer.AMTTYPE_Charge), Fact_Acct_Group_ID, nextSeqNo(SeqNo),

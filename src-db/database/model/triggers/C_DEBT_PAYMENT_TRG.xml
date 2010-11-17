@@ -69,7 +69,7 @@ BEGIN
       -- Check if it is totally invoiced
       SELECT COALESCE(SUM(NOTINVOICED),0)
         INTO v_Aux
-        FROM (SELECT (O.QTYORDERED- COALESCE(LL.QTYINVOICED,0)) AS NOTINVOICED
+        FROM (SELECT (ABS(O.QTYORDERED)- ABS(COALESCE(LL.QTYINVOICED,0))) AS NOTINVOICED
                 FROM C_ORDERLINE O LEFT JOIN (SELECT IL.C_INVOICELINE_ID, IL.QTYINVOICED, IL.C_ORDERLINE_ID
                                                 FROM C_INVOICELINE IL,
                                                      C_INVOICE I
