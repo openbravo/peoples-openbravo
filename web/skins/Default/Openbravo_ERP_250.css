@@ -5599,6 +5599,7 @@ table.Login_ToolBar_bg {
 
 .Login_BottomLogos_SupportLogo_Text {
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .Login_BottomLogos_SupportLogo_Logo_Container {
@@ -5613,6 +5614,7 @@ table.Login_ToolBar_bg {
 
 .Login_BottomLogos_ForgeLogo_Text {
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .Login_BottomLogos_ForgeLogo_Logo_Container {
