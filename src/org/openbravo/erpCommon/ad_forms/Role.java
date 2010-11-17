@@ -28,6 +28,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
@@ -110,22 +112,18 @@ public class Role extends HttpSecureAppServlet {
     response.setContentType("application/json; charset=UTF-8");
     PrintWriter out = response.getWriter();
     if (data == null) {
-      out.println("null");
+      out.println(JSONObject.NULL.toString());
     } else {
-      out.println("[");
+      JSONArray list = new JSONArray();
+
       for (int i = 0; i < data.length; i++) {
-        if (i > 0) {
-          out.println(",");
-        }
-        out.print("[\"");
-        out.print(data[i].padre);
-        out.print("\", \"");
-        out.print(data[i].id);
-        out.print("\", \"");
-        out.print(FormatUtilities.replaceJS(data[i].name));
-        out.print("\"]");
+        JSONArray item = new JSONArray();
+        item.put(data[i].padre);
+        item.put(data[i].id);
+        item.put(data[i].name);
+        list.put(item);
       }
-      out.println("]");
+      out.println(list.toString());
     }
     out.close();
   }
