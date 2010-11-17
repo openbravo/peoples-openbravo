@@ -30,9 +30,12 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Login extends HttpBaseServlet {
@@ -57,7 +60,11 @@ public class Login extends HttpBaseServlet {
         String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
             .getLanguage());
 
-        printPageIdentificacion(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+        if (OBVersion.getInstance().is30()) {
+          printPageLogin30(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+        } else {
+          printPageLogin250(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+        }
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -73,8 +80,12 @@ public class Login extends HttpBaseServlet {
       out.close();
     } else if (vars.commandIn("WELCOME")) {
       log4j.debug("Command: Welcome");
-      String strTheme = vars.getTheme();
-      printPageWelcome(response, strTheme);
+      if (OBVersion.getInstance().is30()) {
+        printPageBlank(response, vars);
+      } else {
+        String strTheme = vars.getTheme();
+        printPageWelcome(response, strTheme);
+      }
     } else if (vars.commandIn("LOGO")) {
       printPageLogo(response, vars);
     } else {
@@ -173,8 +184,11 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  private void printPageIdentificacion(HttpServletResponse response, String strTheme,
-      String cacheMsg, String browserMsg, String orHigherMsg) throws IOException, ServletException {
+  /**
+   * Shows 2.50 login page
+   */
+  private void printPageLogin250(HttpServletResponse response, String strTheme, String cacheMsg,
+      String browserMsg, String orHigherMsg) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
 
@@ -204,107 +218,63 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  private void goToRetry(HttpServletResponse res) throws IOException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
+  /**
+   * Shows 3.0 login page
+   */
+  private void printPageLogin30(HttpServletResponse response, String strTheme, String cacheMsg,
+      String browserMsg, String orHigherMsg) throws IOException, ServletException {
 
-    res.setContentType("text/html");
-    PrintWriter out = res.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    boolean showForgeLogo = true;
+    boolean showITLogo = false;
+    boolean showCompanyLogo = false;
+    String itLink = "";
+    String companyLink = "";
+    SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
 
-  // public void printPageOptions(HttpServletResponse response,
-  // VariablesSecureApp vars) throws IOException, ServletException {
-  // XmlDocument xmlDocument =
-  // xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_Options_F1").createXmlDocument
-  // ();
-  //    
-  // RoleComboData[] data = RoleComboData.select(this, vars.getUser());
-  // if (data==null || data.length==0) {
-  // goToRetry(response);
-  // return;
-  // }
-  // xmlDocument.setParameter("language", "defaultLang=\"" +
-  // vars.getLanguage() + "\";");
-  // ClientData[] clients = null;
-  // {
-  // ClientData[] data1 = ClientData.select(this);
-  // if (data1==null || data1.length==0) {
-  // bdError(response, "NoClientLogin", vars.getLanguage());
-  // return;
-  // } else {
-  // Vector<Object> vecClients = new Vector<Object>();
-  // for (int i=0;i<data.length;i++) {
-  // StringTokenizer st = new StringTokenizer(data[i].clientlist, ",", false);
-  //    
-  // while (st.hasMoreTokens()) {
-  // String token = st.nextToken().trim();
-  // ClientData auxClient = new ClientData();
-  // auxClient.padre = data[i].adRoleId;
-  // auxClient.id = token;
-  // auxClient.name = getDescriptionFromArray(data1, token);
-  // vecClients.addElement(auxClient);
-  // }
-  // }
-  // clients = new ClientData[vecClients.size()];
-  // vecClients.copyInto(clients);
-  // }
-  // xmlDocument.setParameter("clientes", arrayDobleEntrada("arrClientes",
-  // clients));
-  // }
-  // {
-  // OrganizationData[] data1 = OrganizationData.select(this);
-  // if (data1==null || data1.length==0) {
-  // bdError(response, "NoOrgLogin", vars.getLanguage());
-  // return;
-  // }
-  // xmlDocument.setParameter("organizaciones", arrayDobleEntrada("arrOrgs",
-  // data1));
-  // }
-  // xmlDocument.setParameter("warehouses", arrayDobleEntrada("arrWare",
-  // WarehouseData.select(this)));
-  // xmlDocument.setData("structureRol", data);
-  // ClientComboData[] clientCombo = null;
-  // {
-  // Vector<Object> vecClientCombo = new Vector<Object>();
-  // for (int i=0;i<clients.length;i++) {
-  // if (clients[i].padre.equals(data[0].adRoleId)) {
-  // ClientComboData auxCombo = new ClientComboData();
-  // auxCombo.adClientId = clients[i].id;
-  // auxCombo.name = clients[i].name;
-  // vecClientCombo.addElement(auxCombo);
-  // }
-  // }
-  // clientCombo = new ClientComboData[vecClientCombo.size()];
-  // vecClientCombo.copyInto(clientCombo);
-  // }
-  // xmlDocument.setData("structureCliente", clientCombo);
-  // xmlDocument.setData("structureOrganizacion",
-  // OrganizationComboData.select(this, data[0].adRoleId));
-  // xmlDocument.setData("structureAlmacen", WarehouseComboData.select(this,
-  // data[0].adRoleId, data[0].adClientId));
-  //
-  // response.setContentType("text/html; charset=UTF-8");
-  // PrintWriter out = response.getWriter();
-  // out.println(xmlDocument.print());
-  // out.close();
-  // }
+    if (sysInfo == null) {
+      log4j.error("System information not found");
+    } else {
+      showITLogo = sysInfo.getYourItServiceLoginImage() != null;
+      showCompanyLogo = sysInfo.getYourCompanyLoginImage() != null;
+      showForgeLogo = !ActivationKey.getInstance().isActive()
+          || (ActivationKey.getInstance().isActive() && sysInfo.isShowForgeLogoInLogin());
+      itLink = sysInfo.getSupportContact() == null ? "" : sysInfo.getSupportContact();
+      companyLink = sysInfo.getYourCompanyURL() == null ? "" : sysInfo.getYourCompanyURL();
+    }
 
-  private void bdError(HttpServletResponse response, String strCode, String strLanguage)
-      throws IOException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error")
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login")
         .createXmlDocument();
 
-    xmlDocument.setParameter("ParamTitulo", strCode);
-    xmlDocument.setParameter("ParamTexto", Utility.messageBD(this, strCode, strLanguage));
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", strTheme);
+
+    String visualPrefs = "var showCompanyLogo = " + showCompanyLogo + ", showSupportLogo = "
+        + showITLogo + ", showForgeLogo = " + showForgeLogo + ", urlCompany = '" + companyLink
+        + "', urlSupport = '" + itLink + "', urlOBForge = 'http://forge.openbravo.com/';";
+    xmlDocument.setParameter("visualPrefs", visualPrefs);
+    xmlDocument.setParameter("itServiceUrl", "var itServiceUrl = '"
+        + SessionLoginData.selectSupportContact(this) + "'");
+
+    String cacheMsgFinal = (cacheMsg != null && !cacheMsg.equals("")) ? cacheMsg
+        : "Your browser's cache has outdated files. Please clean it and reload the page.";
+    cacheMsgFinal = "var cacheMsg = \"" + cacheMsgFinal + "\"";
+    xmlDocument.setParameter("cacheMsg", cacheMsgFinal.replaceAll("\\n", "\n"));
+
+    String orHigherMsgFinal = (orHigherMsg != null && !orHigherMsg.equals("")) ? orHigherMsg
+        : "or higher";
+
+    String browserMsgFinal = (browserMsg != null && !browserMsg.equals("")) ? browserMsg
+        : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
+
+    browserMsgFinal = browserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
+        + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsgFinal;
+    browserMsgFinal = "var browserMsg = \"" + browserMsgFinal + "\"";
+    xmlDocument.setParameter("browserMsg", browserMsgFinal.replaceAll("\\n", "\n"));
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
 
-  public String getServletInfo() {
-    return "Login servlet";
-  }
 }

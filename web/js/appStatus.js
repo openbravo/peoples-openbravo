@@ -98,6 +98,7 @@ function disableButton(id) {
     } else {                                                                                                   //Used in old r2.40 button definition
       if (link.className.indexOf('ButtonLink') != -1 && link.className.indexOf('ButtonLink_disabled') == -1) {
         link.className = link.className.replace('ButtonLink_default', 'ButtonLink');
+        link.className = link.className.replace('ButtonLink_focus', 'ButtonLink');
         link.className = link.className.replace('ButtonLink', 'ButtonLink_disabled');
         link.setAttribute('id', link.getAttribute('id') + '_disabled');
         link.disabled = true;
