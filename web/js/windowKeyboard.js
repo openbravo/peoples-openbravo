@@ -182,11 +182,21 @@ function mouseDownLogic(evt, obj) {
     while(obj.tagName != 'SELECT') obj = obj.parentNode;
   }
 
+  if (obj.tagName == 'TD') { /* To check if clicked TD is part of a Button */
+    try {
+      var parentOfTable = getObjParent(getObjParent(getObjParent(getObjParent(obj))));
+      if (parentOfTable.tagName == 'BUTTON') {
+        obj = parentOfTable;
+      }
+    }
+    catch (e) { }
+  }
+
   if (checkGenericTree(obj)) {
     return true;
   }
 
-    cursorFocus(obj, 'onmousedown');
+  cursorFocus(obj, 'onmousedown');
 
   if (obj.tagName == 'SELECT') {
     comboKeyBehaviour(obj,'onmousedown');
@@ -204,6 +214,16 @@ function mouseClickLogic(evt, obj) {
   }
   if (obj.tagName == 'OPTION') {
     while(obj.tagName != 'SELECT') obj = obj.parentNode;
+  }
+
+  if (obj.tagName == 'TD') { /* To check if clicked TD is part of a Button */
+    try {
+      var parentOfTable = getObjParent(getObjParent(getObjParent(getObjParent(obj))));
+      if (parentOfTable.tagName == 'BUTTON') {
+        obj = parentOfTable;
+      }
+    }
+    catch (e) { }
   }
 
   if (checkGenericTree(obj)) {
