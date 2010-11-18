@@ -82,7 +82,8 @@ public class InsertAcces extends HttpSecureAppServlet {
       log4j.debug("Output: Button insert acces");
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    final String lang = vars.getLanguage();
+    if (lang.equals("en_US"))
       data = ActionButtonDefaultData.select(this, strProcessId);
     else
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
@@ -99,7 +100,11 @@ public class InsertAcces extends HttpSecureAppServlet {
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setData("reportModules_S", "liststructure", ModuleComboData.select(this));
+    if (lang.equals("en_US"))
+      xmlDocument.setData("reportModules_S", "liststructure", ModuleComboData.select(this));
+    else
+      xmlDocument
+          .setData("reportModules_S", "liststructure", ModuleComboData.selectTrl(this, lang));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);
