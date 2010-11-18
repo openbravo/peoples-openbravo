@@ -191,7 +191,7 @@ AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID]]></queryString>
 	<field name="FAX" class="java.lang.String"/>
 	<field name="URL" class="java.lang.String"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>
-	<field name="DATEORDERED" class="java.sql.Timestamp"/>
+	<field name="DATEORDERED" class="java.lang.String"/>
 	<field name="ALBARAN" class="java.lang.String"/>
 	<field name="COMPLETE_NAME" class="java.lang.String"/>
 	<field name="ENTITY" class="java.lang.String"/>
@@ -346,7 +346,7 @@ AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID]]></queryString>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{DATEORDERED}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DATEORDERED}]]></textFieldExpression>
 				</textField>
 				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Right" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
