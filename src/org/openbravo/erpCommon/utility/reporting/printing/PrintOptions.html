@@ -51,7 +51,8 @@
     }
 
     function submitThisPage(strCommand) {
-      submitCommandForm(strCommand, false, null, null, '_top');
+      submitCommandForm(strCommand, false, null, null, "hiddenFrame");
+      window.close();
       return true;
     }
 
