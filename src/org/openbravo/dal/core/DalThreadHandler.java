@@ -47,8 +47,10 @@ public abstract class DalThreadHandler extends ThreadHandler {
           SessionHandler.getInstance().rollback();
         } else if (errorOccured) {
           SessionHandler.getInstance().rollback();
-        } else {
+        } else if (SessionHandler.getInstance().getSession().getTransaction().isActive()) {
           SessionHandler.getInstance().commitAndClose();
+        } else {
+          SessionHandler.getInstance().closeSession();
         }
       }
     } finally {

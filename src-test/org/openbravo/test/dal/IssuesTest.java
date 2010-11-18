@@ -38,6 +38,7 @@ import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
+import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBCriteria;
@@ -116,6 +117,8 @@ import org.openbravo.test.base.BaseTest;
  * 
  * https://issues.openbravo.com/view.php?id=15050: OBQuery: whereclause with alias with a comma
  * direct after the alias fails
+ * 
+ * https://issues.openbravo.com/view.php?id=15218: error when closing transaction
  * 
  * @author mtaal
  * @author iperdomo
@@ -543,5 +546,23 @@ public class IssuesTest extends BaseTest {
     final String whereClause = " as t, ADColumn as c where c.table = t and c.keyColumn=true";
     final OBQuery<Table> tables = OBDal.getInstance().createQuery(Table.class, whereClause);
     assertTrue(tables.list().size() > 0);
+  }
+
+  /**
+   * https://issues.openbravo.com/view.php?id=15218: error when closing transaction
+   */
+  public void test15218() throws Exception {
+    final OBContext obContext = OBContext.getOBContext();
+    final DalThreadHandler dth = new DalThreadHandler() {
+
+      @Override
+      protected void doAction() throws Exception {
+        OBDal.getInstance().getSession().beginTransaction();
+        OBDal.getInstance().getSession().getTransaction().commit();
+      }
+    };
+
+    dth.run();
+    OBContext.setOBContext(obContext);
   }
 }

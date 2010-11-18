@@ -186,8 +186,10 @@ public class BaseTest extends TestCase {
           SessionHandler.getInstance().rollback();
         } else if (isErrorOccured()) {
           SessionHandler.getInstance().rollback();
-        } else {
+        } else if (SessionHandler.getInstance().getSession().getTransaction().isActive()) {
           SessionHandler.getInstance().commitAndClose();
+        } else {
+          SessionHandler.getInstance().getSession().close();
         }
       }
     } catch (final Exception e) {

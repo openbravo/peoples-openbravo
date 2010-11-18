@@ -60,6 +60,30 @@ input:-moz-ui-invalid {
   box-shadow: none;
 }
 
+textarea {
+  box-shadow: none;
+}
+
+textarea:-moz-ui-valid {
+  box-shadow: none;
+}
+
+textarea:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+select {
+  box-shadow: none;
+}
+
+select:-moz-ui-valid {
+  box-shadow: none;
+}
+
+select:-moz-ui-invalid {
+  box-shadow: none;
+}
+
 
 /*
  *************************************************************************
@@ -5599,6 +5623,7 @@ table.Login_ToolBar_bg {
 
 .Login_BottomLogos_SupportLogo_Text {
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .Login_BottomLogos_SupportLogo_Logo_Container {
@@ -5613,6 +5638,7 @@ table.Login_ToolBar_bg {
 
 .Login_BottomLogos_ForgeLogo_Text {
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .Login_BottomLogos_ForgeLogo_Logo_Container {
