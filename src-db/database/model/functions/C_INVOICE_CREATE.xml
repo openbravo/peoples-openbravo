@@ -985,46 +985,6 @@
                 END IF;
               END IF;--FINISH_PROCESS
               IF(NOT FINISH_PROCESS) THEN
-                -- New Shipment
-                IF(Cur_InvoiceSchedule.M_InOut_ID<>v_InOut_ID) THEN
-                  v_InOut_ID:=Cur_InvoiceSchedule.M_InOut_ID;
-                  -- Get Reference Info
-         SELECT PrintName
-                  INTO v_Reference
-                  FROM C_DOCTYPE dt
-                  WHERE C_DocType_ID=Cur_InvoiceSchedule.C_DocType_ID;
-                  v_Reference:=v_Reference || ' ' || Cur_InvoiceSchedule.DocumentNo; -- Date would come here
-                  IF(Cur_InvoiceSchedule.POReference IS NOT NULL) THEN
-                    v_Reference:=v_Reference || ' (' || Cur_InvoiceSchedule.POReference || ')';
-                  END IF;
-                  v_Reference:=v_Reference || ': ' || Cur_InvoiceSchedule.Description;
-                  -- Reference/Comment Line
-                  v_ResultStr:='InsertSumShipmentReference';
-                  Ad_Sequence_Next('C_InvoiceLine', Cur_InvoiceSchedule.C_Order_ID, v_NextNo) ;
-                  v_LineNo:=v_LineNo + 10;
-                  INSERT
-                  INTO C_INVOICELINE
-                    (
-                      C_InvoiceLine_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                      Created, CreatedBy, Updated, UpdatedBy,
-                      C_Invoice_ID, C_OrderLine_ID, M_InOutLine_ID, Line,
-                      Description, M_Product_ID, QtyInvoiced, PriceList,
-                      PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
-                      ChargeAmt, C_UOM_ID, C_Tax_ID, PriceStd
-                    )
-                    VALUES
-                    (
-                      v_NextNo, Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.AD_Org_ID, 'Y',
-                      now(), v_ADUserId, now(), v_ADUserId,
-                      p_Invoice_ID, NULL, NULL, v_LineNo,
-                      v_Reference, NULL, 0, 0,
-                      0, 0, 0, Cur_InvoiceSchedule.C_Charge_ID,
-                      Cur_InvoiceSchedule.ChargeAmt, NULL, NULL, 0
-                    )
-                    ;
-                END IF;
-              END IF;--FINISH_PROCESS
-              IF(NOT FINISH_PROCESS) THEN
                 -- Normal Line
                 Ad_Sequence_Next('C_InvoiceLine', Cur_InvoiceSchedule.C_Order_ID, v_NextNo) ;
                 v_LineNo:=v_LineNo + 10;
