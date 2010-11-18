@@ -36,7 +36,7 @@ public class StaticCommunityBranding extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    String uimode = vars.getStringParameter("uimode");
+    String uimode = vars.getStringParameter("uimode", "2.50");
     if (vars.commandIn("DEFAULT")) {
       printPage(response, uimode);
     } else
