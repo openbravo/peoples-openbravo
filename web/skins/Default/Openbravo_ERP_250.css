@@ -5646,17 +5646,27 @@ table.Login_ToolBar_bg {
 }
 
 
-.Login_ErrorMsg_LabelText {
-  color: red !important;
-  font-weight: bold;
+.Login_ErrorMsg_Container {
   position: absolute;
   overflow: auto;
-  height: 76px;
+  height: 88px;
   bottom: 0;
   left: 80px;
-  margin-bottom: 84px;
+  margin-bottom: 72px;
   margin-right: 64px;
-  font-size: 11px;
+
+}
+
+.Login_ErrorMsg_Title {
+  color: red !important;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.Login_ErrorMsg_Content {
+  color: red !important;
+  font-weight: normal;
+  font-size: 10px;
 }
 
 .Login_LabelText {
