@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +32,11 @@ import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 
 public class StaticCommunityBranding extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
