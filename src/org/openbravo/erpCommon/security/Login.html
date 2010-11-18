@@ -147,7 +147,6 @@
     if (result.showMessage) {
       setLoginMessage(result.messageType, result.messageTitle, result.messageText);
       document.getElementById('password').value = '';
-      setWindowElementFocus('password', 'id');
     }
 
     if (!result.showMessage || result.messageType === 'Warning') {
@@ -164,6 +163,7 @@
       submitCommandForm('DEFAULT', false, null, result.target, target, true);
     } else {
       enableButton('buttonOK');
+      setWindowElementFocus('password', 'id');
     }
   }
 </script>
