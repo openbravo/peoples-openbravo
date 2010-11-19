@@ -33,6 +33,7 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
@@ -186,11 +187,13 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
   }
 
   private String calculateChecksum(String moduleId) {
-    OBCriteria<DataSet> criteria = OBDal.getInstance().createCriteria(DataSet.class);
-    criteria.add(Expression.eq(DataSet.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
-        moduleId)));
-    criteria.addOrderBy(DataSet.PROPERTY_ID, true);
-    List<DataSet> datasets = criteria.list();
+    String hql = "as dataset where dataset.module.id=:moduleid ";
+    hql += " and (dataset.dataAccessLevel in ('3','1')";
+    hql += " or (dataset.module.id='0' and dataset.dataAccessLevel IN ('3','6')))";
+    hql += " order by dataset.id";
+    OBQuery<DataSet> query = OBDal.getInstance().createQuery(DataSet.class, hql);
+    query.setNamedParameter("moduleid", moduleId);
+    List<DataSet> datasets = query.list();
     String checksum = "";
     for (DataSet ds : datasets) {
       if (ds.getChecksum() != null) {

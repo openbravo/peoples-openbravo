@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,9 @@ public class WADButton extends WADControl {
   }
 
   private StringBuffer getAction() {
+    final String logClickCode = "logClick(document.getElementById('" + getData("ColumnName") + "'));";
+    final boolean triggersAutosave = getData("IsAutosave").equalsIgnoreCase("Y");
+
     StringBuffer text = new StringBuffer();
     boolean isDisabled = (getData("IsReadOnly").equals("Y")
         || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
@@ -64,21 +67,27 @@ public class WADButton extends WADControl {
       text.append("return true;");
     } else {
       if (getData("MappingName").equals("")) {
+        if (triggersAutosave) {
+          text.append(logClickCode);
+        }
         text.append("openServletNewWindow('BUTTON").append(
             FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
         text.append("', true, '").append(getData("TabName")).append(
-            "_Edition.html', 'BUTTON', null, ").append(getData("IsAutosave").equals("Y"));
+            "_Edition.html', 'BUTTON', null, ").append(triggersAutosave);
         if (getData("ColumnName").equalsIgnoreCase("CreateFrom"))
           text.append(",600, 900");
         else
           text.append(", 600, 900");
         text.append(");");
       } else {
+        if (triggersAutosave) {
+          text.append(logClickCode);
+        }
         text.append("openServletNewWindow('DEFAULT', true, '..");
         if (!getData("MappingName").startsWith("/"))
           text.append('/');
         text.append(getData("MappingName")).append("', 'BUTTON', '").append(
-            getData("AD_Process_ID")).append("', ").append(getData("IsAutosave").equals("Y"));
+            getData("AD_Process_ID")).append("', ").append(triggersAutosave);
         text.append(",600, 900);");
       }
     }
@@ -95,7 +104,6 @@ public class WADButton extends WADControl {
     xmlDocument.setParameter("name", getData("Name"));
 
     xmlDocument.setParameter("callout", getOnChangeCode());
-    xmlDocument.setParameter("inputId", getData("ColumnName"));
     xmlDocument.setParameter("action", getAction().toString());
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y")
