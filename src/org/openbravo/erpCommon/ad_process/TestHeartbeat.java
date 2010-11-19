@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,6 +66,12 @@ public class TestHeartbeat extends HttpSecureAppServlet {
   private static final String EVERY_N_DAYS = "N";
   private static final String SCHEDULE = "S";
   private static final ValueListFilter activeFilter = new ValueListFilter("", "Y", "N");
+
+  @Override
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)

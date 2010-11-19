@@ -71,19 +71,40 @@
   }
 </script>
 <script type="text/javascript">
-  function setLoginMessage(type, text) {
+  function setLoginMessage(type, title, text) {
     if (type === 'Error') {
       var msgContainer = document.getElementById('errorMsg');
-      msgContainer.innerHTML = text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>');
+      var msgContainerTitle = document.getElementById('errorMsgTitle');
+      var msgContainerContent = document.getElementById('errorMsgContent');
+      if (typeof title !== 'undefined' && title !== '' && title !== null) {
+        msgContainerTitle.innerHTML = title.replace(/\n/g, '<br>').replace(/\\n/g, '<br>');
+      } else {
+        msgContainerTitle.innerHTML = '';
+      }
+      if (typeof text !== 'undefined' && text !== '' && text !== null) {
+        msgContainerContent.innerHTML = text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>');
+      } else {
+        msgContainerContent.innerHTML = '';
+      }
       msgContainer.style.display = '';
     } else if (type === 'Warning') {
-      alert(text.replace(/<br>/g, '\n'));
+      var alertText = '';
+      if (typeof title !== 'undefined' && title !== '' && title !== null) {
+        alertText += title.replace(/<br>/g, '\n') + '\n';
+      }
+      if (typeof text !== 'undefined' && text !== '' && text !== null) {
+        alertText += text.replace(/<br>/g, '\n')
+      }
+      alert(alertText);
     }
   }
 
   function resetMessage(){
     var msgContainer = document.getElementById('errorMsg');
-    msgContainer.innerHTML = '';
+    var msgContainerTitle = document.getElementById('errorMsgTitle');
+    var msgContainerContent = document.getElementById('errorMsgContent');
+    msgContainerTitle.innerHTML = '';
+    msgContainerContent.innerHTML = '';
     msgContainer.style.display = 'none';
   }
 </script>
@@ -124,9 +145,8 @@
 
   function processResult(result){
     if (result.showMessage) {
-      setLoginMessage(result.messageType, result.messageTitle + '\n' + result.messageText);
+      setLoginMessage(result.messageType, result.messageTitle, result.messageText);
       document.getElementById('password').value = '';
-      setWindowElementFocus('password', 'id');
     }
 
     if (!result.showMessage || result.messageType === 'Warning') {
@@ -143,6 +163,7 @@
       submitCommandForm('DEFAULT', false, null, result.target, target, true);
     } else {
       enableButton('buttonOK');
+      setWindowElementFocus('password', 'id');
     }
   }
 </script>
@@ -175,6 +196,9 @@
       document.getElementById('CompanyLogo_Container').style.display = ''
     }
     bottomLogos.style.display = '';
+
+    var msgContainer = document.getElementById('errorMsg');
+    msgContainer.innerHTML = '<span id="errorMsgTitle" class="Login_ErrorMsg_Title">xx</span><br><span id="errorMsgContent" class="Login_ErrorMsg_Content">xx</span>';
   }
 </script>
 <script type="text/javascript">
@@ -193,12 +217,12 @@
     enableShortcuts('edition');
     setWindowElementFocus('user', 'id');
 
-    if ((!revisionControl('8947')) || (isOpsInstance() != isOpsInstanceCached())) {
-      setLoginMessage('Warning', cacheMsg);
+    if ((!revisionControl('8958')) || (isOpsInstance() != isOpsInstanceCached())) {
+      setLoginMessage('Warning', '', cacheMsg);
     }
 
     if (!checkBrowserCompatibility()) {
-      setLoginMessage('Warning', browserMsg);
+      setLoginMessage('Warning', '', browserMsg);
     }
   }
 </script>
@@ -222,7 +246,7 @@
             <div class="Login_LogForm_Input_Container">
               <dl>
                 <dt>
-                  <label for="user" class="LabelText Login_LabelText">User name</label>
+                  <label for="user" class="LabelText Login_LabelText">User Name</label>
                 </dt>
                 <dd>
                   <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" onKeyDown="resetMessage(); return true;" id="user"/>
@@ -234,7 +258,7 @@
                   <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" onKeyDown="resetMessage(); return true;" id="password"/>
                 </dd>
               </dl>
-              <div id="errorMsg" class="LabelText Login_ErrorMsg_LabelText" style="display: none">xx</div>
+              <div id="errorMsg" class="LabelText Login_ErrorMsg_Container" style="display: none"><!-- xxChild tags developed in javascript --></div>
             </div>
             <div class="Login_LogForm_Button_Container">
               <div class="Login_LogForm_Button">

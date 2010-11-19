@@ -29834,7 +29834,7 @@ Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--1312C32F5ECB439A8D5EE56876CC43C1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1312C32F5ECB439A8D5EE56876CC43C1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1312C32F5ECB439A8D5EE56876CC43C1-->  <VALUE><![CDATA[TOMCAT_NOT_RESTARTED_TITLE]]></VALUE>
-<!--1312C32F5ECB439A8D5EE56876CC43C1-->  <MSGTEXT><![CDATA[The application container wasn't restarted]]></MSGTEXT>
+<!--1312C32F5ECB439A8D5EE56876CC43C1-->  <MSGTEXT><![CDATA[Your system is under maintenance.]]></MSGTEXT>
 <!--1312C32F5ECB439A8D5EE56876CC43C1-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1312C32F5ECB439A8D5EE56876CC43C1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1312C32F5ECB439A8D5EE56876CC43C1--></AD_MESSAGE>
@@ -29989,7 +29989,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--17EB942A41BC417FA70FDFCA35027276-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--17EB942A41BC417FA70FDFCA35027276-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--17EB942A41BC417FA70FDFCA35027276-->  <VALUE><![CDATA[NUMBER_OF_SOFT_USERS_REACHED]]></VALUE>
-<!--17EB942A41BC417FA70FDFCA35027276-->  <MSGTEXT><![CDATA[You have exceeded the number of Global Concurrent Users licensed to use this system.<br>Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.]]></MSGTEXT>
+<!--17EB942A41BC417FA70FDFCA35027276-->  <MSGTEXT><![CDATA[You are allowed to log in but you might consider purchasing additional users to be included in your subscription.]]></MSGTEXT>
 <!--17EB942A41BC417FA70FDFCA35027276-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--17EB942A41BC417FA70FDFCA35027276-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--17EB942A41BC417FA70FDFCA35027276--></AD_MESSAGE>
@@ -30033,7 +30033,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--1A721BC106BF4DB791325E1421AFA95E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1A721BC106BF4DB791325E1421AFA95E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1A721BC106BF4DB791325E1421AFA95E-->  <VALUE><![CDATA[NUMBER_OF_SOFT_USERS_REACHED_TITLE]]></VALUE>
-<!--1A721BC106BF4DB791325E1421AFA95E-->  <MSGTEXT><![CDATA[Maximum number of concurrent users reached]]></MSGTEXT>
+<!--1A721BC106BF4DB791325E1421AFA95E-->  <MSGTEXT><![CDATA[Maximum number of concurrent users reached.]]></MSGTEXT>
 <!--1A721BC106BF4DB791325E1421AFA95E-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--1A721BC106BF4DB791325E1421AFA95E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1A721BC106BF4DB791325E1421AFA95E--></AD_MESSAGE>
@@ -30713,7 +30713,7 @@ Do not close your browser. You will be taken to the login window afterwards.]]><
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <VALUE><![CDATA[NUMBER_OF_CONCURRENT_USERS_REACHED]]></VALUE>
-<!--3AC018B68C664063832D84ECDF0E1B68-->  <MSGTEXT><![CDATA[You have exceeded the number of Global Concurrent Users licensed to use this system. <br>You only can login as System Administrator or wait until one or more users log out of the system and then retry again.<br>Contact your Openbravo Business Partner if you want to purchase a subscription for additional users.]]></MSGTEXT>
+<!--3AC018B68C664063832D84ECDF0E1B68-->  <MSGTEXT><![CDATA[You can login as System Administrator or wait until another user logs out and try again.<br>You could also purchase additional users to be included in your subscription.]]></MSGTEXT>
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--3AC018B68C664063832D84ECDF0E1B68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3AC018B68C664063832D84ECDF0E1B68--></AD_MESSAGE>
@@ -31279,8 +31279,7 @@ Since this is the first time that you login, please select the purpose of this i
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <VALUE><![CDATA[IDENTIFICATION_FAILURE_MSG]]></VALUE>
-<!--5D3624FE019649CCB3B5900F32E59E17-->  <MSGTEXT><![CDATA[Please enter your username and password.
-You must also ensure that your browser accepts cookies.]]></MSGTEXT>
+<!--5D3624FE019649CCB3B5900F32E59E17-->  <MSGTEXT><![CDATA[Please try again.]]></MSGTEXT>
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--5D3624FE019649CCB3B5900F32E59E17-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5D3624FE019649CCB3B5900F32E59E17--></AD_MESSAGE>
@@ -31335,7 +31334,7 @@ You must also ensure that your browser accepts cookies.]]></MSGTEXT>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <VALUE><![CDATA[OPS_INSTANCE_NOT_ACTIVE]]></VALUE>
-<!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTEXT><![CDATA[Your Professional/Basic Edition subscription has expired. However no data has been lost.<br>To renew your Professional/Basic Edition subscription, contact your assigned partner.<br>Only System Administrator users can log in.]]></MSGTEXT>
+<!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTEXT><![CDATA[Your system is still active but only System Administrators can log in to renew your subscription.]]></MSGTEXT>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--5F53F7FE0703477883226EA1287EC5BF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5F53F7FE0703477883226EA1287EC5BF--></AD_MESSAGE>
@@ -32478,7 +32477,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--A5DD637004644A51B6379832BB594EA3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A5DD637004644A51B6379832BB594EA3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A5DD637004644A51B6379832BB594EA3-->  <VALUE><![CDATA[LAST_BUILD_FAILED_TITLE]]></VALUE>
-<!--A5DD637004644A51B6379832BB594EA3-->  <MSGTEXT><![CDATA[Last build failed]]></MSGTEXT>
+<!--A5DD637004644A51B6379832BB594EA3-->  <MSGTEXT><![CDATA[Your system is under maintenance.]]></MSGTEXT>
 <!--A5DD637004644A51B6379832BB594EA3-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--A5DD637004644A51B6379832BB594EA3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A5DD637004644A51B6379832BB594EA3--></AD_MESSAGE>
@@ -33042,7 +33041,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C497496113704DA884B7D6B8C06E4CFE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C497496113704DA884B7D6B8C06E4CFE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C497496113704DA884B7D6B8C06E4CFE-->  <VALUE><![CDATA[TOMCAT_NOT_RESTARTED]]></VALUE>
-<!--C497496113704DA884B7D6B8C06E4CFE-->  <MSGTEXT><![CDATA[The application container wasn't restarted after the latest build. You need to restart Tomcat before<br>you can see the changes done in the last build in your application. Until you do it, some of the<br>functionalities might not work.]]></MSGTEXT>
+<!--C497496113704DA884B7D6B8C06E4CFE-->  <MSGTEXT><![CDATA[Only System Adminitrator access is allowed at this time.<br>The last build operation completed successfully but the application server requires a restart.<br>Please contact your System Administrator to resolve this issue.]]></MSGTEXT>
 <!--C497496113704DA884B7D6B8C06E4CFE-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C497496113704DA884B7D6B8C06E4CFE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C497496113704DA884B7D6B8C06E4CFE--></AD_MESSAGE>
@@ -33098,7 +33097,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <VALUE><![CDATA[OPS_MODULE_EXPIRED_TITLE]]></VALUE>
-<!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <MSGTEXT><![CDATA[Expired module license]]></MSGTEXT>
+<!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <MSGTEXT><![CDATA[The subscription for the following modules has expired.]]></MSGTEXT>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <MSGTIP><![CDATA[The licenses for the following modules are expired. Only System Adminstrator can login to reactivate or uninstall them.]]></MSGTIP>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C6447DF2EBEE4D7E849149DAF351BF1D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -33231,7 +33230,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <VALUE><![CDATA[LAST_BUILD_FAILED]]></VALUE>
-<!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <MSGTEXT><![CDATA[The last system build failed. You will only be able to log in the system in a System Administrator role.<br> You should fix the problems that occurred in the last build, and start a new one as soon as possible. Until then the system is potentially unstable.]]></MSGTEXT>
+<!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <MSGTEXT><![CDATA[Only System Administrator access is allowed at this time.<br>The last build operation failed and the system is potentially unstable.<br>Please contact your System Administrator to review and correct the causes of the failure and rebuild the system.]]></MSGTEXT>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--CF72BCDFFF044C1D8007B907D8B64DF3--></AD_MESSAGE>
@@ -33687,7 +33686,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--EA690991A24C4456958D5E81FEC0C496-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--EA690991A24C4456958D5E81FEC0C496-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EA690991A24C4456958D5E81FEC0C496-->  <VALUE><![CDATA[OPS_INSTANCE_NOT_ACTIVE_TITLE]]></VALUE>
-<!--EA690991A24C4456958D5E81FEC0C496-->  <MSGTEXT><![CDATA[Expired subscription]]></MSGTEXT>
+<!--EA690991A24C4456958D5E81FEC0C496-->  <MSGTEXT><![CDATA[Your Openbravo subscription has expired.]]></MSGTEXT>
 <!--EA690991A24C4456958D5E81FEC0C496-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--EA690991A24C4456958D5E81FEC0C496-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EA690991A24C4456958D5E81FEC0C496--></AD_MESSAGE>
@@ -33731,7 +33730,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--ED94DA7D967E401B93DDFFE86C9715A9-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--ED94DA7D967E401B93DDFFE86C9715A9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--ED94DA7D967E401B93DDFFE86C9715A9-->  <VALUE><![CDATA[NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE]]></VALUE>
-<!--ED94DA7D967E401B93DDFFE86C9715A9-->  <MSGTEXT><![CDATA[Maximum number of concurrent users reached]]></MSGTEXT>
+<!--ED94DA7D967E401B93DDFFE86C9715A9-->  <MSGTEXT><![CDATA[Maximum number of concurrent users reached.]]></MSGTEXT>
 <!--ED94DA7D967E401B93DDFFE86C9715A9-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--ED94DA7D967E401B93DDFFE86C9715A9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--ED94DA7D967E401B93DDFFE86C9715A9--></AD_MESSAGE>
@@ -34011,7 +34010,7 @@ Fix it and restart Tomcat.]]></MSGTEXT>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <VALUE><![CDATA[OPS_MODULE_EXPIRED]]></VALUE>
-<!--FD5CDA03260B436D832C49C33AD3BB66-->  <MSGTEXT><![CDATA[The license for the following installed modules has expired. Only System Administrator role can log into the application to renew the license, uninstall or disable the modules.]]></MSGTEXT>
+<!--FD5CDA03260B436D832C49C33AD3BB66-->  <MSGTEXT><![CDATA[Your system is still active but only System Administrators can log in to renew your subscription.]]></MSGTEXT>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--FD5CDA03260B436D832C49C33AD3BB66-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FD5CDA03260B436D832C49C33AD3BB66--></AD_MESSAGE>
@@ -34044,7 +34043,7 @@ Fix it and restart Tomcat.]]></MSGTEXT>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <VALUE><![CDATA[IDENTIFICATION_FAILURE_TITLE]]></VALUE>
-<!--FE88E1D0FB204477983A77FE42C1297A-->  <MSGTEXT><![CDATA[Identification failure. Try again.]]></MSGTEXT>
+<!--FE88E1D0FB204477983A77FE42C1297A-->  <MSGTEXT><![CDATA[Invalid user name or password.]]></MSGTEXT>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--FE88E1D0FB204477983A77FE42C1297A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FE88E1D0FB204477983A77FE42C1297A--></AD_MESSAGE>

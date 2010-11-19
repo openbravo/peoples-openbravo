@@ -107,7 +107,7 @@ public class LoginHandler extends HttpBaseServlet {
             failureMessage = Utility.messageBD(this, "IDENTIFICATION_FAILURE_MSG", language);
           } else {
             failureTitle = Utility.messageBD(this, "LOCKED_USER_TITLE", language);
-            failureMessage = strUser + " " + Utility.messageBD(this, "LOCKED_USER_MSG", language);
+            failureMessage = Utility.messageBD(this, "LOCKED_USER_MSG", language);
             log4j.debug(strUser + " is locked cannot activate session ID " + sessionId);
             updateDBSession(sessionId, false, "LU");
           }
