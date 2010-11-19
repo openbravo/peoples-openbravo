@@ -631,6 +631,17 @@ build.war: build a war file in the lib directory.
     <antcall target="minimizeJSandCSS" inheritAll="true" inheritrefs="true" />
   </target>
     
+  
+  <target name="build.web.folder.base">
+    <mkdir dir="${base.context}/web" />
+    <copy todir="${base.context}/web" encoding="UTF-8">
+      <fileset dir="${base.modules}">
+        <include name="*/web/*/**" />
+        <exclude name="*/web/*/skins/**" />
+      </fileset>
+      <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\3" />
+    </copy>
+  </target>
 
   <target name="build.web.folder.skins" if="do.skins">
 
@@ -646,13 +657,7 @@ build.war: build a war file in the lib directory.
       <fileset dir="${base.web}/skins" />
     </copy>
 
-    <copy todir="${base.context}/web" encoding="UTF-8">
-      <fileset dir="${base.modules}">
-        <include name="*/web/*/**" />
-        <exclude name="*/web/*/skins/**" />
-      </fileset>
-      <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\3" />
-    </copy>
+    <antcall target="build.web.folder.base" />
 
     <copy todir="${base.context}/web/skins/ltr" encoding="UTF-8">
       <fileset dir="${base.modules}">
@@ -766,6 +771,7 @@ build.war: build a war file in the lib directory.
     <antcall inheritall="true" inheritrefs="true" target="smartbuild.no.new.wad" />
     <antcall inheritall="true" inheritrefs="true" target="compileSqlc" />
     <antcall inheritall="true" inheritrefs="true" target="postsrc" />
+    <antcall inheritall="true" inheritrefs="true" target="build.web.folder.base" />
     <antcall inheritall="true" inheritrefs="true" target="translate" />
     <antcall inheritall="true" inheritrefs="true" target="update.build.timestamp" />
   </target>
