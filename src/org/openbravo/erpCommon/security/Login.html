@@ -99,13 +99,35 @@
     }
   }
 
-  function resetMessage(){
+  function resetLoginMessage() {
     var msgContainer = document.getElementById('errorMsg');
     var msgContainerTitle = document.getElementById('errorMsgTitle');
     var msgContainerContent = document.getElementById('errorMsgContent');
     msgContainerTitle.innerHTML = '';
     msgContainerContent.innerHTML = '';
     msgContainer.style.display = 'none';
+  }
+
+  function addInputChangeCheck(input) {
+    setObjAttribute(input, 'onkeypress', 'checkInputKeyDown(this); return true;');
+    setObjAttribute(input, 'oncut', 'checkInputKeyDown(this); return true;');
+    setObjAttribute(input, 'oncopy', 'checkInputKeyDown(this); return true;');
+    setObjAttribute(input, 'onpaste', 'checkInputKeyDown(this); return true;');
+  }
+
+  function checkInputKeyDown(input, valueLength) {
+    var msgContainer = document.getElementById('errorMsg');
+    if (msgContainer.style.display !== "none" && typeof input === "object") {
+      if (typeof valueLength === "undefined" || valueLength === null) {
+        valueLength = input.value.length;
+        setTimeout(function() { checkInputKeyDown(input, valueLength); }, 100);
+      } else {
+        if (valueLength !== input.value.length) {
+          resetLoginMessage();
+        }
+      }
+    }
+    return true;
   }
 </script>
 <script type="text/javascript">
@@ -210,6 +232,8 @@
 
   function onLoadDo() {
     manageVisualPreferences();
+    addInputChangeCheck(document.getElementById('user'));
+    addInputChangeCheck(document.getElementById('password'));
     this.windowTables = new Array(
       new windowTableId('client', 'buttonOK')
     );
@@ -249,13 +273,13 @@
                   <label for="user" class="LabelText Login_LabelText">User Name</label>
                 </dt>
                 <dd>
-                  <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" onKeyDown="resetMessage(); return true;" id="user"/>
+                  <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" id="user"/>
                 </dd>
                 <dt>
                   <label for="password" class="LabelText Login_LabelText">Password</label>
                 </dt>
                 <dd>
-                  <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" onKeyDown="resetMessage(); return true;" id="password"/>
+                  <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" id="password"/>
                 </dd>
               </dl>
               <div id="errorMsg" class="LabelText Login_ErrorMsg_Container" style="display: none"><!-- xxChild tags developed in javascript --></div>
