@@ -244,12 +244,25 @@ public class UITableDir extends UIReference {
     String name = ((fieldName != null && !fieldName.equals("")) ? fieldName : comboTableData
         .getObjectName());
 
-    String tableDirName;
+    String tableDirName = null;
     if (name.equalsIgnoreCase("createdby") || name.equalsIgnoreCase("updatedby")) {
       tableDirName = "AD_User";
       name = "AD_User_ID";
     } else {
-      tableDirName = name.substring(0, name.length() - 3);
+      // Try to obtain the referenced table from reference. Note it is possible not to be a TableDir
+      // reference, but another one inheriting from this (search).
+      if (subReference != null && !subReference.equals("")) {
+        TableSQLQueryData[] search = TableSQLQueryData.searchInfo(comboTableData.getPool(),
+            subReference);
+        if (search != null && search.length != 0) {
+          name = search[0].columnname;
+          tableDirName = search[0].tablename;
+        }
+      }
+      // If not possible, use the columnname
+      if (tableDirName == null) {
+        tableDirName = name.substring(0, name.length() - 3);
+      }
     }
     ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(comboTableData.getPool(),
         tableDirName);
