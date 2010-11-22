@@ -117,6 +117,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("alertMsg", "ALERT_MSG=\""
+        + Utility.messageBD(this, "NoProductSelected", vars.getLanguage()) + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("name", strNameValue);
     try {

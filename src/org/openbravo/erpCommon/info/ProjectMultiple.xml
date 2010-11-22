@@ -21,6 +21,7 @@
   <template file="ProjectMultiple.html"/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="language" default=""/>
+  <PARAMETER id="paramAlertMsg" name="alertMsg" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="fieldKey" name="key" attribute="value"/>
   <PARAMETER id="fieldName" name="name" attribute="value"/>
