@@ -95,8 +95,8 @@
           IsCentrallyMaintained, AD_Column_ID, AD_FieldGroup_ID, ISDISPLAYED,
           DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY,
           SEQNO, SORTNO, ISSAMELINE,
-          ISFIELDONLY, ISENCRYPTED, AD_MODULE_ID,
-          grid_SeqNo
+          ISFIELDONLY, ISENCRYPTED, AD_MODULE_ID, 
+          ShowInRelation, Grid_Seqno
         )
         VALUES
         (v_NextNo, v_Record_ID, Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID,
@@ -106,7 +106,7 @@
         Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
         Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
         Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_AD_Module_ID,
-        Cur_Fields.grid_SeqNo) ;
+        Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno) ;
       -- update translation
       UPDATE AD_Field_Trl
         SET Name=
