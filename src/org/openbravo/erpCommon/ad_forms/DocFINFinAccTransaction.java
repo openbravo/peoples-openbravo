@@ -231,6 +231,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     // Select specific definition
     String strClassname = "";
     final StringBuilder whereClause = new StringBuilder();
+    Fact fact = new Fact(this, as, Fact.POST_Actual);
     OBContext.setAdminMode();
     try {
       whereClause.append(" as astdt ");
@@ -270,19 +271,18 @@ public class DocFINFinAccTransaction extends AcctServer {
               + e);
         }
       }
+      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+          Record_ID);
+      // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd glitem transaction
+      if (TRXTYPE_BankFee.equals(transaction.getTransactionType()))
+        fact = createFactFee(transaction, as, conn, fact);
+      else if (transaction.getFinPayment() != null)
+        fact = createFactPaymentDetails(as, conn, fact);
+      else
+        fact = createFactGLItem(as, conn, fact);
     } finally {
       OBContext.restorePreviousMode();
     }
-    Fact fact = new Fact(this, as, Fact.POST_Actual);
-    FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-        Record_ID);
-    // 3 Scenarios: 1st Bank fee 2nd payment related transaction 3rd glitem transaction
-    if (TRXTYPE_BankFee.equals(transaction.getTransactionType()))
-      fact = createFactFee(transaction, as, conn, fact);
-    else if (transaction.getFinPayment() != null)
-      fact = createFactPaymentDetails(as, conn, fact);
-    else
-      fact = createFactGLItem(as, conn, fact);
     return fact;
   }
 
