@@ -235,11 +235,19 @@ public class DocBank extends AcctServer {
     BigDecimal TrxAmt = null;
     BigDecimal ChargeAmt = null;
     BigDecimal ConvertChargeAmt = null;
+    String strDateAcct = "FirstIteration";
     // BigDecimal InterestAmt = null;
     // Lines
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Bank line = (DocLine_Bank) p_lines[i];
+      if (strDateAcct.equals("FirstIteration"))
+        strDateAcct = line.m_DateAcct;
+      else if (!strDateAcct.equals(line.m_DateAcct)) {
+        strDateAcct = line.m_DateAcct;
+        Fact_Acct_Group_ID = SequenceIdData.getUUID();
+      }
+
       // setC_Period_ID(line.m_DateAcct);
       // BankAsset DR CR (Statement)
       TrxAmt = new BigDecimal(line.m_TrxAmt);

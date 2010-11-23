@@ -33,7 +33,7 @@
       DP.C_Project_ID AS C_Project_ID
       FROM C_BANKSTATEMENTLINE BL left join C_DEBT_PAYMENT DP on BL.C_DEBT_PAYMENT_ID = DP.C_DEBT_PAYMENT_ID
       WHERE C_BANKSTATEMENT_ID = ? 
-      ORDER BY LINE
+      ORDER BY BL.DATEACCT, LINE
      ]]>
      </Sql>
      <Parameter name="C_BANKSTATEMENT_ID"/>
