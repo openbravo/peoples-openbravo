@@ -168,7 +168,7 @@ build.war: build a war file in the lib directory.
     <mkdir dir="${build.apply.module}" />
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql . '${build.sqlc}'/src" />
-      <jvmarg value="-Dsqlc.listOfFiles=PInstanceProcess_data.xsql,ApplyModule_data.xsql,TableSQLQuery_data.xsql,DateTime_data.xsql,ComboTableQuery_data.xsql,PrintJR_data.xsql,DocumentNo_data.xsql,WindowAccess_data.xsql,Tab_data.xsql,WindowTree_data.xsql,ErrorTextParser_data.xsql,Utility_data.xsql,MessageBD_data.xsql,Translation_data.xsql,Buscador_data.xsql,Pinstance_data.xsql,ProcessRequest_data.xsql,Trigger_data.xsql,ProcessRun_data.xsql,Process_data.xsql,OrgTree_data.xsql"/>
+      <jvmarg value="-Dsqlc.listOfFiles=PInstanceProcess_data.xsql,ApplyModule_data.xsql,TableSQLQuery_data.xsql,DateTime_data.xsql,ComboTableQuery_data.xsql,PrintJR_data.xsql,DocumentNo_data.xsql,WindowAccess_data.xsql,Tab_data.xsql,WindowTree_data.xsql,ErrorTextParser_data.xsql,Utility_data.xsql,MessageBD_data.xsql,Translation_data.xsql,Buscador_data.xsql,Pinstance_data.xsql,ProcessRequest_data.xsql,Trigger_data.xsql,ProcessRun_data.xsql,Process_data.xsql,OrgTree_data.xsql,VersionUtility_data.xsql,ImportModule_data.xsql,SystemInfo_data.xsql"/>
       <classpath refid="project.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
