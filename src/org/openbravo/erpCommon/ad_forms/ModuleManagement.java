@@ -1500,8 +1500,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
       up += node + "," + updates.get(node) + "|";
 
     String notifications = getNotificationsHTML(vars.getLanguage());
-    if (notifications.equals(""))
-      notifications = Utility.messageBD(this, "NoUpdatesAvailable", vars.getLanguage());
+    if (notifications.equals("")) {
+      if (!"".equals(ImportModule.getScanError().toString())) {
+        notifications = Utility.messageBD(this, ImportModule.getScanError().toString(), vars
+            .getLanguage());
+      } else {
+        notifications = Utility.messageBD(this, "NoUpdatesAvailable", vars.getLanguage());
+      }
+    }
     up = notifications + "|" + up + "|";
     response.setContentType("text/plain; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
