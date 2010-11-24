@@ -381,6 +381,22 @@ ORDER BY DATEACCT, IDENTIFIER]]></queryString>
 		</title>
 		<pageHeader>
 			<band height="16"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="200"
+						height="16"
+						key="staticText-13">
+							<printWhenExpression><![CDATA[new Boolean($V{JournalEntry_COUNT}.intValue()!=0)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<text><![CDATA[continued...]]></text>
+				</staticText>
 			</band>
 		</pageHeader>
 		<columnHeader>
@@ -448,7 +464,23 @@ ORDER BY DATEACCT, IDENTIFIER]]></queryString>
 			</band>
 		</columnFooter>
 		<pageFooter>
-			<band height="0"  isSplitAllowed="true" >
+			<band height="16"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="335"
+						y="0"
+						width="200"
+						height="16"
+						key="staticText-12">
+							<printWhenExpression><![CDATA[new Boolean($V{JournalEntry_COUNT}.intValue()==0)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[please turn over]]></text>
+				</staticText>
 			</band>
 		</pageFooter>
 		<summary>
