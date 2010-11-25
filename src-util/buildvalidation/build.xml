@@ -73,7 +73,7 @@
 
   <target name="sqlcModules" depends="init" unless="checkCore">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/buildvalidation/src */src-util/buildvalidation" />
+      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/buildvalidation/src '${module}'/src-util/buildvalidation" />
       <classpath refid="buildvalidation.class.path" />
       <syspropertyset>
         <propertyref name="java.security.egd" />

@@ -73,7 +73,7 @@
 
   <target name="sqlcModules" depends="init" unless="checkCore">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/modulescript/src */src-util/modulescript" />
+      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${base.modules}'/'${module}'/src-util/modulescript/src '${module}'/src-util/modulescript" />
       <classpath refid="modulescript.class.path" />
       <syspropertyset>
         <propertyref name="java.security.egd" />
