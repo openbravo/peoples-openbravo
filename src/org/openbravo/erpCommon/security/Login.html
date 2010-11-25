@@ -231,15 +231,18 @@
   }
 
   function onLoadDo() {
-    manageVisualPreferences();
-    addInputChangeCheck(document.getElementById('user'));
-    addInputChangeCheck(document.getElementById('password'));
-    this.windowTables = new Array(
-      new windowTableId('client', 'buttonOK')
-    );
-    setWindowTableParentElement();
-    enableShortcuts('edition');
-    setWindowElementFocus('user', 'id');
+    try { // To avoid in a release upgrade, that a change in code depending on these functions cause revisionControl message not being displayed
+      manageVisualPreferences();
+      addInputChangeCheck(document.getElementById('user'));
+      addInputChangeCheck(document.getElementById('password'));
+      this.windowTables = new Array(
+        new windowTableId('client', 'buttonOK')
+      );
+      setWindowTableParentElement();
+      enableShortcuts('edition');
+      setWindowElementFocus('user', 'id');
+    }
+    catch (e) { }
 
     if ((!revisionControl('8958')) || (isOpsInstance() != isOpsInstanceCached())) {
       setLoginMessage('Warning', '', cacheMsg);
