@@ -88,6 +88,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strGroupBy = vars.getGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy", "");
       String strHide = vars.getGlobalVariable("inpHideMatched", "ReportGeneralLedger|HideMatched",
           "");
+
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
           strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
           strcProjectId, strGroupBy, strHide, strcAcctSchemaId, strcelementvaluefromdes,
@@ -192,10 +193,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strGroupBy = vars
           .getRequestGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy");
       String strHide = vars.getStringParameter("inpHideMatched");
+      String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedger|PageNo", "1");
       if (vars.commandIn("PDF"))
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
             strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
-            strcProjectId, strGroupBy, strHide, strcAcctSchemaId);
+            strcProjectId, strGroupBy, strHide, strcAcctSchemaId, strPageNo);
       else
         printPageDataXLS(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
             strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
@@ -489,7 +491,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strAmtFrom,
       String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strGroupBy,
-      String strHide, String strcAcctSchemaId) throws IOException, ServletException {
+      String strHide, String strcAcctSchemaId, String strPageNo) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PDF");
     response.setContentType("text/html; charset=UTF-8");
@@ -578,6 +581,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       parameters.put("REPORT_SUBTITLE", strSubTitle.toString());
       parameters.put("Previous", Utility.messageBD(this, "Initial Balance", strLanguage));
       parameters.put("Total", Utility.messageBD(this, "Total", strLanguage));
+      parameters.put("PageNo", strPageNo);
       String strDateFormat;
       strDateFormat = vars.getJavaDateFormat();
       parameters.put("strDateFormat", strDateFormat);

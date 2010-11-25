@@ -38,7 +38,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
@@ -157,12 +156,12 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
           "ReportTrialBalance|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy", "ReportTrialBalance|GroupBy");
-
+      String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo", "1");
       if (vars.commandIn("PDF"))
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueFromDes, strcElementValueTo,
             strcElementValueToDes, strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId,
-            strGroupBy);
+            strGroupBy, strPageNo);
       else
         printPageDataXLS(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueTo, strcBpartnerId, strmProductId, strcProjectId,
@@ -377,8 +376,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
-          Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), '*');
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), Utility
+              .getContext(this, vars, "#User_Client", "ReportTrialBalance"), '*');
       comboTableData.fillParameters(null, "ReportTrialBalance", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
@@ -509,8 +508,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg,
       String strLevel, String strcElementValueFrom, String strcElementValueFromDes,
       String strcElementValueTo, String strcElementValueToDes, String strcBpartnerId,
-      String strmProductId, String strcProjectId, String strcAcctSchemaId, String strGroupBy)
-      throws IOException, ServletException {
+      String strmProductId, String strcProjectId, String strcAcctSchemaId, String strGroupBy,
+      String strPageNo) throws IOException, ServletException {
 
     response.setContentType("text/html; charset=UTF-8");
     ReportTrialBalanceData[] data = null;
@@ -567,6 +566,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         parameters.put("DEFAULTVIEW", !strIsSubAccount);
         parameters.put("SUBACCOUNTVIEW", strIsSubAccount);
         parameters.put("DUMMY", true);
+        parameters.put("PageNo", strPageNo);
 
         renderJR(vars, response, strReportName, "pdf", parameters, data, null);
       }

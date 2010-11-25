@@ -169,6 +169,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       // "ReportGeneralLedgerJournal|Table");
       String strTable = vars.getStringParameter("inpTable");
       String strRecord = vars.getStringParameter("inpRecord");
+      String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedgerJournal|PageNo",
+          "1");
       /*
        * Scenario 1: We will have FactAcctGroupId while the request redirect from
        * ReportGeneralLedger Report. Otherwise we don't need to use FactAcctGroupId for PDF or Excel
@@ -196,7 +198,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       setHistoryCommand(request, "DEFAULT");
       printPagePDF(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
           strRecord, strFactAcctGroupId, strcAcctSchemaId, strShowClosing, strShowReg,
-          strShowOpening);
+          strShowOpening, strPageNo);
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
       String strPreviousRecordRange = vars.getSessionValue(PREVIOUS_RANGE);
@@ -481,7 +483,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
   private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable,
       String strRecord, String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing,
-      String strShowReg, String strShowOpening) throws IOException, ServletException {
+      String strShowReg, String strShowOpening, String strPageNo) throws IOException,
+      ServletException {
 
     ReportGeneralLedgerJournalData[] data = null;
 
@@ -515,6 +518,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("Subtitle", strSubtitle);
+    parameters.put("PageNo", strPageNo);
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
