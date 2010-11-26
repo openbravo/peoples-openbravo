@@ -39,7 +39,6 @@ class WadConnection implements ConnectionProvider {
   private String defaultPoolName = "";
   private String bbdd = "";
   private String rdbms = "";
-  private String contextName = "openbravo";
 
   public WadConnection(String xmlPoolFile) {
     if (myPool == null) {

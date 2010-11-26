@@ -55,34 +55,22 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Fernando Iriazabal
  */
 public class Wad extends DefaultHandler {
-  private static final int NUM_COLUMNS = 10;
   private static final int COLUMN_1_OF_1 = 11;
   private static final int COLUMN_1_OF_2 = 12;
   private static final int COLUMN_2_OF_2 = 22;
   private static final int NUM_TABS = 8;
   private static final int INCR_TABS = 8;
   private static final int HEIGHT_TABS = 38;
-  private static final int MAX_COL_SIZE_RELATION = 50;
   private static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
   private static final int MAX_SIZE_EDITION_2_COLUMNS = 45;
   private static final int MAX_TEXTBOX_LENGTH = 110;
   private static final double PIXEL_TO_LENGTH = 5.6;
-  private static final double FIRST_COLS_SIZE = 60;
-  private static final double SUBTABS_COL_SIZE = 30;
-  private static final double RELATION_MINIMUM_LENGTH = 15.0;
-  private static final int IMAGE_RELATION_WIDTH = 16;
-  private static final int IMAGE_RELATION_HEIGHT = 16;
-  private static final int IMAGE_BUTTON_WIDTH = 16;
-  private static final int IMAGE_BUTTON_HEIGHT = 16;
   private XmlEngine xmlEngine;
   private WadConnection pool;
   private String strSystemSeparator;
   private static final String calendarDescription = "Calendar";
   private static final String clockDescription = "Clock";
   private static final String calculatorDescription = "Calculator";
-  private static String calendarDescriptionTrl = "";
-  private static String clockDescriptionTrl = "";
-  private static String calculatorDescriptionTrl = "";
   private static String jsDateFormat;
   private static String sqlDateFormat;
 

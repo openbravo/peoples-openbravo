@@ -41,10 +41,6 @@ import org.openbravo.xmlEngine.XmlEngine;
 
 public class WadUtility {
   private static final Logger log4j = Logger.getLogger(WadUtility.class);
-  private static final int IMAGE_EDITION_WIDTH = 200;
-  private static final int IMAGE_EDITION_HEIGHT = 200;
-  private static final int IMAGE_BUTTON_WIDTH = 16;
-  private static final int IMAGE_BUTTON_HEIGHT = 16;
   private static String[][] comparations = { { "==", " == " }, { "=", " == " }, { "!", " != " },
       { "^", " != " }, { "-", " != " } };
   private static String[][] unions = { { "|", " || " }, { "&", " && " } };

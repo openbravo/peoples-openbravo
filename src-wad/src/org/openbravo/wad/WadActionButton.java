@@ -40,8 +40,6 @@ import org.openbravo.xmlEngine.XmlEngine;
  * 
  */
 class WadActionButton {
-  private static final int IMAGE_EDITION_WIDTH = 16;
-  private static final int IMAGE_EDITION_HEIGHT = 16;
 
   /**
    * Generates the action button call for the java of the window.
