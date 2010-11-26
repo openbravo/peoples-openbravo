@@ -43,8 +43,9 @@ public class AutologonAuthenticationManager implements AuthenticationManager {
 
     if (s instanceof ConnectionProvider) {
       ConnectionProvider conn = (ConnectionProvider) s;
-      m_sAutologonUsername = ConfigParameters.retrieveFrom(s.getServletContext()).getOBProperty(
-          "authentication.autologon.username");
+      m_sAutologonUsername = ConfigParameters
+          .retrieveFrom(s.getServletConfig().getServletContext()).getOBProperty(
+              "authentication.autologon.username");
       try {
         m_sUserId = AuthenticationData.getUserId(conn, m_sAutologonUsername);
       } catch (ServletException e) {
