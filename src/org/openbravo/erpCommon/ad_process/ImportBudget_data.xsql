@@ -121,7 +121,7 @@
 			  SET C_BP_Group_ID=(
           SELECT C_BP_Group_ID FROM C_BP_Group g
 			    WHERE I_BudgetLine.BPGroupIdent=AD_COLUMN_IDENTIFIER('C_BP_GROUP', TO_CHAR(g.C_BP_GROUP_ID), ?)
-          AND g.AD_Client_ID=I_BudgetLine.AD_Client_ID
+          AND g.AD_Client_ID=I_BudgetLine.AD_Client_ID AND g.AD_ORG_ID = I_BudgetLine.AD_ORG_ID
         )
 			  WHERE C_BP_Group_ID IS NULL
 			  AND I_IsImported<>'Y'
@@ -568,18 +568,18 @@
         UPDATE I_BudgetLine 
         SET C_BudgetLine_ID=(
             SELECT MIN(C_BudgetLine_ID) FROM C_BudgetLine bl
-            WHERE COALESCE(I_BudgetLine.C_ELEMENTVALUE_ID,-1) = COALESCE(bl.C_ELEMENTVALUE_ID,-1)
-              AND COALESCE(I_BudgetLine.C_Period_ID,-1) = COALESCE(bl.C_Period_ID,-1)
-              AND COALESCE(I_BudgetLine.C_Bpartner_ID,-1) = COALESCE(bl.C_Bpartner_ID,-1)
-              AND COALESCE(I_BudgetLine.AD_OrgTrx_ID,-1) = COALESCE(bl.AD_OrgTrx_ID,-1)
-              AND COALESCE(I_BudgetLine.C_SalesRegion_ID,-1) = COALESCE(bl.C_SalesRegion_ID,-1)
-              AND COALESCE(I_BudgetLine.C_Project_ID,-1) = COALESCE(bl.C_Project_ID,-1)
-              AND COALESCE(I_BudgetLine.C_Campaign_ID,-1) = COALESCE(bl.C_Campaign_ID,-1)
-              AND COALESCE(I_BudgetLine.C_Activity_ID,-1) = COALESCE(bl.C_Activity_ID,-1)
-              AND COALESCE(I_BudgetLine.C_BP_Group_ID,-1) = COALESCE(bl.C_BP_Group_ID,-1)
-              AND COALESCE(I_BudgetLine.M_Product_ID,-1) = COALESCE(bl.M_Product_ID,-1)
-              AND COALESCE(I_BudgetLine.M_Product_Category_ID,-1) = COALESCE(bl.M_Product_Category_ID,-1)
-              AND COALESCE(I_BudgetLine.C_Currency_ID,-1) = COALESCE(bl.C_Currency_ID,-1)
+            WHERE COALESCE(I_BudgetLine.C_ELEMENTVALUE_ID, '<NULL>') = COALESCE(bl.C_ELEMENTVALUE_ID, '<NULL>')
+              AND COALESCE(I_BudgetLine.C_Period_ID,'<NULL>') = COALESCE(bl.C_Period_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.C_Bpartner_ID,'<NULL>') = COALESCE(bl.C_Bpartner_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.AD_OrgTrx_ID,'<NULL>') = COALESCE(bl.AD_OrgTrx_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.C_SalesRegion_ID,'<NULL>') = COALESCE(bl.C_SalesRegion_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.C_Project_ID,'<NULL>') = COALESCE(bl.C_Project_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.C_Campaign_ID,'<NULL>') = COALESCE(bl.C_Campaign_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.C_Activity_ID,'<NULL>') = COALESCE(bl.C_Activity_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.C_BP_Group_ID,'<NULL>') = COALESCE(bl.C_BP_Group_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.M_Product_ID,'<NULL>') = COALESCE(bl.M_Product_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.M_Product_Category_ID,'<NULL>') = COALESCE(bl.M_Product_Category_ID,'<NULL>')
+              AND COALESCE(I_BudgetLine.C_Currency_ID,'<NULL>') = COALESCE(bl.C_Currency_ID,'<NULL>')
               AND bl.C_Budget_ID = ?
               AND bl.AD_Client_ID = I_BudgetLine.AD_Client_ID
             )
