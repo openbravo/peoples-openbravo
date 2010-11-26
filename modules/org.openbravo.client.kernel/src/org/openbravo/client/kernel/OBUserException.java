@@ -18,8 +18,14 @@
  */
 package org.openbravo.client.kernel;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class OBUserException extends RuntimeException {
   private static final long serialVersionUID = 1L;
+
+  private Collection<String> params = new ArrayList<String>();
 
   public OBUserException() {
     super();
@@ -29,7 +35,31 @@ public class OBUserException extends RuntimeException {
     super(message);
   }
 
+  public OBUserException(String message, List<String> params) {
+    super(message);
+    this.params = params;
+  }
+
   public OBUserException(Throwable t) {
     super(t);
   }
+
+  /**
+   * Returns a javascript array with the parameters
+   * 
+   */
+  public String getJavaScriptParams() {
+    String result = "new Array(";
+    boolean firstParam = true;
+    for (String param : params) {
+      if (!firstParam) {
+        result += ", ";
+      }
+      result += "'" + param + "'";
+      firstParam = false;
+    }
+    result += ")";
+    return result;
+  }
+
 }

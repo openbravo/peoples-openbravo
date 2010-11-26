@@ -80,10 +80,12 @@ public class KernelUtils {
 
     final StringBuilder sb = new StringBuilder();
     if (e instanceof OBUserException) {
-      sb.append("OB.Utilities.handleUserException('" + e.getMessage() + "');");
+      OBUserException ex = (OBUserException) e;
+      sb.append("OB.KernelUtilities.handleUserException('" + ex.getMessage() + "', "
+          + ex.getJavaScriptParams() + ");");
 
     } else {
-      sb.append("OB.Utilities.handleSystemException('" + e.getMessage() + "');");
+      sb.append("OB.KernelUtilities.handleSystemException('" + e.getMessage() + "');");
     }
     return sb.toString();
   }
