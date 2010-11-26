@@ -742,12 +742,6 @@ class WadActionButton {
    *          Language to translate.
    * @param isGeneric
    *          Indicates if is a generic action button or not.
-   * @param calendarDescription
-   *          String with the description for the calendar controls.
-   * @param clockDescription
-   *          String with the description for the clock controls.
-   * @param calculatorDescription
-   *          String with the description for the calc controls.
    * @param jsDateFormat
    *          Date format for js.
    * @param vecReloads
@@ -756,9 +750,8 @@ class WadActionButton {
    */
   public static void buildHtml(ConnectionProvider conn, XmlEngine xmlEngine, File fileDir,
       FieldsData fd, Vector<Object> vecFields, int max_textbox_length,
-      int max_size_edition_1_columns, String strLanguage, boolean isGeneric,
-      String calendarDescription, String clockDescription, String calculatorDescription,
-      String jsDateFormat, Vector<Object> vecReloads) throws ServletException, IOException {
+      int max_size_edition_1_columns, String strLanguage, boolean isGeneric, String jsDateFormat,
+      Vector<Object> vecReloads) throws ServletException, IOException {
     final String[] discard = { "", "isGeneric", "fieldDiscardProcess", "" };
     if (fd.xmltext.equals(""))
       discard[0] = "helpDiscard";

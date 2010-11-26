@@ -68,9 +68,6 @@ public class Wad extends DefaultHandler {
   private XmlEngine xmlEngine;
   private WadConnection pool;
   private String strSystemSeparator;
-  private static final String calendarDescription = "Calendar";
-  private static final String clockDescription = "Clock";
-  private static final String calculatorDescription = "Calculator";
   private static String jsDateFormat;
   private static String sqlDateFormat;
 
@@ -475,8 +472,7 @@ public class Wad extends DefaultHandler {
 
           // build the html template
           WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields,
-              MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", false, calendarDescription,
-              clockDescription, calculatorDescription, jsDateFormat, vecReloads);
+              MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", false, jsDateFormat, vecReloads);
         }
       }
     } catch (final ServletException e) {
@@ -625,8 +621,7 @@ public class Wad extends DefaultHandler {
 
           // build the html template
           WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields,
-              MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", true, calendarDescription,
-              clockDescription, calculatorDescription, jsDateFormat, vecReloads);
+              MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", true, jsDateFormat, vecReloads);
         }
       }
     } catch (final ServletException e) {

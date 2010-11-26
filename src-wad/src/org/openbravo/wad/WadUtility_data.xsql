@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,21 +21,6 @@
 
 
 <SqlClass name="WadUtilityData" package="org.openbravo.wad">
-  <SqlMethod name="getTranslatedText" type="preparedStatement" return="String">
-      <SqlMethodComment>Get the translate of a text</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT COALESCE(MAX(TO_CHAR(MT.MSGTEXT)), ?) AS TEXT 
-        FROM AD_MESSAGE M, AD_MESSAGE_TRL MT 
-        WHERE M.AD_MESSAGE_ID = MT.AD_MESSAGE_ID 
-        AND M.VALUE = ? 
-        AND MT.AD_LANGUAGE = ? 
-          ]]>
-      </Sql>
-      <Parameter name="value"/>
-      <Parameter name="value"/>
-      <Parameter name="adLanguage"/>
-  </SqlMethod>
-  
    <SqlMethod name="getReferenceClassName" type="preparedStatement" return="String">
       <Sql><![CDATA[
         SELECT COALESCE(R2.WAD_IMPL, R1.WAD_IMPL) AS TEXT
