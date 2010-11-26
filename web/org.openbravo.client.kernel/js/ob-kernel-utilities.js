@@ -29,7 +29,7 @@ OB.KernelUtilities = {};
 OB.KernelUtilities.handleUserException = function(msg, params) {
   // todo: make this nice
   isc.warn(OB.I18N.getLabel(msg, params));
-}
+};
 
 // ** {{{ OB.KernelUtilities.handleSystemException }}} **
 //
@@ -40,4 +40,4 @@ OB.KernelUtilities.handleUserException = function(msg, params) {
 OB.KernelUtilities.handleSystemException = function (msg) {
   // todo: make this nice
   isc.warn('Error occured: ' + msg);
-}
+};
