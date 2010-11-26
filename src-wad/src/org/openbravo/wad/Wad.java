@@ -116,13 +116,9 @@ public class Wad extends DefaultHandler {
     String dirActionButton;
     boolean generateWebXml;
     boolean generateTabs;
-    String dirBaseTrl;
-    String translateStr;
     String dirWebClients;
-    String basePath;
     String attachPath;
     String webPath;
-    String strBaseSrc;
     boolean complete;
     boolean quick;
     if (argv.length < 1) {
@@ -184,16 +180,10 @@ public class Wad extends DefaultHandler {
         dirActionButton = argv[6];
 
       // Path to base translation generation
-      if (argv.length <= 7)
-        dirBaseTrl = dirFin;
-      else
-        dirBaseTrl = argv[7];
+      // was argv[7] no longer used
 
       // Translate base structure
-      if (argv.length <= 8)
-        translateStr = "";
-      else
-        translateStr = argv[8];
+      // was argv[8] no longer used
 
       // Path to find the client's web.xml file
       if (argv.length <= 9)
@@ -202,10 +192,7 @@ public class Wad extends DefaultHandler {
         dirWebClients = argv[9];
 
       // Path of the root project
-      if (argv.length <= 10)
-        basePath = dirFin;
-      else
-        basePath = argv[10];
+      // was argv[10] no longer used
 
       // Path of the attach files
       if (argv.length <= 11)
@@ -220,10 +207,7 @@ public class Wad extends DefaultHandler {
         webPath = argv[12];
 
       // Path to the src folder
-      if (argv.length <= 13)
-        strBaseSrc = dirFin;
-      else
-        strBaseSrc = argv[13];
+      // was argv[13] no longer used
 
       // Boolean to indicate if we are doing a complete generation
       if (argv.length <= 14)
@@ -259,13 +243,9 @@ public class Wad extends DefaultHandler {
       log4j.info("generate web.xml: " + generateWebXml);
       log4j.info("generate web.xml cliente: " + dirWebClients);
       log4j.info("generate tabs: " + generateTabs);
-      log4j.info("directory Translate : " + dirBaseTrl);
-      log4j.info("translation to : " + translateStr);
       log4j.info("File separator: " + wad.strSystemSeparator);
-      log4j.info("Base path: " + basePath);
       log4j.info("Attach path: " + attachPath);
       log4j.info("Web path: " + webPath);
-      log4j.info("Src path: " + strBaseSrc);
       log4j.info("Quick mode: " + quick);
 
       final File fileFin = new File(dirFin);
@@ -309,27 +289,6 @@ public class Wad extends DefaultHandler {
       final File fileActionButton = new File(dirActionButton);
       if (!fileActionButton.exists()) {
         log4j.error("No such directory: " + fileActionButton.getAbsoluteFile());
-
-        return;
-      }
-
-      final File fileTrl = new File(dirBaseTrl);
-      if (!fileTrl.exists()) {
-        log4j.error("No such directory: " + fileTrl.getAbsoluteFile());
-
-        return;
-      }
-
-      final File fileBase = new File(strBaseSrc);
-      if (!fileBase.exists()) {
-        log4j.error("No such directory: " + fileBase.getAbsoluteFile());
-
-        return;
-      }
-
-      final File fileBaseAplication = new File(basePath);
-      if (!fileBaseAplication.exists()) {
-        log4j.error("No such directory: " + fileBaseAplication.getAbsoluteFile());
 
         return;
       }
@@ -404,8 +363,7 @@ public class Wad extends DefaultHandler {
             log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
                 + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
             log4j.debug("Processing: " + tabsData[i].tabid);
-            wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl, translateStr,
-                fileBase, fileBaseAplication);
+            wad.processTab(fileFin, fileFinReloads, tabsData[i]);
           }
         }
       }
@@ -786,21 +744,9 @@ public class Wad extends DefaultHandler {
    *          Path where are gonna be created the reloads sources.
    * @param tabsData
    *          An object containing the tabs info.
-   * @param fileTrl
-   *          Path where are gonna be created the translated sources.
-   * @param dirBaseTrl
-   *          Base path of the translated sources.
-   * @param translateStr
-   *          The base package structure for the translated sources.
-   * @param fileBase
-   *          The path to the project's manual sources.
-   * @param fileBaseAplication
-   *          The path to the project root directory.
    * @throws Exception
    */
-  private void processTab(File fileFin, File fileFinReloads, TabsData tabsData, File fileTrl,
-      String dirBaseTrl, String translateStr, File fileBase, File fileBaseAplication)
-      throws Exception {
+  private void processTab(File fileFin, File fileFinReloads, TabsData tabsData) throws Exception {
     try {
       final String tabNamePresentation = tabsData.realtabname;
       // tabName contains tab's UUID for non core tabs
