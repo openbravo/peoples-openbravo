@@ -55,38 +55,38 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Fernando Iriazabal
  */
 public class Wad extends DefaultHandler {
-  static final int NUM_COLUMNS = 10;
-  static final int COLUMN_1_OF_1 = 11;
-  static final int COLUMN_1_OF_2 = 12;
-  static final int COLUMN_2_OF_2 = 22;
-  static final int NUM_TABS = 8;
-  static final int INCR_TABS = 8;
-  static final int HEIGHT_TABS = 38;
-  static final int MAX_COL_SIZE_RELATION = 50;
-  static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
-  static final int MAX_SIZE_EDITION_2_COLUMNS = 45;
-  static final int MAX_TEXTBOX_LENGTH = 110;
-  static final double PIXEL_TO_LENGTH = 5.6;
-  static final double FIRST_COLS_SIZE = 60;
-  static final double SUBTABS_COL_SIZE = 30;
-  static final double RELATION_MINIMUM_LENGTH = 15.0;
-  static final int IMAGE_RELATION_WIDTH = 16;
-  static final int IMAGE_RELATION_HEIGHT = 16;
-  static final int IMAGE_BUTTON_WIDTH = 16;
-  static final int IMAGE_BUTTON_HEIGHT = 16;
-  XmlEngine xmlEngine;
-  protected WadConnection pool;
-  String strSystemSeparator;
-  static final String calendarDescription = "Calendar";
-  static final String clockDescription = "Clock";
-  static final String calculatorDescription = "Calculator";
-  static String calendarDescriptionTrl = "";
-  static String clockDescriptionTrl = "";
-  static String calculatorDescriptionTrl = "";
-  static String jsDateFormat;
-  static String sqlDateFormat;
+  private static final int NUM_COLUMNS = 10;
+  private static final int COLUMN_1_OF_1 = 11;
+  private static final int COLUMN_1_OF_2 = 12;
+  private static final int COLUMN_2_OF_2 = 22;
+  private static final int NUM_TABS = 8;
+  private static final int INCR_TABS = 8;
+  private static final int HEIGHT_TABS = 38;
+  private static final int MAX_COL_SIZE_RELATION = 50;
+  private static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
+  private static final int MAX_SIZE_EDITION_2_COLUMNS = 45;
+  private static final int MAX_TEXTBOX_LENGTH = 110;
+  private static final double PIXEL_TO_LENGTH = 5.6;
+  private static final double FIRST_COLS_SIZE = 60;
+  private static final double SUBTABS_COL_SIZE = 30;
+  private static final double RELATION_MINIMUM_LENGTH = 15.0;
+  private static final int IMAGE_RELATION_WIDTH = 16;
+  private static final int IMAGE_RELATION_HEIGHT = 16;
+  private static final int IMAGE_BUTTON_WIDTH = 16;
+  private static final int IMAGE_BUTTON_HEIGHT = 16;
+  private XmlEngine xmlEngine;
+  private WadConnection pool;
+  private String strSystemSeparator;
+  private static final String calendarDescription = "Calendar";
+  private static final String clockDescription = "Clock";
+  private static final String calculatorDescription = "Calculator";
+  private static String calendarDescriptionTrl = "";
+  private static String clockDescriptionTrl = "";
+  private static String calculatorDescriptionTrl = "";
+  private static String jsDateFormat;
+  private static String sqlDateFormat;
 
-  static Logger log4j = Logger.getLogger(Wad.class);
+  private static final Logger log4j = Logger.getLogger(Wad.class);
 
   /**
    * Main function, entrusted to launch the process of generation of sources. The list of arguments
@@ -4279,7 +4279,7 @@ public class Wad extends DefaultHandler {
    * @param fileConnection
    *          The path to the connection file.
    */
-  public void createXmlEngine(String fileConnection) {
+  private void createXmlEngine(String fileConnection) {
     // pass null as connection to running the translation at compile time
     xmlEngine = new XmlEngine(null);
     xmlEngine.isResource = true;
@@ -4298,7 +4298,7 @@ public class Wad extends DefaultHandler {
    * @param strFileConnection
    *          Path where is allocated the connection file.
    */
-  public void createPool(String strFileConnection) {
+  private void createPool(String strFileConnection) {
     pool = new WadConnection(strFileConnection);
     WADControl.setConnection(pool);
   }
@@ -4310,7 +4310,7 @@ public class Wad extends DefaultHandler {
    *          The FieldsData object to copy.
    * @return The new copy of the given FieldsData object.
    */
-  public FieldsData copyarrayElement(FieldsData from) {
+  private FieldsData copyarrayElement(FieldsData from) {
     final FieldsData toAux = new FieldsData();
     toAux.realname = from.realname;
     toAux.name = from.name;
@@ -4359,7 +4359,7 @@ public class Wad extends DefaultHandler {
    *          The array of FieldsData objects to copy.
    * @return The copy array of FieldsData objects.
    */
-  public FieldsData[] copyarray(FieldsData[] from) {
+  private FieldsData[] copyarray(FieldsData[] from) {
     log4j.debug("Starting copyarray: " + from.length);
     if (from == null)
       return null;
@@ -4377,7 +4377,7 @@ public class Wad extends DefaultHandler {
    * @param strFileProperties
    *          The path of the property file to read.
    */
-  public void readProperties(String strFileProperties) {
+  private void readProperties(String strFileProperties) {
     // Read properties file.
     final Properties properties = new Properties();
     try {

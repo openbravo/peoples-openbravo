@@ -33,13 +33,13 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
 
-public class WadConnection implements ConnectionProvider {
-  static Logger log4j = Logger.getLogger(WadConnection.class);
-  protected Connection myPool;
-  String defaultPoolName = "";
-  String bbdd = "";
-  String rdbms = "";
-  String contextName = "openbravo";
+class WadConnection implements ConnectionProvider {
+  private static final Logger log4j = Logger.getLogger(WadConnection.class);
+  private Connection myPool;
+  private String defaultPoolName = "";
+  private String bbdd = "";
+  private String rdbms = "";
+  private String contextName = "openbravo";
 
   public WadConnection(String xmlPoolFile) {
     if (myPool == null) {
