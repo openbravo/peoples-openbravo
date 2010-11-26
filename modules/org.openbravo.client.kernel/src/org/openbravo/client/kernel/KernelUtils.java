@@ -79,7 +79,12 @@ public class KernelUtils {
     log.error(e.getMessage(), e);
 
     final StringBuilder sb = new StringBuilder();
-    sb.append("isc.warn('Error occured: " + e.getMessage() + "');");
+    if (e instanceof OBUserException) {
+      sb.append("OB.Utilities.handleUserException('" + e.getMessage() + "');");
+
+    } else {
+      sb.append("OB.Utilities.handleSystemException('" + e.getMessage() + "');");
+    }
     return sb.toString();
   }
 
