@@ -319,6 +319,22 @@ isc.OBViewGrid.addProperties({
     
     criteria = this.convertCriteria(criteria);
     var theView = this.view;
+    
+    // Set tab and module as request parameters
+    if (theView && theView.tabId){
+      var tabParam = {
+        params: {
+          tabId: theView.tabId,
+          moduleId: theView.moduleId
+        }
+      };
+      if (requestProperties) {
+        isc.addProperties(requestProperties, tabParam);
+      } else {
+        requestProperties = tabParam;
+      }
+    }
+    
     var newCallBack = function(){
       theView.recordSelected();
       if (callback) {
@@ -337,6 +353,21 @@ isc.OBViewGrid.addProperties({
     
     criteria = this.convertCriteria(criteria);
     var theView = this.view;
+    
+    // Set tab and module as request parameters
+    if (theView && theView.tabId){
+      var tabParam = {
+        params: {
+          tabId: theView.tabId,
+          moduleId: theView.moduleId
+        }
+      };
+      if (requestProperties) {
+        isc.addProperties(requestProperties, tabParam);
+      } else {
+        requestProperties = tabParam;
+      }
+    }
     
     var newCallBack = function(){
       theView.recordSelected();

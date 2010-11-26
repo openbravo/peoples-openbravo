@@ -28,6 +28,7 @@
     <#if tabComponent.tabSet>
         tabId: '${tabComponent.tabId}',
         dataSourceId: '${tabComponent.dataSourceId?js_string}',
+        moduleId: '${tabComponent.moduleId}',
     </#if>
     
     defaultEditMode: ${tabComponent.defaultEditMode},

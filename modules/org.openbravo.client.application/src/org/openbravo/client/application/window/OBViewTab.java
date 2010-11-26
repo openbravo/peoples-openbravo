@@ -147,6 +147,10 @@ public class OBViewTab extends BaseTemplateComponent {
     return tab.getId();
   }
 
+  public String getModuleId() {
+    return tab.getModule().getId();
+  }
+
   public String getEntityName() {
     return tab.getTable().getName();
   }
