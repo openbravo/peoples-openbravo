@@ -53,10 +53,7 @@ public class ViewComponent extends BaseComponent {
     try {
       OBContext.setAdminMode();
 
-      // is this a window
-      String correctedViewId = (viewId.startsWith(KernelConstants.ID_PREFIX) ? viewId.substring(1)
-          : viewId);
-      Window window = OBDal.getInstance().get(Window.class, correctedViewId);
+      Window window = getWindow(viewId);
 
       // the case if a window is in development and has a unique making postfix
       // see the StandardWindowComponent.getWindowClientClassName method
@@ -67,6 +64,11 @@ public class ViewComponent extends BaseComponent {
       }
 
       if (window != null) {
+        FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess("MW",
+            window.getId());
+        if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
+          throw new OBUserException(featureRestriction.toString());
+        }
         return generateWindow(window);
       } else {
         return generateView(viewId);
@@ -84,36 +86,62 @@ public class ViewComponent extends BaseComponent {
   }
 
   protected String generateView(String viewName) {
+    OBUIAPPViewImplementation viewImpDef = getView(viewName);
 
+    final BaseTemplateComponent component;
+    if (viewImpDef.getJavaClassName() != null) {
+      try {
+        component = (BaseTemplateComponent) OBClassLoader.getInstance().loadClass(
+            viewImpDef.getJavaClassName()).newInstance();
+      } catch (Exception e) {
+        throw new OBException(e);
+      }
+    } else {
+      component = new BaseTemplateComponent();
+      if (viewImpDef.getTemplate() == null) {
+        throw new IllegalStateException("No class and no template defined for view " + viewName);
+      }
+    }
+    component.setId(viewImpDef.getId());
+    component.setComponentTemplate(viewImpDef.getTemplate());
+    component.setParameters(getParameters());
+
+    final String jsCode = component.generate();
+    return jsCode;
+  }
+
+  private OBUIAPPViewImplementation getView(String viewName) {
     OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance().createCriteria(
         OBUIAPPViewImplementation.class);
     obc.add(Expression.eq(OBUIAPPViewImplementation.PROPERTY_NAME, viewName));
 
     if (obc.list().size() > 0) {
-      OBUIAPPViewImplementation viewImpDef = obc.list().get(0);
-
-      final BaseTemplateComponent component;
-      if (viewImpDef.getJavaClassName() != null) {
-        try {
-          component = (BaseTemplateComponent) OBClassLoader.getInstance().loadClass(
-              viewImpDef.getJavaClassName()).newInstance();
-        } catch (Exception e) {
-          throw new OBException(e);
-        }
-      } else {
-        component = new BaseTemplateComponent();
-        if (viewImpDef.getTemplate() == null) {
-          throw new IllegalStateException("No class and no template defined for view " + viewName);
-        }
-      }
-      component.setId(viewImpDef.getId());
-      component.setComponentTemplate(viewImpDef.getTemplate());
-      component.setParameters(getParameters());
-
-      final String jsCode = component.generate();
-      return jsCode;
+      return obc.list().get(0);
     } else {
       throw new IllegalArgumentException("No view found using id/name " + viewName);
+    }
+  }
+
+  private Window getWindow(String viewId) {
+    // is this a window
+    final String correctedViewId = (viewId.startsWith(KernelConstants.ID_PREFIX) ? viewId
+        .substring(1) : viewId);
+    return OBDal.getInstance().get(Window.class, correctedViewId);
+  }
+
+  @Override
+  public Module getModule() {
+    final String id = getParameter("viewId");
+    final Window window = getWindow(id);
+    if (window != null) {
+      return window.getModule();
+    } else {
+      OBUIAPPViewImplementation view = getView(id);
+      if (view != null) {
+        return view.getModule();
+      } else {
+        return super.getModule();
+      }
     }
   }
 

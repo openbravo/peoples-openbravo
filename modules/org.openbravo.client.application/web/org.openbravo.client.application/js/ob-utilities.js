@@ -767,3 +767,25 @@ OB.Utilities.Number.JSToOBMasked = function(number, maskNumeric, decSeparator, g
   formattedNumber = OB.Utilities.Number.OBPlainToOBMasked(formattedNumber, maskNumeric, decSeparator, groupSeparator, groupInterval);
   return formattedNumber;
 };
+
+// ** {{{ OB.Utilities.handleUserException }}} **
+//
+// Shows a warning message from the exception. The message is translatable.
+//
+// Parameters:
+// * {{{msg}}}: Translatable message to show
+OB.Utilities.handleUserException = function(msg) {
+  // todo: make this nice
+  isc.warn(OB.I18N.getLabel(msg));
+}
+
+// ** {{{ OB.Utilities.handleSystemException }}} **
+//
+// Shows a warning message from the exception. The message is not translatable.
+//
+// Parameters:
+// * {{{msg}}}: Message to show
+OB.Utilities.handleSystemException = function (msg) {
+  // todo: make this nice
+  isc.warn('Error occured: ' + msg);
+}
