@@ -173,7 +173,8 @@ public abstract class BaseComponent implements Component {
     if (getModule().isInDevelopment() != null && getModule().isInDevelopment()) {
       return OBContext.getOBContext().getLanguage().getId() + "_" + getLastModified().getTime();
     } else {
-      return OBContext.getOBContext().getLanguage().getId() + "_" + getModule().getVersion();
+      return OBContext.getOBContext().getLanguage().getId() + "_" + getModule().getVersion() + "_"
+          + getModule().isEnabled();
     }
   }
 
