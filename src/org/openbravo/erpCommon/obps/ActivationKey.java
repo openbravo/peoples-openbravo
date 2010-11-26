@@ -102,7 +102,19 @@ public class ActivationKey {
   }
 
   public enum FeatureRestriction {
-    NO_RESTRICTION, DISABLED_MODULE_RESTRICTION, TIER1_RESTRICTION, TIER2_RESTRICTION, UNKNOWN_RESTRICTION;
+    NO_RESTRICTION(""), DISABLED_MODULE_RESTRICTION("FeatureInDisabledModule"), TIER1_RESTRICTION(
+        "FEATURE_OBPS_ONLY"), TIER2_RESTRICTION("FEATURE_OBPS_ONLY"), UNKNOWN_RESTRICTION("");
+
+    private String msg;
+
+    private FeatureRestriction(String msg) {
+      this.msg = msg;
+    }
+
+    @Override
+    public String toString() {
+      return msg;
+    }
   }
 
   public enum LicenseClass {
