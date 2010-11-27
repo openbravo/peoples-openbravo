@@ -80,7 +80,7 @@ class WADValidationResult {
    * 
    * @param validationType
    *          validation type to add the error to
-   * @param error
+   * @param warning
    *          error message
    */
   public void addError(WADValidationType validationType, String warning) {
@@ -105,7 +105,6 @@ class WADValidationResult {
   /**
    * Returns true in case the validation contain errors
    * 
-   * @return
    */
   public boolean hasErrors() {
     return errors.size() > 0;

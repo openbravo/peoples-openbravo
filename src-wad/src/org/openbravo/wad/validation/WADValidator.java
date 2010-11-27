@@ -38,7 +38,7 @@ class WADValidator {
    * 
    * @param conn
    *          Database ConnectionProvider
-   * @param moduleId
+   * @param modules
    *          Module to check
    */
   public WADValidator(ConnectionProvider conn, String modules, boolean friendlyWarnings) {

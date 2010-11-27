@@ -693,7 +693,6 @@ public class InitialClientSetup {
    * 
    * @param strMessage
    *          Message to be added to the log returned (will be translated)
-   * @return
    */
   private void logEvent(String strMessage) {
     strLog.append(strMessage).append(NEW_LINE);

@@ -42,9 +42,9 @@ public class DbUtility implements OBSingleton {
    * because the {@link BatchUpdateException} does not place the underlying exception in the
    * {@link Throwable#getCause()} but in the {@link BatchUpdateException#getNextException()}.
    * 
-   * @param t
+   * @param throwable
    *          the throwable to analyze
-   * @return the underlying sql exception or the original t if none found
+   * @return the underlying sql exception or the original throwable if none found
    */
   public static Throwable getUnderlyingSQLException(Throwable throwable) {
     if (throwable.getCause() instanceof BatchUpdateException

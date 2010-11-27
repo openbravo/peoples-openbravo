@@ -66,8 +66,6 @@ public class ModuleUtiltiy {
    * 
    * @param conn
    * @param modules
-   * @return
-   * @throws Exception
    */
   @Deprecated
   public static ArrayList<String> orderByDependency(ConnectionProvider conn,

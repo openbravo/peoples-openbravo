@@ -212,7 +212,6 @@ public class DocDPManagement extends AcctServer {
   /**
    * 
    * @param oldSeqNo
-   * @return
    */
   public String nextSeqNo(String oldSeqNo) {
     log4j.debug("DocDPManagement - oldSeqNo = " + oldSeqNo);
@@ -227,7 +226,6 @@ public class DocDPManagement extends AcctServer {
    * @param as
    * @param line
    * @param conn
-   * @return
    */
   public String calculateAmount(AcctSchema as, DocLine_DPManagement line, ConnectionProvider conn) {
     String Amt = getConvertedAmt(line.Amount, line.m_C_Currency_ID, as.m_C_Currency_ID,
@@ -268,7 +266,6 @@ public class DocDPManagement extends AcctServer {
    * @param as
    * @param status
    * @param conn
-   * @return
    */
   public Account getAccount(String Isreceipt, String partnerID, AcctSchema as, String status,
       ConnectionProvider conn) {

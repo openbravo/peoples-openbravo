@@ -240,7 +240,7 @@ public class ProcessBundle {
    * @param conn
    *          a connection to the database
    * @return the initialized ProcessBundle
-   * @throws Exception
+   * @throws ServletException
    *           if there is an error initializing the bundle
    */
   public ProcessBundle init(ConnectionProvider conn) throws ServletException {

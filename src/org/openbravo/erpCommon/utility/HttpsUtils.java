@@ -165,7 +165,6 @@ public class HttpsUtils {
    *             information. Use instead {@link HttpsUtils#isInternetAvailable()}
    * @param proxyHost
    * @param proxyPort
-   * @return
    */
   public static boolean isInternetAvailable(String proxyHost, int proxyPort) {
     OBContext.setAdminMode();
