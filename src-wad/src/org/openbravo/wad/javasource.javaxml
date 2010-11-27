@@ -60,7 +60,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   private static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
   private static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
   private static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
-  private static final double SUBTABS_COL_SIZE = 15;
   
   <PARAMETER_TMP id="discardService">
   @Override
@@ -374,18 +373,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
         } else response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
       }
-/*    } else if (vars.commandIn("DELETE_RELATION")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredInStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
-      String message = deleteRelation(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-      if (!message.equals("")) {
-        bdError(request, response, message, vars.getLanguage());
-      } else {
-        vars.removeSessionValue(windowId + "|<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
-        vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "RELATION");
-        response.sendRedirect(strDireccion + request.getServletPath());
-      }*/
     } else if (vars.commandIn("DELETE")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
 </PARAMETER_TMP>
@@ -671,33 +658,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       pageErrorPopUp(response);
     } else pageError(response);
   }
-/*
-  String deleteRelation(VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException, ServletException {
-    log4j.debug("Deleting records");
-    Connection conn = this.getTransactionConnection();
-    try {
-      if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.startsWith("(")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.substring(1, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.length()-1);
-      if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
-        str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = Replace.replace(str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, "'", "");
-        StringTokenizer st = new StringTokenizer(str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, ",", false);
-        while (st.hasMoreTokens()) {
-          String strKey = st.nextToken();
-          if (<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.deleteTransactional(conn, this, strKey<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>)==0) {
-            releaseRollbackConnection(conn);
-            log4j.warn("deleteRelation - key :" + strKey + " - 0 records deleted");
-          }
-        }
-      }
-      releaseCommitConnection(conn);
-    } catch (ServletException e) {
-      releaseRollbackConnection(conn);
-      e.printStackTrace();
-      log4j.error("Rollback in transaction");
-      return "ProcessRunError";
-    }
-    return "";
-  }
-*/
   private <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data getEditVariables(Connection con, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
     <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = new <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data();
     ServletException ex = null;
@@ -1170,7 +1130,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     out.close();
   }
 
-  void printPageButtonFS(HttpServletResponse response, VariablesSecureApp vars, String strProcessId, String path) throws IOException, ServletException {
+  private void printPageButtonFS(HttpServletResponse response, VariablesSecureApp vars, String strProcessId, String path) throws IOException, ServletException {
     log4j.debug("Output: Frames action button");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -1184,7 +1144,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     out.close();
   }
 
-<FIELDS_TMP id="sectionActionButtons2">    void printPageButton<FIELD_TMP id="ButtonRealName2">name</FIELD_TMP><FIELD_TMP id="ProcessID2">xx</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, String str<FIELD_TMP id="ButtonName2">name</FIELD_TMP>, String strProcessing<FIELD_TMP id="FieldsLoadName2">, strFields</FIELD_TMP>)
+<FIELDS_TMP id="sectionActionButtons2">    private void printPageButton<FIELD_TMP id="ButtonRealName2">name</FIELD_TMP><FIELD_TMP id="ProcessID2">xx</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, String str<FIELD_TMP id="ButtonName2">name</FIELD_TMP>, String strProcessing<FIELD_TMP id="FieldsLoadName2">, strFields</FIELD_TMP>)
     throws IOException, ServletException {
       log4j.debug("Output: Button process <FIELD_TMP id="ProcessID2">xx</FIELD_TMP>");
       String[] discard = {"newDiscard"};
