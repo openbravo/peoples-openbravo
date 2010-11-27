@@ -56,15 +56,15 @@ public class Reference extends ModelObject {
 
   // Validation Types
   /**
-   * @deprecated, validation type is not used anymore
+   * @deprecated validation type is not used anymore
    */
   public static final char TABLE_VALIDATION = 'T';
   /**
-   * @deprecated, validation type is not used anymore
+   * @deprecated validation type is not used anymore
    */
   public static final char SEARCH_VALIDATION = 'S';
   /**
-   * @deprecated, validation type is not used anymore
+   * @deprecated validation type is not used anymore
    */
   public static final char LIST_VALIDATION = 'L';
 

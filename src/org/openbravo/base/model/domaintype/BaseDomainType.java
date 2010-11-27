@@ -42,26 +42,14 @@ public abstract class BaseDomainType implements DomainType {
    * 
    * Note: any subclass should clean-up and close database connections or hibernate sessions. If
    * this is not done then the update.database task may hang when disabling foreign keys.
-   * 
-   * @see org.openbravo.base.model.domaintype.DomainType#initialize(org.openbravo.base.model.ModelProvider)
    */
   public void initialize() {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.DomainType#setReference(Reference)
-   */
   public void setReference(Reference reference) {
     this.reference = reference;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.DomainType#getReference()
-   */
   public Reference getReference() {
     return reference;
   }
@@ -70,23 +58,10 @@ public abstract class BaseDomainType implements DomainType {
     return modelProvider;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @seeorg.openbravo.base.model.domaintype.DomainType#setModelProvider(org.openbravo.base.model.
-   * ModelProvider )
-   */
   public void setModelProvider(ModelProvider modelProvider) {
     this.modelProvider = modelProvider;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.openbravo.base.model.domaintype.DomainType#checkObjectIsValid(org.openbravo.base.structure
-   * .BaseOBObjectDef, org.openbravo.base.model.Property)
-   */
   public void checkObjectIsValid(BaseOBObjectDef obObject, Property property)
       throws ValidationException {
     checkIsValidValue(property, obObject.get(property.getName()));

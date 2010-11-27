@@ -31,17 +31,11 @@ public class StringEnumerateDomainType extends BaseEnumerateDomainType<String> {
    * As a standard only a string/varchar column can have enumerates.
    * 
    * @return class of {@link String}.
-   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return String.class;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
-   */
   @Override
   public Object createFromString(String strValue) {
     if (strValue == null || strValue.length() == 0) {
@@ -50,11 +44,6 @@ public class StringEnumerateDomainType extends BaseEnumerateDomainType<String> {
     return strValue;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
-   */
   @Override
   public String getXMLSchemaType() {
     return "ob:string";

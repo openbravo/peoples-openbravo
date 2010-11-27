@@ -38,8 +38,6 @@ public abstract class BaseEnumerateDomainType<E extends Object> extends BasePrim
 
   /**
    * @return the set of enumerate values
-   * 
-   * @see org.openbravo.base.model.domaintype.DomainType#getEnumerateValues()
    */
   public Set<E> getEnumerateValues() {
     return enumerateValues;
@@ -51,19 +49,11 @@ public abstract class BaseEnumerateDomainType<E extends Object> extends BasePrim
 
   /**
    * @return class of {@link Object}.
-   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return Object.class;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.openbravo.base.model.domaintype.DomainType#checkIsValidValue(org.openbravo.base.model.Property
-   * , java.lang.Object)
-   */
   public void checkIsValidValue(Property property, Object value) throws ValidationException {
     super.checkIsValidValue(property, value);
 

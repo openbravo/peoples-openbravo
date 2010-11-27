@@ -31,27 +31,16 @@ public class ObjectDomainType extends BasePrimitiveDomainType {
 
   /**
    * @return class of the {@link Timestamp}
-   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return Object.class;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
-   */
   @Override
   public Object createFromString(String strValue) {
     return strValue;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
-   */
   @Override
   public String getXMLSchemaType() {
     return "xs:anyType";

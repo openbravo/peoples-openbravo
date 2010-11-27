@@ -1425,7 +1425,7 @@ public class InitialSetupUtility {
   }
 
   /**
-   * @deprecated use {@link #getDataSets(Module module, List<String> accessLevel)}
+   * @deprecated use {@link #getDataSets(Module, List)}
    * 
    * @param module
    * @param accessLevel

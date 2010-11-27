@@ -662,8 +662,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * Renders a PDF directly into a HttpServletResponse. <b>NOTE:</b> If you use this method the
    * 'loading' pop-up window will not be closed.
    * 
-   * @param strFo
-   * @param out
    * @throws ServletException
    */
   protected void renderFO(String strFo, HttpServletResponse response) throws ServletException {

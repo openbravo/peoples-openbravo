@@ -33,17 +33,11 @@ public class BinaryDomainType extends BasePrimitiveDomainType {
 
   /**
    * @return class of the {@link byte[]}
-   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return byte[].class;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#convertToString(java.lang.Object)
-   */
   @Override
   public String convertToString(Object value) {
     try {
@@ -56,11 +50,6 @@ public class BinaryDomainType extends BasePrimitiveDomainType {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
-   */
   @Override
   public Object createFromString(String strValue) {
     try {
@@ -73,11 +62,6 @@ public class BinaryDomainType extends BasePrimitiveDomainType {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
-   */
   @Override
   public String getXMLSchemaType() {
     return "ob:base64Binary";

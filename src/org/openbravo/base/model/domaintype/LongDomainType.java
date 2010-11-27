@@ -34,7 +34,6 @@ public class LongDomainType extends BasePrimitiveDomainType {
 
   /**
    * @return class of the {@link Long}
-   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return Long.class;
@@ -51,20 +50,10 @@ public class LongDomainType extends BasePrimitiveDomainType {
     super.checkIsValidValue(property, value);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getFormatId()
-   */
   public String getFormatId() {
     return "integer";
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
-   */
   @Override
   public Object createFromString(String strValue) {
     if (strValue == null || strValue.trim().length() == 0) {
@@ -73,11 +62,6 @@ public class LongDomainType extends BasePrimitiveDomainType {
     return new Long(new BigDecimal(strValue).longValueExact());
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
-   */
   @Override
   public String getXMLSchemaType() {
     return "ob:long";

@@ -220,7 +220,7 @@ public class ImportModule {
   /**
    * Check the dependencies for a file. Used only for local installation from obx file.
    * 
-   * @see {@link #checkDependenciesId(String[], String[], HashMap)}.
+   * @see #checkDependenciesId(String[], String[], HashMap)
    */
   public boolean checkDependenciesFile(InputStream file) throws Exception {
 

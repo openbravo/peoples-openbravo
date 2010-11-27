@@ -62,7 +62,7 @@ public class ModuleUtiltiy {
   }
 
   /**
-   * Deprecated use {@link ModuleUtiltiy#orderByDependency(ArrayList)} instead
+   * Deprecated use {@link ModuleUtiltiy#orderByDependency(List)} instead
    * 
    * @param conn
    * @param modules

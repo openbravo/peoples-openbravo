@@ -33,7 +33,6 @@ public class TableDomainType extends BaseForeignKeyDomainType {
 
   /**
    * @return the column based on the RefTable ({@link #setRefTable(RefTable)}).
-   * @see org.openbravo.base.model.domaintype.DomainType#getForeignKeyColumn(org.openbravo.base.model.Column)
    */
   public Column getForeignKeyColumn(String columnName) {
     // handles a special case that reference value is not set in a column
