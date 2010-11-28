@@ -847,6 +847,7 @@ build.war: build a war file in the lib directory.
     <sync todir="${jakarta.base}/webapps/${context.name}">
       <preserveintarget>
         <include name="**/WEB-INF/classes/**"/>
+        <include name="**/WEB-INF/lib/**"/>
       </preserveintarget>
       <fileset dir="${base.context}" />
     </sync>
