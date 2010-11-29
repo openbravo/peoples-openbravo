@@ -55,7 +55,6 @@ import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -65,13 +64,12 @@ import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.SessionLogin;
+import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.SessionUsageAudit;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -79,7 +77,6 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -388,33 +385,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           SessionInfo.setModuleId(classInfo.adModuleId);
         }
 
-        OBContext.setAdminMode();
-        try {
-          boolean usageAuditEnabled = OBDal.getInstance().get(SystemInformation.class, "0")
-              .isUsageauditenabled();
-          if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null
-              && usageAuditEnabled && vars1.getSessionValue("#AD_Session_ID") != null
-              && !"".equals(vars1.getSessionValue("#AD_Session_ID"))) {
-            // Session Usage Audit
-            SessionUsageAudit usageAudit = OBProvider.getInstance().get(SessionUsageAudit.class);
-            usageAudit.setClient(OBDal.getInstance().get(Client.class, "0"));
-            usageAudit.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
-            usageAudit.setJavaClassName(this.getClass().getName());
-            usageAudit.setModule(OBDal.getInstance().get(
-                org.openbravo.model.ad.module.Module.class, SessionInfo.getModuleId()));
-            usageAudit.setSession(OBDal.getInstance().get(
-                org.openbravo.model.ad.access.Session.class,
-                vars1.getSessionValue("#AD_Session_ID")));
-            usageAudit.setObject(SessionInfo.getProcessId());
-            usageAudit.setCommand(vars1.getCommand());
-            usageAudit.setObjectType(SessionInfo.getProcessType());
-            OBDal.getInstance().save(usageAudit);
-          }
-        } finally {
-          OBContext.restorePreviousMode();
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getConnection().commit();
-        }
+        UsageAudit.auditAction(vars1, this.getClass().getName());
 
         // Autosave logic
         final Boolean saveRequest = (Boolean) request.getAttribute("autosave");
