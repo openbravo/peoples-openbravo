@@ -36,6 +36,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.InvalidContentException;
@@ -120,6 +121,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
+    UsageAudit.auditAction(request, parameters);
     doFetch(request, response, parameters);
   }
 
@@ -153,6 +155,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
+    UsageAudit.auditAction(request, parameters);
+
     if (DataSourceConstants.FETCH_OPERATION.equals(parameters
         .get(DataSourceConstants.OPERATION_TYPE_PARAM))) {
       doFetch(request, response, parameters);
@@ -170,6 +174,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
+    UsageAudit.auditAction(request, parameters);
 
     // checks and set parameters, if not valid then go away
     if (!checkSetParameters(request, response, parameters)) {
@@ -205,6 +210,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
+    UsageAudit.auditAction(request, parameters);
     // note if clause updates parameter map
     if (checkSetIDDataSourceName(request, response, parameters)) {
       final String result = getDataSource(request).update(parameters, getRequestContent(request));
