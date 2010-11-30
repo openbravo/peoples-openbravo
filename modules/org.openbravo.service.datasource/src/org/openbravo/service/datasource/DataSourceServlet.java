@@ -34,8 +34,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -78,6 +81,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
     try {
       super.service(request, response);
+
     } catch (final InvalidRequestException e) {
       if (SessionHandler.isSessionHandlerPresent()) {
         SessionHandler.getInstance().setDoRollback(true);
@@ -175,6 +179,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
     UsageAudit.auditAction(request, parameters);
+    setSessionInfo(request, parameters);
 
     // checks and set parameters, if not valid then go away
     if (!checkSetParameters(request, response, parameters)) {
@@ -210,12 +215,31 @@ public class DataSourceServlet extends BaseKernelServlet {
   public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final Map<String, String> parameters = getParameterMap(request);
+    setSessionInfo(request, parameters);
     UsageAudit.auditAction(request, parameters);
+
     // note if clause updates parameter map
     if (checkSetIDDataSourceName(request, response, parameters)) {
       final String result = getDataSource(request).update(parameters, getRequestContent(request));
       writeResult(response, result);
     }
+  }
+
+  private void setSessionInfo(HttpServletRequest request, Map<String, String> parameters) {
+    SessionInfo.setModuleId(parameters.get("moduleId"));
+    SessionInfo.setProcessType("W");
+    SessionInfo.setProcessId(parameters.get("tabId"));
+    // Session ID and user needn't be set as they were done in the service method.
+
+    // SessionInfo.setUserId(OBContext.getOBContext().getUser().getId());
+    // SessionInfo.setSessionId((String) request.getAttribute("#AD_SESSION_ID"));
+
+    // FIXME: Because of issue #15331 connection is initialized with temporary audit table before
+    // setting session info
+    // Reset Session Info in DB manually as it was set in the service but actual information is not
+    // available till now.
+    SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(), OBPropertiesProvider
+        .getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,
