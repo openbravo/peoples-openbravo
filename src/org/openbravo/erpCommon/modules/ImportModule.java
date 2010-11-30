@@ -121,6 +121,7 @@ public class ImportModule {
   public static final int MSG_ERROR = 2;
 
   OBError errors = null;
+  static StringBuilder scanError = null;
   Vector<DynaBean> dynModulesToInstall = new Vector<DynaBean>();
   Vector<DynaBean> dynModulesToUpdate = new Vector<DynaBean>();
   Vector<DynaBean> dependencies = new Vector<DynaBean>();
@@ -219,7 +220,7 @@ public class ImportModule {
   /**
    * Check the dependencies for a file. Used only for local installation from obx file.
    * 
-   * @see {@link #checkDependenciesId(String[], String[], HashMap)}.
+   * @see #checkDependenciesId(String[], String[], HashMap)
    */
   public boolean checkDependenciesFile(InputStream file) throws Exception {
 
@@ -828,6 +829,10 @@ public class ImportModule {
    */
   public OBError getCheckError() {
     return errors;
+  }
+
+  public static StringBuilder getScanError() {
+    return scanError;
   }
 
   /**
@@ -1527,6 +1532,7 @@ public class ImportModule {
    */
   public static HashMap<String, String> scanForUpdates(ConnectionProvider conn,
       VariablesSecureApp vars) {
+    scanError = new StringBuilder();
     try {
       final HashMap<String, String> updateModules = new HashMap<String, String>();
       final String user = vars == null ? "0" : vars.getUser();
@@ -1537,6 +1543,7 @@ public class ImportModule {
         ImportModuleData.insertLog(conn, user, "", "", "",
             "Scan for updates: Couldn't contact with webservice server", "E");
         log4j.error("Scan for updates, error cound't reach ws server");
+        scanError.append("InternetNotAvailable");
         return updateModules;
       }
 
@@ -1558,6 +1565,7 @@ public class ImportModule {
         } catch (final ServletException ex) {
           log4j.error("Error inserting log", e);
         }
+        scanError.append("WSServerNotReachable");
         return updateModules; // return empty hashmap
       }
 
@@ -1590,6 +1598,7 @@ public class ImportModule {
       } catch (final ServletException ex) {
         log4j.error("Error inserting log", ex);
       }
+      scanError.append("ScanUpdatesFailed");
       return new HashMap<String, String>();
     }
   }

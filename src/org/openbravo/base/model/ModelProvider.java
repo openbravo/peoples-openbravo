@@ -764,7 +764,7 @@ public class ModelProvider implements OBSingleton {
   }
 
   /**
-   * @deprecated, use {@link ForeignKeyDomainType#getForeignKeyColumn(String)}
+   * @deprecated use {@link ForeignKeyDomainType#getForeignKeyColumn(String)}
    */
   protected Column getColumnByReference(String reference, String referenceValue,
       char validationType, String columnName) throws CheckException {

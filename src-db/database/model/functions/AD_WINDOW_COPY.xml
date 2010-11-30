@@ -149,14 +149,14 @@
             AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
             Name, Description, Help, IsCentrallyMaintained, AD_Column_ID, AD_FieldGroup_ID,
             ISDISPLAYED, DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY, SEQNO, SORTNO,
-            ISSAMELINE, ISFIELDONLY, ISENCRYPTED, AD_Module_ID
+            ISSAMELINE, ISFIELDONLY, ISENCRYPTED, AD_Module_ID, ShowInRelation, Grid_Seqno
           )
           SELECT
             v_NextNo_F, v_NextNo_T,
             Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID, Cur_Fields.IsActive, now(), '0', now(), '0',
             coalesce(sub.name, Cur_Fields.Name), coalesce(sub.description, Cur_Fields.Description), coalesce(sub.help, Cur_Fields.Help), Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID,
             Cur_Fields.ISDISPLAYED, Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY, Cur_Fields.SEQNO, Cur_Fields.SORTNO,
-            Cur_Fields.ISSAMELINE, Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_AD_Module_ID
+            Cur_Fields.ISSAMELINE, Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_AD_Module_ID, Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno
           FROM ad_field s left join 
         (select * from AD_field_trl where ad_language=ad_language_target and ad_field_id=Cur_Fields.ad_field_id ) sub
          on sub.ad_field_id=s.ad_field_id where s.ad_field_id=Cur_Fields.ad_field_id;

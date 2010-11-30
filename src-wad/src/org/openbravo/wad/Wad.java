@@ -55,38 +55,23 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Fernando Iriazabal
  */
 public class Wad extends DefaultHandler {
-  static final int NUM_COLUMNS = 10;
-  static final int COLUMN_1_OF_1 = 11;
-  static final int COLUMN_1_OF_2 = 12;
-  static final int COLUMN_2_OF_2 = 22;
-  static final int NUM_TABS = 8;
-  static final int INCR_TABS = 8;
-  static final int HEIGHT_TABS = 38;
-  static final int MAX_COL_SIZE_RELATION = 50;
-  static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
-  static final int MAX_SIZE_EDITION_2_COLUMNS = 45;
-  static final int MAX_TEXTBOX_LENGTH = 110;
-  static final double PIXEL_TO_LENGTH = 5.6;
-  static final double FIRST_COLS_SIZE = 60;
-  static final double SUBTABS_COL_SIZE = 30;
-  static final double RELATION_MINIMUM_LENGTH = 15.0;
-  static final int IMAGE_RELATION_WIDTH = 16;
-  static final int IMAGE_RELATION_HEIGHT = 16;
-  static final int IMAGE_BUTTON_WIDTH = 16;
-  static final int IMAGE_BUTTON_HEIGHT = 16;
-  XmlEngine xmlEngine;
-  protected WadConnection pool;
-  String strSystemSeparator;
-  static final String calendarDescription = "Calendar";
-  static final String clockDescription = "Clock";
-  static final String calculatorDescription = "Calculator";
-  static String calendarDescriptionTrl = "";
-  static String clockDescriptionTrl = "";
-  static String calculatorDescriptionTrl = "";
-  static String jsDateFormat;
-  static String sqlDateFormat;
+  private static final int COLUMN_1_OF_1 = 11;
+  private static final int COLUMN_1_OF_2 = 12;
+  private static final int COLUMN_2_OF_2 = 22;
+  private static final int NUM_TABS = 8;
+  private static final int INCR_TABS = 8;
+  private static final int HEIGHT_TABS = 38;
+  private static final int MAX_SIZE_EDITION_1_COLUMNS = 90;
+  private static final int MAX_SIZE_EDITION_2_COLUMNS = 45;
+  private static final int MAX_TEXTBOX_LENGTH = 110;
+  private static final double PIXEL_TO_LENGTH = 5.6;
+  private XmlEngine xmlEngine;
+  private WadConnection pool;
+  private String strSystemSeparator;
+  private static String jsDateFormat;
+  private static String sqlDateFormat;
 
-  static Logger log4j = Logger.getLogger(Wad.class);
+  private static final Logger log4j = Logger.getLogger(Wad.class);
 
   /**
    * Main function, entrusted to launch the process of generation of sources. The list of arguments
@@ -128,13 +113,9 @@ public class Wad extends DefaultHandler {
     String dirActionButton;
     boolean generateWebXml;
     boolean generateTabs;
-    String dirBaseTrl;
-    String translateStr;
     String dirWebClients;
-    String basePath;
     String attachPath;
     String webPath;
-    String strBaseSrc;
     boolean complete;
     boolean quick;
     if (argv.length < 1) {
@@ -196,16 +177,10 @@ public class Wad extends DefaultHandler {
         dirActionButton = argv[6];
 
       // Path to base translation generation
-      if (argv.length <= 7)
-        dirBaseTrl = dirFin;
-      else
-        dirBaseTrl = argv[7];
+      // was argv[7] no longer used
 
       // Translate base structure
-      if (argv.length <= 8)
-        translateStr = "";
-      else
-        translateStr = argv[8];
+      // was argv[8] no longer used
 
       // Path to find the client's web.xml file
       if (argv.length <= 9)
@@ -214,10 +189,7 @@ public class Wad extends DefaultHandler {
         dirWebClients = argv[9];
 
       // Path of the root project
-      if (argv.length <= 10)
-        basePath = dirFin;
-      else
-        basePath = argv[10];
+      // was argv[10] no longer used
 
       // Path of the attach files
       if (argv.length <= 11)
@@ -232,10 +204,7 @@ public class Wad extends DefaultHandler {
         webPath = argv[12];
 
       // Path to the src folder
-      if (argv.length <= 13)
-        strBaseSrc = dirFin;
-      else
-        strBaseSrc = argv[13];
+      // was argv[13] no longer used
 
       // Boolean to indicate if we are doing a complete generation
       if (argv.length <= 14)
@@ -271,13 +240,9 @@ public class Wad extends DefaultHandler {
       log4j.info("generate web.xml: " + generateWebXml);
       log4j.info("generate web.xml cliente: " + dirWebClients);
       log4j.info("generate tabs: " + generateTabs);
-      log4j.info("directory Translate : " + dirBaseTrl);
-      log4j.info("translation to : " + translateStr);
       log4j.info("File separator: " + wad.strSystemSeparator);
-      log4j.info("Base path: " + basePath);
       log4j.info("Attach path: " + attachPath);
       log4j.info("Web path: " + webPath);
-      log4j.info("Src path: " + strBaseSrc);
       log4j.info("Quick mode: " + quick);
 
       final File fileFin = new File(dirFin);
@@ -321,27 +286,6 @@ public class Wad extends DefaultHandler {
       final File fileActionButton = new File(dirActionButton);
       if (!fileActionButton.exists()) {
         log4j.error("No such directory: " + fileActionButton.getAbsoluteFile());
-
-        return;
-      }
-
-      final File fileTrl = new File(dirBaseTrl);
-      if (!fileTrl.exists()) {
-        log4j.error("No such directory: " + fileTrl.getAbsoluteFile());
-
-        return;
-      }
-
-      final File fileBase = new File(strBaseSrc);
-      if (!fileBase.exists()) {
-        log4j.error("No such directory: " + fileBase.getAbsoluteFile());
-
-        return;
-      }
-
-      final File fileBaseAplication = new File(basePath);
-      if (!fileBaseAplication.exists()) {
-        log4j.error("No such directory: " + fileBaseAplication.getAbsoluteFile());
 
         return;
       }
@@ -416,8 +360,7 @@ public class Wad extends DefaultHandler {
             log4j.info("Processing Window: " + tabsData[i].windowname + " - Tab: "
                 + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
             log4j.debug("Processing: " + tabsData[i].tabid);
-            wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl, translateStr,
-                fileBase, fileBaseAplication);
+            wad.processTab(fileFin, fileFinReloads, tabsData[i]);
           }
         }
       }
@@ -529,8 +472,7 @@ public class Wad extends DefaultHandler {
 
           // build the html template
           WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields,
-              MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", false, calendarDescription,
-              clockDescription, calculatorDescription, jsDateFormat, vecReloads);
+              MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", false, jsDateFormat, vecReloads);
         }
       }
     } catch (final ServletException e) {
@@ -679,8 +621,7 @@ public class Wad extends DefaultHandler {
 
           // build the html template
           WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields,
-              MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", true, calendarDescription,
-              clockDescription, calculatorDescription, jsDateFormat, vecReloads);
+              MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, "", true, jsDateFormat, vecReloads);
         }
       }
     } catch (final ServletException e) {
@@ -798,21 +739,9 @@ public class Wad extends DefaultHandler {
    *          Path where are gonna be created the reloads sources.
    * @param tabsData
    *          An object containing the tabs info.
-   * @param fileTrl
-   *          Path where are gonna be created the translated sources.
-   * @param dirBaseTrl
-   *          Base path of the translated sources.
-   * @param translateStr
-   *          The base package structure for the translated sources.
-   * @param fileBase
-   *          The path to the project's manual sources.
-   * @param fileBaseAplication
-   *          The path to the project root directory.
    * @throws Exception
    */
-  private void processTab(File fileFin, File fileFinReloads, TabsData tabsData, File fileTrl,
-      String dirBaseTrl, String translateStr, File fileBase, File fileBaseAplication)
-      throws Exception {
+  private void processTab(File fileFin, File fileFinReloads, TabsData tabsData) throws Exception {
     try {
       final String tabNamePresentation = tabsData.realtabname;
       // tabName contains tab's UUID for non core tabs
@@ -4279,7 +4208,7 @@ public class Wad extends DefaultHandler {
    * @param fileConnection
    *          The path to the connection file.
    */
-  public void createXmlEngine(String fileConnection) {
+  private void createXmlEngine(String fileConnection) {
     // pass null as connection to running the translation at compile time
     xmlEngine = new XmlEngine(null);
     xmlEngine.isResource = true;
@@ -4298,7 +4227,7 @@ public class Wad extends DefaultHandler {
    * @param strFileConnection
    *          Path where is allocated the connection file.
    */
-  public void createPool(String strFileConnection) {
+  private void createPool(String strFileConnection) {
     pool = new WadConnection(strFileConnection);
     WADControl.setConnection(pool);
   }
@@ -4310,7 +4239,7 @@ public class Wad extends DefaultHandler {
    *          The FieldsData object to copy.
    * @return The new copy of the given FieldsData object.
    */
-  public FieldsData copyarrayElement(FieldsData from) {
+  private FieldsData copyarrayElement(FieldsData from) {
     final FieldsData toAux = new FieldsData();
     toAux.realname = from.realname;
     toAux.name = from.name;
@@ -4359,7 +4288,7 @@ public class Wad extends DefaultHandler {
    *          The array of FieldsData objects to copy.
    * @return The copy array of FieldsData objects.
    */
-  public FieldsData[] copyarray(FieldsData[] from) {
+  private FieldsData[] copyarray(FieldsData[] from) {
     log4j.debug("Starting copyarray: " + from.length);
     if (from == null)
       return null;
@@ -4377,7 +4306,7 @@ public class Wad extends DefaultHandler {
    * @param strFileProperties
    *          The path of the property file to read.
    */
-  public void readProperties(String strFileProperties) {
+  private void readProperties(String strFileProperties) {
     // Read properties file.
     final Properties properties = new Properties();
     try {

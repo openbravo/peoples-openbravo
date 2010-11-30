@@ -34,7 +34,6 @@ public class SearchDomainType extends BaseForeignKeyDomainType {
 
   /**
    * @return the column based on the RefSearch ({@link #setRefSearch(RefSearch)}).
-   * @see org.openbravo.base.model.domaintype.DomainType#getForeignKeyColumn(org.openbravo.base.model.Column)
    */
   public Column getForeignKeyColumn(String columnName) {
     // handles a special case that reference value is not set in a column

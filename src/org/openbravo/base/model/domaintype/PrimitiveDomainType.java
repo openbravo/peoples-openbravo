@@ -45,7 +45,7 @@ public interface PrimitiveDomainType extends DomainType {
   String convertToString(Object value);
 
   /**
-   * Converts a string back to an object value of the primitive type ({@see #getPrimitiveType()})
+   * Converts a string back to an object value of the primitive type ({link #getPrimitiveType()})
    * represented by this DomainType. This method is the opposite of the
    * {@link #convertToString(Object)} method.
    * 

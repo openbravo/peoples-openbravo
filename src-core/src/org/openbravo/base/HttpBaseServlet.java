@@ -388,7 +388,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @param strSql
    *          The SQL statement to prepare.
    * @return PreparedStatement object with the strSql prepared.
-   * @throws Exception
+   * @throws SQLException
    */
   public PreparedStatement getPreparedStatement(Connection conn, String strSql) throws SQLException {
     return (myPool.getPreparedStatement(conn, strSql));
@@ -438,7 +438,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * conn provided.
    * 
    * @return Prepared Statement object requested.
-   * @throws Exception
+   * @throws SQLException
    */
   public Statement getStatement(Connection conn) throws SQLException {
     return (myPool.getStatement(conn));
@@ -662,8 +662,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * Renders a PDF directly into a HttpServletResponse. <b>NOTE:</b> If you use this method the
    * 'loading' pop-up window will not be closed.
    * 
-   * @param strFo
-   * @param out
    * @throws ServletException
    */
   protected void renderFO(String strFo, HttpServletResponse response) throws ServletException {

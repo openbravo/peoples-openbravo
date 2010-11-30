@@ -514,7 +514,6 @@ public class ActivationKey {
   /**
    * Deprecated, use instead {@link ActivationKey#checkOPSLimitations(String)}
    * 
-   * @return
    */
   @Deprecated
   public LicenseRestriction checkOPSLimitations() {
@@ -817,7 +816,7 @@ public class ActivationKey {
    * Checks whether a disabled module can be enabled again. A commercial module cannot be enabled in
    * case its license has expired or the instance is not commercial.
    * 
-   * @param moduleId
+   * @param module
    * @return true in case the module can be enabled
    */
   public boolean isModuleEnableable(Module module) {

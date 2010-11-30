@@ -2241,7 +2241,6 @@ public class TableSQLData implements Serializable {
    * 
    * @param vars
    * @param currPageKey
-   * @return
    * @throws ServletException
    */
   public static int calcAndGetBackendPage(VariablesSecureApp vars, String currPageKey)

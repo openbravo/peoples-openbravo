@@ -73,7 +73,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Constructor
-   *
+   * 
    * @param AD_Client_ID
    *          AD_Client_ID
    */
@@ -88,7 +88,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Load Specific Document Details
-   *
+   * 
    * @return true if loadDocumentType was set
    */
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
@@ -137,7 +137,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Load Invoice Line. 4 amounts AMTTYPE_Payment AMTTYPE_Statement2 AMTTYPE_Charge AMTTYPE_Interest
-   *
+   * 
    * @return DocLine Array
    */
   private DocLine[] loadLines(ConnectionProvider conn) {
@@ -176,7 +176,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Get Source Currency Balance - subtracts line amounts from total - no rounding
-   *
+   * 
    * @return positive amount, if total is bigger than lines
    */
   public BigDecimal getBalance() {
@@ -199,14 +199,14 @@ public class DocBank extends AcctServer {
 
   /**
    * Create Facts (the accounting logic) for CMB.
-   *
+   * 
    * <pre>
    *      BankAsset       DR      CR  (Statement)
    *      BankInTransit   DR      CR              (Payment)
    *      Charge          DR          (Charge)
    *      Interest        DR      CR  (Interest)
    * </pre>
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
@@ -235,11 +235,19 @@ public class DocBank extends AcctServer {
     BigDecimal TrxAmt = null;
     BigDecimal ChargeAmt = null;
     BigDecimal ConvertChargeAmt = null;
+    String strDateAcct = "FirstIteration";
     // BigDecimal InterestAmt = null;
     // Lines
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Bank line = (DocLine_Bank) p_lines[i];
+      if (strDateAcct.equals("FirstIteration"))
+        strDateAcct = line.m_DateAcct;
+      else if (!strDateAcct.equals(line.m_DateAcct)) {
+        strDateAcct = line.m_DateAcct;
+        Fact_Acct_Group_ID = SequenceIdData.getUUID();
+      }
+
       // setC_Period_ID(line.m_DateAcct);
       // BankAsset DR CR (Statement)
       TrxAmt = new BigDecimal(line.m_TrxAmt);
@@ -278,10 +286,9 @@ public class DocBank extends AcctServer {
             line.m_C_Currency_ID, TrxAmt.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
       // Charge DR (Charge)
-      fact.createLine(lineAux, new Account(
-          conn, DocLineBankData.selectChargeAccount(conn, C_BankAccount_ID, as.m_C_AcctSchema_ID)),
-          line.m_C_Currency_ID, ChargeAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
+      fact.createLine(lineAux, new Account(conn, DocLineBankData.selectChargeAccount(conn,
+          C_BankAccount_ID, as.m_C_AcctSchema_ID)), line.m_C_Currency_ID, ChargeAmt.toString(), "",
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       // Interest DR CR (Interest)
       /*
        * if (InterestAmt.signum() < 0)
@@ -294,14 +301,13 @@ public class DocBank extends AcctServer {
        */
       //
       if (ConvertChargeAmt.signum() > 0) // >0 loss
-        fact.createLine(lineAux, getAccount(
-            AcctServer.ACCTTYPE_ConvertChargeLossAmt, as, conn), line.m_C_Currency_ID,
-            line.convertChargeAmt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-      else
-        fact.createLine(lineAux, getAccount(
-            AcctServer.ACCTTYPE_ConvertChargeGainAmt, as, conn), line.m_C_Currency_ID, "",
-            ConvertChargeAmt.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        fact.createLine(lineAux, getAccount(AcctServer.ACCTTYPE_ConvertChargeLossAmt, as, conn),
+            line.m_C_Currency_ID, line.convertChargeAmt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
+      else
+        fact.createLine(lineAux, getAccount(AcctServer.ACCTTYPE_ConvertChargeGainAmt, as, conn),
+            line.m_C_Currency_ID, "", ConvertChargeAmt.negate().toString(), Fact_Acct_Group_ID,
+            nextSeqNo(SeqNo), DocumentType, conn);
 
       log4jDocBank.debug("createTaxCorrection - (NIY)");
     }
@@ -311,7 +317,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Get the account for Accounting Schema
-   *
+   * 
    * @param strcBankstatementlineId
    * @param as
    *          accounting schema
@@ -358,7 +364,7 @@ public class DocBank extends AcctServer {
 
   /**
    * Get Document Confirmation
-   *
+   * 
    * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {

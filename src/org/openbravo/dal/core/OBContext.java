@@ -132,8 +132,8 @@ public class OBContext implements OBNotSingleton {
    * 
    * To restore the previous privileges call the {@link #restorePreviousMode()}.
    * 
-   * @param chekEntityAccess
-   *          Whether entity access should also be checked
+   * @param doOrgClientAccessCheck
+   *          Whether entity access (client+org) should also be checked
    * @see OBContext#restorePreviousMode()
    * @since 2.50MP18
    */

@@ -62,12 +62,10 @@ public class ModuleUtiltiy {
   }
 
   /**
-   * Deprecated use {@link ModuleUtiltiy#orderByDependency(ArrayList)} instead
+   * Deprecated use {@link ModuleUtiltiy#orderByDependency(List)} instead
    * 
    * @param conn
    * @param modules
-   * @return
-   * @throws Exception
    */
   @Deprecated
   public static ArrayList<String> orderByDependency(ConnectionProvider conn,

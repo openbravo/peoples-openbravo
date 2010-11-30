@@ -27,7 +27,7 @@ import org.openbravo.wad.validation.WADValidationResult.WADValidationType;
  * DAL for each compilation.
  * 
  */
-public class WADValidator {
+class WADValidator {
   private String modules;
   private ConnectionProvider conn;
   private String checkAll;
@@ -38,7 +38,7 @@ public class WADValidator {
    * 
    * @param conn
    *          Database ConnectionProvider
-   * @param moduleId
+   * @param modules
    *          Module to check
    */
   public WADValidator(ConnectionProvider conn, String modules, boolean friendlyWarnings) {

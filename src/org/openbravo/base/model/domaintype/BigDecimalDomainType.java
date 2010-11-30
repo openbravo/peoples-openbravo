@@ -31,7 +31,6 @@ public class BigDecimalDomainType extends BasePrimitiveDomainType {
 
   /**
    * @return class of the {@link BigDecimal}
-   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return BigDecimal.class;
@@ -67,11 +66,6 @@ public class BigDecimalDomainType extends BasePrimitiveDomainType {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
-   */
   @Override
   public Object createFromString(String strValue) {
     if (strValue == null || strValue.trim().length() == 0) {
@@ -80,11 +74,6 @@ public class BigDecimalDomainType extends BasePrimitiveDomainType {
     return new BigDecimal(strValue);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
-   */
   @Override
   public String getXMLSchemaType() {
     return "ob:decimal";

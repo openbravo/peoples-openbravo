@@ -41,7 +41,6 @@ public abstract class BaseForeignKeyDomainType extends BaseDomainType implements
   /**
    * @return the refered to column based on the table encoded in the table name of the passed
    *         column. This method also handles exceptional column names in a specific way.
-   * @see org.openbravo.base.model.domaintype.DomainType#getForeignKeyColumn(org.openbravo.base.model.Column)
    */
   public Column getForeignKeyColumn(String columnName) {
 
@@ -111,13 +110,6 @@ public abstract class BaseForeignKeyDomainType extends BaseDomainType implements
     return tableName;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.openbravo.base.model.domaintype.DomainType#checkIsValidValue(org.openbravo.base.model.Property
-   * , java.lang.Object)
-   */
   public void checkIsValidValue(Property property, Object value) throws ValidationException {
     if (value == null) {
       return;
@@ -146,7 +138,7 @@ public abstract class BaseForeignKeyDomainType extends BaseDomainType implements
    * Returns the entity refered to by this foreign key domain type. Note that for TableDir domain
    * types this method always returns null.
    * 
-   * @param the
+   * @param property
    *          property for this domain type, the property is needed because the domain type is
    *          shared by different properties.
    * @return the entity to which this domain type refers, is null in case of TableDir.

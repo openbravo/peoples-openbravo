@@ -40,14 +40,10 @@ import org.openbravo.wad.controls.WADControl;
 import org.openbravo.xmlEngine.XmlEngine;
 
 public class WadUtility {
-  static Logger log4j = Logger.getLogger(WadUtility.class);
-  static final int IMAGE_EDITION_WIDTH = 200;
-  static final int IMAGE_EDITION_HEIGHT = 200;
-  static final int IMAGE_BUTTON_WIDTH = 16;
-  static final int IMAGE_BUTTON_HEIGHT = 16;
-  static String[][] comparations = { { "==", " == " }, { "=", " == " }, { "!", " != " },
+  private static final Logger log4j = Logger.getLogger(WadUtility.class);
+  private static String[][] comparations = { { "==", " == " }, { "=", " == " }, { "!", " != " },
       { "^", " != " }, { "-", " != " } };
-  static String[][] unions = { { "|", " || " }, { "&", " && " } };
+  private static String[][] unions = { { "|", " || " }, { "&", " && " } };
 
   public WadUtility() {
     PropertyConfigurator.configure("log4j.lcf");

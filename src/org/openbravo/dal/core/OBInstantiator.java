@@ -87,7 +87,7 @@ public class OBInstantiator implements Instantiator {
   }
 
   /**
-   * @return returns true if the object is an instance of the Entity handled by the OBInstantiator.
+   * Returns true if the object is an instance of the Entity handled by the OBInstantiator.
    * 
    * @param object
    *          the object to compare with the Entity managed here

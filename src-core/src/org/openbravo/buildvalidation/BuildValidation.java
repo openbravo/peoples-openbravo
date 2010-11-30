@@ -37,7 +37,7 @@ public abstract class BuildValidation {
    * provided, the build will stop, and the messages will be shown to the user. If an empty list is
    * provided, the validation will be considered succesful, and the build will continue
    * 
-   * @Return A list of error Strings
+   * @return A list of error Strings
    */
   public abstract List<String> execute();
 

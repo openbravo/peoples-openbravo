@@ -35,17 +35,11 @@ public class TimestampDomainType extends BasePrimitiveDomainType {
 
   /**
    * @return class of the {@link Timestamp}
-   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return Timestamp.class;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#convertToString(java.lang.Object)
-   */
   @Override
   public synchronized String convertToString(Object value) {
     if (value == null) {
@@ -54,11 +48,6 @@ public class TimestampDomainType extends BasePrimitiveDomainType {
     return xmlDateFormat.format(value);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
-   */
   @Override
   public synchronized Object createFromString(String strValue) {
     try {
@@ -71,11 +60,6 @@ public class TimestampDomainType extends BasePrimitiveDomainType {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
-   */
   @Override
   public String getXMLSchemaType() {
     return "ob:dateTime";

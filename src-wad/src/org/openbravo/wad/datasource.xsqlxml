@@ -262,16 +262,6 @@ package="org.openbravo.wad.Window">
     <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
   </SqlMethod>
 
-  <SqlMethod name="deleteTransactional" connection="true" type="preparedStatement" return="rowCount">
-    <Sql>&#60;&#33;[CDATA[
-        DELETE FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP>
-        WHERE <PARAMETER_TMP id="key">key</PARAMETER_TMP> = ? 
-        <PARAMETER_TMP id="parent">         AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </PARAMETER_TMP>
-    ]]&#62;</Sql>
-    <Parameter name="param1"/>
-    <PARAMETER_TMP id="parent">    <Parameter name="param1" id="paramKeyParent"/></PARAMETER_TMP>
-  </SqlMethod>
-  
   <SqlMethod name="selectOrg" type="preparedStatement" return="string">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql>&#60;&#33;[CDATA[ 

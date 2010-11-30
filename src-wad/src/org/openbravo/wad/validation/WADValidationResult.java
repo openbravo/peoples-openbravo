@@ -30,8 +30,8 @@ import org.apache.log4j.Logger;
  * Contains information of all the warnings and errors detected during the WAD validation
  * 
  */
-public class WADValidationResult {
-  Logger log = Logger.getLogger(WADValidationResult.class);
+class WADValidationResult {
+  private static final Logger log = Logger.getLogger(WADValidationResult.class);
 
   /**
    * Types of possible WAD validations, they have an identifier and a description
@@ -80,7 +80,7 @@ public class WADValidationResult {
    * 
    * @param validationType
    *          validation type to add the error to
-   * @param error
+   * @param warning
    *          error message
    */
   public void addError(WADValidationType validationType, String warning) {
@@ -105,7 +105,6 @@ public class WADValidationResult {
   /**
    * Returns true in case the validation contain errors
    * 
-   * @return
    */
   public boolean hasErrors() {
     return errors.size() > 0;

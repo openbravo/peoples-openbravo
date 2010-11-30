@@ -130,7 +130,7 @@ public class DalUtil {
    * For example the property: organization.name and entity: Product will result in the
    * Organization.name property to be returned.
    * 
-   * @param entity
+   * @param bob
    *          the start entity for the property path
    * @param propertyPath
    *          the property path, dot-separated property names

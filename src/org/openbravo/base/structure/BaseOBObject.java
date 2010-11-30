@@ -150,7 +150,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * @param value
    *          the value being set
    * @throws OBSecurityException
-   *           , OBValidationException
+   *           , ValidationException
    */
   public void set(String propName, Object value) {
     final Property p = getEntity().getProperty(propName);
@@ -218,7 +218,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   /**
    * Validates the content of this object using the property validators.
    * 
-   * @throws OBValidationException
+   * @throws ValidationException
    */
   public void validate() {
     getEntity().validate(this);

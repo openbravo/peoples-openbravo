@@ -16,82 +16,17 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="StaticCommunityBranding-MyOB.css"></link>
+<script language="JavaScript" src="StaticCommunityBranding-MyOB.js" type="text/javascript"></script>
 
-<style type="text/css">
-<!--
-p {} 
-h1 {font-size: 16px; font-family: arial, sans-serif;} 
-a:link {color: #58A618; text-decoration: underline;}
-a:visited {color: #58A618; text-decoration: underline;}
-a:hover {color: #000000; text-decoration: underline;}
-
-.LinkCont {
-  font-size: 12px;
-  font-family: arial, sans-serif;
-  line-height: 18px;
-  _line-height: 10px;
-  margin-top: -8px;
-  margin-left: 15px;
-}
-
-.DescriptionCont {
-  font-size: 12px;
-  font-family: arial, sans-serif;
-  line-height: 18px;
-  margin-top: -8px;
-  margin-left: 15px;
-  margin-right: 10px;
-}
--->
-</style>
 <script type="text/javascript">
-  function onResizeDo() {
-    var LinksCont = document.getElementById('LinksCont');
-    var TextCont = document.getElementById('TextCont');
-    var LogoCont = document.getElementById('LogoCont');
-    var LogoMiddleCont = document.getElementById('LogoMiddleCont');
-    var LogoLeftCont = document.getElementById('LogoLeftCont');
-    var LogoRightCont = document.getElementById('LogoRightCont');
-    var body = document.getElementsByTagName('BODY');
-    var bodyHeight = body[0].clientHeight;
-    var bodyWidth = body[0].clientWidth;
-    LinksCont.style.display = '';
-    TextCont.style.display = '';
-    LogoCont.style.display = '';
-    TextCont.style.height = '';
-    var TextCont_style_width = bodyWidth - LinksCont.clientWidth - 30;
-    if (TextCont_style_width < 0) {
-      TextCont_style_width = 0;
-    }
-    TextCont.style.width = TextCont_style_width
-    if (TextCont.clientHeight > 147) {
-      LinksCont.style.height = TextCont.clientHeight;
-    } else {
-      TextCont.style.height = 148;
-    }
-    var LogoCont_style_width = LinksCont.clientWidth + TextCont.clientWidth + 10;
-    if (LogoCont_style_width < 0) {
-      LogoCont_style_width = 0;
-    }
-    LogoCont.style.width = LogoCont_style_width;
-    var LogoMiddleCont_style_width = LogoCont.clientWidth - LogoLeftCont.clientWidth - LogoRightCont.clientWidth - 23;
-    if (LogoMiddleCont_style_width < 0) {
-      LogoMiddleCont_style_width = 0;
-    }
-    LogoMiddleCont.style.width = LogoMiddleCont_style_width;
-
-    if (LogoMiddleCont.clientWidth > 180) {
-      document.getElementById('LogoMiddleText').style.display = '';
-    } else {
-      document.getElementById('LogoMiddleText').style.display = 'none';
-    }
-  }
-
   function onLoadDo() {
     onResizeDo();
     onResizeDo();
+    setTimeout("onResizeDo()", 10);
   }
 </script>
 </head>
@@ -99,8 +34,10 @@ a:hover {color: #000000; text-decoration: underline;}
 
 <div style="background-color: #e9e9e9; overflow: hidden; padding: 0; margin: 0;">
 
-    <div style="position: relative; float: left; width: 141px; height: 143px; background-color: #f8f8f8; -moz-border-radius: 10px; border-radius: 10px; margin: 8px 3px 8px 8px; display: none;" id="LinksCont">
-      <h1 style="border-bottom: 1px dotted rgb(88, 166, 24); margin-left: 15px; margin-top: 10px; margin-right: 5px;">Links</h1>
+  <div style="height: 162px; overflow: hidden;">
+
+    <div style="position: relative; float: left; width: 141px; height: 146px; background-color: #f8f8f8; -moz-border-radius: 10px; border-radius: 10px; margin: 8px 3px 8px 8px; display: none;" id="LinksCont">
+      <h1 style="border-bottom: 1px dotted rgb(88, 166, 24); margin: 10px 5px 13px 15px;">Links</h1>
       <p class="LinkCont"><a href="http://www.openbravo.com/" target="_blank">Openbravo.com</a></p>
       <p class="LinkCont"><a href="http://exchange.openbravo.com/" target="_blank">Exchange</a></p>
       <p class="LinkCont"><a href="http://planet.openbravo.com/" target="_blank">Planet</a></p>
@@ -108,33 +45,33 @@ a:hover {color: #000000; text-decoration: underline;}
       <p class="LinkCont"><a href="http://wiki.openbravo.com/" target="_blank">Wiki</a></p>
     </div>
 
-
     <div style="width: 100px; position: relative; float: left; background-color: #f8f8f8; -moz-border-radius: 10px; border-radius: 10px; margin: 8px 8px 3px 7px; display: none;" id="TextCont">
-      <h1 style="border-bottom: 1px dotted rgb(88, 166, 24); margin-left: 15px; margin-top: 10px; margin-right: 5px;">Extend your ERP<br>
-      </h1>
-      <p class="DescriptionCont">Discover the power of the Openbravo ecosystem
-       and extend your system with <a href="http://wiki.openbravo.com/wiki/ERP/2.50/Configuration_Manual/Personalizing_Openbravo_ERP#Installing_a_module_from_the_Central_Repository" target="_blank">modules</a>. For more information please <a href="http://www.openbravo.com/form/customer/index.php?source=Form - Community Edition" target="_blank">contact us</a>.
-      </p>
+      <div style="height: 35px; overflow: hidden;"><h1 style="border-bottom: 1px dotted rgb(88, 166, 24); margin: 10px 5px 5px 15px;">Extend your ERP<br>
+      </h1></div>
+      <div style="overflow: hidden; margin-bottom: 4px;" id="TextBody">
+        <p class="DescriptionCont">Discover the power of the Openbravo ecosystem
+         and extend your system with <a href="http://wiki.openbravo.com/wiki/ERP/2.50/Configuration_Manual/Personalizing_Openbravo_ERP#Installing_a_module_from_the_Central_Repository" target="_blank">modules</a>. For more information please <a href="http://www.openbravo.com/form/customer/index.php?source=Form - Community Edition" target="_blank">contact us</a>.
+        </p>
+      </div>
+      <div style="height: 20px; display: none;" id="TextScrollCont">
+        <div class="TextScrollUp TextScrollUp_normal" onmousedown="scrollButton(this, 'onmousedown');" onmouseup="scrollButton(this, 'onmouseup');" onmouseout="scrollButton(this, 'onmouseout');" onmouseover="scrollButton(this, 'onmouseover');" id="TextScrollUp"></div>
+        <div style="position: relative; float: left; height: 19px; width: 2px; -moz-border-radius-bottomleft: 10px; border-bottom-left-radius: 10px;" id="TextScrollMiddle"></div>
+        <div class="TextScrollDown TextScrollDown_normal"  onmousedown="scrollButton(this, 'onmousedown');" onmouseup="scrollButton(this, 'onmouseup');" onmouseout="scrollButton(this, 'onmouseout');" onmouseover="scrollButton(this, 'onmouseover');" id="TextScrollDown"></div>
+      </div>
     </div>
 
+  </div>
 
-  <br style="clear: both;">
-
-
-  <div style="float: left; height: 145px; background-color: #f8f8f8; -moz-border-radius: 10px; border-radius: 10px; margin: 3px 6px 6px 8px; display: none;" id="LogoCont">
+  <div style="float: left; height: 145px; background-color: #f8f8f8; -moz-border-radius: 10px; border-radius: 10px; margin: 3px 6px 3px 8px; display: none;" id="LogoCont">
     <h1 style="margin-left: 15px; margin-top: 10px; margin-right: 5px;">Why upgrade to <a href="http://www.openbravo.com/product/erp/get-basic/" target="_blank">Basic Edition?</a></h1>
-    
-
-<div onclick="window.open('http://www.openbravo.com/product/erp/get-basic/'); return false;" style="cursor: pointer; height: 92px; overflow: hidden;">
+    <div onclick="window.open('http://www.openbravo.com/product/erp/get-basic/');return false;" style="cursor: pointer; height: 92px; overflow: hidden;">
       <div style="float: left; width: 270px; height: 92px; background-color: #E6E6E6; -moz-border-radius-topleft: 10px; -moz-border-radius-bottomleft: 10px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; border-top: 1px solid #D8D8D8; border-left: 1px solid #D8D8D8; border-bottom: 1px solid #D8D8D8; margin-left: 10px;" id="LogoLeftCont">
         <img src="img/LogoLeft_Basic.png" style="border: 0; margin: 6px 0px 0px 8px;" />
       </div>
-
-
-<div style="float: left; height: 92px; width: 10px; background-color: #E6E6E6; border-top: 1px solid #D8D8D8; border-bottom: 1px solid #D8D8D8; font-size: 35px; font-weight: bold; text-align: center; font-family: arial, sans-serif; color: #959595" id="LogoMiddleCont"><div style="margin-top: 25px; display: none;" id="LogoMiddleText">Get Basic!</div></div>
-      
-
-<div style="float: left; width: 66px; height: 92px; background-color: #E6E6E6; -moz-border-radius-topright: 10px; -moz-border-radius-bottomright: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-top: 1px solid #D8D8D8; border-right: 1px solid #D8D8D8; border-bottom: 1px solid #D8D8D8;" id="LogoRightCont">
+      <div style="float: left; height: 92px; width: 10px; background-color: #E6E6E6; border-top: 1px solid #D8D8D8; border-bottom: 1px solid #D8D8D8; font-size: 35px; font-weight: bold; text-align: center; font-family: arial, sans-serif; color: #959595" id="LogoMiddleCont">
+        <div style="margin-top: 25px; display: none;" id="LogoMiddleText">Get Basic!</div>
+      </div>
+      <div style="float: left; width: 66px; height: 92px; background-color: #E6E6E6; -moz-border-radius-topright: 10px; -moz-border-radius-bottomright: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-top: 1px solid #D8D8D8; border-right: 1px solid #D8D8D8; border-bottom: 1px solid #D8D8D8;" id="LogoRightCont">
         <div style="width: 65px; height: 90px;">
           <img src="img/LogoRight.png" style="border: 0; margin: 0px 0px 0px 2px;" />
         <div>
@@ -143,4 +80,5 @@ a:hover {color: #000000; text-decoration: underline;}
   </div>
 </div>
 
-</body></html>
+</body>
+</html>

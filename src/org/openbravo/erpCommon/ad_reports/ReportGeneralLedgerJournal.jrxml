@@ -167,6 +167,7 @@
 	<parameter name="Subtitle" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<parameter name="PageNo" isForPrompting="false" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT IDENTIFIER, DATEACCT, VALUE, NAME, ID, AD_TABLE_ID, DOCBASETYPE, '' AS TOTAL, '' AS DESCRIPTION,
 (CASE AMTACCTDR WHEN 0 THEN NULL ELSE AMTACCTDR END) AS AMTACCTDR, (CASE AMTACCTCR WHEN 0 THEN NULL ELSE AMTACCTCR END) AS AMTACCTCR
 FROM 
@@ -381,6 +382,22 @@ ORDER BY DATEACCT, IDENTIFIER]]></queryString>
 		</title>
 		<pageHeader>
 			<band height="16"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="200"
+						height="16"
+						key="staticText-13">
+							<printWhenExpression><![CDATA[new Boolean($V{JournalEntry_COUNT}.intValue()!=0)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font/>
+					</textElement>
+				<text><![CDATA[continued...]]></text>
+				</staticText>
 			</band>
 		</pageHeader>
 		<columnHeader>
@@ -448,7 +465,50 @@ ORDER BY DATEACCT, IDENTIFIER]]></queryString>
 			</band>
 		</columnFooter>
 		<pageFooter>
-			<band height="0"  isSplitAllowed="true" >
+			<band height="20"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="200"
+						y="0"
+						width="200"
+						height="16"
+						key="staticText-12">
+							<printWhenExpression><![CDATA[new Boolean($V{JournalEntry_COUNT}.intValue()==0)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[please turn over]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="450"
+						y="0"
+						width="41"
+						height="18"
+						key="staticText-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[Page]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="491"
+						y="0"
+						width="34"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[new java.lang.Integer(($V{PAGE_NUMBER}.intValue()) +(Integer.parseInt($P{PageNo}))-(1) )]]></textFieldExpression>
+				</textField>
 			</band>
 		</pageFooter>
 		<summary>

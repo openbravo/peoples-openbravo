@@ -127,14 +127,22 @@ BEGIN
         
         -- Action: Close if not permanently closed
       ELSIF(p_PeriodAction='C') THEN
-        SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count FROM C_PERIOD, C_PERIODCONTROL, C_YEAR WHERE
-          C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID AND C_PERIODCONTROL.PERIODSTATUS IN ('N','O') AND C_YEAR.YEAR<p_YearName
-          AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID AND C_YEAR.C_CALENDAR_ID = p_Calendar;
-        IF (v_Count>=1) THEN
-          RAISE_APPLICATION_ERROR(-20000, '@YearNotClose@');
-        END IF;
         IF (p_IsRecursive='Y') THEN
-         FOR Cur_Document IN
+          SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count
+          FROM C_PERIOD, C_PERIODCONTROL, C_YEAR
+          WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID
+            AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID
+            AND C_PERIODCONTROL.AD_Org_ID IN (SELECT AD_Org_ID
+                                              FROM AD_Org 
+                                              WHERE AD_ISORGINCLUDED(ad_org.ad_org_id, p_Organization, ad_org.ad_client_id)<>-1)
+            AND C_PERIODCONTROL.PERIODSTATUS IN ('N','O')
+            AND C_YEAR.YEAR<p_YearName
+            AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID
+            AND C_YEAR.C_CALENDAR_ID = p_Calendar;
+          IF (v_Count>=1) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@YearNotClose@');
+          END IF;
+          FOR Cur_Document IN
             (SELECT C_PERIODCONTROL_ID
               FROM C_PERIODCONTROL, C_PERIOD 
               WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID 
@@ -153,6 +161,18 @@ BEGIN
               AND PeriodStatus<>'P';
           END LOOP;
        ELSIF (p_IsRecursive='N') THEN
+         SELECT COUNT(DISTINCT C_YEAR.YEAR) INTO v_Count
+         FROM C_PERIOD, C_PERIODCONTROL, C_YEAR
+         WHERE C_PERIODCONTROL.C_PERIOD_ID=C_PERIOD.C_PERIOD_ID
+           AND C_PERIOD.C_YEAR_ID=C_YEAR.C_YEAR_ID
+           AND C_PERIODCONTROL.AD_Org_ID=p_Organization
+           AND C_PERIODCONTROL.PERIODSTATUS IN ('N','O')
+           AND C_YEAR.YEAR<p_YearName
+           AND C_PERIODCONTROL.AD_CLIENT_ID = v_AD_Client_ID
+           AND C_YEAR.C_CALENDAR_ID = p_Calendar;
+         IF (v_Count>=1) THEN
+           RAISE_APPLICATION_ERROR(-20000, '@YearNotClose@');
+         END IF;
         FOR Cur_Document IN
             (SELECT C_PERIODCONTROL_ID
               FROM C_PERIODCONTROL, C_PERIOD 

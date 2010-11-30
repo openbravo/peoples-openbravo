@@ -44,6 +44,7 @@
   <PARAMETER id="inpRecord" name="paramRecord" attribute="value" default=""/>
   <PARAMETER id="inpTable" name="paramTable" attribute="value" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
+  <PARAMETER id="paramPageNo" name="inpPageNo" default=""/>
 
   <PARAMETER id="parameterShowClosing" name="constantShowClosing" default="1"/>
   <PARAMETER id="paramShowClosing" name="showClosing" boolean="checked" withId="parameterShowClosing" default="0"/>

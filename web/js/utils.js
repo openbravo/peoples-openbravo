@@ -4461,8 +4461,12 @@ function resizeAreaInfo(isOnResize) {
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
-  client_middle.style.width = w;
-  client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  var client_middleWidth = w;
+  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  if (client_middleWidth < 0) { client_middleWidth = 0; }
+  if (client_middleHeight < 170) { client_middleHeight = 170; } // To avoid middle area (usually a grid) disappear completly in small windows.
+  client_middle.style.height = client_middleHeight;
+  client_middle.style.width = client_middleWidth;
 
   try {
     if (document.getElementById("grid_toptext")) {
@@ -4490,9 +4494,9 @@ function resizeAreaCreateFrom(isOnResize) {
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
   var client_middleWidth = w - 0;
-  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:1);
   if (client_middleWidth < 0) { client_middleWidth = 0; }
-  if (client_middleHeight < 0) { client_middleHeight = 0; }
+  if (client_middleHeight < 80) { client_middleHeight = 80; } // To avoid middle area (usually a grid) disappear completly in small windows.
   client_middle.style.height = client_middleHeight;
   client_middle.style.width = client_middleWidth;
   client_middle.style.display = "";

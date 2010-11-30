@@ -452,7 +452,6 @@ public class VersionUtility {
      * 
      * @param ver1
      * @param ver2
-     * @return
      */
     public int compareMajorVersions(String ver1, String ver2) {
       return versionCompare(ver1, ver2, true);

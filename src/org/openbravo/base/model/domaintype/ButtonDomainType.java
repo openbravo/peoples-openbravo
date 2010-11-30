@@ -29,17 +29,11 @@ public class ButtonDomainType extends BasePrimitiveDomainType {
 
   /**
    * @return class of the {@link Boolean}
-   * @see org.openbravo.base.model.domaintype.DomainType#getPrimitiveType()
    */
   public Class<?> getPrimitiveType() {
     return Boolean.class;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#createFromString(java.lang.String)
-   */
   @Override
   public Object createFromString(String strValue) {
     if (strValue == null || strValue.trim().length() == 0) {
@@ -48,11 +42,6 @@ public class ButtonDomainType extends BasePrimitiveDomainType {
     return new Boolean(strValue);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getXMLSchemaType()
-   */
   @Override
   public String getXMLSchemaType() {
     return "ob:boolean";

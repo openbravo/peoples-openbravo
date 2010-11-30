@@ -347,7 +347,7 @@ public class InitialSetupUtility {
    *          if null, role inserted for organization with id=0
    * @param name
    *          name of the role
-   * @param strUserLevel
+   * @param strUserLevelProvided
    *          if null, user level " CO" will be set to the new role
    * @return Role object for new element
    */
@@ -1412,7 +1412,6 @@ public class InitialSetupUtility {
    * @param strModules
    *          relation of ids (in a format so that can be included in a "in" statement of a "where"
    *          clause
-   * @return
    * @throws Exception
    */
   public static List<Module> getRDModules(String strModules) throws Exception {
@@ -1426,7 +1425,7 @@ public class InitialSetupUtility {
   }
 
   /**
-   * @deprecated use {@link #getDataSets(Module module, List<String> accessLevel)}
+   * @deprecated use {@link #getDataSets(Module, List)}
    * 
    * @param module
    * @param accessLevel

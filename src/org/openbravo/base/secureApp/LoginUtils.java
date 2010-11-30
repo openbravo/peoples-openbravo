@@ -11,7 +11,6 @@
  */
 package org.openbravo.base.secureApp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -129,10 +128,9 @@ public class LoginUtils {
 
     OBContext.setAdminMode();
     try {
-      List parameters = new ArrayList();
-      parameters.add(strRol);
-      OBQuery query = OBDal.getInstance().createQuery(RoleOrganization.class,
-          "WHERE role.id = ? ORDER BY client.id, organization.id", parameters);
+      OBQuery<RoleOrganization> query = OBDal.getInstance().createQuery(RoleOrganization.class,
+          "WHERE role.id = :roleId ORDER BY client.id, organization.id");
+      query.setNamedParameter("roleId", strRol);
       query.setFilterOnReadableClients(false);
       query.setFilterOnReadableOrganization(false);
       return query.list();
@@ -142,33 +140,33 @@ public class LoginUtils {
   }
 
   public static String buildClientList(List<RoleOrganization> roleorglist) {
-      StringBuilder clientlist = new StringBuilder();
-      String currentclient = null;
-      for (RoleOrganization roleorg : roleorglist) {
-        if (currentclient == null || !currentclient.equals(roleorg.getClient().getId())) {
-          currentclient = roleorg.getClient().getId();
-          if (clientlist.length() > 0) {
-            clientlist.append(',');
-          }
-          clientlist.append('\'');
-          clientlist.append(roleorg.getClient().getId());
-          clientlist.append('\'');
+    StringBuilder clientlist = new StringBuilder();
+    String currentclient = null;
+    for (RoleOrganization roleorg : roleorglist) {
+      if (currentclient == null || !currentclient.equals(roleorg.getClient().getId())) {
+        currentclient = roleorg.getClient().getId();
+        if (clientlist.length() > 0) {
+          clientlist.append(',');
         }
+        clientlist.append('\'');
+        clientlist.append(roleorg.getClient().getId());
+        clientlist.append('\'');
       }
-      return clientlist.toString();
+    }
+    return clientlist.toString();
   }
 
   public static String buildOrgList(List<RoleOrganization> roleorglist) {
-      StringBuilder orglist = new StringBuilder();
-      for (RoleOrganization roleorg : roleorglist) {
-        if (orglist.length() > 0) {
-          orglist.append(',');
-        }
-        orglist.append('\'');
-        orglist.append(roleorg.getOrganization().getId());
-        orglist.append('\'');
+    StringBuilder orglist = new StringBuilder();
+    for (RoleOrganization roleorg : roleorglist) {
+      if (orglist.length() > 0) {
+        orglist.append(',');
       }
-      return orglist.toString();
+      orglist.append('\'');
+      orglist.append(roleorg.getOrganization().getId());
+      orglist.append('\'');
+    }
+    return orglist.toString();
   }
 
   public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars,

@@ -60,8 +60,9 @@ public class XMLTypeConverter implements OBSingleton {
   private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
 
   /**
-   * @return the String format of a {@link Date}, the standard xml format is used:
-   *         yyyy-MM-dd'T'HH:mm:ss.S'Z'
+   * Returns the String format of a {@link Date}, the standard xml format is used:
+   * yyyy-MM-dd'T'HH:mm:ss.S'Z'
+   * 
    * @param dt
    *          the Date to format
    * @return the String representation of the Date in xml format

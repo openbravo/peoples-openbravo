@@ -98,7 +98,7 @@ function windowSearch(strPage, strHeight, strWidth, strTop, strLeft, strWindow, 
   
   if (navigator.appName.indexOf("Netscape"))
     complementsNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
-  var complements = complementsNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=0, scrollbars=1, status=0, toolbar=0, titlebar=0";
+  var complements = complementsNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=1, scrollbars=1, status=0, toolbar=0, titlebar=0";
   winSelector = window.open(strPage + ((auxField=="")?"":"?" + auxField), strWindow, complements);
   if (winSelector!=null) {
     /*if (hidden) window.focus();  //Useless since window.focus() after window.open it doesn't run in most browsers. Also in case of selectors with a non-existing search value can open the popup in the background in FF3.6
@@ -379,10 +379,17 @@ function disableEvents() {
   hasCloseWindowSearch = false;
 }
 
-function infoSelectFilters(params) {
+function infoSelectFilters(params, type) {
+    if (!type) {
+      type = 'Search';
+    }
     setGridFilters(params);
     updateGridDataAfterFilter();
-    dijit.byId('grid').requestParams["newFilter"] = "0";
+    if (type === 'Search') {
+      dijit.byId('grid').requestParams["newFilter"] = "0";
+    } else if (type === 'Save') {
+      dijit.byId('grid').requestParams["newFilter"] = "1";
+    }
     return true;
 }
 
@@ -472,7 +479,10 @@ function depurarSelector_validateSelector_wrapper(action) {
    return true;
  }
  
- function setFilters() {
+ function setFilters(type) {
+   if (!type) {
+     type = 'Search';
+   }
   	var frm = document.forms[0];
   	var paramsData = new Array();
   	var count = 0;
@@ -498,7 +508,7 @@ function depurarSelector_validateSelector_wrapper(action) {
         paramsData[count++] = new Array(selects[i].name, selects[i].options[selects[i].selectedIndex].value);
       };
     }
-  	infoSelectFilters(paramsData);
+  	infoSelectFilters(paramsData, type);
   }
   
 function calculateNumRows() {

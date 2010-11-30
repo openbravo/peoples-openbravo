@@ -59,7 +59,7 @@ public class RefList extends ModelObject {
   }
 
   /**
-   * @deprecated, functionality is now implemented in {@link #setReference(Reference)}
+   * @deprecated functionality is now implemented in {@link #setReference(Reference)}
    */
   public void setAllowedValue() {
   }

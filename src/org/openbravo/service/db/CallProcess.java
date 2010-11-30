@@ -88,7 +88,7 @@ public class CallProcess {
     return call(processCriteria.list().get(0), recordID, parameters);
   }
 
-/**
+  /**
    * Calls a process. The recordID and parameters can be null. Parameters are translated into
    * {@link Parameter} instances.
    * 
@@ -99,7 +99,8 @@ public class CallProcess {
    *          {@link ProcessInstance#getRecordID()}
    * @param parameters
    *          are translated into process parameters, supports only string parameters, for support
-   *          of other parameters see the next method: {@link #callProcess(org.openbravo.model.ad.ui.Process, String, Map)
+   *          of other parameters see the next method:
+   *          {@link #callProcess(org.openbravo.model.ad.ui.Process, String, Map)}
    * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
    *         {@link ProcessInstance#getErrorMsg()})
    */

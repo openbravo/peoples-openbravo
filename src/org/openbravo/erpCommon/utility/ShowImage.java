@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.utility;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,12 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 public class ShowImage extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
+
+  @Override
+  public void init(ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
 
   /**
    * Receiving an id parameter it looks in database for the image with that id and displays it
