@@ -212,47 +212,57 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
             continue;
           }
 
-          String strXml = Utility.fileToString(datasetFile.getPath());
-          ImportResult myResult = myData.importDataFromXML((Client) OBDal.getInstance().get(
-              Client.class, vars.getClient()), (Organization) OBDal.getInstance().get(
-              Organization.class, strOrganization), strXml, (Module) OBDal.getInstance().get(
-              Module.class, data[j].adModuleId));
-          m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
-              .append(SALTO_LINEA);
-          if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
-              && !myResult.getLogMessages().equals("null")) {
-            m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
-            m_info.append(SALTO_LINEA).append(replaceNL(myResult.getLogMessages())).append(
-                SALTO_LINEA);
-          }
-          if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
-              && !myResult.getWarningMessages().equals("null")) {
-            m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
-            m_info.append(SALTO_LINEA).append(replaceNL(myResult.getWarningMessages())).append(
-                SALTO_LINEA);
-          }
-          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-              && !myResult.getErrorMessages().equals("null")) {
-            m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-            m_info.append(SALTO_LINEA).append(replaceNL(myResult.getErrorMessages())).append(
-                SALTO_LINEA);
-          }
-          if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-              && !myResult.getErrorMessages().equals("null"))
-            strError = strError.append(myResult.getErrorMessages());
-          if (!strError.toString().equals(""))
-            return strError.toString();
-          else {
-            if (UpdateReferenceDataData.selectRegister(this, data[j].adModuleId, strOrganization)
-                .equals("0"))
-              InitialOrgSetupData.insertOrgModule(this, vars.getClient(), strOrganization, vars
-                  .getUser(), data[j].adModuleId, data[j].version);
-            else
-              UpdateReferenceDataData.updateOrgModule(this, data[j].version, vars.getUser(), vars
-                  .getClient(), strOrganization, data[j].adModuleId);
+          if (UpdateReferenceDataData.existsOrgModule(this, vars.getClient(), strOrganization,
+              data[j].adModuleId, data[j].version).equals("0")) {
+            // Not installed previously
+            String strXml = Utility.fileToString(datasetFile.getPath());
+            ImportResult myResult = myData.importDataFromXML((Client) OBDal.getInstance().get(
+                Client.class, vars.getClient()), (Organization) OBDal.getInstance().get(
+                Organization.class, strOrganization), strXml, (Module) OBDal.getInstance().get(
+                Module.class, data[j].adModuleId));
+            m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+                .append(SALTO_LINEA);
+            if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
+                && !myResult.getLogMessages().equals("null")) {
+              m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getLogMessages())).append(
+                  SALTO_LINEA);
+            }
+            if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
+                && !myResult.getWarningMessages().equals("null")) {
+              m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getWarningMessages())).append(
+                  SALTO_LINEA);
+            }
+            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+                && !myResult.getErrorMessages().equals("null")) {
+              m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getErrorMessages())).append(
+                  SALTO_LINEA);
+            }
+            if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+                && !myResult.getErrorMessages().equals("null"))
+              strError = strError.append(myResult.getErrorMessages());
+            if (!strError.toString().equals(""))
+              return strError.toString();
+            else {
+              if (UpdateReferenceDataData.selectRegister(this, data[j].adModuleId, strOrganization)
+                  .equals("0"))
+                InitialOrgSetupData.insertOrgModule(this, vars.getClient(), strOrganization, vars
+                    .getUser(), data[j].adModuleId, data[j].version);
+              else
+                UpdateReferenceDataData.updateOrgModule(this, data[j].version, vars.getUser(), vars
+                    .getClient(), strOrganization, data[j].adModuleId);
+              m_info.append(SALTO_LINEA).append(
+                  Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage()))
+                  .append(SALTO_LINEA);
+            }
+          } else {
+            m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+                .append(SALTO_LINEA);
             m_info.append(SALTO_LINEA).append(
-                Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(
-                SALTO_LINEA);
+                Utility.messageBD(this, "CreateReferenceDataAlreadyCreated", vars.getLanguage()))
+                .append(SALTO_LINEA);
           }
         }
         HashMap<String, String> checksums = new HashMap<String, String>();
