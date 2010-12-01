@@ -100,13 +100,13 @@ function onResizeDo() {
   }
   LogoMiddleCont.style.width = LogoMiddleCont_style_width;
 
-  if (LogoMiddleCont.clientWidth > 180) {
+  var minimumLogoMiddleContWidth = (document.getElementById('LogoMiddleText').innerHTML.length * 13) + 20;
+  if (LogoMiddleCont.clientWidth > minimumLogoMiddleContWidth) {
     document.getElementById('LogoMiddleText').style.display = '';
   } else {
     document.getElementById('LogoMiddleText').style.display = 'none';
   }
 }
-
 var step = 1;
 var timerDown;
 var timerUp;
