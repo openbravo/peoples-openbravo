@@ -13,7 +13,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP  Solution
   * The Initial Developer of the Original Code is Jorg Janke and ComPiere, Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
@@ -29,20 +29,28 @@
   * Title: Copy One Tab content (i.e. Fields) to another
   * Description:
   ************************************************************************/
-  -- Logistic
-  v_ResultStr VARCHAR2(2000):='';
-  v_Message VARCHAR2(2000):='';
-  v_Record_ID VARCHAR2(32);
-  v_AD_Module_ID VARCHAR2(32);
-  -- Parameter
-  TYPE RECORD IS REF CURSOR;
+    -- Logistic
+    v_ResultStr VARCHAR2(2000):='';
+    v_Message VARCHAR2(2000):='';
+    v_Record_ID VARCHAR2(32);
+    v_dest_ad_module_id VARCHAR2(32);
+    v_src_ad_module_id VARCHAR2(32);
+    v_dest_ad_module_lang VARCHAR(6);
+    v_src_ad_module_lang VARCHAR(6);
+    -- Parameter
+    TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
     v_AD_Tab_ID VARCHAR2(32);
     v_NoOfFields NUMBER:=0;
-    v_NextNo VARCHAR2(32);
+    v_trl_count NUMBER;
+    v_NextNo_F VARCHAR2(32);
     -- Copy
     Cur_Fields RECORD;
+    v_name VARCHAR(2000);
+    Row_Src_Field AD_Field%ROWTYPE;
+    Row_Dest_Field_Trl AD_Field_Trl%ROWTYPE;
+    
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -74,24 +82,46 @@
     -- Record_ID is the Tab_ID to copy to
     v_ResultStr:='Copying';
     
-    --Insert fields in the same module as the tab
+    -- Get source module id
     SELECT AD_Module_ID
-      INTO v_AD_Module_ID
+      INTO v_src_ad_module_id
+      FROM AD_Tab
+     WHERE AD_Tab_ID = v_AD_Tab_ID;
+
+    -- Get destination module id
+    SELECT AD_Module_ID
+      INTO v_dest_ad_module_id
       FROM AD_Tab
      WHERE AD_Tab_ID = v_Record_ID;
+
+    -- Get module's langs 
+    SELECT AD_Language INTO v_dest_ad_module_lang FROM AD_MODULE WHERE AD_Module_Id=v_dest_ad_module_id;
+    SELECT AD_Language INTO v_src_ad_module_lang FROM AD_MODULE WHERE AD_Module_Id=v_src_ad_module_id;
+     
      
     FOR Cur_Fields IN
       (SELECT *  FROM AD_Field  WHERE AD_Tab_ID=v_AD_Tab_ID)
     LOOP
-      -- Get next no
-      AD_Sequence_Next('AD_Field', Cur_Fields.AD_Client_ID, v_NextNo) ;
-      -- Insert
+
+      -- ------------------------------------------------------------------
+      -- -----------------  AD_Window_Copy has copied code ----------------    
+      AD_Sequence_Next('AD_Field', Cur_Fields.AD_Client_ID, v_NextNo_F) ;
+      
+      --- if the source and dest language are different then retrieve translatable values (name, description, etc) from an appropriate field translation (if there is such) 
+      IF(v_src_ad_module_lang <> v_dest_ad_module_lang) THEN
+        SELECT COUNT(*) INTO v_trl_count FROM AD_Field_Trl WHERE AD_Field_Id=Cur_Fields.AD_Field_Id AND AD_Language=v_dest_ad_module_lang;
+        IF(v_trl_count =1) THEN
+          SELECT * INTO Row_Dest_Field_Trl FROM AD_Field_Trl WHERE AD_Field_Id=Cur_Fields.AD_Field_Id AND AD_Language=v_dest_ad_module_lang;    
+        END IF;
+      END IF;
+
+      -- copy the field taking the translatable colums fields (name, description, etc) 
       INSERT
       INTO AD_Field -- AD_Window_Copy has copied code
         (
           AD_Field_ID, AD_Tab_ID, AD_Client_ID, AD_Org_ID,
-          IsActive, Created, CreatedBy, Updated,
-          UpdatedBy, Name, Description, Help,
+          IsActive, Created, CreatedBy, Updated, UpdatedBy,
+          Name, Description, Help,
           IsCentrallyMaintained, AD_Column_ID, AD_FieldGroup_ID, ISDISPLAYED,
           DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY,
           SEQNO, SORTNO, ISSAMELINE,
@@ -99,22 +129,25 @@
           ShowInRelation, Grid_Seqno
         )
         VALUES
-        (v_NextNo, v_Record_ID, Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID,
-        Cur_Fields.IsActive, now(), '0', now(),
-        '0', Cur_Fields.Name, Cur_Fields.Description, Cur_Fields.Help,
-        Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID, Cur_Fields.ISDISPLAYED,
-        Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
-        Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
-        Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_AD_Module_ID,
-        Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno) ;
-      -- update translation
+        (
+          v_NextNo_F, v_Record_ID, Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID,
+          Cur_Fields.IsActive, now(), '0', now(), '0',
+          COALESCE (Row_Dest_Field_Trl.Name, Cur_Fields.Name), COALESCE (Row_Dest_Field_Trl.Description, Cur_Fields.Description), COALESCE (Row_Dest_Field_Trl.Help, Cur_Fields.Help), 
+          Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID, Cur_Fields.ISDISPLAYED,
+          Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
+          Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
+          Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_dest_ad_module_id,
+          Cur_Fields.ShowInRelation, Cur_Fields.Grid_Seqno
+        );
+
+      -- update translations from source translations
       UPDATE AD_Field_Trl
         SET Name=
         (SELECT Name
         FROM AD_Field_Trl s
         WHERE s.AD_Field_ID=Cur_Fields.AD_Field_ID  AND s.AD_Language=AD_Field_Trl.AD_Language
         )
-        , Description=
+        , Description= 
         (SELECT Description
         FROM AD_Field_Trl s
         WHERE s.AD_Field_ID=Cur_Fields.AD_Field_ID  AND s.AD_Language=AD_Field_Trl.AD_Language
@@ -124,9 +157,27 @@
         FROM AD_Field_Trl s
         WHERE s.AD_Field_ID=Cur_Fields.AD_Field_ID  AND s.AD_Language=AD_Field_Trl.AD_Language
         )
-      WHERE AD_Field_Trl.AD_Field_ID=v_NextNo;
-      --
+      WHERE AD_Field_Trl.AD_Field_ID=v_NextNo_F 
+        AND AD_Field_Trl.AD_Language = ANY (
+            SELECT AD_Language 
+            FROM AD_Field_Trl sub 
+            WHERE sub.AD_Field_ID=Cur_Fields.AD_Field_ID
+            );
+
+      -- if source and dest langs are different then update source language translation from the source field
+      IF(v_src_ad_module_lang <> v_dest_ad_module_lang) THEN
+        SELECT * 
+          INTO Row_Src_Field 
+          FROM AD_FIELD 
+          WHERE AD_Field_ID=Cur_Fields.AD_Field_ID;
+        UPDATE AD_Field_Trl 
+          SET Name=Row_Src_Field.Name, Description=Row_Src_Field.Description, Help = Row_Src_Field.Help
+          WHERE AD_Field_ID=v_NextNo_F AND AD_Language=v_src_ad_module_lang;
+      END IF;
+
       v_NoOfFields:=v_NoOfFields + 1;
+      -- ----------------------  End of copied code -----------------------
+      -- ------------------------------------------------------------------
     END LOOP;
     v_Message:='@Copied@=' || v_NoOfFields;
     --<<FINISH_PROCESS>>
