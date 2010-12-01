@@ -51,6 +51,8 @@
     v_DocTypeTarget_ID VARCHAR2(32);
     v_DocSubTypeSO VARCHAR(60) ;
     v_DocSubTypeSOTarget VARCHAR(60) ;
+    v_DocBaseType VARCHAR(60) ;
+    v_qty NUMBER;
     v_IsBinding CHAR(1):='Y';
     --
     ToDeliver NUMBER;
@@ -633,7 +635,7 @@
         INTO v_OrderLineSeqNo
         FROM C_ORDERLINE
         WHERE C_ORDER_ID=v_Record_ID;
-        SELECT PricePrecision INTO v_precision FROM C_ORDER o,C_CURRENCY c WHERE o.C_ORDER_ID = v_Record_ID AND  o.C_CURRENCY_ID = c.C_CURRENCY_ID;            
+        SELECT PricePrecision,d.DocBaseType INTO v_precision,v_DocBaseType FROM C_ORDER o,C_CURRENCY c,C_DOCTYPE d WHERE o.C_ORDER_ID = v_Record_ID AND  o.C_CURRENCY_ID = c.C_CURRENCY_ID AND o.C_DOCTYPETARGET_ID = d.C_DOCTYPE_ID;            
         FOR Cur_COrderDiscount IN
           (SELECT C_ORDER_DISCOUNT.C_ORDER_DISCOUNT_ID,
             C_DISCOUNT.DISCOUNT,
@@ -672,6 +674,10 @@
             END IF;
             v_OrderLineSeqNo:=10 + v_OrderLineSeqNo;
             v_OrderLine:=get_uuid() ;
+            v_qty := 1;
+            IF(v_DocBaseType='SOO') THEN
+                v_qty := -1;
+            END IF;
             
             INSERT INTO c_orderline
               (
@@ -690,7 +696,7 @@
                 v_OrderLine, v_Client_ID, v_Org_ID, 'Y', now(), v_UpdatedBy,
                 now(), v_UpdatedBy, v_Record_ID, v_OrderLineSeqNo, NULL, NULL, 
                 now(), now(), now(), now(), Cur_COrderDiscount.NAME, 
-                Cur_COrderDiscount.M_PRODUCT_ID, v_M_Warehouse_ID, 'N', Cur_COrderDiscount.C_UOM_ID, 1, 
+                Cur_COrderDiscount.M_PRODUCT_ID, v_M_Warehouse_ID, 'N', Cur_COrderDiscount.C_UOM_ID, v_qty, 
                 0, 0, 0, NULL, v_c_currency_id, 
                 ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), 0, 0, 
                 NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL, 
