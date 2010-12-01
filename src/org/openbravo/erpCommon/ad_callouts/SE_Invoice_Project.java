@@ -72,28 +72,32 @@ public class SE_Invoice_Project extends HttpSecureAppServlet {
 
     StringBuffer resultado = new StringBuffer();
 
-// To be consistent with Purchase/Sales Orders and Sales invoices,
-// This behaviour is implemented for Purchase invoices too
-// as requiested in issue 0013323
+    // To be consistent with Purchase/Sales Orders and Sales invoices,
+    // This behaviour is implemented for Purchase invoices too
+    // as requiested in issue 0013323
 
-//    if (strIsSOTrx.equals("Y")) {
-      if (data == null || data.length == 0) {
-        resultado.append("var calloutName='SE_Invoice_Project';\n\n");
-        resultado.append("var respuesta = null;");
-      } else {
-        resultado.append("var calloutName='SE_Invoice_Project';\n\n");
-        resultado.append("var respuesta = new Array(");
+    // if (strIsSOTrx.equals("Y")) {
+    if (data == null || data.length == 0) {
+      resultado.append("var calloutName='SE_Invoice_Project';\n\n");
+      resultado.append("var respuesta = null;");
+    } else {
+      resultado.append("var calloutName='SE_Invoice_Project';\n\n");
+      resultado.append("var respuesta = new Array(");
 
-        String strPaymentRule = data[0].paymentrule;
+      String strPaymentRule = data[0].paymentrule;
+      if (strPaymentRule != null && !"".equals(strPaymentRule)) {
         resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentRule + "\"),");
-        String PaymentTerm = data[0].paymentterm;
-        resultado.append("new Array(\"inpcPaymenttermId\", \"" + PaymentTerm + "\")");
-        resultado.append(");");
       }
-//    } else {
-//      resultado.append("var calloutName='SE_Invoice_Project';\n\n");
-//      resultado.append("var respuesta = null;");
-//    }
+      String PaymentTerm = data[0].paymentterm;
+      if (PaymentTerm != null && !"".equals(PaymentTerm)) {
+        resultado.append("new Array(\"inpcPaymenttermId\", \"" + PaymentTerm + "\")");
+      }
+      resultado.append(");");
+    }
+    // } else {
+    // resultado.append("var calloutName='SE_Invoice_Project';\n\n");
+    // resultado.append("var respuesta = null;");
+    // }
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
