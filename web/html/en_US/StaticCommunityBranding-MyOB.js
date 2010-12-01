@@ -100,7 +100,7 @@ function onResizeDo() {
   }
   LogoMiddleCont.style.width = LogoMiddleCont_style_width;
 
-  var minimumLogoMiddleContWidth = (document.getElementById('LogoMiddleText').innerHTML.length * 13) + 50;
+  var minimumLogoMiddleContWidth = (document.getElementById('LogoMiddleText').innerHTML.length * 13) + 20;
   if (LogoMiddleCont.clientWidth > minimumLogoMiddleContWidth) {
     document.getElementById('LogoMiddleText').style.display = '';
   } else {
