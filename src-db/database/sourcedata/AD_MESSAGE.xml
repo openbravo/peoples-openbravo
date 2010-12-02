@@ -29559,7 +29559,7 @@ Do you want to enable the Heartbeat?]]></MSGTEXT>
 <!--0285053A21CD44D78A85AB89B3D7AE81-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0285053A21CD44D78A85AB89B3D7AE81-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0285053A21CD44D78A85AB89B3D7AE81-->  <VALUE><![CDATA[MA_SEQUENCEPRODUCT_CHECK1]]></VALUE>
-<!--0285053A21CD44D78A85AB89B3D7AE81-->  <MSGTEXT><![CDATA[Order Quantity and Order UOM are co-dependent fields. We can not assign value for one field and leave other empty.]]></MSGTEXT>
+<!--0285053A21CD44D78A85AB89B3D7AE81-->  <MSGTEXT><![CDATA[Order Quantity and Order UOM are co-dependent fields. You cannot assign value for one field and leave other empty.]]></MSGTEXT>
 <!--0285053A21CD44D78A85AB89B3D7AE81-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--0285053A21CD44D78A85AB89B3D7AE81-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0285053A21CD44D78A85AB89B3D7AE81--></AD_MESSAGE>
@@ -31889,7 +31889,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--7D189EE376C54A0A877A6FB41C6E2E68-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7D189EE376C54A0A877A6FB41C6E2E68-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7D189EE376C54A0A877A6FB41C6E2E68-->  <VALUE><![CDATA[MA_WRPHASEPRODUCT_CHECK1]]></VALUE>
-<!--7D189EE376C54A0A877A6FB41C6E2E68-->  <MSGTEXT><![CDATA[Order Quantity and Order UOM are co-dependent fields. We can not assign value for one field and leave other empty.]]></MSGTEXT>
+<!--7D189EE376C54A0A877A6FB41C6E2E68-->  <MSGTEXT><![CDATA[Order Quantity and Order UOM are co-dependent fields. You cannot assign value for one field and leave other empty.]]></MSGTEXT>
 <!--7D189EE376C54A0A877A6FB41C6E2E68-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--7D189EE376C54A0A877A6FB41C6E2E68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7D189EE376C54A0A877A6FB41C6E2E68--></AD_MESSAGE>
