@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.utility.Utility;
 
 /**
  * Provides Kernel Components.
@@ -89,7 +88,8 @@ public class KernelComponentProvider extends BaseComponentProvider {
         true));
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.LABELS_COMPONENT_ID, true));
-    globalResources.add("web/org.openbravo.client.kernel/js/ob-kernel-utilities.js");
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.kernel/js/ob-kernel-utilities.js", true));
     // globalResources.add(KernelConstants.RESOURCE_STRING_TAG
     // + "document.write(\"<\" + \"script src='\" + document.location.protocol + \""
     // + Utility.BUTLER_UTILS_URL + "'><\" + \"/script>\");");
