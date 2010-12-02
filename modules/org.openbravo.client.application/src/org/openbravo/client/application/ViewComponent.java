@@ -27,9 +27,13 @@ import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.client.kernel.BaseComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.client.kernel.OBUserException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Window;
 
 /**
@@ -57,6 +61,8 @@ public class ViewComponent extends BaseComponent {
 
       // the case if a window is in development and has a unique making postfix
       // see the StandardWindowComponent.getWindowClientClassName method
+      String correctedViewId = (viewId.startsWith(KernelConstants.ID_PREFIX) ? viewId.substring(1)
+          : viewId);
       if (window == null && correctedViewId.contains(KernelConstants.ID_PREFIX)) {
         final int index = correctedViewId.indexOf(KernelConstants.ID_PREFIX);
         correctedViewId = correctedViewId.substring(0, index);
