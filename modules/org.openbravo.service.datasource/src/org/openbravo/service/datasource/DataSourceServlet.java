@@ -36,9 +36,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.KernelUtils;
+import org.openbravo.client.kernel.OBUserException;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
@@ -143,6 +145,10 @@ public class DataSourceServlet extends BaseKernelServlet {
       getRequestContent(request);
     }
     try {
+      if (!hasAccess(request, parameters.get("tabId"))) {
+        throw new OBUserException("AccessTableNoView");
+      }
+
       String filterClass = parameters.get(DataSourceConstants.DS_FILTERCLASS_PARAM);
       if (filterClass != null) {
         try {
@@ -157,22 +163,26 @@ public class DataSourceServlet extends BaseKernelServlet {
       String result = getDataSource(request).fetch(parameters);
       writeResult(response, result);
     } catch (Exception e) {
-      log4j.error(e.getMessage(), e);
-      if (!response.isCommitted()) {
-        final JSONObject jsonResult = new JSONObject();
-        final JSONObject jsonResponse = new JSONObject();
-        String result = "";
-        try {
-          jsonResponse.put(JsonConstants.RESPONSE_STATUS,
-              JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR);
-          jsonResponse.put("error", KernelUtils.getInstance().createErrorJSON(e));
-          jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
-          result = jsonResult.toString();
-        } catch (JSONException e1) {
-          log.error("Error genearating JSON error", e1);
-        }
-        writeResult(response, result);
+      handleException(e, response);
+    }
+  }
+
+  private void handleException(Exception e, HttpServletResponse response) throws IOException {
+    log4j.error(e.getMessage(), e);
+    if (!response.isCommitted()) {
+      final JSONObject jsonResult = new JSONObject();
+      final JSONObject jsonResponse = new JSONObject();
+      String result = "";
+      try {
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS,
+            JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR);
+        jsonResponse.put("error", KernelUtils.getInstance().createErrorJSON(e));
+        jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+        result = jsonResult.toString();
+      } catch (JSONException e1) {
+        log.error("Error genearating JSON error", e1);
       }
+      writeResult(response, result);
     }
   }
 
@@ -182,16 +192,24 @@ public class DataSourceServlet extends BaseKernelServlet {
     final Map<String, String> parameters = getParameterMap(request);
     UsageAudit.auditAction(request, parameters);
 
-    if (DataSourceConstants.FETCH_OPERATION.equals(parameters
-        .get(DataSourceConstants.OPERATION_TYPE_PARAM))) {
-      doFetch(request, response, parameters);
-      return;
-    }
+    try {
+      if (!hasAccess(request, parameters.get("tabId"))) {
+        throw new OBUserException("AccessTableNoView");
+      }
 
-    // note if clause updates parameter map
-    if (checkSetIDDataSourceName(request, response, parameters)) {
-      final String result = getDataSource(request).add(parameters, getRequestContent(request));
-      writeResult(response, result);
+      if (DataSourceConstants.FETCH_OPERATION.equals(parameters
+          .get(DataSourceConstants.OPERATION_TYPE_PARAM))) {
+        doFetch(request, response, parameters);
+        return;
+      }
+
+      // note if clause updates parameter map
+      if (checkSetIDDataSourceName(request, response, parameters)) {
+        final String result = getDataSource(request).add(parameters, getRequestContent(request));
+        writeResult(response, result);
+      }
+    } catch (Exception e) {
+      handleException(e, response);
     }
   }
 
@@ -201,19 +219,25 @@ public class DataSourceServlet extends BaseKernelServlet {
     final Map<String, String> parameters = getParameterMap(request);
     UsageAudit.auditAction(request, parameters);
     setSessionInfo(request, parameters);
+    try {
+      // checks and set parameters, if not valid then go away
+      if (!checkSetParameters(request, response, parameters)) {
+        return;
+      }
+      if (!hasAccess(request, parameters.get("tabId"))) {
+        throw new OBUserException("AccessTableNoView");
+      }
 
-    // checks and set parameters, if not valid then go away
-    if (!checkSetParameters(request, response, parameters)) {
-      return;
+      final String id = parameters.get(JsonConstants.ID);
+      if (id == null) {
+        throw new InvalidRequestException("No id parameter");
+      }
+
+      final String result = getDataSource(request).remove(parameters);
+      writeResult(response, result);
+    } catch (Exception e) {
+      handleException(e, response);
     }
-
-    final String id = parameters.get(JsonConstants.ID);
-    if (id == null) {
-      throw new InvalidRequestException("No id parameter");
-    }
-
-    final String result = getDataSource(request).remove(parameters);
-    writeResult(response, result);
   }
 
   private String getDataSourceNameFromRequest(HttpServletRequest request) {
@@ -238,11 +262,19 @@ public class DataSourceServlet extends BaseKernelServlet {
     final Map<String, String> parameters = getParameterMap(request);
     setSessionInfo(request, parameters);
     UsageAudit.auditAction(request, parameters);
+    try {
+      if (!hasAccess(request, parameters.get("tabId"))) {
+        throw new OBUserException("AccessTableNoView");
+      }
 
-    // note if clause updates parameter map
-    if (checkSetIDDataSourceName(request, response, parameters)) {
-      final String result = getDataSource(request).update(parameters, getRequestContent(request));
-      writeResult(response, result);
+      // note if clause updates parameter map
+      if (checkSetIDDataSourceName(request, response, parameters)) {
+        final String result = getDataSource(request).update(parameters, getRequestContent(request));
+        writeResult(response, result);
+      }
+
+    } catch (Exception e) {
+      handleException(e, response);
     }
   }
 
@@ -389,6 +421,23 @@ public class DataSourceServlet extends BaseKernelServlet {
       log.debug(key + ": " + request.getParameter((String) key));
     }
     return sb.toString();
+  }
+
+  /**
+   * Checks access to the current tab, it reuses infrastructure in HttpSecureAppServlet
+   */
+  private boolean hasAccess(HttpServletRequest req, String tabId) {
+    try {
+      if (tabId == null || tabId.isEmpty()) {
+        return true;
+      }
+      VariablesSecureApp vars = new VariablesSecureApp(req);
+      return hasGeneralAccess(vars, "W", tabId);
+
+    } catch (final Exception e) {
+      log4j.error("Error checking access: ", e);
+      return false;
+    }
   }
 
 }
