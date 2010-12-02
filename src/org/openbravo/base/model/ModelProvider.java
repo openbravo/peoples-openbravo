@@ -341,7 +341,6 @@ public class ModelProvider implements OBSingleton {
   // clears some in-memory lists to save memory
   private void clearLists() {
     tables = null;
-    tablesByTableName = null;
   }
 
   @SuppressWarnings("unchecked")
