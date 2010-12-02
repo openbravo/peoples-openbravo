@@ -32,10 +32,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseKernelServlet;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
@@ -139,20 +142,38 @@ public class DataSourceServlet extends BaseKernelServlet {
     if (log.isDebugEnabled()) {
       getRequestContent(request);
     }
+    try {
+      String filterClass = parameters.get(DataSourceConstants.DS_FILTERCLASS_PARAM);
+      if (filterClass != null) {
+        try {
+          DataSourceFilter filter = (DataSourceFilter) Class.forName(filterClass).newInstance();
+          filter.doFilter(parameters, request);
+        } catch (Exception e) {
+          log.error("Error trying to apply datasource filter with class: " + filterClass, e);
+        }
+      }
 
-    String filterClass = parameters.get(DataSourceConstants.DS_FILTERCLASS_PARAM);
-    if (filterClass != null) {
-      try {
-        DataSourceFilter filter = (DataSourceFilter) Class.forName(filterClass).newInstance();
-        filter.doFilter(parameters, request);
-      } catch (Exception e) {
-        log.error("Error trying to apply datasource filter with class: " + filterClass, e);
+      // now do the action
+      String result = getDataSource(request).fetch(parameters);
+      writeResult(response, result);
+    } catch (Exception e) {
+      log4j.error(e.getMessage(), e);
+      if (!response.isCommitted()) {
+        final JSONObject jsonResult = new JSONObject();
+        final JSONObject jsonResponse = new JSONObject();
+        String result = "";
+        try {
+          jsonResponse.put(JsonConstants.RESPONSE_STATUS,
+              JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR);
+          jsonResponse.put("error", KernelUtils.getInstance().createErrorJSON(e));
+          jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+          result = jsonResult.toString();
+        } catch (JSONException e1) {
+          log.error("Error genearating JSON error", e1);
+        }
+        writeResult(response, result);
       }
     }
-
-    // now do the action
-    String result = getDataSource(request).fetch(parameters);
-    writeResult(response, result);
   }
 
   @Override
