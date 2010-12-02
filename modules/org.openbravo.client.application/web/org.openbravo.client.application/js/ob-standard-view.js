@@ -290,42 +290,45 @@ isc.OBStandardView.addProperties({
   },
   
   setDataSource: function(ds){
-    //Wrap DataSource with OBDataSource which overrides methods to set tab info
-    var OBDataSource = function(){};
-    OBDataSource.prototype = ds;
-    var myDs = new OBDataSource();
-    myDs.view = this;
+  //Wrap DataSource with OBDataSource which overrides methods to set tab info7
+    var obDsClassname = 'OBDataSource'+this.tabId;
+    isc.defineClass(obDsClassname, ds.getClass());
     
-    myDs.updateData = function(updatedRecord, callback, requestProperties){
-      var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
-      //standard update is not sent with operationType
-      var additionalPara = {
-        _operationType: 'update'
-      };
-      isc.addProperties(requestProperties.params, additionalPara);
-      this.Super('updateData', [updatedRecord, callback, newRequestProperties]);
-    };
+    var modifiedDs = isc.addProperties({},ds,{
+        updateData: function(updatedRecord, callback, requestProperties){
+        var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
+        //standard update is not sent with operationType
+        var additionalPara = {
+          _operationType: 'update'
+        };
+        isc.addProperties(requestProperties.params, additionalPara);
+        this.Super('updateData', [updatedRecord, callback, newRequestProperties]);
+      },
+      
+      addData : function(updatedRecord, callback, requestProperties){
+        var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
+        //standard update is not sent with operationType
+        var additionalPara = {
+          _operationType: 'add'
+        };
+        isc.addProperties(requestProperties.params, additionalPara);
+        this.Super('addData', [updatedRecord, callback, newRequestProperties]);
+      },
+      
+      removeData: function(updatedRecord, callback, requestProperties){
+        var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
+        //standard update is not sent with operationType
+        var additionalPara = {
+          _operationType: 'remove'
+        };
+        isc.addProperties(requestProperties.params, additionalPara);
+        this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
+      },
+      
+      view: this
+    });
     
-    myDs.addData = function(updatedRecord, callback, requestProperties){
-      var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
-      //standard update is not sent with operationType
-      var additionalPara = {
-        _operationType: 'add'
-      };
-      isc.addProperties(requestProperties.params, additionalPara);
-      this.Super('addData', [updatedRecord, callback, newRequestProperties]);
-    };
-    
-    myDs.removeData = function(updatedRecord, callback, requestProperties){
-      var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
-      //standard update is not sent with operationType
-      var additionalPara = {
-        _operationType: 'remove'
-      };
-      isc.addProperties(requestProperties.params, additionalPara);
-      this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
-    };
-
+    var myDs = isc[obDsClassname].create(modifiedDs);
   
     this.dataSource = myDs;
     
