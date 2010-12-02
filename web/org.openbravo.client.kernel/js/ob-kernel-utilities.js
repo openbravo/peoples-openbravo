@@ -28,7 +28,7 @@ OB.KernelUtilities = {};
 // * {{{params}}}: Optional parameters to add to the message
 OB.KernelUtilities.handleUserException = function(msg, params) {
   // todo: make this nice
-  isc.warn(OB.I18N.getLabel(msg, params));
+  OB.I18N.getLabel(msg, params, isc, 'warn');
 };
 
 // ** {{{ OB.KernelUtilities.handleSystemException }}} **
