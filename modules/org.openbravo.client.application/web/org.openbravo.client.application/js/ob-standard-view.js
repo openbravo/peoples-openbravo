@@ -324,7 +324,24 @@ isc.OBStandardView.addProperties({
         isc.addProperties(requestProperties.params, additionalPara);
         this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
       },
-      
+
+			transformResponse: function (dsResponse, dsRequest, jsonData) {
+        if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0){ //0 is success
+          if (jsonData.response && jsonData.response.error) {
+            var error = jsonData.response.error;
+            if (error.type && error.type === 'user') {
+              OB.KernelUtilities.handleUserException(error.message, error.params);
+            }
+            else {
+              OB.KernelUtilities.handleSystemException(error.message);
+            }
+          } else {
+            OB.KernelUtilities.handleSystemException('Error occured');
+          }
+        }
+        return this.Super('transformResponse', arguments);  
+      },
+			
       view: this
     });
     
