@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -44,6 +45,9 @@ public class WadUtility {
   private static String[][] comparations = { { "==", " == " }, { "=", " == " }, { "!", " != " },
       { "^", " != " }, { "-", " != " } };
   private static String[][] unions = { { "|", " || " }, { "&", " && " } };
+
+  // small cache to store mapping of <subRef + "-" + parentRef,classname>
+  private static Map<String, String> referenceClassnameCache = new HashMap<String, String>();
 
   public WadUtility() {
     PropertyConfigurator.configure("log4j.lcf");
@@ -791,7 +795,13 @@ public class WadUtility {
     WADControl control;
 
     try {
-      classname = WadUtilityData.getReferenceClassName(conn, subRef, parentRef);
+      // lookup value from cache, if not found, search in db and put into cache
+      String cacheKey = subRef + "-" + parentRef;
+      classname = referenceClassnameCache.get(cacheKey);
+      if (classname == null) {
+        classname = WadUtilityData.getReferenceClassName(conn, subRef, parentRef);
+        referenceClassnameCache.put(cacheKey, classname);
+      }
     } catch (ServletException e1) {
       log4j.warn("Couldn't find reference classname ref " + parentRef + ", subRef " + subRef, e1);
       return new WADControl();
