@@ -1024,6 +1024,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       log4j.debug("Output: PopUp Response");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/PopUp_Response").createXmlDocument();
+
+    if ("W".equals(classInfo.type)) {
+      OBError myMessage = vars.getMessage(classInfo.id);
+      // vars.removeMessage(classInfo.id);
+      // TODO: Remove message only in case the window was called in 3.0 new layout mode
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    }
+
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("href", path.equals("") ? "null" : "'" + path + "'");
     response.setContentType("text/html; charset=UTF-8");
