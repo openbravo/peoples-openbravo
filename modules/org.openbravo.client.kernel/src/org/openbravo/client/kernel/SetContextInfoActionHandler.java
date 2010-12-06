@@ -8,6 +8,12 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.AuxiliaryInput;
+import org.openbravo.model.ad.ui.Tab;
 
 @ApplicationScoped
 public class SetContextInfoActionHandler extends BaseActionHandler {
@@ -21,9 +27,14 @@ public class SetContextInfoActionHandler extends BaseActionHandler {
 
     // TODO Auto-generated method stub
     try {
-      JSONObject p = new JSONObject((String) parameters.get("params"));
+      OBContext.setAdminMode();
 
-      String windowId = p.getString("_windowId");
+      JSONObject p = new JSONObject(content);
+
+      String tabId = p.getString("_tabId");
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      String windowId = tab.getWindow().getId();
+
       System.out.println("window: " + windowId);
 
       JSONArray names = p.names();
@@ -36,9 +47,19 @@ public class SetContextInfoActionHandler extends BaseActionHandler {
         System.out.println(name + ": " + value);
       }
 
+      // Auxiliary inputs
+
+      OBCriteria<AuxiliaryInput> qInputs = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
+      qInputs.add(Restrictions.eq(AuxiliaryInput.PROPERTY_TAB, tab));
+      for (AuxiliaryInput input : qInputs.list()) {
+
+      }
+
     } catch (JSONException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
     System.out.println("set context info");
