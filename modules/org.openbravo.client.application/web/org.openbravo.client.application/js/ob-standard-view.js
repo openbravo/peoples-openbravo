@@ -954,16 +954,16 @@ isc.OBStandardView.addProperties({
   },
 
   setContextInfo: function (sessionProperties, callbackFunction) {
-    var requestParameters = {};
+    var requestParameters = {}, data ={};
     requestParameters._action = 'org.openbravo.client.kernel.SetContextInfoActionHandler';
-    requestParameters.params={};
-    isc.addProperties(requestParameters.params, sessionProperties);
-    isc.addProperties(requestParameters.params, {_windowId: this.windowId});
+    isc.addProperties(data, sessionProperties);
+    isc.addProperties(data, {_windowId: this.windowId});
     
     var rpcRequest = {};
     rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
     rpcRequest.callback = callbackFunction;
-    rpcRequest.httpMethod = 'GET';
+    rpcRequest.httpMethod = 'POST';
+		rpcRequest.data = isc.JSON.encode(data);
     rpcRequest.contentType = 'application/json;charset=UTF-8';
     rpcRequest.useSimpleHttp = true;
     rpcRequest.evalResult = false;
