@@ -29,7 +29,7 @@
       <Sql> <![CDATA[
       SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
         SELECT p.M_Product_ID, p.Discontinued, p.Value, p.Name, REPLACE(p.Name, '''', CHR(92) || '''') AS NAME_HIDDEN, 
-        p.C_UOM_ID, pc.name as PRODUCT_CATEGORY, p.M_Product_ID || '#' || p.Name as RowKey
+        p.C_UOM_ID, pc.name as PRODUCT_CATEGORY, p.M_Product_ID || '@_##_@' || p.Name as RowKey
         FROM M_Product p, m_product_category pc
         WHERE p.M_Product_Category_ID = pc.M_Product_Category_ID
         AND p.IsSummary='N' 

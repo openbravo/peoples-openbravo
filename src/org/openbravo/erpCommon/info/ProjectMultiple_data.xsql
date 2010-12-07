@@ -25,7 +25,7 @@
     <Sql> <![CDATA[
       SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
         SELECT p.C_Project_ID, p.Value, p.Name, REPLACE(p.Name, '''', CHR(92) || '''') AS NAME_HIDDEN,
-        p.C_Project_ID || '#' || p.Name as RowKey
+        p.C_Project_ID || '@_##_@' || p.Name as RowKey
         FROM C_Project p
         WHERE p.IsSummary='N'
           AND p.AD_Client_ID IN ('1')

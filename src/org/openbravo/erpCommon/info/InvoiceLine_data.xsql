@@ -30,7 +30,7 @@
       <Sql>
       <![CDATA[
       	SELECT B.*,
-      		C_INVOICELINE_ID || '#' || (DOCUMENTNO || ' - ' || DATEINVOICED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT) AS ROWKEY,
+      		C_INVOICELINE_ID || '@_##_@' || (DOCUMENTNO || ' - ' || DATEINVOICED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT) AS ROWKEY,
         	(DOCUMENTNO || ' - ' || DATEINVOICED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT) AS LINE_TEXT
       	FROM ( SELECT '0' AS RN1, A.* FROM (
 	          SELECT IL.C_INVOICELINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, I.DATEINVOICED, I.DOCUMENTNO, 

@@ -34,7 +34,7 @@
 					        COALESCE(c.name,u.name) AS Contact, COALESCE(c.ad_user_id,u.ad_user_id) as C_BPartner_Contact_ID, bpl.Phone, l.Postal AS PC, 
 					        bpl.c_bpartner_location_id as C_BPartner_Location_ID,
 					        l.City, bp.ActualLifetimeValue AS Income, 
-					        bp.C_BPartner_ID || '#' || COALESCE(TO_CHAR(c.ad_user_id), TO_CHAR(u.ad_user_id), '') || '#' || COALESCE(TO_CHAR(bpl.c_bpartner_location_id),'') || '#' || bp.name AS rowKey  
+					        bp.C_BPartner_ID || '@_##_@' || COALESCE(TO_CHAR(c.ad_user_id), TO_CHAR(u.ad_user_id), '') || '@_##_@' || COALESCE(TO_CHAR(bpl.c_bpartner_location_id),'') || '@_##_@' || bp.name AS rowKey  
 					        FROM C_BPARTNER bp left join C_BPARTNER_LOCATION bpl on bp.c_bpartner_id = bpl.c_bpartner_id
 					                                                             and bpl.IsActive = 'Y'
 					                           left join AD_USER c on bpl.c_bpartner_location_id = c.C_BPartner_Location_ID

@@ -30,7 +30,7 @@
       <Sql>
       <![CDATA[
         SELECT B.*,
-        	C_Invoice_ID || '#' || DocumentNo || ' - ' || TO_CHAR(DateInvoiced, TO_CHAR(?)) as RowKey,
+        	C_Invoice_ID || '@_##_@' || DocumentNo || ' - ' || TO_CHAR(DateInvoiced, TO_CHAR(?)) as RowKey,
         	C_Base_Convert(GrandTotal, C_Currency_ID, AD_Client_ID, DateAcct, '0') AS ConvertedAmount,
             DocumentNo||' - '||TO_CHAR(DateInvoiced,to_char(?))||' - '||GrandTotal AS Name,
           	REPLACE(DocumentNo||' - '||TO_CHAR(DateInvoiced,to_char(?))||' - '||GrandTotal, '''', CHR(92) || '''') AS Name_HIDDEN, '' AS value

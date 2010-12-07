@@ -30,7 +30,7 @@
       		SELECT * FROM ( SELECT '0' AS RN1, '' AS ID, A.* FROM (
 	            SELECT C.C_ELEMENTVALUE_ID, C.VALUE as value, C.NAME as name, C.DESCRIPTION,
 	            C.AD_ORG_ID, (O.VALUE || ' - ' || O.NAME) AS AD_ORG_ID_D,
-                C.C_ELEMENTVALUE_ID || '#' || C.NAME AS rowkey
+                C.C_ELEMENTVALUE_ID || '@_##_@' || C.NAME AS rowkey
 	            FROM C_ELEMENTVALUE C,
 	            AD_ORG O
 	            WHERE EXISTS (SELECT 1 FROM C_ACCTSCHEMA_ELEMENT

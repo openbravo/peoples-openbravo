@@ -31,7 +31,7 @@
       <![CDATA[
       SELECT B.*,
       	(DOCUMENTNO || ' - ' || DATEORDERED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT) AS LINE_TEXT,
-		C_ORDERLINE_ID || '#' || DOCUMENTNO || ' - ' || DATEORDERED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT as rowkey
+		C_ORDERLINE_ID || '@_##_@' || DOCUMENTNO || ' - ' || DATEORDERED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT as rowkey
       FROM ( SELECT '0' AS RN1, A.* FROM (  
           SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, ol.DATEORDERED, o.DOCUMENTNO, 
           o.ISSOTRX, ol.QTYORDERED AS QTY, ol.PRICEACTUAL, ol.LINENETAMT, ol.LINE, o.GRANDTOTAL

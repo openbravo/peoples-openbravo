@@ -48,6 +48,7 @@ public class ProductComplete extends HttpSecureAppServlet {
       "attribute", "qtyorder", "c_uom2", "qty_ref", "quantityorder_ref", "rowkey" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
+  private static final String ROWKEY_SEPARATOR = "@_##_@";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -515,14 +516,15 @@ public class ProductComplete extends HttpSecureAppServlet {
 
           if (columnname.equalsIgnoreCase("rowkey")) {
             final StringBuffer rowKey = new StringBuffer();
-            rowKey.append(data[j].getField("mProductId")).append("#");
-            rowKey.append(data[j].getField("name")).append("#");
-            rowKey.append(data[j].getField("mLocatorId")).append("#");
-            rowKey.append(data[j].getField("mAttributesetinstanceId")).append("#");
-            rowKey.append(df.format(new BigDecimal(data[j].getField("qtyorder")))).append("#");
-            rowKey.append(data[j].getField("cUom2Id")).append("#");
+            rowKey.append(data[j].getField("mProductId")).append(ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("name")).append(ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("mLocatorId")).append(ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("mAttributesetinstanceId")).append(ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("qtyorder")))).append(
+                ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("cUom2Id")).append(ROWKEY_SEPARATOR);
             final String qty = data[j].getField("qty").equals("") ? "0" : data[j].getField("qty");
-            rowKey.append(df.format(new BigDecimal(qty))).append("#");
+            rowKey.append(df.format(new BigDecimal(qty))).append(ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("cUom1Id"));
             strRowsData.append(rowKey);
           } else if (columnname.equalsIgnoreCase("qty") || columnname.equalsIgnoreCase("qtyorder")

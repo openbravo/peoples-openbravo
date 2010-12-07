@@ -74,7 +74,7 @@ function validate() {
   		data = new Array();
   		rows = dijit.byId('grid').getSelectedRows();
   		for(var i=0; i < rows.length; i++) {
-  			var rowkey = rows[i].split("#");
+  			var rowkey = rows[i].split("@_##_@");
   			var rval = new Array(rowkey[0], rowkey[1]);
   			data.push(rval);
   		}

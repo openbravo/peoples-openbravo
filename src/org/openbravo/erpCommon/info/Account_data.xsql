@@ -34,7 +34,7 @@
 	            C.M_PRODUCT_ID, (P.NAME) AS M_PRODUCT_ID_D, 
 	            C.C_BPARTNER_ID, (B.NAME) AS C_BPARTNER_ID_D, 
 	            C.C_PROJECT_ID, (J.NAME || ' - ' || J.VALUE) AS C_PROJECT_ID_D, 
-	            C.C_CAMPAIGN_ID, (M.NAME) AS C_CAMPAIGN_ID_D, C.C_VALIDCOMBINATION_ID || '#' || C.COMBINATION AS ROWKEY
+	            C.C_CAMPAIGN_ID, (M.NAME) AS C_CAMPAIGN_ID_D, C.C_VALIDCOMBINATION_ID || '@_##_@' || C.COMBINATION AS ROWKEY
 	            FROM C_VALIDCOMBINATION C left join M_PRODUCT P on C.M_PRODUCT_ID = P.M_PRODUCT_ID 
 	                                      left join C_BPARTNER B on C.C_BPARTNER_ID = B.C_BPARTNER_ID 
 	                                      left join C_PROJECT J on C.C_PROJECT_ID = J.C_PROJECT_ID

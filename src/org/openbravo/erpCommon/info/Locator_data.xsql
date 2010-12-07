@@ -31,7 +31,7 @@
       SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (      				   
         SELECT m.M_LOCATOR_ID, mw.NAME, m.VALUE, REPLACE(AD_COLUMN_IDENTIFIER(TO_CHAR('M_LOCATOR'), TO_CHAR(m.M_LOCATOR_ID), TO_CHAR(?)), '''', chr(92)||'''') AS VALUE_HIDDEN, m.PRIORITYNO, 
         m.ISDEFAULT, m.X AS aisle, m.Y AS bin, m.Z AS nivel,
-        m.M_LOCATOR_ID || '#' || m.value  AS rowKey
+        m.M_LOCATOR_ID || '@_##_@' || m.value  AS rowKey
         FROM M_LOCATOR m, M_WAREHOUSE mw,Ad_Org ao
         WHERE m.M_WAREHOUSE_ID = mw.M_WAREHOUSE_ID
         AND mw.AD_Client_ID IN ('1') 
