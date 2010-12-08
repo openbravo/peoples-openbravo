@@ -30,7 +30,7 @@
       <Sql>
       <![CDATA[
 	    SELECT B.*,
-			C_Order_ID || '#' || DocumentNo as rowkey,
+			C_Order_ID || '@_##_@' || DocumentNo as rowkey,
 	        C_Base_Convert(GrandTotal,C_Currency_ID,AD_Client_ID,DateAcct, '0') as Converted
 	    FROM ( SELECT '0' AS RN1, A.* FROM (
         SELECT o.C_Order_ID,

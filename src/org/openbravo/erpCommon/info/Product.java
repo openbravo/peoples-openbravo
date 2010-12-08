@@ -49,6 +49,7 @@ public class Product extends HttpSecureAppServlet {
       "pricestd", "qtyonhand", "qtyordered", "margin", "pricelimit", "rowkey" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
+  private static final String ROWKEY_SEPARATOR = "@_##_@";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -491,12 +492,15 @@ public class Product extends HttpSecureAppServlet {
           // Building rowKey
           if (columnname.equalsIgnoreCase("rowkey")) {
             final StringBuffer rowKey = new StringBuffer();
-            rowKey.append(data[j].getField("mProductId")).append("#");
-            rowKey.append(data[j].getField("name")).append("#");
-            rowKey.append(data[j].getField("cUomId")).append("#");
-            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelist")))).append("#");
-            rowKey.append(df.format(new BigDecimal(data[j].getField("pricestd")))).append("#");
-            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelimit")))).append("#");
+            rowKey.append(data[j].getField("mProductId")).append(ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("name")).append(ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("cUomId")).append(ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelist")))).append(
+                ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricestd")))).append(
+                ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelimit")))).append(
+                ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("cCurrencyId"));
             strRowsData.append(rowKey);
           } else if (columnname.equalsIgnoreCase("pricelist")

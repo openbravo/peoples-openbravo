@@ -126,8 +126,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
       SELECT B.*,
-        M_PRODUCT_ID || '#' || name || '#' || COALESCE(TO_CHAR(M_LOCATOR_ID),'') || '#' || COALESCE(TO_CHAR(M_ATTRIBUTESETINSTANCE_ID),'') || '#' || 
-        QTYORDER || '#' || COALESCE(TO_CHAR(C_UOM2_ID),'') || '#' || COALESCE(QTY,0) || '#' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey,
+        M_PRODUCT_ID || '@_##_@' || name || '@_##_@' || COALESCE(TO_CHAR(M_LOCATOR_ID),'') || '@_##_@' || COALESCE(TO_CHAR(M_ATTRIBUTESETINSTANCE_ID),'') || '@_##_@' || 
+        QTYORDER || '@_##_@' || COALESCE(TO_CHAR(C_UOM2_ID),'') || '@_##_@' || COALESCE(QTY,0) || '@_##_@' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey,
         (wh_name || ' - ' || loc_value || '-' || X || '-' || Y || '-' || Z) AS LOCATOR,
         (SELECT U1TRL.NAME
           FROM C_UOM U1 LEFT JOIN C_UOM_TRL U1TRL ON U1.C_UOM_ID = U1TRL.C_UOM_ID AND U1TRL.AD_LANGUAGE = ? WHERE U1.C_UOM_ID = C_UOM1_ID
@@ -212,8 +212,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
       SELECT B.*,
-        M_PRODUCT_ID || '#' || name || '#' || '' || '#' || COALESCE(TO_CHAR(M_ATTRIBUTESETINSTANCE_ID),'') || '#' || 
-          0 || '#' || '' || '#' || 0 || '#' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey
+        M_PRODUCT_ID || '@_##_@' || name || '@_##_@' || '' || '@_##_@' || COALESCE(TO_CHAR(M_ATTRIBUTESETINSTANCE_ID),'') || '@_##_@' || 
+          0 || '@_##_@' || '' || '@_##_@' || 0 || '@_##_@' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey
       FROM ( SELECT '0' AS RN1, A.* FROM ( 
         SELECT P.M_PRODUCT_ID, P.DISCONTINUED, P.VALUE, P.NAME, P.NAME AS NAME_HIDDEN, 0 AS QTY, U1.NAME AS C_UOM1, 
         0 AS QTYORDER, NULL AS C_UOM2, 
@@ -251,8 +251,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
       SELECT B.*,
-          M_PRODUCT_ID || '#' || name || '#' || '' || '#' || COALESCE(TO_CHAR(M_ATTRIBUTESETINSTANCE_ID),'') || '#' || 
-          0 || '#' || '' || '#' || 0 || '#' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey
+          M_PRODUCT_ID || '@_##_@' || name || '@_##_@' || '' || '@_##_@' || COALESCE(TO_CHAR(M_ATTRIBUTESETINSTANCE_ID),'') || '@_##_@' || 
+          0 || '@_##_@' || '' || '@_##_@' || 0 || '@_##_@' || COALESCE(TO_CHAR(C_UOM1_ID),'') as rowkey
       FROM ( SELECT '0' AS RN1, A.* FROM ( 
         SELECT P.M_PRODUCT_ID, P.DISCONTINUED, P.VALUE, P.NAME, P.NAME AS NAME_HIDDEN, 0 AS QTY, U1TRL.NAME AS C_UOM1, 
         0 AS QTYORDER, NULL AS C_UOM2,

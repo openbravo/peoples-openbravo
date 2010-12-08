@@ -4,14 +4,14 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,7 @@ public class ProductComplete extends HttpSecureAppServlet {
       "attribute", "qtyorder", "c_uom2", "qty_ref", "quantityorder_ref", "rowkey" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
+  private static final String ROWKEY_SEPARATOR = "@_##_@";
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -372,32 +373,34 @@ public class ProductComplete extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "ProjectData.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        // on movePage action force executing countRows again
-        	strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
-        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        	if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        			oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-        			oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-        			rownum = "ROWNUM";
-        	} else {
-        			pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        	}
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
           if (strStore.equals("Y")) {
             // countRows is the same in en_US and +trl case, so a
             // single countRows method is used
-            strNumRows = ProductCompleteData.countRows(this,rownum, strKey, strName, strWarehouse,
-                strIsCalledFromProduction, vars.getRole(), strBpartner, strClients,pgLimit, oraLimit1, oraLimit2);
+            strNumRows = ProductCompleteData.countRows(this, rownum, strKey, strName, strWarehouse,
+                strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, pgLimit,
+                oraLimit1, oraLimit2);
           } else {
             // countRowsNotStored is the same in en_US and +trl case, so a
             // single countRows method is used
-            strNumRows = ProductCompleteData.countRowsNotStored(this,rownum, strKey, strName, strBpartner,
-                strClients, strOrgs, strIsCalledFromProduction,pgLimit, oraLimit1, oraLimit2);
+            strNumRows = ProductCompleteData.countRowsNotStored(this, rownum, strKey, strName,
+                strBpartner, strClients, strOrgs, strIsCalledFromProduction, pgLimit, oraLimit1,
+                oraLimit2);
           }
 
           vars.setSessionValue("ProductComplete.numrows", strNumRows);
@@ -495,7 +498,8 @@ public class ProductComplete extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -512,14 +516,15 @@ public class ProductComplete extends HttpSecureAppServlet {
 
           if (columnname.equalsIgnoreCase("rowkey")) {
             final StringBuffer rowKey = new StringBuffer();
-            rowKey.append(data[j].getField("mProductId")).append("#");
-            rowKey.append(data[j].getField("name")).append("#");
-            rowKey.append(data[j].getField("mLocatorId")).append("#");
-            rowKey.append(data[j].getField("mAttributesetinstanceId")).append("#");
-            rowKey.append(df.format(new BigDecimal(data[j].getField("qtyorder")))).append("#");
-            rowKey.append(data[j].getField("cUom2Id")).append("#");
+            rowKey.append(data[j].getField("mProductId")).append(ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("name")).append(ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("mLocatorId")).append(ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("mAttributesetinstanceId")).append(ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("qtyorder")))).append(
+                ROWKEY_SEPARATOR);
+            rowKey.append(data[j].getField("cUom2Id")).append(ROWKEY_SEPARATOR);
             final String qty = data[j].getField("qty").equals("") ? "0" : data[j].getField("qty");
-            rowKey.append(df.format(new BigDecimal(qty))).append("#");
+            rowKey.append(df.format(new BigDecimal(qty))).append(ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("cUom1Id"));
             strRowsData.append(rowKey);
           } else if (columnname.equalsIgnoreCase("qty") || columnname.equalsIgnoreCase("qtyorder")
