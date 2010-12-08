@@ -351,12 +351,12 @@ public class ImportBPartner extends ImportProcess {
       locationName.append(locationNameA);
       if (!locationNameB.equals("")) {
         locationName.append(", " + locationNameB);
-        result = locationName.toString();
+        result = result + locationName.toString();
       } else
-        result = locationName.toString();
+        result = result + locationName.toString();
     } else if (!locationNameB.equals("")) {
       locationName.append(locationNameB);
-      result = locationName.toString();
+      result = result + locationName.toString();
     }
     return result;
   }
