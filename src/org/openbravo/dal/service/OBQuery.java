@@ -123,6 +123,14 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
+   * @return the underlying hibernate query object which provides an additional api (for example
+   *         scroll).
+   */
+  public Query createHibernateQuery() {
+    return createQuery();
+  }
+
+  /**
    * Makes it possible to get a {@link ScrollableResults} from the underlying Query object.
    * 
    * @param scrollMode
@@ -149,6 +157,36 @@ public class OBQuery<E extends BaseOBObject> {
     final Query qry = getSession().createQuery("select count(*) " + FROM_SPACED + qryStr);
     setParameters(qry);
     return ((Number) qry.uniqueResult()).intValue();
+  }
+
+  /**
+   * Computes the row number of a record which has the id which is passed in as a parameter.
+   * 
+   * @param targetId
+   *          the record id
+   * @return the row number or -1 if not found
+   */
+  public int getRowNumber(String targetId) {
+    String qryStr = createQueryString();
+    if (qryStr.toLowerCase().contains(FROM_SPACED)) {
+      final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
+      qryStr = qryStr.substring(index);
+    }
+    final Query qry = getSession().createQuery("select id " + FROM_SPACED + qryStr);
+    setParameters(qry);
+
+    final ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY);
+    try {
+      while (results.next()) {
+        final String id = results.getString(0);
+        if (id.equals(targetId)) {
+          return results.getRowNumber();
+        }
+      }
+    } finally {
+      results.close();
+    }
+    return -1;
   }
 
   private String stripOrderBy(String qryStr) {
