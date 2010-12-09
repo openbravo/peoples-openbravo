@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION ad_script_disable_triggers(p_seqNoStart numeric)
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION ad_script_disable_constraints(p_seqNoStart numeric)
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -76,7 +76,7 @@ CREATE OR REPLACE FUNCTION ad_script_enable_triggers(p_seqNoStart numeric)
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -110,7 +110,7 @@ CREATE OR REPLACE FUNCTION ad_script_enable_constraints(p_seqNoStart numeric)
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -167,7 +167,7 @@ CREATE OR REPLACE FUNCTION ad_script_drop_recreate_index(p_seqNoStart numeric)
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -223,7 +223,7 @@ CREATE OR REPLACE FUNCTION ad_script_execute(param_Message VARCHAR)
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -267,7 +267,7 @@ CREATE OR REPLACE FUNCTION AD_GET_DOC_LE_BU(p_header_table character varying, p_
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -352,7 +352,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table character varying
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -437,7 +437,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN character v
  $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -525,7 +525,7 @@ CREATE OR REPLACE FUNCTION AD_GET_RDBMS()
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -576,7 +576,7 @@ CREATE OR REPLACE FUNCTION pg_temp.insert_recipient()
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -610,7 +610,7 @@ CREATE OR REPLACE FUNCTION pg_temp.insert_register_form_access()
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -656,7 +656,7 @@ CREATE OR REPLACE FUNCTION ad_create_audit_triggers(p_pinstance_id character var
 $BODY1$ DECLARE 
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html

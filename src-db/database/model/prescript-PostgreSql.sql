@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION dba_getattnumpos(conkey _int4, attnum int4)
 $BODY$
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -70,7 +70,7 @@ CREATE OR REPLACE FUNCTION dba_getstandard_search_text(text)
 $BODY$
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -1312,7 +1312,7 @@ CREATE OR REPLACE FUNCTION get_uuid()
 $BODY$ DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
@@ -1367,7 +1367,7 @@ CREATE or replace FUNCTION AD_DB_MODIFIED(p_Update char) RETURNS CHAR AS
 $BODY$
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
 * the License at http://www.openbravo.com/legal/license.html
