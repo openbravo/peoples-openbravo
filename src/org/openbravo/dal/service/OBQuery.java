@@ -123,14 +123,6 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
-   * @return the underlying hibernate query object which provides an additional api (for example
-   *         scroll).
-   */
-  public Query createHibernateQuery() {
-    return createQuery();
-  }
-
-  /**
    * Makes it possible to get a {@link ScrollableResults} from the underlying Query object.
    * 
    * @param scrollMode
@@ -160,7 +152,9 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
-   * Computes the row number of a record which has the id which is passed in as a parameter.
+   * Computes the row number of a record which has the id which is passed in as a parameter. The
+   * rownumber computation takes into account the filter and sorting settings of the the OBQuery
+   * object.
    * 
    * @param targetId
    *          the record id
