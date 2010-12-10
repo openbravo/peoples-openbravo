@@ -47,7 +47,7 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="paramSelectedGroupBy" name="groupbyselected" attribute="value" default=""/>
-  <PARAMETER id="paramPageNo" name="inpPageNo" default=""/>
+  <PARAMETER id="paramPageNo" name="inpPageNo" attribute="value" default="1"/>
 
   <SUBREPORT id="reportCBPartnerId_IN" name="reportCBPartnerId_IN" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramVacio"/>
