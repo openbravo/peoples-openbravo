@@ -1,0 +1,250 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+/*=======================================================================
+ * Contains styles for:
+ * Form Fields/Items
+ * Form Buttons 
+=======================================================================*/
+
+
+/*=======================================================================
+ * Form Field Styles 
+=======================================================================*/
+ 				        				        
+.OBFormField,
+.OBFormFieldError,
+.OBFormFieldFocused {
+	font-family: 'lucida sans', sans-serif;
+  width: 100%;
+}
+
+.OBFormFieldLabel,
+.OBFormFieldLabelDisabled,
+.OBFormFieldLabelError,
+.OBFormFieldLabelFocused {
+  font-family: 'lucida sans',sans-serif; 
+  font-size: 11px;
+  color: #333333;  
+  font-weight: bold;
+}
+
+.OBFormFieldInput,
+.OBFormFieldInputDisabled,
+.OBFormFieldInputFocused,
+.OBFormFieldInputError,
+.OBFormFieldInputHint,
+.OBFormFieldSelectInput,
+.OBFormFieldSelectInputError,
+.OBFormFieldSelectInputFocused,
+.OBFormFieldSelectInputHint,
+.OBFormFieldSelectInputDisabled {
+  padding: 2px;
+  border: 1px solid #cdd7bb;
+  background: #fff;
+  color: #333333;
+  font-family: arial, sans-serif; 
+  font-size: 12px;
+  width: 100%;
+}
+
+.OBFormFieldInputDisabled,
+.OBFormFieldSelectInputDisabled {
+  color:#777;
+  background-color:#FFFFFF;
+  border:1px solid #A6ABB4;
+}
+
+.OBFormFieldSelectControl,
+.OBFormFieldSelectControlSelected,
+.OBFormFieldSelectControlSelectedFocused,
+.OBFormFieldSelectControlError,
+.OBFormFieldSelectControlFocused {
+  font-family: arial, sans-serif; 
+  font-size: 12px;
+  color: #333;
+  width: 100%;
+  border: 0px 0px 0px 0px;
+}
+
+.OBFormFieldInputError,
+.OBFormFieldSelectInputError,
+.OBFormFieldLabelError { 
+  color:#204268; 
+}
+
+.OBFormFieldSelectPickerIcon,
+.OBFormFieldSelectPickerIconFocused,
+.OBFormFieldSelectPickerIconDisabled,
+.OBFormFieldSelectPickerIconError {
+  padding: 0px;
+  border: 0px;
+  width: 21px;
+}
+
+.OBFormFieldSelectPickerIconOver,
+.OBFormFieldSelectPickerIconFocused,
+.OBFormFieldSelectPickerIconFocused a,
+.OBFormFieldSelectPickerIconSelectedFocused,
+.OBFormFieldSelectPickerIconSelected {
+  padding: 0px;
+  border: 0px;
+  width: 21px;
+}
+
+.OBFormFieldInput:focus,  
+.OBFormFieldInputFocused,
+.OBFormFieldInputSelectedFocused,  
+.OBFormFieldSelectInputFocused,
+.OBFormFieldSelectInputSelectedFocused,  
+.OBFormFieldSelectInput:focus {  
+  -moz-outline-offset: -1;
+  outline-offset: -1;
+  border: 1px solid #fa962f;
+}
+
+.OBFormFieldSelectInput,
+.OBFormFieldSelectInputError,
+.OBFormFieldSelectInputSelectedFocused,
+.OBFormFieldSelectInputFocused,
+.OBFormFieldSelectInputDisabled {
+	border-width: 1px 0 1px 1px;
+  border-right:0px none;
+	padding-right: 0px;  
+}
+
+.OBFormFieldInputHint,
+.OBFormFieldSelectInputHint {
+  color:#204268;
+}
+
+.OBPickListBody,
+.OBPickListBodyFocused {
+  border:1px solid #CDD7BB; 
+  background-color:#FFFFFF;
+}
+
+.OBFormFieldPickListCell,
+.OBFormFieldPickListCellSelected,
+.OBFormFieldPickListCellFocused,
+.OBFormFieldPickListCellSelectedFocused,
+.OBFormFieldPickListCellDisabled,
+.OBFormFieldPickListCellDark,
+.OBFormFieldPickListCellSelectedDark {
+  padding-left: 2px;
+  font-family: 'lucida sans',sans-serif; 
+  font-size:11px;
+  color: #333333;
+  background-color: #f5f7f1;
+}
+
+.OBFormFieldPickListCellDisabled {
+  color:#595959;
+  background-color:#C0C0C0;
+}
+
+.OBFormFieldPickListCellSelected,
+.OBFormFieldPickListCellSelectedFocused,
+.OBFormFieldPickListCellSelectedDark {
+  background: url(./images/navbar/menu-rollover.png) repeat-x scroll;
+}
+
+/*=======================================================================
+ * Form Button Styles 
+=======================================================================*/
+
+.OBFormButton,
+.OBFormButtonOver,
+.OBFormButtonFocused,
+.OBFormButtonFocusedOver,
+.OBFormButtonDown,
+.OBFormButtonFocusedDown,
+.OBFormButtonSelected,
+.OBFormButtonSelectedFocused,
+.OBFormButtonSelectedDown,
+.OBFormButtonSelectedFocusedDown,
+.OBFormButtonSelectedOver,
+.OBFormButtonSelectedFocusedOver,
+.OBFormButtonDisabled,
+.OBFormButtonSelectedDisabled {
+  padding: 5px 20px 5px;
+  font-family:'lucida sans',sans-serif; 
+  font-size:12px;
+  background-image:url(./images/form/bg-bt-orange.png);
+  color:#000000;
+  background-position:right top;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  border: 2px solid #efefef;
+}
+
+.OBFormButtonDisabled,
+.OBFormButtonSelectedDisabled {
+  border:1px solid #d0d1cd;
+  background-image: url(./images/form/bg-bt-orange-disabled.png);
+  font-weight:normal;
+  color:#777;
+}
+
+.OBFormButtonFocused,
+.OBFormButtonFocusedOver,
+.OBFormButtonSelectedFocused,
+.OBFormButtonSelectedFocusedOver,
+.OBFormButtonSelectedFocusedDown {
+  border:2px solid #fa962f;
+}
+
+.OBFormButtonOver,
+.OBFormButtonFocusedOver,
+.OBFormButtonSelectedFocused,
+.OBFormButtonSelectedFocusedOver {
+  background-image: url(./images/form/bg-bt-orange-hover.png);
+}
+
+.OBFormButtonDown,
+.OBFormButtonFocusedDown,
+.OBFormButtonSelectedDown,
+.OBFormButtonSelectedFocusedDown {
+  background-image: url(./images/form/bg-bt-orange-down.png);
+}
+
+.OBFormButtonTitle,
+.OBFormButtonTitleOver,
+.OBFormButtonTitleDown,
+.OBFormButtonTitleSelected,
+.OBFormButtonTitleFocused,
+.OBFormButtonTitleSelectedFocused,
+.OBFormButtonTitleSelectedOver,
+.OBFormButtonTitleFocusedOver,
+.OBFormButtonTitleSelectedFocusedOver,
+.OBFormButtonTitleSelectedDown,
+.OBFormButtonTitleFocusedDown,
+.OBFormButtonTitleSelectedFocusedDown,
+.OBFormButtonTitleDisabled,
+.OBFormButtonTitleSelectedDisabled {
+  color: #000000;
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+}
+
+.OBFormButtonTitleDisabled,
+.OBFormButtonTitleSelectedDisabled {
+  font-weight: normal;
+  color: #777;
+}

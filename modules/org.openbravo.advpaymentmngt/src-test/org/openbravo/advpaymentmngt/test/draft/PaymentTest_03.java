@@ -1,0 +1,201 @@
+package org.openbravo.advpaymentmngt.test.draft;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import org.apache.log4j.Logger;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.common.uom.UOM;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.model.financialmgmt.payment.PaymentTerm;
+import org.openbravo.model.financialmgmt.tax.TaxRate;
+import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.test.base.BaseTest;
+
+/**
+ * The PaymentTest_03 class used to test the payment document generation and reactivation with
+ * write-off option.
+ */
+public class PaymentTest_03 extends BaseTest {
+
+  private static final Logger log = Logger.getLogger(PaymentTest_01.class);
+
+  private static final String MANUAL_EXECUTION = "M";
+  private static final String CLEARED_ACCOUNT = "CLE";
+  private static final String IN_TRANSIT_ACCOUNT = "INT";
+  private static final String WITHDRAWN_ACCOUNT = "WIT";
+  private static final String DEPOSIT_ACCOUNT = "DEP";
+  private static final String CASH = "C";
+  private static final String STANDARD_DESCRIPTION = "JUnit Test Payment_03";
+
+  private String financialAccountId;
+
+  /**
+   * Initial Set up.
+   */
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    TestUtility.setTestContext();
+  }
+
+  public void testRunPayment_03() {
+    boolean exception = false;
+    Invoice invoice = null;
+    FIN_Payment payment = null;
+
+    try {
+
+      // DATA SETUP
+      invoice = dataSetup();
+
+      // PAY PARTIALLY THE INVOICE
+      invoice = OBDal.getInstance().get(Invoice.class, invoice.getId());
+      BigDecimal writeOffAmt = new BigDecimal("2.0");
+      BigDecimal paymentAmount = invoice.getGrandTotalAmount().subtract(writeOffAmt);
+      payment = TestUtility.addPaymentFromInvoice(invoice, OBDal.getInstance().get(
+          FIN_FinancialAccount.class, financialAccountId), paymentAmount, true);
+
+      // PROCESS THE PAYMENT
+      TestUtility.processPayment(payment, "P");
+
+      // CHECK OUTPUT DATA
+      OBContext.setAdminMode();
+      try {
+        FIN_PaymentScheduleDetail psd = TestUtility.getOneInstance(FIN_PaymentScheduleDetail.class,
+            new Value(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, invoice
+                .getFINPaymentScheduleList().get(0)));
+
+        assertTrue("Payment Schedule Outstanding Amount != 0", invoice.getFINPaymentScheduleList()
+            .get(0).getOutstandingAmount().compareTo(psd.getAmount()) != 0);
+
+        assertTrue("Payment Schedule Received Amount == Total Amount", invoice
+            .getGrandTotalAmount().compareTo(
+                invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+
+        assertTrue("Payment Schedule Detail Amount != Total Amount", invoice.getGrandTotalAmount()
+            .compareTo(psd.getAmount()) != 0);
+
+        assertTrue("Payment Schedule Detail Write-off Amount != 0", BigDecimal.ZERO.compareTo(psd
+            .getWriteoffAmount()) != 0);
+
+        assertTrue("Payment Amount != Total Amount", invoice.getGrandTotalAmount().compareTo(
+            payment.getAmount()) != 0);
+        assertTrue("Status == Payment Received", "RPR".equals(payment.getStatus()));
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
+      // REACTIVATE
+      TestUtility.processPayment(payment, "R");
+
+      // CHECK OUTPUT DATA AFTER REACTIVATION
+      OBContext.setAdminMode();
+      try {
+        FIN_PaymentScheduleDetail psd = TestUtility.getOneInstance(FIN_PaymentScheduleDetail.class,
+            new Value(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, invoice
+                .getFINPaymentScheduleList().get(0)));
+
+        assertTrue("Expected Amount != Total Amount", invoice.getGrandTotalAmount().compareTo(
+            invoice.getFINPaymentScheduleList().get(0).getAmount()) == 0);
+        assertTrue("Outstanding Amount != Total Amount", invoice.getGrandTotalAmount().compareTo(
+            invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
+        assertTrue("Received Amount != 0", BigDecimal.ZERO.compareTo(invoice
+            .getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+
+        assertTrue("Payment Schedule Detail Amount != 0", invoice.getGrandTotalAmount().compareTo(
+            psd.getAmount()) == 0);
+        assertTrue("Payment Schedule Detail Write-off Amount == 0", BigDecimal.ZERO.compareTo(psd
+            .getWriteoffAmount()) == 0);
+
+        assertTrue("Payment Amount != 0", BigDecimal.ZERO.compareTo(payment.getAmount()) == 0);
+        assertTrue("Status != Awaiting Payment", "RPAP".equals(payment.getStatus()));
+
+        assertTrue("There are Payment Lines for this payment",
+            TestUtility.getOneInstance(FIN_PaymentDetail.class, new Value(
+                FIN_PaymentDetail.PROPERTY_FINPAYMENT, payment)) == null);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error(FIN_Utility.getExceptionMessage(e));
+      exception = true;
+    }
+
+    assertFalse(exception);
+
+  }
+
+  private Invoice dataSetup() throws Exception {
+
+    // DATA SETUP
+    String bpartnerId = "1000008"; // McGiver
+    String priceListId = "1000003"; // General Sales
+    String paymentTermId = "1000000"; // Immediate"
+    String currencyId = "102"; // EUR
+    String productId = "1000006"; // Hat
+    String taxId = "1000002"; // VAT 4%
+    String docTypeId = "1000001"; // AR Invoice
+    BigDecimal invoicedQuantity = new BigDecimal("5");
+    BigDecimal netUnitPrice = new BigDecimal("35");
+    BigDecimal netListPrice = new BigDecimal("37");
+    BigDecimal lineNetAmount = new BigDecimal("175");
+    BigDecimal priceLimit = new BigDecimal("33.50");
+
+    PriceList testPriceList = OBDal.getInstance().get(PriceList.class, priceListId);
+    BusinessPartner testBusinessPartner = OBDal.getInstance()
+        .get(BusinessPartner.class, bpartnerId);
+    Location location = TestUtility.getOneInstance(Location.class, new Value(
+        Location.PROPERTY_BUSINESSPARTNER, testBusinessPartner));
+    PaymentTerm testPaymentTerm = OBDal.getInstance().get(PaymentTerm.class, paymentTermId);
+    Currency testCurrency = OBDal.getInstance().get(Currency.class, currencyId);
+    Product testProduct = OBDal.getInstance().get(Product.class, productId);
+    UOM uom = TestUtility.getOneInstance(UOM.class, new Value(UOM.PROPERTY_NAME, testProduct
+        .getUOM().getName()));
+    TaxRate testTaxRate = OBDal.getInstance().get(TaxRate.class, taxId);
+    DocumentType testDocumentType = OBDal.getInstance().get(DocumentType.class, docTypeId);
+
+    FIN_FinancialAccount testAccount = TestUtility.insertFinancialAccount("APRM_FINACC_PAYMENT_01",
+        STANDARD_DESCRIPTION, testCurrency, CASH, false,
+        getOneInstance(org.openbravo.model.common.geography.Location.class), testBusinessPartner,
+        null, null, null, null, null, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO,
+        null, true, true);
+
+    FIN_PaymentMethod testPaymentMethod = TestUtility.insertPaymentMethod("APRM_PM_PAYMENT_01",
+        STANDARD_DESCRIPTION, true, false, false, MANUAL_EXECUTION, null, false,
+        IN_TRANSIT_ACCOUNT, DEPOSIT_ACCOUNT, CLEARED_ACCOUNT, true, false, false, MANUAL_EXECUTION,
+        null, false, IN_TRANSIT_ACCOUNT, WITHDRAWN_ACCOUNT, CLEARED_ACCOUNT, true, true);
+
+    FinAccPaymentMethod existAssociation = TestUtility.getOneInstance(FinAccPaymentMethod.class,
+        new Value(FinAccPaymentMethod.PROPERTY_ACCOUNT, testAccount), new Value(
+            FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, testPaymentMethod));
+
+    if (existAssociation == null)
+      TestUtility.associatePaymentMethod(testAccount, testPaymentMethod);
+    this.financialAccountId = testAccount.getId();
+
+    Invoice invoice = TestUtility.createNewInvoice(OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), new Date(), new Date(), new Date(),
+        testDocumentType, testBusinessPartner, location, testPriceList, testCurrency,
+        testPaymentMethod, testPaymentTerm, testProduct, uom, invoicedQuantity, netUnitPrice,
+        netListPrice, priceLimit, testTaxRate, lineNetAmount, true);
+
+    TestUtility.processInvoice(invoice);
+
+    return invoice;
+  }
+}

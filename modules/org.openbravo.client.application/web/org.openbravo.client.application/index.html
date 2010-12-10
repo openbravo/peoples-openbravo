@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+  
+<meta http-equiv="Expires" content="Tue, 24 Apr 1979 00:00:01 GMT"/>
+<meta http-equiv="Content-type" content="text/html;charset=utf-8"/>
+
+<link rel="shortcut icon" href="../images/favicon.ico" />
+
+<link rel="stylesheet" type="text/css" href="../../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion=3.00"/>
+
+<title>Openbravo</title>
+
+<script type="text/javascript" src="../org.openbravo.client.kernel/js/LAB.min.js"></script>
+
+<script type="text/javascript">
+
+$LAB.setGlobalDefaults({AppendTo: 'body'})
+
+var isomorphicDir='../org.openbravo.userinterface.smartclient/isomorphic/';
+
+// starts the application is called as the last statement in the StaticResources part
+function OBStartApplication() {
+  OB.Layout.draw();
+  OB.Layout.ViewManager.createAddStartTab();
+  isc.clearPrompt();
+}
+
+</script>
+<script type="text/javascript" src="../org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+// set some defaults used directly
+isc.Canvas.loadingImageSrc = '../../org.openbravo.userinterface.smartclient/openbravo/skins/3.00/org.openbravo.client.application/images/system/windowLoading.gif';
+isc.Canvas.loadingImageSize = 70;
+
+isc.showPrompt("${loadingImage}", {showEdges:false, showModalMask: true, isModal: true, hiliteBodyColor: null, bodyColor: null, bodyStyle: 'OBLoadingPromptBody'});
+</script>
+
+<script type="text/javascript" src="../org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
+
+<script type="text/javascript" src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_skinVersion=3.00"></script>
+
+</body>
+</html>

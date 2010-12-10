@@ -1,0 +1,307 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http: //www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+/*============================================================
+  The main navbar
+============================================================*/
+.OBNavBarToolStrip {
+  height: 26px;
+  background-color: #FFFFFF;
+}
+
+/*============================================================
+  Navbar button itself
+============================================================*/
+
+.OBNavBarButton,
+.OBNavBarButtonOver,
+.OBNavBarButtonFocused,
+.OBNavBarButtonFocusedOver,
+.OBNavBarButtonDown,
+.OBNavBarButtonFocusedDown,
+.OBNavBarButtonSelected,
+.OBNavBarButtonSelectedFocused,
+.OBNavBarButtonSelectedDown,
+.OBNavBarButtonSelectedFocusedDown,
+.OBNavBarButtonSelectedOver,
+.OBNavBarButtonSelectedFocusedOver {
+	cursor: pointer;
+	font-size: 11px;
+}
+
+.OBNavBarButtonDisabled,
+.OBNavBarButtonSelectedDisabled {
+}
+
+.OBNavBarImgButton,
+.OBNavBarImgButtonOver,
+.OBNavBarImgButtonSelected,
+.OBNavBarImgButtonSelectedDisabled,
+.OBNavBarImgButtonSelectedOver,
+.OBNavBarImgButtonDown,
+.OBNavBarImgButtonSelectedDown,
+.OBNavBarImgButtonDisabled {
+}
+
+.OBNavBarImgButtonDisabled {
+}
+
+.OBNavBarStretchImgButton,
+.OBNavBarStretchImgButtonSelected,
+.OBNavBarStretchImgButtonSelectedOver,
+.OBNavBarStretchImgButtonOver,
+.OBNavBarStretchImgButtonDown,
+.OBNavBarStretchImgButtonSelectedDown,
+.OBNavBarStretchImgButtonSelectedDisabled,
+.OBNavBarStretchImgButtonDisabled {
+}
+
+.OBNavBarStretchImgButtonOver {
+}
+
+.OBNavBarStretchImgButtonSelectedDisabled,
+.OBNavBarStretchImgButtonDisabled {
+}
+
+.OBNavBarButtonTitle,
+.OBNavBarButtonTitleOver,
+.OBNavBarButtonTitleDown,
+.OBNavBarButtonTitleSelected,
+.OBNavBarButtonTitleFocused,
+.OBNavBarButtonTitleSelectedFocused,
+.OBNavBarButtonTitleSelectedOver,
+.OBNavBarButtonTitleFocusedOver,
+.OBNavBarButtonTitleSelectedFocusedOver,
+.OBNavBarButtonTitleSelectedDown,
+.OBNavBarButtonTitleFocusedDown,
+.OBNavBarButtonTitleSelectedFocusedDown,
+.OBNavBarButtonTitleDisabled,
+.OBNavBarButtonTitleSelectedDisabled {
+}
+
+.OBNavBarButtonTitleDisabled,
+.OBNavBarButtonTitleSelectedDisabled {
+}
+
+/*============================================================
+  Navbar component styling
+============================================================*/
+
+.OBNavBarComponent {
+  background: #FFFFFF;
+  color: #000000;
+  cursor: pointer;
+  
+  border-top: 1px solid #fff;
+  
+  background-image: url(./images/navbar/navbar-separator.gif);
+  background-position: right;
+  background-repeat: no-repeat;
+  margin: 0px;
+  padding: 0px;
+}
+
+.OBNavBarComponent:hover {
+  border-color: #6a9a14;
+  border-top: 1px solid #6a9a14;
+  border-bottom: 1px solid #6a9a14;
+  border-left: 1px solid #6a9a14;
+
+  margin-left: -1px;
+
+  background-image: url(./images/navbar/navbar-right-border.gif);
+  background-position: right;
+  background-repeat: repeat-y;
+}
+
+.OBNavBarComponentHideLine {
+  background: #FFFFFF;
+  margin: 0px;
+  padding: 0px;
+}
+
+.OBNavBarComponentSelected {
+  border-color: #6a9a14;
+  border-top: 1px solid #6a9a14;
+  border-left: 1px solid #6a9a14;
+
+  margin-left: -1px;
+
+  background-image: url(./images/navbar/navbar-right-border.gif);
+  background-position: right;
+  background-repeat: repeat-y;
+}
+
+/*============================================================
+  User profile form with tabs
+============================================================*/
+
+.OBNavBarComponentFormTabSetContainer {
+  font-size: 12px;
+  font-family: 'lucida sans', sans-serif;
+  background-color: #FFFFFF;
+  border-top: 2px solid #72ab10;
+  margin-top: -2px;
+}
+
+/* note only the top styles are present here because in Openbravo tabs in forms are shown in the top
+if the tab headers are on the right, left or bottom the same styles can be used */
+
+.OBNavBarComponentFormTabButtonTopSelected,
+.OBNavBarComponentFormTabButtonTopSelectedFocused,
+.OBNavBarComponentFormTabButtonTopSelectedFocusedOver,
+.OBNavBarComponentFormTabButtonTopSelectedFocusedDown,
+.OBNavBarComponentFormTabButtonTopSelectedDown,
+.OBNavBarComponentFormTabButtonTopSelectedDisabled,
+.OBNavBarComponentFormTabButtonTopSelectedOver {
+  border-top: 1px solid #72ab10;
+  border-right: 1px solid #72ab10;
+  border-bottom: 4px solid #fff;
+  border-left: 1px solid #72ab10;
+  margin-bottom: -2px;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: 'lucida sans', sans-serif;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.OBNavBarComponentFormTabButtonTop,
+.OBNavBarComponentFormTabButtonTopOver,
+.OBNavBarComponentFormTabButtonTopDown,
+.OBNavBarComponentFormTabButtonTopDisabled {
+  border-top: 1px solid #fff;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  font-size: 12px;
+  font-family: 'lucida sans', sans-serif;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+        
+/*============================================================
+  Application Menu Styling
+============================================================*/
+
+.OBNavBarComponentMenuBody .menuTable {
+  background: #fff;
+}
+
+.OBNavBarComponentMenu {
+  background-color: #fff;
+  border: 1px solid #72ab10;
+  font-size: 11px;
+  font-family: 'lucida sans', sans-serif;
+}
+
+.OBNavBarComponentMenuBody {
+  font-size: 11px;
+  font-family: 'lucida sans', sans-serif;
+}
+
+.OBNavBarComponentMenuItemCell,
+.OBNavBarComponentMenuItemCellSelected,
+.OBNavBarComponentMenuItemCellOver,
+.OBNavBarComponentMenuItemCellSelectedOver,
+.OBNavBarComponentMenuItemCellDisabled,
+.OBNavBarComponentMenuItemCellTitleField,
+.OBNavBarComponentMenuItemCellTitleFieldSelected,
+.OBNavBarComponentMenuItemCellTitleFieldOver,
+.OBNavBarComponentMenuItemCellTitleFieldSelectedOver,
+.OBNavBarComponentMenuItemCellTitleFieldDisabled {
+  font-size: 11px;
+  font-family: 'lucida sans', sans-serif;
+}
+
+.OBNavBarComponentMenuItemCell,
+.OBNavBarComponentMenuItemCellSelected {
+}
+
+.OBNavBarComponentMenuItemCellOver,
+.OBNavBarComponentMenuItemCellSelectedOver,
+.OBNavBarComponentMenuItemCellSubmenuFieldOver,
+.OBNavBarComponentMenuItemCellSubmenuFieldSelectedOver,
+.OBNavBarComponentMenuItemCellKeysFieldOver,
+.OBNavBarComponentMenuItemCellKeysFieldSelectedOver,
+.OBNavBarComponentMenuItemCellTitleFieldOver,
+.OBNavBarComponentMenuItemCellTitleFieldSelectedOver {
+  color: #5b890d;
+  background-color: #f5f7f1;
+}
+
+.OBNavBarComponentMenuItemCellTitleField,
+.OBNavBarComponentMenuItemCellTitleFieldSelected,
+.OBNavBarComponentMenuItemCellTitleFieldOver,
+.OBNavBarComponentMenuItemCellTitleFieldSelectedOver,
+.OBNavBarComponentMenuItemCellTitleFieldDisabled {
+  padding-left: 10px;
+  padding-right: 20px;
+}
+
+.OBNavBarComponentMenuItemCellDisabled ,
+.OBNavBarComponentMenuItemCellTitleFieldDisabled,
+.OBNavBarComponentMenuItemCellIconFieldDisabled {
+  color: #AAAAAA;
+}
+
+.OBNavBarComponentMenuBody .menuTable {
+  background: #fff; border-color: #fff;
+}
+
+.OBNavBarComponentMenuBody .menuTable img,
+.OBNavBarComponentMenuBodyOver .menuTable img,
+.OBNavBarComponentMenuItemCellTitleField img,
+.OBNavBarComponentMenuItemCellTitleFieldOver img,
+.OBNavBarComponentMenuItemCellSubmenuField img,
+.OBNavBarComponentMenuItemCellSubmenuFieldOver img {
+  display: block;
+}
+
+.OBNavBarComponentMenuItemCellKeysField,
+.OBNavBarComponentMenuItemCellKeysFieldSelected,
+.OBNavBarComponentMenuItemCellKeysFieldOver,
+.OBNavBarComponentMenuItemCellKeysFieldSelectedOver,
+.OBNavBarComponentMenuItemCellKeysFieldDisabled,
+.OBNavBarComponentMenuItemCellSubmenuField,
+.OBNavBarComponentMenuItemCellSubmenuFieldSelected,
+.OBNavBarComponentMenuItemCellSubmenuFieldOver,
+.OBNavBarComponentMenuItemCellSubmenuFieldSelectedOver,
+.OBNavBarComponentMenuItemCellSubmenuFieldDisabled {
+  padding-right: 6px;
+  text-align: right;
+}
+
+.OBNavBarComponentMenuItemCell,
+.OBNavBarComponentMenuItemCellSelected {
+  /*padding-left: 10px;*/
+}
+
+.OBNavBarComponentTest {
+  background: red;
+}
+
+/*============================================================
+  Standard flyout styling
+============================================================*/
+
+.OBFlyoutLayout {
+  background-color: #fff;
+  border: 1px solid #72ab10;
+}
