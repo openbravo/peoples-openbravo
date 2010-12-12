@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "Performing jslint check on modified js resources"
-hg st | grep -v ^? | grep '\.js$' | awk '{print $2}' | xargs -rn1 ../org.openbravo.client.kernel/jslint/jslint || exit 1
