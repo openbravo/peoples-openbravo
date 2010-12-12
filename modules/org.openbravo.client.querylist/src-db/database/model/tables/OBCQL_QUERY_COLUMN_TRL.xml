@@ -65,7 +65,7 @@
         <unique-column name="OBCQL_QUERY_COLUMN_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="OBCQL_QCOLUMNTRL_ACTIVE_CHK"><![CDATA[ISACTIVE     IN ('Y', 'N')]]></check>
+      <check name="OBCQL_QCOLUMNTRL_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBCQL_QCOLUMNTRL_TRANSL_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>
