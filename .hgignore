@@ -38,7 +38,3 @@ lib/*.war
 *.bak
 *.swp
 Thumbs.db
-
-syntax: regexp
-
-^modules/(?!org.openbravo.advpaymentmngt$|org.openbravo.base.weld$|org.openbravo.client.application$|org.openbravo.client.kernel$|org.openbravo.client.myob$|org.openbravo.client.querylist$|org.openbravo.financial.paymentreport$|org.openbravo.reports.ordersawaitingdelivery$|org.openbravo.service.datasource$|org.openbravo.service.json$|org.openbravo.userinterface.selector$|org.openbravo.userinterface.skin.250to300Comp$|org.openbravo.userinterface.smartclient$|org.openbravo.v3$|org.openbravo.v3.datasets$|org.openbravo.v3.framework$)
