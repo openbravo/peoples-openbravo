@@ -161,7 +161,8 @@ public class UIDefinitionController extends BaseTemplateComponent {
       for (Column column : columnQry.list()) {
         final String referenceId;
         if (column.getReferenceSearchKey() != null) {
-          if (DalUtil.getId(column.getReference()).equals("28")) {
+          if (DalUtil.getId(column.getReference()).equals("28")
+              && !column.getReferenceSearchKey().isBaseReference()) {
             // This reference is a button reference. We will add it to the button references
             localButtonReferences.add(column.getReferenceSearchKey());
             localButtonColumns.add(column.getId());
