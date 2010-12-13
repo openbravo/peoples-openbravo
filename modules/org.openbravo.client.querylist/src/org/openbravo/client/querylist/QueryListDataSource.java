@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.openbravo.client.application.ApplicationUtils;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.myob.WidgetClass;
 import org.openbravo.client.myob.WidgetInstance;
@@ -79,17 +81,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       }
       String[] params = widgetQuery.getNamedParameters();
       if (params.length > 0) {
-        List<ParameterValue> parameterValues = widgetInstance
-            .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList();
+        HashMap<String, Object> parameterValues = getParameterValues(parameters, widgetInstance);
 
         for (int i = 0; i < params.length; i++) {
           String namedParam = params[i];
           boolean isParamSet = false;
-          for (ParameterValue paramValue : parameterValues) {
-            if (namedParam.equals(paramValue.getParameter().getDBColumnName())) {
-              widgetQuery.setParameter(namedParam, paramValue.getValueString());
-              isParamSet = true;
-            }
+          if (parameterValues.containsKey(namedParam)) {
+            widgetQuery.setParameter(namedParam, parameterValues.get(namedParam));
+            isParamSet = true;
           }
           if (!isParamSet) {
             // TODO: throw an exception
@@ -109,7 +108,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
           resultList[0] = objResult;
 
         for (OBCQL_QueryColumn column : columns) {
-          // TODO: throw an exception if the display exception doesn't match any returned alias.
+          // TODO: throw an exception if the display expression doesn't match any returned alias.
           for (int i = 0; i < queryAliases.length; i++) {
             if (column.getDisplayExpression().equals(queryAliases[i])) {
               data.put(column.getName(), resultList[i]);
@@ -122,5 +121,34 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Returns a HashMap with the values of the parameters included on the given widget instance.
+   * 
+   * @param parameters
+   *          the parameters passed in from the request
+   * @param widgetInstance
+   *          the widget instance owner of the parameter values
+   * @return a HashMap<String, Object> with the value of each parameter mapped by the DBColumnName
+   *         of the parameter.
+   */
+  private HashMap<String, Object> getParameterValues(Map<String, String> parameters,
+      WidgetInstance widgetInstance) {
+    HashMap<String, Object> parameterValues = new HashMap<String, Object>();
+    for (ParameterValue value : widgetInstance
+        .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
+      parameterValues.put(value.getParameter().getDBColumnName(),
+          ApplicationUtils.getParameterValue(value));
+    }
+
+    for (Parameter parameter : widgetInstance.getWidgetClass()
+        .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
+      if (!parameterValues.containsKey(parameter.getDBColumnName()) && parameter.isFixed()) {
+        parameterValues.put(parameter.getDBColumnName(),
+            ApplicationUtils.getParameterFixedValue(parameters, parameter));
+      }
+    }
+    return parameterValues;
   }
 }
