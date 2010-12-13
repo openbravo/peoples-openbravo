@@ -87,12 +87,21 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       }
 
       final List<JSONObject> definitions = new ArrayList<JSONObject>();
+      final List<String> tmp = new ArrayList<String>();
+      String classDef = "";
       final OBQuery<WidgetClass> widgetClassesQry = OBDal.getInstance().createQuery(
           WidgetClass.class, WidgetClass.PROPERTY_SUPERCLASS + " is false");
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
         if (isAccessible(widgetClass)) {
           final WidgetProvider widgetProvider = MyOBUtils.getWidgetProvider(widgetClass);
           definitions.add(widgetProvider.getWidgetClassDefinition());
+          try {
+            classDef = widgetProvider.generate();
+            classDef = classDef.substring(0, classDef.length() - 1);
+            tmp.add(classDef);
+          } catch (UnsupportedOperationException e) {
+            // Do nothing as the definition is already in a loaded js file
+          }
         }
       }
       Collections.sort(definitions, new WidgetClassComparator());
@@ -101,7 +110,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       for (JSONObject json : definitions) {
         widgetClassDefinitions.add(json.toString());
       }
-
+      widgetClassDefinitions.addAll(tmp);
       log.debug("Available Widget Classes: " + widgetClassDefinitions.size());
       return widgetClassDefinitions;
     } finally {
@@ -211,8 +220,8 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     copyWidgets();
 
     widgets = new ArrayList<WidgetInstance>();
-    final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(
-        MyOBUtils.getUserWidgetInstances());
+    final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(MyOBUtils
+        .getUserWidgetInstances());
     log.debug("Defined User widgets:" + userWidgets.size());
     // filter on the basis of role access
     for (WidgetInstance widget : userWidgets) {
@@ -226,8 +235,8 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
   }
 
   private void copyWidgets() {
-    final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(
-        MyOBUtils.getUserWidgetInstances());
+    final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(MyOBUtils
+        .getUserWidgetInstances());
     final User user = OBDal.getInstance().get(User.class,
         OBContext.getOBContext().getUser().getId());
     final Role role = OBDal.getInstance().get(Role.class,
@@ -239,12 +248,12 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     final Set<WidgetInstance> defaultWidgets = new HashSet<WidgetInstance>();
     defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("OB", null));
     defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("SYSTEM", null));
-    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT",
-        new String[] { client.getId() }));
-    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("ORG",
-        new String[] { organization.getId() }));
-    defaultWidgets
-        .addAll(MyOBUtils.getDefaultWidgetInstances("ROLE", new String[] { role.getId() }));
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT", new String[] { client
+        .getId() }));
+    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("ORG", new String[] { organization
+        .getId() }));
+    defaultWidgets.addAll(MyOBUtils
+        .getDefaultWidgetInstances("ROLE", new String[] { role.getId() }));
     log.debug("Copying new widget instances on user: " + user.getId() + " role: " + role.getId());
 
     // remove the default widgets which are already defined on the user

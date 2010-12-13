@@ -88,18 +88,15 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
               availableAtLevelValue);
 
         } else if (strEventType.equals(RELOAD_WIDGETS)) {
+          // Add available classes
+          addAvailableWidgetClasses(o);
+
+          // Add widget instances
           widgets = new JSONArray();
           reloadWidgets(isAdminMode, message, widgets, availableAtLevel, availableAtLevelValue);
           o.put("widgets", widgets);
         } else if (strEventType.equals(GET_AVAILABLE_WIDGET_CLASSES)) {
-          MyOpenbravoComponent component = new MyOpenbravoComponent();
-          try {
-            List<String> availableClasses = component.getAvailableWidgetClasses();
-            o.put("availableWidgetClasses", availableClasses);
-          } catch (Exception e) {
-            log.error("Error retreiving widget classes", e);
-            o.put("availableWidgetClasses", Collections.EMPTY_LIST);
-          }
+          addAvailableWidgetClasses(o);
         } else {
           message.setType("Error");
           message.setMessage("@OBKMO_UnknownEventType@");
@@ -157,6 +154,21 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
       log.warn(">> No instances found.");
     }
 
+  }
+
+  private void addAvailableWidgetClasses(JSONObject o) {
+    MyOpenbravoComponent component = new MyOpenbravoComponent();
+    try {
+      List<String> availableClasses = component.getAvailableWidgetClasses();
+      o.put("availableWidgetClasses", availableClasses);
+    } catch (Exception e) {
+      log.error("Error retreiving widget classes", e);
+      try {
+        o.put("availableWidgetClasses", Collections.EMPTY_LIST);
+      } catch (Exception ignore) {
+        // Give up
+      }
+    }
   }
 
   private void processWidgets(String strEventType, boolean isAdminMode, OBError message,

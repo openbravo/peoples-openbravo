@@ -20,18 +20,7 @@ isc.defineClass("OBMyOpenbravoImplementation", OBMyOpenbravo);
 
 isc.OBMyOpenbravoImplementation.addProperties({
   enableAdminMode: ${data.enableAdminMode},
-  adminModeValueMap: ${data.adminModeValueMap},
-
-  availableWidgetClasses: [
-    <#list data.availableWidgetClasses as widgetClassDefinition>
-      ${widgetClassDefinition}<#if widgetClassDefinition_has_next>,</#if>
-    </#list>
-    ],
-  widgets: [
-    <#list data.widgetInstanceDefinitions as widgetInstanceDefinition>
-      ${widgetInstanceDefinition}<#if widgetInstanceDefinition_has_next>,</#if>
-    </#list>
-    ]
+  adminModeValueMap: ${data.adminModeValueMap}
 });
 
 //isc.Page.loadStyleSheet('[SKIN]../org.openbravo.client.myob/ob-widget-styles.css?' + OB.Application.moduleVersionParameters['2758CD25B2704AF6BBAD10365FC82C06']);
