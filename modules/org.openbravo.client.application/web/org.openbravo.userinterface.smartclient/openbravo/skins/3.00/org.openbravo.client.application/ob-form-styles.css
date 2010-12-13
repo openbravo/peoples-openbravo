@@ -41,7 +41,7 @@
 .OBFormFieldLabelFocused {
   font-family: 'lucida sans',sans-serif; 
   font-size: 11px;
-  color: #333333;  
+  color: #333333;
   font-weight: bold;
 }
 
@@ -57,10 +57,11 @@
 .OBFormFieldSelectInputDisabled {
   padding: 2px;
   border: 1px solid #cdd7bb;
-  background: #fff;
+  background-color: #F5F7F1;
   color: #333333;
   font-family: arial, sans-serif; 
   font-size: 12px;
+  line-height: normal;
   width: 100%;
 }
 

@@ -167,6 +167,7 @@ isc.OBViewGrid.addProperties({
   
   initWidget: function(){
     var thisGrid = this, localEditLinkField;
+    this.tallBaseStyle = this.tallBaseStyleView;
     if (this.editGrid) {
       // add the edit pencil in the beginning
       localEditLinkField = isc.addProperties({}, this.editLinkFieldProperties);
@@ -635,6 +636,7 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
+    this.tallBaseStyle = this.tallBaseStyleEdit;
     var result = this.Super('showInlineEditor', arguments);
     
     var record = this.getRecord(rowNum);
@@ -646,6 +648,7 @@ isc.OBViewGrid.addProperties({
   },
   
   hideInlineEditor: function(){
+    this.tallBaseStyle = this.tallBaseStyleView;
     isc.Log.logDebug('hideInlineEditor ' + this.getEditRow(), 'OB');
     var rowNum = this.getEditRow();
     var record = this.getRecord(rowNum);
@@ -735,7 +738,7 @@ isc.OBGridButtonsComponent.addProperties({
     buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
     
     this.OBGridToolStrip = isc.OBGridToolStrip.create({
-      members: [editIcon, buttonSeparator1, formIcon, cancelIcon, buttonSeparator2, saveIcon]
+      members: [formIcon, buttonSeparator1, editIcon, cancelIcon, buttonSeparator2, saveIcon]
     });
     
     this.addMember(this.OBGridToolStrip);

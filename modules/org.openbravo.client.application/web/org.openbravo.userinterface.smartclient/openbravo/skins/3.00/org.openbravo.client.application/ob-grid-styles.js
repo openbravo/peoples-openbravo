@@ -17,12 +17,64 @@
  ************************************************************************
 */
 
+isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);
+
+isc.OBGridHeaderImgButton.addProperties({
+  showFocused: false,
+  showRollOver: false,
+  showFocusedAsOver: false,
+  showDown: false
+});
 
 // Styling properties for main grid shown in a standard view
 isc.OBViewGrid.addProperties({
+  tallBaseStyleView: 'OBGridCell',
+  tallBaseStyleEdit: 'OBGridCellEdit',
+  headerBaseStyle: 'OBGridHeaderCell',
+  headerBarStyle: 'OBGridHeaderBar',
+  headerTitleStyle: 'OBGridHeaderCellTitle',
+  cellPadding: 0, /* Set in the CSS */
+  cellHeight: 22,
+  sortAscendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortAscending.gif', width:7, height:11},
+  sortDescendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortDescending.gif', width:7, height:11},
+  headerMenuButtonConstructor: 'OBGridHeaderImgButton',
+  headerMenuButtonWidth: 17,
+  headerMenuButtonSrc: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
   hoverWidth: 200,
-  editLinkColumnWidth: 60
+  editLinkColumnWidth: 58
 });
+
+
+isc.OBViewGrid.changeDefaults('filterEditorDefaults', {
+  height: 22,
+  styleName: 'OBGridFilterBase',
+  baseStyle: 'OBGridFilterCell'
+});
+
+
+isc.OBViewGrid.changeDefaults('sorterDefaults', {
+  // baseStyle / titleStyle is auto-assigned from headerBaseStyle
+  showFocused: false,
+//  src: '[SKIN]ListGrid/header.png',
+  src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeader_bg.png',
+  baseStyle: 'OBGridSorterButton'
+});
+
+isc.OBViewGrid.changeDefaults('headerButtonDefaults', {
+  showTitle: true,
+  showDown: true,
+  showFocused: false,
+  // baseStyle / titleStyle is auto-assigned from headerBaseStyle
+  src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeader_bg.png'
+});
+
+isc.OBViewGrid.changeDefaults('headerMenuButtonDefaults', {
+  showDown: false,
+  showTitle: true,
+  baseStyle: 'pepe'
+  //src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeader_bg.png'
+});
+
 
 isc.OBGridToolStripIcon.addProperties({
   width: 21,
@@ -50,7 +102,7 @@ isc.OBGridToolStrip.addProperties({
   height: '100%',
   width: '100%',
   styleName: 'OBGridToolStrip',
-  membersMargin: 5
+  membersMargin: 4
 });
 
 isc.OBGridButtonsComponent.addProperties({
