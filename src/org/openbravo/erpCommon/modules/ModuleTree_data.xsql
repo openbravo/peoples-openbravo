@@ -148,7 +148,8 @@
                      m.version,
                      m.name as moduleName,
                      m.version_label,
-                     m.enabled
+                     m.enabled,
+                     m.author
             FROM AD_MODULE M LEFT JOIN AD_MODULE_INSTALL MI
                                     ON MI.AD_MODULE_ID = M.AD_MODULE_ID
            WHERE EXISTS (SELECT 1 
@@ -174,7 +175,8 @@
                      m.version,
                      m.name as moduleName,
                      m.version_label,
-                     'Y' as enabled
+                     'Y' as enabled,
+                     m.author
             FROM AD_MODULE_Install M
            WHERE EXISTS (SELECT 1 
                            FROM AD_Module_Dependency_Inst 
