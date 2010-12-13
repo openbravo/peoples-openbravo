@@ -44,14 +44,9 @@ public class EnumUIDefinition extends UIDefinition {
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     String columnValue;
     try {
-      if (field.getColumn().getReference().getId().equals("17")) {
-        columnValue = new JSONObject(super.getFieldProperties(field, getValueFromSession))
-            .getString("value");
-        return getValueInComboReference(field, getValueFromSession, columnValue);
-      } else {
-        System.out.println("Invalid reference: " + field.getColumn().getReference());
-        return super.getFieldProperties(field, getValueFromSession);
-      }
+      columnValue = new JSONObject(super.getFieldProperties(field, getValueFromSession))
+          .getString("value");
+      return getValueInComboReference(field, getValueFromSession, columnValue);
     } catch (JSONException e) {
       throw new OBException("Error while computing combo data", e);
     }
