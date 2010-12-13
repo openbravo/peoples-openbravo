@@ -154,6 +154,10 @@ public class COAData extends MultipartRequest implements FieldProvider {
     super(_vars, _in, _firstLineHeads, _format, null);
   }
 
+  public COAData(InputStream _in, boolean _firstLineHeads, String _format) throws IOException {
+    super(_in, _firstLineHeads, _format, null);
+  }
+
   public String getAccountValue() {
     return accountValue;
   }
@@ -340,8 +344,8 @@ public class COAData extends MultipartRequest implements FieldProvider {
         if (text.charAt(text.length() - 1) == '"')
           text = text.substring(0, text.length() - 1);
       }
-        log4j.debug("COAData - lineSeparatorFormated - i: " + i);
-        log4j.debug("COAData - lineSeparatorFormated - text: " + text);
+      log4j.debug("COAData - lineSeparatorFormated - i: " + i);
+      log4j.debug("COAData - lineSeparatorFormated - text: " + text);
       switch (i) {
       case 0:
         coaData.setAccountValue(text);

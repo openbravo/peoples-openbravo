@@ -42,11 +42,15 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.module.ADClientModule;
+import org.openbravo.model.ad.module.ADOrgModule;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.ElementTrl;
+import org.openbravo.model.ad.ui.Message;
+import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.ad.utility.Sequence;
@@ -58,6 +62,8 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationAcctSchema;
+import org.openbravo.model.common.enterprise.OrganizationType;
+import org.openbravo.model.common.geography.Location;
 import org.openbravo.model.financialmgmt.accounting.coa.AccountingCombination;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaDefault;
@@ -279,6 +285,26 @@ public class InitialSetupUtility {
    * @param client
    * @throws Exception
    */
+  public static void setOrgImage(Client client, Organization org, byte[] image, String strImageName)
+      throws Exception {
+    Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
+    yourCompanyDocumentImage.setClient(client);
+    yourCompanyDocumentImage.setOrganization(org);
+    yourCompanyDocumentImage.setBindaryData(image);
+    yourCompanyDocumentImage.setName(strImageName);
+    org.getOrganizationInformationList().get(0).setYourCompanyDocumentImage(
+        yourCompanyDocumentImage);
+    yourCompanyDocumentImage.setOrganization(org);
+    OBDal.getInstance().save(yourCompanyDocumentImage);
+    OBDal.getInstance().save(org);
+    OBDal.getInstance().flush();
+  }
+
+  /**
+   * 
+   * @param client
+   * @throws Exception
+   */
   public static void setClientImages(Client client) throws Exception {
     SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
     setYourCompanyBigImage(sys, client);
@@ -353,6 +379,23 @@ public class InitialSetupUtility {
    */
   public static Role insertRole(Client client, Organization orgProvided, String name,
       String strUserLevelProvided) throws Exception {
+    return insertRole(client, orgProvided, name, strUserLevelProvided, true);
+  }
+
+  /**
+   * 
+   * @param client
+   *          client for which the role will be created
+   * @param orgProvided
+   *          if null, role inserted for organization with id=0
+   * @param name
+   *          name of the role
+   * @param strUserLevel
+   *          if null, user level " CO" will be set to the new role
+   * @return Role object for new element
+   */
+  public static Role insertRole(Client client, Organization orgProvided, String name,
+      String strUserLevelProvided, boolean isClientAdmin) throws Exception {
     Organization organization = null;
     if (orgProvided == null) {
       if ((organization = getZeroOrg()) == null)
@@ -373,7 +416,7 @@ public class InitialSetupUtility {
     newRole.setClientList(client.getId());
     newRole.setOrganizationList(organization.getId());
     newRole.setUserLevel(strUserLevel);
-    newRole.setClientAdmin(true);
+    newRole.setClientAdmin(isClientAdmin);
     OBDal.getInstance().save(newRole);
     OBDal.getInstance().flush();
     return newRole;
@@ -389,22 +432,40 @@ public class InitialSetupUtility {
    */
   public static RoleOrganization insertRoleOrganization(Role role, Organization orgProvided)
       throws Exception {
-    Organization organization = null;
-    if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
-        return null;
-    } else
-      organization = orgProvided;
+    return insertRoleOrganization(role, orgProvided, false);
+  }
 
-    final RoleOrganization newRoleOrganization = OBProvider.getInstance().get(
-        RoleOrganization.class);
-    newRoleOrganization.setClient(role.getClient());
-    newRoleOrganization.setOrganization(organization);
-    newRoleOrganization.setRole(role);
-    newRoleOrganization.setOrgAdmin(false);
-    OBDal.getInstance().save(newRoleOrganization);
-    OBDal.getInstance().flush();
-    return newRoleOrganization;
+  /**
+   * 
+   * @param role
+   *          role for which the organization access information will be created
+   * @param orgProvided
+   *          if null, organization with id "0" will be used
+   * @return RoleOrganization object for new element
+   */
+  public static RoleOrganization insertRoleOrganization(Role role, Organization orgProvided,
+      boolean isOrgAdmin) throws Exception {
+    try {
+      OBContext.setAdminMode();
+      Organization organization = null;
+      if (orgProvided == null) {
+        if ((organization = getZeroOrg()) == null)
+          return null;
+      } else
+        organization = orgProvided;
+
+      final RoleOrganization newRoleOrganization = OBProvider.getInstance().get(
+          RoleOrganization.class);
+      newRoleOrganization.setClient(role.getClient());
+      newRoleOrganization.setOrganization(organization);
+      newRoleOrganization.setRole(role);
+      newRoleOrganization.setOrgAdmin(isOrgAdmin);
+      OBDal.getInstance().save(newRoleOrganization);
+      OBDal.getInstance().flush();
+      return newRoleOrganization;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
@@ -435,7 +496,8 @@ public class InitialSetupUtility {
     newUser.setUsername(name);
     newUser.setPassword(password);
     newUser.setDefaultLanguage(defaultLanguage);
-    newUser.setDefaultRole(role);
+    if (role != null)
+      newUser.setDefaultRole(role);
     OBDal.getInstance().save(newUser);
     OBDal.getInstance().flush();
     return newUser;
@@ -452,6 +514,20 @@ public class InitialSetupUtility {
    */
   public static UserRoles insertUserRole(Client client, User user, Organization orgProvided,
       Role role) throws Exception {
+    return insertUserRole(client, user, orgProvided, role, true);
+  }
+
+  /**
+   * 
+   * @param client
+   * @param user
+   * @param orgProvided
+   * @param role
+   * @return UserRoles object for new element
+   * @throws Exception
+   */
+  public static UserRoles insertUserRole(Client client, User user, Organization orgProvided,
+      Role role, boolean isRoleAdmin) throws Exception {
     try {
       OBContext.setAdminMode();
       Organization organization = null;
@@ -467,14 +543,13 @@ public class InitialSetupUtility {
       newUserRole.setOrganization(organization);
       newUserRole.setRole(role);
       newUserRole.setUserContact(user);
-      newUserRole.setRoleAdmin(true);
+      newUserRole.setRoleAdmin(isRoleAdmin);
       OBDal.getInstance().save(newUserRole);
       OBDal.getInstance().flush();
       return newUserRole;
     } finally {
       OBContext.restorePreviousMode();
     }
-
   }
 
   /**
@@ -604,30 +679,72 @@ public class InitialSetupUtility {
       String name, String value, String description, String accountType, String accountSign,
       boolean isDocControlled, boolean isSummary, String elementLevel, boolean doFlush)
       throws Exception {
+    try {
+      OBContext.setAdminMode();
 
-    Organization organization = null;
+      Organization organization = null;
+      if (orgProvided == null) {
+        if ((organization = getZeroOrg()) == null)
+          return null;
+      } else
+        organization = orgProvided;
+
+      final ElementValue newElementValue = OBProvider.getInstance().get(ElementValue.class);
+      newElementValue.setClient(element.getClient());
+      newElementValue.setOrganization(organization);
+      newElementValue.setSearchKey(value);
+      newElementValue.setName(name);
+      newElementValue.setDescription(description);
+      newElementValue.setAccountingElement(element);
+      newElementValue.setAccountType(accountType);
+      newElementValue.setAccountSign(accountSign);
+      newElementValue.setDocumentControlled(isDocControlled);
+      newElementValue.setSummaryLevel(isSummary);
+      newElementValue.setElementLevel(elementLevel);
+      OBDal.getInstance().save(newElementValue);
+      if (doFlush)
+        OBDal.getInstance().flush();
+      return newElementValue;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the nodes of a given tree
+   * 
+   * @param accountTree
+   * @param client
+   * @param orgProvided
+   * @return List<TreeNode> with relation of tree node elements of the provided tree
+   * @throws Exception
+   */
+  public static List<TreeNode> getTreeNode(Tree accountTree, Client client, Organization orgProvided)
+      throws Exception {
+    Organization organization;
     if (orgProvided == null) {
       if ((organization = getZeroOrg()) == null)
         return null;
     } else
       organization = orgProvided;
-
-    final ElementValue newElementValue = OBProvider.getInstance().get(ElementValue.class);
-    newElementValue.setClient(element.getClient());
-    newElementValue.setOrganization(organization);
-    newElementValue.setSearchKey(value);
-    newElementValue.setName(name);
-    newElementValue.setDescription(description);
-    newElementValue.setAccountingElement(element);
-    newElementValue.setAccountType(accountType);
-    newElementValue.setAccountSign(accountSign);
-    newElementValue.setDocumentControlled(isDocControlled);
-    newElementValue.setSummaryLevel(isSummary);
-    newElementValue.setElementLevel(elementLevel);
-    OBDal.getInstance().save(newElementValue);
-    if (doFlush)
-      OBDal.getInstance().flush();
-    return newElementValue;
+    List<TreeNode> lTreeNodes;
+    try {
+      OBContext.setAdminMode();
+      final OBCriteria<TreeNode> obcTreeNode = OBDal.getInstance().createCriteria(TreeNode.class);
+      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_TREE, accountTree));
+      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_CLIENT, client));
+      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_ORGANIZATION, organization));
+      if (OBContext.getOBContext().isInAdministratorMode()) {
+        obcTreeNode.setFilterOnReadableClients(false);
+        obcTreeNode.setFilterOnReadableOrganization(false);
+      }
+      lTreeNodes = obcTreeNode.list();
+      return lTreeNodes;
+    } catch (Exception e) {
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
@@ -639,23 +756,7 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static List<TreeNode> getTreeNode(Tree accountTree, Client client) throws Exception {
-    List<TreeNode> lTreeNodes;
-    try {
-      OBContext.setAdminMode();
-      final OBCriteria<TreeNode> obcTreeNode = OBDal.getInstance().createCriteria(TreeNode.class);
-      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_TREE, accountTree));
-      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_CLIENT, client));
-      if (OBContext.getOBContext().isInAdministratorMode()) {
-        obcTreeNode.setFilterOnReadableClients(false);
-        obcTreeNode.setFilterOnReadableOrganization(false);
-      }
-      lTreeNodes = obcTreeNode.list();
-    } catch (Exception e) {
-      return null;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return lTreeNodes;
+    return getTreeNode(accountTree, client, null);
   }
 
   /**
@@ -681,28 +782,33 @@ public class InitialSetupUtility {
   public static void updateAccountTree(List<TreeNode> treeNodes, HashMap<String, Long> mapSequence,
       HashMap<String, String> mapElementValueValue, HashMap<String, String> mapElementValueId,
       HashMap<String, String> mapParent, boolean doFlush) throws Exception {
-    Iterator<TreeNode> iTreeNodes = treeNodes.listIterator();
-    while (iTreeNodes.hasNext()) {
-      try {
-        TreeNode treeNode = iTreeNodes.next();
-        String strElementId = treeNode.getNode();
-        String strElementValue = "0";
-        Long lSequence = 10L;
-        if (!strElementId.equals("0")) {
-          strElementValue = mapElementValueValue.get(strElementId);
-          lSequence = mapSequence.get(strElementValue);
-          treeNode.setSequenceNumber(lSequence);
-          String strParentValue = mapParent.get(strElementValue);
-          if (!strParentValue.equals("0"))
-            treeNode.setReportSet(mapElementValueId.get(strParentValue));
-          OBDal.getInstance().save(treeNode);
+    try {
+      OBContext.setAdminMode();
+      Iterator<TreeNode> iTreeNodes = treeNodes.listIterator();
+      while (iTreeNodes.hasNext()) {
+        try {
+          TreeNode treeNode = iTreeNodes.next();
+          String strElementId = treeNode.getNode();
+          String strElementValue = "0";
+          Long lSequence = 10L;
+          if (!strElementId.equals("0")) {
+            strElementValue = mapElementValueValue.get(strElementId);
+            lSequence = mapSequence.get(strElementValue);
+            treeNode.setSequenceNumber(lSequence);
+            String strParentValue = mapParent.get(strElementValue);
+            if (!strParentValue.equals("0"))
+              treeNode.setReportSet(mapElementValueId.get(strParentValue));
+            OBDal.getInstance().save(treeNode);
+          }
+          if (doFlush)
+            OBDal.getInstance().flush();
+        } catch (Exception ignoredException) {
+          log4j.error("updateAccountTree() - Ignored exception while sorting account tree.",
+              ignoredException);
         }
-        if (doFlush)
-          OBDal.getInstance().flush();
-      } catch (Exception ignoredException) {
-        log4j.error("updateAccountTree() - Ignored exception while sorting account tree.",
-            ignoredException);
       }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -1326,11 +1432,16 @@ public class InitialSetupUtility {
     String strSourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
         "source.path");
     String strPath = "";
-    if (dataset.getModule().getJavaPackage().equals("org.openbravo")) {
-      strPath = strSourcePath + "/referencedata/standard";
-    } else {
-      strPath = strSourcePath + "/modules/" + dataset.getModule().getJavaPackage()
-          + "/referencedata/standard";
+    try {
+      OBContext.setAdminMode();
+      if (dataset.getModule().getJavaPackage().equals("org.openbravo")) {
+        strPath = strSourcePath + "/referencedata/standard";
+      } else {
+        strPath = strSourcePath + "/modules/" + dataset.getModule().getJavaPackage()
+            + "/referencedata/standard";
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     File datasetFile = new File(strPath + "/" + Utility.wikifiedName(dataset.getName()) + ".xml");
     if (!datasetFile.exists()) {
@@ -1343,8 +1454,10 @@ public class InitialSetupUtility {
     if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
         && !myResult.getErrorMessages().equals("null"))
       return myResult;
-
-    insertClientModule(client, dataset.getModule());
+    if (organization.getId().equals(getZeroOrg().getId()))
+      insertClientModule(client, dataset.getModule());
+    else
+      insertOrgModule(client, organization, dataset.getModule());
 
     return myResult;
   }
@@ -1450,13 +1563,18 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static List<DataSet> getDataSets(Module module, List<String> accessLevel) throws Exception {
-    final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
-    obcDataSets.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
-    obcDataSets.add(Expression.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
-    if (obcDataSets.list().size() > 0)
-      return obcDataSets.list();
-    else
-      return null;
+    try {
+      OBContext.setAdminMode();
+      final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
+      obcDataSets.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
+      obcDataSets.add(Expression.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
+      if (obcDataSets.list().size() > 0)
+        return obcDataSets.list();
+      else
+        return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
@@ -1467,16 +1585,47 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static List<org.openbravo.model.ad.domain.List> getAcctSchemaElements() throws Exception {
+    try {
+      OBContext.setAdminMode();
 
-    final OBCriteria<org.openbravo.model.ad.domain.List> obcRefList = OBDal.getInstance()
-        .createCriteria(org.openbravo.model.ad.domain.List.class);
-    obcRefList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, OBDal
-        .getInstance().get(Reference.class, "181")));
-    if (obcRefList.list().size() > 0)
-      return obcRefList.list();
-    else
-      return null;
+      final OBCriteria<org.openbravo.model.ad.domain.List> obcRefList = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.domain.List.class);
+      obcRefList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, OBDal
+          .getInstance().get(Reference.class, "181")));
+      if (obcRefList.list().size() > 0)
+        return obcRefList.list();
+      else
+        return null;
 
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * 
+   * @param client
+   * @param module
+   * @return ADClientModule object with the created element
+   * @throws Exception
+   */
+  public static ADOrgModule insertOrgModule(Client client, Organization org, Module module)
+      throws Exception {
+    try {
+      OBContext.setAdminMode();
+      final ADOrgModule newADOrgModule = OBProvider.getInstance().get(ADOrgModule.class);
+      newADOrgModule.setClient(client);
+      newADOrgModule.setOrganization(org);
+      newADOrgModule.setOrganization(getZeroOrg());
+      newADOrgModule.setModule(module);
+      newADOrgModule.setVersion(module.getVersion());
+
+      OBDal.getInstance().save(newADOrgModule);
+      OBDal.getInstance().flush();
+      return newADOrgModule;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
@@ -1487,14 +1636,196 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static ADClientModule insertClientModule(Client client, Module module) throws Exception {
-    final ADClientModule newADClientModule = OBProvider.getInstance().get(ADClientModule.class);
-    newADClientModule.setClient(client);
-    newADClientModule.setOrganization(getZeroOrg());
-    newADClientModule.setModule(module);
-    newADClientModule.setVersion(module.getVersion());
+    try {
+      OBContext.setAdminMode();
+      final ADClientModule newADClientModule = OBProvider.getInstance().get(ADClientModule.class);
+      newADClientModule.setClient(client);
+      newADClientModule.setOrganization(getZeroOrg());
+      newADClientModule.setModule(module);
+      newADClientModule.setVersion(module.getVersion());
 
-    OBDal.getInstance().save(newADClientModule);
-    OBDal.getInstance().flush();
-    return newADClientModule;
+      OBDal.getInstance().save(newADClientModule);
+      OBDal.getInstance().flush();
+      return newADClientModule;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
+
+  public static boolean existsOrgName(Client client, String strOrgName) throws Exception {
+    try {
+      OBContext.setAdminMode();
+      final OBCriteria<Organization> obcOrg = OBDal.getInstance()
+          .createCriteria(Organization.class);
+      obcOrg.setFilterOnReadableOrganization(false);
+      obcOrg.add(Expression.eq(Organization.PROPERTY_CLIENT, client));
+      obcOrg.add(Expression.eq(Organization.PROPERTY_NAME, strOrgName));
+      return obcOrg.count() > 0;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static Organization insertOrganization(String strOrgName, OrganizationType orgType,
+      String strcLocationId, Client client) throws Exception {
+    log4j.debug("InitialSetupUtility - insertOrganization() - name = " + strOrgName);
+    try {
+      OBContext.setAdminMode();
+      final Organization newOrg = OBProvider.getInstance().get(Organization.class);
+      newOrg.setClient(client);
+      newOrg.setName(strOrgName);
+      newOrg.setSearchKey(strOrgName);
+      newOrg.setOrganizationType(orgType);
+      OBDal.getInstance().save(newOrg);
+      OBDal.getInstance().flush();
+      return newOrg;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+  }
+
+  public static Tree getOrgTree(Client client) throws Exception {
+    OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
+    obcTree.add(Expression.eq(Tree.PROPERTY_TYPEAREA, "OO"));
+    obcTree.add(Expression.eq(Tree.PROPERTY_CLIENT, client));
+    return obcTree.list().get(0);
+  }
+
+  public static TreeNode getTreeNode(Organization org, Tree tree, Client client) throws Exception {
+    try {
+      OBContext.setAdminMode();
+      final OBCriteria<TreeNode> obcTreeNode = OBDal.getInstance().createCriteria(TreeNode.class);
+      obcTreeNode.setFilterOnReadableOrganization(false);
+      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_TREE, tree));
+      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_CLIENT, client));
+      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_NODE, org.getId()));
+      return obcTreeNode.list().get(0);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static void updateOrgTree(Tree tree, TreeNode orgNode, Organization parentOrg)
+      throws Exception {
+    Long lSeqNo = 0L;
+    orgNode.setReportSet(parentOrg.getId());
+    try {
+      OBContext.setAdminMode();
+      final OBCriteria<TreeNode> obcTreeNodes = OBDal.getInstance().createCriteria(TreeNode.class);
+      obcTreeNodes.setFilterOnReadableClients(false);
+      obcTreeNodes.setFilterOnReadableOrganization(false);
+      obcTreeNodes.add(Expression.eq(TreeNode.PROPERTY_REPORTSET, parentOrg.getId()));
+      obcTreeNodes.add(Expression.eq(TreeNode.PROPERTY_TREE, tree));
+      for (TreeNode treeNode : obcTreeNodes.list())
+        if (treeNode.getSequenceNumber() > lSeqNo)
+          lSeqNo = treeNode.getSequenceNumber();
+      orgNode.setSequenceNumber(lSeqNo + 10L);
+      OBDal.getInstance().save(orgNode);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static void updateOrgLocation(Organization org, Location location) throws Exception {
+    try {
+      OBContext.setAdminMode();
+      location.setOrganization(getZeroOrg());
+      org.getOrganizationInformationList().get(0).setLocationAddress(location);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static String getTranslatedMessage(Language language, String msgId) {
+    try {
+      OBContext.setAdminMode();
+      Message msg = OBDal.getInstance().get(Message.class, msgId);
+      OBCriteria<MessageTrl> obcMsgTrl = OBDal.getInstance().createCriteria(MessageTrl.class);
+      obcMsgTrl.setFilterOnReadableClients(false);
+      obcMsgTrl.setFilterOnReadableOrganization(false);
+      obcMsgTrl.add(Expression.eq(MessageTrl.PROPERTY_MESSAGE, msg));
+      obcMsgTrl.add(Expression.eq(MessageTrl.PROPERTY_LANGUAGE, language));
+      MessageTrl trl = (MessageTrl) obcMsgTrl.uniqueResult();
+      if (trl == null) {
+        return msg.getMessageText();
+      }
+      return trl.getMessageText();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static String getTranslatedColumnName(Language language, String columnName) {
+    try {
+      OBContext.setAdminMode();
+
+      OBCriteria<org.openbravo.model.ad.ui.Element> obcElement = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.ui.Element.class);
+      obcElement.setFilterOnReadableClients(false);
+      obcElement.setFilterOnReadableOrganization(false);
+      obcElement.add(Expression.eq(org.openbravo.model.ad.ui.Element.PROPERTY_DBCOLUMNNAME,
+          columnName));
+      org.openbravo.model.ad.ui.Element element = (org.openbravo.model.ad.ui.Element) obcElement
+          .uniqueResult();
+
+      OBCriteria<ElementTrl> obcElementTrl = OBDal.getInstance().createCriteria(ElementTrl.class);
+      obcElementTrl.add(Expression.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
+      obcElementTrl.add(Expression.eq(ElementTrl.PROPERTY_LANGUAGE, language));
+      ElementTrl trl = (ElementTrl) obcElementTrl.uniqueResult();
+      if (trl == null) {
+        return element.getName();
+      }
+      return trl.getName();
+    } catch (final Exception err) {
+      return "Error!";
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the tree of the provided type
+   * 
+   * @param strTreeTypeMenu
+   *          two letters corresponding to the tree type for the menu
+   * @return Tree menu element (defined at system level)
+   * @throws Exception
+   */
+  public static Tree getTree(String strTreeTypeMenu, Client client, Organization orgProvided)
+      throws Exception {
+    Organization organization;
+    if (orgProvided == null) {
+      if ((organization = getZeroOrg()) == null)
+        return null;
+    } else
+      organization = orgProvided;
+
+    final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
+    obcTree.add(Expression.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
+    obcTree.add(Expression.eq(Tree.PROPERTY_CLIENT, client));
+    obcTree.add(Expression.eq(Tree.PROPERTY_ORGANIZATION, organization));
+    List<Tree> lTrees = obcTree.list();
+    if (lTrees.size() != 1)
+      return null;
+    return lTrees.get(0);
+  }
+
+  // public static Role getClientAdminRole(Client client) {
+  // try {
+  // OBContext.setAdminMode();
+  // OBCriteria<Role> obcRole = OBDal.getInstance().createCriteria(Role.class);
+  // obcRole.setFilterOnReadableClients(false);
+  // obcRole.setFilterOnReadableOrganization(false);
+  // obcRole.add(Expression.ilike(Role.PROPERTY_NAME, "%Admin"));
+  // obcRole.add(Expression.eq(Role.PROPERTY_CLIENT, client));
+  // obcRole.add(Expression.eq(Role.PROPERTY_MANUAL, false));
+  // return (Role) obcRole.uniqueResult();
+  // } finally {
+  // OBContext.restorePreviousMode();
+  // }
+  //
+  // }
+
 }
