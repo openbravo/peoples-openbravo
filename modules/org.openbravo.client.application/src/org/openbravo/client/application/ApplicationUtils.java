@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
@@ -127,18 +129,27 @@ public class ApplicationUtils {
   public static String getParameterFixedValue(Map<String, String> parameters, Parameter parameter) {
     if (parameter.isEvaluateFixedValue()) {
       try {
-        final ScriptEngineManager manager = new ScriptEngineManager();
-        final ScriptEngine engine = manager.getEngineByName("js");
-
-        engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters));
-
-        return (String) engine.eval(parameter.getFixedValue());
+        return (String) getJSExpressionResult(parameters, null, parameter.getFixedValue());
       } catch (Exception e) {
         log.error(e.getMessage(), e);
+        return null;
       }
-      return null;
     } else {
       return parameter.getFixedValue();
     }
+  }
+
+  public static Object getJSExpressionResult(Map<String, String> parameters, HttpSession session,
+      String expression) throws ScriptException {
+    final ScriptEngineManager manager = new ScriptEngineManager();
+    final ScriptEngine engine = manager.getEngineByName("js");
+
+    if (session != null) {
+      engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters, session));
+    } else {
+      engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters));
+    }
+
+    return engine.eval(expression);
   }
 }
