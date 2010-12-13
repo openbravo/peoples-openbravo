@@ -1,3 +1,5 @@
 #!/bin/sh
 echo "Performing jslint check on all js resources"
-find -name '*.js' -and ! -path '*isomorphic*' -and ! -path '*qunit*' -and ! -path '*docs*' | xargs -n1 ./modules/org.openbravo.client.kernel/jslint/jslint || exit 1
+find ./modules -name '*.js' -and ! -path '*isomorphic*' \
+-and ! -path '*qunit*' -and ! -path '*docs*' \
+-and ! -path '*LAB*' | xargs -n1 ./modules/org.openbravo.client.kernel/jslint/jslint || exit 1
