@@ -180,7 +180,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Next step is to calculate the values for the columns
       ArrayList<String> calloutsToCall = new ArrayList<String>();
-      ArrayList<String> allColumns = new ArrayList<String>(sortedColumns);
+      ArrayList<String> allColumns = new ArrayList<String>();
       // we add the columns not included in the sortedColumns
       // (the ones which don't have validations)
       for (Field field : fields) {
@@ -188,6 +188,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           allColumns.add(field.getColumn().getDBColumnName());
         }
       }
+      allColumns.addAll(sortedColumns);
 
       for (String col : allColumns) {
         Field field = columnsOfFields.get(col);
