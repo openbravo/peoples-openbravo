@@ -238,7 +238,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
     final JSONObject jsonResponse = new JSONObject();
 
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-    jsonResponse.put(JsonConstants.RESPONSE_STARTROWS, startRow);
+    jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
     jsonResponse.put(JsonConstants.RESPONSE_ENDROW, props.size() + startRow - 1);
     jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, props.size());
     jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(convertToJSONObjects(props,
