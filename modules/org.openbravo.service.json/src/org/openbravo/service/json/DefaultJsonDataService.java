@@ -160,8 +160,13 @@ public class DefaultJsonDataService implements JsonDataService {
           final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
           targetRowNumber = queryService.getRowNumber(targetRecordId);
           if (targetRowNumber != -1) {
-            queryService.setFirstResult(targetRowNumber);
             startRow = targetRowNumber;
+            // if the startrow is really low, then just read from 0
+            // to make sure that we have a full page of data to display
+            if (startRow < (computedMaxResults / 2)) {
+              startRow = 0;
+            }
+            queryService.setFirstResult(startRow);
           }
         }
 
