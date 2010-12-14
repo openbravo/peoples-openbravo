@@ -72,19 +72,17 @@ public class QueryListWidgetProvider extends WidgetProvider {
   public JSONObject getWidgetInstanceDefinition(WidgetInstance widgetInstance) {
     try {
       final JSONObject jsonObject = super.getWidgetInstanceDefinition(widgetInstance);
+
       jsonObject.put("widgetInstanceId", widgetInstance.getId());
 
-      Long height = widgetInstance.getWidgetClass().getHeight();
-
+      Long rowsNumber = 10L;
       for (ParameterValue value : widgetInstance
           .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
         if ("RowsNumber".equals(value.getParameter().getDBColumnName())) {
-          height = value.getValueNumber().longValue() * ROW_HEIGHT;
-          height += STATIC_HEIGHT;
+          rowsNumber = value.getValueNumber().longValue();
         }
       }
-
-      jsonObject.put(HEIGHT, height);
+      jsonObject.put(HEIGHT, (rowsNumber * ROW_HEIGHT) + STATIC_HEIGHT);
 
       return jsonObject;
     } catch (Exception e) {
