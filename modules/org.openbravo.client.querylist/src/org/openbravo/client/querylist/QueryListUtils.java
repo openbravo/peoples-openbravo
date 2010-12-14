@@ -67,7 +67,7 @@ public class QueryListUtils {
 
           field.put("title", getColumnLabel(column));
 
-          field.put("width", column.getWidth());
+          field.put("width", column.getWidth().toString() + "%");
           jsonFields.add(field);
         }
       }
