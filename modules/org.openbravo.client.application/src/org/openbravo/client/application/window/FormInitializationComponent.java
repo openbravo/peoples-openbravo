@@ -184,7 +184,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // we add the columns not included in the sortedColumns
       // (the ones which don't have validations)
       for (Field field : fields) {
-        if (!allColumns.contains(field.getColumn().getDBColumnName())) {
+        if (!sortedColumns.contains(field.getColumn().getDBColumnName())) {
           allColumns.add(field.getColumn().getDBColumnName());
         }
       }
