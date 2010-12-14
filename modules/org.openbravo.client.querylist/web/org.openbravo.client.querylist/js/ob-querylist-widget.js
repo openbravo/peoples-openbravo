@@ -28,7 +28,10 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   fields: null,
   grid: null,
   gridProperties: {},
-  
+  actionHandler: 'org.openbravo.client.querylist.QueryListActionHandler',
+  viewMode: 'widget',
+
+
   createWindowContents: function(){
     var layout = isc.VStack.create({
       height: '100%',
@@ -46,6 +49,25 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
   
   refresh: function(){
+    var post = {
+        'ID': this.ID,
+        'widgetId': this.widgetId,
+        'eventType': 'GET_FIELDS',
+        'viewMode': this.viewMode
+      };
+
+    OB.RemoteCallManager.call(this.actionHandler, post, {}, function(rpcResponse, data, rpcRequest){
+      if (data && data.ID && window[data.ID]) {
+        window[data.ID].reloadGrid(rpcResponse, data, rpcRequest);
+      }
+    });
+  },
+
+  reloadGrid: function(rpcResponse, data, rpcRequest) {
+
+    this.fields = data.fields;
+    this.grid.setDataSource(this.grid.dataSource);
+    this.grid.setFields();
     this.grid.invalidateCache();
     this.grid.filterData();
   }
@@ -97,7 +119,7 @@ isc.OBQueryListGrid.addProperties({
     requestProperties.showPrompt = false;
     criteria.widgetInstanceId = this.widget.dbInstanceId;
     criteria.rowsNumber = this.widget.rowsNumber;
-    criteria.viewMode = "widget";
+    criteria.viewMode = this.widget.viewMode;
     return this.Super('filterData', [criteria, callback, requestProperties]);
   },
   
@@ -111,7 +133,7 @@ isc.OBQueryListGrid.addProperties({
     requestProperties.showPrompt = false;
     criteria.widgetInstanceId = this.widget.dbInstanceId;
     criteria.rowsNumber = this.widget.rowsNumber;
-    criteria.viewMode = "widget";
+    criteria.viewMode = this.widget.viewMode;
     return this.Super('fetchData', [criteria, callback, requestProperties]);
   }  
 });
