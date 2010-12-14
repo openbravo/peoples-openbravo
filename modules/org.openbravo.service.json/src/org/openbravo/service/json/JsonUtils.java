@@ -124,7 +124,7 @@ public class JsonUtils {
 
     try {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put(JsonConstants.RESPONSE_STARTROWS, "0");
+      jsonResponse.put(JsonConstants.RESPONSE_STARTROW, "0");
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, "0");
       jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, "0");
       jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray());
