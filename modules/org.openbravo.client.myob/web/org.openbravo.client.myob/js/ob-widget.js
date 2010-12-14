@@ -194,6 +194,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     if (this.widgetMode === this.CONTENT_MODE) {
       this.toMode(this.EDIT_MODE);
     } else {
+      this.refresh();
       this.toMode(this.CONTENT_MODE);
     }
   },
