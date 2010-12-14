@@ -163,7 +163,7 @@ public class ParametersActionHandler extends BaseActionHandler {
         Date date = xmlDateFormat.parse(stringValue);
         parameterValue.setValueDate(date);
       } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
-          || domainType.getClass().getSuperclass().equals(LongDomainType.class)) {
+          || domainType.getClass().equals(LongDomainType.class)) {
         parameterValue.setValueNumber(new BigDecimal(stringValue));
       } else { // default
         parameterValue.setValueString(stringValue);
