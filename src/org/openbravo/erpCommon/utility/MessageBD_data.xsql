@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,41 +36,28 @@
     <Parameter name="language"/>
     <Parameter name="value"/>
   </SqlMethod>
+  
   <SqlMethod name="message" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT MSGTEXT FROM AD_MESSAGE WHERE VALUE=?
+         SELECT coalesce(t.MSGTEXT, m.MSGTEXT) AS MSGTEXT 
+           FROM AD_MESSAGE m left join AD_MESSAGE_TRL t on m.AD_MESSAGE_ID = t.AD_MESSAGE_ID 
+                                   and t.AD_LANGUAGE = ?
+          WHERE m.VALUE=?
     </Sql>
-    <Parameter name="value"/>
-  </SqlMethod>
-  <SqlMethod name="messageLanguage" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT AD_MESSAGE_TRL.MSGTEXT 
-      FROM AD_MESSAGE, AD_MESSAGE_TRL WHERE AD_MESSAGE.VALUE=? 
-      AND AD_MESSAGE.AD_MESSAGE_ID = AD_MESSAGE_TRL.AD_MESSAGE_ID 
-      AND AD_MESSAGE_TRL.AD_LANGUAGE = ?
-    </Sql>
-    <Parameter name="value"/>
     <Parameter name="language"/>
+    <Parameter name="value"/>
   </SqlMethod>
+  
   <SqlMethod name="columnname" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT NAME FROM AD_ELEMENT WHERE COLUMNNAME=?
+     SELECT coalesce(E_TRL.NAME, E.NAME) AS NAME 
+      FROM AD_ELEMENT E left join AD_ELEMENT_TRL E_TRL on E.AD_ELEMENT_ID = E_TRL.AD_ELEMENT_ID 
+                                                      and E_TRL.AD_LANGUAGE = ?
+      where E.COLUMNNAME=?
     </Sql>
-    <Parameter name="value"/>
-  </SqlMethod>
-  <SqlMethod name="columnnameLanguage" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT (case when E_TRL.NAME IS NULL then E.NAME else E_TRL.NAME end) AS NAME 
-      FROM AD_ELEMENT E, AD_ELEMENT_TRL E_TRL 
-      WHERE E.AD_ELEMENT_ID = E_TRL.AD_ELEMENT_ID 
-      AND E.COLUMNNAME=? 
-      AND E_TRL.AD_LANGUAGE = ? 
-    </Sql>
-    <Parameter name="value"/>
     <Parameter name="language"/>
+    <Parameter name="value"/>
   </SqlMethod>
 </SqlClass>
