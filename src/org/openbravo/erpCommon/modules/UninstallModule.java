@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,8 @@
 package org.openbravo.erpCommon.modules;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
@@ -121,13 +123,36 @@ public class UninstallModule {
       final StringTokenizer st = new StringTokenizer(moduleIdList, ",", false);
       while (st.hasMoreTokens()) {
         final String module = st.nextToken().trim();
-        final String contents = getContentList(module.replace("'", ""));
+
         final String status = UninstallModuleData.selectStatus(pool, module);
         if (status != null && "U".equals(status)) {
           continue;
         }
 
-        final UninstallModuleData data[] = UninstallModuleData.selectDirectories(pool, contents); // delete
+        // obtain all the modules to uninstall: selected modules + inclussions of them
+        String modsToUninstall = getContentList(module.replace("'", ""));
+
+        ArrayList<String> uninstallList = new ArrayList<String>(Arrays.asList(modsToUninstall
+            .replace(" ", "").replace("'", "").split(",")));
+        for (UninstallModuleData dep : UninstallModuleData
+            .selectDependencies(pool, modsToUninstall)) {
+          // Do not uninstall inclussions that are dependencies for other modules
+          uninstallList.remove(dep.adDependentModuleId);
+          addLog(dep.origname + " @IsDependencyOf@ " + dep.name + ". @ModuleWillNotBeUninstalled@",
+              MSG_WARN);
+        }
+
+        modsToUninstall = "";
+        for (String mod : uninstallList) {
+          modsToUninstall += "'" + mod + "',";
+        }
+        if (modsToUninstall.isEmpty()) {
+          return;
+        }
+        modsToUninstall = modsToUninstall.substring(0, modsToUninstall.length() - 1);
+
+        final UninstallModuleData data[] = UninstallModuleData.selectDirectories(pool,
+            modsToUninstall); // delete
         // directories
         if (data != null && data.length > 0) {
           for (int i = 0; i < data.length; i++) {
@@ -156,12 +181,12 @@ public class UninstallModule {
 
         if (status.equals("I")) {
           // the module has not been already installed, delete it from temporary installation tables
-          UninstallModuleData.deleteTmpModule(pool, contents);
-          UninstallModuleData.deleteTmpDependency(pool, contents);
-          UninstallModuleData.deleteTmpDBPrefix(pool, contents);
+          UninstallModuleData.deleteTmpModule(pool, modsToUninstall);
+          UninstallModuleData.deleteTmpDependency(pool, modsToUninstall);
+          UninstallModuleData.deleteTmpDBPrefix(pool, modsToUninstall);
         } else {
           // set as uninstalled in DB
-          UninstallModuleData.updateUninstall(pool, contents);
+          UninstallModuleData.updateUninstall(pool, modsToUninstall);
         }
       }
     } catch (final Exception e) {
