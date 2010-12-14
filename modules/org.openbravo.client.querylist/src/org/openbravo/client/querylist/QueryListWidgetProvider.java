@@ -82,6 +82,7 @@ public class QueryListWidgetProvider extends WidgetProvider {
           rowsNumber = value.getValueNumber().longValue();
         }
       }
+      jsonObject.put("rowsNumber", rowsNumber);
       jsonObject.put(HEIGHT, (rowsNumber * ROW_HEIGHT) + STATIC_HEIGHT);
 
       return jsonObject;

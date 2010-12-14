@@ -24,6 +24,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
 
   widgetId: null,
   widgetInstanceId: null,
+  rowsNumber: null,
   fields: null,
   grid: null,
   gridProperties: {},
@@ -64,11 +65,11 @@ isc.OBQueryListGrid.addProperties({
   
   canEdit: false,
   alternateRecordStyles: true,
-  canReorderFields: true,
+  canReorderFields: false,
   canFreezeFields: false,
   canGroupBy: false,
   autoFetchData: true,
-  //canAutoFitFields: false,
+  canAutoFitFields: false,
   
   //autoFitFieldWidths: true,
   //autoFitWidthApproach: 'title',
@@ -95,6 +96,8 @@ isc.OBQueryListGrid.addProperties({
     }
     requestProperties.showPrompt = false;
     criteria.widgetInstanceId = this.widget.dbInstanceId;
+    criteria.rowsNumber = this.widget.rowsNumber;
+    criteria.viewMode = "widget";
     return this.Super('filterData', [criteria, callback, requestProperties]);
   },
   
@@ -107,6 +110,8 @@ isc.OBQueryListGrid.addProperties({
     }
     requestProperties.showPrompt = false;
     criteria.widgetInstanceId = this.widget.dbInstanceId;
+    criteria.rowsNumber = this.widget.rowsNumber;
+    criteria.viewMode = "widget";
     return this.Super('fetchData', [criteria, callback, requestProperties]);
   }  
 });
