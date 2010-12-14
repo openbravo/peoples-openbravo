@@ -32,6 +32,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -161,7 +162,8 @@ public class ParametersActionHandler extends BaseActionHandler {
       } else if (domainType.getClass().equals(DateDomainType.class)) {
         Date date = xmlDateFormat.parse(stringValue);
         parameterValue.setValueDate(date);
-      } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)) {
+      } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
+          || domainType.getClass().getSuperclass().equals(LongDomainType.class)) {
         parameterValue.setValueNumber(new BigDecimal(stringValue));
       } else { // default
         parameterValue.setValueString(stringValue);
