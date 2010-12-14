@@ -74,7 +74,7 @@ isc.OBQueryListGrid.addProperties({
   //autoFitWidthApproach: 'title',
   
   initWidget: function(){
-    this.setDataSource(OB.Datasource.get('DD17275427E94026AD721067C3C91C18', this));
+    OB.Datasource.get('DD17275427E94026AD721067C3C91C18', this);
     return this.Super('initWidget', arguments);
   },
   
@@ -82,6 +82,7 @@ isc.OBQueryListGrid.addProperties({
     if (ds) {
       ds.fields = this.widget.fields;
       this.dataSource = ds;
+      this.filterData();
     }
   },
   
