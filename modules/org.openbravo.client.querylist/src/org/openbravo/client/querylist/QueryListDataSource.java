@@ -49,7 +49,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
    * @return the total number of objects
    */
   protected int getCount(Map<String, String> parameters) {
-    return getData(parameters, 0, Integer.MAX_VALUE).size();
+    return getData(parameters, 0, (Integer.MAX_VALUE - 1)).size();
   }
 
   /*
@@ -62,22 +62,22 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       int endRow) {
     OBContext.setAdminMode();
     try {
-      // WidgetInstance widgetInstance = OBDal.getInstance().get(WidgetInstance.class,
-      // parameters.get("widgetId"));
+      WidgetInstance widgetInstance = OBDal.getInstance().get(WidgetInstance.class,
+          parameters.get("widgetInstanceId"));
       WidgetClass widgetClass = OBDal.getInstance().get(WidgetClass.class,
           "D1E4261099AE4095B2F2DAEE0F7E7784");
-      WidgetInstance widgetInstance = widgetClass.getOBKMOWidgetInstanceList().get(0);
+      // WidgetInstance widgetInstance = widgetClass.getOBKMOWidgetInstanceList().get(0);
       IncludeIn includeIn = QueryListUtils.IncludeIn.WidgetView;
       List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
           .getOBCQLWidgetQueryList().get(0), includeIn);
-      Query widgetQuery = OBDal.getInstance().getSession()
-          .createQuery(widgetClass.getOBCQLWidgetQueryList().get(0).getHQL());
+      Query widgetQuery = OBDal.getInstance().getSession().createQuery(
+          widgetClass.getOBCQLWidgetQueryList().get(0).getHQL());
       String[] queryAliases = widgetQuery.getReturnAliases();
       if (startRow > 0) {
         widgetQuery.setFirstResult(startRow);
       }
       if (endRow > startRow) {
-        widgetQuery.setFetchSize(endRow - startRow + 1);
+        widgetQuery.setMaxResults(endRow - startRow + 1);
       }
       String[] params = widgetQuery.getNamedParameters();
       if (params.length > 0) {
@@ -138,15 +138,15 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
     HashMap<String, Object> parameterValues = new HashMap<String, Object>();
     for (ParameterValue value : widgetInstance
         .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-      parameterValues.put(value.getParameter().getDBColumnName(),
-          ApplicationUtils.getParameterValue(value));
+      parameterValues.put(value.getParameter().getDBColumnName(), ApplicationUtils
+          .getParameterValue(value));
     }
 
     for (Parameter parameter : widgetInstance.getWidgetClass()
         .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
       if (!parameterValues.containsKey(parameter.getDBColumnName()) && parameter.isFixed()) {
-        parameterValues.put(parameter.getDBColumnName(),
-            ApplicationUtils.getParameterFixedValue(parameters, parameter));
+        parameterValues.put(parameter.getDBColumnName(), ApplicationUtils.getParameterFixedValue(
+            parameters, parameter));
       }
     }
     return parameterValues;

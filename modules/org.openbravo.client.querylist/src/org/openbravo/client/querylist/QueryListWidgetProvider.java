@@ -21,6 +21,7 @@ package org.openbravo.client.querylist;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.myob.WidgetInstance;
 import org.openbravo.client.myob.WidgetProvider;
@@ -32,10 +33,27 @@ import org.openbravo.client.myob.WidgetProvider;
  */
 public class QueryListWidgetProvider extends WidgetProvider {
 
+  private static String GRID_PROPERTIES_REFERENCE = "B36DF126DF5F4077A37F1E5B963AA636";
   private static final Logger log = Logger.getLogger(QueryListWidgetProvider.class);
 
   @Override
   public String generate() {
+    JSONObject gridPropertiesObject = null;
+    for (Parameter parameter : getWidgetClass().getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
+      // fixed parameters are not part of the fielddefinitions
+      if (parameter.getReferenceSearchKey() != null
+          && parameter.getReferenceSearchKey().getId().equals(GRID_PROPERTIES_REFERENCE)) {
+        try {
+          gridPropertiesObject = new JSONObject(parameter.getFixedValue());
+        } catch (Exception e) {
+          // ignore, invalid grid properties
+          log.error("Grid properties parameter " + parameter + " has an illegal format "
+              + e.getMessage(), e);
+        }
+      }
+    }
+    String gridProperties = (gridPropertiesObject == null ? "" : ", gridProperties: "
+        + gridPropertiesObject.toString());
     return "isc.defineClass('"
         + KernelConstants.ID_PREFIX
         + getWidgetClass().getId()
@@ -43,7 +61,8 @@ public class QueryListWidgetProvider extends WidgetProvider {
         + getWidgetClass().getId()
         + "', fields:"
         + QueryListUtils
-            .getWidgetClassFields(getWidgetClass(), QueryListUtils.IncludeIn.WidgetView) + "});";
+            .getWidgetClassFields(getWidgetClass(), QueryListUtils.IncludeIn.WidgetView)
+        + gridProperties + "});";
   }
 
   @Override
@@ -62,6 +81,7 @@ public class QueryListWidgetProvider extends WidgetProvider {
     try {
       final JSONObject jsonObject = new JSONObject();
       addDefaultWidgetProperties(jsonObject, widgetInstance);
+      jsonObject.put("widgetInstanceId", widgetInstance.getId());
       final JSONObject parameters = jsonObject.getJSONObject(WidgetProvider.PARAMETERS);
       return jsonObject;
     } catch (Exception e) {

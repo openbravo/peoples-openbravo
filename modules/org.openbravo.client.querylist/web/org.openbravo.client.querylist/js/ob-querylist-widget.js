@@ -22,51 +22,90 @@
 //
 isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
 
-  widgetId : null,
-  fields : null,
-  grid : null,
-
-  createWindowContents : function() {
+  widgetId: null,
+  widgetInstanceId: null,
+  fields: null,
+  grid: null,
+  gridProperties: {},
+  
+  createWindowContents: function(){
     var layout = isc.VStack.create({
-      height : '100%',
-      width : '100%',
-      styleName : ''
+      height: '100%',
+      width: '100%',
+      styleName: ''
     }), url, params = {};
-
-    this.grid = isc.OBQueryListGrid.create({
-      widget : this,
-      fields : this.fields
-    });
-
+    
+    this.grid = isc.OBQueryListGrid.create(isc.addProperties({
+      widget: this,
+      fields: this.fields
+    }, this.gridProperties));
+    
     layout.addMembers(this.grid);
     return layout;
+  },
+  
+  refresh: function(){
+    this.grid.invalidateCache();
+    this.grid.filterData();
   }
-
+  
 });
 
 isc.ClassFactory.defineClass('OBQueryListGrid', isc.ListGrid);
 
 isc.OBQueryListGrid.addProperties({
-  width : '100%',
-  height : '100%',
-  dataSource : OB.Datasource.get('DD17275427E94026AD721067C3C91C18'),
-
+  width: '100%',
+  height: '100%',
+  dataSource: null,
+  
   // some common settings
   //showFilterEditor: false,
   //filterOnKeypress: false,
-
+  
   canEdit: false,
   alternateRecordStyles: true,
   canReorderFields: true,
   canFreezeFields: false,
   canGroupBy: false,
+  autoFetchData: true,
   //canAutoFitFields: false,
-
+  
   //autoFitFieldWidths: true,
   //autoFitWidthApproach: 'title',
-
-  setDataSource : function(ds) {
-    ds.fields = this.widget.fields;
-    this.dataSource = ds;
-  }
+  
+  initWidget: function(){
+    this.setDataSource(OB.Datasource.get('DD17275427E94026AD721067C3C91C18', this));
+    return this.Super('initWidget', arguments);
+  },
+  
+  setDataSource: function(ds){
+    if (ds) {
+      ds.fields = this.widget.fields;
+      this.dataSource = ds;
+    }
+  },
+  
+  filterData: function(criteria, callback, requestProperties){
+    if (!criteria) {
+      criteria = {};
+    }
+    if (!requestProperties) {
+      requestProperties = {};
+    }
+    requestProperties.showPrompt = false;
+    criteria.widgetInstanceId = this.widget.dbInstanceId;
+    return this.Super('filterData', [criteria, callback, requestProperties]);
+  },
+  
+  fetchData: function(criteria, callback, requestProperties){
+    if (!criteria) {
+      criteria = {};
+    }
+    if (!requestProperties) {
+      requestProperties = {};
+    }
+    requestProperties.showPrompt = false;
+    criteria.widgetInstanceId = this.widget.dbInstanceId;
+    return this.Super('fetchData', [criteria, callback, requestProperties]);
+  }  
 });
