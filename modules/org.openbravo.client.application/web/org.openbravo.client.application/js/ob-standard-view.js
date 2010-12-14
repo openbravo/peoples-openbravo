@@ -304,6 +304,9 @@ isc.OBStandardView.addProperties({
     if (this.viewForm) {
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
     }
+    if (this.defaultEditMode) {
+      this.openDefaultEditView();
+    }
   },
   
   draw: function(){
@@ -405,11 +408,27 @@ isc.OBStandardView.addProperties({
     var me = this;
     this.viewForm.clearErrors();
     this.viewForm.clearValues();
-    if (!this.viewGrid.isVisible()) {
+    if (this.defaultEditMode) {
+      this.openDefaultEditView();
+    } else if (!this.viewGrid.isVisible()) {
       this.switchFormGridVisibility();
     }
     this.viewGrid.refreshContents();
     this.refreshContents = false;
+  },
+
+  openDefaultEditView : function() {
+    // open form in insert mode
+    if (!this.viewGrid.data || this.viewGrid.data.getLength() === 0) {
+      // open in insert mode
+      this.viewGrid.hide();
+      this.statusBarFormLayout.show();
+      this.statusBarFormLayout.setHeight('100%');      
+    } else {
+      // edit the first record
+      record = this.viewGrid.getRecord(0);
+      this.editRecord(record);
+    }    
   },
   
   // ** {{{ switchFormGridVisibility }}} **
@@ -564,8 +583,12 @@ isc.OBStandardView.addProperties({
     // clear all our selections..
     this.viewGrid.deselectAllRecords();
     
-    // switch back to the grid
-    if (!this.viewGrid.isVisible()) {
+    // switch back to the grid or form
+    if (this.defaultEditMode) {
+      if (this.viewGrid.isVisible()) {
+        this.switchFormGridVisibility();
+      }
+    } else if (!this.viewGrid.isVisible()) {
       this.switchFormGridVisibility();
     }
     
@@ -674,6 +697,8 @@ isc.OBStandardView.addProperties({
         this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle);
       } else if (this.recordCount) {
         this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle + ' (' + this.recordCount + ')');
+      } else {
+        this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle);
       }
     }
   },

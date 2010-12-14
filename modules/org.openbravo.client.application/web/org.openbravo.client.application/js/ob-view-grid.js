@@ -254,12 +254,14 @@ isc.OBViewGrid.addProperties({
   },
   
   dataArrived: function(startRow, endRow){
-    var ret = this.Super('dataArrived', arguments);
+    var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
     this.updateSelectedCountDisplay();
     
     if (this.targetRecordId) {
       this.delayedHandleTargetRecord(startRow, endRow);
+    } else if (!this.isVisible() && this.view.defaultEditMode) {
+      this.view.editRecord(this.getRecord(startRow));   
     }
     
     return ret;
@@ -292,7 +294,11 @@ isc.OBViewGrid.addProperties({
       }
       
       this.scrollRecordIntoView(recordIndex, false);
-      this.doSelectSingleRecord(gridRecord);
+      if (this.view.defaultEditMode) {
+        this.view.editRecord(gridRecord);   
+      } else {
+        this.doSelectSingleRecord(gridRecord);
+      }
       
       isc.Page.waitFor(this, "delayedHandleTargetRecord", {
         method: this.view.openDirectChildTab(),

@@ -61,6 +61,10 @@ public class OBViewTab extends BaseTemplateComponent {
     childTabs.add(childTabComponent);
   }
 
+  public String getDefaultEditMode() {
+    return tab.isDefaultEditMode() == null ? "false" : Boolean.toString(tab.isDefaultEditMode());
+  }
+
   public List<ButtonField> getButtonFields() {
     if (buttonFields != null) {
       return buttonFields;
