@@ -24,6 +24,8 @@
         <#if fieldDefinition.standardField>        
         type: '${fieldDefinition.type}',
         columnName: '${fieldDefinition.columnName?string}',
+        inpColumnName: '${fieldDefinition.inpColumnName?string}',
+        referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
         required: ${fieldDefinition.required?string},
         </#if>
         ${fieldDefinition.fieldProperties}

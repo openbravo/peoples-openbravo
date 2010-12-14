@@ -23,6 +23,42 @@ OB.Utilities = {};
 OB.Utilities.Date = {};
 OB.Utilities.Number = {};
 
+// ** {{{OB.Utilities.openDirectView}}} **
+// Open the correct view for a passed in target definition, coming from a certain source Window.
+OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, recordId){
+  var actionURL = OB.Application.contextUrl + 'utility/ReferencedLink.html';
+  
+  var callback = function(response, data, request){
+    var openObject = {
+      viewId: '_' + data.windowId,
+      targetEntity: response.clientContext.targetEntity,
+      targetRecordId: data.recordId,
+      targetTabId: data.tabId,
+      tabTitle: data.tabTitle
+    };
+    OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+  }
+  
+  var reqObj = {
+    params: {
+      Command: 'JSON',
+      inpEntityName: targetEntity,
+      inpKeyReferenceId: recordId,
+      inpwindowId: sourceWindowId,
+      inpKeyReferenceColumnName: keyColumn
+    },
+    clientContext: {
+      targetEntity: targetEntity
+    },
+    callback: callback,
+    evalResult: true,
+    httpMethod: 'GET',
+    useSimpleHttp: true,
+    actionURL: actionURL
+  };
+  var request = isc.RPCManager.sendRequest(reqObj);
+};
+
 // ** {{{OB.Utilities.hasUrlParameter}}} **
 // Returns true if the url has a certain parameter with a certain value.
 OB.Utilities.hasUrlParameter = function(name, value){

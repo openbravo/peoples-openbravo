@@ -31,6 +31,7 @@ import org.openbravo.client.kernel.reference.StringUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.json.JsonConstants;
@@ -89,6 +90,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return fields;
     }
     fields = new ArrayList<LocalField>();
+    final List<String> windowEntities = getWindowEntities();
     final List<Field> sortedFields = new ArrayList<Field>(tab.getADFieldList());
     Collections.sort(sortedFields, new GridFieldComparator());
 
@@ -96,7 +98,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     for (Field fld : sortedFields) {
       if (fld.isActive() && fld.isShowInGridView()) {
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(fld.getColumn());
-        if (prop.isParent()) {
+        if (prop.isParent() && windowEntities.contains(prop.getTargetEntity().getName())) {
           continue;
         }
         if (prop.isId()) {
@@ -114,7 +116,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     for (Field fld : sortedFields) {
       if (fld.isActive() && !fld.isShowInGridView()) {
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(fld.getColumn());
-        if (prop.isParent()) {
+        if (prop.isParent() && windowEntities.contains(prop.getTargetEntity().getName())) {
           continue;
         }
         if (prop.isId()) {
@@ -149,6 +151,23 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     private Property property;
     private UIDefinition uiDefinition;
     private boolean initialShow;
+
+    public String getInpColumnName() {
+      return "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+    }
+
+    public String getReferencedKeyColumnName() {
+      if (property.isOneToMany() || property.isPrimitive()) {
+        return "";
+      }
+      Property prop;
+      if (property.getReferencedProperty() == null) {
+        prop = property.getTargetEntity().getIdProperties().get(0);
+      } else {
+        prop = property.getReferencedProperty();
+      }
+      return prop.getColumnName();
+    }
 
     public String getGridFieldProperties() {
       return uiDefinition.getGridFieldProperties(field);
@@ -241,6 +260,14 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return (int) (arg0Position - arg1Position);
     }
 
+  }
+
+  private List<String> getWindowEntities() {
+    final List<String> windowEntities = new ArrayList<String>();
+    for (Tab localTab : tab.getWindow().getADTabList()) {
+      windowEntities.add(localTab.getTable().getName());
+    }
+    return windowEntities;
   }
 
 }

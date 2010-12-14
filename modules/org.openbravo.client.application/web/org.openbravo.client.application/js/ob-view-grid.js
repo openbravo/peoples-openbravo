@@ -52,7 +52,7 @@ isc.OBViewGrid.addProperties({
   // ** {{{ editGrid }}} **
   // Controls if an edit link column is created in the grid, set to false to
   // prevent this.
-  editGrid: true,  
+  editGrid: true,
   
   // ** {{{ editLinkFieldProperties }}} **
   // The properties of the ListGridField created for the edit links.
@@ -109,7 +109,6 @@ isc.OBViewGrid.addProperties({
   
   emptyMessage: OB.I18N.getLabel('OBUIAPP_NoDataInGrid'),
   discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
-  loadingDataMessage: '&nbsp;',  
   
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true  
@@ -117,7 +116,24 @@ isc.OBViewGrid.addProperties({
   
   dataProperties: {
     useClientFiltering: false,
-    useClientSorting: false
+    useClientSorting: false,
+    
+    transformData: function(newData, dsResponse){
+      // correct the length if there is already data in the localData array
+      if (this.localData) {
+        for (var i = dsResponse.endRow + 1; i < this.localData.length; i++) {
+          if (!Array.isLoading(this.localData[i]) && this.localData[i]) {
+            dsResponse.totalRows = i + 1;
+          } else {
+            break;
+          }
+        }
+      }
+      if (this.localData && this.localData[dsResponse.totalRows]) {
+        this.localData[dsResponse.totalRows] = null;
+      }
+      return this.Super('transformData', arguments);
+    }
   },
   
   recordComponentPoolingMode: 'recycle',
@@ -167,7 +183,6 @@ isc.OBViewGrid.addProperties({
   
   initWidget: function(){
     var thisGrid = this, localEditLinkField;
-    this.tallBaseStyle = this.tallBaseStyleView;
     if (this.editGrid) {
       // add the edit pencil in the beginning
       localEditLinkField = isc.addProperties({}, this.editLinkFieldProperties);
@@ -196,6 +211,25 @@ isc.OBViewGrid.addProperties({
     this.Super('initWidget', arguments);
   },
   
+  headerClick: function(fieldNum, header){
+    var field = this.fields[fieldNum];
+    if (this.isCheckboxField(field) && this.singleRecordSelection) {
+      this.deselectAllRecords();
+      this.singleRecordSelection = false;
+    }
+    return this.Super('headerClick', arguments);
+  },
+  
+  deselectAllRecords: function(){
+    this.allSelected = false;
+    return this.Super('deselectAllRecords', arguments);
+  },
+  
+  selectAllRecords: function(){
+    this.allSelected = true;
+    return this.Super('selectAllRecords', arguments);
+  },
+  
   updateRowCountDisplay: function(){
     var newValue = '';
     if (this.data.getLength() > this.dataPageSize) {
@@ -210,25 +244,72 @@ isc.OBViewGrid.addProperties({
     }
   },
   
+  refreshContents: function(callback){
+    var criteria = this.getFilterEditorCriteria() || {};
+    var context = {
+      showPrompt: false,
+      textMatchStyle: this.autoFetchTextMatchStyle
+    };
+    this.filterData(criteria, callback, context);
+  },
+  
   dataArrived: function(startRow, endRow){
     var ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
     this.updateSelectedCountDisplay();
     
     if (this.targetRecordId) {
-      var gridRecord = this.data.find('id', this.targetRecordId);    
-      this.view.editRecord(gridRecord);
-      this.targetRecordId = null;
-      this.body.scrollTo(null, startRow);
-      this.body.doneFastScrolling();
+      this.delayedHandleTargetRecord(startRow, endRow);
     }
     
     return ret;
   },
   
+  // handle the target record when the body has been drawn
+  delayedHandleTargetRecord: function(startRow, endRow){
+    var rowTop, recordIndex, i, data = this.data;
+    if (!this.targetRecordId) {
+      return;
+    }
+    if (this.body) {
+      var gridRecord = data.find('id', this.targetRecordId);
+      
+      // no grid record found, stop here
+      if (!gridRecord) {
+        return;
+      }
+      recordIndex = this.getRecordIndex(gridRecord);
+      
+      this.targetRecordId = null;
+      if (data.criteria) {
+        data.criteria._targetRecordId = null;
+      }
+      
+      for (i = 0; i < startRow; i++) {
+        if (Array.isLoading(data.localData[i])) {
+          data.localData[i] = null;
+        }
+      }
+      
+      this.scrollRecordIntoView(recordIndex, false);
+      this.view.editRecord(gridRecord);
+      
+      isc.Page.waitFor(this, "delayedHandleTargetRecord", {
+        method: this.view.openDirectChildTab(),
+        args: [],
+        target: this.view
+      });
+    } else {
+      // wait a bit longer
+      this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 500, this);
+    }
+  },
+  
   filterData: function(criteria, callback, requestProperties){
-    // so that the prompt knows the modal target 
-    this.setModalTarget();
+    if (!requestProperties) {
+      requestProperties = {};
+    }
+    requestProperties.showPrompt = false;
     
     criteria = this.convertCriteria(criteria);
     var theView = this.view;
@@ -242,17 +323,11 @@ isc.OBViewGrid.addProperties({
     return this.Super('filterData', [criteria, newCallBack, requestProperties]);
   },
   
-  setModalTarget : function() {
-    if (this.view && this.view.formGridLayout) {
-      OB.OBModalTarget = this.view.formGridLayout;
-    } else {
-      OB.OBModalTarget = this;
-    }
-  },
-  
   fetchData: function(criteria, callback, requestProperties){
-    // so that the prompt knows the modal target 
-    this.setModalTarget();
+    if (!requestProperties) {
+      requestProperties = {};
+    }
+    requestProperties.showPrompt = false;
     
     criteria = this.convertCriteria(criteria);
     var theView = this.view;
@@ -309,6 +384,10 @@ isc.OBViewGrid.addProperties({
     var index = 0, selectedValues;
     var fkFieldsLength = this.foreignKeyFieldNames.getLength(), filterValue = null;
     
+    if (this.targetRecordId) {
+      criteria._targetRecordId = this.targetRecordId;
+    }
+    
     if (this.view.parentProperty) {
       if (!this.view.parentView) {
         criteria[this.view.parentProperty] = '-1';
@@ -325,10 +404,6 @@ isc.OBViewGrid.addProperties({
         this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
         criteria[this.view.parentProperty] = selectedValues[0][OB.Constants.ID];
       }
-    }
-    
-    if (this.targetRecordId) {
-      criteria._targetRecordId = this.targetRecordId;
     }
     
     // now repair the filtering on foreign keys to use the identifier
@@ -358,6 +433,7 @@ isc.OBViewGrid.addProperties({
   //+++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++
   
   makeCellContextItems: function(record, rowNum, colNum){
+    var sourceWindow = this.view.standardWindow.windowId;
     var menuItems = [];
     var field = this.getField(colNum);
     var grid = this;
@@ -389,7 +465,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (field.foreignKeyField) {      
+    if (field.foreignKeyField) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_OpenOnTab'),
         click: function(){
@@ -398,7 +474,7 @@ isc.OBViewGrid.addProperties({
           if (dotIndex !== -1) {
             fldName = fldName.substring(0, dotIndex);
           }
-          OB.EntityToWindowMapping.openView(field.targetEntity, record[fldName]);
+          OB.Utilities.openDirectView(sourceWindow, field.referencedKeyColumnName, field.targetEntity, record[fldName]);
         }
       });
     }
@@ -566,13 +642,20 @@ isc.OBViewGrid.addProperties({
     }
     this.singleRecordSelection = true;
     this.selectSingleRecord(record);
+    
+    // deselect the checkbox in the top
+    var fieldNum = this.getCheckboxFieldPosition(), field = this.fields[fieldNum];
+    var icon = this.checkboxFieldFalseImage || this.booleanFalseImage;
+    var title = this.getValueIconHTML(icon, field);
+    
+    this.setFieldTitle(fieldNum, title);
   },
   
   // overridden to prevent the checkbox to be shown when only one 
   // record is selected.
   getCellValue: function(record, recordNum, fieldNum, gridBody){
     var field = this.fields[fieldNum];
-    if (!field) {
+    if (!field || this.allSelected) {
       return this.Super('getCellValue', arguments);
     }
     // do all the cases which are handled in the super directly
@@ -582,7 +665,7 @@ isc.OBViewGrid.addProperties({
       if (!this.body.canSelectRecord(record)) {
         // record cannot be selected but we want the space allocated for the checkbox anyway.
         icon = '[SKINIMG]/blank.gif';
-      } else if (this.singleRecordSelection) {
+      } else if (this.singleRecordSelection && !this.allSelected) {
         // always show the false image
         icon = (this.checkboxFieldFalseImage || this.booleanFalseImage);
       } else {
@@ -636,7 +719,6 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
-    this.tallBaseStyle = this.tallBaseStyleEdit;
     var result = this.Super('showInlineEditor', arguments);
     
     var record = this.getRecord(rowNum);
@@ -648,7 +730,6 @@ isc.OBViewGrid.addProperties({
   },
   
   hideInlineEditor: function(){
-    this.tallBaseStyle = this.tallBaseStyleView;
     isc.Log.logDebug('hideInlineEditor ' + this.getEditRow(), 'OB');
     var rowNum = this.getEditRow();
     var record = this.getRecord(rowNum);
@@ -738,7 +819,7 @@ isc.OBGridButtonsComponent.addProperties({
     buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
     
     this.OBGridToolStrip = isc.OBGridToolStrip.create({
-      members: [formIcon, buttonSeparator1, editIcon, cancelIcon, buttonSeparator2, saveIcon]
+      members: [editIcon, buttonSeparator1, formIcon, cancelIcon, buttonSeparator2, saveIcon]
     });
     
     this.addMember(this.OBGridToolStrip);

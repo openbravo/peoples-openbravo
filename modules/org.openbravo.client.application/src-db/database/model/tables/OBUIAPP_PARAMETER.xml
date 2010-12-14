@@ -93,7 +93,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EVALUATEFIXEDVALUE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="EVALUATEFIXEDVALUE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
