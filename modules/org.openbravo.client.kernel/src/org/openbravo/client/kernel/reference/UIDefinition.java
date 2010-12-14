@@ -366,16 +366,12 @@ public abstract class UIDefinition {
   }
 
   private FieldProvider generateTabData(List<Field> fields) {
-    HashMap<String, Object> dataMap = (HashMap<String, Object>) RequestContext.get()
-        .getParameterMap();
-
     HashMap<String, Object> noinpDataMap = new HashMap<String, Object>();
     for (Field field : fields) {
       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
           field.getColumn().getId());
       String oldKey = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
-      String newKey = oldKey.replaceFirst("inp", "");
-      Object value = dataMap.get(oldKey);
+      Object value = RequestContext.get().getRequestParameter(oldKey);
       noinpDataMap.put(field.getColumn().getDBColumnName(),
           value == null || value.equals("") ? null : uiDef.formatValueToSQL(value.toString()));
     }
