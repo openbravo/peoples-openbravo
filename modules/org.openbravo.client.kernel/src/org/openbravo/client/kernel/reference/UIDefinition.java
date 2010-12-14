@@ -292,7 +292,6 @@ public abstract class UIDefinition {
 
   protected String getValueInComboReference(Field field, boolean getValueFromSession,
       String columnValue) {
-
     try {
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
