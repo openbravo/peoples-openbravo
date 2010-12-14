@@ -20,6 +20,10 @@ package org.openbravo.client.myob;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
@@ -38,6 +42,10 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author mtaal
  */
 abstract public class MyOBUtils {
+  private static Logger log = Logger.getLogger(MyOBUtils.class);
+  private static String MENU_ITEM_IS_SEPARATOR = "isSeparator";
+  private static String MENU_ITEM_TITLE = "title";
+  private static String MENU_ITEM_CLICK = "click";
 
   /**
    * Calls {@link #getWidgetTitle(WidgetClass)} using the
@@ -72,6 +80,31 @@ abstract public class MyOBUtils {
       }
     }
     return widgetClass.getWidgetTitle();
+  }
+
+  static JSONArray getWidgetMenuItems(WidgetClass widgetClass) {
+    final JSONArray result = new JSONArray();
+
+    for (WidgetClassMenu menuItem : widgetClass.getOBKMOWidgetClassMenuList()) {
+      final JSONObject item = new JSONObject();
+      try {
+
+        if (menuItem.isSeparator()) {
+          item.put(MENU_ITEM_IS_SEPARATOR, true);
+          result.put(item);
+          continue;
+        }
+
+        item.putOpt(MENU_ITEM_TITLE, menuItem.getTitle());
+        item.putOpt(MENU_ITEM_CLICK, menuItem.getAction());
+        result.put(item);
+
+      } catch (JSONException e) {
+        log.error("Error trying to build menu items for widget class "
+            + widgetClass.getWidgetTitle(), e);
+      }
+    }
+    return result;
   }
 
   /**

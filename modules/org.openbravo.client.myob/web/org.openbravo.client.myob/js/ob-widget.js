@@ -84,19 +84,24 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
         width: '*',
         height: '*'
       }],
-      
+
       overflow: 'visible',
       width: 24,
       height: 24,
-      
+
       editFormLayout: null,
       windowContents: null,
-      
+
       showMenu: function(){
-        var me = this;
+        var me = this, menuItems, i,
+            baseMenuItem = {
+              title: '', widget: me.widget, isSeparator: false,
+              iconHeight: 0, iconWidth: 0, click: null
+            };
+
         this.menu.menuButton = this;
-        
-        this.menu.setData([{
+
+        menuItems = [{
           title: OB.I18N.getLabel('OBKMO_WMO_EditSettings'),
           widget: me.widget,
           enableIf: function(target, menu, item){
@@ -106,7 +111,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
             }
             return widget.fieldDefinitions.length > 0;
           },
-          action: function(){
+          click: function(target, item, menu){
             widget.switchMode();
           }
         }, {
@@ -116,20 +121,32 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
           iconHeight: 0,
           iconWidth: 0,
           widget: me.wigdet,
-          action: function(){
+          click: function(target, item, menu){
             widget.refresh();
           }
         }, {
           title: OB.I18N.getLabel('OBKMO_WMO_DeleteThisWidget'),
           widget: me.widget,
-          action: function(){
+          click: function(target, item, menu){
             widget.closeClick();
           }
-        }]);
-        
+        }];
+
+        if (isc.isAn.Array(args.menuItems) && args.menuItems.length > 0) {
+          for(i = 0; i < args.menuItems.length; i++) {
+            if (args.menuItems[i].isSeparator) {
+              menuItems.push({isSeparator: true});
+              continue;
+            }
+            menuItems.push(isc.addProperties({}, baseMenuItem, {title:args.menuItems[i].title, click:args.menuItems[i].click}));
+          }
+        }
+
+        this.menu.setData(menuItems);
+
         return this.Super('showMenu', arguments);
       },
-      
+
       menu: isc.Menu.create({
         portlet: this,
         baseStyle: 'OBWidgetMenuCell', // menu in standard SC
