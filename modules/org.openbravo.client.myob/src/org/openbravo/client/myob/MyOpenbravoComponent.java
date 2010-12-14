@@ -99,7 +99,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
             classDef = widgetProvider.generate();
             classDef = classDef.substring(0, classDef.length() - 1);
             tmp.add(classDef);
-          } catch (UnsupportedOperationException e) {
+          } catch (Exception e) {
             // Do nothing as the definition is already in a loaded js file
           }
         }

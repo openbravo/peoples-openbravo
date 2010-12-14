@@ -60,8 +60,8 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   
   widgetMode: null,
   
-  initWidget: function(){
-    var widget = this;
+  initWidget: function(args){
+    var widget = this, headerControls = ['headerLabel'];
     
     // set the headercontrols in initWidget otherwise only  
     // one menubutton gets created for all widgets
@@ -159,8 +159,15 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
       })
     
     });
-    this.headerControls = ['headerLabel', this.menuButton];
-    
+
+    if(args.showMaximizeButton) {
+      headerControls.push('maximizeButton');
+    }
+
+    headerControls.push(this.menuButton);
+
+    this.headerControls = headerControls;
+
     this.editFormLayout = this.createEditFormLayout();
     this.windowContents = this.createWindowContents();
     
