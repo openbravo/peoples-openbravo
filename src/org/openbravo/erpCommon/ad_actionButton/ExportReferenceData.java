@@ -86,7 +86,7 @@ public class ExportReferenceData extends HttpSecureAppServlet {
       if (!myDataset.getModule().isInDevelopment()) {
         myError = new OBError();
         myError.setType("Error");
-        myError.setTitle(Utility.messageBD(this, "20532", vars.getLanguage()));
+        myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
         myError.setMessage(Utility.messageBD(this, "20532", vars.getLanguage()));
         return myError;
       }
