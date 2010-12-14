@@ -163,7 +163,13 @@ public class ReferencedLink extends HttpSecureAppServlet {
     // vars.getRequiredStringParameter("inpKeyReferenceName");
     // String strTableId =
     // vars.getRequiredStringParameter("inpTableId");
-    String strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
+    String strTableReferenceId;
+    if (vars.hasParameter("inpEntityName")) {
+      String entityName = vars.getStringParameter("inpEntityName");
+      strTableReferenceId = ModelProvider.getInstance().getEntity(entityName).getTableId();
+    } else {
+      strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
+    }
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
     // String strTabId = vars.getStringParameter("inpTabId");
     String strWindowId = vars.getStringParameter("inpwindowId");
