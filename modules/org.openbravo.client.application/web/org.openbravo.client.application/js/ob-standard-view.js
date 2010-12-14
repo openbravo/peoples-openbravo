@@ -71,7 +71,6 @@ isc.OBStandardWindow.addProperties({
     this.view.toolBar = this.toolBar;
     
     // is set later after creation
-    //this.view.viewTabId = this.viewTabId;
     this.view.tabTitle = this.tabTitle;
   },
   
@@ -490,6 +489,9 @@ isc.OBStandardView.addProperties({
     } else {
       this.doHandleClick();
     }
+    var gridRecord = this.viewGrid.getSelectedRecord();
+    this.editRecord(gridRecord);
+
     // remove this info
     delete this.standardWindow.directTabInfo;
   },

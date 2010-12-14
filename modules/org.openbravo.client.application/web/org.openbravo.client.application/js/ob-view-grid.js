@@ -292,7 +292,7 @@ isc.OBViewGrid.addProperties({
       }
       
       this.scrollRecordIntoView(recordIndex, false);
-      this.view.editRecord(gridRecord);
+      this.doSelectSingleRecord(gridRecord);
       
       isc.Page.waitFor(this, "delayedHandleTargetRecord", {
         method: this.view.openDirectChildTab(),

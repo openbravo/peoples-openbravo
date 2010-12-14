@@ -34,7 +34,8 @@ OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, 
       targetEntity: response.clientContext.targetEntity,
       targetRecordId: data.recordId,
       targetTabId: data.tabId,
-      tabTitle: data.tabTitle
+      tabTitle: data.tabTitle,
+      windowId: data.windowId
     };
     OB.Layout.ViewManager.openView(openObject.viewId, openObject);
   }
