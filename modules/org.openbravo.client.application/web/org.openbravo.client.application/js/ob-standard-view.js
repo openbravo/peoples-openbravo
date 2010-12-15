@@ -304,7 +304,8 @@ isc.OBStandardView.addProperties({
     if (this.viewForm) {
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
     }
-    if (this.defaultEditMode) {
+    // open default edit view if this is the rootview
+    if (this.defaultEditMode && !this.parentProperty) {
       this.openDefaultEditView();
     }
   },
@@ -408,7 +409,9 @@ isc.OBStandardView.addProperties({
     var me = this;
     this.viewForm.clearErrors();
     this.viewForm.clearValues();
-    if (this.defaultEditMode) {
+    // open default edit view if there is no parent view or if there is at least
+    // one parent record selected
+    if (this.shouldOpenDefaultEditMode()) {
       this.openDefaultEditView();
     } else if (!this.viewGrid.isVisible()) {
       this.switchFormGridVisibility();
@@ -416,19 +419,30 @@ isc.OBStandardView.addProperties({
     this.viewGrid.refreshContents();
     this.refreshContents = false;
   },
-
-  openDefaultEditView : function() {
+  
+  shouldOpenDefaultEditMode: function(){
+    // can open default edit mode if defaultEditMode is set
+    // and this is the root view or a child view with a selected parent.
+    return this.defaultEditMode && (!this.parentProperty || this.parentView.viewGrid.getSelectedRecords().length === 1)
+  },
+  
+  openDefaultEditView: function(record) {
+    if (!this.shouldOpenDefaultEditMode()) {
+      return;
+    }
+    
     // open form in insert mode
-    if (!this.viewGrid.data || this.viewGrid.data.getLength() === 0) {
+    if (record) {
+      this.editRecord(record);
+    } else if (!this.viewGrid.data || this.viewGrid.data.getLength() === 0) {
       // open in insert mode
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
-      this.statusBarFormLayout.setHeight('100%');      
+      this.statusBarFormLayout.setHeight('100%');
     } else {
       // edit the first record
-      record = this.viewGrid.getRecord(0);
-      this.editRecord(record);
-    }    
+      this.editRecord(this.viewGrid.getRecord(0));
+    }
   },
   
   // ** {{{ switchFormGridVisibility }}} **
@@ -495,7 +509,7 @@ isc.OBStandardView.addProperties({
     if (this.childTabSet) {
       var i, tabs = this.childTabSet.tabs;
       for (i = 0; i < tabs.length; i++) {
-        if (tabs[i].pane.openDirectTab()) {                    
+        if (tabs[i].pane.openDirectTab()) {
           return;
         }
       }
@@ -510,7 +524,7 @@ isc.OBStandardView.addProperties({
     }
     var gridRecord = this.viewGrid.getSelectedRecord();
     this.editRecord(gridRecord);
-
+    
     // remove this info
     delete this.standardWindow.directTabInfo;
   },
@@ -529,7 +543,7 @@ isc.OBStandardView.addProperties({
       if (tabInfos[i].targetTabId === this.tabId) {
         // found it...
         this.viewGrid.targetRecordId = tabInfos[i].targetRecordId;
-                      
+        
         if (this.parentTabSet && this.parentTabSet.getSelectedTab() !== this.tab) {
           this.parentTabSet.selectTab(this.tab);
         } else {
@@ -584,7 +598,7 @@ isc.OBStandardView.addProperties({
     this.viewGrid.deselectAllRecords();
     
     // switch back to the grid or form
-    if (this.defaultEditMode) {
+    if (this.shouldOpenDefaultEditMode()) {
       if (this.viewGrid.isVisible()) {
         this.switchFormGridVisibility();
       }

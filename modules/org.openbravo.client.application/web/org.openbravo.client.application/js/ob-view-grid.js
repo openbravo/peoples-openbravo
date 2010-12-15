@@ -260,8 +260,8 @@ isc.OBViewGrid.addProperties({
     
     if (this.targetRecordId) {
       this.delayedHandleTargetRecord(startRow, endRow);
-    } else if (!this.isVisible() && this.view.defaultEditMode) {
-      this.view.editRecord(this.getRecord(startRow));   
+    } else if (!this.isVisible() && this.view.shouldOpenDefaultEditMode()) {
+      this.view.openDefaultEditView(this.getRecord(startRow));   
     }
     
     return ret;
