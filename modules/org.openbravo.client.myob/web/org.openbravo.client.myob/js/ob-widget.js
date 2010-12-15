@@ -134,11 +134,16 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
 
         if (isc.isAn.Array(args.menuItems) && args.menuItems.length > 0) {
           for(i = 0; i < args.menuItems.length; i++) {
+
             if (args.menuItems[i].isSeparator) {
               menuItems.push({isSeparator: true});
               continue;
             }
-            menuItems.push(isc.addProperties({}, baseMenuItem, {title:args.menuItems[i].title, click:args.menuItems[i].click}));
+
+            menuItems.push(isc.addProperties({}, baseMenuItem, {
+                           title: args.menuItems[i].title,
+                           click: widget[args.menuItems[i].click]
+                           }));
           }
         }
 
@@ -201,7 +206,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     this.items = [this.windowContents, this.editFormLayout];
     this.Super('initWidget', arguments);
   },
-  
+
   confirmedClosePortlet: function(ok){
     if (ok) {
       this.Super('confirmedClosePortlet', arguments);
@@ -482,7 +487,7 @@ isc.defineClass('OBShowParameterWidget', isc.OBWidget).addProperties({
     this.windowContents.addMember(this.createDisplayForm());
     oldForm.destroy();
   },
-  
+
   createWindowContents: function(){
     var layout = isc.VLayout.create({
       width: '100%',
