@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.myob;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -84,8 +85,14 @@ abstract public class MyOBUtils {
 
   static JSONArray getWidgetMenuItems(WidgetClass widgetClass) {
     final JSONArray result = new JSONArray();
+    List<WidgetClassMenu> menuItems = new ArrayList<WidgetClassMenu>();
+    if (widgetClass.getWidgetSuperclass() != null) {
+      menuItems = widgetClass.getWidgetSuperclass().getOBKMOWidgetClassMenuList();
+    } else {
+      menuItems = widgetClass.getOBKMOWidgetClassMenuList();
+    }
 
-    for (WidgetClassMenu menuItem : widgetClass.getOBKMOWidgetClassMenuList()) {
+    for (WidgetClassMenu menuItem : menuItems) {
       final JSONObject item = new JSONObject();
       try {
 
