@@ -26,12 +26,21 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.myob.WidgetClass;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.domain.ModelImplementation;
+import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.WindowTrl;
 
 public class QueryListUtils {
   private static final Logger log = Logger.getLogger(QueryListUtils.class);
@@ -43,7 +52,6 @@ public class QueryListUtils {
         for (OBCQL_QueryColumn column : QueryListUtils.getColumns(widgetClass
             .getOBCQLWidgetQueryList().get(0), includeIn)) {
           final JSONObject field = new JSONObject();
-          field.put("name", column.getName());
           final Reference reference;
           if (column.getReferenceSearchKey() != null) {
             reference = column.getReferenceSearchKey();
@@ -52,7 +60,55 @@ public class QueryListUtils {
           }
           final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
               reference);
+          field.put("name", column.getDisplayExpression());
           field.put("type", uiDefinition.getName());
+          if (column.isHasLink()) {
+            field.put("OB_HasLink", true);
+            field.put("OB_LinkExpression", column.getLinkExpression());
+            final Tab tab = column.getTab();
+            final Entity entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
+
+            field.put("OB_TabId", tab.getId());
+            field.put("OB_WindowId", tab.getWindow().getId());
+
+            final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
+            String tabTitle = null;
+            for (WindowTrl windowTrl : tab.getWindow().getADWindowTrlList()) {
+              final String trlLanguageId = (String) DalUtil.getId(windowTrl.getLanguage());
+              if (trlLanguageId.equals(userLanguageId)) {
+                tabTitle = windowTrl.getName();
+              }
+            }
+            if (tabTitle == null) {
+              tabTitle = tab.getWindow().getName();
+            }
+
+            field.put("OB_WindowTitle", tabTitle);
+            field.put("OB_keyParameter", "inp"
+                + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
+            // find the model object mapping
+            String mappingName = null;
+            for (ModelImplementation modelImpl : tab.getADModelImplementationList()) {
+              for (ModelImplementationMapping mapping : modelImpl
+                  .getADModelImplementationMappingList()) {
+                if (mapping.getMappingName() != null
+                    && mapping.getMappingName().toLowerCase().contains("edition")) {
+                  // found it
+                  mappingName = mapping.getMappingName();
+                  break;
+                }
+              }
+              if (mappingName != null) {
+                break;
+              }
+            }
+            if (mappingName != null) {
+              field.put("OB_mappingName", mappingName);
+            }
+
+          } else {
+            field.put("OB_HasLink", false);
+          }
           try {
             final String fieldProperties = uiDefinition.getFieldProperties(null);
             if (fieldProperties != null && fieldProperties.trim().length() > 0) {
@@ -117,12 +173,13 @@ public class QueryListUtils {
 
   private static String getColumnLabel(OBCQL_QueryColumn column) {
 
-    // TODO: Add column label translation
-    /*
-     * final String userLanguageId = OBContext.getOBContext().getLanguage().getId(); for
-     * (ParameterTrl trl : parameter.getOBUIAPPParameterTrlList()) { if
-     * (DalUtil.getId(trl.getLanguage()).equals(userLanguageId)) { return trl.getName(); } }
-     */
+    final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
+    for (QueryColumnTrl trl : column.getOBCQLQueryColumnTrlList()) {
+      if (DalUtil.getId(trl.getLanguage()).equals(userLanguageId)) {
+        return trl.getName();
+      }
+    }
+
     return column.getName();
   }
 }

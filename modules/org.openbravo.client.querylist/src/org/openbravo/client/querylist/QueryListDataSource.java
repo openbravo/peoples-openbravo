@@ -115,9 +115,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
         for (OBCQL_QueryColumn column : columns) {
           // TODO: throw an exception if the display expression doesn't match any returned alias.
           for (int i = 0; i < queryAliases.length; i++) {
-            if (column.getDisplayExpression().equals(queryAliases[i])) {
-              data.put(column.getName(), resultList[i]);
-            }
+            data.put(queryAliases[i], resultList[i]);
           }
         }
         result.add(data);

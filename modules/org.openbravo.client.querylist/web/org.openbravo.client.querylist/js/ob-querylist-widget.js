@@ -55,21 +55,29 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
         'eventType': 'GET_FIELDS',
         'viewMode': this.viewMode
       };
+    var clientContext = {widget: this};
 
     OB.RemoteCallManager.call(this.actionHandler, post, {}, function(rpcResponse, data, rpcRequest){
-      if (data && data.ID && window[data.ID]) {
-        window[data.ID].reloadGrid(rpcResponse, data, rpcRequest);
-      }
-    });
+      rpcResponse.clientContext.widget.reloadGrid(rpcResponse, data, rpcRequest);
+    }, clientContext);
   },
 
   reloadGrid: function(rpcResponse, data, rpcRequest) {
 
     this.fields = data.fields;
     this.grid.setDataSource(this.grid.dataSource);
-    this.grid.setFields();
     this.grid.invalidateCache();
     this.grid.filterData();
+//    this.grid.destroy();
+//    this.grid = isc.OBQueryListGrid.create(isc.addProperties({
+//      widget: this,
+//      fields: this.fields
+//    }, this.gridProperties));
+    this.markForRedraw();
+  },
+
+  exportGrid: function() {
+    this.grid.exportData();
   }
   
 });
@@ -135,5 +143,22 @@ isc.OBQueryListGrid.addProperties({
     criteria.rowsNumber = this.widget.rowsNumber;
     criteria.viewMode = this.widget.viewMode;
     return this.Super('fetchData', [criteria, callback, requestProperties]);
-  }  
+  },
+
+  cellClick: function (record, rowNum, colNum) {
+    var field = this.getField(colNum);
+    if (field.OB_HasLink) {
+      if (field.OB_TabId && field.OB_LinkExpression) {
+        OB.Layout.ViewManager.openView('OBClassicWindow',  {
+            tabId: field.OB_TabId,
+            recordId: record[field.OB_LinkExpression],
+            windowId: field.OB_WindowId,
+            command: 'DIRECT',
+            tabTitle: field.OB_WindowTitle,
+            mappingName: field.OB_mappingName,
+            keyParameter: field.OB_keyParameter
+        });
+      }
+    }
+  }
 });

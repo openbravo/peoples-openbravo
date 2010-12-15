@@ -73,6 +73,14 @@
         <default><![CDATA[W]]></default>
         <onCreateDefault/>
       </column>
+      <column name="HAS_LINK" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_TAB_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBCQL_QUERY_COLUMN_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -89,5 +97,6 @@
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <check name="OBCQL_QUERY_COLUMN_ACTIVECHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBCQL_QUERY_COLUMN_HASLINK"><![CDATA[HAS_LINK IN ('Y', 'N')]]></check>
     </table>
   </database>

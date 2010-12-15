@@ -6,7 +6,7 @@
 <!--C0A8491CDB43466D9F2645018473588B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C0A8491CDB43466D9F2645018473588B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C0A8491CDB43466D9F2645018473588B-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[D1E4261099AE4095B2F2DAEE0F7E7784]]></OBKMO_WIDGET_CLASS_ID>
-<!--C0A8491CDB43466D9F2645018473588B-->  <HQL><![CDATA[select tab.window.name as windowName, tab.name as tabName, tab.id as tabId
+<!--C0A8491CDB43466D9F2645018473588B-->  <HQL><![CDATA[select tab.window.name as windowName, tab.name as tabName, tab.id as tabId, tab.window.id as windowId
 from ADTab tab
 where window.name like :window_name
   and window.client.id = :client
