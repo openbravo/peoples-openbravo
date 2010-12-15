@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -58,7 +58,6 @@ public class KernelUtils {
     KernelUtils.instance = instance;
   }
 
-  private String moduleVersion = null;
   private List<Module> sortedModules = null;
 
   public Property getPropertyFromColumn(Column column) {
@@ -113,21 +112,21 @@ public class KernelUtils {
   }
 
   /**
-   * @return true if there is at least one module in development
-   * @see Module#isInDevelopment()
+   * Get a module using its java package, the module is read from the internal cache.
+   * 
+   * @param javaPackage
+   *          the java package used to read the module
+   * @return a Module
+   * @throws OBException
+   *           if the module can not be found.
    */
-  public boolean inDevelopersMode() {
-    if (moduleVersion != null) {
-      return false;
+  public Module getModule(String javaPackage) {
+    for (Module module : getModulesOrderedByDependency()) {
+      if (module.getJavaPackage().equals(javaPackage)) {
+        return module;
+      }
     }
-    OBContext.setAdminMode();
-    try {
-      final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
-      modules.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, true));
-      return modules.count() > 0;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    throw new OBException("No module found for java package " + javaPackage);
   }
 
   /**
