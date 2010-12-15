@@ -29,9 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +38,9 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Expression;
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
+import org.mozilla.javascript.Scriptable;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -581,12 +580,12 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (!resp.contains("new Array(")) {
       return null;
     }
-    final ScriptEngineManager manager = new ScriptEngineManager();
-    final ScriptEngine engine = manager.getEngineByName("JavaScript");
+    Context cx = Context.enter();
+    Scriptable scope = cx.initStandardObjects();
+    cx.evaluateString(scope, resp, "<cmd>", 1, null);
     try {
-      engine.eval(resp);
-      Object oresp = engine.getContext().getAttribute("respuesta");
-      Object calloutName = engine.getContext().getAttribute("calloutName");
+      NativeArray oresp = (NativeArray) scope.get("respuesta", scope);
+      Object calloutName = scope.get("calloutName", scope);
       String calloutNameS = calloutName == null ? null : calloutName.toString();
       System.out.println("CALLOUT NAME: " + calloutNameS);
       NativeArray array = (NativeArray) oresp;
@@ -594,7 +593,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         returnedArray.add((NativeArray) array.get(i, null));
       }
       return calloutNameS;
-    } catch (ScriptException e) {
+    } catch (Exception e) {
       log.error("Couldn't parse callout response. The parsed response was: " + resp, e);
     }
     return null;
