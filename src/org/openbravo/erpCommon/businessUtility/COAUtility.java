@@ -67,7 +67,7 @@ public class COAUtility {
   private static final String ACCT_SCHEMA_ELEMENT_PROJECT = "PJ"; // PJ AcctSchemaElement
   private static final String ACCT_SCHEMA_ELEMENT_CAMPAIGN = "MC"; // MC AcctSchemaElement
   private static final String ACCT_SCHEMA_ELEMENT_SALESREGION = "SR"; // SR AcctSchemaElement
-  private static HashMap<String, ElementValue> defaultElementValues = new HashMap<String, ElementValue>();
+  private HashMap<String, ElementValue> defaultElementValues = new HashMap<String, ElementValue>();
   private Client client;
   private Organization organization;
   private Tree treeAccount;
@@ -685,17 +685,19 @@ public class COAUtility {
         log4j.debug("insertElementValuesInDB() - Inserting element value in database");
         ElementValue elementValue = null;
         try {
-          elementValue = InitialSetupUtility.insertElementValue(element, organization, data[i]
-              .getAccountName(), data[i].getAccountValue(), data[i].getAccountDescription(),
+          elementValue = InitialSetupUtility.insertElementValue(element, organization,
+              data[i].getAccountName(), data[i].getAccountValue(), data[i].getAccountDescription(),
               accountType, accountSign, IsDocControlled, IsSummary, data[i].getElementLevel(),
               false);
         } catch (Exception e) {
-          return logError("@CreateAccountingFailed@",
+          return logError(
+              "@CreateAccountingFailed@",
               "insertElementValuesInDB() - Not inserted account with value: "
                   + data[i].getAccountValue(), e);
         }
         if (elementValue == null) {
-          return logError("@CreateAccountingFailed@",
+          return logError(
+              "@CreateAccountingFailed@",
               "insertElementValuesInDB() - Not inserted account with value: "
                   + data[i].getAccountValue());
         }

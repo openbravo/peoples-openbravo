@@ -390,7 +390,7 @@ public class InitialSetupUtility {
    *          if null, role inserted for organization with id=0
    * @param name
    *          name of the role
-   * @param strUserLevel
+   * @param strUserLevelProvided
    *          if null, user level " CO" will be set to the new role
    * @return Role object for new element
    */
@@ -1811,21 +1811,5 @@ public class InitialSetupUtility {
       return null;
     return lTrees.get(0);
   }
-
-  // public static Role getClientAdminRole(Client client) {
-  // try {
-  // OBContext.setAdminMode();
-  // OBCriteria<Role> obcRole = OBDal.getInstance().createCriteria(Role.class);
-  // obcRole.setFilterOnReadableClients(false);
-  // obcRole.setFilterOnReadableOrganization(false);
-  // obcRole.add(Expression.ilike(Role.PROPERTY_NAME, "%Admin"));
-  // obcRole.add(Expression.eq(Role.PROPERTY_CLIENT, client));
-  // obcRole.add(Expression.eq(Role.PROPERTY_MANUAL, false));
-  // return (Role) obcRole.uniqueResult();
-  // } finally {
-  // OBContext.restorePreviousMode();
-  // }
-  //
-  // }
 
 }

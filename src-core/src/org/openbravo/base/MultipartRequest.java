@@ -103,7 +103,7 @@ public class MultipartRequest implements FieldProvider {
     this.rows = data;
   }
 
-  public void init(String filename, boolean firstLineHeads, String format, FieldProvider[] data)
+  private void init(String filename, boolean firstLineHeads, String format, FieldProvider[] data)
       throws IOException {
     this.filename = filename;
     this.firstRowHeads = firstLineHeads;

@@ -134,8 +134,6 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("paramLocationId", "");
       xmlDocument.setParameter("paramLocationDescription", "");
-      // xmlDocument.setParameter("region", arrayDobleEntrada("arrRegion",
-      // RegionComboData.selectTotal(this)));
       xmlDocument.setData("reportCurrency", "liststructure", MonedaComboData.select(this));
       xmlDocument.setData("reportOrgType", "liststructure",
           InitialOrgSetupData.selectOrgType(this, vars.getLanguage(), vars.getClient()));
@@ -149,7 +147,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     }
   }
 
-  private boolean isTrue(String s) {
+  private static boolean isTrue(String s) {
     if (s == null || s.equals(""))
       return false;
     else

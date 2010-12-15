@@ -54,6 +54,8 @@ public class InitialOrgSetup {
   private static final Logger log4j = Logger.getLogger(InitialOrgSetup.class);
   private static final String NEW_LINE = "<br />\n";
   private static final String STRSEPARATOR = "*****************************************************";
+  private static final String ERRORTYPE = "Error";
+  private static final String OKTYPE = "Success";
 
   private StringBuffer strHeaderLog;
   private StringBuffer strLog;
@@ -62,8 +64,6 @@ public class InitialOrgSetup {
   private Client client;
   private User user;
   private Role role;
-  private static final String ERRORTYPE = "Error";
-  private static final String OKTYPE = "Success";
 
   /**
    * 
@@ -115,8 +115,7 @@ public class InitialOrgSetup {
    *          If true, the Sales Region accounting dimension will be added to the new accounting
    *          schema
    * @param strSourcePath
-   *          Path of the instance. Neede to build the path to the reference data (dataset) files
-   * @return
+   *          Path of the instance. Needed to build the path to the reference data (dataset) files
    */
   public OBError createOrganization(String strOrgName, String strOrgUser, String strOrgType,
       String strParentOrg, String strcLocationId, String strPassword, String strModules,
@@ -134,7 +133,7 @@ public class InitialOrgSetup {
     logEvent("@StartingOrg@" + NEW_LINE);
 
     log4j.debug("createOrganization() - Creating organization.");
-    obResult = insertOrganization(client, (strOrgName == null || strOrgName.equals("")) ? "newOrg"
+    obResult = insertOrganization((strOrgName == null || strOrgName.equals("")) ? "newOrg"
         : strOrgName, strOrgType, strParentOrg, strcLocationId);
     if (!obResult.getType().equals(OKTYPE))
       return obResult;
@@ -148,15 +147,14 @@ public class InitialOrgSetup {
     OBContext.getOBContext().getWritableOrganizations();
     OBContext.getOBContext().addWritableOrganization(strOrgId);
     OBContext.getOBContext().getWritableOrganizations();
-    OBDal.getInstance().flush();
     try {
       OBDal.getInstance().flush();
       OBDal.getInstance().commitAndClose();
       org = OBDal.getInstance().get(Organization.class, strOrgId);
       if (strcLocationId != null && !strcLocationId.equals(""))
         try {
-          InitialSetupUtility.updateOrgLocation(org, OBDal.getInstance().get(Location.class,
-              strcLocationId));
+          InitialSetupUtility.updateOrgLocation(org,
+              OBDal.getInstance().get(Location.class, strcLocationId));
         } catch (final Exception err) {
           return logErrorAndRollback(
               "@CreateOrgFailed@",
@@ -259,9 +257,9 @@ public class InitialOrgSetup {
         try {
           log4j.debug("createReferenceData() - There exists accounting modules to process");
           obeResult = insertAccountingModule(strSourcePath, strModules, partner, product, project,
-              campaign, salesRegion, InitialSetupUtility.getTranslatedColumnName(language,
-                  "Account_ID"), InitialSetupUtility.getTranslatedColumnName(language,
-                  "C_Calendar_ID"), strCurrency);
+              campaign, salesRegion,
+              InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"),
+              InitialSetupUtility.getTranslatedColumnName(language, "C_Calendar_ID"), strCurrency);
           if (!obeResult.getType().equals(OKTYPE))
             return obeResult;
           log4j.debug("createReferenceData() - Accounting module processed. ");
@@ -292,7 +290,7 @@ public class InitialOrgSetup {
     return obeResult;
   }
 
-  OBError insertReferenceDataModules(List<Module> refDataModules) {
+  private OBError insertReferenceDataModules(List<Module> refDataModules) {
     log4j.debug("insertReferenceDataModules() - Starting client creation.");
     OBError obeResult = new OBError();
     obeResult.setType(OKTYPE);
@@ -381,9 +379,9 @@ public class InitialOrgSetup {
     return obeResult;
   }
 
-  OBError insertAccountingModule(String strSourcePath, String strModules, boolean bBPartner,
-      boolean bProduct, boolean bProject, boolean bCampaign, boolean bSalesRegion,
-      String strAccountText, String strCalendarText, String strCurrency) {
+  private OBError insertAccountingModule(String strSourcePath, String strModules,
+      boolean bBPartner, boolean bProduct, boolean bProject, boolean bCampaign,
+      boolean bSalesRegion, String strAccountText, String strCalendarText, String strCurrency) {
     log4j.debug("insertAccountingModule() - Starting client creation.");
     if (client == null)
       return logErrorAndRollback(
@@ -499,16 +497,17 @@ public class InitialOrgSetup {
     try {
       istrFileCoA = fileCoAFilePath.getInputStream();
     } catch (IOException e) {
-      return logErrorAndRollback("@CreateAccountingFailed@",
+      return logErrorAndRollback(
+          "@CreateAccountingFailed@",
           "createAccounting() - Exception occured while reading the file "
               + fileCoAFilePath.getName(), e);
     }
     try {
       obResult = coaUtility.createAccounting(vars, istrFileCoA, partner, product, project,
-          campaign, salesRegion, InitialSetupUtility
-              .getTranslatedColumnName(language, "Account_ID"), "US", "A", InitialSetupUtility
-              .getTranslatedColumnName(language, "C_Calendar_ID"), InitialSetupUtility
-              .getCurrency(strCurrency));
+          campaign, salesRegion,
+          InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"), "US", "A",
+          InitialSetupUtility.getTranslatedColumnName(language, "C_Calendar_ID"),
+          InitialSetupUtility.getCurrency(strCurrency));
       if (!obResult.getType().equals(OKTYPE))
         return obResult;
     } catch (final Exception err) {
@@ -529,8 +528,8 @@ public class InitialOrgSetup {
     if (client.getClientInformationList().get(0).getYourCompanyDocumentImage() != null)
       try {
         InitialSetupUtility.setOrgImage(client, org, client.getClientInformationList().get(0)
-            .getYourCompanyDocumentImage().getBindaryData(), client.getClientInformationList().get(
-            0).getYourCompanyDocumentImage().getName());
+            .getYourCompanyDocumentImage().getBindaryData(),
+            client.getClientInformationList().get(0).getYourCompanyDocumentImage().getName());
       } catch (final Exception err) {
         obResult.setMessage(err.getMessage());
         return obResult;
@@ -579,8 +578,8 @@ public class InitialOrgSetup {
     log4j.debug("insertUser() - Organization User Name: " + strOrgUser);
 
     try {
-      user = InitialSetupUtility.insertUser(client, null, strOrgUser, FormatUtilities
-          .sha1Base64(strPassword), null, language);
+      user = InitialSetupUtility.insertUser(client, null, strOrgUser,
+          FormatUtilities.sha1Base64(strPassword), null, language);
     } catch (final Exception err) {
       return logErrorAndRollback("@CreateOrgFailed@",
           "insertUser() - ERROR - Not able to insert the user " + strOrgUser, err);
@@ -626,8 +625,8 @@ public class InitialOrgSetup {
     return obResult;
   }
 
-  private OBError insertOrganization(Client client, String strOrgName, String strOrgType,
-      String strParentOrg, String strcLocationId) {
+  private OBError insertOrganization(String strOrgName, String strOrgType, String strParentOrg,
+      String strcLocationId) {
 
     OBError obResult = new OBError();
     obResult.setType(ERRORTYPE);
@@ -670,8 +669,8 @@ public class InitialOrgSetup {
     }
 
     try {
-      InitialSetupUtility.updateOrgTree(orgTree, orgNode, OBDal.getInstance().get(
-          Organization.class, strParentOrg));
+      InitialSetupUtility.updateOrgTree(orgTree, orgNode,
+          OBDal.getInstance().get(Organization.class, strParentOrg));
     } catch (final Exception err) {
       return logErrorAndRollback(
           "@CreateOrgFailed@",
@@ -688,8 +687,8 @@ public class InitialOrgSetup {
   }
 
   public String getLog() {
-    return strHeaderLog.append(NEW_LINE).append(STRSEPARATOR).append(NEW_LINE + NEW_LINE).append(
-        strLog).toString();
+    return strHeaderLog.append(NEW_LINE).append(STRSEPARATOR).append(NEW_LINE + NEW_LINE)
+        .append(strLog).toString();
   }
 
   /**
@@ -697,7 +696,6 @@ public class InitialOrgSetup {
    * 
    * @param strMessage
    *          Message to be added to the log returned (will be translated)
-   * @return
    */
   private void logEvent(String strMessage) {
     strLog.append(strMessage).append(NEW_LINE);
