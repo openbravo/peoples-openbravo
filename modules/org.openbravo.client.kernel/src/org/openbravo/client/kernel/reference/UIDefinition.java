@@ -146,9 +146,9 @@ public abstract class UIDefinition {
       String defaultS = field.getColumn().getDefaultValue();
       if (defaultS != null) {
         if (!defaultS.startsWith("@SQL=")) {
-          columnValue = Utility.getDefault(new DalConnectionProvider(), rq.getVariablesSecureApp(),
-              field.getColumn().getDBColumnName(), defaultS, field.getTab().getWindow().getId(),
-              defaultS);
+          columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
+              .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
+              .getTab().getWindow().getId(), defaultS);
         } else {
           Vector<String> params = new Vector<String>();
           String sql = parseSQL(defaultS, params);
@@ -159,7 +159,7 @@ public abstract class UIDefinition {
             for (String parameter : params) {
               String value = "";
               if (parameter.substring(0, 1).equals("#")) {
-                value = Utility.getContext(new DalConnectionProvider(), RequestContext.get()
+                value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
                     .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
               } else {
                 String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
@@ -306,19 +306,20 @@ public abstract class UIDefinition {
         validation = field.getColumn().getValidation().getId();
       }
       String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
-      String clientList = Utility.getContext(new DalConnectionProvider(), vars, "#User_Client",
-          field.getTab().getWindow().getId());
+      String clientList = Utility.getContext(new DalConnectionProvider(false), vars,
+          "#User_Client", field.getTab().getWindow().getId());
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
-        clientList = Utility.getContext(new DalConnectionProvider(), vars, "#User_Client", field
-            .getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
+        clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
+            field.getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
         orgList = null;
       }
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
-        orgList = Utility.getContext(new DalConnectionProvider(), vars, "#User_Org", field.getTab()
-            .getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
+        orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", field
+            .getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
       }
-      ComboTableData comboTableData = new ComboTableData(vars, new DalConnectionProvider(), ref,
-          field.getColumn().getDBColumnName(), objectReference, validation, orgList, clientList, 0);
+      ComboTableData comboTableData = new ComboTableData(vars, new DalConnectionProvider(false),
+          ref, field.getColumn().getDBColumnName(), objectReference, validation, orgList,
+          clientList, 0);
       FieldProvider tabData = generateTabData(field.getTab().getADFieldList());
       comboTableData.fillParameters(tabData, field.getTab().getWindow().getId(), columnValue);
       FieldProvider[] fps = comboTableData.select(getValueFromSession);

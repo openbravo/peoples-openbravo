@@ -51,9 +51,25 @@ public class DalConnectionProvider implements ConnectionProvider {
 
   private Connection connection;
   private Properties properties;
+  // This parameter can be used to define whether the OBDal needs to be flushed when the connection
+  // is retrieved or not
+  private boolean flush = true;
 
   public void destroy() throws Exception {
     // never close
+  }
+
+  public DalConnectionProvider() {
+
+  }
+
+  /**
+   * 
+   * @param flush
+   *          if set to true, the getConnection method will flush the OBDal instance.
+   */
+  public DalConnectionProvider(boolean flush) {
+    this.flush = flush;
   }
 
   public Connection getConnection() throws NoConnectionAvailableException {
@@ -62,8 +78,9 @@ public class DalConnectionProvider implements ConnectionProvider {
     }
 
     // always flush all remaining actions
-    OBDal.getInstance().flush();
-
+    if (flush) {
+      OBDal.getInstance().flush();
+    }
     return connection;
   }
 
