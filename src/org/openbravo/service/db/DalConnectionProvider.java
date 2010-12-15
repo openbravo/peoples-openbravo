@@ -42,7 +42,8 @@ import org.openbravo.exception.NoConnectionAvailableException;
  * <ul>
  * <li>does not support connection pooling</li>
  * <li>does not close the connection</li>
- * <li>always flushes the hibernate session before returning a connection ({@link OBDal#flush()})</li>
+ * <li>it flushes the hibernate session before returning a connection by default, but this can be
+ * overriden by using the constructor with the flush parameter ({@link OBDal#flush()})</li>
  * </ul>
  * 
  * @author mtaal
