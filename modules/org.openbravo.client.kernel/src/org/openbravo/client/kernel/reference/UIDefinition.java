@@ -34,6 +34,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
@@ -185,7 +186,12 @@ public abstract class UIDefinition {
     }
     JSONObject jsnobject = new JSONObject();
     try {
-      jsnobject.put("value", columnValue);
+      if (getDomainType() instanceof PrimitiveDomainType) {
+        jsnobject.put("value", ((PrimitiveDomainType) getDomainType())
+            .createFromString(columnValue));
+      } else {
+        jsnobject.put("value", columnValue);
+      }
     } catch (JSONException e) {
       log.error("Couldn't get field property value for column "
           + field.getColumn().getDBColumnName());
@@ -311,6 +317,7 @@ public abstract class UIDefinition {
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
         clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
             field.getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
+        // clientList = vars.getSessionValue("#User_Client");
         orgList = null;
       }
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {

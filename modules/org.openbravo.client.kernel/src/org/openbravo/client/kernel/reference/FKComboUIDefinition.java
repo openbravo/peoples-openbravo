@@ -18,13 +18,9 @@
  */
 package org.openbravo.client.kernel.reference;
 
-import java.util.HashMap;
-
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -47,10 +43,6 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     } catch (JSONException e) {
       throw new OBException("Error while computing combo data", e);
     }
-  }
-
-  private FieldProvider createFieldProviderArray(HashMap<String, String> values) {
-    return new FieldProviderFactory(values);
   }
 
 }
