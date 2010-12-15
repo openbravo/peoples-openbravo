@@ -64,8 +64,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
     try {
       WidgetInstance widgetInstance = OBDal.getInstance().get(WidgetInstance.class,
           parameters.get("widgetInstanceId"));
-      WidgetClass widgetClass = OBDal.getInstance().get(WidgetClass.class,
-          "D1E4261099AE4095B2F2DAEE0F7E7784");
+      String viewMode = parameters.get("viewMode");
+      WidgetClass widgetClass = widgetInstance.getWidgetClass();
       // WidgetInstance widgetInstance = widgetClass.getOBKMOWidgetInstanceList().get(0);
       IncludeIn includeIn = QueryListUtils.IncludeIn.WidgetView;
       List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
@@ -73,11 +73,16 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       Query widgetQuery = OBDal.getInstance().getSession().createQuery(
           widgetClass.getOBCQLWidgetQueryList().get(0).getHQL());
       String[] queryAliases = widgetQuery.getReturnAliases();
-      if (startRow > 0) {
-        widgetQuery.setFirstResult(startRow);
-      }
-      if (endRow > startRow) {
-        widgetQuery.setMaxResults(endRow - startRow + 1);
+      if ("widget".equals(viewMode)) {
+        int rowsNumber = Integer.valueOf(parameters.get("rowsNumber"));
+        widgetQuery.setMaxResults(rowsNumber);
+      } else {
+        if (startRow > 0) {
+          widgetQuery.setFirstResult(startRow);
+        }
+        if (endRow > startRow) {
+          widgetQuery.setMaxResults(endRow - startRow + 1);
+        }
       }
       String[] params = widgetQuery.getNamedParameters();
       if (params.length > 0) {

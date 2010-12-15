@@ -118,6 +118,9 @@ isc.MenuButton.create(OB.ApplicationMenuButtonStylingProperties, {
         
     // overridden to get reliable custom style name
     getBaseStyle: function(record, rowNum, colNum){
+      if (!this.getField(colNum)) {
+        return '';
+      }
       var name = this.getField(colNum).name;
       return this.baseStyle +  name.substr(0, 1).toUpperCase() + name.substr(1) + 'Field';
     },

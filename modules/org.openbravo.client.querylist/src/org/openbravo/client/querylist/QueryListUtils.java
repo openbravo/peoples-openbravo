@@ -39,35 +39,37 @@ public class QueryListUtils {
   public static String getWidgetClassFields(WidgetClass widgetClass, IncludeIn includeIn) {
     try {
       final List<JSONObject> jsonFields = new ArrayList<JSONObject>();
-      for (OBCQL_QueryColumn column : QueryListUtils.getColumns(widgetClass
-          .getOBCQLWidgetQueryList().get(0), includeIn)) {
-        final JSONObject field = new JSONObject();
-        field.put("name", column.getName());
-        final Reference reference;
-        if (column.getReferenceSearchKey() != null) {
-          reference = column.getReferenceSearchKey();
-        } else {
-          reference = column.getReference();
-        }
-        final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-            reference);
-        field.put("type", uiDefinition.getName());
-        try {
-          final String fieldProperties = uiDefinition.getFieldProperties(null);
-          if (fieldProperties != null && fieldProperties.trim().length() > 0) {
-            final JSONObject fieldPropertiesObject = new JSONObject(fieldProperties);
-            field.put("fieldProperties", fieldPropertiesObject);
+      if (!widgetClass.getOBCQLWidgetQueryList().isEmpty()) {
+        for (OBCQL_QueryColumn column : QueryListUtils.getColumns(widgetClass
+            .getOBCQLWidgetQueryList().get(0), includeIn)) {
+          final JSONObject field = new JSONObject();
+          field.put("name", column.getName());
+          final Reference reference;
+          if (column.getReferenceSearchKey() != null) {
+            reference = column.getReferenceSearchKey();
+          } else {
+            reference = column.getReference();
           }
-        } catch (NullPointerException e) {
-          // handle non-careful implementors of ui definitions
-          log.error("Error when processing column: " + column, e);
-          // ignore this field properties for now
+          final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
+              reference);
+          field.put("type", uiDefinition.getName());
+          try {
+            final String fieldProperties = uiDefinition.getFieldProperties(null);
+            if (fieldProperties != null && fieldProperties.trim().length() > 0) {
+              final JSONObject fieldPropertiesObject = new JSONObject(fieldProperties);
+              field.put("fieldProperties", fieldPropertiesObject);
+            }
+          } catch (NullPointerException e) {
+            // handle non-careful implementors of ui definitions
+            log.error("Error when processing column: " + column, e);
+            // ignore this field properties for now
+          }
+
+          field.put("title", getColumnLabel(column));
+
+          field.put("width", column.getWidth().toString() + "%");
+          jsonFields.add(field);
         }
-
-        field.put("title", getColumnLabel(column));
-
-        field.put("width", column.getWidth());
-        jsonFields.add(field);
       }
       final JSONArray fields = new JSONArray(jsonFields);
       return fields.toString();
@@ -81,8 +83,8 @@ public class QueryListUtils {
     OBCriteria<OBCQL_QueryColumn> obcColumns = OBDal.getInstance().createCriteria(
         OBCQL_QueryColumn.class);
     obcColumns.add(Expression.eq(OBCQL_QueryColumn.PROPERTY_WIDGETQUERY, query));
-    obcColumns.add(Expression.in(OBCQL_QueryColumn.PROPERTY_INCLUDEIN,
-        includeIn.getIncludedValues()));
+    obcColumns.add(Expression.in(OBCQL_QueryColumn.PROPERTY_INCLUDEIN, includeIn
+        .getIncludedValues()));
     obcColumns.addOrderBy(OBCQL_QueryColumn.PROPERTY_SEQUENCENUMBER, true);
     return obcColumns.list();
   }

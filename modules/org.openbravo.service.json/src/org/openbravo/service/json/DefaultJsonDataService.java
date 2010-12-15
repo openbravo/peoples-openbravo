@@ -18,6 +18,7 @@
  */
 package org.openbravo.service.json;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -70,98 +71,128 @@ public class DefaultJsonDataService implements JsonDataService {
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
 
-      final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
-      final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
-
-      final DataEntityQueryService queryService = OBProvider.getInstance().get(
-          DataEntityQueryService.class);
-      queryService.setEntityName(entityName);
-
-      if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
-        queryService.setUseAlias();
-      }
-      // set the filter parameters
-      for (String key : parameters.keySet()) {
-        if (!key.startsWith("_")) {
-          queryService.addFilterParameter(key, parameters.get(key));
-        } else if (key.equals(JsonConstants.WHERE_PARAMETER)
-            || key.equals(JsonConstants.IDENTIFIER) || key.equals(JsonConstants.ORG_PARAMETER)) {
-          // the _where is used in a special way
-          queryService.addFilterParameter(key, parameters.get(key));
+      final JSONObject jsonResult = new JSONObject();
+      final JSONObject jsonResponse = new JSONObject();
+      List<BaseOBObject> bobs;
+      final String id = parameters.get(JsonConstants.ID);
+      // if the id is set that's a special case of one object being requested
+      if (id != null) {
+        bobs = new ArrayList<BaseOBObject>();
+        final BaseOBObject bob = OBDal.getInstance().get(entityName, id);
+        if (bob != null) {
+          bobs.add(bob);
         }
-      }
-
-      if (parameters.get(JsonConstants.OR_EXPRESSION_PARAMETER) != null) {
-        queryService.setDoOrExpression();
-      }
-
-      if (parameters.containsKey(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE)) {
-        queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE));
       } else {
-        queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER));
-      }
+        final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
+        final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
 
-      boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
-          || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
+        final DataEntityQueryService queryService = OBProvider.getInstance().get(
+            DataEntityQueryService.class);
+        queryService.setEntityName(entityName);
 
-      // only do the count if a paging request is done
-      // note preventCountOperation variable is considered further below
-      boolean doCount = false;
-      int count = -1;
-      int startRow = 0;
-      int computedMaxResults = Integer.MAX_VALUE;
-      if (startRowStr != null) {
-        startRow = Integer.parseInt(startRowStr);
-        queryService.setFirstResult(startRow);
-        doCount = true;
-      }
-
-      if (endRowStr != null && endRowStr != null) {
-        int endRow = Integer.parseInt(endRowStr);
-        computedMaxResults = endRow - startRow + 1;
-        // note computedmaxresults must be set before
-        // endRow is increased by 1
-        // increase by 1 to see if there are more results.
-        if (preventCountOperation) {
-          endRow++;
-          // set count here, is corrected in specific cases later
-          count = endRow;
+        if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
+          queryService.setUseAlias();
         }
-        queryService.setMaxResults(computedMaxResults);
-        doCount = true;
-      } else {
-        // can't do this if there is no endrow...
-        preventCountOperation = false;
-      }
-
-      final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
-      if (sortBy != null) {
-        queryService.setOrderBy(sortBy);
-      } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
-        queryService.setOrderBy(parameters.get(JsonConstants.ORDERBY_PARAMETER));
-      }
-
-      // compute a new startrow if the targetrecordid was passed in
-      int targetRowNumber = -1;
-      if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
-        final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
-        targetRowNumber = queryService.getRowNumber(targetRecordId);
-        if (targetRowNumber != -1) {
-          queryService.setFirstResult(targetRowNumber);
-          startRow = targetRowNumber;
+        // set the filter parameters
+        for (String key : parameters.keySet()) {
+          if (!key.startsWith("_")) {
+            queryService.addFilterParameter(key, parameters.get(key));
+          } else if (key.equals(JsonConstants.WHERE_PARAMETER)
+              || key.equals(JsonConstants.IDENTIFIER) || key.equals(JsonConstants.ORG_PARAMETER)) {
+            // the _where is used in a special way
+            queryService.addFilterParameter(key, parameters.get(key));
+          }
         }
-      }
 
-      List<BaseOBObject> bobs = queryService.list();
+        if (parameters.get(JsonConstants.OR_EXPRESSION_PARAMETER) != null) {
+          queryService.setDoOrExpression();
+        }
 
-      if (preventCountOperation) {
-        // computedMaxResults is one too much, if we got one to much then correct
-        // the result, the count is already correct
-        if (bobs.size() == computedMaxResults) {
-          bobs = bobs.subList(0, bobs.size() - 1);
+        if (parameters.containsKey(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE)) {
+          queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE));
         } else {
-          // got less so correct the count
+          queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER));
+        }
+
+        boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
+            || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
+
+        // only do the count if a paging request is done
+        // note preventCountOperation variable is considered further below
+        boolean doCount = false;
+        int count = -1;
+        int startRow = 0;
+        int computedMaxResults = Integer.MAX_VALUE;
+        if (startRowStr != null) {
+          startRow = Integer.parseInt(startRowStr);
+          queryService.setFirstResult(startRow);
+          doCount = true;
+        }
+
+        if (endRowStr != null && endRowStr != null) {
+          int endRow = Integer.parseInt(endRowStr);
+          computedMaxResults = endRow - startRow + 1;
+          // note computedmaxresults must be set before
+          // endRow is increased by 1
+          // increase by 1 to see if there are more results.
+          if (preventCountOperation) {
+            endRow++;
+            // set count here, is corrected in specific cases later
+            count = endRow;
+          }
+          queryService.setMaxResults(computedMaxResults);
+          doCount = true;
+        } else {
+          // can't do this if there is no endrow...
+          preventCountOperation = false;
+        }
+
+        final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
+        if (sortBy != null) {
+          queryService.setOrderBy(sortBy);
+        } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
+          queryService.setOrderBy(parameters.get(JsonConstants.ORDERBY_PARAMETER));
+        }
+
+        // compute a new startrow if the targetrecordid was passed in
+        int targetRowNumber = -1;
+        if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
+          final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
+          targetRowNumber = queryService.getRowNumber(targetRecordId);
+          if (targetRowNumber != -1) {
+            startRow = targetRowNumber;
+            // if the startrow is really low, then just read from 0
+            // to make sure that we have a full page of data to display
+            if (startRow < (computedMaxResults / 2)) {
+              startRow = 0;
+            }
+            queryService.setFirstResult(startRow);
+          }
+        }
+
+        bobs = queryService.list();
+
+        if (preventCountOperation) {
           count = bobs.size() + startRow;
+          // computedMaxResults is one too much, if we got one to much then correct
+          // the result and up the count so that the grid knows that there are more
+          if (bobs.size() == computedMaxResults) {
+            bobs = bobs.subList(0, bobs.size() - 1);
+            count++;
+          }
+        }
+
+        if (doCount && !preventCountOperation) {
+          count = queryService.count();
+        }
+        jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (bobs.size() > 0 ? bobs.size() + startRow
+            - 1 : 0));
+        // bobs can be empty and count > 0 if the order by forces a join without results
+        if (bobs.isEmpty()) {
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
+        } else if (doCount) {
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
         }
       }
 
@@ -169,27 +200,8 @@ public class DefaultJsonDataService implements JsonDataService {
           DataToJsonConverter.class);
       toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
-
-      if (doCount && !preventCountOperation) {
-        count = queryService.count();
-      }
-
-      final JSONObject jsonResult = new JSONObject();
-      final JSONObject jsonResponse = new JSONObject();
-      if (targetRowNumber != -1) {
-        jsonResponse.put(JsonConstants.RESPONSE_SCROLLTO, targetRowNumber);
-      }
-      jsonResponse.put(JsonConstants.RESPONSE_STARTROWS, startRow);
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (bobs.size() > 0 ? bobs.size() + startRow - 1
-          : 0));
-      // bobs can be empty and count > 0 if the order by forces a join without results
-      if (bobs.isEmpty()) {
-        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
-      } else if (doCount) {
-        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
-      }
       jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
       // if (jsonObjects.size() > 0) {

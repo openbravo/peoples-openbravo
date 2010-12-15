@@ -297,25 +297,22 @@ public class Utility {
 
     try {
       log4j.debug("Utility.messageBD - Message Code: " + strCode);
-      if (strLanguage.equals("en_US"))
-        strMessage = MessageBDData.message(conn, strCode);
-      else
-        strMessage = MessageBDData.messageLanguage(conn, strCode, strLanguage);
+      strMessage = MessageBDData.message(conn, strLanguage, strCode);
     } catch (final Exception ignore) {
+      log4j.error("Error getting message", ignore);
     }
     log4j.debug("Utility.messageBD - Message description: " + strMessage);
     if (strMessage == null || strMessage.equals("")) {
       try {
-        if (strLanguage.equals("en_US"))
-          strMessage = MessageBDData.columnname(conn, strCode);
-        else
-          strMessage = MessageBDData.columnnameLanguage(conn, strCode, strLanguage);
+        strMessage = MessageBDData.columnname(conn, strLanguage, strCode);
       } catch (final Exception e) {
+        log4j.error("Error getting message", e);
         strMessage = strCode;
       }
     }
-    if (strMessage == null || strMessage.equals(""))
+    if (strMessage == null || strMessage.equals("")) {
       strMessage = strCode;
+    }
     return Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
   }
 

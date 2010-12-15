@@ -78,6 +78,7 @@ public abstract class WidgetProvider {
   private static final String PARAMETERREQUIRED = "required";
   private static final String DBINSTANCEID = "dbInstanceId";
   private static final String CAN_MAXIMIZE = "showMaximizeButton";
+  private static final String MENU_ITEMS = "menuItems";
 
   private Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -96,7 +97,12 @@ public abstract class WidgetProvider {
           .getClientSideWidgetClassName());
       jsonObject.put(TITLE, MyOBUtils.getWidgetTitle(widgetClass));
       jsonObject.put(HEIGHT, widgetClass.getHeight());
-      jsonObject.put(CAN_MAXIMIZE, widgetClass.isCanMaximize());
+      jsonObject.put(MENU_ITEMS, MyOBUtils.getWidgetMenuItems(widgetClass));
+      if (widgetClass.getWidgetSuperclass() != null) {
+        jsonObject.put(CAN_MAXIMIZE, widgetClass.getWidgetSuperclass().isCanMaximize());
+      } else {
+        jsonObject.put(CAN_MAXIMIZE, widgetClass.isCanMaximize());
+      }
       final JSONObject defaultParameters = new JSONObject();
       final List<JSONObject> fieldDefinitions = new ArrayList<JSONObject>();
       for (Parameter parameter : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {

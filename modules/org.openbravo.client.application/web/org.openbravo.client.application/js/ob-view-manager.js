@@ -155,6 +155,17 @@
             // and show it
             tabset.selectTab(viewTabID);
             
+            // tell the viewinstance what tab it is on
+            // note do not use tabId on the viewInstance
+            // as tabId is used by the classic ob window
+            // local variable is: viewTabID (with uppercase ID)
+            // function call and other variable uses camelcase Id
+            if (viewInstance.setViewTabId) {
+              viewInstance.setViewTabId(viewTabID);
+            } else {
+              viewInstance.viewTabId = viewTabID;
+            }
+
             // update the cache
             vmgr.views.removeTab(viewTabID, false);
             vmgr.views.push({

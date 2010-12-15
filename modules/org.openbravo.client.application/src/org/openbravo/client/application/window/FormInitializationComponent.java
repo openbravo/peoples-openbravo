@@ -184,7 +184,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // we add the columns not included in the sortedColumns
       // (the ones which don't have validations)
       for (Field field : fields) {
-        if (!allColumns.contains(field.getColumn().getDBColumnName())) {
+        if (!sortedColumns.contains(field.getColumn().getDBColumnName())) {
           allColumns.add(field.getColumn().getDBColumnName());
         }
       }
@@ -673,7 +673,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         for (String parameter : params) {
           String value = "";
           if (parameter.substring(0, 1).equals("#")) {
-            value = Utility.getContext(new DalConnectionProvider(), RequestContext.get()
+            value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
                 .getVariablesSecureApp(), parameter, windowId);
           } else {
             String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
@@ -687,7 +687,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           fvalue = rs.getString(1);
         }
       } else {
-        fvalue = Utility.getContext(new DalConnectionProvider(), RequestContext.get()
+        fvalue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
             .getVariablesSecureApp(), code, windowId);
       }
       return fvalue;

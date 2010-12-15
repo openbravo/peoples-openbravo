@@ -33,6 +33,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldGroup;
 import org.openbravo.model.ad.ui.Tab;
@@ -118,6 +119,11 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public boolean getStandardField();
 
     public String getFieldProperties();
+
+    public String getInpColumnName();
+
+    public String getReferencedKeyColumnName();
+
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -160,6 +166,23 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getColumnName() {
       return property.getColumnName().toLowerCase();
+    }
+
+    public String getInpColumnName() {
+      return "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+    }
+
+    public String getReferencedKeyColumnName() {
+      if (property.isOneToMany() || property.isPrimitive()) {
+        return "";
+      }
+      Property prop;
+      if (property.getReferencedProperty() == null) {
+        prop = property.getTargetEntity().getIdProperties().get(0);
+      } else {
+        prop = property.getReferencedProperty();
+      }
+      return prop.getColumnName();
     }
 
     public String getLabel() {
@@ -217,6 +240,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private List<OBViewFieldDefinition> children = new ArrayList<OBViewFieldDefinition>();
 
     public String getFieldProperties() {
+      return "";
+    }
+
+    public String getInpColumnName() {
+      return "";
+    }
+
+    public String getReferencedKeyColumnName() {
       return "";
     }
 

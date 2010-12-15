@@ -151,6 +151,7 @@ public class UIDefinitionController extends BaseTemplateComponent {
           final Class<?> clz = OBClassLoader.getInstance().loadClass(
               buttonReference.getOBCLKERUIDefinitionList().get(0).getImplementationClassname());
           buttonDefinition = (UIDefinition) clz.newInstance();
+          buttonDefinition.setReference(buttonReference);
         } catch (Exception e) {
           throw new OBException("Exception when creating UIDefinition for reference " + reference,
               e);

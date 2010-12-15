@@ -28,10 +28,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.hibernate.criterion.Expression;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
 
 /**
@@ -193,21 +190,8 @@ public abstract class BaseComponent implements Component {
     if (module != null) {
       return module;
     }
-    OBContext.setAdminMode();
-    try {
-      final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
-      modules.add(Expression.eq(Module.PROPERTY_JAVAPACKAGE, getModulePackageName()));
-      if (modules.list().isEmpty()) {
-        throw new IllegalStateException("Component " + this.getClass().getName()
-            + " is not in a module or it does not belong to a package of a module. "
-            + "Consider overriding the getModulePackageName method as it now returns " + "a value "
-            + getModulePackageName() + " which does not correspond to a module package name");
-      }
-      module = modules.list().get(0);
-      return module;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    module = KernelUtils.getInstance().getModule(getModulePackageName());
+    return module;
   }
 
   /**
@@ -235,5 +219,9 @@ public abstract class BaseComponent implements Component {
 
   public boolean isJavaScriptComponent() {
     return true;
+  }
+
+  public boolean isInDevelopment() {
+    return getModule().isInDevelopment();
   }
 }

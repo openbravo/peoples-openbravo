@@ -64,9 +64,15 @@ public class JsonConstants {
   public static final String TEXTMATCH_SUBSTRING = "substring";
 
   // these constants are used in response
-  public static final String RESPONSE_SCROLLTO = "scrollTo";
   public static final String RESPONSE_STATUS = "status";
+
+  /**
+   * @deprecated has been replaced by {@link #RESPONSE_STARTROW}
+   */
+  @Deprecated
   public static final String RESPONSE_STARTROWS = "startRows";
+
+  public static final String RESPONSE_STARTROW = "startRow";
   public static final String RESPONSE_ENDROW = "endRow";
   public static final String RESPONSE_TOTALROWS = "totalRows";
   public static final String RESPONSE_ERRORS = "errors";

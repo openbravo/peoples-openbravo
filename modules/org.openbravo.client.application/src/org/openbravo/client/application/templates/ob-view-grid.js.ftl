@@ -27,6 +27,8 @@ isc.OBViewGrid.create({
         , targetEntity: '${field.targetEntity?js_string}'
         , title: '${field.title?js_string}'
         , showIf: '${field.initialShow?string}'
+        , inpColumnName: '${field.inpColumnName?string}'
+        , referencedKeyColumnName: '${field.referencedKeyColumnName?string}'        
        }
        <#if field_has_next>,</#if>
     </#list>

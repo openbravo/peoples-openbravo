@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.openbravo.client.application.window.EntityWindowMappingComponent;
 import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -50,11 +49,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     if (componentId.equals(ApplicationConstants.MAIN_LAYOUT_ID)) {
       final MainLayoutComponent component = getComponent(MainLayoutComponent.class);
       component.setId(ApplicationConstants.MAIN_LAYOUT_ID);
-      component.setParameters(parameters);
-      return component;
-    } else if (componentId.equals(EntityWindowMappingComponent.COMPONENT_ID)) {
-      final EntityWindowMappingComponent component = getComponent(EntityWindowMappingComponent.class);
-      component.setId(EntityWindowMappingComponent.COMPONENT_ID);
       component.setParameters(parameters);
       return component;
     } else if (componentId.equals(ApplicationConstants.MAIN_LAYOUT_VIEW_COMPONENT_ID)) {
@@ -182,9 +176,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     // Application
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + ApplicationConstants.COMPONENT_TYPE + "/" + ApplicationConstants.MAIN_LAYOUT_ID, false));
-    globalResources.add(createStaticResource("org.openbravo.client.kernel/"
-        + ApplicationConstants.COMPONENT_TYPE + "/" + EntityWindowMappingComponent.COMPONENT_ID,
-        false));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-view-manager.js", false));

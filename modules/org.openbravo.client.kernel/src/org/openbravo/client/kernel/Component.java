@@ -91,4 +91,9 @@ public interface Component {
    */
   public boolean isJavaScriptComponent();
 
+  /**
+   * @return true if the component's module or a module of a subcomponent is in development
+   * @see Module#isInDevelopment()
+   */
+  public boolean isInDevelopment();
 }

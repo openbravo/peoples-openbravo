@@ -49,6 +49,25 @@ public class StaticResourceComponent extends BaseComponent {
   @Any
   private Instance<ComponentProvider> componentProviders;
 
+  private Boolean isInDevelopment;
+
+  @Override
+  public boolean isInDevelopment() {
+    if (isInDevelopment == null) {
+      isInDevelopment = false;
+      for (ComponentProvider provider : componentProviders) {
+        if (provider.getGlobalResources() == null) {
+          continue;
+        }
+        if (provider.getModule().isInDevelopment()) {
+          isInDevelopment = true;
+          return isInDevelopment;
+        }
+      }
+    }
+    return isInDevelopment;
+  }
+
   /**
    * @return returns this instance
    * @see org.openbravo.client.kernel.BaseComponent#getData()
@@ -141,11 +160,7 @@ public class StaticResourceComponent extends BaseComponent {
                     continue;
                   }
                   String resourceContents = FileUtils.readFileToString(file);
-                  if (!module.isInDevelopment()) {
-                    sb.append(JSCompressor.getInstance().compress(resourceContents)).append("\n");
-                  } else {
-                    sb.append(resourceContents).append("\n");
-                  }
+                  sb.append(resourceContents).append("\n");
                 } catch (Exception e) {
                   log.error("Error reading file: " + resource, e);
                 }

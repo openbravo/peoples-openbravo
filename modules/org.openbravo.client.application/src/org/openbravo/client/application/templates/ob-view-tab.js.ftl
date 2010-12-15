@@ -30,6 +30,8 @@
         dataSourceId: '${tabComponent.dataSourceId?js_string}',
     </#if>
     
+    defaultEditMode: ${tabComponent.defaultEditMode},
+    
     customToolbarButtons: [
     <#list data.buttonFields as field>
       {id: '${field.id?js_string}', title: '${field.label?js_string}'}<#if field_has_next>,</#if>

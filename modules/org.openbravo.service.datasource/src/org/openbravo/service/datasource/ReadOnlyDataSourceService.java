@@ -75,7 +75,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put(JsonConstants.RESPONSE_STARTROWS, startRow);
+      jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, data.size() + startRow - 1);
       if (doCount) {
         jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, getCount(parameters));

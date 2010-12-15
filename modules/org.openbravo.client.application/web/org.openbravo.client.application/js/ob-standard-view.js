@@ -5,7 +5,7 @@
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
  * the License at http://www.openbravo.com/legal/license.html
- * Software distributed under the License  is  distributed  on  an "AS IS"
+ * Software distributed under the License  is  distribfuted  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
@@ -16,6 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
 isc.ClassFactory.defineClass('OBStandardWindow', isc.VLayout);
 
 // The OBStandardWindow contains the toolbar and the root view.
@@ -26,6 +27,7 @@ isc.OBStandardWindow.addProperties({
   viewProperties: null,
   
   initWidget: function(){
+    var standardWindow = this;
     this.toolBar = isc.OBToolbar.create({
       height: this.toolBarHeight,
       minHeight: this.toolBarHeight,
@@ -61,10 +63,8 @@ isc.OBStandardWindow.addProperties({
     })]);
     
     this.addMember(this.toolBar);
-        
-    // todo: set in the correct childtab...
-    // note must be set before the OBStandardView is created
-    this.viewProperties.targetRecordId = this.targetRecordId;
+    
+    this.viewProperties.standardWindow = this;
     
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addMember(this.view);
@@ -72,13 +72,33 @@ isc.OBStandardWindow.addProperties({
     this.view.toolBar = this.toolBar;
     
     // is set later after creation
-    //this.view.viewTabId = this.viewTabId;
     this.view.tabTitle = this.tabTitle;
   },
   
-  setViewTabId: function(viewTabId) {
+  draw: function(){
+    var standardWindow = this;
+    var ret = this.Super('draw', arguments);
+    
+    if (this.targetRecordId) {
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.ComputeSelectedRecordActionHandler', null, {
+        targetEntity: this.targetEntity,
+        targetRecordId: this.targetRecordId,
+        windowId: this.windowId
+      }, function(response, data, request){
+        standardWindow.directTabInfo = data.result;
+        standardWindow.view.openDirectTab();
+      });
+      delete this.targetRecordId;
+      delete this.targetTabId;
+      delete this.targetEntity;
+    }
+    
+    return ret;
+  },
+  
+  setViewTabId: function(viewTabId){
     this.view.viewTabId = viewTabId;
-    this.viewTabId = viewTabId;    
+    this.viewTabId = viewTabId;
   },
   
   doHandleClick: function(){
@@ -139,39 +159,6 @@ isc.OBStandardView.addClassProperties({
 
 isc.OBStandardView.addProperties({
 
-  state: isc.OBStandardView.STATE_MID,
-  previousState: isc.OBStandardView.STATE_TOP_MAX,
-  
-  doHandleClick: function(){
-    if (!this.childTabSet) {
-      return;
-    }
-    if (this.state !== isc.OBStandardView.STATE_BOTTOM_MAX) {
-      this.setHalfSplit();
-      this.previousState = isc.OBStandardView.STATE_TOP_MAX;
-      this.state = isc.OBStandardView.STATE_MID;
-    }
-  },
-  
-  doHandleDoubleClick: function(){
-    var tempState;
-    if (!this.childTabSet) {
-      return;
-    }
-    tempState = this.state;
-    this.state = this.previousState;
-    if (this.previousState === isc.OBStandardView.STATE_BOTTOM_MAX) {
-      this.setBottomMaximum();
-    } else if (this.previousState === isc.OBStandardView.STATE_MID) {
-      this.setHalfSplit();
-    } else if (this.previousState === isc.OBStandardView.STATE_TOP_MAX) {
-      this.setTopMaximum();
-    } else {
-      isc.warn(this.previousState + ' not supported ');
-    }
-    this.previousState = tempState;
-  },
-  
   // properties used by the ViewManager, only relevant in case this is the
   // top
   // view shown directly in the main tab
@@ -253,19 +240,27 @@ isc.OBStandardView.addProperties({
   padding: 0,
   overflow: 'hidden',
   
+  // set if one record has been selected
+  lastRecordSelected: null,
+  
+  // ** {{{ refreshContents }}} **
+  // Should the contents listgrid/forms be refreshed when the tab
+  // gets selected and shown to the user.
+  refreshContents: true,
+  
+  state: isc.OBStandardView.STATE_MID,
+  previousState: isc.OBStandardView.STATE_TOP_MAX,
+  
   initWidget: function(properties){
     var isRootView = !this.parentProperty;
     
-    // this value must be set before passing on to build structure
-    this.targetRecordId = properties.targetRecordId;
-
     if (isRootView) {
       this.buildStructure();
     }
     
-    OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);        
+    OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
-
+    
     this.Super('initWidget', arguments);
   },
   
@@ -286,7 +281,7 @@ isc.OBStandardView.addProperties({
         this.members[1].setHeight('50%');
         this.childTabSet.setState(isc.OBStandardView.STATE_IN_MID);
         this.childTabSet.selectTab(this.childTabSet.tabs[0]);
-
+        
         OB.TestRegistry.register('org.openbravo.client.application.ChildTabSet_' + this.tabId, this.viewForm);
       } else {
         this.members[0].setHeight('100%');
@@ -296,7 +291,11 @@ isc.OBStandardView.addProperties({
   
   setDataSource: function(ds){
     this.dataSource = ds;
+    
     if (this.viewGrid) {
+      if (this.targetRecordId) {
+        this.viewGrid.targetRecordId = this.targetRecordId;
+      }
       this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
       if (!this.parentProperty) {
         this.viewGrid.fetchData();
@@ -305,6 +304,10 @@ isc.OBStandardView.addProperties({
     }
     if (this.viewForm) {
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
+    }
+    // open default edit view if this is the rootview
+    if (this.defaultEditMode && !this.parentProperty) {
+      this.openDefaultEditView();
     }
   },
   
@@ -327,20 +330,21 @@ isc.OBStandardView.addProperties({
   createMainParts: function(){
     var isRootView = !this.parentProperty;
     var me = this;
-    if (this.tabId.length > 0) {
+    if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
         width: '100%',
         height: '*',
-        overflow: 'auto'
+        overflow: 'auto',
+        view: this,
+        focusChanged: function(hasFocus){
+//          console.log("Tab " + this.view.tabTitle + ' --> ' + hasFocus + ' ' + this.view.containsFocus());
+        }
       });
       
       if (this.viewGrid) {
         this.viewGrid.setWidth('100%');
         this.viewGrid.view = this;
         this.formGridLayout.addMember(this.viewGrid);
-        if (this.targetRecordId) {
-          this.viewGrid.targetRecordId = this.targetRecordId;
-        }
       }
       
       if (this.viewForm) {
@@ -378,6 +382,8 @@ isc.OBStandardView.addProperties({
   // this
   // parent.
   addChildView: function(childView){
+    childView.standardWindow = this.standardWindow;
+    
     childView.parentView = this;
     childView.parentTabSet = this.childTabSet;
     
@@ -394,17 +400,12 @@ isc.OBStandardView.addProperties({
     childView.tab = this.childTabSet.tabs[this.childTabSet.tabs.length - 1];
     
     OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + "_" + childView.tabId, childView.tab);
-
+    
   },
-  
-  // ** {{{ refreshContents }}} **
-  // Should the contents listgrid/forms be refreshed when the tab
-  // gets selected and shown to the user.
-  refreshContents: true,
   
   doRefreshContents: function(){
     // refresh when shown
-    if (this.parentTabSet.state === isc.OBStandardView.STATE_MIN) {
+    if (this.parentTabSet && this.parentTabSet.state === isc.OBStandardView.STATE_MIN) {
       return;
     }
     if (!this.refreshContents) {
@@ -413,14 +414,40 @@ isc.OBStandardView.addProperties({
     var me = this;
     this.viewForm.clearErrors();
     this.viewForm.clearValues();
-    if (!this.viewGrid.isVisible()) {
+    // open default edit view if there is no parent view or if there is at least
+    // one parent record selected
+    if (this.shouldOpenDefaultEditMode()) {
+      this.openDefaultEditView();
+    } else if (!this.viewGrid.isVisible()) {
       this.switchFormGridVisibility();
     }
-    // filter and select the first record
-    this.viewGrid.filterData({}, function(){
-      //      me.viewGrid.selectRecord(0);
-    });
+    this.viewGrid.refreshContents();
     this.refreshContents = false;
+  },
+  
+  shouldOpenDefaultEditMode: function(){
+    // can open default edit mode if defaultEditMode is set
+    // and this is the root view or a child view with a selected parent.
+    return this.defaultEditMode && (!this.parentProperty || this.parentView.viewGrid.getSelectedRecords().length === 1)
+  },
+  
+  openDefaultEditView: function(record){
+    if (!this.shouldOpenDefaultEditMode()) {
+      return;
+    }
+    
+    // open form in insert mode
+    if (record) {
+      this.editRecord(record);
+    } else if (!this.viewGrid.data || this.viewGrid.data.getLength() === 0) {
+      // open in insert mode
+      this.viewGrid.hide();
+      this.statusBarFormLayout.show();
+      this.statusBarFormLayout.setHeight('100%');
+    } else {
+      // edit the first record
+      this.editRecord(this.viewGrid.getRecord(0));
+    }
   },
   
   // ** {{{ switchFormGridVisibility }}} **
@@ -438,11 +465,41 @@ isc.OBStandardView.addProperties({
     this.updateTabTitle();
   },
   
+  doHandleClick: function(){
+    if (!this.childTabSet) {
+      return;
+    }
+    if (this.state !== isc.OBStandardView.STATE_BOTTOM_MAX) {
+      this.setHalfSplit();
+      this.previousState = isc.OBStandardView.STATE_TOP_MAX;
+      this.state = isc.OBStandardView.STATE_MID;
+    }
+  },
+  
+  doHandleDoubleClick: function(){
+    var tempState;
+    if (!this.childTabSet) {
+      return;
+    }
+    tempState = this.state;
+    this.state = this.previousState;
+    if (this.previousState === isc.OBStandardView.STATE_BOTTOM_MAX) {
+      this.setBottomMaximum();
+    } else if (this.previousState === isc.OBStandardView.STATE_MID) {
+      this.setHalfSplit();
+    } else if (this.previousState === isc.OBStandardView.STATE_TOP_MAX) {
+      this.setTopMaximum();
+    } else {
+      isc.warn(this.previousState + ' not supported ');
+    }
+    this.previousState = tempState;
+  },
+  
   // ** {{{ editRecord }}} **
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
   editRecord: function(record){
-    
+  
     // this.recordSelected(record);
     this.viewForm.editRecord(record);
     this.viewForm.clearErrors();
@@ -450,16 +507,79 @@ isc.OBStandardView.addProperties({
       this.switchFormGridVisibility();
     }
     this.viewGrid.doSelectSingleRecord(record);
-    if (this.targetRecordId) {
-      this.targetRecordId = null;
+  },
+  
+  // check if a child tab should be opened directly
+  openDirectChildTab: function(){
+    if (this.childTabSet) {
+      var i, tabs = this.childTabSet.tabs;
+      for (i = 0; i < tabs.length; i++) {
+        if (tabs[i].pane.openDirectTab()) {
+          return;
+        }
+      }
     }
+    
+    // no child tabs to open anymore, show ourselves as the default view
+    // open this view
+    if (this.parentTabSet) {
+      this.parentTabSet.setState(isc.OBStandardView.STATE_MID);
+    } else {
+      this.doHandleClick();
+    }
+    var gridRecord = this.viewGrid.getSelectedRecord();
+    this.editRecord(gridRecord);
+    
+    // remove this info
+    delete this.standardWindow.directTabInfo;
+  },
+  
+  openDirectTab: function(){
+    if (!this.dataSource) {
+      // wait for the datasource to arrive
+      this.delayCall('openDirectTab', null, 200, this);
+      return;
+    }
+    var i, thisView = this, tabInfos = this.standardWindow.directTabInfo;
+    if (!tabInfos) {
+      return;
+    }
+    for (i = 0; i < tabInfos.length; i++) {
+      if (tabInfos[i].targetTabId === this.tabId) {
+        // found it...
+        this.viewGrid.targetRecordId = tabInfos[i].targetRecordId;
+        
+        if (this.parentTabSet && this.parentTabSet.getSelectedTab() !== this.tab) {
+          this.parentTabSet.selectTab(this.tab);
+        } else {
+          // make sure that the content gets refreshed
+          this.refreshContents = true;
+          // refresh and open a child view when all is done
+          this.doRefreshContents();
+        }
+        return true;
+      }
+    }
+    return false;
   },
   
   // ** {{{ recordSelected }}} **
   // Is called when a record get's selected. Will refresh direct child views
-  // (which
-  // will again refresh their children.
+  // which will again refresh their children.
   recordSelected: function(){
+    this.fireOnPause("recordSelected", {
+      target: this,
+      methodName: "doRecordSelected",
+      args: []
+    }, this.fetchDelay);
+  },
+  
+  doRecordSelected: function(){
+    // no change go away
+    if (this.viewGrid.getSelectedRecords().length === 1 && this.viewGrid.getSelectedRecord() === this.lastRecordSelected) {
+      return;
+    }
+    
     var tabViewPane = null;
     
     // refresh the tabs
@@ -472,6 +592,7 @@ isc.OBStandardView.addProperties({
     // and recompute the count:
     this.updateChildCount();
     this.updateTabTitle();
+    this.lastRecordSelected = this.viewGrid.getSelectedRecord();
   },
   
   // ** {{{ parentRecordSelected }}} **
@@ -481,8 +602,12 @@ isc.OBStandardView.addProperties({
     // clear all our selections..
     this.viewGrid.deselectAllRecords();
     
-    // switch back to the grid
-    if (!this.viewGrid.isVisible()) {
+    // switch back to the grid or form
+    if (this.shouldOpenDefaultEditMode()) {
+      if (this.viewGrid.isVisible()) {
+        this.switchFormGridVisibility();
+      }
+    } else if (!this.viewGrid.isVisible()) {
       this.switchFormGridVisibility();
     }
     
@@ -499,12 +624,7 @@ isc.OBStandardView.addProperties({
       isc.Log.logDebug('ParentRecordSelected: View visible ' + this.tabTitle, 'OB');
       var me = this;
       if (this.viewGrid) {
-        // filter and select the first record
-        this.viewGrid.filterData({}, function(){
-          // will cascade parentRecordSelected to children
-          // me.viewGrid.selectRecord(0);
-          // disabled for now, is done using the for-loop below
-        });
+        this.viewGrid.refreshContents();
       }
       if (this.viewForm) {
         this.viewForm.clearValues();
@@ -550,7 +670,7 @@ isc.OBStandardView.addProperties({
     callback = function(resp, data, req){
       var tab, tabPane;
       var tabInfos = data.result;
-      if (tabInfos.length !== me.childTabSet.tabs.length) {
+      if (!tabInfos || tabInfos.length !== me.childTabSet.tabs.length) {
         // error, something has changed
         return;
       }
@@ -594,8 +714,10 @@ isc.OBStandardView.addProperties({
       // only show a count if there is one parent
       if (this.parentView.viewGrid.getSelectedRecords().length !== 1) {
         this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle);
-      } else if (this.recordCount){
+      } else if (this.recordCount) {
         this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle + ' (' + this.recordCount + ')');
+      } else {
+        this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle);
       }
     }
   },
@@ -1004,5 +1126,15 @@ isc.OBStandardViewTabSet.addProperties({
   initWidget: function(){
     this.tabBarProperties.tabSet = this;
     this.Super('initWidget', arguments);
+  }
+});
+
+// TODO: move this to a central location
+isc.Canvas.addProperties({
+  // let focuschanged go up to the parent
+  focusChanged: function(hasFocus){
+    if (this.parentElement && this.parentElement.focusChanged) {
+      this.parentElement.focusChanged(hasFocus);
+    }
   }
 });
