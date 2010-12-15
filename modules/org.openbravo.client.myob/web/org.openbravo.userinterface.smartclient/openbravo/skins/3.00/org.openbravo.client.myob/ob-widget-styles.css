@@ -31,6 +31,41 @@
   vertical-align: top;
 }
 
+/* Header icons */
+
+.OBWidgetIconMinimize,
+.OBWidgetIconMinimizeOver,
+.OBWidgetIconMinimizeDown,
+.OBWidgetIconMinimizeDisabled {
+  margin-right: 4px;
+  border: 1px solid #91A777;
+}
+
+.OBWidgetIconMaximize,
+.OBWidgetIconMaximizeOver,
+.OBWidgetIconMaximizeDown,
+.OBWidgetIconMaximizeDisabled {
+  margin-right: 4px;
+  border: 1px solid #91A777;
+}
+
+.OBWidgetIconRestore,
+.OBWidgetIconRestoreOver,
+.OBWidgetIconRestoreDown,
+.OBWidgetIconRestoreDisabled {
+  margin-right: 4px;
+  border: 1px solid #91A777;
+}
+
+.OBWidgetIconClose,
+.OBWidgetIconCloseOver,
+.OBWidgetIconCloseDown,
+.OBWidgetIconCloseDisabled {
+  margin-right: 4px;
+  border: 1px solid #FA962F;
+}
+
+
 /* Widget Menu */
 
 .OBWidgetMenu {
@@ -143,6 +178,7 @@
   padding: 1px; 
   background: #91A777;
 }
+
 
 /* Portal part*/
 

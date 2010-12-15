@@ -75,7 +75,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
       showFocusedAsOver: false,
       showTitle: false,
       imageType: isc.Img.CENTER,
-      src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/ico-edit-wgt-hover.png',
+      src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/edit.png',
       baseStyle: 'OBWidgetMenuButton',
       
       // only show the middle image without stretch appended

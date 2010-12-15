@@ -56,6 +56,33 @@ isc.OBWidget.changeDefaults('headerLabelDefaults', {
   align: isc.Canvas.CENTER
 });
 
+isc.OBWidget.changeDefaults('restoreButtonDefaults', {
+  baseStyle: 'OBWidgetIconRestore',
+  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/restore.png',
+  width: 24,
+  height: 20
+});
+
+isc.OBWidget.changeDefaults('closeButtonDefaults', {
+  baseStyle: 'OBWidgetIconClose',
+  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/close.png',
+  width: 24,
+  height: 20
+});
+
+isc.OBWidget.changeDefaults('maximizeButtonDefaults', {
+  baseStyle: 'OBWidgetIconMaximize',
+  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/maximize.png',
+  width: 24,
+  height: 20
+});
+
+isc.OBWidget.changeDefaults('minimizeButtonDefaults', {
+  baseStyle: 'OBWidgetIconMinimize',
+  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/minimize.png',
+  width: 24,
+  height: 20
+});
 
 // MyOpenbravo dialogs (left menu)
 
