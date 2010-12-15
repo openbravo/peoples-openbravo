@@ -71,15 +71,13 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private static final int MAX_CALLOUT_CALLS = 10;
 
-  private HttpServletRequest request;
   private HttpServletResponse response;
   private ServletContext context;
 
-  public void doPost(HttpServletRequest request1, HttpServletResponse response1,
-      ServletContext context) throws IOException {
-    this.request = request1;
-    this.response = response1;
-    this.context = context;
+  public void doPost(HttpServletRequest localRequest, HttpServletResponse localResponse,
+      ServletContext localContext) throws IOException {
+    this.response = localResponse;
+    this.context = localContext;
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("MODE", "NEW");
     parameters.put("TAB_ID", "186");
@@ -110,13 +108,13 @@ public class FormInitializationComponent extends BaseActionHandler {
       String tabId = (String) parameters.get("TAB_ID");
       String rowId = (String) parameters.get("ROW_ID");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      BaseOBObject row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       Tab parentTab = null;
       BaseOBObject parentRecord = null;
       System.out.println("TAB NAME: " + tab.getWindow().getName() + "." + tab.getName()
           + " Tab Id:" + tab.getId());
       if (mode.equals("EDIT")) {
-        BaseOBObject obj = OBDal.getInstance().get(tab.getTable().getName(), rowId);
-        parentRecord = KernelUtils.getInstance().getParentRecord(obj, tab);
+        parentRecord = KernelUtils.getInstance().getParentRecord(row, tab);
       }
       parentTab = KernelUtils.getInstance().getParentTab(tab);
       if (parentId != null && parentTab != null) {
@@ -154,9 +152,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             // used)
             value = uiDef.getFieldProperties(field, false);
           } else if (mode.equals("EDIT")) {
-            // On EDIT mode, the values are retrieved from the database row
-            BaseOBObject obj = OBDal.getInstance().get(tab.getTable().getName(), rowId);
-            setValueOfColumnInRequest(obj, field.getColumn().getDBColumnName());
+            setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
             value = uiDef.getFieldProperties(field, true);
           } else if (mode.equals("CHANGE") || (mode.equals("SETSESSION"))) {
             // On CHANGE and SETSESSION mode, the values are read from the request
@@ -343,10 +339,15 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
     Entity entity = obj.getEntity();
-    Object currentValue = obj.get(entity.getPropertyByColumnName(columnName).getName());
+    Property prop = entity.getPropertyByColumnName(columnName);
+    Object currentValue = obj.get(prop.getName());
     if (currentValue != null) {
       if (currentValue instanceof BaseOBObject) {
-        currentValue = ((BaseOBObject) currentValue).getId();
+        if (prop.getReferencedProperty() != null) {
+          currentValue = ((BaseOBObject) currentValue).get(prop.getReferencedProperty().getName());
+        } else {
+          currentValue = ((BaseOBObject) currentValue).getId();
+        }
       }
       RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
           currentValue.toString());
@@ -431,7 +432,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       String calloutClassName = calloutsToCall.get(0);
       System.out.println("Calling callout " + calloutClassName);
       try {
-        Class calloutClass = Class.forName(calloutClassName);
+        Class<?> calloutClass = Class.forName(calloutClassName);
         calloutsToCall.remove(calloutClassName);
         Object calloutInstance = calloutClass.newInstance();
         Method method = null;
