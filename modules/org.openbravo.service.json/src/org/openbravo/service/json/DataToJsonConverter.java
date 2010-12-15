@@ -75,7 +75,7 @@ public class DataToJsonConverter {
         for (String key : dataInstance.keySet()) {
           final Object value = dataInstance.get(key);
           if (value instanceof BaseOBObject) {
-            addBaseOBObject(jsonObject, key, (BaseOBObject) value);
+            addBaseOBObject(jsonObject, key, null, (BaseOBObject) value);
           } else {
             // TODO: format!
             jsonObject.put(key, convertPrimitiveValue(value));
@@ -145,16 +145,18 @@ public class DataToJsonConverter {
             // TODO: format!
             jsonObject.put(property.getName(), convertPrimitiveValue(property, value));
           } else {
-            addBaseOBObject(jsonObject, property.getName(), (BaseOBObject) value);
+            addBaseOBObject(jsonObject, property.getName(), property.getReferencedProperty(),
+                (BaseOBObject) value);
           }
         } else {
           jsonObject.put(property.getName(), JSONObject.NULL);
         }
       }
       for (String additionalProperty : additionalProperties) {
-        final Object value = getValueFromPath(bob, additionalProperty);
+        final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
         if (value instanceof BaseOBObject) {
-          addBaseOBObject(jsonObject, additionalProperty, (BaseOBObject) value);
+          addBaseOBObject(jsonObject, additionalProperty, getPropertyFromPath(bob,
+              additionalProperty).getReferencedProperty(), (BaseOBObject) value);
         } else {
           final Property property = DalUtil
               .getPropertyFromPath(bob.getEntity(), additionalProperty);
@@ -173,11 +175,7 @@ public class DataToJsonConverter {
     }
   }
 
-  /**
-   * ToDO: replace with call to DalUtil.getValueFromPath after MP14 because of small issue solved in
-   * DalUtil in that release.
-   */
-  private Object getValueFromPath(BaseOBObject bob, String propertyPath) {
+  private Property getPropertyFromPath(BaseOBObject bob, String propertyPath) {
     final String[] parts = propertyPath.split("\\.");
     BaseOBObject currentBob = bob;
     Property result = null;
@@ -188,9 +186,6 @@ public class DataToJsonConverter {
       // && !currentEntity.hasProperty(part)
       // NOTE disabled for now, there is one special case: AD_Column.IDENTIFIER
       // which is NOT HANDLED
-      if (part.equals(JsonConstants.IDENTIFIER)) {
-        return currentBob.getIdentifier();
-      }
       final Entity currentEntity = currentBob.getEntity();
       if (!currentEntity.hasProperty(part)) {
         return null;
@@ -201,16 +196,20 @@ public class DataToJsonConverter {
       if (value instanceof BaseOBObject) {
         currentBob = (BaseOBObject) value;
       } else {
-        return value;
+        return currentEntity.getProperty(part);
       }
     }
     return result;
   }
 
-  private void addBaseOBObject(JSONObject jsonObject, String propertyName, BaseOBObject obObject)
-      throws JSONException {
+  private void addBaseOBObject(JSONObject jsonObject, String propertyName,
+      Property referencedProperty, BaseOBObject obObject) throws JSONException {
     // jsonObject.put(propertyName, toJsonObject(obObject, DataResolvingMode.SHORT));
-    jsonObject.put(propertyName, obObject.getId());
+    if (referencedProperty != null) {
+      jsonObject.put(propertyName, obObject.get(referencedProperty.getName()));
+    } else {
+      jsonObject.put(propertyName, obObject.getId());
+    }
     // jsonObject.put(propertyName + "." + JsonConstants.ID, obObject.getId());
     jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, obObject.getIdentifier());
   }
