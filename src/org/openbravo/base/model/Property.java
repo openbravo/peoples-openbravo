@@ -271,6 +271,9 @@ public class Property {
   }
 
   public Entity getTargetEntity() {
+    if (targetEntity == null && getReferencedProperty() != null) {
+      targetEntity = getReferencedProperty().getEntity();
+    }
     return targetEntity;
   }
 
