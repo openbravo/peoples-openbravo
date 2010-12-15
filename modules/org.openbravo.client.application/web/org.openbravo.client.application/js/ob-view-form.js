@@ -31,6 +31,9 @@ isc.OBViewForm.addProperties({
   view: null,
   numCols: 4,
   
+  fieldsByInpColumnName: null,  
+  fieldsByColumnName: null,
+  
   initWidget: function(){
     // iterate over the fields and set the datasource
 //    var field, i, fieldsNum = this.fields.length;
@@ -40,6 +43,98 @@ isc.OBViewForm.addProperties({
         // field.optionDataSource = OB.Datasource.get(field.dataSourceId, field, 'optionDataSource');
 //      }
 //    }
-    return this.Super('initWidget', arguments);
+    var ret = this.Super('initWidget', arguments);
+    return ret;
+  },
+  
+  editRecord: function (record) {
+    var ret = this.Super("editRecord", arguments);
+    this.retrieveInitialValues();
+    return ret;
+  },
+  
+  getFieldFromInpColumnName: function(inpColumnName) {
+    if (!this.fieldsByInpColumnName) {
+      var localResult = [], fields = this.getFields();
+      for (var i = 0; i < fields.length; i++) {
+        localResult[fields[i].inpColumnName] = fields[i];
+      }
+      this.fieldsByInpColumnName = localResult;
+    }
+    return this.fieldsByInpColumnName[inpColumnName.toLowerCase()];
+  },
+  
+  getFieldFromColumnName: function(columnName) {
+    if (!this.fieldsByColumnName) {
+      var localResult = [], fields = this.getFields();
+      for (var i = 0; i < fields.length; i++) {
+        localResult[fields[i].columnName] = fields[i];
+      }
+      this.fieldsByColumnName = localResult;
+    }
+    return this.fieldsByColumnName[columnName.toLowerCase()];
+  },
+  
+  setFields: function() {
+    this.Super('setFields', arguments);
+    this.fieldsByInpColumnName = null;
+    this.fieldsByColumnName = null;
+  },
+  
+  retrieveInitialValues: function() {
+    var parentId = null, me = this;
+    if (this.view.parentProperty) {
+      parentId = this.getValue(this.view.parentProperty);
+    }
+     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', null, {
+        MODE: 'EDIT',
+        PARENT_ID: parentId,
+        TAB_ID: this.view.tabId,
+        ROW_ID: this.getValue(OB.Constants.ID)
+      }, function(response, data, request){
+        me.processInitialValues(response, data, request);
+      });
+  },
+  
+  processInitialValues: function(response, data, request) {
+    var columnValues = data.columnValues, 
+    calloutMessages = data.calloutMessages,
+    auxInputs = data.auxiliaryInputValues, 
+    prop, value;
+    if (columnValues) {
+      for (prop in columnValues) {
+        if (columnValues.hasOwnProperty(prop)) {
+          this.processColumnValue(prop, columnValues[prop]);
+        }
+      }
+    }
+    if (calloutMessages) {
+      // show messages...
+    }
+    if (auxInputs) {
+      // handle aux inputs
+    }
+  },
+  
+  processColumnValue: function(columnName, columnValue) {
+    var i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+    if (!field) {
+      // ignore for now, the pk is also passed in
+      //isc.warn('No field found using column name: ' + columnName + ' for tab ' + this.view.tabId);
+      return;
+    }
+    if (entries && entries.length > 0) {
+      if (field.getDataSource()) {
+        field.getDataSource().setCacheData(entries, true);
+      } else {
+        for (i = 0; i < entries.length; i++) {
+          valueMap[entries[i][OB.Constants.ID]] = entries[i][OB.Constants.IDENTIFIER];
+        }
+        field.setValueMap(valueMap);
+      }
+    }
+    if (columnValue.value) {
+      this.setValue(field.name, columnValue.value);
+    }
   }
 });

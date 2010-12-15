@@ -55,7 +55,9 @@ OB.DefaultPickListStyleProperties = {
   quickRunPickListWidth: 225,
   // fixes issue https://issues.openbravo.com/view.php?id=15105
   quickRunPickListCellHeight: 22,
-  
+  pickListHeight: 200,
+  autoSizePickList: false,
+
   pickListProperties: {
     showShadow: false,
     shadowDepth: 5,

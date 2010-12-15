@@ -15,7 +15,7 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
- */ 
+ */
 // = Form Item Widgets =
 // Contains the following widgets:
 // * OBFormButton: button used in forms.
@@ -46,14 +46,14 @@ isc.ClassFactory.defineClass('OBListComboBoxItem', ComboBoxItem);
 isc.OBListComboBoxItem.addProperties({
 
   itemData: null,
-
+  
   getValueMap: function(){
     if (this.itemData) {
       return this.itemData;
     }
     return this.Super('getValueMap', arguments);
   }
-
+  
 });
 
 // == OBListFilterComboBoxItem ==
@@ -62,7 +62,7 @@ isc.OBListComboBoxItem.addProperties({
 isc.ClassFactory.defineClass('OBListFilterComboBoxItem', isc.OBListComboBoxItem);
 
 isc.OBListFilterComboBoxItem.addProperties({
-  
+
   // adds an empty value at the beginning
   getClientPickListData: function(){
     var result = this.Super('getClientPickListData', arguments);
@@ -86,37 +86,28 @@ isc.OBFKComboBoxItem.addProperties({
   itemData: null,
   optionDataSource: null,
   
-  pickListProperties: {
-    bodyStyleName: 'OBPickListBody',
-    fetchDelay: 400,
-    showHeaderContextMenu: false
+  getDataSource: function(){
+    return this.getOptionDataSource();
   },
-  
-  getValueMap: function(){
-    return null;
-  },
-  
+   
   getOptionDataSource: function(){
     if (this.optionDataSource) {
       return this.optionDataSource;
     }
     // set a client only datasource
-    if (this.itemData) {
-      this.showOptionsFromDataSource = true;
-      this.optionDataSource = isc.DataSource.create({
-        fields: [{
-          name: OB.Constants.ID,
-          type: 'text'
-        }, {
-          name: OB.Constants.IDENTIFIER,
-          type: 'text'
-        }],
-        clientOnly: true,
-        testData: this.itemData
-      });
-      return this.optionDataSource;
-    }
-    return this.Super('getOptionDataSource', arguments);
+    this.showOptionsFromDataSource = true;
+    this.optionDataSource = isc.DataSource.create({
+      fields: [{
+        name: OB.Constants.ID,
+        type: 'text'
+      }, {
+        name: OB.Constants.IDENTIFIER,
+        type: 'text'
+      }],
+      clientOnly: true,
+      testData: this.itemData
+    });
+    return this.optionDataSource;
   },
   
   getPickListFilterCriteria: function(){
@@ -143,7 +134,7 @@ isc.OBFKComboBoxItem.addProperties({
 // Extends SelectItem with preset yes and no values
 isc.ClassFactory.defineClass('OBYesNoItem', SelectItem);
 
-isc.OBYesNoItem.addProperties({  
+isc.OBYesNoItem.addProperties({
   mapValueToDisplay: function(value, a, b, c){
     return OB.Utilities.getYesNoDisplayValue(value);
   },
@@ -545,7 +536,7 @@ isc.OBNumberItem.addProperties({
     
     var oldCaretPosition = 0;
     if (this.getSelectionRange()) {
-      oldCaretPosition= this.getSelectionRange()[0];
+      oldCaretPosition = this.getSelectionRange()[0];
     }
     var newCaretPosition = this.returnNewCaretPosition(this.getValue(), oldCaretPosition, groupSeparator);
     
@@ -833,7 +824,7 @@ OB.I18N.getLabel('OBUISC_Validator.requiredField', null, isc.OBDateTimeItem, 're
 
 // set the global title click:
 isc.FormItem.addProperties({
-  titleClick: function(form, item) {
+  titleClick: function(form, item){
     item.focusInItem();
   }
 });
