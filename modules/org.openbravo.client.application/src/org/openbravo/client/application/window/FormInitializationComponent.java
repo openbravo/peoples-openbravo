@@ -82,7 +82,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     this.response = response1;
     this.context = context;
     HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("MODE", "EDIT");
+    parameters.put("MODE", "NEW");
     parameters.put("TAB_ID", "186");
     parameters.put("ROW_ID", "1000019");
     JSONObject obj = execute(parameters, null);
@@ -128,80 +128,40 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (parentTab != null && parentRecord != null) {
         setSessionValues(parentRecord, parentTab);
       }
-      ArrayList<String> columns = new ArrayList<String>();
       HashMap<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
-      HashMap<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
-      HashMap<String, String> validations = new HashMap<String, String>();
       HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
-
-      // Calculation of validation dependencies
+      ArrayList<String> allColumns = new ArrayList<String>();
+      ArrayList<String> calloutsToCall = new ArrayList<String>();
 
       long iniTime = System.currentTimeMillis();
       List<Field> fields = tab.getADFieldList();
-      List<String> columnsWithValidation = new ArrayList<String>();
+
       for (Field field : fields) {
-        String columnName = field.getColumn().getDBColumnName();
-        columns.add(columnName);
-        columnsOfFields.put(columnName, field);
-        if (field.getColumn().getValidation() != null) {
-          columnsWithValidation.add(field.getColumn().getDBColumnName());
-          validations.put(field.getColumn().getDBColumnName(), getValidation(field));
-        }
-        if (field.getColumn().getDefaultValue() != null) {
-          // System.out.println(field.getColumn().getDBColumnName() + "   -   "
-          // + field.getColumn().getDefaultValue());
-        }
+        columnsOfFields.put(field.getColumn().getDBColumnName(), field);
       }
 
-      for (String column : columnsWithValidation) {
-        columnsInValidation.put(column, parseValidation(column, validations.get(column),
-            columnsWithValidation));
-      }
+      // Calculation of validation dependencies
+      computeListOfColumnsSortedByValidationDependencies(tab, allColumns);
 
-      ArrayList<String> sortedColumns = new ArrayList<String>();
-      String nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
-          columnsInValidation);
-      while (nonDepColumn != null) {
-        sortedColumns.add(nonDepColumn);
-        nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
-            columnsInValidation);
-      }
-
-      String cycleCols = "";
-      for (String col : columnsWithValidation) {
-        if (!sortedColumns.contains(col)) {
-          cycleCols += "," + col;
-        }
-      }
-      if (!cycleCols.equals("")) {
-        throw new OBException("Error. The columns " + cycleCols.substring(1)
-            + " have validations which form a cycle.");
-      }
-
-      // Next step is to calculate the values for the columns
-      ArrayList<String> calloutsToCall = new ArrayList<String>();
-      ArrayList<String> allColumns = new ArrayList<String>();
-      // we add the columns not included in the sortedColumns
-      // (the ones which don't have validations)
-      for (Field field : fields) {
-        if (!sortedColumns.contains(field.getColumn().getDBColumnName())) {
-          allColumns.add(field.getColumn().getDBColumnName());
-        }
-      }
-      allColumns.addAll(sortedColumns);
-
+      // Column values are set in the RequestContext
       for (String col : allColumns) {
         Field field = columnsOfFields.get(col);
         try {
           String columnId = field.getColumn().getId();
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
-          String value;
+          String value = null;
           if (mode.equals("NEW")) {
+            // On NEW mode, the values are computed through the UIDefinition (the defaults will be
+            // used)
             value = uiDef.getFieldProperties(field, false);
-          } else {
+          } else if (mode.equals("EDIT")) {
+            // On EDIT mode, the values are retrieved from the database row
             BaseOBObject obj = OBDal.getInstance().get(tab.getTable().getName(), rowId);
             setValueOfColumnInRequest(obj, field.getColumn().getDBColumnName());
             value = uiDef.getFieldProperties(field, true);
+          } else if (mode.equals("CHANGE") || (mode.equals("SETSESSION"))) {
+            // On CHANGE and SETSESSION mode, the values are read from the request
+            // TODO this is pending
           }
           JSONObject jsonobject = new JSONObject(value);
           columnValues.put("inp"
@@ -229,7 +189,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
 
-      // Next step is to compute the Auxiliary Input values
+      // Computation of the Auxiliary Input values
       OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
       auxInC.add(Expression.eq(AuxiliaryInput.PROPERTY_TAB, tab));
       List<AuxiliaryInput> auxInputs = auxInC.list();
@@ -246,10 +206,8 @@ public class FormInitializationComponent extends BaseActionHandler {
         RequestContext.get().setRequestParameter(
             "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
             value == null ? null : value.toString());
-      }
-      // Now we insert session values for auxiliary inputs
-      if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
-        for (AuxiliaryInput auxIn : auxInputs) {
+        // Now we insert session values for auxiliary inputs
+        if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
           setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), columnValues.get("inp"
               + Sqlc.TransformaNombreColumna(auxIn.getName())));
         }
@@ -267,6 +225,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // }
 
       ArrayList<String> messages = new ArrayList<String>();
+
       if (mode.equals("NEW")) {
         for (Field field : fields) {
           if (field.getColumn().getCallout() != null) {
@@ -330,6 +289,57 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private void computeListOfColumnsSortedByValidationDependencies(Tab tab,
+      ArrayList<String> allColumns) {
+    List<Field> fields = tab.getADFieldList();
+    ArrayList<String> columns = new ArrayList<String>();
+    HashMap<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
+    List<String> columnsWithValidation = new ArrayList<String>();
+    HashMap<String, String> validations = new HashMap<String, String>();
+    for (Field field : fields) {
+      String columnName = field.getColumn().getDBColumnName();
+      columns.add(columnName);
+      if (field.getColumn().getValidation() != null) {
+        columnsWithValidation.add(field.getColumn().getDBColumnName());
+        validations.put(field.getColumn().getDBColumnName(), getValidation(field));
+      }
+    }
+
+    for (String column : columnsWithValidation) {
+      columnsInValidation.put(column, parseValidation(column, validations.get(column),
+          columnsWithValidation));
+    }
+
+    ArrayList<String> sortedColumns = new ArrayList<String>();
+    String nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
+        columnsInValidation);
+    while (nonDepColumn != null) {
+      sortedColumns.add(nonDepColumn);
+      nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
+          columnsInValidation);
+    }
+
+    String cycleCols = "";
+    for (String col : columnsWithValidation) {
+      if (!sortedColumns.contains(col)) {
+        cycleCols += "," + col;
+      }
+    }
+    if (!cycleCols.equals("")) {
+      throw new OBException("Error. The columns " + cycleCols.substring(1)
+          + " have validations which form a cycle.");
+    }
+
+    // we add the columns not included in the sortedColumns
+    // (the ones which don't have validations)
+    for (Field field : fields) {
+      if (!sortedColumns.contains(field.getColumn().getDBColumnName())) {
+        allColumns.add(field.getColumn().getDBColumnName());
+      }
+    }
+    allColumns.addAll(sortedColumns);
   }
 
   private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
