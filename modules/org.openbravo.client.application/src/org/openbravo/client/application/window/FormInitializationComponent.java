@@ -92,6 +92,8 @@ public class FormInitializationComponent extends BaseActionHandler {
   // @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode(true);
+
+    long iniTime = System.currentTimeMillis();
     try {
       // OBCriteria<Tab> tabs = OBDal.getInstance().createCriteria(Tab.class);
       int num = 0;
@@ -102,17 +104,25 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (num++ > 10) {
         return null;
       }
-
+      JSONObject jsContent = null;
+      try {
+        jsContent = new JSONObject(content);
+      } catch (JSONException e) {
+        throw new OBException("Error while parsing content", e);
+      }
       String mode = (String) parameters.get("MODE");
       String parentId = (String) parameters.get("PARENT_ID");
       String tabId = (String) parameters.get("TAB_ID");
       String rowId = (String) parameters.get("ROW_ID");
+      String changedColumn = (String) parameters.get("CHANGED_COLUMN");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       BaseOBObject row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       Tab parentTab = null;
       BaseOBObject parentRecord = null;
       System.out.println("TAB NAME: " + tab.getWindow().getName() + "." + tab.getName()
           + " Tab Id:" + tab.getId());
+
+      // First the session variables for the parent records are set
       if (mode.equals("EDIT")) {
         parentRecord = KernelUtils.getInstance().getParentRecord(row, tab);
       }
@@ -129,8 +139,6 @@ public class FormInitializationComponent extends BaseActionHandler {
       HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
       ArrayList<String> allColumns = new ArrayList<String>();
       ArrayList<String> calloutsToCall = new ArrayList<String>();
-
-      long iniTime = System.currentTimeMillis();
       List<Field> fields = tab.getADFieldList();
 
       for (Field field : fields) {
@@ -156,7 +164,9 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, true);
           } else if (mode.equals("CHANGE") || (mode.equals("SETSESSION"))) {
             // On CHANGE and SETSESSION mode, the values are read from the request
-            // TODO this is pending
+            JSONObject jsCol = new JSONObject();
+            jsCol.put("value", jsContent.get("inp" + Sqlc.TransformaNombreColumna(col)));
+            value = jsCol.toString();
           }
           JSONObject jsonobject = new JSONObject(value);
           columnValues.put("inp"
@@ -219,8 +229,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       // + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
       // }
 
+      // List of the callouts that need to be called
       ArrayList<String> messages = new ArrayList<String>();
-
       if (mode.equals("NEW")) {
         for (Field field : fields) {
           if (field.getColumn().getCallout() != null) {
@@ -237,6 +247,21 @@ public class FormInitializationComponent extends BaseActionHandler {
             } catch (JSONException e) {
               log.error("Error reading value from parameter. Not executing callouts for column "
                   + field.getColumn().getDBColumnName(), e);
+            }
+          }
+        }
+      }
+
+      // In CHANGE mode, we will add the initial callout call for the changed column, if there is
+      // one
+      if (mode.equals("CHANGE")) {
+        if (changedColumn != null) {
+          for (Column col : tab.getTable().getADColumnList()) {
+            if (col.getDBColumnName().equals(changedColumn)) {
+              if (col.getCallout() != null) {
+                // The column has a callout. We will add the callout to the callout list
+                addCalloutToList(col, calloutsToCall);
+              }
             }
           }
         }
