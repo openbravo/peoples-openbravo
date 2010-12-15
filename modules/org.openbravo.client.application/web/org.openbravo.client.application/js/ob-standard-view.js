@@ -16,6 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
 isc.ClassFactory.defineClass('OBStandardWindow', isc.VLayout);
 
 // The OBStandardWindow contains the toolbar and the root view.
@@ -333,7 +334,11 @@ isc.OBStandardView.addProperties({
       this.formGridLayout = isc.HLayout.create({
         width: '100%',
         height: '*',
-        overflow: 'auto'
+        overflow: 'auto',
+        view: this,
+        focusChanged: function(hasFocus){
+//          console.log("Tab " + this.view.tabTitle + ' --> ' + hasFocus + ' ' + this.view.containsFocus());
+        }
       });
       
       if (this.viewGrid) {
@@ -426,7 +431,7 @@ isc.OBStandardView.addProperties({
     return this.defaultEditMode && (!this.parentProperty || this.parentView.viewGrid.getSelectedRecords().length === 1)
   },
   
-  openDefaultEditView: function(record) {
+  openDefaultEditView: function(record){
     if (!this.shouldOpenDefaultEditMode()) {
       return;
     }
@@ -1121,5 +1126,15 @@ isc.OBStandardViewTabSet.addProperties({
   initWidget: function(){
     this.tabBarProperties.tabSet = this;
     this.Super('initWidget', arguments);
+  }
+});
+
+// TODO: move this to a central location
+isc.Canvas.addProperties({
+  // let focuschanged go up to the parent
+  focusChanged: function(hasFocus){
+    if (this.parentElement && this.parentElement.focusChanged) {
+      this.parentElement.focusChanged(hasFocus);
+    }
   }
 });
