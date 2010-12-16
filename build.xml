@@ -208,6 +208,19 @@ export.database: exports database structure and data to xml files.
     </and>
   </condition>
 
+  <!-- Minimal classpath used for executing Wad at compile time -->
+  <path id="wad.class.path">
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${build.core.lib}">
+      <include name="openbravo-core.jar" />
+    </fileset>
+    <fileset dir="${build.wad.lib}">
+      <include name="openbravo-wad.jar" />
+    </fileset>
+  </path>
+
   <path id="project.class.path">
     <dirset dir="${base.modules}">
       <include name="*/build/classes/" />

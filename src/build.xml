@@ -369,7 +369,7 @@ build.war: build a war file in the lib directory.
   </target>
   
   <target name="compileSqlc" depends="sqlc">
-    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" excludes="${base.modules}/*/src-wad/**,${base.modules}/*/src-util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}">
+    <javac  srcdir="${basedir}:${build.sqlc}/src:${build.sqlc}/srcAD:${base.src.test}:${base.modules}" excludes="*/src-wad/**,*/src-util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}">
       <classpath refid="project.class.path" />
     </javac>
 
@@ -453,7 +453,7 @@ build.war: build a war file in the lib directory.
   <target name="wad" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick'" />
-      <classpath refid="project.class.path" />
+      <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
       </syspropertyset>
@@ -464,7 +464,7 @@ build.war: build a war file in the lib directory.
   <target name="wad.quick" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
-      <classpath refid="project.class.path" />
+      <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
       </syspropertyset>
