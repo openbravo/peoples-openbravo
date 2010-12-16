@@ -109,6 +109,13 @@ public class QueryListUtils {
           } else {
             field.put("OB_HasLink", false);
           }
+
+          // Summarize option:
+          if (column.getSummarizeType() != null) {
+            field.put("showGridSummary", true);
+            field.put("summaryFunction", column.getSummarizeType());
+          }
+
           try {
             final String fieldProperties = uiDefinition.getFieldProperties(null);
             if (fieldProperties != null && fieldProperties.trim().length() > 0) {

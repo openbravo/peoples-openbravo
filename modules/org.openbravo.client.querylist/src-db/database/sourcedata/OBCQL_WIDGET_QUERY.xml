@@ -6,11 +6,13 @@
 <!--C0A8491CDB43466D9F2645018473588B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C0A8491CDB43466D9F2645018473588B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C0A8491CDB43466D9F2645018473588B-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[D1E4261099AE4095B2F2DAEE0F7E7784]]></OBKMO_WIDGET_CLASS_ID>
-<!--C0A8491CDB43466D9F2645018473588B-->  <HQL><![CDATA[select tab.window.name as windowName, tab.name as tabName, tab.id as tabId, tab.window.id as windowId
-from ADTab tab
-where window.name like :window_name
-  and window.client.id = :client
-order by tab.window.name]]></HQL>
+<!--C0A8491CDB43466D9F2645018473588B-->  <HQL><![CDATA[select myWindow.name as windowName, myTab.name as tabName, myTab.id as tabId, count(field) as fieldCount
+from ADField field inner join field.tab myTab
+                                 inner join myTab.window myWindow
+where myWindow.name like :window_name
+  and myWindow.client.id = :client
+group by myWindow.name, myTab.name, myTab.id
+order by myWindow.name]]></HQL>
 <!--C0A8491CDB43466D9F2645018473588B--></OBCQL_WIDGET_QUERY>
 
 </data>

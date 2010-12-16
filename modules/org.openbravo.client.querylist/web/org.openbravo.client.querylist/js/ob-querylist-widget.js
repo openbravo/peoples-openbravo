@@ -100,6 +100,7 @@ isc.OBQueryListGrid.addProperties({
   canGroupBy: false,
   autoFetchData: true,
   canAutoFitFields: false,
+  showGridSummary: true,
   
   //autoFitFieldWidths: true,
   //autoFitWidthApproach: 'title',
