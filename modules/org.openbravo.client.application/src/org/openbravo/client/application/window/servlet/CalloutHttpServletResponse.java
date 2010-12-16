@@ -60,6 +60,7 @@ public class CalloutHttpServletResponse implements HttpServletResponse {
     return wrappedResponse.containsHeader(arg0);
   }
 
+  @Deprecated
   public String encodeRedirectUrl(String arg0) {
     return wrappedResponse.encodeRedirectUrl(arg0);
   }
@@ -68,6 +69,7 @@ public class CalloutHttpServletResponse implements HttpServletResponse {
     return wrappedResponse.encodeRedirectURL(arg0);
   }
 
+  @Deprecated
   public String encodeUrl(String arg0) {
     return wrappedResponse.encodeUrl(arg0);
   }
@@ -160,6 +162,7 @@ public class CalloutHttpServletResponse implements HttpServletResponse {
     wrappedResponse.setLocale(arg0);
   }
 
+  @Deprecated
   public void setStatus(int arg0, String arg1) {
     wrappedResponse.setStatus(arg0, arg1);
   }
