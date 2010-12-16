@@ -106,7 +106,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
       JSONObject jsContent = null;
       try {
-        if (content != null) {
+        if (content == null) {
+          jsContent = new JSONObject();
+        } else {
           jsContent = new JSONObject(content);
         }
       } catch (JSONException e) {

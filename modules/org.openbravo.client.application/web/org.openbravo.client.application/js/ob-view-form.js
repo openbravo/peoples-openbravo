@@ -31,29 +31,29 @@ isc.OBViewForm.addProperties({
   view: null,
   numCols: 4,
   
-  fieldsByInpColumnName: null,  
+  fieldsByInpColumnName: null,
   fieldsByColumnName: null,
   
   initWidget: function(){
     // iterate over the fields and set the datasource
-//    var field, i, fieldsNum = this.fields.length;
-//    for (i = 0; i < fieldsNum; i++) {
-//      field = this.fields[i];
-//      if (field.dataSourceId) {
-        // field.optionDataSource = OB.Datasource.get(field.dataSourceId, field, 'optionDataSource');
-//      }
-//    }
+    //    var field, i, fieldsNum = this.fields.length;
+    //    for (i = 0; i < fieldsNum; i++) {
+    //      field = this.fields[i];
+    //      if (field.dataSourceId) {
+    // field.optionDataSource = OB.Datasource.get(field.dataSourceId, field, 'optionDataSource');
+    //      }
+    //    }
     var ret = this.Super('initWidget', arguments);
     return ret;
   },
   
-  editRecord: function (record) {
+  editRecord: function(record){
     var ret = this.Super("editRecord", arguments);
     this.retrieveInitialValues();
     return ret;
   },
   
-  getFieldFromInpColumnName: function(inpColumnName) {
+  getFieldFromInpColumnName: function(inpColumnName){
     if (!this.fieldsByInpColumnName) {
       var localResult = [], fields = this.getFields();
       for (var i = 0; i < fields.length; i++) {
@@ -64,7 +64,7 @@ isc.OBViewForm.addProperties({
     return this.fieldsByInpColumnName[inpColumnName.toLowerCase()];
   },
   
-  getFieldFromColumnName: function(columnName) {
+  getFieldFromColumnName: function(columnName){
     if (!this.fieldsByColumnName) {
       var localResult = [], fields = this.getFields();
       for (var i = 0; i < fields.length; i++) {
@@ -75,32 +75,29 @@ isc.OBViewForm.addProperties({
     return this.fieldsByColumnName[columnName.toLowerCase()];
   },
   
-  setFields: function() {
+  setFields: function(){
     this.Super('setFields', arguments);
     this.fieldsByInpColumnName = null;
     this.fieldsByColumnName = null;
   },
   
-  retrieveInitialValues: function() {
+  retrieveInitialValues: function(){
     var parentId = null, me = this;
     if (this.view.parentProperty) {
       parentId = this.getValue(this.view.parentProperty);
     }
-     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', null, {
-        MODE: 'EDIT',
-        PARENT_ID: parentId,
-        TAB_ID: this.view.tabId,
-        ROW_ID: this.getValue(OB.Constants.ID)
-      }, function(response, data, request){
-        me.processInitialValues(response, data, request);
-      });
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', null, {
+      MODE: 'EDIT',
+      PARENT_ID: parentId,
+      TAB_ID: this.view.tabId,
+      ROW_ID: this.getValue(OB.Constants.ID)
+    }, function(response, data, request){
+      me.processInitialValues(response, data, request);
+    });
   },
   
-  processInitialValues: function(response, data, request) {
-    var columnValues = data.columnValues, 
-    calloutMessages = data.calloutMessages,
-    auxInputs = data.auxiliaryInputValues, 
-    prop, value;
+  processInitialValues: function(response, data, request){
+    var columnValues = data.columnValues, calloutMessages = data.calloutMessages, auxInputs = data.auxiliaryInputValues, prop, value;
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
@@ -116,8 +113,8 @@ isc.OBViewForm.addProperties({
     }
   },
   
-  processColumnValue: function(columnName, columnValue) {
-    var i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+  processColumnValue: function(columnName, columnValue){
+    var isDate, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     if (!field) {
       // ignore for now, the pk is also passed in
       //isc.warn('No field found using column name: ' + columnName + ' for tab ' + this.view.tabId);
@@ -134,7 +131,16 @@ isc.OBViewForm.addProperties({
       }
     }
     if (columnValue.value) {
-      this.setValue(field.name, columnValue.value);
+      isDate = field.type &&
+        (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
+        isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
+      if (isDate) {
+        this.setValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
+      } else {
+        this.setValue(field.name, columnValue.value);
+      }
+    } else {
+      this.clearValue(field.name);
     }
   }
 });
