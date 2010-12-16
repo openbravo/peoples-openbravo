@@ -290,7 +290,44 @@ isc.OBStandardView.addProperties({
   },
   
   setDataSource: function(ds){
-    this.dataSource = ds;
+    //Wrap DataSource with OBDataSource which overrides methods to set tab info
+    var OBDataSource = function(){};
+    OBDataSource.prototype = ds;
+    var myDs = new OBDataSource();
+    myDs.view = this;
+    
+    myDs.updateData = function(updatedRecord, callback, requestProperties){
+      var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
+      //standard update is not sent with operationType
+      var additionalPara = {
+        _operationType: 'update'
+      };
+      isc.addProperties(requestProperties.params, additionalPara);
+      this.Super('updateData', [updatedRecord, callback, newRequestProperties]);
+    };
+    
+    myDs.addData = function(updatedRecord, callback, requestProperties){
+      var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
+      //standard update is not sent with operationType
+      var additionalPara = {
+        _operationType: 'add'
+      };
+      isc.addProperties(requestProperties.params, additionalPara);
+      this.Super('addData', [updatedRecord, callback, newRequestProperties]);
+    };
+    
+    myDs.removeData = function(updatedRecord, callback, requestProperties){
+      var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
+      //standard update is not sent with operationType
+      var additionalPara = {
+        _operationType: 'remove'
+      };
+      isc.addProperties(requestProperties.params, additionalPara);
+      this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
+    };
+
+  
+    this.dataSource = myDs;
     
     if (this.viewGrid) {
       if (this.targetRecordId) {

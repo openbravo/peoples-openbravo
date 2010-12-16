@@ -320,20 +320,7 @@ isc.OBViewGrid.addProperties({
     criteria = this.convertCriteria(criteria);
     var theView = this.view;
     
-    // Set tab and module as request parameters
-    if (theView && theView.tabId){
-      var tabParam = {
-        params: {
-          tabId: theView.tabId,
-          moduleId: theView.moduleId
-        }
-      };
-      if (requestProperties) {
-        isc.addProperties(requestProperties, tabParam);
-      } else {
-        requestProperties = tabParam;
-      }
-    }
+    var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(theView, requestProperties);
     
     var newCallBack = function(){
       theView.recordSelected();
@@ -342,7 +329,7 @@ isc.OBViewGrid.addProperties({
       }
     };
     
-    return this.Super('filterData', [criteria, newCallBack, requestProperties]);
+    return this.Super('filterData', [criteria, newCallBack, newRequestProperties]);
   },
   
   fetchData: function(criteria, callback, requestProperties){
@@ -354,20 +341,7 @@ isc.OBViewGrid.addProperties({
     criteria = this.convertCriteria(criteria);
     var theView = this.view;
     
-    // Set tab and module as request parameters
-    if (theView && theView.tabId){
-      var tabParam = {
-        params: {
-          tabId: theView.tabId,
-          moduleId: theView.moduleId
-        }
-      };
-      if (requestProperties) {
-        isc.addProperties(requestProperties, tabParam);
-      } else {
-        requestProperties = tabParam;
-      }
-    }
+    var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(theView, requestProperties);
     
     var newCallBack = function(){
       theView.recordSelected();
@@ -376,7 +350,7 @@ isc.OBViewGrid.addProperties({
       }
     };
     
-    return this.Super('fetchData', [criteria, newCallBack, requestProperties]);
+    return this.Super('fetchData', [criteria, newCallBack, newRequestProperties]);
   },
   
   // determine which field can be autoexpanded to use extra space  

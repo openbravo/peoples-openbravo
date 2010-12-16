@@ -767,3 +767,29 @@ OB.Utilities.Number.JSToOBMasked = function(number, maskNumeric, decSeparator, g
   formattedNumber = OB.Utilities.Number.OBPlainToOBMasked(formattedNumber, maskNumeric, decSeparator, groupSeparator, groupInterval);
   return formattedNumber;
 };
+
+// ** {{{ OB.Utilities._getTabInfoRequestProperties }}} **
+//
+// Adds tab and module information to the requestProperties.
+//
+// Parameters:
+// * {{{theView}}}: view to obtain tab and module info from.
+// * {{{requestProperties}}}: original requestProperties.
+// Return:
+// * Original requestProperties including the new module and tab properties.
+OB.Utilities._getTabInfoRequestProperties = function (theView, requestProperties){
+  if (theView && theView.tabId){
+    var tabParam = {
+      params: {
+        tabId: theView.tabId,
+        moduleId: theView.moduleId
+      }
+    };
+    if (requestProperties) {
+      isc.addProperties(requestProperties, tabParam);
+    } else {
+      requestProperties = tabParam;
+    }
+  }
+  return requestProperties;
+};
