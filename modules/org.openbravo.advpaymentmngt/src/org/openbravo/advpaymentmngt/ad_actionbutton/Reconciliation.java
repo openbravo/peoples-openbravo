@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -146,7 +147,7 @@ public class Reconciliation extends HttpSecureAppServlet {
       FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
           strFinancialAccountId);
 
-      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account, null);
+      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account, "N");
 
       FIN_Reconciliation lastProcessedReconciliation = TransactionsDao.getLastReconciliation(
           account, "Y");
@@ -187,8 +188,6 @@ public class Reconciliation extends HttpSecureAppServlet {
           msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), strMessage));
           vars.setMessage(strTabId, msg);
           msg = null;
-          // printPage(response, vars, "", strWindowId, strTabId, strFinancialAccountId,
-          // strStatementDate, strEndBalance);
           printPageClosePopUpAndRefreshParent(response, vars);
           return;
         }
@@ -196,7 +195,6 @@ public class Reconciliation extends HttpSecureAppServlet {
       }
 
       DocumentType docType = FIN_Utility.getDocumentType(account.getOrganization(), "REC");
-
       if (docType == null) {
         String strMessage = "@APRM_DocumentTypeNotFound@";
         msg.setType("Error");
@@ -204,36 +202,13 @@ public class Reconciliation extends HttpSecureAppServlet {
         msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), strMessage));
         vars.setMessage(strTabId, msg);
         msg = null;
-        // printPage(response, vars, "", strWindowId, strTabId, strFinancialAccountId,
-        // strStatementDate, strEndBalance);
         printPageClosePopUpAndRefreshParent(response, vars);
         return;
       }
 
-      if (reconciliation == null) {
-        String docNumber = FIN_Utility.getDocumentNo(account.getOrganization(), "REC",
-            "DocumentNo_FIN_Reconciliation");
-
-        reconciliation = dao.getNewReconciliation(account.getOrganization(), account, docNumber,
-            docType, FIN_Utility.getDateTime(strStatementDate), FIN_Utility
-                .getDateTime(strStatementDate), new BigDecimal(strBeginBalance), new BigDecimal(
-                strEndBalance), process ? "CO" : "DR");
-      } else {
-        if (reconciliation.isProcessed()) {
-          String docNumber = FIN_Utility.getDocumentNo(account.getOrganization(), "REC",
-              "DocumentNo_FIN_Reconciliation");
-
-          reconciliation = dao.getNewReconciliation(account.getOrganization(), account, docNumber,
-              docType, FIN_Utility.getDateTime(strStatementDate), FIN_Utility
-                  .getDateTime(strStatementDate), new BigDecimal(strBeginBalance), new BigDecimal(
-                  strEndBalance), process ? "CO" : "DR");
-        } else {
-          reconciliation.setEndingBalance(new BigDecimal(strEndBalance));
-          reconciliation.setTransactionDate(FIN_Utility.getDateTime(strStatementDate));
-          reconciliation.setEndingDate(FIN_Utility.getDateTime(strStatementDate));
-        }
-      }
-
+      reconciliation.setEndingBalance(new BigDecimal(strEndBalance));
+      reconciliation.setTransactionDate(FIN_Utility.getDateTime(strStatementDate));
+      reconciliation.setEndingDate(FIN_Utility.getDateTime(strStatementDate));
       reconciliation.setDocumentStatus(process ? "CO" : "DR");
       reconciliation.setProcessed(process);
       OBDal.getInstance().save(reconciliation);
@@ -311,18 +286,20 @@ public class Reconciliation extends HttpSecureAppServlet {
 
     log4j.debug("Output: Reconcile button pressed on Financial Account || Transaction tab");
 
+    dao = new AdvPaymentMngtDao();
     String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
         "dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
+
+    FIN_Reconciliation currentReconciliation = null;
     OBContext.setAdminMode();
     try {
-
       FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
           strFinancialAccountId);
 
-      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account, "Y");
-      FIN_Reconciliation currentReconciliation = TransactionsDao
-          .getLastReconciliation(account, "N");
+      FIN_Reconciliation lastProcessedReconciliation = TransactionsDao.getLastReconciliation(
+          account, "Y");
+      currentReconciliation = TransactionsDao.getLastReconciliation(account, "N");
       if (isAutomaticReconciliation(currentReconciliation)) {
         OBDal.getInstance().rollbackAndClose();
         OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
@@ -331,6 +308,7 @@ public class Reconciliation extends HttpSecureAppServlet {
         printPageClosePopUp(response, vars, Utility.getTabURL(this, strTabId, "R"));
         return;
       }
+
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/advpaymentmngt/ad_actionbutton/Reconciliation").createXmlDocument();
 
@@ -353,19 +331,17 @@ public class Reconciliation extends HttpSecureAppServlet {
 
       } else {
         String currentStatementDate = DateTimeData.today(this);
-        if (currentReconciliation != null && !currentReconciliation.isProcessed()) {
+        if (currentReconciliation != null) {
           currentStatementDate = dateFormater.format(currentReconciliation.getTransactionDate());
-        }
-        xmlDocument.setParameter("statementDate", currentStatementDate);
-        if (currentReconciliation != null && !currentReconciliation.isProcessed()) {
           currentEndBalance = currentReconciliation.getEndingBalance();
         }
+        xmlDocument.setParameter("statementDate", currentStatementDate);
         xmlDocument.setParameter("endBalance", currentEndBalance.toString());
         xmlDocument.setParameter("calcEndingBalance", currentEndBalance.toString());
       }
 
-      BigDecimal beginBalance = (reconciliation == null) ? account.getInitialBalance()
-          : reconciliation.getEndingBalance();
+      BigDecimal beginBalance = (lastProcessedReconciliation == null) ? account.getInitialBalance()
+          : lastProcessedReconciliation.getEndingBalance();
 
       xmlDocument.setParameter("account", account.getName());
       xmlDocument.setParameter("beginBalance", beginBalance.toString());
@@ -384,6 +360,15 @@ public class Reconciliation extends HttpSecureAppServlet {
       try {
         xmlDocument.setParameter("precision", account.getCurrency().getStandardPrecision()
             .toString());
+
+        if (currentReconciliation == null) {
+          DocumentType docType = FIN_Utility.getDocumentType(account.getOrganization(), "REC");
+          String docNumber = FIN_Utility.getDocumentNo(account.getOrganization(), "REC",
+              "DocumentNo_FIN_Reconciliation");
+
+          dao.getNewReconciliation(account.getOrganization(), account, docNumber, docType,
+              new Date(), new Date(), beginBalance, BigDecimal.ZERO, "DR");
+        }
       } finally {
         OBContext.restorePreviousMode();
       }
