@@ -504,6 +504,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         params.put("<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
         params.put("adOrgId", vars.getStringParameter("inpadOrgId"));
         params.put("adClientId", vars.getStringParameter("inpadClientId"));
+        params.put("tabId", tabId);
+        
         <FIELD_TMP id="FieldsLoadParams3j">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
         
         pb.setParams(params);
