@@ -866,7 +866,6 @@ isc.OBGridButtonsComponent.addProperties({
   },
   
   doOpen: function(){
-		this.grid.view.getContextInfo(this.record);
     this.grid.view.editRecord(this.record);
   },
   

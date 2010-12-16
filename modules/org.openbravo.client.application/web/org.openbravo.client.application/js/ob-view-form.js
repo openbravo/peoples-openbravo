@@ -30,6 +30,8 @@ isc.OBViewForm.addProperties({
   // and the grid and other related components.
   view: null,
   numCols: 4,
+  auxInputs: {},
+  dynamicCols: [],
   
   fieldsByInpColumnName: null,
   fieldsByColumnName: null,
@@ -102,6 +104,7 @@ isc.OBViewForm.addProperties({
       return;
     }
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages, auxInputs = data.auxiliaryInputValues, prop, value;
+    var dynamicCols = data.dynamicCols;
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
@@ -113,11 +116,16 @@ isc.OBViewForm.addProperties({
       // show messages...
     }
     if (auxInputs) {
+      this.auxInputs = {};
       for (prop in auxInputs) {
         if (auxInputs.hasOwnProperty(prop)) {
           this.setValue(prop, auxInputs[prop].value);
+          auxInputs[prop] = auxInputs[prop].value;
         }
       }
+    }
+    if (dynamicCols) {
+      this.dynamicCols = dynamicCols;
     }
   },
   
@@ -150,5 +158,38 @@ isc.OBViewForm.addProperties({
     } else {
       this.clearValue(field.name);
     }
+  },
+  
+  itemChanged: function(item, newValue) {
+    var ret = this.Super("itemChanged", arguments);
+    var i;
+    for (i = 0; i < this.dynamicCols.length; i++) {
+      if (this.dynamicCols[i] === item.inpColumnName) {
+        this.doChangeFICCall(item);
+        return;      
+      }
+    }
+    return ret;
+  },
+  
+  doChangeFICCall: function(item) {
+    var parentId = null, me = this;
+    if (this.view.parentProperty) {
+      parentId = this.getValue(this.view.parentProperty);
+    }
+    
+    var allProperties = {}, sessionProperties = {};
+    this.view.getContextInfo(allProperties, sessionProperties);
+    
+    // collect the context information    
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, {
+      MODE: 'CHANGE',
+      PARENT_ID: parentId,
+      TAB_ID: this.view.tabId,
+      ROW_ID: this.getValue(OB.Constants.ID),
+      CHANGED_COLUMN: item.inpColumnName
+    }, function(response, data, request){
+      me.processInitialValues(response, data, request);
+    });
   }
 });

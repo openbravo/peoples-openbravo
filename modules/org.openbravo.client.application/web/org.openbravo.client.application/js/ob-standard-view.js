@@ -931,42 +931,49 @@ isc.OBStandardView.addProperties({
     }
   },
   
-  getContextInfo: function(record, allProperties, sessionProperties){
+  getContextInfo: function(allProperties, sessionProperties){
+    // different modes:
+    // 1) showing grid with one record selected
+    // 2) showing form with aux inputs
+    var record;
+    if (this.viewGrid.isVisible()) {
+      record = this.viewGrid.getSelectedRecord()
+    } else {
+      record = this.viewForm.getValues();   
+    }
     
     var properties = this.propertyToColumns;
 
     for (var i=0; i<properties.length; i++){
       var value = record[properties[i].property];
-      if (typeof value === 'boolean'){
-        value = value?'Y':'N';
-      }
-      var param = {};
-      param[properties[i].column] = value;
-      isc.addProperties(allProperties, param);
+      allProperties[properties[i].column] = value;
       if (properties[i].sessionProperty){
-        isc.addProperties(sessionProperties, param);
+        sessionProperties[properties[i].column] = value;
       }
+    }
+    
+    if (this.viewForm.isVisible()) {
+      isc.addProperties(allProperties, this.viewForm.auxInputs);
+      isc.addProperties(sessionProperties, this.viewForm.auxInputs);
+    }
+    
+    if (this.parentView) {
+      this.parentView.getContextInfo(allProperties, sessionProperties);
     }
   },
 
   setContextInfo: function (sessionProperties, callbackFunction) {
-    var requestParameters = {}, data ={};
-    requestParameters._action = 'org.openbravo.client.kernel.SetContextInfoActionHandler';
-    isc.addProperties(data, sessionProperties);
-    isc.addProperties(data, {_windowId: this.windowId});
-    
-    var rpcRequest = {};
-    rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
-    rpcRequest.callback = callbackFunction;
-    rpcRequest.httpMethod = 'POST';
-		rpcRequest.data = isc.JSON.encode(data);
-    rpcRequest.contentType = 'application/json;charset=UTF-8';
-    rpcRequest.useSimpleHttp = true;
-    rpcRequest.evalResult = false;
-    rpcRequest.params = requestParameters;
-    isc.RPCManager.sendRequest(rpcRequest);
-  }
-  
+    var allProperties = {};
+    if (!sessionProperties) {
+      sessionProperties = {};
+      this.getContextInfo(allProperties, sessionProperties);
+    }
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', 
+    sessionProperties, {
+      MODE: 'SETSESSION',
+      TAB_ID: this.view.tabId
+    }, callbackFunction);
+  }  
 });
 
 // = OBStandardViewTabSet =

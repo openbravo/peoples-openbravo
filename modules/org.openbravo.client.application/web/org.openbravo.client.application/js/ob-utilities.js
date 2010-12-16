@@ -807,7 +807,7 @@ OB.Utilities.openActionButton = function (button, o){
 	var allProperties = {}, sessionProperties={};
 	var theView = button.parentElement.parentElement.view;
 	
-	theView.getContextInfo(theView.viewGrid.getSelectedRecord(), allProperties, sessionProperties);
+	theView.getContextInfo(allProperties, sessionProperties);
 	
 	
 	for (param in allProperties){
@@ -837,8 +837,8 @@ OB.Utilities.openActionButtonCallback = function (button, o){
     return;
   }
   
-  
-  var params = button.parentElement.parentElement.view.getContextInfo(theView.viewGrid.getSelectedRecord());
+  var allProperties = {}, sessionProperties = {};
+  var params = theView.getContextInfo(allProperties, sessionProperties);
   
   
   for (param in params){
