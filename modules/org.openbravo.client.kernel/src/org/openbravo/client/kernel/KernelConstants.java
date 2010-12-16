@@ -90,4 +90,9 @@ public class KernelConstants {
    * Name of dateFormat.java property in Openbravo.properties.
    */
   public static final String DATETIME_FORMAT_PROPERTY = "dateTimeFormat.java";
+
+  /**
+   * Name of dateFormat.sql property in Openbravo.properties.
+   */
+  public static final String DATETIME_SQL_FORMAT_PROPERTY = "dateTimeFormat.sql";
 }
