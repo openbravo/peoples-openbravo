@@ -77,7 +77,12 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
 
   exportGrid: function() {
-    this.grid.exportData();
+    var grid = this.widget.grid;
+    grid.exportData({
+      exportAs: 'csv',
+     // exportFilename: 'Query/List_widget.csv',
+      exportDisplay: 'download'
+    });
   }
   
 });
