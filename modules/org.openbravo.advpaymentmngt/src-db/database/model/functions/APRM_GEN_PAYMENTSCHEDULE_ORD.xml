@@ -32,9 +32,11 @@ v_GrandTotal NUMBER:=0;
 v_OrderDate DATE;
 v_Currency_ID VARCHAR2(32);
 v_Org_ID VARCHAR2(32);
+v_C_Doctype_ID VARCHAR2(32);
 v_client_ID VARCHAR2(32);
 v_paymentmethod_id c_order.fin_paymentmethod_id%TYPE;
 v_bpartner_id c_order.c_bpartner_id%TYPE;
+v_docSubType c_doctype.docsubtypeso%TYPE;
 
 TYPE RECORD IS REF CURSOR;
 Cur_Params RECORD;
@@ -63,13 +65,20 @@ BEGIN
   v_ResultStr:='ReadingOrder';
   SELECT ad_client_id, ad_org_id, 
          grandtotal, dateordered, c_currency_id,
-         fin_paymentmethod_id, c_bpartner_id
+         fin_paymentmethod_id, c_bpartner_id, c_doctype_id
     INTO v_client_id, v_org_id,
          v_grandtotal, v_orderdate, v_currency_id,
-         v_paymentmethod_id, v_bpartner_id
+         v_paymentmethod_id, v_bpartner_id, v_C_Doctype_ID
   FROM c_order
   WHERE c_order_id = p_record_id;
 
+  SELECT docsubtypeso
+  INTO v_docSubType
+  FROM c_doctype
+  WHERE c_doctype_id = v_C_Doctype_ID;
+  
+
+  IF(v_docSubType not in ('OB', 'ON')) THEN
   IF (p_docaction = 'CO') THEN
     -- Checking Payment Method ID is available
     IF(v_paymentmethod_id IS NULL) THEN
@@ -204,6 +213,7 @@ BEGIN
           AND outstandingamt > v_difference;
       END IF;
     END;
+  END IF;
   END IF;
 EXCEPTION
 WHEN OTHERS THEN
