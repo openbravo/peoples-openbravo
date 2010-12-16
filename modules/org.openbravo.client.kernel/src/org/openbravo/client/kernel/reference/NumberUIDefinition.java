@@ -98,7 +98,9 @@ public abstract class NumberUIDefinition extends UIDefinition {
           final JSONObject jsonObject = new JSONObject();
 
           JSONObject val = new JSONObject(super.getFieldProperties(field, getValueFromSession));
-          jsonObject.put("value", val.get("value"));
+          if (val.has("value")) {
+            jsonObject.put("value", val.get("value"));
+          }
           jsonObject.put("maskNumeric", inputFormat.getFormat());
           jsonObject.put("decSeparator", inputFormat.getDecimalSymbol());
           jsonObject.put("groupSeparator", inputFormat.getGroupingSymbol());
