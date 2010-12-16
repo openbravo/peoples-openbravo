@@ -171,7 +171,11 @@ public class FormInitializationComponent extends BaseActionHandler {
           } else if (mode.equals("CHANGE") || (mode.equals("SETSESSION"))) {
             // On CHANGE and SETSESSION mode, the values are read from the request
             JSONObject jsCol = new JSONObject();
-            jsCol.put("value", jsContent.get("inp" + Sqlc.TransformaNombreColumna(col)));
+            String colName = "inp" + Sqlc.TransformaNombreColumna(col);
+            if (!jsContent.has(colName)) {
+              continue;
+            }
+            jsCol.put("value", jsContent.get(colName));
             value = jsCol.toString();
           }
           JSONObject jsonobject = new JSONObject(value);
@@ -306,23 +310,29 @@ public class FormInitializationComponent extends BaseActionHandler {
         finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
 
         if (mode.equals("NEW") || mode.equals("EDIT")) {
-          JSONArray colsWithValidation = new JSONArray();
+          List<String> changeEventCols = new ArrayList<String>();
           // We also include information related to validation dependencies
           for (Field field : fields) {
             String column = field.getColumn().getDBColumnName();
+            // also call on change for every column with a callout
+            if (field.getColumn().getCallout() != null) {
+              final String columnName = "inp"
+                  + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+              if (!changeEventCols.contains(columnName)) {
+                changeEventCols.add(columnName);
+              }
+            }
             if (columnsInValidation.get(column) != null
                 && columnsInValidation.get(column).size() > 0) {
-              JSONObject colWithValidation = new JSONObject();
-              colWithValidation.put("name", "inp" + Sqlc.TransformaNombreColumna(column));
-              JSONArray colsInValidation = new JSONArray();
               for (String colInVal : columnsInValidation.get(column)) {
-                colsInValidation.put("inp" + Sqlc.TransformaNombreColumna(colInVal));
+                final String columnName = "inp" + Sqlc.TransformaNombreColumna(colInVal);
+                if (!changeEventCols.contains(columnName)) {
+                  changeEventCols.add(columnName);
+                }
               }
-              colWithValidation.put("colsInValidation", colsInValidation);
-              colsWithValidation.put(colWithValidation);
             }
           }
-          finalObject.put("colsWithValidation", colsWithValidation);
+          finalObject.put("dynamicCols", new JSONArray(changeEventCols));
         }
         System.out.println(finalObject.toString(1));
         System.out.println(System.currentTimeMillis() - iniTime);
