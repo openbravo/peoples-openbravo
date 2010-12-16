@@ -151,7 +151,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       // Calculation of validation dependencies
-      computeListOfColumnsSortedByValidationDependencies(tab, allColumns);
+      HashMap<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
+      computeListOfColumnsSortedByValidationDependencies(tab, allColumns, columnsInValidation);
 
       // Column values are set in the RequestContext
       for (String col : allColumns) {
@@ -303,6 +304,26 @@ public class FormInitializationComponent extends BaseActionHandler {
               + Sqlc.TransformaNombreColumna(auxIn.getName())));
         }
         finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
+
+        if (mode.equals("NEW") || mode.equals("EDIT")) {
+          JSONArray colsWithValidation = new JSONArray();
+          // We also include information related to validation dependencies
+          for (Field field : fields) {
+            String column = field.getColumn().getDBColumnName();
+            if (columnsInValidation.get(column) != null
+                && columnsInValidation.get(column).size() > 0) {
+              JSONObject colWithValidation = new JSONObject();
+              colWithValidation.put("name", "inp" + Sqlc.TransformaNombreColumna(column));
+              JSONArray colsInValidation = new JSONArray();
+              for (String colInVal : columnsInValidation.get(column)) {
+                colsInValidation.put("inp" + Sqlc.TransformaNombreColumna(colInVal));
+              }
+              colWithValidation.put("colsInValidation", colsInValidation);
+              colsWithValidation.put(colWithValidation);
+            }
+          }
+          finalObject.put("colsWithValidation", colsWithValidation);
+        }
         System.out.println(finalObject.toString(1));
         System.out.println(System.currentTimeMillis() - iniTime);
         return finalObject;
@@ -318,10 +339,9 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void computeListOfColumnsSortedByValidationDependencies(Tab tab,
-      ArrayList<String> allColumns) {
+      ArrayList<String> allColumns, HashMap<String, List<String>> columnsInValidation) {
     List<Field> fields = tab.getADFieldList();
     ArrayList<String> columns = new ArrayList<String>();
-    HashMap<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
     List<String> columnsWithValidation = new ArrayList<String>();
     HashMap<String, String> validations = new HashMap<String, String>();
     for (Field field : fields) {
