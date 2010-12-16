@@ -7565,7 +7565,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800020-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800020-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--800020-->  <WHERECLAUSE><![CDATA[C_Order.IsSOTrx='Y']]></WHERECLAUSE>
-<!--800020-->  <AD_PROCESS_ID><![CDATA[110]]></AD_PROCESS_ID>
+<!--800020-->  <AD_PROCESS_ID><![CDATA[1000500002]]></AD_PROCESS_ID>
 <!--800020-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800020-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
