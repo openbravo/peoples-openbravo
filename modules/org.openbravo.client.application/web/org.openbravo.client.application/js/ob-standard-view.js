@@ -42,7 +42,7 @@ isc.OBStandardWindow.addProperties({
         prompt: 'New Row'
       })],
       rightMembers: [isc.OBToolbarTextButton.create({
-        action: 'alert(\'Button A\')',
+        action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
         title: 'Button A'
       })]
     });
@@ -325,7 +325,7 @@ isc.OBStandardView.addProperties({
         this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
       },
 
-			transformResponse: function (dsResponse, dsRequest, jsonData) {
+      transformResponse: function (dsResponse, dsRequest, jsonData) {
         if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0){ //0 is success
           if (jsonData.response && jsonData.response.error) {
             var error = jsonData.response.error;
@@ -341,7 +341,7 @@ isc.OBStandardView.addProperties({
         }
         return this.Super('transformResponse', arguments);  
       },
-			
+      
       view: this
     });
     
@@ -933,7 +933,44 @@ isc.OBStandardView.addProperties({
       this.members[0].setHeight('100%');
       this.members[0].show();
     }
+  },
+  
+  getContextInfo: function(record, allProperties, sessionProperties){
+    
+    var properties = this.propertyToColumns;
+
+    for (var i=0; i<properties.length; i++){
+      var value = record[properties[i].property];
+      if (typeof value === 'boolean'){
+        value = value?'Y':'N';
+      }
+      var param = {};
+      param[properties[i].column] = value;
+      isc.addProperties(allProperties, param);
+      if (properties[i].sessionProperty){
+        isc.addProperties(sessionProperties, param);
+      }
+    }
+  },
+
+  setContextInfo: function (sessionProperties, callbackFunction) {
+    var requestParameters = {};
+    requestParameters._action = 'org.openbravo.client.kernel.SetContextInfoActionHandler';
+    requestParameters.params={};
+    isc.addProperties(requestParameters.params, sessionProperties);
+    isc.addProperties(requestParameters.params, {_windowId: this.windowId});
+    
+    var rpcRequest = {};
+    rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
+    rpcRequest.callback = callbackFunction;
+    rpcRequest.httpMethod = 'GET';
+    rpcRequest.contentType = 'application/json;charset=UTF-8';
+    rpcRequest.useSimpleHttp = true;
+    rpcRequest.evalResult = false;
+    rpcRequest.params = requestParameters;
+    isc.RPCManager.sendRequest(rpcRequest);
   }
+  
 });
 
 // = OBStandardViewTabSet =

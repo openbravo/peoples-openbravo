@@ -793,3 +793,65 @@ OB.Utilities._getTabInfoRequestProperties = function (theView, requestProperties
   }
   return requestProperties;
 };
+
+OB.Utilities.openActionButton = function (button, o){
+	var theView = button.parentElement.parentElement.view;
+	var selectedRecord = theView.viewGrid.getSelectedRecord();
+	
+	if (!selectedRecord) {
+		isc.warn('No record selected');
+		return;
+	}
+	
+	
+	var allProperties = {}, sessionProperties={};
+	var theView = button.parentElement.parentElement.view;
+	
+	theView.getContextInfo(theView.viewGrid.getSelectedRecord(), allProperties, sessionProperties);
+	
+	
+	for (param in allProperties){
+		if (allProperties.hasOwnProperty(param)){
+			o.command += '&'+param+'='+allProperties[param];
+		}
+	}
+	
+	theView.setContextInfo(sessionProperties, function(){
+		OB.Layout.ViewManager.openView("OBPopupClassicWindow", o)
+	});
+	
+	
+//	OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+	//OB.Layout.ViewManager.openView("OBClassicPopup", o);
+	
+	
+	//button.parentElement.parentElement.view.getContextInfo()
+};
+
+OB.Utilities.openActionButtonCallback = function (button, o){
+  var theView = button.parentElement.parentElement.view;
+  var selectedRecord = theView.viewGrid.getSelectedRecord();
+  
+  if (!selectedRecord) {
+    isc.warn('No record selected');
+    return;
+  }
+  
+  
+  var params = button.parentElement.parentElement.view.getContextInfo(theView.viewGrid.getSelectedRecord());
+  
+  
+  for (param in params){
+    if (params.hasOwnProperty(param)){
+      o.command += '&'+param+'='+params[param];
+    }
+  }
+  
+  OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+  //OB.Layout.ViewManager.openView("OBClassicPopup", o);
+  
+  
+  //button.parentElement.parentElement.view.getContextInfo()
+};
+
+

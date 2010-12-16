@@ -33,6 +33,16 @@
     
     defaultEditMode: ${tabComponent.defaultEditMode},
     
+    propertyToColumns:[
+      <#list data.allFields as field>
+        {
+          property: '${field.propertyName?js_string}',
+          column: '${field.columnName?js_string}', 
+          sessionProperty: ${field.session}
+        }<#if field_has_next>,</#if>
+      </#list>
+    ],
+    
     customToolbarButtons: [
     <#list data.buttonFields as field>
       {id: '${field.id?js_string}', title: '${field.label?js_string}'}<#if field_has_next>,</#if>

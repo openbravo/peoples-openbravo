@@ -33,6 +33,8 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
@@ -177,6 +179,54 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public void setTabTitle(String tabTitle) {
     this.tabTitle = tabTitle;
+  }
+
+  public List<FieldProperty> getAllFields() {
+    List<FieldProperty> fields = new ArrayList<FieldProperty>();
+    Field keyField = null;
+    for (Field field : tab.getADFieldList()) {
+      if (field.getColumn().isKeyColumn()) {
+        keyField = field;
+      }
+      FieldProperty fp = new FieldProperty(field);
+
+      fields.add(fp);
+    }
+
+    // Additional key column, set in session with db column name
+    if (keyField != null) {
+      FieldProperty fp = new FieldProperty(keyField);
+      fp.columnName = keyField.getColumn().getDBColumnName();
+      fp.session = true;
+      fields.add(fp);
+    }
+
+    return fields;
+  }
+
+  public class FieldProperty {
+    private String columnName;
+    private String propertyName;
+    private boolean session;
+
+    public FieldProperty(Field field) {
+      Column col = field.getColumn();
+      columnName = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
+      propertyName = KernelUtils.getInstance().getPropertyFromColumn(col).getName();
+      session = col.isStoredInSession();
+    }
+
+    public String getColumnName() {
+      return columnName;
+    }
+
+    public String getPropertyName() {
+      return propertyName;
+    }
+
+    public String getSession() {
+      return session ? "true" : "false";
+    }
   }
 
   public class ButtonField {
