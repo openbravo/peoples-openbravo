@@ -186,17 +186,25 @@ public abstract class UIDefinition {
     }
     JSONObject jsnobject = new JSONObject();
     try {
-      if (getDomainType() instanceof PrimitiveDomainType) {
-        jsnobject.put("value", ((PrimitiveDomainType) getDomainType())
-            .createFromString(columnValue));
-      } else {
-        jsnobject.put("value", columnValue);
-      }
+      jsnobject.put("value", createJsonValueFromClassicValueString(columnValue));
     } catch (JSONException e) {
       log.error("Couldn't get field property value for column "
           + field.getColumn().getDBColumnName());
     }
     return jsnobject.toString();
+  }
+
+  /**
+   * Convert a string value as used in classic OB to a type safe value.
+   * 
+   * @see PrimitiveDomainType#createFromString(String)
+   */
+  protected Object createJsonValueFromClassicValueString(String value) {
+    if (getDomainType() instanceof PrimitiveDomainType) {
+      return ((PrimitiveDomainType) getDomainType()).createFromString(value);
+    } else {
+      return value;
+    }
   }
 
   /**
@@ -317,7 +325,7 @@ public abstract class UIDefinition {
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
         clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
             field.getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
-        // clientList = vars.getSessionValue("#User_Client");
+        clientList = vars.getSessionValue("#User_Client");
         orgList = null;
       }
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {

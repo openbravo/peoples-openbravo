@@ -18,12 +18,29 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+
 /**
  * Implementation of the date ui definition.
  * 
  * @author mtaal
  */
 public class DateUIDefinition extends UIDefinition {
+
+  private static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
+  private SimpleDateFormat format = null;
+
+  public SimpleDateFormat getFormat() {
+    if (format == null) {
+      format = new SimpleDateFormat(PATTERN);
+      format.setLenient(true);
+    }
+    return format;
+  }
 
   @Override
   public String getParentType() {
@@ -33,6 +50,19 @@ public class DateUIDefinition extends UIDefinition {
   @Override
   public String getFormEditorType() {
     return "OBDateItem";
+  }
+
+  @Override
+  protected synchronized Object createJsonValueFromClassicValueString(String value) {
+    try {
+      if (value == null || value.length() == 0) {
+        return null;
+      }
+      final Date date = getFormat().parse(value);
+      return ((PrimitiveDomainType) getDomainType()).convertToString(date);
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
   }
 
   @Override

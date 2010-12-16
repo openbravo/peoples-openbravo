@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.kernel.reference;
 
+
 /**
  * Implementation of the date time ui definition.
  * 
@@ -39,4 +40,5 @@ public class DateTimeUIDefinition extends DateUIDefinition {
   public String getFilterEditorType() {
     return "OBDateItem";
   }
+
 }
