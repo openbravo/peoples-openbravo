@@ -106,7 +106,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
       JSONObject jsContent = null;
       try {
-        jsContent = new JSONObject(content);
+        if (content != null) {
+          jsContent = new JSONObject(content);
+        }
       } catch (JSONException e) {
         throw new OBException("Error while parsing content", e);
       }
@@ -139,6 +141,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
       ArrayList<String> allColumns = new ArrayList<String>();
       ArrayList<String> calloutsToCall = new ArrayList<String>();
+      ArrayList<String> lastfieldChanged = new ArrayList<String>();
       List<Field> fields = tab.getADFieldList();
 
       for (Field field : fields) {
@@ -176,7 +179,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (mode.equals("NEW")
               && ((jsonobject.get("value") != null && !jsonobject.get("value").equals("")) || uiDef instanceof FKComboUIDefinition)) {
             if (field.getColumn().getCallout() != null) {
-              addCalloutToList(field.getColumn(), calloutsToCall);
+              addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
             }
           }
           setRequestContextParameter(field, jsonobject);
@@ -242,7 +245,7 @@ public class FormInitializationComponent extends BaseActionHandler {
               if (value != null && !value.toString().equals("")) {
                 // There is a callout and the value for this field is set
 
-                addCalloutToList(field.getColumn(), calloutsToCall);
+                addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
               }
             } catch (JSONException e) {
               log.error("Error reading value from parameter. Not executing callouts for column "
@@ -260,7 +263,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             if (col.getDBColumnName().equals(changedColumn)) {
               if (col.getCallout() != null) {
                 // The column has a callout. We will add the callout to the callout list
-                addCalloutToList(col, calloutsToCall);
+                addCalloutToList(col, calloutsToCall, lastfieldChanged);
               }
             }
           }
@@ -268,7 +271,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       ArrayList<String> calledCallouts = new ArrayList<String>();
-      runCallouts(columnValues, fields, calledCallouts, calloutsToCall, messages);
+      runCallouts(columnValues, fields, calledCallouts, calloutsToCall, lastfieldChanged, messages);
       // System.out.println("Field values");
       // System.out.println("************");
       /*
@@ -449,16 +452,19 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   // TODO: This method should probably be transformed into a utility class
   private void runCallouts(HashMap<String, JSONObject> columnValues, List<Field> fields,
-      ArrayList<String> calledCallouts, ArrayList<String> calloutsToCall, ArrayList<String> messages) {
+      ArrayList<String> calledCallouts, ArrayList<String> calloutsToCall,
+      ArrayList<String> lastfieldChangedList, ArrayList<String> messages) {
 
     HashMap<String, Field> inpFields = buildInpField(fields);
 
     while (!calloutsToCall.isEmpty() && calledCallouts.size() < MAX_CALLOUT_CALLS) {
       String calloutClassName = calloutsToCall.get(0);
+      String lastFieldChanged = lastfieldChangedList.get(0);
       System.out.println("Calling callout " + calloutClassName);
       try {
         Class<?> calloutClass = Class.forName(calloutClassName);
         calloutsToCall.remove(calloutClassName);
+        lastfieldChangedList.remove(lastFieldChanged);
         Object calloutInstance = calloutClass.newInstance();
         Method method = null;
         Method init = null;
@@ -483,6 +489,7 @@ public class FormInitializationComponent extends BaseActionHandler {
               columnValues);
           formatColumnValues(formattedColumnValues, fields);
           setRequestContextParameters(fields, columnValues);
+          RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
           CalloutServletConfig config = new CalloutServletConfig(calloutClassName, context);
           Object[] initArgs = { config };
           init.invoke(calloutInstance, initArgs);
@@ -547,7 +554,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                     }
                     if (changed && col.getCallout() != null) {
                       // We need to fire this callout, as the column value was changed
-                      addCalloutToList(col, calloutsToCall);
+                      addCalloutToList(col, calloutsToCall, lastfieldChangedList);
                     }
                   }
                 }
@@ -567,7 +574,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   }
 
-  private void addCalloutToList(Column col, ArrayList<String> listOfCallouts) {
+  private void addCalloutToList(Column col, ArrayList<String> listOfCallouts,
+      ArrayList<String> lastFieldChangedList) {
     if (col.getCallout().getADModelImplementationList() == null
         || col.getCallout().getADModelImplementationList().size() == 0) {
       log.error("The callout of the column " + col.getDBColumnName()
@@ -576,6 +584,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       String calloutClassNameToCall = col.getCallout().getADModelImplementationList().get(0)
           .getJavaClassName();
       listOfCallouts.add(calloutClassNameToCall);
+      lastFieldChangedList.add("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()));
     }
   }
 
