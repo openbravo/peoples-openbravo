@@ -362,10 +362,6 @@ isc.OBStandardView.addProperties({
     if (this.viewForm) {
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
     }
-    // open default edit view if this is the rootview
-    if (this.defaultEditMode && !this.parentProperty) {
-      this.openDefaultEditView();
-    }
   },
   
   draw: function(){

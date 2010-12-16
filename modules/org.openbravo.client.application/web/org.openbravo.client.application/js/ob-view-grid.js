@@ -260,7 +260,7 @@ isc.OBViewGrid.addProperties({
     
     if (this.targetRecordId) {
       this.delayedHandleTargetRecord(startRow, endRow);
-    } else if (!this.isVisible() && this.view.shouldOpenDefaultEditMode()) {
+    } else if (this.view.shouldOpenDefaultEditMode()) {
       this.view.openDefaultEditView(this.getRecord(startRow));   
     }
     
@@ -866,7 +866,6 @@ isc.OBGridButtonsComponent.addProperties({
   },
   
   doOpen: function(){
-		console.info('doOpen');
 		this.grid.view.getContextInfo(this.record);
     this.grid.view.editRecord(this.record);
   },

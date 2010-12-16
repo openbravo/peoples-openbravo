@@ -97,6 +97,10 @@ isc.OBViewForm.addProperties({
   },
   
   processInitialValues: function(response, data, request){
+    // TODO: an error occured, handles this much better...
+    if (!data) {
+      return;
+    }
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages, auxInputs = data.auxiliaryInputValues, prop, value;
     if (columnValues) {
       for (prop in columnValues) {
