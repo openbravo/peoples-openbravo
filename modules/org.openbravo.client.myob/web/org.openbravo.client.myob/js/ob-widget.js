@@ -505,7 +505,11 @@ isc.defineClass('OBShowParameterWidget', isc.OBWidget).addProperties({
     layout.addMember(this.createDisplayForm());
     return layout;
   },
-  
+
+  customAction: function() {
+    isc.say('Custom Action!', {isModal: true, showModalMask: true});
+  },
+
   createDisplayForm: function(){
     var item, theForm = isc.DynamicForm.create({
       width: '100%',
