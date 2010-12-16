@@ -177,7 +177,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           // We need to fire callouts if the field value was changed, or if the field is a combo
           // (due to how ComboReloads worked, callouts were always called)
           if (mode.equals("NEW")
-              && ((jsonobject.get("value") != null && !jsonobject.get("value").equals("")) || uiDef instanceof FKComboUIDefinition)) {
+              && ((jsonobject.has("value") && !jsonobject.get("value").equals("")) || uiDef instanceof FKComboUIDefinition)) {
             if (field.getColumn().getCallout() != null) {
               addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
             }
@@ -188,7 +188,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (mode.equals("EDIT") || mode.equals("SETSESSION")) {
             if (field.getColumn().isStoredInSession()) {
               setSessionValue(tab.getWindow().getId() + "|" + field.getColumn().getDBColumnName(),
-                  uiDef.formatValueToSQL(jsonobject.get("value").toString()));
+                  jsonobject.has("value") ? uiDef.formatValueToSQL(jsonobject.get("value")
+                      .toString()) : null);
             }
           }
         } catch (Exception e) {
@@ -239,9 +240,9 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (field.getColumn().getCallout() != null) {
             Object value;
             try {
-              value = columnValues.get(
-                  "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())).get(
-                  "value");
+              JSONObject jsonCol = columnValues.get("inp"
+                  + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+              value = jsonCol.has("value") ? jsonCol.get("value") : null;
               if (value != null && !value.toString().equals("")) {
                 // There is a callout and the value for this field is set
 
@@ -423,7 +424,8 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void setRequestContextParameter(Field field, JSONObject jsonObj) {
     try {
       String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
-      RequestContext.get().setRequestParameter(fieldId, jsonObj.getString("value"));
+      RequestContext.get().setRequestParameter(fieldId,
+          jsonObj.has("value") ? jsonObj.getString("value") : null);
     } catch (JSONException e) {
       log.error("Couldn't read JSON parameter for column " + field.getColumn().getDBColumnName());
     }
@@ -596,7 +598,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
       try {
         if (obj != null) {
-          String oldValue = obj.getString("value");
+          String oldValue = obj.has("value") ? obj.getString("value") : null;
           String value = oldValue == null || oldValue.equals("") ? oldValue : uiDef
               .formatValueToSQL(oldValue.toString());
           obj.put("value", value);
