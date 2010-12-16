@@ -57,7 +57,6 @@ public class KernelServlet extends BaseKernelServlet {
 
   private static final String REQUEST_HEADER_IFMODIFIEDSINCE = "If-Modified-Since";
   private static final String REQUEST_HEADER_IFNONEMATCH = "If-None-Match";
-  private static final String RESPONSE_HEADER_CONTENTTYPE = "Content-Type";
 
   private static final long serialVersionUID = 1L;
 

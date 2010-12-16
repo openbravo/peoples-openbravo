@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -75,7 +77,6 @@ public class KernelUtils {
    * Creates a javascript string which reports an exception to the client.
    */
   public String createErrorJavaScript(Exception e) {
-
     log.error(e.getMessage(), e);
 
     final StringBuilder sb = new StringBuilder();
@@ -88,6 +89,23 @@ public class KernelUtils {
       sb.append("OB.KernelUtilities.handleSystemException('" + e.getMessage() + "');");
     }
     return sb.toString();
+  }
+
+  public JSONObject createErrorJSON(Exception e) {
+    log.error(e.getMessage(), e);
+    JSONObject error = new JSONObject();
+    try {
+      error.put("message", e.getMessage());
+      if (e instanceof OBUserException) {
+        error.put("type", "user");
+        error.put("params", ((OBUserException) e).getJavaScriptParams());
+      } else {
+        error.put("type", "system");
+      }
+    } catch (JSONException e1) {
+      log.error("Error creating json error", e1);
+    }
+    return error;
   }
 
   /**

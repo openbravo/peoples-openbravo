@@ -49,7 +49,7 @@ public class OBUserException extends RuntimeException {
    * 
    */
   public String getJavaScriptParams() {
-    String result = "new Array(";
+    String result = "[";
     boolean firstParam = true;
     for (String param : params) {
       if (!firstParam) {
@@ -58,7 +58,7 @@ public class OBUserException extends RuntimeException {
       result += "'" + param + "'";
       firstParam = false;
     }
-    result += ")";
+    result += "]";
     return result;
   }
 

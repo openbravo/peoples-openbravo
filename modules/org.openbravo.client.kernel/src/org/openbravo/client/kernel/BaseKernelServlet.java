@@ -43,6 +43,7 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
   protected static final String RESPONSE_HEADER_LASTMODIFIED = "Last-Modified";
   protected static final String RESPONSE_HEADER_CACHE_CONTROL = "Cache-Control";
   protected static final String RESPONSE_NO_CACHE = "no-cache";
+  protected static final String RESPONSE_HEADER_CONTENTTYPE = "Content-Type";
 
   private static final long serialVersionUID = 1L;
 
