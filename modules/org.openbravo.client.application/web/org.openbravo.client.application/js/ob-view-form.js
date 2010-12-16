@@ -113,7 +113,11 @@ isc.OBViewForm.addProperties({
       // show messages...
     }
     if (auxInputs) {
-      // handle aux inputs
+      for (prop in auxInputs) {
+        if (auxInputs.hasOwnProperty(prop)) {
+          this.setValue(prop, auxInputs[prop].value);
+        }
+      }
     }
   },
   
