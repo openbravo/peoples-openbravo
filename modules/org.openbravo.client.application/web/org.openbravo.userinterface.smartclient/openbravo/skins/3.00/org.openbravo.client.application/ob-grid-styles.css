@@ -70,22 +70,22 @@
 .OBGridCellOverDark,
 .OBGridCellEditOver,
 .OBGridCellEditOverDark {
-  background-color: #ffe1c0;  /* Orange for active grid, for non active grid: #dbe6c7 */
+  background-color: #e1e1e1;  /* Orange for active grid, for non active grid: #dbe6c7 */
 }
 
 .OBGridCellSelected,
 .OBGridCellSelectedDark {
-  background-color: #ffba6e; /* Orange for active grid, for non active grid: #b8d587 */
+  background-color: #ffe1c0; /* Orange for active grid, for non active grid: #b8d587 */
 }
 
 .OBGridCellEditSelected,
 .OBGridCellEditSelectedDark {
-  background-color: #e1e1e1;
+  background-color: #ffe1c0;
 }
 
 .OBGridCellSelectedOver,
 .OBGridCellSelectedOverDark {
-  background-color: #ffba6e;
+  background-color: #e1e1e1;
 }
 
 .OBGridCellEditSelectedOver,
