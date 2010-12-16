@@ -172,7 +172,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             // On CHANGE and SETSESSION mode, the values are read from the request
             JSONObject jsCol = new JSONObject();
             String colName = "inp" + Sqlc.TransformaNombreColumna(col);
-            if (!jsContent.has(colName)) {
+            if (!jsContent.has(colName) || jsContent.get(colName) == JSONObject.NULL) {
               continue;
             }
             jsCol.put("value", jsContent.get(colName));
@@ -268,7 +268,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("CHANGE")) {
         if (changedColumn != null) {
           for (Column col : tab.getTable().getADColumnList()) {
-            if (col.getDBColumnName().equals(changedColumn)) {
+            if (("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName())).equals(changedColumn)) {
               if (col.getCallout() != null) {
                 // The column has a callout. We will add the callout to the callout list
                 addCalloutToList(col, calloutsToCall, lastfieldChanged);
@@ -290,11 +290,11 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       JSONObject finalObject = new JSONObject();
       try {
-        if (mode.equals("NEW")) {
+        if (mode.equals("NEW") || mode.equals("CHANGE")) {
           JSONArray arrayMessages = new JSONArray(messages);
           finalObject.put("calloutMessages", arrayMessages);
         }
-        if (mode.equals("NEW") || mode.equals("EDIT")) {
+        if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
           JSONObject jsonColumnValues = new JSONObject();
           for (Field field : fields) {
             jsonColumnValues.put(field.getColumn().getDBColumnName(), columnValues.get("inp"
@@ -524,7 +524,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           formatColumnValues(formattedColumnValues, fields);
           setRequestContextParameters(fields, columnValues);
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
-          CalloutServletConfig config = new CalloutServletConfig(calloutClassName, context);
+          CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
+              .getMockServletContext());
           Object[] initArgs = { config };
           init.invoke(calloutInstance, initArgs);
           CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
