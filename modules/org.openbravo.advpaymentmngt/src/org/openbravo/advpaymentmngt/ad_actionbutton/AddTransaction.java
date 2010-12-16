@@ -243,7 +243,9 @@ public class AddTransaction extends HttpSecureAppServlet {
       }
 
     } catch (Exception e) {
-      throw new OBException(e);
+      OBError newError = Utility.translateError(this, vars, vars.getLanguage(), FIN_Utility
+          .getExceptionMessage(e));
+      throw new OBException(newError.getMessage());
     } finally {
       OBContext.restorePreviousMode();
     }
