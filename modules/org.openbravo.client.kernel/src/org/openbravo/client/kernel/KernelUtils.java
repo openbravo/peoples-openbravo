@@ -112,12 +112,6 @@ public class KernelUtils {
    * Computes parameters to add to a link of a resource. The parameters include the version and
    * language of the user.
    * 
-   * The version computation logic depends on if the module is in development (
-   * {@link Module#isInDevelopment()}. If in developers mode then the
-   * {@link System#currentTimeMillis()} is used. If not in developers mode then the
-   * {@link Module#getVersion()} is used. These values are prepended with the language id of the
-   * user. This makes it possible to generate language specific components on the server.
-   * 
    * @param module
    *          Module to get the version from (if not in developers mode)
    * @return the version parameter string, a concatenation of the version and language with
@@ -126,12 +120,8 @@ public class KernelUtils {
    * @see KernelConstants#RESOURCE_LANGUAGE_PARAMETER
    */
   public String getVersionParameters(Module module) {
-    if (module.isInDevelopment()) {
-      return "" + System.currentTimeMillis();
-    }
-    final String useAsVersion = module.getVersion();
 
-    return KernelConstants.RESOURCE_VERSION_PARAMETER + "=" + useAsVersion + "&"
+    return KernelConstants.RESOURCE_VERSION_PARAMETER + "=" + module.getVersion() + "&"
         + KernelConstants.RESOURCE_LANGUAGE_PARAMETER + "="
         + OBContext.getOBContext().getLanguage().getId();
   }
