@@ -17,19 +17,11 @@
  ************************************************************************
 */
 
-isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);
-
-isc.OBGridHeaderImgButton.addProperties({
-  showFocused: false,
-  showRollOver: false,
-  showFocusedAsOver: false,
-  showDown: false
-});
-
-// Styling properties for main grid shown in a standard view
-isc.OBViewGrid.addProperties({
-  tallBaseStyleView: 'OBGridCell',
-  tallBaseStyleEdit: 'OBGridCellEdit',
+// Styling properties for a generic grid (ob-grid.js)
+isc.OBGrid.addProperties({
+  baseStyle: 'OBGridCell',
+  baseStyleView: 'OBGridCell', // for use in ob-view-grid.js while no editing a cell
+  baseStyleEdit: 'OBGridCellEdit', // for use in ob-view-grid.js while editing a cell
   headerBaseStyle: 'OBGridHeaderCell',
   headerBarStyle: 'OBGridHeaderBar',
   headerTitleStyle: 'OBGridHeaderCellTitle',
@@ -45,14 +37,14 @@ isc.OBViewGrid.addProperties({
 });
 
 
-isc.OBViewGrid.changeDefaults('filterEditorDefaults', {
+isc.OBGrid.changeDefaults('filterEditorDefaults', {
   height: 22,
   styleName: 'OBGridFilterBase',
   baseStyle: 'OBGridFilterCell'
 });
 
 
-isc.OBViewGrid.changeDefaults('sorterDefaults', {
+isc.OBGrid.changeDefaults('sorterDefaults', {
   // baseStyle / titleStyle is auto-assigned from headerBaseStyle
   showFocused: false,
 //  src: '[SKIN]ListGrid/header.png',
@@ -60,7 +52,7 @@ isc.OBViewGrid.changeDefaults('sorterDefaults', {
   baseStyle: 'OBGridSorterButton'
 });
 
-isc.OBViewGrid.changeDefaults('headerButtonDefaults', {
+isc.OBGrid.changeDefaults('headerButtonDefaults', {
   showTitle: true,
   showDown: true,
   showFocused: false,
@@ -68,7 +60,7 @@ isc.OBViewGrid.changeDefaults('headerButtonDefaults', {
   src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 
-isc.OBViewGrid.changeDefaults('headerMenuButtonDefaults', {
+isc.OBGrid.changeDefaults('headerMenuButtonDefaults', {
   showDown: false,
   showTitle: true,
   baseStyle: 'pepe'
@@ -76,6 +68,16 @@ isc.OBViewGrid.changeDefaults('headerMenuButtonDefaults', {
 });
 
 
+// Styling properties for the header button of a generic grid (ob-grid.js)
+isc.OBGridHeaderImgButton.addProperties({
+  showFocused: false,
+  showRollOver: false,
+  showFocusedAsOver: false,
+  showDown: false
+});
+
+
+// Styling properties for the buttons of the grid in 'grid mode' (ob-view-grid.js)
 isc.OBGridToolStripIcon.addProperties({
   width: 21,
   height: 19,

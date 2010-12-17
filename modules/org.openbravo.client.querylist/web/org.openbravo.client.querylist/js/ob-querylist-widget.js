@@ -87,7 +87,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   
 });
 
-isc.ClassFactory.defineClass('OBQueryListGrid', isc.ListGrid);
+isc.ClassFactory.defineClass('OBQueryListGrid', isc.OBGrid);
 
 isc.OBQueryListGrid.addProperties({
   width: '100%',

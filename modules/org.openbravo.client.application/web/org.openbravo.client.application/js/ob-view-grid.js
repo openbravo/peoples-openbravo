@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-isc.ClassFactory.defineClass('OBViewGrid', isc.ListGrid);
+isc.ClassFactory.defineClass('OBViewGrid', isc.OBGrid);
 
 isc.OBViewGrid.addClassProperties({
   EDIT_LINK_FIELD_NAME: '_editLink',
@@ -183,7 +183,7 @@ isc.OBViewGrid.addProperties({
   
   initWidget: function(){
     var thisGrid = this, localEditLinkField;
-    this.tallBaseStyle = this.tallBaseStyleView;
+    this.baseStyle = this.baseStyleView;
     if (this.editGrid) {
       // add the edit pencil in the beginning
       localEditLinkField = isc.addProperties({}, this.editLinkFieldProperties);
@@ -731,7 +731,7 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
-    this.tallBaseStyle = this.tallBaseStyleEdit;
+    this.baseStyle = this.baseStyleEdit;
     var result = this.Super('showInlineEditor', arguments);
     
     var record = this.getRecord(rowNum);
@@ -744,7 +744,7 @@ isc.OBViewGrid.addProperties({
   
   hideInlineEditor: function(){
     isc.Log.logDebug('hideInlineEditor ' + this.getEditRow(), 'OB');
-    this.tallBaseStyle = this.tallBaseStyleView;
+    this.baseStyle = this.baseStyleView;
     var rowNum = this.getEditRow();
     var record = this.getRecord(rowNum);
     var editColumnLayout = record.editColumnLayout;
