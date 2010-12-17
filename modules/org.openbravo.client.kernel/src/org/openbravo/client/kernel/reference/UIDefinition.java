@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -151,7 +150,7 @@ public abstract class UIDefinition {
               .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
               .getTab().getWindow().getId(), defaultS);
         } else {
-          Vector<String> params = new Vector<String>();
+          ArrayList<String> params = new ArrayList<String>();
           String sql = parseSQL(defaultS, params);
           System.out.println(sql);
           int indP = 1;
@@ -395,7 +394,7 @@ public abstract class UIDefinition {
 
   // Old method which parses SQL such as the one in Default values of columns, or auxiliary inputs
   // TODO: This method probably shouldn't be here, need to find a better place to put it
-  public static String parseSQL(String code, Vector<String> colNames) {
+  public static String parseSQL(String code, ArrayList<String> colNames) {
     if (code == null || code.trim().equals(""))
       return "";
     String token;
@@ -444,7 +443,7 @@ public abstract class UIDefinition {
           strOut.append("'" + i + "'");
         // String parameter = "<Parameter name=\"" + token + "\"" + strAux + "/>";
         // String paramElement[] = { parameter, modifier };
-        colNames.addElement(token);// paramElement);
+        colNames.add(token);// paramElement);
         strValue = strValue.substring(j + 1, strValue.length());
         strAux = strValue.trim();
         if (strAux.length() > 0 && strAux.substring(0, 1).indexOf("'") > -1)
