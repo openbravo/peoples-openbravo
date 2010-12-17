@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -525,7 +524,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           setRequestContextParameters(fields, columnValues);
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
           CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
-              .getMockServletContext());
+              .getServletContext());
           Object[] initArgs = { config };
           init.invoke(calloutInstance, initArgs);
           CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
@@ -739,7 +738,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       System.out.println(auxIn.getName() + ":" + code);
       String fvalue = null;
       if (code.startsWith("@SQL=")) {
-        Vector<String> params = new Vector<String>();
+        ArrayList<String> params = new ArrayList<String>();
         String sql = UIDefinition.parseSQL(code, params);
         // final StringBuffer parametros = new StringBuffer();
         // for (final Enumeration<String> e = params.elements(); e.hasMoreElements();) {
