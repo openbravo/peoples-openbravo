@@ -18,7 +18,7 @@
  */
 // = OBWidget =
 //
-// Implements the base class from where all My Opebravo widgets extend.
+// Implements the base class from where all MyOpenbravo widgets extend.
 //
 isc.defineClass('OBWidget', isc.Portlet).addProperties({
   CONTENT_MODE: 'content',
@@ -140,6 +140,11 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
               continue;
             }
 
+            if (!widget[args.menuItems[i].click]) {
+              isc.Log.logWarn('Method: ' + args.menuItems[i].click +
+                              ' not defined for widget: ' + widget);
+            }
+
             menuItems.push(isc.addProperties({}, baseMenuItem, {
                            title: args.menuItems[i].title,
                            click: widget[args.menuItems[i].click]
@@ -182,11 +187,11 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     
     });
 
+    headerControls.push(this.menuButton);
+
     if(args.showMaximizeButton) {
       headerControls.push('maximizeButton');
     }
-
-    headerControls.push(this.menuButton);
 
     this.headerControls = headerControls;
 
