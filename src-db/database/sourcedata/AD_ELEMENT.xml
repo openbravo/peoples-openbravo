@@ -19022,8 +19022,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800694-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800694-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800694-->  <COLUMNNAME><![CDATA[Expreinvoicing]]></COLUMNNAME>
-<!--800694-->  <NAME><![CDATA[Reinvoiced Expenses]]></NAME>
-<!--800694-->  <PRINTNAME><![CDATA[Reinvoicing]]></PRINTNAME>
+<!--800694-->  <NAME><![CDATA[Planned Reinvoiced Expenses]]></NAME>
+<!--800694-->  <PRINTNAME><![CDATA[Planned Reinvoiced Expenses]]></PRINTNAME>
 <!--800694-->  <HELP><![CDATA[Amount of expenses we plan to invoice back to the client. Real number will originate from sales invoices for this particular client and project that include products of type "expense" (such as telephone, electricity, etc)]]></HELP>
 <!--800694-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800694--></AD_ELEMENT>
@@ -19046,8 +19046,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800696-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800696-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800696-->  <COLUMNNAME><![CDATA[Expmargin]]></COLUMNNAME>
-<!--800696-->  <NAME><![CDATA[Expenses Margin %]]></NAME>
-<!--800696-->  <PRINTNAME><![CDATA[Expected Margin %]]></PRINTNAME>
+<!--800696-->  <NAME><![CDATA[Planned Expenses Margin %]]></NAME>
+<!--800696-->  <PRINTNAME><![CDATA[Planned Expenses Margin %]]></PRINTNAME>
 <!--800696-->  <HELP><![CDATA[Expected margin for expenses.]]></HELP>
 <!--800696-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800696--></AD_ELEMENT>
@@ -19058,8 +19058,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800697-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800697-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800697-->  <COLUMNNAME><![CDATA[Servcost]]></COLUMNNAME>
-<!--800697-->  <NAME><![CDATA[Service Cost]]></NAME>
-<!--800697-->  <PRINTNAME><![CDATA[Total Service cost]]></PRINTNAME>
+<!--800697-->  <NAME><![CDATA[Planned Service Cost]]></NAME>
+<!--800697-->  <PRINTNAME><![CDATA[Planned Service cost]]></PRINTNAME>
 <!--800697-->  <HELP><![CDATA[Expected total cost of services provided. The real number will originate from all expense sheets (lines marked as Time Sheet) related to this project.]]></HELP>
 <!--800697-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800697--></AD_ELEMENT>
@@ -19082,8 +19082,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800699-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800699-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800699-->  <COLUMNNAME><![CDATA[Servmargin]]></COLUMNNAME>
-<!--800699-->  <NAME><![CDATA[Service Margin %]]></NAME>
-<!--800699-->  <PRINTNAME><![CDATA[Service Margin %]]></PRINTNAME>
+<!--800699-->  <NAME><![CDATA[Planned Service Margin %]]></NAME>
+<!--800699-->  <PRINTNAME><![CDATA[Planned Service Margin %]]></PRINTNAME>
 <!--800699-->  <HELP><![CDATA[Expected service margin. Real number will be calculated from actual service revenue and costs.]]></HELP>
 <!--800699-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800699--></AD_ELEMENT>
@@ -19094,8 +19094,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800700-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800700-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800700-->  <COLUMNNAME><![CDATA[Servrevenue]]></COLUMNNAME>
-<!--800700-->  <NAME><![CDATA[Service Revenue]]></NAME>
-<!--800700-->  <PRINTNAME><![CDATA[Service revenue]]></PRINTNAME>
+<!--800700-->  <NAME><![CDATA[Planned Service Revenue]]></NAME>
+<!--800700-->  <PRINTNAME><![CDATA[Planned Service revenue]]></PRINTNAME>
 <!--800700-->  <HELP><![CDATA[Expected revenue of services provided to the client. Real numbers will originate from invoices of services (products of type "service") sent out to the client.]]></HELP>
 <!--800700-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800700--></AD_ELEMENT>
