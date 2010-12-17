@@ -48,7 +48,8 @@ public class EnumUIDefinition extends UIDefinition {
       if (!field.isDisplayed()) {
         return value.toString();
       }
-      return getValueInComboReference(field, getValueFromSession, value.getString("value"));
+      return getValueInComboReference(field, getValueFromSession, value.has("value") ? value
+          .getString("value") : "");
     } catch (JSONException e) {
       throw new OBException("Error while computing combo data", e);
     }
