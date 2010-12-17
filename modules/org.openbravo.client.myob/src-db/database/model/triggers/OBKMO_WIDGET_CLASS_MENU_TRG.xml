@@ -51,7 +51,6 @@ BEGIN
       WHERE obkmo_widget_class_menu_id=:new.obkmo_widget_class_menu_id;
     END IF;
   END IF;
-
 END OBKMO_WIDGET_CLASS_MENU_TRG
 ]]></body>
     </trigger>
