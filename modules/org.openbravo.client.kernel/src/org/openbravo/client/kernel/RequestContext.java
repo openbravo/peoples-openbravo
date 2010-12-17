@@ -73,8 +73,12 @@ public class RequestContext {
 
   private static ThreadLocal<RequestContext> instance = new ThreadLocal<RequestContext>();
 
-  public static ServletContext getMockServletContext() {
+  public static ServletContext getServletContext() {
     return servletContext;
+  }
+
+  public static void setServletContext(ServletContext aServletContext) {
+    servletContext = aServletContext;
   }
 
   public static RequestContext get() {
