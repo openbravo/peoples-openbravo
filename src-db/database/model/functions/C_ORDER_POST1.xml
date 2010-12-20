@@ -1298,11 +1298,11 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
   -- We are done with standard sales orders
 IF (v_DocSubTypeSO = 'RM') THEN
 
-	FOR Cur_Order IN( SELECT ol.qtyordered from C_order o,C_orderline ol
+	FOR Cur_Order IN( SELECT ol.qtyordered, ol.c_order_discount_id from C_order o,C_orderline ol
       where o.C_Order_ID = v_Record_ID
       AND ol.C_Order_ID = o.C_Order_ID)
 	LOOP
-		IF (Cur_Order.qtyordered >0) THEN 
+		IF (Cur_Order.qtyordered >0 AND Cur_Order.c_order_discount_id IS NULL) THEN 
 			RAISE_APPLICATION_ERROR(-20000, '@ReturnMaterialOrderType@') ;
 		END IF;
 	END LOOP;
