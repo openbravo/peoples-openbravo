@@ -32,6 +32,7 @@ import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 public class DateUIDefinition extends UIDefinition {
 
   private static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
+  private static final String PATTERN_T = "yyyy-MM-dd'T'HH:mm:ss";
   private SimpleDateFormat format = null;
 
   public SimpleDateFormat getFormat() {
@@ -55,10 +56,17 @@ public class DateUIDefinition extends UIDefinition {
   @Override
   protected synchronized Object createJsonValueFromClassicValueString(String value) {
     try {
-      if (value == null || value.length() == 0) {
+      if (value == null || value.length() == 0 || value.equals("null")) {
         return null;
       }
-      final Date date = getFormat().parse(value);
+      SimpleDateFormat lformat;
+      if (value.contains("T")) {
+        lformat = new SimpleDateFormat(PATTERN_T);
+      } else {
+        lformat = new SimpleDateFormat(PATTERN);
+      }
+      lformat.setLenient(true);
+      final Date date = lformat.parse(value);
       return ((PrimitiveDomainType) getDomainType()).convertToString(date);
     } catch (Exception e) {
       throw new OBException(e);
