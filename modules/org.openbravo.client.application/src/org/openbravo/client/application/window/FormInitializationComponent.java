@@ -111,8 +111,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       BaseOBObject row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       Tab parentTab = null;
       BaseOBObject parentRecord = null;
-      System.out.println("TAB NAME: " + tab.getWindow().getName() + "." + tab.getName()
-          + " Tab Id:" + tab.getId());
+      log.debug("TAB NAME: " + tab.getWindow().getName() + "." + tab.getName() + " Tab Id:"
+          + tab.getId());
 
       // First the session variables for the parent records are set
       if (mode.equals("EDIT")) {
@@ -167,7 +167,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<AuxiliaryInput> auxInputs = auxInC.list();
       for (AuxiliaryInput auxIn : auxInputs) {
         Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
-        System.out.println("Final Value " + auxIn.getName() + ": " + value);
+        log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);
         JSONObject jsonObj = new JSONObject();
         try {
           jsonObj.put("value", value);
@@ -322,8 +322,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
           finalObject.put("dynamicCols", new JSONArray(changeEventCols));
         }
-        System.out.println(finalObject.toString(1));
-        System.out.println(System.currentTimeMillis() - iniTime);
+        log.debug(finalObject.toString(1));
+        log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime));
         return finalObject;
       } catch (JSONException e) {
         log.error("Error while generating the final JSON object: ", e);
@@ -458,7 +458,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void setSessionValue(String key, Object value) {
-    log.info("Setting session value. Key: " + key + "  Value:" + value);
+    log.debug("Setting session value. Key: " + key + "  Value:" + value);
     RequestContext.get().setSessionAttribute(key, value);
   }
 
@@ -503,7 +503,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     while (!calloutsToCall.isEmpty() && calledCallouts.size() < MAX_CALLOUT_CALLS) {
       String calloutClassName = calloutsToCall.get(0);
       String lastFieldChanged = lastfieldChangedList.get(0);
-      System.out.println("Calling callout " + calloutClassName);
+      log.debug("Calling callout " + calloutClassName);
       try {
         Class<?> calloutClass = Class.forName(calloutClassName);
         calloutsToCall.remove(calloutClassName);
@@ -586,7 +586,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                       } else {
                         value = (String) el;
                       }
-                      System.out.println("Column: " + col.getDBColumnName() + "  Value: " + value);
+                      log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + value);
                       rq.setRequestParameter(colId, value);
                       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
                           col.getId());
@@ -613,7 +613,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
     }
     if (calledCallouts.size() == MAX_CALLOUT_CALLS) {
-      log.info("Warning: maximum number of callout calls reached");
+      log.warn("Warning: maximum number of callout calls reached");
     }
 
   }
@@ -666,7 +666,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       NativeArray oresp = (NativeArray) scope.get("respuesta", scope);
       Object calloutName = scope.get("calloutName", scope);
       String calloutNameS = calloutName == null ? null : calloutName.toString();
-      System.out.println("CALLOUT NAME: " + calloutNameS);
+      log.debug("Callout Name: " + calloutNameS);
       NativeArray array = (NativeArray) oresp;
       for (int i = 0; i < array.getLength(); i++) {
         returnedArray.add((NativeArray) array.get(i, null));
@@ -740,7 +740,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private Object computeAuxiliaryInput(AuxiliaryInput auxIn, String windowId) {
     try {
       String code = auxIn.getValidationCode();
-      System.out.println(auxIn.getName() + ":" + code);
+      log.debug("Auxiliary Input: " + auxIn.getName() + " Code:" + code);
       String fvalue = null;
       if (code.startsWith("@SQL=")) {
         ArrayList<String> params = new ArrayList<String>();
@@ -750,7 +750,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         // String paramsElement = WadUtility.getWhereParameter(e.nextElement(), true);
         // parametros.append("\n" + paramsElement);
         // }
-        System.out.println(sql);
+        log.debug("Transformed SQL code: " + sql);
         int indP = 1;
         PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
         for (String parameter : params) {
@@ -762,7 +762,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
             value = RequestContext.get().getRequestParameter(fieldId);
           }
-          System.out.println(parameter + ": " + value);
+          log.debug("Parameter: " + parameter + ": Value " + value);
           ps.setObject(indP++, value);
         }
         ResultSet rs = ps.executeQuery();
