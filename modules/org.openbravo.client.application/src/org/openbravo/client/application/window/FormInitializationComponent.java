@@ -348,26 +348,51 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void computeListOfColumnsSortedByValidationDependencies(Tab tab,
-      ArrayList<String> allColumns, HashMap<String, List<String>> columnsInValidation) {
+      ArrayList<String> sortedColumns, HashMap<String, List<String>> columnsInValidation) {
     List<Field> fields = tab.getADFieldList();
     ArrayList<String> columns = new ArrayList<String>();
     List<String> columnsWithValidation = new ArrayList<String>();
     HashMap<String, String> validations = new HashMap<String, String>();
     for (Field field : fields) {
       String columnName = field.getColumn().getDBColumnName();
-      columns.add(columnName);
+      columns.add(columnName.toUpperCase());
       if (field.getColumn().getValidation() != null) {
         columnsWithValidation.add(field.getColumn().getDBColumnName());
         validations.put(field.getColumn().getDBColumnName(), getValidation(field));
       }
     }
-
     for (String column : columnsWithValidation) {
-      columnsInValidation.put(column, parseValidation(column, validations.get(column),
-          columnsWithValidation));
+      columnsInValidation.put(column, parseValidation(column, validations.get(column), columns));
+      String cols = "";
+      for (String col : columnsInValidation.get(column)) {
+        cols += col + ",";
+      }
+      log.debug("Column: " + column);
+      log.debug("Validation: '" + validations.get(column) + "'");
+      log.debug("Columns in validation: '" + cols + "'");
     }
 
-    ArrayList<String> sortedColumns = new ArrayList<String>();
+    // Add client and org first to compute dependencies correctly
+    for (Field field : fields) {
+      String colName = field.getColumn().getDBColumnName();
+      if (colName.equalsIgnoreCase("Ad_Client_Id")) {
+        sortedColumns.add(colName);
+      }
+    }
+    for (Field field : fields) {
+      String colName = field.getColumn().getDBColumnName();
+      if (colName.equalsIgnoreCase("Ad_Org_Id")) {
+        sortedColumns.add(colName);
+      }
+    }
+    // we add the columns not included in the sortedColumns
+    // (the ones which don't have validations)
+    for (Field field : fields) {
+      String colName = field.getColumn().getDBColumnName();
+      if (field.getColumn().getValidation() == null && !sortedColumns.contains(colName)) {
+        sortedColumns.add(colName);
+      }
+    }
     String nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
         columnsInValidation);
     while (nonDepColumn != null) {
@@ -386,15 +411,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       throw new OBException("Error. The columns " + cycleCols.substring(1)
           + " have validations which form a cycle.");
     }
-
-    // we add the columns not included in the sortedColumns
-    // (the ones which don't have validations)
-    for (Field field : fields) {
-      if (!sortedColumns.contains(field.getColumn().getDBColumnName())) {
-        allColumns.add(field.getColumn().getDBColumnName());
-      }
+    String finalCols = "";
+    for (String col : sortedColumns) {
+      finalCols += col + ",";
     }
-    allColumns.addAll(sortedColumns);
+    log.debug("Final order of column computation: " + finalCols);
   }
 
   private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
@@ -716,7 +737,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           String strAux = token.substring(0, i);
           token = token.substring(i + 1);
           if (!columns.contains(strAux)) {
-            if (!strAux.equals(column) && possibleColumns.contains(strAux)) {
+            if (!strAux.equalsIgnoreCase(column) && possibleColumns.contains(strAux.toUpperCase())) {
               columns.add(strAux);
             }
           }
