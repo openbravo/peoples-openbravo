@@ -31,6 +31,22 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   actionHandler: 'org.openbravo.client.querylist.QueryListActionHandler',
   viewMode: 'widget',
 
+  initWidget: function(){
+    this.Super('initWidget', arguments);
+    // Calculate heigth
+    var currentHeight = this.getHeight(), 
+        //currentBodyHeight = this.body.getHeight(),
+        headerHeight = this.headerDefaults.height,
+        newGridHeight = this.grid.headerHeight
+                      + (this.grid.cellHeight * this.rowsNumber)
+                      + this.grid.summaryRowHeight
+                      + 2;
+
+    this.setHeight(headerHeight + newGridHeight + 13);
+    //this.body.setHeight(newBodyHeight);
+
+    return this;
+  },
 
   createWindowContents: function(){
     var layout = isc.VStack.create({
