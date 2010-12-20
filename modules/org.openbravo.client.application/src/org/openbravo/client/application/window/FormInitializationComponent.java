@@ -93,15 +93,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     OBContext.setAdminMode(true);
     long iniTime = System.currentTimeMillis();
     try {
-      // OBCriteria<Tab> tabs = OBDal.getInstance().createCriteria(Tab.class);
-      int num = 0;
-      // for (Tab tab : tabs.list()) {
-      // if (tab.getTabLevel() != 0) {
-      // continue;
-      // }
-      if (num++ > 10) {
-        return null;
-      }
       JSONObject jsContent = null;
       try {
         if (content == null) {
@@ -246,18 +237,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
 
-      // System.out.println("Field values");
-      // System.out.println("************");
-      // for (Field field : fields) {
-      // System.out.println(field.getColumn().getDBColumnName()
-      // + "("
-      // + field.isDisplayed()
-      // + ")"
-      // + ": "
-      // + columnValues.get("inp"
-      // + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
-      // }
-
       // List of the callouts that need to be called
       ArrayList<String> messages = new ArrayList<String>();
       if (mode.equals("NEW")) {
@@ -298,13 +277,6 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       ArrayList<String> calledCallouts = new ArrayList<String>();
       runCallouts(columnValues, fields, calledCallouts, calloutsToCall, lastfieldChanged, messages);
-      // System.out.println("Field values");
-      // System.out.println("************");
-      /*
-       * for (Field field : fields) { System.out.println(field.getColumn().getDBColumnName() + ": "
-       * + columnValues.get("inp" +
-       * Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()))); }
-       */
 
       JSONObject finalObject = new JSONObject();
       try {
@@ -764,11 +736,6 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
       i = token.indexOf("@");
     }
-
-    // System.out.println(column);
-    // for (String col : columns) {
-    // System.out.println("   -" + col);
-    // }
     return columns;
   }
 
