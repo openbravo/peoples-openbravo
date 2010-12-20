@@ -125,9 +125,8 @@
 .OBFormFieldSelectInputSelectedFocused,
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputDisabled {
-	border-width: 1px 0 1px 1px;
+  border-width: 1px 0px 1px 1px;
   border-right:0px none;
-	padding-right: 0px;  
 }
 
 .OBFormFieldInputHint,
