@@ -16,7 +16,145 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-// = OBWidget =
+
+// = OBWidget Definition =
+
+//
+// == OBWidgetMenu ==
+// Defines the menu handling
+//
+isc.defineClass('OBWidgetMenu', isc.Menu).addProperties({
+  portlet: null,
+  fields: ['icon', 'title'],
+  baseStyle: 'OBWidgetMenuCell', // menu in standard SC
+  styleName: 'OBWidgetMenu', // normal in standard sc
+  bodyStyleName: 'OBWidgetMenuBody', // normal in standard sc
+  tableStyle: 'OBWidgetMenuTable', // menuTable in standard SC
+  iconBodyStyleName: 'OBWidgetMenuTable',
+
+  // overridden to get reliable custom style name
+  getBaseStyle: function (record, rowNum, colNum) {
+    var name = this.getField(colNum).name;
+    return this.baseStyle + name.substr(0, 1).toUpperCase() + name.substr(1) + 'Field';
+  },
+
+
+  // overridden to let the menu to expand to the left, within the widget
+  // TODO: how to handle RTL?
+  placeNear: function (left, top) {
+    var newLeft = left - this.width + this.menuButton.getVisibleWidth();
+    // don't show left from the portlet, in that extremely rare
+    // case use the old left
+    if (newLeft < this.portlet.getPageLeft()) {
+      newLeft = left;
+    }
+    return this.Super('placeNear', [newLeft, top]);
+  }
+});
+
+//
+// == OBWidgetMenuItem ==
+//
+isc.defineClass('OBWidgetMenuItem', IMenuButton).addProperties({
+  widget: null,
+  menu: null,
+  showIcon: false,
+  showOver: false,
+  showRollOver: true,
+  showDown: false,
+  showFocused: false,
+  showFocusedAsOver: false,
+  showTitle: false,
+  imageType: isc.Img.CENTER,
+  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/edit.png',
+  baseStyle: 'OBWidgetMenuButton',
+
+  // only show the middle image without stretch appended
+  items: [{
+    name: '',
+    width: '*',
+    height: '*'
+  }],
+
+  overflow: 'visible',
+  width: 24,
+  height: 24,
+
+  editFormLayout: null,
+  windowContents: null,
+  menuItems: null,
+
+  initWidget: function(args) {
+    this.widget = args.portlet;
+    this.menuItems = this.widget.menuItems;
+    this.menu = isc.OBWidgetMenu.create({portlet: this.widget});
+    this.Super('initWidget', args);
+  },
+
+  showMenu: function() {
+        var me = this, menuItems, i,
+            baseMenuItem = {
+              title: '', widget: me.widget, isSeparator: false,
+              iconHeight: 0, iconWidth: 0, click: null
+            };
+
+        this.menu.menuButton = this;
+
+        menuItems = [{
+          title: OB.I18N.getLabel('OBKMO_WMO_EditSettings'),
+          widget: this.widget,
+          enableIf: function (target, menu, item){
+            // already in edit mode
+            if (this.widget.widgetMode === this.widget.EDIT_MODE) {
+              return false;
+            }
+            return this.widget.fieldDefinitions.length > 0;
+          },
+          click: function (target, item, menu){
+            this.widget.switchMode();
+          }
+        }, {
+          isSeparator: true
+        }, {
+          title: OB.I18N.getLabel('OBKMO_WMO_Refresh'),
+          iconHeight: 0,
+          iconWidth: 0,
+          widget: this.widget,
+          click: function (target, item, menu){
+            this.widget.refresh();
+          }
+        }, {
+          title: OB.I18N.getLabel('OBKMO_WMO_DeleteThisWidget'),
+          widget: this.widget,
+          click: function (target, item, menu){
+            this.widget.closeClick();
+          }
+        }];
+        if (isc.isAn.Array(this.menuItems) && this.menuItems.length > 0) {
+          for(i = 0; i < this.menuItems.length; i++) {
+            if (this.menuItems[i].isSeparator) {
+              menuItems.push({isSeparator: true});
+              continue;
+            }
+
+            if (!this.widget[this.menuItems[i].click]) {
+              isc.Log.logWarn('Method: ' + this.menuItems[i].click +
+                              ' not defined for widget: ' + this.widget);
+            }
+
+            menuItems.push(isc.addProperties({}, baseMenuItem, {
+                           title: this.menuItems[i].title,
+                           click: this.widget[this.menuItems[i].click]
+                           }));
+          }
+        }
+        this.menu.setData(menuItems);
+        return this.Super('showMenu', arguments);
+      }
+});
+
+//
+// == OBWidget ==
 //
 // Implements the base class from where all MyOpenbravo widgets extend.
 //
@@ -60,132 +198,12 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   
   widgetMode: null,
   
-  initWidget: function(args){
+  initWidget: function (args) {
     var widget = this, headerControls = ['headerLabel'];
     
     // set the headercontrols in initWidget otherwise only  
     // one menubutton gets created for all widgets
-    this.menuButton = isc.IMenuButton.create({
-      widget: this,
-      showIcon: false,
-      showOver: false,
-      showRollOver: true,
-      showDown: false,
-      showFocused: false,
-      showFocusedAsOver: false,
-      showTitle: false,
-      imageType: isc.Img.CENTER,
-      src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/edit.png',
-      baseStyle: 'OBWidgetMenuButton',
-      
-      // only show the middle image without stretch appended
-      items: [{
-        name: '',
-        width: '*',
-        height: '*'
-      }],
-
-      overflow: 'visible',
-      width: 24,
-      height: 24,
-
-      editFormLayout: null,
-      windowContents: null,
-
-      showMenu: function(){
-        var me = this, menuItems, i,
-            baseMenuItem = {
-              title: '', widget: me.widget, isSeparator: false,
-              iconHeight: 0, iconWidth: 0, click: null
-            };
-
-        this.menu.menuButton = this;
-
-        menuItems = [{
-          title: OB.I18N.getLabel('OBKMO_WMO_EditSettings'),
-          widget: me.widget,
-          enableIf: function(target, menu, item){
-            // already in edit mode
-            if (widget.widgetMode === widget.EDIT_MODE) {
-              return false;
-            }
-            return widget.fieldDefinitions.length > 0;
-          },
-          click: function(target, item, menu){
-            widget.switchMode();
-          }
-        }, {
-          isSeparator: true
-        }, {
-          title: OB.I18N.getLabel('OBKMO_WMO_Refresh'),
-          iconHeight: 0,
-          iconWidth: 0,
-          widget: me.wigdet,
-          click: function(target, item, menu){
-            widget.refresh();
-          }
-        }, {
-          title: OB.I18N.getLabel('OBKMO_WMO_DeleteThisWidget'),
-          widget: me.widget,
-          click: function(target, item, menu){
-            widget.closeClick();
-          }
-        }];
-
-        if (isc.isAn.Array(args.menuItems) && args.menuItems.length > 0) {
-          for(i = 0; i < args.menuItems.length; i++) {
-
-            if (args.menuItems[i].isSeparator) {
-              menuItems.push({isSeparator: true});
-              continue;
-            }
-
-            if (!widget[args.menuItems[i].click]) {
-              isc.Log.logWarn('Method: ' + args.menuItems[i].click +
-                              ' not defined for widget: ' + widget);
-            }
-
-            menuItems.push(isc.addProperties({}, baseMenuItem, {
-                           title: args.menuItems[i].title,
-                           click: widget[args.menuItems[i].click]
-                           }));
-          }
-        }
-
-        this.menu.setData(menuItems);
-
-        return this.Super('showMenu', arguments);
-      },
-
-      menu: isc.Menu.create({
-        portlet: this,
-        baseStyle: 'OBWidgetMenuCell', // menu in standard SC
-        styleName: 'OBWidgetMenu', // normal in standard sc
-        bodyStyleName: 'OBWidgetMenuBody', // normal in standard sc
-        tableStyle: 'OBWidgetMenuTable', // menuTable in standard SC
-        iconBodyStyleName: 'OBWidgetMenuTable',
-        
-        // overridden to get reliable custom style name
-        getBaseStyle: function(record, rowNum, colNum){
-          var name = this.getField(colNum).name;
-          return this.baseStyle + name.substr(0, 1).toUpperCase() + name.substr(1) + 'Field';
-        },
-        
-        fields: ['icon', 'title'],
-        // overridden to let the menu to expand to the left, within the widget
-        // TODO: how to handle RTL?
-        placeNear: function(left, top){
-          var newLeft = left - this.width + this.menuButton.getVisibleWidth();
-          // don't show left from the portlet, in that extremely rare
-          // case use the old left
-          if (newLeft < this.portlet.getPageLeft()) {
-            newLeft = left;
-          }
-          return this.Super('placeNear', [newLeft, top]);
-        }
-      })
-    
-    });
+    this.menuButton = isc.OBWidgetMenuItem.create({portlet: this});
 
     headerControls.push(this.menuButton);
 
