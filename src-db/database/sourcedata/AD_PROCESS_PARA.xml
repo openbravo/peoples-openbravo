@@ -1088,9 +1088,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--198-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--198-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--198-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--198-->  <NAME><![CDATA[Contract Date]]></NAME>
-<!--198-->  <DESCRIPTION><![CDATA[The date a contract is registered into the application.]]></DESCRIPTION>
-<!--198-->  <HELP><![CDATA[The contract date is used to determine when the document becomes effective. This is usually the contract date.  The contract date is used in reports and report parameters.]]></HELP>
+<!--198-->  <NAME><![CDATA[Planned End Date]]></NAME>
+<!--198-->  <DESCRIPTION><![CDATA[The planned end data is when a contract is registered into the application.]]></DESCRIPTION>
+<!--198-->  <HELP><![CDATA[The planned end date is used to determine when the document becomes effective. This is usually the contract date.  The planned end date is used in reports and report parameters.]]></HELP>
 <!--198-->  <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
 <!--198-->  <SEQNO><![CDATA[70]]></SEQNO>
 <!--198-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
@@ -1107,9 +1107,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--199-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--199-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--199-->  <NAME><![CDATA[Ending Date]]></NAME>
+<!--199-->  <NAME><![CDATA[Real End Date]]></NAME>
 <!--199-->  <DESCRIPTION><![CDATA[The date that a task, process, or action is to be completed or delivered by.]]></DESCRIPTION>
-<!--199-->  <HELP><![CDATA[The finish date is used to indicate when the project is expected to be completed or has been completed.]]></HELP>
+<!--199-->  <HELP><![CDATA[The real end date is used to indicate when the project is expected to be completed or has been completed.]]></HELP>
 <!--199-->  <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
 <!--199-->  <SEQNO><![CDATA[80]]></SEQNO>
 <!--199-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>

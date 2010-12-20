@@ -802,7 +802,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Contract Date:]]></text>
+				<text><![CDATA[Planned End Date:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

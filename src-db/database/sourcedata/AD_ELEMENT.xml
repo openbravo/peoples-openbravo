@@ -9116,10 +9116,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1556-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1556-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1556-->  <COLUMNNAME><![CDATA[DateContract]]></COLUMNNAME>
-<!--1556-->  <NAME><![CDATA[Contract Date]]></NAME>
-<!--1556-->  <PRINTNAME><![CDATA[Contract Date]]></PRINTNAME>
-<!--1556-->  <DESCRIPTION><![CDATA[The date a contract is registered into the application.]]></DESCRIPTION>
-<!--1556-->  <HELP><![CDATA[The contract date is used to determine when the document becomes effective. This is usually the contract date.  The contract date is used in reports and report parameters.]]></HELP>
+<!--1556-->  <NAME><![CDATA[Planned End Date]]></NAME>
+<!--1556-->  <PRINTNAME><![CDATA[Planned End Date]]></PRINTNAME>
+<!--1556-->  <DESCRIPTION><![CDATA[The planned end data is when a contract is registered into the application.]]></DESCRIPTION>
+<!--1556-->  <HELP><![CDATA[The planned end date is used to determine when the document becomes effective. This is usually the contract date.  The planned end date is used in reports and report parameters.]]></HELP>
 <!--1556-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1556--></AD_ELEMENT>
 
@@ -9129,10 +9129,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1557-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1557-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1557-->  <COLUMNNAME><![CDATA[DateFinish]]></COLUMNNAME>
-<!--1557-->  <NAME><![CDATA[Ending Date]]></NAME>
-<!--1557-->  <PRINTNAME><![CDATA[Finish Date]]></PRINTNAME>
+<!--1557-->  <NAME><![CDATA[Real End Date]]></NAME>
+<!--1557-->  <PRINTNAME><![CDATA[Real End Date]]></PRINTNAME>
 <!--1557-->  <DESCRIPTION><![CDATA[The date that a task, process, or action is to be completed or delivered by.]]></DESCRIPTION>
-<!--1557-->  <HELP><![CDATA[The finish date is used to indicate when the project is expected to be completed or has been completed.]]></HELP>
+<!--1557-->  <HELP><![CDATA[The real end date is used to indicate when the project is expected to be completed or has been completed.]]></HELP>
 <!--1557-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1557--></AD_ELEMENT>
 
