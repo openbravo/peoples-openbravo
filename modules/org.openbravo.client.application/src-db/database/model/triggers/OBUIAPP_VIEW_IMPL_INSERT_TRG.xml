@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="TRIGGER OBUIAPP_VIEW_IMPL_INSERT">
-    <trigger name="OBUIAPP_VIEW_IMPL_INSERT" table="OBUIAPP_VIEW_IMPL" fires="after" insert="true" update="false" delete="false" foreach="row">
+  <database name="TRIGGER OBUIAPP_VIEW_IMPL_INSERT_TRG">
+    <trigger name="OBUIAPP_VIEW_IMPL_INSERT_TRG" table="OBUIAPP_VIEW_IMPL" fires="after" insert="true" update="false" delete="false" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -34,9 +34,7 @@ BEGIN
     now(), '0'
   FROM AD_Role r
    WHERE isManual='N';
-
-  RETURN NEW;
-END OBUIAPP_VIEW_IMPL_INSERT
+END OBUIAPP_VIEW_IMPL_INSERT_TRG
 ]]></body>
     </trigger>
   </database>
