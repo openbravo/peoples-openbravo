@@ -71,12 +71,10 @@ public class FormInitializationComponent extends BaseActionHandler {
   private static final int MAX_CALLOUT_CALLS = 10;
 
   private HttpServletResponse response;
-  private ServletContext context;
 
   public void doPost(HttpServletRequest localRequest, HttpServletResponse localResponse,
       ServletContext localContext) throws IOException {
     this.response = localResponse;
-    this.context = localContext;
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("MODE", "NEW");
     parameters.put("TAB_ID", "186");
