@@ -152,6 +152,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       ArrayList<String> allColumns = new ArrayList<String>();
       ArrayList<String> calloutsToCall = new ArrayList<String>();
       ArrayList<String> lastfieldChanged = new ArrayList<String>();
+      List<String> changeEventCols = new ArrayList<String>();
 
       for (Field field : fields) {
         columnsOfFields.put(field.getColumn().getDBColumnName(), field);
@@ -159,7 +160,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Calculation of validation dependencies
       HashMap<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
-      computeListOfColumnsSortedByValidationDependencies(tab, allColumns, columnsInValidation);
+      computeListOfColumnsSortedByValidationDependencies(tab, allColumns, columnsInValidation,
+          changeEventCols);
 
       // Computation of the Auxiliary Input values
       OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
@@ -196,7 +198,11 @@ public class FormInitializationComponent extends BaseActionHandler {
             // On NEW mode, the values are computed through the UIDefinition (the defaults will be
             // used)
             value = uiDef.getFieldProperties(field, false);
-          } else if (mode.equals("EDIT")) {
+          } else if (mode.equals("EDIT")
+              || (mode.equals("CHANGE") && changeEventCols.contains(changedColumn))) {
+            // On EDIT mode, the values are computed through the UIDefinition (the values have been
+            // previously set in the RequestContext)
+            // This is also done this way on CHANGE mode where a combo reload is needed
             value = uiDef.getFieldProperties(field, true);
           } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
             // On CHANGE and SETSESSION mode, the values are read from the request
@@ -298,25 +304,14 @@ public class FormInitializationComponent extends BaseActionHandler {
         finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
 
         if (mode.equals("NEW") || mode.equals("EDIT")) {
-          List<String> changeEventCols = new ArrayList<String>();
           // We also include information related to validation dependencies
+          // and we add the columns which have a callout
           for (Field field : fields) {
-            String column = field.getColumn().getDBColumnName();
-            // also call on change for every column with a callout
             if (field.getColumn().getCallout() != null) {
               final String columnName = "inp"
                   + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
               if (!changeEventCols.contains(columnName)) {
                 changeEventCols.add(columnName);
-              }
-            }
-            if (columnsInValidation.get(column) != null
-                && columnsInValidation.get(column).size() > 0) {
-              for (String colInVal : columnsInValidation.get(column)) {
-                final String columnName = "inp" + Sqlc.TransformaNombreColumna(colInVal);
-                if (!changeEventCols.contains(columnName)) {
-                  changeEventCols.add(columnName);
-                }
               }
             }
           }
@@ -337,7 +332,8 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void computeListOfColumnsSortedByValidationDependencies(Tab tab,
-      ArrayList<String> sortedColumns, HashMap<String, List<String>> columnsInValidation) {
+      ArrayList<String> sortedColumns, HashMap<String, List<String>> columnsInValidation,
+      List<String> changeEventCols) {
     List<Field> fields = tab.getADFieldList();
     ArrayList<String> columns = new ArrayList<String>();
     List<String> columnsWithValidation = new ArrayList<String>();
@@ -405,6 +401,22 @@ public class FormInitializationComponent extends BaseActionHandler {
       finalCols += col + ",";
     }
     log.debug("Final order of column computation: " + finalCols);
+
+    // We also fill the changeEventCols
+    // These are the columns which should trigger a CHANGE request to the FIC (because either they
+    // require a combo reload because they are used in a validation, or there is a callout
+    // associated with them)
+    for (Field field : fields) {
+      String column = field.getColumn().getDBColumnName();
+      if (columnsInValidation.get(column) != null && columnsInValidation.get(column).size() > 0) {
+        for (String colInVal : columnsInValidation.get(column)) {
+          final String columnName = "inp" + Sqlc.TransformaNombreColumna(colInVal);
+          if (!changeEventCols.contains(columnName)) {
+            changeEventCols.add(columnName);
+          }
+        }
+      }
+    }
   }
 
   private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
