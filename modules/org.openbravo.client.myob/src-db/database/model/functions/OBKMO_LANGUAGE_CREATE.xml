@@ -73,7 +73,6 @@
                           
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('- OBKMO_LANGUAGE_CREATE: obkmo_widget_class_menu_trl ' || v_rowcount) ;
-
 END OBKMO_LANGUAGE_CREATE
 ]]></body>
     </function>
