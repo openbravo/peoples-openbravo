@@ -138,10 +138,24 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (parentTab != null && parentRecord != null) {
         setSessionValues(parentRecord, parentTab);
       }
+      // We also need to set the current record values in the request
       if (mode.equals("EDIT")) {
-        // We also need to set the current record values in the request
+        // In EDIT mode we get them from the database
         for (Field field : fields) {
           setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
+        }
+      } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
+        // In CHANGE and SETSESSION we get them from the request
+        for (Field field : fields) {
+          String inpColName = "inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+          try {
+            if (jsContent.has(inpColName)) {
+              RequestContext.get().setRequestParameter(inpColName, jsContent.getString(inpColName));
+            }
+          } catch (Exception e) {
+            log.error("Couldn't read column value from the request for column " + inpColName, e);
+          }
         }
       }
       HashMap<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
@@ -195,7 +209,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, false);
           } else if (mode.equals("EDIT")) {
             value = uiDef.getFieldProperties(field, true);
-          } else if (mode.equals("CHANGE") || (mode.equals("SETSESSION"))) {
+          } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
             // On CHANGE and SETSESSION mode, the values are read from the request
             JSONObject jsCol = new JSONObject();
             String colName = "inp" + Sqlc.TransformaNombreColumna(col);
