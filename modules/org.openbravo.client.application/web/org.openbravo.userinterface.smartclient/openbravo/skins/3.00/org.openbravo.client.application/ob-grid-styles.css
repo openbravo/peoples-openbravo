@@ -85,12 +85,12 @@
 
 .OBGridCellSelectedOver,
 .OBGridCellSelectedOverDark {
-  background-color: #e1e1e1;
+  background-color: #ffe1c0;
 }
 
 .OBGridCellEditSelectedOver,
 .OBGridCellEditSelectedOverDark {
-  background-color: #e1e1e1;
+  background-color: #ffe1c0;
 }
 
 .OBGridFilterCell {
