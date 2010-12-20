@@ -91,7 +91,6 @@ public class FormInitializationComponent extends BaseActionHandler {
   // @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode(true);
-
     long iniTime = System.currentTimeMillis();
     try {
       // OBCriteria<Tab> tabs = OBDal.getInstance().createCriteria(Tab.class);
@@ -119,6 +118,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       String rowId = (String) parameters.get("ROW_ID");
       String changedColumn = (String) parameters.get("CHANGED_COLUMN");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      List<Field> fields = tab.getADFieldList();
       BaseOBObject row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       Tab parentTab = null;
       BaseOBObject parentRecord = null;
@@ -138,12 +138,17 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (parentTab != null && parentRecord != null) {
         setSessionValues(parentRecord, parentTab);
       }
+      if (mode.equals("EDIT")) {
+        // We also need to set the current record values in the request
+        for (Field field : fields) {
+          setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
+        }
+      }
       HashMap<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
       HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
       ArrayList<String> allColumns = new ArrayList<String>();
       ArrayList<String> calloutsToCall = new ArrayList<String>();
       ArrayList<String> lastfieldChanged = new ArrayList<String>();
-      List<Field> fields = tab.getADFieldList();
 
       for (Field field : fields) {
         columnsOfFields.put(field.getColumn().getDBColumnName(), field);
@@ -152,6 +157,30 @@ public class FormInitializationComponent extends BaseActionHandler {
       // Calculation of validation dependencies
       HashMap<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
       computeListOfColumnsSortedByValidationDependencies(tab, allColumns, columnsInValidation);
+
+      // Computation of the Auxiliary Input values
+      OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
+      auxInC.add(Expression.eq(AuxiliaryInput.PROPERTY_TAB, tab));
+      List<AuxiliaryInput> auxInputs = auxInC.list();
+      for (AuxiliaryInput auxIn : auxInputs) {
+        Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
+        System.out.println("Final Value " + auxIn.getName() + ": " + value);
+        JSONObject jsonObj = new JSONObject();
+        try {
+          jsonObj.put("value", value);
+        } catch (JSONException e) {
+          log.error("Error while computing auxiliary input " + auxIn.getName(), e);
+        }
+        columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
+        RequestContext.get().setRequestParameter(
+            "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
+            value == null ? null : value.toString());
+        // Now we insert session values for auxiliary inputs
+        if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
+          setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), columnValues.get("inp"
+              + Sqlc.TransformaNombreColumna(auxIn.getName())));
+        }
+      }
 
       // Column values are set in the RequestContext
       for (String col : allColumns) {
@@ -165,7 +194,6 @@ public class FormInitializationComponent extends BaseActionHandler {
             // used)
             value = uiDef.getFieldProperties(field, false);
           } else if (mode.equals("EDIT")) {
-            setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
             value = uiDef.getFieldProperties(field, true);
           } else if (mode.equals("CHANGE") || (mode.equals("SETSESSION"))) {
             // On CHANGE and SETSESSION mode, the values are read from the request
@@ -204,29 +232,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
 
-      // Computation of the Auxiliary Input values
-      OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
-      auxInC.add(Expression.eq(AuxiliaryInput.PROPERTY_TAB, tab));
-      List<AuxiliaryInput> auxInputs = auxInC.list();
-      for (AuxiliaryInput auxIn : auxInputs) {
-        Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
-        System.out.println("Final Value " + auxIn.getName() + ": " + value);
-        JSONObject jsonObj = new JSONObject();
-        try {
-          jsonObj.put("value", value);
-        } catch (JSONException e) {
-          log.error("Error while computing auxiliary input " + auxIn.getName(), e);
-        }
-        columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
-        RequestContext.get().setRequestParameter(
-            "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
-            value == null ? null : value.toString());
-        // Now we insert session values for auxiliary inputs
-        if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
-          setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), columnValues.get("inp"
-              + Sqlc.TransformaNombreColumna(auxIn.getName())));
-        }
-      }
       // System.out.println("Field values");
       // System.out.println("************");
       // for (Field field : fields) {
