@@ -109,6 +109,7 @@ public class JsonReadRestTest extends JsonRestTest {
   /**
    * Paged query.
    */
+  @SuppressWarnings("deprecation")
   public void testPageRest() throws Exception {
     setSystemAdministratorContext();
     final OBCriteria<Column> colCriteria = OBDal.getInstance().createCriteria(Column.class);
