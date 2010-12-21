@@ -18,11 +18,13 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+import org.openbravo.client.kernel.RequestContext;
 
 /**
  * Implementation of the date ui definition.
@@ -31,8 +33,8 @@ import org.openbravo.base.model.domaintype.PrimitiveDomainType;
  */
 public class DateUIDefinition extends UIDefinition {
 
-  private static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
-  private static final String PATTERN_T = "yyyy-MM-dd'T'HH:mm:ss";
+  private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
+
   private SimpleDateFormat format = null;
 
   public SimpleDateFormat getFormat() {
@@ -61,9 +63,10 @@ public class DateUIDefinition extends UIDefinition {
       }
       SimpleDateFormat lformat;
       if (value.contains("T")) {
-        lformat = new SimpleDateFormat(PATTERN_T);
-      } else {
         lformat = new SimpleDateFormat(PATTERN);
+      } else {
+        String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT").toString();
+        lformat = new SimpleDateFormat(pattern);
       }
       lformat.setLenient(true);
       final Date date = lformat.parse(value);
@@ -81,5 +84,20 @@ public class DateUIDefinition extends UIDefinition {
         + "normalDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},");
     return sb.toString();
+  }
+
+  public String formatValueToSQL(String value) {
+    SimpleDateFormat lformat = new SimpleDateFormat(PATTERN);
+    lformat.setLenient(true);
+    Date date;
+    try {
+      date = lformat.parse(value);
+    } catch (ParseException e) {
+      throw new OBException("Couldn't parse date: " + value, e);
+    }
+    String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT").toString();
+    SimpleDateFormat outFormat = new SimpleDateFormat(pattern);
+    outFormat.setLenient(true);
+    return outFormat.format(date);
   }
 }
