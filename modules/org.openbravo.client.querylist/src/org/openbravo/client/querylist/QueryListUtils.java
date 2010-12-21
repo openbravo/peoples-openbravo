@@ -50,7 +50,7 @@ public class QueryListUtils {
       final List<JSONObject> jsonFields = new ArrayList<JSONObject>();
       if (!widgetClass.getOBCQLWidgetQueryList().isEmpty()) {
         for (OBCQL_QueryColumn column : QueryListUtils.getColumns(widgetClass
-            .getOBCQLWidgetQueryList().get(0), includeIn)) {
+            .getOBCQLWidgetQueryList().get(0))) {
           final JSONObject field = new JSONObject();
           final Reference reference;
           if (column.getReferenceSearchKey() != null) {
@@ -116,6 +116,13 @@ public class QueryListUtils {
             field.put("summaryFunction", column.getSummarizeType());
           }
 
+          field.put("canExport", true);
+          if ("E".equals(column.getIncludeIn())
+              || ("M".equals(column.getIncludeIn()) && includeIn.equals(IncludeIn.WidgetView))) {
+            field.put("hidden", true);
+            field.put("showIf", "false");
+          }
+
           try {
             final String fieldProperties = uiDefinition.getFieldProperties(null);
             if (fieldProperties != null && fieldProperties.trim().length() > 0) {
@@ -142,12 +149,10 @@ public class QueryListUtils {
 
   }
 
-  public static List<OBCQL_QueryColumn> getColumns(OBCQL_WidgetQuery query, IncludeIn includeIn) {
+  public static List<OBCQL_QueryColumn> getColumns(OBCQL_WidgetQuery query) {
     OBCriteria<OBCQL_QueryColumn> obcColumns = OBDal.getInstance().createCriteria(
         OBCQL_QueryColumn.class);
     obcColumns.add(Expression.eq(OBCQL_QueryColumn.PROPERTY_WIDGETQUERY, query));
-    obcColumns.add(Expression.in(OBCQL_QueryColumn.PROPERTY_INCLUDEIN, includeIn
-        .getIncludedValues()));
     obcColumns.addOrderBy(OBCQL_QueryColumn.PROPERTY_SEQUENCENUMBER, true);
     return obcColumns.list();
   }
