@@ -42,6 +42,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erputil.aprmigrationtool.utility.Value;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -422,6 +423,21 @@ public class AdvPaymentMngtDao {
     OBDal.getInstance().flush();
 
     return newPaymentProposalDetail;
+  }
+
+  public FIN_FinaccTransaction getFinancialTransaction(FIN_Payment payment) {
+    FIN_FinaccTransaction transaction = FIN_Utility.getOneInstance(FIN_FinaccTransaction.class,
+        new Value(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
+    if (transaction == null) {
+      transaction = getNewFinancialTransaction(payment.getOrganization(), payment.getCurrency(),
+          payment.getAccount(), TransactionsDao.getTransactionMaxLineNo(payment.getAccount()) + 10,
+          payment, payment.getDescription(), payment.getPaymentDate(), null, "RPPC", payment
+              .isReceipt() ? payment.getAmount() : BigDecimal.ZERO, !payment.isReceipt() ? payment
+              .getAmount().negate() : BigDecimal.ZERO, payment.getProject(), payment
+              .getSalesCampaign(), payment.getActivity(), payment.isReceipt() ? "BPD" : "BPW",
+          payment.getPaymentDate());
+    }
+    return transaction;
   }
 
   public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,
