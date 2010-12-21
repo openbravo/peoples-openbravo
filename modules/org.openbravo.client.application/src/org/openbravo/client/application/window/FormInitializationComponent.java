@@ -140,7 +140,10 @@ public class FormInitializationComponent extends BaseActionHandler {
               + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
           try {
             if (jsContent.has(inpColName)) {
-              RequestContext.get().setRequestParameter(inpColName, jsContent.getString(inpColName));
+              RequestContext.get().setRequestParameter(
+                  inpColName,
+                  jsContent.get(inpColName).equals("null") ? null : jsContent.get(inpColName)
+                      .toString());
             }
           } catch (Exception e) {
             log.error("Couldn't read column value from the request for column " + inpColName, e);
