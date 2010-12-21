@@ -157,7 +157,7 @@ isc.OBQueryListGrid.addProperties({
       requestProperties = {};
     }
     requestProperties.showPrompt = false;
-    if (requestProperties.params.exportToFile) {
+    if (requestProperties.params && requestProperties.params.exportToFile) {
       this.dataSource.dataFormat = requestProperties.exportAs;
     } else {
       this.dataSource.dataFormat = 'json';
