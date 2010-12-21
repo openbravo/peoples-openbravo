@@ -242,7 +242,7 @@
         UPDATE I_BudgetLine 
         SET AD_OrgTrx_ID=(
           SELECT AD_Org_ID FROM AD_Org o
-          WHERE I_BudgetLine.OrgTrxIdent=AD_COLUMN_IDENTIFIER('AD_ORG', TO_CHAR(o.AD_Org_ID), ?)
+          WHERE I_BudgetLine.OrgTrxIdent=AD_COLUMN_IDENTIFIER('AD_ORG', TO_CHAR(o.AD_Org_ID), ?) AND o.AD_CLIENT_ID = ?
         )
         WHERE AD_OrgTrx_ID IS NULL
          AND OrgTrxIdent IS NOT NULL
@@ -251,6 +251,7 @@
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
+    <Parameter name="ad_client_id"/>
     <Parameter name="ad_client_id"/>
   </SqlMethod>
 
