@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -115,7 +114,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         // used
         if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment())
           continue;
-        data[i] = new FieldProviderFactory(new HashMap());
+        data[i] = new FieldProviderFactory(null);
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
         FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
             .getId());
@@ -165,7 +164,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     FieldProviderFactory[] data = new FieldProviderFactory[1];
     OBContext.setAdminMode();
     try {
-      data[0] = new FieldProviderFactory(new HashMap());
+      data[0] = new FieldProviderFactory(null);
       FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
       FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
       FieldProviderFactory.setField(data[0], "adOrgId", transaction.getOrganization().getId());
@@ -671,7 +670,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     FieldProviderFactory[] data = new FieldProviderFactory[1];
     OBContext.setAdminMode();
     try {
-      data[0] = new FieldProviderFactory(new HashMap());
+      data[0] = new FieldProviderFactory(null);
       FieldProviderFactory.setField(data[0], "AD_Client_ID", transaction.getClient().getId());
       FieldProviderFactory.setField(data[0], "AD_Org_ID", transaction.getOrganization().getId());
       FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());

@@ -94,11 +94,11 @@ isc.OBViewForm.addProperties({
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID)
     }, function(response, data, request){
-      me.processInitialValues(response, data, request);
+      me.processFICReturn(response, data, request);
     });
   },
   
-  processInitialValues: function(response, data, request){
+  processFICReturn: function(response, data, request){
     // TODO: an error occured, handles this much better...
     if (!data) {
       return;
@@ -114,6 +114,8 @@ isc.OBViewForm.addProperties({
     }
     if (calloutMessages) {
       // show messages...
+      // code added to prevent jslint error
+      var __dummy = 0;  
     }
     if (auxInputs) {
       this.auxInputs = {};
@@ -162,14 +164,22 @@ isc.OBViewForm.addProperties({
   
   itemChanged: function(item, newValue) {
     var ret = this.Super("itemChanged", arguments);
-    var i;
-    for (i = 0; i < this.dynamicCols.length; i++) {
-      if (this.dynamicCols[i] === item.inpColumnName) {
-        this.doChangeFICCall(item);
-        return;      
+    item._doFICCall = true;
+    return ret;
+  },
+  
+  blurItem: function(item) {
+    if (item._doFICCall) {
+      var i;
+      for (i = 0; i < this.dynamicCols.length; i++) {
+        if (this.dynamicCols[i] === item.inpColumnName) {
+          item._doFICCall = false;
+          this.doChangeFICCall(item);
+          return;
+        }
       }
     }
-    return ret;
+    item._doFICCall = false;
   },
   
   doChangeFICCall: function(item) {
@@ -189,7 +199,7 @@ isc.OBViewForm.addProperties({
       ROW_ID: this.getValue(OB.Constants.ID),
       CHANGED_COLUMN: item.inpColumnName
     }, function(response, data, request){
-      me.processInitialValues(response, data, request);
+      me.processFICReturn(response, data, request);
     });
   }
 });

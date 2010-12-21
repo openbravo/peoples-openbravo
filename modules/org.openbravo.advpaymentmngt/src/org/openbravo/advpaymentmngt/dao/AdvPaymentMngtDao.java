@@ -29,6 +29,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.advpaymentmngt.utility.Value;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -422,6 +423,21 @@ public class AdvPaymentMngtDao {
     OBDal.getInstance().flush();
 
     return newPaymentProposalDetail;
+  }
+
+  public FIN_FinaccTransaction getFinancialTransaction(FIN_Payment payment) {
+    FIN_FinaccTransaction transaction = FIN_Utility.getOneInstance(FIN_FinaccTransaction.class,
+        new Value(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
+    if (transaction == null) {
+      transaction = getNewFinancialTransaction(payment.getOrganization(), payment.getCurrency(),
+          payment.getAccount(), TransactionsDao.getTransactionMaxLineNo(payment.getAccount()) + 10,
+          payment, payment.getDescription(), payment.getPaymentDate(), null, "RPPC", payment
+              .isReceipt() ? payment.getAmount() : BigDecimal.ZERO, !payment.isReceipt() ? payment
+              .getAmount().negate() : BigDecimal.ZERO, payment.getProject(), payment
+              .getSalesCampaign(), payment.getActivity(), payment.isReceipt() ? "BPD" : "BPW",
+          payment.getPaymentDate());
+    }
+    return transaction;
   }
 
   public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,

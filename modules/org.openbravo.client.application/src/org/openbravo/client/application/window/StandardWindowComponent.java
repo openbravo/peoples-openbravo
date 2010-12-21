@@ -54,6 +54,8 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   }
 
   public String getWindowClientClassName() {
+    // see the ViewComponent#correctViewId
+    // changes made in this if statement should also be done in that method
     if (isIndevelopment()) {
       return KernelConstants.ID_PREFIX + window.getId() + KernelConstants.ID_PREFIX + uniqueString;
     }

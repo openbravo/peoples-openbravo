@@ -174,7 +174,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
                   transactionLine.getFinPayment().setStatus("RPPC");
                 }
                 if (item.getTransactionDate().compareTo(transactionLine.getTransactionDate()) < 0) {
-                  // We set processed to false before changing dates to avoid trigger exception
+                  // Set processed to false before changing dates to avoid trigger exception
                   boolean posted = "Y".equals(transactionLine.getPosted());
                   if (posted) {
                     transactionLine.setPosted("N");
@@ -188,7 +188,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
                   transactionLine.setDateAcct(item.getTransactionDate());
                   OBDal.getInstance().save(transactionLine);
                   OBDal.getInstance().flush();
-                  // We set processed to true afterwards
+                  // Set processed to true afterwards
                   transactionLine.setProcessed(true);
                   OBDal.getInstance().save(transactionLine);
                   OBDal.getInstance().flush();
@@ -404,10 +404,13 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBDal.getInstance().save(bsline);
       OBDal.getInstance().flush();
 
-      if (finTrans.getFinPayment() != null) {
-        finTrans.getFinPayment()
-            .setStatus((finTrans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
+      if (finTrans != null) {
+        if (finTrans.getFinPayment() != null) {
+          finTrans.getFinPayment().setStatus(
+              (finTrans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
+        }
         finTrans.setStatus((finTrans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
+        finTrans.setReconciliation(null);
         OBDal.getInstance().save(finTrans);
         OBDal.getInstance().flush();
       }
@@ -462,6 +465,15 @@ public class MatchTransaction extends HttpSecureAppServlet {
             matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
           }
           transaction = matched.getTransaction();
+          // if (transaction != null) {
+          // FIN_BankStatementLine bsl = FIN_BankStatementLines[i];
+          // bsl.setFinancialAccountTransaction(transaction);
+          // bsl.setMatchingtype(matched.getMatchLevel());
+          // // FIXME payment CLEARING
+          // OBDal.getInstance().save(transaction);
+          // OBDal.getInstance().save(bsl);
+          // OBDal.getInstance().flush();
+          // }
           excluded.add(transaction);
           matchingType = matched.getMatchLevel();
 
@@ -479,17 +491,17 @@ public class MatchTransaction extends HttpSecureAppServlet {
         // CREDIT - DEBIT
         FieldProviderFactory.setField(data[i], "bankLineAmount", FIN_BankStatementLines[i]
             .getCramount().subtract(FIN_BankStatementLines[i].getDramount()).toString());
-        FieldProviderFactory.setField(data[i], "matchStyle", matchingType
-            .equals(FIN_MatchedTransaction.STRONG) ? COLOR_STRONG : ((matchingType
-            .equals(FIN_MatchedTransaction.WEAK)) ? COLOR_WEAK : COLOR_WHITE));
+        FieldProviderFactory.setField(data[i], "matchStyle", FIN_MatchedTransaction.STRONG
+            .equals(matchingType) ? COLOR_STRONG : ((FIN_MatchedTransaction.WEAK
+            .equals(matchingType)) ? COLOR_WEAK : ((FIN_MatchedTransaction.NOMATCH
+            .equals(matchingType)) ? COLOR_WHITE : matchingType)));
         FieldProviderFactory.setField(data[i], "matchingType", matchingType);
 
         if (transaction != null) {
           FieldProviderFactory.setField(data[i], "disabled", "N");
           // Auto Matching or already matched
-          FieldProviderFactory.setField(data[i], "checked",
-              (matchingType.equals(FIN_MatchedTransaction.STRONG) || transaction
-                  .getReconciliation() != null) ? "Y" : "N");
+          FieldProviderFactory.setField(data[i], "checked", (FIN_MatchedTransaction.STRONG
+              .equals(matchingType) || transaction.getReconciliation() != null) ? "Y" : "N");
           FieldProviderFactory.setField(data[i], "finTransactionId", transaction.getId());
           FieldProviderFactory.setField(data[i], "transactionDate", Utility.formatDate(transaction
               .getTransactionDate().compareTo(reconciliation.getEndingDate()) > 0 ? reconciliation

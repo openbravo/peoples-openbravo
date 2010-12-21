@@ -52,7 +52,14 @@ public class Property {
   private Entity targetEntity;
   private boolean id;
   private boolean isInactive;
+
   private Property referencedProperty;
+  // is this a property which is referenced by another property
+  // if this === otherProperty.referencedProperty then this
+  // member is true, these properties can be accessed also
+  // in derived read mode
+  private boolean isBeingReferenced;
+
   private String name;
   private String columnName;
   private String columnId;
@@ -267,6 +274,7 @@ public class Property {
    */
   public void setReferencedProperty(Property referencedProperty) {
     this.referencedProperty = referencedProperty;
+    referencedProperty.setBeingReferenced(true);
     setTargetEntity(referencedProperty.getEntity());
   }
 
@@ -467,15 +475,22 @@ public class Property {
   }
 
   /**
-   * Identifier and Id properties are derived readable, all other properties are not derived
-   * readable.
+   * Identifier, Id, audit info, active, client/organization properties are derived readable, in
+   * addition properties which are referenced by other properties are derived readable, all other
+   * properties are not derived readable.
    * 
    * @return true if derived readable for the current user, false otherwise.
+   * @see Property#isActiveColumn()
+   * @see Property#isAuditInfo()
+   * @see Property#isBeingReferenced()
+   * @see Property#isClientOrOrganization()
+   * @see Property#isIdentifier()
+   * @see Property#isId()
    */
   public boolean allowDerivedRead() {
     if (allowDerivedRead == null) {
       allowDerivedRead = isActiveColumn() || isAuditInfo() || isId() || isIdentifier()
-          || isClientOrOrganization();
+          || isClientOrOrganization() || isBeingReferenced();
     }
     return allowDerivedRead;
   }
@@ -986,5 +1001,21 @@ public class Property {
 
   public void setColumnId(String columnId) {
     this.columnId = columnId;
+  }
+
+  /**
+   * Is this a property which is referenced by another property if this ===
+   * otherProperty.referencedProperty then this method returns true. Referenced properties are also
+   * accessible in derived read mode.
+   * 
+   * @return true if this property is being referenced by another property in the model.
+   * @see Property#getReferencedProperty()
+   */
+  public boolean isBeingReferenced() {
+    return isBeingReferenced;
+  }
+
+  public void setBeingReferenced(boolean isBeingReferenced) {
+    this.isBeingReferenced = isBeingReferenced;
   }
 }

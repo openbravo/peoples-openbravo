@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -90,7 +89,7 @@ public class DocFINPayment extends AcctServer {
         // used
         if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment())
           continue;
-        data[i] = new FieldProviderFactory(new HashMap());
+        data[i] = new FieldProviderFactory(null);
         FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
             .getId());
         FieldProviderFactory.setField(data[i], "AD_Org_ID", paymentDetails.get(i).getOrganization()
@@ -336,7 +335,7 @@ public class DocFINPayment extends AcctServer {
       throws ServletException {
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Id);
     FieldProviderFactory[] data = new FieldProviderFactory[1];
-    data[0] = new FieldProviderFactory(new HashMap());
+    data[0] = new FieldProviderFactory(null);
     FieldProviderFactory.setField(data[0], "AD_Client_ID", payment.getClient().getId());
     FieldProviderFactory.setField(data[0], "AD_Org_ID", payment.getOrganization().getId());
     FieldProviderFactory.setField(data[0], "C_BPartner_ID",

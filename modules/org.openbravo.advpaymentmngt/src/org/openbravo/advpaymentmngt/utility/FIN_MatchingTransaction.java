@@ -46,10 +46,10 @@ public class FIN_MatchingTransaction {
     }
   }
 
-  public FIN_MatchedTransaction match(FIN_BankStatementLine _financialTransaction,
+  public FIN_MatchedTransaction match(FIN_BankStatementLine _bankstatementLine,
       List<FIN_FinaccTransaction> excluded) throws ServletException, NoAlgorithmFoundException {
     if (algorithm != null)
-      return algorithm.match(_financialTransaction, excluded);
+      return algorithm.match(_bankstatementLine, excluded);
     else
       throw new NoAlgorithmFoundException(
           "No algorithm has been defined to match bank statement lines");

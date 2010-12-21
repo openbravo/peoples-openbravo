@@ -45,6 +45,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.ElementTrl;
@@ -538,6 +539,89 @@ public class FIN_Utility {
     if (strMessage == null || strMessage.equals(""))
       strMessage = strCode;
     return Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
+
+  }
+
+  /**
+   * Generic OBCriteria.
+   * 
+   * @param clazz
+   *          Class (entity).
+   * @param values
+   *          Value. Property, value and operator.
+   * @return All the records that satisfy the conditions.
+   */
+  public static <T extends BaseOBObject> List<T> getAllInstances(Class<T> clazz, Value... values) {
+    OBCriteria<T> obc = OBDal.getInstance().createCriteria(clazz);
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnReadableOrganization(false);
+    obc.add(Expression.ne(Client.PROPERTY_ID, "0"));
+    for (Value value : values) {
+      if (value.getValue() == null && "==".equals(value.getOperator())) {
+        obc.add(Expression.isNull(value.getField()));
+      } else if (value.getValue() == null && "!=".equals(value.getOperator())) {
+        obc.add(Expression.isNotNull(value.getField()));
+      } else if ("==".equals(value.getOperator())) {
+        obc.add(Expression.eq(value.getField(), value.getValue()));
+      } else if ("!=".equals(value.getOperator())) {
+        obc.add(Expression.ne(value.getField(), value.getValue()));
+      } else if ("<".equals(value.getOperator())) {
+        obc.add(Expression.lt(value.getField(), value.getValue()));
+      } else if (">".equals(value.getOperator())) {
+        obc.add(Expression.gt(value.getField(), value.getValue()));
+      } else if ("<=".equals(value.getOperator())) {
+        obc.add(Expression.le(value.getField(), value.getValue()));
+      } else if (">=".equals(value.getOperator())) {
+        obc.add(Expression.ge(value.getField(), value.getValue()));
+      } else {
+        obc.add(Expression.eq(value.getField(), value.getValue()));
+      }
+    }
+    return obc.list();
+  }
+
+  /**
+   * Generic OBCriteria.
+   * 
+   * @param clazz
+   *          Class (entity).
+   * @param values
+   *          Value. Property, value and operator.
+   * @return One record that satisfies the conditions.
+   */
+  public static <T extends BaseOBObject> T getOneInstance(Class<T> clazz, Value... values) {
+    OBCriteria<T> obc = OBDal.getInstance().createCriteria(clazz);
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnReadableOrganization(false);
+    obc.add(Expression.ne(Client.PROPERTY_ID, "0"));
+    for (Value value : values) {
+      if (value.getValue() == null && "==".equals(value.getOperator())) {
+        obc.add(Expression.isNull(value.getField()));
+      } else if (value.getValue() == null && "!=".equals(value.getOperator())) {
+        obc.add(Expression.isNotNull(value.getField()));
+      } else if ("==".equals(value.getOperator())) {
+        obc.add(Expression.eq(value.getField(), value.getValue()));
+      } else if ("!=".equals(value.getOperator())) {
+        obc.add(Expression.ne(value.getField(), value.getValue()));
+      } else if ("<".equals(value.getOperator())) {
+        obc.add(Expression.lt(value.getField(), value.getValue()));
+      } else if (">".equals(value.getOperator())) {
+        obc.add(Expression.gt(value.getField(), value.getValue()));
+      } else if ("<=".equals(value.getOperator())) {
+        obc.add(Expression.le(value.getField(), value.getValue()));
+      } else if (">=".equals(value.getOperator())) {
+        obc.add(Expression.ge(value.getField(), value.getValue()));
+      } else {
+        obc.add(Expression.eq(value.getField(), value.getValue()));
+      }
+    }
+
+    final List<T> listt = obc.list();
+    if (listt != null && listt.size() > 0) {
+      return listt.get(0);
+    } else {
+      return null;
+    }
 
   }
 

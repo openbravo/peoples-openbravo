@@ -326,8 +326,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
       FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(paymentDetails);
       for (int i = 0; i < data.length; i++) {
-        FieldProviderFactory.setField(data[i], "cglitemid", paymentDetailArray[i].getGLItem()
-            .getIdentifier());
+        FieldProviderFactory.setField(data[i], "cglitemid",
+            paymentDetailArray[i].getGLItem() != null ? paymentDetailArray[i].getGLItem()
+                .getIdentifier() : "");
         FieldProviderFactory.setField(data[i], "amount", paymentDetailArray[i].getAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "finpaymentdetailid", paymentDetailArray[i].getId());

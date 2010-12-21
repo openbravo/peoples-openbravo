@@ -82,6 +82,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
         continue;
       }
       final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+      if (property.getDomainType() instanceof ButtonDomainType) {
+        continue;
+      }
 
       // a button domain type, continue for now
       if (property.getDomainType() instanceof ButtonDomainType) {
