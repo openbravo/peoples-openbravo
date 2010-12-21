@@ -510,6 +510,8 @@ isc.OBViewGrid.addProperties({
   
   // selectionChanged is called when the user makes changes
   selectionChanged: function(record, state){
+    this.stopHover();
+    
     // stop editing if the selection is changing  
     var rowNum = this.getRecordIndex(record);
     
