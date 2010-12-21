@@ -374,8 +374,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       ConnectionProvider connectionProvider, FIN_Payment payment) {
     FIN_FinaccTransaction transaction = TransactionsDao.createFinAccTransaction(payment);
     TransactionsDao.process(transaction);
-    // TODO posting process
-    // TransactionsDao.post(vars, connectionProvider, transaction);
     return;
   }
 
