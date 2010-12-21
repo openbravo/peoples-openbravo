@@ -57,17 +57,7 @@ public class ViewComponent extends BaseComponent {
     try {
       OBContext.setAdminMode();
 
-      Window window = getWindow(viewId);
-
-      // the case if a window is in development and has a unique making postfix
-      // see the StandardWindowComponent.getWindowClientClassName method
-      String correctedViewId = (viewId.startsWith(KernelConstants.ID_PREFIX) ? viewId.substring(1)
-          : viewId);
-      if (window == null && correctedViewId.contains(KernelConstants.ID_PREFIX)) {
-        final int index = correctedViewId.indexOf(KernelConstants.ID_PREFIX);
-        correctedViewId = correctedViewId.substring(0, index);
-        window = OBDal.getInstance().get(Window.class, correctedViewId);
-      }
+      final Window window = OBDal.getInstance().get(Window.class, correctViewId(viewId));
 
       if (window != null) {
         FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess("MW",
@@ -128,17 +118,10 @@ public class ViewComponent extends BaseComponent {
     }
   }
 
-  private Window getWindow(String viewId) {
-    // is this a window
-    final String correctedViewId = (viewId.startsWith(KernelConstants.ID_PREFIX) ? viewId
-        .substring(1) : viewId);
-    return OBDal.getInstance().get(Window.class, correctedViewId);
-  }
-
   @Override
   public Module getModule() {
     final String id = getParameter("viewId");
-    final Window window = getWindow(id);
+    final Window window = OBDal.getInstance().get(Window.class, correctViewId(id));
     if (window != null) {
       return window.getModule();
     } else {
@@ -149,6 +132,20 @@ public class ViewComponent extends BaseComponent {
         return super.getModule();
       }
     }
+  }
+
+  protected String correctViewId(String viewId) {
+    // the case if a window is in development and has a unique making postfix
+    // see the StandardWindowComponent.getWindowClientClassName method
+    // changes made here should also be done there
+    String correctedViewId = (viewId.startsWith(KernelConstants.ID_PREFIX) ? viewId.substring(1)
+        : viewId);
+    // if in consultants mode, do another conversion
+    if (correctedViewId.contains(KernelConstants.ID_PREFIX)) {
+      final int index = correctedViewId.indexOf(KernelConstants.ID_PREFIX);
+      correctedViewId = correctedViewId.substring(0, index);
+    }
+    return correctedViewId;
   }
 
   @Override
