@@ -370,6 +370,7 @@ isc.OBDateItem.addProperties({
       this.checkOBDateItemValue();
       this.inBlur = false;
     }
+    return this.Super("blur", arguments);
   },
   
   // ** {{{ displayFormat }}} **
@@ -799,6 +800,7 @@ isc.OBNumberItem.addProperties({
   blur: function(form, item){
     item.blurNumberInput(item.maskNumeric, item.decSeparator, item.groupSeparator, item.groupInterval);
     item.validateOBNumberItem();
+    return this.Super("blur", arguments);
   },
   
   keyDown: function(item, form, keyName){
@@ -826,5 +828,10 @@ OB.I18N.getLabel('OBUISC_Validator.requiredField', null, isc.OBDateTimeItem, 're
 isc.FormItem.addProperties({
   titleClick: function(form, item){
     item.focusInItem();
-  }
+  },
+  blur : function (form, item) {
+    if (form && form.blurItem) {
+      form.blurItem(item);
+    }    
+  }  
 });
