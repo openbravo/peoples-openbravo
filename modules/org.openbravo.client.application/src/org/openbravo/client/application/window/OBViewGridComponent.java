@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
@@ -104,6 +105,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         if (prop.isId()) {
           continue;
         }
+        if (!fld.isDisplayed()) {
+          continue;
+        }
+        if (prop.getDomainType() instanceof ButtonDomainType) {
+          continue;
+        }
         // these are currently also ignored
         if (fld.getGridPosition() == null && fld.getSequenceNumber() == null) {
           continue;
@@ -120,6 +127,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
           continue;
         }
         if (prop.isId()) {
+          continue;
+        }
+        if (!fld.isDisplayed()) {
+          continue;
+        }
+        if (prop.getDomainType() instanceof ButtonDomainType) {
           continue;
         }
         fields.add(createLocalField(fld, prop, false));
