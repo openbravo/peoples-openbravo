@@ -44,8 +44,8 @@ public abstract class DocFINPaymentTemplate {
    *          accounting schema
    * @return Fact
    */
-  public abstract Fact createFact(DocFINPayment docAccDefPlan, AcctSchema as,
-      ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
+  public abstract Fact createFact(DocFINPayment docPayment, AcctSchema as, ConnectionProvider conn,
+      Connection con, VariablesSecureApp vars) throws ServletException;
 
   public String getServletInfo() {
     return "Servlet for the accounting";
