@@ -19,4 +19,22 @@
 
 isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 
+isc.OBGrid.addProperties({
+  exportData: function(requestProperties, additionalProperties) {
+    // var criteria = this.getCriteria();
+    var dsURL = this.dataSource.dataURL;
+    var data = {
+        _dataSource: this.dataSource.ID,
+        _operationType: 'fetch',
+        exportFormat: 'csv',
+        exportToFile: (requestProperties
+                       && requestProperties.params
+                       && requestProperties.params.exportToFile)
+    };
+    isc.addProperties(data, additionalProperties);
+    
+    OB.Utilities.postThroughHiddenFrame(dsURL, data);
+  }
+});
+
 isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);

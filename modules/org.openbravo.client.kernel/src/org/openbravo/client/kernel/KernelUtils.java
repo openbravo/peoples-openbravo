@@ -255,8 +255,6 @@ public class KernelUtils {
   /**
    * Returns the parent tab of a BaseOBObject which belongs to a given tab
    * 
-   * @param object
-   *          A BaseOBObject whose parent tab we seek
    * @param tab
    *          The tab the object belongs to
    * @return The parent tab of the given tab

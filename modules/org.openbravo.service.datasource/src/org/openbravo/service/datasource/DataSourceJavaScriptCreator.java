@@ -47,7 +47,7 @@ public class DataSourceJavaScriptCreator extends BaseWebServiceServlet {
    * 
    * @param name
    *          the name of the datasource
-   * @param entity
+   * @param entityProperties
    *          the properties of this entity are used for the data source fields
    * @return the javascript string
    */

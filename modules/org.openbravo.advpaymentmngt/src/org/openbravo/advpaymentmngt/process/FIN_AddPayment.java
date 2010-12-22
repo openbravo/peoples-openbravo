@@ -460,7 +460,6 @@ public class FIN_AddPayment {
    * Payment Proposal.
    * 
    * @param paymentProposal
-   * @return
    */
   public static List<FIN_PaymentScheduleDetail> getSelectedPendingPaymentsFromProposal(
       FIN_PaymentProposal paymentProposal) {
@@ -695,8 +694,6 @@ public class FIN_AddPayment {
    *          ConnectionProvider with the connection being used.
    * @param strProcessProposalAction
    *          String with the action of the process. {GSP, RE}
-   * @param strSendBankReq
-   *          not implemented parameter.
    * @param strFinPaymentProposalId
    *          String with FIN_PaymentProposal Id to be processed.
    * @return a OBError with the result message of the process.

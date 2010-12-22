@@ -38,6 +38,7 @@
 		<property name="updatable" type="org.openbravo.base.session.OBYesNoType" column="isupdateable"/>
 		<property name="identifier" type="org.openbravo.base.session.OBYesNoType" column="isidentifier"/>
 		<property name="mandatory" type="org.openbravo.base.session.OBYesNoType" column="ismandatory"/>
+    <property name="encrypted" type="org.openbravo.base.session.OBYesNoType" column="isencrypted"/>
 		<property name="valueMin"/>
 		<property name="valueMax"/>
 		<property name="developmentStatus"/>

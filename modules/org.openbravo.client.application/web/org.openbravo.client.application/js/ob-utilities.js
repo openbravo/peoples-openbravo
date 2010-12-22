@@ -854,4 +854,23 @@ OB.Utilities.openActionButtonCallback = function (button, o){
   //button.parentElement.parentElement.view.getContextInfo()
 };
 
+OB.Utilities.postThroughHiddenFrame = function(url, data) {
+  OB.globalHiddenForm.setAttribute('action', url);
+  
+//  for (var child in OB.globalHiddenForm.children) {
+//    OB.globalHiddenForm.removeChild(child);
+//  }
+  
+  for (var key in data) {
+    var field = document.createElement('input');
+    field.setAttribute('type', 'hidden');
+    field.setAttribute('name', key);
+    field.setAttribute('value', data[key]);
+    
+    OB.globalHiddenForm.appendChild(field);
+  }
+  
+  OB.globalHiddenForm.submit();
+}
+
 

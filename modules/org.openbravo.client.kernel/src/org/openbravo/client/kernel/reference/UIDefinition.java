@@ -63,7 +63,6 @@ public abstract class UIDefinition {
   /**
    * Unique name used to identify the type.
    * 
-   * @return
    */
   public String getName() {
     return TYPE_NAME_PREFIX + reference.getId();
@@ -152,7 +151,6 @@ public abstract class UIDefinition {
         } else {
           ArrayList<String> params = new ArrayList<String>();
           String sql = parseSQL(defaultS, params);
-          System.out.println(sql);
           int indP = 1;
           try {
             PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
@@ -165,13 +163,11 @@ public abstract class UIDefinition {
                 String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
                 value = RequestContext.get().getRequestParameter(fieldId);
               }
-              System.out.println(parameter + ": " + value);
               ps.setObject(indP++, value);
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
               columnValue = rs.getString(1);
-              System.out.println("final value: " + columnValue);
             }
           } catch (Exception e) {
             log.error("Error computing default value for field " + field.getName() + " of tab "
@@ -323,13 +319,15 @@ public abstract class UIDefinition {
           "#User_Client", field.getTab().getWindow().getId());
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
         clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
-            field.getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
+            field.getTab().getWindow().getId(), Integer.parseInt(field.getTab().getTable()
+                .getDataAccessLevel()));
         clientList = vars.getSessionValue("#User_Client");
         orgList = null;
       }
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
         orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", field
-            .getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
+            .getTab().getWindow().getId(), Integer.parseInt(field.getTab().getTable()
+            .getDataAccessLevel()));
       }
       ComboTableData comboTableData = new ComboTableData(vars, new DalConnectionProvider(false),
           ref, field.getColumn().getDBColumnName(), objectReference, validation, orgList,

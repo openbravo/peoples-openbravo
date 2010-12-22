@@ -33,12 +33,12 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
 
   initWidget: function(){
     this.Super('initWidget', arguments);
-    // Calculate heigth
+    // Calculate height
     var currentHeight = this.getHeight(), 
         //currentBodyHeight = this.body.getHeight(),
         headerHeight = this.headerDefaults.height,
         newGridHeight = this.grid.headerHeight
-                      + (this.grid.cellHeight * this.rowsNumber)
+                      + (this.grid.cellHeight * (this.rowsNumber ? this.rowsNumber : 10))
                       + this.grid.summaryRowHeight
                       + 2;
 
@@ -80,25 +80,25 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
 
   reloadGrid: function(rpcResponse, data, rpcRequest) {
 
-    this.fields = data.fields;
-    this.grid.setDataSource(this.grid.dataSource);
     this.grid.invalidateCache();
     this.grid.filterData();
-//    this.grid.destroy();
-//    this.grid = isc.OBQueryListGrid.create(isc.addProperties({
-//      widget: this,
-//      fields: this.fields
-//    }, this.gridProperties));
-    this.markForRedraw();
   },
 
   exportGrid: function() {
     var grid = this.widget.grid;
-    grid.exportData({
-      exportAs: 'csv',
-     // exportFilename: 'Query/List_widget.csv',
-      exportDisplay: 'download'
-    });
+    var requestProperties = {
+          exportAs: 'csv',
+          //exportFilename: 'Query/List_widget.csv',
+          exportDisplay: 'download',
+          params: {
+            exportToFile: true
+          }
+        };
+    var additionalProperties = {
+          widgetInstanceId: this.widget.dbInstanceId
+        };
+
+    grid.exportData(requestProperties, additionalProperties);
   }
   
 });
@@ -161,6 +161,11 @@ isc.OBQueryListGrid.addProperties({
       requestProperties = {};
     }
     requestProperties.showPrompt = false;
+    if (requestProperties.params && requestProperties.params.exportToFile) {
+      this.dataSource.dataFormat = requestProperties.exportAs;
+    } else {
+      this.dataSource.dataFormat = 'json';
+    }
     criteria.widgetInstanceId = this.widget.dbInstanceId;
     criteria.rowsNumber = this.widget.rowsNumber;
     criteria.viewMode = this.widget.viewMode;

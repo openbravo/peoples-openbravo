@@ -20,10 +20,13 @@ package org.openbravo.service.datasource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -31,7 +34,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -161,7 +166,19 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       // now do the action
       String result = getDataSource(request).fetch(parameters);
-      writeResult(response, result);
+
+      boolean isExport = "true".equals(parameters.get("exportToFile"));
+      if (isExport) {
+        String exportFormat = parameters.get("exportFormat");
+        if (StringUtils.isEmpty(exportFormat)) {
+          exportFormat = "csv";
+        }
+        if ("csv".equals(exportFormat)) {
+          writeResultCSV(response, result);
+        }
+      } else {
+        writeResult(response, result);
+      }
     } catch (Exception e) {
       handleException(e, response);
     }
@@ -400,6 +417,52 @@ public class DataSourceServlet extends BaseKernelServlet {
     final Writer w = response.getWriter();
     w.write(result);
     w.close();
+  }
+
+  private void writeResultCSV(HttpServletResponse response, String result) throws IOException,
+      JSONException {
+    response.setContentType("text/csv; charset=UTF-8");
+    response.setHeader("Content-Disposition", "attachment; filename=Results.csv");
+
+    JSONObject jsonResult = new JSONObject(result);
+    JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
+
+    StringBuffer csv = new StringBuffer();
+    if (data.length() > 0) {
+      final JSONObject headerRow = data.getJSONObject(0);
+
+      final Iterator<?> itKeys = headerRow.keys();
+      Vector<String> keys = new Vector<String>();
+      boolean isFirst = true;
+      while (itKeys.hasNext()) {
+        if (isFirst) {
+          isFirst = false;
+        } else {
+          csv.append(",");
+        }
+        String key = (String) itKeys.next();
+        keys.add(key);
+        csv.append("'").append(key).append("'");
+      }
+
+      for (int i = 0; i < data.length(); i++) {
+        JSONObject row = data.getJSONObject(i);
+        csv.append("\n");
+        isFirst = true;
+        for (String key : keys) {
+          if (isFirst) {
+            isFirst = false;
+          } else {
+            csv.append(",");
+          }
+          csv.append("'").append(row.get(key)).append("'");
+        }
+      }
+    }
+
+    final PrintWriter pw = response.getWriter();
+    pw.write(csv.toString());
+    pw.close();
   }
 
   private String getRequestContent(HttpServletRequest request) throws IOException {

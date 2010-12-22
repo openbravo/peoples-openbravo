@@ -108,7 +108,7 @@ public class Transactions extends HttpSecureAppServlet {
       OBContext.restorePreviousMode();
     }
 
-    if (vars.commandIn("DEFAULT")) {
+    if (vars.commandIn("DEFAULT") || vars.commandIn("EDIT")) {
 
       String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", windowId
           + "|Fin_Financial_Account_ID", "");
@@ -636,7 +636,7 @@ public class Transactions extends HttpSecureAppServlet {
    *          ConnectionProvider with the connection being used.
    * @param strAction
    *          String with the action of the process. {P, D, R}
-   * @param Transaction
+   * @param transaction
    *          FIN_Payment that needs to be processed.
    * @return a OBError with the result message of the process.
    * @throws Exception

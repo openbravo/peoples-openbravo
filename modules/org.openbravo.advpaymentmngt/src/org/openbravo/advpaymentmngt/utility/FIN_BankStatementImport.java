@@ -70,7 +70,7 @@ public abstract class FIN_BankStatementImport {
   }
 
   /**
-   * @param myError
+   * @param error
    *          the myError to set
    */
   public void setMyError(OBError error) {

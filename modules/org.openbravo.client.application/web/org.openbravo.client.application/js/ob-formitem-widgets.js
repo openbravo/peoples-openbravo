@@ -27,6 +27,14 @@
 // * OBFKComboBoxItem: combo box for foreign key references
 // * OBListComboBoxItem: combo box for list references
 
+// == OBEncryptedItem ==
+// The type used for encrypted items.
+isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
+
+// add specific properties here
+isc.OBEncryptedItem.addProperties({
+});
+
 // == OBFormButton ==
 // The default form button.
 isc.ClassFactory.defineClass('OBFormButton', Button);

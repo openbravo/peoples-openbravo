@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.myob;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -85,12 +84,7 @@ abstract public class MyOBUtils {
 
   static JSONArray getWidgetMenuItems(WidgetClass widgetClass) {
     final JSONArray result = new JSONArray();
-    List<WidgetClassMenu> menuItems = new ArrayList<WidgetClassMenu>();
-    if (widgetClass.getWidgetSuperclass() != null) {
-      menuItems = widgetClass.getWidgetSuperclass().getOBKMOWidgetClassMenuList();
-    } else {
-      menuItems = widgetClass.getOBKMOWidgetClassMenuList();
-    }
+    List<WidgetClassMenu> menuItems = MyOBUtils.getWidgetClassMenuItemsList(widgetClass);
 
     for (WidgetClassMenu menuItem : menuItems) {
       final JSONObject item = new JSONObject();
@@ -112,6 +106,19 @@ abstract public class MyOBUtils {
       }
     }
     return result;
+  }
+
+  private static List<WidgetClassMenu> getWidgetClassMenuItemsList(WidgetClass widgetClass) {
+    OBCriteria<WidgetClassMenu> obcMenuItems = OBDal.getInstance().createCriteria(
+        WidgetClassMenu.class);
+    if (widgetClass.getWidgetSuperclass() != null) {
+      obcMenuItems.add(Expression.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass
+          .getWidgetSuperclass()));
+    } else {
+      obcMenuItems.add(Expression.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass));
+    }
+    obcMenuItems.addOrderBy(WidgetClassMenu.PROPERTY_SEQUENCE, true);
+    return obcMenuItems.list();
   }
 
   /**

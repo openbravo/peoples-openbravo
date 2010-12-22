@@ -361,8 +361,8 @@ public class TestUtility extends BaseTest {
    * @param refundAmount
    *          . Refund Amount need to transfer to the customer.
    * @return. Created FIN_Payment object.
-   * @throws Exception. In
-   *           case of executing invalid data.
+   * @throws Exception
+   *           In case of executing invalid data.
    */
   public static FIN_Payment createRefundPayment(FIN_Payment payment, BigDecimal refundAmount)
       throws Exception {

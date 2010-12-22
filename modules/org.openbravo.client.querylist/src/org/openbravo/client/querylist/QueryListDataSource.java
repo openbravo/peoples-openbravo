@@ -29,7 +29,6 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.myob.WidgetClass;
 import org.openbravo.client.myob.WidgetInstance;
-import org.openbravo.client.querylist.QueryListUtils.IncludeIn;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
@@ -64,19 +63,18 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
     try {
       WidgetInstance widgetInstance = OBDal.getInstance().get(WidgetInstance.class,
           parameters.get("widgetInstanceId"));
+      boolean isExport = "true".equals(parameters.get("exportToFile"));
       String viewMode = parameters.get("viewMode");
       WidgetClass widgetClass = widgetInstance.getWidgetClass();
-      // WidgetInstance widgetInstance = widgetClass.getOBKMOWidgetInstanceList().get(0);
-      IncludeIn includeIn = QueryListUtils.IncludeIn.WidgetView;
-      List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
-          .getOBCQLWidgetQueryList().get(0), includeIn);
+
       Query widgetQuery = OBDal.getInstance().getSession().createQuery(
           widgetClass.getOBCQLWidgetQueryList().get(0).getHQL());
       String[] queryAliases = widgetQuery.getReturnAliases();
-      if ("widget".equals(viewMode)) {
+
+      if (!isExport && "widget".equals(viewMode)) {
         int rowsNumber = Integer.valueOf(parameters.get("rowsNumber"));
         widgetQuery.setMaxResults(rowsNumber);
-      } else {
+      } else if (!isExport) {
         if (startRow > 0) {
           widgetQuery.setFirstResult(startRow);
         }
@@ -84,6 +82,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
           widgetQuery.setMaxResults(endRow - startRow + 1);
         }
       }
+
       String[] params = widgetQuery.getNamedParameters();
       if (params.length > 0) {
         HashMap<String, Object> parameterValues = getParameterValues(parameters, widgetInstance);
@@ -98,9 +97,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
           if (!isParamSet) {
             // TODO: throw an exception
           }
-
         }
       }
+
+      List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
+          .getOBCQLWidgetQueryList().get(0));
 
       final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
       for (Object objResult : widgetQuery.list()) {
@@ -115,7 +116,10 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
         for (OBCQL_QueryColumn column : columns) {
           // TODO: throw an exception if the display expression doesn't match any returned alias.
           for (int i = 0; i < queryAliases.length; i++) {
-            data.put(queryAliases[i], resultList[i]);
+            if (queryAliases[i].equals(column.getDisplayExpression())
+                || (!isExport && queryAliases[i].equals(column.getLinkExpression()))) {
+              data.put(queryAliases[i], resultList[i]);
+            }
           }
         }
         result.add(data);

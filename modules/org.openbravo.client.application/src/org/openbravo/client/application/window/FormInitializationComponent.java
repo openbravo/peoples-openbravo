@@ -23,7 +23,10 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,7 +143,14 @@ public class FormInitializationComponent extends BaseActionHandler {
               + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
           try {
             if (jsContent.has(inpColName)) {
-              RequestContext.get().setRequestParameter(inpColName, jsContent.getString(inpColName));
+              String value;
+              if (jsContent.get(inpColName) == null
+                  || jsContent.get(inpColName).toString().equals("null")) {
+                value = null;
+              } else {
+                value = jsContent.get(inpColName).toString();
+              }
+              RequestContext.get().setRequestParameter(inpColName, value);
             }
           } catch (Exception e) {
             log.error("Couldn't read column value from the request for column " + inpColName, e);
@@ -419,12 +429,29 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
+  private Object parseDateFromDAL(Object value) {
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    format.setLenient(true);
+    Date date;
+    try {
+      date = format.parse(value.toString());
+    } catch (ParseException e) {
+      throw new OBException("Error while parsing date: " + value, e);
+    }
+    SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    outFormat.setLenient(true);
+    return outFormat.format(date);
+  }
+
   private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
     Entity entity = obj.getEntity();
     Property prop = entity.getPropertyByColumnName(columnName);
     Object currentValue = obj.get(prop.getName());
+
     if (currentValue != null) {
-      if (currentValue instanceof BaseOBObject) {
+      if (prop.isDate()) {
+        currentValue = parseDateFromDAL(currentValue);
+      } else if (currentValue instanceof BaseOBObject) {
         if (prop.getReferencedProperty() != null) {
           currentValue = ((BaseOBObject) currentValue).get(prop.getReferencedProperty().getName());
         } else {
@@ -442,7 +469,9 @@ public class FormInitializationComponent extends BaseActionHandler {
         Property prop = object.getEntity().getPropertyByColumnName(col.getDBColumnName());
         Object value = object.get(prop.getName());
         if (value != null) {
-          if (value instanceof BaseOBObject) {
+          if (prop.isDate()) {
+            value = parseDateFromDAL(value);
+          } else if (value instanceof BaseOBObject) {
             value = ((BaseOBObject) value).getId();
           } else {
             value = UIDefinitionController.getInstance().getUIDefinition(col.getId())
@@ -540,11 +569,11 @@ public class FormInitializationComponent extends BaseActionHandler {
           log.error("Couldn't find method doPost in Callout " + calloutClassName);
         } else {
           RequestContext rq = RequestContext.get();
-          HashMap<String, JSONObject> formattedColumnValues = new HashMap<String, JSONObject>(
-              columnValues);
-          formatColumnValues(formattedColumnValues, fields);
-          setRequestContextParameters(fields, columnValues);
+          // We first prepare the data so that it's usable by the callout
+          formatColumnValues(columnValues, fields);
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
+
+          // We then execute the callout
           CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
               .getServletContext());
           Object[] initArgs = { config };
@@ -555,6 +584,11 @@ public class FormInitializationComponent extends BaseActionHandler {
           method.invoke(calloutInstance, arguments);
           String calloutResponse = fakeResponse.getOutputFromWriter();
 
+          // Now we restore the request data so that it's compatible with the UIDefinition
+          // computation
+          setRequestContextParameters(fields, columnValues);
+          // Now we parse the callout response and modify the stored values of the columns modified
+          // by the callout
           ArrayList<NativeArray> returnedArray = new ArrayList<NativeArray>();
           String calloutNameJS = parseCalloutResponse(calloutResponse, returnedArray);
           if (calloutNameJS != null && calloutNameJS != "") {
@@ -655,7 +689,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           String oldValue = obj.has("value") ? obj.getString("value") : null;
           String value = oldValue == null || oldValue.equals("") ? oldValue : uiDef
               .formatValueToSQL(oldValue.toString());
-          obj.put("value", value);
+          RequestContext.get().setRequestParameter(
+              "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), value);
         }
       } catch (Exception e) {
         log.error("Error while formatting column " + field.getColumn().getDBColumnName(), e);
@@ -701,7 +736,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
       boolean allColsSorted = true;
       for (String depCol : columnsInValidation.get(col)) {
-        if (!sortedColumns.contains(depCol))
+        if (!containsIgnoreCase(sortedColumns, depCol))
           allColsSorted = false;
       }
       if (allColsSorted)
@@ -709,6 +744,15 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     return null;
+  }
+
+  private boolean containsIgnoreCase(List<String> list, String element) {
+    for (String e : list) {
+      if (e.equalsIgnoreCase(element)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private String getValidation(Field field) {
