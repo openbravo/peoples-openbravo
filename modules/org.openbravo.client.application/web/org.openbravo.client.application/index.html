@@ -26,6 +26,7 @@ function OBStartApplication() {
   OB.Layout.draw();
   OB.Layout.ViewManager.createAddStartTab();
   isc.clearPrompt();
+  OB.globalHiddenForm = document.forms.globalHiddenForm;
 }
 
 </script>
@@ -44,6 +45,9 @@ isc.showPrompt("${loadingImage}", {showEdges:false, showModalMask: true, isModal
 <script type="text/javascript" src="../org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
 
 <script type="text/javascript" src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_skinVersion=3.00"></script>
+
+<form name="globalHiddenForm" method="post" action="blank.html"></form>
+
 
 </body>
 </html>
