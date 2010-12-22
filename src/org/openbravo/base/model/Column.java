@@ -55,6 +55,7 @@ public class Column extends ModelObject {
   private boolean secondaryKey;
   private boolean parent;
   private boolean mandatory;
+  private boolean encrypted;
   private boolean updatable;
   private boolean identifier;
   private String valueMin;
@@ -417,5 +418,13 @@ public class Column extends ModelObject {
 
   public void setModule(Module module) {
     this.module = module;
+  }
+
+  public boolean isEncrypted() {
+    return encrypted;
+  }
+
+  public void setEncrypted(boolean encrypted) {
+    this.encrypted = encrypted;
   }
 }

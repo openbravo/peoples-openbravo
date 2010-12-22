@@ -74,6 +74,7 @@ public class Property {
   private boolean mandatory;
   private boolean identifier;
   private boolean parent;
+  private boolean encrypted;
   private boolean isUuid;
   private boolean isUpdatable;
   private Property idBasedOnProperty;
@@ -115,6 +116,7 @@ public class Property {
     setNameOfColumn(fromColumn.getName());
     setColumnId(fromColumn.getId());
     setDomainType(fromColumn.getDomainType());
+    setEncrypted(fromColumn.isEncrypted());
 
     setDefaultValue(fromColumn.getDefaultValue());
 
@@ -1017,5 +1019,13 @@ public class Property {
 
   public void setBeingReferenced(boolean isBeingReferenced) {
     this.isBeingReferenced = isBeingReferenced;
+  }
+
+  public boolean isEncrypted() {
+    return encrypted;
+  }
+
+  public void setEncrypted(boolean encrypted) {
+    this.encrypted = encrypted;
   }
 }
