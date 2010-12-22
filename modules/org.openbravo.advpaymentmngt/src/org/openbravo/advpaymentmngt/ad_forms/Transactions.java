@@ -108,7 +108,7 @@ public class Transactions extends HttpSecureAppServlet {
       OBContext.restorePreviousMode();
     }
 
-    if (vars.commandIn("DEFAULT")) {
+    if (vars.commandIn("DEFAULT") || vars.commandIn("EDIT")) {
 
       String strFinFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId", windowId
           + "|Fin_Financial_Account_ID", "");
