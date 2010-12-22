@@ -429,6 +429,20 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
+  private Object parseDateFromDAL(Object value) {
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    format.setLenient(true);
+    Date date;
+    try {
+      date = format.parse(value.toString());
+    } catch (ParseException e) {
+      throw new OBException("Error while parsing date: " + value, e);
+    }
+    SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    outFormat.setLenient(true);
+    return outFormat.format(date);
+  }
+
   private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
     Entity entity = obj.getEntity();
     Property prop = entity.getPropertyByColumnName(columnName);
@@ -436,17 +450,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
     if (currentValue != null) {
       if (prop.isDate()) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setLenient(true);
-        Date date;
-        try {
-          date = format.parse(currentValue.toString());
-        } catch (ParseException e) {
-          throw new OBException("Error while parsing date: " + currentValue, e);
-        }
-        SimpleDateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        outFormat.setLenient(true);
-        currentValue = outFormat.format(date);
+        currentValue = parseDateFromDAL(currentValue);
       } else if (currentValue instanceof BaseOBObject) {
         if (prop.getReferencedProperty() != null) {
           currentValue = ((BaseOBObject) currentValue).get(prop.getReferencedProperty().getName());
@@ -465,7 +469,9 @@ public class FormInitializationComponent extends BaseActionHandler {
         Property prop = object.getEntity().getPropertyByColumnName(col.getDBColumnName());
         Object value = object.get(prop.getName());
         if (value != null) {
-          if (value instanceof BaseOBObject) {
+          if (prop.isDate()) {
+            value = parseDateFromDAL(value);
+          } else if (value instanceof BaseOBObject) {
             value = ((BaseOBObject) value).getId();
           } else {
             value = UIDefinitionController.getInstance().getUIDefinition(col.getId())
