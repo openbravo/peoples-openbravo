@@ -319,13 +319,15 @@ public abstract class UIDefinition {
           "#User_Client", field.getTab().getWindow().getId());
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
         clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
-            field.getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
+            field.getTab().getWindow().getId(), Integer.parseInt(field.getTab().getTable()
+                .getDataAccessLevel()));
         clientList = vars.getSessionValue("#User_Client");
         orgList = null;
       }
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
         orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", field
-            .getTab().getWindow().getId(), (int) field.getTab().getTabLevel().longValue());
+            .getTab().getWindow().getId(), Integer.parseInt(field.getTab().getTable()
+            .getDataAccessLevel()));
       }
       ComboTableData comboTableData = new ComboTableData(vars, new DalConnectionProvider(false),
           ref, field.getColumn().getDBColumnName(), objectReference, validation, orgList,
