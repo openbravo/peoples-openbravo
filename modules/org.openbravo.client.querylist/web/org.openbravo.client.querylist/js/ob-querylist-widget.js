@@ -93,8 +93,12 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
           params: {
             exportToFile: true
           }
-        }
-    grid.exportData(requestProperties);
+        };
+    var additionalProperties = {
+          widgetInstanceId: this.widget.dbInstanceId
+        };
+
+    grid.exportData(requestProperties, additionalProperties);
   }
   
 });
