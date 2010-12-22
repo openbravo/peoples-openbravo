@@ -63,7 +63,6 @@ public abstract class UIDefinition {
   /**
    * Unique name used to identify the type.
    * 
-   * @return
    */
   public String getName() {
     return TYPE_NAME_PREFIX + reference.getId();

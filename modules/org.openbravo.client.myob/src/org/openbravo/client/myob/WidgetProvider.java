@@ -195,7 +195,6 @@ public abstract class WidgetProvider {
   /**
    * As a default will generate javascript which extends the OBShowParameterWidget widget.
    * 
-   * @return
    */
   public String generate() {
     return "isc.defineClass('" + KernelConstants.ID_PREFIX + getWidgetClass().getId()

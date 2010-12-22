@@ -51,7 +51,7 @@ public interface DataSourceService {
   /**
    * Create the properties used in the template.
    * 
-   * @param the
+   * @param parameters
    *          parameters used for this request
    * @return the list of DataSourceProperty instances to use in the template
    */

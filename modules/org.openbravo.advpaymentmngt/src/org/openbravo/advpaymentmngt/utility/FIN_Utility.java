@@ -175,7 +175,6 @@ public class FIN_Utility {
    *          List of FIN_PaymentSchedule that need to be selected by default
    * @param filteredScheduledPayments
    *          List of FIN_PaymentSchedule that need to unselected by default
-   * @return
    */
   public static FieldProvider[] getShownScheduledPayments(VariablesSecureApp vars,
       List<FIN_PaymentSchedule> selectedScheduledPayments,
