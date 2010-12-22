@@ -736,7 +736,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
       boolean allColsSorted = true;
       for (String depCol : columnsInValidation.get(col)) {
-        if (!sortedColumns.contains(depCol))
+        if (!containsIgnoreCase(sortedColumns, depCol))
           allColsSorted = false;
       }
       if (allColsSorted)
@@ -744,6 +744,15 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     return null;
+  }
+
+  private boolean containsIgnoreCase(List<String> list, String element) {
+    for (String e : list) {
+      if (e.equalsIgnoreCase(element)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private String getValidation(Field field) {
