@@ -107,6 +107,8 @@ isc.OBViewGrid.addProperties({
   stopOnErrors: true,
   confirmDiscardEdits: true,
   
+  canMultiSort: false,
+  
   emptyMessage: OB.I18N.getLabel('OBUIAPP_NoDataInGrid'),
   discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
   
