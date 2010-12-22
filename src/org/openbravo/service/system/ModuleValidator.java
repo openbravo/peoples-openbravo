@@ -241,7 +241,7 @@ public class ModuleValidator implements SystemValidator {
       if (dependentModule.isIncluded()) {
         // for inclusions check the dependency matches exactly with the defined one
         if (!depActualVersion.equals(depDefinedVersion)) {
-          result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+          result.addWarning(SystemValidationType.MODULE_ERROR, module.getName()
               + " defines inclussion of module " + dependentModule.getDependentModule().getName()
               + " in version " + depDefinedVersion + ", but actual version in DB is "
               + depActualVersion + ". They must exactly match.");
