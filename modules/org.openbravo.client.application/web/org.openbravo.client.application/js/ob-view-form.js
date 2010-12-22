@@ -29,9 +29,13 @@ isc.OBViewForm.addProperties({
   // handles this form
   // and the grid and other related components.
   view: null,
-  numCols: 4,
   auxInputs: {},
   dynamicCols: [],
+
+  // ** {{ Layout Settings }} **
+  numCols: 4,
+  colWidths: ['24%', '24%', '24%', '24%'],
+  //cellBorder: 1, // debug layout
   
   fieldsByInpColumnName: null,
   fieldsByColumnName: null,

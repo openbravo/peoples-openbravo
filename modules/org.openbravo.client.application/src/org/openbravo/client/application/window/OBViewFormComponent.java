@@ -48,6 +48,12 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   private static final String TEMPLATE_ID = "C1D176407A354A40815DC46D24D70EB8";
 
+  // Based on WAD implementation legacy code
+  // 22 - Half column
+  // 44 - One column
+  private static final long ONE_COLUMN_MAX_LENGTH = 44;
+  private static final long MULTILINE_MIN_LENGTH = 60;
+
   private Tab tab;
 
   protected Template getComponentTemplate() {
@@ -126,6 +132,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getInpColumnName();
 
     public String getReferencedKeyColumnName();
+
+    public String getStartRow();
+
+    public String getEndRow();
+
+    public long getColSpan();
+
+    public long getRowSpan();
 
   }
 
@@ -235,6 +249,22 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getDataSourceId() {
       return property.getTargetEntity().getName();
     }
+
+    public long getColSpan() {
+      return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH ? 2 : 1;
+    }
+
+    public String getEndRow() {
+      return "false";
+    }
+
+    public long getRowSpan() {
+      return field.getDisplayedLength() >= MULTILINE_MIN_LENGTH ? 2 : 1;
+    }
+
+    public String getStartRow() {
+      return "false";
+    }
   }
 
   public class OBViewFieldGroup implements OBViewFieldDefinition {
@@ -292,6 +322,22 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getName() {
       return fieldGroup.getId();
+    }
+
+    public long getColSpan() {
+      return 1;
+    }
+
+    public String getEndRow() {
+      return "false";
+    }
+
+    public long getRowSpan() {
+      return 1;
+    }
+
+    public String getStartRow() {
+      return "false";
     }
   }
 

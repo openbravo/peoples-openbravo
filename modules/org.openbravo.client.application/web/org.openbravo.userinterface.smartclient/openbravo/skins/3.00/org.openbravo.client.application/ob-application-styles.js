@@ -40,6 +40,14 @@ isc.OBTextItem.addProperties({
   textBoxStyle: 'OBFormFieldInput'
 });
 
+isc.OBTextAreaItem.addProperties({
+  errorOrientation: 'left',
+  width: '100%',
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput'
+});
+
 OB.DefaultPickListStyleProperties = {
   pickListTallBaseStyle: 'OBFormField',
   cellStyle: 'OBFormField',

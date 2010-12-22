@@ -32,7 +32,7 @@
 .OBFormFieldError,
 .OBFormFieldFocused {
 	font-family: 'lucida sans', sans-serif;
-  width: 100%;
+  /*width: 100%;*/
 }
 
 .OBFormFieldLabel,
@@ -62,7 +62,7 @@
   font-family: arial, sans-serif; 
   font-size: 12px;
   line-height: normal;
-  width: 100%;
+  /*width: 100%;*/
 }
 
 .OBFormFieldInputDisabled,
@@ -80,7 +80,7 @@
   font-family: arial, sans-serif; 
   font-size: 12px;
   color: #333;
-  width: 100%;
+  /*width: 100%;*/
   border: 0px 0px 0px 0px;
 }
 

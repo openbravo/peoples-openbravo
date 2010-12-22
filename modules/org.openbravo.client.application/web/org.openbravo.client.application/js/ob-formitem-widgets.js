@@ -20,6 +20,7 @@
 // Contains the following widgets:
 // * OBFormButton: button used in forms.
 // * OBTextItem: string/text item
+// * OBTextAreaItem: string/text-area item
 // * OBDateItem: FormItem for dates
 // * OBDateTimeItem: FormItem for DateTime
 // * OBNumber: FormItem for numbers
@@ -46,6 +47,10 @@ isc.OBFormButton.addProperties({
 // == OBTextItem ==
 // Input for normal strings
 isc.ClassFactory.defineClass('OBTextItem', TextItem);
+
+// == OBTextAreaItem ==
+// Input for large strings
+isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 
 // == OBListComboBoxItem ==
 // Combo box for list references
