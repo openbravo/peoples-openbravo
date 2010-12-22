@@ -34,7 +34,6 @@ import java.util.TimeZone;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -43,14 +42,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.system.Language;
-import org.openbravo.model.ad.ui.Element;
-import org.openbravo.model.ad.ui.ElementTrl;
-import org.openbravo.model.ad.ui.Message;
-import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -60,6 +55,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
 public class FIN_Utility {
@@ -494,51 +490,9 @@ public class FIN_Utility {
    * @return String with the translated message.
    */
   public static String messageBD(String strCode) {
-    String strMessage = "";
-
-    OBContext.setAdminMode(true);
-    try {
-      Language language = OBContext.getOBContext().getLanguage();
-      if ("en_US".equals(language.getLanguage())) {
-        OBCriteria<Message> obc = OBDal.getInstance().createCriteria(Message.class);
-        obc.add(Expression.eq(Message.PROPERTY_SEARCHKEY, strCode));
-        strMessage = (obc.list() != null && obc.list().size() > 0) ? obc.list().get(0)
-            .getMessageText() : null;
-
-      } else {
-        OBCriteria<MessageTrl> obcTrl = OBDal.getInstance().createCriteria(MessageTrl.class);
-        obcTrl.add(Expression.eq(MessageTrl.PROPERTY_LANGUAGE, language));
-        obcTrl.createAlias(MessageTrl.PROPERTY_MESSAGE, "msg");
-        obcTrl.add(Restrictions.eq("msg.searchKey", strCode));
-        strMessage = (obcTrl.list() != null && obcTrl.list().size() > 0) ? obcTrl.list().get(0)
-            .getMessageText() : null;
-      }
-
-      if (strMessage == null || strMessage.equals("")) {
-        if ("en_US".equals(language.getLanguage())) {
-          OBCriteria<Element> obcCol = OBDal.getInstance().createCriteria(Element.class);
-          obcCol.add(Expression.eq(Element.PROPERTY_DBCOLUMNNAME, strCode).ignoreCase());
-          strMessage = (obcCol.list() != null && obcCol.list().size() > 0) ? obcCol.list().get(0)
-              .getName() : null;
-
-        } else {
-          OBCriteria<ElementTrl> obcTrl = OBDal.getInstance().createCriteria(ElementTrl.class);
-          obcTrl.add(Expression.eq(ElementTrl.PROPERTY_LANGUAGE, language));
-          obcTrl.createAlias(ElementTrl.PROPERTY_APPLICATIONELEMENT, "ele");
-          obcTrl.add(Restrictions.eq("ele.dBColumnName", strCode).ignoreCase());
-          strMessage = (obcTrl.list() != null && obcTrl.list().size() > 0) ? obcTrl.list().get(0)
-              .getName() : null;
-
-        }
-      }
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    if (strMessage == null || strMessage.equals(""))
-      strMessage = strCode;
-    return Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
-
+    String language = OBContext.getOBContext().getLanguage().getLanguage();
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    return Utility.messageBD(conn, strCode, language);
   }
 
   /**

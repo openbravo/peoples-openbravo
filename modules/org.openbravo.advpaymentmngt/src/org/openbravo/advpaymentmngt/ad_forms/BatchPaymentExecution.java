@@ -282,6 +282,7 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     int offset = Integer.valueOf(strOffset).intValue();
     int pageSize = Integer.valueOf(strPageSize).intValue();
     List<FIN_Payment> gridPayments = null;
+    String strNewFilterAux = strNewFilter;
 
     if (headers != null) {
       try {
@@ -307,12 +308,12 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
         page = TableSQLData.calcAndGetBackendPage(vars, "BatchPaymentExecution.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
           // on movePage action force executing countRows again
-          strNewFilter = "";
+          strNewFilterAux = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
+        if (strNewFilterAux.equals("1") || strNewFilterAux.equals("")) { // New filter or first load
           gridPayments = dao.getPayExecRowCount(strOrgId, strPaymentMethodId,
               strFinancialAccountId, FIN_Utility.getDate(strDateFrom), FIN_Utility
                   .getDate(DateTimeData.nDaysAfter(this, strDateTo, "1")), offset, pageSize, null,

@@ -100,8 +100,8 @@ public class FIN_AddPayment {
    * @param isWriteoff
    *          Boolean to write off the difference when the payment amount is lower than the Payment
    *          Scheduled PAyment Detail amount.
-   * @param refundAmount
-   *          BigDecimal with the amount that needs to be refund to the business partner.
+   * @param isRefund
+   *          Not used.
    * @return The FIN_Payment OBObject containing all the Payment Details.
    */
   public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
@@ -631,6 +631,7 @@ public class FIN_AddPayment {
    * @param paymentProposal
    * @return List of payment identifiers
    */
+  @SuppressWarnings("unchecked")
   public static List<String> getPaymentFromPaymentProposal(FIN_PaymentProposal paymentProposal) {
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done

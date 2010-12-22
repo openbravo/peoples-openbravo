@@ -231,6 +231,7 @@ public class Transactions extends HttpSecureAppServlet {
     log4j.debug("Output: dataSheet");
     String strCommand = "EDIT";
     FieldProvider[] data = TransactionsDao.getAccTrxData(strFinFinancialAccountId);
+
     /*
      * if (data == null || data.length == 0) { throw new ServletException(formClassName +
      * ": Error when getting data"); }
@@ -401,6 +402,7 @@ public class Transactions extends HttpSecureAppServlet {
     String strNumRows = "0";
     int offset = Integer.valueOf(strOffset).intValue();
     int pageSize = Integer.valueOf(strPageSize).intValue();
+    String strNewFilterAux = strNewFilter;
 
     if (headers != null) {
       try {
@@ -428,12 +430,12 @@ public class Transactions extends HttpSecureAppServlet {
         page = TableSQLData.calcAndGetBackendPage(vars, "Transactions.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
           // on movePage action force executing countRows again
-          strNewFilter = "";
+          strNewFilterAux = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
+        if (strNewFilterAux.equals("1") || strNewFilterAux.equals("")) { // New filter or first load
           int dbNumRows = dao.getTrxGridRowCount(dao.getObject(FIN_FinancialAccount.class,
               strFinancialAccountId), hideReconciledTrx, TableSQLData.maxRowsPerGridPage, offset);
           strNumRows = Integer.toString(dbNumRows);
