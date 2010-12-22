@@ -143,7 +143,7 @@ public class OBDal implements OBSingleton {
 
     // prevent saving of db view objects, this can happen for example if someone accidentally
     // exported views in xml and then imports this xml again
-    if (((BaseOBObject) obj).getEntity().isView()) {
+    if (obj instanceof BaseOBObject && ((BaseOBObject) obj).getEntity().isView()) {
       log.warn("Trying to save an object which is a db-view, ignoring save operation, entity: "
           + ((BaseOBObject) obj).getEntity().getName());
       return;
@@ -176,7 +176,7 @@ public class OBDal implements OBSingleton {
 
     // prevent removing of db view objects, this can happen for example if someone accidentally
     // exported views in xml and posts this xml using a webservice
-    if (((BaseOBObject) obj).getEntity().isView()) {
+    if (obj instanceof BaseOBObject && ((BaseOBObject) obj).getEntity().isView()) {
       log.warn("Trying to remove an object which is a db-view, ignoring remove operation, entity: "
           + ((BaseOBObject) obj).getEntity().getName());
       return;
