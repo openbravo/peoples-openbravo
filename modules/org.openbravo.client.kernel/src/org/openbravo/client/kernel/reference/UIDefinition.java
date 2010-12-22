@@ -151,7 +151,6 @@ public abstract class UIDefinition {
         } else {
           ArrayList<String> params = new ArrayList<String>();
           String sql = parseSQL(defaultS, params);
-          System.out.println(sql);
           int indP = 1;
           try {
             PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
@@ -164,13 +163,11 @@ public abstract class UIDefinition {
                 String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
                 value = RequestContext.get().getRequestParameter(fieldId);
               }
-              System.out.println(parameter + ": " + value);
               ps.setObject(indP++, value);
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
               columnValue = rs.getString(1);
-              System.out.println("final value: " + columnValue);
             }
           } catch (Exception e) {
             log.error("Error computing default value for field " + field.getName() + " of tab "
