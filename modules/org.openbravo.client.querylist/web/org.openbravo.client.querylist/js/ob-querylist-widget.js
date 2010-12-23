@@ -63,20 +63,6 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
   
   refresh: function(){
-    var post = {
-        'ID': this.ID,
-        'widgetId': this.widgetId,
-        'eventType': 'GET_FIELDS',
-        'viewMode': this.viewMode
-      };
-    var clientContext = {widget: this};
-
-    OB.RemoteCallManager.call(this.actionHandler, post, {}, function(rpcResponse, data, rpcRequest){
-      rpcResponse.clientContext.widget.reloadGrid(rpcResponse, data, rpcRequest);
-    }, clientContext);
-  },
-
-  reloadGrid: function(rpcResponse, data, rpcRequest) {
     this.grid.invalidateCache();
     this.grid.filterData();
   },
