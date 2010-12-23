@@ -30,13 +30,13 @@
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID,tn.SeqNo,menuData.NAME,menuData.Description,menuData.IsSummary,
         menuData.Action, (case menuData.Action when 'W' then MOW.CLASSNAME 
                                               when  'X' then MOX.CLASSNAME
-                                              when  'T' then MOT.CLASSNAME
+                                              when  'T' then null
                                               when 'F' then MOF.CLASSNAME
                                               else MOP.CLASSNAME
                                               end) AS CLASSNAME, 
         (case menuData.Action when 'W' then MOMW.MAPPINGNAME
                               when 'X' then MOMX.MAPPINGNAME
-                              when 'T' then MOMT.MAPPINGNAME
+                              when 'T' then null
                               when 'F' then MOMF.MAPPINGNAME
                               else MOMP.MAPPINGNAME
                               end) AS MAPPINGNAME, 
@@ -47,11 +47,15 @@
         menuData.AD_Form_ID,
         menuData.url,
         P.IsExternalService,
-        P.Service_Type
+        P.Service_Type,
+        MW.AD_Module_ID as windowModule, MT.AD_Module_ID as tabModule,
+        MW.JAVAPACKAGE as windowPackage, MT.JAVAPACKAGE as tabPackage,
+        AD_MAPPING_FORMAT(to_char(w.name)) as windowName, 
+        AD_MAPPING_FORMAT(to_char(t.name)) as tabName
         FROM AD_TREENODE tn,
         (SELECT m.AD_Menu_ID, COALESCE(m_t.NAME, m.NAME) AS NAME, COALESCE(m_t.DESCRIPTION, m.Description) AS DESCRIPTION, 
         m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 
-        m.AD_FORM_ID, m.AD_Task_ID, m.AD_Workflow_ID, m.url 
+        m.AD_FORM_ID, m.AD_Task_ID, m.AD_Workflow_ID, m.url
         FROM AD_MENU m left join AD_MENU_TRL m_t on m.AD_MENU_ID = m_t.AD_MENU_ID 
                                                 AND m_t.AD_LANGUAGE = ?,
              AD_MODULE mod
@@ -68,6 +72,9 @@
                     AND w.isActive = 'Y'
                     AND wa.AD_Role_ID=?)
         )) menuData left join AD_TAB T on menuData.AD_Window_ID = T.AD_WINDOW_ID
+                    left join AD_WINDOW W on menuData.AD_Window_ID = W.AD_WINDOW_ID
+                    left join AD_MODULE MW on W.AD_MODULE_ID = MW.AD_MODULE_ID
+                    left join AD_MODULE MT on T.AD_Module_ID = MT.AD_Module_ID
                     left join AD_PROCESS P on P.AD_Process_ID = menuData.AD_Process_ID 
                     left join AD_MODEL_OBJECT MOW on T.AD_TAB_ID = MOW.AD_TAB_ID
                                                   AND MOW.ACTION    = 'W' 
@@ -83,13 +90,6 @@
                     left join AD_MODEL_OBJECT_MAPPING MOMX on MOX.AD_MODEL_OBJECT_ID = MOMX.AD_MODEL_OBJECT_ID 
                                                   AND MOMX.ISACTIVE  = 'Y'
                                                   AND MOMX.ISDEFAULT = 'Y'
-                    left join AD_MODEL_OBJECT MOT on menuData.AD_TASK_ID = MOT.AD_TASK_ID 
-                                                  AND MOT.ACTION    = 'T' 
-                                                  AND MOT.ISACTIVE  = 'Y'
-                                                  AND MOT.ISDEFAULT = 'Y'
-                    left join AD_MODEL_OBJECT_MAPPING MOMT on MOT.AD_MODEL_OBJECT_ID = MOMT.AD_MODEL_OBJECT_ID 
-                                                  AND MOMT.ISACTIVE  = 'Y'
-                                                  AND MOMT.ISDEFAULT = 'Y'
                     left join AD_MODEL_OBJECT MOF on menuData.AD_WORKFLOW_ID = MOF.AD_WORKFLOW_ID 
                                                   AND MOF.ACTION   = 'X' 
                                                   AND MOF.ISACTIVE = 'Y'
