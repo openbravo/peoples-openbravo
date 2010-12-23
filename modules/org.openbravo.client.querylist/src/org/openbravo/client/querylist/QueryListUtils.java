@@ -42,7 +42,7 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
 
-public class QueryListUtils {
+class QueryListUtils {
   private static final Logger log = Logger.getLogger(QueryListUtils.class);
 
   public static String getWidgetClassFields(WidgetClass widgetClass, IncludeIn includeIn) {
@@ -157,7 +157,7 @@ public class QueryListUtils {
     return obcColumns.list();
   }
 
-  public enum IncludeIn {
+  enum IncludeIn {
     WidgetView(new String[] { "W" }), MaximizedView(new String[] { "W", "M" }), ExportedFile(
         new String[] { "W", "M", "E" });
 

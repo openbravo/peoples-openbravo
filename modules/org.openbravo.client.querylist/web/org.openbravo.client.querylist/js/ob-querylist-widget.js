@@ -79,7 +79,6 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
 
   reloadGrid: function(rpcResponse, data, rpcRequest) {
-
     this.grid.invalidateCache();
     this.grid.filterData();
   },
@@ -140,36 +139,25 @@ isc.OBQueryListGrid.addProperties({
   },
   
   filterData: function(criteria, callback, requestProperties){
-    if (!criteria) {
-      criteria = {};
-    }
-    if (!requestProperties) {
-      requestProperties = {};
-    }
-    requestProperties.showPrompt = false;
-    criteria.widgetInstanceId = this.widget.dbInstanceId;
-    criteria.rowsNumber = this.widget.rowsNumber;
-    criteria.viewMode = this.widget.viewMode;
-    return this.Super('filterData', [criteria, callback, requestProperties]);
+    var crit = criteria || {},
+    reqProperties = requestProperties || {};
+
+    reqProperties.showPrompt = false;
+    crit.widgetInstanceId = this.widget.dbInstanceId;
+    crit.rowsNumber = this.widget.rowsNumber;
+    crit.viewMode = this.widget.viewMode;
+    return this.Super('filterData', [crit, callback, reqProperties]);
   },
   
   fetchData: function(criteria, callback, requestProperties){
-    if (!criteria) {
-      criteria = {};
-    }
-    if (!requestProperties) {
-      requestProperties = {};
-    }
-    requestProperties.showPrompt = false;
-    if (requestProperties.params && requestProperties.params.exportToFile) {
-      this.dataSource.dataFormat = requestProperties.exportAs;
-    } else {
-      this.dataSource.dataFormat = 'json';
-    }
-    criteria.widgetInstanceId = this.widget.dbInstanceId;
-    criteria.rowsNumber = this.widget.rowsNumber;
-    criteria.viewMode = this.widget.viewMode;
-    return this.Super('fetchData', [criteria, callback, requestProperties]);
+    var crit = criteria || {},
+        reqProperties = requestProperties || {};
+
+    reqProperties.showPrompt = false;
+    crit.widgetInstanceId = this.widget.dbInstanceId;
+    crit.rowsNumber = this.widget.rowsNumber;
+    crit.viewMode = this.widget.viewMode;
+    return this.Super('fetchData', [crit, callback, reqProperties]);
   },
 
   cellClick: function (record, rowNum, colNum) {

@@ -47,16 +47,12 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
    *          the parameters passed in from the request
    * @return the total number of objects
    */
+  @Override
   protected int getCount(Map<String, String> parameters) {
     return getData(parameters, 0, (Integer.MAX_VALUE - 1)).size();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.service.datasource.ReadOnlyDataSourceService#getData(java.util.Map, int,
-   * int)
-   */
+  @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
     OBContext.setAdminMode();

@@ -34,7 +34,7 @@ import org.openbravo.client.myob.WidgetProvider;
  */
 public class QueryListWidgetProvider extends WidgetProvider {
 
-  private static String GRID_PROPERTIES_REFERENCE = "B36DF126DF5F4077A37F1E5B963AA636";
+  private static final String GRID_PROPERTIES_REFERENCE = "B36DF126DF5F4077A37F1E5B963AA636";
   private static final Logger log = Logger.getLogger(QueryListWidgetProvider.class);
   private static final String HEIGHT = "height";
   private static final Long ROW_HEIGHT = 23L;

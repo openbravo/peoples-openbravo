@@ -20,7 +20,6 @@ package org.openbravo.client.querylist;
 
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
@@ -35,23 +34,12 @@ public class QueryListComponent extends BaseTemplateComponent {
   static final String COMPONENT_ID = "QueryList";
   private static final String TEMPLATEID = "337A637E2DDB4FABA2C793DFB937207D";
 
-  private Logger log = Logger.getLogger(QueryListComponent.class);
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.client.kernel.BaseTemplateComponent#getComponentTemplate()
-   */
   @Override
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATEID);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.openbravo.client.kernel.BaseComponent#getId()
-   */
+  @Override
   public String getId() {
     return COMPONENT_ID;
   }
