@@ -558,7 +558,7 @@ export.database: exports database structure and data to xml files.
   
   <target name="run.api.test.model" 
           description="Checks current xml db model and dictionary API for not-allowed changes. Requires stableDBdir parameter">
-    <taskdef name="checkAPI" classname="org.openbravo.ddlutils.task.CheckAPI">
+    <taskdef name="checkAPI" classname="org.openbravo.ddlutils.task.CheckAPIDistribution">
       <classpath refid="project.class.path" />
     </taskdef>
     <checkAPI driver="${bbdd.driver}" 
@@ -566,7 +566,7 @@ export.database: exports database structure and data to xml files.
                   user="${bbdd.user}" 
                   password="${bbdd.password}" 
                   stableDBdir="${stableDBdir}"
-                  testDBdir="${base.src.db}/database"
+                  testDBdir="${basedir}"
                   verbosity="${bbdd.verbosity}"
     />    
   </target>
