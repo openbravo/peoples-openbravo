@@ -171,7 +171,7 @@ public class PaymentReport extends HttpSecureAppServlet {
       else {
         String inputName = "inp" + Sqlc.TransformaNombreColumna(data.get("adColumnName"));
 
-        String strWindowPath = Utility.getTabURL(this, data.get("adTabId"), "R");
+        String strWindowPath = Utility.getTabURL(data.get("adTabId"), "R", true);
         if (strWindowPath.equals("")) {
           strWindowPath = strDefaultServlet;
         }
