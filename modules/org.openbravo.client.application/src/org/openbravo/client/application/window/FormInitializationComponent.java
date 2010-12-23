@@ -430,7 +430,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     Object currentValue = obj.get(prop.getName());
 
     if (currentValue != null) {
-      if (prop.isDate()) {
+      if (prop.isDate() || prop.isDatetime()) {
         currentValue = parseDateFromDAL(currentValue);
       } else if (currentValue instanceof BaseOBObject) {
         if (prop.getReferencedProperty() != null) {
@@ -450,7 +450,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         Property prop = object.getEntity().getPropertyByColumnName(col.getDBColumnName());
         Object value = object.get(prop.getName());
         if (value != null) {
-          if (prop.isDate()) {
+          if (prop.isDate() || prop.isDatetime()) {
             value = parseDateFromDAL(value);
           } else if (value instanceof BaseOBObject) {
             value = ((BaseOBObject) value).getId();
