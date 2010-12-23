@@ -49,7 +49,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
    */
   @Override
   protected int getCount(Map<String, String> parameters) {
-    return getData(parameters, 0, (Integer.MAX_VALUE - 1)).size();
+    return getData(parameters, 0, -1).size();
   }
 
   @Override
@@ -68,7 +68,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       String[] queryAliases = widgetQuery.getReturnAliases();
 
       if (!isExport && "widget".equals(viewMode)) {
-        int rowsNumber = Integer.valueOf(parameters.get("rowsNumber"));
+        int rowsNumber = Integer.valueOf((parameters.get("rowsNumber") != null) ? parameters
+            .get("rowsNumber") : "10");
         widgetQuery.setMaxResults(rowsNumber);
       } else if (!isExport) {
         if (startRow > 0) {
