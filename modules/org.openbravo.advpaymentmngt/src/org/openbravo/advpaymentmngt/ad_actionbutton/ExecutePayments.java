@@ -175,7 +175,7 @@ public class ExecutePayments extends HttpSecureAppServlet {
         || PurchaseInvoiceWindow.equals(strWindowId) || SalesInvoiceWindow.equals(strWindowId)) {
       final String strTabId = vars.getGlobalVariable("inpTabId", "ExecutePayments|Tab_ID");
       vars.setMessage(strTabId, result);
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

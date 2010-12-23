@@ -265,7 +265,7 @@ public class Transactions extends HttpSecureAppServlet {
     xmlDocument.setParameter("finFinancialAccountId", strFinFinancialAccountId);
     xmlDocument.setParameter("hideReconciled", (hideReconciledTrx) ? "Y" : "N");
     xmlDocument.setParameter("KeyName", "");
-    xmlDocument.setParameter("windowPath", Utility.getTabURL(this, tabId, "E"));
+    xmlDocument.setParameter("windowPath", Utility.getTabURL(tabId, "E", true));
 
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");

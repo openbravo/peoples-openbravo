@@ -124,7 +124,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         vars.setMessage(strTabId, myMessage);
         // on error close popup
         if (pinstance.getResult() == 0L || !"CO".equals(strdocaction)) {
-          String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+          String strWindowPath = Utility.getTabURL(strTabId, "R", true);
           if (strWindowPath.equals(""))
             strWindowPath = strDefaultServlet;
           printPageClosePopUp(response, vars, strWindowPath);
@@ -150,7 +150,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         response.sendRedirect(strDireccion
             + "/org.openbravo.advpaymentmngt.ad_actionbutton/ExecutePayments.html");
       } else {
-        String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+        String strWindowPath = Utility.getTabURL(strTabId, "R", true);
         if (strWindowPath.equals(""))
           strWindowPath = strDefaultServlet;
         printPageClosePopUp(response, vars, strWindowPath);

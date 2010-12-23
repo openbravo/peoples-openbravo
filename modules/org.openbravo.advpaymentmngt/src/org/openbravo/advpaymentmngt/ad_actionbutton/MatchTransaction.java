@@ -96,7 +96,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
         OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
             .parseTranslation(this, vars, vars.getLanguage(), "@APRM_NoStatementsToMatch@"));
         vars.setMessage(strTabId, message);
-        printPageClosePopUp(response, vars, Utility.getTabURL(this, strTabId, "R"));
+        printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
       } else {
         if (reconciliation == null) {
           reconciliation = MatchTransactionDao.addNewReconciliation(this, vars,
@@ -227,7 +227,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
             vars.setMessage(strTabId, msg);
           }
         }
-        String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+        String strWindowPath = Utility.getTabURL(strTabId, "R", true);
         if (strWindowPath.equals(""))
           strWindowPath = strDefaultServlet;
 
@@ -329,7 +329,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
           .parseTranslation(this, vars, vars.getLanguage(), "@APRM_MissingMatchingAlgorithm@"));
       vars.setMessage(strTabId, message);
-      printPageClosePopUp(response, vars, Utility.getTabURL(this, strTabId, "R"));
+      printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
       return;
     }
     if (isManualReconciliation(reconciliation)) {
@@ -337,7 +337,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
           .parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
       vars.setMessage(strTabId, message);
-      printPageClosePopUp(response, vars, Utility.getTabURL(this, strTabId, "R"));
+      printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
       return;
     }
     try {

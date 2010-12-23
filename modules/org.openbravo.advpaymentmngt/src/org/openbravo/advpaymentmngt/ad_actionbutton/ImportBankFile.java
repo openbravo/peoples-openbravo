@@ -61,7 +61,7 @@ public class ImportBankFile extends HttpSecureAppServlet {
       String strKey = vars.getStringParameter("inpfinFinancialAccountId");
       String strBankFileFormat = vars.getStringParameter("inpfinBankFileFormatId");
       String strTabId = vars.getRequiredStringParameter("inpTabId");
-      String strWindowPath = Utility.getTabURL(this, strTabId, "E");
+      String strWindowPath = Utility.getTabURL(strTabId, "E", true);
       BankFileFormat bff = OBDal.getInstance().get(BankFileFormat.class, strBankFileFormat);
       FIN_BankStatementImport bsi = null;
       try {

@@ -305,7 +305,7 @@ public class Reconciliation extends HttpSecureAppServlet {
         OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
             .parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
         vars.setMessage(strTabId, message);
-        printPageClosePopUp(response, vars, Utility.getTabURL(this, strTabId, "R"));
+        printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
         return;
       }
 
