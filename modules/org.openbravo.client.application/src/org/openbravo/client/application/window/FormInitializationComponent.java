@@ -111,7 +111,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       String changedColumn = (String) parameters.get("CHANGED_COLUMN");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       List<Field> fields = tab.getADFieldList();
-      BaseOBObject row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
+      BaseOBObject row = null;
+      if (rowId != null) {
+        row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
+      }
       Tab parentTab = null;
       BaseOBObject parentRecord = null;
       log.debug("TAB NAME: " + tab.getWindow().getName() + "." + tab.getName() + " Tab Id:"
@@ -633,6 +636,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                         value = (String) el;
                       }
                       log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + value);
+                      // We set the new value in the request, so that the JSONObject is computed
+                      // with the new value
                       rq.setRequestParameter(colId, value);
                       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
                           col.getId());
@@ -641,6 +646,11 @@ public class FormInitializationComponent extends BaseActionHandler {
                       columnValues.put("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()),
                           jsonobj);
                       changed = true;
+
+                      // We set the value as formatted in the JSONObject in the request, so that the
+                      // request now is format safe and additional getFieldProperties calls do not
+                      // fail
+                      rq.setRequestParameter(colId, jsonobj.getString("value"));
                     }
                     if (changed && col.getCallout() != null) {
                       // We need to fire this callout, as the column value was changed
@@ -653,9 +663,9 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
       } catch (ClassNotFoundException e) {
-        log.error("Couldn't find class " + calloutClassName, e);
+        throw new OBException("Couldn't find class " + calloutClassName, e);
       } catch (Exception e) {
-        log.error("Couldn't execute callout (class " + calloutClassName + ")", e);
+        throw new OBException("Couldn't execute callout (class " + calloutClassName + ")", e);
       }
     }
     if (calledCallouts.size() == MAX_CALLOUT_CALLS) {
