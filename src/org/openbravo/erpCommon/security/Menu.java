@@ -246,7 +246,7 @@ public class Menu extends HttpSecureAppServlet {
       final String type = command.equals("GRID") ? "R" : "E";
 
       // Getting the tab URL
-      final String tabURL = Utility.getTabURL(this, tabId, type);
+      final String tabURL = Utility.getTabURL(tabId, type, true);
       targetmenu = tabURL + "?dl=1&" + qString;
 
     } catch (Exception e) {
