@@ -85,7 +85,7 @@ public class InitialOrgSetup {
    * @param strOrgUser
    *          Name of the user that will be created for the organization
    * @param strOrgType
-   *          Organization Type
+   *          Organization Type code, according to: 0-Organization, 1-Legal with accounting, 2-Generic, 3-Legal without accounting.
    * @param strParentOrg
    *          New organization will belong to the provided one, in the organization tree
    * @param strcLocationId
