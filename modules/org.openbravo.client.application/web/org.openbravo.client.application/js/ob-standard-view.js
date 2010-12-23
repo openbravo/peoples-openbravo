@@ -979,7 +979,7 @@ isc.OBStandardView.addProperties({
 // = OBStandardViewTabSet =
 // The OBStandardViewTabSet is the tabset used within the standard view to
 // display child tabs
-isc.ClassFactory.defineClass('OBStandardViewTabSet', isc.TabSet);
+isc.ClassFactory.defineClass('OBStandardViewTabSet', isc.OBTabSetChild);
 
 isc.OBStandardViewTabSet.addClassProperties({
 
@@ -1048,7 +1048,6 @@ isc.OBStandardViewTabSet.addProperties({
   paneContainerMargin: 0,
   paneContainerPadding: 0,
   showPaneContainerEdges: false,
-  useSimpleTabs: true,
   
   state: null,
   previousState: null,

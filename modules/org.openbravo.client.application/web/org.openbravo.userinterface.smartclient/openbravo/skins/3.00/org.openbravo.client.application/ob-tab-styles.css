@@ -1,0 +1,68 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an 'AS IS'
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+.OBTabSetChild {
+
+}
+
+.OBTabBarChild {
+  background:  #ffffff url(./images/tab/tabBarChild_bg.gif) repeat-x scroll;
+  background-position: center top;
+}
+
+.OBTabSetChildContainer {
+
+}
+
+/* styles for simple css-styled tabs*/
+/* note only the top styles are present here because in Openbravo tabs in forms are shown in the top
+if the tab headers are on the right, left or bottom the same styles can be used */
+
+.OBTabBarChildButtonTopSelected,
+.OBTabBarChildButtonTopSelectedFocused,
+.OBTabBarChildButtonTopSelectedFocusedOver,
+.OBTabBarChildButtonTopSelectedFocusedDown,
+.OBTabBarChildButtonTopSelectedDown,
+.OBTabBarChildButtonTopSelectedDisabled,
+.OBTabBarChildButtonTopSelectedOver {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  color: #fff;
+  margin: 0px;
+  padding: 0px 8px 0px 8px;
+  background-image: url(./images/tab/tabBarButtonChild_active.gif);
+  background-position: center 2px;
+  background-repeat: repeat-x;
+}
+
+.OBTabBarChildButtonTop,
+.OBTabBarChildButtonTopOver,
+.OBTabBarChildButtonTopDown,
+.OBTabBarChildButtonTopDisabled {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  color: #fff;
+  margin: 0px;
+  padding: 0px 8px 0px 8px;
+  background-image: url(./images/tab/tabBarButtonChild_inactive.gif);
+  background-position: center 2px;
+  background-repeat: repeat-x;
+}

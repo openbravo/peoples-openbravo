@@ -78,6 +78,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-formitem-widgets.js", true));
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/ob-tab.js", false));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-grid.js", false));
 
     globalResources.add(createStaticResource(
@@ -126,6 +128,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.application/ob-tab-styles.css", false));
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.application/ob-form-styles.css", false));
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
@@ -152,6 +158,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
             + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.application/ob-application-styles.css", false));
 
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.application/ob-tab-styles.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER
