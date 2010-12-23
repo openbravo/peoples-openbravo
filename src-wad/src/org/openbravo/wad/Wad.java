@@ -690,6 +690,10 @@ public class Wad extends DefaultHandler {
       WadData[] contextParams = WadData.selectContextParams(pool);
       xmlDocument.setData("structureContextParams", contextParams);
 
+      WadData[] allTabs = WadData.selectAllTabs(pool);
+      xmlDocument.setData("structureServletTab", getTabServlets(allTabs));
+      xmlDocument.setData("structureMappingTab", getTabMappings(allTabs));
+
       final WadData[] servlets = WadData.select(pool);
       WadData[][] servletParams = null;
       if (servlets != null && servlets.length > 0) {
@@ -727,6 +731,58 @@ public class Wad extends DefaultHandler {
       e.printStackTrace();
       log4j.error("Problem of IOException in process of Web.xml");
     }
+  }
+
+  private WadData[] getTabServlets(WadData[] allTabs) {
+    ArrayList<WadData> servlets = new ArrayList<WadData>();
+    for (WadData tab : allTabs) {
+      String tabClassName = "org.openbravo.erpWindows."
+          + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage) + tab.windowname + "."
+          + tab.tabname;
+      WadData servlet = new WadData();
+      servlet.displayname = tabClassName;
+      servlet.name = "W" + tab.adTabId;
+      servlet.classname = tabClassName;
+      servlets.add(servlet);
+
+      String comboReloadClassName = "org.openbravo.erpCommon.ad_callouts.ComboReloads"
+          + tab.adTabId;
+      WadData servletCombo = new WadData();
+      servletCombo.displayname = comboReloadClassName;
+      servletCombo.name = "WR" + tab.adTabId;
+      servletCombo.classname = comboReloadClassName;
+      servlets.add(servletCombo);
+    }
+    return servlets.toArray(new WadData[servlets.size()]);
+  }
+
+  private FieldProvider[] getTabMappings(WadData[] allTabs) {
+    ArrayList<WadData> mappings = new ArrayList<WadData>();
+    for (WadData tab : allTabs) {
+      String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage)
+          + tab.windowname + "/" + tab.tabname;
+
+      WadData mapping = new WadData();
+      mapping.name = "W" + tab.adTabId;
+      mapping.classname = prefix + "_Relation.html";
+      mappings.add(mapping);
+
+      WadData mapping2 = new WadData();
+      mapping2.name = "W" + tab.adTabId;
+      mapping2.classname = prefix + "_Edition.html";
+      mappings.add(mapping2);
+
+      WadData mapping3 = new WadData();
+      mapping3.name = "W" + tab.adTabId;
+      mapping3.classname = prefix + "_Excel.xls";
+      mappings.add(mapping3);
+
+      WadData mapping4 = new WadData();
+      mapping4.name = "WR" + tab.adTabId;
+      mapping4.classname = "/ad_callouts/ComboReloads" + tab.adTabId + ".html";
+      mappings.add(mapping4);
+    }
+    return mappings.toArray(new WadData[mappings.size()]);
   }
 
   /**

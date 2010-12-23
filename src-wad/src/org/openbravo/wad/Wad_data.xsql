@@ -26,7 +26,8 @@
     <Sql>
       <![CDATA[
       SELECT MAX(COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, CLASSNAME, CLASSNAME AS DISPLAYNAME, 
-      MAX(LOADONSTARTUP) AS LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH, '' as buildxml
+      MAX(LOADONSTARTUP) AS LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH, '' as buildxml,
+      '' as ad_tab_id, '' as windowName, '' as tabName, '' as windowPackage, '' as windowmodule, '' as tabPackage, '' as tabmodule
       FROM AD_MODEL_OBJECT o
       WHERE ((ISACTIVE = 'Y' and ad_tab_id is null)
             or (ad_tab_id is not null 
@@ -37,11 +38,31 @@
                                 and t.isactive='Y'
                                 and w.isactive='Y')))
       AND OBJECT_TYPE = 'S'
+      AND ACTION != 'W'
       GROUP BY CLASSNAME
       ORDER BY NAME
       ]]>
     </Sql>
   </SqlMethod>
+  
+  <SqlMethod name="selectAllTabs" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+        select t.ad_tab_id, AD_MAPPING_FORMAT(to_char(w.name)) as windowName, 
+               AD_MAPPING_FORMAT(to_char(t.name)) as tabName, 
+               m2.javapackage windowPackage, m2.ad_module_id windowmodule,
+               m.javapackage tabPackage, m.ad_module_id tabmodule
+          from ad_tab t, ad_window w, ad_module m, ad_module m2
+         where t.ad_module_id = m.ad_module_id
+           and w.ad_module_id = m2.ad_module_id
+           and w.ad_window_id = t.ad_window_id
+           and t.isactive='Y'
+           and w.isactive='Y'
+           order by w.name, t.seqno
+      ]]>
+    </Sql>
+  </SqlMethod>
+
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment>Create a registry</SqlMethodComment>
       <Sql></Sql>
@@ -121,6 +142,7 @@
       AND MO.OBJECT_TYPE = 'F' 
       AND MO.AD_MODEL_OBJECT_ID = MOM.AD_MODEL_OBJECT_ID 
       AND MOM.ISACTIVE = 'Y'
+      AND MO.ACTION != 'W'
       GROUP BY MO.CLASSNAME, MOM.MAPPINGNAME, MO.SEQNO 
       ORDER BY SEQNO,NAME
       ]]>
