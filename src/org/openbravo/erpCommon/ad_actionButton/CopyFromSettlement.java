@@ -79,7 +79,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       String strKey = vars.getRequestGlobalVariable("inpcSettlementFromId",
           "CopyFromSettlement|C_SettlementFrom_ID");
 
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

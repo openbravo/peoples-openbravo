@@ -71,7 +71,7 @@ public class Buscador extends HttpSecureAppServlet {
       // of the incoming window path
       // always use _Relation form url as it matches old behavior in ToolBar.java and
       // both views are mapped to the same servlet
-      strWindow = Utility.getTabURL(this, strTab, "R");
+      strWindow = Utility.getTabURL(strTab, "R", true);
 
       if (!BuscadorData.hasSelectionColumns(this, strTab).equals("0"))
         data = BuscadorData.select(this, vars.getLanguage(), strTab, strShowAudit);

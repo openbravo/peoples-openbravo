@@ -74,7 +74,7 @@ public class TabFilter extends HttpSecureAppServlet {
       if (tab != null && tab.length != 0) {
         if (tab[0].help.equals("Y"))
           strWindowPath = "../utility/WindowTree_FS.html?inpTabId=" + strTab;
-        strWindowPath = Utility.getTabURL(this, strTab, "R");
+        strWindowPath = Utility.getTabURL(strTab, "R", true);
       } else
         strWindowPath = strDefaultServlet;
       if (strOrderBy != null && strOrderBy.length() > 0) {
@@ -135,10 +135,13 @@ public class TabFilter extends HttpSecureAppServlet {
   }
 
   private boolean isHasDescriptionReference(String reference) {
-	  if("17".equals(reference) || "18".equals(reference) || "19".equals(reference) || "21".equals(reference) || "25".equals(reference) || "28".equals(reference) || "30".equals(reference) || "31".equals(reference) || "32".equals(reference) || "35".equals(reference) || "800011".equals(reference)){
-		  return true;
-	  }
-      return false;
+    if ("17".equals(reference) || "18".equals(reference) || "19".equals(reference)
+        || "21".equals(reference) || "25".equals(reference) || "28".equals(reference)
+        || "30".equals(reference) || "31".equals(reference) || "32".equals(reference)
+        || "35".equals(reference) || "800011".equals(reference)) {
+      return true;
+    }
+    return false;
   }
 
   private TabFilterData[] getShownFieldsData(TabFilterData[] data) {

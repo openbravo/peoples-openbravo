@@ -250,7 +250,7 @@ public class WindowTree extends HttpSecureAppServlet {
     WindowTreeData[] data = WindowTreeData.selectTabName(this, TabId);
 
     xmlDocument.setParameter("description", data[0].name);
-    xmlDocument.setParameter("page", Utility.getTabURL(this, TabId, "E"));
+    xmlDocument.setParameter("page", Utility.getTabURL(TabId, "E", true));
     xmlDocument.setParameter("menu", loadNodes(vars, key, WindowTreeData
         .selectEditable(this, TabId).equals("Y"), TabId));
     xmlDocument.setParameter("treeID", strTreeID);

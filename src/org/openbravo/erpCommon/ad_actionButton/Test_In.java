@@ -66,7 +66,7 @@ public class Test_In extends HttpSecureAppServlet {
       vars.setSessionValue(strWindow + "|AT_Test_ID", strKey);
       String strTab = vars.getStringParameter("inpTabId");
 
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

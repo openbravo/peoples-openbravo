@@ -65,7 +65,7 @@ public class ExportReferenceData extends HttpSecureAppServlet {
       String strTab = vars.getGlobalVariable("inpTabId", "ExportReferenceData|Tab_ID");
       String strKey = vars.getRequestGlobalVariable("inpKey", "ExportReferenceData|AD_DataSet_ID");
 
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

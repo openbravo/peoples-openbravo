@@ -63,7 +63,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       String tabId = getTabId(vars);
       String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
 
-      servletURL.append(Utility.getTabURL(this, tabId, "E"));
+      servletURL.append(Utility.getTabURL(tabId, "E", true));
       servletURL.append("?Command=").append((strKeyReferenceId.equals("") ? "DEFAULT" : "DIRECT"))
           .append("&");
       servletURL.append("inpDirectKey").append("=").append(strKeyReferenceId);

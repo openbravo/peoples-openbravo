@@ -60,7 +60,7 @@ public class ImportAccountServlet extends HttpSecureAppServlet {
       strUpdateDefault = vars.getStringParameter("inpUpdateDefault", "N");
       strCreateNewCombination = vars.getStringParameter("inpCreateNewCombination", "N");
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

@@ -59,7 +59,7 @@ public class ImportOrderServlet extends HttpSecureAppServlet {
       String strRecord = vars.getGlobalVariable("inpKey", "ImportOrderServlet|key");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "ImportOrderServlet|tabId");
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

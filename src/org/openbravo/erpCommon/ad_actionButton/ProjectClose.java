@@ -56,7 +56,7 @@ public class ProjectClose extends HttpSecureAppServlet {
       String strKey = vars.getRequestGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
       String strTab = vars.getStringParameter("inpTabId");
 
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

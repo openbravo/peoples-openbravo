@@ -61,7 +61,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
       String strPriceListCheck = vars.getStringParameter("inpPriceList");
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

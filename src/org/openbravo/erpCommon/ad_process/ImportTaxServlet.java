@@ -59,7 +59,7 @@ public class ImportTaxServlet extends HttpSecureAppServlet {
       String strRecord = vars.getGlobalVariable("inpKey", "ImportTaxServlet|key");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "ImportTaxServlet|tabId");
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

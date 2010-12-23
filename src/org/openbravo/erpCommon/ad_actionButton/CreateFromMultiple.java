@@ -95,7 +95,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       OBError myMessage = saveMethod(vars, strKey, strWindowId, strSOTrx);
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

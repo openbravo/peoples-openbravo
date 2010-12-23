@@ -63,7 +63,7 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
       String[] strGroupId = request.getParameterValues("strGroup");
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

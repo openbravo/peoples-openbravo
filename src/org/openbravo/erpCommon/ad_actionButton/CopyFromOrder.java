@@ -70,7 +70,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       OBError myError = copyLines(vars, strRownum, strKey, strWindowId, strSOTrx);
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 
