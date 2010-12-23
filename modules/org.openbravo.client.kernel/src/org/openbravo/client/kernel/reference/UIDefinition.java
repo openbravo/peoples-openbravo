@@ -142,6 +142,20 @@ public abstract class UIDefinition {
       columnValue = rq.getRequestParameter("inp"
           + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
     } else {
+      if (field.getColumn().getDBColumnName().equalsIgnoreCase("documentno")) {
+        String docTypeTarget = rq.getRequestParameter("inp"
+            + Sqlc.TransformaNombreColumna("C_DocTypeTarget_ID"));
+        if (docTypeTarget == null)
+          docTypeTarget = "";
+        String docType = rq.getRequestParameter("inp"
+            + Sqlc.TransformaNombreColumna("C_DocType_ID"));
+        if (docType == null)
+          docType = "";
+        columnValue = "<"
+            + Utility.getDocumentNo(new DalConnectionProvider(false), rq.getVariablesSecureApp(),
+                field.getTab().getWindow().getId(), field.getColumn().getTable().getDBTableName(),
+                docTypeTarget, docType, false, false) + ">";
+      }
       String defaultS = field.getColumn().getDefaultValue();
       if (defaultS != null) {
         if (!defaultS.startsWith("@SQL=")) {
