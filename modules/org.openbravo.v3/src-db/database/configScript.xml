@@ -1832,14 +1832,6 @@
       <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="323">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="323">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="324">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -1880,30 +1872,6 @@
       <oldValue><![CDATA[130]]></oldValue>
       <newValue><![CDATA[90]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="337">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="337">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="350">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="350">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="404">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="404">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="405">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -1915,14 +1883,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="409">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="430">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="430">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="431">
       <oldValue><![CDATA[30]]></oldValue>
@@ -1980,14 +1940,6 @@
       <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="450">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="450">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="451">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -2024,20 +1976,8 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="459">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="465">
       <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="466">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="466">
-      <oldValue><![CDATA[20]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="467">
@@ -2054,14 +1994,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="470">
       <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="471">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="471">
-      <oldValue><![CDATA[20]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="472">
@@ -2082,14 +2014,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="476">
       <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="477">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="477">
-      <oldValue><![CDATA[20]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="479">
@@ -2116,20 +2040,8 @@
       <oldValue><![CDATA[100]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="486">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="491">
       <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="492">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="492">
-      <oldValue><![CDATA[20]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="493">
@@ -2155,14 +2067,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="499">
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="501">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="501">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="502">
       <oldValue><![CDATA[30]]></oldValue>
@@ -2216,21 +2120,9 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="665">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="681">
       <oldValue><![CDATA[120]]></oldValue>
       <newValue><![CDATA[90]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="683">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="683">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="684">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -2275,14 +2167,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="693">
       <oldValue><![CDATA[140]]></oldValue>
       <newValue><![CDATA[110]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="695">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="695">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="696">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -2368,14 +2252,6 @@
       <oldValue><![CDATA[250]]></oldValue>
       <newValue><![CDATA[160]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="714">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="714">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="715">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -2415,14 +2291,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="731">
       <oldValue><![CDATA[160]]></oldValue>
       <newValue><![CDATA[130]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="793">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="793">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="794">
       <oldValue><![CDATA[70]]></oldValue>
@@ -2520,14 +2388,6 @@
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="913">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="913">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="914">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
@@ -2543,14 +2403,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="939">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="968">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="968">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="969">
       <oldValue><![CDATA[50]]></oldValue>
@@ -2592,14 +2444,6 @@
       <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="988">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="988">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="989">
       <oldValue><![CDATA[60]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
@@ -2624,25 +2468,9 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="996">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="996">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="997">
       <oldValue><![CDATA[60]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1000">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1000">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1001">
       <oldValue><![CDATA[50]]></oldValue>
@@ -2664,14 +2492,6 @@
       <oldValue><![CDATA[110]]></oldValue>
       <newValue><![CDATA[90]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1008">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1008">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1009">
       <oldValue><![CDATA[60]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
@@ -2691,14 +2511,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1014">
       <oldValue><![CDATA[120]]></oldValue>
       <newValue><![CDATA[110]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1016">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1016">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1017">
       <oldValue><![CDATA[90]]></oldValue>
@@ -2764,22 +2576,6 @@
       <oldValue><![CDATA[320]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1043">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1050">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1058">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1058">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1059">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -2791,14 +2587,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1061">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1064">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1064">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1065">
       <oldValue><![CDATA[60]]></oldValue>
@@ -2816,21 +2604,9 @@
       <oldValue><![CDATA[160]]></oldValue>
       <newValue><![CDATA[130]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1073">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1077">
       <oldValue><![CDATA[130]]></oldValue>
       <newValue><![CDATA[140]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1079">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1079">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1081">
       <oldValue><![CDATA[30]]></oldValue>
@@ -2944,14 +2720,6 @@
       <oldValue><![CDATA[N]]></oldValue>
       <newValue><![CDATA[Y]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1117">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1117">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1119">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -3040,14 +2808,6 @@
       <oldValue><![CDATA[300]]></oldValue>
       <newValue><![CDATA[150]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1153">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1153">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1154">
       <oldValue><![CDATA[60]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
@@ -3059,14 +2819,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1156">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1174">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1174">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1175">
       <oldValue><![CDATA[50]]></oldValue>
@@ -3084,14 +2836,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1193">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1193">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1194">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
@@ -3102,14 +2846,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1198">
       <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1199">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1199">
-      <oldValue><![CDATA[20]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1200">
@@ -3236,14 +2972,6 @@
       <oldValue><![CDATA[320]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1336">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1336">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1337">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -3275,14 +3003,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="1343">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1351">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1351">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1352">
       <oldValue><![CDATA[50]]></oldValue>
@@ -3336,14 +3056,6 @@
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1366">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1366">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1367">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
@@ -3376,26 +3088,6 @@
       <oldValue><![CDATA[120]]></oldValue>
       <newValue><![CDATA[110]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1382">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1391">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1412">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1412">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1421">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1455">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
@@ -3403,14 +3095,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1456">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1457">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1457">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1458">
       <oldValue><![CDATA[50]]></oldValue>
@@ -3432,33 +3116,13 @@
       <oldValue><![CDATA[40]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1464">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1464">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1465">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1473">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1477">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1478">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1478">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1479">
       <oldValue><![CDATA[50]]></oldValue>
@@ -3468,14 +3132,6 @@
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1485">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1485">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1486">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
@@ -3484,25 +3140,9 @@
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1494">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1494">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1495">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1500">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1500">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1519">
       <oldValue><![CDATA[140]]></oldValue>
@@ -3518,14 +3158,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1525">
       <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1526">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1526">
-      <oldValue><![CDATA[20]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1527">
@@ -3924,14 +3556,6 @@
       <oldValue><![CDATA[100]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2123">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2123">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2124">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -4052,14 +3676,6 @@
       <oldValue><![CDATA[160]]></oldValue>
       <newValue><![CDATA[100]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2181">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2181">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2182">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -4136,14 +3752,6 @@
       <oldValue><![CDATA[80]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2198">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2198">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2199">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -4166,14 +3774,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2204">
       <oldValue><![CDATA[70]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2205">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2205">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2206">
@@ -4199,14 +3799,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2211">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2215">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2215">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2216">
       <oldValue><![CDATA[20]]></oldValue>
@@ -4240,18 +3832,6 @@
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2223">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2231">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2231">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2232">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
@@ -4280,18 +3860,6 @@
       <oldValue><![CDATA[80]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2252">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2259">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2259">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2260">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
@@ -4319,14 +3887,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2266">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2267">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2267">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2268">
       <oldValue><![CDATA[40]]></oldValue>
@@ -4368,14 +3928,6 @@
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2275">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2275">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2276">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -4383,18 +3935,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2279">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2284">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2294">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2294">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2295">
       <oldValue><![CDATA[20]]></oldValue>
@@ -4420,18 +3960,6 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2315">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2324">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2343">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2395">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -4455,14 +3983,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2399">
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2400">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2400">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2402">
       <oldValue><![CDATA[20]]></oldValue>
@@ -4547,14 +4067,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SHOWINRELATION" pkRow="2480">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2484">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2484">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2486">
       <oldValue><![CDATA[20]]></oldValue>
@@ -4692,14 +4204,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2646">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2646">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2647">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -4764,14 +4268,6 @@
       <oldValue><![CDATA[270]]></oldValue>
       <newValue><![CDATA[250]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2681">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2681">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2682">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -4795,14 +4291,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="2689">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2690">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2690">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2691">
       <oldValue><![CDATA[20]]></oldValue>
@@ -4832,14 +4320,6 @@
       <oldValue><![CDATA[120]]></oldValue>
       <newValue><![CDATA[90]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2700">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2700">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2701">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -4858,14 +4338,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2707">
       <oldValue><![CDATA[380]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2711">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2711">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2712">
@@ -4887,14 +4359,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2719">
       <oldValue><![CDATA[130]]></oldValue>
       <newValue><![CDATA[90]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2720">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2720">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2721">
       <oldValue><![CDATA[20]]></oldValue>
@@ -4927,14 +4391,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="2728">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2729">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2729">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2730">
       <oldValue><![CDATA[20]]></oldValue>
@@ -4975,14 +4431,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2738">
       <oldValue><![CDATA[110]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2748">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2748">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2749">
       <oldValue><![CDATA[20]]></oldValue>
@@ -5027,14 +4475,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2760">
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2761">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2761">
-      <oldValue><![CDATA[9]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2762">
       <oldValue><![CDATA[18]]></oldValue>
@@ -5380,14 +4820,6 @@
       <oldValue><![CDATA[54]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2982">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2982">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="2983">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -5436,14 +4868,6 @@
       <oldValue><![CDATA[160]]></oldValue>
       <newValue><![CDATA[100]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3000">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3000">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3001">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -5451,18 +4875,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3002">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3007">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3016">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3016">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3017">
       <oldValue><![CDATA[40]]></oldValue>
@@ -5495,10 +4907,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3024">
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3032">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3048">
       <oldValue><![CDATA[180]]></oldValue>
@@ -5556,10 +4964,6 @@
       <oldValue><![CDATA[100]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3089">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3112">
       <oldValue><![CDATA[189]]></oldValue>
       <newValue><![CDATA[140]]></newValue>
@@ -5611,14 +5015,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="3146">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3171">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3171">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3172">
       <oldValue><![CDATA[40]]></oldValue>
@@ -5768,14 +5164,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3302">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3302">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3303">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -5850,14 +5238,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3319">
       <oldValue><![CDATA[40]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3320">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3320">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3321">
@@ -6020,14 +5400,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3358">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3358">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3359">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -6083,14 +5455,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3374">
       <oldValue><![CDATA[160]]></oldValue>
       <newValue><![CDATA[100]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3376">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3376">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3377">
       <oldValue><![CDATA[20]]></oldValue>
@@ -6176,14 +5540,6 @@
       <oldValue><![CDATA[130]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3400">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3400">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3402">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -6255,14 +5611,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3420">
       <oldValue><![CDATA[130]]></oldValue>
       <newValue><![CDATA[110]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3422">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3422">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3424">
       <oldValue><![CDATA[30]]></oldValue>
@@ -6464,14 +5812,6 @@
       <oldValue><![CDATA[200]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3468">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3468">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3469">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -6483,14 +5823,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3472">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3476">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3476">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3477">
       <oldValue><![CDATA[20]]></oldValue>
@@ -6632,14 +5964,6 @@
       <oldValue><![CDATA[380]]></oldValue>
       <newValue><![CDATA[160]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3508">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3508">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3509">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -6760,10 +6084,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3752">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3781">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -6771,18 +6091,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3781">
       <oldValue><![CDATA[80]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3783">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3793">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3802">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3815">
       <oldValue><![CDATA[60]]></oldValue>
@@ -6932,14 +6240,6 @@
       <oldValue><![CDATA[100]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3903">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3903">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3904">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -6967,14 +6267,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3910">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3911">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3911">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3912">
       <oldValue><![CDATA[20]]></oldValue>
@@ -7068,14 +6360,6 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3935">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3935">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3936">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -7123,14 +6407,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3955">
       <oldValue><![CDATA[140]]></oldValue>
       <newValue><![CDATA[90]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3976">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3976">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3977">
       <oldValue><![CDATA[20]]></oldValue>
@@ -7216,14 +6492,6 @@
       <oldValue><![CDATA[50]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3991">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3991">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="3992">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -7276,14 +6544,6 @@
       <oldValue><![CDATA[100]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4004">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4004">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4005">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -7318,26 +6578,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4014">
       <oldValue><![CDATA[60]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4059">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4066">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4066">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4073">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4073">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4074">
@@ -7375,10 +6615,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4082">
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4083">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4092">
       <oldValue><![CDATA[560]]></oldValue>
@@ -7552,14 +6788,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4161">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4161">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4162">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -7579,14 +6807,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4166">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4167">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4167">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4168">
       <oldValue><![CDATA[20]]></oldValue>
@@ -7632,14 +6852,6 @@
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4176">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4176">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4177">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -7683,14 +6895,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4190">
       <oldValue><![CDATA[150]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4191">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4191">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4192">
       <oldValue><![CDATA[20]]></oldValue>
@@ -7772,33 +6976,9 @@
       <oldValue><![CDATA[80]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4460">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4473">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4524">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4550">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4561">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4575">
       <oldValue><![CDATA[200]]></oldValue>
       <newValue><![CDATA[180]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4610">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="4622">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -7819,22 +6999,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4724">
       <oldValue><![CDATA[120]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4819">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4830">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4837">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4848">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4858">
       <oldValue><![CDATA[160]]></oldValue>
@@ -7952,14 +7116,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5231">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5231">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5232">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -8030,14 +7186,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5243">
       <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5244">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5244">
-      <oldValue><![CDATA[20]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5245">
@@ -8212,14 +7360,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5290">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5290">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5291">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -8268,14 +7408,6 @@
       <oldValue><![CDATA[250]]></oldValue>
       <newValue><![CDATA[170]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5352">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5370">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5381">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -8316,69 +7448,9 @@
       <oldValue><![CDATA[110]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5394">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5403">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5449">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5471">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5481">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5490">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5497">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5501">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5540">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5592">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5605">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5613">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5621">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5634">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5716">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="5874">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5885">
       <oldValue><![CDATA[90]]></oldValue>
@@ -8420,10 +7492,6 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6164">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6182">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -8448,14 +7516,6 @@
       <oldValue><![CDATA[60]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6188">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6188">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6190">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -8463,10 +7523,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6190">
       <oldValue><![CDATA[80]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6280">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6298">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -8532,14 +7588,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6355">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6355">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6356">
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
@@ -8551,14 +7599,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6358">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6359">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6359">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6360">
       <oldValue><![CDATA[90]]></oldValue>
@@ -8588,14 +7628,6 @@
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6370">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6370">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6371">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -8604,18 +7636,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6378">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6389">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6396">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6404">
       <oldValue><![CDATA[120]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
@@ -8623,14 +7643,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="6404">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6409">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6409">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6410">
       <oldValue><![CDATA[20]]></oldValue>
@@ -8655,14 +7667,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6431">
       <oldValue><![CDATA[210]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6472">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6490">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="6506">
       <oldValue><![CDATA[390]]></oldValue>
@@ -8764,34 +7768,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6623">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6633">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6653">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6797">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6809">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6826">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6835">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6863">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -8848,10 +7824,6 @@
       <oldValue><![CDATA[210]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6887">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="6935">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -8891,14 +7863,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7012">
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7014">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7014">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7016">
       <oldValue><![CDATA[20]]></oldValue>
@@ -8976,10 +7940,6 @@
       <oldValue><![CDATA[80]]></oldValue>
       <newValue><![CDATA[100]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7034">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7038">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -8996,10 +7956,6 @@
       <oldValue><![CDATA[320]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7052">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7365">
       <oldValue><![CDATA[170]]></oldValue>
       <newValue><![CDATA[140]]></newValue>
@@ -9009,34 +7965,6 @@
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="7368">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7388">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7409">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7418">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7418">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7446">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7477">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7539">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
@@ -9071,14 +7999,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7646">
       <oldValue><![CDATA[240]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7652">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7689">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7780">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -9384,34 +8304,6 @@
       <oldValue><![CDATA[340]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7846">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7846">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7854">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7945">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7961">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="8110">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="8157">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8171">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
@@ -9440,14 +8332,6 @@
       <oldValue><![CDATA[80]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="8178">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8178">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8184">
       <oldValue><![CDATA[150]]></oldValue>
       <newValue><![CDATA[120]]></newValue>
@@ -9463,10 +8347,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8211">
       <oldValue><![CDATA[140]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="8213">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8228">
       <oldValue><![CDATA[140]]></oldValue>
@@ -9548,10 +8428,6 @@
       <oldValue><![CDATA[110]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800012">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800023">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -9599,34 +8475,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800028">
       <oldValue><![CDATA[150]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800046">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800087">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800102">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800119">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800128">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800135">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800141">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800149">
       <oldValue><![CDATA[60]]></oldValue>
@@ -9740,18 +8588,6 @@
       <oldValue><![CDATA[120]]></oldValue>
       <newValue><![CDATA[100]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800188">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800210">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800217">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800222">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -9776,14 +8612,6 @@
       <oldValue><![CDATA[140]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800227">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800233">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800239">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -9799,18 +8627,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800240">
       <oldValue><![CDATA[120]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800242">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800252">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800262">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800268">
       <oldValue><![CDATA[210]]></oldValue>
@@ -9832,14 +8648,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800274">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800274">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800275">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -9847,18 +8655,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800276">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800342">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800413">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800413">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800414">
       <oldValue><![CDATA[20]]></oldValue>
@@ -9918,14 +8714,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800428">
       <oldValue><![CDATA[170]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800431">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800431">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800432">
@@ -10028,14 +8816,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800485">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800485">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800486">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -10116,14 +8896,6 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800522">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800522">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800544">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -10154,14 +8926,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800551">
       <oldValue><![CDATA[150]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800554">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800554">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800555">
@@ -10264,14 +9028,6 @@
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800606">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800606">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800607">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -10288,14 +9044,6 @@
       <oldValue><![CDATA[120]]></oldValue>
       <newValue><![CDATA[110]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800612">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800612">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800613">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -10307,14 +9055,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800616">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800620">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800620">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800621">
       <oldValue><![CDATA[20]]></oldValue>
@@ -10342,14 +9082,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800626">
       <oldValue><![CDATA[40]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800627">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800627">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800628">
@@ -10404,18 +9136,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800645">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800659">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800659">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800721">
       <oldValue><![CDATA[150]]></oldValue>
       <newValue><![CDATA[140]]></newValue>
@@ -10439,14 +9159,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800727">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800728">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800728">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800729">
       <oldValue><![CDATA[20]]></oldValue>
@@ -10487,42 +9199,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800749">
       <oldValue><![CDATA[140]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800750">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800756">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800763">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800770">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800799">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800815">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800834">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800900">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800925">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800951">
       <oldValue><![CDATA[80]]></oldValue>
@@ -10576,14 +9252,6 @@
       <oldValue><![CDATA[100]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="800992">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800992">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="800993">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -10620,10 +9288,6 @@
       <oldValue><![CDATA[180]]></oldValue>
       <newValue><![CDATA[150]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801002">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801010">
       <oldValue><![CDATA[210]]></oldValue>
       <newValue/>
@@ -10639,14 +9303,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801014">
       <oldValue><![CDATA[170]]></oldValue>
       <newValue><![CDATA[110]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801016">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801016">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801017">
       <oldValue><![CDATA[20]]></oldValue>
@@ -10728,14 +9384,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801033">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801033">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801034">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -10760,21 +9408,9 @@
       <oldValue><![CDATA[60]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801041">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801048">
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801050">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801050">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801051">
       <oldValue><![CDATA[20]]></oldValue>
@@ -10799,14 +9435,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801056">
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801065">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801065">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801066">
       <oldValue><![CDATA[20]]></oldValue>
@@ -10856,29 +9484,9 @@
       <oldValue><![CDATA[250]]></oldValue>
       <newValue><![CDATA[130]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801131">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801301">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SHOWINRELATION" pkRow="801309">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801320">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801355">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801355">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801356">
       <oldValue><![CDATA[20]]></oldValue>
@@ -10968,14 +9576,6 @@
       <oldValue><![CDATA[150]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801372">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801372">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801373">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -11048,14 +9648,6 @@
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801438">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801438">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="801439">
       <oldValue><![CDATA[180]]></oldValue>
       <newValue><![CDATA[150]]></newValue>
@@ -11116,26 +9708,6 @@
       <oldValue><![CDATA[260]]></oldValue>
       <newValue><![CDATA[220]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801464">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801479">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801485">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801491">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801497">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801510">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -11180,126 +9752,6 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801546">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801552">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801558">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801566">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801574">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801580">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801638">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801645">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801654">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801718">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801737">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801744">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801757">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801766">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801777">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801789">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801798">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801806">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801812">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801820">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801830">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="801836">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802364">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802379">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802406">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802497">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802505">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802514">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802521">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802527">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802534">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -11323,30 +9775,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="802540">
       <oldValue><![CDATA[230]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802564">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802577">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802583">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802591">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802600">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802624">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802642">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -11392,14 +9820,6 @@
       <oldValue><![CDATA[60]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802705">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="802705">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="802706">
       <oldValue><![CDATA[80]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
@@ -11436,70 +9856,6 @@
       <oldValue><![CDATA[100]]></oldValue>
       <newValue><![CDATA[110]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802717">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802756">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802842">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802856">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802860">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802872">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802878">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802890">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802908">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802924">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802932">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="802953">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803018">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803026">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803063">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803083">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803092">
       <oldValue><![CDATA[100]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
@@ -11518,14 +9874,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803117">
       <oldValue><![CDATA[30]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803118">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803118">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803119">
@@ -11564,14 +9912,6 @@
       <oldValue><![CDATA[50]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803129">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803129">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803131">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -11598,14 +9938,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803136">
       <oldValue><![CDATA[80]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803139">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803139">
-      <oldValue><![CDATA[20]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803141">
@@ -11644,14 +9976,6 @@
       <oldValue><![CDATA[300]]></oldValue>
       <newValue><![CDATA[260]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803153">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803161">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803185">
       <oldValue><![CDATA[100]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
@@ -11663,14 +9987,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803195">
       <oldValue><![CDATA[280]]></oldValue>
       <newValue><![CDATA[240]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803238">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803238">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803239">
       <oldValue><![CDATA[20]]></oldValue>
@@ -11755,14 +10071,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="803258">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803263">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803263">
-      <oldValue><![CDATA[20]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803264">
       <oldValue><![CDATA[30]]></oldValue>
@@ -11868,14 +10176,6 @@
       <oldValue><![CDATA[240]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803296">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803308">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803318">
       <oldValue><![CDATA[70]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
@@ -11891,14 +10191,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="803320">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803322">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803322">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803323">
       <oldValue><![CDATA[20]]></oldValue>
@@ -11955,14 +10247,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803335">
       <oldValue><![CDATA[140]]></oldValue>
       <newValue><![CDATA[110]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803337">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803337">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803338">
       <oldValue><![CDATA[20]]></oldValue>
@@ -12032,26 +10316,6 @@
       <oldValue><![CDATA[190]]></oldValue>
       <newValue><![CDATA[160]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803359">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803374">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803380">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803386">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803386">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803387">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -12088,41 +10352,9 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803419">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803419">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803447">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803447">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803456">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803460">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803469">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803479">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803488">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803499">
       <oldValue><![CDATA[100]]></oldValue>
@@ -12131,30 +10363,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803500">
       <oldValue><![CDATA[110]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803503">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803508">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803517">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803523">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803529">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803536">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803547">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -12171,10 +10379,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803548">
       <oldValue><![CDATA[120]]></oldValue>
       <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803551">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="803556">
       <oldValue><![CDATA[260]]></oldValue>
@@ -12220,18 +10424,6 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803596">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803608">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803615">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803624">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -12240,111 +10432,11 @@
       <oldValue><![CDATA[150]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803626">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803633">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803641">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803649">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803655">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803738">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803752">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803759">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803765">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803774">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803780">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803788">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803803">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803811">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803833">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803846">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803852">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803946">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803964">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803981">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803999">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="804079">
       <oldValue><![CDATA[420]]></oldValue>
       <newValue><![CDATA[230]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="804079">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="804126">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="804133">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="804142">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="804149">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
@@ -12376,18 +10468,6 @@
       <oldValue><![CDATA[300]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1000500005">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1000500015">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1000500015">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1000500016">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -12407,14 +10487,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1000500022">
       <oldValue><![CDATA[50]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1000500023">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1000500023">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1000500024">
       <oldValue><![CDATA[80]]></oldValue>
@@ -12476,10 +10548,6 @@
       <oldValue><![CDATA[30]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100012">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100036">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -12516,31 +10584,7 @@
       <oldValue><![CDATA[170]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100120">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100160">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100162">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100171">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100180">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100204">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1002100213">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
@@ -12596,27 +10640,7 @@
       <oldValue><![CDATA[115]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1004400008">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1004400024">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1004400032">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1004400047">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1004400071">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1005100000">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
@@ -12692,18 +10716,6 @@
       <oldValue><![CDATA[180]]></oldValue>
       <newValue><![CDATA[170]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1007400006">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1011100000">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1011100016">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1011100024">
       <oldValue><![CDATA[80]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
@@ -12726,14 +10738,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="02F393A7547048E09FF54061D551EBB6">
       <oldValue><![CDATA[90]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="03A907EBF8394F25BA372A127924CAB8">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="03A907EBF8394F25BA372A127924CAB8">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="03B212D251EB4117B5C2D3AE1EF09B7A">
@@ -12804,22 +10808,6 @@
       <oldValue><![CDATA[N]]></oldValue>
       <newValue><![CDATA[Y]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1379570E3FF6422FA0B34BF587F189D7">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1379570E3FF6422FA0B34BF587F189D7">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="13D19F83EDA7483B9DF1A64423E5347B">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="13D19F83EDA7483B9DF1A64423E5347B">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="18CBF8AE96B346D9966F40783008C6A2">
       <oldValue><![CDATA[140]]></oldValue>
       <newValue><![CDATA[130]]></newValue>
@@ -12836,41 +10824,9 @@
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[60]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1DD2CD8ED9BA4F4EB757808526E41B4B">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1DD2CD8ED9BA4F4EB757808526E41B4B">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="1F415C570D7F4CBDA660012CD3AA6D33">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="1F415C570D7F4CBDA660012CD3AA6D33">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="21731B32547C4D028CA89F64E9C0E64D">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="22DB612345BF4DD490F308E111A92809">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="22DB612345BF4DD490F308E111A92809">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="23A31DC54A004E4782C193118244BA4A">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="23A31DC54A004E4782C193118244BA4A">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="2828AC0401C54F0FBE5B4E8CFC799B76">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -12964,22 +10920,6 @@
       <oldValue><![CDATA[60]]></oldValue>
       <newValue><![CDATA[40]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="47492699E416492B82582F6771276C56">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="47492699E416492B82582F6771276C56">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4A91B7362CFA4F7582FA703C760BD0C8">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="4A91B7362CFA4F7582FA703C760BD0C8">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="549FB043F3B24FB9B12519B4F09C19B6">
       <oldValue><![CDATA[298]]></oldValue>
       <newValue><![CDATA[170]]></newValue>
@@ -13024,14 +10964,6 @@
       <oldValue><![CDATA[390]]></oldValue>
       <newValue><![CDATA[220]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="581C57F400FF1682E040007F01013613">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="581C57F400FF1682E040007F01013613">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="581C57F401011682E040007F01013613">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -13070,14 +11002,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="588575F8962A49A6918F086167E2CD56">
       <oldValue><![CDATA[200]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="58D503FCDDA5D53FE040007F01016BBB">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="58D503FCDDA5D53FE040007F01016BBB">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="58D503FCDDA6D53FE040007F01016BBB">
@@ -13134,14 +11058,6 @@
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="5E7451300D254B11B582F0FBA8F11D2A">
       <oldValue><![CDATA[200]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="60FCCD631EBAEDF8E040007F01013AD4">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="60FCCD631EBAEDF8E040007F01013AD4">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="60FCCD631EBBEDF8E040007F01013AD4">
@@ -13276,14 +11192,6 @@
       <oldValue><![CDATA[80]]></oldValue>
       <newValue><![CDATA[50]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7399EE9782437B10E040007F0101315C">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7399EE9782437B10E040007F0101315C">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7399EE9782447B10E040007F0101315C">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -13304,14 +11212,6 @@
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="73A0528DBCE5F38BE040007F01011E2B">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="73A0528DBCE5F38BE040007F01011E2B">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="73A0528DBCE6F38BE040007F01011E2B">
       <oldValue><![CDATA[20]]></oldValue>
       <newValue><![CDATA[10]]></newValue>
@@ -13324,25 +11224,9 @@
       <oldValue><![CDATA[330]]></oldValue>
       <newValue><![CDATA[160]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7695EF000EE24AC486B9796DD68013A5">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7695EF000EE24AC486B9796DD68013A5">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="78AF9391E13A484BA9E46A5CAE98A76E">
       <oldValue><![CDATA[80]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7C541AC0C757FDD7E040007F01016B4D">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7C541AC0C757FDD7E040007F01016B4D">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7C541AC0C758FDD7E040007F01016B4D">
       <oldValue><![CDATA[20]]></oldValue>
@@ -13400,14 +11284,6 @@
       <oldValue><![CDATA[130]]></oldValue>
       <newValue><![CDATA[120]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7DC34559B3FDB45BE040007F0100784A">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7DC34559B3FDB45BE040007F0100784A">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7DFD1BBEC2F50C48E040007F01004674">
       <oldValue><![CDATA[90]]></oldValue>
       <newValue><![CDATA[80]]></newValue>
@@ -13432,38 +11308,6 @@
       <oldValue><![CDATA[180]]></oldValue>
       <newValue><![CDATA[260]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7E5649D862560D79E040007F01001E28">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7E5649D862560D79E040007F01001E28">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7E595A11D628446FE040007F010052E9">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7E595A11D628446FE040007F010052E9">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7E595A11D639446FE040007F010052E9">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7E595A11D639446FE040007F010052E9">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7E595A11D64A446FE040007F010052E9">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7E595A11D64A446FE040007F010052E9">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7E8829EBCFF8143AE040007F010018ED">
       <oldValue><![CDATA[190]]></oldValue>
       <newValue><![CDATA[270]]></newValue>
@@ -13475,14 +11319,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7FCAAFE989BDA375E040007F01007F0A">
       <oldValue><![CDATA[230]]></oldValue>
       <newValue><![CDATA[170]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="7FF2234748F3844FE040007F01003861">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="7FF2234748F3844FE040007F01003861">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8032E178607A50D5E040007F01004282">
       <oldValue><![CDATA[30]]></oldValue>
@@ -13504,44 +11340,12 @@
       <oldValue><![CDATA[230]]></oldValue>
       <newValue><![CDATA[170]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="80E4CFBA7916A660E040007F01005D04">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="80E4CFBA7916A660E040007F01005D04">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="81B33EDA88214F5DA19A5557B12857A2">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="81B33EDA88214F5DA19A5557B12857A2">
       <oldValue><![CDATA[230]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="82683CB3CF7918FDE040007F0100573E">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="82683CB3CF7918FDE040007F0100573E">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="82683CB3CF8018FDE040007F0100573E">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="82683CB3CF8018FDE040007F0100573E">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="82B7B2BAEDF54980E040007F010008E7">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="82B7B2BAEDF54980E040007F010008E7">
-      <oldValue><![CDATA[10]]></oldValue>
       <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="82F2E8A160C7472CE040007F01005324">
@@ -13676,22 +11480,6 @@
       <oldValue><![CDATA[220]]></oldValue>
       <newValue/>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="876D70C14FB40860E040007F0100787B">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="876D70C14FB40860E040007F0100787B">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="876D70C14FBB0860E040007F0100787B">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="876D70C14FBB0860E040007F0100787B">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="87AA1068F11242CAE040007F010011D5">
       <oldValue><![CDATA[250]]></oldValue>
       <newValue><![CDATA[190]]></newValue>
@@ -13708,14 +11496,6 @@
       <oldValue><![CDATA[350]]></oldValue>
       <newValue><![CDATA[180]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="8AD7024EFD78450D8BA32506AC065E8A">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8AD7024EFD78450D8BA32506AC065E8A">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8CB852B414BA4B66B20790634D899D85">
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
@@ -13731,14 +11511,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="8E7CC7A3918FB541E040007F01004601">
       <oldValue><![CDATA[150]]></oldValue>
       <newValue><![CDATA[140]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="9145E8D6EAB54014BF0C8D33520DDFA8">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="9145E8D6EAB54014BF0C8D33520DDFA8">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="958905B4F59845CF8983AC71E6ECC1EA">
       <oldValue><![CDATA[130]]></oldValue>
@@ -13832,14 +11604,6 @@
       <oldValue><![CDATA[30]]></oldValue>
       <newValue><![CDATA[20]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="A850C254278545F3BA2D0563544BB522">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="A850C254278545F3BA2D0563544BB522">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="ABA8AFDB0CDD49B9B20A24D2D8127B38">
       <oldValue><![CDATA[308]]></oldValue>
       <newValue><![CDATA[180]]></newValue>
@@ -13876,14 +11640,6 @@
       <oldValue><![CDATA[40]]></oldValue>
       <newValue><![CDATA[30]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="BE6F3373766744648039EAE64DBFCABA">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="BE6F3373766744648039EAE64DBFCABA">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="C925D6B656AC11DEAE52E723C9919EF7">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -13911,14 +11667,6 @@
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="D75020C6BCC34E84ACDB10F8C95983AF">
       <oldValue><![CDATA[110]]></oldValue>
       <newValue><![CDATA[100]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="D7763E776549499DBEA4F11923834CB7">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="D7763E776549499DBEA4F11923834CB7">
-      <oldValue><![CDATA[10]]></oldValue>
-      <newValue/>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="SEQNO" pkRow="E81BDEBDB5C0448DAECD48AA5857A091">
       <oldValue><![CDATA[170]]></oldValue>
