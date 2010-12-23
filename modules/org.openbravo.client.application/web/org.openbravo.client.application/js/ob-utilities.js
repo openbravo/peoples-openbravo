@@ -854,11 +854,21 @@ OB.Utilities.openActionButtonCallback = function (button, o){
   //button.parentElement.parentElement.view.getContextInfo()
 };
 
-OB.Utilities.postThroughHiddenFrame = function(url, data) {
-  OB.globalHiddenForm.setAttribute('action', url);
+
+//** {{{ OB.Utilities.postThroughHiddenForm }}} **
+//
+// Global method to post a request through a hidden form located on:
+// org.openbravo.client.application/index.html
+//
+// Parameters:
+// * {{{url}}}: the url to post the request.
+// * {{{data}}}: the data to include in the request.
+
+OB.Utilities.postThroughHiddenForm = function(url, data) {
+  OB.GlobalHiddenForm.setAttribute('action', url);
   
-//  for (var child in OB.globalHiddenForm.children) {
-//    OB.globalHiddenForm.removeChild(child);
+//  for (var child in OB.GlobalHiddenForm.children) {
+//    OB.GlobalHiddenForm.removeChild(child);
 //  }
   
   for (var key in data) {
@@ -867,10 +877,10 @@ OB.Utilities.postThroughHiddenFrame = function(url, data) {
     field.setAttribute('name', key);
     field.setAttribute('value', data[key]);
     
-    OB.globalHiddenForm.appendChild(field);
+    OB.GlobalHiddenForm.appendChild(field);
   }
   
-  OB.globalHiddenForm.submit();
+  OB.GlobalHiddenForm.submit();
 }
 
 

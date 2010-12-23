@@ -44,7 +44,7 @@ isc.OBGrid.addProperties({
         exportToFile: true
     }, this.getCriteria());
     
-    OB.Utilities.postThroughHiddenFrame(dsURL, d);
+    OB.Utilities.postThroughHiddenForm(dsURL, d);
   }
 });
 
