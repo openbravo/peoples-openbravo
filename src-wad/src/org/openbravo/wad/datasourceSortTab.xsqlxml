@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -131,7 +131,7 @@
   <SqlMethod name="updateN" type="preparedStatement" connection="true" return="rowCount" static="false">
     <Sql>&#60;&#33;[CDATA[
         UPDATE <PARAMETER_TMP id="table">table</PARAMETER_TMP>
-        SET <FIELD_TMP id="SortConditionField">fieldSort</FIELD_TMP>='N', <FIELD_TMP id="SortField">column_a</FIELD_TMP> = NULL, 
+        SET <FIELD_TMP id="SortConditionField">fieldSort</FIELD_TMP>='N',
         updated = now(), updatedby = ?
         WHERE 1=1 <PARAMETER_TMP id="parent">         AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </PARAMETER_TMP>
     ]]&#62;</Sql>
