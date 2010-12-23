@@ -33,8 +33,13 @@ public class YesNoUIDefinition extends UIDefinition {
   }
 
   @Override
-  public String getFormEditorType() {
+  public String getFilterEditorType() {
     return "OBYesNoItem";
+  }
+
+  @Override
+  public String getFormEditorType() {
+    return "OBCheckboxItem";
   }
 
   @Override
