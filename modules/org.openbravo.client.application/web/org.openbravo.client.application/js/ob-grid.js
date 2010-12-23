@@ -32,22 +32,19 @@ isc.OBGrid.addProperties({
   // exportProperties.exportFormat is supported (which is defaulted to csv).
   // * {{{data}}} the parameters to post to the server, in addition the filter criteria of the grid are posted.  
   exportData: function(exportProperties, data) {
-    if (!data) {
-      data = {};
-    }
-    if (!exportProperties) {
-      exportProperties = {};
-    }
-    var dsURL = this.dataSource.dataURL;
-    isc.addProperties(data, {
+    var d = data || {},
+        expProp = exportProperties || {},
+        dsURL = this.dataSource.dataURL;
+
+    isc.addProperties(d, {
         _dataSource: this.dataSource.ID,
         _operationType: 'fetch',
         _noCount: true, // never do count for export
-        exportFormat: exportProperties.exportFormat || 'csv',
+        exportAs: expProp.exportAs || 'csv',
         exportToFile: true
     }, this.getCriteria());
     
-    OB.Utilities.postThroughHiddenFrame(dsURL, data);
+    OB.Utilities.postThroughHiddenFrame(dsURL, d);
   }
 });
 
