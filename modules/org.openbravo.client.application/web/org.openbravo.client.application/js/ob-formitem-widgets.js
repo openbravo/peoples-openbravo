@@ -52,6 +52,10 @@ isc.ClassFactory.defineClass('OBTextItem', TextItem);
 // Input for large strings
 isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 
+// == OBTextAreaItem ==
+// Form sections
+isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
+
 // == OBListComboBoxItem ==
 // Combo box for list references
 isc.ClassFactory.defineClass('OBListComboBoxItem', ComboBoxItem);

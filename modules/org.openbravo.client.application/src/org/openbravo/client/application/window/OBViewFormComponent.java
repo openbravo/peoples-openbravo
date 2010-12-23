@@ -329,7 +329,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getEndRow() {
-      return "false";
+      return "true";
     }
 
     public long getRowSpan() {
@@ -337,7 +337,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getStartRow() {
-      return "false";
+      return "true";
     }
   }
 

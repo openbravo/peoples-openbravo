@@ -32,6 +32,15 @@
         startRow: ${fieldDefinition.startRow},
         endRow: ${fieldDefinition.endRow},
         width: '*',
+        <#else>
+        type: 'OBSectionItem',
+        sectionExpanded: true,
+        defaultValue: '${fieldDefinition.label?js_string}',
+        itemIds: [
+        <#list fieldDefinition.children as childField>
+        '${childField.name?js_string}'<#if childField_has_next>,</#if>
+        </#list>
+        ],
         </#if>
         ${fieldDefinition.fieldProperties}
         dummy: "dummy"
