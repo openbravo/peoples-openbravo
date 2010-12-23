@@ -1,5 +1,43 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C--><OBCQL_WIDGET_QUERY>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <OBCQL_WIDGET_QUERY_ID><![CDATA[1EF87E8E961A4E5BA3B41E1AB772B47C]]></OBCQL_WIDGET_QUERY_ID>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[147D825456D54D0486C3D7072531C5C9]]></OBKMO_WIDGET_CLASS_ID>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C-->  <HQL><![CDATA[select inv.id as invoiceId, inv.documentNo as documentNo,
+       inv.businessPartner.name as businessPartnerName,
+       inv.invoiceDate as invoiceDate, inv.grandTotalAmount as grandTotalAmount
+from Invoice as inv
+where inv.businessPartner.name like :businessPartnerName
+      and inv.documentNo like :documentNo
+      and inv.processed = true
+      and inv.paymentComplete = false
+      and inv.salesTransaction = true
+      and inv.client.id = :client
+order by inv.invoiceDate]]></HQL>
+<!--1EF87E8E961A4E5BA3B41E1AB772B47C--></OBCQL_WIDGET_QUERY>
+
+<!--58BCB96595FA45678CC1423402238309--><OBCQL_WIDGET_QUERY>
+<!--58BCB96595FA45678CC1423402238309-->  <OBCQL_WIDGET_QUERY_ID><![CDATA[58BCB96595FA45678CC1423402238309]]></OBCQL_WIDGET_QUERY_ID>
+<!--58BCB96595FA45678CC1423402238309-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--58BCB96595FA45678CC1423402238309-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--58BCB96595FA45678CC1423402238309-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--58BCB96595FA45678CC1423402238309-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[34F279BBB85945519DC38F21573106C0]]></OBKMO_WIDGET_CLASS_ID>
+<!--58BCB96595FA45678CC1423402238309-->  <HQL><![CDATA[select inv.id as invoiceId, inv.documentNo as documentNo,
+       inv.businessPartner.name as businessPartnerName,
+       inv.invoiceDate as invoiceDate, inv.grandTotalAmount as grandTotalAmount
+from Invoice as inv
+where inv.businessPartner.name like :businessPartnerName
+      and inv.documentNo like :documentNo
+      and inv.processed = true
+      and inv.paymentComplete = false
+      and inv.salesTransaction = false
+      and inv.client.id = :client
+order by inv.invoiceDate]]></HQL>
+<!--58BCB96595FA45678CC1423402238309--></OBCQL_WIDGET_QUERY>
+
 <!--C0A8491CDB43466D9F2645018473588B--><OBCQL_WIDGET_QUERY>
 <!--C0A8491CDB43466D9F2645018473588B-->  <OBCQL_WIDGET_QUERY_ID><![CDATA[C0A8491CDB43466D9F2645018473588B]]></OBCQL_WIDGET_QUERY_ID>
 <!--C0A8491CDB43466D9F2645018473588B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
