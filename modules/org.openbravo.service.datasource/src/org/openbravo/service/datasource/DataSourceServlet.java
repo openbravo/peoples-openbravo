@@ -169,11 +169,11 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       boolean isExport = "true".equals(parameters.get("exportToFile"));
       if (isExport) {
-        String exportFormat = parameters.get("exportFormat");
-        if (StringUtils.isEmpty(exportFormat)) {
-          exportFormat = "csv";
+        String exportAs = parameters.get("exportAs");
+        if (StringUtils.isEmpty(exportAs)) {
+          exportAs = "csv";
         }
-        if ("csv".equals(exportFormat)) {
+        if ("csv".equals(exportAs)) {
           writeResultCSV(response, result);
         }
       } else {
