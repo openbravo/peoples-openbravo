@@ -44,8 +44,6 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
 
     this.setHeight(headerHeight + newGridHeight + 13);
     //this.body.setHeight(newBodyHeight);
-
-    return this;
   },
 
   createWindowContents: function(){
@@ -127,7 +125,7 @@ isc.OBQueryListGrid.addProperties({
   
   initWidget: function(){
     OB.Datasource.get('DD17275427E94026AD721067C3C91C18', this);
-    return this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
   },
   
   setDataSource: function(ds){
