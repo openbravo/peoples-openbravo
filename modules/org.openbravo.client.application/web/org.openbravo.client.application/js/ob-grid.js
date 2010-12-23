@@ -19,19 +19,33 @@
 
 isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 
+// = OBGrid =
+// The OBGrid combines common grid functionality usefull for different 
+// grid implementations.
 isc.OBGrid.addProperties({
-  exportData: function(requestProperties, additionalProperties) {
-    // var criteria = this.getCriteria();
+    
+  // = exportData =
+  // The exportData function exports the data of the grid to a file. The user will 
+  // be presented with a save-as dialog.
+  // Parameters:
+  // * {{{exportProperties}}} defines different properties used for controlling the export, currently only the 
+  // exportProperties.exportFormat is supported (which is defaulted to csv).
+  // * {{{data}}} the parameters to post to the server, in addition the filter criteria of the grid are posted.  
+  exportData: function(exportProperties, data) {
+    if (!data) {
+      data = {};
+    }
+    if (!exportProperties) {
+      exportProperties = {};
+    }
     var dsURL = this.dataSource.dataURL;
-    var data = {
+    isc.addProperties(data, {
         _dataSource: this.dataSource.ID,
         _operationType: 'fetch',
-        exportFormat: 'csv',
-        exportToFile: (requestProperties
-                       && requestProperties.params
-                       && requestProperties.params.exportToFile)
-    };
-    isc.addProperties(data, additionalProperties);
+        _noCount: true, // never do count for export
+        exportFormat: exportProperties.exportFormat || 'csv',
+        exportToFile: true
+    }, this.getCriteria());
     
     OB.Utilities.postThroughHiddenFrame(dsURL, data);
   }
