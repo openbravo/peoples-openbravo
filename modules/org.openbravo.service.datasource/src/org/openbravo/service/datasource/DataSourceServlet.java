@@ -56,6 +56,7 @@ import org.openbravo.service.web.InvalidContentException;
 import org.openbravo.service.web.InvalidRequestException;
 import org.openbravo.service.web.ResourceNotFoundException;
 import org.openbravo.service.web.WebServiceUtil;
+import org.openbravo.utils.Replace;
 
 /**
  * A web service which provides a JSON REST service using the {@link DataSourceService}
@@ -457,7 +458,11 @@ public class DataSourceServlet extends BaseKernelServlet {
           } else {
             csv.append(",");
           }
-          csv.append("'").append(row.get(key)).append("'");
+          Object keyValue = row.get(key);
+          if (keyValue instanceof String) {
+            Replace.replace((String) keyValue, "\"", "\"\"");
+          }
+          csv.append("\"").append(keyValue).append("\"");
         }
       }
     }
