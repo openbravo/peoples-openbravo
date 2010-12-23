@@ -53,4 +53,42 @@ group by myWindow.name, myTab.name, myTab.id
 order by myWindow.name]]></HQL>
 <!--C0A8491CDB43466D9F2645018473588B--></OBCQL_WIDGET_QUERY>
 
+<!--E5A0DC8536134185AC8B1897F15DB816--><OBCQL_WIDGET_QUERY>
+<!--E5A0DC8536134185AC8B1897F15DB816-->  <OBCQL_WIDGET_QUERY_ID><![CDATA[E5A0DC8536134185AC8B1897F15DB816]]></OBCQL_WIDGET_QUERY_ID>
+<!--E5A0DC8536134185AC8B1897F15DB816-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--E5A0DC8536134185AC8B1897F15DB816-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--E5A0DC8536134185AC8B1897F15DB816-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--E5A0DC8536134185AC8B1897F15DB816-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[2662490B7D3B4F80AF308C88F6DB68C0]]></OBKMO_WIDGET_CLASS_ID>
+<!--E5A0DC8536134185AC8B1897F15DB816-->  <HQL><![CDATA[select p.id as finpaymentId, p.documentNo as documentNo,
+       p.businessPartner.name as businessPartnerName,
+       p.paymentDate as paymentDate, p.amount as amount
+from FIN_Payment as p
+where p.businessPartner.name like :businessPartnerName
+      and p.documentNo like :documentNo
+      and p.client.id = :client
+      and p.processed = true
+      and p.receipt = true
+      and p.status = 'RPAE'
+order by p.paymentDate]]></HQL>
+<!--E5A0DC8536134185AC8B1897F15DB816--></OBCQL_WIDGET_QUERY>
+
+<!--F94AEB4680AD4AD48255071903000A43--><OBCQL_WIDGET_QUERY>
+<!--F94AEB4680AD4AD48255071903000A43-->  <OBCQL_WIDGET_QUERY_ID><![CDATA[F94AEB4680AD4AD48255071903000A43]]></OBCQL_WIDGET_QUERY_ID>
+<!--F94AEB4680AD4AD48255071903000A43-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--F94AEB4680AD4AD48255071903000A43-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--F94AEB4680AD4AD48255071903000A43-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--F94AEB4680AD4AD48255071903000A43-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[F8E4F382BCFB441CADBB4AC693C41C93]]></OBKMO_WIDGET_CLASS_ID>
+<!--F94AEB4680AD4AD48255071903000A43-->  <HQL><![CDATA[select p.id as finpaymentId, p.documentNo as documentNo,
+       p.businessPartner.name as businessPartnerName,
+       p.paymentDate as paymentDate, p.amount as amount
+from FIN_Payment as p
+where p.businessPartner.name like :businessPartnerName
+      and p.documentNo like :documentNo
+      and p.client.id = :client
+      and p.processed = true
+      and p.receipt = false
+      and p.status = 'RPAE'
+order by p.paymentDate]]></HQL>
+<!--F94AEB4680AD4AD48255071903000A43--></OBCQL_WIDGET_QUERY>
+
 </data>
