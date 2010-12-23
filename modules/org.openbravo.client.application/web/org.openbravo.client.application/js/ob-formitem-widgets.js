@@ -18,6 +18,8 @@
  */
 // = Form Item Widgets =
 // Contains the following widgets:
+// * OBCheckBoxItem: yes/no item.
+// * OBSearchItem: item used for search fields.
 // * OBFormButton: button used in forms.
 // * OBTextItem: string/text item
 // * OBTextAreaItem: string/text-area item
@@ -27,6 +29,24 @@
 // * OBYesNoItem: combo box for yes/no values
 // * OBFKComboBoxItem: combo box for foreign key references
 // * OBListComboBoxItem: combo box for list references
+
+// == OBCheckboxItem ==
+// Item used for Openbravo yes/no fields.
+isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
+
+// == OBSearchItem ==
+// Item used for Openbravo search fields.
+isc.ClassFactory.defineClass('OBSearchItem', StaticTextItem);
+
+isc.OBSearchItem.addProperties({
+  showPickerIcon: true,
+  pickerIconHeight: 21,
+  pickerIconWidth: 21,
+  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
+  showPicker: function() {
+     this.openWindow();    
+  }
+});
 
 // == OBEncryptedItem ==
 // The type used for encrypted items.

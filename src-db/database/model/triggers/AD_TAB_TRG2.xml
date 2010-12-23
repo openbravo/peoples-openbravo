@@ -1,0 +1,316 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER AD_TAB_TRG2">
+    <trigger name="AD_TAB_TRG2" table="AD_TAB" fires="after" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+
+
+
+
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2010 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+ v_ID       varchar2(32);
+ v_ID_MAP      VARCHAR2(32);
+ v_WindowName     VARCHAR2(60);
+ v_ClassName     VARCHAR2(500);
+ v_IsActive      CHAR(1) := 'Y';
+ v_Count       NUMBER(10);
+ v_JavaPackage VARCHAR2(315);
+ v_ModuleMapping VARCHAR2(315);
+   
+BEGIN
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+
+
+  IF (UPDATING) THEN
+    IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.') 
+         OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.')
+         OR :old.AD_Module_ID<>:new.AD_Module_ID)
+         ) THEN
+      RETURN;
+    END IF;
+
+    SELECT W.IsActive, 
+           (CASE WHEN M.AD_MODULE_ID ='0' THEN NULL ELSE JavaPackage END)
+    INTO v_IsActive, v_JavaPackage
+    FROM AD_WINDOW W, AD_MODULE M
+    WHERE AD_WINDOW_ID = :NEW.AD_WINDOW_ID
+     AND W.AD_MODULE_ID = M.AD_MODULE_ID;
+
+
+    
+    IF v_IsActive = 'N' or :new.IsActive='N' THEN
+      v_IsActive := 'N';
+    END IF;
+
+    SELECT AD_MAPPING_FORMAT(TO_CHAR(W.NAME)), 
+           AD_MAPPING_FORMAT(TO_CHAR(:new.NAME))
+    INTO v_WindowName, v_ClassName
+    FROM AD_WINDOW W
+    WHERE W.AD_WINDOW_ID = :new.AD_WINDOW_ID;
+    
+    --Add tab id to name for non core modules
+    IF (:new.AD_Module_ID != '0') THEN
+      v_ClassName := v_ClassName || :new.AD_Tab_ID;
+    END IF;
+    
+    IF v_JavaPackage IS NOT NULL THEN
+      v_ModuleMapping := '/'||v_JavaPackage||'.';
+      v_JavaPackage := v_JavaPackage||'.'||v_WindowName;
+    ELSE
+      v_ModuleMapping := '/';
+      v_JavaPackage := v_WindowName;
+    END IF;
+
+
+    SELECT COUNT(*) INTO v_Count
+    FROM AD_MODEL_OBJECT
+    WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
+    AND CLASSNAME LIKE 'org.openbravo.erpWindows.%';
+
+    IF v_Count > 0 THEN
+      SELECT AD_MODEL_OBJECT_ID INTO v_ID
+      FROM AD_MODEL_OBJECT
+      WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
+      AND CLASSNAME LIKE 'org.openbravo.erpWindows.%';
+
+      
+      UPDATE AD_MODEL_OBJECT
+      SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
+        AD_ORG_ID = :new.AD_ORG_ID,
+        ISACTIVE = v_IsActive,
+        UPDATED = now(),
+        UPDATEDBY = :new.UPDATEDBY,
+        CLASSNAME = 'org.openbravo.erpWindows.' || v_JavaPackage || '.' || v_ClassName
+      WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
+      AND CLASSNAME LIKE 'org.openbravo.erpWindows.%';
+
+    ELSE
+      Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
+      INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
+      UPDATED, UPDATEDBY, ACTION, AD_TAB_ID, CLASSNAME, ISDEFAULT)
+      VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+      now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpWindows.' || v_JavaPackage || '.' || v_ClassName, 'Y');
+
+    END IF;
+
+    SELECT COUNT(*) INTO v_Count
+    FROM AD_MODEL_OBJECT_MAPPING
+    WHERE AD_MODEL_OBJECT_ID IN (
+      SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
+    AND MAPPINGNAME LIKE '%_Relation.html';
+
+    IF v_Count > 0 THEN
+      UPDATE AD_MODEL_OBJECT_MAPPING
+      SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
+        AD_ORG_ID = :new.AD_ORG_ID,
+        ISACTIVE = v_IsActive,
+        UPDATED = now(),
+        UPDATEDBY = :new.UPDATEDBY,
+        MAPPINGNAME = (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Relation.html')
+      WHERE AD_MODEL_OBJECT_ID IN (
+        SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
+      AND MAPPINGNAME LIKE '%_Relation.html';
+
+    ELSE
+      Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
+      INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
+      ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
+      VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+      now(), :new.UPDATEDBY, v_ID, (v_ModuleMapping || '/' || v_WindowName || '/' || v_ClassName || '_Relation.html'), 'Y');
+
+    END IF;
+
+    SELECT COUNT(*) INTO v_Count
+    FROM AD_MODEL_OBJECT_MAPPING
+    WHERE AD_MODEL_OBJECT_ID IN (
+      SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
+    AND MAPPINGNAME LIKE '%_Edition.html';
+
+    IF v_Count > 0 THEN
+      UPDATE AD_MODEL_OBJECT_MAPPING
+      SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
+        AD_ORG_ID = :new.AD_ORG_ID,
+        ISACTIVE = v_IsActive,
+        UPDATED = now(),
+        UPDATEDBY = :new.UPDATEDBY,
+        MAPPINGNAME = (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Edition.html')
+      WHERE AD_MODEL_OBJECT_ID IN (
+        SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
+      AND MAPPINGNAME LIKE '%_Edition.html';
+
+    ELSE
+      Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
+      INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
+      ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
+      VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+      now(), :new.UPDATEDBY, v_ID, (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Edition.html'), 'N');
+
+    END IF;
+
+    SELECT COUNT(*) INTO v_Count
+    FROM AD_MODEL_OBJECT_MAPPING
+    WHERE AD_MODEL_OBJECT_ID IN (
+      SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
+    AND MAPPINGNAME LIKE '%_Excel.xls';
+
+    IF v_Count > 0 THEN
+      UPDATE AD_MODEL_OBJECT_MAPPING
+      SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
+        AD_ORG_ID = :new.AD_ORG_ID,
+        ISACTIVE = v_IsActive,
+        UPDATED = now(),
+        UPDATEDBY = :new.UPDATEDBY,
+        MAPPINGNAME = (v_ModuleMapping  || v_WindowName || '/' || v_ClassName || '_Excel.xls')
+      WHERE AD_MODEL_OBJECT_ID IN (
+        SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
+      AND MAPPINGNAME LIKE '%_Excel.xls';
+
+    ELSE
+      Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
+      INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
+      ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
+      VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+      now(), :new.UPDATEDBY, v_ID, (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Excel.xls'), 'N');
+
+    END IF;
+
+    SELECT COUNT(*) INTO v_Count
+    FROM AD_MODEL_OBJECT
+    WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
+    AND CLASSNAME LIKE 'org.openbravo.erpCommon.ad_callouts.ComboReloads%';
+
+    IF v_Count > 0 THEN
+      UPDATE AD_MODEL_OBJECT
+      SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
+        AD_ORG_ID = :new.AD_ORG_ID,
+        ISACTIVE = v_IsActive,
+        UPDATED = now(),
+        UPDATEDBY = :new.UPDATEDBY,
+        CLASSNAME = 'org.openbravo.erpCommon.ad_callouts.ComboReloads' || :new.ad_tab_id
+      WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
+      AND CLASSNAME LIKE 'org.openbravo.erpCommon.ad_callouts.ComboReloads%';
+
+    ELSE
+      Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
+      INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
+      UPDATED, UPDATEDBY, ACTION, AD_TAB_ID, CLASSNAME, ISDEFAULT)
+      VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+      now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpCommon.ad_callouts.ComboReloads' || :new.ad_tab_id, 'N');
+
+    END IF;
+
+    SELECT COUNT(*) INTO v_Count
+    FROM AD_MODEL_OBJECT_MAPPING
+    WHERE AD_MODEL_OBJECT_ID IN (
+      SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
+    AND MAPPINGNAME LIKE '/ad_callouts/ComboReloads%.html';
+
+    IF v_Count > 0 THEN
+      UPDATE AD_MODEL_OBJECT_MAPPING
+      SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
+        AD_ORG_ID = :new.AD_ORG_ID,
+        ISACTIVE = v_IsActive,
+        UPDATED = now(),
+        UPDATEDBY = :new.UPDATEDBY,
+        MAPPINGNAME = ('/ad_callouts/ComboReloads' || :new.ad_tab_id || '.html')
+      WHERE AD_MODEL_OBJECT_ID IN (
+        SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
+      AND MAPPINGNAME LIKE '/ad_callouts/ComboReloads%.html';
+
+    ELSE
+      Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
+      INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
+      ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
+      VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+      now(), :new.UPDATEDBY, v_ID, ('/ad_callouts/ComboReloads' || :new.ad_tab_id || '.html'), 'N');
+
+    END IF;
+
+ END IF;
+
+ IF (INSERTING) THEN
+  
+      SELECT W.IsActive,  (CASE WHEN M.AD_MODULE_ID ='0' THEN NULL ELSE JavaPackage END)
+    INTO v_IsActive, v_JavaPackage
+    FROM AD_WINDOW W, AD_MODULE M
+    WHERE AD_WINDOW_ID = :NEW.AD_WINDOW_ID
+     AND W.AD_MODULE_ID = M.AD_MODULE_ID;
+
+  IF v_IsActive <> 'Y' THEN
+      v_IsActive := :NEW.ISACTIVE;
+  END IF;
+  SELECT AD_MAPPING_FORMAT(TO_CHAR(W.NAME)), AD_MAPPING_FORMAT(TO_CHAR(:new.NAME))
+  INTO v_WindowName, v_ClassName
+  FROM AD_WINDOW W
+  WHERE W.AD_WINDOW_ID = :new.AD_WINDOW_ID;
+  
+  --Add tab id to name for non core modules
+  IF (:new.AD_Module_ID != '0') THEN
+    v_ClassName := v_ClassName || :new.AD_Tab_ID;
+  END IF;
+
+  IF (v_JavaPackage IS NOT NULL)  THEN
+    v_ModuleMapping := '/'||v_JavaPackage||'.';
+    v_JavaPackage := v_JavaPackage||'.'||v_WindowName;
+  ELSE
+    v_JavaPackage := v_WindowName;
+    v_ModuleMapping := '/';
+  END IF;
+    
+  Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
+  INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
+  UPDATED, UPDATEDBY, ACTION, AD_TAB_ID, CLASSNAME, ISDEFAULT)
+  VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+  now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpWindows.' || v_JavaPackage || '.' || v_ClassName, 'Y');
+
+  Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
+  INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
+  ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
+  VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+  now(), :new.UPDATEDBY, v_ID, (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Relation.html'), 'Y');
+
+  Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
+  INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
+  ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
+  VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+  now(), :new.UPDATEDBY, v_ID, (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Edition.html'), 'N');
+
+  Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
+  INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
+  ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
+  VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+  now(), :new.UPDATEDBY, v_ID, (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Excel.xls'), 'N');
+
+  Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
+  INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
+  UPDATED, UPDATEDBY, ACTION, AD_TAB_ID, CLASSNAME, ISDEFAULT)
+  VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+  now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpCommon.ad_callouts.ComboReloads' || :new.ad_tab_id, 'N');
+
+  Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
+  INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
+  ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
+  VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
+  now(), :new.UPDATEDBY, v_ID, ('/ad_callouts/ComboReloads' || :new.ad_tab_id || '.html'), 'N');
+ END IF;
+
+END AD_TAB_TRG2
+]]></body>
+    </trigger>
+  </database>
