@@ -18,8 +18,6 @@
  */
 package org.openbravo.client.application.window;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,10 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -72,22 +66,6 @@ public class FormInitializationComponent extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(FormInitializationComponent.class);
 
   private static final int MAX_CALLOUT_CALLS = 10;
-
-  private HttpServletResponse response;
-
-  public void doPost(HttpServletRequest localRequest, HttpServletResponse localResponse,
-      ServletContext localContext) throws IOException {
-    this.response = localResponse;
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("MODE", "NEW");
-    parameters.put("TAB_ID", "186");
-    parameters.put("ROW_ID", "1000019");
-    JSONObject obj = execute(parameters, null);
-    PrintWriter out = response.getWriter();
-    out.print(obj.toString());
-    out.flush();
-    out.close();
-  }
 
   // @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
