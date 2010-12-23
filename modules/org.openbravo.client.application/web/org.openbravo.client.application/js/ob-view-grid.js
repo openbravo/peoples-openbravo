@@ -248,12 +248,11 @@ isc.OBViewGrid.addProperties({
   },
   
   refreshContents: function(callback){
-    var criteria = this.getFilterEditorCriteria() || {};
     var context = {
       showPrompt: false,
       textMatchStyle: this.autoFetchTextMatchStyle
     };
-    this.filterData(criteria, callback, context);
+    this.filterData(this.getCriteria(), callback, context);
   },
   
   dataArrived: function(startRow, endRow){
@@ -320,11 +319,7 @@ isc.OBViewGrid.addProperties({
     }
     requestProperties.showPrompt = false;
     
-    criteria = this.convertCriteria(criteria);
     var theView = this.view;
-    
-    var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(theView, requestProperties);
-    
     var newCallBack = function(){
       theView.recordSelected();
       if (callback) {
@@ -332,7 +327,7 @@ isc.OBViewGrid.addProperties({
       }
     };
     
-    return this.Super('filterData', [criteria, newCallBack, newRequestProperties]);
+    return this.Super('filterData', [criteria, newCallBack, requestProperties]);
   },
   
   fetchData: function(criteria, callback, requestProperties){
@@ -341,10 +336,7 @@ isc.OBViewGrid.addProperties({
     }
     requestProperties.showPrompt = false;
     
-    criteria = this.convertCriteria(criteria);
-    var theView = this.view;
-    
-    var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(theView, requestProperties);
+    var theView = this.view;    
     
     var newCallBack = function(){
       theView.recordSelected();
@@ -353,7 +345,17 @@ isc.OBViewGrid.addProperties({
       }
     };
     
-    return this.Super('fetchData', [criteria, newCallBack, newRequestProperties]);
+    return this.Super('fetchData', [criteria, newCallBack, requestProperties]);
+  },
+  
+  getCriteria: function() {
+    var criteria = this.Super("getCriteria", arguments);
+    if (!criteria) {
+      criteria = {};
+    }
+    criteria = this.convertCriteria(criteria);
+    criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);    
+    return criteria;
   },
   
   // determine which field can be autoexpanded to use extra space  
