@@ -175,6 +175,8 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
         if ("csv".equals(exportAs)) {
           writeResultCSV(response, result);
+        } else {
+          log.error("Unsupported export format: " + exportAs);
         }
       } else {
         writeResult(response, result);
