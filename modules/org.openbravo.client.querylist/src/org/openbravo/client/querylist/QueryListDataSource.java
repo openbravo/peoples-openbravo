@@ -18,7 +18,10 @@
  */
 package org.openbravo.client.querylist;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,7 @@ import org.openbravo.client.myob.WidgetInstance;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.json.JsonUtils;
 
 /**
  * Reads the tabs which the user is allowed to see.
@@ -39,6 +43,9 @@ import org.openbravo.service.datasource.ReadOnlyDataSourceService;
  * @author gorkaion
  */
 public class QueryListDataSource extends ReadOnlyDataSourceService {
+
+  private final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
+  private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
 
   /**
    * Returns the count of objects based on the passed parameters.
@@ -115,7 +122,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
           for (int i = 0; i < queryAliases.length; i++) {
             if (queryAliases[i].equals(column.getDisplayExpression())
                 || (!isExport && queryAliases[i].equals(column.getLinkExpression()))) {
-              data.put(queryAliases[i], resultList[i]);
+              Object value = resultList[i];
+              if (value instanceof Date) {
+                value = xmlDateFormat.format(value);
+              }
+              if (value instanceof Timestamp) {
+                value = xmlDateTimeFormat.format(value);
+              }
+              data.put(queryAliases[i], value);
             }
           }
         }
