@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -84,7 +84,7 @@ BEGIN
       )
       VALUES
       (
-        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, 'Y',
         :new.Created, :new.CreatedBy, :new.Updated,
         :new.UpdatedBy, v_xTree_ID, :new.AD_Menu_ID,
         v_xParent_ID,(
@@ -103,33 +103,12 @@ BEGIN
   --  synchronize name,...
   IF UPDATING THEN
     IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
-   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.'))
+   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.'))
   THEN
-      IF(:old.IsActive!=:new.IsActive) THEN
-        --  get AD_Tree_ID + ParentID
-        SELECT c.AD_Tree_Menu_ID,
-          n.Node_ID
-        INTO v_xTree_ID,
-          v_xParent_ID
-        FROM AD_ClientInfo c,
-          AD_TreeNode n
-          -- AD_TreeNodeMM n
-        WHERE c.AD_Tree_Menu_ID=n.AD_Tree_ID
-          AND n.Parent_ID IS NULL
-          AND c.AD_Client_ID=:new.AD_Client_ID;
-        -- Update
-        UPDATE AD_TreeNode
-          -- AD_TreeNodeMM
-          SET IsActive=:new.IsActive
-        WHERE AD_Tree_ID=v_xTree_ID
-          AND Node_ID=:new.AD_Menu_ID;
-      ELSE
-        UPDATE AD_Menu_Trl
-          SET IsTranslated='N',
-          Updated=now()
-        WHERE AD_Menu_ID=:new.AD_Menu_ID;
-      END IF;
+     UPDATE AD_Menu_Trl
+        SET IsTranslated='N',
+        Updated=now()
+      WHERE AD_Menu_ID=:new.AD_Menu_ID;
     END IF;
   END IF;
   -- Updating
