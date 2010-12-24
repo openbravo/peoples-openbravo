@@ -451,6 +451,8 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (value != null) {
           if (prop.isDate() || prop.isDatetime()) {
             value = parseDateFromDAL(value);
+            value = UIDefinitionController.getInstance().getUIDefinition(col.getId())
+                .formatValueToSQL(value.toString());
           } else if (value instanceof BaseOBObject) {
             value = ((BaseOBObject) value).getId();
           } else {
