@@ -59,6 +59,7 @@
     v_isReadOnly CHAR(1):='N';
     v_sameLine CHAR(1):='N';
     v_SeqNo NUMBER(10) ;
+    v_SeqNoCounter NUMBER;
     v_gridSeqno NUMBER;
     v_sortNo NUMBER(10) ;
     v_columnName VARCHAR2(40) ;
@@ -129,6 +130,8 @@
       v_GridSeqNo := 0;
     end if;
     
+    v_SeqNoCounter := 20; --Reserve 10 for Organization
+    
     FOR Cur_Column IN(-- added by Pablo Sarobe
     SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID
     FROM AD_Column c, AD_Table t
@@ -138,7 +141,8 @@
       WHERE c.AD_Column_ID=f.AD_Column_ID  AND c.AD_Table_ID=v_AD_Table_ID  AND f.AD_Tab_ID=v_Record_ID
       )
       AND c.AD_Table_ID=v_AD_Table_ID  AND c.AD_Table_ID=t.AD_Table_ID  -- added by Pablo Sarobe
-      AND UPPER(c.Columnname) NOT IN ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') AND c.IsActive='Y')
+      AND UPPER(c.Columnname) NOT IN ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') AND c.IsActive='Y'
+    ORDER BY POSITION)
     LOOP
       AD_Sequence_Next('AD_Field', '0', v_NextNo) ; -- get ID
       -- added by Pablo Sarobe
@@ -152,16 +156,18 @@
       IF(UPPER(Cur_Column.Columnname)=UPPER(Cur_Column.Tablename) ||'_ID') THEN --ID column
         v_isDisplayed:='N';
         v_showInRelation:='N';
+        v_SeqNo:=null;
         IF(UPPER(Cur_Column.Columnname) IN('M_PRODUCT_ID', 'C_BPARTNER_ID')) THEN
           v_DisplayLength:=40;
         ELSIF(UPPER(Cur_Column.Columnname) IN('C_LOCATION_ID', 'C_BPARTNER_LOCATION_ID')) THEN
           v_DisplayLength:=60;
         END IF;
       ELSIF(UPPER(Cur_Column.Columnname)='AD_CLIENT_ID') THEN
-        v_SeqNo:=10;
+        v_SeqNo:=null;
         v_showInRelation:='N';
+        v_isDisplayed:='N';
       ELSIF(UPPER(Cur_Column.Columnname)='AD_ORG_ID') THEN
-        v_SeqNo:=20;
+        v_SeqNo:=10;
         v_sameLine:='Y';
         v_showInRelation:='N';
       ELSIF(UPPER(Cur_Column.Columnname)='LINENO') THEN
@@ -174,6 +180,11 @@
       END IF;
       IF(UPPER(v_LastColumnName)='UPDATEDBY' AND UPPER(Cur_Column.Columnname) LIKE '%_ID') THEN
         v_isReadOnly:='Y';
+      END IF;
+      
+      IF COALESCE(v_SeqNo,-1) = 0 THEN
+        v_SeqNoCounter := v_SeqNoCounter + 10;
+        v_SeqNo := v_SeqNoCounter;
       END IF;
       
       select count(*)
