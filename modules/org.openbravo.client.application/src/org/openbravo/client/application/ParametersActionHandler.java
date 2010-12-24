@@ -18,9 +18,6 @@
  */
 package org.openbravo.client.application;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,12 +25,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.domaintype.BigDecimalDomainType;
-import org.openbravo.base.model.domaintype.DateDomainType;
-import org.openbravo.base.model.domaintype.DomainType;
-import org.openbravo.base.model.domaintype.LongDomainType;
-import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -131,10 +122,10 @@ public class ParametersActionHandler extends BaseActionHandler {
           value = OBProvider.getInstance().get(ParameterValue.class);
           value.setParameter(param);
           value.set(dbFilterProperty, filterObject);
-          setParameterValue(param, value, p);
+          ParameterUtils.setParameterValue(param, value, p);
         } else {
           value = obq.list().get(0);
-          setParameterValue(param, value, p);
+          ParameterUtils.setParameterValue(param, value, p);
         }
         OBDal.getInstance().save(value);
       }
@@ -146,30 +137,6 @@ public class ParametersActionHandler extends BaseActionHandler {
       return new JSONObject();
     } finally {
       OBContext.restorePreviousMode();
-    }
-  }
-
-  private void setParameterValue(Parameter parameter, ParameterValue parameterValue,
-      JSONObject requestValue) {
-    try {
-      final DomainType domainType = ModelProvider.getInstance().getReference(
-          parameter.getReference().getId()).getDomainType();
-      final String stringValue = requestValue.getString("value");
-      final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-      if (domainType.getClass().equals(StringDomainType.class)) {
-        parameterValue.setValueString(stringValue);
-      } else if (domainType.getClass().equals(DateDomainType.class)) {
-        Date date = xmlDateFormat.parse(stringValue);
-        parameterValue.setValueDate(date);
-      } else if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
-          || domainType.getClass().equals(LongDomainType.class)) {
-        parameterValue.setValueNumber(new BigDecimal(stringValue));
-      } else { // default
-        parameterValue.setValueString(stringValue);
-      }
-    } catch (Exception e) {
-      log.error("Error trying to set value for paramter: " + parameter.getName(), e);
     }
   }
 
