@@ -43,8 +43,8 @@
       <![CDATA[
         select t.ad_tab_id, AD_MAPPING_FORMAT(to_char(w.name)) as windowName, 
                AD_MAPPING_FORMAT(to_char(t.name)) as tabName, 
-               m2.javapackage windowPackage, m2.ad_module_id windowmodule,
-               m.javapackage tabPackage, m.ad_module_id tabmodule
+               m2.javapackage as windowPackage, m2.ad_module_id as windowmodule,
+               m.javapackage as tabPackage, m.ad_module_id as tabmodule
           from ad_tab t, ad_window w, ad_module m, ad_module m2
          where t.ad_module_id = m.ad_module_id
            and w.ad_module_id = m2.ad_module_id
