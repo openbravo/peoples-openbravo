@@ -173,8 +173,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             value == null ? null : value.toString());
         // Now we insert session values for auxiliary inputs
         if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
-          setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), columnValues.get("inp"
-              + Sqlc.TransformaNombreColumna(auxIn.getName())));
+          setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), value);
         }
       }
 
