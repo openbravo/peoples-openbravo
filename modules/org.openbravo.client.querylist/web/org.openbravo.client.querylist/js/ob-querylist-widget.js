@@ -37,13 +37,16 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     var currentHeight = this.getHeight(), 
         //currentBodyHeight = this.body.getHeight(),
         headerHeight = this.headerDefaults.height,
-        newGridHeight = this.grid.headerHeight
-                      + (this.grid.cellHeight * (this.rowsNumber ? this.rowsNumber : 10))
-                      + this.grid.summaryRowHeight
-                      + 2;
+        newGridHeight = this.grid.headerHeight +
+                      (this.grid.cellHeight * (this.rowsNumber ? this.rowsNumber : 10)) +
+                      this.grid.summaryRowHeight + 2;
 
     this.setHeight(headerHeight + newGridHeight + 13);
-    //this.body.setHeight(newBodyHeight);
+  },
+
+  setDbInstanceId: function (instanceId) {
+    this.Super('setDbInstanceId', instanceId);
+    this.grid.fetchData();
   },
 
   createWindowContents: function(){
@@ -102,7 +105,7 @@ isc.OBQueryListGrid.addProperties({
   canReorderFields: false,
   canFreezeFields: false,
   canGroupBy: false,
-  autoFetchData: true,
+  autoFetchData: false,
   canAutoFitFields: false,
   showGridSummary: true,
   
@@ -118,7 +121,11 @@ isc.OBQueryListGrid.addProperties({
     if (ds) {
       ds.fields = this.widget.fields;
       this.dataSource = ds;
-      this.filterData();
+
+      if(this.widget && this.widget.dbInstanceId) {
+        this.filterData();
+      }
+
     }
   },
   
