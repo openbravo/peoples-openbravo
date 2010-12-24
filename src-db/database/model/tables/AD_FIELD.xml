@@ -152,5 +152,7 @@
       <check name="AD_FIELD_ISFIELDONLY_CHK"><![CDATA[ISFIELDONLY IN ('Y', 'N')]]></check>
       <check name="AD_FIELD_ISREADONLY_CHK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
       <check name="AD_FIELD_ISSAMELINE_CHK"><![CDATA[ISSAMELINE IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_STARTINODDCOLUMN_CHK"><![CDATA[STARTINODDCOLUMN IN ('Y', 'N')]]></check>
+      <check name="AD_FIELD_STARTNEWLINE_CHK"><![CDATA[STARTNEWLINE IN ('Y', 'N')]]></check>
     </table>
   </database>

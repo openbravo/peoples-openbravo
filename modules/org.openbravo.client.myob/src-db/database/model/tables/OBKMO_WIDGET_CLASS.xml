@@ -86,6 +86,7 @@
         <unique-column name="TITLE"/>
       </unique>
       <check name="OBKMO_WIDGETCLASS_ALLOWANONACC"><![CDATA[ALLOW_ANONYMOUS_ACCESS IN ('Y', 'N')]]></check>
+      <check name="OBKMO_WIDGETCLASS_CAN_MAX_CHK"><![CDATA[CAN_MAXIMIZE IN ('Y', 'N')]]></check>
       <check name="OBKMO_WIDGETCLASS_CLASNAME"><![CDATA[(WIDGET_SUPERCLASS_ID IS NOT NULL) OR (JAVACLASS IS NOT NULL)]]></check>
       <check name="OBKMO_WIDGETCLASS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBKMO_WIDGETCLASS_ISSUPERCLASS"><![CDATA[ISSUPERCLASS IN ('Y', 'N')]]></check>
