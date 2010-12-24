@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -55,7 +55,6 @@
     -- Added by Ismael Ciordia
     v_AD_Reference_ID VARCHAR2(32);
     v_AD_Reference_Value_ID VARCHAR2(32);
-    v_AD_Val_Rule_ID VARCHAR2(32);
     v_IsParent CHAR(1):='N';
     v_IsKey CHAR(1):='N';
     v_IsIdentifier CHAR(1):='N';
@@ -132,7 +131,6 @@
       -- Added by Ismael Ciordia
       v_AD_Reference_ID:=NULL;
       v_AD_Reference_Value_ID:=NULL;
-      v_AD_Val_Rule_ID:=NULL;
       v_IsParent:='N';
       v_IsKey:='N';
       v_IsIdentifier:='N';
@@ -156,11 +154,6 @@
         v_DefaultValue:='@'||Cur_Column.Column_Name||'@';
         v_IsUpdateable:='N';
         v_IsSessionAttr:='Y';
-        IF(UPPER(Cur_Column.Column_Name)='AD_CLIENT_ID') THEN
-          v_AD_Val_Rule_ID:='103';
-        ELSE
-          v_AD_Val_Rule_ID:='104';
-        END IF;
       ELSIF(UPPER(Cur_Column.Column_Name) IN('UPDATED', 'CREATED')) THEN
         v_AD_Reference_ID:='16';
         v_IsUpdateable:='N';
@@ -291,7 +284,7 @@
           v_AD_Reference_ID, v_FieldLength, v_IsKey, v_IsParent,
          (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
           v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, 
-          v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr,
+          null, v_DefaultValue, v_IsSessionAttr,
           Cur_Column.COLUMN_ID, v_module_id);
           --
 	  v_count:=v_count + 1;
