@@ -76,23 +76,7 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="171">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="224">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="234">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="240">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="241">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
@@ -100,51 +84,7 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800010">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800011">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800027">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800029">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800033">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800087">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800093">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800097">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800108">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800181">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800193">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800195">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
@@ -152,61 +92,13 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800207">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800289">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800290">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="1000001">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="1002100006">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="1005400002">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="1005500000">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_PREFERENCE" columnname="VALUE" pkRow="C085B29F345B423F9E7DE5677359E02B">
       <oldValue><![CDATA[http://www.openbravo.com/myobrc2/widgets.html]]></oldValue>
       <newValue><![CDATA[http://www.openbravo.com/myobrc2/widgets.html ]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MODEL_OBJECT" columnname="ISACTIVE" pkRow="801952">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MODEL_OBJECT_MAPPING" columnname="ISACTIVE" pkRow="803637">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MODEL_OBJECT_MAPPING" columnname="ISACTIVE" pkRow="803644">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MODEL_OBJECT_MAPPING" columnname="ISACTIVE" pkRow="803645">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MODEL_OBJECT_MAPPING" columnname="ISACTIVE" pkRow="803646">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_MODEL_OBJECT_MAPPING" columnname="ISACTIVE" pkRow="803647">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="789">
       <oldValue><![CDATA[@AD_CLIENT_ID@]]></oldValue>
@@ -3373,118 +3265,6 @@
       <newValue><![CDATA[140]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISSAMELINE" pkRow="F9EFB543E0244AB090036F2EA6959122">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A1F24D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2144D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2244D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A24D4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2554D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2594D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A25A4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2624D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2B84D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2B94D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2C14D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2C34D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2C74D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2EC4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2F24D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2F54D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A2FD4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A31F4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A32A4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A32C4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A32D4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A3384D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A3764D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A3774D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A3784D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A3DF4D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A3E74D84E040007F01005FEC">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TREENODE" columnname="ISACTIVE" pkRow="52118BF1A3E84D84E040007F01005FEC">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
