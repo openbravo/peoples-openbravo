@@ -428,7 +428,11 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     
     return this.ID === widget.ID;
   },
-  
+
+  setDbInstanceId: function(instanceId) {
+    this.dbInstanceId = instanceId;
+  },
+
   saveParameters: function(){
     var post, i, param, paramObj, fieldDef;
     if (isc.isA.emptyObject(this.parameters)) {

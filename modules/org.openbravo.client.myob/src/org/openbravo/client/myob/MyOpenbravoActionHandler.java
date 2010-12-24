@@ -32,6 +32,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.ParameterValue;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -252,6 +255,9 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
         widget.put("dbInstanceId", newWidgetInstance.getId());
         log.debug(">> new widget added: " + newWidgetInstance.getId());
         hasAddedInstances = true;
+
+        // Process parameter values
+        processParameters(widget, newWidgetInstance);
       }
       if (isOpenbravoTypeInstance && maxOpenbravoTypeInstanceRow[newColNum.intValue()] < newRowNum) {
         maxOpenbravoTypeInstanceRow[newColNum.intValue()] = newRowNum;
@@ -298,4 +304,21 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
     }
   }
 
+  private void processParameters(JSONObject widget, WidgetInstance widgetInstance)
+      throws JSONException {
+    for (Parameter p : widgetInstance.getWidgetClass()
+        .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
+
+      if (p.getDefaultValue() == null) {
+        continue;
+      }
+
+      final ParameterValue value = OBProvider.getInstance().get(ParameterValue.class);
+      value.setParameter(p);
+      value.setObkmoWidgetInstance(widgetInstance);
+      ParameterUtils.setDefaultParameterValue(value);
+      OBDal.getInstance().save(value);
+    }
+    OBDal.getInstance().flush();
+  }
 }

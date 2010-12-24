@@ -618,7 +618,7 @@ isc.OBMyOpenbravo.addProperties({
         isc.isAn.Array(responseWidgets)) {
           for (k = 0; k < responseWidgets.length; k++) {
             if (widget.isSameWidget(responseWidgets[k], true)) {
-              widget.dbInstanceId = responseWidgets[k].dbInstanceId;
+              widget.setDbInstanceId(responseWidgets[k].dbInstanceId);
               break;
             }
           }
