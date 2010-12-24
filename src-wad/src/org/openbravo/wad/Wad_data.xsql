@@ -29,14 +29,7 @@
       MAX(LOADONSTARTUP) AS LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH, '' as buildxml,
       '' as ad_tab_id, '' as windowName, '' as tabName, '' as windowPackage, '' as windowmodule, '' as tabPackage, '' as tabmodule
       FROM AD_MODEL_OBJECT o
-      WHERE ((ISACTIVE = 'Y' and ad_tab_id is null)
-            or (ad_tab_id is not null 
-                and exists (select 1 
-                              from ad_window w, ad_tab t
-                              where t.ad_tab_id = o.ad_tab_id
-                                and t.ad_window_id = w.ad_window_id
-                                and t.isactive='Y'
-                                and w.isactive='Y')))
+      WHERE ISACTIVE = 'Y'
       AND OBJECT_TYPE = 'S'
       AND ACTION != 'W'
       GROUP BY CLASSNAME
@@ -73,14 +66,7 @@
       <![CDATA[
       SELECT MAX(MO.ACTION || MO.AD_MODEL_OBJECT_ID) AS NAME, MOM.MAPPINGNAME AS CLASSNAME, MO.CLASSNAME AS DISPLAYNAME 
       FROM AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_MAPPING MOM
-      WHERE ((mo.ISACTIVE = 'Y' and mo.ad_tab_id is null)
-            or (mo.ad_tab_id is not null 
-                and exists (select 1 
-                              from ad_window w, ad_tab t
-                              where t.ad_tab_id = mo.ad_tab_id
-                                and t.ad_window_id = w.ad_window_id
-                                and t.isactive='Y'
-                                and w.isactive='Y')))
+      WHERE mo.ISACTIVE = 'Y' 
       AND MO.OBJECT_TYPE = 'S' 
       AND MO.AD_MODEL_OBJECT_ID = MOM.AD_MODEL_OBJECT_ID 
       GROUP BY MO.CLASSNAME, MOM.MAPPINGNAME
