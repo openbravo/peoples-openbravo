@@ -28,14 +28,12 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID,tn.SeqNo,menuData.NAME,menuData.Description,menuData.IsSummary,
-        menuData.Action, (case menuData.Action when 'W' then MOW.CLASSNAME 
-                                              when  'X' then MOX.CLASSNAME
+        menuData.Action, (case menuData.Action when  'X' then MOX.CLASSNAME
                                               when  'T' then null
                                               when 'F' then MOF.CLASSNAME
                                               else MOP.CLASSNAME
                                               end) AS CLASSNAME, 
-        (case menuData.Action when 'W' then MOMW.MAPPINGNAME
-                              when 'X' then MOMX.MAPPINGNAME
+        (case menuData.Action when 'X' then MOMX.MAPPINGNAME
                               when 'T' then null
                               when 'F' then MOMF.MAPPINGNAME
                               else MOMP.MAPPINGNAME
@@ -76,13 +74,6 @@
                     left join AD_MODULE MW on W.AD_MODULE_ID = MW.AD_MODULE_ID
                     left join AD_MODULE MT on T.AD_Module_ID = MT.AD_Module_ID
                     left join AD_PROCESS P on P.AD_Process_ID = menuData.AD_Process_ID 
-                    left join AD_MODEL_OBJECT MOW on T.AD_TAB_ID = MOW.AD_TAB_ID
-                                                  AND MOW.ACTION    = 'W' 
-                                                  AND MOW.ISACTIVE = 'Y'
-                                                  AND MOW.ISDEFAULT= 'Y'
-                    left join AD_MODEL_OBJECT_MAPPING MOMW on MOW.AD_MODEL_OBJECT_ID = MOMW.AD_MODEL_OBJECT_ID 
-                                                  AND MOMW.ISACTIVE  = 'Y'
-                                                  AND MOMW.ISDEFAULT = 'Y'
                     left join AD_MODEL_OBJECT MOX on menuData.AD_FORM_ID = MOX.AD_FORM_ID 
                                                   AND MOX.ACTION   = 'X' 
                                                   AND MOX.ISACTIVE = 'Y'
@@ -127,14 +118,12 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID,tn.SeqNo,menuData.NAME,menuData.Description,menuData.IsSummary,
-        menuData.Action, (case menuData.Action when 'W' then MOW.CLASSNAME
-                                        when 'X' then MOX.CLASSNAME
+        menuData.Action, (case menuData.Action when 'X' then MOX.CLASSNAME
                                         when 'T' then MOT.CLASSNAME
                                         when 'F' then MOF.CLASSNAME
                                         else MOP.CLASSNAME
                                         end) AS CLASSNAME, 
-        (case menuData.Action when 'W' then MOMW.MAPPINGNAME
-                            when 'X' then MOMX.MAPPINGNAME
+        (case menuData.Action when 'X' then MOMX.MAPPINGNAME
                             when 'T' then MOMT.MAPPINGNAME
                             when 'F' then MOMF.MAPPINGNAME
                             else MOMP.MAPPINGNAME
@@ -151,13 +140,6 @@
           WHERE m.IsActive='Y' 
         ) menuData left join AD_WINDOW W on menuData.AD_Window_ID = W.AD_Window_ID
                    left join AD_TAB T on W.AD_Window_ID = T.AD_WINDOW_ID
-                   left join AD_MODEL_OBJECT MOW on T.AD_TAB_ID = MOW.AD_TAB_ID  
-                                                AND MOW.ACTION    = 'W' 
-                                                AND MOW.ISACTIVE  = 'Y'
-                                                AND MOW.ISDEFAULT = 'Y'
-                   left join AD_MODEL_OBJECT_MAPPING MOMW on MOW.AD_MODEL_OBJECT_ID = MOMW.AD_MODEL_OBJECT_ID 
-                                                AND MOMW.ISACTIVE  = 'Y'
-                                                AND MOMW.ISDEFAULT = 'Y'
                    left join AD_MODEL_OBJECT MOX on menuData.AD_FORM_ID = MOX.AD_FORM_ID
                                                 AND MOX.ACTION   = 'X' 
                                                 AND MOX.ISACTIVE = 'Y'
