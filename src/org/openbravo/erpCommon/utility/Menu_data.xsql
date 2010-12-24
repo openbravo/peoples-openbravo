@@ -61,11 +61,27 @@
         AND m.AD_Module_ID = mod.AD_Module_ID
         AND mod.Enabled='Y' 
         AND (m.IsSummary='Y' OR m.Action='B' OR m.Action='L' OR m.Action='I'
-        OR EXISTS (SELECT * FROM AD_WINDOW_ACCESS wa WHERE wa.AD_Window_ID=m.AD_Window_ID AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT * FROM AD_PROCESS_ACCESS wa WHERE wa.AD_Process_ID=m.AD_Process_ID AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT * FROM AD_FORM_ACCESS wa WHERE wa.AD_Form_ID=m.AD_Form_ID AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT * FROM AD_TASK_ACCESS wa WHERE wa.AD_Task_ID=m.AD_Task_ID AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT * FROM AD_WORKFLOW w, AD_WORKFLOW_ACCESS wa WHERE w.AD_Workflow_ID=wa.AD_Workflow_ID 
+        OR EXISTS (SELECT 1 FROM AD_WINDOW_ACCESS wa, AD_WINDOW w
+                    WHERE wa.AD_Window_ID=m.AD_Window_ID
+                      AND wa.AD_Window_ID=w.AD_Window_ID
+                      AND w.isActive='Y' 
+                      AND wa.AD_Role_ID=?)
+        OR EXISTS (SELECT 1 FROM AD_PROCESS_ACCESS wa, AD_Process p 
+                    WHERE wa.AD_Process_ID=m.AD_Process_ID
+                      AND p.AD_Process_ID = wa.AD_Process_ID
+                      AND p.isActive='Y' 
+                      AND wa.AD_Role_ID=?)
+        OR EXISTS (SELECT 1 FROM AD_FORM_ACCESS wa, AD_Form f 
+                    WHERE wa.AD_Form_ID=m.AD_Form_ID
+                      AND f.AD_Form_ID = wa.AD_Form_ID
+                      AND f.isActive='Y' 
+                      AND wa.AD_Role_ID=?)
+        OR EXISTS (SELECT 1 FROM AD_TASK_ACCESS wa, AD_Task t 
+                    WHERE wa.AD_Task_ID=m.AD_Task_ID
+                      AND t.AD_Task_ID=wa.AD_Task_ID
+                      AND t.isActive='Y' 
+                      AND wa.AD_Role_ID=?)
+        OR EXISTS (SELECT 1 FROM AD_WORKFLOW w, AD_WORKFLOW_ACCESS wa WHERE w.AD_Workflow_ID=wa.AD_Workflow_ID 
                     AND wa.AD_Workflow_ID=m.AD_Workflow_ID 
                     AND w.isActive = 'Y'
                     AND wa.AD_Role_ID=?)
