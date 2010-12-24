@@ -74,6 +74,8 @@ public class ClassLoaderTest extends BaseTest {
     obc = OBDal.getInstance().createCriteria(ModelImplementation.class);
     obc.add(Expression.eq(ModelImplementation.PROPERTY_OBJECTTYPE, "S"));
     obc.add(Expression.isNull(ModelImplementation.PROPERTY_TAB));
+    obc.add(Expression.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
+    obc.add(Expression.isNull(ModelImplementation.PROPERTY_PROCESS));
 
     for (ModelImplementation mi : obc.list()) {
       try {
@@ -87,8 +89,32 @@ public class ClassLoaderTest extends BaseTest {
       }
     }
 
-    // Checking servlets associated to tabs
+    // Checking servlets associated to forms
     OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(ModelImplementation.class,
+        "objectType = 'S' and specialForm is not null and specialForm.active = true");
+
+    for (ModelImplementation mi : obq.list()) {
+      try {
+        Class.forName(mi.getJavaClassName());
+      } catch (ClassNotFoundException e) {
+        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
+      }
+    }
+
+    // Check servlets associated to processes/reports
+    obq = OBDal.getInstance().createQuery(ModelImplementation.class,
+        "objectType = 'S' and process is not null and process.active = true");
+
+    for (ModelImplementation mi : obq.list()) {
+      try {
+        Class.forName(mi.getJavaClassName());
+      } catch (ClassNotFoundException e) {
+        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
+      }
+    }
+
+    // Checking servlets associated to tabs
+    obq = OBDal.getInstance().createQuery(ModelImplementation.class,
         "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
 
     for (ModelImplementation mi : obq.list()) {
