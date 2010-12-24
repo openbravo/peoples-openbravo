@@ -157,36 +157,37 @@ public abstract class UIDefinition {
                 docTypeTarget, docType, false, false) + ">";
       }
       String defaultS = field.getColumn().getDefaultValue();
-      if (defaultS != null) {
-        if (!defaultS.startsWith("@SQL=")) {
-          columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
-              .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
-              .getTab().getWindow().getId(), defaultS);
-        } else {
-          ArrayList<String> params = new ArrayList<String>();
-          String sql = parseSQL(defaultS, params);
-          int indP = 1;
-          try {
-            PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
-            for (String parameter : params) {
-              String value = "";
-              if (parameter.substring(0, 1).equals("#")) {
-                value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-                    .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
-              } else {
-                String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
-                value = RequestContext.get().getRequestParameter(fieldId);
-              }
-              ps.setObject(indP++, value);
+      if (defaultS == null) {
+        defaultS = "";
+      }
+      if (!defaultS.startsWith("@SQL=")) {
+        columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
+            .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field.getTab()
+            .getWindow().getId(), defaultS);
+      } else {
+        ArrayList<String> params = new ArrayList<String>();
+        String sql = parseSQL(defaultS, params);
+        int indP = 1;
+        try {
+          PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
+          for (String parameter : params) {
+            String value = "";
+            if (parameter.substring(0, 1).equals("#")) {
+              value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+                  .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
+            } else {
+              String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
+              value = RequestContext.get().getRequestParameter(fieldId);
             }
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-              columnValue = rs.getString(1);
-            }
-          } catch (Exception e) {
-            log.error("Error computing default value for field " + field.getName() + " of tab "
-                + field.getTab().getName(), e);
+            ps.setObject(indP++, value);
           }
+          ResultSet rs = ps.executeQuery();
+          if (rs.next()) {
+            columnValue = rs.getString(1);
+          }
+        } catch (Exception e) {
+          log.error("Error computing default value for field " + field.getName() + " of tab "
+              + field.getTab().getName(), e);
         }
       }
     }
@@ -346,7 +347,7 @@ public abstract class UIDefinition {
       ComboTableData comboTableData = new ComboTableData(vars, new DalConnectionProvider(false),
           ref, field.getColumn().getDBColumnName(), objectReference, validation, orgList,
           clientList, 0);
-      FieldProvider tabData = generateTabData(field.getTab().getADFieldList());
+      FieldProvider tabData = generateTabData(field.getTab().getADFieldList(), field, columnValue);
       comboTableData.fillParameters(tabData, field.getTab().getWindow().getId(), columnValue);
       FieldProvider[] fps = comboTableData.select(getValueFromSession);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
@@ -391,13 +392,18 @@ public abstract class UIDefinition {
     }
   }
 
-  private FieldProvider generateTabData(List<Field> fields) {
+  private FieldProvider generateTabData(List<Field> fields, Field currentField, String currentValue) {
     HashMap<String, Object> noinpDataMap = new HashMap<String, Object>();
     for (Field field : fields) {
       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
           field.getColumn().getId());
       String oldKey = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
-      Object value = RequestContext.get().getRequestParameter(oldKey);
+      Object value;
+      if (currentField.getId().equals(field.getId())) {
+        value = uiDef.formatValueToSQL(currentValue);
+      } else {
+        value = RequestContext.get().getRequestParameter(oldKey);
+      }
       noinpDataMap.put(field.getColumn().getDBColumnName(),
           value == null || value.equals("") ? null : uiDef.formatValueToSQL(value.toString()));
     }
