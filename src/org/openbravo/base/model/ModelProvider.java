@@ -555,6 +555,7 @@ public class ModelProvider implements OBSingleton {
     newProp.setDomainType(idProperty.getDomainType());
     newProp.setColumnName(idProperty.getColumnName());
     newProp.setColumnId(idProperty.getColumnId());
+    newProp.setParent(idProperty.isParent());
     newProp.setTargetEntity(idProperty.getTargetEntity());
     newProp.setReferencedProperty(idProperty.getTargetEntity().getIdProperties().get(0));
     newProp.setOneToOne(true);
@@ -579,6 +580,7 @@ public class ModelProvider implements OBSingleton {
     idProperty.setDomainType(targetIdProp.getDomainType());
     idProperty.setIdBasedOnProperty(newProp);
     idProperty.setIdentifier(false);
+    idProperty.setParent(false);
     idProperty.setTargetEntity(null);
   }
 
