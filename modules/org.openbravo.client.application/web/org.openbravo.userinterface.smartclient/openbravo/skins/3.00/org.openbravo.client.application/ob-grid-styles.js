@@ -33,16 +33,23 @@ isc.OBGrid.addProperties({
   headerMenuButtonWidth: 17,
   headerMenuButtonSrc: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
   hoverWidth: 200,
-  editLinkColumnWidth: 58
-});
+  editLinkColumnWidth: 58,
 
+  summaryRowConstructor: "OBGridSummary",
+  summaryRowDefaults:{
+    showRollOver:false
+  },
+  summaryRowHeight: 22,
+  summaryRowStyle: "OBGridSummaryCell",
+  summaryRowStyle_other: "OBGridSummaryCell_other",
+  summaryRowStyle_sum: "OBGridSummaryCell_sum"
+});
 
 isc.OBGrid.changeDefaults('filterEditorDefaults', {
   height: 22,
   styleName: 'OBGridFilterBase',
   baseStyle: 'OBGridFilterCell'
 });
-
 
 isc.OBGrid.changeDefaults('sorterDefaults', {
   // baseStyle / titleStyle is auto-assigned from headerBaseStyle

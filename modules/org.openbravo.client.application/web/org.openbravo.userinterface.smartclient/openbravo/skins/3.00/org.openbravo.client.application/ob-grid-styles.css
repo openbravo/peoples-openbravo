@@ -61,6 +61,11 @@
   padding: 0px 0px 0px 0px;
 }
 
+.OBGridCell,
+.OBGridCellDark {
+  background-color: #ffffff;
+}
+
 .OBGridCellDark,
 .OBGridCellEditDark {
   background-color: #f5f5f5;
@@ -136,6 +141,38 @@
   background: none;
   background-color: #ECEEE9;
 }
+
+.OBGridSummaryCell div,
+.OBGridSummaryCell_other div,
+.OBGridSummaryCell_sum div {
+  width: auto !important;
+}
+
+.OBGridSummaryCell,
+.OBGridSummaryCell_other,
+.OBGridSummaryCell_sum {
+  font-family: arial, sans-serif;
+  vertical-align: middle;
+  border-right: 1px solid #cdd7bb;
+  border-bottom: 1px solid #cdd7bb;
+  background-color: #ffffff;
+}
+
+.OBGridSummaryCell, {
+  padding: 0px 0px 0px 0px;
+}
+
+.OBGridSummaryCell_other {
+  padding: 0px 4px 0px 4px;
+}
+
+.OBGridSummaryCell_sum {
+  padding: 0px 4px 0px 14px;
+  background-image: url(./images/grid/gridSummary_bg_sum.png);
+  background-position: 4px center;
+  background-repeat: no-repeat;
+}
+
 
 .OBGridLinkField,
 .OBGridLinkFieldOver,

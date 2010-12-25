@@ -48,6 +48,21 @@ isc.OBGrid.addProperties({
   }
 });
 
+isc.ClassFactory.defineClass('OBGridSummary', isc.OBGrid);
+
+isc.OBGridSummary.addProperties({
+  getCellStyle: function (record, rowNum, colNum) {
+    var field = this.getField(colNum);
+    if (field.summaryFunction === "sum" && this.summaryRowStyle_sum) {
+      return this.summaryRowStyle_sum;
+    } else if (this.summaryRowStyle_other) {
+      return this.summaryRowStyle_other;
+    } else {
+      return this.summaryRowStyle;
+    }
+  }
+});
+
 isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);
 
 isc.ClassFactory.defineClass('OBGridLinkField', isc.Button);
