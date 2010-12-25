@@ -49,3 +49,5 @@ isc.OBGrid.addProperties({
 });
 
 isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);
+
+isc.ClassFactory.defineClass('OBGridLinkField', isc.Button);

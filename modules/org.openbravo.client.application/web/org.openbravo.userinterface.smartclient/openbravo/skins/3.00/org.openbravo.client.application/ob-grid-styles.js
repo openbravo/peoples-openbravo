@@ -113,3 +113,13 @@ isc.OBGridButtonsComponent.addProperties({
   visible: 'overflow',
   align: 'center'
 });
+
+isc.OBGridLinkField.addProperties({
+  baseStyle: 'OBGridLinkField',
+  showDown: true,
+  showFocused: true,
+  showFocusedAsOver: true,
+  showRollOver: true,
+  autoFit: true,
+  height: 1
+});
