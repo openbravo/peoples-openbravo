@@ -143,14 +143,12 @@
 }
 
 .OBGridSummaryCell div,
-.OBGridSummaryCell_other div,
 .OBGridSummaryCell_sum div,
 .OBGridSummaryCell_avg div {
   width: auto !important;
 }
 
 .OBGridSummaryCell,
-.OBGridSummaryCell_other,
 .OBGridSummaryCell_sum,
 .OBGridSummaryCell_avg {
   font-family: arial, sans-serif;
@@ -160,11 +158,7 @@
   background-color: #ffffff;
 }
 
-.OBGridSummaryCell, {
-  padding: 0px 0px 0px 0px;
-}
-
-.OBGridSummaryCell_other {
+.OBGridSummaryCell {
   padding: 0px 4px 0px 4px;
 }
 

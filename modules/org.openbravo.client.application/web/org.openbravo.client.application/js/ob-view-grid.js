@@ -185,7 +185,6 @@ isc.OBViewGrid.addProperties({
   
   initWidget: function(){
     var thisGrid = this, localEditLinkField;
-    this.baseStyle = this.baseStyleView;
     if (this.editGrid) {
       // add the edit pencil in the beginning
       localEditLinkField = isc.addProperties({}, this.editLinkFieldProperties);
@@ -737,7 +736,9 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
-    this.baseStyle = this.baseStyleEdit;
+    if (this.baseStyleEdit) {
+      this.baseStyle = this.baseStyleEdit;
+    }
     var result = this.Super('showInlineEditor', arguments);
     
     var record = this.getRecord(rowNum);
@@ -750,7 +751,9 @@ isc.OBViewGrid.addProperties({
   
   hideInlineEditor: function(){
     isc.Log.logDebug('hideInlineEditor ' + this.getEditRow(), 'OB');
-    this.baseStyle = this.baseStyleView;
+    if (this.baseStyleView) {
+      this.baseStyle = this.baseStyleView;
+    }
     var rowNum = this.getEditRow();
     var record = this.getRecord(rowNum);
     var editColumnLayout = record.editColumnLayout;

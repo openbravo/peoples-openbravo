@@ -103,9 +103,7 @@ isc.OBGridSummary.addProperties({
     if (field.summaryFunction === "sum" && this.summaryRowStyle_sum) {
       return this.summaryRowStyle_sum;
     } else if (field.summaryFunction === "avg" && this.summaryRowStyle_avg) {
-      return this.summaryRowStyle_avg;
-    } else if (this.summaryRowStyle_other) {
-      return this.summaryRowStyle_other;
+      return this.summaryRowStyle_avg
     } else {
       return this.summaryRowStyle;
     }
