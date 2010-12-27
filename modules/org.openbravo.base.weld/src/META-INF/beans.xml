@@ -35,7 +35,7 @@
         <weld:exclude name="org.openbravo.authentication.**"/>
         <weld:exclude name="org.openbravo.**.ad_*.**"/>
         <weld:exclude name="org.openbravo.**.test.**">
-          <weld:if-class-available name="!org.junit.runners.BlockJUnit4ClassRunner"/>
+          <weld:if-class-available name="!org.jboss.ejb3.api.spi.EJBContainerWrapper"/>
         </weld:exclude>
     </weld:scan>
 
