@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jfree.util.Log;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ButtonDomainType;
@@ -48,12 +49,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   private static Long ZERO = new Long(0);
 
   private static final String TEMPLATE_ID = "C1D176407A354A40815DC46D24D70EB8";
+  private static Logger log = Logger.getLogger(OBViewFormComponent.class);
 
-  // Based on WAD implementation legacy code
-  // 22 - Half column
-  // 44 - One column
-  private static final long ONE_COLUMN_MAX_LENGTH = 44;
-  private static final long MULTILINE_MIN_LENGTH = 60;
+  private static final long ONE_COLUMN_MAX_LENGTH = 60;
+  private static final String TEXT_AD_REFERENCE_ID = "14";
 
   private Tab tab;
 
@@ -77,30 +76,35 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     OBViewFieldGroup currentFieldGroup = null;
     FieldGroup currentADFieldGroup = null;
+    int colNum = 1;
     for (Field field : adFields) {
-      if (field.getColumn() == null) {
-        // TODO: throw an error?
+
+      if (field.getColumn() == null || !field.isDisplayed() || !field.isActive()) {
         continue;
       }
-      if (!field.isDisplayed()) {
-        continue;
-      }
-      if (!field.isActive()) {
-        continue;
-      }
+
       final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-      if (property.getDomainType() instanceof ButtonDomainType) {
-        continue;
-      }
 
       // a button domain type, continue for now
       if (property.getDomainType() instanceof ButtonDomainType) {
         continue;
       }
 
+      if (colNum % 2 == 0 && (field.isStartinoddcolumn() || !field.isDisplayOnSameLine())) {
+
+        final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
+        fields.add(spacer);
+        log.debug("colNum: " + colNum + " - field: [spacer]");
+        colNum++;
+        if (colNum > 4) {
+          colNum = 1;
+        }
+      }
+
       final OBViewField viewField = new OBViewField();
       viewField.setField(field);
       viewField.setProperty(property);
+
       // change in fieldgroup
       if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
         // start of a fieldgroup use it
@@ -109,11 +113,20 @@ public class OBViewFormComponent extends BaseTemplateComponent {
         viewFieldGroup.setFieldGroup(field.getFieldGroup());
         currentFieldGroup = viewFieldGroup;
         currentADFieldGroup = field.getFieldGroup();
-      } else {
-        fields.add(viewField);
+        colNum = 1;
       }
+
+      fields.add(viewField);
+      log.debug("colNum: " + colNum + " - field: " + field.getName() + " - issameline: "
+          + field.isDisplayOnSameLine() + " - startinoddcolumn: " + field.isStartinoddcolumn());
+
       if (currentFieldGroup != null) {
         currentFieldGroup.addChild(viewField);
+      }
+
+      colNum += viewField.getColSpan();
+      if (colNum > 4) {
+        colNum = 1;
       }
     }
     return fields;
@@ -256,7 +269,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public long getColSpan() {
-      return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH ? 2 : 1;
+      return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH || getRowSpan() == 2 ? 2 : 1;
     }
 
     public String getEndRow() {
@@ -264,11 +277,11 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public long getRowSpan() {
-      return field.getDisplayedLength() >= MULTILINE_MIN_LENGTH ? 2 : 1;
+      return property.getDomainType().getReference().getId().equals(TEXT_AD_REFERENCE_ID) ? 2 : 1;
     }
 
     public String getStartRow() {
-      return "false";
+      return field.isStartnewline().toString();
     }
   }
 
@@ -322,7 +335,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getType() {
-      return "section";
+      return "OBSectionItem";
     }
 
     public String getName() {
@@ -344,6 +357,54 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getStartRow() {
       return "true";
     }
+  }
+
+  public class OBViewFieldSpacer implements OBViewFieldDefinition {
+
+    public long getColSpan() {
+      return 1;
+    }
+
+    public String getEndRow() {
+      return "false";
+    }
+
+    public String getFieldProperties() {
+      return "";
+    }
+
+    public String getInpColumnName() {
+      return "";
+    }
+
+    public String getLabel() {
+      return "";
+    }
+
+    public String getName() {
+      return "";
+    }
+
+    public String getReferencedKeyColumnName() {
+      return "";
+    }
+
+    public long getRowSpan() {
+      return 1;
+    }
+
+    public boolean getStandardField() {
+      return false;
+    }
+
+    public String getStartRow() {
+      return "false";
+    }
+
+    public String getType() {
+      return "spacer";
+    }
+
   }
 
   public static class FormFieldComparator implements Comparator<Field> {

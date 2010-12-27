@@ -21,8 +21,9 @@
     {
         name: '${fieldDefinition.name?js_string}',
         title: '${fieldDefinition.label?js_string}',
-        <#if fieldDefinition.standardField>        
         type: '${fieldDefinition.type}',
+        width: '*',
+        <#if fieldDefinition.standardField>
         columnName: '${fieldDefinition.columnName?string}',
         inpColumnName: '${fieldDefinition.inpColumnName?string}',
         referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
@@ -31,13 +32,12 @@
         rowSpan: ${fieldDefinition.rowSpan},
         startRow: ${fieldDefinition.startRow},
         endRow: ${fieldDefinition.endRow},
-        width: '*',
-        <#if fieldDefinition.searchField>
+          <#if fieldDefinition.searchField>
           displayField: '${fieldDefinition.name?js_string}._identifier',
           valueField: '${fieldDefinition.name?js_string}',
+          </#if>
         </#if>
-        <#else>
-        type: 'OBSectionItem',
+        <#if fieldDefinition.type = "OBSectionItem">
         sectionExpanded: true,
         defaultValue: '${fieldDefinition.label?js_string}',
         itemIds: [
