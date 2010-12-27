@@ -481,7 +481,7 @@ isc.OBStandardView.addProperties({
   shouldOpenDefaultEditMode: function(){
     // can open default edit mode if defaultEditMode is set
     // and this is the root view or a child view with a selected parent.
-    return this.defaultEditMode && (!this.parentProperty || this.parentView.viewGrid.getSelectedRecords().length === 1)
+    return this.defaultEditMode && (!this.parentProperty || this.parentView.viewGrid.getSelectedRecords().length === 1);
   },
   
   openDefaultEditView: function(record){
@@ -919,11 +919,11 @@ isc.OBStandardView.addProperties({
         // makes a difference what the order of resizing is, first resize the 
         // one which will be larger, then the one which will be smaller.
         // also do the STATE_IN_MID before resizing
-        this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
         this.members[1].setHeight('50%');
         this.members[0].setHeight('50%');
         this.members[1].show();
         this.members[0].show();
+        this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
       }
     } else {
       this.members[0].setHeight('100%');
@@ -937,7 +937,7 @@ isc.OBStandardView.addProperties({
     // 2) showing form with aux inputs
     var record;
     if (this.viewGrid.isVisible()) {
-      record = this.viewGrid.getSelectedRecord()
+      record = this.viewGrid.getSelectedRecord();
     } else {
       record = this.viewForm.getValues();   
     }
