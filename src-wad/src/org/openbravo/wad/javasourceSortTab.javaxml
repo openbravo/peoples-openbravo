@@ -70,7 +70,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       return;
     }
     
-    vars.removeSessionValue(UtilityData.selectObjectMapping(this, tabId) + "|hash");
+    vars.removeSessionValue(Utility.getTabURL(tabId, "E", false) + "|hash");
     vars.setSessionObject(tabId + "|failedAutosave", false);
     if (vars.commandIn("DEFAULT", "NEW")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
@@ -360,7 +360,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setData("structure1", data2);
     xmlDocument.setData("structure2", data);
-    final String strMappingName = UtilityData.selectObjectMapping(this, tabId);
+    final String strMappingName = Utility.getTabURL(tabId, "E", false);
     xmlDocument.setParameter("mappingName", strMappingName);
     xmlDocument.setParameter("confirmOnChanges", Utility.getJSConfirmOnChanges(vars, windowId));
 <PARAMETER_TMP id="parent">    if (vars.getLanguage().equals("en_US")) xmlDocument.setParameter("parent", <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectParent(this<FIELD_TMP id="language">, vars.getLanguage()</FIELD_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>));

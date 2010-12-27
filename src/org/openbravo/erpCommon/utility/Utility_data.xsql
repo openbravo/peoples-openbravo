@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2008 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -97,18 +97,6 @@
         select AD_WINDOW_ID AS TOTAL 
         FROM AD_TAB
         WHERE AD_TAB_ID = ?
-      </Sql>
-      <Parameter name="adTabId"/>
-   </SqlMethod>
-   <SqlMethod name="selectObjectMapping" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT m.mappingname
-		  FROM ad_model_object o, ad_model_object_mapping m
-		 WHERE o.ad_model_object_id = m.ad_model_object_id
-		   AND o.ad_tab_id = ?
-		   AND o.isdefault = 'Y'
-		   AND m.isdefault = 'Y'
       </Sql>
       <Parameter name="adTabId"/>
    </SqlMethod>

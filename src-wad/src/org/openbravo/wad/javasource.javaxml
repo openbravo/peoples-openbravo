@@ -1071,7 +1071,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     xmlDocument.setParameter("changed", "");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
-    final String strMappingName = UtilityData.selectObjectMapping(this, tabId);
+    final String strMappingName = Utility.getTabURL(tabId, "E", false);
     xmlDocument.setParameter("mappingName", strMappingName);
     xmlDocument.setParameter("confirmOnChanges", Utility.getJSConfirmOnChanges(vars, windowId));
     //xmlDocument.setParameter("buttonReference", Utility.messageBD(this, "Reference", vars.getLanguage()));
