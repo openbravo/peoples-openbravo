@@ -153,7 +153,7 @@ isc.OBQueryListGrid.addProperties({
 
   cellClick: function (record, rowNum, colNum) {
     var field = this.getField(colNum);
-    if (field.OB_HasLink) {
+    if (field.isLink) {
       if (field.OB_TabId && field.OB_LinkExpression) {
         OB.Layout.ViewManager.openView('OBClassicWindow',  {
             tabId: field.OB_TabId,

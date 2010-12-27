@@ -62,7 +62,6 @@ class QueryListUtils {
           field.put("name", column.getDisplayExpression());
           field.put("type", uiDefinition.getName());
           if (column.isHasLink()) {
-            field.put("OB_HasLink", true);
             field.put("isLink", true);
             field.put("OB_LinkExpression", column.getLinkExpression());
             final Tab tab = column.getTab();
@@ -90,8 +89,6 @@ class QueryListUtils {
             String mappingName = Utility.getTabURL(tab.getId(), "E", false);
             field.put("OB_mappingName", mappingName);
 
-          } else {
-            field.put("OB_HasLink", false);
           }
 
           // Summarize option:
