@@ -77,8 +77,6 @@ OB.DefaultPickListStyleProperties = {
 
 isc.OBListItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
-isc.OBListFilterItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
-
 isc.OBFKItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
 isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
