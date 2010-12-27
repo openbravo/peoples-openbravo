@@ -57,7 +57,6 @@
     v_isDisplayed CHAR(1):='Y';
     v_showInRelation CHAR(1):='Y';
     v_isReadOnly CHAR(1):='N';
-    v_sameLine CHAR(1):='N';
     v_SeqNo NUMBER(10) ;
     v_SeqNoCounter NUMBER;
     v_gridSeqno NUMBER;
@@ -149,7 +148,6 @@
       v_isDisplayed:='Y';
       v_showInRelation:='Y';
       v_isReadOnly:='N';
-      v_sameLine:='N';
       v_SeqNo:=0;
       v_sortNo:=NULL;
       v_DisplayLength:=Cur_Column.FieldLength;
@@ -168,7 +166,6 @@
         v_isDisplayed:='N';
       ELSIF(UPPER(Cur_Column.Columnname)='AD_ORG_ID') THEN
         v_SeqNo:=10;
-        v_sameLine:='Y';
         v_showInRelation:='N';
       ELSIF(UPPER(Cur_Column.Columnname)='LINENO') THEN
         v_DisplayLength:=5;
@@ -214,7 +211,7 @@
         now(), '0', now(), '0',
         Cur_Column.Name, Cur_Column.Description, v_SeqNo, v_Record_ID,
         Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', 
-        v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation, v_fieldModule,
+        v_isDisplayed, v_isReadOnly, v_sortNo, 'N', v_showInRelation, v_fieldModule,
         v_gridSeqno) ;
       --
       v_count:=v_count + 1;
