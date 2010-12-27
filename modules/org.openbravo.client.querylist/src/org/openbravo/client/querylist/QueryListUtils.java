@@ -63,6 +63,7 @@ class QueryListUtils {
           field.put("type", uiDefinition.getName());
           if (column.isHasLink()) {
             field.put("OB_HasLink", true);
+            field.put("isLink", true);
             field.put("OB_LinkExpression", column.getLinkExpression());
             final Tab tab = column.getTab();
             final Entity entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
