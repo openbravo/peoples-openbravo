@@ -139,11 +139,6 @@ BEGIN
     THEN
       IF :NEW.IsActive <> :OLD.IsActive
       THEN
-        -- Menu
-        UPDATE AD_Menu
-           SET IsActive = :NEW.IsActive
-         WHERE AD_Process_ID = :NEW.AD_Process_ID;
-
         -- AD_Column -> Field
         UPDATE AD_Field
            SET IsActive = :NEW.IsActive
