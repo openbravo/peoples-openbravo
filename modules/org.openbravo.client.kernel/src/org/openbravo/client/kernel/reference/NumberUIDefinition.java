@@ -151,18 +151,30 @@ public abstract class NumberUIDefinition extends UIDefinition {
   }
 
   public static class AmountUIDefinition extends NumberUIDefinition {
+    public String getParentType() {
+      return "float";
+    }
+
     public String getFormat() {
       return "euroEdition";
     }
   }
 
   public static class QuantityUIDefinition extends NumberUIDefinition {
+    public String getParentType() {
+      return "float";
+    }
+
     public String getFormat() {
       return "qtyEdition";
     }
   }
 
   public static class PriceUIDefinition extends NumberUIDefinition {
+    public String getParentType() {
+      return "float";
+    }
+
     public String getFormat() {
       return "priceEdition";
     }
