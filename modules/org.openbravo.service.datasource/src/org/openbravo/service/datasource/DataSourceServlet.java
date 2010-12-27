@@ -425,7 +425,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   private void writeResultCSV(HttpServletResponse response, String result) throws IOException,
       JSONException {
     response.setContentType("text/csv; charset=UTF-8");
-    response.setHeader("Content-Disposition", "attachment; filename=Results.csv");
+    response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
 
     JSONObject jsonResult = new JSONObject(result);
     JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
