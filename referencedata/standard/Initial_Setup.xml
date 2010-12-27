@@ -1028,8 +1028,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>600000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="0FBF9530BC584A6E9415F7AD01A23201" identifier="Standard Order">
@@ -1042,8 +1040,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>50000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="267B166C6F4B49E893CF6276EE396E7D" identifier="Production">
@@ -1056,8 +1052,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="2D47C580583242259DF1FFEA4D914A94" identifier="MM Shipment">
@@ -1070,8 +1064,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>500000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="4D72691638A24A0194882A302FCF9494" identifier="AP Payment">
@@ -1084,8 +1076,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>700000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="6D3C7477332F47CD8A0F6A5C4805EBD4" identifier="Prepay Order">
@@ -1098,8 +1088,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>30000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="74C3CC2BCDDA45F5BBFE8DF603728749" identifier="Purchase Requisition">
@@ -1112,8 +1100,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>900000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="7C2F74C43970423E890C8892C43673E9" identifier="Settlement">
@@ -1126,8 +1112,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="81EEB6FAFE5D4E6B9389CAAC6297495B" identifier="Physical Inventory">
@@ -1140,8 +1124,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="81F0991C4D884F82AF34E6CD72C0BFEC" identifier="Quotation">
@@ -1154,8 +1136,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="8547DE01C56D4C67A28F37AA5E72046D" identifier="Proposal">
@@ -1168,8 +1148,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>20000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="8CA21B8285CC4C4E8DCAD896DB03213E" identifier="Cash Journal">
@@ -1182,8 +1160,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="949C664EE54A4AA5B23CE288E1677916" identifier="Bank Statement">
@@ -1196,8 +1172,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="A55E308B07EF453B87ED12516E3C9F7D" identifier="Matched Invoices">
@@ -1210,8 +1184,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="A6A631F13B004AB8AD39573E95EE992E" identifier="Return Material">
@@ -1224,8 +1196,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>40000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="A7C5B67A2BB244A19F475160A5AFCE5E" identifier="Inventory Move">
@@ -1238,8 +1208,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="AE79ADF07A5E4E6E9C5367505C1C3463" identifier="Purchase Order">
@@ -1252,8 +1220,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>800000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="B380E35582BD4D1A930146F1BA72C03F" identifier="GL Journal">
@@ -1266,8 +1232,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>1000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="B74E4F916A4B4A67BA572CAE835B4049" identifier="AR Credit Memo">
@@ -1280,8 +1244,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>300000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="BCF68C60AFAE45358B7D78FCAB3EB783" identifier="Matched Purchase Orders">
@@ -1294,8 +1256,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>1000000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="C114BA11CB23468B86887B3619AA52CC" identifier="Depreciation">
@@ -1308,8 +1268,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="CF53CE0FBB6B4FBB89C4939E191AFFD4" identifier="Manual Settlement">
@@ -1322,8 +1280,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="EC5B218F09F44618B98FA0D233E3DC70" identifier="AR Invoice">
@@ -1336,8 +1292,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>100000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="F3659AAEFC2741F788BB474159616023" identifier="AR Receipt">
@@ -1350,8 +1304,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>400000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="F4F629F131124F198601A47F5FEDF53A" identifier="Credit Order">
@@ -1364,8 +1316,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>60000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="F6907986413D46C4BE3E27174895CC48" identifier="Warehouse Order">
@@ -1378,8 +1328,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>70000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="FE1DFB9999224BE7B1B84B9E5D4CDA0B" identifier="Debt Payment Management">
@@ -1392,8 +1340,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>10000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="FFB42B38D6A34634B534AB499B13644C" identifier="POS Order">
@@ -1406,8 +1352,6 @@
     <incrementBy>1</incrementBy>
     <startingNo>80000</startingNo>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <DocumentTemplate id="02376C41DA824413A9BE649443924C03" identifier="Purchase Order Report template">
