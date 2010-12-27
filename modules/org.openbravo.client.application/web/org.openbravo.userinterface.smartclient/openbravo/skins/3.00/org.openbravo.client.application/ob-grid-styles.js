@@ -122,8 +122,8 @@ isc.OBGridButtonsComponent.addProperties({
   align: 'center'
 });
 
-isc.OBGridLinkField.addProperties({
-  baseStyle: 'OBGridLinkField',
+isc.OBGridLinkButton.addProperties({
+  baseStyle: 'OBGridLinkButton',
   showDown: true,
   showFocused: true,
   showFocusedAsOver: true,

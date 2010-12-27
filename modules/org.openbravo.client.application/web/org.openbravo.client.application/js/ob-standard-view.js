@@ -946,9 +946,11 @@ isc.OBStandardView.addProperties({
 
     for (var i=0; i<properties.length; i++){
       var value = record[properties[i].property];
-      allProperties[properties[i].column] = value;
-      if (properties[i].sessionProperty){
-        sessionProperties[properties[i].column] = value;
+      if (typeof value !== 'undefined') {
+        allProperties[properties[i].column] = value;
+        if (properties[i].sessionProperty) {
+          sessionProperties[properties[i].column] = value;
+        }
       }
     }
     

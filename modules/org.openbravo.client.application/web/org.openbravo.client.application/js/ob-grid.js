@@ -23,7 +23,54 @@ isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 // The OBGrid combines common grid functionality usefull for different 
 // grid implementations.
 isc.OBGrid.addProperties({
-    
+
+  recordComponentPoolingMode: 'recycle',
+  showRecordComponentsByCell: true,
+  recordComponentPosition: 'within',
+  poolComponentsPerColumn: true,
+  showRecordComponents: true,
+  
+  createRecordComponent: function(record, colNum){
+    var field = this.getField(colNum);
+    if (field.isLink && record[field.name]) {
+      var linkButton = isc.OBGridLinkButton.create({
+        grid: this,
+        title: record[field.name],
+        record: record,
+        rowNum: this.getRecordIndex(record),
+        colNum: colNum
+      });
+      return linkButton;
+    }
+    return null;
+  },
+  
+  updateRecordComponent: function(record, colNum, component, recordChanged){
+    var field = this.getField(colNum);
+    if (field.isLink && record[field.name]) {
+      component.setTitle(record[field.name]);
+      component.record = record;
+      component.rowNum = this.getRecordIndex(record);
+      component.colNum = colNum;
+      return component;
+    }
+    return null;
+  },
+  
+  initWidget: function(){
+    // prevent the value to be displayed in case of a link
+    var i, field, formatCellValueFunction = function(value, record, rowNum, colNum, grid){
+      return '';
+    };
+    for (i = 0; i < this.fields.length; i++) {
+      field = this.fields[i];
+      if (field.isLink) {
+        field.formatCellValue = formatCellValueFunction;
+      }
+    }
+    return this.Super('initWidget', arguments);
+  },
+  
   // = exportData =
   // The exportData function exports the data of the grid to a file. The user will 
   // be presented with a save-as dialog.
@@ -56,7 +103,7 @@ isc.OBGridSummary.addProperties({
     if (field.summaryFunction === "sum" && this.summaryRowStyle_sum) {
       return this.summaryRowStyle_sum;
     } else if (field.summaryFunction === "avg" && this.summaryRowStyle_avg) {
-      return this.summaryRowStyle_avg
+      return this.summaryRowStyle_avg;
     } else if (this.summaryRowStyle_other) {
       return this.summaryRowStyle_other;
     } else {
@@ -67,4 +114,12 @@ isc.OBGridSummary.addProperties({
 
 isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);
 
-isc.ClassFactory.defineClass('OBGridLinkField', isc.Button);
+isc.ClassFactory.defineClass('OBGridLinkButton', isc.Button);
+isc.OBGridLinkButton.addProperties({
+
+  action: function(){
+    if (this.grid && this.grid.cellClick) {
+      this.grid.cellClick(this.record, this.rowNum, this.colNum);
+    }
+  }
+});

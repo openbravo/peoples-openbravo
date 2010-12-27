@@ -183,31 +183,31 @@
 }
 
 
-.OBGridLinkField,
-.OBGridLinkFieldOver,
-.OBGridLinkFieldDown,
-.OBGridLinkFieldFocused,
-.OBGridLinkFieldFocusedOver,
-.OBGridLinkFieldFocusedDown {
+.OBGridLinkButton,
+.OBGridLinkButtonOver,
+.OBGridLinkButtonDown,
+.OBGridLinkButtonFocused,
+.OBGridLinkButtonFocusedOver,
+.OBGridLinkButtonFocusedDown {
   font-family: arial, sans-serif;
   vertical-align: middle;
   background: transparent;
   padding: 0px 4px 2px 4px;
 }
 
-.OBGridLinkField,
-.OBGridLinkFieldFocused {
+.OBGridLinkButton,
+.OBGridLinkButtonFocused {
   color: #00A651;
 }
 
-.OBGridLinkFieldOver {
+.OBGridLinkButtonOver {
   color: #00A651;
   text-decoration: underline;
 }
 
-.OBGridLinkFieldDown,
-.OBGridLinkFieldFocusedOver,
-.OBGridLinkFieldFocusedDown {
+.OBGridLinkButtonDown,
+.OBGridLinkButtonFocusedOver,
+.OBGridLinkButtonFocusedDown {
   color: #004E27;
   text-decoration: underline;
 }
