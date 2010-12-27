@@ -90,8 +90,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
         continue;
       }
 
-      if (colNum % 2 == 0 && (field.isStartinoddcolumn() || !field.isDisplayOnSameLine())) {
+      final OBViewField viewField = new OBViewField();
+      viewField.setField(field);
+      viewField.setProperty(property);
 
+      // Positioning some fields in odd-columns
+      if (colNum % 2 == 0
+          && (field.isStartinoddcolumn() || !field.isDisplayOnSameLine() || viewField.getColSpan() == 2)) {
         final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
         fields.add(spacer);
         log.debug("colNum: " + colNum + " - field: [spacer]");
@@ -100,10 +105,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
           colNum = 1;
         }
       }
-
-      final OBViewField viewField = new OBViewField();
-      viewField.setField(field);
-      viewField.setProperty(property);
 
       // change in fieldgroup
       if (field.getFieldGroup() != null && field.getFieldGroup() != currentADFieldGroup) {
