@@ -36,8 +36,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
-import org.openbravo.model.ad.domain.ModelImplementation;
-import org.openbravo.model.ad.domain.ModelImplementationMapping;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
@@ -87,24 +86,8 @@ class QueryListUtils {
             field.put("OB_keyParameter", "inp"
                 + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
             // find the model object mapping
-            String mappingName = null;
-            for (ModelImplementation modelImpl : tab.getADModelImplementationList()) {
-              for (ModelImplementationMapping mapping : modelImpl
-                  .getADModelImplementationMappingList()) {
-                if (mapping.getMappingName() != null
-                    && mapping.getMappingName().toLowerCase().contains("edition")) {
-                  // found it
-                  mappingName = mapping.getMappingName();
-                  break;
-                }
-              }
-              if (mappingName != null) {
-                break;
-              }
-            }
-            if (mappingName != null) {
-              field.put("OB_mappingName", mappingName);
-            }
+            String mappingName = Utility.getTabURL(tab.getId(), "E", false);
+            field.put("OB_mappingName", mappingName);
 
           } else {
             field.put("OB_HasLink", false);
