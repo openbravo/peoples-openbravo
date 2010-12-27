@@ -415,7 +415,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
     if (menuItem.mappingname.equals("")) {
       if (menuItem.action.equals("W")) {
         strResultado.append("/" + ("0".equals(menuItem.windowmodule) ? "" : menuItem.windowpackage)
-            + menuItem.windowname + "/" + menuItem.tabname + "_Relation.html");
+            + menuItem.windowname + "/" + menuItem.tabname
+            + ("0".equals(menuItem.tabmodule) ? "" : menuItem.adTabId) + "_Relation.html");
       } else if (menuItem.action.equals("F")) {
         strResultado.append("/ad_workflow/WorkflowControl.html?inpadWorkflowId=").append(
             menuItem.adWorkflowId);
