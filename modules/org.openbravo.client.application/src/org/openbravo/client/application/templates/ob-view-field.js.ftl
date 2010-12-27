@@ -32,6 +32,10 @@
         startRow: ${fieldDefinition.startRow},
         endRow: ${fieldDefinition.endRow},
         width: '*',
+        <#if fieldDefinition.searchField>
+          displayField: '${fieldDefinition.name?js_string}._identifier',
+          valueField: '${fieldDefinition.name?js_string}',
+        </#if>
         <#else>
         type: 'OBSectionItem',
         sectionExpanded: true,

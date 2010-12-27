@@ -30,6 +30,7 @@ import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.client.kernel.reference.FKSearchUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.service.OBDal;
@@ -148,6 +149,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private Property property;
     private String label;
     private UIDefinition uiDefinition;
+
+    public boolean isSearchField() {
+      return uiDefinition instanceof FKSearchUIDefinition;
+    }
 
     public String getType() {
       return getUIDefinition().getName();
