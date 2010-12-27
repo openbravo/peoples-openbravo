@@ -2352,6 +2352,11 @@ public class Utility {
         url += tab.getWindow().getModule().getJavaPackage();
       }
       url += mappingFormat(tab.getWindow().getName()) + "/" + mappingFormat(tab.getName());
+
+      if (!"0".equals(tab.getModule().getId())) {
+        url += tab.getId();
+      }
+
       if ("R".equals(type)) {
         url += "_Relation.html";
       } else if ("X".equals(type)) {

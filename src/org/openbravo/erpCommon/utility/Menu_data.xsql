@@ -49,7 +49,8 @@
         MW.AD_Module_ID as windowModule, MT.AD_Module_ID as tabModule,
         MW.JAVAPACKAGE as windowPackage, MT.JAVAPACKAGE as tabPackage,
         AD_MAPPING_FORMAT(to_char(w.name)) as windowName, 
-        AD_MAPPING_FORMAT(to_char(t.name)) as tabName
+        AD_MAPPING_FORMAT(to_char(t.name)) as tabName,
+        t.ad_tab_id
         FROM AD_TREENODE tn,
         (SELECT m.AD_Menu_ID, COALESCE(m_t.NAME, m.NAME) AS NAME, COALESCE(m_t.DESCRIPTION, m.Description) AS DESCRIPTION, 
         m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 

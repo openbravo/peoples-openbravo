@@ -737,8 +737,9 @@ public class Wad extends DefaultHandler {
     ArrayList<WadData> servlets = new ArrayList<WadData>();
     for (WadData tab : allTabs) {
       String tabClassName = "org.openbravo.erpWindows."
-          + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage) + tab.windowname + "."
-          + tab.tabname;
+          + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage + ".") + tab.windowname + "."
+          + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.adTabId);
+
       WadData servlet = new WadData();
       servlet.displayname = tabClassName;
       servlet.name = "W" + tab.adTabId;
@@ -760,7 +761,7 @@ public class Wad extends DefaultHandler {
     ArrayList<WadData> mappings = new ArrayList<WadData>();
     for (WadData tab : allTabs) {
       String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage)
-          + tab.windowname + "/" + tab.tabname;
+          + tab.windowname + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.adTabId);
 
       WadData mapping = new WadData();
       mapping.name = "W" + tab.adTabId;
