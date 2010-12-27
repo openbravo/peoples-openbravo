@@ -27,8 +27,8 @@
 // * OBDateTimeItem: FormItem for DateTime
 // * OBNumber: FormItem for numbers
 // * OBYesNoItem: combo box for yes/no values
-// * OBFKComboBoxItem: combo box for foreign key references
-// * OBListComboBoxItem: combo box for list references
+// * OBFKItem: combo box for foreign key references
+// * OBListItem: combo box for list references
 
 // == OBCheckboxItem ==
 // Item used for Openbravo yes/no fields.
@@ -76,14 +76,22 @@ isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 // Form sections
 isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
 
-// == OBListComboBoxItem ==
+// == OBListItem ==
 // Combo box for list references
-isc.ClassFactory.defineClass('OBListComboBoxItem', ComboBoxItem);
+isc.ClassFactory.defineClass('OBListItem', SelectItem);
 
-isc.OBListComboBoxItem.addProperties({
+isc.OBListItem.addProperties({
 
   itemData: null,
   
+  changed: function() {
+    var ret = this.Super("changed", arguments);
+    if (this.form && this.form.handleItemChange) {
+      this.form.handleItemChange(this);
+    }
+    return ret;
+  },
+
   getValueMap: function(){
     if (this.itemData) {
       return this.itemData;
@@ -93,26 +101,11 @@ isc.OBListComboBoxItem.addProperties({
   
 });
 
-// == OBListFilterComboBoxItem ==
-// Combo box for list references used in filter editors, the difference
-// is that always an empty value is added.
-isc.ClassFactory.defineClass('OBListFilterComboBoxItem', isc.OBListComboBoxItem);
+// == OBFKItem ==
+// Extends SelectItem with suggestion box behavior for foreign key references.
+isc.ClassFactory.defineClass('OBFKItem', SelectItem);
 
-isc.OBListFilterComboBoxItem.addProperties({
-
-  // adds an empty value at the beginning
-  getClientPickListData: function(){
-    var result = this.Super('getClientPickListData', arguments);
-    result.unshift({});
-    return result;
-  }
-});
-
-// == OBFKComboBoxItem ==
-// Extends ComboBoxItem with suggestion box behavior for foreign key references.
-isc.ClassFactory.defineClass('OBFKComboBoxItem', ComboBoxItem);
-
-isc.OBFKComboBoxItem.addProperties({
+isc.OBFKItem.addProperties({
   selectOnFocus: true,
   autoFetchData: false,
   completeOnTab: true,
@@ -126,7 +119,15 @@ isc.OBFKComboBoxItem.addProperties({
   getDataSource: function(){
     return this.getOptionDataSource();
   },
-   
+     
+  changed: function() {
+    var ret = this.Super("changed", arguments);
+    if (this.form && this.form.handleItemChange) {
+      this.form.handleItemChange(this);
+    }
+    return ret;
+  },
+
   getOptionDataSource: function(){
     if (this.optionDataSource) {
       return this.optionDataSource;
@@ -866,9 +867,17 @@ isc.FormItem.addProperties({
   titleClick: function(form, item){
     item.focusInItem();
   },
+      
+  changed: function() {
+    var ret = this.Super("changed", arguments);
+    this._doFICCall = true;
+    return ret;
+  },
+
   blur : function (form, item) {
-    if (form && form.blurItem) {
-      form.blurItem(item);
-    }    
+    if (form && form.handleItemChange) {
+      form.handleItemChange(this);
+    }
+    this._hasChanged = false;
   }  
 });

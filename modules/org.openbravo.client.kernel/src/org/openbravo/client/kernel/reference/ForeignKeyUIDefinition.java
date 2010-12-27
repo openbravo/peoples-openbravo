@@ -37,7 +37,7 @@ public class ForeignKeyUIDefinition extends UIDefinition {
 
   @Override
   public String getFormEditorType() {
-    return "OBFKComboBoxItem";
+    return "OBFKItem";
   }
 
   @Override

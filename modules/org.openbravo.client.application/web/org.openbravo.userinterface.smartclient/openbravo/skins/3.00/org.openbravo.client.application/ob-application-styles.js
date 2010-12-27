@@ -75,11 +75,11 @@ OB.DefaultPickListStyleProperties = {
   errorOrientation: 'left'
 };
 
-isc.OBListComboBoxItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
+isc.OBListItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
-isc.OBListFilterComboBoxItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
+isc.OBListFilterItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
-isc.OBFKComboBoxItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
+isc.OBFKItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
 isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 

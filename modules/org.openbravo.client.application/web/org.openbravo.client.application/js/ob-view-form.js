@@ -166,13 +166,7 @@ isc.OBViewForm.addProperties({
     }
   },
   
-  itemChanged: function(item, newValue) {
-    var ret = this.Super("itemChanged", arguments);
-    item._doFICCall = true;
-    return ret;
-  },
-  
-  blurItem: function(item) {
+  handleItemChange: function(item) {
     if (item._doFICCall) {
       var i;
       for (i = 0; i < this.dynamicCols.length; i++) {

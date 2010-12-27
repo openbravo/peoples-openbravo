@@ -37,7 +37,7 @@ public class EnumUIDefinition extends UIDefinition {
 
   @Override
   public String getFormEditorType() {
-    return "OBListComboBoxItem";
+    return "OBListItem";
   }
 
   @Override
@@ -53,11 +53,6 @@ public class EnumUIDefinition extends UIDefinition {
     } catch (JSONException e) {
       throw new OBException("Error while computing combo data", e);
     }
-  }
-
-  @Override
-  public String getFilterEditorType() {
-    return "OBListFilterComboBoxItem";
   }
 
   @Override
