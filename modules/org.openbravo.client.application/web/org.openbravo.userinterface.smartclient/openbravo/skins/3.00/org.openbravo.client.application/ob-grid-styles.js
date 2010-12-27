@@ -42,7 +42,8 @@ isc.OBGrid.addProperties({
   summaryRowHeight: 22,
   summaryRowStyle: "OBGridSummaryCell",
   summaryRowStyle_other: "OBGridSummaryCell_other",
-  summaryRowStyle_sum: "OBGridSummaryCell_sum"
+  summaryRowStyle_sum: "OBGridSummaryCell_sum",
+  summaryRowStyle_avg: "OBGridSummaryCell_avg"
 });
 
 isc.OBGrid.changeDefaults('filterEditorDefaults', {
