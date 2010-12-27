@@ -34,7 +34,7 @@
     defaultEditMode: ${tabComponent.defaultEditMode},
     
     propertyToColumns:[
-      <#list data.allFields as field>
+      <#list tabComponent.allFields as field>
         {
           property: '${field.propertyName?js_string}',
           column: '${field.columnName?js_string}', 
@@ -44,7 +44,7 @@
     ],
     
     customToolbarButtons: [
-    <#list data.buttonFields as field>
+    <#list tabComponent.buttonFields as field>
       {id: '${field.id?js_string}', title: '${field.label?js_string}'}<#if field_has_next>,</#if>
     </#list>],
     
