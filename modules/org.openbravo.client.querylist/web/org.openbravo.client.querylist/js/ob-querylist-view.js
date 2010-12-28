@@ -44,7 +44,8 @@ isc.OBQueryListView.addProperties({
         fields: this.fields,
         widgetInstanceId: this.widgetInstanceId,
         dbInstanceId: this.widgetInstanceId,
-        gridDataSource: this.gridDataSource
+        gridDataSource: this.gridDataSource,
+        title: args.tabTitle
       }));
     this.addPortlet(widgetInstance);
   }
