@@ -43,6 +43,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   protected static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
   protected static final double SUBTABS_COL_SIZE = 15;
   protected static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
+  private static final String moduleId = "<PARAMETER_TMP id="moduleId">xx</PARAMETER_TMP>";
+  
+  @Override
+  public void init(ServletConfig config) {
+    setClassInfo("W", tabId, moduleId);
+    super.init(config);
+  }
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);

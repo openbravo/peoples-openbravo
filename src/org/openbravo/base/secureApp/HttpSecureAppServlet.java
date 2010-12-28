@@ -158,12 +158,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     try {
       if (log4j.isDebugEnabled())
         log4j.debug("Servlet request for class info: " + this.getClass());
-      ClassInfoData[] classInfoAux = ClassInfoData.select(this, this.getClass().getName());
-      if (classInfoAux != null && classInfoAux.length > 0)
-        classInfo = classInfoAux[0];
-      else {
-        classInfoAux = ClassInfoData.set();
-        classInfo = classInfoAux[0];
+      if (classInfo == null) {
+        ClassInfoData[] classInfoAux = ClassInfoData.select(this, this.getClass().getName());
+        if (classInfoAux != null && classInfoAux.length > 0)
+          classInfo = classInfoAux[0];
+        else {
+          classInfoAux = ClassInfoData.set();
+          classInfo = classInfoAux[0];
+        }
       }
     } catch (final Exception ex) {
       log4j.error(ex);
@@ -175,6 +177,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         log4j.error(e);
       }
     }
+  }
+
+  /**
+   * Sets information about the artifact the servlet is for. This method is called from generated
+   * 2.50 windows to set tab and module, before calling this init, so it is not needed to query
+   * database to retrieve this info.
+   * 
+   */
+  protected void setClassInfo(String type, String id, String module) {
+    classInfo = new ClassInfoData();
+    classInfo.type = type;
+    classInfo.id = id;
+    classInfo.adModuleId = module;
   }
 
   @Override

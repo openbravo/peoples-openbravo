@@ -1033,7 +1033,7 @@ public class Wad extends DefaultHandler {
             selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId,
             tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams,
             parentwhereclause, strProcess, strDirectPrint, !tabsData.uipattern.equals("STD"),
-            vecParameters, vecTableParameters, tabsData.javapackage);
+            vecParameters, vecTableParameters, tabsData.javapackage, tabsData.tabmodule);
         /************************************************
          * XML of the SORT TAB
          *************************************************/
@@ -1055,7 +1055,7 @@ public class Wad extends DefaultHandler {
             tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.uipattern,
             whereClauseParams, parentwhereclause, tabsData.editreference, strProcess,
             strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage, "Y"
-                .equals(tabsData.isdeleteable));
+                .equals(tabsData.isdeleteable), tabsData.tabmodule);
 
         /************************************************
          * XSQL
@@ -1308,6 +1308,7 @@ public class Wad extends DefaultHandler {
    *          Array of query's parameters for the where clause.
    * @param vecTableParametersTop
    *          Array of query's parameters for from clause.
+   * @param tabmodule
    * @throws ServletException
    * @throws IOException
    */
@@ -1318,8 +1319,8 @@ public class Wad extends DefaultHandler {
       boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
       String windowType, String strColumnSortOrderId, String whereClauseParams,
       String parentwhereclause, String strProcess, String strDirectPrint, boolean strReadOnly,
-      Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop, String javaPackage)
-      throws ServletException, IOException {
+      Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop, String javaPackage,
+      String tabmodule) throws ServletException, IOException {
     log4j.debug("Processing Sort Tab java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final int parentTab = parentTabId(allTabs, strTab);
@@ -1348,6 +1349,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("grandfatherName", grandfatherField);
     xmlDocument.setParameter("ShowName", FieldsData.columnName(pool, strColumnSortOrderId));
     xmlDocument.setParameter("accessLevel", accesslevel);
+    xmlDocument.setParameter("moduleId", tabmodule);
     if (parentsFieldsData.length > 0) {
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
       xmlDocument.setParameter("keyParentINP", Sqlc
@@ -1510,6 +1512,7 @@ public class Wad extends DefaultHandler {
    *          Array with the auxiliar inputs info
    * @param relationControl
    *          Object with the WADGrid control
+   * @param tabmodule
    * @throws ServletException
    * @throws IOException
    */
@@ -1522,8 +1525,8 @@ public class Wad extends DefaultHandler {
       String tableId, String windowType, String uiPattern, String whereClauseParams,
       String parentwhereclause, String editReference, String strProcess, String strDirectPrint,
       Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
-      WADControl relationControl, String javaPackage, boolean deleteable) throws ServletException,
-      IOException {
+      WADControl relationControl, String javaPackage, boolean deleteable, String tabmodule)
+      throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
@@ -1746,6 +1749,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("table", tableName);
     xmlDocument.setParameter("windowId", strWindow);
     xmlDocument.setParameter("accessLevel", accesslevel);
+    xmlDocument.setParameter("moduleId", tabmodule);
     xmlDocument.setParameter("tabId", strTab);
     xmlDocument.setParameter("tableId", tableId);
     xmlDocument.setParameter("createFromProcessId",

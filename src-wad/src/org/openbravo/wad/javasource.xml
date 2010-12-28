@@ -53,6 +53,7 @@
   <PARAMETER id="filter" name = "filter" default=" "/>
   <PARAMETER id="windowId" name = "windowId" default=" "/>
   <PARAMETER id="accessLevel" name = "accessLevel" default=" "/>
+  <PARAMETER id="moduleId" name = "moduleId" default=" "/>
   <PARAMETER id="tabId" name = "tabId" default=" "/>
   <PARAMETER id="orgId" name = "orgId" default=" "/>
   <PARAMETER id="clientId" name = "clientId" default=" "/>
