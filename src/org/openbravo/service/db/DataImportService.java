@@ -320,9 +320,11 @@ public class DataImportService implements OBSingleton {
         if (value != null && !value.equals("0")) {
           final Entity entity = PrimitiveReferenceHandler.getInstance()
               .getPrimitiveReferencedEntity(objectToRepair, p);
+
           final BaseOBObject referencedBob = (BaseOBObject) entityResolver.resolve(
               entity.getName(), value, true);
-          if (referencedBob == null) {
+
+          if (referencedBob == null || referencedBob.getId() == null) {
             if (ir.getErrorMessages() == null) {
               ir.setErrorMessages("The object " + objectToRepair
                   + " references an object (entity: " + entity + ") with id " + value
