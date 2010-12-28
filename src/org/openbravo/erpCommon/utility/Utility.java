@@ -2369,6 +2369,8 @@ public class Utility {
     } catch (Exception e) {
       log4j.error(e.getMessage());
       return "";
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
