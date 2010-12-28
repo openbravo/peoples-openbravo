@@ -101,7 +101,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   maximize: function() {
     OB.Layout.ViewManager.openView('OBQueryListView',  {
       tabTitle: this.title,
-      widgetInstanceId: this.widgetInstanceId,
+      widgetInstanceId: this.dbInstanceId,
       fields: this.maximizedFields,
       gridDataSource: this.gridDataSource
     });
