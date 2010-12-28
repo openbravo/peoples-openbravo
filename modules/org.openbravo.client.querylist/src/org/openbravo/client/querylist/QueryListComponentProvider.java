@@ -47,6 +47,8 @@ public class QueryListComponentProvider extends BaseComponentProvider {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.querylist/js/ob-querylist-widget.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.querylist/js/ob-querylist-view.js", false));
     return globalResources;
   }
 
