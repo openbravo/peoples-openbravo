@@ -78,8 +78,12 @@ isc.OBViewGrid.addProperties({
   // ** {{{ dataPageSize }}} **
   // The data page size used for loading paged data from the server.
   dataPageSize: 100,
-  
+    
+  autoFitFieldWidths: true,
+  autoFitWidthApproach: 'title',
+  canAutoFitFields: false,
   width: '100%',
+
   autoFetchTextMatchStyle: 'substring',
   showFilterEditor: true,
   canEdit: true,
@@ -94,14 +98,10 @@ isc.OBViewGrid.addProperties({
   editEvent: 'none',
   showCellContextMenus: true,
   canOpenRecordEditor: true,
-  canAutoFitFields: false,
   showDetailFields: true,
   
   // internal sc grid property, see the ListGrid source code
   preserveEditsOnSetData: false,
-  
-  autoFitFieldWidths: true,
-  autoFitWidthApproach: 'title',
   
   waitForSave: true,
   stopOnErrors: true,
@@ -138,12 +138,6 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  recordComponentPoolingMode: 'recycle',
-  showRecordComponentsByCell: true,
-  recordComponentPosition: 'within',
-  poolComponentsPerColumn: true,
-  showRecordComponents: true,
-  
   currentEditColumnLayout: null,
   
   refreshFields: function(){
@@ -151,7 +145,10 @@ isc.OBViewGrid.addProperties({
   },
   
   createRecordComponent: function(record, colNum){
-    var layout = null, rowNum;
+    var layout = this.Super('createRecordComponent',arguments), rowNum;
+    if (layout) {
+      return layout;
+    }
     if (this.isEditLinkColumn(colNum)) {
       rowNum = this.getRecordIndex(record);
       layout = isc.OBGridButtonsComponent.create({
@@ -170,6 +167,10 @@ isc.OBViewGrid.addProperties({
   },
   
   updateRecordComponent: function(record, colNum, component, recordChanged){
+    var superComponent = this.Super('updateRecordComponent', arguments);
+    if (superComponent) {
+      return superComponent;
+    }
     if (this.isEditLinkColumn(colNum)) {
       // clear the previous record pointer
       if (recordChanged && component.record.editColumnLayout === component) {
