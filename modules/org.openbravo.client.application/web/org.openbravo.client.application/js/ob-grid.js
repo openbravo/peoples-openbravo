@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 
 // = OBGrid =
@@ -31,13 +30,13 @@ isc.OBGrid.addProperties({
   showRecordComponents: true,
   
   createRecordComponent: function(record, colNum){
-    var field = this.getField(colNum);
+    var field = this.getField(colNum), rowNum = this.getRecordIndex(record);
     if (field.isLink && record[field.name]) {
       var linkButton = isc.OBGridLinkButton.create({
         grid: this,
-        title: record[field.name],
+        title: this.formatLinkValue(record, field, colNum, rowNum, record[field.name]),
         record: record,
-        rowNum: this.getRecordIndex(record),
+        rowNum: rowNum,
         colNum: colNum
       });
       return linkButton;
@@ -46,15 +45,29 @@ isc.OBGrid.addProperties({
   },
   
   updateRecordComponent: function(record, colNum, component, recordChanged){
-    var field = this.getField(colNum);
+    var field = this.getField(colNum), rowNum = this.getRecordIndex(record);
     if (field.isLink && record[field.name]) {
-      component.setTitle(record[field.name]);
+      component.setTitle(this.formatLinkValue(record, field, colNum, rowNum, record[field.name]));
       component.record = record;
-      component.rowNum = this.getRecordIndex(record);
+      component.rowNum = rowNum;
       component.colNum = colNum;
       return component;
     }
     return null;
+  },
+  
+  formatLinkValue: function(record, field, colNum, rowNum, value){
+    if (typeof value === 'undefined' || value === null) {
+      return '';
+    }
+    var simpleType = isc.SimpleType.getType(field.type, this.dataSource);
+    // note: originalFormatCellValue is set in the initWidget below
+    if (field && field.originalFormatCellValue) {
+      return field.originalFormatCellValue(value, record, rowNum, colNum, this);
+    } else if (simpleType.shortDisplayFormatter) {
+      return simpleType.shortDisplayFormatter(value, field, this, record, rowNum, colNum);
+    }
+    return value;
   },
   
   initWidget: function(){
@@ -65,6 +78,11 @@ isc.OBGrid.addProperties({
     for (i = 0; i < this.fields.length; i++) {
       field = this.fields[i];
       if (field.isLink) {
+        // store the originalFormatCellValue if not already set
+        if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {
+          field.originalFormatCellValue = field.formatCellValue;
+        }
+        field.formatCellValueFunctionReplaced = true;
         field.formatCellValue = formatCellValueFunction;
       }
     }
@@ -78,17 +96,15 @@ isc.OBGrid.addProperties({
   // * {{{exportProperties}}} defines different properties used for controlling the export, currently only the 
   // exportProperties.exportFormat is supported (which is defaulted to csv).
   // * {{{data}}} the parameters to post to the server, in addition the filter criteria of the grid are posted.  
-  exportData: function(exportProperties, data) {
-    var d = data || {},
-        expProp = exportProperties || {},
-        dsURL = this.dataSource.dataURL;
-
+  exportData: function(exportProperties, data){
+    var d = data || {}, expProp = exportProperties || {}, dsURL = this.dataSource.dataURL;
+    
     isc.addProperties(d, {
-        _dataSource: this.dataSource.ID,
-        _operationType: 'fetch',
-        _noCount: true, // never do count for export
-        exportAs: expProp.exportAs || 'csv',
-        exportToFile: true
+      _dataSource: this.dataSource.ID,
+      _operationType: 'fetch',
+      _noCount: true, // never do count for export
+      exportAs: expProp.exportAs || 'csv',
+      exportToFile: true
     }, this.getCriteria());
     
     OB.Utilities.postThroughHiddenForm(dsURL, d);
@@ -98,12 +114,12 @@ isc.OBGrid.addProperties({
 isc.ClassFactory.defineClass('OBGridSummary', isc.OBGrid);
 
 isc.OBGridSummary.addProperties({
-  getCellStyle: function (record, rowNum, colNum) {
+  getCellStyle: function(record, rowNum, colNum){
     var field = this.getField(colNum);
     if (field.summaryFunction === "sum" && this.summaryRowStyle_sum) {
       return this.summaryRowStyle_sum;
     } else if (field.summaryFunction === "avg" && this.summaryRowStyle_avg) {
-      return this.summaryRowStyle_avg
+      return this.summaryRowStyle_avg;
     } else {
       return this.summaryRowStyle;
     }
@@ -114,7 +130,6 @@ isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);
 
 isc.ClassFactory.defineClass('OBGridLinkButton', isc.Button);
 isc.OBGridLinkButton.addProperties({
-
   action: function(){
     if (this.grid && this.grid.cellClick) {
       this.grid.cellClick(this.record, this.rowNum, this.colNum);
