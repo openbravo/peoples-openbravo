@@ -305,9 +305,9 @@
             END IF;
 
             IF Cur_Order.DocSubTypeSO = 'WR' THEN
-              v_NEWORDERDATE = Cur_Order.DATEORDERED; -- IS A POS ORDER
+              v_NEWORDERDATE := Cur_Order.DATEORDERED; -- IS A POS ORDER
             ELSE
-              v_NEWORDERDATE = now();
+              v_NEWORDERDATE := now();
             END IF;
 
             --RAISE_APPLICATION_ERROR(-20100,'el numero documento es:'||COALESCE(v_DocumentNo,0)||' El doctypeId es: '||COALESCE(v_DocType_ID,0)||' El cOrderId es: '||COALESCE(Cur_Order.C_Order_ID,'0'));
