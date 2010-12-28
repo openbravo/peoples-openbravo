@@ -18,14 +18,23 @@
  */
 package org.openbravo.client.querylist;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterValue;
+import org.openbravo.client.kernel.Component;
+import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.myob.WidgetInstance;
 import org.openbravo.client.myob.WidgetProvider;
+import org.openbravo.service.datasource.DataSourceComponentProvider;
+import org.openbravo.service.datasource.DataSourceConstants;
 
 /**
  * Responsible for creating the Query/List Widgets.
@@ -33,12 +42,18 @@ import org.openbravo.client.myob.WidgetProvider;
  * @author gorkaion
  */
 public class QueryListWidgetProvider extends WidgetProvider {
+  private static final String DATASOURCEID = "DD17275427E94026AD721067C3C91C18";
+  public static final String WIDGETCLASS_PARAMETER = "WIDGET_CLASS";
 
   private static final String GRID_PROPERTIES_REFERENCE = "B36DF126DF5F4077A37F1E5B963AA636";
   private static final Logger log = Logger.getLogger(QueryListWidgetProvider.class);
   private static final String HEIGHT = "height";
   private static final Long ROW_HEIGHT = 23L;
   private static final Long STATIC_HEIGHT = 80L;
+
+  @Inject
+  @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
+  private DataSourceComponentProvider dataSourceComponentProvider;
 
   @Override
   public String generate() {
@@ -58,15 +73,30 @@ public class QueryListWidgetProvider extends WidgetProvider {
     }
     String gridProperties = (gridPropertiesObject == null ? "" : ", gridProperties: "
         + gridPropertiesObject.toString());
-    return "isc.defineClass('"
+    final String result = "isc.defineClass('"
         + KernelConstants.ID_PREFIX
         + getWidgetClass().getId()
         + "', isc.OBQueryListWidget).addProperties({widgetId: '"
         + getWidgetClass().getId()
-        + "', fields:"
+        + "', "
+        + "gridDataSource: "
+        + getDataSourceJavaScript()
+        + ", fields:"
         + QueryListUtils
             .getWidgetClassFields(getWidgetClass(), QueryListUtils.IncludeIn.WidgetView)
         + gridProperties + "});";
+    return result;
+  }
+
+  public String getDataSourceJavaScript() {
+    final Map<String, Object> localParameters = new HashMap<String, Object>();
+    localParameters.putAll(getParameters());
+    localParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
+    localParameters.put(WIDGETCLASS_PARAMETER, getWidgetClass());
+    final Component dsComponent = dataSourceComponentProvider.getComponent(DATASOURCEID,
+        localParameters);
+    final String dsJavaScript = dsComponent.generate();
+    return dsJavaScript;
   }
 
   public JSONObject getWidgetInstanceDefinition(WidgetInstance widgetInstance) {

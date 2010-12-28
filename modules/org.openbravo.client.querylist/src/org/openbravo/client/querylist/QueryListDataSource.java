@@ -27,13 +27,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterValue;
+import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
+import org.openbravo.client.kernel.reference.NumberUIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.client.kernel.reference.YesNoUIDefinition;
 import org.openbravo.client.myob.WidgetClass;
 import org.openbravo.client.myob.WidgetInstance;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
 
@@ -43,9 +51,6 @@ import org.openbravo.service.json.JsonUtils;
  * @author gorkaion
  */
 public class QueryListDataSource extends ReadOnlyDataSourceService {
-
-  private final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
-  private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
 
   /**
    * Returns the count of objects based on the passed parameters.
@@ -62,6 +67,10 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
   @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
+    // creation of formats is done here because they are not thread safe
+    final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
+    final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
+
     OBContext.setAdminMode();
     try {
       WidgetInstance widgetInstance = OBDal.getInstance().get(WidgetInstance.class,
@@ -168,5 +177,48 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       }
     }
     return parameterValues;
+  }
+
+  public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
+    // note datasource properties are not cached as the component is
+    // re-used within one request thread
+    final List<DataSourceProperty> dsProperties = new ArrayList<DataSourceProperty>();
+    OBContext.setAdminMode();
+    try {
+      WidgetClass widgetClass = (WidgetClass) parameters
+          .get(QueryListWidgetProvider.WIDGETCLASS_PARAMETER);
+
+      if (!widgetClass.getOBCQLWidgetQueryList().isEmpty()) {
+        for (OBCQL_QueryColumn column : QueryListUtils.getColumns(widgetClass
+            .getOBCQLWidgetQueryList().get(0))) {
+          Reference reference = column.getReference();
+          if (column.getReferenceSearchKey() != null) {
+            reference = column.getReferenceSearchKey();
+          }
+
+          final DataSourceProperty dsProperty = new DataSourceProperty();
+          dsProperty.setName(column.getDisplayExpression());
+          dsProperty.setId(false);
+          dsProperty.setMandatory(false);
+          dsProperty.setAuditInfo(false);
+          dsProperty.setUpdatable(false);
+          final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
+              reference);
+          dsProperty.setBoolean(uiDefinition instanceof YesNoUIDefinition);
+          dsProperty.setPrimitive(!(uiDefinition instanceof ForeignKeyUIDefinition));
+          dsProperty.setUIDefinition(uiDefinition);
+          if (dsProperty.isPrimitive()) {
+            dsProperty.setPrimitiveObjectType(((PrimitiveDomainType) uiDefinition.getDomainType())
+                .getPrimitiveType());
+            dsProperty.setNumericType(uiDefinition instanceof NumberUIDefinition);
+          } else {
+          }
+          dsProperties.add(dsProperty);
+        }
+      }
+      return dsProperties;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

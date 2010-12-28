@@ -39,23 +39,14 @@ public class QueryListComponentProvider extends BaseComponentProvider {
 
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
-    if (componentId.equals(QueryListComponent.COMPONENT_ID)) {
-      final QueryListComponent component = getComponent(QueryListComponent.class);
-      component.setParameters(parameters);
-      return component;
-    }
     throw new IllegalArgumentException("Component id " + componentId + " not supported.");
   }
 
   @Override
   public List<ComponentResource> getGlobalResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
-    globalResources
-        .add(createStaticResource(
-            "web/org.openbravo.client.querylist/js/ob-querylist-widget.js",
-            false));
-    globalResources.add(createStaticResource("org.openbravo.client.kernel/" + COMPONENT_TYPE + "/"
-        + QueryListComponent.COMPONENT_ID, false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.querylist/js/ob-querylist-widget.js", false));
     return globalResources;
   }
 

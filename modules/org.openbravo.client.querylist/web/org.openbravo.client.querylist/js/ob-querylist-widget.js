@@ -57,6 +57,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     }), url, params = {};
     
     this.grid = isc.OBQueryListGrid.create(isc.addProperties({
+      dataSource: this.gridDataSource,
       widget: this,
       fields: this.fields
     }, this.gridProperties));
@@ -105,29 +106,9 @@ isc.OBQueryListGrid.addProperties({
   canReorderFields: false,
   canFreezeFields: false,
   canGroupBy: false,
-  autoFetchData: false,
+  autoFetchData: true,
   canAutoFitFields: false,
   showGridSummary: true,
-  
-  //autoFitFieldWidths: true,
-  //autoFitWidthApproach: 'title',
-  
-  initWidget: function(){
-    OB.Datasource.get('DD17275427E94026AD721067C3C91C18', this);
-    this.Super('initWidget', arguments);
-  },
-  
-  setDataSource: function(ds){
-    if (ds) {
-      ds.fields = this.widget.fields;
-      this.dataSource = ds;
-
-      if(this.widget && this.widget.dbInstanceId) {
-        this.filterData();
-      }
-
-    }
-  },
   
   filterData: function(criteria, callback, requestProperties){
     var crit = criteria || {},
