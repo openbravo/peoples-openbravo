@@ -16,46 +16,36 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-// = OBQueryListWidget =
+// = OBQueryListView =
 //
-// Implements the Query / List widget superclass.
+// Implements the Query / List widget maximized view.
 //
 isc.defineClass('OBQueryListView', isc.PortalLayout);
 
 isc.OBQueryListView.addProperties({
   widgetInstanceId: null,
   fields: null,
+  gridDataSource: null,
 
+  //Set PortalLayout common parameters
   numColumns: 1,
   showColumnMenus: false,
-  
-  
+
   initWidget: function(args){
     this.Super('initWidget', arguments);
 
     this.widgetInstanceId = args.widgetInstanceId;
     this.fields = args.fields;
+    this.gridDataSource = args.gridDataSource;
 
     console.log(this.widgetInstanceId);
     var widgetInstance = isc.OBQueryListWidget.create(isc.addProperties({
-      viewMode: 'maximized'
+        viewMode: 'maximized',
+        fields: this.fields,
+        widgetInstanceId: this.widgetInstanceId,
+        dbInstanceId: this.widgetInstanceId,
+        gridDataSource: this.gridDataSource
       }));
     this.addPortlet(widgetInstance);
-/*
-    var layout = isc.VStack.create({
-      height: '100%',
-      width: '100%',
-      styleName: ''
-    }), url, params = {};
-    
-    this.grid = isc.OBQueryListGrid.create(isc.addProperties({
-      widget: this.widget,
-      fields: this.widget.fields
-    }, this.gridProperties));
-    
-    layout.addMembers(this.grid);
-*/
   }
 });
-
-
