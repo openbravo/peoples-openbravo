@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -85,6 +87,9 @@ public abstract class WidgetProvider {
   // note is only set if the widgetprovider is created
   // through the MyOBUtils class.
   private WidgetClass widgetClass;
+
+  @Inject
+  private MyOBUtils myOBUtils;
 
   // prevent anyone else from creating a widgetprovider directly
   protected WidgetProvider() {
@@ -162,7 +167,7 @@ public abstract class WidgetProvider {
 
   protected void addDefaultWidgetProperties(JSONObject jsonObject, WidgetInstance widgetInstance)
       throws JSONException {
-    jsonObject.put(MyOpenbravoWidgetComponent.CLASSNAMEPARAMETER, MyOBUtils.getWidgetProvider(
+    jsonObject.put(MyOpenbravoWidgetComponent.CLASSNAMEPARAMETER, myOBUtils.getWidgetProvider(
         widgetClass).getClientSideWidgetClassName());
     jsonObject.put(DBINSTANCEID, widgetInstance.getId());
     jsonObject.put(TITLE, MyOBUtils.getWidgetTitle(widgetInstance));

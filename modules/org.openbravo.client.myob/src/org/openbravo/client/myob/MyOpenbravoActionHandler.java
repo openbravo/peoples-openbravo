@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -32,9 +33,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.application.ParameterUtils;
+import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -57,6 +59,12 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
   private static final String PUBLISH_CHANGES = "PUBLISH_CHANGES";
   private static final String RELOAD_WIDGETS = "RELOAD_WIDGETS";
   private static final String GET_AVAILABLE_WIDGET_CLASSES = "GET_AVAILABLE_WIDGET_CLASSES";
+
+  @Inject
+  private MyOBUtils myOBUtils;
+
+  @Inject
+  private WeldUtils weldUtils;
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -138,13 +146,13 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
       List<WidgetInstance> widgetsList = MyOBUtils.getDefaultWidgetInstances(availableAtLevel,
           availableAtLevelValue);
       for (WidgetInstance widgetInstance : widgetsList) {
-        final JSONObject jsonObject = MyOBUtils.getWidgetProvider(widgetInstance.getWidgetClass())
+        final JSONObject jsonObject = myOBUtils.getWidgetProvider(widgetInstance.getWidgetClass())
             .getWidgetInstanceDefinition(widgetInstance);
         widgets.put(jsonObject);
         log.debug(">> Added widget instance: " + jsonObject.toString());
       }
     } else {
-      MyOpenbravoComponent myOBComponent = new MyOpenbravoComponent();
+      MyOpenbravoComponent myOBComponent = weldUtils.getInstance(MyOpenbravoComponent.class);
       List<String> widgetsList = myOBComponent.getWidgetInstanceDefinitions();
       for (String widgetInstance : widgetsList) {
         widgets.put(new JSONObject(widgetInstance));
@@ -160,7 +168,7 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
   }
 
   private void addAvailableWidgetClasses(JSONObject o) {
-    MyOpenbravoComponent component = new MyOpenbravoComponent();
+    MyOpenbravoComponent component = weldUtils.getInstance(MyOpenbravoComponent.class);
     try {
       List<String> availableClasses = component.getAvailableWidgetClasses();
       o.put("availableWidgetClasses", availableClasses);

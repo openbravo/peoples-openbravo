@@ -20,6 +20,9 @@ package org.openbravo.client.myob;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -27,6 +30,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -41,7 +45,8 @@ import org.openbravo.model.common.enterprise.Organization;
  * 
  * @author mtaal
  */
-abstract public class MyOBUtils {
+@ApplicationScoped
+public class MyOBUtils {
   private static Logger log = Logger.getLogger(MyOBUtils.class);
   private static String MENU_ITEM_IS_SEPARATOR = "isSeparator";
   private static String MENU_ITEM_TITLE = "title";
@@ -121,26 +126,6 @@ abstract public class MyOBUtils {
     return obcMenuItems.list();
   }
 
-  /**
-   * Creates the widgetProvider from the widgetClass object. Also calls/sets the
-   * {@link WidgetProvider#setWidgetClass(WidgetClass)}.
-   * 
-   * @param widgetClass
-   * @return instance of a {@link WidgetProvider}
-   */
-  static WidgetProvider getWidgetProvider(WidgetClass widgetClass) {
-    try {
-      String strJavaClass = (widgetClass.getWidgetSuperclass() != null) ? widgetClass
-          .getWidgetSuperclass().getJavaClass() : widgetClass.getJavaClass();
-      final Class<?> clz = OBClassLoader.getInstance().loadClass(strJavaClass);
-      final WidgetProvider widgetProvider = (WidgetProvider) clz.newInstance();
-      widgetProvider.setWidgetClass(widgetClass);
-      return widgetProvider;
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
-  }
-
   static List<WidgetInstance> getDefaultWidgetInstances(String availableAtLevel,
       String[] availableAtValues) {
     OBCriteria<WidgetInstance> widgetInstancesCrit = OBDal.getInstance().createCriteria(
@@ -213,6 +198,29 @@ abstract public class MyOBUtils {
       return null;
     }
     return widgetClassCrit.list().get(0);
+  }
+
+  @Inject
+  private WeldUtils weldUtils;
+
+  /**
+   * Creates the widgetProvider from the widgetClass object. Also calls/sets the
+   * {@link WidgetProvider#setWidgetClass(WidgetClass)}.
+   * 
+   * @param widgetClass
+   * @return instance of a {@link WidgetProvider}
+   */
+  WidgetProvider getWidgetProvider(WidgetClass widgetClass) {
+    try {
+      String strJavaClass = (widgetClass.getWidgetSuperclass() != null) ? widgetClass
+          .getWidgetSuperclass().getJavaClass() : widgetClass.getJavaClass();
+      final Class<?> clz = OBClassLoader.getInstance().loadClass(strJavaClass);
+      final WidgetProvider widgetProvider = (WidgetProvider) weldUtils.getInstance(clz);
+      widgetProvider.setWidgetClass(widgetClass);
+      return widgetProvider;
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
   }
 
 }

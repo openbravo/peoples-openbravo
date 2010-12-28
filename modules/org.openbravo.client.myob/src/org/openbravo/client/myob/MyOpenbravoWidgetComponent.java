@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.myob;
 
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseComponent;
@@ -35,6 +37,9 @@ public class MyOpenbravoWidgetComponent extends BaseComponent {
 
   static final String COMPONENT_ID = "MyOpenbravoWidgetComponent";
   public static final String CLASSNAMEPARAMETER = "widgetClassName";
+
+  @Inject
+  private MyOBUtils myOBUtils;
 
   /*
    * (non-Javadoc)
@@ -63,7 +68,7 @@ public class MyOpenbravoWidgetComponent extends BaseComponent {
       }
 
       try {
-        final WidgetProvider widgetProvider = MyOBUtils.getWidgetProvider(widgetClass);
+        final WidgetProvider widgetProvider = myOBUtils.getWidgetProvider(widgetClass);
         widgetProvider.setParameters(getParameters());
         return widgetProvider.generate();
       } catch (Exception e) {

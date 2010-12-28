@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -59,6 +61,9 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
   private List<WidgetInstance> widgets = null;
   private List<String> widgetClassDefinitions = null;
   private Logger log = Logger.getLogger(MyOpenbravoComponent.class);
+
+  @Inject
+  private MyOBUtils myOBUtils;
 
   /*
    * (non-Javadoc)
@@ -93,7 +98,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
           WidgetClass.class, WidgetClass.PROPERTY_SUPERCLASS + " is false");
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
         if (isAccessible(widgetClass)) {
-          final WidgetProvider widgetProvider = MyOBUtils.getWidgetProvider(widgetClass);
+          final WidgetProvider widgetProvider = myOBUtils.getWidgetProvider(widgetClass);
           definitions.add(widgetProvider.getWidgetClassDefinition());
           try {
             classDef = widgetProvider.generate();
@@ -123,7 +128,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     try {
       final List<String> result = new ArrayList<String>();
       for (WidgetInstance widget : getContextWidgetInstances()) {
-        final JSONObject jsonObject = MyOBUtils.getWidgetProvider(widget.getWidgetClass())
+        final JSONObject jsonObject = myOBUtils.getWidgetProvider(widget.getWidgetClass())
             .getWidgetInstanceDefinition(widget);
         result.add(jsonObject.toString());
       }
