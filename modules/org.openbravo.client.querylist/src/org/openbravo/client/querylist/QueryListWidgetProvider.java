@@ -84,6 +84,9 @@ public class QueryListWidgetProvider extends WidgetProvider {
         + ", fields:"
         + QueryListUtils
             .getWidgetClassFields(getWidgetClass(), QueryListUtils.IncludeIn.WidgetView)
+        + ", maximizedFields:"
+        + QueryListUtils.getWidgetClassFields(getWidgetClass(),
+            QueryListUtils.IncludeIn.MaximizedView)
         + gridProperties + "});";
     return result;
   }

@@ -26,6 +26,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   widgetInstanceId: null,
   rowsNumber: null,
   fields: null,
+  maximizedFields: null,
   grid: null,
   gridProperties: {},
   actionHandler: 'org.openbravo.client.querylist.QueryListActionHandler',
@@ -34,6 +35,9 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   initWidget: function(){
     this.Super('initWidget', arguments);
     // Calculate height
+    if (this.viewMode !== 'widget') {
+      return;
+    }
     var currentHeight = this.getHeight(), 
         //currentBodyHeight = this.body.getHeight(),
         headerHeight = this.headerDefaults.height,
@@ -86,6 +90,14 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
         };
 
     grid.exportData(requestProperties, additionalProperties);
+  },
+  
+  maximize: function() {
+    OB.Layout.ViewManager.openView('OBQueryListView',  {
+      tabTitle: 'test',
+      widgetInstanceId: this.widgetInstanceId,
+      fields: this.maximizedFields
+    });
   }
   
 });
