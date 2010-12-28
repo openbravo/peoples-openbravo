@@ -30,6 +30,7 @@ isc.OBQueryListView.addProperties({
   //Set PortalLayout common parameters
   numColumns: 1,
   showColumnMenus: false,
+  canDropComponents: false,
 
   initWidget: function(args){
     this.Super('initWidget', arguments);
@@ -38,7 +39,6 @@ isc.OBQueryListView.addProperties({
     this.fields = args.fields;
     this.gridDataSource = args.gridDataSource;
 
-    console.log(this.widgetInstanceId);
     var widgetInstance = isc.OBQueryListWidget.create(isc.addProperties({
         viewMode: 'maximized',
         fields: this.fields,
@@ -48,5 +48,9 @@ isc.OBQueryListView.addProperties({
         title: args.tabTitle
       }));
     this.addPortlet(widgetInstance);
+  },
+
+  isSameTab: function(viewName, params){
+    return this.widgetInstanceId === params.widgetInstanceId;
   }
 });
