@@ -71,16 +71,16 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
    * @see org.openbravo.client.kernel.ComponentProvider#getGlobalResources()
    */
   @Override
-  public List<ComponentResource> getGlobalResources() {
+  public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-utilities.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-formitem-widgets.js", true));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/ob-tab.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/ob-grid.js", false));
+    globalResources.add(createStaticResource("web/org.openbravo.client.application/js/ob-tab.js",
+        false));
+    globalResources.add(createStaticResource("web/org.openbravo.client.application/js/ob-grid.js",
+        false));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-quickrun-widget.js", false));
