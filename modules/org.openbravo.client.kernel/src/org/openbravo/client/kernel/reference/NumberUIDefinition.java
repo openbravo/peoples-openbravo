@@ -70,14 +70,14 @@ public abstract class NumberUIDefinition extends UIDefinition {
       final StringBuilder sb = new StringBuilder();
       if (shortFormat != null) {
         sb.append("shortDisplayFormatter: function(value, field, component, record) {"
-            + "return OB.Utilities.Number.OBPlainToOBMasked(value," + "'" + shortFormat.getFormat()
+            + "return OB.Utilities.Number.JSToOBMasked(value," + "'" + shortFormat.getFormat()
             + "'," + "'" + shortFormat.getDecimalSymbol() + "'," + "'"
             + shortFormat.getGroupingSymbol() + "', OB.Format.defaultGroupingSize);" + "},");
       }
       if (normalFormat != null) {
         sb.append("normalDisplayFormatter: function(value, field, component, record) {"
-            + "return OB.Utilities.Number.OBPlainToOBMasked(value," + "'"
-            + normalFormat.getFormat() + "'," + "'" + normalFormat.getDecimalSymbol() + "'," + "'"
+            + "return OB.Utilities.Number.JSToOBMasked(value," + "'" + normalFormat.getFormat()
+            + "'," + "'" + normalFormat.getDecimalSymbol() + "'," + "'"
             + normalFormat.getGroupingSymbol() + "', OB.Format.defaultGroupingSize);" + "},");
 
       }
