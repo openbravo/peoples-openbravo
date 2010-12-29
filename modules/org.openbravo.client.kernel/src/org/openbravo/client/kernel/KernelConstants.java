@@ -47,7 +47,10 @@ public class KernelConstants {
   public static final String RESOURCE_VERSION_PARAMETER = "_version";
   public static final String RESOURCE_LANGUAGE_PARAMETER = "_language";
   public static final String SKIN_VERSION_PARAMETER = "_skinVersion";
+  public static final String SKIN_VERSION_300 = "3.00";
+  public static final String SKIN_VERSION_CLASSIC = "2.50_emulation";
   public static final String MODE_PARAMETER = "_mode";
+  public static final String MODE_PARAMETER_300 = "3.00";
   public static final String MODE_PARAMETER_CLASSIC = "classic";
 
   public static final String STYLE_SHEET_COMPONENT_ID = "StyleSheetResources";

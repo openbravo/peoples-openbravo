@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.kernel;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -95,6 +97,16 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return null;
   }
 
+  protected ComponentResource createStaticResource(String path, boolean includeAlsoInClassicMode,
+      boolean includeInNewUIMode) {
+    final ComponentResource componentResource = new ComponentResource();
+    componentResource.setType(ComponentResourceType.Static);
+    componentResource.setPath(path);
+    componentResource.setIncludeAlsoInClassicMode(includeAlsoInClassicMode);
+    componentResource.setIncludeInNewUIMode(includeInNewUIMode);
+    return componentResource;
+  }
+
   protected ComponentResource createStaticResource(String path, boolean includeAlsoInClassicMode) {
     final ComponentResource componentResource = new ComponentResource();
     componentResource.setType(ComponentResourceType.Static);
@@ -119,6 +131,23 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return componentResource;
   }
 
+  /**
+   * Implemented here for backward compatibitility, calls the {@link #getGlobalResources()}
+   */
+  public List<ComponentResource> getGlobalComponentResources() {
+    final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+    for (String globalResource : getGlobalResources()) {
+      globalResources.add(createStaticResource(globalResource, true));
+    }
+    return globalResources;
+  }
+
+  @SuppressWarnings("deprecation")
+  // Implemented for backward compatibility
+  public List<String> getGlobalResources() {
+    return Collections.emptyList();
+  }
+
   public static class ComponentResource {
 
     public enum ComponentResourceType {
@@ -128,6 +157,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     private ComponentResourceType type;
     private String path;
     private boolean includeAlsoInClassicMode = false;
+    private boolean includeInNewUIMode = true;
 
     public ComponentResourceType getType() {
       return type;
@@ -155,6 +185,14 @@ public abstract class BaseComponentProvider implements ComponentProvider {
 
     public void setIncludeAlsoInClassicMode(boolean includeAlsoInClassicMode) {
       this.includeAlsoInClassicMode = includeAlsoInClassicMode;
+    }
+
+    public boolean isIncludeInNewUIMode() {
+      return includeInNewUIMode;
+    }
+
+    public void setIncludeInNewUIMode(boolean includeInNewUIMode) {
+      this.includeInNewUIMode = includeInNewUIMode;
     }
 
   }

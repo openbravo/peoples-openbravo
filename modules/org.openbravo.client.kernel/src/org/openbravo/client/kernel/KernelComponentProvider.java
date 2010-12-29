@@ -81,7 +81,7 @@ public class KernelComponentProvider extends BaseComponentProvider {
    * @return an empty String (no global resources)
    * @see org.openbravo.client.kernel.ComponentProvider#getGlobalResources()
    */
-  public List<ComponentResource> getGlobalResources() {
+  public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.APPLICATION_COMPONENT_ID,

@@ -70,12 +70,13 @@ public class StyleSheetResourceComponent extends BaseComponent {
     for (Module module : modules) {
       boolean hasStyleSheet = false;
       for (ComponentProvider provider : componentProviders) {
-        if (provider.getGlobalResources() == null) {
+        final List<ComponentResource> resources = provider.getGlobalComponentResources();
+        if (resources == null || resources.size() == 0) {
           continue;
         }
 
         if (provider.getModule().getId().equals(module.getId())) {
-          for (ComponentResource resource : provider.getGlobalResources()) {
+          for (ComponentResource resource : resources) {
             if (resource.getType() == ComponentResourceType.Stylesheet) {
               hasStyleSheet = true;
               break;
@@ -98,19 +99,30 @@ public class StyleSheetResourceComponent extends BaseComponent {
         KernelConstants.SERVLET_CONTEXT);
     final StringBuffer sb = new StringBuffer();
 
-    final boolean classicMode = getParameters().containsKey(KernelConstants.MODE_PARAMETER)
-        && getParameters().get(KernelConstants.MODE_PARAMETER).equals(
-            KernelConstants.MODE_PARAMETER_CLASSIC);
+    final boolean classicMode = !getParameters().containsKey(KernelConstants.MODE_PARAMETER)
+        || !getParameters().get(KernelConstants.MODE_PARAMETER).equals(
+            KernelConstants.MODE_PARAMETER_300);
+
+    final String skinParam;
+    if (classicMode) {
+      skinParam = KernelConstants.SKIN_VERSION_CLASSIC;
+    } else {
+      skinParam = KernelConstants.SKIN_VERSION_300;
+    }
 
     for (Module module : modules) {
       for (ComponentProvider provider : componentProviders) {
-        if (provider.getGlobalResources() == null) {
+        final List<ComponentResource> resources = provider.getGlobalComponentResources();
+        if (resources == null || resources.size() == 0) {
           continue;
         }
 
         if (provider.getModule().getId().equals(module.getId())) {
-          for (ComponentResource resource : provider.getGlobalResources()) {
+          for (ComponentResource resource : resources) {
             if (classicMode && !resource.isIncludeAlsoInClassicMode()) {
+              continue;
+            }
+            if (!classicMode && !resource.isIncludeInNewUIMode()) {
               continue;
             }
             log.debug("Processing resource: " + resource);
@@ -120,7 +132,7 @@ public class StyleSheetResourceComponent extends BaseComponent {
               // Skin version handling
               if (resourcePath.contains(KernelConstants.SKIN_VERSION_PARAMETER)) {
                 resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_VERSION_PARAMETER,
-                    getParameter(KernelConstants.SKIN_VERSION_PARAMETER));
+                    skinParam);
               }
 
               try {

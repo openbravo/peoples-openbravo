@@ -51,7 +51,13 @@ public interface ComponentProvider {
   /**
    * @return the global resources which are needed to be present on every page.
    */
-  public List<ComponentResource> getGlobalResources();
+  public List<ComponentResource> getGlobalComponentResources();
+
+  /**
+   * @return the global resources which are needed to be present on every page.
+   * @deprecated implement getGlobalComponentResources
+   */
+  public List<String> getGlobalResources();
 
   /**
    * @return the Module to which this provider belongs

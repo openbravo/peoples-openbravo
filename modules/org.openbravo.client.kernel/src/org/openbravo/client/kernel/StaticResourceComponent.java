@@ -56,7 +56,8 @@ public class StaticResourceComponent extends BaseComponent {
     if (isInDevelopment == null) {
       isInDevelopment = false;
       for (ComponentProvider provider : componentProviders) {
-        if (provider.getGlobalResources() == null) {
+        final List<ComponentResource> resources = provider.getGlobalComponentResources();
+        if (resources == null || resources.size() == 0) {
           continue;
         }
         if (provider.getModule().isInDevelopment()) {
@@ -91,8 +92,24 @@ public class StaticResourceComponent extends BaseComponent {
       // them
       // directly and not the document.write, see here:
       // http://www.codehouse.com/javascript/articles/external/
-      return "document.write(\"<s\" + \"cript type='text/javascript' src='" + getContextUrl()
-          + GEN_TARGET_LOCATION + "/" + getStaticResourceFileName() + ".js'><\\/s\"+\"cript>\");";
+
+      final boolean classicMode = !getParameters().containsKey(KernelConstants.MODE_PARAMETER)
+          || !getParameters().get(KernelConstants.MODE_PARAMETER).equals(
+              KernelConstants.MODE_PARAMETER_300);
+
+      StringBuilder result = new StringBuilder();
+      if (classicMode) {
+        result
+            .append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
+                + getContextUrl()
+                + "org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion=2.50_emulation&_mode=classic'></link>\");\n");
+        result
+            .append("var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
+      }
+      result.append("document.write(\"<s\" + \"cript type='text/javascript' src='"
+          + getContextUrl() + GEN_TARGET_LOCATION + "/" + getStaticResourceFileName()
+          + ".js'><\\/s\"+\"cript>\");");
+      return result.toString();
     } catch (Exception e) {
       log.error("Error generating component; " + e.getMessage(), e);
     } finally {
@@ -117,21 +134,32 @@ public class StaticResourceComponent extends BaseComponent {
         KernelConstants.SERVLET_CONTEXT);
     final StringBuffer sb = new StringBuffer();
 
-    final boolean classicMode = getParameters().containsKey(KernelConstants.MODE_PARAMETER)
-        && getParameters().get(KernelConstants.MODE_PARAMETER).equals(
-            KernelConstants.MODE_PARAMETER_CLASSIC);
+    final boolean classicMode = !getParameters().containsKey(KernelConstants.MODE_PARAMETER)
+        || !getParameters().get(KernelConstants.MODE_PARAMETER).equals(
+            KernelConstants.MODE_PARAMETER_300);
+
+    final String skinParam;
+    if (classicMode) {
+      skinParam = KernelConstants.SKIN_VERSION_CLASSIC;
+    } else {
+      skinParam = KernelConstants.SKIN_VERSION_300;
+    }
 
     int cntDynamicScripts = 0;
 
     for (Module module : modules) {
       for (ComponentProvider provider : componentProviders) {
-        if (provider.getGlobalResources() == null) {
+        final List<ComponentResource> resources = provider.getGlobalComponentResources();
+        if (resources == null || resources.size() == 0) {
           continue;
         }
 
         if (provider.getModule().getId().equals(module.getId())) {
-          for (ComponentResource resource : provider.getGlobalResources()) {
+          for (ComponentResource resource : resources) {
             if (classicMode && !resource.isIncludeAlsoInClassicMode()) {
+              continue;
+            }
+            if (!classicMode && !resource.isIncludeInNewUIMode()) {
               continue;
             }
 
@@ -150,7 +178,7 @@ public class StaticResourceComponent extends BaseComponent {
                 // Skin version handling
                 if (resourcePath.contains(KernelConstants.SKIN_VERSION_PARAMETER)) {
                   resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_VERSION_PARAMETER,
-                      getParameter(KernelConstants.SKIN_VERSION_PARAMETER));
+                      skinParam);
                 }
 
                 try {
