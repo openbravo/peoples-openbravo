@@ -248,15 +248,15 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
         OBContext.getOBContext().getRole().getId());
     final Client client = OBDal.getInstance().get(Client.class,
         OBContext.getOBContext().getCurrentClient().getId());
-    final Organization organization = OBDal.getInstance().get(Organization.class,
-        OBContext.getOBContext().getCurrentOrganization().getId());
     final Set<WidgetInstance> defaultWidgets = new HashSet<WidgetInstance>();
     defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("OB", null));
     defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("SYSTEM", null));
     defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("CLIENT", new String[] { client
         .getId() }));
-    defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("ORG", new String[] { organization
-        .getId() }));
+    final Set<String> orgs = OBContext.getOBContext().getWritableOrganizations();
+    for (String org : orgs) {
+      defaultWidgets.addAll(MyOBUtils.getDefaultWidgetInstances("ORG", new String[] { org }));
+    }
     defaultWidgets.addAll(MyOBUtils
         .getDefaultWidgetInstances("ROLE", new String[] { role.getId() }));
     log.debug("Copying new widget instances on user: " + user.getId() + " role: " + role.getId());
@@ -268,11 +268,12 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       }
     }
     // now copy all the default widgets that are not defined on the user
+    final Organization orgZero = OBDal.getInstance().get(Organization.class, "0");
     boolean copyDone = false;
     for (WidgetInstance widget : defaultWidgets) {
       final WidgetInstance copy = (WidgetInstance) DalUtil.copy(widget);
       copy.setClient(client);
-      copy.setOrganization(organization);
+      copy.setOrganization(orgZero);
       copy.setVisibleAtRole(role);
       copy.setVisibleAtUser(user);
       copy.setCopiedFrom(widget);

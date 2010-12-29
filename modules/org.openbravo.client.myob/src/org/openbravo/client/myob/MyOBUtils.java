@@ -181,9 +181,6 @@ public class MyOBUtils {
     obc.setFilterOnReadableClients(false);
     obc.add(Expression.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance().get(Client.class,
         OBContext.getOBContext().getCurrentClient().getId())));
-    obc.setFilterOnReadableOrganization(false);
-    obc.add(Expression.eq(WidgetInstance.PROPERTY_ORGANIZATION, OBDal.getInstance().get(
-        Organization.class, OBContext.getOBContext().getCurrentOrganization().getId())));
     obc.add(Expression.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, OBDal.getInstance().get(
         Role.class, OBContext.getOBContext().getRole().getId())));
     obc.add(Expression.eq(WidgetInstance.PROPERTY_VISIBLEATUSER, OBDal.getInstance().get(
