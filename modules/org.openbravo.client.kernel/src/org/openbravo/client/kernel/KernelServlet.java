@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.jboss.weld.environment.servlet.Listener;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.util.OBClassLoader;
@@ -90,9 +89,6 @@ public class KernelServlet extends BaseKernelServlet {
     super.init(config);
     globalParameters = ConfigParameters.retrieveFrom(config.getServletContext());
     servletContext = config.getServletContext();
-    final Object beanManager = config.getServletContext().getAttribute(
-        Listener.BEAN_MANAGER_ATTRIBUTE_NAME);
-    System.err.println(beanManager);
   }
 
   @Override
