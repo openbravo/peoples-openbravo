@@ -24,7 +24,6 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
 
   widgetId: null,
   widgetInstanceId: null,
-  rowsNumber: null,
   fields: null,
   maximizedFields: null,
   gridDataSource: null,
@@ -35,22 +34,25 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   initWidget: function(){
     this.Super('initWidget', arguments);
     // Calculate height only on widget view mode
-    if (this.viewMode !== 'widget') {
-      return;
+    if (this.viewMode === 'widget') {
+      this.setWidgetHeight();
     }
-    var currentHeight = this.getHeight(), 
-        //currentBodyHeight = this.body.getHeight(),
-        headerHeight = this.headerDefaults.height,
-        newGridHeight = this.grid.headerHeight +
-                      (this.grid.cellHeight * (this.rowsNumber ? this.rowsNumber : 10)) +
-                      this.grid.summaryRowHeight + 2;
-
-    this.setHeight(headerHeight + newGridHeight + 13);
   },
 
   setDbInstanceId: function (instanceId) {
     this.Super('setDbInstanceId', instanceId);
     this.grid.fetchData();
+  },
+  
+  setWidgetHeight: function (){
+    var currentHeight = this.getHeight(), 
+    //currentBodyHeight = this.body.getHeight(),
+    headerHeight = this.headerDefaults.height,
+    newGridHeight = this.grid.headerHeight +
+                  (this.grid.cellHeight * (this.parameters.RowsNumber ? this.parameters.RowsNumber : 10)) +
+                  this.grid.summaryRowHeight + 2;
+
+    this.setHeight(headerHeight + newGridHeight + 13);
   },
 
   createWindowContents: function(){
@@ -78,6 +80,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
   
   refresh: function(){
+    this.setWidgetHeight();
     this.grid.invalidateCache();
     this.grid.filterData();
   },
@@ -136,8 +139,9 @@ isc.OBQueryListGrid.addProperties({
 
     reqProperties.showPrompt = false;
     crit.widgetInstanceId = this.widget.dbInstanceId;
-    crit.rowsNumber = this.widget.rowsNumber;
+    crit.rowsNumber = this.widget.parameters.RowsNumber;
     crit.viewMode = this.widget.viewMode;
+    crit.showAll = this.widget.parameters.showAll;
     return this.Super('filterData', [crit, callback, reqProperties]);
   },
   
@@ -147,8 +151,9 @@ isc.OBQueryListGrid.addProperties({
 
     reqProperties.showPrompt = false;
     crit.widgetInstanceId = this.widget.dbInstanceId;
-    crit.rowsNumber = this.widget.rowsNumber;
+    crit.rowsNumber = this.widget.parameters.RowsNumber;
     crit.viewMode = this.widget.viewMode;
+    crit.showAll = this.widget.parameters.showAll;
     return this.Super('fetchData', [crit, callback, reqProperties]);
   },
 

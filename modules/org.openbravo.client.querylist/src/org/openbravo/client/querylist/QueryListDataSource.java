@@ -28,8 +28,8 @@ import java.util.Map;
 
 import org.hibernate.Query;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
-import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
@@ -76,6 +76,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       WidgetInstance widgetInstance = OBDal.getInstance().get(WidgetInstance.class,
           parameters.get("widgetInstanceId"));
       boolean isExport = "true".equals(parameters.get("exportToFile"));
+      boolean showAll = "true".equals(parameters.get("showAll"));
       String viewMode = parameters.get("viewMode");
       WidgetClass widgetClass = widgetInstance.getWidgetClass();
 
@@ -83,7 +84,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
           widgetClass.getOBCQLWidgetQueryList().get(0).getHQL());
       String[] queryAliases = widgetQuery.getReturnAliases();
 
-      if (!isExport && "widget".equals(viewMode)) {
+      if (!isExport && "widget".equals(viewMode) && !showAll) {
         int rowsNumber = Integer.valueOf((parameters.get("rowsNumber") != null) ? parameters
             .get("rowsNumber") : "10");
         widgetQuery.setMaxResults(rowsNumber);
@@ -165,14 +166,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
     HashMap<String, Object> parameterValues = new HashMap<String, Object>();
     for (ParameterValue value : widgetInstance
         .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-      parameterValues.put(value.getParameter().getDBColumnName(), ApplicationUtils
+      parameterValues.put(value.getParameter().getDBColumnName(), ParameterUtils
           .getParameterValue(value));
     }
 
     for (Parameter parameter : widgetInstance.getWidgetClass()
         .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
       if (!parameterValues.containsKey(parameter.getDBColumnName()) && parameter.isFixed()) {
-        parameterValues.put(parameter.getDBColumnName(), ApplicationUtils.getParameterFixedValue(
+        parameterValues.put(parameter.getDBColumnName(), ParameterUtils.getParameterFixedValue(
             parameters, parameter));
       }
     }

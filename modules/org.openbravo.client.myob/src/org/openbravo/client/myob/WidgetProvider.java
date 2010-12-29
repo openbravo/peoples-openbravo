@@ -114,15 +114,15 @@ public abstract class WidgetProvider {
       for (Parameter parameter : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
         // fixed parameters are not part of the fielddefinitions
         if (parameter.isFixed()) {
-          defaultParameters.put(parameter.getName(), parameter.getFixedValue());
+          defaultParameters.put(parameter.getDBColumnName(), parameter.getFixedValue());
           continue;
         }
         if (parameter.getDefaultValue() != null) {
-          defaultParameters.put(parameter.getName(), parameter.getDefaultValue());
+          defaultParameters.put(parameter.getDBColumnName(), parameter.getDefaultValue());
         }
         final JSONObject fieldDefinition = new JSONObject();
         fieldDefinition.put(PARAMETERID, parameter.getId());
-        fieldDefinition.put(PARAMETERNAME, parameter.getName());
+        fieldDefinition.put(PARAMETERNAME, parameter.getDBColumnName());
         fieldDefinition.put(PARAMETERREQUIRED, parameter.isMandatory());
 
         final Reference reference;
@@ -180,7 +180,7 @@ public abstract class WidgetProvider {
     final JSONObject widgetParameters = new JSONObject();
     for (ParameterValue parameterValue : widgetInstance
         .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-      widgetParameters.put(parameterValue.getParameter().getName(), ParameterUtils
+      widgetParameters.put(parameterValue.getParameter().getDBColumnName(), ParameterUtils
           .getParameterValue(parameterValue));
     }
     jsonObject.put(PARAMETERS, widgetParameters);
