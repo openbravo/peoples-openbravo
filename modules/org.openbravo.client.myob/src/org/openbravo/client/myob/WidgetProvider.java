@@ -40,6 +40,7 @@ import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterTrl;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
@@ -179,16 +180,8 @@ public abstract class WidgetProvider {
     final JSONObject widgetParameters = new JSONObject();
     for (ParameterValue parameterValue : widgetInstance
         .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-      if (parameterValue.getValueDate() != null) {
-        widgetParameters
-            .put(parameterValue.getParameter().getName(), parameterValue.getValueDate());
-      } else if (parameterValue.getValueNumber() != null) {
-        widgetParameters.put(parameterValue.getParameter().getName(), parameterValue
-            .getValueNumber());
-      } else if (parameterValue.getValueString() != null) {
-        widgetParameters.put(parameterValue.getParameter().getName(), parameterValue
-            .getValueString());
-      }
+      widgetParameters.put(parameterValue.getParameter().getName(), ParameterUtils
+          .getParameterValue(parameterValue));
     }
     jsonObject.put(PARAMETERS, widgetParameters);
   }
