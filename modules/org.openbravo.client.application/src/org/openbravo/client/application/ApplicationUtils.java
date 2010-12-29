@@ -20,12 +20,7 @@ package org.openbravo.client.application;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
@@ -95,61 +90,5 @@ public class ApplicationUtils {
       OBContext.restorePreviousMode();
     }
     return Collections.emptyList();
-  }
-
-  /**
-   * Returns an Object with the Value of the Parameter Value. This object can be a String, a
-   * java.util.Data or a BigDecimal.
-   * 
-   * @param parameterValue
-   *          the Parameter Value we want to get the Value from.
-   * @return the Value of the Parameter Value.
-   */
-  public static Object getParameterValue(ParameterValue parameterValue) {
-    if (parameterValue.getValueDate() != null) {
-      return parameterValue.getValueDate();
-    } else if (parameterValue.getValueNumber() != null) {
-      return parameterValue.getValueNumber();
-    } else if (parameterValue.getValueString() != null) {
-      return parameterValue.getValueString();
-    }
-    return null;
-  }
-
-  /**
-   * Returns the Fixed value of the given parameter. If the value is a JS expression it returns the
-   * result of the expression based on the parameters passed in from the request.
-   * 
-   * @param parameters
-   *          the parameters passed in from the request
-   * @param parameter
-   *          the parameter we want to get the Fixed Value from
-   * @return the Fixed Value of the parameter
-   */
-  public static String getParameterFixedValue(Map<String, String> parameters, Parameter parameter) {
-    if (parameter.isEvaluateFixedValue()) {
-      try {
-        return (String) getJSExpressionResult(parameters, null, parameter.getFixedValue());
-      } catch (Exception e) {
-        log.error(e.getMessage(), e);
-        return null;
-      }
-    } else {
-      return parameter.getFixedValue();
-    }
-  }
-
-  public static Object getJSExpressionResult(Map<String, String> parameters, HttpSession session,
-      String expression) throws ScriptException {
-    final ScriptEngineManager manager = new ScriptEngineManager();
-    final ScriptEngine engine = manager.getEngineByName("js");
-
-    if (session != null) {
-      engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters, session));
-    } else {
-      engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters));
-    }
-
-    return engine.eval(expression);
   }
 }
