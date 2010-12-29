@@ -16,5 +16,5 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-// Contains default settings which should be set before other javascript
+// Empty file, included for backward compatibility
 var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';

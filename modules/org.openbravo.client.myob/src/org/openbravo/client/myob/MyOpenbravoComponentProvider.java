@@ -54,7 +54,7 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
   }
 
   @Override
-  public List<ComponentResource> getGlobalResources() {
+  public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-myopenbravo.js",
         false));
