@@ -419,7 +419,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // Returns true if the object passed as parameter is the same instance.
   // 
   // Parameters:
-  // {{widget}} an object to which you want to campare
+  // {{widget}} an object to which you want to compare
   // {{isNew}} If this flag is true, the comparison is based on the ID of the
   // client side object, otherwise the dbInstanceId is used
   isSameWidget: function(widget, isNew){
