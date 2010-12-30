@@ -274,7 +274,7 @@ public class UsedByLink extends HttpSecureAppServlet {
       bdError(request, response, "RecordError", vars.getLanguage());
       return;
     }
-    final String windowRef = Utility.getTabURL(this, strAD_TAB_ID, "E");
+    final String windowRef = Utility.getTabURL(strAD_TAB_ID, "E", true);
     strScript.append("top.opener.submitFormGetParams('DIRECT', '").append(windowRef).append(
         "', getParamsScript(document.forms[0]));\n");
     strScript.append("top.close();\n");

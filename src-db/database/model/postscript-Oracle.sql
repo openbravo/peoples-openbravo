@@ -829,23 +829,6 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END;
 /-- END
 
-BEGIN
-   EXECUTE IMMEDIATE 'alter trigger ad_tab_mod_trg disable';
-END;
-/-- END
-
-update ad_tab set name = 'M'||name where ad_module_id != '0'
-/-- END
- 
-update ad_tab set name = substr(name,2) where ad_module_id != '0'
-/-- END
-
-BEGIN
-   EXECUTE IMMEDIATE 'alter trigger ad_tab_mod_trg enable';
-END;
-/-- END
- 
-
 --update parent reference for old modules
 BEGIN
    EXECUTE IMMEDIATE 'alter trigger ad_reference_mod_trg disable';

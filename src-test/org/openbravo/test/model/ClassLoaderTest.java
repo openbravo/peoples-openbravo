@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.test.base.BaseTest;
 
@@ -47,9 +48,6 @@ public class ClassLoaderTest extends BaseTest {
 
     setSystemAdministratorContext();
 
-    OBCriteria<ModelImplementation> obc = OBDal.getInstance().createCriteria(
-        ModelImplementation.class);
-
     // "S" - "Servlet"
     // "C" - "ContextParam"
     // "L" - "Listener"
@@ -57,27 +55,76 @@ public class ClassLoaderTest extends BaseTest {
     // "F" - "Filter"
     // "R" - "Resource"
 
-    final String[] in = { "S", "L", "F" };
+    final String[] in = { "L", "F" };
 
+    // Checking listener and filters classes
+    OBCriteria<ModelImplementation> obc = OBDal.getInstance().createCriteria(
+        ModelImplementation.class);
     obc.add(Expression.in(ModelImplementation.PROPERTY_OBJECTTYPE, in));
 
     for (ModelImplementation mi : obc.list()) {
       try {
-
-        if (mi.getId().equals("801180")) {
-          // Ugly hack!!!
-          // Check issue
-          // https://issues.openbravo.com/view.php?id=12429
-          continue;
-        }
-
-        // Testing if the defined class can be loaded
         Class.forName(mi.getJavaClassName());
-
       } catch (ClassNotFoundException e) {
         notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
       }
     }
+
+    // Checking manual servlets
+    obc = OBDal.getInstance().createCriteria(ModelImplementation.class);
+    obc.add(Expression.eq(ModelImplementation.PROPERTY_OBJECTTYPE, "S"));
+    obc.add(Expression.isNull(ModelImplementation.PROPERTY_TAB));
+    obc.add(Expression.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
+    obc.add(Expression.isNull(ModelImplementation.PROPERTY_PROCESS));
+
+    for (ModelImplementation mi : obc.list()) {
+      try {
+        if (mi.getId().equals("801180")) {
+          // Ugly hack! check issue https://issues.openbravo.com/view.php?id=12429
+          continue;
+        }
+        Class.forName(mi.getJavaClassName());
+      } catch (ClassNotFoundException e) {
+        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
+      }
+    }
+
+    // Checking servlets associated to forms
+    OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(ModelImplementation.class,
+        "objectType = 'S' and specialForm is not null and specialForm.active = true");
+
+    for (ModelImplementation mi : obq.list()) {
+      try {
+        Class.forName(mi.getJavaClassName());
+      } catch (ClassNotFoundException e) {
+        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
+      }
+    }
+
+    // Check servlets associated to processes/reports
+    obq = OBDal.getInstance().createQuery(ModelImplementation.class,
+        "objectType = 'S' and process is not null and process.active = true");
+
+    for (ModelImplementation mi : obq.list()) {
+      try {
+        Class.forName(mi.getJavaClassName());
+      } catch (ClassNotFoundException e) {
+        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
+      }
+    }
+
+    // Checking servlets associated to tabs
+    obq = OBDal.getInstance().createQuery(ModelImplementation.class,
+        "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
+
+    for (ModelImplementation mi : obq.list()) {
+      try {
+        Class.forName(mi.getJavaClassName());
+      } catch (ClassNotFoundException e) {
+        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
+      }
+    }
+
     if (notFoundClasses.size() > 0) {
       for (String nf : notFoundClasses) {
         log.error(nf);

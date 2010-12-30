@@ -76,10 +76,12 @@
       FROM AD_ORGMODULE
       WHERE AD_MODULE_ID = ?
       AND AD_ORG_ID = ?
+      AND AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="AD_Module_ID"/>
     <Parameter name="AD_Org_ID"/>
+    <Parameter name="AD_Client_ID"/>
   </SqlMethod>
   <SqlMethod name="existsOrgModule" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>

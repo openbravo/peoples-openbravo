@@ -61,7 +61,7 @@ public class InsertAcces extends HttpSecureAppServlet {
       final String strModule = vars.getStringParameter("inpModules");
       final String strType = vars.getStringParameter("inpType");
 
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

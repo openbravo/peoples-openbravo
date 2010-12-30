@@ -82,6 +82,7 @@
     v_User_ID VARCHAR2(32):='0';
     -- Orders to process  - one per warehouse
     Cur_Order RECORD;
+    v_NEWORDERDATE DATE;
     -- Order Lines per Warehouse
     CURSOR Cur_OrderLine (Order_ID VARCHAR, Warehouse_ID VARCHAR) IS
     SELECT l.*, p.name
@@ -221,8 +222,9 @@
              o.C_Project_ID, o.C_Activity_ID, o.C_Campaign_ID, o.AD_OrgTrx_ID,
              o.User1_ID, o.User2_ID, o.DeliveryViaRule, o.M_Shipper_ID,
              o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID,
+             d.DocSubTypeSO,
              o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
-           FROM C_ORDER o INNER JOIN C_ORDERLINE l ON(o.C_Order_ID=l.C_Order_ID) --  Orders are IP  or CO if Standard Orders
+           FROM C_ORDER o JOIN C_DOCTYPE d ON o.C_DOCTYPE_ID = d.C_DOCTYPE_ID INNER JOIN C_ORDERLINE l ON(o.C_Order_ID=l.C_Order_ID) --  Orders are IP  or CO if Standard Orders
            WHERE(o.DocStatus='IP' OR(o.DocStatus='CO'
                                      AND o.IsDelivered='N'
                                      AND v_Record_ID='0')) -- Sales Orders Only and not Offers
@@ -254,6 +256,7 @@
              o.C_Project_ID, o.C_Activity_ID, o.C_Campaign_ID, o.AD_OrgTrx_ID,
              o.User1_ID, o.User2_ID, o.DeliveryViaRule, o.M_Shipper_ID,
              o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID,
+             d.DocSubTypeSO,
              o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
            ORDER BY o.PriorityRule
           ) LOOP
@@ -300,6 +303,13 @@
             IF(v_DocumentNo IS NULL) THEN
               Ad_Sequence_Doc('DocumentNo_M_InOut', Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
             END IF;
+
+            IF Cur_Order.DocSubTypeSO = 'WR' THEN
+              v_NEWORDERDATE := Cur_Order.DATEORDERED; -- IS A POS ORDER
+            ELSE
+              v_NEWORDERDATE := now();
+            END IF;
+
             --RAISE_APPLICATION_ERROR(-20100,'el numero documento es:'||COALESCE(v_DocumentNo,0)||' El doctypeId es: '||COALESCE(v_DocType_ID,0)||' El cOrderId es: '||COALESCE(Cur_Order.C_Order_ID,'0'));
             --
             DBMS_OUTPUT.PUT_LINE('  InOut_ID=' || p_InOut_ID || ', DocumentNo=' || v_DocumentNo || ', Ship_DocType_ID=' || v_DocType_ID || ', Order_DocType_ID=' || Cur_Order.C_DocType_ID) ;
@@ -321,7 +331,7 @@
               (p_InOut_ID, Cur_Order.C_Order_ID, Cur_Order.IsSOTrx, Cur_Order.AD_Client_ID,
               Cur_Order.AD_Org_ID, 'Y', now(), v_User_ID,
               now(), v_User_ID, v_DocumentNo, v_DocType_ID,
-              Cur_Order.Description, 'N', 'C-', Cur_Order.DATEORDERED,
+              Cur_Order.Description, 'N', 'C-', v_NEWORDERDATE,
               now(), Cur_Order.C_BPartner_ID, Cur_Order.C_BPartner_Location_ID, Cur_Order.AD_User_ID,
               Cur_Order.M_Warehouse_ID, Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.DeliveryRule,
               Cur_Order.FreightCostRule, Cur_Order.FreightAmt, Cur_Order.C_Project_ID, Cur_Order.C_Activity_ID,

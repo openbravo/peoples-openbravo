@@ -707,16 +707,13 @@ function onloadFunctions() {
               <td class="ContentCell"></td>
             </tr>
             <tr>
-              <td class="TitleCell"><span class="LabelText">Initial Page Number</span></td>
-              <td class="TextBox_btn_ContentCell">
-                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                  <tr>
-                    <td class="TextBox_ContentCell">
-                      <input class="TextBox_btn_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" maxlength="10" value="1" outputformat="euroEdition"></input>
-                    </td>
-                  </tr>
-                </table>
+              <td class="TitleCell"><span class="LabelText">Initial page number</span></td>
+              <td class="TextBox_ContentCell"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
               </td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">Group By</span></td>

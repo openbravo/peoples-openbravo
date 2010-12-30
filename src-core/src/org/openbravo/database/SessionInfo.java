@@ -177,6 +177,22 @@ public class SessionInfo {
   }
 
   /**
+   * Initialized DB with temporary table and sets session information on it.
+   * 
+   * @param conn
+   *          Connection where the session information will be stored in
+   * @param rdbms
+   *          Database type
+   */
+  public static void setDBSessionInfo(Connection conn, String rdbms) {
+    if (!isAuditActive) {
+      return;
+    }
+    initDB(conn, rdbms);
+    setDBSessionInfo(conn);
+  }
+
+  /**
    * Return the connection associated with the current session, if there is one.
    */
   static Connection getSessionConnection() {

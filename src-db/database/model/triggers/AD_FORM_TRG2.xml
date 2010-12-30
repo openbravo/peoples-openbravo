@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_FORM_TRG2">
-    <trigger name="AD_FORM_TRG2" table="AD_FORM" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="AD_FORM_TRG2" table="AD_FORM" fires="after" insert="true" update="false" delete="true" foreach="row">
       <body><![CDATA[
 
 
@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -31,30 +31,6 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-
-  IF(UPDATING) THEN
-    IF NOT(COALESCE(:old.NAME, '.') <> COALESCE(:NEW.NAME, '.')
-   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')
-   OR COALESCE(:old.CLASSNAME, '.') <> COALESCE(:NEW.CLASSNAME, '.'))
-  THEN
-      RETURN;
-    END IF;
-  END IF;
-  IF (UPDATING) THEN
-    UPDATE AD_MODEL_OBJECT_MAPPING
-    SET ISACTIVE = :new.isactive
-    WHERE AD_MODEL_OBJECT_ID IN
-      (
-      SELECT AD_MODEL_OBJECT_ID
-      FROM AD_MODEL_OBJECT
-      WHERE AD_MODEL_OBJECT.AD_FORM_ID=:old.AD_FORM_ID
-        AND ACTION='X'
-      );
-    UPDATE AD_MODEL_OBJECT
-    SET ISACTIVE = :new.isactive
-    WHERE ACTION='X'
-      AND AD_MODEL_OBJECT.AD_FORM_ID=:OLD.AD_FORM_ID;
-  END IF;
   IF(DELETING) THEN
     DELETE
     FROM AD_MODEL_OBJECT_MAPPING

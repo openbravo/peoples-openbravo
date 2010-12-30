@@ -5,6 +5,18 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenbravoTrl"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenbravoWAD"/>
 	<classpathentry including="**/*.ext|**/*.java|**/*.oaw|**/*.properties|**/*.xml|**/*.xpt|**/*.xslt" kind="src" path="src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.base.weld/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.client.querylist/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.advpaymentmngt/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.financial.paymentreport/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.reports.ordersawaitingdelivery/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.client.myob/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.client.kernel/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.service.json/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.client.application/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.userinterface.selector/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.userinterface.smartclient/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.service.datasource/src"/>
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry including="quartz.properties" kind="src" path="config"/>
 	<classpathentry kind="src" path="src-gen"/>

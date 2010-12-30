@@ -2145,13 +2145,32 @@ public class TableSQLData implements Serializable {
        * executable sql statement and uses this instead of the bigger one.
        */
       if (onlyId) {
-        txtAuxWhere.deleteCharAt(txtAuxWhere.length() - 1);
-        txtAuxWhere.deleteCharAt(txtAuxWhere.length() - 1);
-        int pos = txtAuxWhere.indexOf("SELECT");
-        txtAuxWhere.delete(0, pos);
-        // replace the previously built sql-text with our version
-        // completely
-        text = txtAuxWhere;
+        if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
+          txtAuxWhere.deleteCharAt(txtAuxWhere.length() - 1);
+          txtAuxWhere.deleteCharAt(txtAuxWhere.length() - 1);
+          int pos = txtAuxWhere.indexOf("FROM");
+          txtAuxWhere.delete(0, pos);
+          // replace the previously built sql-text with our version
+          // completely
+
+          text = txtAuxWhere;
+
+          if (hasRange) {
+            // don't add alias as it is already done in the subquery
+            text.insert(0, "SELECT " + keyColumns + " \n");
+          } else {
+            // add alias
+            text.insert(0, "SELECT " + keyColumnsTable + " \n");
+          }
+        } else {
+          txtAuxWhere.deleteCharAt(txtAuxWhere.length() - 1);
+          txtAuxWhere.deleteCharAt(txtAuxWhere.length() - 1);
+          int pos = txtAuxWhere.indexOf("SELECT");
+          txtAuxWhere.delete(0, pos);
+          // replace the previously built sql-text with our version
+          // completely
+          text = txtAuxWhere;
+        }
       } else {
         // old behavior for !onlyId case
         text.append("WHERE ").append(txtAuxWhere.toString());

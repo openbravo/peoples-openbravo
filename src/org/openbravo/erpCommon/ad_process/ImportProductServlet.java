@@ -52,7 +52,7 @@ public class ImportProductServlet extends HttpSecureAppServlet {
       String strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "ImportProductServlet|tabId");
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

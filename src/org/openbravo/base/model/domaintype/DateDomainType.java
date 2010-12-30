@@ -33,6 +33,10 @@ public class DateDomainType extends BasePrimitiveDomainType {
 
   private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
 
+  public DateDomainType() {
+    xmlDateFormat.setLenient(true);
+  }
+
   /**
    * @return class of the {@link Date}
    */

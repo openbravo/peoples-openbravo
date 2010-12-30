@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -185,7 +186,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     String strModule = vars.getStringParameter("inpNodeId");
     if (strModules == null || strModules.equals(""))
       strModules = "('" + strModule + "')";
-
+    ArrayList<String> modules = new ArrayList<String>();
     if (strModules != null && !strModules.equals("")) {
       UpdateReferenceDataData[] data = UpdateReferenceDataData.selectModules(this, strModules,
           strOrganization);
@@ -211,7 +212,6 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           if (!datasetFile.exists()) {
             continue;
           }
-
           if (UpdateReferenceDataData.existsOrgModule(this, vars.getClient(), strOrganization,
               data[j].adModuleId, data[j].version).equals("0")) {
             // Not installed previously
@@ -243,16 +243,12 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
             if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
                 && !myResult.getErrorMessages().equals("null"))
               strError = strError.append(myResult.getErrorMessages());
-            if (!strError.toString().equals(""))
+            if (!strError.toString().equals("")) {
               return strError.toString();
-            else {
-              if (UpdateReferenceDataData.selectRegister(this, data[j].adModuleId, strOrganization)
-                  .equals("0"))
-                InitialOrgSetupData.insertOrgModule(this, vars.getClient(), strOrganization, vars
-                    .getUser(), data[j].adModuleId, data[j].version);
-              else
-                UpdateReferenceDataData.updateOrgModule(this, data[j].version, vars.getUser(), vars
-                    .getClient(), strOrganization, data[j].adModuleId);
+            } else {
+              if (!modules.contains(data[j].adModuleId)) {
+                modules.add(data[j].adModuleId);
+              }
               m_info.append(SALTO_LINEA).append(
                   Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage()))
                   .append(SALTO_LINEA);
@@ -263,6 +259,19 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
             m_info.append(SALTO_LINEA).append(
                 Utility.messageBD(this, "CreateReferenceDataAlreadyCreated", vars.getLanguage()))
                 .append(SALTO_LINEA);
+          }
+        }
+        String[] modulesArray = new String[modules.size()];
+        modules.toArray(modulesArray);
+        for (String module : modulesArray) {
+          Module appliedModule = OBDal.getInstance().get(Module.class, module);
+          if (UpdateReferenceDataData.selectRegister(this, module, strOrganization,
+              vars.getClient()).equals("0")) {
+            InitialOrgSetupData.insertOrgModule(this, vars.getClient(), strOrganization, vars
+                .getUser(), module, appliedModule.getVersion());
+          } else {
+            UpdateReferenceDataData.updateOrgModule(this, appliedModule.getVersion(), vars
+                .getUser(), vars.getClient(), strOrganization, module);
           }
         }
         HashMap<String, String> checksums = new HashMap<String, String>();

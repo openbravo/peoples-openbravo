@@ -79,6 +79,7 @@ import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
@@ -297,25 +298,22 @@ public class Utility {
 
     try {
       log4j.debug("Utility.messageBD - Message Code: " + strCode);
-      if (strLanguage.equals("en_US"))
-        strMessage = MessageBDData.message(conn, strCode);
-      else
-        strMessage = MessageBDData.messageLanguage(conn, strCode, strLanguage);
+      strMessage = MessageBDData.message(conn, strLanguage, strCode);
     } catch (final Exception ignore) {
+      log4j.error("Error getting message", ignore);
     }
     log4j.debug("Utility.messageBD - Message description: " + strMessage);
     if (strMessage == null || strMessage.equals("")) {
       try {
-        if (strLanguage.equals("en_US"))
-          strMessage = MessageBDData.columnname(conn, strCode);
-        else
-          strMessage = MessageBDData.columnnameLanguage(conn, strCode, strLanguage);
+        strMessage = MessageBDData.columnname(conn, strLanguage, strCode);
       } catch (final Exception e) {
+        log4j.error("Error getting message", e);
         strMessage = strCode;
       }
     }
-    if (strMessage == null || strMessage.equals(""))
+    if (strMessage == null || strMessage.equals("")) {
       strMessage = strCode;
+    }
     return Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
   }
 
@@ -2329,23 +2327,70 @@ public class Utility {
   }
 
   /**
-   * Returns the complete URL for a tab
+   * Returns the URL for a tab
    * 
    * @param tabId
    *          Id for the tab to obtain the url for
    * @param type
    *          "R" -> Relation, "E" -> Edition, "X" -> Excel
-   * @return the complete URL for a tab.
+   * @param completeURL
+   *          if true returns the complete ULR including server name and context, if not, it return
+   *          URL relative to base context
+   * @return the URL for a tab.
    */
-  public static String getTabURL(ConnectionProvider conn, String tabId, String type) {
-    if (!(type.equals("R") || type.equals("E") || type.equals("X")))
-      type = "E";
+  public static String getTabURL(String tabId, String type, boolean completeURL) {
+    OBContext.setAdminMode();
     try {
-      return HttpBaseServlet.strDireccion + "/" + TabData.selectUrl(conn, tabId, type);
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      if (tab == null) {
+        log4j.error("Error trying to obtain URL for unknown tab:" + tabId);
+        return "";
+      }
+
+      String url = (completeURL ? HttpBaseServlet.strDireccion : "") + "/";
+      if (!"0".equals(tab.getWindow().getModule().getId())) {
+        url += tab.getWindow().getModule().getJavaPackage();
+      }
+      url += mappingFormat(tab.getWindow().getName()) + "/" + mappingFormat(tab.getName());
+
+      if (!"0".equals(tab.getModule().getId())) {
+        url += tab.getId();
+      }
+
+      if ("R".equals(type)) {
+        url += "_Relation.html";
+      } else if ("X".equals(type)) {
+        url += "_Excel.html";
+      } else {
+        url += "_Edition.html";
+      }
+
+      return url;
     } catch (Exception e) {
       log4j.error(e.getMessage());
       return "";
+    } finally {
+      OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * @deprecated use {@link Utility#getTabURL(String, String, boolean)}
+   */
+  public static String getTabURL(ConnectionProvider conn, String tabId, String type) {
+    return getTabURL(tabId, type, true);
+  }
+
+  /**
+   * Utility method to generate mapping name. Copied from AD_Mapping_Format PL code. Keep in sync
+   * with that one as it is used to generate 2.50 style menu
+   * 
+   */
+  private static String mappingFormat(String map) {
+    return map.replace(" ", "").replace("-", "").replace("/", "").replace("#", "").replace("&", "")
+        .replace(",", "").replace("(", "").replace(")", "").replace("á", "a").replace("é", "e")
+        .replace("í", "i").replace("ó", "o").replace("ú", "u").replace("Á", "A").replace("É", "")
+        .replace("Í", "I").replace("Ó", "O").replace("Ú", "U");
   }
 
   /**

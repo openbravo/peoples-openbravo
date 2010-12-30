@@ -37,7 +37,7 @@
   <PARAMETER id="paramElementvalueIdFrom" name="paramElementvalueIdFrom" attribute="value"/>
   <PARAMETER id="inpElementValueIdTo_DES" name="inpElementValueIdTo_DES" attribute="value"/>
   <PARAMETER id="inpElementValueIdFrom_DES" name="inpElementValueIdFrom_DES" attribute="value"/>
-  <PARAMETER id="paramPageNo" name="inpPageNo" default=""/>
+  <PARAMETER id="paramPageNo" name="inpPageNo" attribute="value" default="1"/>
 
   <PARAMETER id="parameterHide" name="all" default="1"/>
   <PARAMETER id="paramHideMatched" name="paramHide0" boolean="checked" withId="parameterHide" default="0"/>

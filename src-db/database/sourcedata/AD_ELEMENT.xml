@@ -9116,10 +9116,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1556-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1556-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1556-->  <COLUMNNAME><![CDATA[DateContract]]></COLUMNNAME>
-<!--1556-->  <NAME><![CDATA[Contract Date]]></NAME>
-<!--1556-->  <PRINTNAME><![CDATA[Contract Date]]></PRINTNAME>
-<!--1556-->  <DESCRIPTION><![CDATA[The date a contract is registered into the application.]]></DESCRIPTION>
-<!--1556-->  <HELP><![CDATA[The contract date is used to determine when the document becomes effective. This is usually the contract date.  The contract date is used in reports and report parameters.]]></HELP>
+<!--1556-->  <NAME><![CDATA[Planned End Date]]></NAME>
+<!--1556-->  <PRINTNAME><![CDATA[Planned End Date]]></PRINTNAME>
+<!--1556-->  <DESCRIPTION><![CDATA[The planned end data is when a contract is registered into the application.]]></DESCRIPTION>
+<!--1556-->  <HELP><![CDATA[The planned end date is used to determine when the document becomes effective. This is usually the contract date.  The planned end date is used in reports and report parameters.]]></HELP>
 <!--1556-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1556--></AD_ELEMENT>
 
@@ -9129,10 +9129,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1557-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1557-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1557-->  <COLUMNNAME><![CDATA[DateFinish]]></COLUMNNAME>
-<!--1557-->  <NAME><![CDATA[Ending Date]]></NAME>
-<!--1557-->  <PRINTNAME><![CDATA[Finish Date]]></PRINTNAME>
+<!--1557-->  <NAME><![CDATA[Real End Date]]></NAME>
+<!--1557-->  <PRINTNAME><![CDATA[Real End Date]]></PRINTNAME>
 <!--1557-->  <DESCRIPTION><![CDATA[The date that a task, process, or action is to be completed or delivered by.]]></DESCRIPTION>
-<!--1557-->  <HELP><![CDATA[The finish date is used to indicate when the project is expected to be completed or has been completed.]]></HELP>
+<!--1557-->  <HELP><![CDATA[The real end date is used to indicate when the project is expected to be completed or has been completed.]]></HELP>
 <!--1557-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1557--></AD_ELEMENT>
 
@@ -19022,8 +19022,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800694-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800694-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800694-->  <COLUMNNAME><![CDATA[Expreinvoicing]]></COLUMNNAME>
-<!--800694-->  <NAME><![CDATA[Reinvoiced Expenses]]></NAME>
-<!--800694-->  <PRINTNAME><![CDATA[Reinvoicing]]></PRINTNAME>
+<!--800694-->  <NAME><![CDATA[Planned Reinvoiced Expenses]]></NAME>
+<!--800694-->  <PRINTNAME><![CDATA[Planned Reinvoiced Expenses]]></PRINTNAME>
 <!--800694-->  <HELP><![CDATA[Amount of expenses we plan to invoice back to the client. Real number will originate from sales invoices for this particular client and project that include products of type "expense" (such as telephone, electricity, etc)]]></HELP>
 <!--800694-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800694--></AD_ELEMENT>
@@ -19046,8 +19046,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800696-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800696-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800696-->  <COLUMNNAME><![CDATA[Expmargin]]></COLUMNNAME>
-<!--800696-->  <NAME><![CDATA[Expenses Margin %]]></NAME>
-<!--800696-->  <PRINTNAME><![CDATA[Expected Margin %]]></PRINTNAME>
+<!--800696-->  <NAME><![CDATA[Planned Expenses Margin %]]></NAME>
+<!--800696-->  <PRINTNAME><![CDATA[Planned Expenses Margin %]]></PRINTNAME>
 <!--800696-->  <HELP><![CDATA[Expected margin for expenses.]]></HELP>
 <!--800696-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800696--></AD_ELEMENT>
@@ -19058,8 +19058,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800697-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800697-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800697-->  <COLUMNNAME><![CDATA[Servcost]]></COLUMNNAME>
-<!--800697-->  <NAME><![CDATA[Service Cost]]></NAME>
-<!--800697-->  <PRINTNAME><![CDATA[Total Service cost]]></PRINTNAME>
+<!--800697-->  <NAME><![CDATA[Planned Service Cost]]></NAME>
+<!--800697-->  <PRINTNAME><![CDATA[Planned Service cost]]></PRINTNAME>
 <!--800697-->  <HELP><![CDATA[Expected total cost of services provided. The real number will originate from all expense sheets (lines marked as Time Sheet) related to this project.]]></HELP>
 <!--800697-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800697--></AD_ELEMENT>
@@ -19082,8 +19082,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800699-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800699-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800699-->  <COLUMNNAME><![CDATA[Servmargin]]></COLUMNNAME>
-<!--800699-->  <NAME><![CDATA[Service Margin %]]></NAME>
-<!--800699-->  <PRINTNAME><![CDATA[Service Margin %]]></PRINTNAME>
+<!--800699-->  <NAME><![CDATA[Planned Service Margin %]]></NAME>
+<!--800699-->  <PRINTNAME><![CDATA[Planned Service Margin %]]></PRINTNAME>
 <!--800699-->  <HELP><![CDATA[Expected service margin. Real number will be calculated from actual service revenue and costs.]]></HELP>
 <!--800699-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800699--></AD_ELEMENT>
@@ -19094,8 +19094,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800700-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800700-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800700-->  <COLUMNNAME><![CDATA[Servrevenue]]></COLUMNNAME>
-<!--800700-->  <NAME><![CDATA[Service Revenue]]></NAME>
-<!--800700-->  <PRINTNAME><![CDATA[Service revenue]]></PRINTNAME>
+<!--800700-->  <NAME><![CDATA[Planned Service Revenue]]></NAME>
+<!--800700-->  <PRINTNAME><![CDATA[Planned Service revenue]]></PRINTNAME>
 <!--800700-->  <HELP><![CDATA[Expected revenue of services provided to the client. Real numbers will originate from invoices of services (products of type "service") sent out to the client.]]></HELP>
 <!--800700-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800700--></AD_ELEMENT>
@@ -22005,6 +22005,17 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--09B56C6C0BF34E80A4EFDEEE4ED5DBCD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--09B56C6C0BF34E80A4EFDEEE4ED5DBCD--></AD_ELEMENT>
 
+<!--171C2AFB1127408FAC36225596922954--><AD_ELEMENT>
+<!--171C2AFB1127408FAC36225596922954-->  <AD_ELEMENT_ID><![CDATA[171C2AFB1127408FAC36225596922954]]></AD_ELEMENT_ID>
+<!--171C2AFB1127408FAC36225596922954-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--171C2AFB1127408FAC36225596922954-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--171C2AFB1127408FAC36225596922954-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--171C2AFB1127408FAC36225596922954-->  <COLUMNNAME><![CDATA[Startnewline]]></COLUMNNAME>
+<!--171C2AFB1127408FAC36225596922954-->  <NAME><![CDATA[Start in New Line]]></NAME>
+<!--171C2AFB1127408FAC36225596922954-->  <PRINTNAME><![CDATA[Start in New Line]]></PRINTNAME>
+<!--171C2AFB1127408FAC36225596922954-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--171C2AFB1127408FAC36225596922954--></AD_ELEMENT>
+
 <!--17485BBD94A447C2A0C823181EF0F066--><AD_ELEMENT>
 <!--17485BBD94A447C2A0C823181EF0F066-->  <AD_ELEMENT_ID><![CDATA[17485BBD94A447C2A0C823181EF0F066]]></AD_ELEMENT_ID>
 <!--17485BBD94A447C2A0C823181EF0F066-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -22015,6 +22026,17 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--17485BBD94A447C2A0C823181EF0F066-->  <PRINTNAME><![CDATA[Your Company Document Image]]></PRINTNAME>
 <!--17485BBD94A447C2A0C823181EF0F066-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--17485BBD94A447C2A0C823181EF0F066--></AD_ELEMENT>
+
+<!--1D5007B3718D4A808987DE155B83BDDE--><AD_ELEMENT>
+<!--1D5007B3718D4A808987DE155B83BDDE-->  <AD_ELEMENT_ID><![CDATA[1D5007B3718D4A808987DE155B83BDDE]]></AD_ELEMENT_ID>
+<!--1D5007B3718D4A808987DE155B83BDDE-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1D5007B3718D4A808987DE155B83BDDE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1D5007B3718D4A808987DE155B83BDDE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1D5007B3718D4A808987DE155B83BDDE-->  <COLUMNNAME><![CDATA[Startinoddcolumn]]></COLUMNNAME>
+<!--1D5007B3718D4A808987DE155B83BDDE-->  <NAME><![CDATA[Start in Odd Column]]></NAME>
+<!--1D5007B3718D4A808987DE155B83BDDE-->  <PRINTNAME><![CDATA[Start in Odd Column]]></PRINTNAME>
+<!--1D5007B3718D4A808987DE155B83BDDE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1D5007B3718D4A808987DE155B83BDDE--></AD_ELEMENT>
 
 <!--2E25DF9EA05D415B851BDB301BA12D0A--><AD_ELEMENT>
 <!--2E25DF9EA05D415B851BDB301BA12D0A-->  <AD_ELEMENT_ID><![CDATA[2E25DF9EA05D415B851BDB301BA12D0A]]></AD_ELEMENT_ID>

@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.provider.OBProvider;
@@ -564,5 +565,14 @@ public class IssuesTest extends BaseTest {
 
     dth.run();
     OBContext.setOBContext(obContext);
+  }
+
+  /**
+   * https://issues.openbravo.com/view.php?id=15360: ModelProvider.getTable(tablename) should not
+   * fail
+   */
+  public void test15360() throws Exception {
+    org.openbravo.base.model.Table corder = ModelProvider.getInstance().getTable("C_Order");
+    assertFalse(corder == null);
   }
 }

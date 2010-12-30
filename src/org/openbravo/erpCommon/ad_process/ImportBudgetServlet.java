@@ -62,7 +62,7 @@ public class ImportBudgetServlet extends HttpSecureAppServlet {
       String strBudget = vars.getRequestGlobalVariable("inpBudgetId",
           "ImportBudgetServlet|inpBudgetId");
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

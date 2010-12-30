@@ -39,6 +39,12 @@ public class BooleanDomainType extends BasePrimitiveDomainType {
     if (strValue == null || strValue.trim().length() == 0) {
       return null;
     }
+    if (strValue.equalsIgnoreCase("Y")) {
+      return Boolean.TRUE;
+    }
+    if (strValue.equalsIgnoreCase("N")) {
+      return Boolean.FALSE;
+    }
     return new Boolean(strValue);
   }
 

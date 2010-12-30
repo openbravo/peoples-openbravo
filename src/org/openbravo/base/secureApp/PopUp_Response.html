@@ -24,7 +24,14 @@ function closeThisPage() {
 }
 
 function submitThisPage(ref) {
-  top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
+  if (top.opener.submitCommandForm) {
+		top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
+	} else {
+		var msgText = document.getElementById('messageMessage').value;
+		if (msgText) {
+			top.opener.isc.say(msgText);
+		}	
+	}
   top.close();
   return true;
 }
@@ -32,5 +39,10 @@ function submitThisPage(ref) {
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="submitThisPage(xx);" id="paramHref">
 <h1>Complementing the operation ?</h1>
+<form>
+	<input type="hidden" name="messageType" id="messageType" value=""/>
+	<input type="hidden" name="messageTitle" id="messageTitle" value=""/>
+	<input type="hidden" name="messageMessage" id="messageMessage" value=""/>
+</form>
 </body>
 </html>

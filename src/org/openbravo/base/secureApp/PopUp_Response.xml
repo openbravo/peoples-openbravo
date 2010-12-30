@@ -14,4 +14,10 @@
 	<template file="PopUp_Response.html"/>
 	<PARAMETER id="paramLanguage" name="language"/>
 	<PARAMETER id="paramHref" name="href" attribute="onload" replace="xx"/>
+	<PARAMETER id="paramHref" name="href" attribute="onload" replace="xx"/>
+	
+	<PARAMETER id="messageType" name="messageType" default ="" attribute="value"/>
+  <PARAMETER id="messageTitle" name="messageTitle" default ="" attribute="value"/>
+  <PARAMETER id="messageMessage" name="messageMessage" default ="" attribute="value"/>
+	
 </REPORT>

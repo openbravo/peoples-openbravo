@@ -43,6 +43,12 @@ public class MultipartRequest implements FieldProvider {
     readSubmittedFile(in);
   }
 
+  public MultipartRequest(InputStream in, boolean firstLineHeads, String format,
+      FieldProvider[] data) throws IOException {
+    init("", firstLineHeads, format, data);
+    readSubmittedFile(in);
+  }
+
   public String getField(String index) {
     int i = Integer.valueOf(index).intValue();
     if (i >= vector.size())
@@ -91,6 +97,14 @@ public class MultipartRequest implements FieldProvider {
     // if (filename==null || filename.equals("")) throw new
     // IllegalArgumentException("filename cannot be null");
     this.vars = vars;
+    this.filename = filename;
+    this.firstRowHeads = firstLineHeads;
+    this.format = setFormatSeparator(format);
+    this.rows = data;
+  }
+
+  private void init(String filename, boolean firstLineHeads, String format, FieldProvider[] data)
+      throws IOException {
     this.filename = filename;
     this.firstRowHeads = firstLineHeads;
     this.format = setFormatSeparator(format);

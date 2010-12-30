@@ -55,7 +55,6 @@ import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -65,13 +64,12 @@ import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.SessionLogin;
+import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.SessionUsageAudit;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -79,7 +77,6 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -161,12 +158,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     try {
       if (log4j.isDebugEnabled())
         log4j.debug("Servlet request for class info: " + this.getClass());
-      ClassInfoData[] classInfoAux = ClassInfoData.select(this, this.getClass().getName());
-      if (classInfoAux != null && classInfoAux.length > 0)
-        classInfo = classInfoAux[0];
-      else {
-        classInfoAux = ClassInfoData.set();
-        classInfo = classInfoAux[0];
+      if (classInfo == null) {
+        ClassInfoData[] classInfoAux = ClassInfoData.select(this, this.getClass().getName());
+        if (classInfoAux != null && classInfoAux.length > 0)
+          classInfo = classInfoAux[0];
+        else {
+          classInfoAux = ClassInfoData.set();
+          classInfo = classInfoAux[0];
+        }
       }
     } catch (final Exception ex) {
       log4j.error(ex);
@@ -178,6 +177,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         log4j.error(e);
       }
     }
+  }
+
+  /**
+   * Sets information about the artifact the servlet is for. This method is called from generated
+   * 2.50 windows to set tab and module, before calling this init, so it is not needed to query
+   * database to retrieve this info.
+   * 
+   */
+  protected void setClassInfo(String type, String id, String module) {
+    classInfo = new ClassInfoData();
+    classInfo.type = type;
+    classInfo.id = id;
+    classInfo.adModuleId = module;
   }
 
   @Override
@@ -388,33 +400,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           SessionInfo.setModuleId(classInfo.adModuleId);
         }
 
-        OBContext.setAdminMode();
-        try {
-          boolean usageAuditEnabled = OBDal.getInstance().get(SystemInformation.class, "0")
-              .isUsageauditenabled();
-          if (SessionInfo.getProcessId() != null && SessionInfo.getProcessType() != null
-              && usageAuditEnabled && vars1.getSessionValue("#AD_Session_ID") != null
-              && !"".equals(vars1.getSessionValue("#AD_Session_ID"))) {
-            // Session Usage Audit
-            SessionUsageAudit usageAudit = OBProvider.getInstance().get(SessionUsageAudit.class);
-            usageAudit.setClient(OBDal.getInstance().get(Client.class, "0"));
-            usageAudit.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
-            usageAudit.setJavaClassName(this.getClass().getName());
-            usageAudit.setModule(OBDal.getInstance().get(
-                org.openbravo.model.ad.module.Module.class, SessionInfo.getModuleId()));
-            usageAudit.setSession(OBDal.getInstance().get(
-                org.openbravo.model.ad.access.Session.class,
-                vars1.getSessionValue("#AD_Session_ID")));
-            usageAudit.setObject(SessionInfo.getProcessId());
-            usageAudit.setCommand(vars1.getCommand());
-            usageAudit.setObjectType(SessionInfo.getProcessType());
-            OBDal.getInstance().save(usageAudit);
-          }
-        } finally {
-          OBContext.restorePreviousMode();
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getConnection().commit();
-        }
+        UsageAudit.auditAction(vars1, this.getClass().getName());
 
         // Autosave logic
         final Boolean saveRequest = (Boolean) request.getAttribute("autosave");
@@ -1053,6 +1039,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       log4j.debug("Output: PopUp Response");
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/PopUp_Response").createXmlDocument();
+
+    if ("W".equals(classInfo.type)) {
+      OBError myMessage = vars.getMessage(classInfo.id);
+      // vars.removeMessage(classInfo.id);
+      // TODO: Remove message only in case the window was called in 3.0 new layout mode
+      if (myMessage != null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    }
+
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("href", path.equals("") ? "null" : "'" + path + "'");
     response.setContentType("text/html; charset=UTF-8");

@@ -446,7 +446,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Contract Date:]]></text>
+				<text><![CDATA[Planned End Date:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -481,7 +481,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Ending Date:]]></text>
+				<text><![CDATA[Real End Date:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -551,7 +551,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Project contract duration:]]></text>
+				<text><![CDATA[Planned Project Duration:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -919,7 +919,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Contract Date]]></text>
+				<text><![CDATA[Planned End Date]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -961,7 +961,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Contract duration]]></text>
+				<text><![CDATA[Planned Duration]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1045,7 +1045,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Ending Date]]></text>
+				<text><![CDATA[Real End Date]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1153,7 +1153,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Contract Date]]></text>
+				<text><![CDATA[Planned End Date]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -1175,7 +1175,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Contract duration]]></text>
+				<text><![CDATA[Planned Duration]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -1219,7 +1219,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Ending Date]]></text>
+				<text><![CDATA[Real End Date]]></text>
 				</staticText>
 				<staticText>
 					<reportElement

@@ -80,6 +80,7 @@ public class EntityResolver implements OBNotSingleton {
 
   // keeps track of the mapping from id's to objects
   private Map<Object, BaseOBObject> data = new HashMap<Object, BaseOBObject>();
+  private Map<String, BaseOBObject> originalIdObjectMapping = new HashMap<String, BaseOBObject>();
   private Map<BaseOBObject, String> objectOriginalIdMapping = new HashMap<BaseOBObject, String>();
   private Client clientZero;
   private Organization organizationZero;
@@ -87,7 +88,6 @@ public class EntityResolver implements OBNotSingleton {
   private Client client;
   private Organization organization;
   private String[] orgNaturalTree;
-  private String[] orgIdTree;
   private ResolvingMode resolvingMode = ResolvingMode.ALLOW_NOT_EXIST;
 
   private OrganizationStructureProvider organizationStructureProvider;
@@ -96,6 +96,7 @@ public class EntityResolver implements OBNotSingleton {
 
   void clear() {
     data.clear();
+    originalIdObjectMapping.clear();
     objectOriginalIdMapping.clear();
   }
 
@@ -131,13 +132,25 @@ public class EntityResolver implements OBNotSingleton {
       if (result != null) {
         return result;
       }
+      if (result != null) {
+        return result;
+      }
 
       result = searchInstance(entity, id);
+    }
+
+    // search using the id if it is a view, note can be wrong as there can
+    // be duplicates in id for older id values, but is the best we can do
+    // at the moment
+    if (result == null && entity.isView()) {
+      result = getObjectUsingOriginalId(id);
     }
 
     if (result != null) {
       // found, cache it for future use
       data.put(getKey(entityName, id), result);
+      objectOriginalIdMapping.put(result, id);
+      originalIdObjectMapping.put(id, result);
     } else {
       if (referenced && !isOptionCreateReferencedIfNotFound()) {
         throw new EntityNotFoundException("Entity " + entityName + " with id " + id + " not found");
@@ -153,6 +166,7 @@ public class EntityResolver implements OBNotSingleton {
         // keep the relation so that ad_ref_data_loaded can be filled
         // later
         objectOriginalIdMapping.put(result, id);
+        originalIdObjectMapping.put(id, result);
 
         // check if we can keep the id for this one
         if (!OBDal.getInstance().exists(entityName, id)) {
@@ -168,6 +182,12 @@ public class EntityResolver implements OBNotSingleton {
       setClientOrganization(result);
     }
     return result;
+  }
+
+  protected void addObjectToCaches(String id, String entityName, BaseOBObject bob) {
+    data.put(getKey(entityName, id), bob);
+    objectOriginalIdMapping.put(bob, id);
+    originalIdObjectMapping.put(id, bob);
   }
 
   protected void setClientOrganization(BaseOBObject bob) {
@@ -256,6 +276,10 @@ public class EntityResolver implements OBNotSingleton {
 
   public String getOriginalId(BaseOBObject bob) {
     return objectOriginalIdMapping.get(bob);
+  }
+
+  public BaseOBObject getObjectUsingOriginalId(String id) {
+    return originalIdObjectMapping.get(id);
   }
 
   protected BaseOBObject searchSystem(String id, Entity entity) {
@@ -385,7 +409,6 @@ public class EntityResolver implements OBNotSingleton {
   }
 
   protected void setOrganization(Organization organization) {
-    orgIdTree = new String[] { organization.getId() };
     final Set<String> orgs = organizationStructureProvider.getNaturalTree(organization.getId());
     orgNaturalTree = orgs.toArray(new String[orgs.size()]);
     this.organization = organization;

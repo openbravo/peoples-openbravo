@@ -67,7 +67,7 @@ public class COAUtility {
   private static final String ACCT_SCHEMA_ELEMENT_PROJECT = "PJ"; // PJ AcctSchemaElement
   private static final String ACCT_SCHEMA_ELEMENT_CAMPAIGN = "MC"; // MC AcctSchemaElement
   private static final String ACCT_SCHEMA_ELEMENT_SALESREGION = "SR"; // SR AcctSchemaElement
-  private static HashMap<String, ElementValue> defaultElementValues = new HashMap<String, ElementValue>();
+  private HashMap<String, ElementValue> defaultElementValues = new HashMap<String, ElementValue>();
   private Client client;
   private Organization organization;
   private Tree treeAccount;
@@ -122,23 +122,29 @@ public class COAUtility {
     obeResult.setType(strMessageOk);
     strLog.delete(0, strLog.length());
 
-    String strClientName = client.getName();
-    String strCalendarName = strClientName + " " + strCalendarColumnName;
+    String strElementName = client.getName();
 
-    log4j.debug("createAccounting() - Creating calendar named " + strCalendarName);
-    obeResult = insertCalendar(strCalendarName);
-    if (!obeResult.getType().equals(strMessageOk))
-      return obeResult;
-    log4j.debug("createAccounting() - Calendar inserted correctly.");
+    if (organization != null) {
+      strElementName = organization.getName() + " " + strAccountString;
+    }
 
-    log4j.debug("createAccounting() - Inserting year");
-    obeResult = insertYear();
-    if (!obeResult.getType().equals(strMessageOk))
-      return obeResult;
-    log4j.debug("createAccounting() - Year correctly inserted");
+    // Initial Organization Setup do NOT create calendar
+    if (organization == null) {
+      String strCalendarName = strElementName + " " + strCalendarColumnName;
+      log4j.debug("createAccounting() - Creating calendar named " + strCalendarName);
+      obeResult = insertCalendar(strCalendarName);
+      if (!obeResult.getType().equals(strMessageOk))
+        return obeResult;
+      log4j.debug("createAccounting() - Calendar inserted correctly.");
 
+      log4j.debug("createAccounting() - Inserting year");
+      obeResult = insertYear();
+      if (!obeResult.getType().equals(strMessageOk))
+        return obeResult;
+      log4j.debug("createAccounting() - Year correctly inserted");
+    }
     log4j.debug("createAccounting() - Inserting element");
-    obeResult = insertElement(strClientName, strAccountString);
+    obeResult = insertElement(strElementName, strAccountString);
     if (!obeResult.getType().equals(strMessageOk))
       return obeResult;
     log4j.debug("createAccounting() - Element correctly inserted");
@@ -226,8 +232,8 @@ public class COAUtility {
     String strCostingMethod = strCostingMethodProvided;
     if (strCostingMethod == null || strCostingMethod.equals(""))
       strCostingMethod = "A"; // AD_Reference_ID=122
-    String strAcctSchemaName = client.getName() + " " + strGAAP + "/" + strCostingMethod + "/"
-        + currency.getDescription();
+    String strAcctSchemaName = (organization == null) ? client.getName() : organization.getName()
+        + " " + strGAAP + "/" + strCostingMethod + "/" + currency.getDescription();
     log4j.debug("insertAccountingSchema() - Creating accounting schema " + strAcctSchemaName);
     AcctSchema acctSchema = null;
     try {
@@ -425,7 +431,11 @@ public class COAUtility {
   private COAData[] parseCOA(VariablesBase vars, InputStream instFile) throws IOException {
     log4j.debug("parseCOA() - Parsing chart of acconts file provided."
         + " A COAData object is created.");
-    COAData coa = new COAData(vars, instFile, true, "C");
+    COAData coa;
+    if (vars == null)
+      coa = new COAData(instFile, true, "C");
+    else
+      coa = new COAData(vars, instFile, true, "C");
     log4j.debug("parseCOA() - A COAData object correctly created."
         + " Parsing the data readen from the file.");
     return parseData(coa.getFieldProvider());
@@ -675,17 +685,19 @@ public class COAUtility {
         log4j.debug("insertElementValuesInDB() - Inserting element value in database");
         ElementValue elementValue = null;
         try {
-          elementValue = InitialSetupUtility.insertElementValue(element, organization, data[i]
-              .getAccountName(), data[i].getAccountValue(), data[i].getAccountDescription(),
+          elementValue = InitialSetupUtility.insertElementValue(element, organization,
+              data[i].getAccountName(), data[i].getAccountValue(), data[i].getAccountDescription(),
               accountType, accountSign, IsDocControlled, IsSummary, data[i].getElementLevel(),
               false);
         } catch (Exception e) {
-          return logError("@CreateAccountingFailed@",
+          return logError(
+              "@CreateAccountingFailed@",
               "insertElementValuesInDB() - Not inserted account with value: "
                   + data[i].getAccountValue(), e);
         }
         if (elementValue == null) {
-          return logError("@CreateAccountingFailed@",
+          return logError(
+              "@CreateAccountingFailed@",
               "insertElementValuesInDB() - Not inserted account with value: "
                   + data[i].getAccountValue());
         }

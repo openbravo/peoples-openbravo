@@ -80,7 +80,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       // String strWindowId = vars.getStringParameter("inpWindowId");
       String strTabId = vars.getStringParameter("inpTabId");
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

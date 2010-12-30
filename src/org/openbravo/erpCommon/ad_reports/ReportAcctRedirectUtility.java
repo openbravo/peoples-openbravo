@@ -54,7 +54,7 @@ public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
       else {
         String inputName = "inp" + Sqlc.TransformaNombreColumna(data[0].columnname);
 
-        String strWindowPath = Utility.getTabURL(this, data[0].adTabId, "R");
+        String strWindowPath = Utility.getTabURL(data[0].adTabId, "R", true);
         if (strWindowPath.equals(""))
           strWindowPath = strDefaultServlet;
         if (!"FAT".equals(strDocBaseType))

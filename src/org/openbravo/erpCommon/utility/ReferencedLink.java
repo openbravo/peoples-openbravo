@@ -38,8 +38,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
-import org.openbravo.model.ad.domain.ModelImplementation;
-import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
@@ -63,7 +61,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       String tabId = getTabId(vars);
       String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
 
-      servletURL.append(Utility.getTabURL(this, tabId, "E"));
+      servletURL.append(Utility.getTabURL(tabId, "E", true));
       servletURL.append("?Command=").append((strKeyReferenceId.equals("") ? "DEFAULT" : "DIRECT"))
           .append("&");
       servletURL.append("inpDirectKey").append("=").append(strKeyReferenceId);
@@ -127,23 +125,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       json.put("tabTitle", tabTitle);
 
       // find the model object mapping
-      String mappingName = null;
-      for (ModelImplementation modelImpl : tab.getADModelImplementationList()) {
-        for (ModelImplementationMapping mapping : modelImpl.getADModelImplementationMappingList()) {
-          if (mapping.getMappingName() != null
-              && mapping.getMappingName().toLowerCase().contains("edition")) {
-            // found it
-            mappingName = mapping.getMappingName();
-            break;
-          }
-        }
-        if (mappingName != null) {
-          break;
-        }
-      }
-      if (mappingName != null) {
-        json.put("mappingName", mappingName);
-      }
+      json.put("mappingName", Utility.getTabURL(tabId, "E", false));
     } catch (Exception e) {
       try {
         json.put("error", e.getMessage());
@@ -163,7 +145,13 @@ public class ReferencedLink extends HttpSecureAppServlet {
     // vars.getRequiredStringParameter("inpKeyReferenceName");
     // String strTableId =
     // vars.getRequiredStringParameter("inpTableId");
-    String strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
+    String strTableReferenceId;
+    if (vars.hasParameter("inpEntityName")) {
+      String entityName = vars.getStringParameter("inpEntityName");
+      strTableReferenceId = ModelProvider.getInstance().getEntity(entityName).getTableId();
+    } else {
+      strTableReferenceId = vars.getRequiredStringParameter("inpTableReferenceId");
+    }
     String strKeyReferenceId = vars.getStringParameter("inpKeyReferenceId");
     // String strTabId = vars.getStringParameter("inpTabId");
     String strWindowId = vars.getStringParameter("inpwindowId");

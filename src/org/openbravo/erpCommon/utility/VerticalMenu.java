@@ -189,6 +189,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+
+    response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
@@ -302,10 +304,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
             if (menuData[i].action.equals("L") || menuData[i].action.equals("I"))
               strText.append(menuData[i].url);
             else {
-              strText.append(getUrlString(strDireccion, menuData[i].name, menuData[i].action,
-                  menuData[i].classname, menuData[i].mappingname, menuData[i].adWorkflowId,
-                  menuData[i].adTaskId, menuData[i].adProcessId, menuData[i].isexternalservice,
-                  menuData[i].serviceType));
+              strText.append(getUrlString(strDireccion, menuData[i]));
             }
             strText.append("', '");
             if (menuData[i].action.equals("F")
@@ -397,46 +396,60 @@ public class VerticalMenu extends HttpSecureAppServlet {
   public static String getUrlStringStatic(String strDireccionBase, String name, String action,
       String classname, String mappingname, String adWorkflowId, String adTaskId,
       String adProcessId, String isExternalService, String externalType) {
-    return new VerticalMenu().getUrlString(strDireccionBase, name, action, classname, mappingname,
-        adWorkflowId, adTaskId, adProcessId, isExternalService, externalType);
+    MenuData menuItem = new MenuData();
+    menuItem.name = name;
+    menuItem.action = action;
+    menuItem.classname = classname;
+    menuItem.mappingname = mappingname;
+    menuItem.adWorkflowId = adWorkflowId;
+    menuItem.adTaskId = adTaskId;
+    menuItem.adProcessId = adProcessId;
+    menuItem.isexternalservice = isExternalService;
+    menuItem.serviceType = externalType;
+    return new VerticalMenu().getUrlString(strDireccionBase, menuItem);
   }
 
-  private String getUrlString(String strDireccionBase, String name, String action,
-      String classname, String mappingname, String adWorkflowId, String adTaskId,
-      String adProcessId, String isExternalService, String externalType) {
+  private String getUrlString(String strDireccionBase, MenuData menuItem) {
     final StringBuffer strResultado = new StringBuffer();
     strResultado.append(strDireccionBase);
-    if (mappingname.equals("")) {
-      if (action.equals("F")) {
+    if (menuItem.mappingname.equals("")) {
+      if (menuItem.action.equals("W")) {
+        strResultado.append("/" + ("0".equals(menuItem.windowmodule) ? "" : menuItem.windowpackage)
+            + menuItem.windowname + "/" + menuItem.tabname
+            + ("0".equals(menuItem.tabmodule) ? "" : menuItem.adTabId) + "_Relation.html");
+      } else if (menuItem.action.equals("F")) {
         strResultado.append("/ad_workflow/WorkflowControl.html?inpadWorkflowId=").append(
-            adWorkflowId);
-      } else if (action.equals("T")) {
-        strResultado.append("/utility/ExecuteTask.html?inpadTaskId=").append(adTaskId);
-      } else if (action.equals("P")) {
-        if (isExternalService.equals("Y") && externalType.equals("PS"))
-          strResultado.append("/utility/OpenPentaho.html?inpadProcessId=").append(adProcessId);
+            menuItem.adWorkflowId);
+      } else if (menuItem.action.equals("T")) {
+        strResultado.append("/utility/ExecuteTask.html?inpadTaskId=").append(menuItem.adTaskId);
+      } else if (menuItem.action.equals("P")) {
+        if (menuItem.isexternalservice.equals("Y") && menuItem.serviceType.equals("PS"))
+          strResultado.append("/utility/OpenPentaho.html?inpadProcessId=").append(
+              menuItem.adProcessId);
         else {
           try {
-            if (MenuData.isGenericJavaProcess(this, adProcessId))
+            if (MenuData.isGenericJavaProcess(this, menuItem.adProcessId))
               strResultado.append(
                   "/ad_actionButton/ActionButtonJava_Responser.html?inpadProcessId=").append(
-                  adProcessId);
+                  menuItem.adProcessId);
             else
               strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=")
-                  .append(adProcessId);
+                  .append(menuItem.adProcessId);
           } catch (final Exception e) {
             e.printStackTrace();
             strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=")
-                .append(adProcessId);
+                .append(menuItem.adProcessId);
           }
         }
-      } else if (action.equals("X")) {
-        strResultado.append("/ad_forms/").append(FormatUtilities.replace(name)).append(".html");
-      } else if (action.equals("R")) {
-        strResultado.append("ad_reports/").append(FormatUtilities.replace(name)).append(".html");
+      } else if (menuItem.action.equals("X")) {
+        strResultado.append("/ad_forms/").append(FormatUtilities.replace(menuItem.name)).append(
+            ".html");
+      } else if (menuItem.action.equals("R")) {
+        strResultado.append("ad_reports/").append(FormatUtilities.replace(menuItem.name)).append(
+            ".html");
       }
     } else {
-      strResultado.append(mappingname);
+      strResultado.append(menuItem.mappingname);
     }
     return strResultado.toString();
   }

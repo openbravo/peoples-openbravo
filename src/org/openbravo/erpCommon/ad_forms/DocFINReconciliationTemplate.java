@@ -44,7 +44,7 @@ public abstract class DocFINReconciliationTemplate {
    *          accounting schema
    * @return Fact
    */
-  public abstract Fact createFact(DocFINReconciliation docAccDefPlan, AcctSchema as,
+  public abstract Fact createFact(DocFINReconciliation docREC, AcctSchema as,
       ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
 
   public String getServletInfo() {

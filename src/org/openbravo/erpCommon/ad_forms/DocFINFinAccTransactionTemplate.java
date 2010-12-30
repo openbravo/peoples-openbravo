@@ -45,7 +45,7 @@ public abstract class DocFINFinAccTransactionTemplate {
    *          accounting schema
    * @return Fact
    */
-  public abstract Fact createFact(DocFINFinAccTransaction docAccDefPlan, AcctSchema as,
+  public abstract Fact createFact(DocFINFinAccTransaction docFAT, AcctSchema as,
       ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
 
   public String getServletInfo() {

@@ -25,7 +25,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-           SELECT M.Type, M.AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module',M.AD_Module_ID, ?) as Name,
+           SELECT M.Type, M.AD_Module_ID as Node_ID, RPAD(AD_MODULE_IDENTIFIER(M.AD_Module_ID, ?), 90) as Name,
                  (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
                     FROM AD_Module_Dependency
                    WHERE AD_Module_ID = M.AD_Module_ID

@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -160,7 +159,7 @@ public class DocFINReconciliation extends AcctServer {
         // used
         if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment())
           continue;
-        data[i] = new FieldProviderFactory(new HashMap());
+        data[i] = new FieldProviderFactory(null);
         FieldProviderFactory.setField(data[i], "FIN_Reconciliation_ID", transaction
             .getReconciliation().getId());
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
@@ -215,7 +214,7 @@ public class DocFINReconciliation extends AcctServer {
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
-        data[i] = new FieldProviderFactory(new HashMap());
+        data[i] = new FieldProviderFactory(null);
         FieldProviderFactory.setField(data[i], "FIN_Reconciliation_ID", transaction
             .getReconciliation().getId());
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
@@ -255,7 +254,7 @@ public class DocFINReconciliation extends AcctServer {
     FieldProviderFactory[] data = new FieldProviderFactory[1];
     OBContext.setAdminMode();
     try {
-      data[0] = new FieldProviderFactory(new HashMap());
+      data[0] = new FieldProviderFactory(null);
       FieldProviderFactory.setField(data[0], "FIN_Reconciliation_ID", transaction
           .getReconciliation().getId());
       FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
@@ -290,7 +289,7 @@ public class DocFINReconciliation extends AcctServer {
     FieldProviderFactory[] data = new FieldProviderFactory[1];
     OBContext.setAdminMode();
     try {
-      data[0] = new FieldProviderFactory(new HashMap());
+      data[0] = new FieldProviderFactory(null);
       FieldProviderFactory.setField(data[0], "FIN_Reconciliation_ID", transaction
           .getReconciliation().getId());
       FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", transaction.getId());
@@ -796,7 +795,7 @@ public class DocFINReconciliation extends AcctServer {
     FieldProviderFactory[] data = new FieldProviderFactory[1];
     OBContext.setAdminMode();
     try {
-      data[0] = new FieldProviderFactory(new HashMap());
+      data[0] = new FieldProviderFactory(null);
       FieldProviderFactory.setField(data[0], "AD_Client_ID", reconciliation.getClient().getId());
       FieldProviderFactory.setField(data[0], "AD_Org_ID", reconciliation.getOrganization().getId());
       FieldProviderFactory.setField(data[0], "FIN_Finacc_Transaction_ID", reconciliation.getId());

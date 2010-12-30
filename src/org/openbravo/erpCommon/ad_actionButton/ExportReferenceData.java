@@ -65,7 +65,7 @@ public class ExportReferenceData extends HttpSecureAppServlet {
       String strTab = vars.getGlobalVariable("inpTabId", "ExportReferenceData|Tab_ID");
       String strKey = vars.getRequestGlobalVariable("inpKey", "ExportReferenceData|AD_DataSet_ID");
 
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 
@@ -83,6 +83,13 @@ public class ExportReferenceData extends HttpSecureAppServlet {
     OBError myError = null;
     try {
       DataSet myDataset = (DataSet) OBDal.getInstance().get(DataSet.class, strKey);
+      if (!myDataset.getModule().isInDevelopment()) {
+        myError = new OBError();
+        myError.setType("Error");
+        myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+        myError.setMessage(Utility.messageBD(this, "20532", vars.getLanguage()));
+        return myError;
+      }
       ExportReferenceDataData[] data = ExportReferenceDataData.selectDataset(this, strKey);
       if (data == null || data.length == 0)
         return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");

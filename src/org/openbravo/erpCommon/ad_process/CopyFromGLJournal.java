@@ -67,7 +67,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
 
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

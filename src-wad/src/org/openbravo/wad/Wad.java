@@ -690,6 +690,10 @@ public class Wad extends DefaultHandler {
       WadData[] contextParams = WadData.selectContextParams(pool);
       xmlDocument.setData("structureContextParams", contextParams);
 
+      WadData[] allTabs = WadData.selectAllTabs(pool);
+      xmlDocument.setData("structureServletTab", getTabServlets(allTabs));
+      xmlDocument.setData("structureMappingTab", getTabMappings(allTabs));
+
       final WadData[] servlets = WadData.select(pool);
       WadData[][] servletParams = null;
       if (servlets != null && servlets.length > 0) {
@@ -727,6 +731,59 @@ public class Wad extends DefaultHandler {
       e.printStackTrace();
       log4j.error("Problem of IOException in process of Web.xml");
     }
+  }
+
+  private WadData[] getTabServlets(WadData[] allTabs) {
+    ArrayList<WadData> servlets = new ArrayList<WadData>();
+    for (WadData tab : allTabs) {
+      String tabClassName = "org.openbravo.erpWindows."
+          + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage + ".") + tab.windowname + "."
+          + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.adTabId);
+
+      WadData servlet = new WadData();
+      servlet.displayname = tabClassName;
+      servlet.name = "W" + tab.adTabId;
+      servlet.classname = tabClassName;
+      servlets.add(servlet);
+
+      String comboReloadClassName = "org.openbravo.erpCommon.ad_callouts.ComboReloads"
+          + tab.adTabId;
+      WadData servletCombo = new WadData();
+      servletCombo.displayname = comboReloadClassName;
+      servletCombo.name = "WR" + tab.adTabId;
+      servletCombo.classname = comboReloadClassName;
+      servlets.add(servletCombo);
+    }
+    return servlets.toArray(new WadData[servlets.size()]);
+  }
+
+  private FieldProvider[] getTabMappings(WadData[] allTabs) {
+    ArrayList<WadData> mappings = new ArrayList<WadData>();
+    for (WadData tab : allTabs) {
+      String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage)
+          + tab.windowname + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.adTabId);
+
+      WadData mapping = new WadData();
+      mapping.name = "W" + tab.adTabId;
+      mapping.classname = prefix + "_Relation.html";
+      mappings.add(mapping);
+
+      WadData mapping2 = new WadData();
+      mapping2.name = "W" + tab.adTabId;
+      mapping2.classname = prefix + "_Edition.html";
+      mappings.add(mapping2);
+
+      WadData mapping3 = new WadData();
+      mapping3.name = "W" + tab.adTabId;
+      mapping3.classname = prefix + "_Excel.xls";
+      mappings.add(mapping3);
+
+      WadData mapping4 = new WadData();
+      mapping4.name = "WR" + tab.adTabId;
+      mapping4.classname = "/ad_callouts/ComboReloads" + tab.adTabId + ".html";
+      mappings.add(mapping4);
+    }
+    return mappings.toArray(new WadData[mappings.size()]);
   }
 
   /**
@@ -976,7 +1033,7 @@ public class Wad extends DefaultHandler {
             selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId,
             tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams,
             parentwhereclause, strProcess, strDirectPrint, !tabsData.uipattern.equals("STD"),
-            vecParameters, vecTableParameters, tabsData.javapackage);
+            vecParameters, vecTableParameters, tabsData.javapackage, tabsData.tabmodule);
         /************************************************
          * XML of the SORT TAB
          *************************************************/
@@ -998,7 +1055,7 @@ public class Wad extends DefaultHandler {
             tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.uipattern,
             whereClauseParams, parentwhereclause, tabsData.editreference, strProcess,
             strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage, "Y"
-                .equals(tabsData.isdeleteable));
+                .equals(tabsData.isdeleteable), tabsData.tabmodule);
 
         /************************************************
          * XSQL
@@ -1251,6 +1308,7 @@ public class Wad extends DefaultHandler {
    *          Array of query's parameters for the where clause.
    * @param vecTableParametersTop
    *          Array of query's parameters for from clause.
+   * @param tabmodule
    * @throws ServletException
    * @throws IOException
    */
@@ -1261,8 +1319,8 @@ public class Wad extends DefaultHandler {
       boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
       String windowType, String strColumnSortOrderId, String whereClauseParams,
       String parentwhereclause, String strProcess, String strDirectPrint, boolean strReadOnly,
-      Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop, String javaPackage)
-      throws ServletException, IOException {
+      Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop, String javaPackage,
+      String tabmodule) throws ServletException, IOException {
     log4j.debug("Processing Sort Tab java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final int parentTab = parentTabId(allTabs, strTab);
@@ -1291,6 +1349,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("grandfatherName", grandfatherField);
     xmlDocument.setParameter("ShowName", FieldsData.columnName(pool, strColumnSortOrderId));
     xmlDocument.setParameter("accessLevel", accesslevel);
+    xmlDocument.setParameter("moduleId", tabmodule);
     if (parentsFieldsData.length > 0) {
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
       xmlDocument.setParameter("keyParentINP", Sqlc
@@ -1453,6 +1512,7 @@ public class Wad extends DefaultHandler {
    *          Array with the auxiliar inputs info
    * @param relationControl
    *          Object with the WADGrid control
+   * @param tabmodule
    * @throws ServletException
    * @throws IOException
    */
@@ -1465,8 +1525,8 @@ public class Wad extends DefaultHandler {
       String tableId, String windowType, String uiPattern, String whereClauseParams,
       String parentwhereclause, String editReference, String strProcess, String strDirectPrint,
       Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
-      WADControl relationControl, String javaPackage, boolean deleteable) throws ServletException,
-      IOException {
+      WADControl relationControl, String javaPackage, boolean deleteable, String tabmodule)
+      throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     final boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
@@ -1689,6 +1749,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("table", tableName);
     xmlDocument.setParameter("windowId", strWindow);
     xmlDocument.setParameter("accessLevel", accesslevel);
+    xmlDocument.setParameter("moduleId", tabmodule);
     xmlDocument.setParameter("tabId", strTab);
     xmlDocument.setParameter("tableId", tableId);
     xmlDocument.setParameter("createFromProcessId",

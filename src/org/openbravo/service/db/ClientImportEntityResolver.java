@@ -91,11 +91,17 @@ public class ClientImportEntityResolver extends EntityResolver {
       result = searchInstance(entity, id);
     }
 
+    // search using the id if it is a view, note can be wrong as there can
+    // be duplicates in id for older id values, but is the best we can do
+    // at the moment
+    if (result == null && entity.isView()) {
+      result = getObjectUsingOriginalId(id);
+    }
+
     if (result != null) {
       // found, cache it for future use
-      getData().put(getKey(entityName, id), result);
+      addObjectToCaches(id, entityName, result);
     } else {
-
       // not found create a new one
       result = (BaseOBObject) OBProvider.getInstance().get(entityName);
 
@@ -110,7 +116,7 @@ public class ClientImportEntityResolver extends EntityResolver {
         }
 
         // keep it here so it can be found later
-        getData().put(getKey(entityName, id), result);
+        addObjectToCaches(id, entityName, result);
       }
       setClientOrganization(result);
     }

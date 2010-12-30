@@ -25,16 +25,15 @@
                                                   WHEN 'S' THEN mo.ad_reference_id
                                                   WHEN 'F' THEN mo.ad_workflow_id
                                                   WHEN 'C' THEN mo.ad_callout_id
-                                                  ELSE mo.ad_tab_id END) AS ID,
+                                                  ELSE null END) AS ID,
           m.name AS NAME, /*Name is only maintained for backwards compatibility, now REPORT_TITLE is automatically filled*/
           COALESCE((CASE mo.action WHEN 'X' THEN f.ad_module_id
                                    WHEN 'P' THEN p.ad_module_id
                                    WHEN 'R' THEN p.ad_module_id
-                                   WHEN 'T' THEN null
                                    WHEN 'S' THEN r.ad_module_id
                                    WHEN 'F' THEN w.ad_module_id
                                    WHEN 'C' THEN c.ad_module_id
-                                   ELSE ta.ad_module_id END), mo.ad_module_id) AS ad_module_id
+                                   ELSE null END), mo.ad_module_id) AS ad_module_id
         FROM ad_model_object mo
              LEFT JOIN ad_menu m ON mo.ad_process_id = m.ad_process_id
                                     AND mo.action IN ('P', 'R')
@@ -44,7 +43,6 @@
              LEFT JOIN ad_reference r ON mo.ad_reference_id = r.ad_reference_id
              LEFT JOIN ad_workflow w ON mo.ad_workflow_id = w.ad_workflow_id
              LEFT JOIN ad_callout c ON mo.ad_callout_id = c.ad_callout_id
-             LEFT JOIN ad_tab ta ON mo.ad_tab_id = ta.ad_tab_id
         WHERE mo.classname = ?
           AND mo.isdefault = 'Y'
           AND mo.isactive = 'Y'

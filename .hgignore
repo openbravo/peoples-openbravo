@@ -38,7 +38,3 @@ lib/*.war
 *.bak
 *.swp
 Thumbs.db
-
-syntax: regexp
-
-^modules

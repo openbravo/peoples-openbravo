@@ -1497,8 +1497,10 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--8286A51A2C2C494798EABA6D27CA534D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8286A51A2C2C494798EABA6D27CA534D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8286A51A2C2C494798EABA6D27CA534D-->  <NAME><![CDATA[AD_DataSet_Table access level]]></NAME>
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <DESCRIPTION><![CDATA[Filters tables removing views and taking into account access level]]></DESCRIPTION>
 <!--8286A51A2C2C494798EABA6D27CA534D-->  <TYPE><![CDATA[S]]></TYPE>
-<!--8286A51A2C2C494798EABA6D27CA534D-->  <CODE><![CDATA[((ad_table.accesslevel in ('3','1','7') and exists(select 1 from ad_dataset
+<!--8286A51A2C2C494798EABA6D27CA534D-->  <CODE><![CDATA[ad_table.isView='N'
+and ((ad_table.accesslevel in ('3','1','7') and exists(select 1 from ad_dataset
                                             where ad_dataset_id = @AD_DATASET_ID@
                                             and ad_dataset.accesslevel = '1')) OR
               (ad_table.accesslevel in ('4','6','7') and exists(select 1 from ad_dataset

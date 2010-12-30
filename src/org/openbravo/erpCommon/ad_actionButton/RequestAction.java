@@ -68,7 +68,7 @@ public class RequestAction extends HttpSecureAppServlet {
       if (tab != null && tab.length != 0) {
         strTabName = FormatUtilities.replace(tab[0].name);
       }
-      String strWindowPath = Utility.getTabURL(this, strTab, "R");
+      String strWindowPath = Utility.getTabURL(strTab, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

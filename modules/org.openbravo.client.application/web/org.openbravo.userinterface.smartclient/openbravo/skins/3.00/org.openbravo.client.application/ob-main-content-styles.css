@@ -1,0 +1,169 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http: //www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):   ______________________________________.
+ ************************************************************************
+*/
+
+/*============================================================
+	1) Tab Headers
+============================================================*/
+
+.OBMainTab {
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  height: 100%;
+  border: 0 0 0 0;
+}
+
+.OBMainTabBar {
+  float: left;
+  height: 30px;
+  width: 100%;
+  background:  #ffffff url(./images/tab/bg-tab-navbar.gif) repeat-x scroll;
+  background-position: right top;
+}
+
+.OBMainTabPaneContainer {
+	margin-top:  1px;
+  border-top: 1px solid #72ab10;
+}
+
+/* styles for simple css-styled tabs*/
+/* note only the top styles are present here because in Openbravo tabs in forms are shown in the top
+if the tab headers are on the right, left or bottom the same styles can be used */
+
+.OBMainTabTopSelected,
+.OBMainTabTopSelectedFocused,
+.OBMainTabTopSelectedFocusedOver,
+.OBMainTabTopSelectedFocusedDown,
+.OBMainTabTopSelectedDown,
+.OBMainTabTopSelectedDisabled,
+.OBMainTabTopSelectedOver {
+  color: #fff;
+  margin-left:  25;
+  padding:  0;
+  background-image: url(./images/tab/bg-tab-green-orange.gif);
+  background-position:  right top;
+  background-repeat: repeat-x;
+  height: 30px;
+}
+
+.OBMainTabTop,
+.OBMainTabTopOver,
+.OBMainTabTopDown,
+.OBMainTabTopDisabled {
+  margin: 0;
+  padding: 0;
+  height: 30px;
+  color: #000;
+  background-image: url(./images/tab/bg-tab-grey.gif);
+  background-position: right top;
+  background-repeat: repeat-x;
+}
+
+.OBMainTabBarButton,
+.OBMainTabBarButtonSelected,
+.OBMainTabBarButtonSelectedOver,
+.OBMainTabBarButtonOver,
+.OBMainTabBarButtonDown,
+.OBMainTabBarButtonSelectedDown,
+.OBMainTabBarButtonSelectedDisabled,
+.OBMainTabBarButtonDisabled {
+  font-family: 'lucida sans', sans-serif; 
+  font-size: 12px;
+}
+
+.OBMainTabBarButtonSelectedDisabled,
+.OBMainTabBarButtonDisabled {
+  font-weight: normal; 
+  color: #777;
+}
+
+.OBMainTabBarButton table {
+  margin-top: 4px;
+}
+
+.OBMainTabBarButton td img {
+  background: #91A777; 
+  padding: 1px; 
+  margin-top: -4px;
+}
+
+.OBMainTabBarButtonTitle,
+.OBMainTabBarButtonTitleOver,
+.OBMainTabBarButtonTitleDown,
+.OBMainTabBarButtonTitleSelected,
+.OBMainTabBarButtonTitleFocused,
+.OBMainTabBarButtonTitleSelectedFocused,
+.OBMainTabBarButtonTitleSelectedOver,
+.OBMainTabBarButtonTitleFocusedOver,
+.OBMainTabBarButtonTitleSelectedFocusedOver,
+.OBMainTabBarButtonTitleSelectedDown,
+.OBMainTabBarButtonTitleFocusedDown,
+.OBMainTabBarButtonTitleSelectedFocusedDown,
+.OBMainTabBarButtonTitleDisabled,
+.OBMainTabBarButtonTitleSelectedDisabled {
+  color: #333333;
+  padding-top: 4px;
+  padding-bottom:1px;
+}
+
+.OBMainTabBarButtonTitleSelectedOver,
+.OBMainTabBarButtonTitleFocusedOver,
+.OBMainTabBarButtonTitleSelectedFocusedOver,
+.OBMainTabBarButtonTitleSelected {
+  color:#fff;
+}
+
+.OBMainTabBarButtonTitleOver {
+}
+
+.OBMainTabBarButtonTitleDisabled,
+.OBMainTabBarButtonTitleSelectedDisabled {
+  color: #777;
+  padding-bottom:1px;
+}
+
+/*============================================================
+ Link
+ ============================================================*/
+
+.OBLabelLink {
+  color: green;
+  cursor: pointer;
+  font-family: 'lucida sans', sans-serif; 
+  font-size: 12px;
+}
+
+.OBLabelLink:hover {
+  color: blue;
+  text-decoration: underline;
+}
+
+.OBSeparator {
+    background-image: url(./images/navbar/navbar-separator.gif);
+    background-position: 'center';
+    background-repeat: no-repeat;
+}
+
+
+/*============================================================
+ Loading prompt
+ ============================================================*/
+.OBLoadingPromptBody {
+  background-color: #000000;
+}

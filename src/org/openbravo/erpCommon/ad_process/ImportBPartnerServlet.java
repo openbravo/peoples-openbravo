@@ -57,7 +57,7 @@ public class ImportBPartnerServlet extends HttpSecureAppServlet {
       String strRecord = vars.getGlobalVariable("inpKey", "ImportBPartnerServlet|key");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "ImportBPartnerServlet|tabId");
 
-      String strWindowPath = Utility.getTabURL(this, strTabId, "R");
+      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals(""))
         strWindowPath = strDefaultServlet;
 

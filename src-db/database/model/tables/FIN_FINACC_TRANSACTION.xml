@@ -147,5 +147,8 @@
       <foreign-key foreignTable="FIN_PAYMENT" name="FIN_PAYMENT_TRANSACTION">
         <reference local="FIN_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
+      <unique name="FIN_FINACC_TRANSACTION_UN">
+        <unique-column name="FIN_PAYMENT_ID"/>
+      </unique>
     </table>
   </database>

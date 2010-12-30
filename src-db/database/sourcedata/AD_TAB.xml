@@ -7565,7 +7565,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800020-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800020-->  <HASTREE><![CDATA[N]]></HASTREE>
 <!--800020-->  <WHERECLAUSE><![CDATA[C_Order.IsSOTrx='Y']]></WHERECLAUSE>
-<!--800020-->  <AD_PROCESS_ID><![CDATA[110]]></AD_PROCESS_ID>
+<!--800020-->  <AD_PROCESS_ID><![CDATA[1000500002]]></AD_PROCESS_ID>
 <!--800020-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800020-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9846,55 +9846,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800171-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800171--></AD_TAB>
-
-<!--800172--><AD_TAB>
-<!--800172-->  <AD_TAB_ID><![CDATA[800172]]></AD_TAB_ID>
-<!--800172-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800172-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800172-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800172-->  <NAME><![CDATA[Tab Class]]></NAME>
-<!--800172-->  <DESCRIPTION><![CDATA[View the Java class that implements the tab.]]></DESCRIPTION>
-<!--800172-->  <HELP><![CDATA[View the Java class that implements the tab.]]></HELP>
-<!--800172-->  <AD_TABLE_ID><![CDATA[800148]]></AD_TABLE_ID>
-<!--800172-->  <AD_WINDOW_ID><![CDATA[102]]></AD_WINDOW_ID>
-<!--800172-->  <SEQNO><![CDATA[60]]></SEQNO>
-<!--800172-->  <TABLEVEL><![CDATA[2]]></TABLEVEL>
-<!--800172-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--800172-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--800172-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--800172-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--800172-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--800172-->  <WHERECLAUSE><![CDATA[ACTION='W']]></WHERECLAUSE>
-<!--800172-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800172-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--800172-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--800172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800172-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--800172--></AD_TAB>
-
-<!--800173--><AD_TAB>
-<!--800173-->  <AD_TAB_ID><![CDATA[800173]]></AD_TAB_ID>
-<!--800173-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800173-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800173-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800173-->  <NAME><![CDATA[Tab Mapping]]></NAME>
-<!--800173-->  <DESCRIPTION><![CDATA[View the Java class mapping that enables it to be accessible through a browser..]]></DESCRIPTION>
-<!--800173-->  <HELP><![CDATA[View the Java class mapping that enables it to be accessible through a browser..]]></HELP>
-<!--800173-->  <AD_TABLE_ID><![CDATA[800149]]></AD_TABLE_ID>
-<!--800173-->  <AD_WINDOW_ID><![CDATA[102]]></AD_WINDOW_ID>
-<!--800173-->  <SEQNO><![CDATA[70]]></SEQNO>
-<!--800173-->  <TABLEVEL><![CDATA[3]]></TABLEVEL>
-<!--800173-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--800173-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--800173-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--800173-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--800173-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--800173-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800173-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--800173-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--800173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800173-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--800173--></AD_TAB>
 
 <!--800174--><AD_TAB>
 <!--800174-->  <AD_TAB_ID><![CDATA[800174]]></AD_TAB_ID>

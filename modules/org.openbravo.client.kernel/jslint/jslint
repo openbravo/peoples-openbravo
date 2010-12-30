@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Checking --> " $1
+java -jar ./modules/org.openbravo.client.kernel/lib/runtime/jslint4java-1.3.3.jar --evil $1

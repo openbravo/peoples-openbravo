@@ -43,6 +43,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   protected static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
   protected static final double SUBTABS_COL_SIZE = 15;
   protected static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
+  private static final String moduleId = "<PARAMETER_TMP id="moduleId">xx</PARAMETER_TMP>";
+  
+  @Override
+  public void init(ServletConfig config) {
+    setClassInfo("W", tabId, moduleId);
+    super.init(config);
+  }
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -70,7 +77,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       return;
     }
     
-    vars.removeSessionValue(UtilityData.selectObjectMapping(this, tabId) + "|hash");
+    vars.removeSessionValue(Utility.getTabURL(tabId, "E", false) + "|hash");
     vars.setSessionObject(tabId + "|failedAutosave", false);
     if (vars.commandIn("DEFAULT", "NEW")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
@@ -130,33 +137,100 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
               i++;
             }
 
-             //modify only in case the field's module is in development
+            //modify only in case the field's module is in development
             int start=0;
             int end=0;
             int seqno=0;
             int maxSeqno=0;
             boolean templateInDev = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.isTemplateInDev(this);
             
-            while(end &lt; size) {
+            while (end &lt; size) {
+              // start-end define the first and last element to sort
               start = end;
-              while (start &lt; size &amp;&amp; !templateInDev &amp;&amp; dataShown[start].isindevelopment.equals("N")) start++;
-              end = start;
-              while (end &lt; size &amp;&amp; (templateInDev || dataShown[end].isindevelopment.equals("Y"))) end++;
-              
-              if (start &gt; 0) seqno = new Integer(dataShown[start-1].seqnoParam).intValue();
-              if (end &lt; size) maxSeqno = new Integer(dataShown[end].seqnoParam).intValue();
-              if ((start &gt; 0) &amp;&amp; (end &lt; size-1) &amp;&amp; (seqno &gt; maxSeqno)){
+    
+              // look for the first non-sorted item, and set it as start
+              boolean sorted = true;
+              while (start &lt; size &amp;&amp; sorted) {
+                if (start &lt; size - 1) {
+                  sorted = !(dataShown[start].seqnoParam.isEmpty() &amp;&amp; !dataShown[start + 1].seqnoParam
+                      .isEmpty());
+                  sorted = sorted
+                      &amp;&amp; !(dataShown[start].seqnoParam.isEmpty() &amp;&amp; dataShown[start + 1].seqnoParam
+                          .isEmpty());
+                  if (sorted &amp;&amp; !dataShown[start].seqnoParam.isEmpty()
+                      &amp;&amp; !dataShown[start + 1].seqnoParam.isEmpty()) {
+                    sorted = Integer.parseInt(dataShown[start].seqnoParam) &lt; Integer
+                        .parseInt(dataShown[start + 1].seqnoParam);
+                  }
+                } else if (start == size - 1) {
+                  // In case a single element, treat it as not sorted
+                  sorted = false;
+                }
+    
+                if (sorted) {
+                  start++;
+                }
+              }
+    
+              // Start now contains the first unsorted element, if it is not in dev, move start forward
+              while (start &lt; size &amp;&amp; !templateInDev &amp;&amp; dataShown[start].isindevelopment.equals("N")) {
+                start++;
+              }
+    
+              // Looking for end. It will be the last unsorted element
+              end = start + 1;
+              if (end &gt; size) {
+                end = size;
+              }
+              if (start &gt; 0 &amp;&amp; !dataShown[start - 1].seqnoParam.isEmpty()) {
+                seqno = new Integer(dataShown[start - 1].seqnoParam).intValue();
+              }
+              while (end &lt; size &amp;&amp; !sorted
+                  &amp;&amp; (templateInDev || dataShown[end].isindevelopment.equals("Y"))) {
+    
+                sorted = dataShown[end].seqnoParam.isEmpty() &amp;&amp; !dataShown[end].seqnoParam.isEmpty();
+                sorted = sorted
+                    || end + 1 &lt; size
+                    &amp;&amp; !(dataShown[end].seqnoParam.isEmpty() || dataShown[end + 1].seqnoParam.isEmpty())
+                    &amp;&amp; Integer.parseInt(dataShown[end].seqnoParam) &lt; Integer
+                        .parseInt(dataShown[end + 1].seqnoParam);
+    
+                if (end + 1 &lt; size &amp;&amp; !dataShown[end].seqnoParam.isEmpty()) {
+                  maxSeqno = new Integer(dataShown[end].seqnoParam).intValue();
+    
+                  if (sorted &amp;&amp; maxSeqno - seqno &lt;= end - start) {
+                    // It is sorted, it should be the end point, but there's no place for sorting, set
+                    // it as unsorted to look for more place if possible.
+                    sorted = false;
+                  }
+                }
+                if (!sorted) {
+                  end++;
+                }
+              }
+    
+              if (maxSeqno == 0 &amp;&amp; end &lt; size) {
+                maxSeqno = new Integer(dataShown[end].seqnoParam).intValue();
+              }
+    
+              log4j.debug("Sorting from position:" + start + " to:" + end + ". Size:" + size);
+    
+              if ((start &gt; 0) &amp;&amp; (end &lt; size) &amp;&amp; (seqno &gt;= maxSeqno) &amp;&amp; !(start == end &amp;&amp; end == size)) {
                 myError.setType("Error");
                 myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-                myError.setMessage(Utility.messageBD(this, "CannotReorderNotDevModules", vars.getLanguage()));
+                myError.setMessage(Utility.messageBD(this, "CannotReorderNotDevModules", vars
+                    .getLanguage()));
                 releaseRollbackConnection(conn);
                 error = true;
                 break;
               }
-              if (end==size) maxSeqno = -1; //no limit
-              int add = (maxSeqno == -1 )?10:new Float(((maxSeqno-seqno)/(end-start+1))).intValue();
-              for (int j=start; j &lt; end; j++) {
-                if (maxSeqno == -1 || seqno  &lt; maxSeqno) seqno+=add;
+              if (end == size)
+                maxSeqno = -1; // no limit
+              int add = (maxSeqno == -1) ? 10 : new Float(((maxSeqno - seqno) / (end - start + 1)))
+                  .intValue();
+              for (int j = start; j &lt; end; j++) {
+                if (maxSeqno == -1 || seqno &lt; maxSeqno)
+                  seqno += add;
                 else {
                   myError.setType("Warning");
                   myError.setTitle(Utility.messageBD(this, "Warning", vars.getLanguage()));
@@ -165,19 +239,22 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
                 dataShown[j].seqnoParam = Integer.toString(seqno);
               }
             }
-            
-            for (int j=0; !error &amp;&amp; j &lt; dataShown.length; j++) {
-              if (j &lt; dataShown.length-1 &amp;&amp; (new Integer(dataShown[j].seqnoParam).intValue() &gt; new Integer(dataShown[j+1].seqnoParam).intValue())) {
+    
+            for (int j = 0; !error &amp;&amp; j &lt; dataShown.length; j++) {
+              if (j &lt; dataShown.length - 1
+                  &amp;&amp; (dataShown[j].seqnoParam.isEmpty() || dataShown[j + 1].seqnoParam.isEmpty() || Integer
+                      .parseInt(dataShown[j].seqnoParam) &gt; Integer
+                      .parseInt(dataShown[j + 1].seqnoParam))) {
                 myError.setType("Error");
                 myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-                myError.setMessage(Utility.messageBD(this, "CannotReorderNotDevModules", vars.getLanguage()));
+                myError.setMessage(Utility.messageBD(this, "CannotReorderNotDevModules", vars
+                    .getLanguage()));
                 releaseRollbackConnection(conn);
                 error = true;
                 break;
               }
               dataShown[j].updateY(conn, this);
             }
-            
           }
           if (!error) {
             releaseCommitConnection(conn);
@@ -207,7 +284,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           try {
             releaseRollbackConnection(conn);
           } catch (Exception ignored) {}
-          throw new ServletException("@CODE=@" + exc.getMessage());
+          throw new ServletException("@CODE=@" + exc.getMessage(), exc);
         }
    }
 
@@ -290,7 +367,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setData("structure1", data2);
     xmlDocument.setData("structure2", data);
-    final String strMappingName = UtilityData.selectObjectMapping(this, tabId);
+    final String strMappingName = Utility.getTabURL(tabId, "E", false);
     xmlDocument.setParameter("mappingName", strMappingName);
     xmlDocument.setParameter("confirmOnChanges", Utility.getJSConfirmOnChanges(vars, windowId));
 <PARAMETER_TMP id="parent">    if (vars.getLanguage().equals("en_US")) xmlDocument.setParameter("parent", <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectParent(this<FIELD_TMP id="language">, vars.getLanguage()</FIELD_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>));
