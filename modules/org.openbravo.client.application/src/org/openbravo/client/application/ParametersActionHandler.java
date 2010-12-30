@@ -122,10 +122,10 @@ public class ParametersActionHandler extends BaseActionHandler {
           value = OBProvider.getInstance().get(ParameterValue.class);
           value.setParameter(param);
           value.set(dbFilterProperty, filterObject);
-          ParameterUtils.setParameterValue(param, value, p);
+          ParameterUtils.setParameterValue(value, p);
         } else {
           value = obq.list().get(0);
-          ParameterUtils.setParameterValue(param, value, p);
+          ParameterUtils.setParameterValue(value, p);
         }
         OBDal.getInstance().save(value);
       }

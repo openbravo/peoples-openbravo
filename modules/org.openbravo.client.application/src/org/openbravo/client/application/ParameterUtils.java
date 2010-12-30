@@ -48,8 +48,7 @@ import org.openbravo.dal.core.OBContext;
 public class ParameterUtils {
   private static Logger log = Logger.getLogger(ParameterUtils.class);
 
-  public static void setParameterValue(Parameter parameter, ParameterValue parameterValue,
-      JSONObject requestValue) {
+  public static void setParameterValue(ParameterValue parameterValue, JSONObject requestValue) {
     try {
       setValue(parameterValue, requestValue.getString("value"));
     } catch (Exception e) {
