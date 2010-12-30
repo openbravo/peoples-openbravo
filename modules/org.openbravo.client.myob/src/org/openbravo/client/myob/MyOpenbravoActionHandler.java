@@ -307,7 +307,7 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
       message.setType("Warning");
       message.setMessage("@OBKMO_NoWidgetsRemoved@");
     } else if (strEventType.equals(WIDGET_MOVED) && !hasModifiedInstances) {
-      message.setType("Warning");
+      message.setType("Info");
       message.setMessage("@OBKMO_NoWidgetsMoved@");
     }
   }
