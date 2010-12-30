@@ -61,6 +61,37 @@ where p.businessPartner.name like :businessPartnerName
 order by p.paymentDate]]></HQL>
 <!--E5A0DC8536134185AC8B1897F15DB816--></OBCQL_WIDGET_QUERY>
 
+<!--F5DEE669DD8047FB831A12064BB277BE--><OBCQL_WIDGET_QUERY>
+<!--F5DEE669DD8047FB831A12064BB277BE-->  <OBCQL_WIDGET_QUERY_ID><![CDATA[F5DEE669DD8047FB831A12064BB277BE]]></OBCQL_WIDGET_QUERY_ID>
+<!--F5DEE669DD8047FB831A12064BB277BE-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--F5DEE669DD8047FB831A12064BB277BE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--F5DEE669DD8047FB831A12064BB277BE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--F5DEE669DD8047FB831A12064BB277BE-->  <OBKMO_WIDGET_CLASS_ID><![CDATA[8267FB3F59D7401980DDDEFF51FE55C3]]></OBKMO_WIDGET_CLASS_ID>
+<!--F5DEE669DD8047FB831A12064BB277BE-->  <HQL><![CDATA[select ol.salesOrder.id as orderId, ol.salesOrder.orderDate as dateordered,  ol.salesOrder.scheduledDeliveryDate as plannedDeliveryDate,
+ol.salesOrder.documentNo as salesorder, ol.salesOrder.businessPartner.name as bpartner,
+ol.product.name as productname, ol.attributeSetValue.description as attribute, ol.uOM.name as uom,
+ol.orderedQuantity as totalqty, 
+   (select coalesce(sum(po.quantity),0) 
+    from ProcurementPOInvoiceMatch po
+    where po.goodsShipmentLine is not null
+    and po.salesOrderLine = ol) as qtyReceived, 
+   (select ol.orderedQuantity-coalesce(sum(po2.quantity),0) from ProcurementPOInvoiceMatch po2
+    where po2.goodsShipmentLine is not null
+    and po2.salesOrderLine = ol) as qtyPending
+from OrderLine as ol left join ol.attributeSetValue
+where ol.client.id =:client
+and ol.salesOrder.documentStatus='CO'
+and ol.orderedQuantity <> (select coalesce(sum(po3.quantity),0) 
+                            from ProcurementPOInvoiceMatch po3
+                            where po3.goodsShipmentLine is not null
+                            and po3.salesOrderLine = ol)
+and ol.salesOrder.scheduledDeliveryDate<=now()
+and ol.product.name like :productname
+and ol.salesOrder.businessPartner.name like :suppliername
+and ol.salesOrder.documentNo like :documentno
+order by ol.salesOrder.scheduledDeliveryDate, ol.salesOrder.documentNo]]></HQL>
+<!--F5DEE669DD8047FB831A12064BB277BE--></OBCQL_WIDGET_QUERY>
+
 <!--F94AEB4680AD4AD48255071903000A43--><OBCQL_WIDGET_QUERY>
 <!--F94AEB4680AD4AD48255071903000A43-->  <OBCQL_WIDGET_QUERY_ID><![CDATA[F94AEB4680AD4AD48255071903000A43]]></OBCQL_WIDGET_QUERY_ID>
 <!--F94AEB4680AD4AD48255071903000A43-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
