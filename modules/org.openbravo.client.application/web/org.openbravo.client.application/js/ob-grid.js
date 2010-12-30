@@ -34,6 +34,7 @@ isc.OBGrid.addProperties({
     if (field.isLink && record[field.name]) {
       var linkButton = isc.OBGridLinkButton.create({
         grid: this,
+        align: this.getCellAlign(record, rowNum, colNum),
         title: this.formatLinkValue(record, field, colNum, rowNum, record[field.name]),
         record: record,
         rowNum: rowNum,
@@ -51,6 +52,7 @@ isc.OBGrid.addProperties({
       component.record = record;
       component.rowNum = rowNum;
       component.colNum = colNum;
+      component.align = this.getCellAlign(record, rowNum, colNum);
       return component;
     }
     return null;
