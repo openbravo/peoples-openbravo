@@ -129,7 +129,7 @@ isc.OBQueryListGrid.addProperties({
   canReorderFields: false,
   canFreezeFields: false,
   canGroupBy: false,
-  autoFetchData: true,
+  autoFetchData: false,
   canAutoFitFields: false,
   showGridSummary: true,
   
