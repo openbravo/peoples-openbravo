@@ -127,6 +127,7 @@ isc.OBGridLinkButton.addProperties({
   showFocused: true,
   showFocusedAsOver: true,
   showRollOver: true,
-  width: '100%',
-  height: '100%'
+  autoFit: true,
+  height: 1,
+  overflow: 'visible'
 });

@@ -32,7 +32,7 @@ isc.OBGrid.addProperties({
   createRecordComponent: function(record, colNum){
     var field = this.getField(colNum), rowNum = this.getRecordIndex(record);
     if (field.isLink && record[field.name]) {
-      var linkButton = isc.OBGridLinkButton.create({
+      var linkButton = isc.OBGridLinkLayout.create({
         grid: this,
         align: this.getCellAlign(record, rowNum, colNum),
         title: this.formatLinkValue(record, field, colNum, rowNum, record[field.name]),
@@ -91,6 +91,34 @@ isc.OBGrid.addProperties({
     return this.Super('initWidget', arguments);
   },
   
+  showSummaryRow: function(){
+    var i, fld, fldsLength, newFields = [];
+    var ret = this.Super("showSummaryRow", arguments);
+    if (this.summaryRow && !this.summaryRowFieldRepaired) {
+      // the summaryrow shares the same field instances as the 
+      // original grid, this must be repaired as the grid and
+      // and the summary row need different behavior.
+      // copy the fields and repair specific parts
+      // don't support links in the summaryrow
+      fldsLength = this.summaryRow.fields.length;
+      for (i = 0; i < fldsLength; i++) {
+        fld = isc.addProperties({}, this.summaryRow.fields[i]);
+        newFields[i] = fld;
+        fld.isLink = false;
+        if (fld.originalFormatCellValue) {
+          fld.formatCellValue = fld.originalFormatCellValue;
+          fld.originalFormatCellValue = null;
+        } else {
+          fld.formatCellValue = null;
+        }
+      }
+      this.summaryRow.isSummaryRow = true;
+      this.summaryRowFieldRepaired = true;
+      this.summaryRow.setFields(newFields);
+    }
+    return ret;
+  },
+  
   // = exportData =
   // The exportData function exports the data of the grid to a file. The user will 
   // be presented with a save-as dialog.
@@ -130,11 +158,39 @@ isc.OBGridSummary.addProperties({
 
 isc.ClassFactory.defineClass('OBGridHeaderImgButton', isc.ImgButton);
 
-isc.ClassFactory.defineClass('OBGridLinkButton', isc.Button);
-isc.OBGridLinkButton.addProperties({
-  action: function(){
-    if (this.grid && this.grid.cellClick) {
+isc.ClassFactory.defineClass('OBGridLinkLayout', isc.HLayout);
+isc.OBGridLinkLayout.addProperties({
+  overflow: 'clip-h',
+  btn: null,
+  height: 1,
+  width: '100%',
+  
+  initWidget: function() {
+    this.btn = isc.OBGridLinkButton.create({});
+    this.btn.setTitle(this.title);
+    this.btn.owner = this;
+    this.addMember(this.btn);
+    return this.Super("initWidget", arguments);
+  },
+  
+  setTitle: function(title) {
+    this.btn.setTitle(title);
+  },
+  
+  doAction: function(){
+    if (this.grid && this.grid.doCellClick) {
+      this.grid.doCellClick(this.record, this.rowNum, this.colNum);
+    } else if (this.grid && this.grid.cellClick) {
       this.grid.cellClick(this.record, this.rowNum, this.colNum);
     }
+  }
+
+});
+
+isc.ClassFactory.defineClass('OBGridLinkButton', isc.Button);
+
+isc.OBGridLinkButton.addProperties({
+  action: function(){
+    this.owner.doAction();
   }
 });
