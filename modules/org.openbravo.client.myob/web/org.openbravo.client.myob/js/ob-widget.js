@@ -228,6 +228,11 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     this.src = null;
     this.items = [this.windowContents, this.editFormLayout];
     this.Super('initWidget', arguments);
+    
+    // refresh if the dbInstanceId is set
+    if (this.dbInstanceId) {
+      this.refresh();
+    }
   },
 
   confirmedClosePortlet: function(ok){
@@ -414,7 +419,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // Returns true if the object passed as parameter is the same instance.
   // 
   // Parameters:
-  // {{widget}} an object to which you want to compare
+  // {{widget}} an object to which you want to campare
   // {{isNew}} If this flag is true, the comparison is based on the ID of the
   // client side object, otherwise the dbInstanceId is used
   isSameWidget: function(widget, isNew){
@@ -431,6 +436,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
 
   setDbInstanceId: function(instanceId) {
     this.dbInstanceId = instanceId;
+    this.refresh();
   },
 
   saveParameters: function(){
