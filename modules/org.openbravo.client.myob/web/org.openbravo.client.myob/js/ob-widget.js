@@ -126,6 +126,9 @@ isc.defineClass('OBWidgetMenuItem', IMenuButton).addProperties({
         }, {
           title: OB.I18N.getLabel('OBKMO_WMO_DeleteThisWidget'),
           widget: this.widget,
+          enableIf: function (target, menu, item){
+            return this.widget.canDelete;
+          },
           click: function (target, item, menu){
             this.widget.closeClick();
           }
@@ -168,6 +171,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   showCloseButton: false,
   closeConfirmationMessage: OB.I18N.getLabel('OBKMO_DeleteThisWidgetConfirmation'),
   
+  canDelete: true,
   dbInstanceId: '',
   
   // Parameters handling
