@@ -52,7 +52,13 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
                   (this.grid.cellHeight * (this.parameters.RowsNumber ? this.parameters.RowsNumber : 10)) +
                   this.grid.summaryRowHeight + 2;
 
-    this.setHeight(headerHeight + newGridHeight + 13);
+    var newHeight = headerHeight + newGridHeight + 13;
+    this.setHeight(newHeight);
+    if (this.parentElement) {
+      var heightDiff = newHeight - currentHeight,
+          parentHeight = this.parentElement.getHeight();
+      this.parentElement.setHeight(parentHeight + heightDiff);
+    }
   },
 
   createWindowContents: function(){
