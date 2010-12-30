@@ -26,6 +26,7 @@ isc.OBQueryListView.addProperties({
   widgetInstanceId: null,
   fields: null,
   gridDataSource: null,
+  widgetId: null,
 
   //Set PortalLayout common parameters
   numColumns: 1,
@@ -38,14 +39,20 @@ isc.OBQueryListView.addProperties({
     this.widgetInstanceId = args.widgetInstanceId;
     this.fields = args.fields;
     this.gridDataSource = args.gridDataSource;
+    this.widgetId = args.widgetId;
 
-    var widgetInstance = isc.OBQueryListWidget.create(isc.addProperties({
+    var widgetInstance = isc['_'+this.widgetId].create(isc.addProperties({
         viewMode: 'maximized',
         fields: this.fields,
         widgetInstanceId: this.widgetInstanceId,
+        widgetId: this.widgetId,
         dbInstanceId: this.widgetInstanceId,
         gridDataSource: this.gridDataSource,
-        title: args.tabTitle
+        title: args.tabTitle,
+        menuItems: args.menuItems,
+        parameters: args.parameters,
+        fieldDefinitions: args.fieldDefinitions,
+        canDelete: false
       }));
     this.addPortlet(widgetInstance);
   },

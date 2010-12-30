@@ -86,7 +86,9 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
   
   refresh: function(){
-    this.setWidgetHeight();
+    if (this.viewMode === 'widget') {
+      this.setWidgetHeight();
+    }
     this.grid.invalidateCache();
     this.grid.filterData();
   },
@@ -112,8 +114,12 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     OB.Layout.ViewManager.openView('OBQueryListView',  {
       tabTitle: this.title,
       widgetInstanceId: this.dbInstanceId,
+      widgetId: this.widgetId,
       fields: this.maximizedFields,
-      gridDataSource: this.gridDataSource
+      gridDataSource: this.gridDataSource,
+      parameters: this.parameters,
+      menuItems: this.menuItems,
+      fieldDefinitions: this.fieldDefinitions
     });
   }
   
