@@ -24,6 +24,7 @@ var isomorphicDir='../org.openbravo.userinterface.smartclient/isomorphic/';
 // starts the application is called as the last statement in the StaticResources part
 function OBStartApplication() {
   OB.Layout.draw();
+  $LAB.script(document.location.protocol + OB.Application.butlerUtilsUrl).wait();
   OB.Layout.ViewManager.createAddStartTab();
   isc.clearPrompt();
   OB.GlobalHiddenForm = document.forms.OBGlobalHiddenForm;
