@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -119,7 +120,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
 
       final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
       for (Object objResult : widgetQuery.list()) {
-        final Map<String, Object> data = new HashMap<String, Object>();
+        final Map<String, Object> data = new LinkedHashMap<String, Object>();
 
         Object[] resultList = new Object[1];
         if (objResult instanceof Object[])
