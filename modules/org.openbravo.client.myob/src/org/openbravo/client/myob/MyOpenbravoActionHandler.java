@@ -265,7 +265,7 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
         hasAddedInstances = true;
 
         // Process parameter values
-        processParameters(widget, newWidgetInstance);
+        processParameters(newWidgetInstance);
       }
       if (isOpenbravoTypeInstance && maxOpenbravoTypeInstanceRow[newColNum.intValue()] < newRowNum) {
         maxOpenbravoTypeInstanceRow[newColNum.intValue()] = newRowNum;
@@ -312,8 +312,7 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
     }
   }
 
-  private void processParameters(JSONObject widget, WidgetInstance widgetInstance)
-      throws JSONException {
+  private void processParameters(WidgetInstance widgetInstance) throws JSONException {
     for (Parameter p : widgetInstance.getWidgetClass()
         .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
 
