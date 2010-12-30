@@ -761,6 +761,9 @@ OB.Utilities.Number.OBMaskedToJS = function(number, decSeparator, groupSeparator
 // Return:
 // * The OB formatted number.
 OB.Utilities.Number.JSToOBMasked = function(number, maskNumeric, decSeparator, groupSeparator, groupInterval){
+  if (!number) {
+    return '';
+  }
   var formattedNumber = number;
   formattedNumber = formattedNumber.toString();
   formattedNumber = formattedNumber.replace('.', decSeparator);
