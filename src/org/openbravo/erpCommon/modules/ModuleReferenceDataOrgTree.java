@@ -28,20 +28,15 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.ADOrgModule;
-import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.DataSet;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -167,16 +162,18 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
       if (checksum.equals("")) {
         continue;
       }
-      OBCriteria<ADOrgModule> adOrgModCriteria = OBDal.getInstance().createCriteria(
-          ADOrgModule.class);
-      adOrgModCriteria.add(Expression.eq(ADOrgModule.PROPERTY_MODULE, OBDal.getInstance().get(
-          Module.class, moduleId)));
-      adOrgModCriteria.add(Expression.eq(ADOrgModule.PROPERTY_CLIENT, OBDal.getInstance().get(
-          Client.class, strClient)));
-      adOrgModCriteria.add(Expression.eq(ADOrgModule.PROPERTY_ORGANIZATION, OBDal.getInstance()
-          .get(Organization.class, strOrg)));
-      adOrgModCriteria.add(Expression.eq(ADOrgModule.PROPERTY_CHECKSUM, checksum));
-      if (adOrgModCriteria.list().size() > 0) {
+
+      // OBCriteria cannot be used here because it is not able to filer CLOB in Oracle: using
+      // OBQuery instead. See issue #15556
+      String whereClause = "as m where m.module.id = :module and m.client.id=:client and m.organization.id=:org and to_char(m.checksum)=:checksum";
+      OBQuery<ADOrgModule> cOrgModule = OBDal.getInstance().createQuery(ADOrgModule.class,
+          whereClause);
+      cOrgModule.setNamedParameter("module", moduleId);
+      cOrgModule.setNamedParameter("client", strClient);
+      cOrgModule.setNamedParameter("org", strOrg);
+      cOrgModule.setNamedParameter("checksum", checksum);
+
+      if (cOrgModule.count() > 0) {
         dataList.remove(data[i]);
         log4j
             .debug("Module removed because datasets didn't change: " + data[i].getField("node_id"));
