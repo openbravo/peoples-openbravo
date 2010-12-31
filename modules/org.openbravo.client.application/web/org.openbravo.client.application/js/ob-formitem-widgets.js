@@ -38,13 +38,137 @@ isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
 // Item used for Openbravo search fields.
 isc.ClassFactory.defineClass('OBSearchItem', StaticTextItem);
 
+function closeSearch(action, value, display, parameters, wait){
+  var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem;
+  if (action === 'SAVE') {
+    targetFld.setValue(value);
+    targetFld.form.setValue(targetFld.displayField, display);
+ 
+    if (parameters && parameters.length > 0) {
+      length = parameters.length;
+      for (i = 0; i < length; i++) {
+        hiddenInputName = ((parameters[i].esRef) ? targetFld.inpColumnName : "") + parameters[i].campo;
+        targetFld.form.hiddenInputs[hiddenInputName] = parameters[i].valor;
+      }
+    }
+    targetFld._doFICCall = true;
+    targetFld.form.handleItemChange(targetFld);
+  }
+  isc.OBSearchItem.openedWindow.close();
+  isc.OBSearchItem.openSearchItem = null;
+}
+
 isc.OBSearchItem.addProperties({
   showPickerIcon: true,
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
-  showPicker: function() {
-     this.openWindow();    
+      
+  changed: function(){
+    var ret = this.Super("changed", arguments);
+    if (this.form && this.form.handleItemChange) {
+      this.form.handleItemChange(this);
+    }
+    return ret;
+  },
+  
+  showPicker: function(){
+    var parameters = [], index = 0, i = 0, length, fld, inpName;
+    parameters[index++] = 'inpIDValue';
+    if (this.getValue()) {
+      parameters[index++] = this.getValue();
+    } else {
+      parameters[index++] = '';
+    }
+    parameters[index++] = 'WindowID';
+    parameters[index++] = this.form.view.standardWindow.windowId;
+    length = this.inFields.length;
+    for (i = 0; i < length; i++) {
+      inpName = this.inFields[i];
+      fld = this.form.getFieldFromInpColumnName(inpName);
+      if (fld && fld.getValue()) {
+        parameters[index++] = inpName;
+        parameters[index++] = fld.getValue();
+      }
+    }
+    this.openSearchWindow(this.searchUrl, parameters, this.getValue());
+  },
+  
+  openSearchWindow: function(url, parameters, strValueID){
+    var height, width, top, left;
+    var complementsNS4 = "";
+    var auxField = "";
+    var hidden;
+    
+    if (url.indexOf("Location") != -1) {
+      height = 300;
+      width = 600;
+    } else {
+      height = (screen.height - 100);
+      width = 900;
+    }
+    top = parseInt((screen.height - height) / 2, 10);
+    left = parseInt((screen.width - width) / 2, 10);
+    
+    if (isc.OBSearchItem.openedWindow) {
+      isc.OBSearchItem.openedWindow.close();
+      this.clearUnloadEventHandling();
+    }
+    isc.OBSearchItem.openedWindow = null;
+    
+    if (strValueID) {
+      auxField = "inpNameValue=" + encodeURIComponent(this.form.getValue(this.displayField));
+    }
+    if (parameters) {
+      var total = parameters.length;
+      for (var i = 0; i < total; i++) {
+        if (auxField !== "") {
+          auxField += "&";
+        }
+        // TODO: check this
+        //        if (parameters[i] === "isMultiLine" && parameters[i + 1] == "Y") {
+        //          gIsMultiLineSearch = true;
+        //        }
+        auxField += parameters[i] + "=" + ((parameters[i + 1] !== null) ? encodeURIComponent(parameters[i + 1]) : "");
+        if (parameters[i] === "Command") {
+          hidden = true;
+        }
+        i++;
+      }
+    }
+    
+    if (navigator.appName.indexOf("Netscape")) {
+      complementsNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
+    }
+    var complements = complementsNS4 + "height=" + height + ", width=" + width + ", left=" + left + ", top=" + top + ", screenX=" + left + ", screenY=" + top + ", location=0, resizable=1, scrollbars=1, status=0, toolbar=0, titlebar=0, modal='yes'";
+    isc.OBSearchItem.openedWindow = window.open(OB.Application.contextUrl + url + ((auxField === "") ? "" : "?" + auxField), 'SELECTOR', complements);
+    if (isc.OBSearchItem.openedWindow) {
+      isc.OBSearchItem.openedWindow.focus();
+      this.setUnloadEventHandling();
+    }
+    isc.OBSearchItem.openSearchItem = this;
+  },
+  
+  setUnloadEventHandling: function(){
+    var me = this;
+    if (document.layers) {
+      document.captureEvents(Event.UNLOAD);
+    }
+    window.onunload = function(){
+      if (isc.OBSearchItem.openedWindow) {
+        isc.OBSearchItem.openedWindow.close();
+      }
+      isc.OBSearchItem.openedWindow = null;
+      me.clearUnloadEventHandling();
+    };
+  },
+  
+  clearUnloadEventHandling: function(){
+    if (document.layers) {
+      window.releaseEvents(Event.UNLOAD);
+    }
+    window.onunload = function(){
+    };
   }
 });
 
@@ -53,8 +177,7 @@ isc.OBSearchItem.addProperties({
 isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
 
 // add specific properties here
-isc.OBEncryptedItem.addProperties({
-});
+isc.OBEncryptedItem.addProperties({});
 
 // == OBFormButton ==
 // The default form button.
@@ -84,14 +207,14 @@ isc.OBListItem.addProperties({
 
   itemData: null,
   
-  changed: function() {
+  changed: function(){
     var ret = this.Super("changed", arguments);
     if (this.form && this.form.handleItemChange) {
       this.form.handleItemChange(this);
     }
     return ret;
   },
-
+  
   getValueMap: function(){
     if (this.itemData) {
       return this.itemData;
@@ -119,15 +242,15 @@ isc.OBFKItem.addProperties({
   getDataSource: function(){
     return this.getOptionDataSource();
   },
-     
-  changed: function() {
+  
+  changed: function(){
     var ret = this.Super("changed", arguments);
     if (this.form && this.form.handleItemChange) {
       this.form.handleItemChange(this);
     }
     return ret;
   },
-
+  
   getOptionDataSource: function(){
     if (this.optionDataSource) {
       return this.optionDataSource;
@@ -867,17 +990,17 @@ isc.FormItem.addProperties({
   titleClick: function(form, item){
     item.focusInItem();
   },
-      
-  changed: function() {
+  
+  changed: function(){
     var ret = this.Super("changed", arguments);
     this._doFICCall = true;
     return ret;
   },
-
-  blur : function (form, item) {
+  
+  blur: function(form, item){
     if (form && form.handleItemChange) {
       form.handleItemChange(this);
     }
     this._hasChanged = false;
-  }  
+  }
 });

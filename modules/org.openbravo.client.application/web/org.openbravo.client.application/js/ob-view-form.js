@@ -30,6 +30,7 @@ isc.OBViewForm.addProperties({
   // and the grid and other related components.
   view: null,
   auxInputs: {},
+  hiddenInputs: {},
   dynamicCols: [],
 
   // ** {{ Layout Settings }} **
@@ -116,10 +117,9 @@ isc.OBViewForm.addProperties({
         }
       }
     }
-    if (calloutMessages) {
-      // show messages...
-      // code added to prevent jslint error
-      var __dummy = 0;  
+    if (calloutMessages && calloutMessages.length > 0) {
+      // TODO: handle multiple messages
+      this.view.standardWindow.messageBar.setMessage(calloutMessages[0]);
     }
     if (auxInputs) {
       this.auxInputs = {};
@@ -142,7 +142,7 @@ isc.OBViewForm.addProperties({
       //isc.warn('No field found using column name: ' + columnName + ' for tab ' + this.view.tabId);
       return;
     }
-    if (entries && entries.length > 0) {
+    if (entries) {
       if (field.getDataSource()) {
         field.getDataSource().setCacheData(entries, true);
       } else {

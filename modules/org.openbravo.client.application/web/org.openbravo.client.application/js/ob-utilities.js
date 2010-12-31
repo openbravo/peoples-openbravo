@@ -823,7 +823,7 @@ OB.Utilities.openActionButton = function(button, o){
   });
   
   
-  //  OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+  //	OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
   //OB.Layout.ViewManager.openView("OBClassicPopup", o);
 
 

@@ -16,13 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 isc.ClassFactory.defineClass('OBStandardWindow', isc.VLayout);
 
 // The OBStandardWindow contains the toolbar and the root view.
 isc.OBStandardWindow.addProperties({
   toolBar: null,
   view: null,
+  messageBar: null,
   
   viewProperties: null,
   
@@ -62,6 +62,9 @@ isc.OBStandardWindow.addProperties({
       title: 'Button B'
     })]);
     
+    this.messageBar = isc.OBMessagebar.create({});
+    
+    this.addMember(this.messageBar);
     this.addMember(this.toolBar);
     
     this.viewProperties.standardWindow = this;
@@ -290,12 +293,12 @@ isc.OBStandardView.addProperties({
   },
   
   setDataSource: function(ds){
-  //Wrap DataSource with OBDataSource which overrides methods to set tab info7
-    var obDsClassname = 'OBDataSource'+this.tabId;
+    //Wrap DataSource with OBDataSource which overrides methods to set tab info7
+    var obDsClassname = 'OBDataSource' + this.tabId;
     isc.defineClass(obDsClassname, ds.getClass());
     
-    var modifiedDs = isc.addProperties({},ds,{
-        updateData: function(updatedRecord, callback, requestProperties){
+    var modifiedDs = isc.addProperties({}, ds, {
+      updateData: function(updatedRecord, callback, requestProperties){
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -305,7 +308,7 @@ isc.OBStandardView.addProperties({
         this.Super('updateData', [updatedRecord, callback, newRequestProperties]);
       },
       
-      addData : function(updatedRecord, callback, requestProperties){
+      addData: function(updatedRecord, callback, requestProperties){
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -324,29 +327,28 @@ isc.OBStandardView.addProperties({
         isc.addProperties(requestProperties.params, additionalPara);
         this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
       },
-
-      transformResponse: function (dsResponse, dsRequest, jsonData) {
-        if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0){ //0 is success
+      
+      transformResponse: function(dsResponse, dsRequest, jsonData){
+        if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0) { //0 is success
           if (jsonData.response && jsonData.response.error) {
             var error = jsonData.response.error;
             if (error.type && error.type === 'user') {
               OB.KernelUtilities.handleUserException(error.message, error.params);
-            }
-            else {
+            } else {
               OB.KernelUtilities.handleSystemException(error.message);
             }
           } else {
             OB.KernelUtilities.handleSystemException('Error occured');
           }
         }
-        return this.Super('transformResponse', arguments);  
+        return this.Super('transformResponse', arguments);
       },
       
       view: this
     });
     
     var myDs = isc[obDsClassname].create(modifiedDs);
-  
+    
     this.dataSource = myDs;
     
     if (this.viewGrid) {
@@ -390,7 +392,7 @@ isc.OBStandardView.addProperties({
         overflow: 'auto',
         view: this,
         focusChanged: function(hasFocus){
-//          console.log("Tab " + this.view.tabTitle + ' --> ' + hasFocus + ' ' + this.view.containsFocus());
+          //          console.log("Tab " + this.view.tabTitle + ' --> ' + hasFocus + ' ' + this.view.containsFocus());
         }
       });
       
@@ -939,12 +941,12 @@ isc.OBStandardView.addProperties({
     if (this.viewGrid.isVisible()) {
       record = this.viewGrid.getSelectedRecord();
     } else {
-      record = this.viewForm.getValues();   
+      record = this.viewForm.getValues();
     }
     
     var properties = this.propertyToColumns;
-
-    for (var i=0; i<properties.length; i++){
+    
+    for (var i = 0; i < properties.length; i++) {
       var value = record[properties[i].property];
       if (typeof value !== 'undefined') {
         allProperties[properties[i].column] = value;
@@ -956,26 +958,27 @@ isc.OBStandardView.addProperties({
     
     if (this.viewForm.isVisible()) {
       isc.addProperties(allProperties, this.viewForm.auxInputs);
+      isc.addProperties(allProperties, this.viewForm.hiddenInputs);
       isc.addProperties(sessionProperties, this.viewForm.auxInputs);
+      isc.addProperties(sessionProperties, this.viewForm.hiddenInputs);
     }
     
     if (this.parentView) {
       this.parentView.getContextInfo(allProperties, sessionProperties);
     }
   },
-
-  setContextInfo: function (sessionProperties, callbackFunction) {
+  
+  setContextInfo: function(sessionProperties, callbackFunction){
     var allProperties = {};
     if (!sessionProperties) {
       sessionProperties = {};
       this.getContextInfo(allProperties, sessionProperties);
     }
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', 
-    sessionProperties, {
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',
       TAB_ID: this.view.tabId
     }, callbackFunction);
-  }  
+  }
 });
 
 // = OBStandardViewTabSet =
@@ -1224,6 +1227,48 @@ isc.OBStandardViewTabSet.addProperties({
   initWidget: function(){
     this.tabBarProperties.tabSet = this;
     this.Super('initWidget', arguments);
+  }
+});
+
+isc.ClassFactory.defineClass('OBMessagebar', isc.HLayout);
+
+// = OBMessagebar =
+//
+// The OBMessagebar is the bar which shows messages, it is located above the toolbar.
+//
+isc.OBMessagebar.addProperties({
+  visibility: 'hidden',
+  msgLabel: null,
+  closeButton: null,
+  overflow: 'visible',
+  height: 40,
+  
+  initWidget: function(){
+    this.closeButton = isc.ImgButton.create({
+      messageBar: this,
+      imageType: 'center',
+      showRollOver: false,
+      src: '[SKINIMG]../../org.openbravo.client.application/images/statusbar/ico-x.png',
+      action: function(){
+        this.messageBar.hide();
+      }
+    });
+    
+    this.msgLabel = isc.Label.create({
+      overflow: 'visible',
+      xwidth: '100%',
+      height: '100%'
+    });
+    
+    this.addMember(this.msgLabel);
+    this.addMember(this.closeButton);
+    
+    return this.Super('initWidget', arguments);
+  },
+  
+  setMessage: function(msg){
+    this.msgLabel.setTitle(msg);
+    this.show();
   }
 });
 
