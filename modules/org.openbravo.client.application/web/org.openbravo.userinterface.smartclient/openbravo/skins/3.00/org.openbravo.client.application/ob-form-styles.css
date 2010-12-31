@@ -248,3 +248,16 @@
   font-weight: normal;
   color: #777;
 }
+
+/*=======================================================================
+ * SectionItem Button Styles 
+=======================================================================*/
+
+.OBSectionItemButton_Title_opened,
+.OBSectionItemButton_Title_closed,
+.OBSectionItemButton_Title_Overopened,
+.OBSectionItemButton_Title_Overclosed {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
