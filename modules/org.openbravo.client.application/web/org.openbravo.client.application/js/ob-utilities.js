@@ -761,7 +761,7 @@ OB.Utilities.Number.OBMaskedToJS = function(number, decSeparator, groupSeparator
 // Return:
 // * The OB formatted number.
 OB.Utilities.Number.JSToOBMasked = function(number, maskNumeric, decSeparator, groupSeparator, groupInterval){
-  if (typeof number !== 'number') {
+  if (!isc.isA.Number(number)) {
     return '';
   }
   var formattedNumber = number;
