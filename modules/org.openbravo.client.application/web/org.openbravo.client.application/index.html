@@ -9,7 +9,7 @@
 
 <link rel="shortcut icon" href="../images/favicon.ico" />
 
-<link rel="stylesheet" type="text/css" href="../../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion=3.00"/>
+<link rel="stylesheet" type="text/css" href="../../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&&_skinVersion=3.00"/>
 
 <title>Openbravo</title>
 
@@ -24,6 +24,7 @@ var isomorphicDir='../org.openbravo.userinterface.smartclient/isomorphic/';
 // starts the application is called as the last statement in the StaticResources part
 function OBStartApplication() {
   OB.Layout.draw();
+  $LAB.script(document.location.protocol + OB.Application.butlerUtilsUrl).wait();
   OB.Layout.ViewManager.createAddStartTab();
   isc.clearPrompt();
   OB.GlobalHiddenForm = document.forms.OBGlobalHiddenForm;
@@ -44,7 +45,7 @@ isc.showPrompt("${loadingImage}", {showEdges:false, showModalMask: true, isModal
 
 <script type="text/javascript" src="../org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
 
-<script type="text/javascript" src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_skinVersion=3.00"></script>
+<script type="text/javascript" src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=3.00"></script>
 
 <form name="OBGlobalHiddenForm" method="post" action="blank.html"></form>
 

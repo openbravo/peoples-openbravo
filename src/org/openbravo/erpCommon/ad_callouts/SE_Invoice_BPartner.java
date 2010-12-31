@@ -27,12 +27,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -59,10 +67,15 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       String strProjectId = vars.getStringParameter("inpcProjectId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strTabId = vars.getStringParameter("inpTabId");
+      String strfinPaymentmethodId = vars.getStringParameter("inpfinPaymentmethodId");
 
       try {
-        printPage(response, vars, strBPartner, strDocType, strIsSOTrx, strWindowId, strLocation,
-            strContact, strProjectId, strTabId);
+        if ("inpfinPaymentmethodId".equals(strChanged)) { // Payment Method changed
+          printPagePaymentMethod(response, vars, strBPartner, strIsSOTrx, strfinPaymentmethodId);
+        } else {
+          printPage(response, vars, strBPartner, strDocType, strIsSOTrx, strWindowId, strLocation,
+              strContact, strProjectId, strTabId);
+        }
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -104,9 +117,7 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentRule + "\"),");
       String strFinPaymentMethodId = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
           : data[0].poPaymentmethodId);
-      if (!"".equals(strFinPaymentMethodId))
-        resultado
-            .append("new Array(\"inpfinPaymentmethodId\", \"" + strFinPaymentMethodId + "\"),");
+      resultado.append("new Array(\"inpfinPaymentmethodId\", \"" + strFinPaymentMethodId + "\"),");
       String PaymentTerm = (strIsSOTrx.equals("Y") ? data[0].cPaymenttermId
           : data[0].poPaymenttermId);
       resultado.append("new Array(\"inpcPaymenttermId\", \"" + PaymentTerm + "\"),");
@@ -227,9 +238,13 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
           && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
           && strIsSOTrx.equals("Y")) {
         String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
+        String automationPaymentMethod = isAutomaticCombination(vars, strBPartner, strIsSOTrx,
+            strFinPaymentMethodId);
         resultado.append(", new Array('MESSAGE', \""
             + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed
-            + "\")");
+            + "<br/>" + automationPaymentMethod + "\")");
+      } else if (strIsSOTrx.equals("Y")) {
+        resultado.append(", new Array('MESSAGE', \"\")");
       }
       resultado.append(");");
     }
@@ -240,4 +255,75 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
+
+  private void printPagePaymentMethod(HttpServletResponse response, VariablesSecureApp vars,
+      String strBPartnerId, String strIsSOTrx, String strfinPaymentmethodId) throws IOException,
+      ServletException {
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    StringBuilder result = new StringBuilder();
+
+    String message = isAutomaticCombination(vars, strBPartnerId, strIsSOTrx, strfinPaymentmethodId);
+
+    result.append("var calloutName='SE_Invoice_BPartner';\n\n");
+    result.append("var respuesta = new Array(new Array(\"MESSAGE\", ");
+    result.append("\"" + message + "\"));");
+
+    xmlDocument.setParameter("array", result.toString());
+    xmlDocument.setParameter("frameName", "appFrame");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  /**
+   * Verifies if the given payment method belongs to the default financial account of the given
+   * business partner.
+   * 
+   * @param vars
+   *          VariablesSecureApp.
+   * @param strBPartnerId
+   *          Business Partner id.
+   * @param strIsSOTrx
+   *          Sales ('Y') or purchase ('N') transaction.
+   * @param strfinPaymentmethodId
+   *          Payment Method id.
+   * @return Message to be displayed in the application warning the user that automatic actions
+   *         could not be performed because given payment method does not belong to the default
+   *         financial account of the given business partner.
+   */
+  private String isAutomaticCombination(VariablesSecureApp vars, String strBPartnerId,
+      String strIsSOTrx, String strfinPaymentmethodId) {
+    BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class, strBPartnerId);
+    FIN_PaymentMethod selectedPaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+        strfinPaymentmethodId);
+    OBContext.setAdminMode(true);
+    try {
+      boolean isSales = "Y".equals(strIsSOTrx);
+      FIN_FinancialAccount account = null;
+      String message = "";
+
+      if (bpartner != null && selectedPaymentMethod != null) {
+        account = (isSales) ? bpartner.getAccount() : bpartner.getPOFinancialAccount();
+        if (account != null) {
+          OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
+              FinAccPaymentMethod.class);
+          obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
+          obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, selectedPaymentMethod));
+          if (obc.list() == null || obc.list().size() == 0) {
+            message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount", vars
+                .getLanguage());
+          }
+        } else {
+          message = Utility
+              .messageBD(this, "PaymentmethodNotbelongsFinAccount", vars.getLanguage());
+        }
+      }
+      return message;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
 }

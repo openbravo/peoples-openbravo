@@ -237,9 +237,10 @@ public class KernelServlet extends BaseKernelServlet {
 
     if (!parameterMap.containsKey(KernelConstants.SKIN_VERSION_PARAMETER)) {
       if (OBContext.getOBContext().isNewUI()) { // FIXME: isNewUI true the first load?
-        parameterMap.put(KernelConstants.SKIN_VERSION_PARAMETER, "3.00");
+        parameterMap.put(KernelConstants.SKIN_VERSION_PARAMETER, KernelConstants.SKIN_VERSION_300);
       } else {
-        parameterMap.put(KernelConstants.SKIN_VERSION_PARAMETER, "2.50_emulation");
+        parameterMap.put(KernelConstants.SKIN_VERSION_PARAMETER,
+            KernelConstants.SKIN_VERSION_CLASSIC);
       }
     }
 

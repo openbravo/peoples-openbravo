@@ -265,7 +265,7 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
         hasAddedInstances = true;
 
         // Process parameter values
-        processParameters(widget, newWidgetInstance);
+        processParameters(newWidgetInstance);
       }
       if (isOpenbravoTypeInstance && maxOpenbravoTypeInstanceRow[newColNum.intValue()] < newRowNum) {
         maxOpenbravoTypeInstanceRow[newColNum.intValue()] = newRowNum;
@@ -307,13 +307,12 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
       message.setType("Warning");
       message.setMessage("@OBKMO_NoWidgetsRemoved@");
     } else if (strEventType.equals(WIDGET_MOVED) && !hasModifiedInstances) {
-      message.setType("Warning");
+      message.setType("Info");
       message.setMessage("@OBKMO_NoWidgetsMoved@");
     }
   }
 
-  private void processParameters(JSONObject widget, WidgetInstance widgetInstance)
-      throws JSONException {
+  private void processParameters(WidgetInstance widgetInstance) throws JSONException {
     for (Parameter p : widgetInstance.getWidgetClass()
         .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
 

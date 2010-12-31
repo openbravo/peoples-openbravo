@@ -126,6 +126,9 @@ isc.defineClass('OBWidgetMenuItem', IMenuButton).addProperties({
         }, {
           title: OB.I18N.getLabel('OBKMO_WMO_DeleteThisWidget'),
           widget: this.widget,
+          enableIf: function (target, menu, item){
+            return this.widget.canDelete;
+          },
           click: function (target, item, menu){
             this.widget.closeClick();
           }
@@ -168,6 +171,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   showCloseButton: false,
   closeConfirmationMessage: OB.I18N.getLabel('OBKMO_DeleteThisWidgetConfirmation'),
   
+  canDelete: true,
   dbInstanceId: '',
   
   // Parameters handling
@@ -228,6 +232,11 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     this.src = null;
     this.items = [this.windowContents, this.editFormLayout];
     this.Super('initWidget', arguments);
+    
+    // refresh if the dbInstanceId is set
+    if (this.dbInstanceId) {
+      this.refresh();
+    }
   },
 
   confirmedClosePortlet: function(ok){
@@ -414,7 +423,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   // Returns true if the object passed as parameter is the same instance.
   // 
   // Parameters:
-  // {{widget}} an object to which you want to campare
+  // {{widget}} an object to which you want to compare
   // {{isNew}} If this flag is true, the comparison is based on the ID of the
   // client side object, otherwise the dbInstanceId is used
   isSameWidget: function(widget, isNew){
@@ -431,6 +440,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
 
   setDbInstanceId: function(instanceId) {
     this.dbInstanceId = instanceId;
+    this.refresh();
   },
 
   saveParameters: function(){

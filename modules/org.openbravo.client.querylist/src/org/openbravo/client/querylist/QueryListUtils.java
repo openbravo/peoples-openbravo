@@ -95,6 +95,8 @@ class QueryListUtils {
           if (column.getSummarizeType() != null) {
             field.put("showGridSummary", true);
             field.put("summaryFunction", column.getSummarizeType());
+          } else {
+            field.put("showGridSummary", false);
           }
 
           field.put("canExport", true);

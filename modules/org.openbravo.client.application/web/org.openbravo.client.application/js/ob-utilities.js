@@ -38,7 +38,7 @@ OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, 
       windowId: data.windowId
     };
     OB.Layout.ViewManager.openView(openObject.viewId, openObject);
-  }
+  };
   
   var reqObj = {
     params: {
@@ -761,6 +761,9 @@ OB.Utilities.Number.OBMaskedToJS = function(number, decSeparator, groupSeparator
 // Return:
 // * The OB formatted number.
 OB.Utilities.Number.JSToOBMasked = function(number, maskNumeric, decSeparator, groupSeparator, groupInterval){
+  if (!isc.isA.Number(number)) {
+    return '';
+  }
   var formattedNumber = number;
   formattedNumber = formattedNumber.toString();
   formattedNumber = formattedNumber.replace('.', decSeparator);
@@ -777,8 +780,8 @@ OB.Utilities.Number.JSToOBMasked = function(number, maskNumeric, decSeparator, g
 // * {{{requestProperties}}}: original requestProperties.
 // Return:
 // * Original requestProperties including the new module and tab properties.
-OB.Utilities._getTabInfoRequestProperties = function (theView, requestProperties){
-  if (theView && theView.tabId){
+OB.Utilities._getTabInfoRequestProperties = function(theView, requestProperties){
+  if (theView && theView.tabId) {
     var tabParam = {
       params: {
         tabId: theView.tabId,
@@ -794,41 +797,40 @@ OB.Utilities._getTabInfoRequestProperties = function (theView, requestProperties
   return requestProperties;
 };
 
-OB.Utilities.openActionButton = function (button, o){
-	var theView = button.parentElement.parentElement.view;
-	var selectedRecord = theView.viewGrid.getSelectedRecord();
-	
-	if (!selectedRecord) {
-		isc.warn('No record selected');
-		return;
-	}
-	
-	
-	var allProperties = {}, sessionProperties={};
-	var theView = button.parentElement.parentElement.view;
-	
-	theView.getContextInfo(allProperties, sessionProperties);
-	
-	
-	for (param in allProperties){
-		if (allProperties.hasOwnProperty(param)){
-			o.command += '&'+param+'='+allProperties[param];
-		}
-	}
-	
-	theView.setContextInfo(sessionProperties, function(){
-		OB.Layout.ViewManager.openView("OBPopupClassicWindow", o)
-	});
-	
-	
-//	OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
-	//OB.Layout.ViewManager.openView("OBClassicPopup", o);
-	
-	
-	//button.parentElement.parentElement.view.getContextInfo()
+OB.Utilities.openActionButton = function(button, o){
+  var theView = button.parentElement.parentElement.view;
+  var selectedRecord = theView.viewGrid.getSelectedRecord();
+  
+  if (!selectedRecord) {
+    isc.warn('No record selected');
+    return;
+  }
+  
+  
+  var allProperties = {}, sessionProperties = {};
+  
+  theView.getContextInfo(allProperties, sessionProperties);
+  
+  
+  for (var param in allProperties) {
+    if (allProperties.hasOwnProperty(param)) {
+      o.command += '&' + param + '=' + allProperties[param];
+    }
+  }
+  
+  theView.setContextInfo(sessionProperties, function(){
+    OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+  });
+  
+  
+  //  OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+  //OB.Layout.ViewManager.openView("OBClassicPopup", o);
+
+
+  //button.parentElement.parentElement.view.getContextInfo()
 };
 
-OB.Utilities.openActionButtonCallback = function (button, o){
+OB.Utilities.openActionButtonCallback = function(button, o){
   var theView = button.parentElement.parentElement.view;
   var selectedRecord = theView.viewGrid.getSelectedRecord();
   
@@ -840,18 +842,13 @@ OB.Utilities.openActionButtonCallback = function (button, o){
   var allProperties = {}, sessionProperties = {};
   var params = theView.getContextInfo(allProperties, sessionProperties);
   
-  
-  for (param in params){
-    if (params.hasOwnProperty(param)){
-      o.command += '&'+param+'='+params[param];
+  for (var param in params) {
+    if (params.hasOwnProperty(param)) {
+      o.command += '&' + param + '=' + params[param];
     }
   }
   
   OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
-  //OB.Layout.ViewManager.openView("OBClassicPopup", o);
-  
-  
-  //button.parentElement.parentElement.view.getContextInfo()
 };
 
 
@@ -864,23 +861,24 @@ OB.Utilities.openActionButtonCallback = function (button, o){
 // * {{{url}}}: the url to post the request.
 // * {{{data}}}: the data to include in the request.
 
-OB.Utilities.postThroughHiddenForm = function(url, data) {
+OB.Utilities.postThroughHiddenForm = function(url, data){
   OB.GlobalHiddenForm.setAttribute('action', url);
   
-//  for (var child in OB.GlobalHiddenForm.children) {
-//    OB.GlobalHiddenForm.removeChild(child);
-//  }
+  // remove all children, needs to be done like this as the 
+  // children array is getting updated while removing a child  
+  while (OB.GlobalHiddenForm.children[0]) {
+    OB.GlobalHiddenForm.removeChild(OB.GlobalHiddenForm.children[0]);
+  }
   
   for (var key in data) {
-    var field = document.createElement('input');
-    field.setAttribute('type', 'hidden');
-    field.setAttribute('name', key);
-    field.setAttribute('value', data[key]);
-    
-    OB.GlobalHiddenForm.appendChild(field);
+    if (data.hasOwnProperty(key)) {
+      var field = document.createElement('input');
+      field.setAttribute('type', 'hidden');
+      field.setAttribute('name', key);
+      field.setAttribute('value', data[key]);
+      OB.GlobalHiddenForm.appendChild(field);
+    }
   }
   
   OB.GlobalHiddenForm.submit();
-}
-
-
+};

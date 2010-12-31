@@ -54,8 +54,12 @@ public class SelectorComponentProvider extends BaseComponentProvider {
    * @return an empty String (no global resources)
    * @see org.openbravo.client.kernel.ComponentProvider#getGlobalResources()
    */
-  public List<ComponentResource> getGlobalResources() {
-    ArrayList<ComponentResource> resources = new ArrayList<ComponentResource>();
+  public List<ComponentResource> getGlobalComponentResources() {
+    final ArrayList<ComponentResource> resources = new ArrayList<ComponentResource>();
+    resources.add(createStaticResource(
+        "web/org.openbravo.userinterface.selector/js/ob-selector-widget.js", true, false));
+    resources.add(createStaticResource(
+        "web/org.openbravo.userinterface.selector/js/ob-selector-link-widget.js", true, false));
     return resources;
   }
 

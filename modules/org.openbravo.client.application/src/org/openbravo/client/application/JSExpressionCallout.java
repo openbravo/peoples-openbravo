@@ -91,7 +91,7 @@ public abstract class JSExpressionCallout extends HttpSecureAppServlet {
     sb.append(CLEAR_MSG_CODE);
 
     try {
-      Object result = ApplicationUtils.getJSExpressionResult(getParameterMap(request),
+      Object result = ParameterUtils.getJSExpressionResult(getParameterMap(request),
           request.getSession(false), expression);
 
       sb.append(", ['INFO','"

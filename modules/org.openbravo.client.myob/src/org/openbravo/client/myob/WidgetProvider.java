@@ -40,6 +40,7 @@ import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterTrl;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
@@ -113,15 +114,15 @@ public abstract class WidgetProvider {
       for (Parameter parameter : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
         // fixed parameters are not part of the fielddefinitions
         if (parameter.isFixed()) {
-          defaultParameters.put(parameter.getName(), parameter.getFixedValue());
+          defaultParameters.put(parameter.getDBColumnName(), parameter.getFixedValue());
           continue;
         }
         if (parameter.getDefaultValue() != null) {
-          defaultParameters.put(parameter.getName(), parameter.getDefaultValue());
+          defaultParameters.put(parameter.getDBColumnName(), parameter.getDefaultValue());
         }
         final JSONObject fieldDefinition = new JSONObject();
         fieldDefinition.put(PARAMETERID, parameter.getId());
-        fieldDefinition.put(PARAMETERNAME, parameter.getName());
+        fieldDefinition.put(PARAMETERNAME, parameter.getDBColumnName());
         fieldDefinition.put(PARAMETERREQUIRED, parameter.isMandatory());
 
         final Reference reference;
@@ -179,16 +180,8 @@ public abstract class WidgetProvider {
     final JSONObject widgetParameters = new JSONObject();
     for (ParameterValue parameterValue : widgetInstance
         .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-      if (parameterValue.getValueDate() != null) {
-        widgetParameters
-            .put(parameterValue.getParameter().getName(), parameterValue.getValueDate());
-      } else if (parameterValue.getValueNumber() != null) {
-        widgetParameters.put(parameterValue.getParameter().getName(), parameterValue
-            .getValueNumber());
-      } else if (parameterValue.getValueString() != null) {
-        widgetParameters.put(parameterValue.getParameter().getName(), parameterValue
-            .getValueString());
-      }
+      widgetParameters.put(parameterValue.getParameter().getDBColumnName(), ParameterUtils
+          .getParameterValue(parameterValue));
     }
     jsonObject.put(PARAMETERS, widgetParameters);
   }

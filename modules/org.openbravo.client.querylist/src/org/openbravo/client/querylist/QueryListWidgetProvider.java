@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
@@ -47,9 +46,6 @@ public class QueryListWidgetProvider extends WidgetProvider {
 
   private static final String GRID_PROPERTIES_REFERENCE = "B36DF126DF5F4077A37F1E5B963AA636";
   private static final Logger log = Logger.getLogger(QueryListWidgetProvider.class);
-  private static final String HEIGHT = "height";
-  private static final Long ROW_HEIGHT = 23L;
-  private static final Long STATIC_HEIGHT = 80L;
 
   @Inject
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
@@ -84,7 +80,9 @@ public class QueryListWidgetProvider extends WidgetProvider {
         + ", fields:"
         + QueryListUtils
             .getWidgetClassFields(getWidgetClass(), QueryListUtils.IncludeIn.WidgetView)
-        + gridProperties + "});";
+        + ", maximizedFields:"
+        + QueryListUtils.getWidgetClassFields(getWidgetClass(),
+            QueryListUtils.IncludeIn.MaximizedView) + gridProperties + "});";
     return result;
   }
 
@@ -102,18 +100,7 @@ public class QueryListWidgetProvider extends WidgetProvider {
   public JSONObject getWidgetInstanceDefinition(WidgetInstance widgetInstance) {
     try {
       final JSONObject jsonObject = super.getWidgetInstanceDefinition(widgetInstance);
-
       jsonObject.put("widgetInstanceId", widgetInstance.getId());
-
-      Long rowsNumber = 10L;
-      for (ParameterValue value : widgetInstance
-          .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-        if ("RowsNumber".equals(value.getParameter().getDBColumnName())) {
-          rowsNumber = value.getValueNumber().longValue();
-        }
-      }
-      jsonObject.put("rowsNumber", rowsNumber);
-      jsonObject.put(HEIGHT, (rowsNumber * ROW_HEIGHT) + STATIC_HEIGHT);
 
       return jsonObject;
     } catch (Exception e) {

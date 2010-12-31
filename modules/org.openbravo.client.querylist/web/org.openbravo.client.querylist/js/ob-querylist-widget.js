@@ -24,29 +24,41 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
 
   widgetId: null,
   widgetInstanceId: null,
-  rowsNumber: null,
   fields: null,
+  maximizedFields: null,
+  gridDataSource: null,
   grid: null,
   gridProperties: {},
-  actionHandler: 'org.openbravo.client.querylist.QueryListActionHandler',
   viewMode: 'widget',
 
   initWidget: function(){
     this.Super('initWidget', arguments);
-    // Calculate height
-    var currentHeight = this.getHeight(), 
-        //currentBodyHeight = this.body.getHeight(),
-        headerHeight = this.headerDefaults.height,
-        newGridHeight = this.grid.headerHeight +
-                      (this.grid.cellHeight * (this.rowsNumber ? this.rowsNumber : 10)) +
-                      this.grid.summaryRowHeight + 2;
-
-    this.setHeight(headerHeight + newGridHeight + 13);
+    // Calculate height only on widget view mode
+    if (this.viewMode === 'widget') {
+      this.setWidgetHeight();
+    }
   },
 
   setDbInstanceId: function (instanceId) {
     this.Super('setDbInstanceId', instanceId);
     this.grid.fetchData();
+  },
+  
+  setWidgetHeight: function (){
+    var currentHeight = this.getHeight(), 
+    //currentBodyHeight = this.body.getHeight(),
+    headerHeight = this.headerDefaults.height,
+    newGridHeight = this.grid.headerHeight +
+                  (this.grid.cellHeight * (this.parameters.RowsNumber ? this.parameters.RowsNumber : 10)) +
+                  this.grid.summaryRowHeight + 2;
+
+    var newHeight = headerHeight + newGridHeight + 13;
+    this.setHeight(newHeight);
+    if (this.parentElement) {
+      var heightDiff = newHeight - currentHeight,
+          parentHeight = this.parentElement.getHeight();
+      this.parentElement.setHeight(parentHeight + heightDiff);
+    }
   },
 
   createWindowContents: function(){
@@ -55,6 +67,13 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       width: '100%',
       styleName: ''
     }), url, params = {};
+    
+// FIXME: not shown filters row until optional filter parameters are possible
+//    if (this.viewMode === 'maximized') {
+//      isc.addProperties(this.gridProperties, {
+//        showFilterEditor: true
+//      });
+//    }
     
     this.grid = isc.OBQueryListGrid.create(isc.addProperties({
       dataSource: this.gridDataSource,
@@ -67,6 +86,9 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
   
   refresh: function(){
+    if (this.viewMode === 'widget') {
+      this.setWidgetHeight();
+    }
     this.grid.invalidateCache();
     this.grid.filterData();
   },
@@ -86,6 +108,19 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
         };
 
     grid.exportData(requestProperties, additionalProperties);
+  },
+  
+  maximize: function() {
+    OB.Layout.ViewManager.openView('OBQueryListView',  {
+      tabTitle: this.title,
+      widgetInstanceId: this.dbInstanceId,
+      widgetId: this.widgetId,
+      fields: this.maximizedFields,
+      gridDataSource: this.gridDataSource,
+      parameters: this.parameters,
+      menuItems: this.menuItems,
+      fieldDefinitions: this.fieldDefinitions
+    });
   }
   
 });
@@ -106,7 +141,7 @@ isc.OBQueryListGrid.addProperties({
   canReorderFields: false,
   canFreezeFields: false,
   canGroupBy: false,
-  autoFetchData: true,
+  autoFetchData: false,
   canAutoFitFields: false,
   showGridSummary: true,
   
@@ -116,8 +151,9 @@ isc.OBQueryListGrid.addProperties({
 
     reqProperties.showPrompt = false;
     crit.widgetInstanceId = this.widget.dbInstanceId;
-    crit.rowsNumber = this.widget.rowsNumber;
+    crit.rowsNumber = this.widget.parameters.RowsNumber;
     crit.viewMode = this.widget.viewMode;
+    crit.showAll = this.widget.parameters.showAll;
     return this.Super('filterData', [crit, callback, reqProperties]);
   },
   
@@ -127,8 +163,9 @@ isc.OBQueryListGrid.addProperties({
 
     reqProperties.showPrompt = false;
     crit.widgetInstanceId = this.widget.dbInstanceId;
-    crit.rowsNumber = this.widget.rowsNumber;
+    crit.rowsNumber = this.widget.parameters.RowsNumber;
     crit.viewMode = this.widget.viewMode;
+    crit.showAll = this.widget.parameters.showAll;
     return this.Super('fetchData', [crit, callback, reqProperties]);
   },
 

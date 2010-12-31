@@ -41,24 +41,7 @@ public class WADSelector extends WADControl {
   }
 
   public void initialize() {
-
-    addCSSImport("Stylesheets", "../../../../../web/../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion=2.50_emulation&_mode=classic");
-
-    addImport("Default",
-        "../../../../../web/org.openbravo.userinterface.selector/js/ob-default-settings.js");
-
-    addImport("Isomorphic",
-        "../../../../../web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js");
-
-    addImport("StaticResources",
-        "../../../../../web/../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_skinVersion=2.50_emulation&_mode=classic");
-
-    addImport("Selector",
-        "../../../../../web/org.openbravo.userinterface.selector/js/ob-selector-widget.js");
-
-    addImport("SelectorAsLink",
-        "../../../../../web/org.openbravo.userinterface.selector/js/ob-selector-link-widget.js");
-    
+    addImport("StaticResources", "../../../../../web/../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources");    
     generateJSCode();
   }
 
