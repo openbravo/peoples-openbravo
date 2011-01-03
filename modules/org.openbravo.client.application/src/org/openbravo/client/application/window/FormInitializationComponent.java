@@ -612,8 +612,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // Normal data
                       Object el = element.get(1, null);
                       String value;
-                      if (el instanceof Double) {
-                        value = ((Double) el).toString();
+                      if (el instanceof Number) {
+                        value = ((Number) el).toString();
                       } else {
                         value = (String) el;
                       }
@@ -632,7 +632,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // We set the value as formatted in the JSONObject in the request, so that the
                       // request now is format safe and additional getFieldProperties calls do not
                       // fail
-                      rq.setRequestParameter(colId, jsonobj.getString("value"));
+                      if (jsonobj.has("value")) {
+                        rq.setRequestParameter(colId, jsonobj.getString("value"));
+                      }
                     }
                     if (changed && col.getCallout() != null) {
                       // We need to fire this callout, as the column value was changed
