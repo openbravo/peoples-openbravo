@@ -18,6 +18,13 @@
 */
 
 
+isc.OBViewForm.addProperties({
+  styleName: "OBViewForm",
+  //cellBorder: 1, // debug layout
+  cellPadding: 8
+});
+
+
 isc.OBSectionItem.addProperties({
   sectionHeaderClass: "OBSectionItemButton",
   height: 24

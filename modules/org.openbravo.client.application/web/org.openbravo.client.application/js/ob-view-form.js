@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,6 @@ isc.OBViewForm.addProperties({
   // ** {{ Layout Settings }} **
   numCols: 4,
   colWidths: ['24%', '24%', '24%', '24%'],
-  //cellBorder: 1, // debug layout
   
   fieldsByInpColumnName: null,
   fieldsByColumnName: null,
