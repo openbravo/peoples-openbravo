@@ -103,6 +103,26 @@ function closeSearch(action, value, display, parameters, wait){
 isc.OBSearchItem.addProperties({
   showPickerIcon: true,
 
+  setValue: function(value) {
+    var ret = this.Super('setValue', arguments);
+    // in this case the clearIcon needs to be shown or hidden
+    if (!this.disabled && !this.required) {
+      if (value) {
+        this.showIcon(this.instanceClearIcon);
+      } else {        
+        this.hideIcon(this.instanceClearIcon);
+      }
+    }
+    return ret;
+  },
+
+  init: function() {
+    this.instanceClearIcon = isc.shallowClone(this.clearIcon); 
+    this.icons = [this.instanceClearIcon];
+    this.icons[0].formItem = this;
+    return this.Super('init', arguments);
+  },
+
   getTitleHTML: function() {
     // calls the method from the OBLinkTitleItem interface
     return this.getLinkTitleHTML();

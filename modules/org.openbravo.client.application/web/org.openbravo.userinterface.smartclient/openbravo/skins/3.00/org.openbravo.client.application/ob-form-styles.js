@@ -15,9 +15,7 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
-
-
+ */
 isc.OBViewForm.addProperties({
   styleName: 'OBViewForm',
   //cellBorder: 1, // debug layout
@@ -48,6 +46,30 @@ isc.OBSearchItem.addProperties({
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
+  clearIcon: {
+    height: 15,
+    width: 15,
+    // note: TODO: show a helpfull text, need to be present in the messages table
+    //prompt: 'test',
+    showIf: function(form, item){
+      if (item.disabled) {
+        return false;
+      }
+      if (item.required) {
+        return false;
+      }
+      if (item.getValue()) {
+        return true;
+      }
+      return false;
+    },
+    
+    click: function() {
+      this.formItem.clearValue();
+    },
+    
+    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png'
+  },
   newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8
 });
