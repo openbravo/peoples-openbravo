@@ -371,7 +371,7 @@ public abstract class UIDefinition {
         comboEntries.add(entry);
       }
       JSONObject fieldProps = new JSONObject();
-      if (getValueFromSession) {
+      if (getValueFromSession && !comboreload) {
         fieldProps.put("value", columnValue);
       } else {
         if (possibleIds.contains(columnValue)) {
