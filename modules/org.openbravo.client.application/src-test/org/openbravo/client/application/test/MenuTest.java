@@ -53,7 +53,7 @@ public class MenuTest extends WeldBaseTest {
    */
   @Test
   public void testOpenbravoAdminMenu() throws Exception {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final MenuManager.MenuOption rootMenuOption = menuManager.getMenu();
     dumpMenuOption(rootMenuOption, 0);
     assertFalse(menuManager.getSelectableMenuOptions().isEmpty());

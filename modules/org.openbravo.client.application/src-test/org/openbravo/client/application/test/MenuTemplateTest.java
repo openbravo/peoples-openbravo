@@ -38,7 +38,7 @@ public class MenuTemplateTest extends WeldBaseTest {
 
   @Test
   public void testApplication() throws Exception {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final String javascript = appMenuComponent.generate();
     System.err.println(javascript);
 
