@@ -138,6 +138,9 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
       }
+      if (mode.equals("CHANGE")) {
+        RequestContext.get().setRequestParameter("comboreload", "true");
+      }
       HashMap<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
       HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
       ArrayList<String> allColumns = new ArrayList<String>();
