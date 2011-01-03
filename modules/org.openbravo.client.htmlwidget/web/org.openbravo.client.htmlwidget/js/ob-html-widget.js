@@ -47,7 +47,7 @@ isc.defineClass('OBHTMLWidget', isc.OBWidget).addProperties({
     if (this.parameters.widgetTitle) {
       this.setTitle(this.parameters.widgetTitle);
     }
-    if (!this.contentSource && this.parameters.htmlcode) {
+    if (this.parameters.htmlcode) {
       this.contentSource = this.evaluateContents(this.parameters.htmlcode);
     }
     this.windowContents.contents = this.contentSource;
