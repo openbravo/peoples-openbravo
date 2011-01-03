@@ -56,7 +56,7 @@ public class UniqueConstraintTest extends BaseTest {
    * Tests the {@link OBDal#findUniqueConstrainedObjects(BaseOBObject)} method.
    */
   public void testUniqueConstraintQuerying() {
-    setUserContext("1000001");
+    setUserContext(getRandomUser().getId());
     addReadWriteAccess(Country.class);
     final List<Country> countries = OBDal.getInstance().createCriteria(Country.class).list();
     assertTrue(countries.size() > 0);

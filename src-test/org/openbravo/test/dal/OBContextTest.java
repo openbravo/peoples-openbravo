@@ -34,15 +34,15 @@ public class OBContextTest extends BaseTest {
    * Tests if the warehouse is set correctly in the OBContext.
    */
   public void testWarehouseInContext() {
-    OBContext.setOBContext("100", "0", "1000000", "1000000", null, "1000001");
-    assertTrue(OBContext.getOBContext().getWarehouse().getId().equals("1000001"));
+    OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, null, TEST_WAREHOUSE_ID);
+    assertTrue(OBContext.getOBContext().getWarehouse().getId().equals(TEST_WAREHOUSE_ID));
   }
 
   /**
    * Tests if the language is set correctly in the OBContext.
    */
   public void testLanguageInContext() {
-    OBContext.setOBContext("100", "0", "1000000", "1000000", "en_US");
+    OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, "en_US");
     assertTrue(OBContext.getOBContext().getLanguage().getId().equals("192"));
   }
 
@@ -54,7 +54,7 @@ public class OBContextTest extends BaseTest {
    * See: https://issues.openbravo.com/view.php?id=8853
    */
   public void testMultiThreadedOBContext() throws Exception {
-    setBigBazaarUserContext();
+    setTestUserContext();
     Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
     final LocalThread t1 = new LocalThread();
     t1.setName("t1");

@@ -49,9 +49,9 @@ public class EntityXMLIssues extends XMLBaseTest {
    */
   public void testMantis6212() {
     cleanRefDataLoaded();
-    final Client c = OBDal.getInstance().get(Client.class, "1000000");
-    final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
-    setBigBazaarUserContext();
+    final Client c = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
+    final Organization o = OBDal.getInstance().get(Organization.class, TEST_ORG_ID);
+    setTestUserContext();
 
     addReadWriteAccess(Greeting.class);
 
@@ -87,9 +87,9 @@ public class EntityXMLIssues extends XMLBaseTest {
    */
   public void testMantis6213() {
     cleanRefDataLoaded();
-    final Client c = OBDal.getInstance().get(Client.class, "1000000");
-    final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
-    setBigBazaarUserContext();
+    final Client c = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
+    final Organization o = OBDal.getInstance().get(Organization.class, TEST_ORG_ID);
+    setTestUserContext();
     addReadWriteAccess(UOM.class);
 
     final List<UOM> uoms = getList(UOM.class);
@@ -141,7 +141,7 @@ public class EntityXMLIssues extends XMLBaseTest {
    * Test mantis issue 12633: XML Conversion from integer numbers should be more robust
    */
   public void testMantis12633() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     // read the column
     final Column column = OBDal.getInstance().get(Column.class, "102");
     String xml = getXML(Collections.singletonList(column));

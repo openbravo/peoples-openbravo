@@ -44,7 +44,7 @@ public class OneToManyTest extends BaseTest {
    * Tests if it is possible to iterate over {@link OrderLine} objects of an {@link Order}. Adds one
    */
   public void testAccessChildCollection() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
@@ -65,7 +65,7 @@ public class OneToManyTest extends BaseTest {
    */
   public void testAddOrderLine() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
@@ -97,7 +97,7 @@ public class OneToManyTest extends BaseTest {
    */
   public void testDeleteChild() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
@@ -127,7 +127,7 @@ public class OneToManyTest extends BaseTest {
    * This test checks if the order line has indeed been deleted.
    */
   public void testConfirmDeleted() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
@@ -141,7 +141,7 @@ public class OneToManyTest extends BaseTest {
 
   // test is already done above while preventing side effects.
   // public void testAddChild() throws Exception {
-  // setBigBazaarUserContext();
+  // setFBUserContext();
   // final OBCriteria<BusinessPartner> bpartners = OBDal.getInstance().createCriteria(
   // BusinessPartner.class);
   // bpartners.add(Expression.eq(BusinessPartner.PROPERTY_SEARCHKEY, "mafalda"));

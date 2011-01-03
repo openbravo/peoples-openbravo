@@ -42,7 +42,7 @@ public class FieldProviderTest extends BaseTest {
    * get the value.
    */
   public void testAll() {
-    super.setBigBazaarAdminContext();
+    super.setTestAdminContext();
     for (Entity e : ModelProvider.getInstance().getModel()) {
       final OBCriteria<BaseOBObject> criteria = OBDal.getInstance().createCriteria(e.getName());
       if (criteria.list().size() > 100) {

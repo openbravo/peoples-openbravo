@@ -43,7 +43,7 @@ public class AdminContextTest extends BaseTest {
    * Test a single call to the admin context setting.
    */
   public void testSingleAdminContextCall() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     assertFalse(OBContext.getOBContext().isInAdministratorMode());
     OBContext.setAdminMode();
     assertTrue(OBContext.getOBContext().isInAdministratorMode());
@@ -55,7 +55,7 @@ public class AdminContextTest extends BaseTest {
    * Test multiple nested calls to setting and reseting admin context.
    */
   public void testMultipleAdminContextCall() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     assertFalse(OBContext.getOBContext().isInAdministratorMode());
     OBContext.setAdminMode();
     assertTrue(OBContext.getOBContext().isInAdministratorMode());

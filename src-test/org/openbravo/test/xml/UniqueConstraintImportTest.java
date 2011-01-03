@@ -92,7 +92,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
    * This method also cleans up the testdata.
    */
   public void testCountryTrlImport() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
 
     // read countrytrl
     String xml = exportClass(CountryTrl.class, "country", getCountry("Norway"));
@@ -101,8 +101,8 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
     xml = xml.replaceAll("<CountryTrl id=\"..", "<CountryTrl id=\"1k");
 
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml,
+        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml,
         OBDal.getInstance().get(Module.class, "0"));
 
     log.debug("WARNING>>>>");

@@ -53,11 +53,11 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * insert.
    */
   public void testImportNoUpdate() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
 
     final String xml = exportTax();
-    final Client c = OBDal.getInstance().get(Client.class, "1000000");
-    final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
+    final Client c = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
+    final Organization o = OBDal.getInstance().get(Organization.class, TEST_ORG_ID);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(c, o, xml);
 
     log.debug("WARNING>>>>");
@@ -89,16 +89,16 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    */
   public void test1Greeting() {
     cleanRefDataLoaded();
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Greeting.class);
     final int cnt = count(Greeting.class);
     addReadWriteAccess(Greeting.class);
     final String xml = getXML(Greeting.class);
     // insert in org 1000001
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
+        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     assertEquals(cnt, ir.getInsertedObjects().size());
     assertEquals(0, ir.getUpdatedObjects().size());
     if (ir.hasErrorOccured()) {
@@ -111,10 +111,10 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * object.
    */
   public void test2Greeting() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Greeting.class);
     final String xml = getXML(Greeting.class);
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     // insert in org 1000002
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
         OBDal.getInstance().get(Client.class, "1000001"),
@@ -131,7 +131,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * again. The result should be two updates.
    */
   public void test3Greeting() {
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     String xml = getXML(Greeting.class);
     xml = xml.replaceAll("Mrs", "Mrsses");
     xml = xml.replaceAll("Herr", "Heer");
@@ -150,7 +150,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * Remove the test data from 1000001.
    */
   public void test4Greeting() {
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     final Organization org = OBDal.getInstance().get(Organization.class, "1000001");
     final OBCriteria<Greeting> obc = OBDal.getInstance().createCriteria(Greeting.class);
     obc.setFilterOnReadableClients(false);
@@ -166,8 +166,8 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * Checks that the testdata was indeed removed.
    */
   public void test5Greeting() {
-    setUserContext("1000019");
-    final Organization org = OBDal.getInstance().get(Organization.class, "1000000");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
+    final Organization org = OBDal.getInstance().get(Organization.class, "1000000"); // FIXME
     final OBCriteria<Greeting> obc = OBDal.getInstance().createCriteria(Greeting.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableClients(false);
@@ -184,7 +184,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
 
   // do it again, no change!
   private <T extends BaseOBObject> void doTestNoChange(Class<T> clz) {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Greeting.class);
     final String xml = getXML(clz);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(

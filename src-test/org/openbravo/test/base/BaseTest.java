@@ -20,12 +20,18 @@
 package org.openbravo.test.base;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -40,12 +46,14 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.exception.PoolNotFoundException;
+import org.openbravo.model.ad.access.User;
 
 /**
  * Base test class which can/should be extended by most other test classes which want to make use of
  * the Openbravo test infrastructure.
  * 
  * @author mtaal
+ * @author iperdomo
  */
 
 public class BaseTest extends TestCase {
@@ -55,8 +63,82 @@ public class BaseTest extends TestCase {
   private boolean errorOccured = false;
 
   /**
-   * Overridden to initialize the Dal layer, sets the current user to the the BigBazaar 1000000
-   * user.
+   * Record ID of Client "F&B International Group"
+   */
+  protected static final String TEST_CLIENT_ID = "FF8080812AFBCB14012AFBD3E373001F";
+
+  /**
+   * Record ID of Organization "F&B España - Región Norte"
+   */
+  protected static final String TEST_ORG_ID = "7A8E888A4B4C4E638CD5EB3A41A3289A";
+
+  /**
+   * Record ID of Warehouse "España Región Norte"
+   */
+  protected static final String TEST_WAREHOUSE_ID = "71B43F2AAE3641CA849B131960BCEFF4";
+
+  /**
+   * Record ID of User "F&BAdmin"
+   */
+  protected static final String TEST_USER_ID = "FF8080812AFBCB14012AFBD3E4F60033";
+
+  /**
+   * Record IDs of available users different than {@link #TEST_USER_ID} Note: Initialized to null,
+   * need to call {@link getRandomUserId} at least once
+   */
+  protected static List<User> userIds = null;
+
+  /**
+   * Record ID of Role "F&B International Group Admin"
+   */
+  protected static final String TEST_ROLE_ID = "FF8080812AFBCB14012AFBD3E4340031";
+
+  /**
+   * Record ID of a Order in Draft status
+   */
+  protected static final String TEST_ORDER_ID = "CDA9CA3269D04F7497BFA71067A086C9";
+
+  /**
+   * Record ID of Product "Zumo de Fresa Bio 0,33L"
+   */
+  protected static final String TEST_PRODUCT_ID = "8A64B71A2B0B2946012B0BC43922011F";
+
+  /**
+   * Map representation of current Organization tree for Client {@link #TEST_CLIENT_ID}
+   */
+  protected static Map<String, String[]> TEST_ORG_TREE = new HashMap<String, String[]>();
+
+  static {
+
+    // "F&B International Group"
+    TEST_ORG_TREE.put("3C816D72B14D4BBCB8571404B794AB84", new String[] { "" });
+
+    // "F&B España, S.A."
+    TEST_ORG_TREE.put("4F68EB1C1B734E79B27DE9D2DF56089F", new String[] { "" });
+
+    // "F&B US, Inc."
+    TEST_ORG_TREE.put("B9C7088AB859483A9B1FB342AC2BE17A", new String[] { "" });
+
+  }
+
+  /**
+   * Record ID of the QA Test client
+   */
+  protected static final String QA_TEST_CLIENT_ID = "4028E6C72959682B01295A070852010D";
+
+  /**
+   * Record ID of the Main organization of QA Test client
+   */
+  protected static final String QA_TEST_ORG_ID = "43D590B4814049C6B85C6545E8264E37";
+
+  /**
+   * Record ID of the "Admin" user of QA Test client
+   */
+  protected static final String QA_TEST_ADMIN_USER_ID = "4028E6C72959682B01295A0735CB0120";
+
+  /**
+   * Overridden to initialize the Dal layer, sets the current user to the the User:
+   * {@link #TEST_USER_ID}
    */
   @Override
   protected void setUp() throws Exception {
@@ -67,7 +149,7 @@ public class BaseTest extends TestCase {
 
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
-    setBigBazaarUserContext();
+    setTestUserContext();
     super.setUp();
     // be negative is set back to false at the end of a successfull test.
     errorOccured = true;
@@ -110,25 +192,34 @@ public class BaseTest extends TestCase {
     OBContext.setOBContext("0");
   }
 
-  /**
-   * Sets the current user to the 1000000 user.
-   */
+  @Deprecated
+  protected void setBigBazaarAdminContex() {
+    setTestAdminContext();
+  }
+
+  @Deprecated
   protected void setBigBazaarUserContext() {
-    OBContext.setOBContext("1000000", "1000002", "1000000", "1000000");
+    setTestUserContext();
+  }
+
+  /**
+   * Sets the current user to the {@link #TEST_USER_ID} user.
+   */
+  protected void setTestUserContext() {
+    OBContext.setOBContext(TEST_USER_ID, TEST_ROLE_ID, TEST_CLIENT_ID, TEST_ORG_ID);
   }
 
   /**
    * Sets the current user to the 100 user.
    */
-  protected void setBigBazaarAdminContext() {
-    OBContext.setOBContext("100", "0", "1000000", "1000000");
+  protected void setTestAdminContext() {
+    OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID);
   }
 
   /**
    * Sets the current user. For the 0, 100 and 1000000 users this method should not be used. For
-   * these users one of the other context-set methods should be used:
-   * {@link #setBigBazaarAdminContext()}, {@link #setBigBazaarUserContext()} or
-   * {@link #setSystemAdministratorContext()}.
+   * these users one of the other context-set methods should be used: {@link #setTestAdminContext()}
+   * , {@link #setTestUserContext()} or {@link #setSystemAdministratorContext()}.
    * 
    * @param userId
    *          the id of the user to use.
@@ -139,16 +230,46 @@ public class BaseTest extends TestCase {
           + "consider using that method directly");
       setSystemAdministratorContext();
     } else if (userId.equals("100")) {
-      log.warn("Forwarding the call to setBigBazaarAdminContext method, "
+      log.warn("Forwarding the call to setFBGroupAdminContext method, "
           + "consider using that method directly");
-      setBigBazaarAdminContext();
+      setTestAdminContext();
     } else if (userId.equals("1000000")) {
-      log.warn("Forwarding call to the setBigBazaarUserContext method, "
+      log.warn("User id 1000000 is not longer available, please update your test. "
+          + "Forwarding call to the setTestUserContext method, "
           + "consider using that method directly");
-      setBigBazaarUserContext();
+      setTestUserContext();
     } else {
       OBContext.setOBContext(userId);
     }
+  }
+
+  /**
+   * Gets a random User (Record ID) from the available ones in the test client. The ID is one
+   * different than {@link #TEST_USER_ID}
+   * 
+   * @return A record ID of a available user
+   */
+  protected User getRandomUser() {
+    if (userIds == null) {
+      setTestUserContext();
+
+      String[] excludedUserIds = { "100", TEST_USER_ID };
+      OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
+      obc.add(Expression.isNotNull(User.PROPERTY_PASSWORD));
+      obc.add(Expression.not(Expression.in(User.PROPERTY_ID, excludedUserIds)));
+      obc.add(Expression.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));
+
+      if (obc.count() == 0) {
+        throw new RuntimeException("Unable to initialize the list of available users");
+      }
+      userIds = new ArrayList<User>();
+      for (User u : obc.list()) {
+        userIds.add(u);
+      }
+    }
+
+    Random r = new Random();
+    return userIds.get(r.nextInt(userIds.size()));
   }
 
   @Override

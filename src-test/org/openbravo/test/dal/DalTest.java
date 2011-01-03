@@ -79,7 +79,7 @@ public class DalTest extends BaseTest {
    * removed in a later test.
    */
   public void testCreateBPGroup() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Category.class);
     final Category bpg = OBProvider.getInstance().get(Category.class);
     bpg.setDefault(true);
@@ -94,7 +94,7 @@ public class DalTest extends BaseTest {
    * Test queries for the {@link Category} created in the previous step and removes it.
    */
   public void testRemoveBPGroup() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
     final OBCriteria<Category> obCriteria = OBDal.getInstance().createCriteria(Category.class);
@@ -131,7 +131,7 @@ public class DalTest extends BaseTest {
    * This test checks if the {@link Category} was removed in the previous step.
    */
   public void testCheckBPGroupRemoved() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
@@ -142,7 +142,7 @@ public class DalTest extends BaseTest {
   // test querying for a specific currency and then updating it
   // should fail for a user
   public void testUpdateCurrencyByUser() {
-    setUserContext("1000019");
+    setUserContext(getRandomUser().getId());
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
     final List<Currency> cs = obc.list();
@@ -161,7 +161,7 @@ public class DalTest extends BaseTest {
    * Test updates the description of {@link Currency} by the admin user.
    */
   public void testUpdateCurrencyByAdmin() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     Currency c = null;
     String prevDescription = null;
     String newDescription = null;
@@ -196,7 +196,7 @@ public class DalTest extends BaseTest {
    * Tests the toString method of the BaseOBObject ({@link BaseOBObject#toString()}).
    */
   public void testToString() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final List<Product> products = OBDal.getInstance().createCriteria(Product.class).list();
     final StringBuilder sb = new StringBuilder();
     for (final Product p : products) {
@@ -212,7 +212,7 @@ public class DalTest extends BaseTest {
    * #getName()}.
    */
   public void testTransaction25PageRead() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(MaterialTransaction.class);
     final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
@@ -322,7 +322,7 @@ public class DalTest extends BaseTest {
    * Tests if a database trigger is fired on creation of a {@link CashBook}.
    */
   public void testCashBookTrigger() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Currency.class);
     addReadWriteAccess(CashBook.class);
     addReadWriteAccess(CashBookAccounts.class);

@@ -62,7 +62,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /** Sets up the test data, creates a first of Payment Terms. */
   public void testAPaymentTerm() {
     cleanRefDataLoaded();
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(PaymentTermTrl.class);
     createSavePaymentTerm();
   }
@@ -72,8 +72,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    */
   public void testBPaymentTerm() {
 
-    // read from 1000000
-    setBigBazaarUserContext();
+    setTestUserContext();
     setAccess();
 
     final List<PaymentTerm> pts = getPaymentTerms();
@@ -85,12 +84,12 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     xml = xml.replaceAll("</name>", "t</name>");
 
     // export to client 1000001
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     // don't be bothered by access checks...
     setAccess();
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
+        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -108,8 +107,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    */
   public void testCPaymentTerm() {
 
-    // read from 1000000
-    setBigBazaarUserContext();
+    setTestUserContext();
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
     String xml = getXML(pts);
@@ -118,11 +116,11 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     xml = xml.replaceAll("</name>", "t</name>");
 
     // export to client 1000001
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
+        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -138,8 +136,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    */
   public void testDPaymentTerm() {
 
-    // read from 1000000
-    setBigBazaarUserContext();
+    setTestUserContext();
     setAccess();
 
     // make a copy of the paymentterms and their children so that the
@@ -155,11 +152,11 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     String xml = getXML(pts);
     xml = xml.replaceAll("</name>", "t</name>");
 
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
+        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -182,8 +179,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    */
   public void testEPaymentTerm() {
 
-    // read from 1000000
-    setBigBazaarUserContext();
+    setTestUserContext();
     setAccess();
     // make a copy of the paymentterms and their children so that the
     // original db is not updated
@@ -200,14 +196,14 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     // there is a unique constraint on name
     xml = xml.replaceAll("</name>", "t</name>");
 
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     // a payment term line is not deletable, but for this test it should be done anyway
     // force this by being admin
     OBContext.setAdminMode();
     try {
       final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-          OBDal.getInstance().get(Client.class, "1000001"),
-          OBDal.getInstance().get(Organization.class, "1000001"), xml);
+          OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+          OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
       if (ir.getException() != null) {
         ir.getException().printStackTrace(System.err);
         fail(ir.getException().getMessage());
@@ -229,7 +225,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Tests that the previous test {@link #testEPaymentTerm()} was successfull.
    */
   public void testFPaymentTerm() {
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     final List<PaymentTerm> pts = getPaymentTerms();
     for (final PaymentTerm pt : pts) {
       assertEquals(NO_OF_PT_LINE - 1, pt.getFinancialMgmtPaymentTermLineList().size());
@@ -244,8 +240,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    */
   public void testGPaymentTerm() {
 
-    // read from 1000000
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
     // make a copy of the paymentterms and their children so that the
     // original db is not updated
@@ -272,11 +267,11 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     // there is a unique constraint on name
     xml = xml.replaceAll("</name>", "t</name>");
 
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
+        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -293,7 +288,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Tests that {@link #testGPaymentTerm()} was successfull.
    */
   public void testHPaymentTerm() {
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
     for (final PaymentTerm pt : pts) {
@@ -307,7 +302,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Remove the testdata.
    */
   public void testZPaymentTerm() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
     // financialmanagementpaymenttermline is not deletable, but as we are cleaning up
@@ -319,7 +314,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       }
       commitTransaction();
 
-      setUserContext("1000019");
+      setUserContext(QA_TEST_ADMIN_USER_ID);
       final List<PaymentTerm> pts2 = getPaymentTerms();
       // financialmanagementpaymenttermline is not deletable, but as we are cleaning up
       // force delete by being the admin
@@ -336,7 +331,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     setAccess();
     final List<PaymentTerm> result = new ArrayList<PaymentTerm>();
     for (int i = 0; i < NO_OF_PT; i++) {
-      final PaymentTerm source = OBDal.getInstance().get(PaymentTerm.class, "1000000");
+      final PaymentTerm source = OBDal.getInstance().get(PaymentTerm.class, "1000000"); // FIXME
       final PaymentTerm pt = (PaymentTerm) DalUtil.copy(source, false);
       pt.setName("test " + i);
       pt.setOrganization(OBContext.getOBContext().getCurrentOrganization());

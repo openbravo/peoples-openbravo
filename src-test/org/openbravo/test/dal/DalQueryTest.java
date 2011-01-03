@@ -55,7 +55,7 @@ public class DalQueryTest extends BaseTest {
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
   public void testDalFirstWhereLeftJoinClause() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final String where = "as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.workflow left join mo.tab where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
@@ -66,7 +66,7 @@ public class DalQueryTest extends BaseTest {
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
   public void testDalExtraJoinWhereLeftJoinClause() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final String where = "as mom left join mom."
         + ModelImplementationMapping.PROPERTY_MODELOBJECT
         + " as mo left join mo."
@@ -91,7 +91,7 @@ public class DalQueryTest extends BaseTest {
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
   public void testDalWhereLeftJoinClause() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final String where = "as mo left join mo.callout left join mo.reference where mo.callout.module.id='0' or mo.reference.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
@@ -102,7 +102,7 @@ public class DalQueryTest extends BaseTest {
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
   public void testDalOtherWhereLeftJoinClause() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final String where = "as mo left join mo.callout left join mo.reference where (mo.callout.module.id='0' or mo.reference.module.id='0') and exists(from ADUser where id<>'0')";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
@@ -113,7 +113,7 @@ public class DalQueryTest extends BaseTest {
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
   public void testDalAnOtherWhereLeftJoinClause() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final String where = "exists(from ADUser where id<>'0')";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
@@ -124,7 +124,7 @@ public class DalQueryTest extends BaseTest {
    * Test creates a new {@link Category} and saves it. The new object is removed in the next test.
    */
   public void testCreateBPGroup() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Category.class);
     final Category bpg = OBProvider.getInstance().get(Category.class);
     bpg.setDefault(true);
@@ -139,7 +139,7 @@ public class DalQueryTest extends BaseTest {
    * Test queries for the created {@link Category} and removes it.
    */
   public void testRemoveBPGroup() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
@@ -177,7 +177,7 @@ public class DalQueryTest extends BaseTest {
    * Check that the {@link Category} was indeed removed.
    */
   public void testCheckBPGroupRemoved() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
         Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_SEARCHKEY + "='testvalue'");
@@ -190,7 +190,7 @@ public class DalQueryTest extends BaseTest {
    * have update authorisation.
    */
   public void testUpdateCurrencyByUser() {
-    setUserContext("1000019");
+    setUserContext(getRandomUser().getId());
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
     final List<Currency> cs = obc.list();
@@ -212,7 +212,7 @@ public class DalQueryTest extends BaseTest {
    * identifier to create the identifier of the transaction. The test sorts on product.name.
    */
   public void testTransaction25PageRead() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(MaterialTransaction.class);
     final OBQuery<MaterialTransaction> cq = OBDal.getInstance().createQuery(
         MaterialTransaction.class, " order by product.name");

@@ -187,7 +187,7 @@ public class PreferenceTest extends BaseTest {
 
   public void testOrgVisibility() throws PropertyException {
     setSystemAdministratorContext();
-    Client client = OBDal.getInstance().get(Client.class, "1000000");
+    Client client = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
     Organization orgB = OBDal.getInstance().get(Organization.class, "1000005");
     Organization orgB1 = OBDal.getInstance().get(Organization.class, "1000006");
     Organization orgB2 = OBDal.getInstance().get(Organization.class, "1000007");
@@ -235,7 +235,7 @@ public class PreferenceTest extends BaseTest {
   public void testPLOrgVisibility() throws SQLException {
 
     setSystemAdministratorContext();
-    Client client = OBDal.getInstance().get(Client.class, "1000000");
+    Client client = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
     Organization orgB = OBDal.getInstance().get(Organization.class, "1000005");
     Organization orgB1 = OBDal.getInstance().get(Organization.class, "1000006");
     Organization orgB2 = OBDal.getInstance().get(Organization.class, "1000007");
@@ -367,7 +367,7 @@ public class PreferenceTest extends BaseTest {
   }
 
   public void testPreferenceClientOrgSetting() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     Preference p = Preferences.setPreferenceValue("testProperty2", "testValue", false, null, null,
         null, null, null, null);
     assertEquals("Incorrect Client ID", "0", p.getClient().getId());

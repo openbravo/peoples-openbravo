@@ -46,7 +46,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    */
   public void testNotWritableUpdate() {
     cleanRefDataLoaded();
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Greeting.class);
 
     final List<Greeting> gs = getList(Greeting.class);
@@ -55,9 +55,9 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     // change the xml to force an update
     xml = xml.replaceAll("</name>", "t</name>");
 
-    final Client c = OBDal.getInstance().get(Client.class, "1000000");
-    final Organization o = OBDal.getInstance().get(Organization.class, "1000000");
-    setBigBazaarUserContext();
+    final Client c = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
+    final Organization o = OBDal.getInstance().get(Organization.class, TEST_ORG_ID);
+    setTestUserContext();
     OBContext.getOBContext().setCurrentOrganization(o);
     OBContext.getOBContext().setCurrentClient(c);
 
@@ -89,7 +89,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    */
   public void testNotWritableInsertError() {
     cleanRefDataLoaded();
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Warehouse.class);
 
     final List<Warehouse> ws = getList(Warehouse.class);
@@ -98,9 +98,9 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     // change the xml to force an update
     xml = xml.replaceAll("</name>", "t</name>");
     xml = xml.replaceAll("</id>", "new</id>");
-    final Client c = OBDal.getInstance().get(Client.class, "1000001");
-    final Organization o = OBDal.getInstance().get(Organization.class, "1000001");
-    setUserContext("1000019");
+    final Client c = OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID);
+    final Organization o = OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID);
+    setUserContext(QA_TEST_ADMIN_USER_ID);
 
     // remove the entity from the writable entities to force an access error
     final Entity entity = ModelProvider.getInstance().getEntity(Warehouse.class);
@@ -122,7 +122,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    */
   public void testUpdatingOtherOrganizationWarning() {
     cleanRefDataLoaded();
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Warehouse.class);
 
     final List<Warehouse> ws = getList(Warehouse.class);
@@ -133,8 +133,8 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     xml = xml.replaceAll("</id>", "new</id>");
     setSystemAdministratorContext();
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000000"),
-        OBDal.getInstance().get(Organization.class, "1000002"), xml);
+        OBDal.getInstance().get(Client.class, TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, "1000002"), xml); // FIXME
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());

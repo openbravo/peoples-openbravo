@@ -43,7 +43,7 @@ public class ReadByNameTest extends BaseTest {
 
   public void testCreateBP() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
     addReadWriteAccess(Location.class);
     addReadWriteAccess(Category.class);
@@ -68,7 +68,7 @@ public class ReadByNameTest extends BaseTest {
 
   public void testAddLocation() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
     addReadWriteAccess(org.openbravo.model.common.geography.Location.class);
     addReadWriteAccess(org.openbravo.model.common.businesspartner.Location.class);
@@ -107,7 +107,7 @@ public class ReadByNameTest extends BaseTest {
     assertNotNull(locId);
 
     // Search for a BPLocation if you don't have the Id
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
     addReadWriteAccess(org.openbravo.model.common.geography.Location.class);
     addReadWriteAccess(org.openbravo.model.common.businesspartner.Location.class);
@@ -128,7 +128,7 @@ public class ReadByNameTest extends BaseTest {
 
   public void testPBData() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
     addReadWriteAccess(org.openbravo.model.common.businesspartner.Location.class);
 
@@ -139,7 +139,7 @@ public class ReadByNameTest extends BaseTest {
       System.out.println(loc);
       System.out.println(loc.getLocationAddress());
     }
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     OBDal.getInstance().remove(bp);
 
     assertNull(OBDal.getInstance().get(BusinessPartner.class, bpId));

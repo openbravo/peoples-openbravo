@@ -39,7 +39,7 @@ public class PerformanceGenerateInstanceTest extends BaseTest {
   private static final long COMMIT_COUNT = NUMBER / 10;
 
   public void testLocationInstanceCreation() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final Location location = OBDal.getInstance().get(Location.class, "1000000");
     long time = System.currentTimeMillis();
     Client zeroClient = OBDal.getInstance().get(Client.class, "0");

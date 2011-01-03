@@ -55,14 +55,14 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    */
   public void test1Warehouse() {
     cleanRefDataLoaded();
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Warehouse.class);
     final String xml = getXML(Warehouse.class);
-    // insert in org 1000001
-    setUserContext("1000019");
+
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
+        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -83,12 +83,12 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    * {@link Location} objects should still remain.
    */
   public void test2Warehouse() {
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     // a warehouse is not deletable, but as we are cleaning up, they should be
     // deleted, force this by being admin
     OBContext.setAdminMode();
     try {
-      removeAll(Warehouse.class, 2, Expression.ne("id", "1000002"));
+      removeAll(Warehouse.class, 2, Expression.ne("id", "1000002")); // FIXME
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -99,13 +99,13 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    * {@link Location} objects are also exported but not imported as they already exist in 1000001.
    */
   public void test3Warehouse() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Warehouse.class);
     final String xml = getXML(Warehouse.class);
-    setUserContext("1000019");
+    setUserContext(QA_TEST_ADMIN_USER_ID);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, "1000001"),
-        OBDal.getInstance().get(Organization.class, "1000001"), xml);
+        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());

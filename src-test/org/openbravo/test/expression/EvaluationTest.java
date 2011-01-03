@@ -75,7 +75,7 @@ public class EvaluationTest extends BaseTest {
    * Transient Condition
    */
   public void testOrderEvaluation() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
 

@@ -81,7 +81,7 @@ public class WSReadTest extends BaseWSTest {
    * @throws Exception
    */
   public void testPagedWhereClause() throws Exception {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     requestColumnPage(1, 10);
     requestColumnPage(1, 5);
     requestColumnPage(30, 5);
