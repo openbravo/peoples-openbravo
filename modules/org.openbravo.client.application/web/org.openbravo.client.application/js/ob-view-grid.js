@@ -66,6 +66,7 @@ isc.OBViewGrid.addProperties({
     showTitle: true,
     title: '&nbsp;',
     autoFitWidth: true,
+    canDragResize: false,
     canFilter: true,
     autoExpand: false,
     filterEditorType: 'StaticTextItem',
@@ -302,7 +303,7 @@ isc.OBViewGrid.addProperties({
         this.doSelectSingleRecord(gridRecord);
       }
       
-      isc.Page.waitFor(this, "delayedHandleTargetRecord", {
+      isc.Page.waitFor(this, 'delayedHandleTargetRecord', {
         method: this.view.openDirectChildTab(),
         args: [],
         target: this.view
@@ -327,7 +328,7 @@ isc.OBViewGrid.addProperties({
       }
     };
     
-    return this.Super('filterData', [criteria, newCallBack, requestProperties]);
+    return this.Super('filterData', [this.convertCriteria(criteria), newCallBack, requestProperties]);
   },
   
   fetchData: function(criteria, callback, requestProperties){
@@ -345,16 +346,21 @@ isc.OBViewGrid.addProperties({
       }
     };
     
-    return this.Super('fetchData', [criteria, newCallBack, requestProperties]);
+    return this.Super('fetchData', [this.convertCriteria(criteria), newCallBack, requestProperties]);
+  },
+  
+  getInitialCriteria: function() {
+    var criteria = this.Super('getInitialCriteria', arguments);
+    
+    return this.convertCriteria(criteria);
   },
   
   getCriteria: function() {
-    var criteria = this.Super("getCriteria", arguments);
+    var criteria = this.Super('getCriteria', arguments);
     if (!criteria) {
       criteria = {};
     }
     criteria = this.convertCriteria(criteria);
-    criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);    
     return criteria;
   },
   
@@ -395,6 +401,14 @@ isc.OBViewGrid.addProperties({
       criteria = {};
     }
     
+    if (criteria.conversionDone) {
+      return criteria;
+    }
+    
+    criteria.conversionDone = true;
+    
+    criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);    
+
     var isFiltering = criteria.length > 0;
     var filterValues = [];
     var index = 0, selectedValues;

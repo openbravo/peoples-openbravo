@@ -27,6 +27,7 @@
 // * OBDateTimeItem: FormItem for DateTime
 // * OBNumber: FormItem for numbers
 // * OBYesNoItem: combo box for yes/no values
+// * OBLinkTitleItem: an interface supporting a link button in the title.
 // * OBFKItem: combo box for foreign key references
 // * OBListItem: combo box for list references
 
@@ -34,20 +35,61 @@
 // Item used for Openbravo yes/no fields.
 isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
 
+// == OBLinkTitleItem ==
+// Item used for creating a link button in the title
+isc.ClassFactory.defineInterface('OBLinkTitleItem');
+
+isc.OBLinkTitleItem.addProperties({
+  
+  LINKBUTTONSUFFIX: '_linkButton',
+  
+  getLinkTitleHTML: function(){    
+    var titleHtml = this.Super('getTitleHTML', arguments);
+    
+    if (this.parentProperty) {
+      return titleHtml;
+    }
+
+    var searchIconObj = {
+      src: this.newTabIconSrc,
+      height: this.newTabIconSize,
+      width: this.newTabIconSize,
+      align: 'absmiddle',
+      extraStuff: ' id="' + this.ID + this.LINKBUTTONSUFFIX + '" class="OBFormFieldLinkButton" onclick="window[\'' + this.ID + '\'].linkButtonClick();"'
+    };
+    
+    var imgHTML = isc.Canvas.imgHTML(searchIconObj);
+    
+    return titleHtml + '&nbsp;' + imgHTML;
+  },
+  
+  getLinkImageHtmlElement: function(){
+    return window[this.ID + this.LINKBUTTONSUFFIX];
+  },
+  
+  linkButtonClick: function(){
+    var sourceWindow = this.form.view.standardWindow.windowId;
+    OB.Utilities.openDirectView(sourceWindow, this.referencedKeyColumnName, this.targetEntity, this.getValue());
+  }
+});
+
 // == OBSearchItem ==
 // Item used for Openbravo search fields.
 isc.ClassFactory.defineClass('OBSearchItem', StaticTextItem);
 
+isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
+
+// a global function as it is called from classic windows
 function closeSearch(action, value, display, parameters, wait){
   var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem;
   if (action === 'SAVE') {
     targetFld.setValue(value);
     targetFld.form.setValue(targetFld.displayField, display);
- 
+    
     if (parameters && parameters.length > 0) {
       length = parameters.length;
       for (i = 0; i < length; i++) {
-        hiddenInputName = ((parameters[i].esRef) ? targetFld.inpColumnName : "") + parameters[i].campo;
+        hiddenInputName = ((parameters[i].esRef) ? targetFld.inpColumnName : '') + parameters[i].campo;
         targetFld.form.hiddenInputs[hiddenInputName] = parameters[i].valor;
       }
     }
@@ -60,12 +102,14 @@ function closeSearch(action, value, display, parameters, wait){
 
 isc.OBSearchItem.addProperties({
   showPickerIcon: true,
-  pickerIconHeight: 21,
-  pickerIconWidth: 21,
-  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
-      
+
+  getTitleHTML: function() {
+    // calls the method from the OBLinkTitleItem interface
+    return this.getLinkTitleHTML();
+  },
+
   changed: function(){
-    var ret = this.Super("changed", arguments);
+    var ret = this.Super('changed', arguments);
     if (this.form && this.form.handleItemChange) {
       this.form.handleItemChange(this);
     }
@@ -87,7 +131,7 @@ isc.OBSearchItem.addProperties({
       inpName = this.inFields[i];
       fld = this.form.getFieldFromInpColumnName(inpName);
       if (fld && fld.getValue()) {
-        parameters[index++] = inpName;
+        parameters[index++] = 'inp' + fld.columnName;
         parameters[index++] = fld.getValue();
       }
     }
@@ -96,11 +140,11 @@ isc.OBSearchItem.addProperties({
   
   openSearchWindow: function(url, parameters, strValueID){
     var height, width, top, left;
-    var complementsNS4 = "";
-    var auxField = "";
+    var complementsNS4 = '';
+    var auxField = '';
     var hidden;
     
-    if (url.indexOf("Location") != -1) {
+    if (url.indexOf('Location') !== -1) {
       height = 300;
       width = 600;
     } else {
@@ -117,31 +161,31 @@ isc.OBSearchItem.addProperties({
     isc.OBSearchItem.openedWindow = null;
     
     if (strValueID) {
-      auxField = "inpNameValue=" + encodeURIComponent(this.form.getValue(this.displayField));
+      auxField = 'inpNameValue=' + encodeURIComponent(this.form.getValue(this.displayField));
     }
     if (parameters) {
       var total = parameters.length;
       for (var i = 0; i < total; i++) {
-        if (auxField !== "") {
-          auxField += "&";
+        if (auxField !== '') {
+          auxField += '&';
         }
         // TODO: check this
-        //        if (parameters[i] === "isMultiLine" && parameters[i + 1] == "Y") {
+        //        if (parameters[i] === 'isMultiLine' && parameters[i + 1] == 'Y') {
         //          gIsMultiLineSearch = true;
         //        }
-        auxField += parameters[i] + "=" + ((parameters[i + 1] !== null) ? encodeURIComponent(parameters[i + 1]) : "");
-        if (parameters[i] === "Command") {
+        auxField += parameters[i] + '=' + ((parameters[i + 1] !== null) ? encodeURIComponent(parameters[i + 1]) : '');
+        if (parameters[i] === 'Command') {
           hidden = true;
         }
         i++;
       }
     }
     
-    if (navigator.appName.indexOf("Netscape")) {
-      complementsNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
+    if (navigator.appName.indexOf('Netscape')) {
+      complementsNS4 = 'alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ';
     }
-    var complements = complementsNS4 + "height=" + height + ", width=" + width + ", left=" + left + ", top=" + top + ", screenX=" + left + ", screenY=" + top + ", location=0, resizable=1, scrollbars=1, status=0, toolbar=0, titlebar=0, modal='yes'";
-    isc.OBSearchItem.openedWindow = window.open(OB.Application.contextUrl + url + ((auxField === "") ? "" : "?" + auxField), 'SELECTOR', complements);
+    var complements = complementsNS4 + 'height=' + height + ', width=' + width + ', left=' + left + ', top=' + top + ', screenX=' + left + ', screenY=' + top + ', location=0, resizable=1, scrollbars=1, status=0, toolbar=0, titlebar=0, modal=\'yes\'';
+    isc.OBSearchItem.openedWindow = window.open(OB.Application.contextUrl + url + ((auxField === '') ? '' : '?' + auxField), 'SELECTOR', complements);
     if (isc.OBSearchItem.openedWindow) {
       isc.OBSearchItem.openedWindow.focus();
       this.setUnloadEventHandling();
@@ -207,8 +251,10 @@ isc.OBListItem.addProperties({
 
   itemData: null,
   
+  cachePickListResults: false,
+  
   changed: function(){
-    var ret = this.Super("changed", arguments);
+    var ret = this.Super('changed', arguments);
     if (this.form && this.form.handleItemChange) {
       this.form.handleItemChange(this);
     }
@@ -228,6 +274,8 @@ isc.OBListItem.addProperties({
 // Extends SelectItem with suggestion box behavior for foreign key references.
 isc.ClassFactory.defineClass('OBFKItem', SelectItem);
 
+isc.ClassFactory.mixInInterface('OBFKItem', 'OBLinkTitleItem');
+
 isc.OBFKItem.addProperties({
   selectOnFocus: true,
   autoFetchData: false,
@@ -236,15 +284,24 @@ isc.OBFKItem.addProperties({
   valueField: OB.Constants.ID,
   textMatchStyle: 'substring',
   
+  useClientFiltering: false,
+  
+  cachePickListResults: false,
+  
   itemData: null,
   optionDataSource: null,
   
+  getTitleHTML: function() {
+    // calls the method from the OBLinkTitleItem interface
+    return this.getLinkTitleHTML();
+  },
+
   getDataSource: function(){
     return this.getOptionDataSource();
   },
   
   changed: function(){
-    var ret = this.Super("changed", arguments);
+    var ret = this.Super('changed', arguments);
     if (this.form && this.form.handleItemChange) {
       this.form.handleItemChange(this);
     }
@@ -531,7 +588,7 @@ isc.OBDateItem.addProperties({
       this.checkOBDateItemValue();
       this.inBlur = false;
     }
-    return this.Super("blur", arguments);
+    return this.Super('blur', arguments);
   },
   
   // ** {{{ displayFormat }}} **
@@ -961,7 +1018,7 @@ isc.OBNumberItem.addProperties({
   blur: function(form, item){
     item.blurNumberInput(item.maskNumeric, item.decSeparator, item.groupSeparator, item.groupInterval);
     item.validateOBNumberItem();
-    return this.Super("blur", arguments);
+    return this.Super('blur', arguments);
   },
   
   keyDown: function(item, form, keyName){
@@ -992,7 +1049,7 @@ isc.FormItem.addProperties({
   },
   
   changed: function(){
-    var ret = this.Super("changed", arguments);
+    var ret = this.Super('changed', arguments);
     this._doFICCall = true;
     return ret;
   },

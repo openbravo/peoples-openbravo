@@ -454,7 +454,7 @@ isc.OBStandardView.addProperties({
     
     childView.tab = this.childTabSet.tabs[this.childTabSet.tabs.length - 1];
     
-    OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + "_" + childView.tabId, childView.tab);
+    OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
     
   },
   
@@ -584,6 +584,7 @@ isc.OBStandardView.addProperties({
     }
     var gridRecord = this.viewGrid.getSelectedRecord();
     this.editRecord(gridRecord);
+    this.recordSelected();
     
     // remove this info
     delete this.standardWindow.directTabInfo;
@@ -622,9 +623,9 @@ isc.OBStandardView.addProperties({
   // Is called when a record get's selected. Will refresh direct child views
   // which will again refresh their children.
   recordSelected: function(){
-    this.fireOnPause("recordSelected", {
+    this.fireOnPause('recordSelected', {
       target: this,
-      methodName: "doRecordSelected",
+      methodName: 'doRecordSelected',
       args: []
     }, this.fetchDelay);
   },

@@ -270,3 +270,7 @@
   font-size: 12px;
   font-weight: bold;
 }
+
+.OBFormFieldLinkButton {
+  cursor: pointer;
+}

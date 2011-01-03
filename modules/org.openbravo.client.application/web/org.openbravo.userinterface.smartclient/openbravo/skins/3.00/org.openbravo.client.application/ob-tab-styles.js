@@ -29,5 +29,5 @@ isc.OBTabSetChild.addProperties({
   tabBarThickness: 38,
   styleName: 'OBTabSetChild',
   simpleTabBaseStyle: 'OBTabBarChildButton',
-  paneContainerClassName: "OBTabSetChildContainer"
+  paneContainerClassName: 'OBTabSetChildContainer'
 });

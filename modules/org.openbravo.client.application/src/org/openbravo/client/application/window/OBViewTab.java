@@ -111,6 +111,7 @@ public class OBViewTab extends BaseTemplateComponent {
     final OBViewFormComponent viewFormComponent = createComponent(OBViewFormComponent.class);
     viewFormComponent.setParameters(getParameters());
     viewFormComponent.setTab(tab);
+    viewFormComponent.setParentProperty(getParentProperty());
     return viewFormComponent.generate();
   }
 

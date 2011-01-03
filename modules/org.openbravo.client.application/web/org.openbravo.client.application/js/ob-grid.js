@@ -93,7 +93,7 @@ isc.OBGrid.addProperties({
   
   showSummaryRow: function(){
     var i, fld, fldsLength, newFields = [];
-    var ret = this.Super("showSummaryRow", arguments);
+    var ret = this.Super('showSummaryRow', arguments);
     if (this.summaryRow && !this.summaryRowFieldRepaired) {
       // the summaryrow shares the same field instances as the 
       // original grid, this must be repaired as the grid and
@@ -146,9 +146,9 @@ isc.ClassFactory.defineClass('OBGridSummary', isc.OBGrid);
 isc.OBGridSummary.addProperties({
   getCellStyle: function(record, rowNum, colNum){
     var field = this.getField(colNum);
-    if (field.summaryFunction === "sum" && this.summaryRowStyle_sum) {
+    if (field.summaryFunction === 'sum' && this.summaryRowStyle_sum) {
       return this.summaryRowStyle_sum;
-    } else if (field.summaryFunction === "avg" && this.summaryRowStyle_avg) {
+    } else if (field.summaryFunction === 'avg' && this.summaryRowStyle_avg) {
       return this.summaryRowStyle_avg;
     } else {
       return this.summaryRowStyle;
@@ -170,7 +170,7 @@ isc.OBGridLinkLayout.addProperties({
     this.btn.setTitle(this.title);
     this.btn.owner = this;
     this.addMember(this.btn);
-    return this.Super("initWidget", arguments);
+    return this.Super('initWidget', arguments);
   },
   
   setTitle: function(title) {

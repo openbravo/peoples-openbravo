@@ -19,27 +19,40 @@
 
 
 isc.OBViewForm.addProperties({
-  styleName: "OBViewForm",
+  styleName: 'OBViewForm',
   //cellBorder: 1, // debug layout
   cellPadding: 8
 });
 
 
 isc.OBSectionItem.addProperties({
-  sectionHeaderClass: "OBSectionItemButton",
+  sectionHeaderClass: 'OBSectionItemButton',
   height: 24
 });
 
 isc.ClassFactory.defineClass('OBSectionItemButton', ImgSectionHeader);
-isc.OBSectionItemButton.changeDefaults("backgroundDefaults", {
+isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   showRollOver: true,
   showDown: false,
   showDisabledIcon: false,
   showRollOverIcon: false,
-  src: "[SKIN]/../../org.openbravo.client.application/images/form/sectionItem-bg.png",
-  icon: "[SKIN]/../../org.openbravo.client.application/images/form/sectionItem-ico.png",
+  src: '[SKIN]/../../org.openbravo.client.application/images/form/sectionItem-bg.png',
+  icon: '[SKIN]/../../org.openbravo.client.application/images/form/sectionItem-ico.png',
   iconSize: 12,
   capSize: 12,
-  titleStyle: "OBSectionItemButton_Title_",
-  backgroundColor: "transparent"
-})
+  titleStyle: 'OBSectionItemButton_Title_',
+  backgroundColor: 'transparent'
+});
+
+isc.OBSearchItem.addProperties({
+  pickerIconHeight: 21,
+  pickerIconWidth: 21,
+  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
+  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  newTabIconSize: 8
+});
+
+isc.OBFKItem.addProperties({
+  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  newTabIconSize: 8
+});

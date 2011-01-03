@@ -22,11 +22,15 @@
         name: '${fieldDefinition.name?js_string}',
         title: '${fieldDefinition.label?js_string}',
         type: '${fieldDefinition.type}',
+        disabled: ${fieldDefinition.parentProperty?string},
+        parentProperty: ${fieldDefinition.parentProperty?string},
+        
         width: '*',
         <#if fieldDefinition.standardField>
         columnName: '${fieldDefinition.columnName?string}',
         inpColumnName: '${fieldDefinition.inpColumnName?string}',
         referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
+        targetEntity: '${fieldDefinition.targetEntity?string}',
         required: ${fieldDefinition.required?string},
         colSpan: ${fieldDefinition.colSpan},
         rowSpan: ${fieldDefinition.rowSpan},
@@ -35,6 +39,7 @@
           <#if fieldDefinition.searchField>
           displayField: '${fieldDefinition.name?js_string}._identifier',
           valueField: '${fieldDefinition.name?js_string}',
+          showPickerIcon: ${(!fieldDefinition.parentProperty)?string},
           </#if>
         </#if>
         <#if fieldDefinition.type = "OBSectionItem">

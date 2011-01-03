@@ -35,14 +35,14 @@ isc.OBGrid.addProperties({
   hoverWidth: 200,
   editLinkColumnWidth: 58,
 
-  summaryRowConstructor: "OBGridSummary",
+  summaryRowConstructor: 'OBGridSummary',
   summaryRowDefaults:{
     showRollOver:false
   },
   summaryRowHeight: 22,
-  summaryRowStyle: "OBGridSummaryCell",
-  summaryRowStyle_sum: "OBGridSummaryCell_sum",
-  summaryRowStyle_avg: "OBGridSummaryCell_avg"
+  summaryRowStyle: 'OBGridSummaryCell',
+  summaryRowStyle_sum: 'OBGridSummaryCell_sum',
+  summaryRowStyle_avg: 'OBGridSummaryCell_avg'
 });
 
 isc.OBGrid.changeDefaults('filterEditorDefaults', {

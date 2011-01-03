@@ -819,12 +819,12 @@ OB.Utilities.openActionButton = function(button, o){
   }
   
   theView.setContextInfo(sessionProperties, function(){
-    OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+    OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
   });
   
   
-  //	OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
-  //OB.Layout.ViewManager.openView("OBClassicPopup", o);
+  //	OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
+  //OB.Layout.ViewManager.openView('OBClassicPopup', o);
 
 
   //button.parentElement.parentElement.view.getContextInfo()
@@ -848,7 +848,7 @@ OB.Utilities.openActionButtonCallback = function(button, o){
     }
   }
   
-  OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+  OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
 };
 
 

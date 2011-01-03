@@ -19,7 +19,7 @@
 
 
 isc.OBToolbar.addProperties({
-  width: "100%",
+  width: '100%',
   height: 45,
   leftMargin: 30,
   rightMargin: 4,
@@ -31,7 +31,7 @@ isc.OBToolbar.addProperties({
 isc.OBToolbarIconButton.addProperties({
   width: 30,
   height: 28,
-  menuButtonImage: "[SKIN]/../../org.openbravo.client.application/images/toolbar/iconButton-menu-unfold.png"  /** There is a CSS hack to avoid showing it when no menu available. this.menuButtonImage inside initWidget doesn't run **/
+  menuButtonImage: '[SKIN]/../../org.openbravo.client.application/images/toolbar/iconButton-menu-unfold.png'  /** There is a CSS hack to avoid showing it when no menu available. this.menuButtonImage inside initWidget doesn't run **/
 });
 
 
