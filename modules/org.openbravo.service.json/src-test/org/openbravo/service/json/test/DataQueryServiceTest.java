@@ -145,7 +145,7 @@ public class DataQueryServiceTest extends BaseTest {
       }
 
       {
-        setBigBazaarUserContext();
+        setTestUserContext();
         final String[] orgs = OBContext.getOBContext().getReadableOrganizations();
         // check that 1000008 is not there, so that the test is good
         for (String org : orgs) {
@@ -309,7 +309,7 @@ public class DataQueryServiceTest extends BaseTest {
    * Orderby on identifier with foreign keys
    */
   public void testOrderByOnIdentifier() throws Exception {
-    setBigBazaarUserContext();
+    setTestUserContext();
     OBContext.setAdminMode();
     try {
       final DataEntityQueryService queryService = new DataEntityQueryService();

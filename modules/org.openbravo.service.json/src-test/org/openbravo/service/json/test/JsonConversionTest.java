@@ -170,7 +170,7 @@ public class JsonConversionTest extends BaseTest {
   // test issue:
   // https://issues.openbravo.com/view.php?id=14697
   public void testIssue14697CheckDerivedReadableCurrency() {
-    setUserContext("1000020");
+    setUserContext(getRandomUser().getId());
     final BaseOBObject c = OBDal.getInstance().get(Currency.class, "100");
     final DataToJsonConverter converter = new DataToJsonConverter();
 
