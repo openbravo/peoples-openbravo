@@ -5,6 +5,7 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenbravoTrl"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenbravoWAD"/>
 	<classpathentry including="**/*.ext|**/*.java|**/*.oaw|**/*.properties|**/*.xml|**/*.xpt|**/*.xslt" kind="src" path="src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.client.htmlwidget/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.base.weld/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.client.querylist/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.advpaymentmngt/src"/>
