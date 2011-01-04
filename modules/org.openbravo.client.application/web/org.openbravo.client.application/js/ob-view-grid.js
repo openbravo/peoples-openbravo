@@ -790,7 +790,13 @@ isc.OBGridToolStrip.addProperties({});
 isc.ClassFactory.defineClass('OBGridToolStripIcon', isc.ImgButton);
 
 isc.OBGridToolStripIcon.addProperties({
-  buttonType: null /* This could be: edit - form - cancel - save */
+  buttonType: null, /* This could be: edit - form - cancel - save */
+  initWidget: function() {
+    if (this.initWidgetStyle) {
+      this.initWidgetStyle();
+    }
+    this.Super('initWidget', arguments);
+  }
 });
 
 // = OBGridToolStripSeparator =

@@ -94,9 +94,8 @@ isc.OBGridToolStripIcon.addProperties({
   showFocused: false,
   showFocusedAsOver: true,
   baseStyle: 'OBGridToolStripIcon',
-  initWidget: function() {
+  initWidgetStyle: function() {
     this.setSrc('[SKIN]/../../org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
-    this.Super('initWidget', arguments);
   }
 });
 
