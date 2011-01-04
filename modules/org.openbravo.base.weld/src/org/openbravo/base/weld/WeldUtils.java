@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
+import org.jboss.weld.environment.servlet.Listener;
+import org.openbravo.dal.core.DalContextListener;
+
 /**
  * Provides weld utilities.
  * 
@@ -35,9 +38,43 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class WeldUtils {
 
+  private static BeanManager staticBeanManager = null;
+
+  public static BeanManager getStaticInstanceBeanManager() {
+    if (staticBeanManager == null) {
+      staticBeanManager = (BeanManager) DalContextListener.getServletContext().getAttribute(
+          Listener.BEAN_MANAGER_ATTRIBUTE_NAME);
+    }
+    return staticBeanManager;
+  }
+
+  public static void setStaticInstanceBeanManager(BeanManager theBeanManager) {
+    staticBeanManager = theBeanManager;
+  }
+
   @SuppressWarnings("serial")
   public static final AnnotationLiteral<Any> ANY_LITERAL = new AnnotationLiteral<Any>() {
   };
+
+  /**
+   * Method which uses the static instance of the bean manager cached in this class. This method
+   * should only be used by objects which are not created by Weld. Objects created by Weld should
+   * preferably use the @Inject annotation to get an instance of the WeldUtils injected.
+   * 
+   * @see WeldUtils#getInstance(Class)
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T getInstanceFromStaticBeanManager(Class<T> type) {
+    final BeanManager theBeanManager = getStaticInstanceBeanManager();
+    final Set<Bean<?>> beans = theBeanManager.getBeans(type, ANY_LITERAL);
+    for (Bean<?> bean : beans) {
+      if (bean.getBeanClass() == type) {
+        return (T) theBeanManager.getReference(bean, type, theBeanManager
+            .createCreationalContext(bean));
+      }
+    }
+    throw new IllegalArgumentException("No bean found for type " + type);
+  }
 
   @Inject
   private BeanManager beanManager;
