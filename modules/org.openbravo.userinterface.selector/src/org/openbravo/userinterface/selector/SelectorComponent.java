@@ -62,6 +62,8 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class SelectorComponent extends BaseTemplateComponent {
 
+  public static final String SELECTOR_ITEM_PARAMETER = "IsSelectorItem";
+
   private static final String CSSSIZE = "CssSize";
   private static final String ONECELL = "OneCell";
   private static final String TWOCELLS = "TwoCells";
@@ -92,6 +94,10 @@ public class SelectorComponent extends BaseTemplateComponent {
   @Inject
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
   private ComponentProvider componentProvider;
+
+  public boolean isSelectorItem() {
+    return hasParameter(SELECTOR_ITEM_PARAMETER);
+  }
 
   public Module getModule() {
     return getSelector().getModule();
@@ -161,6 +167,13 @@ public class SelectorComponent extends BaseTemplateComponent {
       return getParameter(SelectorConstants.PARAM_DISABLED);
     }
     return Boolean.FALSE.toString();
+  }
+
+  public String getTargetPropertyName() {
+    if (hasParameter(SelectorConstants.PARAM_TARGET_PROPERTY_NAME)) {
+      return getParameter(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
+    }
+    return "";
   }
 
   public String getValueField() {

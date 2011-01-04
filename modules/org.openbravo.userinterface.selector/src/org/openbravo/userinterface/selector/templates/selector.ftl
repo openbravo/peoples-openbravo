@@ -11,12 +11,45 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2010 Openbravo SLU
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
+<#if data.selectorItem>
+    selectorDefinitionId: '${data.id}',
+    popupTextMatchStyle: '${data.selector.popuptextmatchstyle}',
+    textMatchStyle: '${data.selector.suggestiontextmatchstyle}',
+    defaultPopupFilterField : '${data.defaultPopupFilterField}',
+    displayField: '${data.displayField?js_string}',
+    valueField: '${data.valueField?js_string}',
+    pickListFields: [
+    <#list data.pickListFields as pickListField>
+        {<#list pickListField.properties as property>
+        ${property.name}: ${property.value}<#if property_has_next>,</#if>
+         </#list>       
+        }<#if pickListField_has_next>,</#if>
+    </#list>
+    ],
+    showSelectorGrid: ${data.showSelectorGrid},
+    selectorGridFields : [
+    <#list data.selectorGridFields as selectorGridField>
+        {<#list selectorGridField.properties as property>
+        ${property.name}: ${property.value}<#if property_has_next>,</#if>
+         </#list>
+        }<#if selectorGridField_has_next>,</#if>
+    </#list>
+    ],
+    outFields : {
+    <#list data.outFields as selectorOutField>
+    '${selectorOutField.outFieldName}':'${selectorOutField.tabFieldName}'<#if selectorOutField_has_next>,</#if>
+    </#list>
+    },
+    extraSearchFields: [${data.extraSearchFields}],
+    optionDataSource: ${data.dataSourceJavascript},
+    whereClause : '${data.whereClause?js_string}'
+<#else>
 /* jslint */
 sc_${data.columnName} = isc.OBSelectorWidget.create({
     selectorDefinitionId: '${data.id}',
@@ -58,3 +91,4 @@ sc_${data.columnName} = isc.OBSelectorWidget.create({
     title : '${data.title}',
     comboReload: ${data.comboReload}
 });
+</#if>
