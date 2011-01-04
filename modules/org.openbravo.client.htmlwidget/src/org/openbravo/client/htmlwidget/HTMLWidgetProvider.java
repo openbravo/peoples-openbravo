@@ -21,7 +21,7 @@ package org.openbravo.client.htmlwidget;
 import org.openbravo.client.myob.WidgetProvider;
 
 /**
- * Responsible for creating the Query/List Widgets.
+ * Responsible for creating the HTML Widgets.
  * 
  * @author gorkaion
  */
