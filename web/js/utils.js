@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1256,6 +1256,7 @@ function editHelp(url, type, id, value, height, width, openInMDIPopup) {
   var parameters = new Array();
   parameters = addArrayValue(parameters, "Command", type, true);
   parameters = addArrayValue(parameters, "inpClave", value, true);
+  parameters = addArrayValue(parameters, "IsPopUpCall", "1", true);
   return openPopUp(url, "HELP_EDIT", height, width, null, null, null, null, false, true, parameters, null, openInMDIPopup);
 }
 
