@@ -137,6 +137,16 @@ public class BaseTest extends TestCase {
   protected static final String QA_TEST_ADMIN_USER_ID = "4028E6C72959682B01295A0735CB0120";
 
   /**
+   * Record ID of the "Customer" Business Partner Category
+   */
+  protected static final String TEST_BP_CATEGORY_ID = "4028E6C72959682B01295F40C38C02EB";
+
+  /**
+   * Record ID of the geographical location "c\ de la Costa 54, San Sebastián 12784"
+   */
+  protected static final String TEST_LOCATION_ID = "064277EF6EA544518777EC5430B92592";
+
+  /**
    * Overridden to initialize the Dal layer, sets the current user to the the User:
    * {@link #TEST_USER_ID}
    */
