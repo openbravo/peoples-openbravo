@@ -134,7 +134,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     return fields;
   }
 
-  public interface OBViewFieldDefinition {
+  private interface OBViewFieldDefinition {
     public String getLabel();
 
     public String getName();

@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 // = OBSelectorPopupWindow =
 // The selector popup window shown when clicking the picker icon. Contains 
 // a selection grid and cancel/ok buttons.
@@ -24,24 +23,10 @@
 isc.ClassFactory.defineClass('OBSelectorPopupWindow', isc.Window);
 
 isc.OBSelectorPopupWindow.addProperties({
-  autoSize: false,
-  width: '85%',
-  height: '85%',
-  align: 'center',
-  autoCenter: true,
-  isModal: true,
-  showModalMask: true,
   canDragReposition: true,
   canDragResize: true,
   dismissOnEscape: true,
-  animateMinimize: false,
   showMaximizeButton: true,
-  headerControls: ['headerIcon', 'headerLabel', 'minimizeButton', 'maximizeButton', 'closeButton'],
-  headerIconProperties: {
-    width: 16,
-    height: 16,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png'
-  },
   
   defaultSelectorGridField: {
     canFreeze: true,
@@ -77,9 +62,9 @@ isc.OBSelectorPopupWindow.addProperties({
         useClientSorting: false
       },
       
-      width: '100%',
-      height: '100%',
-      alternateRecordStyles: true,
+      width: this.selectorGridProperties.width,
+      height: this.selectorGridProperties.height,
+      alternateRecordStyles: this.selectorGridProperties.alternateRecordStyles,
       dataSource: this.dataSource,
       showFilterEditor: true,
       sortField: this.displayField,
@@ -136,10 +121,11 @@ isc.OBSelectorPopupWindow.addProperties({
     });
     
     this.items = [this.selectorGrid, isc.HLayout.create({
-      height: 40,
+      styleName: this.buttonBarStyleName,
+      height: this.buttonBarHeight,
       defaultLayoutAlign: 'center',
       members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
-        width: 20
+        width: this.buttonBarSpace
       }), cancelButton, isc.LayoutSpacer.create({})]
     })];
     return this.Super('initWidget', arguments);
@@ -309,8 +295,6 @@ isc.ClassFactory.defineClass('OBSelectorItem', ComboBoxItem);
 isc.ClassFactory.mixInInterface('OBSelectorItem', 'OBLinkTitleItem');
 
 isc.OBSelectorItem.addProperties({
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
-  newTabIconSize: 8,
   popupTextMatchStyle: 'startswith',
   suggestionTextMatchStyle: 'startswith',
   
@@ -333,23 +317,25 @@ isc.OBSelectorItem.addProperties({
   },
   
   valueMap: {},
-  icons: [{
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
-    width: 21,
-    height: 21,
-    keyPress: function(keyName, character, form, item, icon){
-      if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown()) {
-        item.openSelectorWindow();
-        return false;
-      }
-      return true;
-    },
-    click: function(form, item, icon){
-      item.openSelectorWindow();
-    }
-  }],
   
   init: function(){
+    this.icons = [{
+      src: this.popupIconSrc,
+      width: this.popupIconWidth,
+      height: this.popupIconHeight,
+      keyPress: function(keyName, character, form, item, icon){
+        if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown()) {
+          item.openSelectorWindow();
+          return false;
+        }
+        return true;
+      },
+      click: function(form, item, icon){
+        item.openSelectorWindow();
+      }
+    }];
+    
+    
     if (this.disabled) {
       // TODO: disable, remove icons
       this.icons = null;
@@ -456,37 +442,6 @@ isc.ClassFactory.defineClass('OBSelectorLinkItem', StaticTextItem);
 isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 
 isc.OBSelectorLinkItem.addProperties({
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
-  newTabIconSize: 8,
-  pickerIconHeight: 21,
-  pickerIconWidth: 21,
-  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
-  clearIcon: {
-    height: 15,
-    width: 15,
-    // note: TODO: show a helpfull text, need to be present in the messages table
-    //prompt: 'test',
-    showIf: function(form, item){
-      if (item.disabled) {
-        return false;
-      }
-      if (item.required) {
-        return false;
-      }
-      if (item.getValue()) {
-        return true;
-      }
-      return false;
-    },
-    
-    click: function(){
-      this.formItem.clearValue();
-    },
-    
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png'
-  },
-  
-  showPickerIcon: true,
   
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
@@ -511,12 +466,13 @@ isc.OBSelectorLinkItem.addProperties({
       this.form.clearValue(this.displayField);
     } else {
       // use a special valuemap to store the value
-      this.setValue(record[this.gridValueField]);
-      this.form.setValue(this.displayField, record[this.gridDisplayField]);
       if (!this.valueMap) {
         this.valueMap = {};
       }
+      this.setValue(record[this.gridValueField]);
       this.valueMap[this.getValue()] = record[this.gridDisplayField];
+      this.form.setValue(this.displayField, record[this.gridDisplayField]);
+      this.updateValueMap(true);
     }
     this._doFICCall = true;
     this.form.handleItemChange(this);
@@ -528,6 +484,23 @@ isc.OBSelectorLinkItem.addProperties({
     }
     
     this.instanceClearIcon = isc.shallowClone(this.clearIcon);
+    this.instanceClearIcon.showIf= function(form, item){
+      if (item.disabled) {
+        return false;
+      }
+      if (item.required) {
+        return false;
+      }
+      if (item.getValue()) {
+        return true;
+      }
+      return false;
+    };
+    
+    this.instanceClearIcon.click = function(){
+      this.formItem.clearValue();
+    };
+
     this.icons = [this.instanceClearIcon];
     this.icons[0].formItem = this;
     

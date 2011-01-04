@@ -27,6 +27,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.client.kernel.KernelConstants;
 
 /**
  * Provides Selector Components.
@@ -62,6 +63,12 @@ public class SelectorComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.selector/js/ob-selector-link-widget.js", true, false));
     resources.add(createStaticResource(
         "web/org.openbravo.userinterface.selector/js/ob-selector-item.js", false, true));
+
+    resources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.userinterface.selector/ob-selector-item-styles.js", false, true));
+
     return resources;
   }
 
