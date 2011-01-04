@@ -82,6 +82,12 @@ public class OneToManyTest extends BaseTest {
         // copy the orderline
         final OrderLine copy = (OrderLine) DalUtil.copy(l);
         copy.setId(null);
+        /*
+         * The trigger C_ORDERLINE_TRG2 does insert c_orderlinetax entries after an insert into
+         * c_orderline which would clash with the automatically copied children. So remove the
+         * auto-copied rows for that one table before saving the copied row.
+         */
+        copy.getOrderLineTaxList().clear();
         o.getOrderLineList().add(copy);
         commitTransaction();
         lineId = copy.getId();
