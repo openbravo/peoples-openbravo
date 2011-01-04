@@ -225,8 +225,7 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </taskdef>
     <echo message="Exporting sample reference data" />
-    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="SmallBazaar" />
-    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="Accounting Test" />
+    <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="F&amp;B International Group" />
     <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="QA Testing" />
   </target>
 
