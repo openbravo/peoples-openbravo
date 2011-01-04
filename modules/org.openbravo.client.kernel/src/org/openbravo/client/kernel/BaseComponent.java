@@ -208,6 +208,9 @@ public abstract class BaseComponent implements Component {
    * Translates a null value to a value which can be handled better by a template.
    */
   protected String getSafeValue(Object value) {
+    if (value == null) {
+      return "";
+    }
     return value + "";
   }
 
