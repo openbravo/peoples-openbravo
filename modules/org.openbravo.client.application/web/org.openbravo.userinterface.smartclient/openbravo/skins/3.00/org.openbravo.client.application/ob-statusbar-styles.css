@@ -18,3 +18,20 @@
 */
 
 
+.OBStatusBar {
+  background-repeat: repeat-x;
+  background-position: top center;
+  background-image: url(./images/statusbar/statusbar-bg.png);
+}
+
+.OBStatusBarTextLabel {
+  font-family: 'lucida sans', sans-serif; 
+  font-size: 11px;
+  color: #333333;
+  font-weight: bold;
+  padding-left: 20px;
+}
+
+.OBStatusBarIconButtonBar {
+  margin-right: 20px;
+}

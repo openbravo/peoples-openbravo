@@ -18,3 +18,39 @@
 */
 
 
+isc.OBStatusBar.addProperties({
+  styleName: "OBStatusBar",
+  width: '100%',
+  height: 30,
+  overflow: 'auto',
+
+  iconButtonGroupSpacerWidth: 5
+});
+
+isc.OBStatusBarTextLabelBar.addProperties({
+  width: '*',
+  align: 'left',
+  overflow: 'visible'
+});
+
+isc.OBStatusBarTextLabel.addProperties({
+  baseStyle: "OBStatusBarTextLabel"
+});
+
+isc.OBStatusBarIconButtonBar.addProperties({
+  styleName: "OBStatusBarIconButtonBar",
+  width: 110,
+  align: 'left',
+//  overflow: 'visible',
+  membersMargin: 4
+});
+
+isc.OBStatusBarIconButton.addProperties({
+  imageType: 'center',
+  showRollOver: true,
+  showDown: true,
+  showFocused: false,
+  initWidgetStyle: function() {
+    this.setSrc('[SKINIMG]../../org.openbravo.client.application/images/statusbar/iconButton-' + this.buttonType + '.png');
+  }
+});
