@@ -36,7 +36,7 @@ public class SetDefaultRole extends ModuleScript {
     try {
       ConnectionProvider cp = getConnectionProvider();
       PreparedStatement ps = cp
-          .getPreparedStatement("update ad_user set default_ad_role_id='FF8081812250326E012250353BDE0005' where ad_user_id='100' and default_ad_role_id is NULL and exists (select 1 from ad_role where ad_role_id='FF8081812250326E012250353BDE0005')");
+          .getPreparedStatement("update ad_user set default_ad_role_id='A9904A6C65FF43788A584E5A2268449D' where ad_user_id='100' and default_ad_role_id is NULL and exists (select 1 from ad_role where ad_role_id='A9904A6C65FF43788A584E5A2268449D')");
       ps.executeUpdate();
     } catch (Exception e) {
       handleError(e);
