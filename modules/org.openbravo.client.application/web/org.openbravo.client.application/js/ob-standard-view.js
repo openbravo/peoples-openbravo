@@ -796,81 +796,10 @@ isc.OBStandardView.addProperties({
   
   /* ++++++++++++++++++++ Status Bar ++++++++++++++++++++++++++ */
   
-  statusBarCloseIconButtonProperties: {
-    view: null,
-    imageType: 'center',
-    showRollOver: false,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/statusbar/ico-x.png',
-    action: function(){
-      this.view.switchFormGridVisibility();
-    }
-  },
-  
-  statusBarPrevIconButtonProperties: {
-    view: null,
-    imageType: 'center',
-    showRollOver: false,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/statusbar/sn-previous.gif',
-    action: function(){
-      var rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
-      var newRowNum = rowNum - 1;
-      if (newRowNum > -1) {
-        var newRecord = this.view.viewGrid.getRecord(newRowNum);
-        this.view.viewGrid.scrollRecordToTop(newRowNum);
-        this.view.editRecord(newRecord);
-        this.view.updateTabTitle();
-      }
-    }
-  },
-  
-  statusBarNextIconButtonProperties: {
-    view: null,
-    imageType: 'center',
-    showRollOver: false,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/statusbar/sn-next.gif',
-    action: function(){
-      var rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
-      var newRowNum = rowNum + 1;
-      // if there is data move to it
-      if (this.view.viewGrid.data.get(newRowNum)) {
-        var newRecord = this.view.viewGrid.getRecord(newRowNum);
-        this.view.viewGrid.scrollRecordToTop(newRowNum);
-        this.view.editRecord(newRecord);
-        this.view.updateTabTitle();
-      }
-    }
-  },
-  
   createStatusBar: function(){
-    var statusBar = isc.HLayout.create({
-      width: '100%',
-      height: '30',
-      overflow: 'auto'
+    var statusBar = isc.OBStatusBar.create({
+      view: this.viewForm.view
     });
-    var messageBar = isc.HLayout.create({
-      width: '*',
-      align: 'left',
-      overflow: 'visible'
-    });
-    messageBar.addMember(isc.Label.create({
-      contents: 'message'
-    }));
-    
-    var prevButton = isc.ImgButton.create(this.statusBarPrevIconButtonProperties);
-    var nextButton = isc.ImgButton.create(this.statusBarNextIconButtonProperties);
-    var closeButton = isc.ImgButton.create(this.statusBarCloseIconButtonProperties);
-    var buttonBar = isc.HLayout.create({
-      width: '100',
-      align: 'right',
-      overflow: 'visible'
-    });
-    
-    prevButton.view = this;
-    nextButton.view = this;
-    closeButton.view = this;
-    
-    buttonBar.addMembers([prevButton, nextButton, closeButton]);
-    statusBar.addMembers([messageBar, buttonBar]);
     return statusBar;
   },
   
