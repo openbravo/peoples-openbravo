@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jfree.util.Log;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
@@ -198,8 +197,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       } else if (jsonString.equals("{}")) {
         return "";
       }
-      Log.warn("Can't process json string " + jsonString);
-      return "";
+      // be lenient just return the string as it is...
+      return jsonString + (jsonString.trim().endsWith(",") ? "" : ",");
     }
 
     private UIDefinition getUIDefinition() {

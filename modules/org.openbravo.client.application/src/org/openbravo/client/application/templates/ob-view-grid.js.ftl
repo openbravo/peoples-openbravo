@@ -21,7 +21,10 @@ isc.OBViewGrid.create({
     fields:[
     <#list data.fields as field>
         { 
-        autoExpand: ${field.autoExpand}, type: '${field.type}' 
+        autoExpand: ${field.autoExpand}, type: '${field.type}',
+        editorProperties: {
+          ${field.fieldProperties}
+        }
         ${field.gridFieldProperties}
         ${field.filterEditorProperties}
         , targetEntity: '${field.targetEntity?js_string}'
