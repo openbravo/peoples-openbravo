@@ -186,7 +186,7 @@ isc.OBViewGrid.addProperties({
   },
   
   initWidget: function(){
-    var thisGrid = this, localEditLinkField;
+    var editFormProps = {}, thisGrid = this, localEditLinkField;
     if (this.editGrid) {
       // add the edit pencil in the beginning
       localEditLinkField = isc.addProperties({}, this.editLinkFieldProperties);
@@ -400,12 +400,6 @@ isc.OBViewGrid.addProperties({
     if (!criteria) {
       criteria = {};
     }
-    
-    if (criteria.conversionDone) {
-      return criteria;
-    }
-    
-    criteria.conversionDone = true;
     
     criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);    
 
