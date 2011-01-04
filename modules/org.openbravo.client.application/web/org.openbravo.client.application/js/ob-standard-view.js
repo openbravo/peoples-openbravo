@@ -364,6 +364,17 @@ isc.OBStandardView.addProperties({
     if (this.viewForm) {
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
     }
+//    if (this.viewGrid && this.viewForm) {
+      // set properties on the edit form
+//      var editFormProps = {};
+//      for (var editFormProp in this.viewForm) {
+//        if (this.viewForm.hasOwnProperty(editFormProp) && this.viewForm[editFormProp]) {
+//          editFormProps[editFormProp] = isc.shallowClone(this.viewForm[editFormProp]);
+//        }
+//      }
+//      
+//      this.viewGrid.editFormDefaults = isc.addProperties(this.viewGrid.editFormDefaults, editFormProps);
+//    }
   },
   
   draw: function(){
