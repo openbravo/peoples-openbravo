@@ -193,7 +193,7 @@ public class BaseTest extends TestCase {
   }
 
   @Deprecated
-  protected void setBigBazaarAdminContex() {
+  protected void setBigBazaarAdminContext() {
     setTestAdminContext();
   }
 
