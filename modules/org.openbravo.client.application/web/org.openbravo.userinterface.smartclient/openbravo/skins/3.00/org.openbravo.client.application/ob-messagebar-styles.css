@@ -17,3 +17,58 @@
  ************************************************************************
 */
 
+
+.OBMessageBar_success {
+  background-color: #C8F096;
+}
+
+.OBMessageBar_error {
+  background-color: #FFD7D7;
+}
+
+.OBMessageBar_warning {
+  background-color: #FFE79F;
+}
+
+.OBMessageBar_info {
+  background-color: #9BCDFF;
+}
+
+.OBMessageBar_tip {
+  background-color: #FFFAAA;
+}
+
+
+
+.OBMessageBarDescriptionText {
+  font-family: arial, sans-serif; 
+  font-size: 12px;
+  font-weight: normal;
+  margin: 4px 2px 2px 6px;
+  line-height: 16px;
+}
+
+.OBMessageBarDescriptionText_success {
+  color: #333300;
+}
+
+.OBMessageBarDescriptionText_error {
+  color: #C85000;
+}
+
+.OBMessageBarDescriptionText_warning {
+  color: #CC6600;
+}
+
+.OBMessageBarDescriptionText_info {
+  color: #3366CC;
+}
+
+.OBMessageBarDescriptionText_tip {
+  color: #666600;
+}
+
+.OBMessageBarCloseIconOver,
+.OBMessageBarCloseIcon {
+  margin: 2px 2px 0px 0px;
+}

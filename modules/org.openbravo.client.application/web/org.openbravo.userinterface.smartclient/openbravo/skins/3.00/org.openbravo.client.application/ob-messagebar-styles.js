@@ -17,3 +17,38 @@
  ************************************************************************
 */
 
+
+isc.OBMessageBar.addProperties({
+  styleName: 'OBMessageBar_tip',
+  width: '100%',
+  height: 40,
+  overflow: 'auto',
+  setTypeStyle: function(type) {
+    this.setStyleName('OBMessageBar_' + type);
+    this.mainIcon.setSrc('[SKINIMG]../../org.openbravo.client.application/images/messagebar/mainIcon-' + type + '.png');
+    this.text.setStyleName('OBMessageBarDescriptionText OBMessageBarDescriptionText_' + type);
+    this.closeIcon.setSrc('[SKINIMG]../../org.openbravo.client.application/images/messagebar/closeIcon-' + type + '.png');
+  }
+});
+
+isc.OBMessageBarMainIcon.addProperties({
+  src: '[SKINIMG]../../org.openbravo.client.application/images/messagebar/mainIcon-tip.png',
+  width: 47
+});
+
+isc.OBMessageBarDescriptionText.addProperties({
+  styleName: 'OBMessageBarDescriptionText OBMessageBarDescriptionText_tip',
+  width: '*'
+});
+
+isc.OBMessageBarCloseIcon.addProperties({
+  baseStyle: 'OBMessageBarCloseIcon',
+  width: 12, // 10 + 2 of the margin set in the CSS
+  height: 12, // 10 + 2 of the margin set in the CSS
+  align: 'left',
+  showRollOver: true,
+  showDown: false,
+  showFocused: false,
+  overflow: 'visible',
+  src: '[SKINIMG]../../org.openbravo.client.application/images/messagebar/closeIcon-tip.png'
+});
