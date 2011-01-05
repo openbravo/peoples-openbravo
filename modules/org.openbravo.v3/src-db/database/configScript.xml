@@ -278,7 +278,7 @@
     </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="SEQNO" pkRow="210">
       <oldValue><![CDATA[100]]></oldValue>
-      <newValue><![CDATA[11]]></newValue>
+      <newValue><![CDATA[70]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISSINGLEROW" pkRow="210">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -510,7 +510,7 @@
     </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="SEQNO" pkRow="800057">
       <oldValue><![CDATA[70]]></oldValue>
-      <newValue><![CDATA[13]]></newValue>
+      <newValue><![CDATA[100]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="800074">
       <oldValue><![CDATA[Y]]></oldValue>
