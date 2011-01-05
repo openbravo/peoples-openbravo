@@ -29,6 +29,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.Greeting;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.geography.Region;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
@@ -47,9 +48,9 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
   public void testNotWritableUpdate() {
     cleanRefDataLoaded();
     setTestUserContext();
-    addReadWriteAccess(Greeting.class);
+    addReadWriteAccess(Region.class);
 
-    final List<Greeting> gs = getList(Greeting.class);
+    final List<Region> gs = getList(Region.class);
     String xml = getXML(gs);
 
     // change the xml to force an update
@@ -62,7 +63,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     OBContext.getOBContext().setCurrentClient(c);
 
     // remove the entity to force a not-write situation
-    final Entity entity = ModelProvider.getInstance().getEntity(Greeting.class);
+    final Entity entity = ModelProvider.getInstance().getEntity(Region.class);
     OBContext.getOBContext().getEntityAccessChecker().getWritableEntities().remove(entity);
     OBContext.getOBContext().getEntityAccessChecker().getReadableEntities().add(entity);
 
@@ -134,7 +135,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
     setSystemAdministratorContext();
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
         OBDal.getInstance().get(Client.class, TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, "1000002"), xml); // FIXME
+        OBDal.getInstance().get(Organization.class, "B9C7088AB859483A9B1FB342AC2BE17A"), xml); // FIXME
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
