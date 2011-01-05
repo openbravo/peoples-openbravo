@@ -45,6 +45,7 @@ public class JsonConstants {
    */
   public static final String ORG_PARAMETER = "_org";
 
+  public static final String ONLYCOUNT_PARAMETER = "_onlyCount";
   public static final String NOCOUNT_PARAMETER = "_noCount";
   public static final String OR_EXPRESSION_PARAMETER = "_OrExpression";
 

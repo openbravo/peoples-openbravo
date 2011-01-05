@@ -45,6 +45,7 @@ import org.openbravo.dal.core.OBContext;
  */
 public class QueryBuilder {
 
+  private static final String PARAM_DELIMITER = "@";
   private static final String ALIAS_PREFIX = "alias_";
 
   public static enum TextMatching {
@@ -95,6 +96,12 @@ public class QueryBuilder {
 
     if (whereClause != null) {
       return whereClause;
+    }
+
+    // add some default filter parameters
+    filterParameters.put("@user@", OBContext.getOBContext().getUser().getId());
+    if (!filterParameters.containsKey("@client@")) {
+      filterParameters.put("@client@", OBContext.getOBContext().getUser().getId());
     }
 
     final SimpleDateFormat simpleDateFormat = JsonUtils.createDateFormat();
@@ -312,7 +319,30 @@ public class QueryBuilder {
       whereClause = " where " + whereClause;
     }
 
+    whereClause = setRequestParameters(whereClause);
+
     return whereClause;
+  }
+
+  private String setRequestParameters(String currentWhereClause) {
+    // no parameters
+    if (!currentWhereClause.contains(PARAM_DELIMITER)) {
+      return currentWhereClause;
+    }
+    String localWhereClause = currentWhereClause;
+    for (String key : filterParameters.keySet()) {
+      if (!key.startsWith(PARAM_DELIMITER) || !key.endsWith(PARAM_DELIMITER)) {
+        continue;
+      }
+      final int index = localWhereClause.toLowerCase().indexOf(key.toLowerCase());
+      if (index != -1) {
+        localWhereClause = localWhereClause.substring(0, index) + getTypedParameterAlias() + " "
+            + localWhereClause.substring(index + key.length());
+        typedParameters.add(filterParameters.get(key));
+      }
+    }
+
+    return localWhereClause;
   }
 
   private String getTypedParameterAlias() {

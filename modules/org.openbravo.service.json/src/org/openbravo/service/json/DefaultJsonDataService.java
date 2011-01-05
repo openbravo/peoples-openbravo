@@ -170,6 +170,16 @@ public class DefaultJsonDataService implements JsonDataService {
           }
         }
 
+        if (doCount && !preventCountOperation) {
+          count = queryService.count();
+        }
+
+        if (parameters.containsKey(JsonConstants.ONLYCOUNT_PARAMETER)) {
+          // stop here
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
+          return jsonResponse.toString();
+        }
+
         bobs = queryService.list();
 
         if (preventCountOperation) {
@@ -182,9 +192,6 @@ public class DefaultJsonDataService implements JsonDataService {
           }
         }
 
-        if (doCount && !preventCountOperation) {
-          count = queryService.count();
-        }
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
         jsonResponse.put(JsonConstants.RESPONSE_ENDROW, (bobs.size() > 0 ? bobs.size() + startRow
             - 1 : 0));

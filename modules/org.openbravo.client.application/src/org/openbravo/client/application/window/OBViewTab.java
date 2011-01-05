@@ -207,12 +207,14 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public class FieldProperty {
     private String columnName;
+    private String dbColumnName;
     private String propertyName;
     private boolean session;
 
     public FieldProperty(Field field) {
       Column col = field.getColumn();
       columnName = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
+      dbColumnName = col.getDBColumnName();
       propertyName = KernelUtils.getInstance().getPropertyFromColumn(col).getName();
       session = col.isStoredInSession();
     }
@@ -227,6 +229,14 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public String getSession() {
       return session ? "true" : "false";
+    }
+
+    public String getDbColumnName() {
+      return dbColumnName;
+    }
+
+    public void setDbColumnName(String dbColumnName) {
+      this.dbColumnName = dbColumnName;
     }
   }
 
