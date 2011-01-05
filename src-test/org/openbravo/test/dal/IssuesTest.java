@@ -469,7 +469,8 @@ public class IssuesTest extends BaseTest {
     assertTrue(result.size() == 1);
     assertTrue(result.get(0) instanceof Order);
     final Order order = (Order) result.get(0);
-    assertTrue(order.getOrganization().getId().equals("1000000"));
+    // The same Organization ID of the test_13281.xml
+    assertTrue(order.getOrganization().getId().equals("378AF0EAE1A2479EAAA33436645E9433"));
   }
 
   /**
