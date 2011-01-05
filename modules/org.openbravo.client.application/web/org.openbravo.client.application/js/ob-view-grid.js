@@ -79,12 +79,12 @@ isc.OBViewGrid.addProperties({
   // ** {{{ dataPageSize }}} **
   // The data page size used for loading paged data from the server.
   dataPageSize: 100,
-    
+  
   autoFitFieldWidths: true,
   autoFitWidthApproach: 'title',
   canAutoFitFields: false,
   width: '100%',
-
+  
   autoFetchTextMatchStyle: 'substring',
   showFilterEditor: true,
   canEdit: true,
@@ -146,7 +146,7 @@ isc.OBViewGrid.addProperties({
   },
   
   createRecordComponent: function(record, colNum){
-    var layout = this.Super('createRecordComponent',arguments), rowNum;
+    var layout = this.Super('createRecordComponent', arguments), rowNum;
     if (layout) {
       return layout;
     }
@@ -249,6 +249,19 @@ isc.OBViewGrid.addProperties({
   },
   
   refreshContents: function(callback){
+  
+    // do not refresh if the parent is not selected and we have no data anyway
+    if (this.view.parentProperty && this.data && this.data.getLength && this.data.getLength() === 0) {
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      if (selectedValues.length === 0) {
+        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+    }
+    
     var context = {
       showPrompt: false,
       textMatchStyle: this.autoFetchTextMatchStyle
@@ -264,7 +277,7 @@ isc.OBViewGrid.addProperties({
     if (this.targetRecordId) {
       this.delayedHandleTargetRecord(startRow, endRow);
     } else if (this.view.shouldOpenDefaultEditMode()) {
-      this.view.openDefaultEditView(this.getRecord(startRow));   
+      this.view.openDefaultEditView(this.getRecord(startRow));
     }
     
     return ret;
@@ -298,7 +311,7 @@ isc.OBViewGrid.addProperties({
       
       this.scrollRecordIntoView(recordIndex, false);
       if (this.view.defaultEditMode) {
-        this.view.editRecord(gridRecord);   
+        this.view.editRecord(gridRecord);
       } else {
         this.doSelectSingleRecord(gridRecord);
       }
@@ -337,7 +350,7 @@ isc.OBViewGrid.addProperties({
     }
     requestProperties.showPrompt = false;
     
-    var theView = this.view;    
+    var theView = this.view;
     
     var newCallBack = function(){
       theView.recordSelected();
@@ -349,13 +362,13 @@ isc.OBViewGrid.addProperties({
     return this.Super('fetchData', [this.convertCriteria(criteria), newCallBack, requestProperties]);
   },
   
-  getInitialCriteria: function() {
+  getInitialCriteria: function(){
     var criteria = this.Super('getInitialCriteria', arguments);
     
     return this.convertCriteria(criteria);
   },
   
-  getCriteria: function() {
+  getCriteria: function(){
     var criteria = this.Super('getCriteria', arguments);
     if (!criteria) {
       criteria = {};
@@ -401,8 +414,8 @@ isc.OBViewGrid.addProperties({
       criteria = {};
     }
     
-    criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);    
-
+    criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);
+    
     var isFiltering = criteria.length > 0;
     var filterValues = [];
     var index = 0, selectedValues;
@@ -413,11 +426,7 @@ isc.OBViewGrid.addProperties({
     }
     
     if (this.view.parentProperty) {
-      if (!this.view.parentView) {
-        criteria[this.view.parentProperty] = '-1';
-      } else {
-        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      }
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       if (selectedValues.length === 0) {
         criteria[this.view.parentProperty] = '-1';
         this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
@@ -450,6 +459,9 @@ isc.OBViewGrid.addProperties({
     if (this.whereClause) {
       criteria[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     }
+    
+    // add all the context info to the criteria
+    this.view.getContextInfo({}, criteria);
     
     return criteria;
   },
@@ -791,7 +803,7 @@ isc.ClassFactory.defineClass('OBGridToolStripIcon', isc.ImgButton);
 
 isc.OBGridToolStripIcon.addProperties({
   buttonType: null, /* This could be: edit - form - cancel - save */
-  initWidget: function() {
+  initWidget: function(){
     if (this.initWidgetStyle) {
       this.initWidgetStyle();
     }

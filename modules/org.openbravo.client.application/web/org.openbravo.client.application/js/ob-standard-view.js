@@ -708,7 +708,7 @@ isc.OBStandardView.addProperties({
     }
   },
   
-  updateChildCount: function(){
+  updateChildCount: function(){    
     if (!this.childTabSet) {
       return;
     }
@@ -752,7 +752,10 @@ isc.OBStandardView.addProperties({
       }
     };
     
-    OB.RemoteCallManager.call('org.openbravo.client.application.ChildTabRecordCounterActionHandler', data, {}, callback, null);
+    var props = {};
+    this.getContextInfo({}, props);
+    
+    OB.RemoteCallManager.call('org.openbravo.client.application.ChildTabRecordCounterActionHandler', data, props, callback, null);
   },
   
   updateTabTitle: function(){
@@ -887,16 +890,21 @@ isc.OBStandardView.addProperties({
     
     var properties = this.propertyToColumns;
     
-    for (var i = 0; i < properties.length; i++) {
-      var value = record[properties[i].property];
-      if (typeof value !== 'undefined') {
-        allProperties[properties[i].column] = value;
-        if (properties[i].sessionProperty) {
-          sessionProperties[properties[i].column] = value;
+    if (record) {
+      for (var i = 0; i < properties.length; i++) {
+        var value = record[properties[i].property];
+        if (typeof value !== 'undefined') {
+          allProperties[properties[i].column] = value;
+          // surround the property name with @ symbols to make them different
+          // from filter criteria and such          
+          allProperties['@' + this.entity + "." + properties[i].property + '@'] = value;
+          if (properties[i].sessionProperty) {
+            sessionProperties[properties[i].dbColumn] = value;
+            sessionProperties['@' + this.entity + "." + properties[i].property + '@'] = value;
+          }
         }
       }
     }
-    
     if (this.viewForm.isVisible()) {
       isc.addProperties(allProperties, this.viewForm.auxInputs);
       isc.addProperties(allProperties, this.viewForm.hiddenInputs);

@@ -213,7 +213,7 @@ isc.OBViewForm.addProperties({
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID),
       CHANGED_COLUMN: item.inpColumnName
-    }, allProperties);
+    }, allProperties, sessionProperties);
     
     // collect the context information    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', null, requestParams, function(response, data, request){
