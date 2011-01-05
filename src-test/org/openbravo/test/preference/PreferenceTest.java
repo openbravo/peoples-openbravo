@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,33 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.BaseTest;
 
 public class PreferenceTest extends BaseTest {
+
+  private static final String SALES_ROLE_ID = "FA057013C10148828D2430F66F42EF1A";
+
+  /**
+   * F&B International Group
+   */
+  private static final String ORG_B = "3C816D72B14D4BBCB8571404B794AB84";
+
+  /**
+   * F&B US, Inc.
+   */
+  private static final String ORG_B1 = "B9C7088AB859483A9B1FB342AC2BE17A";
+
+  /**
+   * F&B US East Coast
+   */
+  private static final String ORG_B11 = "378AF0EAE1A2479EAAA33436645E9433";
+
+  /**
+   * F&B US West Coast
+   */
+  private static final String ORG_B12 = "90A1F59849E84AFABD04814B3D15A691";
+
+  /**
+   * F&B España, S.A.
+   */
+  private static final String ORG_B2 = "4F68EB1C1B734E79B27DE9D2DF56089F";
 
   public void testCreatePreference() {
     setSystemAdministratorContext();
@@ -84,7 +111,7 @@ public class PreferenceTest extends BaseTest {
   public void testSamePropertyDifferentVisibility() {
     setSystemAdministratorContext();
 
-    Role role = OBDal.getInstance().get(Role.class, "1000001"); // Sales
+    Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
 
     Preferences.setPreferenceValue("testProperty", "salesValue", false, null, null, null, role,
         null, null);
@@ -104,7 +131,7 @@ public class PreferenceTest extends BaseTest {
         .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "newValue", value);
 
-    Role role = OBDal.getInstance().get(Role.class, "1000001"); // Sales
+    Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
     value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
         .getOBContext().getUser(), role, null);
@@ -118,7 +145,7 @@ public class PreferenceTest extends BaseTest {
         .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "newValue", value);
 
-    Role role = OBDal.getInstance().get(Role.class, "1000001"); // Sales
+    Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
     value = getPLPreference("testProperty", false, OBContext.getOBContext().getCurrentClient(),
         OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
         role, null);
@@ -131,7 +158,7 @@ public class PreferenceTest extends BaseTest {
     Preferences.setPreferenceValue("testProperty", "alertGeneral", false, null, null, null, null,
         window, null);
 
-    Role role = OBDal.getInstance().get(Role.class, "1000001"); // Sales
+    Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
     Preferences.setPreferenceValue("testProperty", "alertSales", false, null, null, null, role,
         window, null);
     OBDal.getInstance().flush();
@@ -163,7 +190,7 @@ public class PreferenceTest extends BaseTest {
     Preferences.setPreferenceValue("testProperty", "alertGeneral", false, null, null, null, null,
         window, null);
 
-    Role role = OBDal.getInstance().get(Role.class, "1000001"); // Sales
+    Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
     String value = getPLPreference("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
         .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
@@ -188,11 +215,11 @@ public class PreferenceTest extends BaseTest {
   public void testOrgVisibility() throws PropertyException {
     setSystemAdministratorContext();
     Client client = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
-    Organization orgB = OBDal.getInstance().get(Organization.class, "1000005");
-    Organization orgB1 = OBDal.getInstance().get(Organization.class, "1000006");
-    Organization orgB2 = OBDal.getInstance().get(Organization.class, "1000007");
-    Organization orgB11 = OBDal.getInstance().get(Organization.class, "1000008");
-    Organization orgB12 = OBDal.getInstance().get(Organization.class, "1000009");
+    Organization orgB = OBDal.getInstance().get(Organization.class, ORG_B);
+    Organization orgB1 = OBDal.getInstance().get(Organization.class, ORG_B1);
+    Organization orgB2 = OBDal.getInstance().get(Organization.class, ORG_B2);
+    Organization orgB11 = OBDal.getInstance().get(Organization.class, ORG_B11);
+    Organization orgB12 = OBDal.getInstance().get(Organization.class, ORG_B12);
 
     Preference p = Preferences.setPreferenceValue("testProperty", "B", false, null, orgB, null,
         null, null, null);
@@ -236,11 +263,11 @@ public class PreferenceTest extends BaseTest {
 
     setSystemAdministratorContext();
     Client client = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
-    Organization orgB = OBDal.getInstance().get(Organization.class, "1000005");
-    Organization orgB1 = OBDal.getInstance().get(Organization.class, "1000006");
-    Organization orgB2 = OBDal.getInstance().get(Organization.class, "1000007");
-    Organization orgB11 = OBDal.getInstance().get(Organization.class, "1000008");
-    Organization orgB12 = OBDal.getInstance().get(Organization.class, "1000009");
+    Organization orgB = OBDal.getInstance().get(Organization.class, ORG_B);
+    Organization orgB1 = OBDal.getInstance().get(Organization.class, ORG_B1);
+    Organization orgB2 = OBDal.getInstance().get(Organization.class, ORG_B2);
+    Organization orgB11 = OBDal.getInstance().get(Organization.class, ORG_B11);
+    Organization orgB12 = OBDal.getInstance().get(Organization.class, ORG_B12);
 
     String value = getPLPreference("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
@@ -320,6 +347,7 @@ public class PreferenceTest extends BaseTest {
   }
 
   public void testPLConflict() {
+    setSystemAdministratorContext();
     SQLException exception = null;
     try {
       getPLPreference("testProperty", false, OBContext.getOBContext().getCurrentClient(), OBContext
@@ -360,6 +388,7 @@ public class PreferenceTest extends BaseTest {
   }
 
   public void testPLSolvedConflict() throws SQLException {
+    setSystemAdministratorContext();
     String value = getPLPreference("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
         .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
