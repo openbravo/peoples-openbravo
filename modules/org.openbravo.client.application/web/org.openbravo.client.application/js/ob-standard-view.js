@@ -418,8 +418,17 @@ isc.OBStandardView.addProperties({
         height: '100%',
         contents: '&nbsp;',
         width: OB.ActiveBarStyling.width,
-        styleName: OB.ActiveBarStyling.styleName,
-        visibility: 'hidden'
+        styleName: OB.ActiveBarStyling.inActiveStyleName,
+        activeStyleName: OB.ActiveBarStyling.activeStyleName,
+        inActiveStyleName: OB.ActiveBarStyling.inActiveStyleName,
+        
+        setActive: function(active) {
+          if (active) {
+            this.setStyleName(this.activeStyleName);
+          } else {
+            this.setStyleName(this.inActiveStyleName);
+          }
+        }
       });
       
       this.formGridLayout.addMember(this.activeBar);
@@ -533,11 +542,11 @@ isc.OBStandardView.addProperties({
       }
       //      console.log("Tab " + this.tabTitle + ' --> receives focus ');
       this.standardWindow.focusedView = this;
-      this.activeBar.show();
+      this.activeBar.setActive(true);
       this.setViewFocus();
     } else {
       //      console.log("Tab " + this.tabTitle + ' --> looses focus ');
-      this.activeBar.hide();
+      this.activeBar.setActive(false);
       this.standardWindow.focusedView = null;
     }
   },

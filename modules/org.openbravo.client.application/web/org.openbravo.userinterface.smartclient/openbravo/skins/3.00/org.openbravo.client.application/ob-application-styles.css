@@ -48,6 +48,10 @@ body {
 /*============================================================
  Active view
  ============================================================*/
-.OBActiveView {
+.OBViewActive {
   background-color: orange;
+}
+
+.OBViewInActive {
+  background-color: grey;
 }
