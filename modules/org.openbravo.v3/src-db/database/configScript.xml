@@ -96,10 +96,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_PREFERENCE" columnname="VALUE" pkRow="C085B29F345B423F9E7DE5677359E02B">
-      <oldValue><![CDATA[http://www.openbravo.com/myobrc2/widgets.html]]></oldValue>
-      <newValue><![CDATA[http://www.openbravo.com/myobrc2/widgets.html ]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="789">
       <oldValue><![CDATA[@AD_CLIENT_ID@]]></oldValue>
       <newValue><![CDATA[@#AD_CLIENT_ID@]]></newValue>
@@ -115,22 +111,6 @@
     <columnDataChange tablename="AD_COLUMN" columnname="AD_REFERENCE_VALUE_ID" pkRow="2519">
       <oldValue><![CDATA[132]]></oldValue>
       <newValue><![CDATA[A85EA9A581DB42DCA5576FAFCD08A1B7]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_COLUMN" columnname="ISSESSIONATTR" pkRow="3497">
-      <oldValue><![CDATA[N]]></oldValue>
-      <newValue><![CDATA[Y]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_COLUMN" columnname="ISSESSIONATTR" pkRow="3518">
-      <oldValue><![CDATA[N]]></oldValue>
-      <newValue><![CDATA[Y]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="3792">
-      <oldValue/>
-      <newValue><![CDATA[1000037]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="5212">
-      <oldValue/>
-      <newValue><![CDATA[C]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="8492">
       <oldValue><![CDATA[@AD_CLIENT_ID@]]></oldValue>
@@ -255,10 +235,6 @@
     <columnDataChange tablename="AD_TAB" columnname="ISSINGLEROW" pkRow="182">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TAB" columnname="SEQNO" pkRow="183">
-      <oldValue><![CDATA[80]]></oldValue>
-      <newValue><![CDATA[12]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISSINGLEROW" pkRow="183">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -481,10 +457,6 @@
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="439">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="458">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
@@ -1532,17 +1504,9 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="AD_FIELDGROUP_ID" pkRow="3993">
-      <oldValue/>
-      <newValue><![CDATA[101]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="3998">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="AD_FIELDGROUP_ID" pkRow="4003">
-      <oldValue/>
-      <newValue><![CDATA[101]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="4009">
       <oldValue><![CDATA[Y]]></oldValue>
@@ -2568,25 +2532,13 @@
       <oldValue/>
       <newValue><![CDATA[@FinancialManagement@='']]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SHOWINRELATION" pkRow="803269">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="DISPLAYLOGIC" pkRow="803270">
       <oldValue/>
       <newValue><![CDATA[@FinancialManagement@='']]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SHOWINRELATION" pkRow="803270">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="DISPLAYLOGIC" pkRow="803271">
       <oldValue/>
       <newValue><![CDATA[@FinancialManagement@='']]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_FIELD" columnname="SHOWINRELATION" pkRow="803271">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_FIELD" columnname="ISDISPLAYED" pkRow="803281">
       <oldValue><![CDATA[Y]]></oldValue>
