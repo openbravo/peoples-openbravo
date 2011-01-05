@@ -32,21 +32,22 @@ isc.OBStatusBarIconButton.addProperties({
   view: null,
 
   action: function(){
+    var rowNum, newRowNum, newRecord;
     if (this.buttonType === 'previous') {
-      var rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
-      var newRowNum = rowNum - 1;
+      rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
+      newRowNum = rowNum - 1;
       if (newRowNum > -1) {
-        var newRecord = this.view.viewGrid.getRecord(newRowNum);
+        newRecord = this.view.viewGrid.getRecord(newRowNum);
         this.view.viewGrid.scrollRecordToTop(newRowNum);
         this.view.editRecord(newRecord);
         this.view.updateTabTitle();
       }
     } else if (this.buttonType === 'next') {
-      var rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
-      var newRowNum = rowNum + 1;
+      rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
+      newRowNum = rowNum + 1;
       // if there is data move to it
       if (this.view.viewGrid.data.get(newRowNum)) {
-        var newRecord = this.view.viewGrid.getRecord(newRowNum);
+        newRecord = this.view.viewGrid.getRecord(newRowNum);
         this.view.viewGrid.scrollRecordToTop(newRowNum);
         this.view.editRecord(newRecord);
         this.view.updateTabTitle();
@@ -74,7 +75,7 @@ isc.OBStatusBar.addProperties({
   initWidget: function() {
     var messageBar = isc.OBStatusBarTextLabelBar.create({});
     messageBar.addMember(isc.OBStatusBarTextLabel.create({
-      contents: 'Status:'
+      contents: '' //'Status:'
     }));
 
     var previousButton = isc.OBStatusBarIconButton.create({view: this.view, buttonType: 'previous'});
