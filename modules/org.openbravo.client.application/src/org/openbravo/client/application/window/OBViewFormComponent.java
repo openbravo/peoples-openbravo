@@ -372,7 +372,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public long getColSpan() {
-      return 1;
+      return 4;
     }
 
     public String getEndRow() {

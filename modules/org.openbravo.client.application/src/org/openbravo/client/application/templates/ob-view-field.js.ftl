@@ -24,7 +24,10 @@
         type: '${fieldDefinition.type}',
         disabled: ${fieldDefinition.parentProperty?string},
         parentProperty: ${fieldDefinition.parentProperty?string},
-        
+        colSpan: ${fieldDefinition.colSpan},
+        rowSpan: ${fieldDefinition.rowSpan},
+        startRow: ${fieldDefinition.startRow},
+        endRow: ${fieldDefinition.endRow},
         width: '*',
         <#if fieldDefinition.standardField>
         columnName: '${fieldDefinition.columnName?string}',
@@ -32,10 +35,6 @@
         referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
         targetEntity: '${fieldDefinition.targetEntity?string}',
         required: ${fieldDefinition.required?string},
-        colSpan: ${fieldDefinition.colSpan},
-        rowSpan: ${fieldDefinition.rowSpan},
-        startRow: ${fieldDefinition.startRow},
-        endRow: ${fieldDefinition.endRow},
           <#if fieldDefinition.searchField>
           displayField: '${fieldDefinition.name?js_string}._identifier',
           valueField: '${fieldDefinition.name?js_string}',
