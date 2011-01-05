@@ -223,7 +223,7 @@
 <!--800013-->  <AD_FORM_ID><![CDATA[800013]]></AD_FORM_ID>
 <!--800013-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800013-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800013-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800013-->  <NAME><![CDATA[Remittance Cancellation/Return]]></NAME>
 <!--800013-->  <DESCRIPTION><![CDATA[Edit pending remittances by cancelling or returning them.]]></DESCRIPTION>
 <!--800013-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
