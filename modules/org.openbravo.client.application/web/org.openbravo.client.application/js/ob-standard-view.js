@@ -422,7 +422,7 @@ isc.OBStandardView.addProperties({
         activeStyleName: OB.ActiveBarStyling.activeStyleName,
         inActiveStyleName: OB.ActiveBarStyling.inActiveStyleName,
         
-        setActive: function(active) {
+        setActive: function(active){
           if (active) {
             this.setStyleName(this.activeStyleName);
           } else {
@@ -502,8 +502,8 @@ isc.OBStandardView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
     
   },
-    
-  setViewFocus: function() {
+  
+  setViewFocus: function(){
     var object, functionName;
     
     // clear for a non-focusable item
@@ -522,9 +522,25 @@ isc.OBStandardView.addProperties({
       functionName = 'focus';
     }
     
-    isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);    
+    isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);
   },
-
+  
+  setTabButtonState: function(active){
+    var tabButton;
+    if (this.tab) {
+      tabButton = this.parentTabSet.getTab(this.tab);
+    } else {
+      // not the nicest trick but okay...
+      tabButton = window[this.standardWindow.viewTabId];
+    }
+    // enable this code to set the styleclass changes
+//    if (active) {
+//      tabButton.setCustomState('Active');
+//    } else {
+//      tabButton.setCustomState('InActive');
+//    }
+  },
+  
   // called when this view becomes the focused view or looses the focus
   // the parameter is true if it gets the focus and false otherwise
   setActiveView: function(active, ignoreRefreshContents){
@@ -549,6 +565,7 @@ isc.OBStandardView.addProperties({
       this.activeBar.setActive(false);
       this.standardWindow.focusedView = null;
     }
+    this.setTabButtonState(active);
   },
   
   doRefreshContents: function(){
