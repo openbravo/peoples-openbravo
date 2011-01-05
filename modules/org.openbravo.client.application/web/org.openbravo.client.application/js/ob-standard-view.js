@@ -88,15 +88,7 @@ isc.OBStandardWindow.addProperties({
   
   setFocusInView: function(){
     var currentView = this.focusedView || this.view;
-    
-    // repair the focus
-    if (currentView.lastFocusedItem) {
-      currentView.lastFocusedItem.focusInItem();
-    } else if (currentView.viewGrid && currentView.viewGrid.isVisible()) {
-      currentView.viewGrid.focusInFilterEditor();
-    } else if (currentView.viewForm && currentView.viewForm.getFocusItem()) {
-      currentView.viewForm.getFocusItem().focusInItem();
-    }
+    currentView.setViewFocus();
     currentView.setActiveView(true, true);
   },
   
@@ -501,10 +493,33 @@ isc.OBStandardView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
     
   },
-  
+    
+  setViewFocus: function() {
+    var object, functionName;
+    
+    // clear for a non-focusable item
+    if (this.lastFocusedItem && !this.lastFocusedItem.getCanFocus()) {
+      this.lastFocusedItem = null;
+    }
+    
+    if (this.lastFocusedItem) {
+      object = this.lastFocusedItem;
+      functionName = 'focusInItem';
+    } else if (this.viewGrid && this.viewGrid.isVisible()) {
+      object = this.viewGrid;
+      functionName = 'focusInFilterEditor';
+    } else if (this.viewForm && this.viewForm.getFocusItem()) {
+      object = this.viewForm;
+      functionName = 'focus';
+    }
+    
+    isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);    
+  },
+
   // called when this view becomes the focused view or looses the focus
   // the parameter is true if it gets the focus and false otherwise
   setActiveView: function(active, ignoreRefreshContents){
+    var object, functionName;
     // don't change active when refreshing 
     if (this.refreshContents && !ignoreRefreshContents) {
       return;
@@ -519,9 +534,7 @@ isc.OBStandardView.addProperties({
       //      console.log("Tab " + this.tabTitle + ' --> receives focus ');
       this.standardWindow.focusedView = this;
       this.activeBar.show();
-      if (this.lastFocusedItem) {
-        this.lastFocusedItem.focusInItem();
-      }
+      this.setViewFocus();
     } else {
       //      console.log("Tab " + this.tabTitle + ' --> looses focus ');
       this.activeBar.hide();
@@ -633,7 +646,8 @@ isc.OBStandardView.addProperties({
       this.switchFormGridVisibility();
     }
     this.viewGrid.doSelectSingleRecord(record);
-    this.viewForm.setFocus(true);
+    
+    isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
   },
   
   // check if a child tab should be opened directly
