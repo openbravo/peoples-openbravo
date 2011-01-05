@@ -17,3 +17,58 @@
  ************************************************************************
  */
 
+
+isc.ClassFactory.defineClass('OBMessageBarMainIcon', isc.Img);
+
+isc.ClassFactory.defineClass('OBMessageBarDescriptionText', isc.HTMLFlow);
+
+isc.ClassFactory.defineClass('OBMessageBarCloseIcon', isc.ImgButton);
+
+isc.OBMessageBarCloseIcon.addProperties({
+  messageBar: null,
+  action: function() {
+    this.messageBar.hide();
+  }
+})
+
+
+isc.ClassFactory.defineClass('OBMessageBar', isc.HLayout);
+
+isc.OBMessageBar.addProperties({
+  view: null,
+  type: null,
+  mainIcon: null,
+  text: null,
+  closeIcon: null,
+
+  initWidget: function() {
+    this.mainIcon = isc.OBMessageBarMainIcon.create({});
+    this.text = isc.OBMessageBarDescriptionText.create({
+      contents: ''
+    });
+    this.closeIcon = isc.OBMessageBarCloseIcon.create({messageBar: this});
+
+    this.addMembers([this.mainIcon, this.text, this.closeIcon]);
+  },
+
+  setType: function(type) {
+    if (this.setTypeStyle) {
+      this.setTypeStyle(type);
+    }
+    this.type = type;
+  },
+
+  setText: function(title, text) {
+    if (!title) {
+      this.text.setContents(text);
+    } else {
+      this.text.setContents('<b>' + title + '</b><br />' + text);
+    }
+  },
+
+  setMessage: function(type, title, text) {
+    this.setType(type);
+    this.setText(title, text);
+    this.show();
+  }
+});
