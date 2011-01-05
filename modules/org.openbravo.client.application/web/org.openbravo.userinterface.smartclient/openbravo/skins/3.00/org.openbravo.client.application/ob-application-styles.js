@@ -274,6 +274,14 @@ OB.QuickLaunchNavbarComponentStylingProperties = {
 };
 
 /* =====================================================================
+ * Width of the active bar on the left in the main view
+ =======================================================================*/
+OB.ActiveBarStyling = {
+  width: 5,
+  styleName: 'OBActiveView'
+};
+
+/* =====================================================================
  * Changed styling of the standard dialogs
  =======================================================================*/
 isc.Dialog.OK.buttonConstructor = isc.OBFormButton;
@@ -331,3 +339,4 @@ isc.showPrompt = function(prompt){
   
   isc._orginal_showPrompt(prompt, props);
 };
+

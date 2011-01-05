@@ -32,6 +32,7 @@ isc.OBViewForm.addProperties({
   auxInputs: {},
   hiddenInputs: {},
   dynamicCols: [],
+  width: '100%',
   
   // ** {{ Layout Settings }} **
   numCols: 4,

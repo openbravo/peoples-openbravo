@@ -161,6 +161,9 @@ OB.MainView.TabSet = isc.TabSet.create({
   
   tabSelected: function(tabNum, tabPane, ID, tab) {
     OB.Layout.HistoryManager.updateHistory();
+    if (tabPane.tabSelected) {
+      tabPane.tabSelected(tabNum, tabPane, ID, tab);
+    }
   },
 
   initWidget: function() {

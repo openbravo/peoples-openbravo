@@ -22,7 +22,8 @@ isc.OBStatusBar.addProperties({
   styleName: "OBStatusBar",
   width: '100%',
   height: 30,
-  overflow: 'auto',
+  leaveScrollbarGap: false,
+  overflow: 'hidden',
 
   iconButtonGroupSpacerWidth: 5
 });

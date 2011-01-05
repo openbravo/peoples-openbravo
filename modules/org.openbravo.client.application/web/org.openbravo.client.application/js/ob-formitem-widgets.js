@@ -1074,6 +1074,21 @@ isc.FormItem.addProperties({
     return ret;
   },
   
+  focus: function (form, item) {
+    if (form.view) {
+      form.view.lastFocusedItem = this;
+      form.view.setActiveView(true);
+    } else if (form.grid) {      
+      if (form.grid.view) {
+        form.grid.view.lastFocusedItem = this;
+        form.grid.view.setActiveView(true);
+      } else if (isc.isA.RecordEditor(form.grid) && form.grid.sourceWidget && form.grid.sourceWidget.view) {
+        form.grid.sourceWidget.view.lastFocusedItem = this;
+        form.grid.sourceWidget.view.setActiveView(true);
+      }
+    }
+  },
+
   blur: function(form, item){
     if (form && form.handleItemChange) {
       form.handleItemChange(this);

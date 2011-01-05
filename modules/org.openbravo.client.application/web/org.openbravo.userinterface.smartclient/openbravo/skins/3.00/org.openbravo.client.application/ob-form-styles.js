@@ -18,10 +18,11 @@
  */
 isc.OBViewForm.addProperties({
   styleName: 'OBViewForm',
+  width: '100%',
+  overflow: 'visible',
   //cellBorder: 1, // debug layout
   cellPadding: 8
 });
-
 
 isc.OBSectionItem.addProperties({
   sectionHeaderClass: 'OBSectionItemButton',
