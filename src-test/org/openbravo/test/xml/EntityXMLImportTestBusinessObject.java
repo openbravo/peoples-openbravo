@@ -49,15 +49,15 @@ import org.openbravo.service.db.ImportResult;
 
 public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
+  // prefix is used to uniquely identify the payment terms used in this test case
+  private static final String PREFIX = "" + System.currentTimeMillis();
+
   private static final Logger log = Logger.getLogger(EntityXMLImportTestBusinessObject.class);
 
   private static int NO_OF_PT = 1;
   private static int NO_OF_PT_LINE = 1 + NO_OF_PT * NO_OF_PT;
   // add NO_OF_PT twice because it was translated to one language
   private static int TOTAL_PT_PTL = NO_OF_PT + NO_OF_PT + NO_OF_PT_LINE;
-
-  private String[] currentPaymentTerms = new String[] { "1000000", "1000001", "1000002", "1000003",
-      "1000004" };
 
   /** Sets up the test data, creates a first of Payment Terms. */
   public void testAPaymentTerm() {
@@ -68,7 +68,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Export the Payment Terms from the 1000000 client and import them in 1000001 client.
+   * Export the Payment Terms from one client and import into another client.
    */
   public void testBPaymentTerm() {
 
@@ -251,6 +251,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     for (final BaseOBObject bob : pts) {
       final PaymentTerm pt = (PaymentTerm) bob;
       pt.setId("abc");
+      if (pt.getFinancialMgmtPaymentTermLineList().isEmpty()) {
+        continue;
+      }
       final PaymentTermLine ptl0 = pt.getFinancialMgmtPaymentTermLineList().get(0);
       ptl0.setPaymentTerms(pt);
       final PaymentTermLine ptl = (PaymentTermLine) DalUtil.copy(ptl0);
@@ -294,6 +297,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     for (final PaymentTerm pt : pts) {
       // one pt has 2 lines, one has 1 line
       final int size = pt.getFinancialMgmtPaymentTermLineList().size();
+      System.err.println(size);
       assertTrue(size == 1 || size == 2);
     }
   }
@@ -331,9 +335,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     setAccess();
     final List<PaymentTerm> result = new ArrayList<PaymentTerm>();
     for (int i = 0; i < NO_OF_PT; i++) {
-      final PaymentTerm source = OBDal.getInstance().get(PaymentTerm.class, "1000000"); // FIXME
+      final PaymentTerm source = OBDal.getInstance().get(PaymentTerm.class,
+          "0A12CF4558584952932FDA3539F69118");
       final PaymentTerm pt = (PaymentTerm) DalUtil.copy(source, false);
-      pt.setName("test " + i);
+      pt.setName(PREFIX + " test " + i);
       pt.setOrganization(OBContext.getOBContext().getCurrentOrganization());
 
       // force new
@@ -364,7 +369,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
   private List<PaymentTerm> getPaymentTerms() {
     final OBCriteria<PaymentTerm> obc = OBDal.getInstance().createCriteria(PaymentTerm.class);
-    obc.add(Expression.not(Expression.in("id", currentPaymentTerms)));
+    obc.add(Expression.ilike("name", PREFIX + "%"));
     return obc.list();
   }
 
