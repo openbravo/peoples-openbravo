@@ -69,7 +69,7 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
    * Tests a complexer query related to order lines.
    */
   public void testComplexOBQuery() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
 
     // create the where clause
     final StringBuilder whereClause = new StringBuilder();
@@ -155,7 +155,7 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
   }
 
   public void testComplexQueryTwoHQL() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
 
     final StringBuilder selectClause = new StringBuilder();
 

@@ -709,7 +709,7 @@
 <!--158-->  <AD_WINDOW_ID><![CDATA[158]]></AD_WINDOW_ID>
 <!--158-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--158-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--158-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--158-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--158-->  <NAME><![CDATA[Bank]]></NAME>
 <!--158-->  <DESCRIPTION><![CDATA[Define banks and the related accounts.]]></DESCRIPTION>
 <!--158-->  <HELP><![CDATA[Define banks and the related accounts.]]></HELP>
@@ -1068,7 +1068,7 @@
 <!--197-->  <AD_WINDOW_ID><![CDATA[197]]></AD_WINDOW_ID>
 <!--197-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--197-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--197-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--197-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--197-->  <NAME><![CDATA[Cashbook]]></NAME>
 <!--197-->  <DESCRIPTION><![CDATA[Create cashbooks to manage all cash movements which occur in the cash journal.]]></DESCRIPTION>
 <!--197-->  <HELP><![CDATA[Create cashbooks to manage all cash movements which occur in the cash journal.]]></HELP>
@@ -2055,7 +2055,7 @@
 <!--800018-->  <AD_WINDOW_ID><![CDATA[800018]]></AD_WINDOW_ID>
 <!--800018-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800018-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800018-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800018-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800018-->  <NAME><![CDATA[Remittance Type]]></NAME>
 <!--800018-->  <DESCRIPTION><![CDATA[Create and edit remittance types with corresponding parameters according to your business needs.]]></DESCRIPTION>
 <!--800018-->  <HELP><![CDATA[Create and edit remittance types with corresponding parameters according to your business needs.]]></HELP>
@@ -2445,7 +2445,7 @@
 <!--800069-->  <AD_WINDOW_ID><![CDATA[800069]]></AD_WINDOW_ID>
 <!--800069-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800069-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800069-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800069-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800069-->  <NAME><![CDATA[Promissory Note Format]]></NAME>
 <!--800069-->  <DESCRIPTION><![CDATA[Create and edit the structure of how to print a promissory note.]]></DESCRIPTION>
 <!--800069-->  <HELP><![CDATA[Create and edit the structure of how to print a promissory note.]]></HELP>
@@ -2610,7 +2610,7 @@
 <!--800082-->  <AD_WINDOW_ID><![CDATA[800082]]></AD_WINDOW_ID>
 <!--800082-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800082-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800082-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800082-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800082-->  <NAME><![CDATA[Remittance]]></NAME>
 <!--800082-->  <DESCRIPTION><![CDATA[Edit payments by using remittances to cancel or return them.]]></DESCRIPTION>
 <!--800082-->  <HELP><![CDATA[Edit payments by using remittances to cancel or return them.]]></HELP>
@@ -2820,7 +2820,7 @@
 <!--1002100000-->  <AD_WINDOW_ID><![CDATA[1002100000]]></AD_WINDOW_ID>
 <!--1002100000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1002100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1002100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1002100000-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--1002100000-->  <NAME><![CDATA[Withholding]]></NAME>
 <!--1002100000-->  <DESCRIPTION><![CDATA[Withholding Rules]]></DESCRIPTION>
 <!--1002100000-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>

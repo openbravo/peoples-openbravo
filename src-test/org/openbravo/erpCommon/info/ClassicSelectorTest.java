@@ -38,8 +38,8 @@ public class ClassicSelectorTest extends BaseTest {
    */
   public void testBpartnerMultiple() throws Exception {
 
-    String client = "'1000000'";
-    String org = "'0','1000000'";
+    String client = "'" + TEST_CLIENT_ID + "'";
+    String org = "'0','" + TEST_ORG_ID + "'";
     String key = "";
     String name = "";
     String contact = "";

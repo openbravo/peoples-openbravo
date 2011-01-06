@@ -39,7 +39,7 @@ public class ViewTest extends BaseTest {
    * Iterates over all views
    */
   public void testViews() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     int cnt = 0;
     for (Entity entity : ModelProvider.getInstance().getModel()) {
       if (entity.isView()) {
@@ -57,7 +57,7 @@ public class ViewTest extends BaseTest {
    * Tests issue https://issues.openbravo.com/view.php?id=14914 that view objects are not copied.
    */
   public void test14914() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     OBContext.setAdminMode();
     boolean testDone = false;
     try {

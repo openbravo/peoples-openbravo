@@ -529,10 +529,6 @@ isc.OBSelectorWidget
 
         var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.';
 
-        // Always call the superclass implementation when overriding
-        // initWidget
-        this.Super('initWidget', arguments);
-
         if (this.numCols > 0 && 
             this.numCols <= isc.OBSelectorWidget.styling.widthDefinition.length) {
           this.width = isc.OBSelectorWidget.styling.widthDefinition[this.numCols - 1];
@@ -541,8 +537,7 @@ isc.OBSelectorWidget
         }
 
         // add the combobox to the DynamicForm
-        this
-            .setFields( [ {
+        this.fields = [ {
               textMatchStyle : this.suggestionTextMatchStyle,
               selector : this,
               selectOnFocus : true,
@@ -670,7 +665,12 @@ isc.OBSelectorWidget
 
               // when changed set the field
               changed : this.setSelectorValueFromField
-            } ]);
+            } ];
+
+
+        // Always call the superclass implementation when overriding
+        // initWidget
+        this.Super('initWidget', arguments);
 
         // store the combo so that it can be refered to directly
         this.selectorField = this.getFields()[0];

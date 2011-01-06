@@ -44,3 +44,14 @@ body {
   font-size: 12px;
   color: #333333;
 }
+
+/*============================================================
+ Active view
+ ============================================================*/
+.OBViewActive {
+  background-color: orange;
+}
+
+.OBViewInActive {
+  background-color: grey;
+}

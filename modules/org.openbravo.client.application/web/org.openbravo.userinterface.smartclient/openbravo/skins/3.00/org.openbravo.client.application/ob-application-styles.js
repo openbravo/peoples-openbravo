@@ -250,11 +250,11 @@ OB.LogoutNavbarComponentStylingProperties = {
   baseStyle: 'OBNavBarButton',
   height: 14,
   width: 14,
-  src: "[SKINIMG]../../org.openbravo.client.application/images/navbar/iconClose.png",
+  src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/iconClose.png',
   showTitle: false,
-  imageType: "normal",
-  layoutAlign: "center",
-  overflow: "visible",
+  imageType: 'normal',
+  layoutAlign: 'center',
+  overflow: 'visible',
   showRollOver: false,
   showFocused: false,
   showDown: false
@@ -271,6 +271,15 @@ OB.QuickLaunchNavbarComponentStylingProperties = {
     width: 250,
     membersMargin: 10
   }
+};
+
+/* =====================================================================
+ * Width of the active bar on the left in the main view
+ =======================================================================*/
+OB.ActiveBarStyling = {
+  width: 5,
+  activeStyleName: 'OBViewActive',
+  inActiveStyleName: 'OBViewInActive'
 };
 
 /* =====================================================================
@@ -331,3 +340,4 @@ isc.showPrompt = function(prompt){
   
   isc._orginal_showPrompt(prompt, props);
 };
+

@@ -54,7 +54,7 @@ public class DatasetServiceTest extends BaseTest {
    * @see DataSetTable#getSQLWhereClause()
    */
   public void testCheckQueries() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
 
     Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("ClientID", "0");
@@ -80,7 +80,7 @@ public class DatasetServiceTest extends BaseTest {
    * Exports the data of all data sets.
    */
   public void testExportAllDataSets() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     final List<DataSet> dss = obc.list();
     setSystemAdministratorContext();
@@ -102,7 +102,7 @@ public class DatasetServiceTest extends BaseTest {
    * @see Table
    */
   public void testDataSetTable() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final DataSetTable dst = OBProvider.getInstance().get(DataSetTable.class);
     final Table t = OBProvider.getInstance().get(Table.class);
     t.setName("ADTable");
@@ -119,7 +119,7 @@ public class DatasetServiceTest extends BaseTest {
    * Read all data defined for all data sets.
    */
   public void testReadAll() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
 
     Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("ClientID", "0");

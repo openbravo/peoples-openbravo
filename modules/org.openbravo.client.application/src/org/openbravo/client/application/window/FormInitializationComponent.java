@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -137,6 +138,9 @@ public class FormInitializationComponent extends BaseActionHandler {
             log.error("Couldn't read column value from the request for column " + inpColName, e);
           }
         }
+      }
+      if (mode.equals("CHANGE")) {
+        RequestContext.get().setRequestParameter("comboreload", "true");
       }
       HashMap<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
       HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
@@ -306,6 +310,24 @@ public class FormInitializationComponent extends BaseActionHandler {
             }
           }
           finalObject.put("dynamicCols", new JSONArray(changeEventCols));
+          // And we also include information related to the displaylogic and readonlylogic
+          // expressions
+          JSONObject displaylogics = new JSONObject();
+          for (Field field : fields) {
+            if (field.getDisplayLogic() != null) {
+              String dl = parseDisplayLogic(field);
+              displaylogics.put(field.getColumn().getDBColumnName(), dl);
+            }
+          }
+          finalObject.put("displaylogic", displaylogics);
+          JSONObject readonlylogics = new JSONObject();
+          for (Field field : fields) {
+            if (field.getColumn().getReadOnlyLogic() != null) {
+              String dl = parseReadOnlyLogic(field.getColumn(), tab);
+              readonlylogics.put(field.getColumn().getDBColumnName(), dl);
+            }
+          }
+          finalObject.put("readonlylogic", readonlylogics);
         }
         log.debug(finalObject.toString(1));
         log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime));
@@ -319,6 +341,114 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private String parseDisplayLogic(Field field) {
+    String displaylogic = field.getDisplayLogic();
+    return parseDLExpression(displaylogic, field.getTab());
+  }
+
+  private String parseReadOnlyLogic(Column col, Tab tab) {
+    String readonlylogic = col.getReadOnlyLogic();
+    return parseDLExpression(readonlylogic, tab);
+  }
+
+  private static String[][] comparations = { { "==", " == " }, { "=", " == " }, { "!", " != " },
+      { "^", " != " }, { "-", " != " } };
+  private static String[][] unions = { { "|", " || " }, { "&", " && " } };
+
+  /*
+   * This method was partially copied from WadUtility.
+   */
+  private String parseDLExpression(String code, Tab tab) {
+    StringTokenizer st = new StringTokenizer(code, "|&", true);
+    String token, token2;
+    String strAux;
+    StringBuffer strOut = new StringBuffer();
+    while (st.hasMoreTokens()) {
+      strAux = st.nextToken().trim();
+      int i[] = getFirstElement(unions, strAux);
+      if (i[0] != -1) {
+        strAux = strAux.substring(0, i[0]) + unions[i[1]][1]
+            + strAux.substring(i[0] + unions[i[1]][0].length());
+      }
+
+      int pos[] = getFirstElement(comparations, strAux);
+      token = strAux;
+      token2 = "";
+      if (pos[0] >= 0) {
+        token = strAux.substring(0, pos[0]);
+        token2 = strAux.substring(pos[0] + comparations[pos[1]][0].length(), strAux.length());
+        strAux = strAux.substring(0, pos[0]) + comparations[pos[1]][1]
+            + strAux.substring(pos[0] + comparations[pos[1]][0].length(), strAux.length());
+      }
+      strOut.append(getDisplayLogicText(token, tab));
+      if (pos[0] >= 0)
+        strOut.append(comparations[pos[1]][1]);
+      strOut.append(getDisplayLogicText(token2, tab));
+    }
+    return strOut.toString();
+  }
+
+  /*
+   * This method was partially copied from WadUtility.
+   */
+  private String getDisplayLogicText(String token, Tab tab) {
+    StringBuffer strOut = new StringBuffer();
+    int i = token.indexOf("@");
+    while (i != -1) {
+      strOut.append(token.substring(0, i));
+      token = token.substring(i + 1);
+      i = token.indexOf("@");
+      if (i != -1) {
+        String strAux = token.substring(0, i);
+        token = token.substring(i + 1);
+        String st = getDisplayLogicTextTranslate(strAux, tab);
+        strOut.append(st);
+      }
+      i = token.indexOf("@");
+    }
+    strOut.append(token);
+    return strOut.toString();
+  }
+
+  /*
+   * This method is a different reimplementation of an equivalent method in WadUtility
+   */
+  private String getDisplayLogicTextTranslate(String token, Tab tab) {
+    if (token == null || token.trim().equals(""))
+      return "";
+    for (Field field : tab.getADFieldList()) {
+      if (token.equalsIgnoreCase(field.getName())) {
+        return field.getName();
+      }
+    }
+    OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
+    auxInC.add(Expression.eq(AuxiliaryInput.PROPERTY_TAB, tab));
+    List<AuxiliaryInput> auxInputs = auxInC.list();
+    for (AuxiliaryInput auxIn : auxInputs) {
+      if (token.equalsIgnoreCase(auxIn.getName())) {
+        return auxIn.getName();
+      }
+    }
+    return "'"
+        + Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+            .getVariablesSecureApp(), token, tab.getWindow().getId()) + "'";
+  }
+
+  /*
+   * This method was partially copied from WadUtility.
+   */
+  private static int[] getFirstElement(String[][] array, String token) {
+    int min[] = { -1, -1 }, aux;
+    for (int i = 0; i < array.length; i++) {
+      aux = token.indexOf(array[i][0]);
+      if (aux != -1 && (aux < min[0] || min[0] == -1)) {
+        min[0] = aux;
+        min[1] = i;
+      }
+    }
+    return min;
   }
 
   private void computeListOfColumnsSortedByValidationDependencies(Tab tab,
@@ -609,8 +739,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // Normal data
                       Object el = element.get(1, null);
                       String value;
-                      if (el instanceof Double) {
-                        value = ((Double) el).toString();
+                      if (el instanceof Number) {
+                        value = ((Number) el).toString();
                       } else {
                         value = (String) el;
                       }
@@ -629,7 +759,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // We set the value as formatted in the JSONObject in the request, so that the
                       // request now is format safe and additional getFieldProperties calls do not
                       // fail
-                      rq.setRequestParameter(colId, jsonobj.getString("value"));
+                      if (jsonobj.has("value")) {
+                        rq.setRequestParameter(colId, jsonobj.getString("value"));
+                      }
                     }
                     if (changed && col.getCallout() != null) {
                       // We need to fire this callout, as the column value was changed

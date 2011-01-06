@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,19 @@
 
 /*=======================================================================
  * Contains styles for:
+ * View Form Styles 
  * Form Fields/Items
  * Form Buttons 
+ * SectionItem Button Styles 
 =======================================================================*/
 
+/*=======================================================================
+ * View Form Styles 
+=======================================================================*/
+
+.OBViewForm {
+  margin: 5px 25px 0px 25px;
+}
 
 /*=======================================================================
  * Form Field Styles 
@@ -247,4 +256,21 @@
 .OBFormButtonTitleSelectedDisabled {
   font-weight: normal;
   color: #777;
+}
+
+/*=======================================================================
+ * SectionItem Button Styles 
+=======================================================================*/
+
+.OBSectionItemButton_Title_opened,
+.OBSectionItemButton_Title_closed,
+.OBSectionItemButton_Title_Overopened,
+.OBSectionItemButton_Title_Overclosed {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.OBFormFieldLinkButton {
+  cursor: pointer;
 }

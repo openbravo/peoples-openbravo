@@ -58,7 +58,7 @@ public class ValidationTest extends BaseTest {
    * Tests the type checking of primitive {@link Property} values.
    */
   public void testTypeChecking() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
     final List<Currency> cs = obc.list();
@@ -108,7 +108,7 @@ public class ValidationTest extends BaseTest {
    * Tests the validation of a list value (an enumeration).
    */
   public void testListValue() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final OBCriteria<AlertRule> obc = OBDal.getInstance().createCriteria(AlertRule.class);
     for (final AlertRule ar : obc.list()) {
       try {
@@ -154,7 +154,7 @@ public class ValidationTest extends BaseTest {
    * @see Property#getMaxValue()
    */
   public void testMaxValue() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(InvoiceSchedule.class);
     final OBCriteria<InvoiceSchedule> obc = OBDal.getInstance().createCriteria(
         InvoiceSchedule.class);
@@ -175,7 +175,7 @@ public class ValidationTest extends BaseTest {
    * @see Property#getMinValue()
    */
   public void testMinValue() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(InvoiceSchedule.class);
     final OBCriteria<InvoiceSchedule> obc = OBDal.getInstance().createCriteria(
         InvoiceSchedule.class);

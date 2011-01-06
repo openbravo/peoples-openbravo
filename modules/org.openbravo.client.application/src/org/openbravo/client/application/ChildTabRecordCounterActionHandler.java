@@ -19,6 +19,7 @@
 package org.openbravo.client.application;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +28,11 @@ import javax.enterprise.context.ApplicationScoped;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
+import org.openbravo.service.json.DefaultJsonDataService;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * Computes how many children there in the child tabs when a record gets selected.
@@ -49,24 +49,39 @@ public class ChildTabRecordCounterActionHandler extends BaseActionHandler {
       OBContext.setAdminMode();
       final JSONObject dataObject = new JSONObject(data);
       final String parentId = dataObject.getString("parentId");
+      final Map<String, String> qryParameters = new HashMap<String, String>();
+      for (String key : parameters.keySet()) {
+        final Object value = parameters.get(key);
+        if (value instanceof String) {
+          qryParameters.put(key, (String) value);
+        }
+      }
+      qryParameters.put(JsonConstants.USE_ALIAS, "true");
+      qryParameters.put(JsonConstants.ONLYCOUNT_PARAMETER, "true");
+      qryParameters.put(JsonConstants.NOCOUNT_PARAMETER, "false");
+      qryParameters.put(JsonConstants.STARTROW_PARAMETER, "0");
+      qryParameters.put(JsonConstants.ENDROW_PARAMETER, "" + Integer.MAX_VALUE);
 
       final JSONArray childTabList = dataObject.getJSONArray("tabs");
       final List<JSONObject> result = new ArrayList<JSONObject>();
       for (int i = 0; i < childTabList.length(); i++) {
         final JSONObject childTab = childTabList.getJSONObject(i);
         final String entityName = childTab.getString("entity");
+        qryParameters.put(JsonConstants.ENTITYNAME, entityName);
+
         final String parentProperty = childTab.getString("parentProperty");
-        String whereClause = "";
+        qryParameters.put(parentProperty, parentId);
         if (childTab.has("whereClause")) {
-          whereClause = " and (" + childTab.getString("whereClause") + ")";
+          qryParameters.put(JsonConstants.WHERE_PARAMETER, childTab.getString("whereClause"));
+        } else {
+          qryParameters.remove(JsonConstants.WHERE_PARAMETER);
         }
-        final OBQuery<BaseOBObject> qry = OBDal.getInstance().createQuery(entityName,
-            parentProperty + ".id=:parentId " + whereClause);
-        qry.setNamedParameter("parentId", parentId);
-        final int cnt = qry.count();
+        final String jsonResultStr = DefaultJsonDataService.getInstance().fetch(qryParameters);
+        final JSONObject jsonResult = new JSONObject(jsonResultStr);
+
         final JSONObject tabResult = new JSONObject();
         tabResult.put("tabId", childTab.getString("tabId"));
-        tabResult.put("count", cnt);
+        tabResult.put("count", jsonResult.getInt(JsonConstants.RESPONSE_TOTALROWS));
         result.add(tabResult);
       }
       final JSONObject resultObject = new JSONObject();

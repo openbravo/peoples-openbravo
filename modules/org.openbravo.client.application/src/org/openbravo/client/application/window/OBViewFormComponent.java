@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jfree.util.Log;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
@@ -50,6 +49,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   private static final String TEMPLATE_ID = "C1D176407A354A40815DC46D24D70EB8";
   private static Logger log = Logger.getLogger(OBViewFormComponent.class);
+
+  private String parentProperty;
 
   private static final long ONE_COLUMN_MAX_LENGTH = 60;
   private static final String TEXT_AD_REFERENCE_ID = "14";
@@ -133,7 +134,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     return fields;
   }
 
-  public interface OBViewFieldDefinition {
+  private interface OBViewFieldDefinition {
     public String getLabel();
 
     public String getName();
@@ -148,6 +149,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getReferencedKeyColumnName();
 
+    public String getTargetEntity();
+
     public String getStartRow();
 
     public String getEndRow();
@@ -156,6 +159,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public long getRowSpan();
 
+    public boolean isParentProperty();
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -163,6 +167,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private Property property;
     private String label;
     private UIDefinition uiDefinition;
+    private Boolean isParentProperty = null;
+
+    public boolean isParentProperty() {
+      if (isParentProperty == null) {
+        isParentProperty = OBViewFormComponent.this.getParentProperty().equals(property.getName());
+      }
+      return isParentProperty;
+    }
 
     public boolean isSearchField() {
       return uiDefinition instanceof FKSearchUIDefinition;
@@ -173,6 +185,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getFieldProperties() {
+
       String jsonString = getUIDefinition().getFieldProperties(field).trim();
       if (jsonString == null || jsonString.trim().length() == 0) {
         return "";
@@ -184,8 +197,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       } else if (jsonString.equals("{}")) {
         return "";
       }
-      Log.warn("Can't process json string " + jsonString);
-      return "";
+      // be lenient just return the string as it is...
+      return jsonString + (jsonString.trim().endsWith(",") ? "" : ",");
     }
 
     private UIDefinition getUIDefinition() {
@@ -201,7 +214,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getColumnName() {
-      return property.getColumnName().toLowerCase();
+      return property.getColumnName();
     }
 
     public String getInpColumnName() {
@@ -219,6 +232,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
         prop = property.getReferencedProperty();
       }
       return prop.getColumnName();
+    }
+
+    public String getTargetEntity() {
+      if (property.isOneToMany() || property.isPrimitive()) {
+        return "";
+      }
+      return property.getTargetEntity().getName();
     }
 
     public String getLabel() {
@@ -295,11 +315,19 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return "";
     }
 
+    public boolean isParentProperty() {
+      return false;
+    }
+
     public String getInpColumnName() {
       return "";
     }
 
     public String getReferencedKeyColumnName() {
+      return "";
+    }
+
+    public String getTargetEntity() {
       return "";
     }
 
@@ -344,7 +372,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public long getColSpan() {
-      return 1;
+      return 4;
     }
 
     public String getEndRow() {
@@ -370,6 +398,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return "false";
     }
 
+    public boolean isParentProperty() {
+      return false;
+    }
+
     public String getFieldProperties() {
       return "";
     }
@@ -387,6 +419,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getReferencedKeyColumnName() {
+      return "";
+    }
+
+    public String getTargetEntity() {
       return "";
     }
 
@@ -423,5 +459,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return (int) (arg0Position - arg1Position);
     }
 
+  }
+
+  public String getParentProperty() {
+    return parentProperty;
+  }
+
+  public void setParentProperty(String parentProperty) {
+    this.parentProperty = parentProperty;
   }
 }

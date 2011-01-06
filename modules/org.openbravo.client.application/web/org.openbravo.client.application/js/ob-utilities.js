@@ -387,7 +387,8 @@ OB.Utilities.Date.OBToJS = function(/* String */OBDate, /* String */ dateFormat)
   var fullYear = dateFormat.indexOf('%Y') !== -1 ? OBDate.substring(dateFormat.indexOf('%Y'), dateFormat.indexOf('%Y') + 4) : 0;
   var month = dateFormat.indexOf('%m') !== -1 ? OBDate.substring(dateFormat.indexOf('%m'), dateFormat.indexOf('%m') + 2) : 0;
   var day = dateFormat.indexOf('%d') !== -1 ? OBDate.substring(dateFormat.indexOf('%d'), dateFormat.indexOf('%d') + 2) : 0;
-  var hours = dateFormat.indexOf('%H') !== -1 ? OBDate.substring(dateFormat.indexOf('%H'), dateFormat.indexOf('%H') + 2) : 0;
+  // note if there is no hour in the dateformat then use the value 12 to prevent winter/summertime issues 
+  var hours = dateFormat.indexOf('%H') !== -1 ? OBDate.substring(dateFormat.indexOf('%H'), dateFormat.indexOf('%H') + 2) : 12;
   var minutes = dateFormat.indexOf('%M') !== -1 ? OBDate.substring(dateFormat.indexOf('%M'), dateFormat.indexOf('%M') + 2) : 0;
   var seconds = dateFormat.indexOf('%S') !== -1 ? OBDate.substring(dateFormat.indexOf('%S'), dateFormat.indexOf('%S') + 2) : 0;
   
@@ -819,12 +820,12 @@ OB.Utilities.openActionButton = function(button, o){
   }
   
   theView.setContextInfo(sessionProperties, function(){
-    OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+    OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
   });
   
   
-  //  OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
-  //OB.Layout.ViewManager.openView("OBClassicPopup", o);
+  //	OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
+  //OB.Layout.ViewManager.openView('OBClassicPopup', o);
 
 
   //button.parentElement.parentElement.view.getContextInfo()
@@ -848,7 +849,7 @@ OB.Utilities.openActionButtonCallback = function(button, o){
     }
   }
   
-  OB.Layout.ViewManager.openView("OBPopupClassicWindow", o);
+  OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
 };
 
 

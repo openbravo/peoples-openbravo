@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,12 +30,16 @@ isc.OBViewForm.addProperties({
   // and the grid and other related components.
   view: null,
   auxInputs: {},
+  hiddenInputs: {},
   dynamicCols: [],
-
+  width: '100%',
+  
   // ** {{ Layout Settings }} **
   numCols: 4,
   colWidths: ['24%', '24%', '24%', '24%'],
-  //cellBorder: 1, // debug layout
+  
+  titleSuffix: '',
+  requiredTitleSuffix: '</b>',
   
   fieldsByInpColumnName: null,
   fieldsByColumnName: null,
@@ -54,7 +58,7 @@ isc.OBViewForm.addProperties({
   },
   
   editRecord: function(record){
-    var ret = this.Super("editRecord", arguments);
+    var ret = this.Super('editRecord', arguments);
     this.retrieveInitialValues();
     return ret;
   },
@@ -63,7 +67,9 @@ isc.OBViewForm.addProperties({
     if (!this.fieldsByInpColumnName) {
       var localResult = [], fields = this.getFields();
       for (var i = 0; i < fields.length; i++) {
-        localResult[fields[i].inpColumnName] = fields[i];
+        if (fields[i].inpColumnName) {
+          localResult[fields[i].inpColumnName.toLowerCase()] = fields[i];
+        }
       }
       this.fieldsByInpColumnName = localResult;
     }
@@ -74,7 +80,9 @@ isc.OBViewForm.addProperties({
     if (!this.fieldsByColumnName) {
       var localResult = [], fields = this.getFields();
       for (var i = 0; i < fields.length; i++) {
-        localResult[fields[i].columnName] = fields[i];
+        if (fields[i].columnName) {
+          localResult[fields[i].columnName.toLowerCase()] = fields[i];
+        }
       }
       this.fieldsByColumnName = localResult;
     }
@@ -116,10 +124,9 @@ isc.OBViewForm.addProperties({
         }
       }
     }
-    if (calloutMessages) {
-      // show messages...
-      // code added to prevent jslint error
-      var __dummy = 0;  
+    if (calloutMessages && calloutMessages.length > 0) {
+      // TODO: check as what type should call out messages be displayed
+      this.view.standardWindow.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, calloutMessages);
     }
     if (auxInputs) {
       this.auxInputs = {};
@@ -136,13 +143,13 @@ isc.OBViewForm.addProperties({
   },
   
   processColumnValue: function(columnName, columnValue){
-    var isDate, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+    var data, record, length, valuePresent, currentValue, isDate, value, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     if (!field) {
       // ignore for now, the pk is also passed in
       //isc.warn('No field found using column name: ' + columnName + ' for tab ' + this.view.tabId);
       return;
     }
-    if (entries && entries.length > 0) {
+    if (entries) {
       if (field.getDataSource()) {
         field.getDataSource().setCacheData(entries, true);
       } else {
@@ -151,11 +158,19 @@ isc.OBViewForm.addProperties({
         }
         field.setValueMap(valueMap);
       }
+      
+      // rereads the picklist      
+      if (field.pickList) {
+        field.pickList.invalidateCache();
+        field.pickList.deselectAllRecords();
+        field.selectItemFromValue(field.getValue());
+      }
     }
+    
     if (columnValue.value) {
       isDate = field.type &&
-        (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
-        isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
+      (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
+      isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
       if (isDate) {
         this.setValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
       } else {
@@ -164,9 +179,11 @@ isc.OBViewForm.addProperties({
     } else {
       this.clearValue(field.name);
     }
+    
+    field.redraw();
   },
   
-  handleItemChange: function(item) {
+  handleItemChange: function(item){
     if (item._doFICCall) {
       var i;
       for (i = 0; i < this.dynamicCols.length; i++) {
@@ -180,23 +197,27 @@ isc.OBViewForm.addProperties({
     item._doFICCall = false;
   },
   
-  doChangeFICCall: function(item) {
-    var parentId = null, me = this;
+  doChangeFICCall: function(item){
+    var parentId = null, me = this, requestParams;
+    var allProperties = {}, sessionProperties = {};
+    
     if (this.view.parentProperty) {
       parentId = this.getValue(this.view.parentProperty);
     }
     
-    var allProperties = {}, sessionProperties = {};
+    // fills the allProperties    
     this.view.getContextInfo(allProperties, sessionProperties);
     
-    // collect the context information    
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, {
+    requestParams = isc.addProperties({
       MODE: 'CHANGE',
       PARENT_ID: parentId,
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID),
       CHANGED_COLUMN: item.inpColumnName
-    }, function(response, data, request){
+    }, allProperties, sessionProperties);
+    
+    // collect the context information    
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', null, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
     });
   }

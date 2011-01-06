@@ -25,7 +25,7 @@ public class MyOpenbravoTest extends BaseTest {
   }
 
   public void testMyOpenbravoComponent() throws Exception {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final MyOpenbravoComponent component = new MyOpenbravoComponent();
 
     System.err.println("Available Widget Classes for System Administrator");

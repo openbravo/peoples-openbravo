@@ -11,20 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 isc.ClassFactory.defineClass('OBStandardWindow', isc.VLayout);
 
 // The OBStandardWindow contains the toolbar and the root view.
 isc.OBStandardWindow.addProperties({
   toolBar: null,
   view: null,
+  messageBar: null,
   
   viewProperties: null,
+  
+  focusedView: null,
   
   initWidget: function(){
     var standardWindow = this;
@@ -62,6 +64,9 @@ isc.OBStandardWindow.addProperties({
       title: 'Button B'
     })]);
     
+    this.messageBar = isc.OBMessageBar.create({visibility: 'hidden'});
+    
+    this.addMember(this.messageBar);
     this.addMember(this.toolBar);
     
     this.viewProperties.standardWindow = this;
@@ -73,6 +78,18 @@ isc.OBStandardWindow.addProperties({
     
     // is set later after creation
     this.view.tabTitle = this.tabTitle;
+  },
+  
+  show: function(){
+    var ret = this.Super("show", arguments);
+    this.setFocusInView();
+    return ret;
+  },
+  
+  setFocusInView: function(){
+    var currentView = this.focusedView || this.view;
+    currentView.setViewFocus();
+    currentView.setActiveView(true, true);
   },
   
   draw: function(){
@@ -93,6 +110,7 @@ isc.OBStandardWindow.addProperties({
       delete this.targetEntity;
     }
     
+    this.setFocusInView();
     return ret;
   },
   
@@ -251,6 +269,8 @@ isc.OBStandardView.addProperties({
   state: isc.OBStandardView.STATE_MID,
   previousState: isc.OBStandardView.STATE_TOP_MAX,
   
+  lastFocusedItem: null,
+  
   initWidget: function(properties){
     var isRootView = !this.parentProperty;
     
@@ -290,12 +310,12 @@ isc.OBStandardView.addProperties({
   },
   
   setDataSource: function(ds){
-  //Wrap DataSource with OBDataSource which overrides methods to set tab info7
-    var obDsClassname = 'OBDataSource'+this.tabId;
+    //Wrap DataSource with OBDataSource which overrides methods to set tab info7
+    var obDsClassname = 'OBDataSource' + this.tabId;
     isc.defineClass(obDsClassname, ds.getClass());
     
-    var modifiedDs = isc.addProperties({},ds,{
-        updateData: function(updatedRecord, callback, requestProperties){
+    var modifiedDs = isc.addProperties({}, ds, {
+      updateData: function(updatedRecord, callback, requestProperties){
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -305,7 +325,7 @@ isc.OBStandardView.addProperties({
         this.Super('updateData', [updatedRecord, callback, newRequestProperties]);
       },
       
-      addData : function(updatedRecord, callback, requestProperties){
+      addData: function(updatedRecord, callback, requestProperties){
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -324,29 +344,28 @@ isc.OBStandardView.addProperties({
         isc.addProperties(requestProperties.params, additionalPara);
         this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
       },
-
-      transformResponse: function (dsResponse, dsRequest, jsonData) {
-        if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0){ //0 is success
+      
+      transformResponse: function(dsResponse, dsRequest, jsonData){
+        if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0) { //0 is success
           if (jsonData.response && jsonData.response.error) {
             var error = jsonData.response.error;
             if (error.type && error.type === 'user') {
               OB.KernelUtilities.handleUserException(error.message, error.params);
-            }
-            else {
+            } else {
               OB.KernelUtilities.handleSystemException(error.message);
             }
           } else {
             OB.KernelUtilities.handleSystemException('Error occured');
           }
         }
-        return this.Super('transformResponse', arguments);  
+        return this.Super('transformResponse', arguments);
       },
       
       view: this
     });
     
     var myDs = isc[obDsClassname].create(modifiedDs);
-  
+    
     this.dataSource = myDs;
     
     if (this.viewGrid) {
@@ -369,7 +388,6 @@ isc.OBStandardView.addProperties({
     if (!this.viewGrid || !this.viewGrid.filterEditor) {
       return result;
     }
-    this.viewGrid.focusInFilterEditor();
     return result;
   },
   
@@ -381,7 +399,7 @@ isc.OBStandardView.addProperties({
   // ** {{{ createMainParts }}} **
   // Creates the main layout components of this view.
   createMainParts: function(){
-    var isRootView = !this.parentProperty;
+    var isRootView = !this.parentProperty, formContainerLayout;
     var me = this;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
@@ -390,9 +408,30 @@ isc.OBStandardView.addProperties({
         overflow: 'auto',
         view: this,
         focusChanged: function(hasFocus){
-//          console.log("Tab " + this.view.tabTitle + ' --> ' + hasFocus + ' ' + this.view.containsFocus());
+          if (hasFocus) {
+            this.view.setActiveView(true);
+          }
         }
       });
+      
+      this.activeBar = isc.HLayout.create({
+        height: '100%',
+        contents: '&nbsp;',
+        width: OB.ActiveBarStyling.width,
+        styleName: OB.ActiveBarStyling.inActiveStyleName,
+        activeStyleName: OB.ActiveBarStyling.activeStyleName,
+        inActiveStyleName: OB.ActiveBarStyling.inActiveStyleName,
+        
+        setActive: function(active){
+          if (active) {
+            this.setStyleName(this.activeStyleName);
+          } else {
+            this.setStyleName(this.inActiveStyleName);
+          }
+        }
+      });
+      
+      this.formGridLayout.addMember(this.activeBar);
       
       if (this.viewGrid) {
         this.viewGrid.setWidth('100%');
@@ -412,11 +451,19 @@ isc.OBStandardView.addProperties({
         width: '100%',
         height: '*',
         visibility: 'hidden',
-        leaveScrollbarGap: true,
+        overflow: 'hidden'
+      });
+      
+      // to make sure that the form gets the correct scrollbars
+      formContainerLayout = isc.VLayout.create({
+        width: '100%',
+        height: '*',
         overflow: 'auto'
       });
+      formContainerLayout.addMember(this.viewForm);
+      
       this.statusBarFormLayout.addMember(this.statusBar);
-      this.statusBarFormLayout.addMember(this.viewForm);
+      this.statusBarFormLayout.addMember(formContainerLayout);
       
       this.formGridLayout.addMember(this.statusBarFormLayout);
       this.addMember(this.formGridLayout);
@@ -452,8 +499,73 @@ isc.OBStandardView.addProperties({
     
     childView.tab = this.childTabSet.tabs[this.childTabSet.tabs.length - 1];
     
-    OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + "_" + childView.tabId, childView.tab);
+    OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
     
+  },
+  
+  setViewFocus: function(){
+    var object, functionName;
+    
+    // clear for a non-focusable item
+    if (this.lastFocusedItem && !this.lastFocusedItem.getCanFocus()) {
+      this.lastFocusedItem = null;
+    }
+    
+    if (this.lastFocusedItem) {
+      object = this.lastFocusedItem;
+      functionName = 'focusInItem';
+    } else if (this.viewGrid && this.viewGrid.isVisible()) {
+      object = this.viewGrid;
+      functionName = 'focusInFilterEditor';
+    } else if (this.viewForm && this.viewForm.getFocusItem()) {
+      object = this.viewForm;
+      functionName = 'focus';
+    }
+    
+    isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);
+  },
+  
+  setTabButtonState: function(active){
+    var tabButton;
+    if (this.tab) {
+      tabButton = this.parentTabSet.getTab(this.tab);
+    } else {
+      // not the nicest trick but okay...
+      tabButton = window[this.standardWindow.viewTabId];
+    }
+    // enable this code to set the styleclass changes
+//    if (active) {
+//      tabButton.setCustomState('Active');
+//    } else {
+//      tabButton.setCustomState('InActive');
+//    }
+  },
+  
+  // called when this view becomes the focused view or looses the focus
+  // the parameter is true if it gets the focus and false otherwise
+  setActiveView: function(active, ignoreRefreshContents){
+    var object, functionName;
+    // don't change active when refreshing 
+    if (this.refreshContents && !ignoreRefreshContents) {
+      return;
+    }
+    if (active) {
+      if (this.standardWindow.focusedView === this) {
+        return;
+      }
+      if (this.standardWindow.focusedView) {
+        this.standardWindow.focusedView.setActiveView(false);
+      }
+      //      console.log("Tab " + this.tabTitle + ' --> receives focus ');
+      this.standardWindow.focusedView = this;
+      this.activeBar.setActive(true);
+      this.setViewFocus();
+    } else {
+      //      console.log("Tab " + this.tabTitle + ' --> looses focus ');
+      this.activeBar.setActive(false);
+      this.standardWindow.focusedView = null;
+    }
+    this.setTabButtonState(active);
   },
   
   doRefreshContents: function(){
@@ -560,6 +672,8 @@ isc.OBStandardView.addProperties({
       this.switchFormGridVisibility();
     }
     this.viewGrid.doSelectSingleRecord(record);
+    
+    isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
   },
   
   // check if a child tab should be opened directly
@@ -582,6 +696,7 @@ isc.OBStandardView.addProperties({
     }
     var gridRecord = this.viewGrid.getSelectedRecord();
     this.editRecord(gridRecord);
+    this.recordSelected();
     
     // remove this info
     delete this.standardWindow.directTabInfo;
@@ -620,9 +735,9 @@ isc.OBStandardView.addProperties({
   // Is called when a record get's selected. Will refresh direct child views
   // which will again refresh their children.
   recordSelected: function(){
-    this.fireOnPause("recordSelected", {
+    this.fireOnPause('recordSelected', {
       target: this,
-      methodName: "doRecordSelected",
+      methodName: 'doRecordSelected',
       args: []
     }, this.fetchDelay);
   },
@@ -738,7 +853,10 @@ isc.OBStandardView.addProperties({
       }
     };
     
-    OB.RemoteCallManager.call('org.openbravo.client.application.ChildTabRecordCounterActionHandler', data, {}, callback, null);
+    var props = {};
+    this.getContextInfo({}, props);
+    
+    OB.RemoteCallManager.call('org.openbravo.client.application.ChildTabRecordCounterActionHandler', data, props, callback, null);
   },
   
   updateTabTitle: function(){
@@ -782,81 +900,10 @@ isc.OBStandardView.addProperties({
   
   /* ++++++++++++++++++++ Status Bar ++++++++++++++++++++++++++ */
   
-  statusBarCloseIconButtonProperties: {
-    view: null,
-    imageType: 'center',
-    showRollOver: false,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/statusbar/ico-x.png',
-    action: function(){
-      this.view.switchFormGridVisibility();
-    }
-  },
-  
-  statusBarPrevIconButtonProperties: {
-    view: null,
-    imageType: 'center',
-    showRollOver: false,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/statusbar/sn-previous.gif',
-    action: function(){
-      var rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
-      var newRowNum = rowNum - 1;
-      if (newRowNum > -1) {
-        var newRecord = this.view.viewGrid.getRecord(newRowNum);
-        this.view.viewGrid.scrollRecordToTop(newRowNum);
-        this.view.editRecord(newRecord);
-        this.view.updateTabTitle();
-      }
-    }
-  },
-  
-  statusBarNextIconButtonProperties: {
-    view: null,
-    imageType: 'center',
-    showRollOver: false,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/statusbar/sn-next.gif',
-    action: function(){
-      var rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
-      var newRowNum = rowNum + 1;
-      // if there is data move to it
-      if (this.view.viewGrid.data.get(newRowNum)) {
-        var newRecord = this.view.viewGrid.getRecord(newRowNum);
-        this.view.viewGrid.scrollRecordToTop(newRowNum);
-        this.view.editRecord(newRecord);
-        this.view.updateTabTitle();
-      }
-    }
-  },
-  
   createStatusBar: function(){
-    var statusBar = isc.HLayout.create({
-      width: '100%',
-      height: '30',
-      overflow: 'auto'
+    var statusBar = isc.OBStatusBar.create({
+      view: this.viewForm.view
     });
-    var messageBar = isc.HLayout.create({
-      width: '*',
-      align: 'left',
-      overflow: 'visible'
-    });
-    messageBar.addMember(isc.Label.create({
-      contents: 'message'
-    }));
-    
-    var prevButton = isc.ImgButton.create(this.statusBarPrevIconButtonProperties);
-    var nextButton = isc.ImgButton.create(this.statusBarNextIconButtonProperties);
-    var closeButton = isc.ImgButton.create(this.statusBarCloseIconButtonProperties);
-    var buttonBar = isc.HLayout.create({
-      width: '100',
-      align: 'right',
-      overflow: 'visible'
-    });
-    
-    prevButton.view = this;
-    nextButton.view = this;
-    closeButton.view = this;
-    
-    buttonBar.addMembers([prevButton, nextButton, closeButton]);
-    statusBar.addMembers([messageBar, buttonBar]);
     return statusBar;
   },
   
@@ -939,43 +986,49 @@ isc.OBStandardView.addProperties({
     if (this.viewGrid.isVisible()) {
       record = this.viewGrid.getSelectedRecord();
     } else {
-      record = this.viewForm.getValues();   
+      record = this.viewForm.getValues();
     }
     
     var properties = this.propertyToColumns;
-
-    for (var i=0; i<properties.length; i++){
-      var value = record[properties[i].property];
-      if (typeof value !== 'undefined') {
-        allProperties[properties[i].column] = value;
-        if (properties[i].sessionProperty) {
-          sessionProperties[properties[i].column] = value;
+    
+    if (record) {
+      for (var i = 0; i < properties.length; i++) {
+        var value = record[properties[i].property];
+        if (typeof value !== 'undefined') {
+          allProperties[properties[i].column] = value;
+          // surround the property name with @ symbols to make them different
+          // from filter criteria and such          
+          allProperties['@' + this.entity + "." + properties[i].property + '@'] = value;
+          if (properties[i].sessionProperty) {
+            sessionProperties[properties[i].dbColumn] = value;
+            sessionProperties['@' + this.entity + "." + properties[i].property + '@'] = value;
+          }
         }
       }
     }
-    
     if (this.viewForm.isVisible()) {
       isc.addProperties(allProperties, this.viewForm.auxInputs);
+      isc.addProperties(allProperties, this.viewForm.hiddenInputs);
       isc.addProperties(sessionProperties, this.viewForm.auxInputs);
+      isc.addProperties(sessionProperties, this.viewForm.hiddenInputs);
     }
     
     if (this.parentView) {
       this.parentView.getContextInfo(allProperties, sessionProperties);
     }
   },
-
-  setContextInfo: function (sessionProperties, callbackFunction) {
+  
+  setContextInfo: function(sessionProperties, callbackFunction){
     var allProperties = {};
     if (!sessionProperties) {
       sessionProperties = {};
       this.getContextInfo(allProperties, sessionProperties);
     }
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', 
-    sessionProperties, {
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',
       TAB_ID: this.view.tabId
     }, callbackFunction);
-  }  
+  }
 });
 
 // = OBStandardViewTabSet =
@@ -994,12 +1047,18 @@ isc.OBStandardViewTabSet.addClassProperties({
     overflow: 'hidden',
     
     itemClick: function(item, itemNum){
-      var me = this;
+      var me = this, tab = item;
       me.dblClickWaiting = true;
       isc.Timer.setTimeout(function(){
         // if no double click happened then do the single click
         if (me.dblClickWaiting) {
           me.dblClickWaiting = false;
+          
+          // set the active tab
+          if (tab.pane && tab.pane.setActiveView) {
+            tab.pane.setActiveView(true);
+          }
+          
           me.tabSet.doHandleClick();
         }
       }, OB.Constants.DBL_CLICK_DELAY);
@@ -1039,7 +1098,6 @@ isc.OBStandardViewTabSet.addClassProperties({
 });
 
 isc.OBStandardViewTabSet.addProperties({
-  tabBarProperties: isc.addProperties({}, isc.OBStandardViewTabSet.TABBARPROPERTIES),
   tabBarPosition: 'top',
   width: '100%',
   height: '*',
@@ -1222,6 +1280,7 @@ isc.OBStandardViewTabSet.addProperties({
   },
   
   initWidget: function(){
+    this.tabBarProperties = isc.addProperties({}, isc.OBStandardViewTabSet.TABBARPROPERTIES);
     this.tabBarProperties.tabSet = this;
     this.Super('initWidget', arguments);
   }

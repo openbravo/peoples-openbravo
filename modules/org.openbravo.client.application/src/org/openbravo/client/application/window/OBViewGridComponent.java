@@ -193,6 +193,17 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return property.getTargetEntity().getName();
     }
 
+    public String getFieldProperties() {
+      String props = uiDefinition.getFieldProperties(field).trim();
+      if (props.startsWith("{")) {
+        props = props.substring(1, props.length() - 1);
+      }
+      if (props.trim().endsWith(",")) {
+        return props.trim().substring(0, props.trim().length() - 1);
+      }
+      return props.trim();
+    }
+
     public String getFilterEditorProperties() {
       return uiDefinition.getFilterEditorProperties(field);
     }

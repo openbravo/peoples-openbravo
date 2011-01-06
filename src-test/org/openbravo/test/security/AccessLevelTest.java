@@ -40,7 +40,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.geography.Country;
-import org.openbravo.model.financialmgmt.cashmgmt.CashJournal;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -73,17 +73,25 @@ public class AccessLevelTest extends BaseTest {
 
     setSystemAdministratorContext();
     final List<Table> tables = OBDal.getInstance().createCriteria(Table.class).list();
-    // SmallBazaar role --> CO
-    final Role role = OBDal.getInstance().get(Role.class, "1000000");
-    setBigBazaarAdminContext();
+
+    final Role role = OBDal.getInstance().get(Role.class, TEST_ROLE_ID);
+    setTestAdminContext();
     OBContext.getOBContext().setRole(role);
     final String userLevel = OBContext.getOBContext().getUserLevel();
     assertEquals("CO", userLevel.trim());
+    final OBContext tmpContext = OBContext.getOBContext();
+
     boolean testDone = false;
     for (Table t : tables) {
+
+      setSystemAdministratorContext(); // reset to sysadmin
+
       final Entity entity = ModelProvider.getInstance().getEntityByTableName(t.getDBTableName());
       if (t.getDataAccessLevel().contains("6") || t.getDataAccessLevel().contains("4")) {
         try {
+
+          OBContext.setOBContext(tmpContext); // set to user context
+
           // ignore these
           if (OBContext.getOBContext().getEntityAccessChecker().isDerivedReadable(entity)) {
             continue;
@@ -180,10 +188,11 @@ public class AccessLevelTest extends BaseTest {
    * Tests the Client Organization access level.
    */
   public void testAccessLevelCO() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final Client c = OBDal.getInstance().get(Client.class, "0");
 
-    final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, "1000005");
+    final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class,
+        "8A64B71A2B0B2946012B0FE1E82201F4");
     bp.setClient(c);
     try {
       commitTransaction();
@@ -221,7 +230,7 @@ public class AccessLevelTest extends BaseTest {
   public void testAccessLevelOrganization() {
     setSystemAdministratorContext();
     final Organization o = OBDal.getInstance().get(Organization.class, "0");
-    final CashJournal c = OBDal.getInstance().get(CashJournal.class, "1000000");
+    final Order c = OBDal.getInstance().get(Order.class, "CDA9CA3269D04F7497BFA71067A086C9");
     c.setOrganization(o);
 
     try {

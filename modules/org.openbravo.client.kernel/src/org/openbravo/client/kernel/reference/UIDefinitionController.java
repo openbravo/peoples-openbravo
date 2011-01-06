@@ -146,17 +146,21 @@ public class UIDefinitionController extends BaseTemplateComponent {
           }
 
           localCachedDefinitions.put(reference.getId(), uiDefinition);
-
-          Reference buttonReference = OBDal.getInstance().get(Reference.class, "28");
-          final Class<?> clz = OBClassLoader.getInstance().loadClass(
-              buttonReference.getOBCLKERUIDefinitionList().get(0).getImplementationClassname());
-          buttonDefinition = (UIDefinition) clz.newInstance();
-          buttonDefinition.setReference(buttonReference);
         } catch (Exception e) {
-          throw new OBException("Exception when creating UIDefinition for reference " + reference,
-              e);
+          // just log but continue
+          log.error("Exception when creating UIDefinition for reference " + reference, e);
         }
       }
+      try {
+        Reference buttonReference = OBDal.getInstance().get(Reference.class, "28");
+        final Class<?> clz = OBClassLoader.getInstance().loadClass(
+            buttonReference.getOBCLKERUIDefinitionList().get(0).getImplementationClassname());
+        buttonDefinition = (UIDefinition) clz.newInstance();
+        buttonDefinition.setReference(buttonReference);
+      } catch (Exception e) {
+        throw new OBException("Exception when creating button reference", e);
+      }
+
       final OBQuery<Column> columnQry = OBDal.getInstance().createQuery(Column.class, "");
       columnQry.setFilterOnActive(false);
       for (Column column : columnQry.list()) {

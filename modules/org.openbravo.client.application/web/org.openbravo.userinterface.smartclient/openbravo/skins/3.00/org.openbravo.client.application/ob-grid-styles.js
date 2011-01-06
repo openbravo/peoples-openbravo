@@ -35,14 +35,14 @@ isc.OBGrid.addProperties({
   hoverWidth: 200,
   editLinkColumnWidth: 58,
 
-  summaryRowConstructor: "OBGridSummary",
+  summaryRowConstructor: 'OBGridSummary',
   summaryRowDefaults:{
     showRollOver:false
   },
   summaryRowHeight: 22,
-  summaryRowStyle: "OBGridSummaryCell",
-  summaryRowStyle_sum: "OBGridSummaryCell_sum",
-  summaryRowStyle_avg: "OBGridSummaryCell_avg"
+  summaryRowStyle: 'OBGridSummaryCell',
+  summaryRowStyle_sum: 'OBGridSummaryCell_sum',
+  summaryRowStyle_avg: 'OBGridSummaryCell_avg'
 });
 
 isc.OBGrid.changeDefaults('filterEditorDefaults', {
@@ -94,9 +94,8 @@ isc.OBGridToolStripIcon.addProperties({
   showFocused: false,
   showFocusedAsOver: true,
   baseStyle: 'OBGridToolStripIcon',
-  initWidget: function() {
+  initWidgetStyle: function() {
     this.setSrc('[SKIN]/../../org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
-    this.Super('initWidget', arguments);
   }
 });
 

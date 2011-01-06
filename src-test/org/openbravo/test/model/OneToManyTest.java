@@ -44,7 +44,7 @@ public class OneToManyTest extends BaseTest {
    * Tests if it is possible to iterate over {@link OrderLine} objects of an {@link Order}. Adds one
    */
   public void testAccessChildCollection() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
@@ -65,7 +65,7 @@ public class OneToManyTest extends BaseTest {
    */
   public void testAddOrderLine() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
@@ -82,6 +82,12 @@ public class OneToManyTest extends BaseTest {
         // copy the orderline
         final OrderLine copy = (OrderLine) DalUtil.copy(l);
         copy.setId(null);
+        /*
+         * The trigger C_ORDERLINE_TRG2 does insert c_orderlinetax entries after an insert into
+         * c_orderline which would clash with the automatically copied children. So remove the
+         * auto-copied rows for that one table before saving the copied row.
+         */
+        copy.getOrderLineTaxList().clear();
         o.getOrderLineList().add(copy);
         commitTransaction();
         lineId = copy.getId();
@@ -97,7 +103,7 @@ public class OneToManyTest extends BaseTest {
    */
   public void testDeleteChild() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
@@ -127,7 +133,7 @@ public class OneToManyTest extends BaseTest {
    * This test checks if the order line has indeed been deleted.
    */
   public void testConfirmDeleted() {
-    setBigBazaarUserContext();
+    setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
@@ -141,7 +147,7 @@ public class OneToManyTest extends BaseTest {
 
   // test is already done above while preventing side effects.
   // public void testAddChild() throws Exception {
-  // setBigBazaarUserContext();
+  // setFBUserContext();
   // final OBCriteria<BusinessPartner> bpartners = OBDal.getInstance().createCriteria(
   // BusinessPartner.class);
   // bpartners.add(Expression.eq(BusinessPartner.PROPERTY_SEARCHKEY, "mafalda"));

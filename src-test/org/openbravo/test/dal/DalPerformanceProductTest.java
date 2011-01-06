@@ -39,7 +39,7 @@ public class DalPerformanceProductTest extends BaseTest {
    * Tests a paged read of products and print of the identifier. The timing is reported in the log.
    */
   public void testProduct25PageRead() {
-    setUserContext("1000019");
+    setUserContext(getRandomUser().getId());
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
     final int count = countObc.count();
     log.debug("Number of products " + count);
@@ -76,7 +76,7 @@ public class DalPerformanceProductTest extends BaseTest {
    * {@link Product#getTaxCategory()}. The timing is reported in the log.
    */
   public void testProduct25PageReadGetExtra() {
-    setUserContext("1000019");
+    setUserContext(getRandomUser().getId());
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
     final int count = countObc.count();
     log.debug("Number of products " + count);
@@ -117,7 +117,7 @@ public class DalPerformanceProductTest extends BaseTest {
    * {@link Product#getProductCategory()} and {@link Product#getTaxCategory()}.
    */
   public void testReadProducts() {
-    setUserContext("1000019");
+    setUserContext(getRandomUser().getId());
     final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(Product.class);
     obc.setFilterOnReadableOrganization(false);
     obc.addOrderBy(Product.PROPERTY_NAME, true);
@@ -139,7 +139,7 @@ public class DalPerformanceProductTest extends BaseTest {
    * Reads all {@link Product} objects and updates the name.
    */
   public void testUpdateAllProducts() {
-    setUserContext("1000019");
+    setTestUserContext();
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
     final int count = countObc.count();
     log.debug("Number of products " + count);
@@ -164,7 +164,7 @@ public class DalPerformanceProductTest extends BaseTest {
    * Reads all products in a paged manner and updates the name.
    */
   public void testUpdateAllProductsByPage() {
-    setUserContext("1000019");
+    setTestUserContext();
     addReadWriteAccess(Product.class);
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
     final int count = countObc.count();

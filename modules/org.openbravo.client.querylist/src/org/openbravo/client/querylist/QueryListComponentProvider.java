@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.client.kernel.KernelConstants;
 
 /**
  * 
@@ -49,6 +50,12 @@ public class QueryListComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.querylist/js/ob-querylist-widget.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.querylist/js/ob-querylist-view.js", false));
+
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.querylist/ob-querylist-styles.css", false));
+
     return globalResources;
   }
 

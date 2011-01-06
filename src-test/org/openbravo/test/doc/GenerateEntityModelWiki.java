@@ -88,7 +88,7 @@ public class GenerateEntityModelWiki extends BaseTest {
    * @throws Exception
    */
   public void testGenerateWiki() throws Exception {
-    super.setBigBazaarAdminContext();
+    super.setTestAdminContext();
     if (true) {
       final String entityContent = generateModelContent();
       final Map<String, String> content = new HashMap<String, String>();

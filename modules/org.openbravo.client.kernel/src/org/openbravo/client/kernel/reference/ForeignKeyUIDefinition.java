@@ -59,6 +59,14 @@ public class ForeignKeyUIDefinition extends UIDefinition {
         + ", foreignKeyField: true" + super.getGridFieldProperties(field);
   }
 
+  protected String getSuperGridFieldProperties(Field field) {
+    return super.getGridFieldProperties(field);
+  }
+
+  protected String getSuperGridFieldName(Field field) {
+    return super.getGridFieldName(field);
+  }
+
   protected String getGridFieldName(Field fld) {
     return super.getGridFieldName(fld) + "." + JsonConstants.IDENTIFIER;
   }

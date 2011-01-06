@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,12 +30,22 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   grid: null,
   gridProperties: {},
   viewMode: 'widget',
+  
+  showAllLabel: null,
 
   initWidget: function(){
+    this.showAllLabel = isc.Label.create({
+      contents: OB.I18N.getLabel('OBCQL_ShowAll'),
+      className: 'OBQueryListShowAllLabel',
+      height: '20px',
+      width: '100%',
+      widget: this,
+      action: function(){this.widget.maximize();}
+    });
     this.Super('initWidget', arguments);
-    // Calculate height only on widget view mode
-    if (this.viewMode === 'widget') {
-      this.setWidgetHeight();
+    // refresh if the dbInstanceId is set
+    if (this.dbInstanceId) {
+      this.refresh();
     }
   },
 
@@ -51,8 +61,9 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     newGridHeight = this.grid.headerHeight +
                   (this.grid.cellHeight * (this.parameters.RowsNumber ? this.parameters.RowsNumber : 10)) +
                   this.grid.summaryRowHeight + 2;
+    this.grid.setHeight(newGridHeight);
 
-    var newHeight = headerHeight + newGridHeight + 13;
+    var newHeight = headerHeight + newGridHeight + 13 +  this.showAllLabel.height;
     this.setHeight(newHeight);
     if (this.parentElement) {
       var heightDiff = newHeight - currentHeight,
@@ -81,7 +92,9 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       fields: this.fields
     }, this.gridProperties));
     
-    layout.addMembers(this.grid);
+    layout.addMember(this.grid);
+    layout.addMember(this.showAllLabel);
+
     return layout;
   },
   

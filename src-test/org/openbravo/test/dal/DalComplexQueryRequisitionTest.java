@@ -77,7 +77,7 @@ public class DalComplexQueryRequisitionTest extends BaseTest {
    * Tests a complex query related to requisition lines.
    */
   public void testComplexQueryOne() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
 
     // the query parameters are added to this list
     final List<Object> parameters = new ArrayList<Object>();
@@ -206,7 +206,7 @@ public class DalComplexQueryRequisitionTest extends BaseTest {
   }
 
   public void _testComplexQueryOne() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
 
     final StringBuilder whereClause = new StringBuilder();
 

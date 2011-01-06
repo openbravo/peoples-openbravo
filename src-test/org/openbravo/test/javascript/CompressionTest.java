@@ -19,7 +19,6 @@
 
 package org.openbravo.test.javascript;
 
-import org.apache.log4j.Logger;
 import org.openbravo.test.ant.BaseAntTest;
 
 /**
@@ -29,7 +28,7 @@ import org.openbravo.test.ant.BaseAntTest;
  */
 
 public class CompressionTest extends BaseAntTest {
-  private static final Logger log = Logger.getLogger(JavaScriptAntTest.class);
+  // private static final Logger log = Logger.getLogger(JavaScriptAntTest.class);
 
   public void testAntCompression() {
     doTest("minimizeJSandCSS");

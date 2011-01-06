@@ -132,7 +132,7 @@ public class IssuesTest extends BaseTest {
    * https://issues.openbravo.com/view.php?id=13749
    */
   public void test13749() {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     try {
       org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
           org.openbravo.model.ad.ui.Process.class, "1004400000"); // Has a Date parameter
@@ -195,7 +195,7 @@ public class IssuesTest extends BaseTest {
     setSystemAdministratorContext();
     {
       final List<Object> params = new ArrayList<Object>();
-      final String orderId = "1000001";
+      final String orderId = TEST_ORDER_ID;
       params.add("C_ORDER");
       params.add(orderId);
       params.add("en_US");
@@ -208,7 +208,7 @@ public class IssuesTest extends BaseTest {
     }
     {
       final List<Object> params = new ArrayList<Object>();
-      final String id = "1000000";
+      final String id = TEST_PRODUCT_ID;
       params.add("M_PRODUCT");
       params.add(id);
       params.add("en_US");
@@ -453,7 +453,7 @@ public class IssuesTest extends BaseTest {
    * retrieved referenced objects
    */
   public void test13281And13283() throws Exception {
-    OBContext.setOBContext("1000000", "1000004", "1000000", "0");
+    OBContext.setOBContext(TEST_USER_ID, TEST_ROLE_ID, TEST_CLIENT_ID, "0");
 
     // use the same logic as in the DalWebService
     final XMLEntityConverter xec = XMLEntityConverter.newInstance();
@@ -469,7 +469,8 @@ public class IssuesTest extends BaseTest {
     assertTrue(result.size() == 1);
     assertTrue(result.get(0) instanceof Order);
     final Order order = (Order) result.get(0);
-    assertTrue(order.getOrganization().getId().equals("1000000"));
+    // The same Organization ID of the test_13281.xml
+    assertTrue(order.getOrganization().getId().equals("378AF0EAE1A2479EAAA33436645E9433"));
   }
 
   /**
@@ -477,7 +478,7 @@ public class IssuesTest extends BaseTest {
    * count() call
    */
   public void test13509() throws Exception {
-    setBigBazaarAdminContext();
+    setTestAdminContext();
     final OBCriteria<Organization> orgs = OBDal.getInstance().createCriteria(Organization.class);
     final int cnt = orgs.count();
     assertTrue(cnt > 0);

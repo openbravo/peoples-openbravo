@@ -87,8 +87,8 @@ public class ClientExportImportTest extends XMLBaseTest {
   // }
 
   /**
-   * Exports the 1000000 client and then imports as a new client. Has as side effect that a
-   * completely new client is added in the database.
+   * Exports the "F&B International Group" client and then imports as a new client. Has as side
+   * effect that a completely new client is added in the database.
    * 
    * Also tests mantis 8509: https://issues.openbravo.com/view.php?id=8509
    * 
@@ -96,7 +96,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    */
   public void testExportImportClient1000000() {
 
-    final String newClientId = exportImport("1000000");
+    final String newClientId = exportImport(TEST_CLIENT_ID);
     testMantis8509(newClientId);
     testAccountingFactMantis9000(newClientId);
     testTreeNodesMantis9000(newClientId);
@@ -192,11 +192,11 @@ public class ClientExportImportTest extends XMLBaseTest {
   }
 
   /**
-   * Exports the 1000001 client and then imports as a new client. Has as side effect that a
+   * Exports the "QA Testing" client and then imports as a new client. Has as side effect that a
    * completely new client is added in the database.
    */
   public void _testExportImportClient1000001() {
-    exportImport("1000001");
+    exportImport(QA_TEST_CLIENT_ID);
     // SystemService.getInstance().removeAllClientData(newClientId);
   }
 

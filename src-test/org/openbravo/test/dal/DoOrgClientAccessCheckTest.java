@@ -32,7 +32,7 @@ public class DoOrgClientAccessCheckTest extends BaseTest {
 
   public void testNormalAdminMode() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     OBContext.setAdminMode();
     try {
       insertImage("0");
@@ -45,7 +45,7 @@ public class DoOrgClientAccessCheckTest extends BaseTest {
 
   public void testDoOrgClientAccessCheckWrongClient() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     OBContext.setAdminMode(true);
     try {
       // This should fail, because we are using admin mode with Client/Org filtering, and the client
@@ -60,11 +60,11 @@ public class DoOrgClientAccessCheckTest extends BaseTest {
 
   public void testDoOrgClientAccessCheck() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     OBContext.setAdminMode(true);
     try {
       // This should work, even if we are filtering, because the client is compatible
-      insertImage("1000000");
+      insertImage(TEST_CLIENT_ID);
     } catch (final OBSecurityException e) {
       fail("Security shouldn't fail if client/org is used");
     } finally {
@@ -74,7 +74,7 @@ public class DoOrgClientAccessCheckTest extends BaseTest {
 
   public void testNormalUserMode() {
 
-    setBigBazaarUserContext();
+    setTestUserContext();
     try {
       insertImage("0");
       fail("No security check");

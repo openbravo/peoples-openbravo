@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,13 +120,13 @@
       }
       
       //
-      // Returns a form field and value as a JSON parameter
+      // Returns a form field and value as a javascript object composed by name and value fields
       //
       function inputValueForms(/* String */name, /* Object */ field){
-        var result = '';
+        var result = {};
         if (!field ||
         name.toString().replace(/^\s*/, '').replace(/\s*$/, '') === '') {
-          return '';
+          return result;
         }
         if (!field.type && field.length > 1) {
           field = field[0];
@@ -134,17 +134,13 @@
         if (field.type) {
           if (field.type.toUpperCase().indexOf('SELECT') !== -1) {
             if (field.selectedIndex === -1) {
-              return '';
+              return result;
             } else {
               var length = field.options.length;
               for (var fieldsCount = 0; fieldsCount < length; fieldsCount++) {
                 if (field.options[fieldsCount].selected) {
-                  if (result !== '') {
-                    result += ', ';
-                  }
-                  result += name + ': ' + '\'' +
-                  escape(field.options[fieldsCount].value) +
-                  '\'';
+                  result.name = name;
+                  result.value = field.options[fieldsCount].value;
                 }
               }
               return result;
@@ -153,28 +149,30 @@
           field.type.toUpperCase().indexOf('CHECK') !== -1) {
             if (!field.length) {
               if (field.checked) {
-                return (name + ': ' + '\'' + escape(field.value) + '\'');
+            	result.name = name;
+            	result.value = field.value;
+                return result;
               } else {
-                return '';
+                return result;
               }
             } else {
               var total = field.length;
               for (var i = 0; i < total; i++) {
                 if (field[i].checked) {
-                  if (result !== '') {
-                    result += ', ';
-                  }
-                  result += name + ': ' + '\'' + escape(field[i].value) + '\'';
+                  result.name = name;
+                  result.value = field[i].value;
                 }
               }
               return result;
             }
           } else {
-            return name + ': ' + '\'' + escape(field.value) + '\'';
+        	result.name = name;
+        	result.value = field.value;
+            return result;
           }
         }
         
-        return '';
+        return result;
       }
       
       //
@@ -182,28 +180,19 @@
       // parameters to communicate with the classic OB class
       //
       function getXHRParamsObj(/* String */action, /* Object */ formObject){
-        var paramsObj = 'Command: ' + '\'' + escape(action) + '\'' + ', ';
-        paramsObj += 'IsAjaxCall: ' + '\'' + '1' + '\'';
+    	var paramsObj = {};
+    	paramsObj.Command = action;
+    	paramsObj.IsAjaxCall = '1';
+
         for (var i = 0; i < formObject.elements.length; i++) {
           if (formObject.elements[i].type) {
-            var text = inputValueForms(formObject.elements[i].name, formObject.elements[i]);
-            if (text !== null && text !== '' && text !== '=') {
-              paramsObj += ', ' + text;
-            }
+        	var param =  inputValueForms(formObject.elements[i].name, formObject.elements[i]);
+        	
+        	if (param && param.name !== 'Command'){
+        	  paramsObj[param.name] = param.value;
+        	}
           }
         }
-        paramsObj = '{' + paramsObj + '}';
-        var secCommandIndex = paramsObj.indexOf('Command', paramsObj.indexOf('Command') +
-        1);
-        if (paramsObj.indexOf('Command') !== secCommandIndex &&
-        secCommandIndex !== -1) {
-          var secCommandIndexComma = paramsObj.indexOf(',', secCommandIndex + 1);
-          paramsObj = paramsObj.substring(0, secCommandIndex) +
-          paramsObj.substring(secCommandIndexComma + 2, paramsObj.length);// +
-          // paramsObj.substring(85,
-          // paramsObj.length);
-        }
-        paramsObj = eval('(' + paramsObj + ')');
         return paramsObj;
       }
       

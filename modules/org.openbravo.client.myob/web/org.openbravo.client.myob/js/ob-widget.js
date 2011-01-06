@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -232,11 +232,6 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     this.src = null;
     this.items = [this.windowContents, this.editFormLayout];
     this.Super('initWidget', arguments);
-    
-    // refresh if the dbInstanceId is set
-    if (this.dbInstanceId) {
-      this.refresh();
-    }
   },
 
   confirmedClosePortlet: function(ok){

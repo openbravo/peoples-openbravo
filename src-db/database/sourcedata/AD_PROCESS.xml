@@ -2640,6 +2640,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800026-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800026-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800026-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800026-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800026-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800026-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800026--></AD_PROCESS>
@@ -3218,6 +3219,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800076-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800076-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800076-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800076-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800076-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800076-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800076--></AD_PROCESS>
@@ -3326,7 +3328,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800082-->  <AD_PROCESS_ID><![CDATA[800082]]></AD_PROCESS_ID>
 <!--800082-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800082-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800082-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800082-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800082-->  <VALUE><![CDATA[Cash_Bank_Operations]]></VALUE>
 <!--800082-->  <NAME><![CDATA[Funds Transfer]]></NAME>
 <!--800082-->  <DESCRIPTION><![CDATA[Make transfers between cash and bank]]></DESCRIPTION>
@@ -3338,6 +3340,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800082-->  <CLASSNAME><![CDATA[ad_process/CashBankOperations.html]]></CLASSNAME>
 <!--800082-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800082-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800082-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800082-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800082-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800082--></AD_PROCESS>
@@ -4443,7 +4446,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800153-->  <AD_PROCESS_ID><![CDATA[800153]]></AD_PROCESS_ID>
 <!--800153-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800153-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800153-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800153-->  <VALUE><![CDATA[CashflowForecastReport]]></VALUE>
 <!--800153-->  <NAME><![CDATA[Cashflow Forecast]]></NAME>
 <!--800153-->  <DESCRIPTION><![CDATA[Cashflow Forecast]]></DESCRIPTION>
@@ -4455,6 +4458,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800153-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportCashflowForecast]]></CLASSNAME>
 <!--800153-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800153-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800153-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800153-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800153-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800153--></AD_PROCESS>
@@ -5108,6 +5112,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800191-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800191-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800191-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800191-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800191-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800191-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800191--></AD_PROCESS>
@@ -5262,6 +5267,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800200-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800200-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800200-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800200-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800200-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800200--></AD_PROCESS>
@@ -5328,7 +5334,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800206-->  <AD_PROCESS_ID><![CDATA[800206]]></AD_PROCESS_ID>
 <!--800206-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800206-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800206-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800206-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800206-->  <VALUE><![CDATA[CashFlowStatement]]></VALUE>
 <!--800206-->  <NAME><![CDATA[Cash Flow Statement]]></NAME>
 <!--800206-->  <DESCRIPTION><![CDATA[Cash Flow Statement]]></DESCRIPTION>
@@ -5348,7 +5354,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800207-->  <AD_PROCESS_ID><![CDATA[800207]]></AD_PROCESS_ID>
 <!--800207-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800207-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800207-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800207-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800207-->  <VALUE><![CDATA[GenerateCashFlowStatement]]></VALUE>
 <!--800207-->  <NAME><![CDATA[Generate Cash Flow Statement]]></NAME>
 <!--800207-->  <DESCRIPTION><![CDATA[Generate Cash Flow Statement]]></DESCRIPTION>
@@ -5720,7 +5726,7 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1005500000-->  <AD_PROCESS_ID><![CDATA[1005500000]]></AD_PROCESS_ID>
 <!--1005500000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1005500000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005500000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005500000-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--1005500000-->  <VALUE><![CDATA[Aging]]></VALUE>
 <!--1005500000-->  <NAME><![CDATA[Payment Aging Balance]]></NAME>
 <!--1005500000-->  <DESCRIPTION><![CDATA[Payment Aging Balance]]></DESCRIPTION>
@@ -5730,6 +5736,7 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1005500000-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--1005500000-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--1005500000-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--1005500000-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--1005500000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005500000-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--1005500000--></AD_PROCESS>

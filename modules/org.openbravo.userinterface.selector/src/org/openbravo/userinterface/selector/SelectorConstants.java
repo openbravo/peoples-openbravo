@@ -33,6 +33,7 @@ public class SelectorConstants {
   public static final String PARAM_CALLOUT = "callOut";
   public static final String PARAM_TAB_ID = "adTabId";
   public static final String PARAM_COMBO_RELOAD = "comboReload";
+  public static final String PARAM_TARGET_PROPERTY_NAME = "targetProperty";
 
   // Reference definition IDs
   public static final String SELECTOR_REFERENCE_ID = "95E2A8B50A254B2AAE6774B8C2F28120";

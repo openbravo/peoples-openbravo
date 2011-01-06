@@ -11,12 +11,45 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
-
+<#if data.selectorItem>
+    popupTextMatchStyle: '${data.selector.popuptextmatchstyle}',
+    suggestionTextMatchStyle: '${data.selector.suggestiontextmatchstyle}',
+    defaultPopupFilterField : '${data.defaultPopupFilterField}',
+    displayField: '${data.targetPropertyName?js_string}._identifier',
+    valueField: '${data.targetPropertyName?js_string}',
+    gridDisplayField: '${data.displayField?js_string}',
+    gridValueField: '${data.valueField?js_string}',    
+    pickListFields: [
+    <#list data.pickListFields as pickListField>
+        {<#list pickListField.properties as property>
+        ${property.name}: ${property.value}<#if property_has_next>,</#if>
+         </#list>
+        }<#if pickListField_has_next>,</#if>
+    </#list>
+    ],
+    showSelectorGrid: ${data.showSelectorGrid},
+    selectorGridFields : [
+    <#list data.selectorGridFields as selectorGridField>
+        {<#list selectorGridField.properties as property>
+        ${property.name}: ${property.value}<#if property_has_next>,</#if>
+         </#list>
+        }<#if selectorGridField_has_next>,</#if>
+    </#list>
+    ],
+    outFields : {
+    <#list data.outFields as selectorOutField>
+    '${selectorOutField.outFieldName}':'${selectorOutField.tabFieldName}'<#if selectorOutField_has_next>,</#if>
+    </#list>
+    },
+    extraSearchFields: [${data.extraSearchFields}],
+    dataSource: ${data.dataSourceJavascript},
+    whereClause : '${data.whereClause?js_string}'
+<#else>
 /* jslint */
 sc_${data.columnName} = isc.OBSelectorLinkWidget.create({
     popupTextMatchStyle: '${data.selector.popuptextmatchstyle}',
@@ -56,3 +89,4 @@ sc_${data.columnName} = isc.OBSelectorLinkWidget.create({
     callOut: ${data.callOut},
     title : '${data.title}'
 });
+</#if>

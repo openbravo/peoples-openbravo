@@ -116,6 +116,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-toolbar.js", false));
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/ob-messagebar.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/ob-statusbar.js", false));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-recent-utilities.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-alert-manager.js", false));
@@ -152,6 +156,14 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.application/ob-messagebar-styles.css", false));
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.application/ob-statusbar-styles.css", false));
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.application/ob-main-content-styles.css", false));
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
@@ -165,11 +177,23 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.application/ob-form-styles.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.application/ob-grid-styles.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.application/ob-toolbar-styles.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.application/ob-messagebar-styles.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.application/ob-statusbar-styles.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER

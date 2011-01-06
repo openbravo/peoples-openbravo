@@ -147,7 +147,7 @@
 <!--113-->  <AD_MENU_ID><![CDATA[113]]></AD_MENU_ID>
 <!--113-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--113-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--113-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--113-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--113-->  <NAME><![CDATA[Test]]></NAME>
 <!--113-->  <DESCRIPTION><![CDATA[View an example of a window that shows fields with all possible references or data types.]]></DESCRIPTION>
 <!--113-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -589,7 +589,7 @@
 <!--152-->  <AD_MENU_ID><![CDATA[152]]></AD_MENU_ID>
 <!--152-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--152-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--152-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--152-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--152-->  <NAME><![CDATA[Workflow]]></NAME>
 <!--152-->  <DESCRIPTION><![CDATA[Define workflows that guide users through steps required to complete a specified task.]]></DESCRIPTION>
 <!--152-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -1279,7 +1279,7 @@
 <!--224-->  <AD_MENU_ID><![CDATA[224]]></AD_MENU_ID>
 <!--224-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--224-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--224-->  <NAME><![CDATA[Language Setup]]></NAME>
 <!--224-->  <DESCRIPTION><![CDATA[Setup a new Language of the system and translate elements]]></DESCRIPTION>
 <!--224-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -1550,7 +1550,7 @@
 <!--261-->  <AD_MENU_ID><![CDATA[261]]></AD_MENU_ID>
 <!--261-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--261-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--261-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--261-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--261-->  <NAME><![CDATA[Initial Client Setup Review]]></NAME>
 <!--261-->  <DESCRIPTION><![CDATA[Review of system level setup of a new  Client]]></DESCRIPTION>
 <!--261-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -3625,7 +3625,7 @@
 <!--800108-->  <AD_MENU_ID><![CDATA[800108]]></AD_MENU_ID>
 <!--800108-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800108-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800108-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800108-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800108-->  <NAME><![CDATA[Automated Test]]></NAME>
 <!--800108-->  <DESCRIPTION><![CDATA[Open a folder where you can define information related to business partners, prices, and products.]]></DESCRIPTION>
 <!--800108-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
@@ -4241,7 +4241,7 @@
 <!--800196-->  <AD_MENU_ID><![CDATA[800196]]></AD_MENU_ID>
 <!--800196-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800196-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800196-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800196-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800196-->  <NAME><![CDATA[Remittance Cancellation/Return]]></NAME>
 <!--800196-->  <DESCRIPTION><![CDATA[Edit pending remittances by cancelling or returning them.]]></DESCRIPTION>
 <!--800196-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
@@ -5145,7 +5145,7 @@
 <!--1000001-->  <AD_MENU_ID><![CDATA[1000001]]></AD_MENU_ID>
 <!--1000001-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1000001-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000001-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000001-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--1000001-->  <NAME><![CDATA[Openbravo ERP]]></NAME>
 <!--1000001-->  <DESCRIPTION><![CDATA[Openbravo Homepage]]></DESCRIPTION>
 <!--1000001-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
