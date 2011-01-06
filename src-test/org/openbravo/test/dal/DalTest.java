@@ -11,9 +11,12 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008, 2011 Openbravo SLU 
  * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
+ * Contributor(s):
+ *   Martin Taal <martin.taal@openbravo.com>,
+ *   Ivan Perdomo <ivan.perdomo@openbravo.com>,
+ *   Leo Arias <leo.arias@openbravo.com>.
  ************************************************************************
  */
 
@@ -148,12 +151,17 @@ public class DalTest extends BaseTest {
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     final Currency c = cs.get(0);
-    c.setDescription(c.getDescription() + " a test");
+    // Call getValue and setValue directly to work around security checks on     the description
+    // that are not the objective of this test.
+    c
+        .setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION)
+            + " a test");
     try {
       OBDal.getInstance().save(c);
       fail("No security check");
     } catch (final OBSecurityException e) {
-      // successfull check
+      // successful check
+      rollback();
     }
   }
 
