@@ -22,7 +22,7 @@ isc.OBMessageBar.addProperties({
   styleName: 'OBMessageBar_tip',
   width: '100%',
   height: 40,
-  overflow: 'auto',
+  overflow: 'visible',
   setTypeStyle: function(type) {
     this.setStyleName('OBMessageBar_' + type);
     this.mainIcon.setSrc('[SKINIMG]../../org.openbravo.client.application/images/messagebar/mainIcon-' + type + '.png');

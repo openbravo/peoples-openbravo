@@ -29,10 +29,16 @@ isc.OBMessageBarCloseIcon.addProperties({
   action: function() {
     this.messageBar.hide();
   }
-})
-
+});
 
 isc.ClassFactory.defineClass('OBMessageBar', isc.HLayout);
+
+isc.OBMessageBar.addClassProperties({
+  TYPE_SUCCESS: 'success',
+  TYPE_ERROR: 'error',
+  TYPE_WARNING: 'warning',
+  TYPE_INFO: 'info'
+});
 
 isc.OBMessageBar.addProperties({
   view: null,
@@ -59,16 +65,40 @@ isc.OBMessageBar.addProperties({
   },
 
   setText: function(title, text) {
-    if (!title) {
+    if (!title) {      
       this.text.setContents(text);
     } else {
-      this.text.setContents('<b>' + title + '</b><br />' + text);
+      // TODO: low-prio, move styling to a css class
+      this.text.setContents('<b>' + title + '</b><br/>' + text);
     }
   },
 
+  getDefaultTitle: function(type) {
+    if (type === isc.OBMessageBar.TYPE_SUCCESS) {
+      return OB.I18N.getLabel('OBUIAPP_Success');
+    } else if (type === isc.OBMessageBar.TYPE_ERROR) {
+      return OB.I18N.getLabel('OBUIAPP_Error');
+    } else if (type === isc.OBMessageBar.TYPE_INFO) {
+      return OB.I18N.getLabel('OBUIAPP_Info');
+    } else if (type === isc.OBMessageBar.TYPE_WARNING) {
+      return OB.I18N.getLabel('OBUIAPP_Warning');
+    }
+    return null;  
+  },
+
   setMessage: function(type, title, text) {
+    var i, length, newText;
     this.setType(type);
-    this.setText(title, text);
+    if (isc.isAn.Array(text)) {
+      length = text.length;
+      // TODO: low prio, do some better styling display of multiple messages
+      newText = '<ul class="OBMessageBarTextList">';
+      for (i = 0; i < length; i++) {
+        newText = newText + '<li>' + text[i] + '</li>';
+      }
+      text = newText + '</ul>';
+    }
+    this.setText(title || this.getDefaultTitle(type), text);
     this.show();
   }
 });

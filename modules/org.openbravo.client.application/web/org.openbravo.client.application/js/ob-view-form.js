@@ -124,9 +124,9 @@ isc.OBViewForm.addProperties({
         }
       }
     }
-    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0]) {
-      // TODO: handle multiple messages
-      this.view.standardWindow.messageBar.setMessage(calloutMessages[0]);
+    if (calloutMessages && calloutMessages.length > 0) {
+      // TODO: check as what type should call out messages be displayed
+      this.view.standardWindow.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, calloutMessages);
     }
     if (auxInputs) {
       this.auxInputs = {};

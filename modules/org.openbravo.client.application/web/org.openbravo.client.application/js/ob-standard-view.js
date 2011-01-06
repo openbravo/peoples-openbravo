@@ -64,7 +64,7 @@ isc.OBStandardWindow.addProperties({
       title: 'Button B'
     })]);
     
-    this.messageBar = isc.OBMessagebar.create({});
+    this.messageBar = isc.OBMessageBar.create({visibility: 'hidden'});
     
     this.addMember(this.messageBar);
     this.addMember(this.toolBar);
@@ -1283,48 +1283,6 @@ isc.OBStandardViewTabSet.addProperties({
     this.tabBarProperties = isc.addProperties({}, isc.OBStandardViewTabSet.TABBARPROPERTIES);
     this.tabBarProperties.tabSet = this;
     this.Super('initWidget', arguments);
-  }
-});
-
-isc.ClassFactory.defineClass('OBMessagebar', isc.HLayout);
-
-// = OBMessagebar =
-//
-// The OBMessagebar is the bar which shows messages, it is located above the toolbar.
-//
-isc.OBMessagebar.addProperties({
-  visibility: 'hidden',
-  msgLabel: null,
-  closeButton: null,
-  overflow: 'visible',
-  height: 40,
-  
-  initWidget: function(){
-    this.closeButton = isc.ImgButton.create({
-      messageBar: this,
-      imageType: 'center',
-      showRollOver: false,
-      src: '[SKINIMG]../../org.openbravo.client.application/images/statusbar/ico-x.png',
-      action: function(){
-        this.messageBar.hide();
-      }
-    });
-    
-    this.msgLabel = isc.Label.create({
-      overflow: 'visible',
-      xwidth: '100%',
-      height: '100%'
-    });
-    
-    this.addMember(this.msgLabel);
-    this.addMember(this.closeButton);
-    
-    return this.Super('initWidget', arguments);
-  },
-  
-  setMessage: function(msg){
-    this.msgLabel.setTitle(msg);
-    this.show();
   }
 });
 
