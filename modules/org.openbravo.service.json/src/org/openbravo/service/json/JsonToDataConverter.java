@@ -34,12 +34,14 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.jfree.util.Log;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 
 /**
  * Converts json data to Openbravo business object(s).
@@ -326,16 +328,7 @@ public class JsonToDataConverter {
   }
 
   /**
-   * Tries to find an object first in the internal map which is maintained to first resolve id's
-   * internally within the complete json string. If not found there then the database is queried
-   * using the entity and referenceId. If not found there (or the referenceId == null) then create a
-   * new instance of the entity.
-   * 
-   * @param entity
-   *          the entity to retrieve/create
-   * @param referencedId
-   *          the id of the entity
-   * @return an existing of new BaseOBObject
+   * @see #getBaseOBObjectFromId(Entity, Property, String)
    */
   protected BaseOBObject getBaseOBObjectFromId(Entity entity, String referencedId) {
     BaseOBObject value = null;
@@ -345,6 +338,65 @@ public class JsonToDataConverter {
         value = keyToObject.get(key);
       } else {
         value = OBDal.getInstance().get(entity.getName(), referencedId);
+      }
+      if (value == null) {
+        value = (BaseOBObject) OBProvider.getInstance().get(entity.getName());
+        // put it here, it must be imported later as a real object
+        newObjects.put(key, (BaseOBObject) value);
+      }
+      keyToObject.put(key, (BaseOBObject) value);
+    } else {
+      value = (BaseOBObject) OBProvider.getInstance().get(entity.getName());
+    }
+
+    // note: when inheritance is supported then this Check should be changed/removed
+    Check.isTrue(value.getEntity() == entity, "The object " + value
+        + " has a different entity then the request entity " + entity);
+    return value;
+  }
+
+  /**
+   * Tries to find an object first in the internal map which is maintained to first resolve id's
+   * internally within the complete json string. If not found there then the database is queried
+   * using the entity and referenceId. If not found there (or the referenceId == null) then create a
+   * new instance of the entity.
+   * 
+   * @param entity
+   *          the entity to retrieve/create
+   * @param property
+   *          the property referencing to the entity
+   * @param referencedId
+   *          the id of the entity
+   * @return an existing of new BaseOBObject
+   */
+  protected BaseOBObject getBaseOBObjectFromId(Entity entity, Property property, String referencedId) {
+    BaseOBObject value = null;
+    if (referencedId != null) {
+      final String key = getObjectKey(referencedId, entity.getName());
+      if (keyToObject.get(key) != null) {
+        value = keyToObject.get(key);
+      } else {
+        if (property.getReferencedProperty() != null) {
+          final OBQuery<BaseOBObject> qry = OBDal.getInstance().createQuery(entity.getName(),
+              property.getReferencedProperty().getName() + "=:reference");
+          qry.setNamedParameter("reference", referencedId);
+          qry.setFilterOnActive(false);
+          qry.setFilterOnReadableClients(false);
+          qry.setFilterOnReadableOrganization(false);
+          final List<BaseOBObject> result = qry.list();
+          if (result.size() > 1) {
+            Log.warn("More than one result when querying " + entity + " using property "
+                + property.getReferencedProperty() + " with value " + referencedId
+                + ", choosing the first result");
+            value = result.get(0);
+          } else if (result.size() == 1) {
+            value = result.get(0);
+          } else {
+            value = null;
+          }
+        } else {
+          value = OBDal.getInstance().get(entity.getName(), referencedId);
+        }
       }
       if (value == null) {
         value = (BaseOBObject) OBProvider.getInstance().get(entity.getName());
@@ -395,7 +447,11 @@ public class JsonToDataConverter {
       } else if (jsonValue instanceof String) {
         // an id
         final String referenceId = (String) jsonValue;
-        value = getBaseOBObjectFromId(property.getTargetEntity(), referenceId);
+        if (property.getReferencedProperty() != null) {
+          value = getBaseOBObjectFromId(property.getTargetEntity(), property, referenceId);
+        } else {
+          value = getBaseOBObjectFromId(property.getTargetEntity(), referenceId);
+        }
       } else {
         // a json object
         // try another approach, maybe the value is a jsonobject itself
@@ -525,6 +581,8 @@ public class JsonToDataConverter {
       } catch (ParseException e) {
         throw new Error(e);
       }
+    } else if (property.isBoolean() && value instanceof String) {
+      return Boolean.parseBoolean((String) value);
     } else if (value instanceof Double) {
       return new BigDecimal((Double) value);
     } else if (value instanceof Integer && property.getPrimitiveObjectType() == Long.class) {
@@ -535,6 +593,8 @@ public class JsonToDataConverter {
       return new Float((Long) value);
     } else if (value instanceof Number && property.getPrimitiveObjectType() == BigDecimal.class) {
       return new BigDecimal(((Number) value).doubleValue());
+    } else if (value instanceof String && ((String) value).trim().length() == 0) {
+      return null;
     }
     return value;
   }
