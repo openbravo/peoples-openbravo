@@ -303,6 +303,7 @@ public class DefaultJsonDataService implements JsonDataService {
       }
 
       if (fromJsonConverter.hasErrors()) {
+        OBDal.getInstance().rollbackAndClose();
         // report the errors
         final JSONObject jsonResult = new JSONObject();
         final JSONObject jsonResponse = new JSONObject();
@@ -313,12 +314,7 @@ public class DefaultJsonDataService implements JsonDataService {
           final JSONObject errorMessageObject = new JSONObject();
           errorMessageObject.put(JsonConstants.RESPONSE_ERRORMESSAGE, error.getThrowable()
               .getMessage());
-          if (error.getProperty().isPrimitive()) {
-            errorsObject.put(error.getProperty().getName(), errorMessageObject);
-          } else {
-            errorsObject.put(error.getProperty().getName() + "." + JsonConstants.ID,
-                errorMessageObject);
-          }
+          errorsObject.put(error.getProperty().getName(), errorMessageObject);
         }
         jsonResponse.put(JsonConstants.RESPONSE_ERRORS, errorsObject);
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
