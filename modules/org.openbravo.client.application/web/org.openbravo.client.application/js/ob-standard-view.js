@@ -20,9 +20,8 @@ isc.ClassFactory.defineClass('OBStandardWindow', isc.VLayout);
 
 // The OBStandardWindow contains the toolbar and the root view.
 isc.OBStandardWindow.addProperties({
-  toolBar: null,
+  toolBarLayout: null,
   view: null,
-  messageBar: null,
   
   viewProperties: null,
   
@@ -30,58 +29,27 @@ isc.OBStandardWindow.addProperties({
   
   initWidget: function(){
     var standardWindow = this;
-    this.toolBar = isc.OBToolbar.create({
-      height: this.toolBarHeight,
-      minHeight: this.toolBarHeight,
-      maxHeight: this.toolBarHeight,
-      leftMembers: [isc.OBToolbarIconButton.create({
-        action: 'alert(\'New Document\')',
-        buttonType: 'newDoc',
-        prompt: 'New Document'
-      }), isc.OBToolbarIconButton.create({
-        action: 'alert(\'New Row\')',
-        buttonType: 'newRow',
-        prompt: 'New Row'
-      })],
-      rightMembers: [isc.OBToolbarTextButton.create({
-        action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
-        title: 'Button A'
-      })]
+    
+    this.toolBarLayout = isc.HLayout.create({
+      width: '100%',
+      height: 1, // is set by its content
+      overflow: 'visible'
     });
     
-    this.toolBar.addLeftMembers([isc.OBToolbarIconButton.create({
-      action: 'alert(\'Save\')',
-      buttonType: 'save',
-      prompt: 'Save'
-    }), isc.OBToolbarIconButton.create({
-      action: 'alert(\'Create Copy\')',
-      buttonType: 'createCopy',
-      prompt: 'Create Copy'
-    })]);
-    
-    this.toolBar.addRightMembers([isc.OBToolbarTextButton.create({
-      action: 'alert(\'Button B\')',
-      title: 'Button B'
-    })]);
-    
-    this.messageBar = isc.OBMessageBar.create({visibility: 'hidden'});
-    
-    this.addMember(this.messageBar);
-    this.addMember(this.toolBar);
+    this.addMember(this.toolBarLayout);
     
     this.viewProperties.standardWindow = this;
     
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addMember(this.view);
     this.Super('initWidget', arguments);
-    this.view.toolBar = this.toolBar;
     
     // is set later after creation
     this.view.tabTitle = this.tabTitle;
   },
   
   show: function(){
-    var ret = this.Super("show", arguments);
+    var ret = this.Super('show', arguments);
     this.setFocusInView();
     return ret;
   },
@@ -215,6 +183,8 @@ isc.OBStandardView.addProperties({
   // ** {{{ toolbar }}} **
   // The toolbar canvas.
   toolBar: null,
+
+  messageBar: null,
   
   // ** {{{ formGridLayout }}} **
   // The layout which holds the form and grid.
@@ -274,12 +244,30 @@ isc.OBStandardView.addProperties({
   initWidget: function(properties){
     var isRootView = !this.parentProperty;
     
+    this.messageBar = isc.OBMessageBar.create({
+      visibility: 'hidden'
+    });
+    
     if (isRootView) {
       this.buildStructure();
     }
     
     OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
+    
+    this.toolBar = isc.OBToolbar.create({
+      view: this,
+      visibility: 'hidden',
+      leftMembers: [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES)],
+      rightMembers: [isc.OBToolbarTextButton.create({
+        action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
+        title: 'Button A'
+      })]
+    });
+    
+    if (isRootView) {
+      this.standardWindow.toolBarLayout.addMember(this.toolBar);
+    }
     
     this.Super('initWidget', arguments);
   },
@@ -354,8 +342,12 @@ isc.OBStandardView.addProperties({
             } else {
               OB.KernelUtilities.handleSystemException(error.message);
             }
-          } else {
+          } else if (!dsRequest.willHandleError) {
             OB.KernelUtilities.handleSystemException('Error occured');
+          } else if (dsResponse.status && dsResponse.status === isc.RPCResponse.STATUS_FAILURE) {
+            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, jsonData.data);
+          } else {
+            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
           }
         }
         return this.Super('transformResponse', arguments);
@@ -405,7 +397,7 @@ isc.OBStandardView.addProperties({
       this.formGridLayout = isc.HLayout.create({
         width: '100%',
         height: '*',
-        overflow: 'auto',
+        overflow: 'visible',
         view: this,
         focusChanged: function(hasFocus){
           if (hasFocus) {
@@ -431,8 +423,6 @@ isc.OBStandardView.addProperties({
         }
       });
       
-      this.formGridLayout.addMember(this.activeBar);
-      
       if (this.viewGrid) {
         this.viewGrid.setWidth('100%');
         this.viewGrid.view = this;
@@ -445,7 +435,9 @@ isc.OBStandardView.addProperties({
         this.viewForm.view = this;
       }
       
-      this.statusBar = this.createStatusBar();
+      this.statusBar = isc.OBStatusBar.create({
+        view: this.viewForm.view
+      });
       
       this.statusBarFormLayout = isc.VLayout.create({
         width: '100%',
@@ -466,7 +458,27 @@ isc.OBStandardView.addProperties({
       this.statusBarFormLayout.addMember(formContainerLayout);
       
       this.formGridLayout.addMember(this.statusBarFormLayout);
-      this.addMember(this.formGridLayout);
+
+      // wrap the messagebar and the formgridlayout in a VLayout
+      var gridFormMessageLayout = isc.VLayout.create({
+        height: '100%',
+        width: '100%',
+        overflow: 'auto'
+      });
+      gridFormMessageLayout.addMember(this.messageBar);
+      gridFormMessageLayout.addMember(this.formGridLayout);
+
+      // and place the active bar to the left of the form/grid/messagebar
+      var activeGridFormMessageLayout = isc.HLayout.create({
+        height: '100%',
+        width: '100%',
+        overflow: 'hidden'
+      });
+      
+      activeGridFormMessageLayout.addMember(this.activeBar);
+      activeGridFormMessageLayout.addMember(gridFormMessageLayout);
+      
+      this.addMember(activeGridFormMessageLayout);
     }
     if (this.hasChildTabs) {
       this.childTabSet = isc.OBStandardViewTabSet.create({
@@ -483,6 +495,7 @@ isc.OBStandardView.addProperties({
   // parent.
   addChildView: function(childView){
     childView.standardWindow = this.standardWindow;
+    this.standardWindow.toolBarLayout.addMember(childView.toolBar);
     
     childView.parentView = this;
     childView.parentTabSet = this.childTabSet;
@@ -534,11 +547,11 @@ isc.OBStandardView.addProperties({
       tabButton = window[this.standardWindow.viewTabId];
     }
     // enable this code to set the styleclass changes
-//    if (active) {
-//      tabButton.setCustomState('Active');
-//    } else {
-//      tabButton.setCustomState('InActive');
-//    }
+    //    if (active) {
+    //      tabButton.setCustomState('Active');
+    //    } else {
+    //      tabButton.setCustomState('InActive');
+    //    }
   },
   
   // called when this view becomes the focused view or looses the focus
@@ -558,11 +571,13 @@ isc.OBStandardView.addProperties({
       }
       //      console.log("Tab " + this.tabTitle + ' --> receives focus ');
       this.standardWindow.focusedView = this;
+      this.toolBar.show();
       this.activeBar.setActive(true);
       this.setViewFocus();
     } else {
       //      console.log("Tab " + this.tabTitle + ' --> looses focus ');
       this.activeBar.setActive(false);
+      this.toolBar.hide();
       this.standardWindow.focusedView = null;
     }
     this.setTabButtonState(active);
@@ -666,12 +681,20 @@ isc.OBStandardView.addProperties({
   editRecord: function(record){
   
     // this.recordSelected(record);
-    this.viewForm.editRecord(record);
-    this.viewForm.clearErrors();
-    if (this.viewGrid.isVisible()) {
-      this.switchFormGridVisibility();
+    if (!record) { //  new case
+      this.viewForm.editNewRecord();
+      this.viewForm.clearErrors();
+      if (this.viewGrid.isVisible()) {
+        this.switchFormGridVisibility();
+      }
+    } else {
+      this.viewForm.editRecord(record);
+      this.viewForm.clearErrors();
+      if (this.viewGrid.isVisible()) {
+        this.switchFormGridVisibility();
+      }
+      this.viewGrid.doSelectSingleRecord(record);
     }
-    this.viewGrid.doSelectSingleRecord(record);
     
     isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
   },
@@ -898,19 +921,26 @@ isc.OBStandardView.addProperties({
     this.parentTabSet.getTabNumber(this.tab);
   },
   
-  /* ++++++++++++++++++++ Status Bar ++++++++++++++++++++++++++ */
+  // ++++++++++++++++++++ Button Actions ++++++++++++++++++++++++++
   
-  createStatusBar: function(){
-    var statusBar = isc.OBStatusBar.create({
-      view: this.viewForm.view
-    });
-    return statusBar;
+  saveRow: function(){
+    this.viewForm.saveRow();
   },
   
-  /*
-   * ++++++++++++++++++++ Parent-Child Tab Handling
-   * ++++++++++++++++++++++++++
-   */
+  deleteRow: function(){
+    alert('Delete!');
+  },
+  
+  newRow: function(){
+    this.editRecord(null);
+  },
+  
+  undo: function(){
+    this.viewForm.undo();
+  },
+  
+  // ++++++++++++++++++++ Parent-Child Tab Handling ++++++++++++++++++++++++++
+  
   convertToPercentageHeights: function(){
     if (!this.members[1]) {
       return;
@@ -978,6 +1008,8 @@ isc.OBStandardView.addProperties({
     }
   },
   
+  //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
+  
   getContextInfo: function(allProperties, sessionProperties){
     // different modes:
     // 1) showing grid with one record selected
@@ -998,10 +1030,10 @@ isc.OBStandardView.addProperties({
           allProperties[properties[i].column] = value;
           // surround the property name with @ symbols to make them different
           // from filter criteria and such          
-          allProperties['@' + this.entity + "." + properties[i].property + '@'] = value;
+          allProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
           if (properties[i].sessionProperty) {
             sessionProperties[properties[i].dbColumn] = value;
-            sessionProperties['@' + this.entity + "." + properties[i].property + '@'] = value;
+            sessionProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
           }
         }
       }

@@ -4,7 +4,7 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
@@ -16,8 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
-
 isc.ClassFactory.defineClass('OBMessageBarMainIcon', isc.Img);
 
 isc.ClassFactory.defineClass('OBMessageBarDescriptionText', isc.HTMLFlow);
@@ -26,7 +24,7 @@ isc.ClassFactory.defineClass('OBMessageBarCloseIcon', isc.ImgButton);
 
 isc.OBMessageBarCloseIcon.addProperties({
   messageBar: null,
-  action: function() {
+  action: function(){
     this.messageBar.hide();
   }
 });
@@ -46,34 +44,36 @@ isc.OBMessageBar.addProperties({
   mainIcon: null,
   text: null,
   closeIcon: null,
-
-  initWidget: function() {
+  
+  initWidget: function(){
     this.mainIcon = isc.OBMessageBarMainIcon.create({});
     this.text = isc.OBMessageBarDescriptionText.create({
       contents: ''
     });
-    this.closeIcon = isc.OBMessageBarCloseIcon.create({messageBar: this});
-
+    this.closeIcon = isc.OBMessageBarCloseIcon.create({
+      messageBar: this
+    });
+    
     this.addMembers([this.mainIcon, this.text, this.closeIcon]);
   },
-
-  setType: function(type) {
+  
+  setType: function(type){
     if (this.setTypeStyle) {
       this.setTypeStyle(type);
     }
     this.type = type;
   },
-
-  setText: function(title, text) {
-    if (!title) {      
+  
+  setText: function(title, text){
+    if (!title) {
       this.text.setContents(text);
     } else {
       // TODO: low-prio, move styling to a css class
       this.text.setContents('<b>' + title + '</b><br/>' + text);
     }
   },
-
-  getDefaultTitle: function(type) {
+  
+  getDefaultTitle: function(type){
     if (type === isc.OBMessageBar.TYPE_SUCCESS) {
       return OB.I18N.getLabel('OBUIAPP_Success');
     } else if (type === isc.OBMessageBar.TYPE_ERROR) {
@@ -83,10 +83,10 @@ isc.OBMessageBar.addProperties({
     } else if (type === isc.OBMessageBar.TYPE_WARNING) {
       return OB.I18N.getLabel('OBUIAPP_Warning');
     }
-    return null;  
+    return null;
   },
-
-  setMessage: function(type, title, text) {
+  
+  setMessage: function(type, title, text){
     var i, length, newText;
     this.setType(type);
     if (isc.isAn.Array(text)) {
@@ -100,5 +100,17 @@ isc.OBMessageBar.addProperties({
     }
     this.setText(title || this.getDefaultTitle(type), text);
     this.show();
+  },
+
+  // calls te OB.I18N.getLabel to asynchronously get a label
+  // and display it  
+  setLabel: function(type, title, label){
+    var me = this;
+    OB.I18N.getLabel(label, null, {
+      setLabel: function(text){
+        me.setMessage(type, title, text);
+      }
+    }, 'setLabel');
   }
+  
 });
