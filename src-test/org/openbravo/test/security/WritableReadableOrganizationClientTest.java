@@ -114,7 +114,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
     p.setCapacity(new BigDecimal(1));
 
     // switch usercontext to force exception
-    setUserContext(getRandomUser().getId());
+    setUserContext(TEST2_USER_ID);
     try {
       commitTransaction();
       fail("Writable organizations not checked");
