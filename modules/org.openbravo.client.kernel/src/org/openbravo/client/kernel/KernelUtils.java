@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -82,11 +83,12 @@ public class KernelUtils {
     final StringBuilder sb = new StringBuilder();
     if (e instanceof OBUserException) {
       OBUserException ex = (OBUserException) e;
-      sb.append("OB.KernelUtilities.handleUserException('" + ex.getMessage() + "', "
-          + ex.getJavaScriptParams() + ");");
-
+      sb.append("OB.KernelUtilities.handleUserException('"
+          + StringEscapeUtils.escapeJavaScript(ex.getMessage()) + "', " + ex.getJavaScriptParams()
+          + ");");
     } else {
-      sb.append("OB.KernelUtilities.handleSystemException('" + e.getMessage() + "');");
+      sb.append("OB.KernelUtilities.handleSystemException('"
+          + StringEscapeUtils.escapeJavaScript(e.getMessage()) + "');");
     }
     return sb.toString();
   }
