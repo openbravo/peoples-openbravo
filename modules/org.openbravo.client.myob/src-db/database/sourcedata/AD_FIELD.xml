@@ -2777,6 +2777,13 @@
 <!--993EAC683DEEF0BBE040A8C02101154F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--993EAC683DEEF0BBE040A8C02101154F-->  <NAME><![CDATA[Data Access Level]]></NAME>
 <!--993EAC683DEEF0BBE040A8C02101154F-->  <DESCRIPTION><![CDATA[Indicates what type of data (in terms of AD_CLIENT and AD_ORG data columns) can be entered or viewed.]]></DESCRIPTION>
+<!--993EAC683DEEF0BBE040A8C02101154F-->  <HELP><![CDATA[Indicates what type of data (in terms of AD_CLIENT and AD_ORG data columns) can be entered or viewed. We can classify data in 4 major categories:
+- System (AD_CLIENT_ID=0, AD_ORG_ID=0) - system data (such as metadata for window, tab and field definition)
+- Organization (AD_CLIENT<>0, AD_ORG_ID<>0) - data particular to an organization (such as sales orders)
+- Client/Organization (AD_CLIENT<>0, AD_ORG_ID=anything) - data particular to an organization or shared among all organizations within one client
+- Client (AD_CLIENT<>0, AD_ORG_ID=0) - data that is specific to a client but can be used by all organizations within that client
+
+or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--993EAC683DEEF0BBE040A8C02101154F-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--993EAC683DEEF0BBE040A8C02101154F-->  <AD_TAB_ID><![CDATA[EA867498578C4E98A4935A53A3A5F6AE]]></AD_TAB_ID>
 <!--993EAC683DEEF0BBE040A8C02101154F-->  <AD_COLUMN_ID><![CDATA[993EAC683DE8F0BBE040A8C02101154F]]></AD_COLUMN_ID>

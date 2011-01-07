@@ -46,7 +46,6 @@ BEGIN
                      FROM OBKMO_Widget_Class_Access
                     WHERE OBKMO_Widget_Class_ID = W.OBKMO_Widget_Class_ID
                       AND AD_ROLE_ID = R.AD_ROLE_ID);
-      
 END OBKMO_UPDATE_ACCESS
 ]]></body>
     </function>

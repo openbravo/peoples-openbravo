@@ -19,7 +19,7 @@
 ************************************************************************/
 
  v_ExtensionPointID varchar2(32) := '8261F79453B64AC7998873A9F81A1E5A';
- v_count number;
+ v_count NUMBER;
 BEGIN
 --AD_FORM_ACCESS
   INSERT INTO AD_Form_Access
@@ -190,7 +190,6 @@ BEGIN
   IF v_count != 0 THEN
    AD_EXTENSION_POINT_HANDLER(get_uuid(), v_ExtensionPointID);
   END IF;
-      
 END AD_UPDATE_ACCESS
 ]]></body>
     </function>
