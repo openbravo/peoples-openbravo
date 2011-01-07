@@ -35,15 +35,23 @@ isc.SimpleType.create({
 </#list>       
 
 // set the global date format
-isc.Date.setShortDisplayFormat(function(value) {
-    return OB.Utilities.Date.JSToOB(value, OB.Format.date);
+isc.Date.setShortDisplayFormat(function(useCustomTimeZone) {
+    return OB.Utilities.Date.JSToOB(this, OB.Format.date);
 });
 
-isc.Date.setNormalDisplayFormat(function(value) {
-    return OB.Utilities.Date.JSToOB(value, OB.Format.date);
+isc.Date.setNormalDisplayFormat(function(useCustomTimeZone) {
+    return OB.Utilities.Date.JSToOB(this, OB.Format.date);
 });
+
+isc.Date.inputFormat = function(dateString, format, centuryThreshold, suppressConversion) {
+    return OB.Utilities.Date.OBToJS(dateString, OB.Format.date);
+};
 
 isc.Date.setInputFormat(function(value) {
     return OB.Utilities.Date.OBToJS(value, OB.Format.date);
+});
+
+isc.Date.setShortDatetimeDisplayFormat(function(useCustomTimeZone) {
+    return OB.Utilities.Date.JSToOB(this, OB.Format.dateTime);
 });
 
