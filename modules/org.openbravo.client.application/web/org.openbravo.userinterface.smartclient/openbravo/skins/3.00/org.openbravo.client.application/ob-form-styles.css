@@ -96,7 +96,7 @@
 .OBFormFieldInputError,
 .OBFormFieldSelectInputError,
 .OBFormFieldLabelError { 
-  color:#204268; 
+  color: red; //#204268; 
 }
 
 .OBFormFieldSelectPickerIcon,
