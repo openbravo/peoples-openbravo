@@ -67,7 +67,8 @@ public class DataSourceProperty {
     final DataSourceProperty dsProperty = new DataSourceProperty();
     dsProperty.setName(property.getName());
     dsProperty.setId(property.isId());
-    dsProperty.setMandatory(property.isMandatory());
+    // note booleans are never mandatory as they only have inputs with 2 values
+    dsProperty.setMandatory(!property.isBoolean() && property.isMandatory());
     dsProperty.setAuditInfo(property.isAuditInfo());
     dsProperty.setUpdatable(property.isUpdatable());
     dsProperty.setBoolean(property.isBoolean());
