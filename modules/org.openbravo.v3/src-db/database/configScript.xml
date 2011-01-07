@@ -20,18 +20,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="789">
-      <oldValue><![CDATA[@AD_CLIENT_ID@]]></oldValue>
-      <newValue><![CDATA[@#AD_CLIENT_ID@]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="848">
-      <oldValue><![CDATA[@AD_CLIENT_ID@]]></oldValue>
-      <newValue><![CDATA[@#AD_CLIENT_ID@]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_COLUMN" columnname="DEFAULTVALUE" pkRow="8492">
-      <oldValue><![CDATA[@AD_CLIENT_ID@]]></oldValue>
-      <newValue><![CDATA[@#AD_CLIENT_ID@]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="131">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
