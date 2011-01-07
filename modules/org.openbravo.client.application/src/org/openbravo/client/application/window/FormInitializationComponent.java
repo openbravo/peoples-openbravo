@@ -188,6 +188,13 @@ public class FormInitializationComponent extends BaseActionHandler {
           String columnId = field.getColumn().getId();
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
           String value = null;
+
+          // Force key column to be in session
+          if (field.getColumn().isKeyColumn() && ("SETSESSION".equals(mode) || "EDIT".equals(mode))) {
+            setSessionValue(tab.getWindow().getId() + "|"
+                + field.getColumn().getDBColumnName().toUpperCase(), rowId);
+          }
+
           if (mode.equals("NEW")) {
             // On NEW mode, the values are computed through the UIDefinition (the defaults will be
             // used)
@@ -228,6 +235,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                   jsonobject.has("value") ? uiDef.formatValueToSQL(jsonobject.get("value")
                       .toString()) : null);
             }
+
           }
         } catch (Exception e) {
           throw new OBException("Couldn't get data for column "
