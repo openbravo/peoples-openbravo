@@ -2993,7 +2993,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--271-->  <HELP><![CDATA[Edit taxes applied to your invoice.]]></HELP>
 <!--271-->  <AD_TABLE_ID><![CDATA[334]]></AD_TABLE_ID>
 <!--271-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
-<!--271-->  <SEQNO><![CDATA[40]]></SEQNO>
+<!--271-->  <SEQNO><![CDATA[30]]></SEQNO>
 <!--271-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--271-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--271-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -8278,7 +8278,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800059-->  <NAME><![CDATA[Discounts]]></NAME>
 <!--800059-->  <AD_TABLE_ID><![CDATA[800045]]></AD_TABLE_ID>
 <!--800059-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
-<!--800059-->  <SEQNO><![CDATA[30]]></SEQNO>
+<!--800059-->  <SEQNO><![CDATA[40]]></SEQNO>
 <!--800059-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--800059-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--800059-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -10657,7 +10657,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800211-->  <HELP><![CDATA[Vendor discounts]]></HELP>
 <!--800211-->  <AD_TABLE_ID><![CDATA[800045]]></AD_TABLE_ID>
 <!--800211-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
-<!--800211-->  <SEQNO><![CDATA[30]]></SEQNO>
+<!--800211-->  <SEQNO><![CDATA[31]]></SEQNO>
 <!--800211-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--800211-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--800211-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
