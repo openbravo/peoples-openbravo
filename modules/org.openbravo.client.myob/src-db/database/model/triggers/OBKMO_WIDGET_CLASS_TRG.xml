@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2010-2011 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -83,7 +83,26 @@ BEGIN
         AND l.IsSystemLanguage='Y'
         AND m.AD_Module_ID = :new.AD_Module_ID
         AND M.AD_Language != l.AD_Language;
-  END IF;
+        
+     INSERT INTO OBKMO_Widget_Class_Access
+      (
+        OBKMO_Widget_Class_Access_ID, OBKMO_Widget_Class_ID, AD_Role_ID, AD_Client_ID,
+        AD_Org_ID, IsActive, Created,
+        CreatedBy, Updated, UpdatedBy
+      )
+      SELECT get_uuid(), :new.OBKMO_Widget_Class_ID, R.AD_ROLE_ID, R.AD_CLIENT_ID,
+        R.AD_ORG_ID, 'Y', now(),
+        '0', now(), '0'
+      FROM AD_ROLE R
+      WHERE R.ISMANUAL = 'N'
+        AND (
+          (R.USERLEVEL = 'S' AND :new.ACCESSLEVEL IN ('4','7','6'))
+          OR
+          (R.USERLEVEL IN (' CO', ' C') AND :new.ACCESSLEVEL IN ('7','6','3','1'))
+          OR
+          (R.USERLEVEL = '  O' AND :new.ACCESSLEVEL IN ('3','1','7'))
+        );
+    END IF;
 
   IF UPDATING THEN
     IF coalesce(:new.title,'.') != coalesce(:old.title,'.')

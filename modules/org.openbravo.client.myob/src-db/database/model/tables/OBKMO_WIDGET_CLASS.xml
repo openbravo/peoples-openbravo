@@ -69,6 +69,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ACCESSLEVEL" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[3]]></default>
+        <onCreateDefault><![CDATA['3']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBKMO_WIDGET_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
