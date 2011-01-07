@@ -624,6 +624,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--127-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--127-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--127-->  <HQLWHERECLAUSE><![CDATA[e.currency.id=@Currency.id@]]></HQLWHERECLAUSE>
 <!--127--></AD_TAB>
 
 <!--128--><AD_TAB>
@@ -1111,6 +1112,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--157-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--157-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--157-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--157-->  <HQLWHERECLAUSE><![CDATA[e.projectCategory='S']]></HQLWHERECLAUSE>
 <!--157--></AD_TAB>
 
 <!--158--><AD_TAB>
@@ -1458,6 +1460,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--179-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--179-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--179-->  <HQLWHERECLAUSE><![CDATA[e.quantityOnHand<>0 AND e.storageBin.id=@Locator.id@]]></HQLWHERECLAUSE>
 <!--179--></AD_TAB>
 
 <!--180--><AD_TAB>
@@ -2838,6 +2841,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--257-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--257-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--257-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('C-', 'C+') and e.logistic = 'N']]></HQLWHERECLAUSE>
 <!--257--></AD_TAB>
 
 <!--258--><AD_TAB>
@@ -2933,6 +2937,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--262-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--262-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--262-->  <HQLWHERECLAUSE><![CDATA[e.storageBin.id=@Locator.id@]]></HQLWHERECLAUSE>
 <!--262--></AD_TAB>
 
 <!--263--><AD_TAB>
@@ -2958,6 +2963,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--263-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--263-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--263-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--263-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true]]></HQLWHERECLAUSE>
 <!--263--></AD_TAB>
 
 <!--270--><AD_TAB>
@@ -3211,6 +3217,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--289-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--289-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--289-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--289-->  <HQLWHERECLAUSE><![CDATA[e.product.id=@Product.id@]]></HQLWHERECLAUSE>
 <!--289--></AD_TAB>
 
 <!--290--><AD_TAB>
@@ -3236,6 +3243,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--290-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--290-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--290-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--290-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false]]></HQLWHERECLAUSE>
 <!--290--></AD_TAB>
 
 <!--291--><AD_TAB>
@@ -3382,6 +3390,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--296-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--296-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--296-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--296-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('V-', 'V+') and e.logistic = 'N']]></HQLWHERECLAUSE>
 <!--296--></AD_TAB>
 
 <!--297--><AD_TAB>
@@ -3784,6 +3793,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--319-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--319-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--319-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--319-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true]]></HQLWHERECLAUSE>
 <!--319--></AD_TAB>
 
 <!--320--><AD_TAB>
@@ -3924,6 +3934,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--325-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--325-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--325-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--325-->  <HQLWHERECLAUSE><![CDATA[e.user.id in ('0', @User.id@)]]></HQLWHERECLAUSE>
 <!--325--></AD_TAB>
 
 <!--327--><AD_TAB>
@@ -4247,6 +4258,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--344-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--344-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--344-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--344-->  <HQLWHERECLAUSE><![CDATA[e.salesRepresentative.id=@user@]]></HQLWHERECLAUSE>
 <!--344--></AD_TAB>
 
 <!--346--><AD_TAB>
@@ -4639,6 +4651,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--391-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--391-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--391-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--391-->  <HQLWHERECLAUSE><![CDATA[e.bindaryData is null]]></HQLWHERECLAUSE>
 <!--391--></AD_TAB>
 
 <!--401--><AD_TAB>
@@ -4783,6 +4796,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--407-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--407-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--407-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--407-->  <HQLWHERECLAUSE><![CDATA[e.productCategory.id=@ProductCategory.id@]]></HQLWHERECLAUSE>
 <!--407--></AD_TAB>
 
 <!--408--><AD_TAB>
@@ -5420,6 +5434,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--445-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--445-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--445-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--445-->  <HQLWHERECLAUSE><![CDATA[e.baseLanguage='N' AND e.systemLanguage='Y']]></HQLWHERECLAUSE>
 <!--445--></AD_TAB>
 
 <!--446--><AD_TAB>
@@ -5836,6 +5851,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--470-->  <INCLUDED_TAB_ID><![CDATA[471]]></INCLUDED_TAB_ID>
 <!--470-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--470-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--470-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false]]></HQLWHERECLAUSE>
 <!--470--></AD_TAB>
 
 <!--471--><AD_TAB>
@@ -6275,6 +6291,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--501-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--501-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--501-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--501-->  <HQLWHERECLAUSE><![CDATA[e.paid='N' and e.salesTransaction='Y']]></HQLWHERECLAUSE>
 <!--501--></AD_TAB>
 
 <!--507--><AD_TAB>
@@ -6836,6 +6853,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--536-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--536-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--536-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--536-->  <HQLWHERECLAUSE><![CDATA[e.areasOfInterest.id=@AreasOfInterest.id@]]></HQLWHERECLAUSE>
 <!--536--></AD_TAB>
 
 <!--537--><AD_TAB>
@@ -6861,6 +6879,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--537-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--537-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--537-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--537-->  <HQLWHERECLAUSE><![CDATA[(e.projectCategory<>'S' OR e.projectCategory IS NULL)]]></HQLWHERECLAUSE>
 <!--537--></AD_TAB>
 
 <!--538--><AD_TAB>
@@ -6959,6 +6978,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--551-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--551-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--551-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--551-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
 <!--551--></AD_TAB>
 
 <!--552--><AD_TAB>
@@ -6984,6 +7004,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--552-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--552-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--552-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--552-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
 <!--552--></AD_TAB>
 
 <!--553--><AD_TAB>
@@ -7009,6 +7030,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--553-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--553-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--553-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--553-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
 <!--553--></AD_TAB>
 
 <!--555--><AD_TAB>
@@ -7034,6 +7056,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--555-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--555-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--555-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--555-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
 <!--555--></AD_TAB>
 
 <!--556--><AD_TAB>
@@ -7059,6 +7082,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--556-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--556-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--556-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--556-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
 <!--556--></AD_TAB>
 
 <!--557--><AD_TAB>
@@ -7181,6 +7205,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800002-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800002-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800002-->  <HQLWHERECLAUSE><![CDATA[(e.projectCategory<>'S' e.projectCategory IS NULL)]]></HQLWHERECLAUSE>
 <!--800002--></AD_TAB>
 
 <!--800003--><AD_TAB>
@@ -7352,6 +7377,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800009-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800009-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800009-->  <HQLWHERECLAUSE><![CDATA[e.BusinessPartner.id = @BusinessPartner.id@]]></HQLWHERECLAUSE>
 <!--800009--></AD_TAB>
 
 <!--800012--><AD_TAB>
@@ -7473,6 +7499,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800016-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800016-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800016-->  <HQLWHERECLAUSE><![CDATA[e.volumeDiscount.id=@VolumeDiscount.id@]]></HQLWHERECLAUSE>
 <!--800016--></AD_TAB>
 
 <!--800017--><AD_TAB>
@@ -7522,6 +7549,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800018-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800018-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800018-->  <HQLWHERECLAUSE><![CDATA["e.bPVolumeDiscount.id = @BusinessPartner.id@"]]></HQLWHERECLAUSE>
 <!--800018--></AD_TAB>
 
 <!--800019--><AD_TAB>
@@ -7571,6 +7599,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800020-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800020-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800020-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true]]></HQLWHERECLAUSE>
 <!--800020--></AD_TAB>
 
 <!--800021--><AD_TAB>
@@ -7645,6 +7674,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800025-->  <FILTERCLAUSE><![CDATA[C_Settlement.settlementtype='C']]></FILTERCLAUSE>
 <!--800025-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800025-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800025-->  <HQLWHERECLAUSE><![CDATA[e.settlementType<>'I']]></HQLWHERECLAUSE>
 <!--800025--></AD_TAB>
 
 <!--800026--><AD_TAB>
@@ -7695,6 +7725,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800027-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800027-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800027-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800027-->  <HQLWHERECLAUSE><![CDATA[e.manual='N']]></HQLWHERECLAUSE>
 <!--800027--></AD_TAB>
 
 <!--800028--><AD_TAB>
@@ -7744,6 +7775,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800029-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800029-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800029-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800029-->  <HQLWHERECLAUSE><![CDATA[e.settlementType='I']]></HQLWHERECLAUSE>
 <!--800029--></AD_TAB>
 
 <!--800031--><AD_TAB>
@@ -7768,6 +7800,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800031-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800031-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800031-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800031-->  <HQLWHERECLAUSE><![CDATA[e.manual='Y']]></HQLWHERECLAUSE>
 <!--800031--></AD_TAB>
 
 <!--800032--><AD_TAB>
@@ -8098,6 +8131,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800050-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800050-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800050-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800050-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('V-', 'V+') and e.logistic = 'Y']]></HQLWHERECLAUSE>
 <!--800050--></AD_TAB>
 
 <!--800051--><AD_TAB>
@@ -8123,6 +8157,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800051-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800051-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800051-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800051-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('C-', 'C+') and e.logistic = 'Y']]></HQLWHERECLAUSE>
 <!--800051--></AD_TAB>
 
 <!--800052--><AD_TAB>
@@ -8437,6 +8472,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800065-->  <EDITREFERENCE><![CDATA[800010]]></EDITREFERENCE>
 <!--800065-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800065-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800065-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction='N']]></HQLWHERECLAUSE>
 <!--800065--></AD_TAB>
 
 <!--800066--><AD_TAB>
@@ -9259,6 +9295,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800114-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800114-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800114-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800114-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false]]></HQLWHERECLAUSE>
 <!--800114--></AD_TAB>
 
 <!--800115--><AD_TAB>
@@ -9943,6 +9980,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800177-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800177-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800177-->  <HQLWHERECLAUSE><![CDATA[e.action='C']]></HQLWHERECLAUSE>
 <!--800177--></AD_TAB>
 
 <!--800178--><AD_TAB>
@@ -10330,6 +10368,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800195-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800195-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800195-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800195-->  <HQLWHERECLAUSE><![CDATA[e.action='X']]></HQLWHERECLAUSE>
 <!--800195--></AD_TAB>
 
 <!--800196--><AD_TAB>
@@ -10427,6 +10466,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800200-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800200-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800200-->  <HQLWHERECLAUSE><![CDATA[e.action in ('P','R')]]></HQLWHERECLAUSE>
 <!--800200--></AD_TAB>
 
 <!--800201--><AD_TAB>
@@ -11544,6 +11584,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800249-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800249-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800249-->  <HQLWHERECLAUSE><![CDATA[e.user.id=@user@]]></HQLWHERECLAUSE>
 <!--800249--></AD_TAB>
 
 <!--800251--><AD_TAB>
@@ -11956,6 +11997,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1000500000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1000500000-->  <HQLWHERECLAUSE><![CDATA[1=1]]></HQLWHERECLAUSE>
 <!--1000500000--></AD_TAB>
 
 <!--1000500001--><AD_TAB>
@@ -11982,6 +12024,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500001-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1000500001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1000500001-->  <HQLWHERECLAUSE><![CDATA[e.documentType.id=@DocumentType.id@]]></HQLWHERECLAUSE>
 <!--1000500001--></AD_TAB>
 
 <!--1000500002--><AD_TAB>
@@ -12726,6 +12769,7 @@ The corresponding tables have then the following setting:
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <HQLWHERECLAUSE><![CDATA[e.receipt='N']]></HQLWHERECLAUSE>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E--></AD_TAB>
 
 <!--3690EB6BA1614375A6F058BBA61B19BC--><AD_TAB>
@@ -12752,6 +12796,7 @@ The corresponding tables have then the following setting:
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--3690EB6BA1614375A6F058BBA61B19BC-->  <HQLWHERECLAUSE><![CDATA[e.client.id=@Client.id@]]></HQLWHERECLAUSE>
 <!--3690EB6BA1614375A6F058BBA61B19BC--></AD_TAB>
 
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0--><AD_TAB>
@@ -13122,6 +13167,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6456FDAA469148E580B92126863C5A20-->  <ISSORTTAB><![CDATA[Y]]></ISSORTTAB>
 <!--6456FDAA469148E580B92126863C5A20-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6456FDAA469148E580B92126863C5A20-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--6456FDAA469148E580B92126863C5A20-->  <HQLWHERECLAUSE><![CDATA[e.displayed='Y' AND e.active='Y']]></HQLWHERECLAUSE>
 <!--6456FDAA469148E580B92126863C5A20--></AD_TAB>
 
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA--><AD_TAB>
@@ -13198,6 +13244,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--7580F9AE37704571BB0D3935252CAC5A-->  <HQLWHERECLAUSE><![CDATA[e.organization.id=@Organization.id@]]></HQLWHERECLAUSE>
 <!--7580F9AE37704571BB0D3935252CAC5A--></AD_TAB>
 
 <!--7F5E8E4C55914138A358F5087B532B59--><AD_TAB>
@@ -13605,6 +13652,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--C4B6506838E14A349D6717D6856F1B56-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--C4B6506838E14A349D6717D6856F1B56-->  <HQLWHERECLAUSE><![CDATA[e.receipt='Y']]></HQLWHERECLAUSE>
 <!--C4B6506838E14A349D6717D6856F1B56--></AD_TAB>
 
 <!--C53967BA96E64FC6B2E4166A7C945168--><AD_TAB>
@@ -13843,6 +13891,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--F7A52FDAAA0346EFA07D53C125B40404-->  <HQLWHERECLAUSE><![CDATA[e.receipt='N']]></HQLWHERECLAUSE>
 <!--F7A52FDAAA0346EFA07D53C125B40404--></AD_TAB>
 
 <!--FBC60525011346D6B026D7F8C68199B4--><AD_TAB>
