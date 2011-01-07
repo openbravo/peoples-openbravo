@@ -42,22 +42,6 @@ public abstract class NumberUIDefinition extends UIDefinition {
     return "OBNumberItem";
   }
 
-  public String getFilterEditorProperties(Field field) {
-    final String superProps = super.getFilterEditorProperties(field);
-    final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) getDomainType();
-    if (primitiveDomainType.getFormatId() != null) {
-      final String formatId = primitiveDomainType.getFormatId();
-      final FormatDefinition inputFormat = UIDefinitionController.getInstance()
-          .getFormatDefinition(formatId, UIDefinitionController.SHORTFORMAT_QUALIFIER);
-      if (inputFormat != null) {
-        return superProps + ", 'maskNumeric': '" + inputFormat.getFormat() + "', "
-            + "'decSeparator': '" + inputFormat.getDecimalSymbol() + "'," + "'groupSeparator': '"
-            + inputFormat.getGroupingSymbol() + "'";
-      }
-    }
-    return superProps;
-  }
-
   @Override
   public String getTypeProperties() {
     final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) getDomainType();
@@ -67,23 +51,47 @@ public abstract class NumberUIDefinition extends UIDefinition {
           .getFormatDefinition(formatId, UIDefinitionController.SHORTFORMAT_QUALIFIER);
       final FormatDefinition normalFormat = UIDefinitionController.getInstance()
           .getFormatDefinition(formatId, UIDefinitionController.NORMALFORMAT_QUALIFIER);
+      final FormatDefinition inputFormat = UIDefinitionController.getInstance()
+          .getFormatDefinition(formatId, UIDefinitionController.INPUTFORMAT_QUALIFIER);
       final StringBuilder sb = new StringBuilder();
+      if (inputFormat != null) {
+        sb.append(getInputFormatters(inputFormat));
+      } else if (shortFormat != null) {
+        sb.append(getInputFormatters(shortFormat));
+      }
       if (shortFormat != null) {
-        sb.append("shortDisplayFormatter: function(value, field, component, record) {"
-            + "return OB.Utilities.Number.JSToOBMasked(value," + "'" + shortFormat.getFormat()
-            + "'," + "'" + shortFormat.getDecimalSymbol() + "'," + "'"
-            + shortFormat.getGroupingSymbol() + "', OB.Format.defaultGroupingSize);" + "},");
+        // the edit formatter is actually used for creating the display
+        // value in the input
+        sb.append("editFormatter: " + getFormatter(shortFormat) + ",");
+        sb.append("shortDisplayFormatter: " + getFormatter(shortFormat) + ",");
       }
       if (normalFormat != null) {
-        sb.append("normalDisplayFormatter: function(value, field, component, record) {"
-            + "return OB.Utilities.Number.JSToOBMasked(value," + "'" + normalFormat.getFormat()
-            + "'," + "'" + normalFormat.getDecimalSymbol() + "'," + "'"
-            + normalFormat.getGroupingSymbol() + "', OB.Format.defaultGroupingSize);" + "},");
-
+        sb.append("normalDisplayFormatter: " + getFormatter(normalFormat) + ",");
       }
+
       return sb.toString();
     }
     return "";
+  }
+
+  private String getInputFormatters(FormatDefinition inputFormat) {
+    final StringBuilder sb = new StringBuilder();
+    sb.append("parseInput: function(value, field, component, record) {"
+        + " if (OB.Utilities.Number.IsValidValueString(this, value)) {\n"
+        + "return OB.Utilities.Number.OBMaskedToJS(value,'" + inputFormat.getDecimalSymbol()
+        + "','" + inputFormat.getGroupingSymbol() + "');" + "\n} else {"
+        + "\nreturn field.getValue();" + "\n}},");
+    sb.append("'maskNumeric': '" + inputFormat.getFormat() + "', " + "'decSeparator': '"
+        + inputFormat.getDecimalSymbol() + "'," + "'groupSeparator': '"
+        + inputFormat.getGroupingSymbol() + "',");
+    return sb.toString();
+  }
+
+  private String getFormatter(FormatDefinition formatDefinition) {
+    return "function(value, field, component, record) {"
+        + "return OB.Utilities.Number.JSToOBMasked(value," + "'" + formatDefinition.getFormat()
+        + "'," + "'" + formatDefinition.getDecimalSymbol() + "'," + "'"
+        + formatDefinition.getGroupingSymbol() + "', OB.Format.defaultGroupingSize);}";
   }
 
   @Override
@@ -101,9 +109,6 @@ public abstract class NumberUIDefinition extends UIDefinition {
           if (val.has("value")) {
             jsonObject.put("value", val.get("value"));
           }
-          jsonObject.put("maskNumeric", inputFormat.getFormat());
-          jsonObject.put("decSeparator", inputFormat.getDecimalSymbol());
-          jsonObject.put("groupSeparator", inputFormat.getGroupingSymbol());
           return jsonObject.toString();
         } catch (JSONException e) {
           throw new OBException(e);

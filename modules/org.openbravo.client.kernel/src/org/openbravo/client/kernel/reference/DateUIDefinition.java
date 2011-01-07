@@ -79,6 +79,10 @@ public class DateUIDefinition extends UIDefinition {
   @Override
   public String getTypeProperties() {
     final StringBuilder sb = new StringBuilder();
+    sb.append("editFormatter: function(value, field, component, record) {"
+        + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
+        + "parseInput: function(value, field, component, record) {"
+        + "return OB.Utilities.Date.OBToJS(value, OB.Format.date);" + "},");
     sb.append("shortDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
         + "normalDisplayFormatter: function(value, field, component, record) {"

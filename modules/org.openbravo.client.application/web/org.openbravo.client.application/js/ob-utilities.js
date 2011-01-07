@@ -741,11 +741,17 @@ OB.Utilities.Number.OBPlainToOBMasked = function(/* Number */number, /* String *
 // * {{{groupSeparator}}}: The group separator of the OB number
 // Return:
 // * The JS number.
-OB.Utilities.Number.OBMaskedToJS = function(number, decSeparator, groupSeparator){
-  var calcNumber = number;
-  calcNumber = OB.Utilities.Number.OBMaskedToOBPlain(calcNumber, decSeparator, groupSeparator);
+OB.Utilities.Number.OBMaskedToJS = function(numberStr, decSeparator, groupSeparator){
+  if (!numberStr || numberStr.trim() === '') {
+    return null;
+  }
+  var calcNumber = OB.Utilities.Number.OBMaskedToOBPlain(numberStr, decSeparator, groupSeparator);
   calcNumber = calcNumber.replace(decSeparator, '.');
-  return calcNumber;
+  var numberResult = parseFloat(calcNumber);
+  if (isNaN(numberResult)) {
+    return numberStr;
+  }
+  return numberResult;
 };
 
 // ** {{{ OB.Utilities.Number.JSToOBMasked }}} **
@@ -763,13 +769,47 @@ OB.Utilities.Number.OBMaskedToJS = function(number, decSeparator, groupSeparator
 // * The OB formatted number.
 OB.Utilities.Number.JSToOBMasked = function(number, maskNumeric, decSeparator, groupSeparator, groupInterval){
   if (!isc.isA.Number(number)) {
-    return '';
+    return number;
   }
   var formattedNumber = number;
   formattedNumber = formattedNumber.toString();
   formattedNumber = formattedNumber.replace('.', decSeparator);
   formattedNumber = OB.Utilities.Number.OBPlainToOBMasked(formattedNumber, maskNumeric, decSeparator, groupSeparator, groupInterval);
   return formattedNumber;
+};
+
+OB.Utilities.Number.IsValidValueString = function(type, numberStr){
+  var maskNumeric = type.maskNumeric;
+  // note 0 is also okay to return true
+  if (!numberStr) {
+    return true;
+  }
+  
+  var bolNegative = true;
+  if (maskNumeric.indexOf('+') === 0) {
+    bolNegative = false;
+    maskNumeric = maskNumeric.substring(1, maskNumeric.length);
+  }
+  
+  var bolDecimal = true;
+  if (maskNumeric.indexOf(type.decSeparator) === -1) {
+    bolDecimal = false;
+  }
+  var checkPattern = '';
+  checkPattern += '^';
+  if (bolNegative) {
+    checkPattern += '([+]|[-])?';
+  }
+  checkPattern += '(\\d+)?((\\' + type.groupSeparator + '\\d{' + OB.Format.defaultGroupingSize + '})?)+';
+  if (bolDecimal) {
+    checkPattern += '(\\' + type.decSeparator + '\\d+)?';
+  }
+  checkPattern += '$';
+  var checkRegExp = new RegExp(checkPattern);
+  if (numberStr.match(checkRegExp) && numberStr.substring(0, 1) !== type.groupSeparator) {
+    return true;
+  }
+  return false;
 };
 
 // ** {{{ OB.Utilities._getTabInfoRequestProperties }}} **
@@ -807,12 +847,10 @@ OB.Utilities.openActionButton = function(button, o){
     return;
   }
   
-  
   var allProperties = {}, sessionProperties = {};
   
   theView.getContextInfo(allProperties, sessionProperties);
   OB.Utilities.viewCallingProcess = theView;
-  
   
   for (var param in allProperties) {
     if (allProperties.hasOwnProperty(param)) {

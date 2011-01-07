@@ -59,7 +59,10 @@ isc.OBViewGrid.addProperties({
   editLinkFieldProperties: {
     type: 'text',
     canSort: false,
-    canFreeze: false,
+    // frozen is much nicer, but check out this forum discussion:
+    // http://forums.smartclient.com/showthread.php?p=57581 
+    //frozen: true,
+    canFreeze: true,
     canEdit: false,
     canGroupBy: false,
     canHide: false,
@@ -197,6 +200,10 @@ isc.OBViewGrid.addProperties({
     // added for showing counts in the filtereditor row
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
       canFilter: true,
+      // frozen is much nicer, but check out this forum discussion:
+      // http://forums.smartclient.com/showthread.php?p=57581 
+      //frozen: true,
+      canFreeze: true,
       filterEditorProperties: {
         textAlign: 'center'
       },
@@ -213,6 +220,12 @@ isc.OBViewGrid.addProperties({
     };
     
     this.Super('initWidget', arguments);
+  },
+  
+  show: function(){
+    var ret = this.Super('show', arguments);
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
+    return ret;
   },
   
   headerClick: function(fieldNum, header){
@@ -595,7 +608,7 @@ isc.OBViewGrid.addProperties({
       }
     }
   },
-
+  
   handleRecordSelection: function(viewer, record, recordNum, field, fieldNum, value, rawValue, fromSelectOnMouseDown){
     var EH = isc.EventHandler;
     var keyName = EH.getKey();

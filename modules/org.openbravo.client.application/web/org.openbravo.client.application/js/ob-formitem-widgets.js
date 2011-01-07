@@ -35,37 +35,20 @@
 // Item used for Openbravo yes/no fields.
 isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
 
+isc.OBCheckboxItem.addProperties({
+  // no validation on change or exit here
+  
+  textBoxStyle: 'OBFormFieldLabel',
+  defaultValue: false
+});
+
 // == OBLinkTitleItem ==
-// Item used for creating a link button in the title
+// Item used for creating a link button in the title. Note part of the logic
+// is implemented in the OBViewForm.getTitleHTML.
 isc.ClassFactory.defineInterface('OBLinkTitleItem');
 
 isc.OBLinkTitleItem.addProperties({
-  
-  LINKBUTTONSUFFIX: '_linkButton',
-  
-  getLinkTitleHTML: function(){    
-    var titleHtml = this.Super('getTitleHTML', arguments);
-    
-    if (this.parentProperty) {
-      return titleHtml;
-    }
-
-    var searchIconObj = {
-      src: this.newTabIconSrc,
-      height: this.newTabIconSize,
-      width: this.newTabIconSize,
-      align: 'absmiddle',
-      extraStuff: ' id="' + this.ID + this.LINKBUTTONSUFFIX + '" class="OBFormFieldLinkButton" onclick="window[\'' + this.ID + '\'].linkButtonClick();"'
-    };
-    
-    var imgHTML = isc.Canvas.imgHTML(searchIconObj);
-    
-    return titleHtml + '&nbsp;' + imgHTML;
-  },
-  
-  getLinkImageHtmlElement: function(){
-    return window[this.ID + this.LINKBUTTONSUFFIX];
-  },
+  showLinkIcon: true,
   
   linkButtonClick: function(){
     var sourceWindow = this.form.view.standardWindow.windowId;
@@ -93,7 +76,7 @@ function closeSearch(action, value, display, parameters, wait){
         targetFld.form.hiddenInputs[hiddenInputName] = parameters[i].valor;
       }
     }
-    targetFld._doFICCall = true;
+    targetFld._hasChanged = true;
     targetFld.form.handleItemChange(targetFld);
   }
   isc.OBSearchItem.openedWindow.close();
@@ -102,32 +85,27 @@ function closeSearch(action, value, display, parameters, wait){
 
 isc.OBSearchItem.addProperties({
   showPickerIcon: true,
-
-  setValue: function(value) {
+  
+  setValue: function(value){
     var ret = this.Super('setValue', arguments);
     // in this case the clearIcon needs to be shown or hidden
     if (!this.disabled && !this.required) {
       if (value) {
         this.showIcon(this.instanceClearIcon);
-      } else {        
+      } else {
         this.hideIcon(this.instanceClearIcon);
       }
     }
     return ret;
   },
-
-  init: function() {
-    this.instanceClearIcon = isc.shallowClone(this.clearIcon); 
+  
+  init: function(){
+    this.instanceClearIcon = isc.shallowClone(this.clearIcon);
     this.icons = [this.instanceClearIcon];
     this.icons[0].formItem = this;
     return this.Super('init', arguments);
   },
-
-  getTitleHTML: function() {
-    // calls the method from the OBLinkTitleItem interface
-    return this.getLinkTitleHTML();
-  },
-
+  
   changed: function(){
     var ret = this.Super('changed', arguments);
     if (this.form && this.form.handleItemChange) {
@@ -255,11 +233,19 @@ isc.OBFormButton.addProperties({
 // Input for normal strings
 isc.ClassFactory.defineClass('OBTextItem', TextItem);
 
+isc.OBTextItem.addProperties({
+  validateOnExit: true
+});
+
 // == OBTextAreaItem ==
 // Input for large strings
 isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 
-// == OBTextAreaItem ==
+isc.OBTextAreaItem.addProperties({
+  validateOnExit: true
+});
+
+// == OBSectionItem ==
 // Form sections
 isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
 
@@ -272,6 +258,9 @@ isc.OBListItem.addProperties({
   itemData: null,
   
   cachePickListResults: false,
+  // combos are validated on change, other items are 
+  // validated on exit
+  validateOnChange: true,
   
   changed: function(){
     var ret = this.Super('changed', arguments);
@@ -303,7 +292,9 @@ isc.OBFKItem.addProperties({
   displayField: OB.Constants.IDENTIFIER,
   valueField: OB.Constants.ID,
   textMatchStyle: 'substring',
-  
+  // combos are validated on change, other items are 
+  // validated on exit
+  validateOnChange: true,
   useClientFiltering: false,
   
   cachePickListResults: false,
@@ -311,11 +302,6 @@ isc.OBFKItem.addProperties({
   itemData: null,
   optionDataSource: null,
   
-  getTitleHTML: function() {
-    // calls the method from the OBLinkTitleItem interface
-    return this.getLinkTitleHTML();
-  },
-
   getDataSource: function(){
     return this.getOptionDataSource();
   },
@@ -394,7 +380,7 @@ isc.OBDateItem.addClassProperties({
   // Parameters:
   // * {{{dateFormat}}}: the dateFormat in OB format
   // * {{{value}}}: the current entered value
-  autoCompleteDate: function(dateFormat, value){
+  autoCompleteDate: function(dateFormat, value, item){
     // if (!isTabPressed) {
     if (value === null) {
       return value;
@@ -581,9 +567,8 @@ isc.OBDateItem.addProperties({
   // Fire change event on key press.
   changeOnKeypress: true,
   
-  // ** {{{ validateOnChange }}} **
-  // Validate input on change
-  validateOnChange: false,
+  // is done by the blur event defined here
+  validateOnExit: false,
   
   // ** {{{ change }}} **
   // Called when changing a value.
@@ -593,14 +578,14 @@ isc.OBDateItem.addProperties({
     if (isADate) {
       return;
     }
-    item.setValue(OBDateItem.autoCompleteDate(item.dateFormat, value));
+    item.setValue(OBDateItem.autoCompleteDate(item.dateFormat, value, this));
   },
   
   // to prevent infinite looping as setFormErrors will also blur
   inBlur: false,
   
   // ** {{{ blur }}} **
-  // Called when the focus leaves the field (sets value and validates)s
+  // Called when the focus leaves the field (sets value and validates)
   blur: function(){
     this.setValue(OBDateItem.expandDateYear(this.dateFormat, this.getValue()));
     if (!this.inBlur) {
@@ -613,20 +598,17 @@ isc.OBDateItem.addProperties({
   
   // ** {{{ displayFormat }}} **
   // Formats a date object to a String.
-  displayFormat: function(){
-    // this: is the date object to format
-    var displayedDate = OB.Utilities.Date.JSToOB(this, OB.Format.date);
-    return displayedDate;
-  },
-  
-  // ** {{{ inputFormat }}} **
-  // Parses the inputted value to javascript Date.
-  inputFormat: function(value){
-    return OB.Utilities.Date.OBToJS(value, OB.Format.date);
-  },
-  
-  invalidValueLabel: null,
-  requiredValueLabel: null,
+  //  displayFormat: function(){
+  //    // this: is the date object to format
+  //    var displayedDate = OB.Utilities.Date.JSToOB(this, OB.Format.date);
+  //    return displayedDate;
+  //  },
+  //  
+  //  // ** {{{ inputFormat }}} **
+  //  // Parses the inputted value to javascript Date.
+  //  inputFormat: function(value){
+  //    return OB.Utilities.Date.OBToJS(value, OB.Format.date);
+  //  },
   
   // ** {{{ checkOBDateItemValue }}} **
   // Validate the entered date and add a form error, is called onblur
@@ -639,11 +621,11 @@ isc.OBDateItem.addProperties({
       this.name = 'isc_' + this.getRandomString(this.getRandomInteger(6, 12));
     }
     if (isValid === false) {
-      this.form.addFieldErrors(this.name, this.invalidValueLabel, false);
+      this.form.addFieldErrors(this.name, isc.OBDateItem.invalidValueLabel, false);
       this.form.markForRedraw();
     } else if (isRequired === true &&
     (value === null || value === '' || typeof value === 'undefined')) {
-      this.form.addFieldErrors(this.name, this.requiredValueLabel, false);
+      this.form.addFieldErrors(this.name, isc.OBDateItem.requiredValueLabel, false);
       this.form.markForRedraw();
     } else {
       this.form.clearFieldErrors(this.name, false);
@@ -682,165 +664,99 @@ isc.ClassFactory.defineClass('OBDateTimeItem', isc.OBDateItem);
 
 // = OBDateTimeItem =
 // The Openbravo DateTime form item.
-isc.OBDateTimeItem.addProperties({
-  // ** {{{ dateFormat }}} **
-  // The date time format function.
-  dateFormat: OB.Format.dateTime,
-  
-  // ** {{{ displayFormat }}} **
-  // Formats the date to a string.
-  displayFormat: function(){
-    // this: is the date object to format
-    var displayedDate = OB.Utilities.Date.JSToOB(this, OB.Format.dateTime);
-    return displayedDate;
-  },
-  
-  // ** {{{ inputFormat }}} **
-  // Parses an input to a Date.
-  inputFormat: function(value){
-    return OB.Utilities.Date.OBToJS(value, OB.Format.dateTime);
-  }
-});
+//isc.OBDateTimeItem.addProperties({
+//  // ** {{{ dateFormat }}} **
+//  // The date time format function.
+//  dateFormat: OB.Format.dateTime,
+//  
+//  // ** {{{ displayFormat }}} **
+//  // Formats the date to a string.
+//  displayFormat: function(){
+//    // this: is the date object to format
+//    var displayedDate = OB.Utilities.Date.JSToOB(this, OB.Format.dateTime);
+//    return displayedDate;
+//  },
+//  
+//  // ** {{{ inputFormat }}} **
+//  // Parses an input to a Date.
+//  inputFormat: function(value){
+//    return OB.Utilities.Date.OBToJS(value, OB.Format.dateTime);
+//  }
+//});
 
 isc.ClassFactory.defineClass('OBNumberItem', TextItem);
 
 // = OBNumberItem =
 // The Openbravo numeric form item.
 isc.OBNumberItem.addProperties({
-
+  typeInstance: null,
   errorOrientation: 'left',
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
   
-  getDefaultMaskNumeric: function(){
-    return OB.Format.defaultNumericMask;
-  },
-  getGlobalDecSeparator: function(){
-    return OB.Format.defaultDecimalSymbol;
+  keyPressFilter: '[0-9.,-]',
+  
+  validateOnExit: true,
+  valueValidator: null,
+  
+  init: function(){
+    this.typeInstance = SimpleType.getType(this.type);
+    var newValidators = [];
+    // get rid of the isFloat validators, as we have 
+    // specific validation based on the format definition
+    for (var i =0; i < this.validators.length; i++) {
+      if (this.validators[i].type !== 'isFloat') {
+        newValidators.push(this.validators[i]);
+      }
+      if (this.validators[i].type === 'custom') {
+        this.valueValidator = this.validators[i];
+      }
+    }
+    this.validators = newValidators;
+    return this.Super('init', arguments);
   },
   
-  getGlobalGroupSeparator: function(){
-    return OB.Format.defaultGroupingSymbol;
+  getMaskNumeric: function(){
+    return this.typeInstance.maskNumeric;
+  },
+
+  getDecSeparator: function(){
+    return this.typeInstance.decSeparator;
+  },
+  
+  getGroupSeparator: function(){
+    return this.typeInstance.groupSeparator;
   },
   
   getGlobalGroupInterval: function(){
     return OB.Format.defaultGroupingSize;
   },
   
-  returnNewCaretPosition: function(number, oldCaretPosition, groupSeparator){
+  returnNewCaretPosition: function(numberStr, oldCaretPosition){
     var newCaretPosition = oldCaretPosition;
     for (var i = oldCaretPosition; i > 0; i--) {
-      if (number.substring(i - 1, i) === groupSeparator) {
+      if (numberStr.substring(i - 1, i) === this.getGroupSeparator()) {
         newCaretPosition = newCaretPosition - 1;
       }
     }
     return newCaretPosition;
   },
   
-  focusNumberInput: function(maskNumeric, decSeparator, groupSeparator, groupInterval){
-    if (maskNumeric === null || maskNumeric === '' ||
-    typeof maskNumeric === 'undefined') {
-      maskNumeric = this.maskNumeric;
-    }
-    if (decSeparator === null || decSeparator === '' ||
-    typeof decSeparator === 'undefined') {
-      decSeparator = this.decSeparator;
-    }
-    if (groupSeparator === null || groupSeparator === '' ||
-    typeof groupSeparator === 'undefined') {
-      groupSeparator = this.groupSeparator;
-    }
-    if (groupInterval === null || groupInterval === '' ||
-    typeof groupInterval === 'undefined') {
-      groupInterval = this.groupInterval;
-    }
-    
-    if (maskNumeric === null || maskNumeric === '' ||
-    typeof maskNumeric === 'undefined') {
-      maskNumeric = this.getDefaultMaskNumeric();
-    }
-    if (decSeparator === null || decSeparator === '' ||
-    typeof decSeparator === 'undefined') {
-      decSeparator = this.getGlobalDecSeparator();
-    }
-    if (groupSeparator === null || groupSeparator === '' ||
-    typeof groupSeparator === 'undefined') {
-      groupSeparator = this.getGlobalGroupSeparator();
-    }
-    if (groupInterval === null || groupInterval === '' ||
-    typeof groupInterval === 'undefined') {
-      groupInterval = this.getGlobalGroupInterval();
-    }
-    
+  // focus changes the formatted value to one without grouping
+  focusNumberInput: function(){    
     var oldCaretPosition = 0;
     if (this.getSelectionRange()) {
       oldCaretPosition = this.getSelectionRange()[0];
     }
-    var newCaretPosition = this.returnNewCaretPosition(this.getValue(), oldCaretPosition, groupSeparator);
+    // getElementValue returns the current value string, so not the typed value
+    var newCaretPosition = this.returnNewCaretPosition(this.getElementValue(), oldCaretPosition);
+    // update the value shown, mapValueToDisplay will call the editFormatter
     
-    var number = this.getValue();
-    if (typeof number === 'undefined' || !number) {
-      number = '';
-    }
-    var isValid = this.validateNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
-    if (!isValid) {
-      return false;
-    }
-    var plainNumber = OB.Utilities.Number.OBMaskedToOBPlain(number, decSeparator, groupSeparator);
-    this.setValue(plainNumber);
+    // get the edit value, without grouping symbol.
+    var editValue = OB.Utilities.Number.OBMaskedToOBPlain(this.getElementValue(), this.getDecSeparator(), this.getGroupSeparator());
+    this.setElementValue(editValue);
     this.setSelectionRange(newCaretPosition, newCaretPosition);
-  },
-  
-  blurNumberInput: function(maskNumeric, decSeparator, groupSeparator, groupInterval){
-    if (maskNumeric === null || maskNumeric === '' ||
-    typeof maskNumeric === 'undefined') {
-      maskNumeric = this.maskNumeric;
-    }
-    if (decSeparator === null || decSeparator === '' ||
-    typeof decSeparator === 'undefined') {
-      decSeparator = this.decSeparator;
-    }
-    if (groupSeparator === null || groupSeparator === '' ||
-    typeof groupSeparator === 'undefined') {
-      groupSeparator = this.groupSeparator;
-    }
-    if (groupInterval === null || groupInterval === '' ||
-    typeof groupInterval === 'undefined') {
-      groupInterval = this.groupInterval;
-    }
-    
-    if (maskNumeric === null || maskNumeric === '' ||
-    typeof maskNumeric === 'undefined') {
-      maskNumeric = this.getDefaultMaskNumeric();
-    }
-    if (decSeparator === null || decSeparator === '' ||
-    typeof decSeparator === 'undefined') {
-      decSeparator = this.getGlobalDecSeparator();
-    }
-    if (groupSeparator === null || groupSeparator === '' ||
-    typeof groupSeparator === 'undefined') {
-      groupSeparator = this.getGlobalGroupSeparator();
-    }
-    if (groupInterval === null || groupInterval === '' ||
-    typeof groupInterval === 'undefined') {
-      groupInterval = this.getGlobalGroupInterval();
-    }
-    
-    var number = this.getValue();
-    var isValid = this.validateNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
-    /*
-     * if (obj.getAttribute('maxlength')) { if (obj.value.length >
-     * obj.getAttribute('maxlength')) { isValid = false; } }
-     * updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043
-     * inputs since it has its own methods to update it
-     */
-    if (!isValid) {
-      return false;
-    }
-    
-    var formattedNumber = OB.Utilities.Number.OBPlainToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
-    this.setValue(formattedNumber);
   },
   
   replaceAt: function(string, what, ini, end){
@@ -859,11 +775,9 @@ isc.OBNumberItem.addProperties({
     return newString;
   },
   
-  manageDecPoint: function(keyCode, decSeparator){
-    if (decSeparator === null || decSeparator === '' ||
-    typeof decSeparator === 'undefined') {
-      decSeparator = this.getGlobalDecSeparator();
-    }
+  // handles the decimal point of the numeric keyboard
+  manageDecPoint: function(keyCode){
+    var decSeparator = this.typeInstance.decSeparator;
     
     if (decSeparator === '.') {
       return true;
@@ -879,7 +793,7 @@ isc.OBNumberItem.addProperties({
      * caretPosition);},5); }
      */
     var inpMaxlength = this.length;
-    var inpLength = this.getValue().length;
+    var inpLength = this.getElementValue().length;
     var isInpMaxLength = false;
     if (inpMaxlength === null) {
       isInpMaxLength = false;
@@ -895,190 +809,107 @@ isc.OBNumberItem.addProperties({
     var obj = this;
     if (keyCode === 110) {
       setTimeout(function(){
-        var newValue = obj.replaceAt(obj.getValue(), decSeparator, caretPosition);
-        obj.setValue(newValue);
+        var newValue = obj.replaceAt(obj.getElementValue(), decSeparator, caretPosition);
+        obj.setElementValue(newValue);
         obj.setSelectionRange(caretPosition + 1, caretPosition + 1);
       }, 5);
     }
     return true;
   },
-  
-  validateNumber: function(number, maskNumeric, decSeparator, groupSeparator, groupInterval){
-    if (number === null || number === '' || typeof number === 'undefined') {
-      return true;
-    }
-    if (maskNumeric === null || maskNumeric === '' ||
-    typeof maskNumeric === 'undefined') {
-      maskNumeric = this.maskNumeric;
-    }
-    if (decSeparator === null || decSeparator === '' ||
-    typeof decSeparator === 'undefined') {
-      decSeparator = this.decSeparator;
-    }
-    if (groupSeparator === null || groupSeparator === '' ||
-    typeof groupSeparator === 'undefined') {
-      groupSeparator = this.groupSeparator;
-    }
-    if (groupInterval === null || groupInterval === '' ||
-    typeof groupInterval === 'undefined') {
-      groupInterval = this.groupInterval;
-    }
     
-    if (maskNumeric === null || maskNumeric === '' ||
-    typeof maskNumeric === 'undefined') {
-      maskNumeric = this.getDefaultMaskNumeric();
-    }
-    if (decSeparator === null || decSeparator === '' ||
-    typeof decSeparator === 'undefined') {
-      decSeparator = this.getGlobalDecSeparator();
-    }
-    if (groupSeparator === null || groupSeparator === '' ||
-    typeof groupSeparator === 'undefined') {
-      groupSeparator = this.getGlobalGroupSeparator();
-    }
-    if (groupInterval === null || groupInterval === '' ||
-    typeof groupInterval === 'undefined') {
-      groupInterval = this.getGlobalGroupInterval();
-    }
-    
-    if (number === null || number === '' || typeof number === 'undefined') {
-      return true;
-    }
-    
-    if (typeof number !== 'string') {
-      number = '' + number;
-    }
-    
-    var bolNegative = true;
-    if (maskNumeric.indexOf('+') === 0) {
-      bolNegative = false;
-      maskNumeric = maskNumeric.substring(1, maskNumeric.length);
-    }
-    
-    var bolDecimal = true;
-    if (maskNumeric.indexOf(decSeparator) === -1) {
-      bolDecimal = false;
-    }
-    var checkPattern = '';
-    checkPattern += '^';
-    if (bolNegative) {
-      checkPattern += '([+]|[-])?';
-    }
-    checkPattern += '(\\d+)?((\\' + groupSeparator + '\\d{' + groupInterval +
-    '})?)+';
-    if (bolDecimal) {
-      checkPattern += '(\\' + decSeparator + '\\d+)?';
-    }
-    checkPattern += '$';
-    var checkRegExp = new RegExp(checkPattern);
-    if (number.match(checkRegExp) &&
-    number.substring(0, 1) !== groupSeparator) {
-      return true;
-    }
-    return false;
+  keyDown: function(item, form, keyName){
+    var keyCode = OB.Utilities.getKeyCode();
+    this.manageDecPoint(keyCode);
   },
-  
-  getRandomInteger: function(minInt, maxInt){
-    if (typeof minInt === 'undefined') {
-      minInt = 0;
-    }
-    if (typeof maxInt === 'undefined') {
-      maxInt = 100;
-    }
-    var randomInteger = minInt + (Math.random() * (maxInt - minInt));
-    randomInteger = Math.round(randomInteger);
-    return randomInteger;
-  },
-  
-  getRandomString: function(num){
-    if (typeof num === 'undefined') {
-      num = 10;
-    }
-    var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-    var randomString = '';
-    for (var i = 0; i < num; i++) {
-      var rnum = Math.floor(Math.random() * chars.length);
-      randomString += chars.substring(rnum, rnum + 1);
-    }
-    return randomString;
-  },
-  
-  invalidValueLabel: null,
-  requiredValueLabel: null,
-  
+
   validateOBNumberItem: function(){
-    var value = this.getValue();
-    var validatorLength = this.validators.length;
-    var isValid = this.validators[validatorLength - 1].condition(this, this.form, value);
+    var value = this.getElementValue();
+    var isValid = this.valueValidator.condition(this, this.form, value);
     var isRequired = this.required;
-    if (typeof this.name === 'undefined') {
-      this.name = 'isc_' +
-      this.getRandomString(this.getRandomInteger(6, 12));
-    }
     if (isValid === false) {
-      this.form.setFieldErrors(this.name, this.invalidValueLabel, false);
+      this.form.setFieldErrors(this.name, isc.OBDateItem.invalidValueLabel, false);
       this.form.markForRedraw();
+      return false;
     } else if (isRequired === true &&
     (value === null || value === '' || typeof value === 'undefined')) {
-      this.form.setFieldErrors(this.name, this.requiredValueLabel, false);
+      this.form.setFieldErrors(this.name, isc.OBDateItem.requiredValueLabel, false);
       this.form.markForRedraw();
+      return false;
     } else {
       this.form.clearFieldErrors(this.name, false);
       this.form.markForRedraw();
     }
+    return true;
   },
-  
-  validateOnChange: false,
-  keyPressFilter: '[0-9.,-]',
   
   focus: function(form, item){
-    item.focusNumberInput(item.maskNumeric, item.decSeparator, item.groupSeparator, item.groupInterval);
+    if (!this.getErrors()) {
+      // only do the focus/reformat if no errors
+      this.focusNumberInput();
+    }
+    return this.Super('focus', arguments);
   },
   
-  blur: function(form, item){
-    item.blurNumberInput(item.maskNumeric, item.decSeparator, item.groupSeparator, item.groupInterval);
-    item.validateOBNumberItem();
+  handleEditorExit: function() {
+    var ret = this.Super('handleEditorExit', arguments);
+    return ret;
+  },
+  
+  blur: function(){
+    // first check if the number is valid
+    if (!isc.isA.String(this.getValue())) {
+      // format the value displayed
+      this.setElementValue(this.mapValueToDisplay(this.getValue()));
+    }
     return this.Super('blur', arguments);
-  },
-  
-  keyDown: function(item, form, keyName){
-    var keyCode = OB.Utilities.getKeyCode();
-    item.manageDecPoint(keyCode, item.decSeparator);
   },
   
   validators: [{
     type: 'custom',
     condition: function(item, validator, value){
-      if (!item.validateNumber) {
+      if (!item.typeInstance) {
         // this happens when data is validated which is returned from the system
         // and added to the grid
         return true;
       }
-      return item.validateNumber(value);
+      var type = item.typeInstance;
+      this.resultingValue = null;
+      
+      
+      // return a formatted value, if it was valid
+      if (isc.isA.String(value)) {        
+        if (OB.Utilities.Number.IsValidValueString(type, value)) {
+          this.resultingValue = OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
+          return true; 
+        } else {
+          return false;
+        }
+      }
+      return OB.Utilities.Number.IsValidValueString(type, item.getElementValue());
     }
   }]
 });
 
-OB.I18N.getLabel('OBUIAPP_InvalidValue', null, isc.OBDateTimeItem, 'invalidValueLabel');
-OB.I18N.getLabel('OBUISC_Validator.requiredField', null, isc.OBDateTimeItem, 'requiredValueLabel');
-
-// set the global title click:
 isc.FormItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput',
+  
   titleClick: function(form, item){
     item.focusInItem();
   },
   
   changed: function(){
     var ret = this.Super('changed', arguments);
-    this._doFICCall = true;
+    this._hasChanged = true;
     return ret;
   },
   
-  focus: function (form, item) {
+  focus: function(form, item){
     if (form.view) {
       form.view.lastFocusedItem = this;
       form.view.setActiveView(true);
-    } else if (form.grid) {      
+    } else if (form.grid) {
       if (form.grid.view) {
         form.grid.view.lastFocusedItem = this;
         form.grid.view.setActiveView(true);
@@ -1088,11 +919,12 @@ isc.FormItem.addProperties({
       }
     }
   },
-
+  
   blur: function(form, item){
     if (form && form.handleItemChange) {
       form.handleItemChange(this);
     }
     this._hasChanged = false;
+    return this.Super('blur', arguments);
   }
 });
