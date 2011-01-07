@@ -62,6 +62,7 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.JsonUtils;
 
 public class FormInitializationComponent extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(FormInitializationComponent.class);
@@ -345,6 +346,13 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       // }
+    } catch (Throwable t) {
+      final String jsonString = JsonUtils.convertExceptionToJson(t);
+      try {
+        return new JSONObject(jsonString);
+      } catch (JSONException e) {
+        log.error("Error while generating the error JSON object: " + jsonString, e);
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
