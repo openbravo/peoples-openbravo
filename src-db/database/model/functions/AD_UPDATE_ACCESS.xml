@@ -182,12 +182,11 @@ BEGIN
                       
  
   --Extension point to add access to additional tables defined within modules 
-  select count(*)
-    into v_count
-    from ad_ep_procedures 
-   where ad_extension_points_id = v_ExtensionPointID;
+  SELECT count(*) INTO v_count
+  FROM DUAL
+  WHERE EXISTS (SELECT 1 FROM ad_ep_procedures WHERE ad_extension_points_id = v_ExtensionPointID);
   
-  IF v_count != 0 THEN
+  IF (v_count != 0) THEN
    AD_EXTENSION_POINT_HANDLER(get_uuid(), v_ExtensionPointID);
   END IF;
 END AD_UPDATE_ACCESS
