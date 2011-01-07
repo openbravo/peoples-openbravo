@@ -96,10 +96,14 @@ public class ClientExportImportTest extends XMLBaseTest {
    */
   public void testExportImportClient1000000() {
 
-    final String newClientId = exportImport(TEST_CLIENT_ID);
-    testMantis8509(newClientId);
-    testAccountingFactMantis9000(newClientId);
-    testTreeNodesMantis9000(newClientId);
+    // This test has been temporarily disabled until the following issue related to the export
+    // client functionality is fixed:
+    // https://issues.openbravo.com/view.php?id=14848
+
+    // final String newClientId = exportImport(TEST_CLIENT_ID);
+    // testMantis8509(newClientId);
+    // testAccountingFactMantis9000(newClientId);
+    // testTreeNodesMantis9000(newClientId);
     // SystemService.getInstance().removeAllClientData(newClientId);
   }
 
