@@ -368,11 +368,6 @@ isc.OBSelectorItem.addProperties({
     this.form.handleItemChange(this);
   },
   
-  getTitleHTML: function(){
-    // calls the method from the OBLinkTitleItem interface
-    return this.getLinkTitleHTML();
-  },
-  
   changed: function(){
     var ret = this.Super('changed', arguments);
     if (this.form && this.form.handleItemChange) {
@@ -519,11 +514,6 @@ isc.OBSelectorLinkItem.addProperties({
     });
     
     return this.Super('init', arguments);
-  },
-  
-  getTitleHTML: function(){
-    // calls the method from the OBLinkTitleItem interface
-    return this.getLinkTitleHTML();
   },
   
   changed: function(){
