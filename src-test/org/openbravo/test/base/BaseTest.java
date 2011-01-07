@@ -83,6 +83,11 @@ public class BaseTest extends TestCase {
   protected static final String TEST_USER_ID = "FF8080812AFBCB14012AFBD3E4F60033";
 
   /**
+   * Record ID of User "F&BESRNUser" - Any user with less privileges than {@link #TEST_USER_ID}
+   */
+  protected static final String TEST2_USER_ID = "4E0C3170914443718CCD9EE9E68FA698";
+
+  /**
    * Record IDs of available users different than {@link #TEST_USER_ID} Note: Initialized to null,
    * need to call {@link getRandomUserId} at least once
    */

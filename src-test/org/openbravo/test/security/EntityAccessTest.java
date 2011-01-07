@@ -93,7 +93,7 @@ public class EntityAccessTest extends BaseTest {
    * read.
    */
   public void testCheckDerivedReadableCurrency() {
-    setUserContext(getRandomUser().getId());
+    setUserContext(TEST2_USER_ID);
     final Currency c = OBDal.getInstance().get(Currency.class, "100");
     log.debug(c.getIdentifier());
     log.debug(c.getId());
