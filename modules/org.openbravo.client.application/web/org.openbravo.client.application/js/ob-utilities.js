@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2010 Openbravo SLU
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -811,6 +811,7 @@ OB.Utilities.openActionButton = function(button, o){
   var allProperties = {}, sessionProperties = {};
   
   theView.getContextInfo(allProperties, sessionProperties);
+  OB.Utilities.viewCallingProcess = theView;
   
   
   for (var param in allProperties) {
@@ -822,13 +823,6 @@ OB.Utilities.openActionButton = function(button, o){
   theView.setContextInfo(sessionProperties, function(){
     OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
   });
-  
-  
-  //	OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
-  //OB.Layout.ViewManager.openView('OBClassicPopup', o);
-
-
-  //button.parentElement.parentElement.view.getContextInfo()
 };
 
 OB.Utilities.openActionButtonCallback = function(button, o){
