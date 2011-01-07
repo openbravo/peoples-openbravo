@@ -49,9 +49,9 @@ body {
  Active view
  ============================================================*/
 .OBViewActive {
-  background-color: orange;
+  background-color: #FA962F;
 }
 
 .OBViewInActive {
-  background-color: grey;
+  background-color: #CDD7BB;
 }

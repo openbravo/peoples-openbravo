@@ -277,7 +277,7 @@ OB.QuickLaunchNavbarComponentStylingProperties = {
  * Width of the active bar on the left in the main view
  =======================================================================*/
 OB.ActiveBarStyling = {
-  width: 5,
+  width: 6,
   activeStyleName: 'OBViewActive',
   inActiveStyleName: 'OBViewInActive'
 };
