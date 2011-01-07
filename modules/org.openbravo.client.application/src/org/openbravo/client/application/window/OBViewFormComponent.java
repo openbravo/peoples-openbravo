@@ -274,6 +274,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public boolean isRequired() {
+      // booleans are never required as their input only allows 2 values
+      if (property.isBoolean()) {
+        return false;
+      }
       return property.isMandatory();
     }
 
