@@ -41,6 +41,10 @@ isc.OBStatusBarIconButton.addProperties({
         this.view.viewGrid.scrollRecordToTop(newRowNum);
         this.view.editRecord(newRecord);
         this.view.updateTabTitle();
+        this.view.messageBar.hide();
+        
+        // enable the delete button as we can navigate away from a new record
+        this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
       }
     } else if (this.buttonType === 'next') {
       rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
@@ -51,9 +55,14 @@ isc.OBStatusBarIconButton.addProperties({
         this.view.viewGrid.scrollRecordToTop(newRowNum);
         this.view.editRecord(newRecord);
         this.view.updateTabTitle();
+        this.view.messageBar.hide();
+
+        // enable the delete button as we can navigate away from a new record
+        this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
       }
     } else if (this.buttonType === 'close') {
       this.view.switchFormGridVisibility();
+      this.view.messageBar.hide();
     }
   },
 
