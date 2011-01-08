@@ -849,7 +849,7 @@ OB.Utilities.openActionButton = function(button, o){
   
   var allProperties = {}, sessionProperties = {};
   
-  theView.getContextInfo(allProperties, sessionProperties);
+  theView.getContextInfo(allProperties, sessionProperties, true);
   OB.Utilities.viewCallingProcess = theView;
   
   for (var param in allProperties) {
@@ -873,7 +873,7 @@ OB.Utilities.openActionButtonCallback = function(button, o){
   }
   
   var allProperties = {}, sessionProperties = {};
-  var params = theView.getContextInfo(allProperties, sessionProperties);
+  var params = theView.getContextInfo(allProperties, sessionProperties, true);
   
   for (var param in params) {
     if (params.hasOwnProperty(param)) {

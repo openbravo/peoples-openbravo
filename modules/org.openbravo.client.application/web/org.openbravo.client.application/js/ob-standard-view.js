@@ -186,7 +186,7 @@ isc.OBStandardView.addProperties({
   // ** {{{ toolbar }}} **
   // The toolbar canvas.
   toolBar: null,
-
+  
   messageBar: null,
   
   // ** {{{ formGridLayout }}} **
@@ -461,7 +461,7 @@ isc.OBStandardView.addProperties({
       this.statusBarFormLayout.addMember(formContainerLayout);
       
       this.formGridLayout.addMember(this.statusBarFormLayout);
-
+      
       // wrap the messagebar and the formgridlayout in a VLayout
       var gridFormMessageLayout = isc.VLayout.create({
         height: '100%',
@@ -470,7 +470,7 @@ isc.OBStandardView.addProperties({
       });
       gridFormMessageLayout.addMember(this.messageBar);
       gridFormMessageLayout.addMember(this.formGridLayout);
-
+      
       // and place the active bar to the left of the form/grid/messagebar
       var activeGridFormMessageLayout = isc.HLayout.create({
         height: '100%',
@@ -546,9 +546,9 @@ isc.OBStandardView.addProperties({
   setTabButtonState: function(active){
     var tabButton;
     if (this.tab) {
-      tabButton = this.parentTabSet.getTab(this.tab);
+      tabButton = this.tab;
     } else {
-      // not the nicest trick but okay...
+      // don't like to use the global window object, but okay..
       tabButton = window[this.standardWindow.viewTabId];
     }
     // enable this code to set the styleclass changes
@@ -1015,30 +1015,46 @@ isc.OBStandardView.addProperties({
   
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
-  getContextInfo: function(allProperties, sessionProperties){
+  getContextInfo: function(allProperties, sessionProperties, classicMode){
+    var value, field, record, component;
     // different modes:
     // 1) showing grid with one record selected
     // 2) showing form with aux inputs
-    var record;
     if (this.viewGrid.isVisible()) {
       record = this.viewGrid.getSelectedRecord();
+      component = this.viewGrid;
     } else {
       record = this.viewForm.getValues();
+      component = this.viewForm;
     }
     
     var properties = this.propertyToColumns;
     
     if (record) {
+    
+      // add the id of the record itself also if not set
+      if (!record[OB.Constants.ID] && this.viewGrid.getSelectedRecord()) {
+        // if in edit mode then the grid always has the current record selected
+        record[OB.Constants.ID] = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
+      }
+      
       for (var i = 0; i < properties.length; i++) {
-        var value = record[properties[i].property];
+        value = record[properties[i].property];
+        field = component.getField(properties[i].property);
         if (typeof value !== 'undefined') {
-          allProperties[properties[i].column] = value;
+          if (classicMode) {
+            allProperties[properties[i].column] = value;            
+          } else {
           // surround the property name with @ symbols to make them different
           // from filter criteria and such          
           allProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
+          }
           if (properties[i].sessionProperty) {
-            sessionProperties[properties[i].dbColumn] = value;
-            sessionProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
+            if (classicMode) {
+              sessionProperties[properties[i].dbColumn] = value;
+            } else {
+              sessionProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
+            }
           }
         }
       }
@@ -1051,7 +1067,7 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.parentView) {
-      this.parentView.getContextInfo(allProperties, sessionProperties);
+      this.parentView.getContextInfo(allProperties, sessionProperties, classicMode);
     }
   },
   
@@ -1059,7 +1075,7 @@ isc.OBStandardView.addProperties({
     var allProperties = {};
     if (!sessionProperties) {
       sessionProperties = {};
-      this.getContextInfo(allProperties, sessionProperties);
+      this.getContextInfo(allProperties, sessionProperties, true);
     }
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',

@@ -469,7 +469,7 @@ isc.OBViewGrid.addProperties({
     }
     
     // add all the context info to the criteria
-    this.view.getContextInfo({}, criteria);
+    this.view.getContextInfo({}, criteria, false);
     
     return criteria;
   },

@@ -121,7 +121,7 @@ isc.OBViewForm.addProperties({
       mode = 'EDIT';
     }
     
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', null, {
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, {
       MODE: 'EDIT',
       PARENT_ID: parentId,
       TAB_ID: this.view.tabId,
@@ -227,7 +227,7 @@ isc.OBViewForm.addProperties({
   },
   
   doChangeFICCall: function(item){
-    var parentId = null, me = this, requestParams;
+    var parentId = null, me = this, requestParams, dataParams;
     var allProperties = {}, sessionProperties = {};
     
     if (this.view.parentProperty) {
@@ -235,18 +235,19 @@ isc.OBViewForm.addProperties({
     }
     
     // fills the allProperties    
-    this.view.getContextInfo(allProperties, sessionProperties);
+    this.view.getContextInfo(allProperties, sessionProperties, true);
     
-    requestParams = isc.addProperties({
+    requestParams = {
       MODE: 'CHANGE',
       PARENT_ID: parentId,
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID),
       CHANGED_COLUMN: item.inpColumnName
-    }, allProperties, sessionProperties);
+    };
+    dataParams = isc.addProperties({}, allProperties, sessionProperties);
     
     // collect the context information    
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', null, requestParams, function(response, data, request){
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', dataParams, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
     });
   },
