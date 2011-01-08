@@ -134,9 +134,13 @@ isc.OBStandardView.addClassProperties({
   STATE_IN_MID: 'InMid', // state of the tabset which is shown in the middle,
   // the parent of the tabset has state
   // isc.OBStandardView.STATE_MID
-  STATE_MIN: 'Min' // minimized state, the parent has
+  STATE_MIN: 'Min', // minimized state, the parent has
   // isc.OBStandardView.STATE_TOP_MAX or
   // isc.OBStandardView.STATE_IN_MID
+  
+  // the following states are used for styling
+  MODE_ACTIVE: 'Active',
+  MODE_INACTIVE: 'Inactive'
 });
 
 // = OBStandardView =
@@ -510,7 +514,9 @@ isc.OBStandardView.addProperties({
     
     this.childTabSet.addTab(childTabDef);
     
-    childView.tab = this.childTabSet.tabs[this.childTabSet.tabs.length - 1];
+    childView.tab = this.childTabSet.getTab(this.childTabSet.tabs.length - 1);
+    // start inactive
+    childView.tab.setCustomState(isc.OBStandardView.MODE_INACTIVE);
     
     OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
     
