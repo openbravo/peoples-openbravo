@@ -107,6 +107,10 @@ public class DefaultJsonDataService implements JsonDataService {
         if (parameters.get(JsonConstants.OR_EXPRESSION_PARAMETER) != null) {
           queryService.setDoOrExpression();
         }
+        if (parameters.get(JsonConstants.NO_ACTIVE_FILTER) != null
+            && parameters.get(JsonConstants.NO_ACTIVE_FILTER).equals("true")) {
+          queryService.setFilterOnActive(false);
+        }
 
         if (parameters.containsKey(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE)) {
           queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE));

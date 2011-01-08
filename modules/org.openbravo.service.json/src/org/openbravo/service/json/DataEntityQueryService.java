@@ -50,6 +50,7 @@ public class DataEntityQueryService {
   private Integer firstResult = null;
   private Integer maxResults = null;
 
+  private boolean filterOnActive = true;
   private QueryBuilder queryBuilder = new QueryBuilder();
 
   /**
@@ -64,6 +65,9 @@ public class DataEntityQueryService {
 
     if (queryBuilder.hasOrganizationParameter()) {
       obq.setFilterOnReadableOrganization(false);
+    }
+    if (!filterOnActive) {
+      obq.setFilterOnActive(false);
     }
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
@@ -97,6 +101,7 @@ public class DataEntityQueryService {
     if (queryBuilder.hasOrganizationParameter()) {
       obq.setFilterOnReadableOrganization(false);
     }
+    obq.setFilterOnActive(isFilterOnActive());
 
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
@@ -189,5 +194,13 @@ public class DataEntityQueryService {
    */
   public void setUseAlias() {
     queryBuilder.setMainAlias(JsonConstants.MAIN_ALIAS);
+  }
+
+  public boolean isFilterOnActive() {
+    return filterOnActive;
+  }
+
+  public void setFilterOnActive(boolean filterOnActive) {
+    this.filterOnActive = filterOnActive;
   }
 }
