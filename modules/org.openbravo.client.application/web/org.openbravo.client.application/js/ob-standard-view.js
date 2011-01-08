@@ -138,8 +138,7 @@ isc.OBStandardView.addClassProperties({
   // isc.OBStandardView.STATE_TOP_MAX or
   // isc.OBStandardView.STATE_IN_MID
   
-  // the following states are used for styling
-  MODE_ACTIVE: 'Active',
+  // the inactive state does not show an orange hat on the tab button
   MODE_INACTIVE: 'Inactive'
 });
 
@@ -556,7 +555,7 @@ isc.OBStandardView.addProperties({
     if (active) {
       tabButton.setCustomState('');
     } else {
-      tabButton.setCustomState('Inactive');
+      tabButton.setCustomState(isc.OBStandardView.MODE_INACTIVE);
     }
   },
   
