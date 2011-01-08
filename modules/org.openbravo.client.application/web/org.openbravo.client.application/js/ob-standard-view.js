@@ -802,10 +802,10 @@ isc.OBStandardView.addProperties({
   
     // clear all our selections..
     this.viewGrid.deselectAllRecords();
-
+    
     // allow default edit mode again
     this.allowDefaultEditMode = true;
-
+    
     // switch back to the grid or form
     if (this.shouldOpenDefaultEditMode()) {
       if (this.viewGrid.isVisible()) {
@@ -941,20 +941,33 @@ isc.OBStandardView.addProperties({
   },
   
   deleteRow: function(){
-    var msg;
-    if (this.viewGrid.getSelection().length === 1) {
-      msg= OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle'); 
+    var msg, view = this, deleteCount = this.viewGrid.getSelection().length;
+    if (deleteCount === 1) {
+      msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle');
     } else {
-      msg= OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);       
+      msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);
     }
-
-    var callback = function(ok) {
+    
+    var callback = function(ok){
+      var removeCallBack = function(resp, data, req){
+//        console.log(req);
+//        console.log(data);
+//        console.log(resp);
+        if (resp.status === isc.RPCResponse.STATUS_SUCCESS) {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
+        }
+      };
+      
       if (ok) {
-        alert('OK!');
-      } else {
-        alert('NOT OK!');
+        var selection = view.viewGrid.getSelection().duplicate();
+        // deselect the current records
+        view.viewGrid.deselectAllRecords();
+
+        view.viewGrid.removeData(selection[0], removeCallBack, {
+          willHandleError: true
+        });
       }
-    };    
+    };
     isc.ask(msg, callback);
   },
   
@@ -1065,11 +1078,11 @@ isc.OBStandardView.addProperties({
         field = component.getField(properties[i].property);
         if (typeof value !== 'undefined') {
           if (classicMode) {
-            allProperties[properties[i].column] = value;            
+            allProperties[properties[i].column] = value;
           } else {
-          // surround the property name with @ symbols to make them different
-          // from filter criteria and such          
-          allProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
+            // surround the property name with @ symbols to make them different
+            // from filter criteria and such          
+            allProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
           }
           if (properties[i].sessionProperty) {
             if (classicMode) {
@@ -1368,7 +1381,7 @@ isc.Canvas.addProperties({
   focusChanged: function(hasFocus){
     if (this.view && this.view.setActiveView) {
       this.view.setActiveView(true);
-      return this.Super('focusChanged', arguments);  
+      return this.Super('focusChanged', arguments);
     }
     
     if (this.parentElement && this.parentElement.focusChanged) {
