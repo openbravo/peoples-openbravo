@@ -206,6 +206,12 @@
   background-image: url(./images/toolbar/iconButton-fav.png);
 }
 
+.OBToolbarIconButton_icon_refresh {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/toolbar/iconButton-refresh.png);
+}
+
 /* OBToolbarTextButton */
 
 .OBToolbarTextButton,

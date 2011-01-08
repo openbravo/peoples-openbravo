@@ -75,6 +75,7 @@ isc.OBViewForm.addProperties({
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, false);
     
     this.resetFocusItem();
     var ret = this.Super('editRecord', arguments);
@@ -89,6 +90,7 @@ isc.OBViewForm.addProperties({
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
     // disable relevant buttons
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
@@ -344,9 +346,11 @@ isc.OBViewForm.addProperties({
         // disable undo, enable delete
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
+        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, false);
         if (form.isNew) {
           view.viewGrid.updateRowCountDisplay();
         }
+        form.rememberValues();
         form.isNew = false;
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);

@@ -23,6 +23,7 @@ isc.OBToolbar.addClassProperties({
   TYPE_NEW: 'newRow',
   TYPE_DELETE: 'eliminate',
   TYPE_UNDO: 'undo',
+  TYPE_REFRESH: 'refresh',
   
   SAVE_BUTTON_PROPERTIES: {
     action: function(){
@@ -46,6 +47,14 @@ isc.OBToolbar.addClassProperties({
     disabled: true,
     buttonType: 'eliminate',
     prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow')  
+  },
+  REFRESH_BUTTON_PROPERTIES: {
+    action: function(){
+      this.view.refresh();
+    },
+    disabled: false,
+    buttonType: 'refresh',
+    prompt: OB.I18N.getLabel('OBUIAPP_RefreshData')  
   },
   UNDO_BUTTON_PROPERTIES: {
     action: function(){

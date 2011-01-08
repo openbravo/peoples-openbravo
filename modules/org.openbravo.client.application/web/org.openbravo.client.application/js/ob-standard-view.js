@@ -266,7 +266,7 @@ isc.OBStandardView.addProperties({
     this.toolBar = isc.OBToolbar.create({
       view: this,
       visibility: 'hidden',
-      leftMembers: [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES)],
+      leftMembers: [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES)],
       rightMembers: [isc.OBToolbarTextButton.create({
         action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
         title: 'Button A'
@@ -866,7 +866,7 @@ isc.OBStandardView.addProperties({
     }
   },
   
-  getParentId: function() {
+  getParentId: function(){
     if (!this.parentView || !this.parentView.viewGrid.getSelectedRecord()) {
       return null;
     }
@@ -964,6 +964,28 @@ isc.OBStandardView.addProperties({
   
   // ++++++++++++++++++++ Button Actions ++++++++++++++++++++++++++
   
+  refresh: function(refreshCallback){
+    if (this.viewGrid.isVisible()) {
+      this.viewGrid.filterData(this.viewGrid.getCriteria(), refreshCallback);
+    } else {
+      var view = this;
+      if (this.viewForm.valuesHaveChanged()) {
+        var callback = function(ok){
+          if (ok) {
+            var criteria = [];
+            criteria[OB.Constants.ID] = view.viewGrid.getSelectedRecord()[OB.Constants.ID];
+            view.viewForm.fetchData(criteria, refreshCallback);
+          }
+        };
+        isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
+      } else {
+        var criteria = [];
+        criteria[OB.Constants.ID] = view.viewGrid.getSelectedRecord()[OB.Constants.ID];
+        view.viewForm.fetchData(criteria, refreshCallback);
+       }
+    }
+  },
+  
   saveRow: function(){
     this.viewForm.saveRow();
   },
@@ -982,6 +1004,9 @@ isc.OBStandardView.addProperties({
         //        console.log(data);
         //        console.log(resp);
         if (resp.status === isc.RPCResponse.STATUS_SUCCESS) {
+          if (!view.viewGrid.isVisible()) {
+            view.switchFormGridVisibility();
+          }
           view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
           view.viewGrid.filterData(view.viewGrid.getCriteria());
           view.viewGrid.updateRowCountDisplay();
@@ -1016,7 +1041,18 @@ isc.OBStandardView.addProperties({
   },
   
   undo: function(){
-    this.viewForm.undo();
+    var view = this, callback;
+    if (this.viewForm.valuesHaveChanged()) {
+      callback = function(ok){
+        if (ok) {
+          view.viewForm.undo();
+        }
+      };
+      isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmUndo', callback), callback);
+    }
+    throw {
+      message: 'Undo should only be enabled if the form has changed.'
+    };
   },
   
   // ++++++++++++++++++++ Parent-Child Tab Handling ++++++++++++++++++++++++++

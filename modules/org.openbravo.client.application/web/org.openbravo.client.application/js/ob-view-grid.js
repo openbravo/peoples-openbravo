@@ -224,6 +224,7 @@ isc.OBViewGrid.addProperties({
   
   show: function(){
     var ret = this.Super('show', arguments);
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, false);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     // enable the delete if there are records selected
     if (this.getSelection() && this.getSelection().length > 0) {
