@@ -40,14 +40,43 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarChildButtonTopSelectedFocusedDown,
 .OBTabBarChildButtonTopSelectedDown,
 .OBTabBarChildButtonTopSelectedDisabled,
-.OBTabBarChildButtonTopSelectedOver {
+.OBTabBarChildButtonTopSelectedOver,
+
+.OBTabBarChildButtonTopSelectedInactive,
+.OBTabBarChildButtonTopSelectedFocusedInactive,
+.OBTabBarChildButtonTopSelectedFocusedOverInactive,
+.OBTabBarChildButtonTopSelectedFocusedDownInactive,
+.OBTabBarChildButtonTopSelectedDownInactive,
+.OBTabBarChildButtonTopSelectedDisabledInactive,
+.OBTabBarChildButtonTopSelectedOverInactive {
   font-family: 'lucida sans', sans-serif;
   font-size: 12px;
   font-weight: normal;
   color: #fff;
   margin: 0px;
   padding: 0px 8px 0px 8px;
-  background-image: url(./images/tab/tabBarButtonChild_active.gif);
+}
+
+.OBTabBarChildButtonTopSelected,
+.OBTabBarChildButtonTopSelectedFocused,
+.OBTabBarChildButtonTopSelectedFocusedOver,
+.OBTabBarChildButtonTopSelectedFocusedDown,
+.OBTabBarChildButtonTopSelectedDown,
+.OBTabBarChildButtonTopSelectedDisabled,
+.OBTabBarChildButtonTopSelectedOver {
+  background-image: url(./images/tab/tabBarButtonChild_Selected.gif);
+  background-position: center 2px;
+  background-repeat: repeat-x;
+}
+
+.OBTabBarChildButtonTopSelectedInactive,
+.OBTabBarChildButtonTopSelectedFocusedInactive,
+.OBTabBarChildButtonTopSelectedFocusedOverInactive,
+.OBTabBarChildButtonTopSelectedFocusedDownInactive,
+.OBTabBarChildButtonTopSelectedDownInactive,
+.OBTabBarChildButtonTopSelectedDisabledInactive,
+.OBTabBarChildButtonTopSelectedOverInactive {
+  background-image: url(./images/tab/tabBarButtonChild_Selected_Inactive.gif);
   background-position: center 2px;
   background-repeat: repeat-x;
 }
@@ -55,6 +84,11 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarChildButtonTop,
 .OBTabBarChildButtonTopOver,
 .OBTabBarChildButtonTopDown,
+.OBTabBarChildButtonTopDisabled,
+
+.OBTabBarChildButtonTopInactive,
+.OBTabBarChildButtonTopOverInactive,
+.OBTabBarChildButtonTopDownInactive,
 .OBTabBarChildButtonTopDisabled {
   font-family: 'lucida sans', sans-serif;
   font-size: 12px;
@@ -62,7 +96,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   color: #fff;
   margin: 0px;
   padding: 0px 8px 0px 8px;
-  background-image: url(./images/tab/tabBarButtonChild_inactive.gif);
+  background-image: url(./images/tab/tabBarButtonChild_Unselected.gif);
   background-position: center 2px;
   background-repeat: repeat-x;
 }

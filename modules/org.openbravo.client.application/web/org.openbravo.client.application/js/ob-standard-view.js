@@ -547,11 +547,11 @@ isc.OBStandardView.addProperties({
       tabButton = window[this.standardWindow.viewTabId];
     }
     // enable this code to set the styleclass changes
-    //    if (active) {
-    //      tabButton.setCustomState('Active');
-    //    } else {
-    //      tabButton.setCustomState('InActive');
-    //    }
+    if (active) {
+      tabButton.setCustomState('');
+    } else {
+      tabButton.setCustomState('Inactive');
+    }
   },
   
   // called when this view becomes the focused view or looses the focus

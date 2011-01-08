@@ -52,20 +52,54 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBMainTabTopSelectedFocusedDown,
 .OBMainTabTopSelectedDown,
 .OBMainTabTopSelectedDisabled,
-.OBMainTabTopSelectedOver {
+.OBMainTabTopSelectedOver,
+
+.OBMainTabTopSelectedInactive,
+.OBMainTabTopSelectedFocusedInactive,
+.OBMainTabTopSelectedFocusedOverInactive,
+.OBMainTabTopSelectedFocusedDownInactive,
+.OBMainTabTopSelectedDownInactive,
+.OBMainTabTopSelectedDisabledInactive,
+.OBMainTabTopSelectedOverInactive {
   color: #fff;
   margin-left:  25;
   padding:  0;
-  background-image: url(./images/tab/bg-tab-green-orange.gif);
+  height: 30px;
+}
+
+.OBMainTabTopSelected,
+.OBMainTabTopSelectedFocused,
+.OBMainTabTopSelectedFocusedOver,
+.OBMainTabTopSelectedFocusedDown,
+.OBMainTabTopSelectedDown,
+.OBMainTabTopSelectedDisabled,
+.OBMainTabTopSelectedOver {
   background-position:  right top;
   background-repeat: repeat-x;
-  height: 30px;
+  background-image: url(./images/tab/bg-tab-green-orange.gif);
+}
+
+.OBMainTabTopSelectedInactive,
+.OBMainTabTopSelectedFocusedInactive,
+.OBMainTabTopSelectedFocusedOverInactive,
+.OBMainTabTopSelectedFocusedDownInactive,
+.OBMainTabTopSelectedDownInactive,
+.OBMainTabTopSelectedDisabledInactive,
+.OBMainTabTopSelectedOverInactive {
+  background-position:  right top;
+  background-repeat: repeat-x;
+  background-image: url(./images/tab/bg-tab-green.gif);
 }
 
 .OBMainTabTop,
 .OBMainTabTopOver,
 .OBMainTabTopDown,
-.OBMainTabTopDisabled {
+.OBMainTabTopDisabled,
+
+.OBMainTabTopInactive,
+.OBMainTabTopOverInactive,
+.OBMainTabTopDownInactive,
+.OBMainTabTopDisabledInactive {
   margin: 0;
   padding: 0;
   height: 30px;
@@ -82,22 +116,36 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBMainTabBarButtonDown,
 .OBMainTabBarButtonSelectedDown,
 .OBMainTabBarButtonSelectedDisabled,
-.OBMainTabBarButtonDisabled {
+.OBMainTabBarButtonDisabled,
+
+.OBMainTabBarButtonInactive,
+.OBMainTabBarButtonSelectedInactive,
+.OBMainTabBarButtonSelectedOverInactive,
+.OBMainTabBarButtonOverInactive,
+.OBMainTabBarButtonDownInactive,
+.OBMainTabBarButtonSelectedDownInactive,
+.OBMainTabBarButtonSelectedDisabledInactive,
+.OBMainTabBarButtonDisabledInactive {
   font-family: 'lucida sans', sans-serif; 
   font-size: 12px;
 }
 
 .OBMainTabBarButtonSelectedDisabled,
-.OBMainTabBarButtonDisabled {
+.OBMainTabBarButtonDisabled,
+
+.OBMainTabBarButtonSelectedDisabledInactive,
+.OBMainTabBarButtonDisabledInactive {
   font-weight: normal; 
   color: #777;
 }
 
-.OBMainTabBarButton table {
+.OBMainTabBarButton table,
+.OBMainTabBarButtonInactive table{
   margin-top: 4px;
 }
 
-.OBMainTabBarButton td img {
+.OBMainTabBarButton td img,
+.OBMainTabBarButtonInactive td img {
   background: #91A777; 
   padding: 1px; 
   margin-top: -4px;
@@ -116,7 +164,22 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBMainTabBarButtonTitleFocusedDown,
 .OBMainTabBarButtonTitleSelectedFocusedDown,
 .OBMainTabBarButtonTitleDisabled,
-.OBMainTabBarButtonTitleSelectedDisabled {
+.OBMainTabBarButtonTitleSelectedDisabled,
+
+.OBMainTabBarButtonTitleInactive,
+.OBMainTabBarButtonTitleOverInactive,
+.OBMainTabBarButtonTitleDownInactive,
+.OBMainTabBarButtonTitleSelectedInactive,
+.OBMainTabBarButtonTitleFocusedInactive,
+.OBMainTabBarButtonTitleSelectedFocusedInactive,
+.OBMainTabBarButtonTitleSelectedOverInactive,
+.OBMainTabBarButtonTitleFocusedOverInactive,
+.OBMainTabBarButtonTitleSelectedFocusedOverInactive,
+.OBMainTabBarButtonTitleSelectedDownInactive,
+.OBMainTabBarButtonTitleFocusedDownInactive,
+.OBMainTabBarButtonTitleSelectedFocusedDownInactive,
+.OBMainTabBarButtonTitleDisabledInactive,
+.OBMainTabBarButtonTitleSelectedDisabledInactive {
   color: #333333;
   padding-top: 4px;
   padding-bottom:1px;
@@ -125,15 +188,24 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBMainTabBarButtonTitleSelectedOver,
 .OBMainTabBarButtonTitleFocusedOver,
 .OBMainTabBarButtonTitleSelectedFocusedOver,
-.OBMainTabBarButtonTitleSelected {
+.OBMainTabBarButtonTitleSelected,
+
+.OBMainTabBarButtonTitleSelectedOverInactive,
+.OBMainTabBarButtonTitleFocusedOverInactive,
+.OBMainTabBarButtonTitleSelectedFocusedOverInactive,
+.OBMainTabBarButtonTitleSelectedInactive {
   color:#fff;
 }
 
-.OBMainTabBarButtonTitleOver {
+.OBMainTabBarButtonTitleOver,
+.OBMainTabBarButtonTitleOverInactive {
 }
 
 .OBMainTabBarButtonTitleDisabled,
-.OBMainTabBarButtonTitleSelectedDisabled {
+.OBMainTabBarButtonTitleSelectedDisabled,
+
+.OBMainTabBarButtonTitleDisabledInactive,
+.OBMainTabBarButtonTitleSelectedDisabledInactive {
   color: #777;
   padding-bottom:1px;
 }

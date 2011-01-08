@@ -20,7 +20,10 @@
 
 isc.OBTabBarChild.addProperties({
   buttonConstructor: isc.OBTabBarChildButton,
-  styleName: 'OBTabBarChild'
+  styleName: 'OBTabBarChild',
+  initWidgetStyle: function() {
+//    this.setCustomState('Inactive');  // It doesn't work
+  }
 });
 
 isc.OBTabSetChild.addProperties({
@@ -29,5 +32,8 @@ isc.OBTabSetChild.addProperties({
   tabBarThickness: 38,
   styleName: 'OBTabSetChild',
   simpleTabBaseStyle: 'OBTabBarChildButton',
-  paneContainerClassName: 'OBTabSetChildContainer'
+  paneContainerClassName: 'OBTabSetChildContainer',
+  initWidgetStyle: function() {
+//    this.setCustomState('Inactive');  // It doesn't work
+  }
 });
