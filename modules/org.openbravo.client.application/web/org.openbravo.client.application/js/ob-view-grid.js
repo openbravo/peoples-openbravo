@@ -308,7 +308,7 @@ isc.OBViewGrid.addProperties({
       return;
     }
     if (this.body) {
-      var gridRecord = data.find('id', this.targetRecordId);
+      var gridRecord = data.find(OB.Constants.ID, this.targetRecordId);
       
       // no grid record found, stop here
       if (!gridRecord) {
@@ -327,8 +327,8 @@ isc.OBViewGrid.addProperties({
         }
       }
       
-      this.scrollRecordIntoView(recordIndex, false);
-      if (this.view.defaultEditMode) {
+      this.scrollRecordIntoView(recordIndex, true);
+      if (this.view.defaultEditMode && !this.view.viewForm.newRecordSavedEvent) {
         this.view.editRecord(gridRecord);
       } else {
         this.doSelectSingleRecord(gridRecord);
@@ -343,6 +343,18 @@ isc.OBViewGrid.addProperties({
       // wait a bit longer
       this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 500, this);
     }
+  },
+  
+  selectRecordById: function(id) {
+      var recordIndex, gridRecord = this.data.find(OB.Constants.ID, id);
+      
+      // no grid record found, stop here
+      if (!gridRecord) {
+        return;
+      }
+      recordIndex = this.getRecordIndex(gridRecord);
+      this.scrollRecordIntoView(recordIndex, true);
+      this.doSelectSingleRecord(gridRecord);
   },
   
   filterData: function(criteria, callback, requestProperties){
@@ -549,6 +561,16 @@ isc.OBViewGrid.addProperties({
   selectionChanged: function(record, state){
     this.stopHover();
     
+    // enable/disable the delete if there are records selected
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
+
+    // nothing changed, go away then, happens when saving
+    if (this.view.lastRecordSelected && record && this.view.lastRecordSelected.id === record.id) {
+      // instance may have been updated, update the instance in the view
+      this.view.lastRecordSelected = record;
+      return;
+    }
+
     // stop editing if the selection is changing  
     var rowNum = this.getRecordIndex(record);
     
@@ -565,9 +587,6 @@ isc.OBViewGrid.addProperties({
     isc.Log.logDebug('Selection changed ' + state, 'OB');
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
-
-    // enable/disable the delete if there are records selected
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
   },
   
   // selectionUpdated is called when the grid selection is changed

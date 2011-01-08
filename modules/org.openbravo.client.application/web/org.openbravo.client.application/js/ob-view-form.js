@@ -349,6 +349,13 @@ isc.OBViewForm.addProperties({
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, false);
         if (form.isNew) {
           view.viewGrid.updateRowCountDisplay();
+          view.viewGrid.targetRecordId = data.id;
+          // this flag prevents the re-opening of the form
+          this.newRecordSavedEvent = true;
+          view.viewGrid.filterData(view.viewGrid.getCriteria());
+        } else {
+          // after save the grid selection seems to have gone, repair it
+          view.viewGrid.selectRecordById(data.id);
         }
         form.rememberValues();
         form.isNew = false;

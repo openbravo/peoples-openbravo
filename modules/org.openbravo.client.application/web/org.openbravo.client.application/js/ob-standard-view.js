@@ -748,8 +748,11 @@ isc.OBStandardView.addProperties({
     } else {
       this.doHandleClick();
     }
-    var gridRecord = this.viewGrid.getSelectedRecord();
-    this.editRecord(gridRecord);
+    if (!this.viewForm.newRecordSavedEvent || !this.viewForm.isVisible()) {
+      var gridRecord = this.viewGrid.getSelectedRecord();
+      this.editRecord(gridRecord);
+      this.viewForm.newRecordSavedEvent = false;
+    }
     this.recordSelected();
     
     // remove this info
