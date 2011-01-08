@@ -4,7 +4,7 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
@@ -16,21 +16,35 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
-
 isc.ClassFactory.defineClass('OBStatusBarTextLabelBar', isc.HLayout);
+
+isc.OBStatusBarTextLabelBar.addProperties({
+  // to allow setting the active view when clicking in the statusbar 
+  canFocus: true
+});
 
 isc.ClassFactory.defineClass('OBStatusBarTextLabel', isc.Label);
 
+isc.OBStatusBarTextLabel.addProperties({
+  // to allow setting the active view when clicking in the statusbar 
+  canFocus: true
+});
 
 isc.ClassFactory.defineClass('OBStatusBarIconButtonBar', isc.HLayout);
+
+isc.OBStatusBarIconButtonBar.addProperties({
+  // to allow setting the active view when clicking in the statusbar 
+  canFocus: true
+});
 
 isc.ClassFactory.defineClass('OBStatusBarIconButton', isc.ImgButton);
 
 isc.OBStatusBarIconButton.addProperties({
   buttonType: null,
   view: null,
-
+  // to allow setting the active view when clicking in the statusbar 
+  canFocus: true,
+  
   action: function(){
     var rowNum, newRowNum, newRecord;
     if (this.buttonType === 'previous') {
@@ -56,7 +70,7 @@ isc.OBStatusBarIconButton.addProperties({
         this.view.editRecord(newRecord);
         this.view.updateTabTitle();
         this.view.messageBar.hide();
-
+        
         // enable the delete button as we can navigate away from a new record
         this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
       }
@@ -65,13 +79,14 @@ isc.OBStatusBarIconButton.addProperties({
       this.view.messageBar.hide();
     }
   },
-
-  initWidget: function() {
+  
+  initWidget: function(){
     if (this.initWidgetStyle) {
       this.initWidgetStyle();
     }
     this.Super('initWidget', arguments);
   }
+  
 });
 
 
@@ -80,20 +95,31 @@ isc.ClassFactory.defineClass('OBStatusBar', isc.HLayout);
 isc.OBStatusBar.addProperties({
   view: null,
   iconButtonGroupSpacerWidth: 0, //Set in the skin
-
-  initWidget: function() {
+  initWidget: function(){
     var messageBar = isc.OBStatusBarTextLabelBar.create({});
     messageBar.addMember(isc.OBStatusBarTextLabel.create({
       contents: '' //'Status:'
     }));
-
-    var previousButton = isc.OBStatusBarIconButton.create({view: this.view, buttonType: 'previous'});
-    var nextButton = isc.OBStatusBarIconButton.create({view: this.view, buttonType: 'next'});
-    var closeButton = isc.OBStatusBarIconButton.create({view: this.view, buttonType: 'close'});
-    var buttonSpacer = isc.HLayout.create({width: this.iconButtonGroupSpacerWidth});
+    
+    var previousButton = isc.OBStatusBarIconButton.create({
+      view: this.view,
+      buttonType: 'previous'
+    });
+    var nextButton = isc.OBStatusBarIconButton.create({
+      view: this.view,
+      buttonType: 'next'
+    });
+    var closeButton = isc.OBStatusBarIconButton.create({
+      view: this.view,
+      buttonType: 'close'
+    });
+    var buttonSpacer = isc.HLayout.create({
+      width: this.iconButtonGroupSpacerWidth
+    });
     var buttonBar = isc.OBStatusBarIconButtonBar.create({});
-
+    
     buttonBar.addMembers([previousButton, nextButton, buttonSpacer, closeButton]);
     this.addMembers([messageBar, buttonBar]);
   }
+  
 });

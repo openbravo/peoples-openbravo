@@ -244,6 +244,11 @@ isc.OBStandardView.addProperties({
   
   lastFocusedItem: null,
   
+  // initially set to true, is set to false after the 
+  // first time default edit mode is opened or a new parent 
+  // is selected.
+  allowDefaultEditMode: true,
+  
   initWidget: function(properties){
     var isRootView = !this.parentProperty;
     
@@ -401,16 +406,12 @@ isc.OBStandardView.addProperties({
         width: '100%',
         height: '*',
         overflow: 'visible',
-        view: this,
-        focusChanged: function(hasFocus){
-          if (hasFocus) {
-            this.view.setActiveView(true);
-          }
-        }
+        view: this
       });
       
       this.activeBar = isc.HLayout.create({
         height: '100%',
+        canFocus: true, // to set active view when it gets clicked
         contents: '&nbsp;',
         width: OB.ActiveBarStyling.width,
         styleName: OB.ActiveBarStyling.inActiveStyleName,
@@ -613,25 +614,31 @@ isc.OBStandardView.addProperties({
   shouldOpenDefaultEditMode: function(){
     // can open default edit mode if defaultEditMode is set
     // and this is the root view or a child view with a selected parent.
-    return this.defaultEditMode && (!this.parentProperty || this.parentView.viewGrid.getSelectedRecords().length === 1);
+    return this.allowDefaultEditMode && this.defaultEditMode && (!this.parentProperty || this.parentView.viewGrid.getSelectedRecords().length === 1);
   },
   
+  // opendefaultedit view for a child view is only called
+  // when a new parent is selected, in that case the 
+  // edit view should be opened without setting the focus in the form
   openDefaultEditView: function(record){
     if (!this.shouldOpenDefaultEditMode()) {
       return;
     }
+    // preventFocus is treated as a boolean later
+    var preventFocus = this.parentProperty;
+    
+    // don't open it again
+    this.allowDefaultEditMode = false;
     
     // open form in insert mode
     if (record) {
-      this.editRecord(record);
+      this.editRecord(record, preventFocus);
     } else if (!this.viewGrid.data || this.viewGrid.data.getLength() === 0) {
-      // open in insert mode
-      this.viewGrid.hide();
-      this.statusBarFormLayout.show();
-      this.statusBarFormLayout.setHeight('100%');
+      // purposely not passing a record, to open new mode
+      this.editRecord(null, preventFocus);
     } else {
       // edit the first record
-      this.editRecord(this.viewGrid.getRecord(0));
+      this.editRecord(this.viewGrid.getRecord(0), preventFocus);
     }
   },
   
@@ -683,18 +690,16 @@ isc.OBStandardView.addProperties({
   // ** {{{ editRecord }}} **
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
-  editRecord: function(record){
+  editRecord: function(record, preventFocus){
   
-    // this.recordSelected(record);
     if (!record) { //  new case
-      this.viewForm.editNewRecord();
-      this.viewForm.clearErrors();
+      this.viewGrid.deselectAllRecords();
+      this.viewForm.editNewRecord(preventFocus);
       if (this.viewGrid.isVisible()) {
         this.switchFormGridVisibility();
       }
     } else {
-      this.viewForm.editRecord(record);
-      this.viewForm.clearErrors();
+      this.viewForm.editRecord(record, preventFocus);
       if (this.viewGrid.isVisible()) {
         this.switchFormGridVisibility();
       }
@@ -797,7 +802,10 @@ isc.OBStandardView.addProperties({
   
     // clear all our selections..
     this.viewGrid.deselectAllRecords();
-    
+
+    // allow default edit mode again
+    this.allowDefaultEditMode = true;
+
     // switch back to the grid or form
     if (this.shouldOpenDefaultEditMode()) {
       if (this.viewGrid.isVisible()) {
@@ -933,7 +941,21 @@ isc.OBStandardView.addProperties({
   },
   
   deleteRow: function(){
-    alert('Delete!');
+    var msg;
+    if (this.viewGrid.getSelection().length === 1) {
+      msg= OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle'); 
+    } else {
+      msg= OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);       
+    }
+
+    var callback = function(ok) {
+      if (ok) {
+        alert('OK!');
+      } else {
+        alert('NOT OK!');
+      }
+    };    
+    isc.ask(msg, callback);
   },
   
   newRow: function(){
@@ -1342,8 +1364,13 @@ isc.OBStandardViewTabSet.addProperties({
 
 // TODO: move this to a central location
 isc.Canvas.addProperties({
-  // let focuschanged go up to the parent
+  // let focuschanged go up to the parent, or handle it here
   focusChanged: function(hasFocus){
+    if (this.view && this.view.setActiveView) {
+      this.view.setActiveView(true);
+      return this.Super('focusChanged', arguments);  
+    }
+    
     if (this.parentElement && this.parentElement.focusChanged) {
       this.parentElement.focusChanged(hasFocus);
     }

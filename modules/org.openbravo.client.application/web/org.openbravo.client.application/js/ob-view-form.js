@@ -65,17 +65,49 @@ isc.OBViewForm.addProperties({
     return ret;
   },
   
-  editRecord: function(record){
+  editRecord: function(record, preventFocus){
+    // focus is done automatically, prevent the focus event if needed
+    // the focus event will set the active view
+    this.ignoreFirstFocusEvent = preventFocus;
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
+    
+    this.resetFocusItem();
     var ret = this.Super('editRecord', arguments);
+    this.clearErrors();
     this.retrieveInitialValues(false);
     return ret;
   },
   
-  editNewRecord: function(){
-    var ret = this.Super('editNewRecord', arguments);
+  editNewRecord: function(preventFocus){
+    // focus is done automatically, prevent the focus event if needed
+    // the focus event will set the active view
+    this.ignoreFirstFocusEvent = preventFocus;
+    // disable relevant buttons
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
+    
+    this.resetFocusItem();
+    var ret = this.Super('editNewRecord', arguments);
+    this.clearErrors();
     this.retrieveInitialValues(true);
     return ret;
+  },
+  
+  // reset the focus item to the first item which can get focus
+  resetFocusItem: function(){
+    var items = this.getItems();
+    if (items) {
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (!item.isDisabled() && (item.getCanFocus() || item.canFocus)) {
+          this.setFocusItem(item);
+          return;
+        }
+      }
+    }
   },
   
   getFieldFromInpColumnName: function(inpColumnName){
@@ -122,7 +154,7 @@ isc.OBViewForm.addProperties({
     }
     
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, {
-      MODE: 'EDIT',
+      MODE: mode,
       PARENT_ID: parentId,
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID)
@@ -252,6 +284,22 @@ isc.OBViewForm.addProperties({
     });
   },
   
+  focus: function(){
+    if (this.ignoreFirstFocusEvent) {
+      this.ignoreFirstFocusEvent = false;
+      return;
+    }
+    // handle the case that there is a focusitem but the focus is not yet visible
+    // this happens in defaultedit mode where the parent change forces
+    // a default edit mode opening in a child, in that case the focus is not
+    // set in the child but it should be set when the somewhere in the child a click 
+    // is done
+    if (this.getFocusItem()) {
+      this.getFocusItem().focusInItem();
+    }
+    return this.Super("focus", arguments);
+  },
+  
   itemChanged: function(item, newValue){
     var ret = this.Super('itemChanged', arguments);
     this.itemChangeActions();
@@ -278,13 +326,14 @@ isc.OBViewForm.addProperties({
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     
     var callback = function(resp, data, req){
-//      console.log(data);
-//      console.log(resp.status);
-//      console.log(resp.errors);
+      //      console.log(data);
+      //      console.log(resp.status);
+      //      console.log(resp.errors);
       var index1, index2, errorCode;
       var status = resp.status;
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
         this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
+        // disable undo, enable delete
         this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
         this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
@@ -388,7 +437,7 @@ isc.OBViewForm.addProperties({
       
       var imgHTML = isc.Canvas.imgHTML(searchIconObj);
       
-      return titleHTML + '&nbsp;' + imgHTML;      
+      return titleHTML + '&nbsp;' + imgHTML;
     }
     
     return titleHTML;

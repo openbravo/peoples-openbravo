@@ -225,6 +225,10 @@ isc.OBViewGrid.addProperties({
   show: function(){
     var ret = this.Super('show', arguments);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
+    // enable the delete if there are records selected
+    if (this.getSelection() && this.getSelection().length > 0) {
+      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
+    }
     return ret;
   },
   
@@ -532,7 +536,7 @@ isc.OBViewGrid.addProperties({
     var selection = this.getSelection();
     var selectionLength = selection.getLength();
     var newValue = '&nbsp;';
-    if (!this.singleRecordSelection && selectionLength > 0) {
+    if (selectionLength > 0) {
       newValue = selectionLength + '';
     }
     if (this.filterEditor) {
@@ -560,6 +564,9 @@ isc.OBViewGrid.addProperties({
     isc.Log.logDebug('Selection changed ' + state, 'OB');
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
+
+    // enable/disable the delete if there are records selected
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
   },
   
   // selectionUpdated is called when the grid selection is changed
@@ -568,6 +575,8 @@ isc.OBViewGrid.addProperties({
     isc.Log.logDebug('Selection updated ' + record, 'OB');
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
+    // enable/disable the delete if there are records selected
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
   },
   
   selectOnMouseDown: function(record, recordNum, fieldNum){

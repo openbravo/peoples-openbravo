@@ -28,6 +28,7 @@ isc.OBToolbar.addClassProperties({
     action: function(){
       this.view.saveRow();
     },
+    disabled: true,
     buttonType: 'save',
     prompt: OB.I18N.getLabel('OBUIAPP_SaveRow')  
   },
@@ -42,6 +43,7 @@ isc.OBToolbar.addClassProperties({
     action: function(){
       this.view.deleteRow();
     },
+    disabled: true,
     buttonType: 'eliminate',
     prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow')  
   },
@@ -49,6 +51,7 @@ isc.OBToolbar.addClassProperties({
     action: function(){
       this.view.undo();
     },
+    disabled: true,
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_UndoRow')  
   }
@@ -559,6 +562,14 @@ isc.OBToolbar.addProperties({
 isc.ClassFactory.defineClass('OBToolbarIconButton', isc.MenuButton);
 
 isc.OBToolbarIconButton.addProperties({
+  showRollOver: true,
+  showDisabled: true,
+  showFocused: true,
+  showDown: true,
+  showFocusedAsOver: false,
+  title: '.',
+  showHover: true,
+
   initWidget: function(){
     this.Super('initWidget', arguments);
     var isMenu = false, extraClass;
@@ -576,13 +587,7 @@ isc.OBToolbarIconButton.addProperties({
     }
     
     this.setBaseStyle('OBToolbarIconButton_icon_' + this.buttonType + extraClass + 'OBToolbarIconButton');
-  },
-  showRollOver: true,
-  showDisabled: true,
-  showFocused: true,
-  showDown: true,
-  showFocusedAsOver: false,
-  title: '.'
+  }
 });
 
 isc.ClassFactory.defineClass('OBToolbarTextButton', isc.Button);
