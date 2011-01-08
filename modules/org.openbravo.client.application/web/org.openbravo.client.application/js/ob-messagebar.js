@@ -104,9 +104,9 @@ isc.OBMessageBar.addProperties({
 
   // calls te OB.I18N.getLabel to asynchronously get a label
   // and display it  
-  setLabel: function(type, title, label){
+  setLabel: function(type, title, label, params){
     var me = this;
-    OB.I18N.getLabel(label, null, {
+    OB.I18N.getLabel(label, params, {
       setLabel: function(text){
         me.setMessage(type, title, text);
       }
