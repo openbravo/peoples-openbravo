@@ -20,7 +20,7 @@
 // The selector popup window shown when clicking the picker icon. Contains 
 // a selection grid and cancel/ok buttons.
 //
-isc.ClassFactory.defineClass('OBSelectorPopupWindow', isc.Window);
+isc.ClassFactory.defineClass('OBSelectorPopupWindow', isc.OBPopup);
 
 isc.OBSelectorPopupWindow.addProperties({
   canDragReposition: true,

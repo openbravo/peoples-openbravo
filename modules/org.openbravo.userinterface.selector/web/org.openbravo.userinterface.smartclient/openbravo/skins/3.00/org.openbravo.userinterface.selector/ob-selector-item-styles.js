@@ -27,11 +27,11 @@ isc.OBSelectorPopupWindow.addProperties({
   animateMinimize: false,
   showMaximizeButton: true,
   headerControls: ['headerIcon', 'headerLabel', 'minimizeButton', 'maximizeButton', 'closeButton'],
-  headerIconProperties: {
-    width: 16,
-    height: 16,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png'
-  },
+//  headerIconProperties: {
+//    width: 16,
+//    height: 16,
+//    src: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png'
+//  },
   buttonBarHeight: 40,
   buttonBarSpace: 20,
   buttonBarStyleName: null,
