@@ -411,20 +411,21 @@ public class FormInitializationComponent extends BaseActionHandler {
    */
   private String getDisplayLogicText(String token, Tab tab) {
     StringBuffer strOut = new StringBuffer();
-    int i = token.indexOf("@");
+    String localToken = token;
+    int i = localToken.indexOf("@");
     while (i != -1) {
-      strOut.append(token.substring(0, i));
-      token = token.substring(i + 1);
-      i = token.indexOf("@");
+      strOut.append(localToken.substring(0, i));
+      localToken = localToken.substring(i + 1);
+      i = localToken.indexOf("@");
       if (i != -1) {
-        String strAux = token.substring(0, i);
-        token = token.substring(i + 1);
+        String strAux = localToken.substring(0, i);
+        localToken = localToken.substring(i + 1);
         String st = getDisplayLogicTextTranslate(strAux, tab);
         strOut.append(st);
       }
-      i = token.indexOf("@");
+      i = localToken.indexOf("@");
     }
-    strOut.append(token);
+    strOut.append(localToken);
     return strOut.toString();
   }
 
