@@ -75,11 +75,12 @@ isc.OBSelectorPopupWindow.addProperties({
         return this.Super('fetchData', [this.convertCriteria(criteria), callback, requestProperties]);
       },
       convertCriteria: function(criteria){
-      
+        
         if (!criteria) {
           criteria = {};
         }
         
+        // on purpose not sending the third boolean param
         this.selector.form.view.getContextInfo(criteria, {});
         
         // also adds the special ORG parameter
@@ -214,6 +215,7 @@ isc.OBSelectorPopupWindow.addProperties({
       '_selectorDefinitionId': this.selectorDefinitionId
     };
     
+    // purposely not passing the third boolean param
     this.selector.form.view.getContextInfo(data, {});
     
     var callback = function(resp, data, req){
@@ -359,6 +361,7 @@ isc.OBSelectorItem.addProperties({
   },
   
   setValueFromGrid: function(record){
+    this._hasChanged = true;
     if (!record) {
       this.clearValue();
     } else {
@@ -400,6 +403,7 @@ isc.OBSelectorItem.addProperties({
       criteria[OB.Constants.ORG_PARAMETER] = this.form.getValue('organization');
     }
     
+    // on purpose not passing the third boolean param
     this.form.view.getContextInfo(criteria, {});
     
     // adds the selector id to filter used to get filter information
@@ -456,6 +460,7 @@ isc.OBSelectorLinkItem.addProperties({
   },
   
   setValueFromGrid: function(record){
+    this._hasChanged = true;
     if (!record) {
       this.clearValue();
       this.form.clearValue(this.displayField);
