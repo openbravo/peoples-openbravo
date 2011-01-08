@@ -70,9 +70,11 @@ public class ModelDataSourceService extends BaseDataSourceService {
       // The first request doesn't contain the adTableId
       // that's why baseEntity is null
       final List<Property> baseEntityProperties = new ArrayList<Property>();
-      final Property savedPath = new Property();
-      savedPath.setName(propertyPath);
-      baseEntityProperties.add(savedPath);
+      if (propertyPath != null) {
+        final Property savedPath = new Property();
+        savedPath.setName(propertyPath);
+        baseEntityProperties.add(savedPath);
+      }
       try {
         return getJSONResponse(baseEntityProperties, "", 0);
       } catch (JSONException e) {
