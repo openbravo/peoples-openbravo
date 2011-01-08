@@ -110,7 +110,7 @@ public class EntityAccessTest extends BaseTest {
    * Test derived readable on a set method, also there this check must be done.
    */
   public void testUpdateCurrencyDerivedRead() {
-    setUserContext(getRandomUser().getId());
+    setUserContext(TEST2_USER_ID);
     final Currency c = OBDal.getInstance().get(Currency.class, "100");
     try {
       c.setCostingPrecision((long) 5);
