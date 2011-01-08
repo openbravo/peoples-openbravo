@@ -61,6 +61,7 @@ public class ChildTabRecordCounterActionHandler extends BaseActionHandler {
       qryParameters.put(JsonConstants.NOCOUNT_PARAMETER, "false");
       qryParameters.put(JsonConstants.STARTROW_PARAMETER, "0");
       qryParameters.put(JsonConstants.ENDROW_PARAMETER, "" + Integer.MAX_VALUE);
+      qryParameters.put(JsonConstants.NO_ACTIVE_FILTER, "true");
 
       final JSONArray childTabList = dataObject.getJSONArray("tabs");
       final List<JSONObject> result = new ArrayList<JSONObject>();
