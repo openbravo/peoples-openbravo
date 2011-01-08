@@ -62,14 +62,19 @@
       var requestParameters = {};
       ISC.addProperties(requestParameters, requestParams);
       requestParameters._action = actionName;
-
       var rpcRequest = {};
+
+      // support overriding of the http method through a request param
+      if (requestParameters.httpMethod) {
+        rpcRequest.httpMethod = requestParameters.httpMethod;
+      }
+
       rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel';
       rpcRequest.callback = callback;
       if (data) {
         rpcRequest.data = ISC.JSON.encode(data);
         rpcRequest.httpMethod = 'POST';
-      } else {
+      } else if (!rpcRequest.httpMethod) {
         rpcRequest.httpMethod = 'GET';
       }
       rpcRequest.contentType = 'application/json;charset=UTF-8';
