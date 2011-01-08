@@ -52,6 +52,8 @@ isc.OBViewForm.addProperties({
   fieldsByInpColumnName: null,
   fieldsByColumnName: null,
   
+  isNew: false,
+  
   initWidget: function(){
     // iterate over the fields and set the datasource
     //    var field, i, fieldsNum = this.fields.length;
@@ -66,6 +68,7 @@ isc.OBViewForm.addProperties({
   },
   
   editRecord: function(record, preventFocus){
+    this.isNew = false;
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
@@ -81,6 +84,7 @@ isc.OBViewForm.addProperties({
   },
   
   editNewRecord: function(preventFocus){
+    this.isNew = true;
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
@@ -320,7 +324,7 @@ isc.OBViewForm.addProperties({
   },
   
   saveRow: function(){
-    var i, length, flds;
+    var i, length, flds, form = this;
     
     // disable the save
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
@@ -329,28 +333,34 @@ isc.OBViewForm.addProperties({
       //      console.log(data);
       //      console.log(resp.status);
       //      console.log(resp.errors);
-      var index1, index2, errorCode;
+      var index1, index2, errorCode, view = form.view;
       var status = resp.status;
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
-        this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
         // disable undo, enable delete
-        this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
-        this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
+        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
+        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
+        if (form.isNew) {
+          view.viewGrid.updateRowCountDisplay();
+        }
+        form.isNew = false;
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
-        this.handleFieldErrors(resp.errors);
+        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
+        form.handleFieldErrors(resp.errors);
       } else {
         if (isc.isA.String(data) && data.indexOf('@') !== -1) {
           index1 = data.indexOf('@');
           index2 = data.indexOf('@', index1 + 1);
           if (index2 !== -1) {
             errorCode = data.substring(index1 + 1, index2);
-            this.view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, errorCode);
+            view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, errorCode);
           } else {
-            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, data);
+            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, data);
           }
         } else {
-          this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, data);
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, data);
         }
+        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
       }
       
       return false;

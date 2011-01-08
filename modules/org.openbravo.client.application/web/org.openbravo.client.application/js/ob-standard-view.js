@@ -311,13 +311,24 @@ isc.OBStandardView.addProperties({
     isc.defineClass(obDsClassname, ds.getClass());
     
     var modifiedDs = isc.addProperties({}, ds, {
+      fetchData: function(criteria, callback, requestProperties){
+        var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
+        var additionalPara = {
+          _operationType: 'fetch',
+          _noActiveFilter: true
+        };
+        isc.addProperties(newRequestProperties.params, additionalPara);
+        return this.Super('fetchData', [criteria, callback, newRequestProperties]);
+      },
+      
       updateData: function(updatedRecord, callback, requestProperties){
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
-          _operationType: 'update'
+          _operationType: 'update',
+          _noActiveFilter: true
         };
-        isc.addProperties(requestProperties.params, additionalPara);
+        isc.addProperties(newRequestProperties.params, additionalPara);
         this.Super('updateData', [updatedRecord, callback, newRequestProperties]);
       },
       
@@ -325,9 +336,10 @@ isc.OBStandardView.addProperties({
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
-          _operationType: 'add'
+          _operationType: 'add',
+          _noActiveFilter: true
         };
-        isc.addProperties(requestProperties.params, additionalPara);
+        isc.addProperties(newRequestProperties.params, additionalPara);
         this.Super('addData', [updatedRecord, callback, newRequestProperties]);
       },
       
@@ -335,28 +347,35 @@ isc.OBStandardView.addProperties({
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
-          _operationType: 'remove'
+          _operationType: 'remove',
+          _noActiveFilter: true
         };
-        isc.addProperties(requestProperties.params, additionalPara);
+        isc.addProperties(newRequestProperties.params, additionalPara);
         this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
       },
       
       transformResponse: function(dsResponse, dsRequest, jsonData){
-        if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0) { //0 is success
-          if (jsonData.response && jsonData.response.error) {
-            var error = jsonData.response.error;
-            if (error.type && error.type === 'user') {
-              OB.KernelUtilities.handleUserException(error.message, error.params);
+        if (!dsRequest.willHandleError) {
+          if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0) { //0 is success
+            if (jsonData.response && jsonData.response.error) {
+              var error = jsonData.response.error;
+              if (error.type && error.type === 'user') {
+                OB.KernelUtilities.handleUserException(error.message, error.params);
+              } else {
+                OB.KernelUtilities.handleSystemException(error.message);
+              }
+            } else if (!dsRequest.willHandleError) {
+              OB.KernelUtilities.handleSystemException('Error occured');
+            } else if (dsResponse.status && dsResponse.status === isc.RPCResponse.STATUS_FAILURE) {
+              this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, jsonData.data);
             } else {
-              OB.KernelUtilities.handleSystemException(error.message);
+              this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
             }
-          } else if (!dsRequest.willHandleError) {
-            OB.KernelUtilities.handleSystemException('Error occured');
-          } else if (dsResponse.status && dsResponse.status === isc.RPCResponse.STATUS_FAILURE) {
-            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, jsonData.data);
-          } else {
-            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
           }
+        } else {
+          // there are some cases where the jsonData is not passed, in case of errors
+          // make it available through the response object
+          dsResponse.dataObject = jsonData;
         }
         return this.Super('transformResponse', arguments);
       },
@@ -692,6 +711,8 @@ isc.OBStandardView.addProperties({
   // child views also
   editRecord: function(record, preventFocus){
   
+    this.messageBar.hide();
+    
     if (!record) { //  new case
       this.viewGrid.deselectAllRecords();
       this.viewForm.editNewRecord(preventFocus);
@@ -890,7 +911,7 @@ isc.OBStandardView.addProperties({
     };
     
     var props = {};
-    this.getContextInfo({}, props);
+    this.getContextInfo({}, props, false);
     
     OB.RemoteCallManager.call('org.openbravo.client.application.ChildTabRecordCounterActionHandler', data, props, callback, null);
   },
@@ -949,12 +970,24 @@ isc.OBStandardView.addProperties({
     }
     
     var callback = function(ok){
-      var removeCallBack = function(resp, data, req){
-//        console.log(req);
-//        console.log(data);
-//        console.log(resp);
+      var error, removeCallBack = function(resp, data, req){
+        //        console.log(req);
+        //        console.log(data);
+        //        console.log(resp);
         if (resp.status === isc.RPCResponse.STATUS_SUCCESS) {
           view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
+          view.viewGrid.filterData(view.viewGrid.getCriteria());
+          view.viewGrid.updateRowCountDisplay();
+        } else {
+          // get the error message from the dataObject 
+          if (resp.dataObject && resp.dataObject.response && resp.dataObject.response.error && resp.dataObject.response.error.message) {
+            error = resp.dataObject.response.error;
+            if (error.type && error.type === 'user') {
+              view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
+            } else {
+              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [0]));
+            }
+          }
         }
       };
       
@@ -962,7 +995,7 @@ isc.OBStandardView.addProperties({
         var selection = view.viewGrid.getSelection().duplicate();
         // deselect the current records
         view.viewGrid.deselectAllRecords();
-
+        
         view.viewGrid.removeData(selection[0], removeCallBack, {
           willHandleError: true
         });
@@ -1051,6 +1084,11 @@ isc.OBStandardView.addProperties({
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
   getContextInfo: function(allProperties, sessionProperties, classicMode){
+    // if classicmode is undefined then both classic and new props are used
+    var classicModeUndefined = (typeof classicMode === 'undefined');
+    if (classicModeUndefined) {
+      classicMode = true;
+    }
     var value, field, record, component;
     // different modes:
     // 1) showing grid with one record selected
@@ -1077,17 +1115,19 @@ isc.OBStandardView.addProperties({
         value = record[properties[i].property];
         field = component.getField(properties[i].property);
         if (typeof value !== 'undefined') {
-          if (classicMode) {
+          if (classicMode || classicModeUndefined) {
             allProperties[properties[i].column] = value;
-          } else {
+          }
+          if (!classicMode || classicModeUndefined) {
             // surround the property name with @ symbols to make them different
             // from filter criteria and such          
             allProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
           }
           if (properties[i].sessionProperty) {
-            if (classicMode) {
+            if (classicMode || classicModeUndefined) {
               sessionProperties[properties[i].dbColumn] = value;
-            } else {
+            }
+            if (!classicMode || classicModeUndefined) {
               sessionProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
             }
           }
