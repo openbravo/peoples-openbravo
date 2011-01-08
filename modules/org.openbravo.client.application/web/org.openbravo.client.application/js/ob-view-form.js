@@ -147,22 +147,26 @@ isc.OBViewForm.addProperties({
   },
   
   retrieveInitialValues: function(isNew){
-    var parentId = null, me = this, mode;
-    if (this.view.parentProperty) {
-      parentId = this.getValue(this.view.parentProperty);
-    }
+    var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
+    
     if (isNew) {
       mode = 'NEW';
     } else {
       mode = 'EDIT';
     }
     
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, {
+    requestParams = {
       MODE: mode,
       PARENT_ID: parentId,
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID)
-    }, function(response, data, request){
+    };
+    if (parentId && isNew) {
+      parentColumn = this.getField(this.view.parentProperty).inpColumnName;
+      requestParams[parentColumn] = parentId;
+    }
+    
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
     });
   },

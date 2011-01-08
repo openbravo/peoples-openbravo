@@ -866,6 +866,13 @@ isc.OBStandardView.addProperties({
     }
   },
   
+  getParentId: function() {
+    if (!this.parentView || !this.parentView.viewGrid.getSelectedRecord()) {
+      return null;
+    }
+    return this.parentView.viewGrid.getSelectedRecord()[OB.Constants.ID];
+  },
+  
   updateChildCount: function(){
     if (!this.childTabSet) {
       return;
