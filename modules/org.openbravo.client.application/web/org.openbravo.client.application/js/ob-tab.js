@@ -25,7 +25,9 @@ isc.ClassFactory.defineClass('OBTabSetChild', isc.OBTabSet);
 
 isc.OBTabSetChild.addProperties({
   initWidget: function() {
-    this.initWidgetStyle();
+    if (this.initWidgetStyle) {
+      this.initWidgetStyle();
+    }
     this.Super('initWidget', arguments);
   }
 });
@@ -34,7 +36,9 @@ isc.ClassFactory.defineClass('OBTabBarChild', isc.OBTabBar);
 
 isc.OBTabBarChild.addProperties({
   initWidget: function() {
-    this.initWidgetStyle();
+    if (this.initWidgetStyle) {
+      this.initWidgetStyle();
+    }
     this.Super('initWidget', arguments);
   }
 });
