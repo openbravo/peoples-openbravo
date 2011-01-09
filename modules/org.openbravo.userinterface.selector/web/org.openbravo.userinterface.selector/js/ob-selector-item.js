@@ -491,6 +491,9 @@ isc.OBSelectorLinkItem.addProperties({
       if (item.required) {
         return false;
       }
+      if (form && form.view && form.view.readOnly) {
+        return false;
+      }
       if (item.getValue()) {
         return true;
       }
