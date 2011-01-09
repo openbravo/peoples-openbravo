@@ -340,7 +340,6 @@ public class FormInitializationComponent extends BaseActionHandler {
           finalObject.put("readonlylogic", readonlylogics);
         }
 
-        // determine if the whole form should be opened in readonly mode
         if (mode.equals("EDIT") && row != null) {
           final String rowClientId = ((ClientEnabled) row).getClient().getId();
           final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
