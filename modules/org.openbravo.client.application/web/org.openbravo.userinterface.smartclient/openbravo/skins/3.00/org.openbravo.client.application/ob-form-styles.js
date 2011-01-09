@@ -49,10 +49,16 @@ isc.OBSearchItem.addProperties({
   pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
     height: 15,
-    width: 15,
+    width: 15,    
+    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',
+    
     // note: TODO: show a helpfull text, need to be present in the messages table
     //prompt: 'test',
+    // TODO: display logic in styling is not nice but it is the best option I guess
     showIf: function(form, item){
+      if (form && form.view && form.view.readOnly) {
+        return false;
+      }
       if (item.disabled) {
         return false;
       }
@@ -67,9 +73,7 @@ isc.OBSearchItem.addProperties({
     
     click: function() {
       this.formItem.clearValue();
-    },
-    
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png'
+    }
   },
   newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8

@@ -27,6 +27,9 @@ isc.OBStandardWindow.addProperties({
   
   focusedView: null,
   
+  readOnlyTabDefinition: null,
+  views: [],
+  
   initWidget: function(){
     var standardWindow = this;
     
@@ -39,13 +42,40 @@ isc.OBStandardWindow.addProperties({
     this.addMember(this.toolBarLayout);
     
     this.viewProperties.standardWindow = this;
-    
     this.view = isc.OBStandardView.create(this.viewProperties);
+    this.addView(this.view);
     this.addMember(this.view);
+    
     this.Super('initWidget', arguments);
     
     // is set later after creation
     this.view.tabTitle = this.tabTitle;
+    
+    // compute the tab definition
+    if (!this.getClass().readOnlyTabDefinition) {
+      OB.RemoteCallManager.call('org.openbravo.client.application.ReadOnlyTabComputationActionHandler', null, {
+        windowId: this.windowId
+      }, function(response, data, request){
+        standardWindow.setReadOnlyTabDefinition(data);
+      });
+    }
+  },
+  
+  setReadOnlyTabDefinition: function(data){
+    this.getClass().readOnlyTabDefinition = data;
+    // set the views to readonly
+    for (var i = 0; i < this.views.length; i++) {
+      this.views[i].setReadOnly(data[this.views[i].tabId]);
+    }
+  },
+  
+  addView: function(view){
+    view.standardWindow = this;
+    this.views.push(view);
+    this.toolBarLayout.addMember(view.toolBar);
+    if (this.getClass().readOnlyTabDefinition) {
+      view.setReadOnly(this.getClass().readOnlyTabDefinition[view.tabId]);
+    }
   },
   
   show: function(){
@@ -249,6 +279,8 @@ isc.OBStandardView.addProperties({
   // is selected.
   allowDefaultEditMode: true,
   
+  readOnly: false,
+  
   initWidget: function(properties){
     var isRootView = !this.parentProperty;
     
@@ -272,10 +304,6 @@ isc.OBStandardView.addProperties({
         title: 'Button A'
       })]
     });
-    
-    if (isRootView) {
-      this.standardWindow.toolBarLayout.addMember(this.toolBar);
-    }
     
     this.Super('initWidget', arguments);
   },
@@ -355,22 +383,24 @@ isc.OBStandardView.addProperties({
       },
       
       transformResponse: function(dsResponse, dsRequest, jsonData){
-        if (!dsRequest.willHandleError) {
-          if (!jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== 0) { //0 is success
-            if (jsonData.response && jsonData.response.error) {
-              var error = jsonData.response.error;
-              if (error.type && error.type === 'user') {
-                OB.KernelUtilities.handleUserException(error.message, error.params);
-              } else {
-                OB.KernelUtilities.handleSystemException(error.message);
-              }
+        var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
+        if (errorStatus) {
+          if (jsonData.response && jsonData.response.error) {
+            var error = jsonData.response.error;
+            if (error.type && error.type === 'user') {
+              dsRequest.willHandleError = true;
+              this.view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
             } else if (!dsRequest.willHandleError) {
-              OB.KernelUtilities.handleSystemException('Error occured');
-            } else if (dsResponse.status && dsResponse.status === isc.RPCResponse.STATUS_FAILURE) {
-              this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, jsonData.data);
-            } else {
-              this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+              OB.KernelUtilities.handleSystemException(error.message);
             }
+          } else if (!dsRequest.willHandleError) {
+            OB.KernelUtilities.handleSystemException('Error occured');
+          } else if (dsResponse.status && dsResponse.status === isc.RPCResponse.STATUS_FAILURE) {
+            dsRequest.willHandleError = true;
+            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, jsonData.data);
+          } else {
+            dsRequest.willHandleError = true;
+            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
           }
         } else {
           // there are some cases where the jsonData is not passed, in case of errors
@@ -517,8 +547,7 @@ isc.OBStandardView.addProperties({
   // this
   // parent.
   addChildView: function(childView){
-    childView.standardWindow = this.standardWindow;
-    this.standardWindow.toolBarLayout.addMember(childView.toolBar);
+    this.standardWindow.addView(childView);
     
     childView.parentView = this;
     childView.parentTabSet = this.childTabSet;
@@ -539,6 +568,17 @@ isc.OBStandardView.addProperties({
     
     OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
     
+  },
+  
+  setReadOnly: function(readOnly){
+    this.readOnly = readOnly;
+    if (readOnly) {
+      this.viewForm.disable();
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
+    }
   },
   
   setViewFocus: function(){
@@ -827,6 +867,9 @@ isc.OBStandardView.addProperties({
     // clear all our selections..
     this.viewGrid.deselectAllRecords();
     
+    // hide the messagebar
+    this.messageBar.hide();
+    
     // allow default edit mode again
     this.allowDefaultEditMode = true;
     
@@ -1043,7 +1086,9 @@ isc.OBStandardView.addProperties({
           }
           OB.RemoteCallManager.call('org.openbravo.client.application.MultipleDeleteActionHandler', deleteData, {
             willHandleError: true
-          }, removeCallBack, {refreshGrid: true});
+          }, removeCallBack, {
+            refreshGrid: true
+          });
         } else {
           view.viewGrid.removeData(selection[0], removeCallBack, {
             willHandleError: true

@@ -74,8 +74,8 @@ isc.OBViewForm.addProperties({
     this.ignoreFirstFocusEvent = preventFocus;
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, false);
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, this.view.readOnly || false);
+    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, this.view.readOnly || false);
     
     this.resetFocusItem();
     var ret = this.Super('editRecord', arguments);
@@ -203,9 +203,8 @@ isc.OBViewForm.addProperties({
     if (dynamicCols) {
       this.dynamicCols = dynamicCols;
     }
-    if (!data.writable) {
+    if (!data.writable || this.view.readOnly) {
       this.disable();
-      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, true);
       this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
       this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
       this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
