@@ -985,7 +985,7 @@ isc.OBStandardView.addProperties({
         var criteria = [];
         criteria[OB.Constants.ID] = view.viewGrid.getSelectedRecord()[OB.Constants.ID];
         view.viewForm.fetchData(criteria, refreshCallback);
-       }
+      }
     }
   },
   
@@ -1002,13 +1002,16 @@ isc.OBStandardView.addProperties({
     }
     
     var callback = function(ok){
-      var error, removeCallBack = function(resp, data, req){
+      var i, data, error, removeCallBack = function(resp, data, req){
         //        console.log(req);
         //        console.log(data);
         //        console.log(resp);
         if (resp.status === isc.RPCResponse.STATUS_SUCCESS) {
           if (!view.viewGrid.isVisible()) {
             view.switchFormGridVisibility();
+            if (resp.clientContext && resp.clientContext.refreshGrid) {
+              view.viewGrid.filterData();
+            }
           }
           view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
           view.viewGrid.filterData(view.viewGrid.getCriteria());
@@ -1031,9 +1034,21 @@ isc.OBStandardView.addProperties({
         // deselect the current records
         view.viewGrid.deselectAllRecords();
         
-        view.viewGrid.removeData(selection[0], removeCallBack, {
-          willHandleError: true
-        });
+        if (selection.length > 1) {
+          var deleteData = {};
+          deleteData.entity = view.entity;
+          deleteData.ids = [];
+          for (i = 0; i < selection.length; i++) {
+            deleteData.ids.push(selection[i][OB.Constants.ID]);
+          }
+          OB.RemoteCallManager.call('org.openbravo.client.application.MultipleDeleteActionHandler', deleteData, {
+            willHandleError: true
+          }, removeCallBack, {refreshGrid: true});
+        } else {
+          view.viewGrid.removeData(selection[0], removeCallBack, {
+            willHandleError: true
+          });
+        }
       }
     };
     isc.ask(msg, callback);

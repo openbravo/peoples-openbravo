@@ -404,38 +404,6 @@ isc.OBViewGrid.addProperties({
     return criteria;
   },
   
-  // determine which field can be autoexpanded to use extra space  
-  getAutoFitExpandField: function(){
-    for (var i = 0; i < this.fields.length; i++) {
-      var field = this.fields[i];
-      if (field.autoExpand) {
-        return field;
-      }
-    }
-    return this.Super('getAutoFitExpandField', arguments);
-  },
-  
-  recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
-    var me = this, EH = isc.EventHandler;
-    if (EH.isMouseEvent(EH.getEventType())) {
-      record._dblClickWaiting = true;
-      isc.Timer.setTimeout(function(){
-        // if no double click happened then do the single click
-        if (record._dblClickWaiting) {
-          record._dblClickWaiting = false;
-          me.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
-        }
-      }, OB.Constants.DBL_CLICK_DELAY);
-    } else {
-      me.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
-    }
-  },
-  
-  recordDoubleClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
-    record._dblClickWaiting = false;
-    this.view.editRecord(record);
-  },
-  
   convertCriteria: function(criteria){
     criteria = criteria || {};
     
@@ -489,6 +457,38 @@ isc.OBViewGrid.addProperties({
     this.view.getContextInfo({}, criteria, false);
     
     return criteria;
+  },
+  
+  // determine which field can be autoexpanded to use extra space  
+  getAutoFitExpandField: function(){
+    for (var i = 0; i < this.fields.length; i++) {
+      var field = this.fields[i];
+      if (field.autoExpand) {
+        return field;
+      }
+    }
+    return this.Super('getAutoFitExpandField', arguments);
+  },
+  
+  recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
+    var me = this, EH = isc.EventHandler;
+    if (EH.isMouseEvent(EH.getEventType())) {
+      record._dblClickWaiting = true;
+      isc.Timer.setTimeout(function(){
+        // if no double click happened then do the single click
+        if (record._dblClickWaiting) {
+          record._dblClickWaiting = false;
+          me.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
+        }
+      }, OB.Constants.DBL_CLICK_DELAY);
+    } else {
+      me.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
+    }
+  },
+  
+  recordDoubleClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
+    record._dblClickWaiting = false;
+    this.view.editRecord(record);
   },
   
   //+++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++
