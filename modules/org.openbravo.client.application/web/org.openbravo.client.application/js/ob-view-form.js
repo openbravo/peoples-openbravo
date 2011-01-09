@@ -203,6 +203,15 @@ isc.OBViewForm.addProperties({
     if (dynamicCols) {
       this.dynamicCols = dynamicCols;
     }
+    if (!data.writable) {
+      this.disable();
+      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, true);
+      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
+      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
+      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
+    } else {
+      this.setDisabled(false);
+    }
   },
   
   processColumnValue: function(columnName, columnValue){

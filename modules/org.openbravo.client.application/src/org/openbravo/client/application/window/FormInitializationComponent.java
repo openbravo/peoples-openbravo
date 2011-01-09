@@ -43,6 +43,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -338,6 +339,28 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
           finalObject.put("readonlylogic", readonlylogics);
         }
+
+        // determine if the whole form should be opened in readonly mode
+        if (mode.equals("EDIT") && row != null) {
+          final String rowClientId = ((ClientEnabled) row).getClient().getId();
+          final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
+          if (!rowClientId.equals(currentClientId)) {
+            finalObject.put("writable", false);
+          } else {
+            boolean writable = false;
+            final String userOrgId = OBContext.getOBContext().getCurrentOrganization().getId();
+            for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
+              if (orgId.equals(userOrgId)) {
+                writable = true;
+                break;
+              }
+            }
+            finalObject.put("writable", writable);
+          }
+        } else {
+          finalObject.put("writable", true);
+        }
+
         log.debug(finalObject.toString(1));
         log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime));
         return finalObject;
