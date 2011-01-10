@@ -453,8 +453,8 @@ isc.OBViewGrid.addProperties({
       criteria[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     }
     
-    // add all the context info to the criteria
-    this.view.getContextInfo({}, criteria, false);
+    // add all the new session properties context info to the criteria
+    isc.addProperties(criteria, this.view.getContextInfo(true, false));
     
     return criteria;
   },

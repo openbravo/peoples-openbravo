@@ -295,15 +295,11 @@ isc.OBViewForm.addProperties({
   },
   
   doChangeFICCall: function(item){
-    var parentId = null, me = this, requestParams, dataParams;
-    var allProperties = {}, sessionProperties = {};
+    var parentId = null, me = this, requestParams, allPropertes = theView.getContextInfo(false, true);
     
     if (this.view.parentProperty) {
       parentId = this.getValue(this.view.parentProperty);
     }
-    
-    // fills the allProperties    
-    this.view.getContextInfo(allProperties, sessionProperties, true);
     
     requestParams = {
       MODE: 'CHANGE',
@@ -312,10 +308,9 @@ isc.OBViewForm.addProperties({
       ROW_ID: this.getValue(OB.Constants.ID),
       CHANGED_COLUMN: item.inpColumnName
     };
-    dataParams = isc.addProperties({}, allProperties, sessionProperties);
-    
+
     // collect the context information    
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', dataParams, requestParams, function(response, data, request){
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
     });
   },

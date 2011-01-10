@@ -847,9 +847,9 @@ OB.Utilities.openActionButton = function(button, o){
     return;
   }
   
-  var allProperties = {}, sessionProperties = {};
+  var allProperties = theView.getContextInfo(false, true);
+  var sessionProperties = theView.getContextInfo(true, true);
   
-  theView.getContextInfo(allProperties, sessionProperties, true);
   OB.Utilities.viewCallingProcess = theView;
   
   for (var param in allProperties) {
@@ -872,15 +872,22 @@ OB.Utilities.openActionButtonCallback = function(button, o){
     return;
   }
   
-  var allProperties = {}, sessionProperties = {};
-  var params = theView.getContextInfo(allProperties, sessionProperties, true);
-  
+  // TODO: this has to be checked, these variables are not used?
+  var allProperties = theView.getContextInfo(false, true); 
+  var sessionProperties = theView.getContextInfo(true, true);
+  // this was old code, but this could not have worked
+//    var params = theView.getContextInfo(allProperties, sessionProperties, true);
+
   for (var param in params) {
     if (params.hasOwnProperty(param)) {
       o.command += '&' + param + '=' + params[param];
     }
   }
-  
+    
+  theView.setContextInfo(sessionProperties, function(){
+    OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
+  });
+
   OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
 };
 

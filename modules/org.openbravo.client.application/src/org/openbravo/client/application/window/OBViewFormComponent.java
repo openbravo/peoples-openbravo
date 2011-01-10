@@ -159,6 +159,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public long getRowSpan();
 
+    public boolean isReadOnly();
+
     public boolean isParentProperty();
   }
 
@@ -168,6 +170,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private String label;
     private UIDefinition uiDefinition;
     private Boolean isParentProperty = null;
+
+    public boolean isReadOnly() {
+      return isParentProperty() || !property.isUpdatable();
+    }
 
     public boolean isParentProperty() {
       if (isParentProperty == null) {
@@ -319,6 +325,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return "";
     }
 
+    public boolean isReadOnly() {
+      return false;
+    }
+
     public boolean isParentProperty() {
       return false;
     }
@@ -400,6 +410,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getEndRow() {
       return "false";
+    }
+
+    public boolean isReadOnly() {
+      return false;
     }
 
     public boolean isParentProperty() {

@@ -960,5 +960,12 @@ isc.FormItem.addProperties({
     }
     this._hasChanged = false;
     return this.Super('blur', arguments);
+  },
+  
+  isDisabled: function() {
+    if (this.readOnly) {
+      return true;
+    }
+    return this.Super('isDisabled', arguments);
   }
 });

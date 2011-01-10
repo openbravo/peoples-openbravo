@@ -104,6 +104,7 @@ isc.OBStandardWindow.addProperties({
     if (this.activeView && !this.activeView.viewGrid.isVisible()) {
       this.activeView.viewForm.autoSave(null, true);
     }
+    this.wasDeselected = true;
   },
   
   closeClick: function(tab, tabSet){
@@ -164,10 +165,22 @@ isc.OBStandardWindow.addProperties({
   },
   
   doHandleClick: function(){
+    // happens when we are getting selected
+    // then don't change state
+    if (this.wasDeselected) {
+      this.wasDeselected = false;
+      return;
+    }
     this.view.doHandleClick();
   },
   
   doHandleDoubleClick: function(){
+    // happens when we are getting selected
+    // then don't change state
+    if (this.wasDeselected) {
+      this.wasDeselected = false;
+      return;
+    }
     this.view.doHandleDoubleClick();
   },
   
@@ -388,7 +401,7 @@ isc.OBStandardView.addProperties({
       view: this,
       
       fetchData: function(criteria, callback, requestProperties){
-//        isc.Dialog.Prompt.modalTarget = this.view.standardWindow;
+        //        isc.Dialog.Prompt.modalTarget = this.view.standardWindow;
         
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         var additionalPara = {
@@ -400,7 +413,7 @@ isc.OBStandardView.addProperties({
       },
       
       updateData: function(updatedRecord, callback, requestProperties){
-        
+      
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -412,7 +425,7 @@ isc.OBStandardView.addProperties({
       },
       
       addData: function(updatedRecord, callback, requestProperties){
-        
+      
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -424,7 +437,7 @@ isc.OBStandardView.addProperties({
       },
       
       removeData: function(updatedRecord, callback, requestProperties){
-        
+      
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -437,7 +450,7 @@ isc.OBStandardView.addProperties({
       
       transformResponse: function(dsResponse, dsRequest, jsonData){
       
-//        isc.Dialog.Prompt.modalTarget = null;
+        //        isc.Dialog.Prompt.modalTarget = null;
         
         var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
         if (errorStatus) {
@@ -770,7 +783,7 @@ isc.OBStandardView.addProperties({
       this.viewForm.clearErrors();
       this.viewForm.clearValues();
       this.viewForm.rememberValues();
-            
+      
       this.viewGrid.show();
       this.viewGrid.setHeight('100%');
     }
@@ -848,7 +861,7 @@ isc.OBStandardView.addProperties({
       return;
     }
     this.viewGrid.scrollRecordToTop(newRowNum);
-    this.editRecord(newRecord);    
+    this.editRecord(newRecord);
   },
   
   // check if a child tab should be opened directly
@@ -1051,8 +1064,7 @@ isc.OBStandardView.addProperties({
       }
     };
     
-    var props = {};
-    this.getContextInfo({}, props, false);
+    var props = this.getContextInfo(true, false);
     
     OB.RemoteCallManager.call('org.openbravo.client.application.ChildTabRecordCounterActionHandler', data, props, callback, null);
   },
@@ -1285,7 +1297,8 @@ isc.OBStandardView.addProperties({
   
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
-  getContextInfo: function(allProperties, sessionProperties, classicMode){
+  getContextInfo: function(onlySessionProperties, classicMode){
+    var contextInfo = {}, addProperty;
     // if classicmode is undefined then both classic and new props are used
     var classicModeUndefined = (typeof classicMode === 'undefined');
     if (classicModeUndefined) {
@@ -1316,47 +1329,35 @@ isc.OBStandardView.addProperties({
       for (var i = 0; i < properties.length; i++) {
         value = record[properties[i].property];
         field = component.getField(properties[i].property);
-        if (typeof value !== 'undefined') {
-          if (classicMode || classicModeUndefined) {
-            allProperties[properties[i].column] = value;
-          }
-          if (!classicMode || classicModeUndefined) {
+        addProperty = properties[i].sessionProperty || onlySessionProperties;
+        if (typeof value !== 'undefined' && addProperty) {
+          if (classicMode) {
+            contextInfo[properties[i].column] = value;
+          } else {
             // surround the property name with @ symbols to make them different
             // from filter criteria and such          
-            allProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
-          }
-          if (properties[i].sessionProperty) {
-            if (classicMode || classicModeUndefined) {
-              sessionProperties[properties[i].dbColumn] = value;
-            }
-            if (!classicMode || classicModeUndefined) {
-              sessionProperties['@' + this.entity + '.' + properties[i].property + '@'] = value;
-            }
+            contextInfo['@' + this.entity + '.' + properties[i].property + '@'] = value;
           }
         }
       }
     }
     if (this.viewForm.isVisible()) {
-      isc.addProperties(allProperties, this.viewForm.auxInputs);
-      isc.addProperties(allProperties, this.viewForm.hiddenInputs);
-      isc.addProperties(sessionProperties, this.viewForm.auxInputs);
-      isc.addProperties(sessionProperties, this.viewForm.hiddenInputs);
+      isc.addProperties(contextInfo, this.viewForm.auxInputs);
+      isc.addProperties(contextInfo, this.viewForm.hiddenInputs);
     }
     
     if (this.parentView) {
-      this.parentView.getContextInfo(allProperties, sessionProperties, classicMode);
+      isc.addProperties(contextInfo, this.parentView.getContextInfo(onlySessionProperties, classicMode));
     }
   },
   
   setContextInfo: function(sessionProperties, callbackFunction){
-    var allProperties = {};
     if (!sessionProperties) {
-      sessionProperties = {};
-      this.getContextInfo(allProperties, sessionProperties, true);
+      sessionProperties = this.getContextInfo(true, true);
     }
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',
-      TAB_ID: this.tabId,
+      TAB_ID: this.viewGrid.view.tabId,
       ROW_ID: this.viewGrid.getSelectedRecord().id
     }, callbackFunction);
   }
@@ -1491,6 +1492,9 @@ isc.OBStandardViewTabSet.addProperties({
       // first set to IN_MID, to prevent empty tab displays
       this.setState(isc.OBStandardView.STATE_IN_MID);
       this.setState(isc.OBStandardView.STATE_TOP_MAX);
+    }
+    if (this.getSelectedTab()) {
+      this.getSelectedTab().pane.setAsActiveView();
     }
   },
   
