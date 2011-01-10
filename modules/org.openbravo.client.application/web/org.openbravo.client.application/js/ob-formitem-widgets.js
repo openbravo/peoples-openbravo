@@ -103,7 +103,7 @@ isc.OBSearchItem.addProperties({
     this.instanceClearIcon = isc.shallowClone(this.clearIcon);
     this.instanceClearIcon.formItem = this;
     
-    this.instanceClearIcon.showIf= function(form, item){
+    this.instanceClearIcon.showIf = function(form, item){
       if (item.disabled) {
         return false;
       }
@@ -123,7 +123,7 @@ isc.OBSearchItem.addProperties({
       this.formItem.setValue(null);
       this.formItem.form.itemChangeActions();
     };
-
+    
     this.icons = [this.instanceClearIcon];
     
     return this.Super('init', arguments);
@@ -278,7 +278,7 @@ isc.OBSectionItem.addProperties({
   showDisabled: false,
   
   // never disable a section item
-  isDisabled: function() {
+  isDisabled: function(){
     return false;
   }
 });
@@ -739,7 +739,7 @@ isc.OBNumberItem.addProperties({
     var newValidators = [];
     // get rid of the isFloat validators, as we have 
     // specific validation based on the format definition
-    for (var i =0; i < this.validators.length; i++) {
+    for (var i = 0; i < this.validators.length; i++) {
       if (this.validators[i].type !== 'isFloat') {
         newValidators.push(this.validators[i]);
       }
@@ -754,7 +754,7 @@ isc.OBNumberItem.addProperties({
   getMaskNumeric: function(){
     return this.typeInstance.maskNumeric;
   },
-
+  
   getDecSeparator: function(){
     return this.typeInstance.decSeparator;
   },
@@ -778,7 +778,7 @@ isc.OBNumberItem.addProperties({
   },
   
   // focus changes the formatted value to one without grouping
-  focusNumberInput: function(){    
+  focusNumberInput: function(){
     var oldCaretPosition = 0;
     if (this.getSelectionRange()) {
       oldCaretPosition = this.getSelectionRange()[0];
@@ -850,12 +850,12 @@ isc.OBNumberItem.addProperties({
     }
     return true;
   },
-    
+  
   keyDown: function(item, form, keyName){
     var keyCode = OB.Utilities.getKeyCode();
     this.manageDecPoint(keyCode);
   },
-
+  
   validateOBNumberItem: function(){
     var value = this.getElementValue();
     var isValid = this.valueValidator.condition(this, this.form, value);
@@ -884,7 +884,7 @@ isc.OBNumberItem.addProperties({
     return this.Super('focus', arguments);
   },
   
-  handleEditorExit: function() {
+  handleEditorExit: function(){
     var ret = this.Super('handleEditorExit', arguments);
     return ret;
   },
@@ -911,10 +911,10 @@ isc.OBNumberItem.addProperties({
       
       
       // return a formatted value, if it was valid
-      if (isc.isA.String(value)) {        
+      if (isc.isA.String(value)) {
         if (OB.Utilities.Number.IsValidValueString(type, value)) {
           this.resultingValue = OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
-          return true; 
+          return true;
         } else {
           return false;
         }
@@ -954,18 +954,22 @@ isc.FormItem.addProperties({
     }
   },
   
-  blur: function(form, item){
-    if (form && form.handleItemChange) {
-      form.handleItemChange(this);
-    }
-    this._hasChanged = false;
-    return this.Super('blur', arguments);
-  },
-  
-  isDisabled: function() {
-    if (this.readOnly) {
-      return true;
-    }
-    return this.Super('isDisabled', arguments);
+  init: function(){
+    this._originalIsDisabled = this.isDisabled;
+    this.isDisabled = function(){
+      if (this.readOnly) {
+        return true;
+      }
+      return this._originalIsDisabled();
+    };
+    
+    this._originalBlur = this.blur;
+    this.blur = function(form, item){
+      if (form && form.handleItemChange) {
+        form.handleItemChange(this);
+      }
+      this._hasChanged = false;
+      return this._originalBlur(form, item);
+    };
   }
 });
