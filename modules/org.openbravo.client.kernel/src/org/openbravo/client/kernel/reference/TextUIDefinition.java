@@ -36,4 +36,9 @@ public class TextUIDefinition extends StringUIDefinition {
   public String getFormEditorType() {
     return "OBTextAreaItem";
   }
+
+  @Override
+  public String getFilterEditorType() {
+    return "OBText";
+  }
 }
