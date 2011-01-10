@@ -176,7 +176,7 @@ OB.MainView.TabSet = isc.TabSet.create({
     if (tab.pane && tab.pane.closeClick) {
       tab.pane.closeClick(tab, this);
     } else {
-      doCloseClick(tab);
+      this.doCloseClick(tab);
     }   
   },
   
