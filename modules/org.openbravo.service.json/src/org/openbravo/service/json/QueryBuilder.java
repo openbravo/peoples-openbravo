@@ -390,12 +390,14 @@ public class QueryBuilder {
       orderByClause = "";
       return orderByClause;
     }
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder(" order by ");
+    boolean firstElement = true;
     for (String localOrderBy : orderBy.split(",")) {
-      if (sb.length() > 0) {
+      if (!firstElement) {
         sb.append(",");
       }
       sb.append(getOrderByClausePart(localOrderBy.trim()));
+      firstElement = false;
     }
     orderByClause = sb.toString();
     return orderByClause;
@@ -452,7 +454,7 @@ public class QueryBuilder {
       paths.add(localOrderBy);
     }
 
-    final StringBuilder sb = new StringBuilder(" order by ");
+    final StringBuilder sb = new StringBuilder();
     boolean addComma = false;
     for (String path : paths) {
       if (addComma) {
