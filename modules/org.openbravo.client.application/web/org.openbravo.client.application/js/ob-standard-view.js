@@ -1349,6 +1349,8 @@ isc.OBStandardView.addProperties({
     if (this.parentView) {
       isc.addProperties(contextInfo, this.parentView.getContextInfo(onlySessionProperties, classicMode));
     }
+    
+    return contextInfo;
   },
   
   setContextInfo: function(sessionProperties, callbackFunction){
