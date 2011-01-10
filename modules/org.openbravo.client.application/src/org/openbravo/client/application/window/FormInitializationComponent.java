@@ -206,6 +206,11 @@ public class FormInitializationComponent extends BaseActionHandler {
               RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
                   parentId);
               value = uiDef.getFieldProperties(field, true);
+            } else if (field.getColumn().getDBColumnName().equalsIgnoreCase("IsActive")) {
+              // The Active column is always set to 'true' on new records
+              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
+                  "Y");
+              value = uiDef.getFieldProperties(field, true);
             } else {
               // Else, the default is used
               value = uiDef.getFieldProperties(field, false);
