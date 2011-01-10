@@ -159,6 +159,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       HashMap<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
       computeListOfColumnsSortedByValidationDependencies(tab, allColumns, columnsInValidation,
           changeEventCols);
+      boolean forceComboReload = (mode.equals("CHANGE") && changedColumn == null);
 
       // Computation of the Auxiliary Input values
       OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
@@ -216,7 +217,8 @@ public class FormInitializationComponent extends BaseActionHandler {
               value = uiDef.getFieldProperties(field, false);
             }
           } else if (mode.equals("EDIT")
-              || (mode.equals("CHANGE") && changeEventCols.contains(changedColumn))) {
+              || (mode.equals("CHANGE") && (forceComboReload || changeEventCols
+                  .contains(changedColumn)))) {
             // On EDIT mode, the values are computed through the UIDefinition (the values have been
             // previously set in the RequestContext)
             // This is also done this way on CHANGE mode where a combo reload is needed
