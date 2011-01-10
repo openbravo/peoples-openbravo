@@ -59,7 +59,7 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
 
   /**
    * @return a set of global resources
-   * @see org.openbravo.client.kernel.ComponentProvider#getGlobalResources()
+   * @see org.openbravo.client.kernel.ComponentProvider#getGlobalComponentResources()
    */
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();

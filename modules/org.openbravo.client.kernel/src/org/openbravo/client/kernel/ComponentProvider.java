@@ -57,6 +57,7 @@ public interface ComponentProvider {
    * @return the global resources which are needed to be present on every page.
    * @deprecated implement getGlobalComponentResources
    */
+  @Deprecated
   public List<String> getGlobalResources();
 
   /**

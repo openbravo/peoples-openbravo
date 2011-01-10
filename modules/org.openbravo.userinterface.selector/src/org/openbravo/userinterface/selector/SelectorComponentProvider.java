@@ -53,7 +53,7 @@ public class SelectorComponentProvider extends BaseComponentProvider {
 
   /**
    * @return an empty String (no global resources)
-   * @see org.openbravo.client.kernel.ComponentProvider#getGlobalResources()
+   * @see org.openbravo.client.kernel.ComponentProvider#getGlobalComponentResources()
    */
   public List<ComponentResource> getGlobalComponentResources() {
     final ArrayList<ComponentResource> resources = new ArrayList<ComponentResource>();
