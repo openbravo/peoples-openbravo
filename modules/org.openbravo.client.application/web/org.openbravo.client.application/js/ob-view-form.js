@@ -439,9 +439,9 @@ isc.OBViewForm.addProperties({
       }
       
       // an error occured, show a popup
-      if (autoSave && status !== isc.RPCResponse.STATUS_SUCCESS) {
+      if (status !== isc.RPCResponse.STATUS_SUCCESS) {
         // if there is an action, ask for confirmation
-        if (action) {
+        if (action && autoSave) {
           this.autoSaveConfirmAction(action);
         } else if (!view.isVisible() || forceDialogOnFailure) {
           isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [view.tabTitle]));
@@ -455,7 +455,7 @@ isc.OBViewForm.addProperties({
     // done by calling showErrors without the third parameter to true
     if (!this.validate()) {
       this.handleFieldErrors(null, autoSave);
-      if (autoSave && !form.view.isVisible() || forceDialogOnFailure) {
+      if (!form.view.isVisible() || forceDialogOnFailure) {
         isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [this.view.tabTitle]));
       } else if (action) {
         this.autoSaveConfirmAction(action);

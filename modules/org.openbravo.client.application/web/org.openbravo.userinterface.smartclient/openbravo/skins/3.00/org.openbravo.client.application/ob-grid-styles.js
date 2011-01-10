@@ -42,7 +42,14 @@ isc.OBGrid.addProperties({
   summaryRowHeight: 22,
   summaryRowStyle: 'OBGridSummaryCell',
   summaryRowStyle_sum: 'OBGridSummaryCell_sum',
-  summaryRowStyle_avg: 'OBGridSummaryCell_avg'
+  summaryRowStyle_avg: 'OBGridSummaryCell_avg',
+  
+  progressIconDefaults: {
+      width: 16,
+      height: 16,
+      visibility: 'hidden',
+      src: '[SKIN]/../../org.openbravo.client.application/images/system/progress-indicator-icon.gif'
+  }
 });
 
 isc.OBGrid.changeDefaults('filterEditorDefaults', {

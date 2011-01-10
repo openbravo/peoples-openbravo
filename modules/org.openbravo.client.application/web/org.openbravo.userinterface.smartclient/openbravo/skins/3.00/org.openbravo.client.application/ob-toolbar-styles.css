@@ -50,6 +50,10 @@
   border: 1px solid #64932d;
 }
 
+.OBToolbarIconButtonDisabledProgress {
+  border: 1px solid #64932d;
+}
+
 .OBToolbarIconButtonFocused,
 .OBToolbarIconButtonFocusedOver,
 .OBToolbarIconButtonFocusedDown,
@@ -162,6 +166,12 @@
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(./images/toolbar/iconButton-saveview.png);
+}
+
+.OBToolbarIconButton_icon_saveProgress {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/system/progress-indicator-icon.gif);
 }
 
 .OBToolbarIconButton_icon_sum {

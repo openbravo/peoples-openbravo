@@ -111,8 +111,8 @@ isc.OBViewGrid.addProperties({
   // it is better to allow fast grid interaction and if an error occurs
   // dismiss any new records being edited and go back to the edit row 
   // which causes the error
-  //waitForSave: true,
-  //stopOnErrors: true,
+  waitForSave: false,
+  stopOnErrors: false,
   confirmDiscardEdits: true,
   
   canMultiSort: false,
@@ -879,6 +879,9 @@ isc.OBGridButtonsComponent.addProperties({
   
   initWidget: function(){
     var me = this;
+    
+    this.progressIcon = isc.Img.create(this.grid.progressIconDefaults);
+    
     editIcon = isc.OBGridToolStripIcon.create({
       buttonType: 'edit',
       action: function(){
@@ -915,10 +918,21 @@ isc.OBGridButtonsComponent.addProperties({
       members: [formIcon, buttonSeparator1, editIcon, cancelIcon, buttonSeparator2, saveIcon]
     });
     
+    this.addMember(this.progressIcon);
     this.addMember(this.OBGridToolStrip);
     this.OBGridToolStrip.hideMember(5);
     this.OBGridToolStrip.hideMember(4);
     this.OBGridToolStrip.hideMember(3);
+  },
+  
+  toggleProgressIcon: function(toggle) {
+    if (toggle) {
+      this.progressIcon.show();
+      this.OBGridToolStrip.hide();
+    } else {
+      this.progressIcon.hide();
+      this.OBGridToolStrip.show();
+    }
   },
   
   showEditOpen: function(){

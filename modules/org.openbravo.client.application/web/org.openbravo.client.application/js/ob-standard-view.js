@@ -341,7 +341,7 @@ isc.OBStandardView.addProperties({
   
   readOnly: false,
   
-  initWidget: function(properties){    
+  initWidget: function(properties){
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden'
     });
@@ -392,21 +392,53 @@ isc.OBStandardView.addProperties({
     
     var modifiedDs = isc.addProperties({}, ds, {
       view: this,
+      showProgressAfterDelay: false,
+      currentSelectedRecord: null,
       
-      fetchData: function(criteria, callback, requestProperties){
-        //        isc.Dialog.Prompt.modalTarget = this.view.standardWindow;
-        
-        var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
-        var additionalPara = {
-          _operationType: 'fetch',
-          _noActiveFilter: true
-        };
-        isc.addProperties(newRequestProperties.params, additionalPara);
-        return this.Super('fetchData', [criteria, callback, newRequestProperties]);
+      setCurrentSelectedRecord: function() {
+        if (this.currentSelectedRecord && this.currentSelectedRecord.editColumnLayout) {
+          this.currentSelectedRecord.editColumnLayout.toggleProgressIcon(false);
+        }
+          this.currentSelectedRecord = this.view.viewGrid.getSelectedRecord();
       },
       
-      updateData: function(updatedRecord, callback, requestProperties){
+      showProgress: function(){
+        // hide another one if we are showing it
+        if (this.view.viewGrid.isVisible() && this.currentSelectedRecord) {
+          this.currentSelectedRecord.editColumnLayout.toggleProgressIcon(true);
+        }
+        
+        // don't show it, done to quickly
+        if (!this.showProgressAfterDelay) {
+          return;
+        }
+        var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+        btn.customState = 'Progress';
+        btn.resetBaseStyle();
+        btn.markForRedraw();
+      },
       
+      hideProgress: function(){
+        if (this.currentSelectedRecord && this.currentSelectedRecord.editColumnLayout) {
+          this.currentSelectedRecord.editColumnLayout.toggleProgressIcon(false);
+        }
+        this.currentSelectedRecord = null;
+        
+        this.showProgressAfterDelay = false;
+        var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+        btn.customState = '';
+        btn.resetBaseStyle();
+        btn.markForRedraw();
+      },
+      
+      performDSOperation: function(operationType, data, callback, requestProperties){
+        requestProperties.showPrompt = false;
+        // only show progress after 200ms delay
+        this.showProgressAfterDelay = true;
+        // set the current selected record before the delay
+        this.setCurrentSelectedRecord();
+        this.delayCall('showProgress', [], 200);
+        
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -414,35 +446,11 @@ isc.OBStandardView.addProperties({
           _noActiveFilter: true
         };
         isc.addProperties(newRequestProperties.params, additionalPara);
-        this.Super('updateData', [updatedRecord, callback, newRequestProperties]);
-      },
-      
-      addData: function(updatedRecord, callback, requestProperties){
-      
-        var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
-        //standard update is not sent with operationType
-        var additionalPara = {
-          _operationType: 'add',
-          _noActiveFilter: true
-        };
-        isc.addProperties(newRequestProperties.params, additionalPara);
-        this.Super('addData', [updatedRecord, callback, newRequestProperties]);
-      },
-      
-      removeData: function(updatedRecord, callback, requestProperties){
-      
-        var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
-        //standard update is not sent with operationType
-        var additionalPara = {
-          _operationType: 'remove',
-          _noActiveFilter: true
-        };
-        isc.addProperties(newRequestProperties.params, additionalPara);
-        this.Super('removeData', [updatedRecord, callback, newRequestProperties]);
+        this.Super('performDSOperation', arguments);
       },
       
       transformResponse: function(dsResponse, dsRequest, jsonData){
-      
+        this.hideProgress();
         //        isc.Dialog.Prompt.modalTarget = null;
         
         var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
@@ -1630,3 +1638,6 @@ isc.Canvas.addProperties({
     }
   }
 });
+
+isc.RPCManager.showPrompt = false;
+isc.RPCManager.neverShowPrompt = true;

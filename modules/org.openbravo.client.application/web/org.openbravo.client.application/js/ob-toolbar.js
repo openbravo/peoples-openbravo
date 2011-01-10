@@ -568,7 +568,7 @@ isc.OBToolbar.addProperties({
 /** ----------------------------- **/
 
 
-isc.ClassFactory.defineClass('OBToolbarIconButton', isc.MenuButton);
+isc.ClassFactory.defineClass('OBToolbarIconButton', isc.Button);
 
 isc.OBToolbarIconButton.addProperties({
   showRollOver: true,
@@ -578,9 +578,14 @@ isc.OBToolbarIconButton.addProperties({
   showFocusedAsOver: false,
   title: '.',
   showHover: true,
+  customState: '',
 
   initWidget: function(){
     this.Super('initWidget', arguments);
+    this.resetBaseStyle();
+  },
+  
+  resetBaseStyle: function() {
     var isMenu = false, extraClass;
     if (this.menu !== null) {
       isMenu = true;
@@ -594,8 +599,8 @@ isc.OBToolbarIconButton.addProperties({
       this.iconWidth = 1;
       this.iconHeight = 1;
     }
-    
-    this.setBaseStyle('OBToolbarIconButton_icon_' + this.buttonType + extraClass + 'OBToolbarIconButton');
+
+    this.setBaseStyle('OBToolbarIconButton_icon_' + this.buttonType + this.customState + extraClass + 'OBToolbarIconButton');
   }
 });
 
