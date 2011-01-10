@@ -101,8 +101,31 @@ isc.OBSearchItem.addProperties({
   
   init: function(){
     this.instanceClearIcon = isc.shallowClone(this.clearIcon);
+    this.instanceClearIcon.formItem = this;
+    
+    this.instanceClearIcon.showIf= function(form, item){
+      if (item.disabled) {
+        return false;
+      }
+      if (item.required) {
+        return false;
+      }
+      if (form && form.view && form.view.readOnly) {
+        return false;
+      }
+      if (item.getValue()) {
+        return true;
+      }
+      return false;
+    };
+    
+    this.instanceClearIcon.click = function(){
+      this.formItem.setValue(null);
+      this.formItem.form.itemChangeActions();
+    };
+
     this.icons = [this.instanceClearIcon];
-    this.icons[0].formItem = this;
+    
     return this.Super('init', arguments);
   },
   
@@ -248,6 +271,17 @@ isc.OBTextAreaItem.addProperties({
 // == OBSectionItem ==
 // Form sections
 isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
+
+isc.OBSectionItem.addProperties({
+  // revisit when/if we allow disabling of section items
+  // visual state of disabled or non-disabled stays the same now
+  showDisabled: false,
+  
+  // never disable a section item
+  isDisabled: function() {
+    return false;
+  }
+});
 
 // == OBListItem ==
 // Combo box for list references
@@ -908,14 +942,14 @@ isc.FormItem.addProperties({
   focus: function(form, item){
     if (form.view) {
       form.view.lastFocusedItem = this;
-      form.view.setActiveView(true);
+      form.view.setAsActiveView();
     } else if (form.grid) {
       if (form.grid.view) {
         form.grid.view.lastFocusedItem = this;
-        form.grid.view.setActiveView(true);
+        form.grid.view.setAsActiveView();
       } else if (isc.isA.RecordEditor(form.grid) && form.grid.sourceWidget && form.grid.sourceWidget.view) {
         form.grid.sourceWidget.view.lastFocusedItem = this;
-        form.grid.sourceWidget.view.setActiveView(true);
+        form.grid.sourceWidget.view.setAsActiveView();
       }
     }
   },

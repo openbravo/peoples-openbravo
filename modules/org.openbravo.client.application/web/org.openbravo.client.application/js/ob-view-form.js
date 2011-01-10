@@ -53,6 +53,7 @@ isc.OBViewForm.addProperties({
   fieldsByColumnName: null,
   
   isNew: false,
+  hasChanged: false,
   
   initWidget: function(){
     // iterate over the fields and set the datasource
@@ -68,7 +69,7 @@ isc.OBViewForm.addProperties({
   },
   
   editRecord: function(record, preventFocus){
-    this.isNew = false;
+
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
@@ -81,14 +82,18 @@ isc.OBViewForm.addProperties({
     var ret = this.Super('editRecord', arguments);
     this.clearErrors();
     this.retrieveInitialValues(false);
+    
+    this.setNewState(false);
+    this.view.messageBar.hide();
+
     return ret;
   },
   
   editNewRecord: function(preventFocus){
-    this.isNew = true;
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
+
     // disable relevant buttons
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
@@ -99,7 +104,18 @@ isc.OBViewForm.addProperties({
     var ret = this.Super('editNewRecord', arguments);
     this.clearErrors();
     this.retrieveInitialValues(true);
+
+    this.setNewState(true);
+    
+    this.view.messageBar.hide();
+
     return ret;
+  },
+  
+  setNewState: function(isNew) {
+    this.isNew = isNew;
+    this.view.statusBar.setNewState(isNew);    
+    this.view.updateTabTitle();
   },
   
   // reset the focus item to the first item which can get focus
@@ -325,7 +341,8 @@ isc.OBViewForm.addProperties({
   },
   
   itemChangeActions: function(){
-    // remove the message 
+    // remove the message
+    this.hasChanged = true;
     this.view.messageBar.hide();
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, false);
@@ -335,21 +352,46 @@ isc.OBViewForm.addProperties({
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
     this.resetValues();
+    this.hasChanged = false;
   },
   
-  saveRow: function(){
+  // action defines the action to call when the save succeeds
+  autoSave: function(action) {
+    
+    if (!this.view.standardWindow.isAutoSave() && this.hasChanged && action) {
+      this.autoSaveConfirmAction(action);
+    } else if (this.view.standardWindow.isAutoSave() && this.hasChanged && !this.inAutoSave) {
+      this.inAutoSave = true;
+      this.saveRow(action, true);
+    } else if (action) {
+      action.method.call(action.target, action.parameters);
+    }
+    return true;
+  },
+    
+  autoSaveConfirmAction: function(action) {
+    var callback = function(ok) {
+      if (ok) {
+        action.method.apply(action.target, action.parameters);
+      } 
+    };
+    isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);
+  },
+
+  saveRow: function(action, autoSave){
     var i, length, flds, form = this;
     
     // disable the save
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     
     var callback = function(resp, data, req){
-      //      console.log(data);
-      //      console.log(resp.status);
-      //      console.log(resp.errors);
       var index1, index2, errorCode, view = form.view;
       var status = resp.status;
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
+        
+        // do remember values here to prevent infinite autosave loop
+        form.rememberValues();
+        
         view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
         // disable undo, enable delete
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
@@ -365,11 +407,15 @@ isc.OBViewForm.addProperties({
           // after save the grid selection seems to have gone, repair it
           view.viewGrid.selectRecordById(data.id);
         }
-        form.rememberValues();
-        form.isNew = false;
+        this.setNewState(false);
+        this.hasChanged = false;
+        // success invoke the action:
+        if (action) {
+          action.method.apply(action.target, action.parameters);
+        }
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
-        form.handleFieldErrors(resp.errors);
+        form.handleFieldErrors(resp.errors, autoSave);
       } else {
         if (isc.isA.String(data) && data.indexOf('@') !== -1) {
           index1 = data.indexOf('@');
@@ -386,11 +432,29 @@ isc.OBViewForm.addProperties({
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
       }
       
+      // an error occured, show a popup
+      if (autoSave && status !== isc.RPCResponse.STATUS_SUCCESS) {
+        // if there is an action, ask for confirmation
+        if (action) {
+          this.autoSaveConfirmAction(action);
+        } else if (!view.isVisible()) {
+          isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [view.tabTitle]));
+        }
+      }
+      form.inAutoSave = false;
       return false;
     };
     
+    // note validate will also set the formfocus, this is 
+    // done by calling showErrors without the third parameter to true
     if (!this.validate()) {
-      this.handleFieldErrors();
+      this.handleFieldErrors(null, autoSave);
+      if (autoSave && !form.view.isVisible()) {
+        isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [this.view.tabTitle]));
+      } else if (action) {
+        this.autoSaveConfirmAction(action);
+      }
+      form.inAutoSave = false;
       return;
     } else {
       // remove the error message if any
@@ -398,11 +462,21 @@ isc.OBViewForm.addProperties({
     }
     // last parameter true prevents additional validation
     this.saveData(callback, {
-      willHandleError: true
+      willHandleError: true,
+      formSave: true
     }, true);
   },
-  
-  handleFieldErrors: function(errors){
+
+  // overridden to prevent focus setting when autoSaving
+    
+  showErrors : function (errors, hiddenErrors, suppressAutoFocus) {
+    if (this.inAutoSave) {
+      return this.Super('showErrors', [errors, hiddenErrors, true]);
+    }
+    return this.Super('showErrors', arguments);
+  },
+    
+  handleFieldErrors: function(errors, autoSave){
     if (errors) {
       this.setErrors(errors, true);
     }
@@ -414,7 +488,13 @@ isc.OBViewForm.addProperties({
     length = flds.length;
     for (i = 0; i < length; i++) {
       if (flds[i].getErrors()) {
-        flds[i].focusInItem();
+        if (autoSave) {
+          // otherwise the focus results in infinite cycles
+          // with views getting activated all the time
+          this.view.lastFocusedItem = flds[i];          
+        } else {
+          flds[i].focusInItem();
+        }
         break;
       }
     }
@@ -476,10 +556,4 @@ isc.OBViewForm.addProperties({
     return titleHTML;
   }
   
-});
-
-isc.RPCManager.addClassProperties({
-  handleError: function(response, request){
-    alert('error!');
-  }
 });

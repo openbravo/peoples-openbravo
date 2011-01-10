@@ -559,13 +559,14 @@ isc.OBViewGrid.addProperties({
   
   // selectionChanged is called when the user makes changes
   selectionChanged: function(record, state){
+    
     this.stopHover();
     
     // enable/disable the delete if there are records selected
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
 
     // nothing changed, go away then, happens when saving
-    if (this.view.lastRecordSelected && record && this.view.lastRecordSelected.id === record.id) {
+    if (state && this.view.lastRecordSelected && record && this.view.lastRecordSelected.id === record.id) {
       // instance may have been updated, update the instance in the view
       this.view.lastRecordSelected = record;
       return;
@@ -592,6 +593,7 @@ isc.OBViewGrid.addProperties({
   // selectionUpdated is called when the grid selection is changed
   // programmatically
   selectionUpdated: function(record, recordList){
+    
     isc.Log.logDebug('Selection updated ' + record, 'OB');
     this.updateSelectedCountDisplay();
     this.view.recordSelected();

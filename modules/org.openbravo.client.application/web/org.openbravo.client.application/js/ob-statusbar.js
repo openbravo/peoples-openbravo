@@ -16,9 +16,9 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-isc.ClassFactory.defineClass('OBStatusBarTextLabelBar', isc.HLayout);
+isc.ClassFactory.defineClass('OBStatusBarLeftBar', isc.HLayout);
 
-isc.OBStatusBarTextLabelBar.addProperties({
+isc.OBStatusBarLeftBar.addProperties({
   // to allow setting the active view when clicking in the statusbar 
   canFocus: true
 });
@@ -45,35 +45,22 @@ isc.OBStatusBarIconButton.addProperties({
   // to allow setting the active view when clicking in the statusbar 
   canFocus: true,
   
-  action: function(){
+  // always go through the autosave of the form
+  action: function() {
+    var actionObject = {
+      target: this,
+      method: this.doAction,
+      parameters: []
+    };
+    this.view.viewForm.autoSave(actionObject);
+  },
+  
+  doAction: function(){
     var rowNum, newRowNum, newRecord;
     if (this.buttonType === 'previous') {
-      rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
-      newRowNum = rowNum - 1;
-      if (newRowNum > -1) {
-        newRecord = this.view.viewGrid.getRecord(newRowNum);
-        this.view.viewGrid.scrollRecordToTop(newRowNum);
-        this.view.editRecord(newRecord);
-        this.view.updateTabTitle();
-        this.view.messageBar.hide();
-        
-        // enable the delete button as we can navigate away from a new record
-        this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
-      }
+      this.view.editNextPreviousRecord(false);
     } else if (this.buttonType === 'next') {
-      rowNum = this.view.viewGrid.data.indexOf(this.view.viewGrid.getSelectedRecord());
-      newRowNum = rowNum + 1;
-      // if there is data move to it
-      if (this.view.viewGrid.data.get(newRowNum)) {
-        newRecord = this.view.viewGrid.getRecord(newRowNum);
-        this.view.viewGrid.scrollRecordToTop(newRowNum);
-        this.view.editRecord(newRecord);
-        this.view.updateTabTitle();
-        this.view.messageBar.hide();
-        
-        // enable the delete button as we can navigate away from a new record
-        this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
-      }
+      this.view.editNextPreviousRecord(next);
     } else if (this.buttonType === 'close') {
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
@@ -95,17 +82,24 @@ isc.ClassFactory.defineClass('OBStatusBar', isc.HLayout);
 isc.OBStatusBar.addProperties({
   view: null,
   iconButtonGroupSpacerWidth: 0, //Set in the skin
+  
+  nextButton: null,
+  previousButton: null,
+  newIcon: null,
+  leftBar: null,
+  
   initWidget: function(){
-    var messageBar = isc.OBStatusBarTextLabelBar.create({});
-    messageBar.addMember(isc.OBStatusBarTextLabel.create({
-      contents: '' //'Status:'
-    }));
+    this.leftBar = isc.OBStatusBarLeftBar.create({
+    });
+//    leftBar.addMember(isc.OBStatusBarTextLabel.create({
+//      contents: '' //'Status:'
+//    }));
     
-    var previousButton = isc.OBStatusBarIconButton.create({
+    this.previousButton = isc.OBStatusBarIconButton.create({
       view: this.view,
       buttonType: 'previous'
     });
-    var nextButton = isc.OBStatusBarIconButton.create({
+    this.nextButton = isc.OBStatusBarIconButton.create({
       view: this.view,
       buttonType: 'next'
     });
@@ -118,8 +112,25 @@ isc.OBStatusBar.addProperties({
     });
     var buttonBar = isc.OBStatusBarIconButtonBar.create({});
     
-    buttonBar.addMembers([previousButton, nextButton, buttonSpacer, closeButton]);
-    this.addMembers([messageBar, buttonBar]);
+    buttonBar.addMembers([this.previousButton, this.nextButton, buttonSpacer, closeButton]);
+    this.addMembers([this.leftBar, buttonBar]);
+  },
+  
+  setNewIcon: function(show) {
+    if (show) {      
+      if (!this.newIcon) {
+        this.newIcon = isc.Img.create(this.newIconDefaults);
+      }
+      this.leftBar.addMember(this.newIcon, 0);
+    } else if (this.newIcon) {
+      this.leftBar.removeMember(this.newIcon);
+    }
+  },
+  
+  setNewState: function(isNew) {
+    this.previousButton.setDisabled(isNew);
+    this.nextButton.setDisabled(isNew);
+    this.setNewIcon(isNew);
   }
   
 });

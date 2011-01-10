@@ -25,9 +25,8 @@ isc.OBStandardWindow.addProperties({
   
   viewProperties: null,
   
-  focusedView: null,
+  activeView: null,
   
-  readOnlyTabDefinition: null,
   views: [],
   
   initWidget: function(){
@@ -51,22 +50,36 @@ isc.OBStandardWindow.addProperties({
     // is set later after creation
     this.view.tabTitle = this.tabTitle;
     
-    // compute the tab definition
-    if (!this.getClass().readOnlyTabDefinition) {
-      OB.RemoteCallManager.call('org.openbravo.client.application.ReadOnlyTabComputationActionHandler', null, {
+    // retrieve user specific window settings from the server
+    // they are stored at class level to only do the call once
+    if (!this.getClass().windowSettingsRead) {
+      OB.RemoteCallManager.call('org.openbravo.client.application.WindowSettingsActionHandler', null, {
         windowId: this.windowId
       }, function(response, data, request){
-        standardWindow.setReadOnlyTabDefinition(data);
+        standardWindow.setWindowSettings(data);
       });
     }
   },
   
-  setReadOnlyTabDefinition: function(data){
-    this.getClass().readOnlyTabDefinition = data;
+  // set window specific user settings, purposely set on class level
+  setWindowSettings: function(data){
+    if (this.getClass().windowSettingsRead) {
+      return;
+    }
+    this.getClass().windowSettingsRead = true;
+    this.getClass().readOnlyTabDefinition = data.readOnlyDefinition;
+    this.getClass().autoSave = data.autoSave;
     // set the views to readonly
     for (var i = 0; i < this.views.length; i++) {
-      this.views[i].setReadOnly(data[this.views[i].tabId]);
+      this.views[i].setReadOnly(data.readOnlyDefinition[this.views[i].tabId]);
     }
+  },
+  
+  isAutoSave: function(){
+    if (this.getClass().autoSave) {
+      return true;
+    }
+    return false;
   },
   
   addView: function(view){
@@ -84,10 +97,41 @@ isc.OBStandardWindow.addProperties({
     return ret;
   },
   
+  // is called from the main app tabset
+  tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
+    if (this.activeView) {
+      this.activeView.viewForm.autoSave();
+    }
+  },
+  
+  closeClick: function(tab, tabSet){
+    var actionObject = {
+      target: tabSet,
+      method: tabSet.doCloseClick,
+      parameters: [tab]
+    };
+    this.view.viewForm.autoSave(actionObject);
+  },
+  
+  setActiveView: function(view){
+    if (!this.isDrawn()) {
+      return;
+    }
+    var currentActiveView = this.activeView;
+    if (this.activeView === view) {
+      return;
+    }
+    if (currentActiveView) {
+      currentActiveView.setActiveViewVisualState(false);
+    }
+    this.activeView = view;
+    view.setActiveViewVisualState(true);
+  },
+  
   setFocusInView: function(){
-    var currentView = this.focusedView || this.view;
+    var currentView = this.activeView || this.view;
     currentView.setViewFocus();
-    currentView.setActiveView(true, true);
+    currentView.setAsActiveView(true);
   },
   
   draw: function(){
@@ -339,7 +383,11 @@ isc.OBStandardView.addProperties({
     isc.defineClass(obDsClassname, ds.getClass());
     
     var modifiedDs = isc.addProperties({}, ds, {
+      view: this,
+      
       fetchData: function(criteria, callback, requestProperties){
+//        isc.Dialog.Prompt.modalTarget = this.view.standardWindow;
+        
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         var additionalPara = {
           _operationType: 'fetch',
@@ -350,6 +398,7 @@ isc.OBStandardView.addProperties({
       },
       
       updateData: function(updatedRecord, callback, requestProperties){
+        
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -361,6 +410,7 @@ isc.OBStandardView.addProperties({
       },
       
       addData: function(updatedRecord, callback, requestProperties){
+        
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -372,6 +422,7 @@ isc.OBStandardView.addProperties({
       },
       
       removeData: function(updatedRecord, callback, requestProperties){
+        
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
@@ -383,6 +434,9 @@ isc.OBStandardView.addProperties({
       },
       
       transformResponse: function(dsResponse, dsRequest, jsonData){
+      
+//        isc.Dialog.Prompt.modalTarget = null;
+        
         var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
         if (errorStatus) {
           if (jsonData.response && jsonData.response.error) {
@@ -408,9 +462,7 @@ isc.OBStandardView.addProperties({
           dsResponse.dataObject = jsonData;
         }
         return this.Super('transformResponse', arguments);
-      },
-      
-      view: this
+      }
     });
     
     var myDs = isc[obDsClassname].create(modifiedDs);
@@ -619,33 +671,35 @@ isc.OBStandardView.addProperties({
     }
   },
   
-  // called when this view becomes the focused view or looses the focus
-  // the parameter is true if it gets the focus and false otherwise
-  setActiveView: function(active, ignoreRefreshContents){
-    var object, functionName;
-    // don't change active when refreshing 
+  setAsActiveView: function(ignoreRefreshContents){
+    // don't change active when refreshing
     if (this.refreshContents && !ignoreRefreshContents) {
       return;
     }
-    if (active) {
-      if (this.standardWindow.focusedView === this) {
-        return;
-      }
-      if (this.standardWindow.focusedView) {
-        this.standardWindow.focusedView.setActiveView(false);
-      }
-      //      console.log("Tab " + this.tabTitle + ' --> receives focus ');
-      this.standardWindow.focusedView = this;
+    // don't change when saving data 
+    if (this.preventActiveViewChange) {
+      return;
+    }
+    this.standardWindow.setActiveView(this);
+  },
+  
+  setActiveViewVisualState: function(state){
+    if (state) {
       this.toolBar.show();
       this.activeBar.setActive(true);
       this.setViewFocus();
     } else {
-      //      console.log("Tab " + this.tabTitle + ' --> looses focus ');
       this.activeBar.setActive(false);
       this.toolBar.hide();
-      this.standardWindow.focusedView = null;
+      // note we can not check on viewForm visibility as 
+      // the grid and form can both be hidden when changing
+      // to another tab, this handles the case that the grid
+      // is shown but the underlying form has errors
+      if (!this.viewGrid.isVisible()) {
+        this.viewForm.autoSave();
+      }
     }
-    this.setTabButtonState(active);
+    this.setTabButtonState(state);
   },
   
   doRefreshContents: function(){
@@ -710,6 +764,11 @@ isc.OBStandardView.addProperties({
       this.statusBarFormLayout.setHeight('100%');
     } else {
       this.statusBarFormLayout.hide();
+      // clear the form
+      this.viewForm.clearErrors();
+      this.viewForm.clearValues();
+      this.viewForm.rememberValues();
+            
       this.viewGrid.show();
       this.viewGrid.setHeight('100%');
     }
@@ -768,6 +827,26 @@ isc.OBStandardView.addProperties({
     }
     
     isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
+  },
+  
+  // go to a next or previous record, if !next then the previous one is used
+  editNextPreviousRecord: function(next){
+    var rowNum, newRowNum, newRecord, currentSelectedRecord = this.viewGrid.getSelectedRecord();
+    if (!currentSelectedRecord) {
+      return;
+    }
+    rowNum = this.viewGrid.data.indexOf(currentSelectedRecord);
+    if (next) {
+      newRowNum = rowNum + 1;
+    } else {
+      newRowNum = rowNum - 1;
+    }
+    newRecord = this.view.viewGrid.getRecord(newRowNum);
+    if (!newRecord) {
+      return;
+    }
+    this.viewGrid.scrollRecordToTop(newRowNum);
+    this.editRecord(newRecord);    
   },
   
   // check if a child tab should be opened directly
@@ -873,6 +952,13 @@ isc.OBStandardView.addProperties({
     // allow default edit mode again
     this.allowDefaultEditMode = true;
     
+    // no parent disable new
+    if (!this.getParentId()) {
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
+    } else {
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, this.readOnly);
+    }
+    
     // switch back to the grid or form
     if (this.shouldOpenDefaultEditMode()) {
       if (this.viewGrid.isVisible()) {
@@ -970,7 +1056,17 @@ isc.OBStandardView.addProperties({
   },
   
   updateTabTitle: function(){
-  
+    var prefix = '';
+    var suffix = '';
+    
+    if (this.viewForm.isVisible() && this.viewForm.isNew) {
+      if (isc.Page.isRTL()) {
+        suffix = ' *';
+      } else {
+        prefix = '* ';
+      }
+    }
+    
     // store the original tab title
     if (!this.originalTabTitle) {
       this.originalTabTitle = this.tabTitle;
@@ -982,23 +1078,23 @@ isc.OBStandardView.addProperties({
       identifier = this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER];
       if (!this.parentTabSet && this.viewTabId) {
         tab = OB.MainView.TabSet.getTab(this.viewTabId);
-        OB.MainView.TabSet.setTabTitle(tab, this.originalTabTitle + ' - ' + identifier);
+        OB.MainView.TabSet.setTabTitle(tab, prefix + this.originalTabTitle + ' - ' + identifier + suffix);
       } else if (this.parentTabSet && this.tab) {
-        this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle + ' - ' + identifier);
+        this.parentTabSet.setTabTitle(this.tab, prefix + this.originalTabTitle + ' - ' + identifier + suffix);
       }
     } else if (!this.parentTabSet && this.viewTabId) {
       // the root view
       tab = OB.MainView.TabSet.getTab(this.viewTabId);
-      OB.MainView.TabSet.setTabTitle(tab, this.originalTabTitle);
+      OB.MainView.TabSet.setTabTitle(tab, prefix + this.originalTabTitle + suffix);
     } else if (this.parentTabSet && this.tab) {
       // the check on this.tab is required for the initialization phase
       // only show a count if there is one parent
       if (this.parentView.viewGrid.getSelectedRecords().length !== 1) {
-        this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle);
+        this.parentTabSet.setTabTitle(this.tab, prefix + this.originalTabTitle + suffix);
       } else if (this.recordCount) {
-        this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle + ' (' + this.recordCount + ')');
+        this.parentTabSet.setTabTitle(this.tab, prefix + this.originalTabTitle + ' (' + this.recordCount + ')' + suffix);
       } else {
-        this.parentTabSet.setTabTitle(this.tab, this.originalTabTitle);
+        this.parentTabSet.setTabTitle(this.tab, prefix + this.originalTabTitle + suffix);
       }
     }
   },
@@ -1046,9 +1142,6 @@ isc.OBStandardView.addProperties({
     
     var callback = function(ok){
       var i, data, error, removeCallBack = function(resp, data, req){
-        //        console.log(req);
-        //        console.log(data);
-        //        console.log(resp);
         if (resp.status === isc.RPCResponse.STATUS_SUCCESS) {
           if (!view.viewGrid.isVisible()) {
             view.switchFormGridVisibility();
@@ -1112,6 +1205,7 @@ isc.OBStandardView.addProperties({
         }
       };
       isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmUndo', callback), callback);
+      return;
     }
     throw {
       message: 'Undo should only be enabled if the form has changed.'
@@ -1290,8 +1384,8 @@ isc.OBStandardViewTabSet.addClassProperties({
           me.dblClickWaiting = false;
           
           // set the active tab
-          if (tab.pane && tab.pane.setActiveView) {
-            tab.pane.setActiveView(true);
+          if (tab.pane && tab.pane.setAsActiveView) {
+            tab.pane.setAsActiveView();
           }
           
           me.tabSet.doHandleClick();
@@ -1525,8 +1619,8 @@ isc.OBStandardViewTabSet.addProperties({
 isc.Canvas.addProperties({
   // let focuschanged go up to the parent, or handle it here
   focusChanged: function(hasFocus){
-    if (this.view && this.view.setActiveView) {
-      this.view.setActiveView(true);
+    if (this.view && this.view.setAsActiveView) {
+      this.view.setAsActiveView();
       return this.Super('focusChanged', arguments);
     }
     
