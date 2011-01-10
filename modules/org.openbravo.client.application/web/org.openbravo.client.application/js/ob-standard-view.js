@@ -1356,7 +1356,7 @@ isc.OBStandardView.addProperties({
     }
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',
-      TAB_ID: this.viewGrid.view.tabId,
+      TAB_ID: this.tabId,
       ROW_ID: this.viewGrid.getSelectedRecord().id
     }, callbackFunction);
   }
