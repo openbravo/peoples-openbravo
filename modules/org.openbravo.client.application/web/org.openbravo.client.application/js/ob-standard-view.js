@@ -41,6 +41,7 @@ isc.OBStandardWindow.addProperties({
     this.addMember(this.toolBarLayout);
     
     this.viewProperties.standardWindow = this;
+    this.viewProperties.isRootView = true;
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);
     this.addMember(this.view);
@@ -340,14 +341,12 @@ isc.OBStandardView.addProperties({
   
   readOnly: false,
   
-  initWidget: function(properties){
-    var isRootView = !this.parentProperty;
-    
+  initWidget: function(properties){    
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden'
     });
     
-    if (isRootView) {
+    if (this.isRootView) {
       this.buildStructure();
     }
     
@@ -368,17 +367,11 @@ isc.OBStandardView.addProperties({
   },
   
   buildStructure: function(){
-    var isRootView = !this.parentProperty;
-    // if (isRootView) {
-    // this.setOverflow('hidden');
-    // } else {
-    // this.setOverflow('auto');
-    // }
     this.createMainParts();
     this.createViewStructure();
     this.dataSource = OB.Datasource.get(this.dataSourceId, this);
     
-    if (isRootView) {
+    if (this.isRootView) {
       if (this.childTabSet) {
         this.members[0].setHeight('50%');
         this.members[1].setHeight('50%');
@@ -489,7 +482,7 @@ isc.OBStandardView.addProperties({
         this.viewGrid.targetRecordId = this.targetRecordId;
       }
       this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
-      if (!this.parentProperty) {
+      if (this.isRootView) {
         this.viewGrid.fetchData();
         this.refreshContents = false;
       }
@@ -515,7 +508,7 @@ isc.OBStandardView.addProperties({
   // ** {{{ createMainParts }}} **
   // Creates the main layout components of this view.
   createMainParts: function(){
-    var isRootView = !this.parentProperty, formContainerLayout;
+    var formContainerLayout;
     var me = this;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
@@ -742,7 +735,7 @@ isc.OBStandardView.addProperties({
   shouldOpenDefaultEditMode: function(){
     // can open default edit mode if defaultEditMode is set
     // and this is the root view or a child view with a selected parent.
-    return this.allowDefaultEditMode && this.defaultEditMode && (!this.parentProperty || this.parentView.viewGrid.getSelectedRecords().length === 1);
+    return this.allowDefaultEditMode && this.defaultEditMode && (this.isRootView || this.parentView.viewGrid.getSelectedRecords().length === 1);
   },
   
   // opendefaultedit view for a child view is only called
@@ -753,7 +746,7 @@ isc.OBStandardView.addProperties({
       return;
     }
     // preventFocus is treated as a boolean later
-    var preventFocus = this.parentProperty;
+    var preventFocus = !this.isRootView;
     
     // don't open it again
     this.allowDefaultEditMode = false;
