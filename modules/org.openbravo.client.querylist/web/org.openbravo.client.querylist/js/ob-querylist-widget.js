@@ -30,17 +30,23 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   grid: null,
   gridProperties: {},
   viewMode: 'widget',
-  
+
   showAllLabel: null,
+  OBQueryListShowAllLabelHeight: null,
 
   initWidget: function(){
-    this.showAllLabel = isc.Label.create({
-      contents: OB.I18N.getLabel('OBCQL_ShowAll'),
-      className: 'OBQueryListShowAllLabel',
-      height: '20px',
-      width: '100%',
-      widget: this,
-      action: function(){this.widget.maximize();}
+    this.showAllLabel = isc.HLayout.create({
+      height: this.OBQueryListShowAllLabelHeight,
+      members: [
+        isc.HLayout.create({
+          width: '100%'
+        }),
+        isc.OBQueryListShowAllLabel.create({
+          contents: OB.I18N.getLabel('OBCQL_ShowAll'),
+          widget: this,
+          action: function(){this.widget.maximize();}
+        })
+    ]
     });
     this.Super('initWidget', arguments);
     // refresh if the dbInstanceId is set

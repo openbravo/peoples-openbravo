@@ -1,10 +1,10 @@
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.1  (the  "License"),  being  the  Mozilla  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
@@ -15,35 +15,23 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
- */ 
- 
-/* QueryList */
-.OBQueryListShowAllLabel,
-.OBQueryListShowAllLabelOver,
-.OBQueryListShowAllLabelDown,
-.OBQueryListShowAllLabelFocused,
-.OBQueryListShowAllLabelFocusedOver,
-.OBQueryListShowAllLabelFocusedDown {
-  font-family: 'lucida sans', sans-serif;
-  vertical-align: middle;
-  background: transparent;
-  text-align: right;
-  cursor: pointer;
-}
+*/
 
-.OBQueryListShowAllLabel,
-.OBQueryListShowAllLabelFocused {
-  color: #00A651;
-}
 
-.OBQueryListShowAllLabelOver {
-  color: #00A651;
-  text-decoration: underline;
-}
+isc.OBQueryListWidget.addProperties({
+  OBQueryListShowAllLabelHeight: 20
+});
 
-.OBQueryListShowAllLabelDown,
-.OBQueryListShowAllLabelFocusedOver,
-.OBQueryListShowAllLabelFocusedDown {
-  color: #004E27;
-  text-decoration: underline;
-}
+
+isc.ClassFactory.defineClass('OBQueryListShowAllLabel', isc.Label);
+
+isc.OBQueryListShowAllLabel.addProperties({
+  className: 'OBQueryListShowAllLabel',
+  showDown: true,
+  showFocused: true,
+  showFocusedAsOver: true,
+  showRollOver: true,
+  height: 20,
+  wrap: false,
+  width: '*'
+});
