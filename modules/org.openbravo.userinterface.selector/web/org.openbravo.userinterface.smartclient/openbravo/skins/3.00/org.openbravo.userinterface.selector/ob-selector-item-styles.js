@@ -62,6 +62,8 @@ isc.OBSelectorLinkItem.addProperties({
   clearIcon: {        
     src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',
     height: 15,
-    width: 15
+    width: 15,
+    showHover: true,
+    prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
   }
 });

@@ -501,7 +501,8 @@ isc.OBSelectorLinkItem.addProperties({
     };
     
     this.instanceClearIcon.click = function(){
-      this.formItem.clearValue();
+      this.formItem.setValue(null);
+      this.formItem.form.itemChangeActions();
     };
 
     this.icons = [this.instanceClearIcon];
