@@ -969,7 +969,10 @@ isc.FormItem.addProperties({
         form.handleItemChange(this);
       }
       this._hasChanged = false;
-      return this._originalBlur(form, item);
+      if (this._originalBlur) {
+        return this._originalBlur(form, item);
+      }
+      return;
     };
   }
 });
