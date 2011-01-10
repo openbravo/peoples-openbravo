@@ -200,7 +200,16 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (mode.equals("NEW")) {
             // On NEW mode, the values are computed through the UIDefinition (the defaults will be
             // used)
-            value = uiDef.getFieldProperties(field, false);
+            if (field.getColumn().isLinkToParentColumn() && parentRecord != null
+                && referencedEntityIsParent(parentRecord, field)) {
+              // If the column is link to the parent tab, we set its value as the parent id
+              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
+                  parentId);
+              value = uiDef.getFieldProperties(field, true);
+            } else {
+              // Else, the default is used
+              value = uiDef.getFieldProperties(field, false);
+            }
           } else if (mode.equals("EDIT")
               || (mode.equals("CHANGE") && changeEventCols.contains(changedColumn))) {
             // On EDIT mode, the values are computed through the UIDefinition (the values have been
@@ -379,6 +388,15 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private boolean referencedEntityIsParent(BaseOBObject parentRecord, Field field) {
+    Entity parentEntity = parentRecord.getEntity();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        field.getTab().getTable().getId());
+    Property property = entity.getPropertyByColumnName(field.getColumn().getDBColumnName());
+    Entity referencedEntity = property.getReferencedProperty().getEntity();
+    return referencedEntity.equals(parentEntity);
   }
 
   private String parseDisplayLogic(Field field) {
