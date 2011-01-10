@@ -107,8 +107,12 @@ isc.OBViewGrid.addProperties({
   // internal sc grid property, see the ListGrid source code
   preserveEditsOnSetData: false,
   
-  waitForSave: true,
-  stopOnErrors: true,
+  // enabling this results in a slower user interaction
+  // it is better to allow fast grid interaction and if an error occurs
+  // dismiss any new records being edited and go back to the edit row 
+  // which causes the error
+  //waitForSave: true,
+  //stopOnErrors: true,
   confirmDiscardEdits: true,
   
   canMultiSort: false,
