@@ -99,8 +99,10 @@ isc.OBStandardWindow.addProperties({
   
   // is called from the main app tabset
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
-    if (this.activeView) {
-      this.activeView.viewForm.autoSave();
+    // note: explicitly checking for grid visibility as the form
+    // may already be hidden
+    if (this.activeView && !this.activeView.viewGrid.isVisible()) {
+      this.activeView.viewForm.autoSave(null, true);
     }
   },
   
@@ -841,7 +843,7 @@ isc.OBStandardView.addProperties({
     } else {
       newRowNum = rowNum - 1;
     }
-    newRecord = this.view.viewGrid.getRecord(newRowNum);
+    newRecord = this.viewGrid.getRecord(newRowNum);
     if (!newRecord) {
       return;
     }

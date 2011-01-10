@@ -186,6 +186,8 @@ isc.OBViewForm.addProperties({
     
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
+      // remember the initial values 
+      me.rememberValues();
     });
   },
   
@@ -349,6 +351,7 @@ isc.OBViewForm.addProperties({
   },
   
   undo: function(){
+    this.view.messageBar.hide();
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
     this.resetValues();
@@ -356,13 +359,16 @@ isc.OBViewForm.addProperties({
   },
   
   // action defines the action to call when the save succeeds
-  autoSave: function(action) {
+  // forceDialogOnFailure: if true then even if the form is visible
+  // still a dialog is shown, this becomes sometimes autosave is done
+  // before actually the form gets hidden
+  autoSave: function(action, forceDialogOnFailure) {
     
     if (!this.view.standardWindow.isAutoSave() && this.hasChanged && action) {
       this.autoSaveConfirmAction(action);
     } else if (this.view.standardWindow.isAutoSave() && this.hasChanged && !this.inAutoSave) {
       this.inAutoSave = true;
-      this.saveRow(action, true);
+      this.saveRow(action, true, forceDialogOnFailure);
     } else if (action) {
       action.method.call(action.target, action.parameters);
     }
@@ -370,15 +376,20 @@ isc.OBViewForm.addProperties({
   },
     
   autoSaveConfirmAction: function(action) {
+    var form = this;
     var callback = function(ok) {
       if (ok) {
         action.method.apply(action.target, action.parameters);
-      } 
+      } else {
+        // and focus to the first error field
+        form.setFocusInErrorField(true);
+        form.focus();
+      }
     };
     isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);
   },
 
-  saveRow: function(action, autoSave){
+  saveRow: function(action, autoSave, forceDialogOnFailure){
     var i, length, flds, form = this;
     
     // disable the save
@@ -437,7 +448,7 @@ isc.OBViewForm.addProperties({
         // if there is an action, ask for confirmation
         if (action) {
           this.autoSaveConfirmAction(action);
-        } else if (!view.isVisible()) {
+        } else if (!view.isVisible() || forceDialogOnFailure) {
           isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [view.tabTitle]));
         }
       }
@@ -449,7 +460,7 @@ isc.OBViewForm.addProperties({
     // done by calling showErrors without the third parameter to true
     if (!this.validate()) {
       this.handleFieldErrors(null, autoSave);
-      if (autoSave && !form.view.isVisible()) {
+      if (autoSave && !form.view.isVisible() || forceDialogOnFailure) {
         isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [this.view.tabTitle]));
       } else if (action) {
         this.autoSaveConfirmAction(action);
@@ -484,6 +495,10 @@ isc.OBViewForm.addProperties({
     this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
     
     // and focus to the first error field
+    this.setFocusInErrorField(autoSave);
+  },
+  
+  setFocusInErrorField: function(autoSave) {
     flds = this.getFields();
     length = flds.length;
     for (i = 0; i < length; i++) {
@@ -491,13 +506,14 @@ isc.OBViewForm.addProperties({
         if (autoSave) {
           // otherwise the focus results in infinite cycles
           // with views getting activated all the time
-          this.view.lastFocusedItem = flds[i];          
+          this.view.lastFocusedItem = flds[i];
         } else {
           flds[i].focusInItem();
         }
-        break;
+        return;
       }
     }
+    this.resetFocusItem();
   },
   
   // overridden to show the error when hovering over items
