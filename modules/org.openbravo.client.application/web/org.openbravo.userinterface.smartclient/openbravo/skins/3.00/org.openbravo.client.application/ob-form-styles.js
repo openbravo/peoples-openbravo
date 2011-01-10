@@ -48,32 +48,11 @@ isc.OBSearchItem.addProperties({
   pickerIconWidth: 21,
   pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
+    showHover: true,
     height: 15,
-    width: 15,    
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',
-    
-    // note: TODO: show a helpfull text, need to be present in the messages table
-    //prompt: 'test',
-    // TODO: display logic in styling is not nice but it is the best option I guess
-    showIf: function(form, item){
-      if (form && form.view && form.view.readOnly) {
-        return false;
-      }
-      if (item.disabled) {
-        return false;
-      }
-      if (item.required) {
-        return false;
-      }
-      if (item.getValue()) {
-        return true;
-      }
-      return false;
-    },
-    
-    click: function() {
-      this.formItem.clearValue();
-    }
+    width: 15,
+    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',    
+    prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
   },
   newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8

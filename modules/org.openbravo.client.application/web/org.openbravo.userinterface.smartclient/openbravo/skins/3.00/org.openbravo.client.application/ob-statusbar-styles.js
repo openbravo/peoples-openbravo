@@ -25,11 +25,22 @@ isc.OBStatusBar.addProperties({
   leaveScrollbarGap: false,
   overflow: 'hidden',
 
+  newIconDefaults: {
+    showHover: true,
+    prompt: OB.I18N.getLabel('OBUIAPP_NewIconPrompt'),
+    height: 14,
+    width: 14,
+    src:  '[SKINIMG]../../org.openbravo.client.application/images/form/asterisk-new.png'
+  },
+
   iconButtonGroupSpacerWidth: 5
 });
 
-isc.OBStatusBarTextLabelBar.addProperties({
+isc.OBStatusBarLeftBar.addProperties({
+  baseStyle: 'OBStatusBarLeftBar',
   width: '*',
+  layoutLeftMargin: 5,
+  defaultLayoutAlign: 'center',
   align: 'left',
   overflow: 'visible'
 });
