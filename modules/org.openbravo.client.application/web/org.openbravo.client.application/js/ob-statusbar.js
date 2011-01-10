@@ -60,7 +60,7 @@ isc.OBStatusBarIconButton.addProperties({
     if (this.buttonType === 'previous') {
       this.view.editNextPreviousRecord(false);
     } else if (this.buttonType === 'next') {
-      this.view.editNextPreviousRecord(next);
+      this.view.editNextPreviousRecord(true);
     } else if (this.buttonType === 'close') {
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
