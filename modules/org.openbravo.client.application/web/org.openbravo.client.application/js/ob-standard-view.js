@@ -169,7 +169,7 @@ isc.OBStandardView.addProperties({
     
     var rightMemberButtons = [];
     
-    if (this.actionToolbarButtons){
+    if (this.actionToolbarButtons) {
       for (var i = 0; i < this.actionToolbarButtons.length; i++) {
         rightMemberButtons.push(isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]));
       }
@@ -182,10 +182,10 @@ isc.OBStandardView.addProperties({
       rightMembers: rightMemberButtons
     });
     
-//    [isc.OBToolbarTextButton.create({
-//        action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
-//        title: 'Button A'
-//      })]
+    //    [isc.OBToolbarTextButton.create({
+    //        action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
+    //        title: 'Button A'
+    //      })]
     
     this.Super('initWidget', arguments);
   },
@@ -285,7 +285,7 @@ isc.OBStandardView.addProperties({
         if (errorStatus) {
           var handled = this.view.messageBar.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
           if (!handled && !dsRequest.willHandleError) {
-              OB.KernelUtilities.handleSystemException(error.message);
+            OB.KernelUtilities.handleSystemException(error.message);
           }
         } else {
           // there are some cases where the jsonData is not passed, in case of errors
@@ -597,10 +597,8 @@ isc.OBStandardView.addProperties({
       this.isShowingForm = true;
     } else {
       this.statusBarFormLayout.hide();
-      // clear the form
-      this.viewForm.clearErrors();
-      this.viewForm.clearValues();
-      this.viewForm.rememberValues();
+      // clear the form    
+      this.viewForm.resetForm();
       this.isShowingForm = false;
       
       this.viewGrid.show();
@@ -807,6 +805,10 @@ isc.OBStandardView.addProperties({
     // clear the count from the tabtitle, will be recomputed
     this.updateTabTitle();
     
+    if (this.viewForm) {
+      this.viewForm.resetForm();
+    }
+    
     // if not visible or the parent also needs to be refreshed
     if (!this.isViewVisible() ||
     (this.parentView && this.parentView.refreshContents)) {
@@ -815,13 +817,8 @@ isc.OBStandardView.addProperties({
       this.refreshContents = true;
     } else {
       isc.Log.logDebug('ParentRecordSelected: View visible ' + this.tabTitle, 'OB');
-      var me = this;
       if (this.viewGrid) {
         this.viewGrid.refreshContents();
-      }
-      if (this.viewForm) {
-        this.viewForm.clearValues();
-        this.viewForm.clearErrors();
       }
     }
     // enable the following code if we don't automatically select the first

@@ -69,7 +69,7 @@ isc.OBViewForm.addProperties({
   },
   
   editRecord: function(record, preventFocus){
-
+  
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
@@ -85,7 +85,7 @@ isc.OBViewForm.addProperties({
     
     this.setNewState(false);
     this.view.messageBar.hide();
-
+    
     return ret;
   },
   
@@ -93,7 +93,7 @@ isc.OBViewForm.addProperties({
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
-
+    
     // disable relevant buttons
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
@@ -104,17 +104,17 @@ isc.OBViewForm.addProperties({
     var ret = this.Super('editNewRecord', arguments);
     this.clearErrors();
     this.retrieveInitialValues(true);
-
+    
     this.setNewState(true);
     
     this.view.messageBar.hide();
-
+    
     return ret;
   },
   
-  setNewState: function(isNew) {
+  setNewState: function(isNew){
     this.isNew = isNew;
-    this.view.statusBar.setNewState(isNew);    
+    this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
   },
   
@@ -164,15 +164,15 @@ isc.OBViewForm.addProperties({
     this.fieldsByColumnName = null;
   },
   
-  show: function() {
-    
+  show: function(){
+  
     // if the view is showing the form then the show action
     // is because a tab is selected not because a grid to form 
     // thing happens 
-//    if (this.view.isShowingForm) {
-//      console.log('Do change fic call');
-//      this.doChangeFICCall();
-//    }
+    //    if (this.view.isShowingForm) {
+    //      console.log('Do change fic call');
+    //      this.doChangeFICCall();
+    //    }
     
     return this.Super('show', arguments);
   },
@@ -325,7 +325,7 @@ isc.OBViewForm.addProperties({
     if (item) {
       requestParams.CHANGED_COLUMN = item.inpColumnName;
     }
-
+    
     // collect the context information    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
@@ -362,6 +362,12 @@ isc.OBViewForm.addProperties({
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, false);
   },
   
+  resetForm: function(){
+    this.resetValues();
+    this.clearErrors();
+    this.hasChanged = false;
+  },
+  
   undo: function(){
     this.view.messageBar.hide();
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
@@ -374,8 +380,8 @@ isc.OBViewForm.addProperties({
   // forceDialogOnFailure: if true then even if the form is visible
   // still a dialog is shown, this becomes sometimes autosave is done
   // before actually the form gets hidden
-  autoSave: function(action, forceDialogOnFailure) {
-    
+  autoSave: function(action, forceDialogOnFailure){
+  
     if (!this.view.standardWindow.isAutoSave() && this.hasChanged && action) {
       this.autoSaveConfirmAction(action);
     } else if (this.view.standardWindow.isAutoSave() && this.hasChanged && !this.inAutoSave) {
@@ -386,10 +392,10 @@ isc.OBViewForm.addProperties({
     }
     return true;
   },
-    
-  autoSaveConfirmAction: function(action) {
+  
+  autoSaveConfirmAction: function(action){
     var form = this;
-    var callback = function(ok) {
+    var callback = function(ok){
       if (ok) {
         action.method.apply(action.target, action.parameters);
       } else {
@@ -400,7 +406,7 @@ isc.OBViewForm.addProperties({
     };
     isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);
   },
-
+  
   saveRow: function(action, autoSave, forceDialogOnFailure){
     var i, length, flds, form = this;
     
@@ -411,7 +417,7 @@ isc.OBViewForm.addProperties({
       var index1, index2, errorCode, view = form.view;
       var status = resp.status;
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
-        
+      
         // do remember values here to prevent infinite autosave loop
         form.rememberValues();
         
@@ -478,16 +484,16 @@ isc.OBViewForm.addProperties({
       formSave: true
     }, true);
   },
-
+  
   // overridden to prevent focus setting when autoSaving
-    
-  showErrors : function (errors, hiddenErrors, suppressAutoFocus) {
+  
+  showErrors: function(errors, hiddenErrors, suppressAutoFocus){
     if (this.inAutoSave) {
       return this.Super('showErrors', [errors, hiddenErrors, true]);
     }
     return this.Super('showErrors', arguments);
   },
-    
+  
   handleFieldErrors: function(errors, autoSave){
     if (errors) {
       this.setErrors(errors, true);
@@ -499,7 +505,7 @@ isc.OBViewForm.addProperties({
     this.setFocusInErrorField(autoSave);
   },
   
-  setFocusInErrorField: function(autoSave) {
+  setFocusInErrorField: function(autoSave){
     flds = this.getFields();
     length = flds.length;
     for (i = 0; i < length; i++) {
