@@ -191,13 +191,6 @@ public class FormInitializationComponent extends BaseActionHandler {
           String columnId = field.getColumn().getId();
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
           String value = null;
-
-          // Force key column to be in session
-          if (field.getColumn().isKeyColumn() && ("SETSESSION".equals(mode) || "EDIT".equals(mode))) {
-            setSessionValue(tab.getWindow().getId() + "|"
-                + field.getColumn().getDBColumnName().toUpperCase(), rowId);
-          }
-
           if (mode.equals("NEW")) {
             // On NEW mode, the values are computed through the UIDefinition (the defaults will be
             // used)
@@ -248,8 +241,9 @@ public class FormInitializationComponent extends BaseActionHandler {
 
           // We also set the session value for the column in Edit or SetSession mode
           if (mode.equals("EDIT") || mode.equals("SETSESSION")) {
-            if (field.getColumn().isStoredInSession()) {
-              setSessionValue(tab.getWindow().getId() + "|" + field.getColumn().getDBColumnName(),
+            if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
+              setSessionValue(tab.getWindow().getId() + "|"
+                  + field.getColumn().getDBColumnName().toUpperCase(),
                   jsonobject.has("value") ? uiDef.formatValueToSQL(jsonobject.get("value")
                       .toString()) : null);
             }
