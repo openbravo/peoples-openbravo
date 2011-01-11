@@ -73,7 +73,13 @@ isc.OBToolbarTextButton.addProperties( {
 
     for ( var param in allProperties) {
       if (allProperties.hasOwnProperty(param)) {
-        popupParams.command += '&' + param + '=' + allProperties[param];
+        var value = allProperties[param];
+        
+        if (typeof value === 'boolean') {
+          value = value?'Y':'N';
+        }
+        
+        popupParams.command += '&' + param + '=' + value;
       }
     }
 
