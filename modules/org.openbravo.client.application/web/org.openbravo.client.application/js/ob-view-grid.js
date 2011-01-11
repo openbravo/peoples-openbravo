@@ -120,6 +120,10 @@ isc.OBViewGrid.addProperties({
   emptyMessage: OB.I18N.getLabel('OBUIAPP_NoDataInGrid'),
   discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
   
+  quickDrawAheadRatio: 6.0,
+  drawAheadRatio: 4.0,
+  drawAllMaxCells: 500,
+  
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true  
   singleRecordSelection: false,
