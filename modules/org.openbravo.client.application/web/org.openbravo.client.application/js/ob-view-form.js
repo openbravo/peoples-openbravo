@@ -169,6 +169,10 @@ isc.OBViewForm.addProperties({
     // if the view is showing the form then the show action
     // is because a tab is selected not because a grid to form 
     // thing happens 
+//    if (this.view.isShowingForm) {
+//      console.log('Do change fic call');
+//      this.doChangeFICCall();
+//    }
     
     return this.Super('show', arguments);
   },
@@ -303,8 +307,10 @@ isc.OBViewForm.addProperties({
     item._hasChanged = false;
   },
   
+  // note item can be null, is also called when the form is re-shown
+  // to recompute combos
   doChangeFICCall: function(item){
-    var parentId = null, me = this, requestParams, allPropertes = theView.getContextInfo(false, true);
+    var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true);
     
     if (this.view.parentProperty) {
       parentId = this.getValue(this.view.parentProperty);
@@ -314,9 +320,11 @@ isc.OBViewForm.addProperties({
       MODE: 'CHANGE',
       PARENT_ID: parentId,
       TAB_ID: this.view.tabId,
-      ROW_ID: this.getValue(OB.Constants.ID),
-      CHANGED_COLUMN: item.inpColumnName
+      ROW_ID: this.getValue(OB.Constants.ID)
     };
+    if (item) {
+      requestParams.CHANGED_COLUMN = item.inpColumnName;
+    }
 
     // collect the context information    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
