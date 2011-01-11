@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,10 +34,12 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
+import org.openbravo.utils.FormatUtilities;
 
 /**
  * Represents the Openbravo Tab (form and grid combination).
@@ -83,6 +85,10 @@ public class OBViewTab extends BaseTemplateComponent {
         final ButtonField buttonField = new ButtonField();
         buttonField.setId(fld.getId());
         buttonField.setLabel(OBViewUtil.getLabel(fld));
+        buttonField.setUrl(Utility.getTabURL(fld.getTab().getId(), "E", false));
+        buttonField.setCommand("BUTTON"
+            + FormatUtilities.replace(fld.getColumn().getDBColumnName())
+            + fld.getColumn().getProcess().getId());
         buttonFields.add(buttonField);
       }
     }
@@ -243,6 +249,25 @@ public class OBViewTab extends BaseTemplateComponent {
   public class ButtonField {
     private String id;
     private String label;
+    private String url;
+
+    public String getUrl() {
+      return url;
+    }
+
+    public void setUrl(String url) {
+      this.url = url;
+    }
+
+    public String getCommand() {
+      return command;
+    }
+
+    public void setCommand(String command) {
+      this.command = command;
+    }
+
+    private String command;
 
     public String getLabel() {
       return label;

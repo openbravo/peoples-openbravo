@@ -1,6 +1,6 @@
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2011 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -25,30 +25,15 @@ function closeThisPage() {
 
 function submitThisPage(ref) {
   if (top.opener.submitCommandForm) {
-        top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
-    } else {
-        var msgText = document.getElementById('messageMessage').value;
-        if (msgText) {
-            var opener = top.opener;
-            var title = document.getElementById('messageTitle').value;
-            var type = document.getElementById('messageType').value;
-            var msgType;
-            switch (type){
-                case 'Success':
-                  msgType = opener.isc.OBMessageBar.TYPE_SUCCESS;
-                  break;
-                case 'Error':
-                  msgType = opener.isc.OBMessageBar.TYPE_ERROR;
-                  break;
-                case 'Warning':
-                  msgType = opener.isc.OBMessageBar.TYPE_WARNING;
-                  break;
-                default:
-                  msgType = opener.isc.OBMessageBar.TYPE_INFO;
-            }
-            opener.OB.Utilities.viewCallingProcess.standardWindow.messageBar.setMessage(msgType, title, msgText);
-        }   
+    top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
+  } else {
+    var msg = {
+      type: document.getElementById('messageType').value,
+      title: document.getElementById('messageTitle').value,
+      text: document.getElementById('messageMessage').value
     }
+    top.opener.OB.ActionButton.closeProcessPopup(msg);
+  }
   top.close();
   return true;
 }

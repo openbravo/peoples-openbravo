@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,9 +44,13 @@
       </#list>
     ],
     
-    customToolbarButtons: [
+    actionToolbarButtons: [
     <#list tabComponent.buttonFields as field>
-      {id: '${field.id?js_string}', title: '${field.label?js_string}'}<#if field_has_next>,</#if>
+      {id: '${field.id?js_string}', 
+       title: '${field.label?js_string}',
+       obManualURL: '${field.url}',
+       command: '${field.command}'
+      }<#if field_has_next>,</#if>
     </#list>],
     
     <#if tabComponent.childTabs?size &gt; 0>

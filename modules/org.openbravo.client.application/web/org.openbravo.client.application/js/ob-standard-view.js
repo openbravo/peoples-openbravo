@@ -167,15 +167,25 @@ isc.OBStandardView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
     
+    var rightMemberButtons = [];
+    
+    if (this.actionToolbarButtons){
+      for (var i = 0; i < this.actionToolbarButtons.length; i++) {
+        rightMemberButtons.push(isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]));
+      }
+    }
+    
     this.toolBar = isc.OBToolbar.create({
       view: this,
       visibility: 'hidden',
       leftMembers: [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES)],
-      rightMembers: [isc.OBToolbarTextButton.create({
-        action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
-        title: 'Button A'
-      })]
+      rightMembers: rightMemberButtons
     });
+    
+//    [isc.OBToolbarTextButton.create({
+//        action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
+//        title: 'Button A'
+//      })]
     
     this.Super('initWidget', arguments);
   },
