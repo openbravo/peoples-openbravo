@@ -76,6 +76,8 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
             + KernelConstants.SKIN_VERSION_PARAMETER + "/smartclient/load_skin.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/js/ob-smartclient-labels.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/js/ob-smartclient.js", true));
     globalResources.add(createStaticResource("org.openbravo.client.kernel/" + SC_COMPONENT_TYPE
         + "/" + TypesComponent.SC_TYPES_COMPONENT_ID, true));
     return globalResources;

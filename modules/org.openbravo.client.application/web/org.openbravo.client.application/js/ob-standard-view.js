@@ -16,202 +16,16 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-isc.ClassFactory.defineClass('OBStandardWindow', isc.VLayout);
-
-// The OBStandardWindow contains the toolbar and the root view.
-isc.OBStandardWindow.addProperties({
-  toolBarLayout: null,
-  view: null,
-  
-  viewProperties: null,
-  
-  activeView: null,
-  
-  views: [],
-  
-  initWidget: function(){
-    var standardWindow = this;
-    
-    this.toolBarLayout = isc.HLayout.create({
-      width: '100%',
-      height: 1, // is set by its content
-      overflow: 'visible'
-    });
-    
-    this.addMember(this.toolBarLayout);
-    
-    this.viewProperties.standardWindow = this;
-    this.viewProperties.isRootView = true;
-    this.view = isc.OBStandardView.create(this.viewProperties);
-    this.addView(this.view);
-    this.addMember(this.view);
-    
-    this.Super('initWidget', arguments);
-    
-    // is set later after creation
-    this.view.tabTitle = this.tabTitle;
-    
-    // retrieve user specific window settings from the server
-    // they are stored at class level to only do the call once
-    if (!this.getClass().windowSettingsRead) {
-      OB.RemoteCallManager.call('org.openbravo.client.application.WindowSettingsActionHandler', null, {
-        windowId: this.windowId
-      }, function(response, data, request){
-        standardWindow.setWindowSettings(data);
-      });
-    }
-  },
-  
-  // set window specific user settings, purposely set on class level
-  setWindowSettings: function(data){
-    if (this.getClass().windowSettingsRead) {
-      return;
-    }
-    this.getClass().windowSettingsRead = true;
-    this.getClass().readOnlyTabDefinition = data.readOnlyDefinition;
-    this.getClass().autoSave = data.autoSave;
-    // set the views to readonly
-    for (var i = 0; i < this.views.length; i++) {
-      this.views[i].setReadOnly(data.readOnlyDefinition[this.views[i].tabId]);
-    }
-  },
-  
-  isAutoSave: function(){
-    if (this.getClass().autoSave) {
-      return true;
-    }
-    return false;
-  },
-  
-  addView: function(view){
-    view.standardWindow = this;
-    this.views.push(view);
-    this.toolBarLayout.addMember(view.toolBar);
-    if (this.getClass().readOnlyTabDefinition) {
-      view.setReadOnly(this.getClass().readOnlyTabDefinition[view.tabId]);
-    }
-  },
-  
-  show: function(){
-    var ret = this.Super('show', arguments);
-    this.setFocusInView();
-    return ret;
-  },
-  
-  // is called from the main app tabset
-  tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
-    // note: explicitly checking for grid visibility as the form
-    // may already be hidden
-    if (this.activeView && !this.activeView.viewGrid.isVisible()) {
-      this.activeView.viewForm.autoSave(null, true);
-    }
-    this.wasDeselected = true;
-  },
-  
-  closeClick: function(tab, tabSet){
-    var actionObject = {
-      target: tabSet,
-      method: tabSet.doCloseClick,
-      parameters: [tab]
-    };
-    this.view.viewForm.autoSave(actionObject);
-  },
-  
-  setActiveView: function(view){
-    if (!this.isDrawn()) {
-      return;
-    }
-    var currentActiveView = this.activeView;
-    if (this.activeView === view) {
-      return;
-    }
-    if (currentActiveView) {
-      currentActiveView.setActiveViewVisualState(false);
-    }
-    this.activeView = view;
-    view.setActiveViewVisualState(true);
-  },
-  
-  setFocusInView: function(){
-    var currentView = this.activeView || this.view;
-    currentView.setViewFocus();
-    currentView.setAsActiveView(true);
-  },
-  
-  draw: function(){
-    var standardWindow = this;
-    var ret = this.Super('draw', arguments);
-    
-    if (this.targetRecordId) {
-      OB.RemoteCallManager.call('org.openbravo.client.application.window.ComputeSelectedRecordActionHandler', null, {
-        targetEntity: this.targetEntity,
-        targetRecordId: this.targetRecordId,
-        windowId: this.windowId
-      }, function(response, data, request){
-        standardWindow.directTabInfo = data.result;
-        standardWindow.view.openDirectTab();
-      });
-      delete this.targetRecordId;
-      delete this.targetTabId;
-      delete this.targetEntity;
-    }
-    
-    this.setFocusInView();
-    return ret;
-  },
-  
-  setViewTabId: function(viewTabId){
-    this.view.viewTabId = viewTabId;
-    this.viewTabId = viewTabId;
-  },
-  
-  doHandleClick: function(){
-    // happens when we are getting selected
-    // then don't change state
-    if (this.wasDeselected) {
-      this.wasDeselected = false;
-      return;
-    }
-    this.view.doHandleClick();
-  },
-  
-  doHandleDoubleClick: function(){
-    // happens when we are getting selected
-    // then don't change state
-    if (this.wasDeselected) {
-      this.wasDeselected = false;
-      return;
-    }
-    this.view.doHandleDoubleClick();
-  },
-  
-  getBookMarkParams: function(){
-    var result = {};
-    result.windowId = this.windowId;
-    result.viewId = this.getClassName();
-    result.tabTitle = this.tabTitle;
-    return result;
-  },
-  
-  isEqualParams: function(params){
-    var equalTab = params.windowId && params.windowId === this.windowId;
-    return equalTab;
-  },
-  
-  isSameTab: function(viewName, params){
-    return this.isEqualParams(params);
-  },
-  
-  // returns the view information for the help view.
-  getHelpView: function(){
-    return null;
-  }
-  
-});
-
-// Note: currently this class covers both the top-level view as well as child views
-// in child tabs. If there is a lot of separate code then maybe the 2 types of usages
-// have to be factored out in separate classes.
+// = OBStandardView =
+//
+// An OBStandardView represents a single Openbravo tab. An OBStandardView consists
+// of three parts:
+// 1) a grid an instance of an OBViewGrid
+// 2) a form an instance of an OBViewForm
+// 3) a tab set with child OBStandardView instances
+// 
+// In addition an OBStandardView has components for a message bar and other visualization.
+//
 isc.ClassFactory.defineClass('OBStandardView', isc.VLayout);
 
 isc.OBStandardView.addClassProperties({
@@ -231,10 +45,6 @@ isc.OBStandardView.addClassProperties({
   // the inactive state does not show an orange hat on the tab button
   MODE_INACTIVE: 'Inactive'
 });
-
-// = OBStandardView =
-// The OBStandardView is the composite canvas which contains a form/grid and
-// child tabs.
 
 isc.OBStandardView.addProperties({
 
@@ -332,6 +142,8 @@ isc.OBStandardView.addProperties({
   state: isc.OBStandardView.STATE_MID,
   previousState: isc.OBStandardView.STATE_TOP_MAX,
   
+  // last item in the filtergrid or the form which had focus
+  // when the view is activated it will set focus here
   lastFocusedItem: null,
   
   // initially set to true, is set to false after the 
@@ -340,6 +152,8 @@ isc.OBStandardView.addProperties({
   allowDefaultEditMode: true,
   
   readOnly: false,
+  
+  isShowingForm: false,
   
   initWidget: function(properties){
     this.messageBar = isc.OBMessageBar.create({
@@ -392,39 +206,35 @@ isc.OBStandardView.addProperties({
     
     var modifiedDs = isc.addProperties({}, ds, {
       view: this,
-      showProgressAfterDelay: false,
-      currentSelectedRecord: null,
       
-      setCurrentSelectedRecord: function() {
-        if (this.currentSelectedRecord && this.currentSelectedRecord.editColumnLayout) {
-          this.currentSelectedRecord.editColumnLayout.toggleProgressIcon(false);
-        }
-          this.currentSelectedRecord = this.view.viewGrid.getSelectedRecord();
-      },
-      
-      showProgress: function(){
-        // hide another one if we are showing it
-        if (this.view.viewGrid.isVisible() && this.currentSelectedRecord) {
-          this.currentSelectedRecord.editColumnLayout.toggleProgressIcon(true);
-        }
+      showProgress: function(editedRecord){
         
         // don't show it, done to quickly
-        if (!this.showProgressAfterDelay) {
+        if (!editedRecord._showProgressAfterDelay) {
           return;
         }
-        var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
-        btn.customState = 'Progress';
-        btn.resetBaseStyle();
-        btn.markForRedraw();
+
+        if (editedRecord && editedRecord.editColumnLayout) {
+          if (this.view.viewGrid.isVisible()) {
+            editedRecord.editColumnLayout.toggleProgressIcon(true);
+          }
+        }
+
+        if (this.view.viewForm.isVisible()) {
+          var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+          btn.customState = 'Progress';
+          btn.resetBaseStyle();
+          btn.markForRedraw();
+        }
       },
       
-      hideProgress: function(){
-        if (this.currentSelectedRecord && this.currentSelectedRecord.editColumnLayout) {
-          this.currentSelectedRecord.editColumnLayout.toggleProgressIcon(false);
+      hideProgress: function(editedRecord){
+        editedRecord._showProgressAfterDelay = false;
+        if (editedRecord && editedRecord.editColumnLayout) {
+          editedRecord.editColumnLayout.toggleProgressIcon(false);
         }
-        this.currentSelectedRecord = null;
         
-        this.showProgressAfterDelay = false;
+        // always remove the progress style here anyway
         var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
         btn.customState = '';
         btn.resetBaseStyle();
@@ -432,12 +242,19 @@ isc.OBStandardView.addProperties({
       },
       
       performDSOperation: function(operationType, data, callback, requestProperties){
-        requestProperties.showPrompt = false;
-        // only show progress after 200ms delay
-        this.showProgressAfterDelay = true;
+//        requestProperties.showPrompt = false;
         // set the current selected record before the delay
-        this.setCurrentSelectedRecord();
-        this.delayCall('showProgress', [], 200);
+        var currentRecord = this.view.viewGrid.getSelectedRecord();
+        if (currentRecord) {
+          // only show progress after 200ms delay
+          currentRecord._showProgressAfterDelay = true;
+          // keep the edited record in the client context
+          if (!requestProperties.clientContext) {
+            requestProperties.clientContext = {};
+          }
+          requestProperties.clientContext.progressIndicatorSelectedRecord = currentRecord;
+          this.delayCall('showProgress', [requestProperties.clientContext.progressIndicatorSelectedRecord], 200);
+        }
         
         var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
@@ -450,8 +267,9 @@ isc.OBStandardView.addProperties({
       },
       
       transformResponse: function(dsResponse, dsRequest, jsonData){
-        this.hideProgress();
-        //        isc.Dialog.Prompt.modalTarget = null;
+        if (dsRequest.clientContext && dsRequest.clientContext.progressIndicatorSelectedRecord) {
+          this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
+        }
         
         var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
         if (errorStatus) {
@@ -778,12 +596,15 @@ isc.OBStandardView.addProperties({
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
       this.statusBarFormLayout.setHeight('100%');
+      // this member should be set after the form is shown
+      this.isShowingForm = true;
     } else {
       this.statusBarFormLayout.hide();
       // clear the form
       this.viewForm.clearErrors();
       this.viewForm.clearValues();
       this.viewForm.rememberValues();
+      this.isShowingForm = false;
       
       this.viewGrid.show();
       this.viewGrid.setHeight('100%');
@@ -1365,279 +1186,3 @@ isc.OBStandardView.addProperties({
     }, callbackFunction);
   }
 });
-
-// = OBStandardViewTabSet =
-// The OBStandardViewTabSet is the tabset used within the standard view to
-// display child tabs
-isc.ClassFactory.defineClass('OBStandardViewTabSet', isc.OBTabSetChild);
-
-isc.OBStandardViewTabSet.addClassProperties({
-
-  TABBARPROPERTIES: {
-    dblClickWaiting: false,
-    
-    canDrag: false,
-    dragAppearance: 'none',
-    dragStartDistance: 1,
-    overflow: 'hidden',
-    
-    itemClick: function(item, itemNum){
-      var me = this, tab = item;
-      me.dblClickWaiting = true;
-      isc.Timer.setTimeout(function(){
-        // if no double click happened then do the single click
-        if (me.dblClickWaiting) {
-          me.dblClickWaiting = false;
-          
-          // set the active tab
-          if (tab.pane && tab.pane.setAsActiveView) {
-            tab.pane.setAsActiveView();
-          }
-          
-          me.tabSet.doHandleClick();
-        }
-      }, OB.Constants.DBL_CLICK_DELAY);
-      
-    },
-    
-    itemDoubleClick: function(item, itemNum){
-      this.dblClickWaiting = false;
-      this.tabSet.doHandleDoubleClick();
-    },
-    
-    dragStop: function(){
-      // change the height to percentage based to handle resizing of browser:
-      this.tabSet.parentContainer.convertToPercentageHeights();
-      return true;
-    },
-    
-    dragStart: function(){
-      // -2 to prevent scrollbar
-      this.tabSet.maxHeight = this.tabSet.parentContainer.getHeight() - 2;
-      this.tabSet.minHeight = (this.getHeight() * 2) + 15;
-      return true;
-    },
-    
-    dragMove: function(){
-      var offset = (0 - isc.EH.dragOffsetY);
-      this.resizeTarget(this.tabSet, true, true, offset, -1 * this.getHeight(), null, true);
-      this.tabSet.draggedHeight = this.tabSet.getHeight();
-      // if (this.tabSet.getHeight() === this.getHeight()) {
-      // // set the parent to top-max
-      // this.tabSet.parentTabSet.setState(isc.OBStandardView.STATE_TOP_MAX);
-      // this.tabSet.draggedHeight = null;
-      // }
-      return true;
-    }
-  }
-});
-
-isc.OBStandardViewTabSet.addProperties({
-  tabBarPosition: 'top',
-  width: '100%',
-  height: '*',
-  overflow: 'hidden',
-  
-  // get rid of the margin around the content of a pane
-  paneMargin: 0,
-  paneContainerMargin: 0,
-  paneContainerPadding: 0,
-  showPaneContainerEdges: false,
-  
-  state: null,
-  previousState: null,
-  
-  // keeps track of the previous dragged height, to restore it
-  draggedHeight: null,
-  
-  setDraggable: function(draggable){
-    if (draggable) {
-      this.tabBar.canDrag = true;
-      this.tabBar.cursor = isc.Canvas.HAND;
-    } else {
-      this.tabBar.canDrag = false;
-      this.tabBar.cursor = isc.Canvas.DEFAULT;
-    }
-  },
-  
-  doHandleClick: function(){
-    if (this.state === isc.OBStandardView.STATE_MIN) {
-      // we are minimized, there must be a parent then
-      if (this.parentTabSet) {
-        this.parentTabSet.setState(isc.OBStandardView.STATE_MID);
-      } else {
-        this.parentContainer.setHalfSplit();
-      }
-    } else if (this.state === isc.OBStandardView.STATE_BOTTOM_MAX) {
-      this.setState(isc.OBStandardView.STATE_MID);
-    }
-  },
-  
-  doHandleDoubleClick: function(){
-    if (this.state === isc.OBStandardView.STATE_TOP_MAX) {
-      // we are maximized go back to the previous state
-      if (this.previousState && this.previousState !== this.state) {
-        if (this.previousState === isc.OBStandardView.STATE_IN_MID) {
-          this.parentContainer.setHalfSplit();
-        } else if (this.previousState === isc.OBStandardView.STATE_MIN) {
-          if (this.parentTabSet) {
-            this.parentTabSet.setState(isc.OBStandardView.STATE_TOP_MAX);
-          } else {
-            this.parentContainer.setTopMaximum();
-          }
-        } else {
-          this.setState(this.previousState);
-        }
-      } else {
-        this.setState(isc.OBStandardView.STATE_BOTTOM_MAX);
-      }
-    } else {
-      // first set to IN_MID, to prevent empty tab displays
-      this.setState(isc.OBStandardView.STATE_IN_MID);
-      this.setState(isc.OBStandardView.STATE_TOP_MAX);
-    }
-    if (this.getSelectedTab()) {
-      this.getSelectedTab().pane.setAsActiveView();
-    }
-  },
-  
-  getState: function(){
-    return this.state;
-  },
-  
-  setState: function(newState){
-  
-    // disabled this as sometimes states have
-    // to be reset to recompute heights changed automatically
-    // if (this.state === newState) {
-    // return;
-    // }
-    
-    var tab, i, pane;
-    var tmpPreviousState = this.state;
-    
-    // is corrected below for one state
-    this.setDraggable(false);
-    
-    if (newState === isc.OBStandardView.STATE_TOP_MAX) {
-      this.state = newState;
-      
-      // minimize the ancestors
-      if (this.parentTabSet) {
-        this.parentTabSet.setState(isc.OBStandardView.STATE_BOTTOM_MAX);
-      } else if (this.parentContainer) {
-        this.parentContainer.setBottomMaximum();
-      }
-      
-      // note this for loop must be done before the parent's are
-      // done otherwise the content is not drawn
-      // the top member in each tab is maximized
-      // the bottom member in each tab is set to the tabbar height
-      for (i = 0; i < this.tabs.length; i++) {
-        tab = this.tabs[i];
-        this.makeTabVisible(tab);
-        pane = this.getTabPane(tab);
-        pane.setTopMaximum();
-      }
-      
-    } else if (newState === isc.OBStandardView.STATE_MIN) {
-      // the height is set to the height of the tabbar
-      this.setHeight(this.tabBar.getHeight());
-      for (i = 0; i < this.tabs.length; i++) {
-        tab = this.tabs[i];
-        this.getTabPane(tab).hide();
-      }
-      this.state = newState;
-    } else if (newState === isc.OBStandardView.STATE_BOTTOM_MAX) {
-      // the top part in each layout is set to 0%, and the bottom to max
-      this.state = newState;
-      if (this.parentTabSet) {
-        this.parentTabSet.setState(isc.OBStandardView.STATE_BOTTOM_MAX);
-      } else if (this.parentContainer) {
-        this.parentContainer.setBottomMaximum();
-      }
-      for (i = 0; i < this.tabs.length; i++) {
-        tab = this.tabs[i];
-        this.makeTabVisible(tab);
-        pane = this.getTabPane(tab);
-        pane.setBottomMaximum();
-      }
-    } else if (newState === isc.OBStandardView.STATE_IN_MID) {
-      this.state = newState;
-      this.setDraggable(true);
-      // minimize the third level
-      for (i = 0; i < this.tabs.length; i++) {
-        tab = this.tabs[i];
-        pane = this.getTabPane(tab);
-        this.makeTabVisible(tab);
-        pane.members[0].setHeight('*');
-        if (pane.members[1]) {
-          pane.members[1].setState(isc.OBStandardView.STATE_MIN);
-        }
-      }
-    } else if (newState === isc.OBStandardView.STATE_MID) {
-      if (this.parentTabSet) {
-        this.parentTabSet.setState(isc.OBStandardView.STATE_BOTTOM_MAX);
-      } else if (this.parentContainer) {
-        this.parentContainer.setBottomMaximum();
-      }
-      // the content of the tabs is split in 2
-      this.state = newState;
-      for (i = 0; i < this.tabs.length; i++) {
-        tab = this.tabs[i];
-        pane = this.getTabPane(tab);
-        pane.setHalfSplit();
-        this.makeTabVisible(tab);
-      }
-    }
-    
-    this.previousState = tmpPreviousState;
-  },
-  
-  makeTabVisible: function(tab){
-    if (tab === this.getSelectedTab()) {
-      pane = this.getTabPane(tab);
-      pane.show();
-      if (pane.doRefreshContents) {
-        pane.doRefreshContents();
-      }
-      if (pane.members[0]) {
-        pane.members[0].show();
-      }
-      if (pane.members[1]) {
-        pane.members[1].show();
-      }
-      this.selectTab(tab);
-    }
-  },
-  
-  tabSelected: function(tabNum, tabPane, ID, tab){
-    if (tabPane.refreshContents) {
-      tabPane.doRefreshContents();
-    }
-  },
-  
-  initWidget: function(){
-    this.tabBarProperties = isc.addProperties({}, isc.OBStandardViewTabSet.TABBARPROPERTIES);
-    this.tabBarProperties.tabSet = this;
-    this.Super('initWidget', arguments);
-  }
-});
-
-// TODO: move this to a central location
-isc.Canvas.addProperties({
-  // let focuschanged go up to the parent, or handle it here
-  focusChanged: function(hasFocus){
-    if (this.view && this.view.setAsActiveView) {
-      this.view.setAsActiveView();
-      return this.Super('focusChanged', arguments);
-    }
-    
-    if (this.parentElement && this.parentElement.focusChanged) {
-      this.parentElement.focusChanged(hasFocus);
-    }
-  }
-});
-
-isc.RPCManager.showPrompt = false;
-isc.RPCManager.neverShowPrompt = true;

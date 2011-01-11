@@ -164,6 +164,15 @@ isc.OBViewForm.addProperties({
     this.fieldsByColumnName = null;
   },
   
+  show: function() {
+    
+    // if the view is showing the form then the show action
+    // is because a tab is selected not because a grid to form 
+    // thing happens 
+    
+    return this.Super('show', arguments);
+  },
+  
   retrieveInitialValues: function(isNew){
     var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
     

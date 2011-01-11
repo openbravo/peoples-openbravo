@@ -18,10 +18,6 @@
 */
 // jslint
 
-// is placed here because the smartclient labels are loaded just after the smartclient
-// core
-isc.setAutoDraw(false);
-
 /*
  * The code below sets all standard Smartclient system labels.
  * For more information see the 'Internationalization and Localization (i18n,l10n)'
