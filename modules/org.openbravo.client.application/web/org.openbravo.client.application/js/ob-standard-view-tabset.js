@@ -16,12 +16,77 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 // = OBStandardViewTabSet =
 //
 // An OBStandardViewTabSet contains the child tabs of an OBStandardView. 
 // Each tab inside an OBStandardViewTabSet contains an OBStandardView instance.
 isc.ClassFactory.defineClass('OBStandardViewTabSet', isc.OBTabSetChild);
+
+isc.OBStandardViewTabSet.addClassProperties({
+
+  TABBARPROPERTIES: {
+    dblClickWaiting: false,
+    
+    canDrag: false,
+    dragAppearance: 'none',
+    dragStartDistance: 1,
+    overflow: 'hidden',
+    
+    itemClick: function(item, itemNum){
+      var me = this, tab = item;
+      me.dblClickWaiting = true;
+      isc.Timer.setTimeout(function(){
+        // if no double click happened then do the single click
+        if (me.dblClickWaiting) {
+          me.dblClickWaiting = false;
+          
+          // set the active tab
+          if (tab.pane && tab.pane.setAsActiveView) {
+            tab.pane.setAsActiveView();
+          }
+          
+          me.tabSet.doHandleClick();
+        }
+      }, OB.Constants.DBL_CLICK_DELAY);
+      
+    },
+    
+    itemDoubleClick: function(item, itemNum){
+      var tab = item;
+      this.dblClickWaiting = false;      
+      // set the active tab
+      if (tab.pane && tab.pane.setAsActiveView) {
+        tab.pane.setAsActiveView();
+      }
+      this.tabSet.doHandleDoubleClick();
+    },
+    
+    dragStop: function(){
+      // change the height to percentage based to handle resizing of browser:
+      this.tabSet.parentContainer.convertToPercentageHeights();
+      return true;
+    },
+    
+    dragStart: function(){
+      // -2 to prevent scrollbar
+      this.tabSet.maxHeight = this.tabSet.parentContainer.getHeight() - 2;
+      this.tabSet.minHeight = (this.getHeight() * 2) + 15;
+      return true;
+    },
+    
+    dragMove: function(){
+      var offset = (0 - isc.EH.dragOffsetY);
+      this.resizeTarget(this.tabSet, true, true, offset, -1 * this.getHeight(), null, true);
+      this.tabSet.draggedHeight = this.tabSet.getHeight();
+      // if (this.tabSet.getHeight() === this.getHeight()) {
+      // // set the parent to top-max
+      // this.tabSet.parentTabSet.setState(isc.OBStandardView.STATE_TOP_MAX);
+      // this.tabSet.draggedHeight = null;
+      // }
+      return true;
+    }
+  }
+});
 
 isc.OBStandardViewTabSet.addProperties({
   tabBarPosition: 'top',

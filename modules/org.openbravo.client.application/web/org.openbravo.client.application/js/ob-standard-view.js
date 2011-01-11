@@ -610,6 +610,7 @@ isc.OBStandardView.addProperties({
   },
   
   doHandleClick: function(){
+    this.setAsActiveView();
     if (!this.childTabSet) {
       return;
     }
@@ -621,6 +622,7 @@ isc.OBStandardView.addProperties({
   },
   
   doHandleDoubleClick: function(){
+    this.setAsActiveView();
     var tempState;
     if (!this.childTabSet) {
       return;
