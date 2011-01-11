@@ -36,7 +36,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.domain.ModelImplementation;
+import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.utils.FormatUtilities;
@@ -82,14 +85,7 @@ public class OBViewTab extends BaseTemplateComponent {
         if (!(prop.getDomainType() instanceof ButtonDomainType)) {
           continue;
         }
-        final ButtonField buttonField = new ButtonField();
-        buttonField.setId(fld.getId());
-        buttonField.setLabel(OBViewUtil.getLabel(fld));
-        buttonField.setUrl(Utility.getTabURL(fld.getTab().getId(), "E", false));
-        buttonField.setCommand("BUTTON"
-            + FormatUtilities.replace(fld.getColumn().getDBColumnName())
-            + fld.getColumn().getProcess().getId());
-        buttonFields.add(buttonField);
+        buttonFields.add(new ButtonField(fld));
       }
     }
     return buttonFields;
@@ -250,6 +246,39 @@ public class OBViewTab extends BaseTemplateComponent {
     private String id;
     private String label;
     private String url;
+
+    public ButtonField(Field fld) {
+      id = fld.getId();
+      label = OBViewUtil.getLabel(fld);
+
+      // Define command
+      Process process = fld.getColumn().getProcess();
+      if (process != null) {
+        String manualProcessMapping = null;
+        for (ModelImplementation impl : process.getADModelImplementationList()) {
+          if (impl.isDefault()) {
+            for (ModelImplementationMapping mapping : impl.getADModelImplementationMappingList()) {
+              if (mapping.isDefault()) {
+                manualProcessMapping = mapping.getMappingName();
+                break;
+              }
+            }
+            break;
+          }
+        }
+
+        if (manualProcessMapping == null) {
+          // Standard UI process
+          url = Utility.getTabURL(fld.getTab().getId(), "E", false);
+          command = "BUTTON" + FormatUtilities.replace(fld.getColumn().getDBColumnName())
+              + fld.getColumn().getProcess().getId();
+        } else {
+          url = manualProcessMapping;
+          command = "DEFAULT";
+        }
+
+      } // TODO: else
+    }
 
     public String getUrl() {
       return url;
