@@ -276,6 +276,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               + Utility.messageBD(this, "PayementMethodNotdefined", vars.getLanguage()) + ".");
           return myMessage;
         } else {
+          if (data1[0].paymentrule.equals("") || data1[0].paymentrule == null) {
+            data1[0].paymentrule = "P";
+          }
           String docTargetType = ExpenseSOrderData.cDoctypeTarget(conn, this, data.adClientId,
               data.adOrgId);
           String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", docTargetType,
@@ -537,17 +540,17 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateOrddisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateOrdsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramShowNullComplete", strCompleteAuto);
-    try{
-   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ExpenseSOrder"), Utility
-   	              .getContext(this, vars, "#User_Client", "ExpenseSOrder"), 0);
-   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseSOrder", strOrganization);
-   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
-   	      comboTableData = null;
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ExpenseSOrder"), Utility
+              .getContext(this, vars, "#User_Client", "ExpenseSOrder"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseSOrder", strOrganization);
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
 
-   }catch (Exception ex) {
-   	 throw new ServletException(ex);
-	}
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
 
     // New interface parameters
     try {
