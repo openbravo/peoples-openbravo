@@ -40,8 +40,6 @@
 .OBToolbarIconButtonSelectedFocusedDown,
 .OBToolbarIconButtonSelectedDisabled,
 .OBToolbarIconButtonDisabled {
-  padding: 12px 0px 0px 4px;  /* Hack to hide the menu unfold arrow when there is no menu present */
-  width: 23px;  /* Hack to hide the menu unfold arrow when there is no menu present */
   color: transparent;
   font-size: 0pt;
 }

@@ -568,7 +568,7 @@ isc.OBToolbar.addProperties({
 /** ----------------------------- **/
 
 
-isc.ClassFactory.defineClass('OBToolbarIconButton', isc.Button);
+isc.ClassFactory.defineClass('OBToolbarIconButton', isc.MenuButton);
 
 isc.OBToolbarIconButton.addProperties({
   showRollOver: true,
@@ -579,6 +579,7 @@ isc.OBToolbarIconButton.addProperties({
   title: '.',
   showHover: true,
   customState: '',
+  showMenuButtonImage: false,
 
   initWidget: function(){
     this.Super('initWidget', arguments);
