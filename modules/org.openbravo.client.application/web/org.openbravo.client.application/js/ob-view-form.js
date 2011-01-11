@@ -158,6 +158,17 @@ isc.OBViewForm.addProperties({
     return this.fieldsByColumnName[columnName.toLowerCase()];
   },
   
+  getPropertyFromColumnName: function(columnName) {
+    var length = this.view.propertyToColumns.length;
+    for (var i = 0; i < length; i++) {
+      var propDef = this.view.propertyToColumns[i];
+      if (propDef.dbColumn === columnName) {
+        return propDef.property;
+      }
+    }
+    return null;
+  },
+  
   setFields: function(){
     this.Super('setFields', arguments);
     this.fieldsByInpColumnName = null;
@@ -245,10 +256,21 @@ isc.OBViewForm.addProperties({
   },
   
   processColumnValue: function(columnName, columnValue){
-    var data, record, length, valuePresent, currentValue, isDate, value, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+    var data, record, length, valuePresent, currentValue, isDate, value, i, 
+      valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     if (!field) {
-      // ignore for now, the pk is also passed in
-      //isc.warn('No field found using column name: ' + columnName + ' for tab ' + this.view.tabId);
+      // not a field on the form, probably a datasource field
+      var prop = this.getPropertyFromColumnName(columnName);
+      if (!prop) {
+        return;
+      }
+      field = this.getDataSource().getField(prop);
+      if (!field) {
+        return;
+      }
+    }
+    // ignore the id
+    if (field.name === OB.Constants.ID) {
       return;
     }
     if (entries) {
@@ -273,8 +295,8 @@ isc.OBViewForm.addProperties({
       // handle the case that the FIC returns a null value as a string
       // should be repaired in the FIC
       this.clearValue(field.name);
-    } else if (columnValue.value || columnValue.value === 0) {
-      isDate = field.type &&
+    } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
+        isDate = field.type &&
       (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
       isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
       if (isDate) {
@@ -286,7 +308,9 @@ isc.OBViewForm.addProperties({
       this.clearValue(field.name);
     }
     
-    field.redraw();
+    if (field.redraw) {
+      field.redraw();
+    }
   },
   
   // called explicitly onblur and when non-editable fields change

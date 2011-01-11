@@ -786,6 +786,10 @@ isc.OBStandardView.addProperties({
     // allow default edit mode again
     this.allowDefaultEditMode = true;
     
+    if (this.viewForm) {
+      this.viewForm.resetForm();
+    }
+    
     // no parent disable new
     if (!this.getParentId()) {
       this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
@@ -804,10 +808,6 @@ isc.OBStandardView.addProperties({
     
     // clear the count from the tabtitle, will be recomputed
     this.updateTabTitle();
-    
-    if (this.viewForm) {
-      this.viewForm.resetForm();
-    }
     
     // if not visible or the parent also needs to be refreshed
     if (!this.isViewVisible() ||
@@ -1143,7 +1143,7 @@ isc.OBStandardView.addProperties({
       for (var i = 0; i < properties.length; i++) {
         value = record[properties[i].property];
         field = component.getField(properties[i].property);
-        addProperty = properties[i].sessionProperty || onlySessionProperties;
+        addProperty = properties[i].sessionProperty || !onlySessionProperties;
         if (typeof value !== 'undefined' && addProperty) {
           if (classicMode) {
             contextInfo[properties[i].column] = value;
