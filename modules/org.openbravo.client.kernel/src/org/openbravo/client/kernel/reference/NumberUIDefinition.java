@@ -104,7 +104,13 @@ public abstract class NumberUIDefinition extends UIDefinition {
       if (inputFormat != null) {
         try {
           final JSONObject jsonObject = new JSONObject();
-
+          // If a column has a numeric reference, and is required, and doesn't have a default, then
+          // the default '0' is set
+          if (!getValueFromSession && field.getColumn().isMandatory()
+              && field.getColumn().getDefaultValue() == null) {
+            jsonObject.put("value", 0);
+            return jsonObject.toString();
+          }
           JSONObject val = new JSONObject(super.getFieldProperties(field, getValueFromSession));
           if (val.has("value")) {
             jsonObject.put("value", val.get("value"));
