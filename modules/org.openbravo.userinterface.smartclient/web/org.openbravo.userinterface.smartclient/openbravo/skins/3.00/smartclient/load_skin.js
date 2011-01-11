@@ -13,6 +13,7 @@ with (theWindow) {
 // Specify skin directory
 //----------------------------------------
     // must be relative to your application file or isomorphicDir
+//    isc.Page.setSkinDir("[ISOMORPHIC]/skins/Enterprise/")
     isc.Page.setSkinDir("[ISOMORPHIC]/../openbravo/skins/3.00/smartclient/")
 
 
@@ -54,6 +55,22 @@ with (theWindow) {
 	isc.Canvas.addProperties({
 		groupBorderCSS: "1px solid #A7ABB4"
 	});
+
+    if(isc.Browser.isIE && isc.Browser.version >= 7) {
+        isc.Canvas.setAllowExternalFilters(false);
+        isc.Canvas.setNeverUseFilters(true);
+        if(isc.Window) {
+          isc.Window.addProperties({
+                modalMaskOpacity:null,
+                modalMaskStyle:"normal"
+            });
+            isc.Window.changeDefaults("modalMaskDefaults", { src : "[SKIN]opacity.png" });
+        }
+    }
+
+    if(isc.RPCManager) {
+        isc.RPCManager.addClassProperties({ promptStyle:"cursor" });
+    }
 
 //----------------------------------------
 // 1) Scrollbars
@@ -396,7 +413,8 @@ with (theWindow) {
         isc.Window.changeDefaults("toolbarDefaults", {
             buttonConstructor: "IButton"
         })
-        
+
+
         if (isc.ColorPicker) {
             isc.ColorPicker.addProperties({
                 layoutMargin:0
@@ -453,7 +471,6 @@ with (theWindow) {
         isc.FormItem.addProperties({
             defaultIconSrc:"[SKIN]/DynamicForm/default_formItem_icon.png"
         });
-
     }
     if (isc.CheckboxItem) {
         isc.CheckboxItem.addProperties({

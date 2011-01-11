@@ -11,12 +11,11 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 // This file contains direct overrides of Smartclient types.
 // Normally we introduce new subtypes of Smartclient types. However for
 // some cases it makes sense to directly set properties on top Smartclient
@@ -56,26 +55,15 @@ isc.FormItem.addProperties({
     }
   },
   
-  init: function(){
-    this._originalIsDisabled = this.isDisabled;
-    this.isDisabled = function(){
-      if (this.readOnly) {
-        return true;
-      }
-      return this._originalIsDisabled();
-    };
-    
-    this._originalBlur = this.blur;
-    this.blur = function(form, item){
-      if (form && form.handleItemChange) {
-        form.handleItemChange(this);
-      }
-      this._hasChanged = false;
-      if (this._originalBlur) {
-        return this._originalBlur(form, item);
-      }
-      return;
-    };
+  blur: function(form, item){
+    if (form && form.handleItemChange) {
+      form.handleItemChange(this);
+    }
+    this._hasChanged = false;
+    if (this._originalBlur) {
+      return this._originalBlur(form, item);
+    }
+    return;
   }
 });
 
