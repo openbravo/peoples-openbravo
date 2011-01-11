@@ -80,7 +80,7 @@ public class OBViewTab extends BaseTemplateComponent {
     final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
     Collections.sort(adFields, new FormFieldComparator());
     for (Field fld : adFields) {
-      if (fld.isActive()) {
+      if (fld.isActive() && fld.isDisplayed()) {
         if (!(ApplicationUtils.isUIButton(fld))) {
           continue;
         }
