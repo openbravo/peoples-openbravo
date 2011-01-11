@@ -21,6 +21,7 @@ package org.openbravo.client.querylist;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,6 +29,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.domaintype.BigDecimalDomainType;
+import org.openbravo.base.model.domaintype.DateDomainType;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
@@ -52,6 +58,7 @@ import org.openbravo.service.json.JsonUtils;
  * @author gorkaion
  */
 public class QueryListDataSource extends ReadOnlyDataSourceService {
+  private static final String OPTIONAL_FILTERS = "@optional_filters@";
 
   /**
    * Returns the count of objects based on the passed parameters.
@@ -80,9 +87,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       boolean showAll = "true".equals(parameters.get("showAll"));
       String viewMode = parameters.get("viewMode");
       WidgetClass widgetClass = widgetInstance.getWidgetClass();
+      List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
+          .getOBCQLWidgetQueryList().get(0));
 
-      Query widgetQuery = OBDal.getInstance().getSession().createQuery(
-          widgetClass.getOBCQLWidgetQueryList().get(0).getHQL());
+      String HQL = widgetClass.getOBCQLWidgetQueryList().get(0).getHQL();
+      // Parse the HQL in case that optional filters are required
+      HQL = parseOptionalFilters(HQL, viewMode, parameters, columns, xmlDateFormat);
+
+      Query widgetQuery = OBDal.getInstance().getSession().createQuery(HQL);
       String[] queryAliases = widgetQuery.getReturnAliases();
 
       if (!isExport && "widget".equals(viewMode) && !showAll) {
@@ -115,18 +127,15 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
         }
       }
 
-      List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
-          .getOBCQLWidgetQueryList().get(0));
-
       final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
       for (Object objResult : widgetQuery.list()) {
         final Map<String, Object> data = new LinkedHashMap<String, Object>();
-
         Object[] resultList = new Object[1];
-        if (objResult instanceof Object[])
+        if (objResult instanceof Object[]) {
           resultList = (Object[]) objResult;
-        else
+        } else {
           resultList[0] = objResult;
+        }
 
         for (OBCQL_QueryColumn column : columns) {
           // TODO: throw an exception if the display expression doesn't match any returned alias.
@@ -179,6 +188,64 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       }
     }
     return parameterValues;
+  }
+
+  private String parseOptionalFilters(String _HQL, String viewMode, Map<String, String> parameters,
+      List<OBCQL_QueryColumn> columns, SimpleDateFormat xmlDateFormat) {
+    StringBuffer optionalFilter = new StringBuffer(" 1=1 ");
+    String HQL = _HQL;
+
+    // Parse for columns filtered by grid's filter row on maximized view. If we are not on maximized
+    // view return the HQL without parsing.
+    if ("maximized".equals(viewMode)) {
+      for (OBCQL_QueryColumn column : columns) {
+        if (column.isCanBeFiltered()) {
+          String value = parameters.get(column.getDisplayExpression());
+          String whereClause = " 1=1 ";
+          if (value != null) {
+            whereClause = getWhereClause(value, column, xmlDateFormat);
+          }
+
+          if (HQL.contains("@" + column.getDisplayExpression() + "@")) {
+            HQL = HQL.replace("@" + column.getDisplayExpression() + "@", whereClause);
+          } else {
+            optionalFilter.append(" and " + whereClause);
+          }
+        }
+      }
+    }
+    HQL = HQL.replace(OPTIONAL_FILTERS, optionalFilter.toString());
+    return HQL;
+  }
+
+  private String getWhereClause(String value, OBCQL_QueryColumn column,
+      SimpleDateFormat xmlDateFormat) {
+    String whereClause = "";
+    DomainType domainType = ModelProvider.getInstance().getReference(column.getReference().getId())
+        .getDomainType();
+    if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
+        || domainType.getClass().equals(LongDomainType.class)) {
+      whereClause = column.getWhereClauseLeftPart() + " = " + value;
+    } else if (domainType.getClass().equals(DateDomainType.class)) {
+      try {
+        final Calendar cal = Calendar.getInstance();
+        cal.setTime(xmlDateFormat.parse(value));
+        whereClause = " (day(" + column.getWhereClauseLeftPart() + ") = " + cal.get(Calendar.DATE);
+        whereClause += "\n and month(" + column.getWhereClauseLeftPart() + ") = "
+            + (cal.get(Calendar.MONTH) + 1);
+        whereClause += "\n and year(" + column.getWhereClauseLeftPart() + ") = "
+            + cal.get(Calendar.YEAR) + ") ";
+      } catch (Exception e) {
+        // ignore these errors, just don't filter then
+        // add a dummy whereclause to make the query format correct
+        whereClause = " 1=1 ";
+      }
+    } else {
+      whereClause = "upper(" + column.getWhereClauseLeftPart() + ")";
+      whereClause += " LIKE ";
+      whereClause += "'%" + value.toUpperCase().replaceAll(" ", "%") + "%'";
+    }
+    return whereClause;
   }
 
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {

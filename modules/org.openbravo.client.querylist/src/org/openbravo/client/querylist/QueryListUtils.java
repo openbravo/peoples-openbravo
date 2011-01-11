@@ -61,6 +61,8 @@ class QueryListUtils {
               reference);
           field.put("name", column.getDisplayExpression());
           field.put("type", uiDefinition.getName());
+          field.put("filterEditorType", uiDefinition.getFilterEditorType());
+          field.put("canFilter", column.isCanBeFiltered());
           if (column.isHasLink()) {
             field.put("isLink", true);
             field.put("OB_LinkExpression", column.getLinkExpression());

@@ -85,12 +85,11 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       styleName: ''
     }), url, params = {};
     
-// FIXME: not shown filters row until optional filter parameters are possible
-//    if (this.viewMode === 'maximized') {
-//      isc.addProperties(this.gridProperties, {
-//        showFilterEditor: true
-//      });
-//    }
+    if (this.viewMode === 'maximized') {
+      isc.addProperties(this.gridProperties, {
+        showFilterEditor: true
+      });
+    }
     
     this.grid = isc.OBQueryListGrid.create(isc.addProperties({
       dataSource: this.gridDataSource,
@@ -163,6 +162,11 @@ isc.OBQueryListGrid.addProperties({
   autoFetchData: false,
   canAutoFitFields: false,
   showGridSummary: true,
+  
+  dataProperties: {
+    useClientFiltering: false,
+    useClientSorting: false
+  },
   
   filterData: function(criteria, callback, requestProperties){
     var crit = criteria || {},

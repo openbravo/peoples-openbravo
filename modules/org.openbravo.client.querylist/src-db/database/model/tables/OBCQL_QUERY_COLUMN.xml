@@ -81,6 +81,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CAN_BE_FILTERED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="WHERECLAUSE_LEFT_PART" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_TAB" name="OBCQL_QUERY_COLUMN_ADTAB">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
@@ -99,6 +107,8 @@
       <foreign-key foreignTable="AD_REFERENCE" name="OBCQL_QUERY_COLUMN_REFERENCE">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
+      <check name="OBCQL_COLUMN_CANBEFILTERED_CHK"><![CDATA[CAN_BE_FILTERED IN ('Y', 'N')]]></check>
+      <check name="OBCQL_COLUMN_WHERECLAUSE_CHK"><![CDATA[(CAN_BE_FILTERED = 'Y' AND WHERECLAUSE_LEFT_PART IS NOT NULL) OR CAN_BE_FILTERED = 'N']]></check>
       <check name="OBCQL_QUERY_COLUMN_ACTIVECHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBCQL_QUERY_COLUMN_HASLINK"><![CDATA[HAS_LINK IN ('Y', 'N')]]></check>
     </table>

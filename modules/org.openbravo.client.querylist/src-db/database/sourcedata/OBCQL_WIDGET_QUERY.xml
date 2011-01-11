@@ -18,6 +18,7 @@ where inv.businessPartner.name like :businessPartnerName
       and inv.paymentComplete = false
       and inv.salesTransaction = true
       and inv.client.id = :client
+      and @optional_filters@
 order by inv.invoiceDate]]></HQL>
 <!--1EF87E8E961A4E5BA3B41E1AB772B47C--></OBCQL_WIDGET_QUERY>
 
@@ -39,6 +40,7 @@ where inv.businessPartner.name like :businessPartnerName
       and inv.paymentComplete = false
       and inv.salesTransaction = false
       and inv.client.id = :client
+      and @optional_filters@
 order by inv.invoiceDate]]></HQL>
 <!--58BCB96595FA45678CC1423402238309--></OBCQL_WIDGET_QUERY>
 
@@ -58,6 +60,7 @@ where p.businessPartner.name like :businessPartnerName
       and p.processed = true
       and p.receipt = true
       and p.status = 'RPAE'
+      and @optional_filters@
 order by p.paymentDate]]></HQL>
 <!--E5A0DC8536134185AC8B1897F15DB816--></OBCQL_WIDGET_QUERY>
 
@@ -89,6 +92,7 @@ and ol.salesOrder.scheduledDeliveryDate<=now()
 and ol.product.name like :productname
 and ol.salesOrder.businessPartner.name like :suppliername
 and ol.salesOrder.documentNo like :documentno
+and @optional_filters@
 order by ol.salesOrder.scheduledDeliveryDate, ol.salesOrder.documentNo]]></HQL>
 <!--F5DEE669DD8047FB831A12064BB277BE--></OBCQL_WIDGET_QUERY>
 
@@ -108,6 +112,7 @@ where p.businessPartner.name like :businessPartnerName
       and p.processed = true
       and p.receipt = false
       and p.status = 'RPAE'
+      and @optional_filters@
 order by p.paymentDate]]></HQL>
 <!--F94AEB4680AD4AD48255071903000A43--></OBCQL_WIDGET_QUERY>
 
