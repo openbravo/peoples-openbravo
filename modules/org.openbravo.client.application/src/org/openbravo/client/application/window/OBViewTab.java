@@ -251,7 +251,8 @@ public class OBViewTab extends BaseTemplateComponent {
       label = OBViewUtil.getLabel(fld);
 
       // Define command
-      Process process = fld.getColumn().getProcess();
+      Column column = fld.getColumn();
+      Process process = column.getProcess();
       if (process != null) {
         String manualProcessMapping = null;
         for (ModelImplementation impl : process.getADModelImplementationList()) {
@@ -269,14 +270,18 @@ public class OBViewTab extends BaseTemplateComponent {
         if (manualProcessMapping == null) {
           // Standard UI process
           url = Utility.getTabURL(fld.getTab().getId(), "E", false);
-          command = "BUTTON" + FormatUtilities.replace(fld.getColumn().getDBColumnName())
-              + fld.getColumn().getProcess().getId();
+          command = "BUTTON" + FormatUtilities.replace(column.getDBColumnName())
+              + column.getProcess().getId();
         } else {
           url = manualProcessMapping;
           command = "DEFAULT";
         }
-
-      } // TODO: else
+      } else {
+        if ("Posted".equals(column.getDBColumnName()) && column.getProcess() == null) {
+          command = "BUTTONPosted";
+          url = Utility.getTabURL(fld.getTab().getId(), "E", false);
+        }
+      }
     }
 
     public String getUrl() {
