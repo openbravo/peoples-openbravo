@@ -25,7 +25,7 @@ import java.util.List;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.ButtonDomainType;
+import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.window.OBViewFormComponent.FormFieldComparator;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
@@ -81,8 +81,7 @@ public class OBViewTab extends BaseTemplateComponent {
     Collections.sort(adFields, new FormFieldComparator());
     for (Field fld : adFields) {
       if (fld.isActive()) {
-        final Property prop = KernelUtils.getInstance().getPropertyFromColumn(fld.getColumn());
-        if (!(prop.getDomainType() instanceof ButtonDomainType)) {
+        if (!(ApplicationUtils.isUIButton(fld))) {
           continue;
         }
         buttonFields.add(new ButtonField(fld));

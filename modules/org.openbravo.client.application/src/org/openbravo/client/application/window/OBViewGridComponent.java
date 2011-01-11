@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.ButtonDomainType;
+import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
@@ -108,7 +108,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         if (!fld.isDisplayed()) {
           continue;
         }
-        if (prop.getDomainType() instanceof ButtonDomainType) {
+        if (ApplicationUtils.isUIButton(fld)) {
           continue;
         }
         // these are currently also ignored
@@ -132,7 +132,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         if (!fld.isDisplayed()) {
           continue;
         }
-        if (prop.getDomainType() instanceof ButtonDomainType) {
+        if (ApplicationUtils.isUIButton(fld)) {
           continue;
         }
         fields.add(createLocalField(fld, prop, false));

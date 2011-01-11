@@ -25,8 +25,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
+import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
@@ -87,7 +87,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
 
       // a button domain type, continue for now
-      if (property.getDomainType() instanceof ButtonDomainType) {
+      if (ApplicationUtils.isUIButton(field)) {
         continue;
       }
 

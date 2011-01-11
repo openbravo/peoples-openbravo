@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@ package org.openbravo.client.application;
 
 import java.util.Collections;
 import java.util.List;
-
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
@@ -31,6 +30,7 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.ad.ui.Field;
 
 /**
  * Utility class for common operations
@@ -90,5 +90,18 @@ public class ApplicationUtils {
       OBContext.restorePreviousMode();
     }
     return Collections.emptyList();
+  }
+
+  /**
+   * Checks whether the reference of a field is button.
+   * 
+   * Caution: this check is done by checking hardcoded reference ID 28.
+   * 
+   * @param field
+   *          Field to check
+   * @return true in case it is button, false if not
+   */
+  public static boolean isUIButton(Field field) {
+    return "28".equals(field.getColumn().getReference().getId());
   }
 }
