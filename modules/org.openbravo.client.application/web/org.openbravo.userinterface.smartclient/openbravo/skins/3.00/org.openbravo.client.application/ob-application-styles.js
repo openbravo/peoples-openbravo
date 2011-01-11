@@ -16,6 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
 /* =====================================================================
  * Styling properties for:
  * 1) OB Form items
@@ -81,33 +82,28 @@ isc.OBFKItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperti
 
 isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
-// let the dateitem use the OBText
-if (!isc.DateItem.TEXT_FIELD) {
-  isc.DateItem.TEXT_FIELD = {};
-}
-isc.DateItem.TEXT_FIELD.type = 'OBTextItem';
-isc.OBDateItem.addProperties({
-  errorOrientation: 'left',
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
-  height: '100%',
-  pickerIconWidth: 21,
-  pickerIconHeight: 21,
-  pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png'
-});
 
-isc.OBDateTimeItem.addProperties({
+OB.OBDateItemStyleProperties = {
   errorOrientation: 'left',
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
-  
-  height: '100%',
+
+  pickerIconHSpace: '0',
+
+  textFieldProperties: {
+    type: "OBTextField",
+    textBoxStyle: 'OBFormFieldDateInput'
+  },
+
+  height: 25,
+
   pickerIconWidth: 21,
   pickerIconHeight: 21,
   pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png'
-});
+};
+
+isc.OBDateItem.addProperties(isc.addProperties({}, OB.OBDateItemStyleProperties));
+
+isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.OBDateItemStyleProperties));
+
 
 /* =====================================================================
  * Main layout styling properties

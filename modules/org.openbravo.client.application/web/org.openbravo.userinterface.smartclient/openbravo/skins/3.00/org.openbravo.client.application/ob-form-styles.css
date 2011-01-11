@@ -63,12 +63,19 @@
 .OBFormFieldInputFocused,
 .OBFormFieldInputError,
 .OBFormFieldInputHint,
+
 .OBFormFieldSelectInput,
 .OBFormFieldSelectInputError,
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputHint,
-.OBFormFieldSelectInputDisabled {
-  padding: 2px;
+.OBFormFieldSelectInputDisabled,
+
+.OBFormFieldDateInput,
+.OBFormFieldDateInputDisabled,
+.OBFormFieldDateInputFocused,
+.OBFormFieldDateInputError,
+.OBFormFieldDateInputHint  {
+  padding: 2px 2px 0px 2px;
   border: 1px solid #cdd7bb;
   background-color: #F5F7F1;
   color: #333333;
@@ -78,8 +85,18 @@
   /*width: 100%;*/
 }
 
+.OBFormFieldDateInput,
+.OBFormFieldDateInputDisabled,
+.OBFormFieldDateInputFocused,
+.OBFormFieldDateInputError,
+.OBFormFieldDateInputHint {
+  margin-right: -7px;
+ /*height: 17px !important;*/
+}
+
 .OBFormFieldInputDisabled,
-.OBFormFieldSelectInputDisabled {
+.OBFormFieldSelectInputDisabled,
+.OBFormFieldDateInputDisabled {
   color:#777;
   background-color:#FFFFFF;
   border:1px solid #A6ABB4;
@@ -99,6 +116,7 @@
 
 .OBFormFieldInputError,
 .OBFormFieldSelectInputError,
+.OBFormFieldDateInputError,
 .OBFormFieldLabelError { 
   color: red; //#204268; 
 }
@@ -122,12 +140,15 @@
   width: 21px;
 }
 
-.OBFormFieldInput:focus,  
+.OBFormFieldInput:focus,
 .OBFormFieldInputFocused,
-.OBFormFieldInputSelectedFocused,  
+.OBFormFieldInputSelectedFocused,
 .OBFormFieldSelectInputFocused,
-.OBFormFieldSelectInputSelectedFocused,  
-.OBFormFieldSelectInput:focus {  
+.OBFormFieldSelectInputSelectedFocused,
+.OBFormFieldSelectInput:focus,
+.OBFormFieldDateInput:focus,
+.OBFormFieldDateInputFocused,
+.OBFormFieldDateInputSelectedFocused {
   -moz-outline-offset: -1;
   outline-offset: -1;
   border: 1px solid #fa962f;
@@ -143,7 +164,8 @@
 }
 
 .OBFormFieldInputHint,
-.OBFormFieldSelectInputHint {
+.OBFormFieldSelectInputHint,
+.OBFormFieldDateInputHint {
   color:#204268;
 }
 
