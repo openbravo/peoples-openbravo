@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,11 +25,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.jfree.util.Log;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * Contains utility methods used in this module.
@@ -37,6 +45,7 @@ import org.openbravo.base.model.Property;
  * @author mtaal
  */
 public class JsonUtils {
+  private static final Logger log = Logger.getLogger(JsonUtils.class);
 
   /**
    * @return a new instance of the {@link SimpleDateFormat} using a format of yyyy-MM-dd (xml schema
@@ -103,7 +112,29 @@ public class JsonUtils {
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-      jsonResponse.put(JsonConstants.RESPONSE_DATA, localThrowable.getMessage());
+
+      try {
+        // get rid of the current transaction
+        OBDal.getInstance().rollbackAndClose();
+      } catch (Exception e) {
+        // ignored on purpose
+        log.error(e.getMessage(), e);
+      }
+
+      final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+      final OBError obError = Utility.translateError(new DalConnectionProvider(), vars, OBContext
+          .getOBContext().getLanguage().getLanguage(), localThrowable.getMessage());
+
+      if (obError != null) {
+        final JSONObject error = new JSONObject();
+        error.put("message", obError.getMessage());
+        error.put("messageType", obError.getType());
+        error.put("title", obError.getTitle());
+        jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
+      } else {
+        jsonResponse.put(JsonConstants.RESPONSE_DATA, localThrowable.getMessage());
+      }
+
       jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
       return jsonResult.toString();

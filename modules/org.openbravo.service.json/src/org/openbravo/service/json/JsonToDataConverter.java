@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,13 +35,16 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jfree.util.Log;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Converts json data to Openbravo business object(s).
@@ -219,6 +222,26 @@ public class JsonToDataConverter {
    *          the target of the data
    */
   protected void setData(JSONObject jsonObject, BaseOBObject obObject) throws JSONException {
+
+    // just use a random entity to get the name of the updated property
+    if (jsonObject.has(Organization.PROPERTY_UPDATED) && obObject instanceof Traceable) {
+      final String jsonDateStr = jsonObject.getString(Organization.PROPERTY_UPDATED);
+      if (jsonDateStr != null) {
+        try {
+          final Date jsonDate = new Timestamp(xmlDateTimeFormat.parse(jsonDateStr).getTime());
+          final Date objectDate = ((Traceable) obObject).getUpdated();
+          if (!areDatesEqual(jsonDate, objectDate, true)) {
+            // return this message code to let the client show a translated label
+            throw new OBStaleObjectException("@OBJSON_StaleDate@");
+          }
+        } catch (OBStaleObjectException x) {
+          throw x;
+        } catch (Exception e) {
+          throw new OBException("Exception when updating " + obObject, e);
+        }
+      }
+    }
+
     final Entity entity = obObject.getEntity();
 
     // collect the keys

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -260,8 +260,8 @@ public class DefaultJsonDataService implements JsonDataService {
         OBDal.getInstance().commitAndClose();
 
         return jsonResult.toString();
-      } catch (JSONException e) {
-        return JsonUtils.convertExceptionToJson(e);
+      } catch (Throwable t) {
+        return JsonUtils.convertExceptionToJson(t);
       }
     } else {
       return JsonUtils.convertExceptionToJson(new IllegalStateException("Object not found"));

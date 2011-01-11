@@ -440,18 +440,7 @@ isc.OBViewForm.addProperties({
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
         form.handleFieldErrors(resp.errors, autoSave);
       } else {
-        if (isc.isA.String(data) && data.indexOf('@') !== -1) {
-          index1 = data.indexOf('@');
-          index2 = data.indexOf('@', index1 + 1);
-          if (index2 !== -1) {
-            errorCode = data.substring(index1 + 1, index2);
-            view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, errorCode);
-          } else {
-            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, data);
-          }
-        } else {
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, data);
-        }
+        view.messageBar.setErrorMessageFromResponse(resp, data, req);
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
       }
       

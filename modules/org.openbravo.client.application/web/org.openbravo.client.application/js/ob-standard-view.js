@@ -218,18 +218,18 @@ isc.OBStandardView.addProperties({
       view: this,
       
       showProgress: function(editedRecord){
-        
+      
         // don't show it, done to quickly
         if (!editedRecord._showProgressAfterDelay) {
           return;
         }
-
+        
         if (editedRecord && editedRecord.editColumnLayout) {
           if (this.view.viewGrid.isVisible()) {
             editedRecord.editColumnLayout.toggleProgressIcon(true);
           }
         }
-
+        
         if (this.view.viewForm.isVisible()) {
           var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
           btn.customState = 'Progress';
@@ -252,7 +252,7 @@ isc.OBStandardView.addProperties({
       },
       
       performDSOperation: function(operationType, data, callback, requestProperties){
-//        requestProperties.showPrompt = false;
+        //        requestProperties.showPrompt = false;
         // set the current selected record before the delay
         var currentRecord = this.view.viewGrid.getSelectedRecord();
         if (currentRecord) {
@@ -283,22 +283,9 @@ isc.OBStandardView.addProperties({
         
         var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
         if (errorStatus) {
-          if (jsonData.response && jsonData.response.error) {
-            var error = jsonData.response.error;
-            if (error.type && error.type === 'user') {
-              dsRequest.willHandleError = true;
-              this.view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
-            } else if (!dsRequest.willHandleError) {
+          var handled = this.view.messageBar.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
+          if (!handled && !dsRequest.willHandleError) {
               OB.KernelUtilities.handleSystemException(error.message);
-            }
-          } else if (!dsRequest.willHandleError) {
-            OB.KernelUtilities.handleSystemException('Error occured');
-          } else if (dsResponse.status && dsResponse.status === isc.RPCResponse.STATUS_FAILURE) {
-            dsRequest.willHandleError = true;
-            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, jsonData.data);
-          } else {
-            dsRequest.willHandleError = true;
-            this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
           }
         } else {
           // there are some cases where the jsonData is not passed, in case of errors
@@ -1023,15 +1010,11 @@ isc.OBStandardView.addProperties({
           for (i = 0; i < selection.length; i++) {
             deleteData.ids.push(selection[i][OB.Constants.ID]);
           }
-          OB.RemoteCallManager.call('org.openbravo.client.application.MultipleDeleteActionHandler', deleteData, {
-            willHandleError: true
-          }, removeCallBack, {
+          OB.RemoteCallManager.call('org.openbravo.client.application.MultipleDeleteActionHandler', deleteData, {}, removeCallBack, {
             refreshGrid: true
           });
         } else {
-          view.viewGrid.removeData(selection[0], removeCallBack, {
-            willHandleError: true
-          });
+          view.viewGrid.removeData(selection[0], removeCallBack, {});
         }
       }
     };
