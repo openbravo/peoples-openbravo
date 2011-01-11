@@ -75,7 +75,7 @@ isc.OBSelectorPopupWindow.addProperties({
         return this.Super('fetchData', [this.convertCriteria(criteria), callback, requestProperties]);
       },
       convertCriteria: function(criteria){
-        
+      
         if (!criteria) {
           criteria = {};
         }
@@ -336,8 +336,7 @@ isc.OBSelectorItem.addProperties({
         item.openSelectorWindow();
       }
     }];
-    
-    
+        
     if (this.disabled) {
       // TODO: disable, remove icons
       this.icons = null;
@@ -357,7 +356,7 @@ isc.OBSelectorItem.addProperties({
       });
     }
     
-    return this.Super('init', arguments);
+    return this.Super('init', arguments); 
   },
   
   setValueFromGrid: function(record){
@@ -441,7 +440,7 @@ isc.ClassFactory.defineClass('OBSelectorLinkItem', StaticTextItem);
 isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 
 isc.OBSelectorLinkItem.addProperties({
-  
+
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
     // in this case the clearIcon needs to be shown or hidden
@@ -484,7 +483,7 @@ isc.OBSelectorLinkItem.addProperties({
     }
     
     this.instanceClearIcon = isc.shallowClone(this.clearIcon);
-    this.instanceClearIcon.showIf= function(form, item){
+    this.instanceClearIcon.showIf = function(form, item){
       if (item.disabled) {
         return false;
       }
@@ -504,7 +503,7 @@ isc.OBSelectorLinkItem.addProperties({
       this.formItem.setValue(null);
       this.formItem.form.itemChangeActions();
     };
-
+    
     this.icons = [this.instanceClearIcon];
     this.icons[0].formItem = this;
     

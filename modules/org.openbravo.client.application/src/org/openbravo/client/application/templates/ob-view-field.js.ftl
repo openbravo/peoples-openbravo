@@ -22,7 +22,7 @@
         name: '${fieldDefinition.name?js_string}',
         title: '${fieldDefinition.label?js_string}',
         type: '${fieldDefinition.type}',
-        readOnly: ${fieldDefinition.readOnly?string},
+        disabled: ${fieldDefinition.readOnly?string},
         parentProperty: ${fieldDefinition.parentProperty?string},
         colSpan: ${fieldDefinition.colSpan},
         rowSpan: ${fieldDefinition.rowSpan},
