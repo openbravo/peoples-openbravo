@@ -28,7 +28,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.jfree.util.Log;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -199,7 +198,9 @@ public class JsonUtils {
         return properties;
       }
       if (!currentEntity.hasProperty(part)) {
-        Log.warn("Property " + part + " not found in entity " + currentEntity);
+        // explicitly not logging as the new ui will also post and send other
+        // properties
+        // Log.warn("Property " + part + " not found in entity " + currentEntity);
         return properties;
       }
       result = currentEntity.getProperty(part);
