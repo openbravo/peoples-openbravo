@@ -24,6 +24,7 @@ function closeThisPage() {
 }
 
 function submitThisPage(ref) {
+    
   if (top.opener.submitCommandForm) {
     top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
   } else {
@@ -32,7 +33,7 @@ function submitThisPage(ref) {
       title: document.getElementById('messageTitle').value,
       text: document.getElementById('messageMessage').value
     }
-    top.opener.OB.ActionButton.closeProcessPopup(msg);
+    top.opener.OB.ActionButton.closeProcessPopup(msg, ref);
   }
   top.close();
   return true;
