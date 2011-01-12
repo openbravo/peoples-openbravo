@@ -30,6 +30,8 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   grid: null,
   gridProperties: {},
   viewMode: 'widget',
+  totalRows: null,
+  widgetTitle: null,
 
   showAllLabel: null,
   OBQueryListShowAllLabelHeight: null,
@@ -38,9 +40,12 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     this.showAllLabel = isc.HLayout.create({
       height: this.OBQueryListShowAllLabelHeight,
       members: [
-        isc.HLayout.create({
-          width: '100%'
+        isc.OBQueryListRowsNumberLabel.create({
+          contents: ''
         }),
+//        isc.HLayout.create({
+//          width: '100%'
+//        }),
         isc.OBQueryListShowAllLabel.create({
           contents: OB.I18N.getLabel('OBCQL_ShowAll'),
           widget: this,
@@ -49,6 +54,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     ]
     });
     this.Super('initWidget', arguments);
+    this.widgetTitle = this.title;
     // refresh if the dbInstanceId is set
     if (this.dbInstanceId) {
       this.refresh();
@@ -69,7 +75,8 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
                   this.grid.summaryRowHeight + 2;
     this.grid.setHeight(newGridHeight);
 
-    var newHeight = headerHeight + newGridHeight + 13 +  this.showAllLabel.height;
+    var newHeight = headerHeight + newGridHeight + 13;
+    if (this.showAllLabel.isVisible()) { newHeight += this.showAllLabel.height; }
     this.setHeight(newHeight);
     if (this.parentElement) {
       var heightDiff = newHeight - currentHeight,
@@ -130,7 +137,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   
   maximize: function() {
     OB.Layout.ViewManager.openView('OBQueryListView',  {
-      tabTitle: this.title,
+      tabTitle: this.widgetTitle,
       widgetInstanceId: this.dbInstanceId,
       widgetId: this.widgetId,
       fields: this.maximizedFields,
@@ -139,8 +146,25 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       menuItems: this.menuItems,
       fieldDefinitions: this.fieldDefinitions
     });
-  }
+  },
   
+  setTotalRows: function(totalRows) {
+    this.totalRows = totalRows;
+    if (this.viewMode === 'maximized') {
+      this.setTitle(this.widgetTitle + " (" + this.totalRows + ")");
+    }
+    this.showAllLabel.getMembers()[0].setContents(
+        OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber, this.totalRows])
+      );
+    if (this.parameters.showAll || this.totalRows <= this.parameters.RowsNumber) {
+      this.showAllLabel.hide();
+    } else {
+      this.showAllLabel.show();
+    }
+    if (this.viewMode === 'widget') {
+      this.setWidgetHeight();
+    }
+  }
 });
 
 isc.ClassFactory.defineClass('OBQueryListGrid', isc.OBGrid);
@@ -177,7 +201,18 @@ isc.OBQueryListGrid.addProperties({
     crit.rowsNumber = this.widget.parameters.RowsNumber;
     crit.viewMode = this.widget.viewMode;
     crit.showAll = this.widget.parameters.showAll;
-    return this.Super('filterData', [crit, callback, reqProperties]);
+
+    reqProperties.clientContext = {grid: this,
+        criteria: crit}; 
+
+    var newCallBack = function(dsResponse, data, dsRequest){
+      dsResponse.clientContext.grid.getWidgetTotalRows(dsResponse, data, dsRequest);
+      if (callback) {
+        callback();
+      }
+    };
+
+    return this.Super('filterData', [crit, newCallBack, reqProperties]);
   },
   
   fetchData: function(criteria, callback, requestProperties){
@@ -189,7 +224,18 @@ isc.OBQueryListGrid.addProperties({
     crit.rowsNumber = this.widget.parameters.RowsNumber;
     crit.viewMode = this.widget.viewMode;
     crit.showAll = this.widget.parameters.showAll;
-    return this.Super('fetchData', [crit, callback, reqProperties]);
+
+    reqProperties.clientContext = {grid: this,
+                                   criteria: crit}; 
+
+    var newCallBack = function(dsResponse, data, dsRequest){
+      dsResponse.clientContext.grid.getWidgetTotalRows(dsResponse, data, dsRequest);
+      if (callback) {
+        callback();
+      }
+    };
+
+    return this.Super('fetchData', [crit, newCallBack, reqProperties]);
   },
 
   cellClick: function (record, rowNum, colNum) {
@@ -206,6 +252,23 @@ isc.OBQueryListGrid.addProperties({
             keyParameter: field.OB_keyParameter
         });
       }
+    }
+  },
+
+  getWidgetTotalRows: function(dsResponse, data, dsRequest){
+    if (this.widget.viewMode === 'widget' && !this.widget.parameters.showAll) {
+      var criteria = dsResponse.clientContext.criteria || {},
+          requestProperties = {};
+      requestProperties.showPrompt = false;
+      requestProperties.clientContext = {grid: this};
+
+      criteria.showAll = true;
+      this.dataSource.fetchData(criteria, function(dsResponse, data, dsRequest){
+          dsResponse.clientContext.grid.widget.setTotalRows(dsResponse.totalRows);
+        }, requestProperties );
+
+    } else {
+      this.widget.setTotalRows(dsResponse.totalRows);
     }
   }
 });

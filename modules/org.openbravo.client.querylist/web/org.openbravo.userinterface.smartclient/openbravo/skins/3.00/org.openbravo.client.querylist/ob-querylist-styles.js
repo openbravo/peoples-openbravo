@@ -35,3 +35,16 @@ isc.OBQueryListShowAllLabel.addProperties({
   wrap: false,
   width: '*'
 });
+
+isc.ClassFactory.defineClass('OBQueryListRowsNumberLabel', isc.Label);
+
+isc.OBQueryListRowsNumberLabel.addProperties({
+  className: 'OBQueryListRowsNumberLabel',
+  showDown: false,
+  showFocused: false,
+  showFocusedAsOver: false,
+  showRollOver: false,
+  height: 20,
+  wrap: false,
+  width: '*'
+});
