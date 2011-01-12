@@ -1176,7 +1176,7 @@ isc.OBStandardView.addProperties({
       TAB_ID: this.viewGrid.view.tabId,
       ROW_ID: this.viewGrid.getSelectedRecord().id
     }, callbackFunction);
-  }
+  },
   
   getTabMessage: function(){
     var callback = function(resp, data, req){
