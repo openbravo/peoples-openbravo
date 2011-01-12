@@ -560,10 +560,11 @@ isc.OBToolbar.addProperties({
   //
   refreshToolbarButtons: function() {
     var buttons = this.getRightMembers();
-    //console.log('sel records: '+this.view.viewGrid.getSelectedRecords().length);
+    var hideAllButtons = this.view.viewGrid.getSelectedRecords().length !== 1;
+    
     for (var i = 0; i < buttons.length; i++){
       if (buttons[i].refresh){
-        buttons[i].refresh(this.view.getCurrentValues());
+        buttons[i].refresh(this.view.getCurrentValues(), hideAllButtons);
       }
     }
   },

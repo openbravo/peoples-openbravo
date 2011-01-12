@@ -93,19 +93,20 @@ isc.OBToolbarTextButton.addProperties( {
     }
   },
   
-  refresh: function(record) {
-    if (!record){
+  refresh: function(record, hide) {
+    if (hide || !record) {
+      this.hide();
       return;
     }
+    
+    //TODO: implement display/read only logic
+    this.show();
     
     var label = this.labelValue[record[this.property]];
     if (!label){
       label = this.title;
     }
     this.setTitle(label);
-    
-   // console.log('currentVAlue'+record[this.property]+'r:',record);
-    
   }
   
 });
