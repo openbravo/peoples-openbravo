@@ -574,9 +574,9 @@ public class JsonToDataConverter {
   protected boolean isNotConvertable(BaseOBObject obObject, Property property) {
     // one-to-many are never json-ized
     boolean doNotHandleThisProperty = property.isOneToMany();
-    // do not change auditinfo or client/org for an existing object
+    // do not change auditinfo or client for an existing object
     doNotHandleThisProperty |= !obObject.isNewOBObject()
-        && (property.isAuditInfo() || property.isClientOrOrganization());
+        && (property.isAuditInfo() || property.getName().equals(Organization.PROPERTY_CLIENT));
     // do not change not changeable properties
     doNotHandleThisProperty |= property.isInactive();
     // do not change not updatable properties
