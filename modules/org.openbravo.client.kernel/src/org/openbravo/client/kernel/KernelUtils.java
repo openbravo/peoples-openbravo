@@ -164,7 +164,7 @@ public class KernelUtils {
       for (Module module : modules.list()) {
         final ModuleWithLowLevelCode moduleLowLevelCode = new ModuleWithLowLevelCode();
         moduleLowLevelCode.setModule(module);
-        moduleLowLevelCode.setLowLevelCode(computeLowLevelCode(module));
+        moduleLowLevelCode.setLowLevelCode(computeLowLevelCode(module, new ArrayList<Module>()));
         moduleLowLevelCodes.add(moduleLowLevelCode);
       }
       Collections.sort(moduleLowLevelCodes);
@@ -179,13 +179,20 @@ public class KernelUtils {
     }
   }
 
-  private int computeLowLevelCode(Module module) {
+  private int computeLowLevelCode(Module module, List<Module> modules) {
     if (module.getId().equals("0")) {
       return 0;
     }
+    // have been here, go away, with a high number
+    // infinite loop
+    if (modules.contains(module)) {
+      log.warn("Cyclic relation in module dependencies of module " + module);
+      return 100;
+    }
+    modules.add(module);
     int currentLevel = 0;
     for (ModuleDependency dependency : module.getModuleDependencyList()) {
-      final int computedLevel = 1 + computeLowLevelCode(dependency.getDependentModule());
+      final int computedLevel = 1 + computeLowLevelCode(dependency.getDependentModule(), modules);
       if (computedLevel > currentLevel) {
         currentLevel = computedLevel;
       }
