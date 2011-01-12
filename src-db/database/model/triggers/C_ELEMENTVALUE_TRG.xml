@@ -104,10 +104,10 @@ BEGIN
     UPDATE C_ValidCombination
       SET Updated=now(), 
           combination= TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.VALUE || '-_-_-_',
-          description= TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.DESCRIPTION || '-_-_-_'
+          description= TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.NAME || '-_-_-_'
       WHERE (Account_ID=:new.C_ElementValue_ID OR User1_ID=:new.C_ElementValue_ID OR User2_ID=:new.C_ElementValue_ID)
          AND (combination <> (TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.VALUE || '-_-_-_')
-         OR description <> (TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.DESCRIPTION || '-_-_-_'));
+         OR description <> (TO_CHAR((SELECT AD_ORG.NAME FROM AD_ORG WHERE AD_ORG.AD_ORG_ID = C_VALIDCOMBINATION.AD_ORG_ID)) || '-' || :new.NAME || '-_-_-_'));
 
      UPDATE Fact_Acct SET AcctValue=:new.VALUE,AcctDescription=:new.DESCRIPTION WHERE Account_ID=:new.C_ElementValue_ID;
   END IF;
