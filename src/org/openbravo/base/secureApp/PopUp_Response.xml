@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.U.
+ * Copyright (C) 2001-2011 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -14,10 +14,4 @@
 	<template file="PopUp_Response.html"/>
 	<PARAMETER id="paramLanguage" name="language"/>
 	<PARAMETER id="paramHref" name="href" attribute="onload" replace="xx"/>
-	<PARAMETER id="paramHref" name="href" attribute="onload" replace="xx"/>
-	
-	<PARAMETER id="messageType" name="messageType" default ="" attribute="value"/>
-  <PARAMETER id="messageTitle" name="messageTitle" default ="" attribute="value"/>
-  <PARAMETER id="messageMessage" name="messageMessage" default ="" attribute="value"/>
-	
 </REPORT>

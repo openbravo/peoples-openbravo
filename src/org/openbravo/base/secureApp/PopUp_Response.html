@@ -28,12 +28,7 @@ function submitThisPage(ref) {
   if (top.opener.submitCommandForm) {
     top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
   } else {
-    var msg = {
-      type: document.getElementById('messageType').value,
-      title: document.getElementById('messageTitle').value,
-      text: document.getElementById('messageMessage').value
-    }
-    top.opener.OB.ActionButton.closeProcessPopup(msg, ref);
+    top.opener.OB.ActionButton.closeProcessPopup(ref);
   }
   top.close();
   return true;
