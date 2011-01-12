@@ -108,7 +108,7 @@
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <check name="OBCQL_COLUMN_CANBEFILTERED_CHK"><![CDATA[CAN_BE_FILTERED IN ('Y', 'N')]]></check>
-      <check name="OBCQL_COLUMN_WHERECLAUSE_CHK"><![CDATA[(CAN_BE_FILTERED = 'Y' AND WHERECLAUSE_LEFT_PART IS NOT NULL) OR CAN_BE_FILTERED = 'N']]></check>
+      <check name="OBCQL_COLUMN_WHERECLAUSE_CHK"><![CDATA[((CAN_BE_FILTERED = 'Y') AND (WHERECLAUSE_LEFT_PART IS NOT NULL)) OR (CAN_BE_FILTERED = 'N')]]></check>
       <check name="OBCQL_QUERY_COLUMN_ACTIVECHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBCQL_QUERY_COLUMN_HASLINK"><![CDATA[HAS_LINK IN ('Y', 'N')]]></check>
     </table>
