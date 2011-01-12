@@ -66,8 +66,14 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
 function closeSearch(action, value, display, parameters, wait){
   var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem;
   if (action === 'SAVE') {
+    if (!targetFld.valueMap) {
+      targetFld.valueMap = {};
+    }
+    
     targetFld.setValue(value);
+    targetFld.valueMap[targetFld.getValue()] = display;
     targetFld.form.setValue(targetFld.displayField, display);
+    targetFld.updateValueMap(true);
     
     if (parameters && parameters.length > 0) {
       length = parameters.length;
@@ -277,13 +283,13 @@ isc.OBSectionItem.addProperties({
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,
   
-  initWidget: function() {
+  initWidget: function(){
     var ret = this.Super('initWidget', arguments);
     return ret;
   },
   
-  updateDisabled: function() {
-      var ret = this.Super('initWidget', arguments);
+  updateDisabled: function(){
+    var ret = this.Super('initWidget', arguments);
     return ret;
   },
   
