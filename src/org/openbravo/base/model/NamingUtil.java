@@ -258,6 +258,8 @@ public class NamingUtil {
         log
             .error("ERROR: Property name computation fails for property "
                 + property
+                + " using new name "
+                + mappingName
                 + " there is more then one property with the same name, being robust and "
                 + "renaming property automatically. If this error appears during update.database then "
                 + "this is possibly solved automatically. Otherwise this should be repaired manually by "

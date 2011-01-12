@@ -74,6 +74,7 @@ public class Property {
   private boolean mandatory;
   private boolean identifier;
   private boolean parent;
+  private boolean child;
   private boolean encrypted;
   private boolean isUuid;
   private boolean isUpdatable;
@@ -533,6 +534,14 @@ public class Property {
 
   public void setParent(boolean parent) {
     this.parent = parent;
+  }
+
+  public boolean isChild() {
+    return child;
+  }
+
+  public void setChild(boolean child) {
+    this.child = child;
   }
 
   /**

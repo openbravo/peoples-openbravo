@@ -239,21 +239,35 @@ public class ModelProvider implements OBSingleton {
       // of the real not-null in the database!
       for (final Entity e : model) {
         for (final Property p : e.getProperties()) {
-          p.initializeName();
-          // don't do mandatory value setting for views
-          if (!e.isView() && p.getColumnName() != null) {
-            final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(e.getTableName(),
-                p.getColumnName()));
-            if (mandatory != null) {
-              p.setMandatory(mandatory);
-            } else {
-              log.warn("Column " + p + " mandatory setting not found in the database metadata. "
-                  + "A cause can be that the column does not exist in the database schema");
+          if (!p.isOneToMany()) {
+            p.initializeName();
+            // don't do mandatory value setting for views
+            if (!e.isView() && p.getColumnName() != null) {
+              final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(e
+                  .getTableName(), p.getColumnName()));
+              if (mandatory != null) {
+                p.setMandatory(mandatory);
+              } else {
+                log.warn("Column " + p + " mandatory setting not found in the database metadata. "
+                    + "A cause can be that the column does not exist in the database schema");
+              }
             }
           }
         }
-
         // dumpPropertyNames(e);
+      }
+      for (final Entity e : model) {
+        // add virtual property in the parent table based on
+        // isParent columns
+        createPropertyInParentEntity(e);
+      }
+
+      for (final Entity e : model) {
+        for (final Property p : e.getProperties()) {
+          if (p.isOneToMany()) {
+            p.initializeName();
+          }
+        }
       }
     } finally {
       log.debug("Closing session and sessionfactory used during model read");
@@ -364,11 +378,6 @@ public class ModelProvider implements OBSingleton {
         createIdReferenceProperty(e);
       } else if (e.getIdProperties().size() > 1) {
         createCompositeId(e);
-      }
-      // add virtual property in the parent table based on
-      // isParent columns
-      if (e.getParentProperties().size() > 0) {
-        createPropertyInParentEntity(e);
       }
     }
   }
@@ -615,18 +624,35 @@ public class ModelProvider implements OBSingleton {
   }
 
   private void createPropertyInParentEntity(Entity e) {
-    for (final Property p : e.getParentProperties()) {
-      if (p.getReferencedProperty() == null) {
-        continue;
+    try {
+      List<Property> props = new ArrayList<Property>(e.getProperties());
+      for (final Property p : props) {
+        if (!p.isParent()
+            && (p.isOneToMany()
+                || p.isId()
+                || p.getColumnName().equalsIgnoreCase("createdby")
+                || p.getColumnName().equalsIgnoreCase("updatedby")
+                || p.getReferencedProperty() == null
+                || entitiesByClassName.get("org.openbravo.model.ad.system.Client").equals(
+                    p.getReferencedProperty().getEntity())
+                || entitiesByClassName.get("org.openbravo.model.common.enterprise.Organization")
+                    .equals(p.getReferencedProperty().getEntity())
+                || entitiesByClassName.get("org.openbravo.model.ad.module.Module").equals(
+                    p.getReferencedProperty().getEntity()) || entitiesByClassName.get(
+                "org.openbravo.model.ad.system.Language").equals(
+                p.getReferencedProperty().getEntity()))) {
+          continue;
+        }
+        final Entity parent = p.getReferencedProperty().getEntity();
+        createChildProperty(parent, p);
       }
-      final Entity parent = p.getReferencedProperty().getEntity();
-      createChildProperty(parent, p);
+    } catch (Exception ex) {
+      ex.printStackTrace();
     }
   }
 
   private void createChildProperty(Entity parentEntity, Property childProperty) {
     final Property newProp = new Property();
-
     newProp.setEntity(parentEntity);
     newProp.setId(false);
     newProp.setIdentifier(false);
@@ -638,7 +664,7 @@ public class ModelProvider implements OBSingleton {
     newProp.setReferencedProperty(childProperty);
     newProp.setOneToOne(false);
     newProp.setOneToMany(true);
-
+    newProp.setChild(childProperty.isParent());
     parentEntity.addProperty(newProp);
   }
 
