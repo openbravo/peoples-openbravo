@@ -48,7 +48,7 @@ isc.OBGrid.addProperties({
       width: 16,
       height: 16,
       visibility: 'hidden',
-      src: '[SKIN]/../../org.openbravo.client.application/images/system/progress-indicator-icon.gif'
+      src: '[SKIN]/../../org.openbravo.client.application/images/system/progress-indicator-row.gif'
   }
 });
 
