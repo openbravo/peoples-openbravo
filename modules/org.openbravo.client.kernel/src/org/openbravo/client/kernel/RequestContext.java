@@ -225,6 +225,9 @@ public class RequestContext {
     }
 
     public String getContentType() {
+      if (delegate == null) {
+        return "text/html";
+      }
       return delegate.getContentType();
     }
 

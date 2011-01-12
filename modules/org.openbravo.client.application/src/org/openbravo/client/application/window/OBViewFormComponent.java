@@ -21,12 +21,15 @@ package org.openbravo.client.application.window;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.client.application.ApplicationUtils;
+import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
@@ -75,6 +78,30 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
     Collections.sort(adFields, new FormFieldComparator());
 
+    final List<Field> fieldsInDynamicExpression = new ArrayList<Field>();
+    final Map<Field, String> fieldsExpressionMap = new HashMap<Field, String>();
+
+    // Processing dynamic expressions (display logic)
+    for (Field f : adFields) {
+      if (f.getDisplayLogic() == null || f.getDisplayLogic().equals("") || !f.isActive()
+          || !f.isDisplayed()) {
+        continue;
+      }
+
+      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab);
+      fieldsExpressionMap.put(f, parser.getJSExpression());
+
+      // log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
+
+      for (Field fieldExpression : parser.getFields()) {
+        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
+          fieldsInDynamicExpression.add(fieldExpression);
+        }
+      }
+    }
+
+    // log.debug(tab.getId() + " - " + fieldsInDynamicExpression);
+
     OBViewFieldGroup currentFieldGroup = null;
     FieldGroup currentADFieldGroup = null;
     int colNum = 1;
@@ -94,13 +121,15 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       final OBViewField viewField = new OBViewField();
       viewField.setField(field);
       viewField.setProperty(property);
+      viewField.setReadrawOnChange(fieldsInDynamicExpression.contains(field));
+      viewField.setShowIf(fieldsExpressionMap.get(field) != null ? fieldsExpressionMap.get(field)
+          : "");
 
       // Positioning some fields in odd-columns
       if (colNum % 2 == 0
           && (field.isStartinoddcolumn() || !field.isDisplayOnSameLine() || viewField.getColSpan() == 2)) {
         final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
         fields.add(spacer);
-        log.debug("colNum: " + colNum + " - field: [spacer]");
         colNum++;
         if (colNum > 4) {
           colNum = 1;
@@ -119,8 +148,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       }
 
       fields.add(viewField);
-      log.debug("colNum: " + colNum + " - field: " + field.getName() + " - issameline: "
-          + field.isDisplayOnSameLine() + " - startinoddcolumn: " + field.isStartinoddcolumn());
 
       if (currentFieldGroup != null) {
         currentFieldGroup.addChild(viewField);
@@ -159,9 +186,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getTargetEntity();
 
-    public String getStartRow();
+    public boolean getStartRow();
 
-    public String getEndRow();
+    public boolean getEndRow();
 
     public long getColSpan();
 
@@ -170,6 +197,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public boolean isReadOnly();
 
     public boolean isParentProperty();
+
+    public boolean getRedrawOnChange();
+
+    public String getShowIf();
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -178,6 +209,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private String label;
     private UIDefinition uiDefinition;
     private Boolean isParentProperty = null;
+    private boolean redrawOnChange = false;
+    private String showIf = "";
 
     public boolean isReadOnly() {
       return isParentProperty() || !property.isUpdatable();
@@ -311,16 +344,32 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH || getRowSpan() == 2 ? 2 : 1;
     }
 
-    public String getEndRow() {
-      return "false";
+    public boolean getEndRow() {
+      return false;
     }
 
     public long getRowSpan() {
       return property.getDomainType().getReference().getId().equals(TEXT_AD_REFERENCE_ID) ? 2 : 1;
     }
 
-    public String getStartRow() {
-      return field.isStartnewline().toString();
+    public boolean getStartRow() {
+      return field.isStartnewline();
+    }
+
+    public void setReadrawOnChange(boolean redrawOnChange) {
+      this.redrawOnChange = redrawOnChange;
+    }
+
+    public boolean getRedrawOnChange() {
+      return redrawOnChange;
+    }
+
+    public void setShowIf(String showIf) {
+      this.showIf = showIf;
+    }
+
+    public String getShowIf() {
+      return showIf;
     }
 
   }
@@ -355,38 +404,40 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return 4;
     }
 
-    public String getEndRow() {
-      return "true";
+    public boolean getEndRow() {
+      return true;
     }
 
     public long getRowSpan() {
       return 1;
     }
 
-    public String getStartRow() {
-      return "true";
+    public boolean getStartRow() {
+      return true;
     }
 
     public boolean getStandardField() {
       return false;
     }
 
-    @Override
     public String getLabel() {
-      // TODO Auto-generated method stub
-      return null;
+      return "";
     }
 
-    @Override
     public String getName() {
-      // TODO Auto-generated method stub
-      return null;
+      return "";
     }
 
-    @Override
     public String getType() {
-      // TODO Auto-generated method stub
-      return null;
+      return "";
+    }
+
+    public boolean getRedrawOnChange() {
+      return false;
+    }
+
+    public String getShowIf() {
+      return "";
     }
 
   }
@@ -443,12 +494,29 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return "dummy";
     }
 
+    public boolean getEndRow() {
+      return true;
+    }
+
     public List<OBViewFieldDefinition> getChildren() {
       return Collections.singletonList(childField);
+
     }
 
     public String getType() {
       return "OBLinkedItemSectionItem";
+    }
+
+    public boolean getStartRow() {
+      return true;
+    }
+
+    public boolean getRedrawOnChange() {
+      return false;
+    }
+
+    public String getShowIf() {
+      return "";
     }
 
     public String getName() {
@@ -492,8 +560,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return 1;
     }
 
-    public String getEndRow() {
-      return "false";
+    public boolean getEndRow() {
+      return false;
     }
 
     public boolean isReadOnly() {
@@ -536,12 +604,20 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return false;
     }
 
-    public String getStartRow() {
-      return "false";
+    public boolean getStartRow() {
+      return false;
     }
 
     public String getType() {
       return "spacer";
+    }
+
+    public boolean getRedrawOnChange() {
+      return false;
+    }
+
+    public String getShowIf() {
+      return "";
     }
 
   }

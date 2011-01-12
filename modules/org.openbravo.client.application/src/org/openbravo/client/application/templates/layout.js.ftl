@@ -126,7 +126,7 @@ OB.MainView.TabSet = isc.TabSet.create({
   width: '100%',
   height: '100%',
   
-  destroyPanes: false,
+  destroyPanes: true,
   
   stateAsString: null,
     

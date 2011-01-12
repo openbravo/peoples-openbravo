@@ -26,8 +26,8 @@
         parentProperty: ${fieldDefinition.parentProperty?string},
         colSpan: ${fieldDefinition.colSpan},
         rowSpan: ${fieldDefinition.rowSpan},
-        startRow: ${fieldDefinition.startRow},
-        endRow: ${fieldDefinition.endRow},
+        startRow: ${fieldDefinition.startRow?string},
+        endRow: ${fieldDefinition.endRow?string},
         width: '*',
         <#if fieldDefinition.standardField>
         columnName: '${fieldDefinition.columnName?string}',
@@ -35,6 +35,13 @@
         referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
         targetEntity: '${fieldDefinition.targetEntity?string}',
         required: ${fieldDefinition.required?string},
+        redrawOnChange: ${fieldDefinition.redrawOnChange?string},
+          <#if fieldDefinition.showIf != "">
+          showIf: function(item, value, form) {
+                    // debug console.log('%o', form);
+                    return form.auxInputs && (${fieldDefinition.showIf});
+                  },
+          </#if>
           <#if fieldDefinition.searchField>
           displayField: '${fieldDefinition.name?js_string}._identifier',
           valueField: '${fieldDefinition.name?js_string}',

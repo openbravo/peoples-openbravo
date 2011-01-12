@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -336,24 +335,6 @@ public class FormInitializationComponent extends BaseActionHandler {
             }
           }
           finalObject.put("dynamicCols", new JSONArray(changeEventCols));
-          // And we also include information related to the displaylogic and readonlylogic
-          // expressions
-          JSONObject displaylogics = new JSONObject();
-          for (Field field : fields) {
-            if (field.getDisplayLogic() != null) {
-              String dl = parseDisplayLogic(field);
-              displaylogics.put(field.getColumn().getDBColumnName(), dl);
-            }
-          }
-          finalObject.put("displaylogic", displaylogics);
-          JSONObject readonlylogics = new JSONObject();
-          for (Field field : fields) {
-            if (field.getColumn().getReadOnlyLogic() != null) {
-              String dl = parseReadOnlyLogic(field.getColumn(), tab);
-              readonlylogics.put(field.getColumn().getDBColumnName(), dl);
-            }
-          }
-          finalObject.put("readonlylogic", readonlylogics);
         }
 
         if (mode.equals("EDIT") && row != null) {
@@ -404,115 +385,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     Property property = entity.getPropertyByColumnName(field.getColumn().getDBColumnName());
     Entity referencedEntity = property.getReferencedProperty().getEntity();
     return referencedEntity.equals(parentEntity);
-  }
-
-  private String parseDisplayLogic(Field field) {
-    String displaylogic = field.getDisplayLogic();
-    return parseDLExpression(displaylogic, field.getTab());
-  }
-
-  private String parseReadOnlyLogic(Column col, Tab tab) {
-    String readonlylogic = col.getReadOnlyLogic();
-    return parseDLExpression(readonlylogic, tab);
-  }
-
-  private static String[][] comparations = { { "==", " == " }, { "=", " == " }, { "!", " != " },
-      { "^", " != " }, { "-", " != " } };
-  private static String[][] unions = { { "|", " || " }, { "&", " && " } };
-
-  /*
-   * This method was partially copied from WadUtility.
-   */
-  private String parseDLExpression(String code, Tab tab) {
-    StringTokenizer st = new StringTokenizer(code, "|&", true);
-    String token, token2;
-    String strAux;
-    StringBuffer strOut = new StringBuffer();
-    while (st.hasMoreTokens()) {
-      strAux = st.nextToken().trim();
-      int i[] = getFirstElement(unions, strAux);
-      if (i[0] != -1) {
-        strAux = strAux.substring(0, i[0]) + unions[i[1]][1]
-            + strAux.substring(i[0] + unions[i[1]][0].length());
-      }
-
-      int pos[] = getFirstElement(comparations, strAux);
-      token = strAux;
-      token2 = "";
-      if (pos[0] >= 0) {
-        token = strAux.substring(0, pos[0]);
-        token2 = strAux.substring(pos[0] + comparations[pos[1]][0].length(), strAux.length());
-        strAux = strAux.substring(0, pos[0]) + comparations[pos[1]][1]
-            + strAux.substring(pos[0] + comparations[pos[1]][0].length(), strAux.length());
-      }
-      strOut.append(getDisplayLogicText(token, tab));
-      if (pos[0] >= 0)
-        strOut.append(comparations[pos[1]][1]);
-      strOut.append(getDisplayLogicText(token2, tab));
-    }
-    return strOut.toString();
-  }
-
-  /*
-   * This method was partially copied from WadUtility.
-   */
-  private String getDisplayLogicText(String token, Tab tab) {
-    StringBuffer strOut = new StringBuffer();
-    String localToken = token;
-    int i = localToken.indexOf("@");
-    while (i != -1) {
-      strOut.append(localToken.substring(0, i));
-      localToken = localToken.substring(i + 1);
-      i = localToken.indexOf("@");
-      if (i != -1) {
-        String strAux = localToken.substring(0, i);
-        localToken = localToken.substring(i + 1);
-        String st = getDisplayLogicTextTranslate(strAux, tab);
-        strOut.append(st);
-      }
-      i = localToken.indexOf("@");
-    }
-    strOut.append(localToken);
-    return strOut.toString();
-  }
-
-  /*
-   * This method is a different reimplementation of an equivalent method in WadUtility
-   */
-  private String getDisplayLogicTextTranslate(String token, Tab tab) {
-    if (token == null || token.trim().equals(""))
-      return "";
-    for (Field field : tab.getADFieldList()) {
-      if (token.equalsIgnoreCase(field.getName())) {
-        return field.getName();
-      }
-    }
-    OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
-    auxInC.add(Expression.eq(AuxiliaryInput.PROPERTY_TAB, tab));
-    List<AuxiliaryInput> auxInputs = auxInC.list();
-    for (AuxiliaryInput auxIn : auxInputs) {
-      if (token.equalsIgnoreCase(auxIn.getName())) {
-        return auxIn.getName();
-      }
-    }
-    return "'"
-        + Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-            .getVariablesSecureApp(), token, tab.getWindow().getId()) + "'";
-  }
-
-  /*
-   * This method was partially copied from WadUtility.
-   */
-  private static int[] getFirstElement(String[][] array, String token) {
-    int min[] = { -1, -1 }, aux;
-    for (int i = 0; i < array.length; i++) {
-      aux = token.indexOf(array[i][0]);
-      if (aux != -1 && (aux < min[0] || min[0] == -1)) {
-        min[0] = aux;
-        min[1] = i;
-      }
-    }
-    return min;
   }
 
   private void computeListOfColumnsSortedByValidationDependencies(Tab tab,
