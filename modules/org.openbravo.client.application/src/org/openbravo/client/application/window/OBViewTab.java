@@ -245,13 +245,17 @@ public class OBViewTab extends BaseTemplateComponent {
     private String id;
     private String label;
     private String url;
+    private String propertyName;
+    private List<Value> labelValues;
 
     public ButtonField(Field fld) {
       id = fld.getId();
       label = OBViewUtil.getLabel(fld);
+      Column column = fld.getColumn();
+
+      propertyName = KernelUtils.getInstance().getPropertyFromColumn(column).getName();
 
       // Define command
-      Column column = fld.getColumn();
       Process process = column.getProcess();
       if (process != null) {
         String manualProcessMapping = null;
@@ -282,6 +286,26 @@ public class OBViewTab extends BaseTemplateComponent {
           url = Utility.getTabURL(fld.getTab().getId(), "E", false);
         }
       }
+
+      labelValues = new ArrayList<Value>();
+      if (column.getReferenceSearchKey() != null) {
+        for (org.openbravo.model.ad.domain.List valueList : column.getReferenceSearchKey()
+            .getADListList()) {
+          Value value = new Value();
+          value.label = valueList.getName();
+          value.value = valueList.getSearchKey();
+
+          labelValues.add(value);
+        }
+      }
+    }
+
+    public String getPropertyName() {
+      return propertyName;
+    }
+
+    public List<Value> getLabelValues() {
+      return labelValues;
     }
 
     public String getUrl() {
@@ -318,5 +342,17 @@ public class OBViewTab extends BaseTemplateComponent {
       this.id = id;
     }
 
+    public class Value {
+      private String value;
+      private String label;
+
+      public String getValue() {
+        return value;
+      }
+
+      public String getLabel() {
+        return label;
+      }
+    }
   }
 }

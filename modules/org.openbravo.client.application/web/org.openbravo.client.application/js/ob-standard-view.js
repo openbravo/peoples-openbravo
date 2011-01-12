@@ -771,6 +771,8 @@ isc.OBStandardView.addProperties({
     this.updateChildCount();
     this.updateTabTitle();
     this.lastRecordSelected = this.viewGrid.getSelectedRecord();
+    
+    this.toolBar.refreshToolbarButtons();
   },
   
   // ** {{{ parentRecordSelected }}} **
@@ -1109,6 +1111,14 @@ isc.OBStandardView.addProperties({
     }
   },
   
+  getCurrentValues: function() {
+    if (this.isShowingForm) {
+      return this.viewForm.getValues();
+    } else {
+      return this.viewGrid.getSelectedRecord();
+    }
+  },
+    
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
   getContextInfo: function(onlySessionProperties, classicMode){

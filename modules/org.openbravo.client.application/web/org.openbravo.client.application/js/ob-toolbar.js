@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -552,6 +552,20 @@ isc.OBToolbar.addProperties({
       member.setSelected(state);
     }
     return;
+  },
+
+  // ** {{{ refreshToolbarButtons }}} **
+  //
+  // Refreshes all buttons in the toolbar based on current record selection
+  //
+  refreshToolbarButtons: function() {
+    var buttons = this.getRightMembers();
+    //console.log('sel records: '+this.view.viewGrid.getSelectedRecords().length);
+    for (var i = 0; i < buttons.length; i++){
+      if (buttons[i].refresh){
+        buttons[i].refresh(this.view.getCurrentValues());
+      }
+    }
   },
   
   addMembers: 'null',

@@ -49,7 +49,12 @@
       {id: '${field.id?js_string}', 
        title: '${field.label?js_string}',
        obManualURL: '${field.url}',
-       command: '${field.command}'
+       command: '${field.command}',
+       property: '${field.propertyName?js_string}',
+       labelValue: {<#list field.labelValues as value>
+           '${value.value}': '${value.label?js_string}'<#if field_has_next>,</#if>
+       </#list>
+         }
       }<#if field_has_next>,</#if>
     </#list>],
     

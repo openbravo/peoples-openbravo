@@ -91,6 +91,21 @@ isc.OBToolbarTextButton.addProperties( {
         };
       OB.Layout.ViewManager.openView('OBClassicWindow', windowParams);
     }
+  },
+  
+  refresh: function(record) {
+    if (!record){
+      return;
+    }
+    
+    var label = this.labelValue[record[this.property]];
+    if (!label){
+      label = this.title;
+    }
+    this.setTitle(label);
+    
+   // console.log('currentVAlue'+record[this.property]+'r:',record);
+    
   }
   
 });
