@@ -19,24 +19,9 @@
 
 OB.ActionButton = {};
 
-OB.ActionButton.closeProcessPopup = function(msg, newWindow) {
-  if (msg && msg.text && OB.ActionButton.calledFromView) {
-    var msgType;
-    switch (msg.type) {
-    case 'Success':
-      msgType = OBMessageBar.TYPE_SUCCESS;
-      break;
-    case 'Error':
-      msgType = OBMessageBar.TYPE_ERROR;
-      break;
-    case 'Warning':
-      msgType = OBMessageBar.TYPE_WARNING;
-      break;
-    default:
-      msgType = OBMessageBar.TYPE_INFO;
-    }
-    OB.ActionButton.calledFromView.messageBar.setMessage(msgType, msg.title,
-        msg.text);
+OB.ActionButton.closeProcessPopup = function(newWindow) {
+  if (OB.ActionButton.calledFromView) {
+    OB.ActionButton.calledFromView.getTabMessage();
   }
 
   OB.ActionButton.calledFromView = null;
