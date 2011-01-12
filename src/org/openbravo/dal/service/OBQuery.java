@@ -58,6 +58,8 @@ public class OBQuery<E extends BaseOBObject> {
   private static final String WHERE = "where";
   private static final String ORDERBY = "order by";
 
+  // computed in createQueryString
+  private String usedAlias = "";
   private String whereAndOrderBy;
   private Entity entity;
   private List<Object> parameters;
@@ -166,7 +168,8 @@ public class OBQuery<E extends BaseOBObject> {
       final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    final Query qry = getSession().createQuery("select id " + FROM_SPACED + qryStr);
+    final Query qry = getSession()
+        .createQuery("select " + usedAlias + "id " + FROM_SPACED + qryStr);
     setParameters(qry);
 
     final ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY);
@@ -277,6 +280,8 @@ public class OBQuery<E extends BaseOBObject> {
       }
       prefix = alias + ".";
     }
+
+    usedAlias = prefix;
 
     // detect a special case, no where but an alias or join
     String aliasJoinClause = "";
