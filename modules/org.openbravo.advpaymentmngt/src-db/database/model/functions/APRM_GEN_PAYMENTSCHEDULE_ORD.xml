@@ -77,9 +77,8 @@ BEGIN
   FROM c_doctype
   WHERE c_doctype_id = v_C_Doctype_ID;
   
-
-  IF(v_docSubType not in ('OB', 'ON')) THEN
-  IF (p_docaction = 'CO') THEN
+  IF(v_docSubType is null or v_docSubType not in ('OB', 'ON')) THEN
+    IF (p_docaction = 'CO') THEN
     -- Checking Payment Method ID is available
     IF(v_paymentmethod_id IS NULL) THEN
       RAISE_APPLICATION_ERROR(-20000, '@APRM_PAYMENTMETHOD_MISSING@');
@@ -98,7 +97,6 @@ BEGIN
       IF (v_count > 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@APRM_ORDER_MAN_PAYMENTS@');
       END IF;
-
       v_payment_schedule_order := get_uuid();
       INSERT INTO fin_payment_schedule
       (
