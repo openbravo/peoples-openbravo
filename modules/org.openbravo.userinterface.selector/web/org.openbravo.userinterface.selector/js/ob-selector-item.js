@@ -440,6 +440,7 @@ isc.ClassFactory.defineClass('OBSelectorLinkItem', StaticTextItem);
 isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 
 isc.OBSelectorLinkItem.addProperties({
+  canFocus: true,
 
   setValue: function(value){
     var ret = this.Super('setValue', arguments);

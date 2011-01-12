@@ -91,7 +91,8 @@ function closeSearch(action, value, display, parameters, wait){
 
 isc.OBSearchItem.addProperties({
   showPickerIcon: true,
-  
+  canFocus: true,
+
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
     // in this case the clearIcon needs to be shown or hidden
