@@ -19,7 +19,7 @@
 
 OB.ActionButton = {};
 
-OB.ActionButton.closeProcessPopup = function(msg) {
+OB.ActionButton.closeProcessPopup = function(msg, newWindow) {
   if (msg && msg.text && OB.ActionButton.calledFromView) {
     var msgType;
     switch (msg.type) {
@@ -40,6 +40,26 @@ OB.ActionButton.closeProcessPopup = function(msg) {
   }
 
   OB.ActionButton.calledFromView = null;
+  
+  if (newWindow) {
+    if (newWindow.indexOf(location.origin) !== -1){
+      newWindow = newWindow.substr(location.origin.length);
+    }
+    
+    if (newWindow.startsWith(OB.Application.contextUrl)){
+      newWindow = newWindow.substr(OB.Application.contextUrl.length);
+    }
+    
+    if (!newWindow.startsWith('/')){
+      newWindow = '/'+newWindow;
+    }
+    
+    var popupParams = {
+        viewId : 'OBPopupClassicWindow',
+        obManualURL : newWindow  
+      };
+    OB.Layout.ViewManager.openView('OBClassicWindow', popupParams);
+  }
 }
 
 isc.ClassFactory.defineClass('OBToolbarActionButton', isc.OBToolbarTextButton);

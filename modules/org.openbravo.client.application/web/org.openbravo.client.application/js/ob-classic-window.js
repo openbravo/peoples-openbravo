@@ -108,9 +108,12 @@ isc.OBClassicWindow.addMethods({
       '&noprefs=true&Command=DIRECT&hideMenu=true';
     } else if (this.obManualURL && this.obManualURL !== '') {
       this.contentsURL = this.appURL + urlCharacter + 'url=' + this.obManualURL +
-      '&noprefs=true&Command=' +
-      this.command +
-      '&hideMenu=true';
+      '&noprefs=true&hideMenu=true';
+      
+      if (this.obManualURL.indexOf('Command=') === -1) {
+        // Add command in case it is not already set in the obManualURL
+        this.contentsURL = this.contentsURL + '&Command=' + this.command; 
+      }
     } else {
       this.contentsURL = this.appURL + urlCharacter + 'Command=' + this.command +
       '&noprefs=true';
