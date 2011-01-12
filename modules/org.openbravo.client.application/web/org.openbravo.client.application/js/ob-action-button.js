@@ -18,34 +18,7 @@
  */
 
 OB.ActionButton = {};
-
-OB.ActionButton.closeProcessPopup = function(newWindow) {
-  if (OB.ActionButton.calledFromView) {
-    OB.ActionButton.calledFromView.getTabMessage();
-  }
-
-  OB.ActionButton.calledFromView = null;
-  
-  if (newWindow) {
-    if (newWindow.indexOf(location.origin) !== -1){
-      newWindow = newWindow.substr(location.origin.length);
-    }
-    
-    if (newWindow.startsWith(OB.Application.contextUrl)){
-      newWindow = newWindow.substr(OB.Application.contextUrl.length);
-    }
-    
-    if (!newWindow.startsWith('/')){
-      newWindow = '/'+newWindow;
-    }
-    
-    var popupParams = {
-        viewId : 'OBPopupClassicWindow',
-        obManualURL : newWindow  
-      };
-    OB.Layout.ViewManager.openView('OBClassicWindow', popupParams);
-  }
-}
+OB.ActionButton.executingProcess = null;
 
 isc.ClassFactory.defineClass('OBToolbarActionButton', isc.OBToolbarTextButton);
 
@@ -64,17 +37,17 @@ isc.OBToolbarTextButton.addProperties( {
 
     var popupParams = {
       viewId : 'OBPopupClassicWindow',
-      obManualURL : this.obManualURL, // "TablesandColumns/Table_Edition.html",
+      obManualURL : this.obManualURL, 
       processId : this.id,
       id : this.id,
-      command : this.command, // "BUTTONImportTable173",
+      command : this.command,
       tabTitle : this.title
     };
 
     var allProperties = theView.getContextInfo(false, true);
     var sessionProperties = theView.getContextInfo(true, true);
 
-    OB.ActionButton.calledFromView = theView;
+    OB.ActionButton.executingProcess = this;
 
     for ( var param in allProperties) {
       if (allProperties.hasOwnProperty(param)) {
@@ -91,5 +64,33 @@ isc.OBToolbarTextButton.addProperties( {
     theView.setContextInfo(sessionProperties, function() {
       OB.Layout.ViewManager.openView('OBPopupClassicWindow', popupParams);
     });
+  },
+  
+  closeProcessPopup: function(newWindow) {
+    this.view.getTabMessage();
+
+    OB.ActionButton.executingProcess = null;
+    
+    if (newWindow) {
+      if (newWindow.indexOf(location.origin) !== -1){
+        newWindow = newWindow.substr(location.origin.length);
+      }
+      
+      if (newWindow.startsWith(OB.Application.contextUrl)){
+        newWindow = newWindow.substr(OB.Application.contextUrl.length);
+      }
+      
+      if (!newWindow.startsWith('/')){
+        newWindow = '/'+newWindow;
+      }
+      
+      var windowParams = {
+          viewId : this.title,
+          tabTitle: this.title,
+          obManualURL : newWindow  
+        };
+      OB.Layout.ViewManager.openView('OBClassicWindow', windowParams);
+    }
   }
+  
 });
