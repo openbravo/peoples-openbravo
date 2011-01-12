@@ -1177,4 +1177,14 @@ isc.OBStandardView.addProperties({
       ROW_ID: this.viewGrid.getSelectedRecord().id
     }, callbackFunction);
   }
+  
+  getTabMessage: function(){
+    var callback = function(resp, data, req){
+      if (data.type && (data.text || data.title)) {
+        req.clientContext.messageBar.setMessage(OBMessageBar[data.type], data.title, data.text);
+      }
+    };
+    
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.GetTabMessageActionHandler', {tabId: this.tabId}, null, callback, this);
+  }
 });
