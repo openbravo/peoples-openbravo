@@ -180,19 +180,6 @@ isc.OBViewForm.addProperties({
     this.fieldsByColumnName = null;
   },
   
-  show: function(){
-  
-    // if the view is showing the form then the show action
-    // is because a tab is selected not because a grid to form 
-    // thing happens 
-    //    if (this.view.isShowingForm) {
-    //      console.log('Do change fic call');
-    //      this.doChangeFICCall();
-    //    }
-    
-    return this.Super('show', arguments);
-  },
-  
   retrieveInitialValues: function(isNew){
     var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
     
@@ -605,6 +592,13 @@ isc.OBViewForm.addProperties({
     }
     
     return titleHTML;
+  },
+  
+  // we are being reshown, get new values for the combos
+  visibilityChanged: function(visible){
+    if (visible && this.view.isShowingForm) {
+      this.doChangeFICCall();
+    }
   }
   
 });
