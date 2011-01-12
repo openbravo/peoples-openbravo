@@ -939,13 +939,18 @@ isc.OBStandardView.addProperties({
   },
   
   // ++++++++++++++++++++ Button Actions ++++++++++++++++++++++++++
+        
+  // make a special refresh:
+  // - refresh the current selected record without changing the selection
+  // - refresh the parent/grand-parent in the same way without changing the selection
+  // - recursive to children: refresh the children, put the children in grid mode and refresh
   
   refresh: function(refreshCallback){
     if (this.viewGrid.isVisible()) {
       this.viewGrid.filterData(this.viewGrid.getCriteria(), refreshCallback);
     } else {
       var view = this;
-      if (this.viewForm.valuesHaveChanged()) {
+      if (this.viewForm.hasChanged) {
         var callback = function(ok){
           if (ok) {
             var criteria = [];
@@ -1023,12 +1028,17 @@ isc.OBStandardView.addProperties({
   },
   
   newRow: function(){
-    this.editRecord(null);
+    var actionObject = {
+      target: this,
+      method: this.editRecord,
+      parameters: null
+    };
+    this.viewForm.autoSave(actionObject);
   },
   
   undo: function(){
     var view = this, callback;
-    if (this.viewForm.valuesHaveChanged()) {
+    if (this.viewForm.hasChanged) {
       callback = function(ok){
         if (ok) {
           view.viewForm.undo();
@@ -1195,6 +1205,8 @@ isc.OBStandardView.addProperties({
       }
     };
     
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.GetTabMessageActionHandler', {tabId: this.tabId}, null, callback, this);
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.GetTabMessageActionHandler', {
+      tabId: this.tabId
+    }, null, callback, this);
   }
 });
