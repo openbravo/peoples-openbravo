@@ -131,6 +131,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
         colNum = 1;
       }
     }
+
+    // add the linked items part
+    final OBViewFieldDefinition canvasFieldDefinition = new LinkedItemsCanvasField();
+    final LinkedItemsField linkedItemsField = new LinkedItemsField();
+    linkedItemsField.setChildField(canvasFieldDefinition);
+    fields.add(linkedItemsField);
+    fields.add(canvasFieldDefinition);
+
     return fields;
   }
 
@@ -314,12 +322,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getStartRow() {
       return field.isStartnewline().toString();
     }
+
   }
 
-  public class OBViewFieldGroup implements OBViewFieldDefinition {
-    private FieldGroup fieldGroup;
-    private String label;
-    private List<OBViewFieldDefinition> children = new ArrayList<OBViewFieldDefinition>();
+  public class DefaultVirtualField implements OBViewFieldDefinition {
 
     public String getFieldProperties() {
       return "";
@@ -344,6 +350,51 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getTargetEntity() {
       return "";
     }
+
+    public long getColSpan() {
+      return 4;
+    }
+
+    public String getEndRow() {
+      return "true";
+    }
+
+    public long getRowSpan() {
+      return 1;
+    }
+
+    public String getStartRow() {
+      return "true";
+    }
+
+    public boolean getStandardField() {
+      return false;
+    }
+
+    @Override
+    public String getLabel() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public String getName() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public String getType() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+  }
+
+  public class OBViewFieldGroup extends DefaultVirtualField {
+    private FieldGroup fieldGroup;
+    private String label;
+    private List<OBViewFieldDefinition> children = new ArrayList<OBViewFieldDefinition>();
 
     public String getLabel() {
       // compute the label
@@ -373,10 +424,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return children;
     }
 
-    public boolean getStandardField() {
-      return false;
-    }
-
     public String getType() {
       return "OBSectionItem";
     }
@@ -385,21 +432,58 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return fieldGroup.getId();
     }
 
-    public long getColSpan() {
-      return 4;
+  }
+
+  public class LinkedItemsField extends DefaultVirtualField {
+
+    private OBViewFieldDefinition childField;
+
+    public String getLabel() {
+      // is set at runtime
+      return "dummy";
     }
 
-    public String getEndRow() {
-      return "true";
+    public List<OBViewFieldDefinition> getChildren() {
+      return Collections.singletonList(childField);
     }
 
-    public long getRowSpan() {
-      return 1;
+    public String getType() {
+      return "OBLinkedItemSectionItem";
     }
 
-    public String getStartRow() {
-      return "true";
+    public String getName() {
+      return "_linkedItems_";
     }
+
+    public OBViewFieldDefinition getChildField() {
+      return childField;
+    }
+
+    public void setChildField(OBViewFieldDefinition childField) {
+      this.childField = childField;
+    }
+  }
+
+  private class LinkedItemsCanvasField extends DefaultVirtualField {
+
+    public String getLabel() {
+      // is set at runtime
+      return "dummy";
+    }
+
+    @SuppressWarnings("unused")
+    public List<OBViewFieldDefinition> getChildren() {
+      return Collections.emptyList();
+    }
+
+    public String getType() {
+      return "OBLinkedItemCanvasItem";
+    }
+
+    public String getName() {
+      return "_linkedItems_Canvas";
+    }
+
   }
 
   public class OBViewFieldSpacer implements OBViewFieldDefinition {

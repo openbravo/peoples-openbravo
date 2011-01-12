@@ -41,7 +41,7 @@
           showPickerIcon: ${(!fieldDefinition.parentProperty)?string},
           </#if>
         </#if>
-        <#if fieldDefinition.type = "OBSectionItem">
+        <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem" >
         sectionExpanded: true,
         defaultValue: '${fieldDefinition.label?js_string}',
         itemIds: [

@@ -110,6 +110,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource("web/org.openbravo.client.application/js/ob-popup.js",
         false));
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/ob-view-form-linked-items.js", false));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-view-form.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-view-grid.js", false));

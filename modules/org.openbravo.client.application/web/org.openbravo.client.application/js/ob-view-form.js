@@ -37,6 +37,7 @@ isc.OBViewForm.addProperties({
   showErrorIcons: false,
   showErrorStyle: true,
   selectOnFocus: true,
+  autoComplete: true,
   
   // ** {{ Layout Settings }} **
   numCols: 4,
@@ -55,21 +56,12 @@ isc.OBViewForm.addProperties({
   isNew: false,
   hasChanged: false,
   
-  initWidget: function(){
-    // iterate over the fields and set the datasource
-    //    var field, i, fieldsNum = this.fields.length;
-    //    for (i = 0; i < fieldsNum; i++) {
-    //      field = this.fields[i];
-    //      if (field.dataSourceId) {
-    // field.optionDataSource = OB.Datasource.get(field.dataSourceId, field, 'optionDataSource');
-    //      }
-    //    }
-    var ret = this.Super('initWidget', arguments);
-    return ret;
-  },
+  // is set in the OBLinkedItemSectionItem.initWidget
+  linkedItemSection: null,
   
   editRecord: function(record, preventFocus){
-  
+    this.hasChanged = false;
+    
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
@@ -94,6 +86,8 @@ isc.OBViewForm.addProperties({
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
     
+    this.hasChanged = false;
+    
     // disable relevant buttons
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
@@ -112,10 +106,21 @@ isc.OBViewForm.addProperties({
     return ret;
   },
   
+  enableLinkedItemSection: function(enable){
+    if (enable) {
+      this.linkedItemSection.collapseSection();
+      this.linkedItemSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+      this.linkedItemSection.show();
+    } else {
+      this.linkedItemSection.hide();
+    }
+  },
+  
   setNewState: function(isNew){
     this.isNew = isNew;
     this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
+    this.enableLinkedItemSection(!isNew);
   },
   
   // reset the focus item to the first item which can get focus
@@ -158,7 +163,7 @@ isc.OBViewForm.addProperties({
     return this.fieldsByColumnName[columnName.toLowerCase()];
   },
   
-  getPropertyFromColumnName: function(columnName) {
+  getPropertyFromColumnName: function(columnName){
     var length = this.view.propertyToColumns.length;
     for (var i = 0; i < length; i++) {
       var propDef = this.view.propertyToColumns[i];
@@ -256,8 +261,7 @@ isc.OBViewForm.addProperties({
   },
   
   processColumnValue: function(columnName, columnValue){
-    var data, record, length, valuePresent, currentValue, isDate, value, i, 
-      valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+    var data, record, length, valuePresent, currentValue, isDate, value, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     if (!field) {
       // not a field on the form, probably a datasource field
       var prop = this.getPropertyFromColumnName(columnName);
@@ -296,7 +300,7 @@ isc.OBViewForm.addProperties({
       // should be repaired in the FIC
       this.clearValue(field.name);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
-        isDate = field.type &&
+      isDate = field.type &&
       (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
       isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
       if (isDate) {

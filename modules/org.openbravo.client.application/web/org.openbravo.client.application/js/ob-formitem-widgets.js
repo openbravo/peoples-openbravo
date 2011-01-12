@@ -277,6 +277,16 @@ isc.OBSectionItem.addProperties({
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,
   
+  initWidget: function() {
+    var ret = this.Super('initWidget', arguments);
+    return ret;
+  },
+  
+  updateDisabled: function() {
+      var ret = this.Super('initWidget', arguments);
+    return ret;
+  },
+  
   // never disable a section item
   isDisabled: function(){
     return false;
