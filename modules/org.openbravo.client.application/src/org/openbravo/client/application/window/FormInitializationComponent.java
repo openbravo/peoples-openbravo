@@ -220,25 +220,31 @@ public class FormInitializationComponent extends BaseActionHandler {
             // On CHANGE and SETSESSION mode, the values are read from the request
             JSONObject jsCol = new JSONObject();
             String colName = "inp" + Sqlc.TransformaNombreColumna(col);
-            if (!jsContent.has(colName) || jsContent.get(colName) == JSONObject.NULL) {
-              continue;
-            }
-            jsCol.put("value", jsContent.get(colName));
-            value = jsCol.toString();
-          }
-          JSONObject jsonobject = new JSONObject(value);
-          columnValues.put("inp"
-              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
-          // We need to fire callouts if the field value was changed, or if the field is a combo
-          // (due to how ComboReloads worked, callouts were always called)
-          if (mode.equals("NEW")
-              && ((jsonobject.has("value") && !jsonobject.get("value").equals("")) || uiDef instanceof FKComboUIDefinition)) {
-            if (field.getColumn().getCallout() != null) {
-              addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
+            if (jsContent.has(colName)) {
+              jsCol.put("value", jsContent.get(colName));
+              value = jsCol.toString();
+            } else if (jsContent.has(field.getColumn().getDBColumnName())) {
+              // Special case related to the primary key column, which is sent with its dbcolumnname
+              // instead of the "inp" name
+              jsCol.put("value", jsContent.get(field.getColumn().getDBColumnName()));
+              value = jsCol.toString();
             }
           }
-          setRequestContextParameter(field, jsonobject);
-
+          JSONObject jsonobject = null;
+          if (value != null) {
+            jsonobject = new JSONObject(value);
+            columnValues.put("inp"
+                + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
+            // We need to fire callouts if the field value was changed, or if the field is a combo
+            // (due to how ComboReloads worked, callouts were always called)
+            if (mode.equals("NEW")
+                && ((jsonobject.has("value") && !jsonobject.get("value").equals("")) || uiDef instanceof FKComboUIDefinition)) {
+              if (field.getColumn().getCallout() != null) {
+                addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
+              }
+            }
+            setRequestContextParameter(field, jsonobject);
+          }
           // We also set the session value for the column in Edit or SetSession mode
           if (mode.equals("EDIT") || mode.equals("SETSESSION")) {
             if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
