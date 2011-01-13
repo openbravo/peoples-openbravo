@@ -268,7 +268,11 @@ public abstract class FIN_BankStatementImport {
 
   BusinessPartner matchBusinessPartner(String partnername) {
     // TODO extend with other matching methods. It will make it easier to later reconcile
-    return matchBusinessPartnerByName(partnername);
+    BusinessPartner bp = matchBusinessPartnerByName(partnername);
+    if (bp == null) {
+      bp = finBPByName(partnername);
+    }
+    return bp;
   }
 
   BusinessPartner matchBusinessPartnerByName(String partnername) {
@@ -290,6 +294,29 @@ public abstract class FIN_BankStatementImport {
         return null;
       else
         return matchedLines.get(0).getBusinessPartner();
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  BusinessPartner finBPByName(String partnername) {
+    final StringBuilder whereClause = new StringBuilder();
+
+    OBContext.setAdminMode();
+    try {
+
+      whereClause.append(" as bp ");
+      whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = '" + partnername + "'");
+      whereClause.append(" and bp." + BusinessPartner.PROPERTY_CLIENT + " = "
+          + OBContext.getOBContext().getCurrentClient());
+      final OBQuery<BusinessPartner> bp = OBDal.getInstance().createQuery(BusinessPartner.class,
+          whereClause.toString());
+      List<BusinessPartner> matchedBP = bp.list();
+      if (matchedBP.size() == 0)
+        return null;
+      else
+        return matchedBP.get(0);
 
     } finally {
       OBContext.restorePreviousMode();
