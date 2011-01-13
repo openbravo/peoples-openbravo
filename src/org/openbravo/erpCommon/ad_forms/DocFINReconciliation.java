@@ -769,7 +769,13 @@ public class DocFINReconciliation extends AcctServer {
             } else if ("BPW".equals(transaction.getTransactionType())
                 && account.getClearedPaymentAccountOUT() != null) {
               confirmation = true;
-            } else if ("BF".equals(transaction.getTransactionType())
+            }
+          }
+        } else {
+          for (FIN_FinancialAccountAccounting account : accounts) {
+            if (confirmation)
+              return confirmation;
+            if ("BF".equals(transaction.getTransactionType())
                 && account.getClearedPaymentAccountOUT() != null) {
               confirmation = true;
             }
