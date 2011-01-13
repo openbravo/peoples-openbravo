@@ -26,12 +26,16 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -831,55 +835,58 @@ public class ImportOrder extends ImportProcess {
         data[i].iIsimported = "Y";
         data[i].processed = "Y";
         data[i].update(con, conn);
-        String[] arrayPayment = { data[i].paymentrule1, data[i].paymentrule2 };
-        String[] arrayAmount = { data[i].paymentamount1, data[i].paymentamount2 };
-        for (int k = 0; k < arrayPayment.length; k++) {
-          if (!arrayPayment[k].equals("")) {
-            CDebtpaymentData cdebtpayment = new CDebtpaymentData();
-            cdebtpayment.adClientId = data[i].adClientId;
-            cdebtpayment.adOrgId = data[i].adOrgId;
-            cdebtpayment.createdby = getAD_User_ID();
-            cdebtpayment.updatedby = getAD_User_ID();
-            cdebtpayment.cBpartnerId = corder_cbpartnerid;
-            cdebtpayment.cCurrencyId = corder_ccurrencyid;
-            /*
-             * cdebtpayment.cBankaccountId = ; cdebtpayment.cCashbookId = ;
-             */
-            cdebtpayment.paymentrule = arrayPayment[k];
-            cdebtpayment.amount = arrayAmount[k];
-            cdebtpayment.ispaid = "N";
-            cdebtpayment.dateplanned = data[i].dateordered.equals("") ? DateTimeData.today(conn)
-                : data[i].dateordered;
-            cdebtpayment.ismanual = "N";
-            cdebtpayment.isvalid = "Y";
-            cdebtpayment.changesettlementcancel = "N";
-            cdebtpayment.cancelProcessed = "N";
-            cdebtpayment.generateProcessed = "N";
-            cdebtpayment.glitemamt = "0";
-            cdebtpayment.isdirectposting = "N";
-            cdebtpayment.status = "DE";
-            cdebtpayment.statusInitial = "DE";
-            cdebtpayment.cOrderId = data[i].cOrderId;
-            // Looking for same payment yet inserted
-            ImportOrderData[] paymentInserted = ImportOrderData.selectPaymentInserted(conn,
-                cdebtpayment.adClientId, cdebtpayment.adOrgId, cdebtpayment.createdby,
-                cdebtpayment.updatedby, cdebtpayment.cBpartnerId, cdebtpayment.cCurrencyId,
-                cdebtpayment.paymentrule, cdebtpayment.amount, cdebtpayment.ispaid,
-                cdebtpayment.ismanual, cdebtpayment.isvalid, cdebtpayment.changesettlementcancel,
-                cdebtpayment.cancelProcessed, cdebtpayment.generateProcessed,
-                cdebtpayment.glitemamt, cdebtpayment.isdirectposting, cdebtpayment.status,
-                cdebtpayment.statusInitial, cdebtpayment.cOrderId);
-            if (paymentInserted != null && paymentInserted.length == 0) {
-              try {
-                cdebtpayment.cDebtPaymentId = SequenceIdData.getUUID();
-                cdebtpayment.insert(con, conn);
-              } catch (ServletException ex) {
-                if (log4j.isDebugEnabled())
-                  log4j.debug("Insert Order - " + ex.toString());
-                conn.releaseRollbackConnection(con);
-                ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
-                noInsert--;
-                continue;
+
+        if (!isNewFlow()) {
+          String[] arrayPayment = { data[i].paymentrule1, data[i].paymentrule2 };
+          String[] arrayAmount = { data[i].paymentamount1, data[i].paymentamount2 };
+          for (int k = 0; k < arrayPayment.length; k++) {
+            if (!arrayPayment[k].equals("")) {
+              CDebtpaymentData cdebtpayment = new CDebtpaymentData();
+              cdebtpayment.adClientId = data[i].adClientId;
+              cdebtpayment.adOrgId = data[i].adOrgId;
+              cdebtpayment.createdby = getAD_User_ID();
+              cdebtpayment.updatedby = getAD_User_ID();
+              cdebtpayment.cBpartnerId = corder_cbpartnerid;
+              cdebtpayment.cCurrencyId = corder_ccurrencyid;
+              /*
+               * cdebtpayment.cBankaccountId = ; cdebtpayment.cCashbookId = ;
+               */
+              cdebtpayment.paymentrule = arrayPayment[k];
+              cdebtpayment.amount = arrayAmount[k];
+              cdebtpayment.ispaid = "N";
+              cdebtpayment.dateplanned = data[i].dateordered.equals("") ? DateTimeData.today(conn)
+                  : data[i].dateordered;
+              cdebtpayment.ismanual = "N";
+              cdebtpayment.isvalid = "Y";
+              cdebtpayment.changesettlementcancel = "N";
+              cdebtpayment.cancelProcessed = "N";
+              cdebtpayment.generateProcessed = "N";
+              cdebtpayment.glitemamt = "0";
+              cdebtpayment.isdirectposting = "N";
+              cdebtpayment.status = "DE";
+              cdebtpayment.statusInitial = "DE";
+              cdebtpayment.cOrderId = data[i].cOrderId;
+              // Looking for same payment yet inserted
+              ImportOrderData[] paymentInserted = ImportOrderData.selectPaymentInserted(conn,
+                  cdebtpayment.adClientId, cdebtpayment.adOrgId, cdebtpayment.createdby,
+                  cdebtpayment.updatedby, cdebtpayment.cBpartnerId, cdebtpayment.cCurrencyId,
+                  cdebtpayment.paymentrule, cdebtpayment.amount, cdebtpayment.ispaid,
+                  cdebtpayment.ismanual, cdebtpayment.isvalid, cdebtpayment.changesettlementcancel,
+                  cdebtpayment.cancelProcessed, cdebtpayment.generateProcessed,
+                  cdebtpayment.glitemamt, cdebtpayment.isdirectposting, cdebtpayment.status,
+                  cdebtpayment.statusInitial, cdebtpayment.cOrderId);
+              if (paymentInserted != null && paymentInserted.length == 0) {
+                try {
+                  cdebtpayment.cDebtPaymentId = SequenceIdData.getUUID();
+                  cdebtpayment.insert(con, conn);
+                } catch (ServletException ex) {
+                  if (log4j.isDebugEnabled())
+                    log4j.debug("Insert Order - " + ex.toString());
+                  conn.releaseRollbackConnection(con);
+                  ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
+                  noInsert--;
+                  continue;
+                }
               }
             }
           }
@@ -980,6 +987,26 @@ public class ImportOrder extends ImportProcess {
       totalProcessed = totalProcessed + 1;
     }
     return messageResult;
+  }
+
+  private boolean isNewFlow() {
+    // Extra check for Payment Flow-disabling switch
+    try {
+      // Use Utility.getPropertyValue for backward compatibility
+      try {
+        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
+            .getOBContext().getUser(), null, null);
+        return true;
+      } catch (PropertyNotFoundException e) {
+        if (Utility.getPropertyValue("FinancialManagement", OBContext.getOBContext()
+            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId()) != null) {
+          return true;
+        } else
+          return false;
+      }
+    } catch (PropertyException e) {
+      return false;
+    }
   }
 
 }
