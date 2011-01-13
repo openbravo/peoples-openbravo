@@ -221,7 +221,7 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
         if (p.isPrimitive()) {
           continue;
         }
-        if (p.isOneToMany()) {
+        if (p.isOneToMany() && p.isChild()) {
           @SuppressWarnings("unchecked")
           final List<Object> childList = (List<Object>) bob.get(p.getName());
           int index = -1;

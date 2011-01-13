@@ -258,7 +258,7 @@ public class DalUtil {
         }
         final Object value = to.getValue(p.getName());
 
-        if (p.isOneToMany()) {
+        if (p.isOneToMany() && p.isChild()) {
           @SuppressWarnings("unchecked")
           final List<BaseOBObject> bobs = (List<BaseOBObject>) value;
           for (int i = 0; i < bobs.size(); i++) {
@@ -282,7 +282,7 @@ public class DalUtil {
     fromTo.put(source, target);
     for (final Property p : source.getEntity().getProperties()) {
       final Object value = source.getValue(p.getName());
-      if (p.isOneToMany()) {
+      if (p.isOneToMany() && p.isChild()) {
         if (copyChildren && !p.getTargetEntity().isView()) {
           final List<BaseOBObject> targetChildren = new ArrayList<BaseOBObject>();
           target.setValue(p.getName(), targetChildren);

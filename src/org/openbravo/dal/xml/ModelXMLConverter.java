@@ -160,7 +160,7 @@ public class ModelXMLConverter implements OBSingleton {
 
       element.addAttribute("minOccurs", "0");
 
-      if (p.isOneToMany()) {
+      if (p.isOneToMany() && p.isChild()) {
         element.addAttribute("minOccurs", "0");
       } else {
         if ((p.isPrimitive() && p.isId()) || !p.isMandatory()) {
@@ -174,7 +174,7 @@ public class ModelXMLConverter implements OBSingleton {
       // set the type
       if (p.isPrimitive()) {
         element.addAttribute("type", ((PrimitiveDomainType) p.getDomainType()).getXMLSchemaType());
-      } else if (p.isOneToMany()) {
+      } else if (p.isOneToMany() && p.isChild()) {
         final Element complexChildElement = element.addElement("xs:complexType");
         final Element sequenceChildElement = complexChildElement.addElement("xs:sequence");
         final Element childElement = sequenceChildElement.addElement("xs:element");

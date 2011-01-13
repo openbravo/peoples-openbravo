@@ -335,8 +335,8 @@ public class EntityXMLConverter implements OBNotSingleton {
         continue;
       }
 
-      // onetomany is always a child currently
-      if (p.isOneToMany() && (!isOptionIncludeChildren() || isAddedBecauseReferenced)) {
+      if (p.isOneToMany() && p.isChild()
+          && (!isOptionIncludeChildren() || isAddedBecauseReferenced)) {
         continue;
       }
 
@@ -413,7 +413,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
         xmlHandler.characters(txt.toCharArray(), 0, txt.length());
         xmlHandler.endElement("", "", p.getName());
-      } else if (p.isOneToMany()) {
+      } else if (p.isOneToMany() && p.isChild()) {
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
 
         // get all the children and export each child

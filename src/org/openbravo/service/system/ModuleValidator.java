@@ -210,7 +210,7 @@ public class ModuleValidator implements SystemValidator {
 
     // also check the children
     for (Property property : baseOBObject.getEntity().getProperties()) {
-      if (property.isOneToMany()) {
+      if (property.isOneToMany() && property.isChild()) {
         @SuppressWarnings("unchecked")
         final List<BaseOBObject> children = (List<BaseOBObject>) baseOBObject.get(property
             .getName());

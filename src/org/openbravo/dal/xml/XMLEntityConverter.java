@@ -247,7 +247,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
                 updated = true;
               }
             }
-          } else if (p.isOneToMany()) {
+          } else if (p.isOneToMany() && p.isChild()) {
             // resolve the content of the list
             final List<BaseOBObject> newValues = new ArrayList<BaseOBObject>();
             for (final Object o : childElement.elements()) {
