@@ -129,11 +129,14 @@ public class ReportExpense extends HttpSecureAppServlet {
       }
     }
     for (int i = 0; i < data1.length; i++) {
-      String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
-      if (Integer.parseInt(count) == 0) {
-        advisePopUp(request, response, "ERROR", Utility
-            .messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this,
-            "NoConversionDayUom", vars.getLanguage()));
+      if (data1[i].horas != null && !data1[i].horas.equals("")
+          && !data1[i].horas.trim().equals("0") && data1[i].cuomid != null
+          && !data1[i].cuomid.equals("")) {
+        String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
+        if (Integer.parseInt(count) == 0) {
+          advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
+              .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
+        }
       }
     }
     strConvRateErrorMsg = myMessage.getMessage();
@@ -189,11 +192,14 @@ public class ReportExpense extends HttpSecureAppServlet {
       }
     }
     for (int i = 0; i < data1.length; i++) {
-      String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
-      if (Integer.parseInt(count) == 0) {
-        advisePopUp(request, response, "ERROR", Utility
-            .messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this,
-            "NoConversionDayUom", vars.getLanguage()));
+      if (data1[i].horas != null && !data1[i].horas.equals("")
+          && !data1[i].horas.trim().equals("0") && data1[i].cuomid != null
+          && !data1[i].cuomid.equals("")) {
+        String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
+        if (Integer.parseInt(count) == 0) {
+          advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
+              .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
+        }
       }
     }
     strConvRateErrorMsg = myMessage.getMessage();

@@ -146,11 +146,14 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     strConvRateErrorMsg = myMessage.getMessage();
 
     for (int i = 0; i < data.length; i++) {
-      String count = ReportExpenseData.selectUOM(this, data[i].cuomid);
-      if (Integer.parseInt(count) == 0) {
-        advisePopUp(request, response, "ERROR", Utility
-            .messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this,
-            "NoConversionDayUom", vars.getLanguage()));
+      if (data[i].realservices != null && !data[i].realservices.equals("")
+          && !data[i].realservices.trim().equals("0") && data[i].cuomid != null
+          && !data[i].cuomid.equals("")) {
+        String count = ReportExpenseData.selectUOM(this, data[i].cuomid);
+        if (Integer.parseInt(count) == 0) {
+          advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
+              .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
+        }
       }
     }
     // If a conversion rate is missing for a certain transaction, an error
