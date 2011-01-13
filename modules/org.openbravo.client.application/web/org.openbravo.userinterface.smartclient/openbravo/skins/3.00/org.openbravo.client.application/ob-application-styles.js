@@ -131,6 +131,9 @@ isc.DateChooser.addProperties({  //TODO : Changed to 'isc.OBDateChooser.addPrope
 
 
 OB.OBDateItemStyleProperties = {
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput',
   errorOrientation: 'left',
 
   pickerIconHSpace: '0',
@@ -153,10 +156,10 @@ isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.OBDateItemStylePropert
 
 
 isc.OBNumberItem.addProperties({
-  errorOrientation: 'left',
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput'
+  errorOrientation: 'left',
 });
 
 
