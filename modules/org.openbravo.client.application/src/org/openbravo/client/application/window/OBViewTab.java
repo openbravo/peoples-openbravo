@@ -327,6 +327,11 @@ public class OBViewTab extends BaseTemplateComponent {
     private String command;
 
     public String getLabel() {
+      // this type of escaping not needed for javascript
+      // gives jslint warnings
+      if (label.contains("\\>")) {
+        return label.replace("\\>", ">");
+      }
       return label;
     }
 
