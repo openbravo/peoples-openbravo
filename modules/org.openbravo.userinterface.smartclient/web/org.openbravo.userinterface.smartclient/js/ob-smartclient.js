@@ -64,6 +64,10 @@ isc.FormItem.addProperties({
       return this._originalBlur(form, item);
     }
     return;
+  },
+  
+  isDisabled: function() {
+    return this.form.readOnly;
   }
 });
 
