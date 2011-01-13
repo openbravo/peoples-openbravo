@@ -283,8 +283,9 @@ public class OBViewTab extends BaseTemplateComponent {
           command = "DEFAULT";
         }
       } else {
-        if ("Posted".equals(column.getDBColumnName()) && column.getProcess() == null) {
-          command = "BUTTONPosted";
+        String colName = column.getDBColumnName();
+        if ("Posted".equalsIgnoreCase(colName) || "CreateFrom".equalsIgnoreCase(colName)) {
+          command = "BUTTON" + colName;
           url = Utility.getTabURL(fld.getTab().getId(), "E", false);
         }
       }
