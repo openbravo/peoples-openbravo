@@ -163,7 +163,9 @@ public class DynamicExpressionParser {
     for (AuxiliaryInput auxIn : auxInputs) {
       if (token.equalsIgnoreCase(auxIn.getName())) {
         auxInputsInExpression.add(auxIn);
-        return "form.auxInputs['" + auxIn.getName() + "']";
+        // prevents jslint warning but will only work if auxIn does
+        // not contain illegal js names..
+        return "form.auxInputs." + auxIn.getName() + "";
       }
     }
     return "'"
