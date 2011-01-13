@@ -183,11 +183,14 @@ public class KernelUtils {
     if (module.getId().equals("0")) {
       return 0;
     }
-    // have been here, go away, with a high number
+    // have been here, go away, with a signal number that there is a loop
     // infinite loop
     if (modules.contains(module)) {
-      log.warn("Cyclic relation in module dependencies of module " + module);
-      return 100;
+      log.error("Cyclic relation in module dependencies of module " + module);
+      for (Module moduleCycle : modules) {
+        log.error(moduleCycle.getName());
+      }
+      throw new OBException("Cycle detected in module dependencies");
     }
     modules.add(module);
     int currentLevel = 0;
@@ -197,6 +200,7 @@ public class KernelUtils {
         currentLevel = computedLevel;
       }
     }
+    modules.remove(module);
     return currentLevel;
   }
 
