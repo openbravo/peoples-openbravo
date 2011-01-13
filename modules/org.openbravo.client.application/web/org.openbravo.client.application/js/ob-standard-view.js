@@ -182,11 +182,6 @@ isc.OBStandardView.addProperties({
       rightMembers: rightMemberButtons
     });
     
-    //    [isc.OBToolbarTextButton.create({
-    //        action: 'OB.Utilities.openActionButton(this, {viewId: "OBPopupClassicWindow", obManualURL: "TablesandColumns/Table_Edition.html", processId: "173", id: "173", command: "BUTTONImportTable173", tabTitle: "Testing"});',
-    //        title: 'Button A'
-    //      })]
-    
     this.Super('initWidget', arguments);
   },
   

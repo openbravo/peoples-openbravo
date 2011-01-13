@@ -838,60 +838,6 @@ OB.Utilities._getTabInfoRequestProperties = function(theView, requestProperties)
   return requestProperties;
 };
 
-OB.Utilities.openActionButton = function(button, o){
-  var theView = button.parentElement.parentElement.view;
-  var selectedRecord = theView.viewGrid.getSelectedRecord();
-  
-  if (!selectedRecord) {
-    isc.warn('No record selected');
-    return;
-  }
-  
-  var allProperties = theView.getContextInfo(false, true);
-  var sessionProperties = theView.getContextInfo(true, true);
-  
-  OB.Utilities.viewCallingProcess = theView;
-  
-  for (var param in allProperties) {
-    if (allProperties.hasOwnProperty(param)) {
-      o.command += '&' + param + '=' + allProperties[param];
-    }
-  }
-  
-  theView.setContextInfo(sessionProperties, function(){
-    OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
-  });
-};
-
-OB.Utilities.openActionButtonCallback = function(button, o){
-  var theView = button.parentElement.parentElement.view;
-  var selectedRecord = theView.viewGrid.getSelectedRecord();
-  
-  if (!selectedRecord) {
-    isc.warn('No record selected');
-    return;
-  }
-  
-  // TODO: this has to be checked, these variables are not used?
-  var allProperties = theView.getContextInfo(false, true); 
-  var sessionProperties = theView.getContextInfo(true, true);
-  // this was old code, but this could not have worked
-//    var params = theView.getContextInfo(allProperties, sessionProperties, true);
-
-  for (var param in params) {
-    if (params.hasOwnProperty(param)) {
-      o.command += '&' + param + '=' + params[param];
-    }
-  }
-    
-  theView.setContextInfo(sessionProperties, function(){
-    OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
-  });
-
-  OB.Layout.ViewManager.openView('OBPopupClassicWindow', o);
-};
-
-
 //** {{{ OB.Utilities.postThroughHiddenForm }}} **
 //
 // Global method to post a request through a hidden form located on:
