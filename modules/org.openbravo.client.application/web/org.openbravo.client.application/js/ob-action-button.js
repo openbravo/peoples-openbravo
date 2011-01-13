@@ -67,7 +67,11 @@ isc.OBToolbarTextButton.addProperties( {
   },
   
   closeProcessPopup: function(newWindow) {
-    this.view.getTabMessage();
+    //Keep current view for the callback function. Refresh and look for tab message.
+    var theView = this.view;
+    this.view.refresh(function(){
+        theView.getTabMessage();
+      });
 
     OB.ActionButton.executingProcess = null;
     
