@@ -283,21 +283,23 @@ public class DalUtil {
     for (final Property p : source.getEntity().getProperties()) {
       final Object value = source.getValue(p.getName());
       if (p.isOneToMany()) {
-        if (copyChildren && p.isChild() && !p.getTargetEntity().isView()) {
-          final List<BaseOBObject> targetChildren = new ArrayList<BaseOBObject>();
-          target.setValue(p.getName(), targetChildren);
-          @SuppressWarnings("unchecked")
-          final List<BaseOBObject> sourceChildren = (List<BaseOBObject>) value;
-          for (final BaseOBObject sourceChild : sourceChildren) {
-            targetChildren.add(copy(sourceChild, copyChildren, resetId, fromTo));
-          }
-        } else {
-          final List<BaseOBObject> targetReferedObjects = new ArrayList<BaseOBObject>();
-          target.setValue(p.getName(), targetReferedObjects);
-          @SuppressWarnings("unchecked")
-          final List<BaseOBObject> sourceReferedObjects = (List<BaseOBObject>) value;
-          for (final BaseOBObject sourceReferedObject : sourceReferedObjects) {
-            targetReferedObjects.add(sourceReferedObject);
+        if (copyChildren && !p.getTargetEntity().isView()) {
+          if (p.isChild()) {
+            final List<BaseOBObject> targetChildren = new ArrayList<BaseOBObject>();
+            target.setValue(p.getName(), targetChildren);
+            @SuppressWarnings("unchecked")
+            final List<BaseOBObject> sourceChildren = (List<BaseOBObject>) value;
+            for (final BaseOBObject sourceChild : sourceChildren) {
+              targetChildren.add(copy(sourceChild, copyChildren, resetId, fromTo));
+            }
+          } else {
+            final List<BaseOBObject> targetReferedObjects = new ArrayList<BaseOBObject>();
+            target.setValue(p.getName(), targetReferedObjects);
+            @SuppressWarnings("unchecked")
+            final List<BaseOBObject> sourceReferedObjects = (List<BaseOBObject>) value;
+            for (final BaseOBObject sourceReferedObject : sourceReferedObjects) {
+              targetReferedObjects.add(sourceReferedObject);
+            }
           }
         }
       } else {
