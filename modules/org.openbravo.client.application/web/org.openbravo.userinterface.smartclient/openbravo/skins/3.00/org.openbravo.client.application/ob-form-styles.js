@@ -44,6 +44,9 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
 });
 
 isc.OBSearchItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput',
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
