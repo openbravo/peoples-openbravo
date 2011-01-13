@@ -26,10 +26,6 @@
 isc.setAutoDraw(false);
 
 isc.FormItem.addProperties({
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
-  
   titleClick: function(form, item){
     item.focusInItem();
   },
