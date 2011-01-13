@@ -37,11 +37,12 @@
 /*=======================================================================
  * Form Field Styles 
 =======================================================================*/
- 				        				        
+
 .OBFormField,
-.OBFormFieldError,
-.OBFormFieldFocused {
-	font-family: 'lucida sans', sans-serif;
+.OBFormFieldDisabled,
+.OBFormFieldFocused,
+.OBFormFieldError {
+  font-family: 'lucida sans', sans-serif;
   /*width: 100%;*/
 }
 
@@ -49,10 +50,15 @@
 .OBFormFieldLabelDisabled,
 .OBFormFieldLabelError,
 .OBFormFieldLabelFocused {
-  font-family: 'lucida sans',sans-serif; 
+  font-family: 'lucida sans', sans-serif;
   font-size: 11px;
-  color: #333333;
   font-weight: bold;
+}
+
+.OBFormFieldLabel,
+.OBFormFieldLabelError,
+.OBFormFieldLabelFocused {
+  color: #333333;
 }
 
 .OBFormFieldLabelDisabled {
@@ -66,24 +72,48 @@
 .OBFormFieldInputHint,
 
 .OBFormFieldSelectInput,
-.OBFormFieldSelectInputError,
-.OBFormFieldSelectInputFocused,
-.OBFormFieldSelectInputHint,
 .OBFormFieldSelectInputDisabled,
+.OBFormFieldSelectInputFocused,
+.OBFormFieldSelectInputError,
+.OBFormFieldSelectInputHint,
 
 .OBFormFieldDateInput,
 .OBFormFieldDateInputDisabled,
 .OBFormFieldDateInputFocused,
 .OBFormFieldDateInputError,
-.OBFormFieldDateInputHint  {
-  padding: 2px 2px 0px 2px;
-  border: 1px solid #cdd7bb;
-  background-color: #F5F7F1;
-  color: #333333;
+.OBFormFieldDateInputHint {
   font-family: arial, sans-serif; 
   font-size: 12px;
   line-height: normal;
+  padding: 2px 2px 0px 2px;
   /*width: 100%;*/
+}
+
+.OBFormFieldInput,
+.OBFormFieldInputFocused,
+.OBFormFieldInputError,
+.OBFormFieldInputHint,
+
+.OBFormFieldSelectInput,
+.OBFormFieldSelectInputError,
+.OBFormFieldSelectInputFocused,
+.OBFormFieldSelectInputHint,
+
+.OBFormFieldDateInput,
+.OBFormFieldDateInputFocused,
+.OBFormFieldDateInputError,
+.OBFormFieldDateInputHint {
+  border: 1px solid #cdd7bb;
+  background-color: #F5F7F1;
+  color: #333333;
+}
+
+.OBFormFieldInputDisabled,
+.OBFormFieldSelectInputDisabled,
+.OBFormFieldDateInputDisabled {
+  border: 1px solid #d7d7d7;
+  background-color: #ffffff;
+  color: #acacac;
 }
 
 .OBFormFieldDateInput,
@@ -93,14 +123,6 @@
 .OBFormFieldDateInputHint {
   margin-right: -7px;
  /*height: 17px !important;*/
-}
-
-.OBFormFieldInputDisabled,
-.OBFormFieldSelectInputDisabled,
-.OBFormFieldDateInputDisabled {
-  color:#777;
-  background-color:#FFFFFF;
-  border:1px solid #A6ABB4;
 }
 
 .OBFormFieldSelectControl,
@@ -119,7 +141,7 @@
 .OBFormFieldSelectInputError,
 .OBFormFieldDateInputError,
 .OBFormFieldLabelError { 
-  color: red; //#204268; 
+  color: red; /*#204268;*/
 }
 
 .OBFormFieldSelectPickerIcon,
