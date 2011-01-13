@@ -34,7 +34,24 @@ isc.OBToolbarTextButton.addProperties( {
       isc.warn('No record selected');
       return;
     }
-
+    
+    //TODO: Currently autosave is only supported in form view, once it is supported
+    //in grid, make use of it here.
+    if (theView.viewForm.hasChanged) {
+      var actionObject = {
+        target: this,
+        method: this.doAction,
+        parameters: []
+      };
+      theView.viewForm.autoSave(actionObject);
+    } else {
+      // If no changes, execute action directly
+      this.doAction();
+    }
+  },
+  
+  doAction: function(){
+    var theView = this.view;
     var popupParams = {
       viewId : 'OBPopupClassicWindow',
       obManualURL : this.obManualURL, 
