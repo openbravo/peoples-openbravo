@@ -247,6 +247,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private String url;
     private String propertyName;
     private List<Value> labelValues;
+    private boolean autosave;
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -254,6 +255,7 @@ public class OBViewTab extends BaseTemplateComponent {
       Column column = fld.getColumn();
 
       propertyName = KernelUtils.getInstance().getPropertyFromColumn(column).getName();
+      autosave = column.isAutosave();
 
       // Define command
       Process process = column.getProcess();
@@ -298,6 +300,10 @@ public class OBViewTab extends BaseTemplateComponent {
           labelValues.add(value);
         }
       }
+    }
+
+    public boolean isAutosave() {
+      return autosave;
     }
 
     public String getPropertyName() {

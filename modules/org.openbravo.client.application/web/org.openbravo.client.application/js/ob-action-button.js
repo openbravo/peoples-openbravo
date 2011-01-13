@@ -37,7 +37,7 @@ isc.OBToolbarTextButton.addProperties( {
     
     //TODO: Currently autosave is only supported in form view, once it is supported
     //in grid, make use of it here.
-    if (theView.viewForm.hasChanged) {
+    if (this.autosave && theView.viewForm.hasChanged) {
       var actionObject = {
         target: this,
         method: this.doAction,
