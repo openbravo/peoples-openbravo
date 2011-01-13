@@ -226,7 +226,7 @@ public class StaticResourceComponent extends BaseComponent {
     // note compress, note that modules are cached in memory
     // when changing development status, system needs to be restarted.
     final String output;
-    if (KernelUtils.getInstance().isAnyModuleInDevelopment()) {
+    if (!isInDevelopment()) {
       output = JSCompressor.getInstance().compress(sb.toString());
     } else {
       output = sb.toString();

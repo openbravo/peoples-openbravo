@@ -70,7 +70,6 @@ public class KernelUtils {
   }
 
   private List<Module> sortedModules = null;
-  private Boolean isAnyModuleInDevelopment = null;
 
   public Property getPropertyFromColumn(Column column) {
     final Entity entity = ModelProvider.getInstance().getEntity(column.getTable().getName());
@@ -337,17 +336,6 @@ public class KernelUtils {
       }
     }
     return targetTab;
-  }
-
-  public Boolean isAnyModuleInDevelopment() {
-    if (isAnyModuleInDevelopment == null) {
-      isAnyModuleInDevelopment = false;
-      final List<Module> modules = getModulesOrderedByDependency();
-      for (Module module : modules) {
-        isAnyModuleInDevelopment |= module.isInDevelopment();
-      }
-    }
-    return isAnyModuleInDevelopment;
   }
 
   private class ModuleDependencyCycleException extends OBException {
