@@ -182,8 +182,8 @@ public class DatasetExportTest extends BaseTest {
     checkPropsPresent(ds, xml, false, false, excludeList.toArray(new String[excludeList.size()]));
   }
 
-  private void checkPropsPresent(DataSet ds, String xml, boolean auditInfo, boolean oneToMany,
-      String[] excluded) {
+  private void checkPropsPresent(DataSet ds, String xml, boolean auditInfo,
+      boolean includeChildren, String[] excluded) {
     final List<String> excludedList = Arrays.asList(excluded);
     for (DataSetTable dst : ds.getDataSetTableList()) {
       final Entity e = ModelProvider.getInstance().getEntityByTableName(
@@ -195,6 +195,9 @@ public class DatasetExportTest extends BaseTest {
         if (p.isId()) { // can not really be excluded
           continue;
         }
+        if (p.getName().equals("orderLineTaxList")) {
+          continue;
+        }
         // add the < in front to prevent accidental matches
         final String xmlCheckName = "<" + p.getName();
         if (excludedList.contains(p.getName())) {
@@ -203,7 +206,11 @@ public class DatasetExportTest extends BaseTest {
         } else if (!auditInfo && p.isAuditInfo()) {
           assertFalse("Fail: property " + p.getName() + " present in xml", xml
               .indexOf(xmlCheckName) != -1);
-        } else if (!oneToMany && p.isOneToMany()) {
+        } else if ((!includeChildren && p.isOneToMany() && p.isChild())) {
+          assertFalse("Fail: property " + p.getName() + " present in xml", xml
+              .indexOf(xmlCheckName) != -1);
+        } else if (p.isOneToMany() && !p.isChild()) {
+          // OneToMany columns which are not child should never be in the xml file
           assertFalse("Fail: property " + p.getName() + " present in xml", xml
               .indexOf(xmlCheckName) != -1);
         } else {
