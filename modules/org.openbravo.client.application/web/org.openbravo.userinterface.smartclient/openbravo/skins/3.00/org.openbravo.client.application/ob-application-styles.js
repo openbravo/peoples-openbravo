@@ -83,13 +83,60 @@ isc.OBFKItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperti
 isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
 
+isc.DateChooser.addProperties({  //TODO : Changed to 'isc.OBDateChooser.addProperties'
+  headerStyle: 'OBDateChooserButton',
+  weekendHeaderStyle: 'OBDateChooserWeekendButton',
+  baseNavButtonStyle: 'OBDateChooserNavButton',
+  baseWeekdayStyle: 'OBDateChooserWeekday',
+  baseWeekendStyle: 'OBDateChooserWeekend',
+  baseBottomButtonStyle: 'OBDateChooserBottomButton',
+  alternateWeekStyles: false,
+
+  showEdges: true,
+
+  edgeImage: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-popup.png',
+  edgeSize: 6,
+  edgeTop: 26,
+  edgeBottom: 5,
+  edgeOffsetTop: 1,
+  edgeOffsetRight: 5,
+  edgeOffsetLeft: 5,
+  edgeOffsetBottom: 5,
+
+  todayButtonHeight: 20,
+
+  headerHeight: 24,
+
+  edgeCenterBackgroundColor: '#FFFFFF',
+  backgroundColor: null,
+
+  showShadow: false,
+  shadowDepth: 6,
+  shadowOffset: 5,
+
+  showDoubleYearIcon: false,
+  prevYearIcon: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-doubleArrow_left.png',
+  prevYearIconWidth: 16,
+  prevYearIconHeight: 16,
+  nextYearIcon: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-doubleArrow_right.png',
+  nextYearIconWidth: 16,
+  nextYearIconHeight: 16,
+  prevMonthIcon: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-arrow_left.png',
+  prevMonthIconWidth: 16,
+  prevMonthIconHeight: 16,
+  nextMonthIcon: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-arrow_right.png',
+  nextMonthIconWidth: 16,
+  nextMonthIconHeight: 16
+});
+
+
 OB.OBDateItemStyleProperties = {
   errorOrientation: 'left',
 
   pickerIconHSpace: '0',
 
   textFieldProperties: {
-    type: "OBTextField",
+    type: 'OBTextField',
     textBoxStyle: 'OBFormFieldDateInput'
   },
 

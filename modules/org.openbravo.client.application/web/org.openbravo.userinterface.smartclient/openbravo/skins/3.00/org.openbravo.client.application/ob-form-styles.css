@@ -21,6 +21,7 @@
  * Contains styles for:
  * View Form Styles 
  * Form Fields/Items
+ * Date Picker
  * Form Buttons 
  * SectionItem Button Styles 
 =======================================================================*/
@@ -198,6 +199,242 @@
 .OBFormFieldPickListCellSelectedFocused,
 .OBFormFieldPickListCellSelectedDark {
   background: url(./images/navbar/menu-rollover.png) repeat-x scroll;
+}
+
+/*=======================================================================
+ * Date Picker 
+=======================================================================*/
+
+.OBDateChooserButton,
+.OBDateChooserButtonOver,
+.OBDateChooserButtonDown,
+.OBDateChooserButtonDisabled,
+.OBDateChooserButtonSelected,
+.OBDateChooserButtonSelectedDown,
+.OBDateChooserButtonSelectedOver,
+.OBDateChooserButtonSelectedDisabled,
+.OBDateChooserWeekendButton,
+.OBDateChooserWeekendButtonOver,
+.OBDateChooserWeekendButtonDown,
+.OBDateChooserWeekendButtonDisabled,
+.OBDateChooserWeekendButtonSelected,
+.OBDateChooserWeekendButtonSelectedDown,
+.OBDateChooserWeekendButtonSelectedOver,
+.OBDateChooserWeekendButtonSelectedDisabled,
+.OBDateChooserNavButton,
+.OBDateChooserNavButtonOver,
+.OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonSelected,
+.OBDateChooserNavButtonSelectedOver,
+.OBDateChooserNavButtonSelectedDown,
+.OBDateChooserWeekday,
+.OBDateChooserWeekdayOver,
+.OBDateChooserWeekdayDown,
+.OBDateChooserWeekdaySelected,
+.OBDateChooserWeekdaySelectedOver,
+.OBDateChooserWeekdaySelectedDown,
+.OBDateChooserWeekdayDisabled,
+.OBDateChooserWeekend,
+.OBDateChooserWeekendOver,
+.OBDateChooserWeekendDown,
+.OBDateChooserWeekendSelected,
+.OBDateChooserWeekendSelectedOver,
+.OBDateChooserWeekendSelectedDown,
+.OBDateChooserWeekendDisabled {
+  font-family: arial, sans-serif;
+  font-size: 12px;
+  background-color: transparent;
+  color: #333333;
+}
+
+.OBDateChooserBottomButton,
+.OBDateChooserBottomButtonOver,
+.OBDateChooserBottomButtonDown,
+.OBDateChooserBottomButtonSelected,
+.OBDateChooserBottomButtonSelectedOver,
+.OBDateChooserBottomButtonSelectedDown {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 11px;
+  background-color: transparent;
+  color: #333333;
+}
+
+.OBDateChooserBottomButton,
+.OBDateChooserBottomButtonSelected {
+  background-image: url(./images/form/dateChooser-bg-button.png);
+  background-position: left top;
+  background-repeat: repeat-x;
+}
+
+.OBDateChooserBottomButtonOver,
+.OBDateChooserBottomButtonSelectedOver {
+  background-image: url(./images/form/dateChooser-bg-button_Over.png);
+  background-position: left top;
+  background-repeat: repeat-x;
+}
+
+.OBDateChooserBottomButtonDown,
+.OBDateChooserBottomButtonSelectedDown {
+  background-image: url(./images/form/dateChooser-bg-button_Down.png);
+  background-position: left top;
+  background-repeat: repeat-x;
+}
+
+.OBDateChooserNavButton,
+.OBDateChooserNavButtonOver,
+.OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonSelected,
+.OBDateChooserNavButtonSelectedOver,
+.OBDateChooserNavButtonSelectedDown {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  background-color: transparent;
+  color: #333333;
+}
+
+/* year/month buttons */
+.OBDateChooserNavButton,
+.OBDateChooserNavButtonOver,
+.OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonSelected,
+.OBDateChooserNavButtonSelectedOver,
+.OBDateChooserNavButtonSelectedDown {
+  padding: 0px;
+  border-top: 0px none;
+  border-bottom: 0px none;
+}
+
+/* for all buttons, plus weekday headers (dateChooserButton) */
+.OBDateChooserButton,
+.OBDateChooserButtonOver,
+.OBDateChooserButtonDown,
+.OBDateChooserButtonSelected,
+.OBDateChooserButtonSelectedOver,
+.OBDateChooserButtonSelectedDown,
+.OBDateChooserWeekendButton,
+.OBDateChooserWeekendButtonOver,
+.OBDateChooserWeekendButtonDown,
+.OBDateChooserWeekendButtonSelected,
+.OBDateChooserWeekendButtonSelectedOver,
+.OBDateChooserWeekendButtonSelectedDown,
+.OBDateChooserNavButton,
+.OBDateChooserNavButtonOver,
+.OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonSelected,
+.OBDateChooserNavButtonSelectedOver,
+.OBDateChooserNavButtonSelectedDown {
+  font-weight: bold;
+  color: #4C4C4C;
+}
+
+.OBDateChooserButtonOver,
+.OBDateChooserButtonDown {
+  cursor: pointer;
+  color: #467DCD;
+}
+
+.OBDateChooserWeekendButton,
+.OBDateChooserWeekendButtonOver,
+.OBDateChooserWeekendButtonDown,
+.OBDateChooserWeekendButtonSelected,
+.OBDateChooserWeekendButtonSelectedOver,
+.OBDateChooserWeekendButtonSelectedDown {
+  background-color: #CDD7BB;
+  border: 2px solid #CDD7BB;
+}
+
+
+.OBDateChooserNavButton,
+.OBDateChooserNavButtonOver,
+.OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonSelected,
+.OBDateChooserNavButtonSelectedOver,
+.OBDateChooserNavButtonSelectedDown {
+  cursor: pointer;
+  padding: 2px;
+}
+
+.OBDateChooserNavButtonOver,
+.OBDateChooserNavButtonDown {
+  color: #FA962F;
+}
+
+/* Today, Cancel buttons */
+.OBDateChooserBottomButton,
+.OBDateChooserBottomButtonOver,
+.OBDateChooserBottomButtonDown {
+  cursor: pointer;
+  font-weight: bold;
+  color: #4C4C4C;
+  border-left: 1px solid #ACB1B9;
+  border-top: 1px solid #ACB1B9;
+}
+
+
+/* weekday and weekend cells */
+
+.OBDateChooserWeekday,
+.OBDateChooserWeekdayOver,
+.OBDateChooserWeekdayDown,
+.OBDateChooserWeekdaySelected,
+.OBDateChooserWeekdaySelectedOver,
+.OBDateChooserWeekdaySelectedDown,
+.OBDateChooserWeekdayDisabled,
+.OBDateChooserWeekend,
+.OBDateChooserWeekendOver,
+.OBDateChooserWeekendDown,
+.OBDateChooserWeekendSelected,
+.OBDateChooserWeekendSelectedOver,
+.OBDateChooserWeekendSelectedDown,
+.OBDateChooserWeekendDisabled {
+  cursor: pointer;
+  color: #333333;
+  border: 2px solid white;
+  background-color: white;
+}
+
+.OBDateChooserWeekdayDisabled,
+.OBDateChooserWeekendDisabled {
+  color: #C0C3CA;
+}
+
+.OBDateChooserWeekend,
+.OBDateChooserWeekendOver,
+.OBDateChooserWeekendSelected,
+.OBDateChooserWeekendDisabled {
+  border: 2px solid #CDD7BB;
+  background-color: #CDD7BB;
+}
+
+.OBDateChooserWeekdayOver,
+.OBDateChooserWeekendOver {
+  border: 2px solid #FA962F;
+}
+
+.OBDateChooserWeekdaySelected,
+.OBDateChooserWeekdaySelectedOver,
+.OBDateChooserWeekdayDown,
+.OBDateChooserWeekdaySelectedDown,
+.OBDateChooserWeekendSelected,
+.OBDateChooserWeekendSelectedOver,
+.OBDateChooserWeekendDown,
+.OBDateChooserWeekendSelectedDown {
+  font-weight: bold;
+  color: #4C4C4C;
+  border: 2px solid #FA962F;
+  background-color: #F8E0C5;
+}
+
+.OBDateChooserWeekdayDown,
+.OBDateChooserWeekendDown {
+  font-weight: normal;
+}
+
+/* year and month pop-up menus */
+.OBDateChooserYearMenu,
+.OBDateChooserMonthMenu {
+  border: 2px solid #4C4C4C;
+  background-color: #FFFFFF;
 }
 
 /*=======================================================================

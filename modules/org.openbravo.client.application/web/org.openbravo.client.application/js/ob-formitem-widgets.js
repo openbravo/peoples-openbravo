@@ -423,6 +423,11 @@ isc.OBYesNoItem.addProperties({
   }
 });
 
+// == OBDateChooser ==
+// OBDateChooser inherits from SmartClient DateChooser
+// extends standard DateChooser implementation to be used in OBDateItem
+isc.ClassFactory.defineClass('OBDateChooser', DateChooser);
+
 // == OBDateItem ==
 // OBDateItem inherits from SmartClient DateItem
 // adds autocomplete and formatting based on the Openbravo date pattern
@@ -611,6 +616,10 @@ isc.OBDateItem.addClassProperties({
 
 // == OBDateItem properties ==
 isc.OBDateItem.addProperties({
+  // ** {{{ pickerConstructor }}} **
+  // Picker constructor class
+  pickerConstructor: 'OBDateChooser',
+
   // ** {{{ dateFormat }}} **
   // Dateformat function
   dateFormat: OB.Format.date,
