@@ -23,6 +23,11 @@ OB.ActionButton.executingProcess = null;
 isc.ClassFactory.defineClass('OBToolbarActionButton', isc.OBToolbarTextButton);
 
 isc.OBToolbarTextButton.addProperties( {
+  initWidget: function(properties){
+    //Hide buttons by default, they will be shown if needed by the refresh method
+    this.hide();
+  },
+  
   action : function() {
     this.runProcess();
   },
