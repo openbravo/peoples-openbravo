@@ -238,12 +238,12 @@ isc.OBViewForm.addProperties({
       this.dynamicCols = dynamicCols;
     }
     if (!data.writable || this.view.readOnly) {
-      this.disable();
+      this.readOnly = true;
       this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
       this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
       this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
     } else {
-      this.setDisabled(false);
+      this.readOnly = false;
     }
   },
   

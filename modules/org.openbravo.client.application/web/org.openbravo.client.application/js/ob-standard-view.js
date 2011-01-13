@@ -375,6 +375,10 @@ isc.OBStandardView.addProperties({
         view: this.viewForm.view
       });
       
+      // NOTE: when changing the layout structure and the scrollbar
+      // location for these layouts check if the scrollTo method 
+      // in ob-view-form-linked-items is still called on the correct
+      // object 
       this.statusBarFormLayout = isc.VLayout.create({
         width: '100%',
         height: '*',
@@ -456,7 +460,7 @@ isc.OBStandardView.addProperties({
   setReadOnly: function(readOnly){
     this.readOnly = readOnly;
     if (readOnly) {
-      this.viewForm.disable();
+      this.viewForm.readOnly = true;
       this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
       this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
       this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
