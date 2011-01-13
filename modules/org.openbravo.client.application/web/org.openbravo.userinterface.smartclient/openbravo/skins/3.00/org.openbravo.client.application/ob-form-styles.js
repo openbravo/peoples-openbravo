@@ -21,7 +21,7 @@ isc.OBViewForm.addProperties({
   width: '100%',
   overflow: 'visible',
   //cellBorder: 1, // debug layout
-  cellPadding: 8
+  cellPadding: 0
 });
 
 isc.OBSectionItem.addProperties({

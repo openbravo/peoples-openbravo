@@ -43,6 +43,7 @@
 .OBFormFieldFocused,
 .OBFormFieldError {
   font-family: 'lucida sans', sans-serif;
+  padding: 4px 8px 4px 8px;
   /*width: 100%;*/
 }
 
