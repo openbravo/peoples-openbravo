@@ -72,10 +72,3 @@ var OB = {
     
     I18N: {}
 };
-
-OB.Application.moduleVersionParameters = {
-<#list data.moduleVersionParameters as moduleVersionParameter>
-'${moduleVersionParameter.id?js_string}' : '${moduleVersionParameter.value?js_string}'<#if moduleVersionParameter_has_next>,</#if>
-</#list>};
-
-OB.Constants.VERSION_QUERYSTRING = "_version=" + OB.Application.systemVersion + "&_language=" + OB.Application.language;
