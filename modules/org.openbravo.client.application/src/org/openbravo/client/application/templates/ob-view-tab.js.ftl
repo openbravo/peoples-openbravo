@@ -48,11 +48,11 @@
     <#list tabComponent.buttonFields as field>
       {id: '${field.id?js_string}', 
        title: '${field.label?js_string}',
-       obManualURL: '${field.url}',
-       command: '${field.command}',
+       obManualURL: '${field.url?js_string}',
+       command: '${field.command?js_string}',
        property: '${field.propertyName?js_string}',
        labelValue: {<#list field.labelValues as value>
-           '${value.value}': '${value.label?js_string}'<#if field_has_next>,</#if>
+           '${value.value?js_string}': '${value.label?js_string}'<#if value_has_next>,</#if>
        </#list>
          }
       }<#if field_has_next>,</#if>
