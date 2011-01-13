@@ -93,6 +93,9 @@ isc.OBToolbarTextButton.addProperties( {
     var theView = this.view;
     this.view.refresh(function(){
         theView.getTabMessage();
+        
+        //Is this needed? It woulnd't in case view refresh refreshes also buttons
+        theView.toolbar.refreshToolbarButtons();
       });
 
     OB.ActionButton.executingProcess = null;
