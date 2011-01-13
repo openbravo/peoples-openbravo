@@ -79,6 +79,8 @@ function closeSearch(action, value, display, parameters, wait){
       length = parameters.length;
       for (i = 0; i < length; i++) {
         hiddenInputName = ((parameters[i].esRef) ? targetFld.inpColumnName : '') + parameters[i].campo;
+        // Revisit for grid editor, maybe setting the value in the form will set it
+        // in the record to be kepped there 
         targetFld.form.hiddenInputs[hiddenInputName] = parameters[i].valor;
       }
     }
@@ -275,6 +277,14 @@ isc.OBTextAreaItem.addProperties({
   validateOnExit: true
 });
 
+// used in the grid
+isc.ClassFactory.defineClass('OBPopUpTextAreaItem', PopUpTextAreaItem);
+
+isc.OBPopUpTextAreaItem.addProperties({
+  validateOnExit: true,
+  popUpOnEnter: true
+});
+
 // == OBSectionItem ==
 // Form sections
 isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
@@ -285,11 +295,6 @@ isc.OBSectionItem.addProperties({
   showDisabled: false,
   
   initWidget: function(){
-    var ret = this.Super('initWidget', arguments);
-    return ret;
-  },
-  
-  updateDisabled: function(){
     var ret = this.Super('initWidget', arguments);
     return ret;
   },

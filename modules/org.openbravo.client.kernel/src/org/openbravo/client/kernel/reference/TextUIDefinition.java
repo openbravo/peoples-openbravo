@@ -41,4 +41,9 @@ public class TextUIDefinition extends StringUIDefinition {
   public String getFilterEditorType() {
     return "OBText";
   }
+
+  @Override
+  public String getGridEditorType() {
+    return "OBPopUpTextAreaItem";
+  }
 }

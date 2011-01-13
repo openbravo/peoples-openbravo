@@ -257,7 +257,8 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getGridFieldProperties(Field field) {
-    return ", name: '" + getGridFieldName(field) + "', canExport: true, canHide: true";
+    return ", name: '" + getGridFieldName(field)
+        + "', canExport: true, canHide: true, editorType: '" + this.getGridEditorType() + "'";
   }
 
   /**
