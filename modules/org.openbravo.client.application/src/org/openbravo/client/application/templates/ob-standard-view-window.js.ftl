@@ -17,7 +17,7 @@
  ************************************************************************
 */
 // contains the code for creating a class reflecting the standard window
-
+//jslint
 // tell the view manager what got loaded...
 OB.Layout.ViewManager.loadedWindowClassName = '${data.windowClientClassName?js_string}';
 
