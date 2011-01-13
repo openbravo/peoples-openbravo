@@ -27,11 +27,14 @@ import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
 import org.openbravo.advpaymentmngt.utility.FIN_PaymentExecutionProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.advpaymentmngt.utility.Value;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetailV;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcessParameter;
 import org.openbravo.model.financialmgmt.payment.PaymentRun;
@@ -110,6 +113,12 @@ public class FIN_ExecutePayment {
               paymentStatus = paymentRunPayment.getPayment().isReceipt() ? "RPR" : "PPM";
               paymentRunPayment.getPayment().setStatus(paymentStatus);
             }
+            if ("PPW".equals(paymentRun.getSourceOfTheExecution())) {
+              FIN_PaymentProposal pp = getPaymentProposalFromPayment(paymentRunPayment.getPayment());
+              pp.setStatus("PPM");
+              OBDal.getInstance().save(pp);
+              OBDal.getInstance().flush();
+            }
             paymentRunPayment.getPayment().setPosted("N");
             if (("RPR".equals(paymentStatus) || "PPM".equals(paymentStatus))
                 && FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
@@ -133,6 +142,12 @@ public class FIN_ExecutePayment {
       error.setMessage("@IssueOnExecutionProcess@");
       return error;
     }
+  }
+
+  FIN_PaymentProposal getPaymentProposalFromPayment(FIN_Payment payment) {
+    FIN_PaymentPropDetailV ppv = FIN_Utility.getOneInstance(FIN_PaymentPropDetailV.class,
+        new Value(FIN_PaymentPropDetailV.PROPERTY_PAYMENT, payment));
+    return ppv.getPaymentProposal();
   }
 
   private void setDefaultParameters() {

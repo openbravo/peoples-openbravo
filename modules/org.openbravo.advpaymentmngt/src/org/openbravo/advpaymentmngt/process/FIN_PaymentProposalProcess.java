@@ -172,6 +172,11 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           paymentProposal.setStatus(isReceipt ? "RPR" : "PPM");
           // process payment
           message = FIN_AddPayment.processPayment(vars, conProvider, "P", payment);
+          if ("RPAE".equals(payment.getStatus())) {
+            paymentProposal.setStatus("RPAE");
+            OBDal.getInstance().save(paymentProposal);
+            OBDal.getInstance().flush();
+          }
           if (message.getType().equals("Error")) {
             String exceptionMessage = payment.getBusinessPartner().getName();
             exceptionMessage += ": " + message.getMessage();
@@ -189,11 +194,14 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           OBDal.getInstance().flush();
           OBContext.restorePreviousMode();
         }
-        // If Automatic step is enabled get proposal status
-        if (FIN_Utility.isAutomaticDepositWithdrawn(paymentProposal))
-          paymentProposal.setStatus(isReceipt ? "RDNC" : "PWNC");
-        else
-          paymentProposal.setStatus(isReceipt ? "RPR" : "PPM");
+        // If Automatic step is enabled and not awaiting execution get proposal status
+        if (!"RPAE".equals(paymentProposal.getStatus())) {
+          if (FIN_Utility.isAutomaticDepositWithdrawn(paymentProposal)) {
+            paymentProposal.setStatus(isReceipt ? "RDNC" : "PWNC");
+          } else {
+            paymentProposal.setStatus(isReceipt ? "RPR" : "PPM");
+          }
+        }
         paymentProposal.setProcessed(true);
         paymentProposal.setAPRMProcessProposal("RE");
         OBDal.getInstance().save(paymentProposal);
