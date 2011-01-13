@@ -152,6 +152,14 @@ isc.OBDateItem.addProperties(isc.addProperties({}, OB.OBDateItemStyleProperties)
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.OBDateItemStyleProperties));
 
 
+isc.OBNumberItem.addProperties({
+  errorOrientation: 'left',
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput'
+});
+
+
 /* =====================================================================
  * Main layout styling properties
  =======================================================================*/

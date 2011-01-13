@@ -755,10 +755,6 @@ isc.ClassFactory.defineClass('OBNumberItem', TextItem);
 // The Openbravo numeric form item.
 isc.OBNumberItem.addProperties({
   typeInstance: null,
-  errorOrientation: 'left',
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
   
   keyPressFilter: '[0-9.,-]',
   
