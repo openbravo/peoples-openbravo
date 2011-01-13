@@ -31,6 +31,7 @@ isc.OBLinkedItemSectionItem.addProperties({
   width: '100%',
   height: '100%',
   overflow: 'hidden',
+  canFocus: true,
   
   // don't expand as a default
   sectionExpanded: false,
@@ -43,7 +44,7 @@ isc.OBLinkedItemSectionItem.addProperties({
   init: function(){
   
     // override the one passed in
-    this.defaultValue =  OB.I18N.getLabel('OBUIAPP_LinkedItemsTitle');
+    this.defaultValue = OB.I18N.getLabel('OBUIAPP_LinkedItemsTitle');
     this.sectionExpanded = false;
     
     // tell the form who we are
@@ -72,6 +73,18 @@ isc.OBLinkedItemSectionItem.addProperties({
   expandSection: function(){
     var ret = this.Super('expandSection', arguments);
     this.getLinkedItemPart().setExpanded(true);
+    
+    // after doing the linked item section check if this 
+    // can replace the scrollto below
+    //    this.canvasItem.focusInItem();
+    
+    // NOTE: if the layout structure changes then this needs to be 
+    // changed probably to see where the scrollbar is to scroll
+    
+    // call with a small delay to let the item be expanded
+    // form.parentElement is the one holding the scrollbar apparently
+    this.form.parentElement.delayCall('scrollToBottom', null, 200);
+    
     return ret;
   },
   
@@ -81,7 +94,7 @@ isc.OBLinkedItemSectionItem.addProperties({
   }
 });
 
-isc.ClassFactory.defineClass('OBLinkedItemLayout', isc.HLayout);
+isc.ClassFactory.defineClass('OBLinkedItemLayout', isc.VLayout);
 
 isc.OBLinkedItemLayout.addProperties({
 
@@ -106,6 +119,11 @@ isc.OBLinkedItemLayout.addProperties({
     this.addMember(this.label);
     
     return ret;
+  },
+  
+  // never disable this item
+  isDisabled: function(){
+    return false;
   },
   
   getForm: function(){
@@ -163,5 +181,11 @@ isc.OBLinkedItemCanvasItem.addProperties({
   // pointer back to this item: canvasItem
   // for setting more properties use canvasProperties, etc. see 
   // the docs
-  canvasConstructor: 'OBLinkedItemLayout'
+  canvasConstructor: 'OBLinkedItemLayout',
+  
+  // never disable this one
+  isDisabled: function(){
+    return false;
+  }
+  
 });
