@@ -293,11 +293,7 @@ public class OBViewTab extends BaseTemplateComponent {
       if (column.getReferenceSearchKey() != null) {
         for (org.openbravo.model.ad.domain.List valueList : column.getReferenceSearchKey()
             .getADListList()) {
-          Value value = new Value();
-          value.label = valueList.getName();
-          value.value = valueList.getSearchKey();
-
-          labelValues.add(value);
+          labelValues.add(new Value(valueList));
         }
       }
     }
@@ -355,14 +351,19 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public class Value {
       private String value;
-      private String label;
+      private String labelValue;
+
+      public Value(org.openbravo.model.ad.domain.List valueList) {
+        labelValue = OBViewUtil.getLabel(valueList, valueList.getADListTrlList());
+        value = valueList.getSearchKey();
+      }
 
       public String getValue() {
         return value;
       }
 
       public String getLabel() {
-        return label;
+        return labelValue;
       }
     }
   }
