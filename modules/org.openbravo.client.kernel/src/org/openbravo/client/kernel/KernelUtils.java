@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.FetchMode;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -50,6 +51,13 @@ public class KernelUtils {
 
   private static KernelUtils instance = new KernelUtils();
 
+  // the static dependency list is used when a cycle is detected
+  // in the modules
+  private static String[] STATICDEPENDENCYLIST = new String[] { "org.openbravo",
+      "org.openbravo.base.weld", "org.openbravo.service.json", "org.openbravo.client.kernel",
+      "org.openbravo.userinterface.smartclient", "org.openbravo.service.datasource",
+      "org.openbravo.client.application", "org.openbravo.userinterface.selector" };
+
   public static synchronized KernelUtils getInstance() {
     if (instance == null) {
       instance = new KernelUtils();
@@ -62,6 +70,7 @@ public class KernelUtils {
   }
 
   private List<Module> sortedModules = null;
+  private Boolean isAnyModuleInDevelopment = null;
 
   public Property getPropertyFromColumn(Column column) {
     final Entity entity = ModelProvider.getInstance().getEntity(column.getTable().getName());
@@ -159,13 +168,47 @@ public class KernelUtils {
 
     final List<ModuleWithLowLevelCode> moduleLowLevelCodes = new ArrayList<ModuleWithLowLevelCode>();
     OBContext.setAdminMode();
+
     try {
+      // note, because of the left join fetch on module dependencies
+      // a module is returned for each module dependency, take care of this in
+      // the for-loop below
       final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
-      for (Module module : modules.list()) {
-        final ModuleWithLowLevelCode moduleLowLevelCode = new ModuleWithLowLevelCode();
-        moduleLowLevelCode.setModule(module);
-        moduleLowLevelCode.setLowLevelCode(computeLowLevelCode(module, new ArrayList<Module>()));
-        moduleLowLevelCodes.add(moduleLowLevelCode);
+      modules.setFetchMode(Module.PROPERTY_MODULEDEPENDENCYLIST, FetchMode.JOIN);
+      final List<Module> handledModules = new ArrayList<Module>();
+      try {
+        for (Module module : modules.list()) {
+          if (handledModules.contains(module)) {
+            continue;
+          }
+          handledModules.add(module);
+          final ModuleWithLowLevelCode moduleLowLevelCode = new ModuleWithLowLevelCode();
+          moduleLowLevelCode.setModule(module);
+          moduleLowLevelCode.setLowLevelCode(computeLowLevelCode(module, new ArrayList<Module>()));
+          moduleLowLevelCodes.add(moduleLowLevelCode);
+        }
+      } catch (ModuleDependencyCycleException e) {
+        // use static list...
+        moduleLowLevelCodes.clear();
+        handledModules.clear();
+        for (Module module : modules.list()) {
+          if (handledModules.contains(module)) {
+            continue;
+          }
+          handledModules.add(module);
+          final ModuleWithLowLevelCode moduleLowLevelCode = new ModuleWithLowLevelCode();
+          moduleLowLevelCode.setModule(module);
+          int index = 0;
+          for (String pkg : STATICDEPENDENCYLIST) {
+            if (pkg.equals(module.getJavaPackage())) {
+              break;
+            }
+
+            index++;
+          }
+          moduleLowLevelCode.setLowLevelCode(index);
+          moduleLowLevelCodes.add(moduleLowLevelCode);
+        }
       }
       Collections.sort(moduleLowLevelCodes);
       final List<Module> result = new ArrayList<Module>();
@@ -190,7 +233,8 @@ public class KernelUtils {
       for (Module moduleCycle : modules) {
         log.error(moduleCycle.getName());
       }
-      throw new OBException("Cycle detected in module dependencies");
+      throw new ModuleDependencyCycleException("Cycle detected in module dependencies with module "
+          + module + " check the error log for the cycle");
     }
     modules.add(module);
     int currentLevel = 0;
@@ -293,5 +337,26 @@ public class KernelUtils {
       }
     }
     return targetTab;
+  }
+
+  public Boolean isAnyModuleInDevelopment() {
+    if (isAnyModuleInDevelopment == null) {
+      isAnyModuleInDevelopment = false;
+      final List<Module> modules = getModulesOrderedByDependency();
+      for (Module module : modules) {
+        isAnyModuleInDevelopment |= module.isInDevelopment();
+      }
+    }
+    return isAnyModuleInDevelopment;
+  }
+
+  private class ModuleDependencyCycleException extends OBException {
+
+    private static final long serialVersionUID = 1L;
+
+    public ModuleDependencyCycleException(String message) {
+      super(message);
+    }
+
   }
 }

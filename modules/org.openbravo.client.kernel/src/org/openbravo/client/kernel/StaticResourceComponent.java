@@ -223,7 +223,14 @@ public class StaticResourceComponent extends BaseComponent {
       sb.append("}\n});");
     }
 
-    final String output = sb.toString();
+    // note compress, note that modules are cached in memory
+    // when changing development status, system needs to be restarted.
+    final String output;
+    if (KernelUtils.getInstance().isAnyModuleInDevelopment()) {
+      output = JSCompressor.getInstance().compress(sb.toString());
+    } else {
+      output = sb.toString();
+    }
     final String md5 = DigestUtils.md5Hex(output);
     final File dir = new File(context.getRealPath(GEN_TARGET_LOCATION));
     if (!dir.exists()) {
