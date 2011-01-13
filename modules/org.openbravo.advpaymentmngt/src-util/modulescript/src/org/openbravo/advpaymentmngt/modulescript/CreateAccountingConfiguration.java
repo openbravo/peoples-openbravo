@@ -69,8 +69,7 @@ public class CreateAccountingConfiguration extends ModuleScript{
 
   //Inserts table access for FIN_FinAcc_Transaction table
   void createTableAccess(ConnectionProvider cp) throws Exception{
-    boolean exist = CreateAccountingConfigurationData.selectTableAccess(cp);
-    if(!exist) CreateAccountingConfigurationData.insertTableAccess(cp.getConnection(), cp);
+    CreateAccountingConfigurationData.insertTableAccess(cp.getConnection(), cp);
   }
 
   void updateTableDocType(ConnectionProvider cp) throws Exception{

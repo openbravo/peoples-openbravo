@@ -74,15 +74,6 @@
       ]]>
     </Sql>
   </SqlMethod>
-   <SqlMethod name="selectTableAccess" type="preparedStatement" return="boolean">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      select count(*) as name from ad_table_access
-      where ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'
-      ]]>
-    </Sql>
-  </SqlMethod>
   <SqlMethod name="insertTableAccess" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
