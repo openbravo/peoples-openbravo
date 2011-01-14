@@ -21,7 +21,7 @@ package org.openbravo.client.kernel.reference;
 import org.openbravo.model.ad.ui.Field;
 
 /**
- * Implementation of the String ui definition.
+ * Implementation of the YesNo/Boolean ui definition.
  * 
  * @author mtaal
  */

@@ -18,17 +18,14 @@
  */
 package org.openbravo.client.kernel.reference;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.hibernate.Hibernate;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.client.kernel.BaseTemplateComponent;
@@ -69,16 +66,10 @@ public class UIDefinitionController extends BaseTemplateComponent {
   private Map<String, UIDefinition> cachedDefinitions = null;
   private Map<String, UIDefinition> uiDefinitionsByColumnId = null;
   private Map<String, FormatDefinition> formatDefinitions = null;
-  private List<Reference> buttonReferences = null;
-  private List<String> buttonColumns = null;
-  private UIDefinition buttonDefinition = null;
 
   public UIDefinition getUIDefinition(String columnId) {
     if (cachedDefinitions == null) {
       setInitCachedDefinitions();
-    }
-    if (buttonColumns.contains(columnId)) {
-      return buttonDefinition;
     }
     final UIDefinition uiDefinition = uiDefinitionsByColumnId.get(columnId);
     if (uiDefinition == null) {
@@ -90,9 +81,6 @@ public class UIDefinitionController extends BaseTemplateComponent {
   public UIDefinition getUIDefinition(Reference reference) {
     if (cachedDefinitions == null) {
       setInitCachedDefinitions();
-    }
-    if (buttonReferences.contains(reference)) {
-      return buttonDefinition;
     }
     final UIDefinition uiDefinition = cachedDefinitions.get(reference.getId());
     if (uiDefinition == null) {
@@ -126,8 +114,6 @@ public class UIDefinitionController extends BaseTemplateComponent {
     }
     final Map<String, UIDefinition> localCachedDefinitions = new HashMap<String, UIDefinition>();
     final Map<String, UIDefinition> localUIDefinitionsByColumn = new HashMap<String, UIDefinition>();
-    final ArrayList<Reference> localButtonReferences = new ArrayList<Reference>();
-    final ArrayList<String> localButtonColumns = new ArrayList<String>();
 
     OBContext.setAdminMode();
     try {
@@ -151,27 +137,12 @@ public class UIDefinitionController extends BaseTemplateComponent {
           log.error("Exception when creating UIDefinition for reference " + reference, e);
         }
       }
-      try {
-        Reference buttonReference = OBDal.getInstance().get(Reference.class, "28");
-        final Class<?> clz = OBClassLoader.getInstance().loadClass(
-            buttonReference.getOBCLKERUIDefinitionList().get(0).getImplementationClassname());
-        buttonDefinition = (UIDefinition) clz.newInstance();
-        buttonDefinition.setReference(buttonReference);
-      } catch (Exception e) {
-        throw new OBException("Exception when creating button reference", e);
-      }
 
       final OBQuery<Column> columnQry = OBDal.getInstance().createQuery(Column.class, "");
       columnQry.setFilterOnActive(false);
       for (Column column : columnQry.list()) {
         final String referenceId;
         if (column.getReferenceSearchKey() != null) {
-          if (DalUtil.getId(column.getReference()).equals("28")
-              && !column.getReferenceSearchKey().isBaseReference()) {
-            // This reference is a button reference. We will add it to the button references
-            localButtonReferences.add(column.getReferenceSearchKey());
-            localButtonColumns.add(column.getId());
-          }
           referenceId = (String) DalUtil.getId(column.getReferenceSearchKey());
         } else {
           referenceId = (String) DalUtil.getId(column.getReference());
@@ -184,8 +155,6 @@ public class UIDefinitionController extends BaseTemplateComponent {
     }
     uiDefinitionsByColumnId = localUIDefinitionsByColumn;
     cachedDefinitions = localCachedDefinitions;
-    buttonReferences = localButtonReferences;
-    buttonColumns = localButtonColumns;
   }
 
   private UIDefinition getUIDefinitionImplementation(Reference reference) throws Exception {

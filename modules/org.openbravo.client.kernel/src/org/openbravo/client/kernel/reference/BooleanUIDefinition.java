@@ -22,7 +22,9 @@ package org.openbravo.client.kernel.reference;
  * Implementation of the boolean ui definition.
  * 
  * @author mtaal
+ * @deprecated use {@link YesNoUIDefinition}
  */
+@Deprecated
 public class BooleanUIDefinition extends UIDefinition {
 
   @Override
