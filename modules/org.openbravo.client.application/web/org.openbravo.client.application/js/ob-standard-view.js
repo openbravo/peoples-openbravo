@@ -421,6 +421,10 @@ isc.OBStandardView.addProperties({
         parentTabSet: this.parentTabSet
       });
       this.addMember(this.childTabSet);
+    } else if (this.isRootView) {
+      // hide the maximize button if this is the root without
+      // children
+      this.statusBar.maximizeButton.hide();
     }
   },
   
@@ -573,7 +577,7 @@ isc.OBStandardView.addProperties({
     // don't open it again
     this.allowDefaultEditMode = false;
     
-    // open form in insert mode
+    // open form in edit mode
     if (record) {
       this.editRecord(record, preventFocus);
     } else if (!this.viewGrid.data || this.viewGrid.data.getLength() === 0) {
@@ -611,9 +615,9 @@ isc.OBStandardView.addProperties({
     if (!this.childTabSet) {
       return;
     }
-    if (this.state !== isc.OBStandardView.STATE_BOTTOM_MAX) {
+    if (this.state !== isc.OBStandardView.STATE_MID) {
       this.setHalfSplit();
-      this.previousState = isc.OBStandardView.STATE_TOP_MAX;
+      this.previousState = this.state;
       this.state = isc.OBStandardView.STATE_MID;
     }
   },
@@ -628,6 +632,8 @@ isc.OBStandardView.addProperties({
     this.state = this.previousState;
     if (this.previousState === isc.OBStandardView.STATE_BOTTOM_MAX) {
       this.setBottomMaximum();
+    } else if (tempState === isc.OBStandardView.STATE_MID && this.previousState === isc.OBStandardView.STATE_MID) {
+      this.setTopMaximum();
     } else if (this.previousState === isc.OBStandardView.STATE_MID) {
       this.setHalfSplit();
     } else if (this.previousState === isc.OBStandardView.STATE_TOP_MAX) {
@@ -660,6 +666,43 @@ isc.OBStandardView.addProperties({
     }
     
     isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
+  },
+  
+  setMaximizeRestoreButtonState: function(){
+    // single view, no maximize or restore
+    if (!this.hasChildTabs && this.isRootView) {
+      return;
+    }
+    // different cases:
+    var theState = this.state;
+    if (this.parentTabSet) {
+      theState = this.parentTabSet.state;
+    }
+    if (theState === isc.OBStandardView.STATE_TOP_MAX) {
+      this.statusBar.maximizeButton.hide();
+      this.statusBar.restoreButton.show(true);
+    } else {
+      this.statusBar.maximizeButton.show(true);
+      this.statusBar.restoreButton.hide();
+    }
+  },
+  
+  maximize: function(){
+    if (this.parentTabSet) {
+      this.parentTabSet.doHandleDoubleClick();
+    } else {
+      this.doHandleDoubleClick();
+    }
+    this.setMaximizeRestoreButtonState();
+  },
+  
+  restore: function(){
+    if (this.parentTabSet) {
+      this.parentTabSet.doHandleDoubleClick();
+    } else {
+      this.doHandleDoubleClick();
+    }
+    this.setMaximizeRestoreButtonState();
   },
   
   // go to a next or previous record, if !next then the previous one is used
@@ -702,7 +745,12 @@ isc.OBStandardView.addProperties({
     }
     if (!this.viewForm.newRecordSavedEvent || !this.viewForm.isVisible()) {
       var gridRecord = this.viewGrid.getSelectedRecord();
-      this.editRecord(gridRecord);
+      if (!gridRecord) {
+        // not passing a record forces a new record
+        this.editRecord();
+      } else {
+        this.editRecord(gridRecord);
+      }
       this.viewForm.newRecordSavedEvent = false;
     }
     this.recordSelected();
@@ -723,8 +771,13 @@ isc.OBStandardView.addProperties({
     }
     for (i = 0; i < tabInfos.length; i++) {
       if (tabInfos[i].targetTabId === this.tabId) {
-        // found it...
-        this.viewGrid.targetRecordId = tabInfos[i].targetRecordId;
+        // found it..., check if a record needs to be edited
+        if (tabInfos[i].targetRecordId) {
+          this.viewGrid.targetRecordId = tabInfos[i].targetRecordId;
+        } else {
+          // signal open grid
+          this.viewGrid.targetOpenGrid = true;
+        }
         
         if (this.parentTabSet && this.parentTabSet.getSelectedTab() !== this.tab) {
           this.parentTabSet.selectTab(this.tab);
@@ -938,7 +991,7 @@ isc.OBStandardView.addProperties({
   },
   
   // ++++++++++++++++++++ Button Actions ++++++++++++++++++++++++++
-        
+  
   // make a special refresh:
   // - refresh the current selected record without changing the selection
   // - refresh the parent/grand-parent in the same way without changing the selection
@@ -946,6 +999,7 @@ isc.OBStandardView.addProperties({
   
   refresh: function(refreshCallback){
     if (this.viewGrid.isVisible()) {
+      this.messageBar.hide();
       this.viewGrid.filterData(this.viewGrid.getCriteria(), refreshCallback);
     } else {
       var view = this;
@@ -1076,6 +1130,8 @@ isc.OBStandardView.addProperties({
       this.members[0].setHeight('100%');
       this.members[0].show();
     }
+    this.state = isc.OBStandardView.STATE_TOP_MAX;
+    this.setMaximizeRestoreButtonState();
   },
   
   setBottomMaximum: function(){
@@ -1089,6 +1145,8 @@ isc.OBStandardView.addProperties({
       this.members[0].setHeight('100%');
       this.members[0].show();
     }
+    this.state = isc.OBStandardView.STATE_BOTTOM_MAX;
+    this.setMaximizeRestoreButtonState();
   },
   
   setHalfSplit: function(){
@@ -1118,16 +1176,18 @@ isc.OBStandardView.addProperties({
       this.members[0].setHeight('100%');
       this.members[0].show();
     }
+    this.state = isc.OBStandardView.STATE_MID;
+    this.setMaximizeRestoreButtonState();
   },
   
-  getCurrentValues: function() {
+  getCurrentValues: function(){
     if (this.isShowingForm) {
       return this.viewForm.getValues();
     } else {
       return this.viewGrid.getSelectedRecord();
     }
   },
-    
+  
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
   getContextInfo: function(onlySessionProperties, classicMode){

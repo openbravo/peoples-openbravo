@@ -51,9 +51,9 @@ isc.OBStatusBarTextLabel.addProperties({
 
 isc.OBStatusBarIconButtonBar.addProperties({
   styleName: "OBStatusBarIconButtonBar",
-  width: 110,
-  align: 'left',
-//  overflow: 'visible',
+  width: 130,
+  align: 'right',
+  overflow: 'visible',
   membersMargin: 4
 });
 

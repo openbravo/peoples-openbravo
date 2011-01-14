@@ -248,6 +248,11 @@ isc.OBStandardViewTabSet.addProperties({
     }
     
     this.previousState = tmpPreviousState;
+
+    for (i = 0; i < this.tabs.length; i++) {
+      tab = this.tabs[i];
+      tab.pane.setMaximizeRestoreButtonState();
+    }
   },
   
   makeTabVisible: function(tab){

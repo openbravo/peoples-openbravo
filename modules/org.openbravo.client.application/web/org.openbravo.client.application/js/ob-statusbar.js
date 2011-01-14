@@ -59,6 +59,10 @@ isc.OBStatusBarIconButton.addProperties({
     var rowNum, newRowNum, newRecord;
     if (this.buttonType === 'previous') {
       this.view.editNextPreviousRecord(false);
+    } else if (this.buttonType === 'maximize') {
+      this.view.maximize();
+    } else if (this.buttonType === 'restore') {
+      this.view.restore();
     } else if (this.buttonType === 'next') {
       this.view.editNextPreviousRecord(true);
     } else if (this.buttonType === 'close') {
@@ -107,12 +111,21 @@ isc.OBStatusBar.addProperties({
       view: this.view,
       buttonType: 'close'
     });
+    this.maximizeButton = isc.OBStatusBarIconButton.create({
+      view: this.view,
+      buttonType: 'maximize'
+    });
+    this.restoreButton = isc.OBStatusBarIconButton.create({
+      visibility: 'hidden',
+      view: this.view,
+      buttonType: 'restore'
+    });
     var buttonSpacer = isc.HLayout.create({
       width: this.iconButtonGroupSpacerWidth
     });
     var buttonBar = isc.OBStatusBarIconButtonBar.create({});
     
-    buttonBar.addMembers([this.previousButton, this.nextButton, buttonSpacer, closeButton]);
+    buttonBar.addMembers([this.previousButton, this.nextButton, buttonSpacer, this.maximizeButton, this.restoreButton, closeButton]);
     this.addMembers([this.leftBar, buttonBar]);
   },
   
