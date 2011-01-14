@@ -321,8 +321,6 @@ public abstract class UIDefinition {
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
 
-      boolean comboreload = rq.getRequestParameter("comboreload") != null
-          && rq.getRequestParameter("comboreload").equals("true");
       String ref = field.getColumn().getReference().getId();
       String objectReference = "";
       if (field.getColumn().getReferenceSearchKey() != null) {
@@ -352,7 +350,7 @@ public abstract class UIDefinition {
           clientList, 0);
       FieldProvider tabData = generateTabData(field.getTab().getADFieldList(), field, columnValue);
       comboTableData.fillParameters(tabData, field.getTab().getWindow().getId(), columnValue);
-      FieldProvider[] fps = comboTableData.select(getValueFromSession && !comboreload);
+      FieldProvider[] fps = comboTableData.select(getValueFromSession);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
@@ -372,7 +370,7 @@ public abstract class UIDefinition {
         comboEntries.add(entry);
       }
       JSONObject fieldProps = new JSONObject();
-      if (getValueFromSession && !comboreload) {
+      if (getValueFromSession) {
         fieldProps.put("value", columnValue);
       } else {
         if (possibleIds.contains(columnValue)) {
