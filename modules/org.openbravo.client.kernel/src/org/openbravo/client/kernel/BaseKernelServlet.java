@@ -50,7 +50,7 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
-    RequestContext.setServletContext(getServletContext());
+    RequestContext.setServletContext(config.getServletContext());
   }
 
   public void service(final HttpServletRequest request, HttpServletResponse response)
