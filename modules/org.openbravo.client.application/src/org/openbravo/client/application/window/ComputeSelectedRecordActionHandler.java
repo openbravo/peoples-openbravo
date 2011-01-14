@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,6 @@ import org.openbravo.client.application.MenuManager;
 import org.openbravo.client.application.MenuManager.MenuOption;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
@@ -44,10 +43,11 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.json.JsonConstants;
 
 /**
- * Is used to compute which records to select in a set of tabs of a certain window.
+ * Is used to compute which records to select in a set of tabs of a certain window. It receives the
+ * id and entity of a record and then finds the tab and all the parent tab and records which need to
+ * be selected. This is then returned to the client to build the ui.
  * 
  * @author mtaal
- * @see StaticResourceComponent
  */
 @ApplicationScoped
 public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
@@ -83,7 +83,9 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
         if (menuOption.getType() == MenuManager.MenuEntryType.Window) {
           if (windowId.equals(menuOption.getMenu().getWindow().getId())) {
             // found the window process it
-            result = processWindow(menuOption.getMenu().getWindow(), targetRecordId, targetEntity);
+            final Window menuWindow = OBDal.getInstance().get(Window.class,
+                menuOption.getMenu().getWindow().getId());
+            result = processWindow(menuWindow, targetRecordId, targetEntity);
             break;
           }
         }
@@ -107,8 +109,26 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
   private JSONObject processWindow(Window window, String recordId, String entityName)
       throws Exception {
     // create the initial TabInfo
-    final Tab tab = getTab(window, entityName);
     final BaseOBObject bob = OBDal.getInstance().get(entityName, recordId);
+
+    // special case, no bob
+    // find the root tab and return only that
+    if (bob == null) {
+      for (Tab tab : window.getADTabList()) {
+        if (tab.isActive() && tab.getModule().isEnabled() && tab.getTabLevel() == 0) {
+          final TabInfo tabInfo = new TabInfo();
+          tabInfo.setTab(tab);
+          final List<JSONObject> resultList = new ArrayList<JSONObject>();
+          resultList.add(tabInfo.getJSONObject());
+          final JSONObject result = new JSONObject();
+          result.put(RESULT, new JSONArray(resultList));
+          return result;
+        }
+      }
+      throw new OBException("No root tab found in window " + window);
+    }
+
+    final Tab tab = getTab(window, entityName);
     final TabInfo tabInfo = new TabInfo();
     tabInfo.setRecord(bob);
     tabInfo.setTab(tab);
@@ -144,11 +164,12 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
 
   private Tab getTab(Window window, String entityName) {
     for (Tab tab : window.getADTabList()) {
-      if (tab.getTable().getName().equals(entityName)) {
+      if (tab.isActive() && tab.getModule().isEnabled()
+          && tab.getTable().getName().equals(entityName)) {
         return tab;
       }
     }
-    return null;
+    throw new OBException("No tab found using entity " + entityName + " window: " + window);
   }
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -177,7 +198,9 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
 
     public JSONObject getJSONObject() throws Exception {
       final JSONObject result = new JSONObject();
-      result.put(TARGET_RECORD_ID, getRecord().getId());
+      if (getRecord() != null) {
+        result.put(TARGET_RECORD_ID, getRecord().getId());
+      }
       result.put(TARGET_TAB_ID, getTab().getId());
       return result;
     }

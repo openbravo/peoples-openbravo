@@ -147,7 +147,7 @@ isc.OBStandardWindow.addProperties({
     var standardWindow = this;
     var ret = this.Super('draw', arguments);
     
-    if (this.targetRecordId) {
+    if (this.targetTabId) {
       OB.RemoteCallManager.call('org.openbravo.client.application.window.ComputeSelectedRecordActionHandler', null, {
         targetEntity: this.targetEntity,
         targetRecordId: this.targetRecordId,
