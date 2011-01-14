@@ -42,27 +42,3 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   titleStyle: 'OBSectionItemButton_Title_',
   backgroundColor: 'transparent'
 });
-
-isc.OBSearchItem.addProperties({
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
-  pickerIconHeight: 21,
-  pickerIconWidth: 21,
-  height: 21,
-  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
-  clearIcon: {
-    showHover: true,
-    height: 15,
-    width: 15,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',    
-    prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
-  },
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
-  newTabIconSize: 8
-});
-
-isc.OBFKItem.addProperties({
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
-  newTabIconSize: 8
-});
