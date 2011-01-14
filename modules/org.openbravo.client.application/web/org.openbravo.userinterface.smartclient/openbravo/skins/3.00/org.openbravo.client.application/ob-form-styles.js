@@ -49,6 +49,7 @@ isc.OBSearchItem.addProperties({
   textBoxStyle: 'OBFormFieldInput',
   pickerIconHeight: 21,
   pickerIconWidth: 21,
+  height: 21,
   pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
     showHover: true,
