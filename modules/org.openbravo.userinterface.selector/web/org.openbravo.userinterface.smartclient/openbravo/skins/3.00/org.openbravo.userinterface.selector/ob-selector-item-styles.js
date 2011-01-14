@@ -52,7 +52,8 @@ isc.OBSelectorItem.addProperties({
   
   popupIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
   popupIconWidth: 21,
-  popupIconHeight: 21
+  popupIconHeight: 21,
+  pickerIconHspace: 0
 });
 
 isc.OBSelectorLinkItem.addProperties({
