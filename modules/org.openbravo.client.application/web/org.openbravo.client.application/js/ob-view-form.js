@@ -221,9 +221,10 @@ isc.OBViewForm.addProperties({
         }
       }
     }
-    if (calloutMessages && calloutMessages.length > 0) {
+    // apparently sometimes an empty string is returned
+    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0] !== '') {
       // TODO: check as what type should call out messages be displayed
-      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, calloutMessages);
+      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, calloutMessages[0]);
     }
     if (auxInputs) {
       this.auxInputs = {};
