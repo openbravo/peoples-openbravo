@@ -122,7 +122,7 @@
 .OBFormFieldDateInputFocused,
 .OBFormFieldDateInputError,
 .OBFormFieldDateInputHint {
-  margin-right: -7px;
+  margin-right: -6px;
  /*height: 17px !important;*/
 }
 
