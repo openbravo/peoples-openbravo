@@ -159,7 +159,7 @@ isc.OBNumberItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput'
-  errorOrientation: 'left',
+  errorOrientation: 'left'
 });
 
 
