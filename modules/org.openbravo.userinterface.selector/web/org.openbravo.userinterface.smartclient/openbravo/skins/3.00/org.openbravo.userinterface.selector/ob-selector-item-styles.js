@@ -43,17 +43,16 @@ isc.OBSelectorPopupWindow.addProperties({
   }
 });
 
+isc.OBSelectorItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
+
 isc.OBSelectorItem.addProperties({
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
   newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8,  
   
   popupIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
   popupIconWidth: 21,
   popupIconHeight: 21,
-  pickerIconHspace: 0
+  popupIconHspace: 0
 });
 
 isc.OBSelectorLinkItem.addProperties({

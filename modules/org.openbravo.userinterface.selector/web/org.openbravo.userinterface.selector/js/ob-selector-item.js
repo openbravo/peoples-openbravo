@@ -325,7 +325,7 @@ isc.OBSelectorItem.addProperties({
       src: this.popupIconSrc,
       width: this.popupIconWidth,
       height: this.popupIconHeight,
-      hspace: this.pickerIconHspace,
+      hspace: this.popupIconHspace,
       keyPress: function(keyName, character, form, item, icon){
         if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown()) {
           item.openSelectorWindow();
