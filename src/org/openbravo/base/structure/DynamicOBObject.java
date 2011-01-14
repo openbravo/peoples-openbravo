@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,8 @@ import org.openbravo.model.common.enterprise.Organization;
 
 public class DynamicOBObject extends BaseOBObject implements Traceable, ClientEnabled,
     OrganizationEnabled {
+
+  private static final long serialVersionUID = 1L;
 
   private String entityName;
 
