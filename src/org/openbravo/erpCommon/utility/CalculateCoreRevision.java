@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,9 +38,7 @@ public class CalculateCoreRevision extends Task {
     // remove + in case there are uncommited changes
     hgRevNo = hgRevNo.replace("+", "");
 
-    Integer revNo = new Integer(hgRevNo);
-    revNo += 10000;
-    getProject().setProperty(revision, "2.50." + revNo.toString());
+    getProject().setProperty(revision, "3.0." + hgRevNo);
   }
 
   public String getRevision() {
