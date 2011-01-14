@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -123,118 +123,127 @@ public class SystemInfo {
 
   private static void load(Item i, ConnectionProvider conn) throws ServletException {
 
-    switch (i) {
-    case SYSTEM_IDENTIFIER:
-      systemInfo.put(i, getSystemIdentifier(conn));
-      break;
-    case MAC_IDENTIFIER:
-      systemInfo.put(i, calculateMacIdentifier());
-      break;
-    case DB_IDENTIFIER:
-      systemInfo.put(i, getDBIdentifier(conn));
-      break;
-    case DATABASE:
-      systemInfo.put(i, conn.getRDBMS());
-      break;
-    case DATABASE_VERSION:
-      systemInfo.put(i, getDatabaseVersion(conn));
-      break;
-    case WEBSERVER:
-      systemInfo.put(i, getWebserver()[0]);
-      break;
-    case WEBSERVER_VERSION:
-      systemInfo.put(i, getWebserver()[1]);
-      break;
-    case SERVLET_CONTAINER:
-      systemInfo.put(i, SystemInfoData.selectServletContainer(conn));
-      break;
-    case SERVLET_CONTAINER_VERSION:
-      systemInfo.put(i, SystemInfoData.selectServletContainerVersion(conn));
-      break;
-    case ANT_VERSION:
-      systemInfo.put(i, getVersion(SystemInfoData.selectAntVersion(conn)));
-      break;
-    case OB_VERSION:
-      OBVersion version = OBVersion.getInstance();
-      systemInfo.put(i, version.getVersionNumber() + version.getMP());
-      break;
-    case OB_INSTALL_MODE:
-      systemInfo.put(i, SystemInfoData.selectObInstallMode(conn));
-      break;
-    case CODE_REVISION:
-      systemInfo.put(i, SystemInfoData.selectCodeRevision(conn));
-      break;
-    case NUM_REGISTERED_USERS:
-      systemInfo.put(i, SystemInfoData.selectNumRegisteredUsers(conn));
-      break;
-    case ISHEARTBEATACTIVE:
-      systemInfo.put(i, SystemInfoData.selectIsheartbeatactive(conn));
-      break;
-    case ISPROXYREQUIRED:
-      systemInfo.put(i, SystemInfoData.selectIsproxyrequired(conn));
-      break;
-    case PROXY_SERVER:
-      systemInfo.put(i, SystemInfoData.selectProxyServer(conn));
-      break;
-    case PROXY_PORT:
-      systemInfo.put(i, SystemInfoData.selectProxyPort(conn));
-      break;
-    case OPERATING_SYSTEM:
-      systemInfo.put(i, System.getProperty("os.name"));
-      break;
-    case OPERATING_SYSTEM_VERSION:
-      systemInfo.put(i, System.getProperty("os.version"));
-      break;
-    case JAVA_VERSION:
-      systemInfo.put(i, System.getProperty("java.version"));
-      break;
-    case MODULES:
-      systemInfo.put(i, getModules());
-      break;
-    case OBPS_INSTANCE:
-      systemInfo.put(i, getOBPSInstance());
-      break;
-    case INSTANCE_NUMBER:
-      systemInfo.put(i, getOBPSIntanceNumber());
-      break;
-    case FIRST_LOGIN:
-      systemInfo.put(i, sd.format(firstLogin));
-      break;
-    case LAST_LOGIN:
-      systemInfo.put(i, sd.format(lastLogin));
-      break;
-    case TOTAL_LOGINS:
-      systemInfo.put(i, numberOfLogins.toString());
-      break;
-    case AVG_CONCURRENT_USERS:
-      systemInfo.put(i, avgUsers.toString());
-      break;
-    case MAX_CONCURRENT_USERS:
-      systemInfo.put(i, Integer.toString(maxUsers));
-      break;
-    case PERC_TIME_USAGE:
-      systemInfo.put(i, usagePercentageTime.toString());
-      break;
-    case TOTAL_LOGINS_LAST_MOTH:
-      systemInfo.put(i, Integer.toString(numberOfLoginsThisMonth));
-      break;
-    case NUMBER_OF_CLIENTS:
-      systemInfo.put(i, getNumberOfClients());
-      break;
-    case NUMBER_OF_ORGS:
-      systemInfo.put(i, getNumberOfOrgs());
-      break;
-    case USAGE_AUDIT:
-      systemInfo.put(i, isUsageAuditEnabled() ? "true" : "false");
-      break;
-    case INSTANCE_PURPOSE:
-      String instancePurpose = OBDal.getInstance().get(SystemInformation.class, "0")
-          .getInstancePurpose();
-      systemInfo.put(i, instancePurpose == null ? "U" : instancePurpose);
-      break;
-    case REJECTED_LOGINS_DUE_CONC_USERS:
-      systemInfo.put(i, Integer.toString(numberOfRejectedLoginsDueConcUsersThisMonth));
-      break;
+    OBContext.setAdminMode();
+    try {
+
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+      switch (i) {
+      case SYSTEM_IDENTIFIER:
+        systemInfo.put(i, getSystemIdentifier(conn));
+        break;
+      case MAC_IDENTIFIER:
+        systemInfo.put(i, calculateMacIdentifier());
+        break;
+      case DB_IDENTIFIER:
+        systemInfo.put(i, getDBIdentifier(conn));
+        break;
+      case DATABASE:
+        systemInfo.put(i, conn.getRDBMS());
+        break;
+      case DATABASE_VERSION:
+        systemInfo.put(i, getDatabaseVersion(conn));
+        break;
+      case WEBSERVER:
+        systemInfo.put(i, getWebserver()[0]);
+        break;
+      case WEBSERVER_VERSION:
+        systemInfo.put(i, getWebserver()[1]);
+        break;
+      case SERVLET_CONTAINER:
+        systemInfo.put(i, SystemInfoData.selectServletContainer(conn));
+        break;
+      case SERVLET_CONTAINER_VERSION:
+        systemInfo.put(i, SystemInfoData.selectServletContainerVersion(conn));
+        break;
+      case ANT_VERSION:
+        systemInfo.put(i, getVersion(SystemInfoData.selectAntVersion(conn)));
+        break;
+      case OB_VERSION:
+        OBVersion version = OBVersion.getInstance();
+        systemInfo.put(i, version.getVersionNumber() + version.getMP());
+        break;
+      case OB_INSTALL_MODE:
+        systemInfo.put(i, SystemInfoData.selectObInstallMode(conn));
+        break;
+      case CODE_REVISION:
+        systemInfo.put(i, SystemInfoData.selectCodeRevision(conn));
+        break;
+      case NUM_REGISTERED_USERS:
+        systemInfo.put(i, SystemInfoData.selectNumRegisteredUsers(conn));
+        break;
+      case ISHEARTBEATACTIVE:
+        systemInfo.put(i, SystemInfoData.selectIsheartbeatactive(conn));
+        break;
+      case ISPROXYREQUIRED:
+        systemInfo.put(i, SystemInfoData.selectIsproxyrequired(conn));
+        break;
+      case PROXY_SERVER:
+        systemInfo.put(i, SystemInfoData.selectProxyServer(conn));
+        break;
+      case PROXY_PORT:
+        systemInfo.put(i, SystemInfoData.selectProxyPort(conn));
+        break;
+      case OPERATING_SYSTEM:
+        systemInfo.put(i, System.getProperty("os.name"));
+        break;
+      case OPERATING_SYSTEM_VERSION:
+        systemInfo.put(i, System.getProperty("os.version"));
+        break;
+      case JAVA_VERSION:
+        systemInfo.put(i, System.getProperty("java.version"));
+        break;
+      case MODULES:
+        systemInfo.put(i, getModules());
+        break;
+      case OBPS_INSTANCE:
+        systemInfo.put(i, getOBPSInstance());
+        break;
+      case INSTANCE_NUMBER:
+        systemInfo.put(i, getOBPSIntanceNumber());
+        break;
+      case FIRST_LOGIN:
+        systemInfo.put(i, sd.format(firstLogin));
+        break;
+      case LAST_LOGIN:
+        systemInfo.put(i, sd.format(lastLogin));
+        break;
+      case TOTAL_LOGINS:
+        systemInfo.put(i, numberOfLogins.toString());
+        break;
+      case AVG_CONCURRENT_USERS:
+        systemInfo.put(i, avgUsers.toString());
+        break;
+      case MAX_CONCURRENT_USERS:
+        systemInfo.put(i, Integer.toString(maxUsers));
+        break;
+      case PERC_TIME_USAGE:
+        systemInfo.put(i, usagePercentageTime.toString());
+        break;
+      case TOTAL_LOGINS_LAST_MOTH:
+        systemInfo.put(i, Integer.toString(numberOfLoginsThisMonth));
+        break;
+      case NUMBER_OF_CLIENTS:
+        systemInfo.put(i, getNumberOfClients());
+        break;
+      case NUMBER_OF_ORGS:
+        systemInfo.put(i, getNumberOfOrgs());
+        break;
+      case USAGE_AUDIT:
+        systemInfo.put(i, isUsageAuditEnabled() ? "true" : "false");
+        break;
+      case INSTANCE_PURPOSE:
+        String instancePurpose = sysInfo.getInstancePurpose();
+        systemInfo.put(i, instancePurpose == null ? "U" : instancePurpose);
+        break;
+      case REJECTED_LOGINS_DUE_CONC_USERS:
+        systemInfo.put(i, Integer.toString(numberOfRejectedLoginsDueConcUsersThisMonth));
+        break;
+      case CUSTOM_QUERY_ENABLED:
+        systemInfo.put(i, sysInfo.isEnableCustomQueries() ? "Y" : "N");
+        break;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -740,7 +749,8 @@ public class SystemInfo {
         "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
         false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false), INSTANCE_PURPOSE(
         "instancePurpose", false), REJECTED_LOGINS_DUE_CONC_USERS("rejectedLoginsDueConcUsers",
-        false), INSTANCE_NUMBER("instanceNo", false);
+        false), INSTANCE_NUMBER("instanceNo", false), CUSTOM_QUERY_ENABLED("enabledCustomQuery",
+        false);
 
     private String label;
     private boolean isIdInfo;

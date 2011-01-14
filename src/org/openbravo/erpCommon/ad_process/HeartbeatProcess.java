@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -390,6 +390,8 @@ public class HeartbeatProcess implements Process {
           log.warn("Incorrect number of rejected logins: "
               + SystemInfo.Item.REJECTED_LOGINS_DUE_CONC_USERS.getLabel());
         }
+        hbLog.setEnableCustomQueries("Y".equals(systemInfo
+            .getProperty(SystemInfo.Item.CUSTOM_QUERY_ENABLED.getLabel())));
       }
       OBDal.getInstance().save(hbLog);
     } finally {
@@ -402,8 +404,11 @@ public class HeartbeatProcess implements Process {
    */
   private void parseResponse(String response) {
     logger.logln(logger.messageDb("HB_UPDATES", ctx.getLanguage()));
-    if (response == null)
+    if (response == null) {
       return;
+    }
+
+    OBContext.setAdminMode();
     try {
       JSONObject json = new JSONObject(response);
       String beatId = (String) json.get("beatId");
@@ -413,12 +418,15 @@ public class HeartbeatProcess implements Process {
       parseAlerts(alertsResponse);
 
       // Get Custom Queries from JSONObject and process them
-      processCustomQueries((JSONArray) json.get("customQueries"), beatId);
-
+      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+      if (sysInfo != null && sysInfo.isEnableCustomQueries()) {
+        processCustomQueries((JSONArray) json.get("customQueries"), beatId);
+      }
     } catch (JSONException e) {
       log.error(e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
   }
 
   private void parseAlerts(String alertsResponse) {
@@ -501,83 +509,78 @@ public class HeartbeatProcess implements Process {
     if ("null".equals(jsonArrayCQueries.get(0)))
       return;
 
-    try {
-      OBContext.setAdminMode();
-      JSONObject jsonObjectCQReturn = new JSONObject();
-      for (int i = 0; i < jsonArrayCQueries.length(); i++) {
-        JSONObject jsonCustomQuery = (JSONObject) jsonArrayCQueries.get(i);
-        String strQId = jsonCustomQuery.getString("QId");
-        String strQName = jsonCustomQuery.getString("QName");
-        logger.logln("Processing custom query: " + strQName);
-        try {
-          String strQType = jsonCustomQuery.getString("QType");
-          if ("HQL".equals(strQType)) {
-            String strHQL = jsonCustomQuery.getString("QCode");
-            HeartbeatLogCustomQuery hbLogCQ = logCustomQuery(strQName, strQType, strHQL);
-
-            Session obSession = OBDal.getInstance().getSession();
-            Query customQuery = obSession.createQuery(strHQL);
-            String[] properties = customQuery.getReturnAliases();
-            JSONArray jsonArrayResultRows = new JSONArray();
-            int row = 0;
-
-            for (Object objResult : (List<Object>) customQuery.list()) {
-              row += 1;
-              JSONArray jsonArrayResultRowValues = new JSONArray();
-
-              Object[] resultList = new Object[1];
-              if (objResult instanceof Object[])
-                resultList = (Object[]) objResult;
-              else
-                resultList[0] = objResult;
-
-              for (int j = 0; j < resultList.length; j++) {
-                jsonArrayResultRowValues.put(resultList[j]);
-
-                String fieldName = null;
-                if (properties != null && properties.length > j) {
-                  fieldName = properties[j];
-                }
-                if (fieldName == null) {
-                  fieldName = "??";
-                }
-                logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
-              }
-              jsonArrayResultRows.put(jsonArrayResultRowValues);
-            }
-
-            if (customQuery.list().isEmpty())
-              jsonArrayResultRows.put("null");
-
-            JSONObject jsonResult = new JSONObject();
-            jsonResult.put("properties", properties == null ? null : Arrays.asList(properties));
-            jsonResult.put("values", jsonArrayResultRows);
-            jsonObjectCQReturn.put(strQId, jsonResult);
-          } else {
-            log.warn("unknown Query Type: " + strQType);
-            jsonObjectCQReturn.put(strQId, "unknown query type: " + strQType);
-          }
-        } catch (Exception e) {
-          // ignore exception
-          jsonObjectCQReturn.put(strQId, "exeption executing query: " + e.getMessage());
-          log.warn("Error processing custom query: " + strQName);
-        }
-
-      }
-      JSONObject jsonObjectReturn = new JSONObject();
-      jsonObjectReturn.put("beatId", beatId);
-      jsonObjectReturn.put("customQueries", jsonObjectCQReturn);
-
+    JSONObject jsonObjectCQReturn = new JSONObject();
+    for (int i = 0; i < jsonArrayCQueries.length(); i++) {
+      JSONObject jsonCustomQuery = (JSONObject) jsonArrayCQueries.get(i);
+      String strQId = jsonCustomQuery.getString("QId");
+      String strQName = jsonCustomQuery.getString("QName");
+      logger.logln("Processing custom query: " + strQName);
       try {
-        String info = "beatType=" + CUSTOMQUERY_BEAT + "&q=" + jsonObjectReturn.toString();
-        sendInfo(info);
+        String strQType = jsonCustomQuery.getString("QType");
+        if ("HQL".equals(strQType)) {
+          String strHQL = jsonCustomQuery.getString("QCode");
+          HeartbeatLogCustomQuery hbLogCQ = logCustomQuery(strQName, strQType, strHQL);
+
+          Session obSession = OBDal.getInstance().getSession();
+          Query customQuery = obSession.createQuery(strHQL);
+          String[] properties = customQuery.getReturnAliases();
+          JSONArray jsonArrayResultRows = new JSONArray();
+          int row = 0;
+
+          for (Object objResult : (List<Object>) customQuery.list()) {
+            row += 1;
+            JSONArray jsonArrayResultRowValues = new JSONArray();
+
+            Object[] resultList = new Object[1];
+            if (objResult instanceof Object[])
+              resultList = (Object[]) objResult;
+            else
+              resultList[0] = objResult;
+
+            for (int j = 0; j < resultList.length; j++) {
+              jsonArrayResultRowValues.put(resultList[j]);
+
+              String fieldName = null;
+              if (properties != null && properties.length > j) {
+                fieldName = properties[j];
+              }
+              if (fieldName == null) {
+                fieldName = "??";
+              }
+              logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
+            }
+            jsonArrayResultRows.put(jsonArrayResultRowValues);
+          }
+
+          if (customQuery.list().isEmpty())
+            jsonArrayResultRows.put("null");
+
+          JSONObject jsonResult = new JSONObject();
+          jsonResult.put("properties", properties == null ? null : Arrays.asList(properties));
+          jsonResult.put("values", jsonArrayResultRows);
+          jsonObjectCQReturn.put(strQId, jsonResult);
+        } else {
+          log.warn("unknown Query Type: " + strQType);
+          jsonObjectCQReturn.put(strQId, "unknown query type: " + strQType);
+        }
       } catch (Exception e) {
-        log.error(e.getMessage(), e);
+        // ignore exception
+        jsonObjectCQReturn.put(strQId, "exeption executing query: " + e.getMessage());
+        log.warn("Error processing custom query: " + strQName);
       }
 
-    } finally {
-      OBContext.restorePreviousMode();
     }
+    JSONObject jsonObjectReturn = new JSONObject();
+    jsonObjectReturn.put("beatId", beatId);
+    jsonObjectReturn.put("customQueries", jsonObjectCQReturn);
+
+    try {
+      String info = "beatType=" + CUSTOMQUERY_BEAT + "&q=" + jsonObjectReturn.toString();
+      sendInfo(info);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+
   }
 
   private HeartbeatLogCustomQuery logCustomQuery(String strQName, String strQType, String strHQL) {

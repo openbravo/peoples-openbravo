@@ -185,6 +185,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISCUSTOMQUERYENABLED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_SYSTEM_INFO_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -211,6 +215,7 @@
       </foreign-key>
       <check name="AD_SYSTEM_INFO_CHANGE_PURPOSE"><![CDATA[CHANGE_INSTANCE_PURPOSE IN ('Y', 'N')]]></check>
       <check name="AD_SYSTEM_INFO_CUSTOMIZATI_CHK"><![CDATA[CUSTOMIZATION_ALLOWED IN ('Y', 'N')]]></check>
+      <check name="AD_SYSTEM_INFO_QRYENABLED"><![CDATA[ISCUSTOMQUERYENABLED IN ('Y', 'N')]]></check>
       <check name="AD_SYSTEM_INFO_SHOW_COMMBRAND"><![CDATA[SHOW_COMMUNITY_BRANDING IN ('Y', 'N')]]></check>
       <check name="AD_SYSTEM_INFO_SHOWFORGE"><![CDATA[SHOWFORGELOGO IN ('Y', 'N')]]></check>
       <check name="AD_SYSTEMINFO_USAGEAUDITENAB"><![CDATA[ISUSAGEAUDITENABLED IN ('Y', 'N')]]></check>
