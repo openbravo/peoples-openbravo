@@ -158,7 +158,7 @@ isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.OBDateItemStylePropert
 isc.OBNumberItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput'
+  textBoxStyle: 'OBFormFieldInput',
   errorOrientation: 'left'
 });
 
