@@ -66,6 +66,12 @@
   color: #acacac;
 }
 
+.OBFormFieldStatic,
+.OBFormFieldStaticDisabled,
+.OBFormFieldStaticFocused,
+.OBFormFieldStaticError,
+.OBFormFieldStaticHint,
+
 .OBFormFieldInput,
 .OBFormFieldInputDisabled,
 .OBFormFieldInputFocused,
@@ -90,6 +96,13 @@
   /*width: 100%;*/
 }
 
+.OBFormFieldStatic,
+.OBFormFieldStaticFocused,
+.OBFormFieldStaticError,
+.OBFormFieldStaticHint {
+  color: #333333;
+}
+
 .OBFormFieldInput,
 .OBFormFieldInputFocused,
 .OBFormFieldInputError,
@@ -107,6 +120,10 @@
   border: 1px solid #cdd7bb;
   background-color: #F5F7F1;
   color: #333333;
+}
+
+.OBFormFieldStaticDisabled {
+  color: #acacac;  
 }
 
 .OBFormFieldInputDisabled,

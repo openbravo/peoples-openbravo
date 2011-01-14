@@ -336,7 +336,7 @@ isc.OBSelectorItem.addProperties({
         item.openSelectorWindow();
       }
     }];
-        
+    
     if (this.disabled) {
       // TODO: disable, remove icons
       this.icons = null;
@@ -356,7 +356,7 @@ isc.OBSelectorItem.addProperties({
       });
     }
     
-    return this.Super('init', arguments); 
+    return this.Super('init', arguments);
   },
   
   setValueFromGrid: function(record){
@@ -441,7 +441,7 @@ isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 
 isc.OBSelectorLinkItem.addProperties({
   canFocus: true,
-
+  
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
     // in this case the clearIcon needs to be shown or hidden

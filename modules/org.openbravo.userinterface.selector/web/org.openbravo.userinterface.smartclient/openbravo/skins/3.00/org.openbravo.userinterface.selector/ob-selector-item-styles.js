@@ -44,6 +44,9 @@ isc.OBSelectorPopupWindow.addProperties({
 });
 
 isc.OBSelectorItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput',
   newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8,  
   
@@ -53,6 +56,9 @@ isc.OBSelectorItem.addProperties({
 });
 
 isc.OBSelectorLinkItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldStatic',
   newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8,
   pickerIconHeight: 21,
