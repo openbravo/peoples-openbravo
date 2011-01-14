@@ -310,7 +310,7 @@ isc.OBStandardView.addProperties({
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
     }
   },
-    
+  
   // handles different ways by which an error can be passed from the 
   // system, translates this to an object with a type, title and message
   setErrorMessageFromResponse: function(resp, data, req){
@@ -344,17 +344,17 @@ isc.OBStandardView.addProperties({
           return false;
         }
       } else {
-          // hope that someone else will handle it
-          return false;
+        // hope that someone else will handle it
+        return false;
       }
     } else if (data.data) {
       // try it with data.data
       return this.setErrorMessageFromResponse(resp, data.data, req);
-    } else {    
+    } else {
       // hope that someone else will handle it
       return false;
     }
-
+    
     req.willHandleError = true;
     resp._errorMessageHandled = true;
     if (msg.indexOf('@') !== -1) {
@@ -371,7 +371,7 @@ isc.OBStandardView.addProperties({
     }
     return true;
   },
-
+  
   draw: function(){
     var result = this.Super('draw', arguments);
     if (!this.viewGrid || !this.viewGrid.filterEditor) {
@@ -623,7 +623,9 @@ isc.OBStandardView.addProperties({
   shouldOpenDefaultEditMode: function(){
     // can open default edit mode if defaultEditMode is set
     // and this is the root view or a child view with a selected parent.
-    return this.allowDefaultEditMode && this.viewGrid.data && this.viewGrid.data.getLength() > 1 && this.defaultEditMode && (this.isRootView || this.parentView.viewGrid.getSelectedRecords().length === 1);
+    var oneOrMoreSelected = this.viewGrid.data && this.viewGrid.data.lengthIsKnown && this.viewGrid.data.lengthIsKnown() &&
+        this.viewGrid.data.getLength() > 1; 
+    return this.allowDefaultEditMode && oneOrMoreSelected && this.defaultEditMode && (this.isRootView || this.parentView.viewGrid.getSelectedRecords().length === 1);
   },
   
   // opendefaultedit view for a child view is only called
@@ -645,7 +647,7 @@ isc.OBStandardView.addProperties({
     } else if (this.viewGrid.data && this.viewGrid.data.getLength() > 0) {
       // edit the first record
       this.editRecord(this.viewGrid.getRecord(0), preventFocus);
-    } 
+    }
     // in other cases just show grid
   },
   
@@ -805,15 +807,11 @@ isc.OBStandardView.addProperties({
     }
     if (!this.viewForm.newRecordSavedEvent || !this.viewForm.isVisible()) {
       var gridRecord = this.viewGrid.getSelectedRecord();
-      if (!gridRecord) {
-        // not passing a record forces a new record
-        this.editRecord();
-      } else {
+      if (gridRecord) {
         this.editRecord(gridRecord);
       }
       this.viewForm.newRecordSavedEvent = false;
     }
-    this.recordSelected();
     
     // remove this info
     delete this.standardWindow.directTabInfo;
