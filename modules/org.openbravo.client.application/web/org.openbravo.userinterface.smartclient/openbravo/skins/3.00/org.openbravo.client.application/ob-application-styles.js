@@ -50,17 +50,24 @@ isc.OBTextAreaItem.addProperties({
 });
 
 OB.DefaultPickListStyleProperties = {
-  pickListTallBaseStyle: 'OBFormField',
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
   controlStyle: 'OBFormFieldSelectControl',
   pickerIconStyle: 'OBFormFieldSelectPickerIcon',
   pickListBaseStyle: 'OBFormFieldPickListCell',
+  // tallbasestyle is used when the cellheight is different
+  // from the standard
+  pickListTallBaseStyle: 'OBFormFieldPickListCell',
   pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
   height: 21,
   pickerIconWidth: 21,
-  pickerIconHeight: 21,
+  pickerIconHeight: 21, 
+  
+  // note the menu-rollover.png which is the background for selected rows
+  // is 20
+  pickListCellHeight: 20,
+  
   quickRunPickListWidth: 225,
   // fixes issue https://issues.openbravo.com/view.php?id=15105
   quickRunPickListCellHeight: 22,
@@ -76,9 +83,7 @@ OB.DefaultPickListStyleProperties = {
   errorOrientation: 'left'
 };
 
-
 isc.OBListItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
-
 
 isc.OBFKItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
@@ -86,7 +91,6 @@ isc.OBFKItem.addProperties({
   newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8
 });
-
 
 isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
@@ -119,6 +123,7 @@ isc.DateChooser.addProperties({  //TODO : Changed to 'isc.OBDateChooser.addPrope
   baseWeekendStyle: 'OBDateChooserWeekend',
   baseBottomButtonStyle: 'OBDateChooserBottomButton',
   alternateWeekStyles: false,
+  firstDayOfWeek: 1,  
 
   showEdges: true,
 
