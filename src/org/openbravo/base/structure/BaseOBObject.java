@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,9 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
 
   // computed once therefore an object type
   private Boolean isDerivedReadable;
+
+  // if set to true then derived readable is not checked
+  private boolean allowRead = false;
 
   // is used to set default data in a constructor of the generated class
   // without a security check
@@ -163,7 +166,8 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   protected void checkDerivedReadable(Property p) {
     final OBContext obContext = OBContext.getOBContext();
     // obContext can be null in the OBContext initialize method
-    if (obContext != null && obContext.isInitialized() && !obContext.isInAdministratorMode()) {
+    if (!isAllowRead() && obContext != null && obContext.isInitialized()
+        && !obContext.isInAdministratorMode()) {
       if (isDerivedReadable == null) {
         isDerivedReadable = obContext.getEntityAccessChecker().isDerivedReadable(getEntity());
       }
@@ -263,5 +267,22 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
 
   public void setNewOBObject(boolean newOBObject) {
     this.newOBObject = newOBObject;
+  }
+
+  public boolean isAllowRead() {
+    return allowRead;
+  }
+
+  /**
+   * Sets if the object maybe read also by non-authorized users. Can only be called in admin mode
+   * (see {@link OBContext#setAdminMode()}.
+   * 
+   * @param allowRead
+   */
+  public void setAllowRead(boolean allowRead) {
+    if (!OBContext.getOBContext().isInAdministratorMode()) {
+      throw new OBSecurityException("setAllowRead may only be called in admin mode");
+    }
+    this.allowRead = allowRead;
   }
 }

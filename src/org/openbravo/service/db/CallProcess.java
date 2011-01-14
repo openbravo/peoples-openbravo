@@ -133,6 +133,10 @@ public class CallProcess {
       pInstance.setProcess(process);
       // must be set to true
       pInstance.setActive(true);
+
+      // allow it to be read by others also
+      pInstance.setAllowRead(true);
+
       if (recordID != null) {
         pInstance.setRecordID(recordID);
       } else {
