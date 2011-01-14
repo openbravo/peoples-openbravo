@@ -580,13 +580,11 @@ isc.OBStandardView.addProperties({
     // open form in edit mode
     if (record) {
       this.editRecord(record, preventFocus);
-    } else if (!this.viewGrid.data || this.viewGrid.data.getLength() === 0) {
-      // purposely not passing a record, to open new mode
-      this.editRecord(null, preventFocus);
-    } else {
+    } else if (!this.viewGrid.data && this.viewGrid.data.getLength() > 0) {
       // edit the first record
       this.editRecord(this.viewGrid.getRecord(0), preventFocus);
-    }
+    } 
+    // in other cases just show grid
   },
   
   // ** {{{ switchFormGridVisibility }}} **
