@@ -520,7 +520,8 @@ isc.OBViewForm.addProperties({
     this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
     
     // and focus to the first error field
-    this.setFocusInErrorField(autoSave);
+    this.setFocusInErrorField(autoSave || this.inAutoSave);
+    this.inAutoSave = false;
   },
   
   setFocusInErrorField: function(autoSave){

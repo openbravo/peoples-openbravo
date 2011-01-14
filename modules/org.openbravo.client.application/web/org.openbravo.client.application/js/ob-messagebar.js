@@ -111,57 +111,5 @@ isc.OBMessageBar.addProperties({
         me.setMessage(type, title, text);
       }
     }, 'setLabel');
-  },
-  
-  // handles different ways by which an error can be passed from the 
-  // system, translates this to an object with a type, title and message
-  setErrorMessageFromResponse: function(resp, data, req){
-    // only handle it once
-    if (resp._errorMessageHandled) {
-      return true;
-    }
-    var msg = '', title = null, type = isc.OBMessageBar.TYPE_ERROR, isLabel = false, params = null;
-    if (isc.isA.String(data)) {
-      msg = data;
-    } else if (data && data.response && data.response.error) {
-      var error = data.response.error;
-      if (error.type && error.type === 'user') {
-        isLabel = true;
-        msg = error.message;
-        params = error.params;
-      } else if (error.message) {
-        type = error.messageType || type;
-        params = error.params;
-        // error.messageType can be Error
-        type = type.toLowerCase();
-        title = error.title || title;
-        msg = error.message;
-      } else {
-        // hope that someone else will handle it
-        return false;
-      }
-    } else if (data.data) {
-      // try it with data.data
-      return this.setErrorMessageFromResponse(resp, data.data, req);
-    } else {    
-      // hope that someone else will handle it
-      return false;
-    }
-
-    req.willHandleError = true;
-    resp._errorMessageHandled = true;
-    if (msg.indexOf('@') !== -1) {
-      index1 = msg.indexOf('@');
-      index2 = msg.indexOf('@', index1 + 1);
-      if (index2 !== -1) {
-        errorCode = msg.substring(index1 + 1, index2);
-        this.setLabel(type, title, errorCode, params);
-      }
-    } else if (isLabel) {
-      this.setLabel(type, title, msg, params);
-    } else {
-      this.setMessage(type, title, msg);
-    }
-    return true;
   }
 });

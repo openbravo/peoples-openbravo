@@ -298,6 +298,9 @@ isc.OBViewGrid.addProperties({
       this.delayedHandleTargetRecord(startRow, endRow);
     } else if (this.view.shouldOpenDefaultEditMode()) {
       this.view.openDefaultEditView(this.getRecord(startRow));
+    } else if (this.data && this.data.getLength() === 1) {
+      // one record select it directly
+      this.selectRecord(0);
     }
     
     return ret;
