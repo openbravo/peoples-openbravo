@@ -265,7 +265,9 @@ isc.OBViewForm.addProperties({
     if (field.name === OB.Constants.ID) {
       return;
     }
-    if (entries) {
+    // note field can be a datasource field, see above, in that case
+    // don't set the entries
+    if (field.form && entries) {
       if (field.getDataSource()) {
         field.getDataSource().setCacheData(entries, true);
       } else {
