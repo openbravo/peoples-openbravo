@@ -809,7 +809,11 @@ public class ComboTableData {
   public void identifier(String tableName, FieldProvider field) throws Exception {
     UIReference uiref;
     if (field == null) {
-      uiref = Reference.getUIReference(getReferenceType(), null);
+      if (getObjectReference() != null && getObjectReference().length() > 0) {
+        uiref = Reference.getUIReference(getReferenceType(), getObjectReference());
+      } else {
+        uiref = Reference.getUIReference(getReferenceType(), null);
+      }
     } else {
       uiref = Reference.getUIReference(field.getField("reference"), field
           .getField("referenceValue"));
